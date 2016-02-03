@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using FlashDevelop.Managers;
+using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
@@ -363,13 +364,13 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         static string ExtractFilterKeywords(string filter, ref bool viewCustom, ref bool viewConflicts)
         {
-            if (!viewCustom && filter.Length != 0 && filter[0] == ViewCustomKey)
+            if (!viewCustom && filter.StartsWith(ViewCustomKey))
             {
                 filter = filter.Substring(1);
                 viewCustom = true;
                 return ExtractFilterKeywords(filter, ref viewCustom, ref viewConflicts);
             }
-            if (!viewConflicts && filter.Length != 0 && filter[0] == ViewConflictsKey)
+            if (!viewConflicts && filter.StartsWith(ViewConflictsKey))
             {
                 filter = filter.Substring(1);
                 viewConflicts = true;
