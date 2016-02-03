@@ -57,19 +57,47 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
-            this.listView = new System.Windows.Forms.ListView();
+            this.searchLabel = new System.Windows.Forms.Label();
+            this.filterTextBox = new System.Windows.Forms.TextBox();
+            this.clearButton = new System.Windows.Forms.Button();
             this.idHeader = new System.Windows.Forms.ColumnHeader();
             this.keyHeader = new System.Windows.Forms.ColumnHeader();
-            this.closeButton = new System.Windows.Forms.Button();
+            this.listView = new System.Windows.Forms.ListView();
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.infoLabel = new System.Windows.Forms.Label();
-            this.searchLabel = new System.Windows.Forms.Label();
-            this.clearButton = new System.Windows.Forms.Button();
-            this.filterTextBox = new System.Windows.Forms.TextBox();
             this.openButton = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
+            this.closeButton = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)this.pictureBox).BeginInit();
             this.SuspendLayout();
+            // 
+            // searchLabel
+            // 
+            this.searchLabel.AutoSize = true;
+            this.searchLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left;
+            this.searchLabel.Location = new System.Drawing.Point(10, 10);
+            this.searchLabel.Name = "searchLabel";
+            this.searchLabel.Text = "Search:";
+            // 
+            // filterTextBox
+            // 
+            this.filterTextBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            this.filterTextBox.Location = new System.Drawing.Point(12, 32);
+            this.filterTextBox.Name = "filterTextBox";
+            this.filterTextBox.Size = new System.Drawing.Size(531, 20);
+            this.filterTextBox.TabIndex = 0;
+            this.filterTextBox.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.filterTextBox.TextChanged += new System.EventHandler(this.FilterTextChanged);
+            // 
+            // clearButton
+            // 
+            this.clearButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            this.clearButton.Location = new System.Drawing.Point(549, 30);
+            this.clearButton.Name = "clearButton";
+            this.clearButton.Size = new System.Drawing.Size(26, 23);
+            this.clearButton.TabIndex = 1;
+            this.clearButton.UseVisualStyleBackColor = true;
+            this.clearButton.Click += new System.EventHandler(this.ClearFilterClick);
             // 
             // idHeader
             // 
@@ -83,94 +111,70 @@ namespace FlashDevelop.Dialogs
             // 
             // listView
             // 
-            this.listView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {this.idHeader, this.keyHeader});
+            this.listView.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { this.idHeader, this.keyHeader });
             this.listView.GridLines = true;
             this.listView.FullRowSelect = true;
-            this.listView.Location = new System.Drawing.Point(12, 70);
+            this.listView.Location = new System.Drawing.Point(12, 62);
             this.listView.MultiSelect = false;
             this.listView.Name = "listView";
-            this.listView.Size = new System.Drawing.Size(562, 304);
-            this.listView.TabIndex = 4;
+            this.listView.Size = new System.Drawing.Size(562, 312);
+            this.listView.TabIndex = 2;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
             this.listView.KeyDown += new KeyEventHandler(this.ListViewKeyDown);
             // 
-            // closeButton
-            // 
-            this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.closeButton.Location = new System.Drawing.Point(485, 381);
-            this.closeButton.Name = "closeButton";
-            this.closeButton.Size = new System.Drawing.Size(90, 23);
-            this.closeButton.TabIndex = 0;
-            this.closeButton.Text = "Close";
-            this.closeButton.UseVisualStyleBackColor = true;
-            this.closeButton.Click += new System.EventHandler(this.CloseButtonClick);
-            // 
             // pictureBox
             // 
-            this.pictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.pictureBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             this.pictureBox.Location = new System.Drawing.Point(12, 385);
             this.pictureBox.Name = "pictureBox";
             this.pictureBox.Size = new System.Drawing.Size(16, 16);
             this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox.TabIndex = 5;
             this.pictureBox.TabStop = false;
             // 
             // infoLabel
             // 
-            this.infoLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.infoLabel.Location = new System.Drawing.Point(33, 386);
+            this.infoLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            this.infoLabel.Location = new System.Drawing.Point(33, 380);
             this.infoLabel.Name = "infoLabel";
-            this.infoLabel.Size = new System.Drawing.Size(446, 16);
-            this.infoLabel.TabIndex = 6;
+            this.infoLabel.Size = new System.Drawing.Size(243, 32);
             this.infoLabel.Text = "Shortcuts can be edited by selecting an item and pressing valid menu item shortcut keys.";
-            // 
-            // searchLabel
-            // 
-            this.searchLabel.AutoSize = true;
-            this.searchLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-            this.searchLabel.Location = new System.Drawing.Point(10, 25);
-            this.searchLabel.Name = "searchLabel";
-            this.searchLabel.TabIndex = 0;
-            this.searchLabel.Text = "Search:";
-            // 
-            // clearButton
-            // 
-            this.clearButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.clearButton.Location = new System.Drawing.Point(549, 39);
-            this.clearButton.Name = "clearButton";
-            this.clearButton.Size = new System.Drawing.Size(26, 23);
-            this.clearButton.TabIndex = 2;
-            this.clearButton.UseVisualStyleBackColor = true;
-            this.clearButton.Click += new System.EventHandler(this.ClearFilterClick);
-            // 
-            // filterTextBox
-            // 
-            this.filterTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.filterTextBox.Location = new System.Drawing.Point(12, 41);
-            this.filterTextBox.Name = "filterTextBox";
-            this.filterTextBox.Size = new System.Drawing.Size(531, 20);
-            this.filterTextBox.TabIndex = 1;
-            this.filterTextBox.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.filterTextBox.TextChanged += new System.EventHandler(this.FilterTextChanged);
+            this.infoLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // openButton
             // 
-            this.openButton.Location = new System.Drawing.Point(369, 12);
+            this.openButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            this.saveButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.openButton.Location = new System.Drawing.Point(279, 381);
             this.openButton.Name = "openButton";
             this.openButton.Size = new System.Drawing.Size(100, 23);
+            this.openButton.TabIndex = 3;
             this.openButton.UseVisualStyleBackColor = true;
-            this.openButton.Click += new System.EventHandler(SelectCustomShortcut);
+            this.openButton.Click += new System.EventHandler(this.SelectCustomShortcut);
             // 
             // saveButton
             // 
-            this.saveButton.Location = new System.Drawing.Point(475, 12);
+            this.saveButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            this.saveButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.saveButton.Location = new System.Drawing.Point(382, 381);
             this.saveButton.Name = "saveButton";
             this.saveButton.Size = new System.Drawing.Size(100, 23);
+            this.saveButton.TabIndex = 4;
             this.saveButton.UseVisualStyleBackColor = true;
-            this.saveButton.Click += new System.EventHandler(SaveCustomShortcut);
+            this.saveButton.Click += new System.EventHandler(this.SaveCustomShortcut);
+            // 
+            // closeButton
+            // 
+            this.closeButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.closeButton.Location = new System.Drawing.Point(485, 381);
+            this.closeButton.Name = "closeButton";
+            this.closeButton.Size = new System.Drawing.Size(90, 23);
+            this.closeButton.TabIndex = 5;
+            this.closeButton.Text = "Close";
+            this.closeButton.UseVisualStyleBackColor = true;
+            this.closeButton.Click += new System.EventHandler(this.CloseButtonClick);
             // 
             // ShortcutDialog
             // 
@@ -186,20 +190,20 @@ namespace FlashDevelop.Dialogs
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(586, 416);
             this.MinimumSize = new System.Drawing.Size(400, 250);
-            this.Controls.Add(this.saveButton);
-            this.Controls.Add(this.openButton);
+            this.Controls.Add(this.searchLabel);
             this.Controls.Add(this.filterTextBox);
             this.Controls.Add(this.clearButton);
-            this.Controls.Add(this.infoLabel);
-            this.Controls.Add(this.pictureBox);
-            this.Controls.Add(this.closeButton);
             this.Controls.Add(this.listView);
-            this.Controls.Add(this.searchLabel);
+            this.Controls.Add(this.pictureBox);
+            this.Controls.Add(this.infoLabel);
+            this.Controls.Add(this.openButton);
+            this.Controls.Add(this.saveButton);
+            this.Controls.Add(this.closeButton);
             this.FormClosing += new FormClosingEventHandler(this.DialogClosing);
             this.FormClosed += new FormClosedEventHandler(this.DialogClosed);
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.pictureBox).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
         }
