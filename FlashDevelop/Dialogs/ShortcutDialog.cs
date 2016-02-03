@@ -124,7 +124,7 @@ namespace FlashDevelop.Dialogs
             // pictureBox
             // 
             this.pictureBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            this.pictureBox.Location = new System.Drawing.Point(12, 385);
+            this.pictureBox.Location = new System.Drawing.Point(12, 388);
             this.pictureBox.Name = "pictureBox";
             this.pictureBox.Size = new System.Drawing.Size(16, 16);
             this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -211,15 +211,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void InitializeGraphics()
         {
-            using (var imageList = new ImageList())
-            {
-                imageList.ColorDepth = ColorDepth.Depth32Bit;
-                imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-                imageList.Images.Add(Globals.MainForm.FindImage("229", false));
-                imageList.Images.Add(Globals.MainForm.FindImage("153", false));
-                this.pictureBox.Image = imageList.Images[0];
-                this.clearButton.Image = imageList.Images[1];
-            }
+            this.pictureBox.Image = Globals.MainForm.FindImage16("229", false);
+            this.clearButton.Image = Globals.MainForm.FindImage16("153", false);
         }
 
         /// <summary>
