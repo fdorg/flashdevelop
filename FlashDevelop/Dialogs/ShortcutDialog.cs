@@ -1,28 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using FlashDevelop.Managers;
-using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
-using PluginCore.Managers;
 using PluginCore.Utilities;
+using PluginCore;
 
 namespace FlashDevelop.Dialogs
 {
     public class ShortcutDialog : SmartForm
     {
-        const char ViewConflictsKey = '?';
-        const char ViewCustomKey = '*';
-
-        Timer updateTimer;
-        ToolStripMenuItem removeShortcut;
-        ToolStripMenuItem revertToDefault;
-        ToolStripMenuItem revertAllToDefault;
-        ShortcutListItem[] shortcutListItems;
+        private Timer updateTimer;
+        private ToolStripMenuItem removeShortcut;
+        private ToolStripMenuItem revertToDefault;
+        private ToolStripMenuItem revertAllToDefault;
+        private ShortcutListItem[] shortcutListItems;
         private System.Windows.Forms.Label infoLabel;
         private System.Windows.Forms.Label searchLabel;
         private System.Windows.Forms.ListView listView;
@@ -34,8 +29,10 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.Button closeButton;
         private System.Windows.Forms.Button importButton;
         private System.Windows.Forms.Button exportButton;
+        private const char ViewConflictsKey = '?';
+        private const char ViewCustomKey = '*';
 
-        ShortcutDialog()
+        public ShortcutDialog()
         {
             this.Owner = Globals.MainForm;
             this.Font = Globals.Settings.DefaultFont;
@@ -84,7 +81,7 @@ namespace FlashDevelop.Dialogs
             this.filterTextBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.filterTextBox.Location = new System.Drawing.Point(12, 32);
             this.filterTextBox.Name = "filterTextBox";
-            this.filterTextBox.Size = new System.Drawing.Size(531, 20);
+            this.filterTextBox.Size = new System.Drawing.Size(561, 20);
             this.filterTextBox.TabIndex = 0;
             this.filterTextBox.ForeColor = System.Drawing.SystemColors.GrayText;
             this.filterTextBox.TextChanged += new System.EventHandler(this.FilterTextChanged);
@@ -92,7 +89,7 @@ namespace FlashDevelop.Dialogs
             // clearButton
             // 
             this.clearButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            this.clearButton.Location = new System.Drawing.Point(549, 30);
+            this.clearButton.Location = new System.Drawing.Point(579, 30);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(26, 23);
             this.clearButton.TabIndex = 1;
@@ -105,7 +102,7 @@ namespace FlashDevelop.Dialogs
             // 
             // keyHeader
             // 
-            this.keyHeader.Width = 208;
+            this.keyHeader.Width = 239;
             // 
             // listView
             // 
@@ -116,7 +113,7 @@ namespace FlashDevelop.Dialogs
             this.listView.Location = new System.Drawing.Point(12, 62);
             this.listView.MultiSelect = false;
             this.listView.Name = "listView";
-            this.listView.Size = new System.Drawing.Size(562, 312);
+            this.listView.Size = new System.Drawing.Size(592, 312);
             this.listView.TabIndex = 2;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
@@ -125,7 +122,7 @@ namespace FlashDevelop.Dialogs
             // pictureBox
             // 
             this.pictureBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            this.pictureBox.Location = new System.Drawing.Point(12, 388);
+            this.pictureBox.Location = new System.Drawing.Point(12, 386);
             this.pictureBox.Name = "pictureBox";
             this.pictureBox.Size = new System.Drawing.Size(16, 16);
             this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -134,18 +131,17 @@ namespace FlashDevelop.Dialogs
             // infoLabel
             // 
             this.infoLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            this.infoLabel.Location = new System.Drawing.Point(33, 380);
+            this.infoLabel.Location = new System.Drawing.Point(33, 378);
             this.infoLabel.Name = "infoLabel";
-            this.infoLabel.Size = new System.Drawing.Size(243, 32);
+            this.infoLabel.Size = new System.Drawing.Size(420, 32);
             this.infoLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // openButton
             // 
             this.importButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            this.importButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.importButton.Location = new System.Drawing.Point(279, 381);
+            this.importButton.Location = new System.Drawing.Point(454, 382);
             this.importButton.Name = "openButton";
-            this.importButton.Size = new System.Drawing.Size(100, 23);
+            this.importButton.Size = new System.Drawing.Size(25, 23);
             this.importButton.TabIndex = 3;
             this.importButton.UseVisualStyleBackColor = true;
             this.importButton.Click += new System.EventHandler(this.SelectCustomShortcut);
@@ -153,10 +149,9 @@ namespace FlashDevelop.Dialogs
             // saveButton
             // 
             this.exportButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            this.exportButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.exportButton.Location = new System.Drawing.Point(382, 381);
+            this.exportButton.Location = new System.Drawing.Point(484, 382);
             this.exportButton.Name = "saveButton";
-            this.exportButton.Size = new System.Drawing.Size(100, 23);
+            this.exportButton.Size = new System.Drawing.Size(25, 23);
             this.exportButton.TabIndex = 4;
             this.exportButton.UseVisualStyleBackColor = true;
             this.exportButton.Click += new System.EventHandler(this.SaveCustomShortcut);
@@ -165,7 +160,7 @@ namespace FlashDevelop.Dialogs
             // 
             this.closeButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.closeButton.Location = new System.Drawing.Point(485, 381);
+            this.closeButton.Location = new System.Drawing.Point(515, 382);
             this.closeButton.Name = "closeButton";
             this.closeButton.Size = new System.Drawing.Size(90, 23);
             this.closeButton.TabIndex = 5;
@@ -183,16 +178,16 @@ namespace FlashDevelop.Dialogs
             this.CancelButton = this.closeButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(586, 416);
+            this.ClientSize = new System.Drawing.Size(616, 418);
             this.MinimumSize = new System.Drawing.Size(400, 250);
             this.Controls.Add(this.searchLabel);
             this.Controls.Add(this.filterTextBox);
             this.Controls.Add(this.clearButton);
             this.Controls.Add(this.listView);
             this.Controls.Add(this.pictureBox);
-            this.Controls.Add(this.infoLabel);
             this.Controls.Add(this.importButton);
             this.Controls.Add(this.exportButton);
+            this.Controls.Add(this.infoLabel);
             this.Controls.Add(this.closeButton);
             this.FormClosing += new FormClosingEventHandler(this.DialogClosing);
             this.FormClosed += new FormClosedEventHandler(this.DialogClosed);
@@ -214,6 +209,8 @@ namespace FlashDevelop.Dialogs
         {
             this.pictureBox.Image = Globals.MainForm.FindImage16("229", false);
             this.clearButton.Image = Globals.MainForm.FindImage16("153", false);
+            this.exportButton.Image = Globals.MainForm.FindImage16("55|9|3|3", false);
+            this.importButton.Image = Globals.MainForm.FindImage16("55|1|3|3", false);
         }
 
         /// <summary>
@@ -244,12 +241,13 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void ApplyLocalizedTexts()
         {
+            ToolTip tooltip = new ToolTip();
             this.idHeader.Text = TextHelper.GetString("Label.Command");
             this.keyHeader.Text = TextHelper.GetString("Label.Shortcut");
             this.infoLabel.Text = TextHelper.GetString("Info.ShortcutEditInfo");
             this.closeButton.Text = TextHelper.GetString("Label.Close");
-            this.importButton.Text = TextHelper.GetString("Label.Import");
-            this.exportButton.Text = TextHelper.GetString("Label.Export");
+            tooltip.SetToolTip(this.importButton, TextHelper.GetStringWithoutMnemonics("Label.Import"));
+            tooltip.SetToolTip(this.exportButton, TextHelper.GetStringWithoutMnemonics("Label.Export"));
             this.searchLabel.Text = TextHelper.GetString("Label.ShortcutSearch");
             this.Text = " " + TextHelper.GetString("Title.Shortcuts");
         }
@@ -668,7 +666,6 @@ namespace FlashDevelop.Dialogs
 
         #endregion
 
-
         #region ListViewComparer
 
         /// <summary>
@@ -686,6 +683,8 @@ namespace FlashDevelop.Dialogs
         }
 
         #endregion
+
+        #region ShortcutListItem
 
         /// <summary>
         /// Represents a visual representation of a <see cref="ShortcutItem"/> object.
@@ -798,5 +797,9 @@ namespace FlashDevelop.Dialogs
                 this.Item.Custom = this.Custom;
             }
         }
+
+        #endregion
+
     }
+
 }

@@ -18,7 +18,7 @@
 		<menu label="Label.Modify" name="ModifyMenu" flags="Enable:IsEditable">
 			<button label="Label.Reload" click="Reload" shortcut="Control|Shift|R" flags="Enable:IsEditable|!IsUntitled" image="66" />
 			<button label="Label.Duplicate" click="Duplicate" shortcut="Control|Shift|N" flags="Enable:IsEditable" image="292" />
-			<button label="Label.Revert" click="Revert" shortcut="Control|Shift|T" flags="Enable:IsEditable|CanUndo" image="73" />
+			<button label="Label.Revert" click="Revert" shortcut="Control|Shift|M" flags="Enable:IsEditable|CanUndo" image="73" />
 		</menu>
 		<button label="Label.Open" click="Open" shortcut="Control|O" image="214" />
 		<separator />
