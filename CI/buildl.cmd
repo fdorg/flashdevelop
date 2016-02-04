@@ -99,6 +99,9 @@ if %errorlevel% neq 0 goto :error
 
 : finish
 
+:: Revert distro changes with backup
+git stash save "Local CI Backup..."
+
 :: Done, Run FD
 start FlashDevelop\Installer\Binary\FlashDevelop.exe
 exit
