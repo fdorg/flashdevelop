@@ -20,38 +20,21 @@ namespace FlashDevelop.Managers
 {
     class ScintillaManager
     {
-        public static event Action ConfigurationLoaded;
-
-        private static bool initialized;
-        private static readonly Object initializationLock = new Object();
-
         public static Bitmap Bookmark;
-
-        private static Scintilla _sciConfig;
-        public static Scintilla SciConfig
-        {
-            get
-            {
-                Initialize();
-                return _sciConfig;
-            }
-        }
-
-        private static ConfigurationUtility _sciConfigUtil;
-        public static ConfigurationUtility SciConfigUtil
-        {
-            get
-            {
-                Initialize();
-                return _sciConfigUtil;
-            }
-        }
+        private static bool initialized;
+        private static Scintilla sciConfig;
+        private static ConfigurationUtility sciConfigUtil;
+        private static readonly Object initializationLock = new Object();
+        public static event Action ConfigurationLoaded;
 
         static ScintillaManager()
         {
             Bookmark = ScaleHelper.Scale(new Bitmap(ResourceHelper.GetStream("BookmarkIcon.png")));
         }
 
+        /// <summary>
+        /// Initializes the config loading
+        /// </summary>
         private static void Initialize()
         {
             if (!initialized)
@@ -68,16 +51,39 @@ namespace FlashDevelop.Managers
         }
 
         /// <summary>
+        /// Gets the SciConfig and initializes
+        /// </summary>
+        public static Scintilla SciConfig
+        {
+            get
+            {
+                Initialize();
+                return sciConfig;
+            }
+        }
+
+        /// <summary>
+        /// Gets the SciConfigUtil and initializes
+        /// </summary>
+        public static ConfigurationUtility SciConfigUtil
+        {
+            get
+            {
+                Initialize();
+                return sciConfigUtil;
+            }
+        }
+
+        /// <summary>
         /// Loads the syntax and refreshes scintilla settings.
         /// </summary>
         public static void LoadConfiguration()
         {
-            _sciConfigUtil = new ConfigurationUtility(Assembly.GetExecutingAssembly());
+            sciConfigUtil = new ConfigurationUtility(Assembly.GetExecutingAssembly());
             String[] configFiles = Directory.GetFiles(Path.Combine(PathHelper.SettingDir, "Languages"), "*.xml");
-            _sciConfig = (Scintilla)_sciConfigUtil.LoadConfiguration(configFiles);
-            ScintillaControl.Configuration = _sciConfig;
-            if (ConfigurationLoaded != null)
-                ConfigurationLoaded();
+            sciConfig = (Scintilla)sciConfigUtil.LoadConfiguration(configFiles);
+            ScintillaControl.Configuration = sciConfig;
+            if (ConfigurationLoaded != null) ConfigurationLoaded();
         }
 
         /// <summary>
@@ -411,8 +417,8 @@ namespace FlashDevelop.Managers
             sci.MarkerDefine((Int32)MarkerOutline.FolderEnd, MarkerSymbol.BoxPlusConnected);
             sci.MarkerDefine((Int32)MarkerOutline.FolderOpenMid, MarkerSymbol.BoxMinusConnected);
             sci.MarkerDefine((Int32)MarkerOutline.FolderMidTail, MarkerSymbol.TCorner);
-            sci.SetXCaretPolicy((Int32)(CaretPolicy.Slop | CaretPolicy.Even | CaretPolicy.Strict), 0);
-            sci.SetYCaretPolicy((Int32)(CaretPolicy.Slop | CaretPolicy.Even | CaretPolicy.Strict), 0);
+            sci.SetXCaretPolicy((Int32)CaretPolicy.Even, 0); // Match edge...
+            sci.SetYCaretPolicy((Int32)CaretPolicy.Even, 0); // Match edge...
             sci.ScrollWidthTracking = (PluginBase.Settings.ScrollWidth == 3000);
             sci.CodePage = 65001; // Editor handles text as UTF-8
             sci.Encoding = Encoding.GetEncoding(codepage);
