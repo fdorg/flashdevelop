@@ -92,12 +92,31 @@ namespace ScintillaNet
                 if (enabled && !this.Controls.Contains(this.vScrollBar))
                 {
                     this.AddScrollBars(this);
+                    this.UpdateScrollBarTheme(this);
                 }
                 else if (!enabled && this.Controls.Contains(this.vScrollBar))
                 {
                     this.RemoveScrollBars(this);
                 }
             }
+        }
+
+        /// <summary>
+        /// Updates the scrollbar theme and applies old defaults
+        /// </summary>
+        private void UpdateScrollBarTheme(ScintillaControl sender)
+        {
+            PluginBase.MainForm.ThemeControls(sender.vScrollBar);
+            PluginBase.MainForm.ThemeControls(sender.hScrollBar);
+            // Apply settings so that old defaults work...
+            sender.vScrollBar.ArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ArrowColor", sender.vScrollBar.ForeColor);
+            sender.vScrollBar.HotArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotArrowColor", sender.vScrollBar.ForeColor);
+            sender.vScrollBar.ActiveArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ActiveArrowColor", sender.vScrollBar.ActiveForeColor);
+            sender.vScrollBar.HotForeColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotForeColor", sender.vScrollBar.ForeColor);
+            sender.hScrollBar.ArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ArrowColor", sender.hScrollBar.ForeColor);
+            sender.hScrollBar.HotArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotArrowColor", sender.hScrollBar.ForeColor);
+            sender.hScrollBar.ActiveArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ActiveArrowColor", sender.hScrollBar.ActiveForeColor);
+            sender.hScrollBar.HotForeColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotForeColor", sender.hScrollBar.ForeColor);
         }
 
         /// <summary>
@@ -120,17 +139,7 @@ namespace ScintillaNet
             if (PluginBase.MainForm.GetThemeFlag("ScrollBar.UseCustom", false))
             {
                 sender.AddScrollBars(sender);
-                PluginBase.MainForm.ThemeControls(sender.vScrollBar);
-                PluginBase.MainForm.ThemeControls(sender.hScrollBar);
-                // Apply settings so that old defaults work...
-                this.vScrollBar.ArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ArrowColor", this.vScrollBar.ForeColor);
-                this.vScrollBar.HotArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotArrowColor", this.vScrollBar.ForeColor);
-                this.vScrollBar.ActiveArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ActiveArrowColor", this.vScrollBar.ActiveForeColor);
-                this.vScrollBar.HotForeColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotForeColor", this.vScrollBar.ForeColor);
-                this.hScrollBar.ArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ArrowColor", this.hScrollBar.ForeColor);
-                this.hScrollBar.HotArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotArrowColor", this.hScrollBar.ForeColor);
-                this.hScrollBar.ActiveArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ActiveArrowColor", this.hScrollBar.ActiveForeColor);
-                this.hScrollBar.HotForeColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotForeColor", this.hScrollBar.ForeColor);
+                sender.UpdateScrollBarTheme(sender);
             }
             EventManager.AddEventHandler(this, EventType.ApplyTheme);
         }
