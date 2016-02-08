@@ -136,7 +136,7 @@ namespace FlashDevelop.Dialogs
             this.infoLabel.Size = new System.Drawing.Size(420, 32);
             this.infoLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // openButton
+            // importButton
             // 
             this.importButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.importButton.Location = new System.Drawing.Point(454, 382);
@@ -146,7 +146,7 @@ namespace FlashDevelop.Dialogs
             this.importButton.UseVisualStyleBackColor = true;
             this.importButton.Click += new System.EventHandler(this.SelectCustomShortcut);
             // 
-            // saveButton
+            // exportButton
             // 
             this.exportButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.exportButton.Location = new System.Drawing.Point(484, 382);
@@ -226,9 +226,9 @@ namespace FlashDevelop.Dialogs
             this.revertToDefault = new ToolStripMenuItem(TextHelper.GetString("Label.RevertToDefault"), null, this.RevertToDefaultClick);
             this.revertAllToDefault = new ToolStripMenuItem(TextHelper.GetString("Label.RevertAllToDefault"), null, this.RevertAllToDefaultClick);
             this.removeShortcut.ShortcutKeyDisplayString = DataConverter.KeysToString(Keys.Delete);
-            this.removeShortcut.Image = Globals.MainForm.FindImage("153");
-            this.revertToDefault.Image = Globals.MainForm.FindImage("69");
-            this.revertAllToDefault.Image = Globals.MainForm.FindImage("224");
+            this.removeShortcut.Image = Globals.MainForm.FindImage("153", false);
+            this.revertToDefault.Image = Globals.MainForm.FindImage("69", false);
+            this.revertAllToDefault.Image = Globals.MainForm.FindImage("224", false);
             cms.Items.Add(this.removeShortcut);
             cms.Items.Add(this.revertToDefault);
             cms.Items.Add(this.revertAllToDefault);
@@ -425,7 +425,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Assign the new shortcut.
         /// </summary>
-        void AssignNewShortcut(ShortcutListItem item, Keys shortcut, bool suppressWarning = false)
+        void AssignNewShortcut(ShortcutListItem item, Keys shortcut)
         {
             if (shortcut == 0 || shortcut == Keys.Delete) shortcut = 0;
             else if (!ToolStripManager.IsValidShortcut(shortcut)) return;
@@ -437,7 +437,7 @@ namespace FlashDevelop.Dialogs
             item.Selected = true;
             this.GetConflictItems(item);
             this.listView.EndUpdate();
-            if (item.HasConflicts && !suppressWarning)
+            if (item.HasConflicts)
             {
                 string text = TextHelper.GetString("Info.ShortcutIsAlreadyUsed");
                 string caption = TextHelper.GetString("Title.WarningDialog");
@@ -515,10 +515,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         void RevertAllToDefaultClick(object sender, EventArgs e)
         {
-            foreach (ShortcutListItem item in this.listView.Items)
-            {
-                this.AssignNewShortcut(item, item.Default, true);
-            }
+            foreach (ShortcutListItem item in this.listView.Items) RevertToDefault(item);
         }
 
         /// <summary>

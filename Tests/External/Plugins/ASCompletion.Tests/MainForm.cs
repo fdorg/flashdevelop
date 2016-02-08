@@ -210,6 +210,21 @@ namespace FlashDevelop
 
         public Image FindImage(string data, bool autoAdjust)
         {
+            return null;
+        }
+
+        public Image FindImage16(string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Image FindImage16(string data, bool autoAdjusted)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Image FindImageAndSetAdjust(string data)
+        {
             throw new NotImplementedException();
         }
 
