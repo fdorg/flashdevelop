@@ -1581,6 +1581,97 @@ namespace ASCompletion.Model
                     Assert.AreEqual("i1", member2.Name);
                 }
             }
+
+            [Test]
+            public void ParseFile_MetadataClass()
+            {
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.MetadataTest.hx"))
+                {
+                    var srcModel = new FileModel(resourceFile.DestinationFile);
+                    srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                    var model = ASFileParser.ParseFile(srcModel);
+                    var classModel = model.Classes[0];
+                    Assert.AreEqual("MetadataTest", classModel.Name);
+                    Assert.AreEqual(FlagType.Class, classModel.Flags & FlagType.Class);
+                    Assert.AreEqual(2, classModel.LineFrom);
+                    Assert.AreEqual(28, classModel.LineTo);
+                    Assert.AreEqual(6, classModel.Members.Count);
+
+                    var memberModel = classModel.Members[0];
+                    Assert.AreEqual("func", memberModel.Name);
+                    Assert.AreEqual("Void", memberModel.Type);
+                    var flags = FlagType.Function;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Private, memberModel.Access & Visibility.Private);
+                    Assert.AreEqual(4, memberModel.LineFrom);
+                    Assert.AreEqual(6, memberModel.LineTo);
+                    Assert.IsNull(memberModel.Parameters);
+                    Assert.IsNull(memberModel.MetaDatas);
+
+                    memberModel = classModel.Members[1];
+                    Assert.AreEqual("test", memberModel.Name);
+                    Assert.AreEqual("Int", memberModel.Type);
+                    flags = FlagType.Variable;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Private, memberModel.Access & Visibility.Private);
+                    Assert.AreEqual(9, memberModel.LineFrom);
+                    Assert.AreEqual(9, memberModel.LineTo);
+                    Assert.AreEqual(1, memberModel.MetaDatas.Count);
+                    Assert.AreEqual(":allow", memberModel.MetaDatas[0].Name);
+                    Assert.AreEqual("flixel", memberModel.MetaDatas[0].Params["Default"]);
+
+                    memberModel = classModel.Members[2];
+                    Assert.AreEqual("func2", memberModel.Name);
+                    Assert.AreEqual(null, memberModel.Type);
+                    flags = FlagType.Function;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Private, memberModel.Access & Visibility.Private);
+                    Assert.AreEqual(11, memberModel.LineFrom);
+                    Assert.AreEqual(13, memberModel.LineTo);
+                    Assert.IsNull(memberModel.Parameters);
+                    Assert.IsNull(memberModel.MetaDatas);
+
+                    memberModel = classModel.Members[3];
+                    Assert.AreEqual("test2", memberModel.Name);
+                    Assert.AreEqual("Int", memberModel.Type);
+                    flags = FlagType.Variable;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Private, memberModel.Access & Visibility.Private);
+                    Assert.AreEqual(16, memberModel.LineFrom);
+                    Assert.AreEqual(16, memberModel.LineTo);
+                    Assert.AreEqual(1, memberModel.MetaDatas.Count);
+                    Assert.AreEqual(":allow", memberModel.MetaDatas[0].Name);
+                    Assert.AreEqual("flixel", memberModel.MetaDatas[0].Params["Default"]);
+
+                    memberModel = classModel.Members[4];
+                    Assert.AreEqual("func3", memberModel.Name);
+                    Assert.AreEqual("Void", memberModel.Type);
+                    flags = FlagType.Function;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Private, memberModel.Access & Visibility.Private);
+                    Assert.AreEqual(18, memberModel.LineFrom);
+                    Assert.AreEqual(20, memberModel.LineTo);
+                    Assert.IsNull(memberModel.Parameters);
+                    Assert.IsNull(memberModel.MetaDatas);
+
+                    memberModel = classModel.Members[5];
+                    Assert.AreEqual("test3", memberModel.Name);
+                    Assert.AreEqual("Bool", memberModel.Type);
+                    flags = FlagType.Function;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Public, memberModel.Access & Visibility.Public);
+                    Assert.AreEqual(24, memberModel.LineFrom);
+                    Assert.AreEqual(27, memberModel.LineTo);
+                    Assert.AreEqual(1, memberModel.Parameters.Count);
+                    Assert.AreEqual("arg", memberModel.Parameters[0].Name);
+                    Assert.AreEqual("Int", memberModel.Parameters[0].Type);
+                    Assert.AreEqual(2, memberModel.MetaDatas.Count);
+                    Assert.AreEqual("author", memberModel.MetaDatas[0].Name);
+                    Assert.AreEqual("\"FlashDevelop\"", memberModel.MetaDatas[0].Params["Default"]);
+                    Assert.AreEqual("test", memberModel.MetaDatas[1].Name);
+                    Assert.IsNull(memberModel.MetaDatas[1].Params);
+                }
+            }
         }
     }
 }

@@ -1590,7 +1590,7 @@ namespace ASCompletion.Model
                             }
                         }
 
-                        // metadata
+                        // metadata, contexts should define a meta keyword and a way to parse metadata
                         else if (!inValue && c1 == '[')
                         {
                             if (version == 3)
@@ -1607,8 +1607,17 @@ namespace ASCompletion.Model
                                 if (ba[i] == ']') curMember.Type = features.CArrayTemplate + "@" + curMember.Type;
                             }
                         }
+                        else if (!inValue && c1 == '@' && haXe)
+                        {
+                            var meta = LookupHaxeMeta(ref ba, ref i);
+                            if (meta != null)
+                            {
+                                carriedMetaData = carriedMetaData ?? new List<ASMetaData>();
+                                carriedMetaData.Add(meta);
+                            }
+                        }
 
-                        // Unreachable code????
+                        // Unreachable code???? plus it seems a bit crazy we have so many places for function types
                         // Haxe signatures: T -> T -> T 
                         else if (haXe && c1 == '-' && curMember != null)
                         {
@@ -1753,6 +1762,63 @@ namespace ASCompletion.Model
                     lastComment = null;
                 }
                 else lastComment = null;
+            }
+            return md;
+        }
+
+        private ASMetaData LookupHaxeMeta(ref string ba, ref int i)
+        {
+            int len = ba.Length;
+            int i0 = i;
+            int line0 = line;
+            int inString = 0;
+            int parCount = 0;
+            bool isComplex = false;
+            while (i < len)
+            {
+                char c = ba[i];
+                if (inString == 0)
+                {
+                    if (c == '"') inString = 1;
+                    else if (c == '\'') inString = 2;
+                    else if ("{;[".IndexOf(c) >= 0)
+                    {
+                        i = i0;
+                        line = line0;
+                        return null;
+                    }
+                    else if (c == '(') parCount++;
+                    else if (c == ')')
+                    {
+                        parCount--;
+                        isComplex = true;
+                        if (parCount <= 0) break;
+                    }
+                    else if (c <= 32)
+                    {
+                        break;
+                    }
+                }
+                else if (c == 10 || c == 13)
+                {
+                    line++;
+                    if (c == 13 && i < len && ba[i + 1] == 10) i++;
+                }
+                else if (inString == 1 && c == '"') inString = 0;
+                else if (inString == 2 && c == '\'') inString = 0;
+                else if (inString > 0 && (c == 10 || c == 13)) inString = 0;
+                i++;
+            }
+
+            string meta = ba.Substring(i0, i - i0);
+            ASMetaData md = new ASMetaData(isComplex ? meta.Substring(0, meta.IndexOf('(')) : meta);
+            md.LineFrom = line0;
+            md.LineTo = line;
+            if (isComplex)
+            {
+                meta = meta.Substring(meta.IndexOf('(') + 1);
+                md.Params = new Dictionary<string, string>();
+                md.Params["Default"] = meta;
             }
             return md;
         }
