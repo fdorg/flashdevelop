@@ -961,7 +961,7 @@ namespace ASCompletion.Model
                 {
                     bool stopParser = false;
                     bool valueError = false;
-                    if (inType && !inAnonType && !inGeneric && !Char.IsLetterOrDigit(c1) && ".{}-><".IndexOf(c1) < 0)
+                    if (inType && !inAnonType && !inGeneric && !char.IsLetterOrDigit(c1) && ".{}-><".IndexOf(c1) < 0)
                     {
                         inType = false;
                         inValue = false;
@@ -1015,7 +1015,7 @@ namespace ASCompletion.Model
                         else if (paramTempCount > 0)
                         {
                             paramTempCount--;
-                            stopParser = true;
+                            stopParser = paramTempCount == 0 && paramBraceCount == 0;
                         }
                         else valueError = true;
                     }
@@ -1059,7 +1059,7 @@ namespace ASCompletion.Model
                     }
 
                     // detect keywords
-                    if (!Char.IsLetterOrDigit(c1))
+                    if (!char.IsLetterOrDigit(c1))
                     {
                         // escape next char
                         if (c1 == '\\' && i < len)
@@ -1111,7 +1111,7 @@ namespace ASCompletion.Model
                             {
                                 param = ASFileParserRegexes.Spaces.Replace(param, "");
                                 param = param.Replace(",", ", ");
-                                param = param.Replace("->", " -> ");
+                                //param = param.Replace("->", " -> ");
                             }
                         }
                         curMember.Type = param;
@@ -1169,7 +1169,7 @@ namespace ASCompletion.Model
                         buffer[length++] = '-';
                         buffer[length++] = '>';
                         i++;
-                        hadDot = true;
+                        inType = true;
                         continue;
                     }
 
@@ -1212,8 +1212,8 @@ namespace ASCompletion.Model
                             else if (c1 == '<' && features.hasGenerics)
                             {
                                 if (!inValue && i > 2 && length > 1 && i < len - 3
-                                    && Char.IsLetterOrDigit(ba[i - 3]) && (Char.IsLetter(ba[i]) || (haXe && ba[i] == '{'))
-                                    && (Char.IsLetter(buffer[0]) || buffer[0] == '_'))
+                                    && char.IsLetterOrDigit(ba[i - 3]) && (char.IsLetter(ba[i]) || (haXe && ba[i] == '{'))
+                                    && (char.IsLetter(buffer[0]) || buffer[0] == '_'))
                                 {
                                     if (curMember == null)
                                     {
@@ -1239,10 +1239,11 @@ namespace ASCompletion.Model
                                             valueBuffer[valueLength++] = buffer[j];
                                         valueBuffer[valueLength++] = c1;
                                         length = 0;
+                                        /*
                                         paramBraceCount = 0;
                                         paramParCount = 0;
-                                        paramSqCount = 0;
-                                        paramTempCount = 1;
+                                        paramSqCount = 0;*/
+                                        paramTempCount++;
                                         continue;
                                     }
                                 }
@@ -1607,7 +1608,8 @@ namespace ASCompletion.Model
                             }
                         }
 
-                        // Haxe signatures: T -> T -> T
+                        // Unreachable code????
+                        // Haxe signatures: T -> T -> T 
                         else if (haXe && c1 == '-' && curMember != null)
                         {
                             if (ba[i] == '>' && curMember.Type != null)

@@ -1205,7 +1205,7 @@ namespace ASCompletion.Model
                     Context.ASContext.Context = context;
                     var model = context.GetCodeModel(File.ReadAllText(resourceFile.DestinationFile));
 
-                    Assert.AreEqual(4, model.Members.Count);
+                    Assert.AreEqual(5, model.Members.Count);
 
                     var member = model.Members[0];
                     Assert.AreEqual("functionTypesWithSubTypes", member.Name);
@@ -1243,6 +1243,13 @@ namespace ASCompletion.Model
                     Assert.AreEqual(4, member.LineTo);
                     Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
                     Assert.AreEqual("(Dynamic->Dynamic)->(Int->Int)", member.Type);
+
+                    member = model.Members[4];
+                    Assert.AreEqual("functionType4", member.Name);
+                    Assert.AreEqual(5, member.LineFrom);
+                    Assert.AreEqual(5, member.LineTo);
+                    Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
+                    Assert.AreEqual("Void->(Void->Array<Int>)", member.Type);
                 }
             }
 
@@ -1316,8 +1323,8 @@ namespace ASCompletion.Model
                     Assert.AreEqual("Test", classModel.Name);
                     Assert.AreEqual(FlagType.Class, classModel.Flags & FlagType.Class);
                     Assert.AreEqual(2, classModel.LineFrom);
-                    Assert.AreEqual(45, classModel.LineTo);
-                    Assert.AreEqual(14, classModel.Members.Count);
+                    Assert.AreEqual(49, classModel.LineTo);
+                    Assert.AreEqual(15, classModel.Members.Count);
 
                     var memberModel = classModel.Members[0];
                     Assert.AreEqual("CONSTANT", memberModel.Name);
@@ -1505,6 +1512,21 @@ namespace ASCompletion.Model
                     Assert.AreEqual(FlagType.ParameterVar, param.Flags & FlagType.ParameterVar);
                     Assert.AreEqual(41, param.LineFrom);
                     Assert.AreEqual(41, param.LineTo);
+
+                    memberModel = classModel.Members[14];
+                    Assert.AreEqual("nestedGenerics", memberModel.Name);
+                    flags = FlagType.Function;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Public, memberModel.Access & Visibility.Public);
+                    Assert.AreEqual(46, memberModel.LineFrom);
+                    Assert.AreEqual(48, memberModel.LineTo);
+                    Assert.AreEqual(1, memberModel.Parameters.Count);
+                    param = memberModel.Parameters[0];
+                    Assert.AreEqual("s", param.Name);
+                    Assert.AreEqual("Array<Array<Int>>", param.Type);
+                    Assert.AreEqual(FlagType.ParameterVar, param.Flags & FlagType.ParameterVar);
+                    Assert.AreEqual(46, param.LineFrom);
+                    Assert.AreEqual(46, param.LineTo);
                 }
             }
 
