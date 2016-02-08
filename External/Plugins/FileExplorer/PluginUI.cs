@@ -55,7 +55,6 @@ namespace FileExplorer
             this.InitializeContextMenu();
             this.InitializeLayout();
             this.InitializeTexts();
-            ScrollBarEx.Attach(this.fileView);
         }
         
         #region Windows Forms Designer Generated Code
