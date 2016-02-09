@@ -1015,7 +1015,7 @@ namespace ASCompletion.Model
                         else if (paramTempCount > 0)
                         {
                             paramTempCount--;
-                            stopParser = paramTempCount == 0 && paramBraceCount == 0;
+                            stopParser = true; //paramTempCount == 0 && paramBraceCount == 0; this would make more sense but just restore the original for now
                         }
                         else valueError = true;
                     }
