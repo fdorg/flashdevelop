@@ -1794,7 +1794,7 @@ namespace ASCompletion.Model
                         isComplex = true;
                         if (parCount <= 0) break;
                     }
-                    else if (c <= 32)
+                    else if (c <= 32 && parCount <= 0)
                     {
                         break;
                     }
@@ -1816,7 +1816,7 @@ namespace ASCompletion.Model
             md.LineTo = line;
             if (isComplex)
             {
-                meta = meta.Substring(meta.IndexOf('(') + 1);
+                meta = meta.Substring(meta.IndexOf('(') + 1).Trim();
                 md.Params = new Dictionary<string, string>();
                 md.Params["Default"] = meta;
             }
