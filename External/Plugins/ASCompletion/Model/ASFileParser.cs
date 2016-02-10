@@ -1781,7 +1781,7 @@ namespace ASCompletion.Model
                 {
                     if (c == '"') inString = 1;
                     else if (c == '\'') inString = 2;
-                    else if ("{;[".IndexOf(c) >= 0)
+                    else if ("{;[".IndexOf(c) >= 0) // Is this valid in Haxe meta?
                     {
                         i = i0;
                         line = line0;
@@ -1806,7 +1806,6 @@ namespace ASCompletion.Model
                 }
                 else if (inString == 1 && c == '"') inString = 0;
                 else if (inString == 2 && c == '\'') inString = 0;
-                else if (inString > 0 && (c == 10 || c == 13)) inString = 0;
                 i++;
             }
 

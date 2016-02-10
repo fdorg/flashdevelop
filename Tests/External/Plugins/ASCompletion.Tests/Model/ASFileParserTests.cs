@@ -1670,6 +1670,18 @@ namespace ASCompletion.Model
                     Assert.AreEqual("\"FlashDevelop\"", memberModel.MetaDatas[0].Params["Default"]);
                     Assert.AreEqual("test", memberModel.MetaDatas[1].Name);
                     Assert.IsNull(memberModel.MetaDatas[1].Params);
+
+                    classModel = model.Classes[1];
+                    Assert.AreEqual("MetaClass", classModel.Name);
+                    Assert.AreEqual(FlagType.Class, classModel.Flags & FlagType.Class);
+                    Assert.AreEqual(33, classModel.LineFrom);
+                    Assert.AreEqual(36, classModel.LineTo);
+                    Assert.AreEqual(0, classModel.Members.Count);
+                    Assert.AreEqual(2, classModel.MetaDatas.Count);
+                    Assert.AreEqual(":build", classModel.MetaDatas[0].Name);
+                    Assert.AreEqual("ResourceGenerator.build(\"resource/strings.json\")", classModel.MetaDatas[0].Params["Default"]);
+                    Assert.AreEqual(":build", classModel.MetaDatas[1].Name);
+                    Assert.AreEqual("TemplateBuilder.build('\r\n    <div class=\"mycomponent\"></div>'", classModel.MetaDatas[1].Params["Default"]);
                 }
             }
         }
