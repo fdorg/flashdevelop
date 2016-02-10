@@ -67,7 +67,7 @@ namespace HaXeContext
 
         public void GetPosition(HaxeCompleteResultHandler<HaxePositionResult> callback)
         {
-            StartThread(callback, () => positionResults.Count > 0 ? positionResults[0] : null);
+            StartThread(callback, () => positionResults != null && positionResults.Count > 0 ? positionResults[0] : null);
         }
 
         public void GetUsages(HaxeCompleteResultHandler<List<HaxePositionResult>> callback)
