@@ -150,7 +150,7 @@ namespace AS3Context
                         {
                             ASDocItem doc = thisDocs[docPath];
                             applyASDoc(doc, type);
-                            if (doc.Meta != null) model.MetaDatas = doc.Meta;
+                            if (doc.Meta != null) type.MetaDatas = doc.Meta;
                         }
                         if (model.Package.Length == 0) docPath = type.Name;
                     }
@@ -985,6 +985,8 @@ namespace AS3Context
                     ReadPrologMetadataApiVersion(doc);
                 else if (Name == "styles")
                     ReadPrologMetadataStyles(doc);
+                else if (Name == "DefaultProperty")
+                    ReadPrologMetadataDefaultProperty(doc);
                 Read();
             }
         }
@@ -1050,6 +1052,23 @@ namespace AS3Context
                     ReadStyleMeta(doc);
                 Read();
             }
+        }
+
+        private void ReadPrologMetadataDefaultProperty(ASDocItem doc)
+        {
+            ASMetaData meta = new ASMetaData("DefaultProperty");
+            meta.Kind = ASMetaKind.DefaultProperty;
+            meta.Comments = "";
+
+            meta.Params = new Dictionary<string, string>();
+
+            string defValue = GetAttribute("name");
+            meta.Params["default"] = defValue;
+
+            meta.RawParams = string.Format("\"{0}\"", defValue);
+
+            if (doc.Meta == null) doc.Meta = new List<ASMetaData>();
+            doc.Meta.Add(meta);
         }
 
         private void ReadPrologCustoms(ASDocItem doc, string terminationNode)
