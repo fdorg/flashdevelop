@@ -1696,10 +1696,9 @@ namespace ASCompletion.Completion
             List<ASMetaData> events = new List<ASMetaData>();
             while (ofClass != null && !ofClass.IsVoid())
             {
-                FileModel inFile = ofClass.InFile;
-                if (inFile.MetaDatas != null)
+                if (ofClass.MetaDatas != null)
                 {
-                    foreach (ASMetaData meta in inFile.MetaDatas)
+                    foreach (ASMetaData meta in ofClass.MetaDatas)
                         if (meta.Kind == ASMetaKind.Event) events.Add(meta);
                 }
                 ofClass = ofClass.Extends;

@@ -215,7 +215,7 @@ namespace ProjectManager.Controls.TreeView
                     if (projects.Count > 0)
                     {
                         ExpandedPaths = PluginMain.Settings.GetPrefs(projects[0]).ExpandedPaths;
-                        Win32.SetScrollPos(this, new Point());
+                        if (Win32.ShouldUseWin32()) Win32.SetScrollPos(this, new Point());
                     }
                     else Project = null;
 

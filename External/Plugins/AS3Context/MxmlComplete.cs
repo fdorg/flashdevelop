@@ -363,7 +363,7 @@ namespace AS3Context
                         mix.Add(new HtmlAttributeItem(member.Name, mtype, className, ns));
                     }
 
-                ExploreMetadatas(tmpClass.InFile, mix, excludes, ns, tagClass == tmpClass);
+                ExploreMetadatas(tmpClass, mix, excludes, ns, tagClass == tmpClass);
 
                 tmpClass = tmpClass.Extends;
                 if (tmpClass != null && tmpClass.InFile.Package == "" && tmpClass.Name == "Object")
@@ -431,7 +431,7 @@ namespace AS3Context
                     }
 
                 List<ICompletionListItem> retVal;
-                if (GetAutoCompletionValuesFromMetaData(tmpClass.InFile, attribute, tagClass, tmpClass, out retVal))
+                if (GetAutoCompletionValuesFromMetaData(tmpClass, attribute, tagClass, tmpClass, out retVal))
                     return retVal;
 
                 tmpClass = tmpClass.Extends;
@@ -473,7 +473,7 @@ namespace AS3Context
             return GetAutoCompletionValuesFromType(type);
         }
 
-        private static bool GetAutoCompletionValuesFromMetaData(FileModel model, string attribute, ClassModel tagClass, ClassModel tmpClass, out List<ICompletionListItem> result)
+        private static bool GetAutoCompletionValuesFromMetaData(ClassModel model, string attribute, ClassModel tagClass, ClassModel tmpClass, out List<ICompletionListItem> result)
         {
             if (model != null && model.MetaDatas != null)
             {
@@ -501,10 +501,10 @@ namespace AS3Context
                             break;
                         case ASMetaKind.Exclude:
                             break;
-                        case ASMetaKind.Include:    // Can this happen? if it happens I guess name == true will never be true? I don't know any test case
+                        case ASMetaKind.Include:    // TODO: Check this case...
                             Debug.Assert(false, "Please, check this case");
-                            FileModel incModel = ParseInclude(model, meta);
-                            return GetAutoCompletionValuesFromMetaData(incModel, attribute, tagClass, tmpClass, out result);
+                            FileModel incModel = ParseInclude(model.InFile, meta);
+                            return GetAutoCompletionValuesFromMetaData(incModel.GetPublicClass(), attribute, tagClass, tmpClass, out result);
                     }
                     if (meta.Params != null && meta.Params.ContainsKey("enumeration"))
                     {
@@ -632,13 +632,12 @@ namespace AS3Context
             return null;
         }
 
-        private static void ExploreMetadatas(FileModel fileModel, List<ICompletionListItem> mix, List<string> excludes, string ns, bool isCurrentModel)
+        private static void ExploreMetadatas(ClassModel model, List<ICompletionListItem> mix, List<string> excludes, string ns, bool isCurrentModel)
         {
-            if (fileModel == null || fileModel.MetaDatas == null) 
+            if (model == null || model.MetaDatas == null) 
                 return;
-            ClassModel model = fileModel.GetPublicClass();
-            string className = model.IsVoid() ? Path.GetFileNameWithoutExtension(fileModel.FileName) : model.Name;
-            foreach (ASMetaData meta in fileModel.MetaDatas)
+            string className = model.IsVoid() ? Path.GetFileNameWithoutExtension(model.InFile.FileName) : model.Name;
+            foreach (ASMetaData meta in model.MetaDatas)
             {
                 string add = null;
                 string type = null;
@@ -661,8 +660,8 @@ namespace AS3Context
                         if (meta.Params != null) excludes.Add(meta.Params["name"]);
                         break;
                     case ASMetaKind.Include:
-                        FileModel incModel = ParseInclude(fileModel, meta);
-                        ExploreMetadatas(incModel, mix, excludes, ns, isCurrentModel);
+                        FileModel incModel = ParseInclude(model.InFile, meta);
+                        ExploreMetadatas(incModel.GetPublicClass(), mix, excludes, ns, isCurrentModel);
                         break;
                 }
                 if (add != null && meta.Params.ContainsKey("name"))
