@@ -74,7 +74,8 @@ namespace ASCompletion.Model
             string cacheDir = GetCachePath();
             try
             {
-                Directory.Delete(cacheDir, true);
+                if (Directory.Exists(cacheDir))
+                    Directory.Delete(cacheDir, true);
             }
             catch { }
         }
