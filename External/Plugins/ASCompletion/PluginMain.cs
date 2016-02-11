@@ -596,6 +596,7 @@ namespace ASCompletion
             pluginDesc = TextHelper.GetString("Info.Description");
             dataPath = Path.Combine(PathHelper.DataDir, "ASCompletion");
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
+            else if (PluginBase.MainForm.RefreshConfig) CleanData(dataPath);
             settingsFile = Path.Combine(dataPath, "Settings.fdb");
             settingObject = new GeneralSettings();
             if (!File.Exists(settingsFile))
@@ -610,6 +611,14 @@ namespace ASCompletion
                 Object obj = ObjectSerializer.Deserialize(settingsFile, settingObject);
                 settingObject = (GeneralSettings)obj;
             }
+        }
+
+        /// <summary>
+        /// FD has been updated, clean some app data
+        /// </summary>
+        private void CleanData(string dataPath)
+        {
+            PathExplorer.ClearPersistentCache();
         }
 
         private void SaveSettings()
