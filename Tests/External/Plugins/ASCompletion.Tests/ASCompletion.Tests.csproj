@@ -165,6 +165,7 @@
     <EmbeddedResource Include="Test Files\generated\as3\BeforeFieldFromParameterWithSuperConstructorMultiLine.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeFieldFromParameterWithWrongSuperConstructor.as" />
     <EmbeddedResource Include="Test Files\parser\as3\IdentifiersWithUnicodeCharsTest.as" />
+    <EmbeddedResource Include="Test Files\parser\haxe\MetadataTest.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
