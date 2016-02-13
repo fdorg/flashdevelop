@@ -1124,6 +1124,7 @@ namespace ASCompletion.Model
                         }
                         curMember.Type = param;
                         length = 0;
+                        inType = false;
                     }
                     // AS3 const or method parameter's default value 
                     else if (version > 2 && (curMember.Flags & FlagType.Variable) > 0)
