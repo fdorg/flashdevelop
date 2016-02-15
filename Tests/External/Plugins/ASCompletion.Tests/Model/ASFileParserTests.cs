@@ -1760,7 +1760,7 @@ namespace ASCompletion.Model
                     Assert.AreEqual(2, classModel.LineFrom);
                     //I'd say this should be possible
                     //Assert.AreEqual(9, classModel.LineTo);
-                    Assert.AreEqual(1, classModel.Members.Count);
+                    Assert.AreEqual(2, classModel.Members.Count);
 
                     var memberModel = classModel.Members[0];
                     Assert.AreEqual("func", memberModel.Name);
@@ -1775,6 +1775,35 @@ namespace ASCompletion.Model
                 }
             }
 
+            [Test]
+            [Ignore("Not working for now")]
+            public void ParseFile_WrongSyntaxCompilerMetaAfterVarWithNoType()
+            {
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.WrongSyntaxCompilerMetaAfterVarWithNoType.hx"))
+                {
+                    var srcModel = new FileModel(resourceFile.DestinationFile);
+                    srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                    var model = ASFileParser.ParseFile(srcModel);
+                    var classModel = model.Classes[0];
+                    Assert.AreEqual("WrongSyntaxMetadataTest", classModel.Name);
+                    Assert.AreEqual(FlagType.Class, classModel.Flags & FlagType.Class);
+                    Assert.AreEqual(2, classModel.LineFrom);
+                    //I'd say this should be possible
+                    //Assert.AreEqual(9, classModel.LineTo);
+                    Assert.AreEqual(2, classModel.Members.Count);
+
+                    var memberModel = classModel.Members[0];
+                    Assert.AreEqual("func", memberModel.Name);
+                    Assert.AreEqual(null, memberModel.Type);
+                    var flags = FlagType.Variable;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Private, memberModel.Access & Visibility.Private);
+                    Assert.AreEqual(6, memberModel.LineFrom);
+                    Assert.AreEqual(6, memberModel.LineTo);
+                    Assert.AreEqual(" Dummy data to make sure this method keeps values at the end of the parsing ", memberModel.Comments);
+                    Assert.AreEqual("dummy", memberModel.MetaDatas[0].Name);
+                }
+            }
         }
     }
 }

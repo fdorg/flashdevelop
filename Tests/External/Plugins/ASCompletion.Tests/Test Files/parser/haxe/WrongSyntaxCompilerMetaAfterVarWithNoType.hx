@@ -4,9 +4,7 @@ class WrongSyntaxMetadataTest
 {
 	/** Dummy data to make sure this method keeps values at the end of the parsing **/
     @dummy
-    private function func()
-    {
-    }
+    private var func = 13;
 
     @:allow(flixel
     private function dummyFunction()
