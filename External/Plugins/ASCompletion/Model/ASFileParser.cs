@@ -952,6 +952,7 @@ namespace ASCompletion.Model
                         braceCount--;
                         if (braceCount == 0 && curMethod != null)
                         {
+                            if (curMember.Equals(curMethod)) curMember = null;
                             curMethod.LineTo = line;
                             curMethod = null;
                         }
