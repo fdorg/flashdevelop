@@ -952,6 +952,7 @@ namespace ASCompletion.Model
                         braceCount--;
                         if (braceCount == 0 && curMethod != null)
                         {
+                            if (curMethod.Equals(curMember)) curMember = null;
                             curMethod.LineTo = line;
                             curMethod = null;
                         }
@@ -1124,6 +1125,7 @@ namespace ASCompletion.Model
                         }
                         curMember.Type = param;
                         length = 0;
+                        inType = false;
                     }
                     // AS3 const or method parameter's default value 
                     else if (version > 2 && (curMember.Flags & FlagType.Variable) > 0)
