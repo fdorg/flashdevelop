@@ -97,7 +97,7 @@ if %errorlevel% neq 0 goto :error
 :: Create the archive
 7z a -tzip FlashDevelop\Installer\Binary\HaxeDevelop.zip .\FlashDevelop\Bin\Debug\* -xr!.empty
 
-: finish
+:finish
 
 :: Revert distro changes with backup
 git stash save "Local CI Backup..."
