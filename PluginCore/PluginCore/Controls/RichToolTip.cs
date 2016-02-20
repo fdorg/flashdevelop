@@ -134,7 +134,7 @@ namespace PluginCore.Controls
             int limitLeft = ((Form)PluginBase.MainForm).ClientRectangle.Left + mediumPadding;
             int limitRight = ((Form)PluginBase.MainForm).ClientRectangle.Right - mediumPadding;
             int limitBottom = ((Form)PluginBase.MainForm).ClientRectangle.Bottom - ScaleHelper.Scale(26);
-            //
+            
             int maxW = availableWidth > 0 ? availableWidth : limitRight - limitLeft;
             if (maxW > maxWidth && maxWidth > 0)
                 maxW = maxWidth;
@@ -195,14 +195,13 @@ namespace PluginCore.Controls
         
         public void ShowAtMouseLocation()
         {
-            //ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
             mousePos = ((Form)PluginBase.MainForm).PointToClient(Control.MousePosition);
-            toolTip.Left = mousePos.X;// +sci.Left;
+            toolTip.Left = mousePos.X;
             if (toolTip.Right > ((Form)PluginBase.MainForm).ClientRectangle.Right)
             {
                 toolTip.Left -= (toolTip.Right - ((Form)PluginBase.MainForm).ClientRectangle.Right);
             }
-            toolTip.Top = mousePos.Y - toolTip.Height - ScaleHelper.Scale(10);// +sci.Top;
+            toolTip.Top = mousePos.Y - toolTip.Height - ScaleHelper.Scale(10);
             toolTip.Show();
             toolTip.BringToFront();
         }
