@@ -416,6 +416,19 @@
 		</Urls>
 	</Entry>
 	<Entry>
+		<Id>quicknavigate</Id>
+        	<Name>QuickNavigate</Name>
+		<Version>2.7</Version>
+		<Build>203</Build>
+		<Checksum>13419a790b9aad4370aedf6cbc123a49</Checksum>
+		<Desc>Quickly navigate through Types, Fields, Projects and more</Desc>
+		<Group>Plugins</Group>
+		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4_INFO_t=5961</Info>
+		<Urls>
+			<Url>https://github.com/SlavaRa/fdplugin-quicknavigate/releases/download/2.7.203/QuickNavigate.fdz</Url>
+	        </Urls>
+	</Entry>
+	<Entry>
 		<Id>vsbluefulltheme</Id>
 		<Name>VsBlue Full Theme</Name>
 		<Version>1.2</Version>
