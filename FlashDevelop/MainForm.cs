@@ -3138,7 +3138,23 @@ namespace FlashDevelop
             }
             else browser.WebBrowser.GoHome();
         }
-        
+
+        /// <summary>
+        /// Opens the home page in browser
+        /// </summary>
+        public void ShowHome(Object sender, System.EventArgs e)
+        {
+            this.CallCommand("Browse", DistroConfig.DISTRIBUTION_HOME);
+        }
+
+        /// <summary>
+        /// Opens the help page in browser
+        /// </summary>
+        public void ShowHelp(Object sender, System.EventArgs e)
+        {
+            this.CallCommand("Browse", DistroConfig.DISTRIBUTION_HELP);
+        }
+
         /// <summary>
         /// Opens the arguments dialog
         /// </summary>
@@ -3692,7 +3708,6 @@ namespace FlashDevelop
         {
             CommentSelection();
         }
-
         private bool? CommentSelection()
         {
             ScintillaControl sci = Globals.SciControl;
@@ -3793,14 +3808,12 @@ namespace FlashDevelop
             ScintillaControl sci = Globals.SciControl;
             String lineComment = ScintillaManager.GetLineComment(sci.ConfigurationLanguage);
             Int32 position = sci.CurrentPos;
-            
             // try doing a block comment on the current line instead (xml, html...)
             if (lineComment == "")
             {
                 ToggleBlockOnCurrentLine(sci);
                 return;
             }
-
             Int32 curLine = sci.LineFromPosition(position);
             Int32 startPosInLine = position - sci.PositionFromLine(curLine);
             Int32 startLine = sci.LineFromPosition(sci.SelectionStart);
@@ -3824,31 +3837,23 @@ namespace FlashDevelop
                 }
                 line++;
             }
-
             if (containsCodeLine) this.CommentLine(null, null);
             else this.UncommentLine(null, null);
         }
-
         private void ToggleBlockOnCurrentLine(ScintillaControl sci)
         {
             Int32 selStart = sci.SelectionStart;
-
             Int32 indentPos = sci.LineIndentPosition(sci.CurrentLine);
             Int32 lineEndPos = sci.LineEndPosition(sci.CurrentLine);
             bool afterBlockStart = sci.CurrentPos > indentPos;
             bool afterBlockEnd = sci.CurrentPos >= lineEndPos;
-
             sci.SelectionStart = indentPos;
             sci.SelectionEnd = lineEndPos;
-
-            bool? added = CommentSelection();
+            bool ? added = CommentSelection();
             if (added == null) return;
-
             int factor = (bool)added ? 1 : -1;
-
             String commentEnd = ScintillaManager.GetCommentEnd(sci.ConfigurationLanguage);
             String commentStart = ScintillaManager.GetCommentStart(sci.ConfigurationLanguage);
-
             // preserve cursor pos
             if (afterBlockStart) selStart += commentStart.Length * factor;
             if (afterBlockEnd) selStart += commentEnd.Length * factor;
