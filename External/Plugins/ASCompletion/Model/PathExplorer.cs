@@ -26,6 +26,7 @@ namespace ASCompletion.Model
         }
 
         static private bool uistarted;
+        static private bool contextUpdating;
         static private Queue<PathExplorer> waiting = new Queue<PathExplorer>();
         static private volatile Thread explorerThread;
         static private volatile bool stopExploration;
@@ -67,6 +68,16 @@ namespace ASCompletion.Model
         static public void ClearAll()
         {
             lock (waiting) { waiting.Clear(); }
+        }
+
+        static public void BeginUpdate()
+        {
+            contextUpdating = true;
+        }
+
+        static public void EndUpdate()
+        {
+            contextUpdating = false;
         }
 
         static public void ClearPersistentCache()
@@ -144,6 +155,12 @@ namespace ASCompletion.Model
             while (!stopExploration)
             {
                 PathExplorer next = null;
+
+                if (contextUpdating)
+                {
+                    Thread.Sleep(100);
+                    continue;
+                }
 
                 lock (waiting)
                 {
