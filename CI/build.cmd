@@ -71,9 +71,9 @@ if %errorlevel% neq 0 goto :error
 
 :: Rename binaries
 ren FlashDevelop\Bin\Debug\FlashDevelop.exe HaxeDevelop.exe
-ren FlashDevelop\Bin\Debug\FlashDevelopx64.exe HaxeDevelopx64.exe
+ren FlashDevelop\Bin\Debug\FlashDevelop64.exe HaxeDevelop64.exe
 ren FlashDevelop\Bin\Debug\FlashDevelop.exe.config HaxeDevelop.exe.config
-ren FlashDevelop\Bin\Debug\FlashDevelopx64.exe.config HaxeDevelopx64.exe.config
+ren FlashDevelop\Bin\Debug\FlashDevelop64.exe.config HaxeDevelop64.exe.config
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
