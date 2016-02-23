@@ -4,7 +4,7 @@
 var rssFeedItemTemplate = "<h3 class=\"rssItemTitle\"><a href=\"javascript:window.external.ShowURL('{1}');\">{0}</a></h3><span class=\"rssItemContent\">{2}</span>";
 var projectItemTemplate = "<li onclick=\"javascript:window.external.OpenProject('{1}');\" title=\"{1} ({2})\">{0}</li>";
 var tooltipTextTemplate = "{0}<br /><b>" + getLocaleString("tooltipTextType") + "</b> {1}<br /><b>" + getLocaleString("tooltipTextCreated") + "</b> {2}<br /><b>" + getLocaleString("tooltipTextModified") + "</b> {3}";
-var versionAvailableTemplate = "<button onclick=\"window.open('{1}');\" class=\"button\"><b>{0}:</b> " + getLocaleString("downloadVersionHere") + "</button>";
+var versionAvailableTemplate = "<button onclick=\"javascript:document.location.href='{1}';\" class=\"button\"><b>{0}:</b> " + getLocaleString("downloadVersionHere") + "</button>";
 var versionOutOfDateTemplate = "<p>" + getLocaleString("yourVersionIsOutOfDate") + "</p>";
 var versionNotAvailableTemplate = "<p>" + getLocaleString("versionInfoNotAvailable") + "</p>";
 
@@ -188,8 +188,8 @@ function handleXmlData(projectXml, rssUrl)
 {
 	if (rssUrl != null)
 	{
-		var fd3Url = "http://www.flashdevelop.org/latest.txt";
-		loadTextDocument(fd3Url, handleVersionInfo);
+		var hdUrl = "http://www.haxedevelop.org/latest.txt";
+		loadTextDocument(hdUrl, handleVersionInfo);
 		loadTextDocument(rssUrl, handleRssFeedXml);
 	}
 	var xml = parseXmlDocument(projectXml);
