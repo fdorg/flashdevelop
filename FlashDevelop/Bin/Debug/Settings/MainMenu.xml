@@ -172,8 +172,8 @@
 	</menu>
 	<menu label="Label.Help" name="HelpMenu">
 		<button label="Label.ReleaseNotes" click="Browse" tag="$(AppDir)\Docs\index.html" image="222" />
-		<button label="Label.FDDocs" click="ShowHome" image="95" />
-		<button label="Label.FDHome" click="ShowHelp" image="224" />
+		<button label="Label.FDDocs" click="ShowHelp" image="95" />
+		<button label="Label.FDHome" click="ShowHome" image="224" />
 		<button label="Label.CheckUpdates" click="CheckUpdates" image="181|8|0|4" />
 		<separator />
 		<menu label="Label.TechnicalSpecifications" name="TechSpecsMenu">
