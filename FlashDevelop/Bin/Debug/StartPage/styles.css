@@ -1,14 +1,14 @@
 ﻿* 
 {
 	font-size: 9pt;
-	font-family: "Trebuchet MS", Georgia, Times, serif;
+	font-family: "Open Sans", "Trebuchet MS", Georgia, Times, serif;
 	color: #111111;
 }
 body 
 {
-	background-color: #f9f9f9;
-	padding: 0px;
 	margin: 0px;
+	padding: 0px;
+	background-color: #f9f9f9;
 	background-image: url(images/pageHeader.png);
 	background-repeat: repeat-x;
 	background-position: top;
@@ -17,8 +17,10 @@ hr
 {
 	margin: 0px;	
 	padding: 0px;
-	margin-top: 5px;
-	margin-bottom: 5px;
+	border: none;
+	border-bottom: 1px solid #ececec;
+	margin-bottom: 15px;
+	margin-top: 15px;
 	color: #ececec;
 	height: 1px;
 	width: 100%;
@@ -44,10 +46,10 @@ div#wrapper
 }
 div#title 
 {
+	height: 75px;
 	background-image: url(images/pageTitle.png);
 	background-repeat: no-repeat;
 	background-position: 0px 10px;
-	height: 75px;
 }
 div#links 
 {
@@ -72,7 +74,7 @@ div#tooltip
 	position: absolute;
 	background-color: #f9f7e3;
 	border: 1px solid #555555;
-	padding: 4px 7px 3px 7px;
+	padding: 4px 7px 6px 7px;
 }
 table#holder 
 {
@@ -109,7 +111,16 @@ div#projectsContent li
 	padding-bottom: 2px;
 	padding-left: 21px;
 }
-div#rssContent ul,li 
+div#rssContent ul
+{
+	margin: 0px;
+	padding: 0px;
+	padding-top: 4px;
+	padding-left: 1px;
+	padding-bottom: 5px;
+	list-style-type: none;
+}
+div#rssContent li 
 {
 	list-style-type: none;
 	padding: 0px;
@@ -124,7 +135,7 @@ div#rssContent li
 {
 	font-size: 9pt;
 	text-transform: uppercase;
-	margin-bottom: 5px;
+	margin-bottom: 10px;
 	display: block;
 }
 .rssItemContent
@@ -186,35 +197,35 @@ div#rssContent li span a:hover
 .windowTop 
 {
 	background-color: #e9e9e9;
-	height: 24px;
+	height: 28px;
 }
 .windowTopLeft 
 {
 	background-color: #e9e9e9;
-	height: 24px;
+	height: 28px;
 	width: 10px;
 }
 .windowTopRight 
 {
 	background-color: #e9e9e9;
-	height: 24px;
+	height: 28px;
 	width: 20px;
 }
 .windowBottom
 {
 	background-color: #e9e9e9;
-	height: 3px;
+	height: 4px;
 }
 .windowBottomLeft 
 {
 	background-color: #e9e9e9;
-	height: 3px;
+	height: 4px;
 	width: 10px;
 }
 .windowBottomRight 
 {
 	background-color: #e9e9e9;
-	height: 3px;
+	height: 4px;
 	width: 20px;
 }
 .social 
