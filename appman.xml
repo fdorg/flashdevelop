@@ -522,14 +522,14 @@
 	<Entry>
 		<Id>wakatime</Id>
 		<Name>WakaTime</Name>
-		<Version>1.1.0</Version>
+		<Version>1.1.1</Version>
 		<Build>1</Build>
-		<Checksum>484580b6df30103eb882bfcfa6663cb8dbc5026e</Checksum>
+		<Checksum>4128CB05D1C6F05928BDD93F62953959</Checksum>
 		<Desc>Adds WakaTime time tracking functionality</Desc>
 		<Group>Plugins</Group>
 		<Info>https://github.com/CamWiseOwl/flashdevelop-wakatime/</Info>
 		<Urls>
-			<Url>https://github.com/CamWiseOwl/flashdevelop-wakatime/releases/download/v1.1.0/WakaTime.fdz</Url>
+			<Url>https://github.com/CamWiseOwl/flashdevelop-wakatime/releases/download/v1.1.1/WakaTime.fdz</Url>
 		</Urls>
 	</Entry>
 	FD5-->
