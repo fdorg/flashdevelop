@@ -801,15 +801,22 @@ namespace ASCompletion.Completion
             string labelEvent = String.Format(tmp, "Event");
             string labelDataEvent = String.Format(tmp, "DataEvent");
             string labelContext = String.Format(tmp, contextParam);
-            string[] choices = (contextParam != "Event") ?
-                new string[] { labelContext, labelEvent } :
-                new string[] { labelEvent, labelDataEvent };
+            string[] choices;
+            if (contextParam != "Event") choices = new string[] { labelContext, labelEvent };
+            else if (HasDataEvent()) choices = new string[] { labelEvent, labelDataEvent };
+            else choices = new string[] { labelEvent };
+
             for (int i = 0; i < choices.Length; i++)
             {
                 options.Add(new GeneratorItem(choices[i],
                     choices[i] == labelContext ? GeneratorJobType.ComplexEvent : GeneratorJobType.BasicEvent,
                     found.member, found.inClass));
             }
+        }
+
+        private static bool HasDataEvent()
+        {
+            return !ASContext.Context.ResolveType("flash.events.DataEvent", ASContext.Context.CurrentModel).IsVoid();
         }
 
         private static void ShowGetSetList(FoundDeclaration found, List<ICompletionListItem> options)
@@ -3569,22 +3576,12 @@ namespace ASCompletion.Completion
                 ClassModel eventClass = ASContext.Context.ResolveType(type, ASContext.Context.CurrentModel);
                 if (eventClass.IsVoid())
                 {
-                    if (type == "Event")
+                    if (TryImportType("flash.events." + type, ref delta, sci.LineFromPosition(position)))
                     {
-                        List<string> typesUsed = new List<string>();
-                        typesUsed.Add("flash.events.Event");
-                        delta = AddImportsByName(typesUsed, sci.LineFromPosition(position));
                         position += delta;
                         sci.SetSel(position, position);
                     }
-                    else if (type == "DataEvent")
-                    {
-                        List<string> typesUsed = new List<string>();
-                        typesUsed.Add("flash.events.DataEvent");
-                        delta = AddImportsByName(typesUsed, sci.LineFromPosition(position));
-                        position += delta;
-                        sci.SetSel(position, position);
-                    }
+                    else type = null;
                 }
                 lookupPosition += delta;
                 string acc = GetPrivateAccessor(afterMethod, inClass);
@@ -3608,6 +3605,18 @@ namespace ASCompletion.Completion
             {
                 sci.EndUndoAction();
             }
+        }
+
+        private static bool TryImportType(string type, ref int delta, int atLine)
+        {
+            ClassModel eventClass = ASContext.Context.ResolveType(type, ASContext.Context.CurrentModel);
+            if (eventClass.IsVoid())
+                return false;
+            
+            List<string> typesUsed = new List<string>();
+            typesUsed.Add(type);
+            delta += AddImportsByName(typesUsed, atLine);
+            return true;
         }
 
         static private string AddRemoveEvent(string eventName)
