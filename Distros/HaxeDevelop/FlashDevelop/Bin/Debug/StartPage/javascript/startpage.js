@@ -113,7 +113,7 @@ function handleVersionInfo(text, status)
 	var html = "";
 	if (status == 200)
 	{
-		var info = text.split("\r\n");
+		var info = text.split(/[\r\n]+/g);
 		var version = decodeURIComponent(getUrlParameter("v"));
 		html = formatString(versionAvailableTemplate, info[0], info[1]);
 		if (version && ((info[0] < version) - (version < info[0])) == -1)
