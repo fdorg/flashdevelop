@@ -13,6 +13,7 @@ namespace PluginCore
         public const String DISTRIBUTION_COPYRIGHT = "HaxeDevelop.org 2015-2016";
         public const String DISTRIBUTION_COMPANY = "HaxeDevelop.org";
         public const String DISTRIBUTION_RSS = "http://www.haxedevelop.org/rss.xml";
+        public const String DISTRIBUTION_EXT = "hx";
     }
 
 }

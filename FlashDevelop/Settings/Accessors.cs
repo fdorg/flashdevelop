@@ -286,7 +286,7 @@ namespace FlashDevelop.Settings
             set { this.scrollWidth = value; }
         }
 
-        [DefaultValue("as")]
+        [DefaultValue(DistroConfig.DISTRIBUTION_EXT)]
         [DisplayName("Default File Extension")]
         [LocalizedCategory("FlashDevelop.Category.Editor")]
         [LocalizedDescription("FlashDevelop.Description.DefaultFileExtension")]

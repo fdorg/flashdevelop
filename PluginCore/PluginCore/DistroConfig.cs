@@ -13,6 +13,7 @@ namespace PluginCore
         public const String DISTRIBUTION_COPYRIGHT = "FlashDevelop.org 2005-2016";
         public const String DISTRIBUTION_COMPANY = "FlashDevelop.org";
         public const String DISTRIBUTION_RSS = "http://www.flashdevelop.org/community/rss.php?f=15";
+        public const String DISTRIBUTION_EXT = "as";
     }
 
 }

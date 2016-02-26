@@ -40,7 +40,7 @@ namespace FlashDevelop.Settings
         private List<String> previousDocuments = new List<String>();
         private List<String> disabledPlugins = new List<String>();
         private String latestDialogPath = Application.StartupPath;
-        private String defaultFileExtension = "as";
+        private String defaultFileExtension = DistroConfig.DISTRIBUTION_EXT;
         private Boolean confirmOnExit = false;
         private Boolean keepIndentTabs = false;
         private Boolean disableFindOptionSync = false;
