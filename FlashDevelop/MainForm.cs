@@ -707,6 +707,8 @@ namespace FlashDevelop
                     File.Delete(appman);
                     this.refreshConfig = true;
                 }
+                // Load platform data from user files
+                PlatformData.Load(Path.Combine(PathHelper.SettingDir, "Platforms"));
                 // Load current theme for applying later
                 String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
                 if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
@@ -790,7 +792,6 @@ namespace FlashDevelop
                 this.appSettings = (SettingObject)obj;
             }
             SettingObject.EnsureValidity(this.appSettings);
-            PlatformData.Load(Path.Combine(PathHelper.SettingDir, "Platforms"));
             FileStateManager.RemoveOldStateFiles();
         }
 
