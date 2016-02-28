@@ -34,11 +34,11 @@ namespace ASCompletion.Completion
         static private Regex reModifier = new Regex("(public |private |protected )", RegexOptions.Compiled);
         static private Regex reSuperCall = new Regex("^super\\s*\\(", RegexOptions.Compiled);
 
-        static private string contextToken;
-        static private string contextParam;
-        static private Match contextMatch;
-        static private ASResult contextResolved;
-        static private MemberModel contextMember;
+        static internal string contextToken;
+        static internal string contextParam;
+        static internal Match contextMatch;
+        static internal ASResult contextResolved;
+        static internal MemberModel contextMember;
         static private bool firstVar;
 
         static private bool IsHaxe
@@ -795,7 +795,7 @@ namespace ASCompletion.Completion
             options.Add(new GeneratorItem(label, GeneratorJobType.Delegate, found.member, found.inClass));
         }
 
-        private static void ShowEventList(FoundDeclaration found, List<ICompletionListItem> options)
+        internal static void ShowEventList(FoundDeclaration found, List<ICompletionListItem> options)
         {
             string tmp = TextHelper.GetString("ASCompletion.Label.GenerateHandler");
             string labelEvent = String.Format(tmp, "Event");
@@ -4611,7 +4611,7 @@ namespace ASCompletion.Completion
         }
     }
 
-    class FoundDeclaration
+    internal class FoundDeclaration
     {
         public MemberModel member;
         public ClassModel inClass;
