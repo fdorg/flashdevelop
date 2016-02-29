@@ -17,38 +17,6 @@
 		</Urls>
 	</Entry>
 	<Entry>
-		<Id>haxe3setup1</Id>
-		<Name>Haxe + Neko</Name>
-		<Version>3.2.0</Version>
-		<Build>1</Build>
-		<Desc>Haxe 3 and Neko virtual machine installer</Desc>
-		<Group>Compilers</Group>
-		<Bundles>
-			<Bundle>Haxe</Bundle>
-		</Bundles>
-		<Type>Executable</Type>
-		<Info>http://www.haxe.org</Info>
-		<Urls>
-			<Url>http://haxe.org/file/haxe-3.2.0-win.exe</Url>
-		</Urls>
-	</Entry>
-	<Entry>
-		<Id>haxe3setup2</Id>
-		<Name>Haxe + Neko</Name>
-		<Version>3.1.3</Version>
-		<Build>1</Build>
-		<Desc>Haxe 3 and Neko virtual machine installer</Desc>
-		<Group>Compilers</Group>
-		<Bundles>
-			<Bundle>Haxe</Bundle>
-		</Bundles>
-		<Type>Executable</Type>
-		<Info>http://www.haxe.org</Info>
-		<Urls>
-			<Url>http://haxe.org/file/haxe-3.1.3-win.exe</Url>
-		</Urls>
-	</Entry>
-	<Entry>
 		<Id>flexsdk</Id>
 		<Name>Flex SDK (OLD)</Name>
 		<Version>4.6.0</Version>
@@ -546,4 +514,32 @@
 		</Urls>
 	</Entry>
 	FD5-->
+	<!--Haxelib
+	<Entry>
+		<Id>cmdopenfl</Id>
+		<Name>OpenFL Installer Script</Name>
+		<Version>1.0.0</Version>
+		<Build>1</Build>
+		<Desc>Installs OpenFL and its dependencies with Haxelib.</Desc>
+		<Group>Haxelib</Group>
+		<Type>Executable</Type>
+		<Info>https://github.com/fdorg/flashdevelop/tree/development/External/Scripts</Info>
+		<Urls>
+			<Url>https://raw.github.com/fdorg/flashdevelop/development/External/Scripts/InstallOpenFL.cmd</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>cmdflixel</Id>
+		<Name>Flixel Installer Script</Name>
+		<Version>1.0.0</Version>
+		<Build>1</Build>
+		<Desc>Installs Flixel and its dependencies with Haxelib.</Desc>
+		<Group>Haxelib</Group>
+		<Type>Executable</Type>
+		<Info>https://github.com/fdorg/flashdevelop/tree/development/External/Scripts</Info>
+		<Urls>
+			<Url>https://raw.github.com/fdorg/flashdevelop/development/External/Scripts/InstallFlixel.cmd</Url>
+		</Urls>
+	</Entry>
+	Haxelib-->
 </Entries>
