@@ -532,5 +532,18 @@
 			<Url>https://github.com/mikicho/findandreplaceex/releases/download/v1.1/Find.ReplaceEx.fdz</Url>
 		</Urls>
 	</Entry>
+	<Entry>
+		<Id>wakatime</Id>
+		<Name>WakaTime</Name>
+		<Version>1.1.1</Version>
+		<Build>1</Build>
+		<Checksum>4128CB05D1C6F05928BDD93F62953959</Checksum>
+		<Desc>Adds WakaTime time tracking functionality</Desc>
+		<Group>Plugins</Group>
+		<Info>https://github.com/CamWiseOwl/flashdevelop-wakatime/</Info>
+		<Urls>
+			<Url>https://github.com/CamWiseOwl/flashdevelop-wakatime/releases/download/1.1.1/WakaTime.fdz</Url>
+		</Urls>
+	</Entry>
 	FD5-->
 </Entries>
