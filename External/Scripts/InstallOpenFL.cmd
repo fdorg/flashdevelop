@@ -51,6 +51,6 @@ exit -1
 
 :done
 
-echo OpenFL + Flixel installed successfully.
+echo OpenFL installed successfully.
 pause
 exit 0
