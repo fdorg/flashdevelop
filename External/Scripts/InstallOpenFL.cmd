@@ -1,4 +1,4 @@
-:: Script for installing Flixel and it's dependencies.
+:: Script for installing OpenFL and it's dependencies.
 @echo off
 
 :check_haxelib
@@ -23,7 +23,7 @@ haxelib path openfl > nul
 if %errorlevel% neq 0 goto :install_openfl
 
 echo OK
-goto :check_flixel
+goto :done
 
 :install_openfl
 
@@ -31,29 +31,6 @@ echo Installing OpenFL...
 
 haxelib install openfl
 haxelib run openfl setup
-
-:: Check for errors
-if %errorlevel% neq 0 goto :install_error
-
-goto :check_flixel
-
-:check_flixel
-
-echo Checking Flixel...
-
-haxelib path flixel > nul
-
-:: Check for errors
-if %errorlevel% neq 0 goto :install_flixel
-
-echo OK
-goto :done
-
-:install_flixel
-
-echo Installing Flixel...
-
-haxelib install flixel
 
 :: Check for errors
 if %errorlevel% neq 0 goto :install_error
@@ -68,12 +45,12 @@ exit -1
 
 :install_error
 
-echo Could not install required Haxelib libraries: openfl or flixel.
+echo Could not install required Haxelib library: openfl.
 pause
 exit -1
 
 :done
 
-echo OpenFL installed successfully.
+echo OpenFL + Flixel installed successfully.
 pause
 exit 0
