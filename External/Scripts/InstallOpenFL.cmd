@@ -1,11 +1,10 @@
-::
-:: Script for installing OpenFL and it's dependencies.
-:: Path refresh adapted from: https://github.com/chocolatey/chocolatey/blob/master/src/redirects/RefreshEnv.cmd
-::
 @echo off
 
-echo Refreshing PATH from registry...
-goto :refresh_path
+:: Script for installing OpenFL and it's dependencies.
+:: Path refresh adapted from: https://github.com/chocolatey/chocolatey/blob/master/src/redirects/RefreshEnv.cmd
+
+:: Skip PATH refresh on Wine/CrossOver
+if "%WINEPREFIX%"=="" (goto :refresh_path) else (goto :check_haxelib)
 
 :setfromreg
 
@@ -27,6 +26,7 @@ goto :EOF
 
 :refresh_path
 
+echo Refreshing PATH from registry...
 echo/@echo off >"%TEMP%\_env.cmd"
 
 :: Slowly generating final file
