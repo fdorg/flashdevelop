@@ -211,7 +211,7 @@
 			<Url>https://github.com/git-for-windows/git/releases/download/v2.6.3.windows.1/Git-2.6.3-32-bit.exe</Url>
 		</Urls>
 	</Entry>
-    <Entry>
+  <Entry>
 		<Id>git4win</Id>
 		<Name>Git For Windows (x64)</Name>
 		<Version>2.6.3</Version>
@@ -275,7 +275,7 @@
 			<Url>https://sliksvn.com/pub/Slik-Subversion-1.9.2-win32.msi</Url>
 		</Urls>
 	</Entry>
-    <Entry>
+  <Entry>
 		<Id>sliksvn</Id>
 		<Name>SlikSVN Client (x64)</Name>
 		<Version>1.9.2</Version>
@@ -289,6 +289,38 @@
 		<Info>http://www.sliksvn.com/en/download/</Info>
 		<Urls>
 			<Url>https://sliksvn.com/pub/Slik-Subversion-1.9.2-x64.msi</Url>
+		</Urls>
+	</Entry>
+  <Entry>
+		<Id>torhg</Id>
+		<Name>TortoiseHg (x86)</Name>
+		<Version>3.7.1</Version>
+		<Build>1</Build>
+		<Desc>TortoiseHg (including Mercurial) 3.7.1 - x86</Desc>
+		<Group>Source Control</Group>
+		<Bundles>
+			<Bundle>HG</Bundle>
+		</Bundles>
+		<Type>Executable</Type>
+		<Info>https://www.mercurial-scm.org/downloads</Info>
+		<Urls>
+			<Url>http://bitbucket.org/tortoisehg/files/downloads/tortoisehg-3.7.1-x86.msi</Url>
+		</Urls>
+	</Entry>
+  <Entry>
+		<Id>torhg64</Id>
+		<Name>TortoiseHg (x64)</Name>
+		<Version>3.7.1</Version>
+		<Build>1</Build>
+		<Desc>TortoiseHg (including Mercurial) 3.7.1 - x64</Desc>
+		<Group>Source Control</Group>
+		<Bundles>
+			<Bundle>HG</Bundle>
+		</Bundles>
+		<Type>Executable</Type>
+		<Info>https://www.mercurial-scm.org/downloads</Info>
+		<Urls>
+			<Url>http://bitbucket.org/tortoisehg/files/downloads/tortoisehg-3.7.1-x64.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
