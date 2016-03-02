@@ -166,7 +166,7 @@
 	<Entry>
 		<Id>torgit</Id>
 		<Name>TortoiseGit (x86)</Name>
-		<Version>1.8.16</Version>
+		<Version>2.0.0</Version>
 		<Build>1</Build>
 		<Desc>Git client 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -176,13 +176,13 @@
 		<Type>Executable</Type>
 		<Info>https://code.google.com/p/tortoisegit/</Info>
 		<Urls>
-			<Url>https://download.tortoisegit.org/tgit/1.8.16.0/TortoiseGit-1.8.16.0-32bit.msi</Url>
+			<Url>https://download.tortoisegit.org/tgit/2.0.0.0/TortoiseGit-2.0.0.0-32bit.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torgit64</Id>
 		<Name>TortoiseGit (x64)</Name>
-		<Version>1.8.16</Version>
+		<Version>2.0.0</Version>
 		<Build>1</Build>
 		<Desc>Git client 64-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -192,13 +192,13 @@
 		<Type>Executable</Type>
 		<Info>https://code.google.com/p/tortoisegit/</Info>
 		<Urls>
-			<Url>https://download.tortoisegit.org/tgit/1.8.16.0/TortoiseGit-1.8.16.0-64bit.msi</Url>
+			<Url>https://download.tortoisegit.org/tgit/2.0.0.0/TortoiseGit-2.0.0.0-64bit.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>git4win</Id>
 		<Name>Git For Windows (x86)</Name>
-		<Version>2.6.3</Version>
+		<Version>2.7.2</Version>
 		<Build>1</Build>
 		<Desc>Git command line client 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -208,13 +208,13 @@
 		<Type>Executable</Type>
 		<Info>http://msysgit.github.io/</Info>
 		<Urls>
-			<Url>https://github.com/git-for-windows/git/releases/download/v2.6.3.windows.1/Git-2.6.3-32-bit.exe</Url>
+			<Url>https://github.com/git-for-windows/git/releases/download/v2.7.2.windows.1/Git-2.7.2-32-bit.exe</Url>
 		</Urls>
 	</Entry>
   <Entry>
 		<Id>git4win</Id>
 		<Name>Git For Windows (x64)</Name>
-		<Version>2.6.3</Version>
+		<Version>2.7.2</Version>
 		<Build>1</Build>
 		<Desc>Git command line client 64-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -224,13 +224,13 @@
 		<Type>Executable</Type>
 		<Info>http://msysgit.github.io/</Info>
 		<Urls>
-			<Url>https://github.com/git-for-windows/git/releases/download/v2.6.3.windows.1/Git-2.6.3-64-bit.exe</Url>
-        </Urls>
+			<Url>https://github.com/git-for-windows/git/releases/download/v2.7.2.windows.1/Git-2.7.2-64-bit.exe</Url>
+    </Urls>
 	</Entry>
 	<Entry>
 		<Id>torsvn</Id>
 		<Name>TortoiseSVN (x86)</Name>
-		<Version>1.9.2</Version>
+		<Version>1.9.3</Version>
 		<Build>1</Build>
 		<Desc>Subversion client 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -240,13 +240,13 @@
 		<Type>Executable</Type>
 		<Info>http://tortoisesvn.net/</Info>
 		<Urls>
-			<Url>https://sourceforge.net/projects/tortoisesvn/files/1.9.2/Application/TortoiseSVN-1.9.2.26806-win32-svn-1.9.2.msi</Url>
+			<Url>http://downloads.sourceforge.net/project/tortoisesvn/1.9.3/Application/TortoiseSVN-1.9.3.27038-win32-svn-1.9.3.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torsvn64</Id>
 		<Name>TortoiseSVN (x64)</Name>
-		<Version>1.9.2</Version>
+		<Version>1.9.3</Version>
 		<Build>1</Build>
 		<Desc>Subversion client 64-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -256,13 +256,13 @@
 		<Type>Executable</Type>
 		<Info>http://tortoisesvn.net/</Info>
 		<Urls>
-			<Url>https://sourceforge.net/projects/tortoisesvn/files/1.9.2/Application/TortoiseSVN-1.9.2.26806-x64-svn-1.9.2.msi</Url>
+      <Url>https://sourceforge.net/projects/tortoisesvn/files/1.9.3/Application/TortoiseSVN-1.9.3.27038-x64-svn-1.9.3.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>sliksvn</Id>
 		<Name>SlikSVN Client (x86)</Name>
-		<Version>1.9.2</Version>
+		<Version>1.9.3</Version>
 		<Build>1</Build>
 		<Desc>Subversion command line client 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -272,13 +272,13 @@
 		<Type>Executable</Type>
 		<Info>http://www.sliksvn.com/en/download/</Info>
 		<Urls>
-			<Url>https://sliksvn.com/pub/Slik-Subversion-1.9.2-win32.msi</Url>
+			<Url>https://sliksvn.com/pub/Slik-Subversion-1.9.3-win32.msi</Url>
 		</Urls>
 	</Entry>
   <Entry>
 		<Id>sliksvn</Id>
 		<Name>SlikSVN Client (x64)</Name>
-		<Version>1.9.2</Version>
+		<Version>1.9.3</Version>
 		<Build>1</Build>
 		<Desc>Subversion command line client 64-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -288,7 +288,7 @@
 		<Type>Executable</Type>
 		<Info>http://www.sliksvn.com/en/download/</Info>
 		<Urls>
-			<Url>https://sliksvn.com/pub/Slik-Subversion-1.9.2-x64.msi</Url>
+			<Url>https://sliksvn.com/pub/Slik-Subversion-1.9.3-x64.msi</Url>
 		</Urls>
 	</Entry>
   <Entry>
