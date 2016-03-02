@@ -33,9 +33,11 @@ namespace AppMan
         private Queue<String> fileQueue;
         private LocaleData localeData;
         private Boolean localeOverride;
+        private Boolean configOverride;
         private String[] notifyPaths;
         private Boolean haveUpdates;
         private Boolean checkOnly;
+        private String argsConfig;
 
         /**
         * Static link label margin constant
@@ -128,6 +130,12 @@ namespace AppMan
                 {
                     this.localeId = arg.Trim().Substring("-locale=".Length);
                     this.localeOverride = true;
+                }
+                // Handle config values
+                if (arg.Trim().Contains("-config="))
+                {
+                    this.argsConfig = arg.Trim().Substring("-config=".Length);
+                    this.configOverride = true;
                 }
             }
         }
@@ -237,6 +245,10 @@ namespace AppMan
                     PathHelper.LOG_DIR = ArgProcessor.ProcessArguments(settings.Logs);
                     if (!this.localeOverride) this.localeId = settings.Locale;
                     this.notifyPaths = settings.Paths;
+                }
+                if (this.configOverride)
+                {
+                    PathHelper.CONFIG_ADR = this.argsConfig;
                 }
                 if (!Directory.Exists(PathHelper.LOG_DIR))
                 {
