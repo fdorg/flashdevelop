@@ -562,15 +562,15 @@
 	</Entry>
 	<Entry>
 		<Id>cmdflixel</Id>
-		<Name>Flixel Installer Script</Name>
+		<Name>HaxeFlixel Installer Script</Name>
 		<Version>1.0.0</Version>
 		<Build>1</Build>
-		<Desc>Installs Flixel and its dependencies with Haxelib.</Desc>
+		<Desc>Installs HaxeFlixel and its dependencies with Haxelib.</Desc>
 		<Group>Haxelib</Group>
 		<Type>Executable</Type>
 		<Info>https://github.com/fdorg/flashdevelop/tree/development/External/Scripts</Info>
 		<Urls>
-			<Url>https://raw.github.com/fdorg/flashdevelop/development/External/Scripts/InstallFlixel.cmd</Url>
+			<Url>https://raw.github.com/fdorg/flashdevelop/development/External/Scripts/InstallHaxeFlixel.cmd</Url>
 		</Urls>
 	</Entry>
 	Haxelib-->

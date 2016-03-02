@@ -1,4 +1,4 @@
-:: Script for installing Flixel and it's dependencies.
+:: Script for installing HaxeFlixel and it's dependencies.
 @echo off
 
 :check_haxelib
@@ -39,7 +39,7 @@ goto :check_flixel
 
 :check_flixel
 
-echo Checking Flixel...
+echo Checking HaxeFlixel...
 
 haxelib path flixel > nul
 
@@ -51,7 +51,7 @@ goto :done
 
 :install_flixel
 
-echo Installing Flixel...
+echo Installing HaxeFlixel...
 
 haxelib install flixel
 
@@ -74,6 +74,6 @@ exit -1
 
 :done
 
-echo OpenFL + Flixel installed successfully.
+echo OpenFL + HaxeFlixel installed successfully.
 pause
 exit 0
