@@ -1,5 +1,54 @@
+::
 :: Script for installing OpenFL and it's dependencies.
+:: Path refresh adapted from: https://github.com/chocolatey/chocolatey/blob/master/src/redirects/RefreshEnv.cmd
+::
 @echo off
+
+echo Refreshing PATH from registry...
+goto :refresh_path
+
+:setfromreg
+
+"%WinDir%\System32\Reg" QUERY "%~1" /v "%~2" > "%TEMP%\_envset.tmp" 2>NUL
+for /f "usebackq skip=2 tokens=2,*" %%A IN ("%TEMP%\_envset.tmp") do (
+	echo/set %~3=%%B
+)
+goto :EOF
+
+:getregenv
+
+"%WinDir%\System32\Reg" QUERY "%~1" > "%TEMP%\_envget.tmp"
+for /f "usebackq skip=2" %%A IN ("%TEMP%\_envget.tmp") do (
+	if /I not "%%~A"=="Path" (
+		call :setfromreg "%~1" "%%~A" "%%~A"
+	)
+)
+goto :EOF
+
+:refresh_path
+
+echo/@echo off >"%TEMP%\_env.cmd"
+
+:: Slowly generating final file
+call :getregenv "HKLM\System\CurrentControlSet\Control\Session Manager\Environment" >> "%TEMP%\_env.cmd"
+call :getregenv "HKCU\Environment">>"%TEMP%\_env.cmd" >> "%TEMP%\_env.cmd"
+
+:: Special handling for PATH - mix both User and System
+call :setfromreg "HKLM\System\CurrentControlSet\Control\Session Manager\Environment" Path Path_HKLM >> "%TEMP%\_env.cmd"
+call :setfromreg "HKCU\Environment" Path Path_HKCU >> "%TEMP%\_env.cmd"
+
+:: Caution: do not insert space-chars before >> redirection sign
+echo/set Path=%%Path_HKLM%%;%%Path_HKCU%% >> "%TEMP%\_env.cmd"
+
+:: Cleanup
+del /f /q "%TEMP%\_envset.tmp" 2>nul
+del /f /q "%TEMP%\_envget.tmp" 2>nul
+
+:: Set these variables
+call "%TEMP%\_env.cmd"
+
+echo OK
+goto :check_haxelib
 
 :check_haxelib
 
@@ -39,7 +88,7 @@ goto :done
 
 :haxelib_error
 
-echo Haxe is not installed. Please install Haxe first or if it's installed, restart Windows before continuing.
+echo Haxe seems not to be installed. Please install Haxe first or if it's installed, restart Windows before continuing.
 pause
 exit -1
 
