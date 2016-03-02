@@ -24,6 +24,7 @@ namespace ProjectManager.Controls
         private System.Windows.Forms.CheckBox cbInClasspathsOnly;
         private System.Windows.Forms.CheckBox checkBox;
         private System.Windows.Forms.Button refreshButton;
+        private static string previousSearch;
 
         public OpenResourceForm(PluginMain plugin)
         {
@@ -206,7 +207,10 @@ namespace ProjectManager.Controls
             if (openedFiles == null) this.CreateFileList();
             else
             {
-                this.textBox.Text = "";
+                this.textBox.Focus();
+                this.textBox.Text = previousSearch;
+                this.textBox.SelectAll();
+                
                 this.UpdateOpenFiles();
                 this.textBox.Focus();
             }
@@ -508,6 +512,12 @@ namespace ProjectManager.Controls
         }
 
         #endregion
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            previousSearch = this.textBox.Text;
+        }
 
     }
 
