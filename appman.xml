@@ -355,7 +355,7 @@
 		<Name>HaxeFlixel Template</Name>
 		<Version>2.0.1</Version>
 		<Build>1</Build>
-		<Desc>Adds HaxeFlixel default template</Desc>
+		<Desc>Adds the default HaxeFlixel template</Desc>
 		<Group>Templates</Group>
 		<Bundles>
 			<Bundle>HaxeFlixel</Bundle>
