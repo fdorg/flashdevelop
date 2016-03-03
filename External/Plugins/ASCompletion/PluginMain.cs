@@ -1,25 +1,27 @@
 using System;
-using System.Windows.Forms;
-using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
+using System.Drawing;
 using System.IO;
-using WeifenLuo.WinFormsUI;
-using WeifenLuo.WinFormsUI.Docking;
-using PluginCore.Utilities;
-using PluginCore.Managers;
-using PluginCore.Controls;
-using PluginCore;
-using ASCompletion.Settings;
-using ASCompletion.Model;
-using ASCompletion.Context;
-using ASCompletion.Completion;
-using PluginCore.Localization;
 using System.Text.RegularExpressions;
-using PluginCore.Helpers;
+using System.Timers;
+using System.Windows.Forms;
+using ASCompletion.Commands;
+using ASCompletion.Completion;
+using ASCompletion.Context;
 using ASCompletion.Helpers;
+using ASCompletion.Model;
+using ASCompletion.Settings;
+using PluginCore;
+using PluginCore.Controls;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
+using ScintillaNet;
+using WeifenLuo.WinFormsUI.Docking;
+using Timer = System.Timers.Timer;
 
 namespace ASCompletion
 {
@@ -57,7 +59,7 @@ namespace ASCompletion
         private bool started;
         private FlashErrorsWatcher flashErrorsWatcher;
         private bool checking = false;
-        private System.Timers.Timer timerPosition;
+        private Timer timerPosition;
         private int lastHoverPosition;
 
         private Regex reVirtualFile = new Regex("\\.(swf|swc)::", RegexOptions.Compiled);
@@ -97,7 +99,7 @@ namespace ASCompletion
         }
 
         [Browsable(false)]
-        public Object Settings
+        public virtual Object Settings
         {
             get { return settingObject; }
         }
@@ -106,13 +108,13 @@ namespace ASCompletion
         #region Plugin Properties
 
         [Browsable(false)]
-        public PluginUI Panel
+        public virtual PluginUI Panel
         {
             get { return pluginUI; }
         }
 
         [Browsable(false)]
-        public string DataPath
+        public virtual string DataPath
         {
             get { return dataPath; }
         }
@@ -124,7 +126,7 @@ namespace ASCompletion
         /**
         * Initializes the plugin
         */
-        public void Initialize()
+        public virtual void Initialize()
         {
             try
             {
@@ -154,7 +156,7 @@ namespace ASCompletion
         /**
         * Handles the incoming events
         */
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             try
             {
@@ -175,7 +177,7 @@ namespace ASCompletion
 
                 // editor ready?
                 if (doc == null) return;
-                ScintillaNet.ScintillaControl sci = doc.IsEditable ? doc.SciControl : null;
+                ScintillaControl sci = doc.IsEditable ? doc.SciControl : null;
 
                 //
                 //  Events always handled
@@ -231,7 +233,7 @@ namespace ASCompletion
                     case EventType.SyntaxDetect:
                         // detect Actionscript language version
                         if (!doc.IsEditable) return;
-                        if (doc.FileName.ToLower().EndsWith(".as"))
+                        if (doc.FileName.ToLower().EndsWithOrdinal(".as"))
                         {
                             settingObject.LastASVersion = DetectActionscriptVersion(doc);
                             (e as TextEvent).Value = settingObject.LastASVersion;
@@ -266,9 +268,9 @@ namespace ASCompletion
                         de = e as DataEvent;
                         string command = de.Action ?? "";
 
-                        if (command.StartsWith("ASCompletion."))
+                        if (command.StartsWithOrdinal("ASCompletion."))
                         {
-                            string cmdData = (de.Data is string) ? (string)de.Data : null;
+                            string cmdData = de.Data as string;
 
                             // add a custom classpath
                             if (command == "ASCompletion.ClassPath")
@@ -362,7 +364,7 @@ namespace ASCompletion
                             else if (command == "ASCompletion.CallFlashIDE")
                             {
                                 if (flashErrorsWatcher == null) flashErrorsWatcher = new FlashErrorsWatcher();
-                                e.Handled = Commands.CallFlashIDE.Run(settingObject.PathToFlashIDE, cmdData);
+                                e.Handled = CallFlashIDE.Run(settingObject.PathToFlashIDE, cmdData);
                             }
 
                             // create Flash 8+ trust file
@@ -372,7 +374,7 @@ namespace ASCompletion
                                 {
                                     string[] args = cmdData.Split(';');
                                     if (args.Length == 2)
-                                        e.Handled = Commands.CreateTrustFile.Run(args[0], args[1]);
+                                        e.Handled = CreateTrustFile.Run(args[0], args[1]);
                                 }
                             }
                             else if (command == "ASCompletion.GetClassPath")
@@ -435,7 +437,7 @@ namespace ASCompletion
                         }
                         else if (command == "ProjectManager.UserRefreshTree")
                         {
-                            ASContext.Context.UserRefreshRequest();
+                            ASContext.UserRefreshRequestAll();
                         }
                         break;
                 }
@@ -444,103 +446,111 @@ namespace ASCompletion
                 // Actionscript context specific
                 //
                 if (ASContext.Context.IsFileValid)
-                switch (e.Type)
                 {
-                    case EventType.ProcessArgs:
-                        TextEvent te = (TextEvent)e;
-                        if (reArgs.IsMatch(te.Value))
-                        {
-                            // resolve current element
-                            Hashtable details = ASComplete.ResolveElement(sci, null);
-                            te.Value = ArgumentsProcessor.Process(te.Value, details);
-
-                            if (te.Value.IndexOf("$") >= 0 && reCostlyArgs.IsMatch(te.Value))
+                    switch (e.Type)
+                    {
+                        case EventType.ProcessArgs:
+                            TextEvent te = (TextEvent) e;
+                            if (reArgs.IsMatch(te.Value))
                             {
-                                ASResult result = ASComplete.CurrentResolvedContext.Result ?? new ASResult();
-                                details = new Hashtable();
-                                // Get closest list (Array or Vector)
-                                string closestListName = "", closestListItemType = "";
-                                ASComplete.FindClosestList(ASContext.Context, result.Context, sci.CurrentLine, ref closestListName, ref closestListItemType);
-                                details.Add("TypClosestListName", closestListName);
-                                details.Add("TypClosestListItemType", closestListItemType);
-                                // get free iterator index
-                                string iterator = ASComplete.FindFreeIterator(ASContext.Context, ASContext.Context.CurrentClass, result.Context);
-                                details.Add("ItmUniqueVar", iterator);
+                                // resolve current element
+                                Hashtable details = ASComplete.ResolveElement(sci, null);
                                 te.Value = ArgumentsProcessor.Process(te.Value, details);
-                            }
-                        }
-                        break;
 
-                    // menu commands
-                    case EventType.Command:
-                        string command = (e as DataEvent).Action ?? "";
-                        if (command.StartsWith("ASCompletion."))
-                        {
-                            string cmdData = (e as DataEvent).Data as string;
-                            // run MTASC
-                            if (command == "ASCompletion.CustomBuild")
-                            {
-                                if (cmdData != null) ASContext.Context.RunCMD(cmdData);
-                                else ASContext.Context.RunCMD("");
-                                e.Handled = true;
-                            }
-
-                            // build the SWF using MTASC
-                            else if (command == "ASCompletion.QuickBuild")
-                            {
-                                ASContext.Context.BuildCMD(false);
-                                e.Handled = true;
-                            }
-
-                            // resolve element under cusor and open declaration
-                            else if (command == "ASCompletion.GotoDeclaration")
-                            {
-                                ASComplete.DeclarationLookup(sci);
-                                e.Handled = true;
-                            }
-
-                            // resolve element under cursor and send a CustomData event
-                            else if (command == "ASCompletion.ResolveElement")
-                            {
-                                ASComplete.ResolveElement(sci, cmdData);
-                                e.Handled = true;
-                            }
-                            else if (command == "ASCompletion.MakeIntrinsic")
-                            {
-                                ASContext.Context.MakeIntrinsic(cmdData);
-                                e.Handled = true;
-                            }
-
-                            // alternative to default shortcuts
-                            else if (command == "ASCompletion.CtrlSpace")
-                            {
-                                ASComplete.OnShortcut(Keys.Control | Keys.Space, ASContext.CurSciControl);
-                                e.Handled = true;
-                            }
-                            else if (command == "ASCompletion.CtrlShiftSpace")
-                            {
-                                ASComplete.OnShortcut(Keys.Control | Keys.Shift | Keys.Space, ASContext.CurSciControl);
-                                e.Handled = true;
-                            }
-                            else if (command == "ASCompletion.CtrlAltSpace")
-                            {
-                                ASComplete.OnShortcut(Keys.Control | Keys.Alt | Keys.Space, ASContext.CurSciControl);
-                                e.Handled = true;
-                            }
-                            else if (command == "ASCompletion.ContextualGenerator")
-                            {
-                                if (ASContext.HasContext && ASContext.Context.IsFileValid)
+                                if (te.Value.IndexOf('$') >= 0 && reCostlyArgs.IsMatch(te.Value))
                                 {
-                                    ASGenerator.ContextualGenerator(ASContext.CurSciControl);
+                                    ASResult result = ASComplete.CurrentResolvedContext.Result ?? new ASResult();
+                                    details = new Hashtable();
+                                    // Get closest list (Array or Vector)
+                                    string closestListName = "", closestListItemType = "";
+                                    ASComplete.FindClosestList(ASContext.Context, result.Context, sci.CurrentLine, ref closestListName, ref closestListItemType);
+                                    details.Add("TypClosestListName", closestListName);
+                                    details.Add("TypClosestListItemType", closestListItemType);
+                                    // get free iterator index
+                                    string iterator = ASComplete.FindFreeIterator(ASContext.Context, ASContext.Context.CurrentClass, result.Context);
+                                    details.Add("ItmUniqueVar", iterator);
+                                    te.Value = ArgumentsProcessor.Process(te.Value, details);
                                 }
                             }
-                        }
-                        return;
+                            break;
 
-                    case EventType.ProcessEnd:
-                        string procResult = (e as TextEvent).Value;
-                        ASContext.Context.OnProcessEnd(procResult);
-                        break;
+                        // menu commands
+                        case EventType.Command:
+                            de = e as DataEvent;
+                            string command = de.Action ?? "";
+                            if (command.StartsWith("ASCompletion.", StringComparison.Ordinal))
+                            {
+                                string cmdData = de.Data as string;
+                                switch (command)
+                                {
+                                    // run MTASC
+                                    case "ASCompletion.CustomBuild":
+                                        if (cmdData != null) ASContext.Context.RunCMD(cmdData);
+                                        else ASContext.Context.RunCMD("");
+                                        e.Handled = true;
+                                        break;
+
+                                    // build the SWF using MTASC
+                                    case "ASCompletion.QuickBuild":
+                                        ASContext.Context.BuildCMD(false);
+                                        e.Handled = true;
+                                        break;
+
+                                    // resolve element under cursor and open declaration
+                                    case "ASCompletion.GotoDeclaration":
+                                        ASComplete.DeclarationLookup(sci);
+                                        e.Handled = true;
+                                        break;
+
+                                    // resolve element under cursor and send a CustomData event
+                                    case "ASCompletion.ResolveElement":
+                                        ASComplete.ResolveElement(sci, cmdData);
+                                        e.Handled = true;
+                                        break;
+
+                                    case "ASCompletion.MakeIntrinsic":
+                                        ASContext.Context.MakeIntrinsic(cmdData);
+                                        e.Handled = true;
+                                        break;
+
+                                    // alternative to default shortcuts
+                                    case "ASCompletion.CtrlSpace":
+                                        ASComplete.OnShortcut(Keys.Control | Keys.Space, ASContext.CurSciControl);
+                                        e.Handled = true;
+                                        break;
+
+                                    case "ASCompletion.CtrlShiftSpace":
+                                        ASComplete.OnShortcut(Keys.Control | Keys.Shift | Keys.Space, ASContext.CurSciControl);
+                                        e.Handled = true;
+                                        break;
+
+                                    case "ASCompletion.CtrlAltSpace":
+                                        ASComplete.OnShortcut(Keys.Control | Keys.Alt | Keys.Space, ASContext.CurSciControl);
+                                        e.Handled = true;
+                                        break;
+
+                                    case "ASCompletion.ContextualGenerator":
+                                        if (ASContext.HasContext && ASContext.Context.IsFileValid)
+                                        {
+                                            var options = new List<ICompletionListItem>();
+                                            ASGenerator.ContextualGenerator(ASContext.CurSciControl, options);
+                                            EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "ASCompletion.ContextualGenerator.AddOptions", options));
+                                            if (options.Count == 0)
+                                            {
+                                                PluginBase.MainForm.StatusLabel.Text = TextHelper.GetString("Info.NoContextGeneratorCode");
+                                            }
+                                            CompletionList.Show(options, false);
+                                        }
+                                        break;
+                                }
+                            }
+                            return;
+
+                        case EventType.ProcessEnd:
+                            string procResult = (e as TextEvent).Value;
+                            ASContext.Context.OnProcessEnd(procResult);
+                            break;
+                    }
                 }
             }
             catch(Exception ex)
@@ -566,13 +576,13 @@ namespace ASCompletion
         * Gets the PluginSettings
         */
         [Browsable(false)]
-        public GeneralSettings PluginSettings
+        public virtual GeneralSettings PluginSettings
         {
             get { return settingObject; }
         }
 
         [Browsable(false)]
-        public List<ToolStripItem> MenuItems
+        public virtual List<ToolStripItem> MenuItems
         {
             get { return menuItems; }
         }
@@ -586,13 +596,14 @@ namespace ASCompletion
             pluginDesc = TextHelper.GetString("Info.Description");
             dataPath = Path.Combine(PathHelper.DataDir, "ASCompletion");
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
+            else if (PluginBase.MainForm.RefreshConfig) CleanData(dataPath);
             settingsFile = Path.Combine(dataPath, "Settings.fdb");
             settingObject = new GeneralSettings();
             if (!File.Exists(settingsFile))
             {
                 // default settings
                 settingObject.JavadocTags = GeneralSettings.DEFAULT_TAGS;
-                settingObject.PathToFlashIDE = Commands.CallFlashIDE.FindFlashIDE();
+                settingObject.PathToFlashIDE = CallFlashIDE.FindFlashIDE();
                 SaveSettings();
             }
             else
@@ -600,6 +611,14 @@ namespace ASCompletion
                 Object obj = ObjectSerializer.Deserialize(settingsFile, settingObject);
                 settingObject = (GeneralSettings)obj;
             }
+        }
+
+        /// <summary>
+        /// FD has been updated, clean some app data
+        /// </summary>
+        private void CleanData(string dataPath)
+        {
+            PathExplorer.ClearPersistentCache();
         }
 
         private void SaveSettings()
@@ -628,7 +647,7 @@ namespace ASCompletion
                 menu.DropDownItems.Add(item);
             }
 
-            System.Drawing.Image image;
+            Image image;
             // tools items
             menu = (ToolStripMenuItem)mainForm.FindMenuItem("FlashToolsMenu");
             if (menu != null)
@@ -681,7 +700,7 @@ namespace ASCompletion
                 image = pluginUI.GetIcon(PluginUI.ICON_CHECK_SYNTAX);
                 button = new ToolStripButton(image);
                 button.Name = "CheckSyntax";
-                button.ToolTipText = TextHelper.GetString("Label.CheckSyntax").Replace("&", "");
+                button.ToolTipText = TextHelper.GetStringWithoutMnemonics("Label.CheckSyntax");
                 button.Click += new EventHandler(CheckSyntax);
                 PluginBase.MainForm.RegisterSecondaryItem("FlashToolsMenu.CheckSyntax", button);
                 toolStrip.Items.Add(button);
@@ -744,10 +763,10 @@ namespace ASCompletion
             EventManager.AddEventHandler(this, EventType.UIStarted, HandlingPriority.Low);
             
             // cursor position changes tracking
-            timerPosition = new System.Timers.Timer();
+            timerPosition = new Timer();
             timerPosition.SynchronizingObject = PluginBase.MainForm as Form;
             timerPosition.Interval = 200;
-            timerPosition.Elapsed += new System.Timers.ElapsedEventHandler(timerPosition_Elapsed);
+            timerPosition.Elapsed += new ElapsedEventHandler(timerPosition_Elapsed);
         }
 
         #endregion
@@ -772,7 +791,7 @@ namespace ASCompletion
             }
             else if (model.Version > 2) return "as3";
             else if (model.Version > 1) return "as2";
-            else if (settingObject.LastASVersion != null && settingObject.LastASVersion.StartsWith("as"))
+            else if (settingObject.LastASVersion != null && settingObject.LastASVersion.StartsWithOrdinal("as"))
             {
                 return settingObject.LastASVersion;
             }
@@ -782,7 +801,7 @@ namespace ASCompletion
         /// <summary>
         /// Clear and rebuild classpath models cache
         /// </summary>
-        private void RebuildClasspath(object sender, System.EventArgs e)
+        private void RebuildClasspath(object sender, EventArgs e)
         {
             ASContext.RebuildClasspath();
         }
@@ -790,7 +809,7 @@ namespace ASCompletion
         /// <summary>
         /// Open de types explorer dialog
         /// </summary>
-        private void TypesExplorer(object sender, System.EventArgs e)
+        private void TypesExplorer(object sender, EventArgs e)
         {
             ModelsExplorer.Instance.UpdateTree();
             ModelsExplorer.Open();
@@ -799,7 +818,7 @@ namespace ASCompletion
         /// <summary>
         /// Opens the plugin panel again if closed
         /// </summary>
-        public void OpenPanel(object sender, System.EventArgs e)
+        public void OpenPanel(object sender, EventArgs e)
         {
             pluginPanel.Show();
         }
@@ -807,7 +826,7 @@ namespace ASCompletion
         /// <summary>
         /// Menu item command: Check ActionScript
         /// </summary>
-        public void CheckSyntax(object sender, System.EventArgs e)
+        public void CheckSyntax(object sender, EventArgs e)
         {
             if (!checking && !PluginBase.MainForm.SavingMultiple)
             {
@@ -820,7 +839,7 @@ namespace ASCompletion
         /// <summary>
         /// Menu item command: Quick Build
         /// </summary>
-        public void QuickBuild(object sender, System.EventArgs e)
+        public void QuickBuild(object sender, EventArgs e)
         {
             ASContext.Context.BuildCMD(false);
         }
@@ -828,7 +847,7 @@ namespace ASCompletion
         /// <summary>
         /// Menu item command: Convert To Intrinsic
         /// </summary>
-        public void MakeIntrinsic(object sender, System.EventArgs e)
+        public void MakeIntrinsic(object sender, EventArgs e)
         {
             if (PluginBase.MainForm.CurrentDocument.IsEditable)
                 ASContext.Context.MakeIntrinsic(null);
@@ -837,7 +856,7 @@ namespace ASCompletion
         /// <summary>
         /// Menu item command: Goto Declaration
         /// </summary>
-        public void GotoDeclaration(object sender, System.EventArgs e)
+        public void GotoDeclaration(object sender, EventArgs e)
         {
             ASComplete.DeclarationLookup(ASContext.CurSciControl);
         }
@@ -845,7 +864,7 @@ namespace ASCompletion
         /// <summary>
         /// Menu item command: Back From Declaration
         /// </summary>
-        public void BackDeclaration(object sender, System.EventArgs e)
+        public void BackDeclaration(object sender, EventArgs e)
         {
             pluginUI.RestoreLastLookupPosition();
         }
@@ -867,13 +886,13 @@ namespace ASCompletion
         /// <summary>
         /// Display completion list or calltip info
         /// </summary>
-        private void OnChar(ScintillaNet.ScintillaControl Sci, int Value)
+        private void OnChar(ScintillaControl Sci, int Value)
         {
             if (Sci.Lexer == 3 || Sci.Lexer == 4)
                 ASComplete.OnChar(Sci, Value, true);
         }
 
-        private void OnMouseHover(ScintillaNet.ScintillaControl sci, int position)
+        private void OnMouseHover(ScintillaControl sci, int position)
         {
             if (!ASContext.Context.IsFileValid)
                 return;
@@ -897,13 +916,13 @@ namespace ASCompletion
             }
         }
 
-        private void OnTextChanged(ScintillaNet.ScintillaControl sender, int position, int length, int linesAdded)
+        private void OnTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
         {
             ASComplete.OnTextChanged(sender, position, length, linesAdded);
             ASContext.OnTextChanged(sender, position, length, linesAdded);
         }
 
-        private void OnUpdateCallTip(ScintillaNet.ScintillaControl sci, int position)
+        private void OnUpdateCallTip(ScintillaControl sci, int position)
         {
             if (ASComplete.HasCalltip())
             {
@@ -915,15 +934,15 @@ namespace ASCompletion
             }
         }
 
-        private void OnUpdateSimpleTip(ScintillaNet.ScintillaControl sci, Point mousePosition)
+        private void OnUpdateSimpleTip(ScintillaControl sci, Point mousePosition)
         {
             if (UITools.Tip.Visible)
                 OnMouseHover(sci, lastHoverPosition);
         }
 
-        void timerPosition_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        void timerPosition_Elapsed(object sender, ElapsedEventArgs e)
         {
-            ScintillaNet.ScintillaControl sci = ASContext.CurSciControl;
+            ScintillaControl sci = ASContext.CurSciControl;
             if (sci == null) return;
             int position = sci.CurrentPos;
             if (position != currentPos)
@@ -940,7 +959,7 @@ namespace ASCompletion
 
             if (doc.IsEditable)
             {
-                ScintillaNet.ScintillaControl sci = ASContext.CurSciControl;
+                ScintillaControl sci = ASContext.CurSciControl;
                 if (currentDoc == doc.FileName && sci != null)
                 {
                     int line = sci.LineFromPosition(currentPos);

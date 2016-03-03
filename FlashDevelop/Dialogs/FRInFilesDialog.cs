@@ -1,11 +1,11 @@
 using System;
 using System.IO;
-using System.Data;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using PluginCore.Localization;
 using FlashDevelop.Utilities;
 using PluginCore.Utilities;
@@ -13,10 +13,9 @@ using PluginCore.Controls;
 using PluginCore.FRService;
 using PluginCore.Managers;
 using PluginCore.Helpers;
+using Ookii.Dialogs;
 using ScintillaNet;
 using PluginCore;
-using Ookii.Dialogs;
-using System.Text.RegularExpressions;
 
 namespace FlashDevelop.Dialogs
 {
@@ -477,7 +476,7 @@ namespace FlashDevelop.Dialogs
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
             imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            imageList.Images.Add(Globals.MainForm.FindImage("203"));
+            imageList.Images.Add(Globals.MainForm.FindImage("203", false));
             this.browseButton.ImageList = imageList;
             this.browseButton.ImageIndex = 0;
         }
@@ -493,7 +492,7 @@ namespace FlashDevelop.Dialogs
             this.replaceLabel.Text = TextHelper.GetString("Info.ReplaceWith");
             this.findButton.Text = TextHelper.GetString("Label.Find");
             this.cancelButton.Text = TextHelper.GetString("Label.Cancel");
-            this.replaceButton.Text = TextHelper.GetString("Label.Replace").Replace("...", "");
+            this.replaceButton.Text = TextHelper.GetStringWithoutEllipsis("Label.Replace");
             this.lineHeader.Text = TextHelper.GetString("Info.LineHeader");
             this.descHeader.Text = TextHelper.GetString("Info.DescHeader");
             this.pathHeader.Text = TextHelper.GetString("Info.PathHeader");
@@ -632,14 +631,9 @@ namespace FlashDevelop.Dialogs
                 var doc = Globals.MainForm.OpenEditableDocument(data.Key, false) as ITabbedDocument;
                 if (doc != null && doc.IsEditable)
                 {
-                    ScintillaControl sci = doc.SciControl;
                     if (this.resultsView.Columns.Count == 4)
                     {
-                        Int32 column = sci.MBSafeTextLength(data.Value.LineText.Substring(0, data.Value.Column));
-                        Int32 length = sci.MBSafeTextLength(data.Value.LineText.Substring(data.Value.Column, data.Value.Length));
-                        Int32 position = sci.PositionFromLine(data.Value.Line - 1) + column;
-                        sci.EnsureVisible(data.Value.Line - 1);
-                        sci.SetSel(position, position + length);
+                        FRDialogGenerics.SelectMatch(doc.SciControl, data.Value);
                     }
                 }
             }
@@ -714,8 +708,7 @@ namespace FlashDevelop.Dialogs
                     {
                         foreach (SearchMatch match in entry.Value)
                         {
-                            Int32 column = match.Column;
-                            TraceManager.Add(entry.Key + ":" + match.Line.ToString() + ": chars " + match.Column + "-" + (match.Column + match.Length) + " : " + match.LineText.Trim(), (Int32)TraceType.Info);
+                            TraceManager.Add(entry.Key + ":" + match.Line + ": chars " + match.Column + "-" + (match.Column + match.Length) + " : " + match.LineText.Trim(), (Int32)TraceType.Info);
                         }
                     }
                     Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
@@ -777,7 +770,7 @@ namespace FlashDevelop.Dialogs
                     {
                         foreach (SearchMatch match in entry.Value)
                         {
-                            TraceManager.Add(entry.Key + ":" + match.Line.ToString() + ": chars " + match.Column + "-" + (match.Column + match.Length) + " : " + match.Value, (Int32)TraceType.Info);
+                            TraceManager.Add(entry.Key + ":" + match.Line + ": chars " + match.Column + "-" + (match.Column + match.Length) + " : " + match.Value, (Int32)TraceType.Info);
                         }
                     }
                     Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
@@ -857,6 +850,19 @@ namespace FlashDevelop.Dialogs
         }
 
         /// <summary>
+        /// Process shortcuts
+        /// </summary>
+        protected override Boolean ProcessDialogKey(Keys keyData)
+        {
+            if (keyData == (Keys.Control | Keys.F))
+            {
+                this.findComboBox.Focus();
+                return true;
+            }
+            return base.ProcessDialogKey(keyData);
+        }
+
+        /// <summary>
         /// Some event handling when showing the form
         /// </summary>
         private void VisibleChange(Object sender, System.EventArgs e)
@@ -873,7 +879,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private Boolean IsValidFileMask(String mask)
         {
-            return !String.IsNullOrEmpty(mask) && mask.Trim().StartsWith("*.") && !mask.Contains("..") && !mask.Contains("/") && !mask.Contains("\\");
+            return !String.IsNullOrEmpty(mask) && mask.Trim().StartsWithOrdinal("*.") && !mask.Contains("..") && !mask.Contains("/") && !mask.Contains("\\");
         }
 
         /// <summary>
@@ -962,7 +968,7 @@ namespace FlashDevelop.Dialogs
                     for (var i = 0; i < project.SourcePaths.Length; i++)
                     {
                         String sourcePath = project.GetAbsolutePath(project.SourcePaths[i]);
-                        if (Directory.Exists(sourcePath) && !sourcePath.StartsWith(projPath))
+                        if (Directory.Exists(sourcePath) && !sourcePath.StartsWithOrdinal(projPath))
                         {
                             walker = new PathWalker(sourcePath, mask, recursive);
                             allFiles.AddRange(walker.GetFiles());
@@ -984,7 +990,7 @@ namespace FlashDevelop.Dialogs
             foreach (String hiddenPath in hiddenPaths)
             {
                 String absHiddenPath = project.GetAbsolutePath(hiddenPath);
-                if (Directory.Exists(absHiddenPath) && file.StartsWith(absHiddenPath)) return true;
+                if (Directory.Exists(absHiddenPath) && file.StartsWithOrdinal(absHiddenPath)) return true;
             }
             return false;
         }
@@ -995,7 +1001,7 @@ namespace FlashDevelop.Dialogs
         private Boolean IsValidPattern()
         {
             String pattern = this.findComboBox.Text;
-            if (pattern.Length < 1) return false;
+            if (pattern.Length == 0) return false;
             if (this.regexCheckBox.Checked)
             {
                 try

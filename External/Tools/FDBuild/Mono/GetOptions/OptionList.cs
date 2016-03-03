@@ -80,7 +80,7 @@ namespace Mono.GetOptions
             for (int num1 = 0; num1 < textArray1.Length; num1++)
             {
                 string text1 = textArray1[num1];
-                if (text1.StartsWith("@"))
+                if (text1.StartsWith("@", StringComparison.Ordinal))
                 {
                     try
                     {
@@ -203,7 +203,7 @@ namespace Mono.GetOptions
 
         internal bool MaybeAnOption(string arg)
         {
-            return ((((this.parsingMode & OptionsParsingMode.Windows) > ((OptionsParsingMode) 0)) && (arg[0] == '/')) || (((this.parsingMode & OptionsParsingMode.Linux) > ((OptionsParsingMode) 0)) && (arg[0] == '-')));
+            return (((this.parsingMode & OptionsParsingMode.Windows) > 0) && (arg[0] == '/')) || (((this.parsingMode & OptionsParsingMode.Linux) > 0) && (arg[0] == '-'));
         }
 
         public string[] NormalizeArgs(string[] args)
@@ -222,7 +222,7 @@ namespace Mono.GetOptions
                         {
                             flag1 = false;
                         }
-                        else if (((((this.parsingMode & OptionsParsingMode.Linux) > ((OptionsParsingMode) 0)) && (text1[0] == '-')) && ((text1.Length > 1) && (text1[1] != '-'))) && this.breakSingleDashManyLettersIntoManyOptions)
+                        else if (((this.parsingMode & OptionsParsingMode.Linux) > 0) && (text1[0] == '-') && ((text1.Length > 1) && (text1[1] != '-')) && this.breakSingleDashManyLettersIntoManyOptions)
                         {
                             CharEnumerator enumerator1 = text1.Substring(1).GetEnumerator();
                             while (true)
@@ -285,7 +285,7 @@ namespace Mono.GetOptions
                         text1 = null;
                     }
                     bool flag1 = false;
-                    if ((text2.Length <= 1) || (!text2.StartsWith("-") && !text2.StartsWith("/")))
+                    if ((text2.Length <= 1) || (!text2.StartsWith("-", StringComparison.Ordinal) && !text2.StartsWith("/", StringComparison.Ordinal)))
                     {
                         goto Label_00DA;
                     }

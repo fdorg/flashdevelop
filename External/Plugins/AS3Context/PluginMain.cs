@@ -1,21 +1,24 @@
 using System;
-using System.IO;
-using System.Text;
-using System.ComponentModel;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Globalization;
+using System.IO;
 using System.Text.RegularExpressions;
-using PluginCore.Localization;
+using System.Windows.Forms;
+using AS3Context.Compiler;
+using AS3Context.Controls;
+using ASCompletion.Commands;
+using ASCompletion.Completion;
+using ASCompletion.Context;
+using ASCompletion.Model;
+using PluginCore;
 using PluginCore.Helpers;
+using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
-using AS3Context.Compiler;
-using ASCompletion.Model;
-using ASCompletion.Completion;
-using ASCompletion.Commands;
-using AS3Context.Controls;
+using SwfOp;
 using WeifenLuo.WinFormsUI.Docking;
-using System.Windows.Forms;
-using PluginCore;
 
 namespace AS3Context
 {
@@ -30,7 +33,7 @@ namespace AS3Context
         private Context contextInstance;
         private String settingFilename;
         private bool inMXML;
-        private System.Drawing.Image pluginIcon;
+        private Image pluginIcon;
         private ProfilerUI profilerUI;
         private DockContent profilerPanel;
         private ToolStripButton viewButton;
@@ -96,7 +99,7 @@ namespace AS3Context
 
         static public AS3Settings Settings
         {
-            get { return settingObject as AS3Settings; }
+            get { return settingObject; }
         }
         #endregion
         
@@ -135,7 +138,7 @@ namespace AS3Context
                 {
                     case EventType.ProcessArgs:
                         TextEvent te = e as TextEvent;
-                        if (te.Value.IndexOf("$(FlexSDK)") >= 0)
+                        if (te.Value.IndexOfOrdinal("$(FlexSDK)") >= 0)
                         {
                             te.Value = te.Value.Replace("$(FlexSDK)", contextInstance.GetCompilerPath());
                         }
@@ -153,13 +156,13 @@ namespace AS3Context
                             if (PluginBase.CurrentProject != null && PluginBase.CurrentProject.Language == "as3")
                                 e.Handled = OpenVirtualFileModel(de.Data as String);
                         }
-                        else if (!(settingObject as AS3Settings).DisableFDB && action == "AS3Context.StartDebugger")
+                        else if (!settingObject.DisableFDB && action == "AS3Context.StartDebugger")
                         {
                             string workDir = (PluginBase.CurrentProject != null)
                                 ? Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath)
                                 : Environment.CurrentDirectory;
 
-                            string flexSdk = (settingObject as AS3Settings).GetDefaultSDK().Path;
+                            string flexSdk = settingObject.GetDefaultSDK().Path;
 
                             // if the default sdk is not defined ask for project sdk
                             if (String.IsNullOrEmpty(flexSdk))
@@ -201,8 +204,8 @@ namespace AS3Context
                         ValidateSettings();
                         AddToolbarItems();
                         // Associate this context with AS3 language
-                        ASCompletion.Context.ASContext.RegisterLanguage(contextInstance, "as3");
-                        ASCompletion.Context.ASContext.RegisterLanguage(contextInstance, "mxml");
+                        ASContext.RegisterLanguage(contextInstance, "as3");
+                        ASContext.RegisterLanguage(contextInstance, "mxml");
                         break;
 
                     case EventType.FileSave:
@@ -232,7 +235,7 @@ namespace AS3Context
                         IProject project = PluginBase.CurrentProject;
                         viewButton.Enabled = project == null || project.Language == "as3" || project.Language == "haxe";
                     }
-                    else if (action.StartsWith("FlashViewer."))
+                    else if (action.StartsWithOrdinal("FlashViewer."))
                     {
                         if (action == "FlashViewer.Closed")
                         {
@@ -289,7 +292,7 @@ namespace AS3Context
 
         private bool OpenVirtualFileModel(string virtualPath)
         {
-            int p = virtualPath.IndexOf("::");
+            int p = virtualPath.IndexOfOrdinal("::");
             if (p < 0) return false;
 
             string container = virtualPath.Substring(0, p);
@@ -299,7 +302,7 @@ namespace AS3Context
 
             string fileName = Path.Combine(container, virtualPath.Substring(p + 2).Replace('.', Path.DirectorySeparatorChar));
             PathModel path = new PathModel(container, contextInstance);
-            SwfOp.ContentParser parser = new SwfOp.ContentParser(path.Path);
+            ContentParser parser = new ContentParser(path.Path);
             parser.Run();
             AbcConverter.Convert(parser, path, contextInstance);
 
@@ -369,7 +372,7 @@ namespace AS3Context
 
             viewButton = new ToolStripButton(pluginIcon);
             viewButton.Name = "ShowProfiler";
-            viewButton.ToolTipText = TextHelper.GetString("Label.ViewMenuItem").Replace("&", "");
+            viewButton.ToolTipText = TextHelper.GetStringWithoutMnemonics("Label.ViewMenuItem");
             PluginBase.MainForm.RegisterSecondaryItem("ViewMenu.ShowProfiler", viewButton);
             viewButton.Click += OpenPanel;
         }
@@ -401,9 +404,9 @@ namespace AS3Context
         /// <summary>
         /// Opens the plugin panel again if closed
         /// </summary>
-        public void OpenPanel(object sender, System.EventArgs e)
+        public void OpenPanel(object sender, EventArgs e)
         {
-            if (sender is ToolStripButton && profilerPanel.Visible && profilerPanel.DockState.ToString().IndexOf("AutoHide") < 0)
+            if (sender is ToolStripButton && profilerPanel.Visible && profilerPanel.DockState.ToString().IndexOfOrdinal("AutoHide") < 0)
             {
                 profilerPanel.Hide();
             }
@@ -585,7 +588,7 @@ namespace AS3Context
                 flashPath = Path.GetDirectoryName(flashPath);
             }
             string basePath = flashPath;
-            string deflang = System.Globalization.CultureInfo.CurrentUICulture.Name;
+            string deflang = CultureInfo.CurrentUICulture.Name;
             deflang = deflang.Substring(0, 2);
             // CS4+ default configuration
             if (Directory.Exists(basePath + "\\Common\\Configuration\\ActionScript 3.0"))
@@ -660,7 +663,7 @@ namespace AS3Context
                     sdk.Version = mVer.Groups[1].Value;
 
                     descriptor = Path.Combine(path, "AIR SDK Readme.txt");
-                    if (sdk.Name.StartsWith("Flex") && File.Exists(descriptor))
+                    if (sdk.Name.StartsWithOrdinal("Flex") && File.Exists(descriptor))
                     {
                         raw = File.ReadAllText(descriptor);
                         Match mAIR = Regex.Match(raw, "Adobe AIR ([0-9.]+) SDK");

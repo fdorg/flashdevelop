@@ -1,16 +1,15 @@
 using System;
-using System.IO;
+using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using System.ComponentModel;
-using WeifenLuo.WinFormsUI.Docking;
-using PluginCore.Localization;
-using PluginCore.Utilities;
-using PluginCore.Managers;
-using PluginCore.Helpers;
 using PluginCore;
-using ProjectManager.Projects.AS3;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
+using ProjectManager.Projects;
 
 namespace AirProperties
 {
@@ -122,7 +121,7 @@ namespace AirProperties
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
@@ -174,7 +173,8 @@ namespace AirProperties
         /// </summary>
         private void CreateMenuItems()
         {
-            this.pluginMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.ProjectMenuItem"), GetImage("blockdevice_small.png"), new EventHandler(this.OpenWizard), null);
+            Image image = PluginBase.MainForm.GetAutoAdjustedImage(GetImage("blockdevice_small.png"));
+            this.pluginMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.ProjectMenuItem"), image, new EventHandler(this.OpenWizard), null);
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.AirApplicationProperties", this.pluginMenuItem);
             this.pluginMenuItem.Enabled = false;
         }
@@ -193,8 +193,8 @@ namespace AirProperties
         private void AddToolBarItems(ToolStrip toolStrip)
         {
             this.pmMenuButton = new ToolStripButton();
-            this.pmMenuButton.Image = GetImage("blockdevice_small.png");
-            this.pmMenuButton.Text = TextHelper.GetString("Label.ProjectMenuItem").Replace("&", "").Replace("...", "");
+            this.pmMenuButton.Image = this.pluginMenuItem.Image;
+            this.pmMenuButton.Text = TextHelper.GetStringWithoutMnemonicsOrEllipsis("Label.ProjectMenuItem");
             this.pmMenuButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
             this.pmMenuButton.Click += new EventHandler(this.OpenWizard);
             PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.AirApplicationProperties", this.pmMenuButton);
@@ -207,12 +207,11 @@ namespace AirProperties
         public void UpdateMenuItems()
         {
             Boolean pluginActive = false;
-            ToolStrip mainToolStrip = (ToolStrip)PluginBase.MainForm.ToolStrip;
             if (this.pluginMenuItem == null || this.pmMenuButton == null) return;
             if (PluginBase.CurrentProject != null)
             {
-                ProjectManager.Projects.Project project = (ProjectManager.Projects.Project)PluginBase.CurrentProject;
-                pluginActive = project.MovieOptions.Platform.StartsWith("AIR");
+                Project project = (Project)PluginBase.CurrentProject;
+                pluginActive = project.MovieOptions.Platform.StartsWithOrdinal("AIR");
             }
             this.pluginMenuItem.Enabled = this.pmMenuButton.Enabled = pluginActive;
         }
@@ -220,7 +219,7 @@ namespace AirProperties
         /// <summary>
         /// Opens the plugin panel if closed
         /// </summary>
-        public void OpenWizard(Object sender, System.EventArgs e)
+        public void OpenWizard(Object sender, EventArgs e)
         {
             this.wizard = new AirWizard(this);
             if (this.wizard.IsPropertiesLoaded)

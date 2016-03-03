@@ -1,9 +1,7 @@
 using System;
-using System.Text;
-using System.Drawing.Design;
 using System.ComponentModel;
-using System.Collections.Generic;
-using System.Windows.Forms.Design;
+using System.Drawing.Design;
+using Ookii.Dialogs;
 using PluginCore.Localization;
 
 namespace FileExplorer
@@ -21,7 +19,7 @@ namespace FileExplorer
         /// </summary>
         [DisplayName("Active Path")]
         [LocalizedDescription("FileExplorer.Description.FilePath"), DefaultValue("C:\\")]
-        [Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
+        [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public String FilePath 
         {
             get { return this.filePath; }

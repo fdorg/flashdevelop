@@ -6,18 +6,18 @@
  */
 
 using System;
-using System.Windows.Forms;
-using System.Text;
 using System.Collections.Generic;
-using PluginCore;
-using PluginCore.Managers;
-using ASCompletion.Model;
-using ASCompletion.Context;
-using ASCompletion.Settings;
-using PluginCore.Localization;
 using System.Drawing;
 using System.Reflection;
+using System.Text;
+using System.Windows.Forms;
+using ASCompletion.Context;
+using ASCompletion.Model;
+using ASCompletion.Settings;
+using PluginCore;
 using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
 
 namespace ASCompletion
 {
@@ -77,7 +77,7 @@ namespace ASCompletion
 
         public ToolStripMenuItem LookupMenuItem;
         private System.ComponentModel.IContainer components;
-        public System.Windows.Forms.ImageList treeIcons;
+        public ImageListManager treeIcons;
         private FixedTreeView outlineTree;
         private System.Timers.Timer tempoClick;
 
@@ -113,44 +113,7 @@ namespace ASCompletion
             InitializeComponent();
             treeIcons.ColorDepth = ColorDepth.Depth32Bit;
             treeIcons.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            treeIcons.Images.AddRange( new Image[] 
-            {
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("FilePlain.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("FolderClosed.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("FolderOpen.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("CheckAS.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("QuickBuild.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Package.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Interface.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Intrinsic.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Class.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Variable.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("VariableProtected.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("VariablePrivate.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("VariableStatic.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("VariableStaticProtected.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("VariableStaticPrivate.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Const.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("ConstProtected.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("ConstPrivate.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Const.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("ConstProtected.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("ConstPrivate.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Method.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("MethodProtected.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("MethodPrivate.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("MethodStatic.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("MethodStaticProtected.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("MethodStaticPrivate.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Property.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("PropertyProtected.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("PropertyPrivate.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("PropertyStatic.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("PropertyStaticProtected.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("PropertyStaticPrivate.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Template.png"))),
-                PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream("Declaration.png")))
-            });
+            treeIcons.Initialize(TreeIcons_Populate);
 
             toolStrip.Renderer = new DockPanelStripRenderer();
             toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
@@ -175,6 +138,53 @@ namespace ASCompletion
             outlineTree.ShowNodeToolTips = true;
             Controls.Add(outlineTree);
             outlineTree.BringToFront();
+        }
+
+        private void TreeIcons_Populate(object sender, EventArgs e)
+        {
+            treeIcons.Images.AddRange(new Image[]
+            {
+                GetImage("FilePlain.png"),
+                GetImage("FolderClosed.png"),
+                GetImage("FolderOpen.png"),
+                GetImage("CheckAS.png"),
+                GetImage("QuickBuild.png"),
+                GetImage("Package.png"),
+                GetImage("Interface.png"),
+                GetImage("Intrinsic.png"),
+                GetImage("Class.png"),
+                GetImage("Variable.png"),
+                GetImage("VariableProtected.png"),
+                GetImage("VariablePrivate.png"),
+                GetImage("VariableStatic.png"),
+                GetImage("VariableStaticProtected.png"),
+                GetImage("VariableStaticPrivate.png"),
+                GetImage("Const.png"),
+                GetImage("ConstProtected.png"),
+                GetImage("ConstPrivate.png"),
+                GetImage("Const.png"),
+                GetImage("ConstProtected.png"),
+                GetImage("ConstPrivate.png"),
+                GetImage("Method.png"),
+                GetImage("MethodProtected.png"),
+                GetImage("MethodPrivate.png"),
+                GetImage("MethodStatic.png"),
+                GetImage("MethodStaticProtected.png"),
+                GetImage("MethodStaticPrivate.png"),
+                GetImage("Property.png"),
+                GetImage("PropertyProtected.png"),
+                GetImage("PropertyPrivate.png"),
+                GetImage("PropertyStatic.png"),
+                GetImage("PropertyStaticProtected.png"),
+                GetImage("PropertyStaticPrivate.png"),
+                GetImage("Template.png"),
+                GetImage("Declaration.png")
+            });
+        }
+
+        public static Image GetImage(String name)
+        {
+            return PluginBase.MainForm.ImageSetAdjust(Image.FromStream(GetStream(name)));
         }
 
         public static System.IO.Stream GetStream(String name)
@@ -270,7 +280,7 @@ namespace ASCompletion
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PluginUI));
-            this.treeIcons = new System.Windows.Forms.ImageList(this.components);
+            this.treeIcons = new ImageListManager(this.components);
             this.toolStrip = new PluginCore.Controls.ToolStripEx();
             this.sortDropDown = new System.Windows.Forms.ToolStripDropDownButton();
             this.noneItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -495,7 +505,7 @@ namespace ASCompletion
             if (currentHighlight != null)
             {
                 //currentHighlight.BackColor = System.Drawing.SystemColors.Window;
-                currentHighlight.ForeColor = System.Drawing.SystemColors.WindowText;
+                currentHighlight.ForeColor = outlineTree.ForeColor;
             }
             outlineTree.SelectedNode = currentHighlight = node;
             if (currentHighlight != null)
@@ -504,7 +514,8 @@ namespace ASCompletion
                     outlineTree.State.highlight = currentHighlight.FullPath;
 
                 //currentHighlight.BackColor = System.Drawing.Color.LightGray;
-                currentHighlight.ForeColor = System.Drawing.Color.Blue;
+                currentHighlight.ForeColor = PluginBase.MainForm.GetThemeColor("TreeView.Highlight", SystemColors.Highlight);
+
             }
         }
 
@@ -532,7 +543,7 @@ namespace ASCompletion
                     }
                     foreach (MemberModel member in aFile.Members)
                     {
-                        sb.Append(member.Flags.ToString()).Append(member.ToString());
+                        sb.Append(member.Flags).Append(member);
                         lines.Add(member.LineFrom);
                         names.Add(member.Name);
                     }
@@ -541,7 +552,7 @@ namespace ASCompletion
                         if (string.IsNullOrEmpty(aClass.ExtendsType))
                             aClass.ResolveExtends();
 
-                        sb.Append(aClass.Flags.ToString()).Append(aClass.FullName);
+                        sb.Append(aClass.Flags).Append(aClass.FullName);
                         sb.Append(aClass.ExtendsType);
                         if (aClass.Implements != null)
                             foreach (string implements in aClass.Implements)
@@ -550,13 +561,13 @@ namespace ASCompletion
                         names.Add(aClass.Name);
                         foreach (MemberModel member in aClass.Members)
                         {
-                            sb.Append(member.Flags.ToString()).Append(member.ToString());
+                            sb.Append(member.Flags).Append(member);
                             lines.Add(member.LineFrom);
                             names.Add(member.Name);
                         }
                     }
-
-                    foreach (MemberModel region in aFile.Regions) {
+                    foreach (MemberModel region in aFile.Regions)
+                    {
                         sb.Append(region.Name);
                         lines.Add(region.LineFrom);
                         names.Add(region.Name);
@@ -572,9 +583,10 @@ namespace ASCompletion
                 }
                 else
                 {
+                    int prevLinesCount = prevLines.Count;
                     for (int i = 0, count = lines.Count; i < count; i++)
                     {
-                        if (lines[i] == prevLines[i]) continue;
+                        if (i < prevLinesCount && lines[i] == prevLines[i]) continue;
                         UpdateTree(aFile, names, lines);
                         prevLines = lines;
                         break;
@@ -591,7 +603,7 @@ namespace ASCompletion
         {
             //TraceManager.Add("Outline refresh...");
             outlineTree.BeginStatefulUpdate();
-            if (prevChecksum.StartsWith(aFile.FileName))
+            if (prevChecksum.StartsWithOrdinal(aFile.FileName))
                 aFile.OutlineState = outlineTree.State;
 
             try
@@ -624,7 +636,7 @@ namespace ASCompletion
                     nodes = node.Nodes;
                     foreach (MemberModel import in aFile.Imports)
                     {
-                        if (import.Type.EndsWith(".*"))
+                        if (import.Type.EndsWithOrdinal(".*"))
                             nodes.Add(new TreeNode(import.Type, ICON_PACKAGE, ICON_PACKAGE));
                         else
                         {
@@ -706,11 +718,13 @@ namespace ASCompletion
                     return;
 
                 var mapping = new Dictionary<string, string>();
-
+                int prevLinesCount = prevLines.Count;
                 for (int i = 0, count = newLines.Count; i < count; i++)
                 {
                     string name = modelNames[i];
-                    mapping[name + "@" + prevLines[i]] = name + "@" + newLines[i];
+                    string value = name + "@" + newLines[i];
+                    if (i < prevLinesCount) mapping[name + "@" + prevLines[i]] = value;
+                    else mapping[value] = value;
                 }
 
                 var tree = new Stack<TreeNodeCollection>();
@@ -741,7 +755,7 @@ namespace ASCompletion
             //if ((aClass.Flags & FlagType.TypeDef) > 0 && aClass.Members.Count == 0)
             //    folder.Text = "Defines"; // TODO need a better word I guess
 
-            while (aClass.ExtendsType != null && aClass.ExtendsType.Length > 0 
+            while (!string.IsNullOrEmpty(aClass.ExtendsType) 
                 && aClass.ExtendsType != "Object" 
                 && (!aClass.InFile.haXe || aClass.ExtendsType != "Dynamic"))
             {
@@ -989,6 +1003,7 @@ namespace ASCompletion
             sci.GotoPos(pos);
         }
 
+        // TODO: Refactor, doesn't make a lot of sense to have this feature inside the Panel
         public void SetLastLookupPosition(string file, int line, int column)
         {
             // store location
@@ -1033,8 +1048,8 @@ namespace ASCompletion
             if (hilight)
             {
                 node.EnsureVisible();
-                node.ForeColor = SystemColors.HighlightText;
-                node.BackColor = SystemColors.Highlight;
+                node.BackColor = PluginBase.MainForm.GetThemeColor("TreeView.Highlight", SystemColors.Highlight);
+                node.ForeColor = PluginBase.MainForm.GetThemeColor("TreeView.HighlightText", SystemColors.HighlightText);
             }
             else
             {
@@ -1049,7 +1064,7 @@ namespace ASCompletion
             {
                 return false;
             }
-            return (inputText.ToUpper().IndexOf(searchText) >= 0);
+            return (inputText.ToUpper().IndexOfOrdinal(searchText) >= 0);
         }
 
         private void HighlightAllMachingDeclaration(string text)
@@ -1093,7 +1108,7 @@ namespace ASCompletion
             if (findProcTxt.Text == searchInvitation)
             {
                 findProcTxt.Text = "";
-                findProcTxt.ForeColor = System.Drawing.SystemColors.WindowText;
+                findProcTxt.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.ForeColor", SystemColors.WindowText);
             }
         }
 
@@ -1102,7 +1117,7 @@ namespace ASCompletion
             if (findProcTxt.Text == "")
             {
                 findProcTxt.Text = searchInvitation;
-                findProcTxt.ForeColor = System.Drawing.SystemColors.GrayText;
+                findProcTxt.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.GrayText", SystemColors.GrayText);
                 clearButton.Enabled = false;
             }
         }
@@ -1121,7 +1136,7 @@ namespace ASCompletion
         // Update colors on start after theme engine
         public void UpdateAfterTheme()
         {
-            findProcTxt.ForeColor = System.Drawing.SystemColors.GrayText;
+            findProcTxt.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.GrayText", SystemColors.GrayText);
         }
 
         protected override Boolean ProcessDialogKey(Keys keyData)
@@ -1171,8 +1186,7 @@ namespace ASCompletion
         {
             foreach (TreeNode node in nodes)
             {
-                if (node.BackColor == System.Drawing.Color.LightSkyBlue)
-                    return node;
+                if (node.BackColor == PluginBase.MainForm.GetThemeColor("TreeView.Highlight", SystemColors.Highlight)) return node;
                 if (node.Nodes.Count > 0)
                 {
                     TreeNode subnode = FindMatch(node.Nodes);

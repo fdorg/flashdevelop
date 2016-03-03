@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
-using ScintillaNet.Configuration;
-using ScintillaNet;
-using PluginCore.Managers;
-using PluginCore.Controls;
 using PluginCore;
+using PluginCore.Controls;
+using PluginCore.Helpers;
 using PluginCore.Utilities;
+using ScintillaNet;
+using ScintillaNet.Configuration;
+using ScintillaNet.Lexers;
 
 namespace CssCompletion
 {
@@ -28,7 +28,7 @@ namespace CssCompletion
         CssFeatures features;
         int lastColonInsert;
 
-        public Completion(PluginCore.Helpers.SimpleIni config, Settings settings)
+        public Completion(SimpleIni config, Settings settings)
         {
             this.settings = settings;
             lang = ScintillaControl.Configuration.GetLanguage("css");
@@ -81,7 +81,7 @@ namespace CssCompletion
                 {
                     int line = sci.LineFromPosition(position);
                     string text = sci.GetLine(line - 1).TrimEnd();
-                    if (text.EndsWith("{")) AutoCloseBrace(sci, line);
+                    if (text.EndsWith('{')) AutoCloseBrace(sci, line);
                 }
                 else if (c == '\t') // TODO get tab notification!
                 {
@@ -168,7 +168,7 @@ namespace CssCompletion
             {
                 var matches = new List<ICompletionListItem>();
                 foreach(var item in items)
-                    if (item.Label.StartsWith(context.Word)) matches.Add(item);
+                    if (item.Label.StartsWithOrdinal(context.Word)) matches.Add(item);
                 if (matches.Count == 1)
                 {
                     ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
@@ -207,7 +207,7 @@ namespace CssCompletion
             int i = position - 1;
             int style = sci.StyleAt(i-1);
 
-            if (style == (int)ScintillaNet.Lexers.CSS.COMMENT) // inside comments
+            if (style == (int)CSS.COMMENT) // inside comments
             {
                 ctx.InComments = true;
                 return ctx;
@@ -537,16 +537,16 @@ namespace CssCompletion
                     if (c == 13 || c == 10)
                     {
                         prevLine = prevLine.Trim();
-                        if (prevLine.StartsWith("//")) break;
-                        if (!prevLine.EndsWith("*/") || prevLine.IndexOf("/*") >= 0) break;
+                        if (prevLine.StartsWithOrdinal("//")) break;
+                        if (!prevLine.EndsWithOrdinal("*/") || prevLine.IndexOfOrdinal("/*") >= 0) break;
                     }
                     prevLine = c + prevLine;
                 }
             }
             if (prevLine.Length > 0 && prevLine[0] == '/')
             {
-                if (prevLine.StartsWith("//")) value += "//" + prevLine.Substring(2);
-                else if (prevLine.StartsWith("/*")) value += "//" + prevLine.Substring(2, prevLine.Length - 4);
+                if (prevLine.StartsWithOrdinal("//")) value += "//" + prevLine.Substring(2);
+                else if (prevLine.StartsWithOrdinal("/*")) value += "//" + prevLine.Substring(2, prevLine.Length - 4);
             }
 
             return value.Trim();
@@ -628,7 +628,7 @@ namespace CssCompletion
             return list;
         }
 
-        private Dictionary<string, string> GetSection(PluginCore.Helpers.SimpleIni config, string name)
+        private Dictionary<string, string> GetSection(SimpleIni config, string name)
         {
             foreach (var def in config)
                 if (def.Key == name) return def.Value;
@@ -660,7 +660,6 @@ namespace CssCompletion
 
             // find where to include the closing brace
             int startIndent = indent;
-            int newIndent = indent + Sci.TabWidth;
             int count = Sci.LineCount;
             int lastLine = line;
             int position;

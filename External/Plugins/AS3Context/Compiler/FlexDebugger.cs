@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using PluginCore;
 using System.Windows.Forms;
-using PluginCore.Managers;
-using System.IO;
+using PluginCore;
 using PluginCore.Localization;
+using PluginCore.Managers;
 
 namespace AS3Context.Compiler
 {
@@ -58,7 +54,7 @@ namespace AS3Context.Compiler
         {
             if (startMessage == null) 
                 return;
-            PluginBase.RunAsync((MethodInvoker)delegate
+            PluginBase.RunAsync(delegate
             {
                 // send message again
                 ignoreMessage = true;

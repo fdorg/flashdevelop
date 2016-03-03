@@ -51,10 +51,11 @@ namespace WeifenLuo.WinFormsUI.Docking
 
                 Graphics g = e.Graphics;
                 Rectangle rect = ClientRectangle;
+                Pen pen = new Pen(PluginCore.PluginBase.MainForm.GetThemeColor("DockWindow.BorderColor", SystemColors.ControlDark));
                 if (Alignment == DockAlignment.Top || Alignment == DockAlignment.Bottom)
-                    g.DrawLine(SystemPens.ControlDark, rect.Left, rect.Bottom - 1, rect.Right, rect.Bottom - 1);
+                    g.DrawLine(pen, rect.Left, rect.Bottom - 1, rect.Right, rect.Bottom - 1);
                 else if (Alignment == DockAlignment.Left || Alignment == DockAlignment.Right)
-                    g.DrawLine(SystemPens.ControlDarkDark, rect.Right - 1, rect.Top, rect.Right - 1, rect.Bottom);
+                    g.DrawLine(pen, rect.Right - 1, rect.Top, rect.Right - 1, rect.Bottom);
             }
 
             protected override void OnMouseDown(MouseEventArgs e)

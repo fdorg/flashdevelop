@@ -1,11 +1,11 @@
 using System;
-using System.IO;
-using System.Drawing;
 using System.Collections;
-using System.Diagnostics;
-using ProjectManager.Projects;
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Text.RegularExpressions;
+using PluginCore;
+using ProjectManager.Projects;
 using ProjectManager.Projects.AS3;
 
 namespace ProjectManager.Controls.TreeView
@@ -19,7 +19,6 @@ namespace ProjectManager.Controls.TreeView
         {
             this.project = project;
             isDraggable = false;
-            isRenamable = false;
         }
 
         public override void Refresh(bool recursive)
@@ -27,14 +26,16 @@ namespace ProjectManager.Controls.TreeView
             RemoveReferences();
 
             base.Refresh(recursive);
-            FontStyle style = isActive ? FontStyle.Bold : FontStyle.Regular;
-            NodeFont = new System.Drawing.Font(PluginCore.PluginBase.Settings.DefaultFont, FontStyle.Bold);
-            Text = ProjectRef.Name + " (" + ProjectRef.Language.ToUpper() + ")";
+            NodeFont = new Font(PluginBase.Settings.DefaultFont, FontStyle.Bold);
+            Text = ProjectRef.Name + " (" + ProjectRef.LanguageDisplayName + ")";
             ImageIndex = Icons.Project.Index;
             SelectedImageIndex = ImageIndex;
 
             if (References != null && References.Parent == null)
+            {
+                if (recursive) RefreshReferences(recursive);
                 Nodes.Insert(0, References);
+            }
 
             NotifyProjectRefresh();
             Expand();
@@ -89,7 +90,7 @@ namespace ProjectManager.Controls.TreeView
                 if (isActive == value) return;
                 isActive = value;
                 FontStyle style = isActive ? FontStyle.Bold : FontStyle.Regular;
-                NodeFont = new System.Drawing.Font(PluginCore.PluginBase.Settings.DefaultFont, style);
+                NodeFont = new Font(PluginBase.Settings.DefaultFont, style);
                 Text = Text; // Reset text to update the font
             }
         }
@@ -196,6 +197,7 @@ namespace ProjectManager.Controls.TreeView
         {
             Text = text;
             ImageIndex = SelectedImageIndex = Icons.HiddenFolder.Index;
+            ForeColorRequest = PluginBase.MainForm.GetThemeColor("ProjectTreeView.ForeColor", SystemColors.WindowText);
             isDraggable = false;
             isRenamable = false;
         }
@@ -230,7 +232,7 @@ namespace ProjectManager.Controls.TreeView
                 string absolute = projectClasspath;
                 if (!Path.IsPathRooted(absolute))
                     absolute = project.GetAbsolutePath(projectClasspath);
-                if ((absolute + "\\").StartsWith(project.Directory + "\\"))
+                if ((absolute + "\\").StartsWithOrdinal(project.Directory + "\\"))
                     continue;
                 if (!project.ShowHiddenPaths && project.IsPathHidden(absolute))
                     continue;
@@ -245,7 +247,7 @@ namespace ProjectManager.Controls.TreeView
                 string absolute = globalClasspath;
                 if (!Path.IsPathRooted(absolute))
                     absolute = project.GetAbsolutePath(globalClasspath);
-                if (absolute.StartsWith(project.Directory + Path.DirectorySeparatorChar.ToString()))
+                if (absolute.StartsWithOrdinal(project.Directory + Path.DirectorySeparatorChar))
                     continue;
 
                 cpNode = ReuseNode(absolute, nodesToDie) as ProjectClasspathNode ?? new ClasspathNode(project, absolute, globalClasspath);
@@ -264,16 +266,16 @@ namespace ProjectManager.Controls.TreeView
                         absolute = project.GetAbsolutePath(asset.Path);
 
                     bool showNode = true;
-                    if (absolute.StartsWith(project.Directory))
+                    if (absolute.StartsWithOrdinal(project.Directory))
                         showNode = false;
                     foreach (string path in project.AbsoluteClasspaths)
-                        if (absolute.StartsWith(path))
+                        if (absolute.StartsWithOrdinal(path))
                         {
                             showNode = false;
                             break;
                         }
                     foreach (string path in PluginMain.Settings.GlobalClasspaths)
-                        if (absolute.StartsWith(path))
+                        if (absolute.StartsWithOrdinal(path))
                         {
                             showNode = false;
                             break;

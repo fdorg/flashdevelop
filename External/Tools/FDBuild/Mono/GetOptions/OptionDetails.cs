@@ -172,13 +172,13 @@ namespace Mono.GetOptions
 
         private string ExtractParamName(string shortDescription)
         {
-            int num1 = shortDescription.IndexOf("{");
+            int num1 = shortDescription.IndexOf('{');
             if (num1 < 0)
             {
                 this.paramName = "PARAM";
                 return shortDescription;
             }
-            int num2 = shortDescription.IndexOf("}");
+            int num2 = shortDescription.IndexOf('}');
             if (num2 < num1)
             {
                 num2 = shortDescription.Length + 1;
@@ -220,7 +220,7 @@ namespace Mono.GetOptions
             {
                 if (!this.NeedsParameter)
                 {
-                    if (this.VBCStyleBoolean && arg.EndsWith("-"))
+                    if (this.VBCStyleBoolean && arg.EndsWith("-", StringComparison.Ordinal))
                     {
                         this.DoIt(false);
                     }
@@ -252,7 +252,7 @@ namespace Mono.GetOptions
             {
                 string text1;
                 string text2;
-                bool flag1 = (this.LongForm != null) && (this.LongForm != string.Empty);
+                bool flag1 = !string.IsNullOrEmpty(this.LongForm);
                 if (this.OptionBundle.ParsingMode == OptionsParsingMode.Windows)
                 {
                     text2 = "/";
@@ -279,7 +279,7 @@ namespace Mono.GetOptions
                     this.optionHelp = this.optionHelp + "[+|-]";
                 }
                 this.optionHelp = this.optionHelp + ("\t" + this.ShortDescription);
-                if ((this.AlternateForm != string.Empty) && (this.AlternateForm != null))
+                if (!string.IsNullOrEmpty(this.AlternateForm))
                 {
                     this.optionHelp = this.optionHelp + (" [short form: " + text2 + this.AlternateForm + "]");
                 }

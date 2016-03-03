@@ -1,9 +1,8 @@
 using System;
-using System.Text;
 using System.Collections.Generic;
 using FlashDevelop.Settings;
-using ScintillaNet;
 using PluginCore;
+using ScintillaNet;
 
 namespace FlashDevelop
 {
@@ -14,7 +13,7 @@ namespace FlashDevelop
         /// </summary> 
         public static MainForm MainForm
         {
-            get { return MainForm.Instance; }
+            get; internal set;
         }
 
         /// <summary>
@@ -22,7 +21,7 @@ namespace FlashDevelop
         /// </summary>
         public static ITabbedDocument CurrentDocument 
         {
-            get { return MainForm.CurrentDocument; }
+            get { return PluginBase.MainForm.CurrentDocument; }
         }
 
         /// <summary>
@@ -46,7 +45,7 @@ namespace FlashDevelop
         /// </summary>
         public static SettingObject Settings
         {
-            get { return MainForm.AppSettings; }
+            get { return (SettingObject)PluginBase.MainForm.Settings; }
         }
 
     }

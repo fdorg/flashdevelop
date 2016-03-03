@@ -1,20 +1,16 @@
 using System;
-using System.Collections;
-using System.Collections.Specialized;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.IO;
-using System.Diagnostics;
-using System.Windows.Forms;
-using PluginCore;
-using PluginCore.Managers;
-using PluginCore.Controls;
-using ASCompletion.Context;
+using System.Text.RegularExpressions;
 using ASCompletion.Completion;
+using ASCompletion.Context;
 using ASCompletion.Model;
 using ASCompletion.Settings;
-using PluginCore.Localization;
+using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
 
 namespace AS2Context
 {
@@ -103,7 +99,9 @@ namespace AS2Context
             features.objectKey = "Object";
             features.booleanKey = "Boolean";
             features.numberKey = "Number";
+            features.stringKey = "String";
             features.arrayKey = "Array";
+            features.dynamicKey = "*";
             features.importKey = "import";
             features.typesPreKeys = new string[] { "import", "new", "instanceof", "extends", "implements" };
             features.codeKeywords = new string[] { 
@@ -169,28 +167,28 @@ namespace AS2Context
 
             string path;
             if ((as2settings.UseMtascIntrinsic || String.IsNullOrEmpty(as2settings.MMClassPath))
-                && !String.IsNullOrEmpty(mtascPath) && System.IO.Directory.Exists(mtascPath))
+                && !String.IsNullOrEmpty(mtascPath) && Directory.Exists(mtascPath))
             {
                 try 
                 {
                     if (majorVersion == 9)
                     {
                         path = Path.Combine(mtascPath, "std9");
-                        if (System.IO.Directory.Exists(path)) AddPath(path);
+                        if (Directory.Exists(path)) AddPath(path);
                         else majorVersion = 8;
                     }
                     if (majorVersion == 8)
                     {
                         path = Path.Combine(mtascPath, "std8");
-                        if (System.IO.Directory.Exists(path)) AddPath(path);
+                        if (Directory.Exists(path)) AddPath(path);
                     }
                     path = Path.Combine(mtascPath, "std");
-                    if (System.IO.Directory.Exists(path)) AddPath(path);
+                    if (Directory.Exists(path)) AddPath(path);
                 }
                 catch {}
             }
             // Macromedia/Adobe
-            if (!String.IsNullOrEmpty(as2settings.MMClassPath) && System.IO.Directory.Exists(as2settings.MMClassPath))
+            if (!String.IsNullOrEmpty(as2settings.MMClassPath) && Directory.Exists(as2settings.MMClassPath))
             {
                 if (classPath.Count == 0)
                 {
@@ -199,13 +197,13 @@ namespace AS2Context
                     if (tempVersion > 8)
                     {
                         path = Path.Combine(as2settings.MMClassPath, "FP" + tempVersion);
-                        if (System.IO.Directory.Exists(path))
+                        if (Directory.Exists(path))
                             AddPath(path);
                         // now add FP8
                         tempVersion = 8;
                     }
                     path = Path.Combine(as2settings.MMClassPath, "FP" + Math.Max(7, tempVersion));
-                    if (System.IO.Directory.Exists(path))
+                    if (Directory.Exists(path))
                     {
                         PathModel aPath = new PathModel(path, this);
                         ManualExploration(aPath, new string[] { "aso", "FP7", "FP8", "FP9" });
@@ -288,7 +286,6 @@ namespace AS2Context
                 {
                     if (cFile.FileName.Length > 0)
                     {
-                        string prevClassName = cClass.Name;
                         UpdateCurrentFile(true);
                     }
                     // update "this" and "super" special vars
@@ -342,14 +339,14 @@ namespace AS2Context
             if (topLevel != null && topLevel.Members.Count > 0)
             {
                 // current class
-                ClassModel inClass = ASContext.Context.CurrentClass;
+                ClassModel inClass = Context.CurrentClass;
                 if (token == "this")
                 {
                     result.Member = topLevel.Members.Search("this", 0, 0);
                     if (inClass.IsVoid()) 
-                        inClass = ASContext.Context.ResolveType(result.Member.Type, null);
+                        inClass = Context.ResolveType(result.Member.Type, null);
                     result.Type = inClass;
-                    result.InFile = ASContext.Context.CurrentModel;
+                    result.InFile = Context.CurrentModel;
                     return;
                 }
                 else if (token == "super")
@@ -357,7 +354,7 @@ namespace AS2Context
                     if (inClass.IsVoid())
                     {
                         MemberModel thisMember = topLevel.Members.Search("this", 0, 0);
-                        inClass = ASContext.Context.ResolveType(thisMember.Type, null);
+                        inClass = Context.ResolveType(thisMember.Type, null);
                     }
                     inClass.ResolveExtends();
                     ClassModel extends = inClass.Extends;
@@ -375,7 +372,7 @@ namespace AS2Context
                 if (!result.IsNull()) return;
 
                 // special _levelN
-                if (hasLevels && token.StartsWith("_") && re_level.IsMatch(token))
+                if (hasLevels && token.StartsWith('_') && re_level.IsMatch(token))
                 {
                     result.Member = new MemberModel();
                     result.Member.Name = token;
@@ -453,10 +450,10 @@ namespace AS2Context
         /// <param name="atLine">Position in the file</param>
         public override bool IsImported(MemberModel member, int atLine)
         {
-            FileModel cFile = ASContext.Context.CurrentModel;
+            FileModel cFile = Context.CurrentModel;
             string fullName = member.Type;
             string name = member.Name;
-            int lineMin = (ASContext.Context.InPrivateSection) ? cFile.PrivateSectionIndex : 0;
+            int lineMin = (Context.InPrivateSection) ? cFile.PrivateSectionIndex : 0;
             int lineMax = atLine;
             foreach (MemberModel import in cFile.Imports)
             {
@@ -723,7 +720,7 @@ namespace AS2Context
                 // in the same (or parent) package
                 else if (testSamePackage)
                 {
-                    if (inPackage == pkg || (matchParentPackage && pkg.Length < pLen && inPackage.StartsWith(pkg + ".")))
+                    if (inPackage == pkg || (matchParentPackage && pkg.Length < pLen && inPackage.StartsWithOrdinal(pkg + ".")))
                         foreach (ClassModel aClass in aFile.Classes)
                             if (aClass.Name == cname /*&& (aFile.Module == "" || aFile.Module == aClass.Name)*/)
                             {
@@ -798,7 +795,7 @@ namespace AS2Context
                 {
                     string pathname = package.Replace('.', Path.DirectorySeparatorChar);
                     string fullpath = Path.GetDirectoryName(cFile.FileName);
-                    if (!fullpath.EndsWith(pathname))
+                    if (!fullpath.EndsWithOrdinal(pathname))
                     {
                         if (settings.FixPackageAutomatically && CurSciControl != null)
                         {
@@ -845,7 +842,7 @@ namespace AS2Context
                                     string correctPath = null;
                                     foreach (PathModel pm in classpaths)
                                     {
-                                        if (fullpath.IndexOf(pm.Path) > -1 && fullpath.Length > pm.Path.Length)
+                                        if (fullpath.IndexOfOrdinal(pm.Path) > -1 && fullpath.Length > pm.Path.Length)
                                         {
                                             correctPath = fullpath.Substring(pm.Path.Length + 1);
                                         }
@@ -885,7 +882,7 @@ namespace AS2Context
                     {
                         if (package.Length > 0) cname = package + "." + cname;
                         string filename = cname.Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(cFile.FileName);
-                        if (!cFile.FileName.ToUpper().EndsWith(filename.ToUpper()))
+                        if (!cFile.FileName.ToUpper().EndsWithOrdinal(filename.ToUpper()))
                         {
                             string org = TextHelper.GetString("Info.TypeDontMatchFileName");
                             string msg = String.Format(org, cname) + "\n" + cFile.FileName;
@@ -991,7 +988,7 @@ namespace AS2Context
                 if (lazyMode || settings.LazyClasspathExploration || aPath.IsTemporaryPath)
                 {
                     string path = Path.Combine(aPath.Path, packagePath);
-                    if (aPath.IsValid && System.IO.Directory.Exists(path))
+                    if (aPath.IsValid && Directory.Exists(path))
                     {
                         try
                         {
@@ -1028,7 +1025,7 @@ namespace AS2Context
                                 pModel.Members.Add(member.Clone() as MemberModel);
                         }
                         else if (package != prevPackage
-                                && (package.Length > name.Length && package.StartsWith(packagePrefix))) // imports
+                                && (package.Length > name.Length && package.StartsWithOrdinal(packagePrefix))) // imports
                         {
                             prevPackage = package;
                             if (nameLen > 1) package = package.Substring(nameLen);
@@ -1058,7 +1055,7 @@ namespace AS2Context
             string[] fileEntries = null;
             try
             {
-                fileEntries = System.IO.Directory.GetFiles(path, "*" + settings.DefaultExtension);
+                fileEntries = Directory.GetFiles(path, "*" + settings.DefaultExtension);
             }
             catch { }
             if (fileEntries == null) return;
@@ -1068,7 +1065,7 @@ namespace AS2Context
             foreach (string entry in fileEntries)
             {
                 mname = GetLastStringToken(entry, dirSeparator);
-                mname = mname.Substring(0, mname.LastIndexOf("."));
+                mname = mname.Substring(0, mname.LastIndexOf('.'));
                 if (mname.Length > 0 && memberList.Search(mname, 0, 0) == null && re_token.IsMatch(mname))
                 {
                     type = mname;
@@ -1083,7 +1080,7 @@ namespace AS2Context
             string[] dirEntries = null;
             try
             {
-                dirEntries = System.IO.Directory.GetDirectories(path);
+                dirEntries = Directory.GetDirectories(path);
             }
             catch { }
             if (dirEntries == null) return;
@@ -1319,7 +1316,7 @@ namespace AS2Context
                 else mtascPath = Path.GetDirectoryName(mtascPath);
 
                 command += ";\"" + CurrentFile + "\"";
-                if (append == null || append.IndexOf("-swf-version") < 0)
+                if (append == null || append.IndexOfOrdinal("-swf-version") < 0)
                     command += " -version "+majorVersion;
                 // classpathes
                 foreach(PathModel aPath in classPath)
@@ -1376,7 +1373,7 @@ namespace AS2Context
             {
                 command = Regex.Replace(command, "[\\r\\n]\\s*\\*", "", RegexOptions.Singleline);
                 command = " " + MainForm.ProcessArgString(command) + " ";
-                if (command == null || command.Length == 0)
+                if (string.IsNullOrEmpty(command))
                 {
                     if (!failSilently)
                         throw new Exception(TextHelper.GetString("Info.InvalidQuickBuildCommand"));

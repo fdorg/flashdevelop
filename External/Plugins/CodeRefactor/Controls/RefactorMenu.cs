@@ -1,118 +1,85 @@
 ﻿using System;
-using System.Text;
-using System.Drawing;
 using System.Windows.Forms;
-using PluginCore.Localization;
 using PluginCore;
+using PluginCore.Localization;
 
 namespace CodeRefactor.Controls
 {
     public class RefactorMenu : ToolStripMenuItem
     {
-        private SurroundMenu surroundMenu;
-        private ToolStripMenuItem batchMenuItem;
-        private ToolStripMenuItem renameMenuItem;
-        private ToolStripMenuItem truncateMenuItem;
-        private ToolStripMenuItem organizeMenuItem;
-        private ToolStripMenuItem delegateMenuItem;
-        private ToolStripMenuItem generatorMenuItem;
-        private ToolStripMenuItem extractMethodMenuItem;
-        private ToolStripMenuItem extractLocalVariableMenuItem;
-
         public RefactorMenu(Boolean createSurroundMenu)
         {
             this.Text = TextHelper.GetString("Label.Refactor");
-            this.renameMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.Rename")) as ToolStripMenuItem;
-            this.renameMenuItem.Image = PluginBase.MainForm.FindImage("331");
-            this.extractMethodMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.ExtractMethod"), null) as ToolStripMenuItem;
-            this.extractLocalVariableMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.ExtractLocalVariable"), null) as ToolStripMenuItem;
-            this.delegateMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.DelegateMethods"), null) as ToolStripMenuItem;
+            this.MoveMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.Move")) as ToolStripMenuItem;
+            this.RenameMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.Rename")) as ToolStripMenuItem;
+            this.RenameMenuItem.Image = PluginBase.MainForm.FindImage("331");
+            this.ExtractMethodMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.ExtractMethod"), null) as ToolStripMenuItem;
+            this.ExtractLocalVariableMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.ExtractLocalVariable"), null) as ToolStripMenuItem;
+            this.DelegateMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.DelegateMethods"), null) as ToolStripMenuItem;
             if (createSurroundMenu)
             {
-                this.surroundMenu = new SurroundMenu();
-                this.DropDownItems.Add(this.surroundMenu);
+                this.SurroundMenu = new SurroundMenu();
+                this.DropDownItems.Add(this.SurroundMenu);
             }
             this.DropDownItems.Add(new ToolStripSeparator());
-            this.generatorMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.InvokeCodeGenerator"), null, null, createSurroundMenu ? Keys.Control | Keys.Shift | Keys.D1 : Keys.None);
-            this.DropDownItems.Add(this.generatorMenuItem);
+            this.CodeGeneratorMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.InvokeCodeGenerator"), null, null, createSurroundMenu ? Keys.Control | Keys.Shift | Keys.D1 : Keys.None);
+            this.DropDownItems.Add(this.CodeGeneratorMenuItem);
             this.DropDownItems.Add(new ToolStripSeparator());
-            this.organizeMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.OrganizeImports"), null) as ToolStripMenuItem;
-            this.truncateMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.TruncateImports"), null) as ToolStripMenuItem;
+            this.OrganizeMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.OrganizeImports"), null) as ToolStripMenuItem;
+            this.TruncateMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.TruncateImports"), null) as ToolStripMenuItem;
             this.DropDownItems.Add(new ToolStripSeparator());
-            this.batchMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.BatchProcess"), null) as ToolStripMenuItem;
+            this.BatchMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.BatchProcess"), null) as ToolStripMenuItem;
         }
 
         /// <summary>
         /// Accessor to the SurroundMenu
         /// </summary>
-        public SurroundMenu SurroundMenu
-        {
-            get { return this.surroundMenu; }
-        }
+        public SurroundMenu SurroundMenu { get; private set; }
 
         /// <summary>
         /// Accessor to the BatchMenuItem
         /// </summary>
-        public ToolStripMenuItem BatchMenuItem
-        {
-            get { return this.batchMenuItem; }
-        }
+        public ToolStripMenuItem BatchMenuItem { get; private set; }
 
         /// <summary>
         /// Accessor to the RenameMenuItem
         /// </summary>
-        public ToolStripMenuItem RenameMenuItem
-        {
-            get { return this.renameMenuItem; }
-        }
+        public ToolStripMenuItem RenameMenuItem { get; private set; }
+
+        /// <summary>
+        /// Accessor to the MoveMenuItem
+        /// </summary>
+        public ToolStripMenuItem MoveMenuItem { get; private set; }
 
         /// <summary>
         /// Accessor to the TruncateMenuItem
         /// </summary>
-        public ToolStripMenuItem TruncateMenuItem
-        {
-            get { return this.truncateMenuItem; }
-        }
+        public ToolStripMenuItem TruncateMenuItem { get; private set; }
 
         /// <summary>
         /// Accessor to the OrganizeMenuItem
         /// </summary>
-        public ToolStripMenuItem OrganizeMenuItem
-        {
-            get { return this.organizeMenuItem; }
-        }
+        public ToolStripMenuItem OrganizeMenuItem { get; private set; }
 
         /// <summary>
         /// Accessor to the ExtractMethodMenuItem
         /// </summary>
-        public ToolStripMenuItem ExtractMethodMenuItem
-        {
-            get { return this.extractMethodMenuItem; }
-        }
+        public ToolStripMenuItem ExtractMethodMenuItem { get; private set; }
 
         /// <summary>
         /// Accessor to the DelegateMenuItem
         /// </summary>
-        public ToolStripMenuItem DelegateMenuItem
-        {
-            get { return this.delegateMenuItem; }
-        }
+        public ToolStripMenuItem DelegateMenuItem { get; private set; }
 
         /// <summary>
         /// Accessor to the ExtractLocalVariableMenuItem
         /// </summary>
-        public ToolStripMenuItem ExtractLocalVariableMenuItem
-        {
-            get { return this.extractLocalVariableMenuItem; }
-        }
+        public ToolStripMenuItem ExtractLocalVariableMenuItem { get; private set; }
 
         /// <summary>
         /// Accessor to the CodeGeneratorMenuItem
         /// </summary>
-        public ToolStripMenuItem CodeGeneratorMenuItem
-        {
-            get { return this.generatorMenuItem; }
-        }
+        public ToolStripMenuItem CodeGeneratorMenuItem { get; private set; }
 
     }
 

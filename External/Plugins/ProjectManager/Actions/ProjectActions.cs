@@ -1,22 +1,21 @@
 using System;
 using System.Collections;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using ICSharpCode.SharpZipLib.Zip;
+using Ookii.Dialogs;
 using PluginCore;
-using PluginCore.Managers;
+using PluginCore.Helpers;
 using PluginCore.Localization;
+using PluginCore.Managers;
 using ProjectManager.Controls;
+using ProjectManager.Controls.TreeView;
 using ProjectManager.Helpers;
 using ProjectManager.Projects;
-using ProjectManager.Projects.AS2;
 using ProjectManager.Projects.AS3;
-using PluginCore.Helpers;
-using ICSharpCode.SharpZipLib.Zip;
-using ProjectManager.Controls.TreeView;
-using System.Text.RegularExpressions;
-using Ookii.Dialogs;
 
 namespace ProjectManager.Actions
 {
@@ -135,7 +134,7 @@ namespace ProjectManager.Actions
 
         private void PatchFbProject(AS3Project project)
         {
-            if (project == null || !project.MovieOptions.Platform.StartsWith("AIR")) return;
+            if (project == null || !project.MovieOptions.Platform.StartsWithOrdinal("AIR")) return;
 
             // We do this because the batch files cannot automatically detect the path changes caused by debug/release differences
             bool trace = project.TraceEnabled;
@@ -190,7 +189,7 @@ namespace ProjectManager.Actions
             {
                 bool excluded = false;
                 foreach (var excludedFile in excludedFiles)
-                    if (file.StartsWith(Path.Combine(projectPath, excludedFile)))
+                    if (file.StartsWithOrdinal(Path.Combine(projectPath, excludedFile)))
                     {
                         excluded = true;
                         break;
@@ -198,7 +197,7 @@ namespace ProjectManager.Actions
 
                 if (excluded) continue;
                 var fileDirectory = Path.GetDirectoryName(file).Replace(projectPath, string.Empty);
-                if (fileDirectory.StartsWith("\\")) fileDirectory = fileDirectory.Substring(1);
+                if (fileDirectory.StartsWith('\\')) fileDirectory = fileDirectory.Substring(1);
                 var folder = Path.Combine(path, fileDirectory);
                 if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
                 string newFile = Path.Combine(folder, Path.GetFileName(file));
@@ -222,7 +221,7 @@ namespace ProjectManager.Actions
             descriptor = Path.Combine(path, descriptor);
             var fileInfo = FileHelper.GetEncodingFileInfo(descriptor);
             string contents = Regex.Replace(fileInfo.Contents, "<content>\\[This value will be overwritten by (Flex|Flash) Builder in the output app.xml]</content>", "<content>" + Path.GetFileName(project.OutputPath) + "</content>");
-            FileHelper.WriteFile(descriptor, contents, System.Text.Encoding.GetEncoding(fileInfo.CodePage), fileInfo.ContainsBOM);
+            FileHelper.WriteFile(descriptor, contents, Encoding.GetEncoding(fileInfo.CodePage), fileInfo.ContainsBOM);
         }
 
         private void PatchProject(Project project)
@@ -256,7 +255,6 @@ namespace ProjectManager.Actions
                                 if (entry.IsFile)
                                 {
                                     Stream zip = zFile.GetInputStream(entry);
-                                    String ext = Path.GetExtension(newPath);
                                     String dirPath = Path.GetDirectoryName(newPath);
                                     if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
                                     FileStream extracted = new FileStream(newPath, FileMode.Create);
@@ -361,19 +359,20 @@ namespace ProjectManager.Actions
                 {
                     absPath = Path.Combine(dir, hidPath);
                     foreach (string cp in classPaths)
-                        if (absPath.StartsWith(cp))
+                        if (absPath.StartsWithOrdinal(cp))
                         {
                             hiddenPaths.Add(absPath);
                             break;
                         }
                 }
             }
-            else
+            else if (PlatformData.SupportedLanguages.ContainsKey("as3"))
             {
-                var targets = PluginCore.PlatformData.SupportedLanguages["as3"].Platforms;
+                var targets = PlatformData.SupportedLanguages["as3"].Platforms;
                 var flashPlatform = targets[PlatformData.FLASHPLAYER_PLATFORM];
                 version = flashPlatform.LastVersion.Value;
             }
+            else version = "11.0";
 
             DataEvent de;
             Hashtable info = new Hashtable();

@@ -1,16 +1,11 @@
 using System;
 using System.Text;
-using System.Reflection;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using PluginCore.Localization;
-using FlashDevelop.Docking;
-using FlashDevelop.Settings;
-using FlashDevelop.Helpers;
-using PluginCore.Managers;
-using PluginCore.Helpers;
-using ScintillaNet;
 using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using ScintillaNet;
 
 namespace FlashDevelop.Managers
 {
@@ -25,7 +20,7 @@ namespace FlashDevelop.Managers
             if (Globals.CurrentDocument == null) return;
             for (Int32 i = 0; i < count; i++)
             {
-                ToolStripItem item = (ToolStripItem)StripBarManager.Items[i];
+                ToolStripItem item = StripBarManager.Items[i];
                 String[] actions = ((ItemData)item.Tag).Flags.Split('+');
                 for (Int32 j = 0; j < actions.Length; j++)
                 {
@@ -40,7 +35,8 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static Boolean ValidateFlagAction(ToolStripItem item, String action)
         {
-            ITabbedDocument document = Globals.CurrentDocument;
+            IMainForm mainForm = PluginBase.MainForm;
+            ITabbedDocument document = mainForm.CurrentDocument;
             ScintillaControl sci = document.SciControl;
             if (action.Contains("!IsEditable"))
             {
@@ -74,13 +70,13 @@ namespace FlashDevelop.Managers
             {
                 if (!document.IsUntitled) return false;
             }
+            if (action.Contains("!HasBookmarks"))
+            {
+                if (document.HasBookmarks) return false;
+            }
             else if (action.Contains("HasBookmarks"))
             {
                 if (!document.HasBookmarks) return false;
-            }
-            else if (action.Contains("!HasBookmarks"))
-            {
-                if (document.HasBookmarks) return false;
             }
             if (action.Contains("!IsAloneInPane"))
             {
@@ -92,11 +88,11 @@ namespace FlashDevelop.Managers
             }
             if (action.Contains("!HasModified"))
             {
-                if (Globals.MainForm.HasModifiedDocuments) return false;
+                if (mainForm.HasModifiedDocuments) return false;
             }
             else if (action.Contains("HasModified"))
             {
-                if (!Globals.MainForm.HasModifiedDocuments) return false;
+                if (!mainForm.HasModifiedDocuments) return false;
             }
             if (action.Contains("!HasClosedDocs"))
             {
@@ -108,27 +104,40 @@ namespace FlashDevelop.Managers
             }
             if (action.Contains("!ProcessIsRunning"))
             {
-                if (Globals.MainForm.ProcessIsRunning) return false;
+                if (mainForm.ProcessIsRunning) return false;
             }
             else if (action.Contains("ProcessIsRunning"))
             {
-                if (!Globals.MainForm.ProcessIsRunning) return false;
+                if (!mainForm.ProcessIsRunning) return false;
             }
             if (action.Contains("!StandaloneMode"))
             {
-                if (Globals.MainForm.StandaloneMode) return false;
+                if (mainForm.StandaloneMode) return false;
             }
             else if (action.Contains("StandaloneMode"))
             {
-                if (!Globals.MainForm.StandaloneMode) return false;
+                if (!mainForm.StandaloneMode) return false;
             }
             if (action.Contains("!MultiInstanceMode"))
             {
-                if (Globals.MainForm.MultiInstanceMode) return false;
+                if (mainForm.MultiInstanceMode) return false;
             }
             else if (action.Contains("MultiInstanceMode"))
             {
-                if (!Globals.MainForm.MultiInstanceMode) return false;
+                if (!mainForm.MultiInstanceMode) return false;
+            }
+            if (action.Contains("!IsFullScreen"))
+            {
+                if (mainForm.IsFullScreen) return false;
+            }
+            else if (action.Contains("IsFullScreen"))
+            {
+                if (!mainForm.IsFullScreen) return false;
+            }
+            if (action.Contains("TracksBoolean"))
+            {
+                Boolean value = (Boolean)Globals.Settings.GetValue(((ItemData)item.Tag).Tag);
+                if (!value) return false;
             }
             if (sci != null)
             {
@@ -164,6 +173,31 @@ namespace FlashDevelop.Managers
                 {
                     if (sci.SelText.Length == 0) return false;
                 }
+                if (action.Contains("!SaveBOM"))
+                {
+                    if (document.SciControl.SaveBOM) return false;
+                }
+                else if (action.Contains("SaveBOM"))
+                {
+                    if (!document.SciControl.SaveBOM) return false;
+                }
+                if (action.Contains("!IsUnicode"))
+                {
+                    if (ScintillaManager.IsUnicode(document.SciControl.Encoding.CodePage)) return false;
+                }
+                else if (action.Contains("IsUnicode"))
+                {
+                    if (!ScintillaManager.IsUnicode(document.SciControl.Encoding.CodePage)) return false;
+                }
+                if (action.Contains("SyntaxIs?"))
+                {
+                    String[] chunks = action.Split('?');
+                    if (chunks.Length == 2)
+                    {
+                        String language = document.SciControl.ConfigurationLanguage;
+                        if (chunks[chunks.Length - 1] != language.ToUpper()) return false;
+                    }
+                }
                 if (action.Contains("IsActiveSyntax"))
                 {
                     String language = document.SciControl.ConfigurationLanguage;
@@ -175,42 +209,16 @@ namespace FlashDevelop.Managers
                     if (codepage == Encoding.Default.CodePage) codepage = 0;
                     if (((ItemData)item.Tag).Tag != codepage.ToString()) return false;
                 }
-                if (action.Contains("SaveBOM"))
-                {
-                    return document.SciControl.SaveBOM;
-                }
-                if (action.Contains("IsDefaultEncoding"))
-                {
-                    Int32 codepage = document.SciControl.Encoding.CodePage;
-                    return codepage == Encoding.Default.CodePage;
-                }
                 if (action.Contains("IsActiveEOL"))
                 {
                     Int32 eolMode = document.SciControl.EOLMode;
                     if (((ItemData)item.Tag).Tag != eolMode.ToString()) return false;
                 }
-                if (action.Contains("SyntaxIs?"))
+                if (action.Contains("IsDefaultEncoding"))
                 {
-                    String[] chunks = action.Split('?');
-                    if (chunks.Length == 2)
-                    {
-                        String language = document.SciControl.ConfigurationLanguage;
-                        if (chunks[chunks.Length - 1] != language.ToUpper()) return false;
-                    }
+                    Int32 codepage = document.SciControl.Encoding.CodePage;
+                    if (codepage != Encoding.Default.CodePage) return false;
                 }
-            }
-            if (action.Contains("!IsFullScreen"))
-            {
-                if (MainForm.Instance.IsFullScreen) return false;
-            }
-            else if (action.Contains("IsFullScreen"))
-            {
-                if (!MainForm.Instance.IsFullScreen) return false;
-            }
-            if (action.Contains("TracksBoolean"))
-            {
-                Boolean value = (Boolean)Globals.Settings.GetValue(((ItemData)item.Tag).Tag);
-                if (!value) return false;
             }
             return true;
         }
@@ -220,25 +228,25 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void ExecuteFlagAction(ToolStripItem item, String action, Boolean value)
         {
-            if (action.StartsWith("Check:"))
+            if (action.StartsWithOrdinal("Check:"))
             {
                 if (item is ToolStripMenuItem)
                 {
                     ((ToolStripMenuItem)item).Checked = value;
                 }
             }
-            else if (action.StartsWith("Uncheck:"))
+            else if (action.StartsWithOrdinal("Uncheck:"))
             {
                 if (item is ToolStripMenuItem)
                 {
                     ((ToolStripMenuItem)item).Checked = !value;
                 }
             }
-            else if (action.StartsWith("Enable:"))
+            else if (action.StartsWithOrdinal("Enable:"))
             {
                 item.Enabled = value;
             }
-            else if (action.StartsWith("Disable:"))
+            else if (action.StartsWithOrdinal("Disable:"))
             {
                 item.Enabled = !value;
             }
@@ -286,7 +294,6 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                ToolStripMenuItem reopenMenu = (ToolStripMenuItem)StripBarManager.FindMenuItem("ReopenMenu");
                 if (Globals.PreviousDocuments.Contains(file))
                 {
                     Globals.PreviousDocuments.Remove(file);
@@ -308,25 +315,42 @@ namespace FlashDevelop.Managers
             ITabbedDocument document = Globals.CurrentDocument;
             if (document != null && document.IsEditable)
             {
-                Boolean hasBOM = document.SciControl.SaveBOM;
                 Int32 codepage = document.SciControl.Encoding.CodePage;
-                if (codepage == Encoding.UTF8.CodePage)
+                EncodingFileInfo info = FileHelper.GetEncodingFileInfo(document.FileName);
+                if (codepage == info.CodePage)
                 {
-                    return GetLabelAsPlainText("Label.UTF8", hasBOM);
+                    if (ScintillaManager.IsUnicode(info.CodePage))
+                    {
+                        String name = "Unicode (" + info.Charset + ")";
+                        return info.ContainsBOM ? name + " (BOM)" : name;
+                    }
+                    else
+                    {
+                        String name = TextHelper.GetStringWithoutMnemonics("Label.8Bits");
+                        return name + " (" + info.Charset + ")";
+                    }
                 }
-                else if (codepage == Encoding.UTF7.CodePage)
+                else // Opened in different encoding...
                 {
-                    return GetLabelAsPlainText("Label.UTF7", hasBOM);
+                    Boolean hasBOM = document.SciControl.SaveBOM;
+                    if (codepage == Encoding.UTF8.CodePage)
+                    {
+                        return GetLabelAsPlainText("Label.UTF8", true, hasBOM);
+                    }
+                    else if (codepage == Encoding.UTF7.CodePage)
+                    {
+                        return GetLabelAsPlainText("Label.UTF7", true, hasBOM);
+                    }
+                    else if (codepage == Encoding.BigEndianUnicode.CodePage)
+                    {
+                        return GetLabelAsPlainText("Label.BigEndian", true, hasBOM);
+                    }
+                    else if (codepage == Encoding.Unicode.CodePage)
+                    {
+                        return GetLabelAsPlainText("Label.LittleEndian", true, hasBOM);
+                    }
+                    else return GetLabelAsPlainText("Label.8Bits", false, false);
                 }
-                else if (codepage == Encoding.BigEndianUnicode.CodePage)
-                {
-                    return GetLabelAsPlainText("Label.BigEndian", hasBOM);
-                }
-                else if (codepage == Encoding.Unicode.CodePage)
-                {
-                    return GetLabelAsPlainText("Label.LittleEndian", hasBOM);
-                }
-                else return GetLabelAsPlainText("Label.8Bits", false);
             }
             else return TextHelper.GetString("Info.Unknown");
         }
@@ -334,9 +358,10 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets a label as plain text by removing the accelerator key
         /// </summary>
-        public static String GetLabelAsPlainText(String name, Boolean hasBOM)
+        public static String GetLabelAsPlainText(String name, Boolean unicode, Boolean hasBOM)
         {
-            String label = TextHelper.GetString(name).Replace("&", "");
+            String label = TextHelper.GetStringWithoutMnemonics(name);
+            if (unicode) label = "Unicode (" + label.ToLower() + ")";
             return hasBOM ? label + " (BOM)" : label;
         }
 

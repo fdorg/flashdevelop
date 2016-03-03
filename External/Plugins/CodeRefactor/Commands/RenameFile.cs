@@ -1,14 +1,12 @@
-﻿using ASCompletion.Context;
-using ASCompletion.Model;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Windows.Forms;
 using CodeRefactor.Provider;
 using PluginCore.FRService;
 using PluginCore.Helpers;
 using PluginCore.Localization;
-using ScintillaNet;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Windows.Forms;
+using PluginCore.Managers;
 
 namespace CodeRefactor.Commands
 {
@@ -63,7 +61,7 @@ namespace CodeRefactor.Commands
             if (FileHelper.ConfirmOverwrite(newPath))
             {
                 FileHelper.ForceMove(oldPath, newPath);
-                PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, newPath);
+                DocumentManager.MoveDocuments(oldPath, newPath);
             }
         }
 

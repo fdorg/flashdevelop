@@ -1,13 +1,9 @@
 using System;
-using System.Text;
 using System.Drawing;
-using System.Reflection;
-using System.Collections;
 using System.ComponentModel;
 using System.Collections.Generic;
 using PluginCore.Localization;
 using System.Windows.Forms;
-using PluginCore.Managers;
 using PluginCore;
 
 namespace FlashDevelop.Settings
@@ -22,15 +18,13 @@ namespace FlashDevelop.Settings
         private ScintillaNet.Enums.FoldFlag foldFlags = ScintillaNet.Enums.FoldFlag.LineAfterContracted;
         private ScintillaNet.Enums.SmartIndent smartIndentType = ScintillaNet.Enums.SmartIndent.CPP;
         private ScintillaNet.Enums.VirtualSpaceMode virtualSpaceMode = ScintillaNet.Enums.VirtualSpaceMode.RectangularSelection;
-        private UiRenderMode uiRenderMode = UiRenderMode.Professional;
-        private CodingStyle codingStyle = CodingStyle.BracesAfterLine;
         private CommentBlockStyle commentBlockStyle = CommentBlockStyle.Indented;
-        private FlatStyle comboBoxFlatStyle = FlatStyle.Popup;
-        private Font consoleFont = new Font("Courier New", 8.75F);
-        private Font defaultFont = new Font("Tahoma", 8.25F);
+        private CodingStyle codingStyle = CodingStyle.BracesAfterLine;
         private String customProjectsDir = String.Empty;
         private String customTemplateDir = String.Empty;
         private String customSnippetDir = String.Empty;
+        private Font consoleFont = new Font("Courier New", 8.75F);
+        private Font defaultFont = new Font("Tahoma", 8.25F);
         private Int32 tabWidth = 4;
         private Int32 indentSize = 4;
         private Int32 caretPeriod = 500;
@@ -46,10 +40,9 @@ namespace FlashDevelop.Settings
         private List<String> previousDocuments = new List<String>();
         private List<String> disabledPlugins = new List<String>();
         private String latestDialogPath = Application.StartupPath;
-        private String defaultFileExtension = "as";
+        private String defaultFileExtension = DistroConfig.DISTRIBUTION_EXT;
         private Boolean confirmOnExit = false;
         private Boolean keepIndentTabs = false;
-        private Boolean useSystemColors = false;
         private Boolean disableFindOptionSync = false;
         private Boolean disableSimpleQuickFind = false;
         private Boolean disableTabDifferentiation = false;
@@ -58,7 +51,6 @@ namespace FlashDevelop.Settings
         private Boolean saveUnicodeWithBOM = false;
         private Boolean disableFindTextUpdating = false;
         private Boolean redirectFilesResults = true;
-        private Boolean useListViewGrouping = true;
         private Boolean applyFileExtension = true;
         private Boolean restoreFileStates = true;
         private Boolean restoreFileSession = true;
@@ -103,7 +95,6 @@ namespace FlashDevelop.Settings
         private Boolean uiWrapList = false;
         private Boolean uiDisableSmartMatch = false;
         private String uiInsertionTriggers = "";
-
     }
 
 }

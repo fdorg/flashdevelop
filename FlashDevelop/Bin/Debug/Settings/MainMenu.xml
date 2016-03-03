@@ -18,7 +18,7 @@
 		<menu label="Label.Modify" name="ModifyMenu" flags="Enable:IsEditable">
 			<button label="Label.Reload" click="Reload" shortcut="Control|Shift|R" flags="Enable:IsEditable|!IsUntitled" image="66" />
 			<button label="Label.Duplicate" click="Duplicate" shortcut="Control|Shift|N" flags="Enable:IsEditable" image="292" />
-			<button label="Label.Revert" click="Revert" shortcut="Control|Shift|T" flags="Enable:IsEditable|CanUndo" image="73" />
+			<button label="Label.Revert" click="Revert" shortcut="Control|Shift|M" flags="Enable:IsEditable|CanUndo" image="73" />
 		</menu>
 		<button label="Label.Open" click="Open" shortcut="Control|O" image="214" />
 		<separator />
@@ -34,7 +34,7 @@
 		<button label="Label.CloseAll" click="CloseAll" shortcut="Control|Shift|V" flags="Enable:!IsAloneInPane" />
 		<separator />
 		<menu label="Label.Encoding" name="EncodingMenu" flags="Enable:IsEditable">
-			<button label="Label.8Bits" click="ChangeEncoding" tag="0" flags="Check:IsEditable|IsActiveEncoding" />
+			<button label="Label.8Bits" click="ChangeEncoding" tag="0" flags="Check:IsEditable|!IsUnicode" />
 			<button label="Label.BigEndian" click="ChangeEncoding" tag="1201" flags="Check:IsEditable|IsActiveEncoding" />
 			<button label="Label.LittleEndian" click="ChangeEncoding" tag="1200" flags="Check:IsEditable|IsActiveEncoding" />
 			<button label="Label.UTF8" click="ChangeEncoding" tag="65001" flags="Check:IsEditable|IsActiveEncoding" />
@@ -42,13 +42,6 @@
 			<separator />
 			<button label="Label.SaveBOM" click="ToggleSaveBOM" flags="Check:IsEditable|SaveBOM+Disable:IsDefaultEncoding" />
 			<separator />
-			<menu label="Label.ConvertTextTo" name="ConvertToMenu" flags="Enable:IsEditable">
-				<button label="Label.8Bits" click="ConvertEncoding" tag="0" image="559" />
-				<button label="Label.BigEndian" click="ConvertEncoding" tag="1201" />
-				<button label="Label.LittleEndian" click="ConvertEncoding" tag="1200" />
-				<button label="Label.UTF8" click="ConvertEncoding" tag="65001" />
-				<button label="Label.UTF7" click="ConvertEncoding" tag="65000" />
-			</menu>
 			<menu label="Label.OpenFilesIn" name="OpenInMenu" flags="Enable:IsEditable" image="559">
 				<button label="Label.8Bits" click="OpenIn" tag="0" image="559" />
 				<button label="Label.BigEndian" click="OpenIn" tag="1201" />
@@ -179,8 +172,8 @@
 	</menu>
 	<menu label="Label.Help" name="HelpMenu">
 		<button label="Label.ReleaseNotes" click="Browse" tag="$(AppDir)\Docs\index.html" image="222" />
-		<button label="Label.FDDocs" click="Browse" tag="http://www.flashdevelop.org/wikidocs/" image="95" />
-		<button label="Label.FDHome" click="Browse" tag="http://www.flashdevelop.org/" image="224" />
+		<button label="Label.FDDocs" click="ShowHelp" image="95" />
+		<button label="Label.FDHome" click="ShowHome" image="224" />
 		<button label="Label.CheckUpdates" click="CheckUpdates" image="181|8|0|4" />
 		<separator />
 		<menu label="Label.TechnicalSpecifications" name="TechSpecsMenu">

@@ -1,14 +1,11 @@
 using System;
 using System.IO;
-using System.Text;
-using Microsoft.Win32;
-using System.Security;
-using System.Security.Principal;
 using System.Security.AccessControl;
-using System.Runtime.InteropServices;
-using System.Collections.Generic;
+using System.Security.Principal;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using PluginCore.Managers;
 
 namespace PluginCore.Helpers
@@ -119,6 +116,17 @@ namespace PluginCore.Helpers
             get
             {
                 return Path.Combine(BaseDir, "Settings");
+            }
+        }
+
+        /// <summary>
+        /// Path to the custom shortcut directory
+        /// </summary>
+        public static String ShortcutsDir
+        {
+            get
+            {
+                return Path.Combine(SettingDir, "Shortcuts");
             }
         }
 
@@ -249,9 +257,9 @@ namespace PluginCore.Helpers
         /// </summary>
         public static String ResolvePath(String path, String relativeTo)
         {
-            if (path == null || path.Length == 0) return null;
-            Boolean isPathNetworked = path.StartsWith("\\\\") || path.StartsWith("//");
-            Boolean isPathAbsSlashed = (path.StartsWith("\\") || path.StartsWith("/")) && !isPathNetworked;
+            if (string.IsNullOrEmpty(path)) return null;
+            Boolean isPathNetworked = path.StartsWithOrdinal("\\\\") || path.StartsWithOrdinal("//");
+            Boolean isPathAbsSlashed = (path.StartsWith('\\') || path.StartsWith('/')) && !isPathNetworked;
             if (isPathAbsSlashed) path = Path.GetPathRoot(AppDir) + path.Substring(1);
             if (Path.IsPathRooted(path) || isPathNetworked) return path;
             String resolvedPath;

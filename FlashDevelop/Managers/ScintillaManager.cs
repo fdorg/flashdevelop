@@ -1,34 +1,77 @@
 using System;
-using System.IO;
-using System.Text;
 using System.Drawing;
+using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using ScintillaNet.Configuration;
-using PluginCore.Localization;
-using FlashDevelop.Settings;
-using FlashDevelop.Utilities;
 using FlashDevelop.Helpers;
-using PluginCore.Managers;
-using PluginCore.Utilities;
+using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
 using ScintillaNet;
-using PluginCore;
+using ScintillaNet.Configuration;
+using ScintillaNet.Enums;
+using Keys = System.Windows.Forms.Keys;
 
 namespace FlashDevelop.Managers
 {
     class ScintillaManager
     {
-        public static Scintilla SciConfig;
-        public static ConfigurationUtility SciConfigUtil;
         public static Bitmap Bookmark;
+        private static bool initialized;
+        private static Scintilla sciConfig;
+        private static ConfigurationUtility sciConfigUtil;
+        private static readonly Object initializationLock = new Object();
+        public static event Action ConfigurationLoaded;
 
         static ScintillaManager()
         {
             Bookmark = ScaleHelper.Scale(new Bitmap(ResourceHelper.GetStream("BookmarkIcon.png")));
-            LoadConfiguration();
+        }
+
+        /// <summary>
+        /// Initializes the config loading
+        /// </summary>
+        private static void Initialize()
+        {
+            if (!initialized)
+            {
+                lock (initializationLock)
+                {
+                    if (!initialized)
+                    {
+                        LoadConfiguration();
+                        initialized = true;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the SciConfig and initializes
+        /// </summary>
+        public static Scintilla SciConfig
+        {
+            get
+            {
+                Initialize();
+                return sciConfig;
+            }
+        }
+
+        /// <summary>
+        /// Gets the SciConfigUtil and initializes
+        /// </summary>
+        public static ConfigurationUtility SciConfigUtil
+        {
+            get
+            {
+                Initialize();
+                return sciConfigUtil;
+            }
         }
 
         /// <summary>
@@ -36,11 +79,11 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void LoadConfiguration()
         {
-            SciConfigUtil = new ConfigurationUtility(Assembly.GetExecutingAssembly());
+            sciConfigUtil = new ConfigurationUtility(Assembly.GetExecutingAssembly());
             String[] configFiles = Directory.GetFiles(Path.Combine(PathHelper.SettingDir, "Languages"), "*.xml");
-            SciConfig = (Scintilla)SciConfigUtil.LoadConfiguration(configFiles);
-            ScintillaControl.Configuration = SciConfig;
-            MainForm.Instance.ApplyAllSettings();
+            sciConfig = (Scintilla)sciConfigUtil.LoadConfiguration(configFiles);
+            ScintillaControl.Configuration = sciConfig;
+            if (ConfigurationLoaded != null) ConfigurationLoaded();
         }
 
         /// <summary>
@@ -119,12 +162,15 @@ namespace FlashDevelop.Managers
         }
 
         /// <summary>
-        /// Selects a correct codepage for the editor
+        /// Detects from codepage if the encoding is unicode
         /// </summary>
-        public static Int32 SelectCodePage(Int32 codepage)
+        public static Boolean IsUnicode(Int32 codepage)
         {
-            if (codepage == 65001 || codepage == 1201 || codepage == 1200) return 65001;
-            else return 0; // Disable multibyte support
+            return (codepage == Encoding.UTF7.CodePage
+                || codepage == Encoding.UTF8.CodePage
+                || codepage == Encoding.UTF32.CodePage
+                || codepage == Encoding.BigEndianUnicode.CodePage
+                || codepage == Encoding.Unicode.CodePage);
         }
 
         /// <summary>
@@ -192,33 +238,34 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                sci.CaretPeriod = Globals.Settings.CaretPeriod;
-                sci.CaretWidth = Globals.Settings.CaretWidth;
-                sci.EOLMode = LineEndDetector.DetectNewLineMarker(sci.Text, (Int32)Globals.Settings.EOLMode);
-                sci.IsBraceMatching = Globals.Settings.BraceMatchingEnabled;
-                sci.UseHighlightGuides = !Globals.Settings.HighlightGuide;
-                sci.Indent = Globals.Settings.IndentSize;
-                sci.SmartIndentType = Globals.Settings.SmartIndentType;
-                sci.IsBackSpaceUnIndents = Globals.Settings.BackSpaceUnIndents;
-                sci.IsCaretLineVisible = Globals.Settings.CaretLineVisible;
-                sci.IsIndentationGuides = Globals.Settings.ViewIndentationGuides;
-                sci.IndentView = Globals.Settings.IndentView;
-                sci.IsTabIndents = Globals.Settings.TabIndents;
-                sci.IsUseTabs = Globals.Settings.UseTabs;
-                sci.IsViewEOL = Globals.Settings.ViewEOL;
-                sci.ScrollWidth = Globals.Settings.ScrollWidth;
-                sci.TabWidth = Globals.Settings.TabWidth;
-                sci.ViewWS = Convert.ToInt32(Globals.Settings.ViewWhitespace);
-                sci.WrapMode = Convert.ToInt32(Globals.Settings.WrapText);
-                sci.SetProperty("fold", Convert.ToInt32(Globals.Settings.UseFolding).ToString());
-                sci.SetProperty("fold.comment", Convert.ToInt32(Globals.Settings.FoldComment).ToString());
-                sci.SetProperty("fold.compact", Convert.ToInt32(Globals.Settings.FoldCompact).ToString());
-                sci.SetProperty("fold.preprocessor", Convert.ToInt32(Globals.Settings.FoldPreprocessor).ToString());
-                sci.SetProperty("fold.at.else", Convert.ToInt32(Globals.Settings.FoldAtElse).ToString());
-                sci.SetProperty("fold.html", Convert.ToInt32(Globals.Settings.FoldHtml).ToString());
+                ISettings settings = PluginBase.Settings;
+                sci.CaretPeriod = settings.CaretPeriod;
+                sci.CaretWidth = settings.CaretWidth;
+                sci.EOLMode = LineEndDetector.DetectNewLineMarker(sci.Text, (Int32)settings.EOLMode);
+                sci.IsBraceMatching = settings.BraceMatchingEnabled;
+                sci.UseHighlightGuides = !settings.HighlightGuide;
+                sci.Indent = settings.IndentSize;
+                sci.SmartIndentType = settings.SmartIndentType;
+                sci.IsBackSpaceUnIndents = settings.BackSpaceUnIndents;
+                sci.IsCaretLineVisible = settings.CaretLineVisible;
+                sci.IsIndentationGuides = settings.ViewIndentationGuides;
+                sci.IndentView = settings.IndentView;
+                sci.IsTabIndents = settings.TabIndents;
+                sci.IsUseTabs = settings.UseTabs;
+                sci.IsViewEOL = settings.ViewEOL;
+                sci.ScrollWidth = settings.ScrollWidth;
+                sci.TabWidth = settings.TabWidth;
+                sci.ViewWS = Convert.ToInt32(settings.ViewWhitespace);
+                sci.WrapMode = Convert.ToInt32(settings.WrapText);
+                sci.SetProperty("fold", Convert.ToInt32(settings.UseFolding).ToString());
+                sci.SetProperty("fold.comment", Convert.ToInt32(settings.FoldComment).ToString());
+                sci.SetProperty("fold.compact", Convert.ToInt32(settings.FoldCompact).ToString());
+                sci.SetProperty("fold.preprocessor", Convert.ToInt32(settings.FoldPreprocessor).ToString());
+                sci.SetProperty("fold.at.else", Convert.ToInt32(settings.FoldAtElse).ToString());
+                sci.SetProperty("fold.html", Convert.ToInt32(settings.FoldHtml).ToString());
                 sci.SetProperty("lexer.cpp.track.preprocessor", "0");
-                sci.SetVirtualSpaceOptions((Int32)Globals.Settings.VirtualSpaceMode);
-                sci.SetFoldFlags((Int32)Globals.Settings.FoldFlags);
+                sci.SetVirtualSpaceOptions((Int32)settings.VirtualSpaceMode);
+                sci.SetFoldFlags((Int32)settings.FoldFlags);
                 /**
                 * Set if themes should colorize the first margin
                 */
@@ -226,32 +273,32 @@ namespace FlashDevelop.Managers
                 if (language != null && language.editorstyle != null)
                 {
                     Boolean colorizeMarkerBack = language.editorstyle.ColorizeMarkerBack;
-                    if (colorizeMarkerBack) sci.SetMarginTypeN(0, (Int32)ScintillaNet.Enums.MarginType.Fore);
-                    else sci.SetMarginTypeN(0, (Int32)ScintillaNet.Enums.MarginType.Symbol);
+                    if (colorizeMarkerBack) sci.SetMarginTypeN(0, (Int32)MarginType.Fore);
+                    else sci.SetMarginTypeN(0, (Int32)MarginType.Symbol);
                 }
                 /**
                 * Set correct line number margin width
                 */
-                Boolean viewLineNumbers = Globals.Settings.ViewLineNumbers;
+                Boolean viewLineNumbers = settings.ViewLineNumbers;
                 if (viewLineNumbers) sci.SetMarginWidthN(1, ScaleArea(sci, 36));
                 else sci.SetMarginWidthN(1, 0);
                 /**
                 * Set correct bookmark margin width
                 */
-                Boolean viewBookmarks = Globals.Settings.ViewBookmarks;
+                Boolean viewBookmarks = settings.ViewBookmarks;
                 if (viewBookmarks) sci.SetMarginWidthN(0, ScaleArea(sci, 14));
                 else sci.SetMarginWidthN(0, 0);
                 /**
                 * Set correct folding margin width
                 */
-                Boolean useFolding = Globals.Settings.UseFolding;
+                Boolean useFolding = settings.UseFolding;
                 if (!useFolding && !viewBookmarks && !viewLineNumbers) sci.SetMarginWidthN(2, 0);
                 else if (useFolding) sci.SetMarginWidthN(2, ScaleArea(sci, 15));
                 else sci.SetMarginWidthN(2, ScaleArea(sci, 2));
                 /**
                 * Adjust the print margin
                 */
-                sci.EdgeColumn = Globals.Settings.PrintMarginColumn;
+                sci.EdgeColumn = settings.PrintMarginColumn;
                 if (sci.EdgeColumn > 0) sci.EdgeMode = 1;
                 else sci.EdgeMode = 0;
                 /**
@@ -301,6 +348,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static ScintillaControl CreateControl(String file, String text, Int32 codepage)
         {
+            Initialize();
             ScintillaControl sci = new ScintillaControl();
             sci.AutoCSeparator = 32;
             sci.AutoCTypeSeparator = 63;
@@ -312,7 +360,7 @@ namespace FlashDevelop.Managers
             sci.ControlCharSymbol = 0;
             sci.CurrentPos = 0;
             sci.CursorType = -1;
-            sci.Dock = System.Windows.Forms.DockStyle.Fill;
+            sci.Dock = DockStyle.Fill;
             sci.EndAtLastLine = 0;
             sci.EdgeColumn = 0;
             sci.EdgeMode = 0;
@@ -325,56 +373,56 @@ namespace FlashDevelop.Managers
             sci.IsTwoPhaseDraw = true;
             sci.LayoutCache = 1;
             sci.Lexer = 3;
-            sci.Location = new System.Drawing.Point(0, 0);
+            sci.Location = new Point(0, 0);
             sci.MarginLeft = 5;
             sci.MarginRight = 5;
-            sci.ModEventMask = (Int32)ScintillaNet.Enums.ModificationFlags.InsertText | (Int32)ScintillaNet.Enums.ModificationFlags.DeleteText | (Int32)ScintillaNet.Enums.ModificationFlags.RedoPerformed | (Int32)ScintillaNet.Enums.ModificationFlags.UndoPerformed;
+            sci.ModEventMask = (Int32)ModificationFlags.InsertText | (Int32)ModificationFlags.DeleteText | (Int32)ModificationFlags.RedoPerformed | (Int32)ModificationFlags.UndoPerformed;
             sci.MouseDwellTime = ScintillaControl.MAXDWELLTIME;
             sci.Name = "sci";
             sci.PasteConvertEndings = false;
-            sci.PrintColourMode = (Int32)ScintillaNet.Enums.PrintOption.Normal;
-            sci.PrintWrapMode = (Int32)ScintillaNet.Enums.Wrap.Word;
+            sci.PrintColourMode = (Int32)PrintOption.Normal;
+            sci.PrintWrapMode = (Int32)Wrap.Word;
             sci.PrintMagnification = 0;
             sci.SearchFlags = 0;
             sci.SelectionEnd = 0;
             sci.SelectionMode = 0;
             sci.SelectionStart = 0;
-            sci.SmartIndentType = ScintillaNet.Enums.SmartIndent.CPP;
+            sci.SmartIndentType = SmartIndent.CPP;
             sci.Status = 0;
             sci.StyleBits = 7;
             sci.TabIndex = 0;
             sci.TargetEnd = 0;
             sci.TargetStart = 0;
-            sci.WrapStartIndent = Globals.Settings.IndentSize;
-            sci.WrapVisualFlagsLocation = (Int32)ScintillaNet.Enums.WrapVisualLocation.EndByText;
-            sci.WrapVisualFlags = (Int32)ScintillaNet.Enums.WrapVisualFlag.End;
+            sci.WrapStartIndent = PluginBase.Settings.IndentSize;
+            sci.WrapVisualFlagsLocation = (Int32)WrapVisualLocation.EndByText;
+            sci.WrapVisualFlags = (Int32)WrapVisualFlag.End;
             sci.XOffset = 0;
             sci.ZoomLevel = 0;
             sci.UsePopUp(false);
-            sci.SetMarginTypeN(0, (Int32)ScintillaNet.Enums.MarginType.Symbol);
+            sci.SetMarginTypeN(0, (Int32)MarginType.Symbol);
             sci.SetMarginMaskN(0, MarkerManager.MARKERS);
             sci.SetMarginWidthN(0, ScaleHelper.Scale(14));
-            sci.SetMarginTypeN(1, (Int32)ScintillaNet.Enums.MarginType.Number);
-            sci.SetMarginMaskN(1, (Int32)ScintillaNet.Enums.MarginType.Symbol);
-            sci.SetMarginTypeN(2, (Int32)ScintillaNet.Enums.MarginType.Symbol);
+            sci.SetMarginTypeN(1, (Int32)MarginType.Number);
+            sci.SetMarginMaskN(1, (Int32)MarginType.Symbol);
+            sci.SetMarginTypeN(2, (Int32)MarginType.Symbol);
             sci.SetMarginMaskN(2, -33554432 | 1 << 2);
             sci.MarginSensitiveN(2, true);
             sci.SetMultiSelectionTyping(true);
             sci.MarkerDefineRGBAImage(0, Bookmark);
-            sci.MarkerDefine(2, ScintillaNet.Enums.MarkerSymbol.Fullrect);
-            sci.MarkerDefine((Int32)ScintillaNet.Enums.MarkerOutline.Folder, ScintillaNet.Enums.MarkerSymbol.BoxPlus);
-            sci.MarkerDefine((Int32)ScintillaNet.Enums.MarkerOutline.FolderOpen, ScintillaNet.Enums.MarkerSymbol.BoxMinus);
-            sci.MarkerDefine((Int32)ScintillaNet.Enums.MarkerOutline.FolderSub, ScintillaNet.Enums.MarkerSymbol.VLine);
-            sci.MarkerDefine((Int32)ScintillaNet.Enums.MarkerOutline.FolderTail, ScintillaNet.Enums.MarkerSymbol.LCorner);
-            sci.MarkerDefine((Int32)ScintillaNet.Enums.MarkerOutline.FolderEnd, ScintillaNet.Enums.MarkerSymbol.BoxPlusConnected);
-            sci.MarkerDefine((Int32)ScintillaNet.Enums.MarkerOutline.FolderOpenMid, ScintillaNet.Enums.MarkerSymbol.BoxMinusConnected);
-            sci.MarkerDefine((Int32)ScintillaNet.Enums.MarkerOutline.FolderMidTail, ScintillaNet.Enums.MarkerSymbol.TCorner);
-            sci.SetXCaretPolicy((Int32)(ScintillaNet.Enums.CaretPolicy.Jumps | ScintillaNet.Enums.CaretPolicy.Even), 30);
-            sci.SetYCaretPolicy((Int32)(ScintillaNet.Enums.CaretPolicy.Jumps | ScintillaNet.Enums.CaretPolicy.Even), 2);
-            sci.ScrollWidthTracking = (Globals.Settings.ScrollWidth == 3000);
-            sci.CodePage = SelectCodePage(codepage);
+            sci.MarkerDefine(2, MarkerSymbol.Fullrect);
+            sci.MarkerDefine((Int32)MarkerOutline.Folder, MarkerSymbol.BoxPlus);
+            sci.MarkerDefine((Int32)MarkerOutline.FolderOpen, MarkerSymbol.BoxMinus);
+            sci.MarkerDefine((Int32)MarkerOutline.FolderSub, MarkerSymbol.VLine);
+            sci.MarkerDefine((Int32)MarkerOutline.FolderTail, MarkerSymbol.LCorner);
+            sci.MarkerDefine((Int32)MarkerOutline.FolderEnd, MarkerSymbol.BoxPlusConnected);
+            sci.MarkerDefine((Int32)MarkerOutline.FolderOpenMid, MarkerSymbol.BoxMinusConnected);
+            sci.MarkerDefine((Int32)MarkerOutline.FolderMidTail, MarkerSymbol.TCorner);
+            sci.SetXCaretPolicy((Int32)CaretPolicy.Even, 0); // Match edge...
+            sci.SetYCaretPolicy((Int32)CaretPolicy.Even, 0); // Match edge...
+            sci.ScrollWidthTracking = (PluginBase.Settings.ScrollWidth == 3000);
+            sci.CodePage = 65001; // Editor handles text as UTF-8
             sci.Encoding = Encoding.GetEncoding(codepage);
-            sci.SaveBOM = (sci.CodePage == 65001) && Globals.Settings.SaveUnicodeWithBOM;
+            sci.SaveBOM = IsUnicode(codepage) && PluginBase.Settings.SaveUnicodeWithBOM;
             sci.Text = text; sci.FileName = file; // Set text and save file name
             sci.Modified += new ModifiedHandler(Globals.MainForm.OnScintillaControlModified);
             sci.MarginClick += new MarginClickHandler(Globals.MainForm.OnScintillaControlMarginClick);
@@ -382,8 +430,8 @@ namespace FlashDevelop.Managers
             sci.URIDropped += new URIDroppedHandler(Globals.MainForm.OnScintillaControlDropFiles);
             sci.ModifyAttemptRO += new ModifyAttemptROHandler(Globals.MainForm.OnScintillaControlModifyRO);
             String untitledFileStart = TextHelper.GetString("Info.UntitledFileStart");
-            if (!file.StartsWith(untitledFileStart)) sci.IsReadOnly = FileHelper.FileIsReadOnly(file);
-            sci.SetFoldFlags((Int32)Globals.Settings.FoldFlags);
+            if (!file.StartsWithOrdinal(untitledFileStart)) sci.IsReadOnly = FileHelper.FileIsReadOnly(file);
+            sci.SetFoldFlags((Int32)PluginBase.Settings.FoldFlags);
             sci.EmptyUndoBuffer(); ApplySciSettings(sci);
             UITools.Manager.ListenTo(sci);
             return sci;

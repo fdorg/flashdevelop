@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
 using System.Collections;
+using System.Collections.Generic;
+using System.Windows.Forms;
 using PluginCore;
+using PluginCore.Localization;
 
 namespace AS3Context.Controls
 {
@@ -32,7 +32,7 @@ namespace AS3Context.Controls
             listView.ColumnClick += new ColumnClickEventHandler(listView_ColumnClick);
 
             // action
-            viewObjectsItem = new ToolStripMenuItem(PluginCore.Localization.TextHelper.GetString("Label.ViewObjectsItem"));
+            viewObjectsItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewObjectsItem"));
             viewObjectsItem.Click += new EventHandler(onViewObjects);
 
             listView.ContextMenuStrip = new ContextMenuStrip();

@@ -1,17 +1,17 @@
 using System;
-using System.IO;
-using System.Drawing;
-using System.Diagnostics;
-using System.Windows.Forms;
-using System.ComponentModel;
 using System.Collections.Generic;
-using WeifenLuo.WinFormsUI.Docking;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+using PluginCore;
+using PluginCore.Bridge;
+using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
-using PluginCore.Helpers;
-using PluginCore.Bridge;
-using PluginCore;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace FileExplorer
 {
@@ -127,7 +127,7 @@ namespace FileExplorer
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             switch (e.Type)
             {
@@ -193,9 +193,9 @@ namespace FileExplorer
                 Dictionary<string, string> config = ConfigHelper.Parse(configFilename, true).Flatten();
                 if (!config.ContainsKey("explorer")) config["explorer"] = explorerAction;
                 String explorer = PluginBase.MainForm.ProcessArgString(config["explorer"]);
-                int start = explorer.StartsWith("\"") ? explorer.IndexOf("\"", 2) : 0;
-                int p = explorer.IndexOf(" ", start);
-                if (!path.StartsWith("\"")) path = "\"" + path + "\"";
+                int start = explorer.StartsWith('\"') ? explorer.IndexOfOrdinal("\"", 2) : 0;
+                int p = explorer.IndexOfOrdinal(" ", start);
+                if (!path.StartsWith('\"')) path = "\"" + path + "\"";
                 // Start the process...
                 ProcessStartInfo psi = new ProcessStartInfo(explorer.Substring(0, p));
                 psi.Arguments = String.Format(explorer.Substring(p + 1), path);
@@ -239,10 +239,9 @@ namespace FileExplorer
                 Dictionary<string, string> config = ConfigHelper.Parse(configFilename, true).Flatten();
                 if (!config.ContainsKey("cmd")) config["cmd"] = cmdAction;
                 String cmd = PluginBase.MainForm.ProcessArgString(config["cmd"]).Replace("{0}", path);
-                int start = cmd.StartsWith("\"") ? cmd.IndexOf("\"", 2) : 0;
-                int p = cmd.IndexOf(" ", start);
-                string quoted = !path.StartsWith("\"") ? path = "\"" + path + "\"" : path;
-                if (path.StartsWith("\"") && path.Length > 2) path = path.Substring(1, path.Length - 2);
+                int start = cmd.StartsWith('\"') ? cmd.IndexOfOrdinal("\"", 2) : 0;
+                int p = cmd.IndexOfOrdinal(" ", start);
+                if (path.StartsWith('\"') && path.Length > 2) path = path.Substring(1, path.Length - 2);
                 // Start the process...
                 ProcessStartInfo psi = new ProcessStartInfo(p > 0 ? cmd.Substring(0, p) : cmd);
                 if (p > 0) psi.Arguments = String.Format(cmd.Substring(p + 1), path);
@@ -328,7 +327,7 @@ namespace FileExplorer
         /// <summary>
         /// Opens the plugin panel if closed
         /// </summary>
-        public void OpenPanel(Object sender, System.EventArgs e)
+        public void OpenPanel(Object sender, EventArgs e)
         {
             this.pluginPanel.Show();
         }

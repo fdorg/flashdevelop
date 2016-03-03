@@ -17,8 +17,6 @@ namespace FlashDebugger
 {
     class BreakPointUI : DockPanelControl
     {
-        private static ImageList imageList;
-
         private DataGridView dgv;
         private PluginMain pluginMain;
         private BreakPointManager breakPointManager;
@@ -65,17 +63,6 @@ namespace FlashDebugger
 
         private void init()
         {
-            if (imageList == null)
-            {
-                imageList = new ImageList();
-                imageList.ColorDepth = ColorDepth.Depth32Bit;
-                imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-                imageList.Images.Add("DeleteBreakpoint", PluginBase.MainForm.FindImage("548|27|5|5"));
-                imageList.Images.Add("DeleteBreakpoints", PluginBase.MainForm.FindImage("549|27|5|5"));
-                imageList.Images.Add("ToggleBreakpoints", PluginBase.MainForm.FindImage("136|23|5|5"));
-                imageList.Images.Add("ExportBreakpoints", PluginBase.MainForm.FindImage("549|22|4|4"));
-                imageList.Images.Add("ImportBreakpoints", PluginBase.MainForm.FindImage("549|8|4|4"));
-            }
             this.AutoKeyHandling = true;
             this.dgv = new DataGridViewEx();
             this.dgv.Dock = DockStyle.Fill;
@@ -132,11 +119,11 @@ namespace FlashDebugger
             this.dgv.CellDoubleClick += new DataGridViewCellEventHandler(dgv_CellDoubleClick);
             this.Controls.Add(this.dgv);
             InitializeComponent();
-            tsbRemoveSelected.Image = imageList.Images["DeleteBreakpoint"];
-            tsbRemoveFiltered.Image = imageList.Images["DeleteBreakpoints"];
-            tsbAlternateFiltered.Image = imageList.Images["ToggleBreakpoints"];
-            tsbExportFiltered.Image = imageList.Images["ExportBreakpoints"];
-            tsbImport.Image = imageList.Images["ImportBreakpoints"];
+            tsbRemoveSelected.Image = PluginBase.MainForm.FindImage("548|27|5|5");
+            tsbRemoveFiltered.Image = PluginBase.MainForm.FindImage("549|27|5|5");
+            tsbAlternateFiltered.Image = PluginBase.MainForm.FindImage("136|23|5|5");
+            tsbExportFiltered.Image = PluginBase.MainForm.FindImage("549|22|4|4");
+            tsbImport.Image = PluginBase.MainForm.FindImage("549|8|4|4");
             this.tscbFilterColumns.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
             this.tsActions.Renderer = new DockPanelStripRenderer(false);
         }

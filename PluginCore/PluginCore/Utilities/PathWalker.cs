@@ -1,11 +1,9 @@
 using System;
-using System.IO;
-using System.Text;
 using System.Collections.Generic;
-using PluginCore;
 using System.ComponentModel;
-using System.Windows.Forms;
+using System.IO;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace PluginCore.Utilities
 {
@@ -66,7 +64,11 @@ namespace PluginCore.Utilities
 
         void bg_DoWork(object sender, DoWorkEventArgs e)
         {
-            this.ExploreFolder(basePath);
+            try
+            {
+                this.ExploreFolder(basePath);
+            }
+            catch { }
         }
         
         /// <summary>

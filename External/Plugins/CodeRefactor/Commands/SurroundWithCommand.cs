@@ -32,10 +32,8 @@ namespace CodeRefactor.Commands
             sci.BeginUndoAction();
             try
             {
-                IASContext context = ASContext.Context;
-
                 string selection = sci.SelText;
-                if (selection == null || selection.Length == 0)
+                if (string.IsNullOrEmpty(selection))
                 {
                     return;
                 }
@@ -56,7 +54,7 @@ namespace CodeRefactor.Commands
                 int entryPointIndent = 0;
 
                 string snippet = GetSnippet(SnippetCode, sci.ConfigurationLanguage, sci.Encoding);
-                int pos = snippet.IndexOf("{0}");
+                int pos = snippet.IndexOfOrdinal("{0}");
                 if (pos > -1)
                 {
                     while (pos >= 0)

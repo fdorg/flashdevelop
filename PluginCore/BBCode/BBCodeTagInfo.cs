@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace PluginCore.BBCode
 {
@@ -46,7 +44,7 @@ namespace PluginCore.BBCode
         override public String ToString()
         {
             return "[bbCodeTagInfo"
-                   + " isTagOpener=" + _isTagOpener.ToString()
+                   + " isTagOpener=" + _isTagOpener
                    + " tagName='" + _tagName + "'"
                    + " tagParam='" + _tagParam + "'"
                    + "]";

@@ -1,11 +1,8 @@
 using System;
 using System.IO;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using PluginCore.Localization;
-using PluginCore.Controls;
 using PluginCore.Helpers;
-using System.Text;
+using PluginCore.Localization;
 
 namespace PluginCore.Managers
 {
@@ -80,9 +77,9 @@ namespace PluginCore.Managers
         public static void AddToLog(String message, Exception exception)
         {
             String result = String.Empty;
-            result += DateTime.Now.ToString() + "\r\n\r\n";
-            if (message != null) result += message.ToString() + "\r\n\r\n";
-            if (exception != null) result += exception.ToString() + "\r\n\r\n";
+            result += DateTime.Now + "\r\n\r\n";
+            if (message != null) result += message + "\r\n\r\n";
+            if (exception != null) result += exception + "\r\n\r\n";
             try
             {
                 String fileName = Path.Combine(PathHelper.BaseDir, "Exceptions.log");

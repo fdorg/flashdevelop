@@ -1,5 +1,59 @@
 ### Default.fdi
 
+# FD UI THEME (5.1+)
+
+# System, Professional
+#Global.UiRenderMode=Professional
+
+# Flat, Popup, Standard, System
+#ComboBox.FlatStyle=Popup
+
+ScrollBar.UseCustom=False
+#ScrollBar.HotForeColor=#888888
+#ScrollBar.ArrowColor=#868999
+#ScrollBar.HotArrowColor=#1C97EA
+#ScrollBar.ActiveArrowColor=#007ACC
+
+#ListView.UseGrouping=True
+#ListView.Highlight=#ffa500
+#ListView.HighlightText=#ffa500
+#TreeView.Highlight=#ffa500
+#TreeView.HighlightText=#ffa500
+
+#FlashLogViewer.DebugColor
+#FlashLogViewer.WarningColor
+#FlashLogViewer.ErrorColor
+
+#OutputPanel.InfoColor=#808080
+#OutputPanel.DebugColor=#000000
+#OutputPanel.WarningColor=#ffa500
+#OutputPanel.ErrorColor=#ff0000
+#OutputPanel.FatalColor=#ff00ff
+#OutputPanel.ProcessStartColor=#ff0000
+#OutputPanel.ProcessEndColor=ff0000
+#OutputPanel.HighlightColor=#ff0000
+
+#DataTreeControl.GrayText=#808080
+#DataTreeControl.ErrorText=#ff0000
+#DataTreeControl.HighlightText=#ffffff
+#DataTreeControl.LineColor=#808080
+
+#ProjectTreeView.InputColor=#0000ff
+#ProjectTreeView.SubItemColor=#808080
+#ProjectTreeView.ErrorColor=#ff0000
+
+#CompletionList.SelectedTextColor=#ff0000
+#CompletionList.SelectedBackColor=#ff0000
+#CompletionList.PackageColor=#ff0000
+
+#MethodCallTip.SelectedFore=#ffffff
+#MethodCallTip.SelectedBack=#0000ff
+#MethodCallTip.InfoColor=#ff0000
+
+#DataGridView.LineColor=#ff0000
+#ToolStripTextBoxControl.GrayText=#808080
+#QuickFind.ErrorBack=#ff0000
+
 # FD UI THEME (5.0+)
 
 # Use inherited base styles?
@@ -18,16 +72,16 @@ VS2005DockPaneStrip.TabStyle=Default
 VS2005AutoHideStrip.TabStyle=Default
 VS2005AutoHideStrip.TabUnderlineColor=#ff0000
 
-# Default (Hover), Click
+# Hover, Click
 DockPanel.ShowAutoHideContentOn=Hover
 
-#ScrollBar.ForeColor=#686A68
-#ScrollBar.BackColor=#A8ACAA
-#ScrollBar.BorderColor=#A8ACAA
-#ScrollBar.ActiveForeColor=#485253
-#ScrollBar.DisabledBackColor=#333F42
-#ScrollBar.DisabledBorderColor=#666D73
-#ScrollBar.CurrentPositionColor=#804000
+#ScrollBar.ForeColor=#D0D1D7
+#ScrollBar.BackColor=#E8E8EC
+#ScrollBar.BorderColor=#E8E8EC
+#ScrollBar.ActiveForeColor=#6A6A6A
+#ScrollBar.DisabledBackColor=#C0C0C0
+#ScrollBar.DisabledBorderColor=#888888
+#ScrollBar.CurrentPositionColor=#0000CD
 
 #LinkLabel.LinkColor=#ff0000
 #LinkLabel.ActiveLinkColor=#00ff00

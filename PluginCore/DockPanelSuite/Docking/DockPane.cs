@@ -1173,8 +1173,6 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             DockPanel.SuspendLayout(true);
 
-            IDockContent activeContent = DockPanel.ActiveContent;
-
             for (int i=DisplayingContents.Count-1; i>=0; i--)
             {
                 IDockContent content = DisplayingContents[i];

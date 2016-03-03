@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 
 namespace PluginCore.BBCode
 {
@@ -40,7 +38,7 @@ namespace PluginCore.BBCode
             {
                 if (!outStyle.isAbsFontSize)
                 {
-                    outStyle.isAbsFontSize = (bool)(parent.isAbsFontSize && parent.fontSize != 0);
+                    outStyle.isAbsFontSize = parent.isAbsFontSize && parent.fontSize != 0;
                     outStyle.fontSize = parent.fontSize + outStyle.fontSize;
                 }
                 else
@@ -50,7 +48,7 @@ namespace PluginCore.BBCode
                 }
             }
 
-            if (outStyle.fontName == null || outStyle.fontName.Length < 1)
+            if (string.IsNullOrEmpty(outStyle.fontName))
                 outStyle.fontName = parent.fontName;
 
             if (outStyle.backColor == null)
@@ -147,7 +145,7 @@ namespace PluginCore.BBCode
                    + " isUnderlined='" + isUnderlined + "'"
                    + " fontName='" + (fontName == null ? "null" : fontName) + "'"
                    + " fontSize='" + fontSize + "'"
-                   + " isAbsFontSize='" + isAbsFontSize.ToString() + "'"
+                   + " isAbsFontSize='" + isAbsFontSize + "'"
                    + " foreColor='" + (foreColor == null ? "null" : foreColor.ToString()) + "'"
                    + " backColor='" + (backColor == null ? "null" : backColor.ToString()) + "'"
                    + "]";
@@ -213,7 +211,7 @@ namespace PluginCore.BBCode
 
             public static Mode ResolveColorMode(String modeStr)
             {
-                if (modeStr == null || modeStr.Length < 1)
+                if (string.IsNullOrEmpty(modeStr))
                     return Mode.NORMAL;
 
                 _InitStatics();

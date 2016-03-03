@@ -34,6 +34,7 @@
 // exception statement from your version.
 
 using System;
+using System.Collections;
 using System.IO;
 using ICSharpCode.SharpZipLib.Core;
 
@@ -464,7 +465,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                 }
 #endif
                 zipFile_.IsStreamOwner = isStreamOwner;
-                System.Collections.IEnumerator enumerator = zipFile_.GetEnumerator();
+                IEnumerator enumerator = zipFile_.GetEnumerator();
                 while (continueRunning_ && enumerator.MoveNext()) {
                     ZipEntry entry = (ZipEntry)enumerator.Current;
                     if (entry.IsFile)
@@ -635,7 +636,7 @@ namespace ICSharpCode.SharpZipLib.Zip
                     targetName = extractNameTransform_.TransformDirectory(targetName);
                 }
                 
-                doExtraction = !((targetName == null) || (targetName.Length == 0));
+                doExtraction = !string.IsNullOrEmpty(targetName);
             }
             
             // TODO: Fire delegate/throw exception were compression method not supported, or name is invalid?
@@ -694,8 +695,7 @@ namespace ICSharpCode.SharpZipLib.Zip
 #else
         static bool NameIsValid(string name)
         {
-            return (name != null) &&
-                (name.Length > 0) &&
+            return (!string.IsNullOrEmpty(name)) &&
                 (name.IndexOfAny(Path.GetInvalidPathChars()) < 0);
         }
 #endif

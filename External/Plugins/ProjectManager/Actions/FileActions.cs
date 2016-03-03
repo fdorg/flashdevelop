@@ -1,16 +1,13 @@
 using System;
 using System.Collections;
 using System.IO;
-using System.Text;
-using System.Diagnostics;
 using System.Windows.Forms;
+using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
 using ProjectManager.Helpers;
 using ProjectManager.Projects;
-using PluginCore.Localization;
-using WeifenLuo.WinFormsUI;
-using PluginCore.Helpers;
-using PluginCore.Managers;
-using PluginCore;
 
 namespace ProjectManager.Actions
 {
@@ -234,7 +231,7 @@ namespace ProjectManager.Actions
         {
             try
             {
-                string label = TextHelper.GetString("Label.NewFolder").Replace("&", "").Replace("...", "");
+                string label = TextHelper.GetStringWithoutMnemonicsOrEllipsis("Label.NewFolder");
                 string path = Path.Combine(inDirectory, label);
 
                 int i = 2;
@@ -449,8 +446,8 @@ namespace ProjectManager.Actions
                 if (isDirectory)
                 {
                     // this is required for renaming directories, don't ask me why
-                    string oldPathFixed = (oldPath.EndsWith("\\")) ? oldPath : oldPath + "\\";
-                    string newPathFixed = (newPath.EndsWith("\\")) ? newPath : newPath + "\\";
+                    string oldPathFixed = (oldPath.EndsWith('\\')) ? oldPath : oldPath + "\\";
+                    string newPathFixed = (newPath.EndsWith('\\')) ? newPath : newPath + "\\";
                     if (oldPathFixed.Equals(newPathFixed, StringComparison.OrdinalIgnoreCase))
                     {
                         // name casing changed

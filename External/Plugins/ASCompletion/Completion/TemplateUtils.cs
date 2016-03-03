@@ -1,11 +1,11 @@
 using System;
 using System.IO;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using ASCompletion.Context;
 using ASCompletion.Model;
-using PluginCore.Helpers;
-using PluginCore.Utilities;
 using PluginCore;
+using PluginCore.Helpers;
+using ScintillaNet;
 
 namespace ASCompletion.Completion
 {
@@ -54,7 +54,7 @@ namespace ASCompletion.Completion
                 methodModifiers = (GetStaticExternOverride(m) + GetModifiers(m)).Trim();
 
             // Insert Modifiers (private, static, etc)
-            if (methodModifiers == "private" && Context.ASContext.Context.Features.methodModifierDefault == Visibility.Private)
+            if (methodModifiers == "private" && ASContext.Context.Features.methodModifierDefault == Visibility.Private)
                 methodModifiers = null;
             string res = ReplaceTemplateVariable(template, "Modifiers", methodModifiers);
 
@@ -75,7 +75,7 @@ namespace ASCompletion.Completion
             // If method, insert arguments
             template = ReplaceTemplateVariable(template, "Arguments", ParametersString(m, true));
 
-            if (m.Type != null && m.Type.Length > 0)
+            if (!string.IsNullOrEmpty(m.Type))
             {
                 if ((m.Flags & FlagType.Setter) > 0 && m.Parameters != null && m.Parameters.Count == 1)
                     template = ReplaceTemplateVariable(template, "Type", FormatType(m.Parameters[0].Type));
@@ -111,7 +111,7 @@ namespace ASCompletion.Completion
 
                     one = ReplaceTemplateVariable(one, "PName", param.Name);
 
-                    if (param.Type != null && param.Type.Length > 0)
+                    if (!string.IsNullOrEmpty(param.Type))
                         one = ReplaceTemplateVariable(one, "PType", formated ? FormatType(param.Type) : param.Type);
                     else
                         one = ReplaceTemplateVariable(one, "PType", null);
@@ -143,7 +143,8 @@ namespace ASCompletion.Completion
                     else
                         one = ReplaceTemplateVariable(one, "PComma", null);
 
-                    one = ReplaceTemplateVariable(one, "PName", param.Name);
+                    var pname = GetParamName(param);
+                    one = ReplaceTemplateVariable(one, "PName", pname);
 
                     one = ReplaceTemplateVariable(one, "PType", null);
                     one = ReplaceTemplateVariable(one, "PDefaultValue", null);
@@ -156,20 +157,34 @@ namespace ASCompletion.Completion
 
         public static string ReplaceTemplateVariable(string template, string var, string replace)
         {
-            Match m = Regex.Match(template, String.Format(template_variable, var));
-            if (m.Success)
+            MatchCollection mc = Regex.Matches(template, String.Format(template_variable, var));
+            int mcCount = mc.Count;
+            if (mcCount > 0)
             {
-                if (replace == null)
+                var sb = new System.Text.StringBuilder();
+                int pos = 0;
+                for (int i = 0; i < mcCount; i++)
                 {
-                    template = template.Substring(0, m.Index) + template.Substring(m.Index + m.Length);
-                    return template;
+                    Match m = mc[i];
+                    int endIndex = m.Index + m.Length;
+                    sb.Append(template.Substring(pos, m.Index - pos));
+                    if (replace != null)
+                    {
+                        string val = m.Value;
+                        val = val.Substring(2, val.Length - 4);
+                        sb.Append(val);
+                    }
+                    if (i == mcCount - 1)
+                        sb.Append(template.Substring(endIndex));
+                    else
+                    {
+                        int next = mc[i + 1].Index;
+                        sb.Append(template.Substring(endIndex, next - endIndex));
+                        pos += next;
+                    }
                 }
-                else
-                {
-                    string val = m.Value;
-                    val = val.Substring(2, val.Length - 4);
-                    template = template.Substring(0, m.Index) + val + template.Substring(m.Index + m.Length);
-                }
+
+                template = sb.ToString();
             }
             template = template.Replace("$(" + var + ")", replace);
             return template;
@@ -180,7 +195,7 @@ namespace ASCompletion.Completion
             return MemberModel.FormatType(type);
         }
 
-        public static MemberModel GetTemplateBlockMember(ScintillaNet.ScintillaControl Sci, string blockTmpl)
+        public static MemberModel GetTemplateBlockMember(ScintillaControl Sci, string blockTmpl)
         {
             if (string.IsNullOrEmpty(blockTmpl))
                 return null;
@@ -188,7 +203,7 @@ namespace ASCompletion.Completion
             string firstLine = blockTmpl;
             int lineCount = 0;
 
-            int index = blockTmpl.IndexOf("\n");
+            int index = blockTmpl.IndexOf('\n');
             if (index != -1)
             {
                 firstLine = blockTmpl.Substring(0, index);
@@ -199,7 +214,7 @@ namespace ASCompletion.Completion
             while (lineNum < Sci.LineCount)
             {
                 string line = Sci.GetLine(lineNum);
-                int funcBlockIndex = line.IndexOf(firstLine);
+                int funcBlockIndex = line.IndexOfOrdinal(firstLine);
                 if (funcBlockIndex != -1)
                 {
                     MemberModel latest = new MemberModel();
@@ -264,6 +279,11 @@ namespace ASCompletion.Completion
                 sr.Close();
             }
             return content;
+        }
+
+        public static string GetParamName(MemberModel param)
+        {
+            return (param.Name ?? "").Replace("?", ""); // '?' is a marker for optional arguments
         }
     }
 }

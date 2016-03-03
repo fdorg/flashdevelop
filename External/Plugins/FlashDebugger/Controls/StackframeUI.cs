@@ -200,7 +200,7 @@ namespace FlashDebugger
         {
             wholeFrameStack.Clear();
             lv.Items.Clear();
-            toolStripTextBoxFilter.Enabled = lv.Enabled = false;
+            toolStripTextBoxFilter.Enabled = false;
         }
 
         public void ActiveItem()
@@ -262,8 +262,8 @@ namespace FlashDebugger
                             foreach (string cp in project.AbsoluteClasspaths)
                             {
                                 string pathBackSlash = cp.TrimEnd(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar });
-                                pathBackSlash = pathBackSlash.IndexOf(Path.AltDirectorySeparatorChar.ToString()) > -1 ? pathBackSlash + Path.AltDirectorySeparatorChar : pathBackSlash + Path.DirectorySeparatorChar;
-                                if (sourceFile.getFullPath().ToString().StartsWith(pathBackSlash))
+                                pathBackSlash = pathBackSlash.IndexOfOrdinal(Path.AltDirectorySeparatorChar.ToString()) > -1 ? pathBackSlash + Path.AltDirectorySeparatorChar : pathBackSlash + Path.DirectorySeparatorChar;
+                                if (sourceFile.getFullPath().ToString().StartsWithOrdinal(pathBackSlash))
                                 {
                                     ownFile = true;
                                     break;
@@ -286,12 +286,12 @@ namespace FlashDebugger
                     wholeFrameStack.Add(listItem);
                 }
                 FilterResults();
-                toolStripTextBoxFilter.Enabled = lv.Enabled = true;
+                toolStripTextBoxFilter.Enabled = true;
             }
             else
             {
                 lv.Items.Clear();
-                toolStripTextBoxFilter.Enabled = lv.Enabled = false;
+                toolStripTextBoxFilter.Enabled = false;
             }
         }
 
@@ -406,7 +406,7 @@ namespace FlashDebugger
             string filterText = toolStripTextBoxFilter.Text.Trim();
             lv.Items.Clear();
             Regex regex = null;
-            Color color = System.Drawing.SystemColors.GrayText;
+            Color color = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.GrayText", SystemColors.GrayText);
             if (toolStripItemRegEx.Checked)
             {
                 try

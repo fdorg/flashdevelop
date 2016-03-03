@@ -1,13 +1,17 @@
 body 
 {
 	font-size: 9pt;
-	font-family: "Trebuchet MS", Georgia, Times, serif;
+	font-family: "Open Sans", "Trebuchet MS", Georgia, Times, serif;
 	padding-top: 12px;
 }
 h4 
 {
 	font-size: 12pt;
 	border-bottom: 1px dotted #999999;
+}
+h5 
+{
+	font-size: 10pt;
 }
 ul 
 {
@@ -39,7 +43,7 @@ a:hover
 #header h3 
 {
 	font-size: 15pt;
-	color: orange;
+	color: #eea21a;
 }
 #content 
 {

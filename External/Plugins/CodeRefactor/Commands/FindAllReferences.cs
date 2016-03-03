@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using ASCompletion.Completion;
-using PluginCore.FRService;
 using CodeRefactor.Provider;
+using PluginCore;
+using PluginCore.FRService;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using ScintillaNet;
-using PluginCore;
 
 namespace CodeRefactor.Commands
 {
@@ -123,7 +124,7 @@ namespace CodeRefactor.Commands
                 foreach (var fileEntries in this.Results)
                 {
 
-                    if (fileEntries.Value.Count > 0 && System.IO.File.Exists(fileEntries.Key))
+                    if (fileEntries.Value.Count > 0 && File.Exists(fileEntries.Key))
                     {
                         SearchMatch entry = fileEntries.Value[0];
                         var doc = (ITabbedDocument)PluginBase.MainForm.OpenEditableDocument(fileEntries.Key, false);

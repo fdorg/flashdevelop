@@ -1,9 +1,7 @@
 ﻿using System;
-using System.IO;
-using System.Text;
 using System.ComponentModel;
 using System.ComponentModel.Design;
-using System.Collections.Generic;
+using System.IO;
 using PluginCore.Helpers;
 
 namespace LayoutManager.Controls
@@ -13,7 +11,7 @@ namespace LayoutManager.Controls
         /// <summary>
         /// 
         /// </summary>
-        protected override void FillTreeWithData(ObjectSelectorEditor.Selector selector, ITypeDescriptorContext context, IServiceProvider provider)
+        protected override void FillTreeWithData(Selector selector, ITypeDescriptorContext context, IServiceProvider provider)
         {
             base.FillTreeWithData(selector, context, provider);
             selector.Nodes.Add(new SelectorNode("<None>", null));

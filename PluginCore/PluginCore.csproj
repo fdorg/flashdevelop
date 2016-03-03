@@ -84,7 +84,7 @@
     <NoStdLib>false</NoStdLib>
     <NoWarn>
     </NoWarn>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <RegisterForComInterop>false</RegisterForComInterop>
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
@@ -93,8 +93,9 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>..\FlashDevelop\Bin\Debug\</OutputPath>
+    <OutputPath>Bin\Debug\</OutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -102,13 +103,12 @@
     <DefineConstants>TRACE</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System">
       <Name>System</Name>
-    </Reference>
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
     </Reference>
     <Reference Include="System.Design">
       <Name>System.Design</Name>
@@ -365,6 +365,7 @@
     <Compile Include="Ookii.Dialogs\VistaFolderBrowserDialog.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Ookii.Dialogs\VistaFolderNameEditor.cs" />
     <Compile Include="PluginCore\Bridge\IBridgeSettings.cs" />
     <Compile Include="PluginCore\Controls\Common.cs">
       <SubType>Component</SubType>
@@ -399,13 +400,16 @@
     <Compile Include="PluginCore\Bridge\BridgeClient.cs" />
     <Compile Include="PluginCore\Bridge\ServerSocket.cs" />
     <Compile Include="PluginCore\Bridge\WatcherEx.cs" />
+    <Compile Include="PluginCore\Managers\ImageListManager.cs" />
     <Compile Include="PluginCore\PlatformData.cs" />
     <Compile Include="PluginCore\Utilities\CryptoClasses.cs" />
+    <Compile Include="PluginCore\Utilities\ExtensionClasses.cs" />
     <Compile Include="PluginCore\Utilities\ImageKonverter.cs" />
     <Compile Include="PluginCore\Utilities\LogicalComparer.cs" />
     <Compile Include="PluginCore\Utilities\ImageQuantizers.cs" />
     <Compile Include="PluginCore\Utilities\ProcessRunner.cs" />
     <Compile Include="PluginCore\Utilities\InteropSHFileOperation.cs" />
+    <Compile Include="PluginCore\Utilities\SemVer.cs" />
     <Compile Include="PluginCore\Utilities\SingleInstanceApp.cs" />
     <Compile Include="PluginCore\Win32.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -574,6 +578,39 @@
     <Compile Include="SharpZipLib\Zip\ZipInputStream.cs" />
     <Compile Include="SharpZipLib\Zip\ZipNameTransform.cs" />
     <Compile Include="SharpZipLib\Zip\ZipOutputStream.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\Big5Prober.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\BitPackage.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\CharDistributionAnalyser.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\CharsetProber.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\Charsets.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\CodingStateMachine.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\EscCharsetProber.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\EscSM.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\EUCJPProber.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\EUCKRProber.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\EUCTWProber.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\GB18030Prober.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\HebrewProber.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\JapaneseContextAnalyser.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\LangBulgarianModel.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\LangCyrillicModel.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\LangGreekModel.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\LangHebrewModel.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\LangHungarianModel.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\LangThaiModel.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\Latin1Prober.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\MBCSGroupProber.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\MBCSSM.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\SBCharsetProber.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\SBCSGroupProber.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\SequenceModel.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\SJISProber.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\SMModel.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\UniversalDetector.cs" />
+    <Compile Include="UdeLibrary\Ude.Core\UTF8Prober.cs" />
+    <Compile Include="UdeLibrary\Ude\CharsetDetector.cs" />
+    <Compile Include="UdeLibrary\Ude\DetectionConfidence.cs" />
+    <Compile Include="UdeLibrary\Ude\ICharsetDetector.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{967B4E0D-AD0C-4609-AB67-0FA40C0206D8}" />
@@ -595,6 +632,9 @@
     <EmbeddedResource Include="FastColoredTB\HotkeysEditorForm.resx" />
     <EmbeddedResource Include="FastColoredTB\ReplaceForm.resx" />
     <EmbeddedResource Include="PluginCore\Resources\de_DE.resX">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PluginCore\Resources\ko_KR.resX">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="PluginCore\Resources\en_US.resX">

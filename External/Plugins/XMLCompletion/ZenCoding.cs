@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using PluginCore;
-using ScintillaNet;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using LitJson;
+using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Managers;
-using System.Reflection;
-using System.Windows.Forms;
-using System.Text.RegularExpressions;
-using LitJson;
+using ScintillaNet;
 
 namespace XMLCompletion
 {
@@ -61,7 +60,6 @@ namespace XMLCompletion
         private static ZenSettings ReadZenSettings(JsonReader reader)
         {
             ZenSettings settings = new ZenSettings();
-            Type objType = settings.GetType();
 
             reader.Read();
             if (reader.Token != JsonToken.ObjectStart)
@@ -314,7 +312,7 @@ namespace XMLCompletion
                     {
                         string expr = expandExpression(sci.SelText);
                         if (expr == null) return false;
-                        if (expr.IndexOf("$(EntryPoint)") < 0) expr += "$(EntryPoint)";
+                        if (expr.IndexOfOrdinal("$(EntryPoint)") < 0) expr += "$(EntryPoint)";
                         data["snippet"] = expr;
                     }
                     catch (ZenExpandException zex)
@@ -340,7 +338,7 @@ namespace XMLCompletion
                 delayOpenConfig.Start();
                 return "";
             }
-            else if (expr.EndsWith("+"))
+            else if (expr.EndsWith('+'))
             {
                 if (lang.abbreviations.ContainsKey(expr))
                     expr = (string)lang.abbreviations[expr]; // expandos
@@ -438,12 +436,12 @@ namespace XMLCompletion
                                     tag = tagStart;
                                     if (atId.Length > 0)
                                     {
-                                        if (tagEnd.IndexOf(" id=") < 0) tag += atId;
+                                        if (tagEnd.IndexOfOrdinal(" id=") < 0) tag += atId;
                                         else tagEnd = tagEnd.Replace(" id=\"\"", atId);
                                     }
                                     if (atClass.Length > 0)
                                     {
-                                        if (tagEnd.IndexOf(" class=") < 0) tag += atClass;
+                                        if (tagEnd.IndexOfOrdinal(" class=") < 0) tag += atClass;
                                         else tagEnd = tagEnd.Replace(" class=\"\"", atClass);
                                     }
                                     tag += tagEnd;
@@ -455,12 +453,12 @@ namespace XMLCompletion
 
                     if (customExpand)
                     {
-                        if (tag.IndexOf("${") >= 0) tag = ProcessVars(tag);
+                        if (tag.IndexOfOrdinal("${") >= 0) tag = ProcessVars(tag);
 
                         tag = tag.Replace("\\n", "\n").Replace("\\t", "\t");
                         if (tag.IndexOf('|') < 0) tag = tag.Replace("\"\"", "\"|\"");
 
-                        int child = tag.IndexOf("${child}");
+                        int child = tag.IndexOfOrdinal("${child}");
                         if (child >= 0)
                         {
                             tag = tag.Replace("${child}", "");
@@ -468,7 +466,7 @@ namespace XMLCompletion
                         }
                         else
                         {
-                            child = tag.IndexOf("><");
+                            child = tag.IndexOfOrdinal("><");
                             if (child > 0) child++;
                         }
                         

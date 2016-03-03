@@ -1,19 +1,22 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using PluginCore.Managers;
+using System.Text.RegularExpressions;
+using System.Timers;
+using System.Windows.Forms;
+using AS3Context.Compiler;
+using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using PluginCore;
-using System.Collections;
-using System.Text.RegularExpressions;
 using PluginCore.Controls;
-using PluginCore.Localization;
-using AS3Context.Compiler;
 using PluginCore.Helpers;
-using System.Timers;
-using ASCompletion.Completion;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using ScintillaNet;
+using ScintillaNet.Enums;
+using SwfOp;
+using Timer = System.Timers.Timer;
 
 namespace AS3Context
 {
@@ -34,7 +37,7 @@ namespace AS3Context
         private bool hasAIRSupport;
         private bool hasMobileSupport;
         private MxmlFilterContext mxmlFilterContext; // extract inlined AS3 ranges & MXML tags
-        private System.Timers.Timer timerCheck;
+        private Timer timerCheck;
         private string fileWithSquiggles;
         protected bool mxmlEnabled;
 
@@ -98,7 +101,9 @@ namespace AS3Context
             features.objectKey = "Object";
             features.booleanKey = "Boolean";
             features.numberKey = "Number";
+            features.stringKey = "String";
             features.arrayKey = "Array";
+            features.dynamicKey = "*";
             features.importKey = "import";
             features.typesPreKeys = new string[] { "import", "new", "typeof", "is", "as", "extends", "implements" };
             features.codeKeywords = new string[] { 
@@ -107,7 +112,7 @@ namespace AS3Context
                 "null", "true", "false", "try", "catch", "finally", "throw", "use", "namespace"
             };
             features.accessKeywords = new string[] { 
-                "extern", "dynamic", "inline", "final", "public", "private", "protected", "internal", "static", "override"
+                "extern", "dynamic", "final", "public", "private", "protected", "internal", "static", "override"
             };
             features.declKeywords = new string[] { "var", "function", "const", "namespace", "get", "set" };
             features.typesKeywords = new string[] { "import", "class", "interface" };
@@ -133,7 +138,7 @@ namespace AS3Context
 
             // live syntax checking
             timerCheck = new Timer(500);
-            timerCheck.SynchronizingObject = PluginBase.MainForm as System.Windows.Forms.Form;
+            timerCheck.SynchronizingObject = PluginBase.MainForm as Form;
             timerCheck.AutoReset = false;
             timerCheck.Elapsed += new ElapsedEventHandler(timerCheck_Elapsed);
             FlexShells.SyntaxError += new SyntaxErrorHandler(FlexShell_SyntaxError);
@@ -194,7 +199,7 @@ namespace AS3Context
             List<string> addLibs = new List<string>();
             List<string> addLocales = new List<string>();
 
-            if (!Directory.Exists(sdkLibs) && !sdkLibs.StartsWith("$")) // fallback
+            if (!Directory.Exists(sdkLibs) && !sdkLibs.StartsWith('$')) // fallback
             {
                 sdkLibs = PathHelper.ResolvePath(PathHelper.ToolDir + S + "flexlibs" + S + "frameworks" + S + "libs" + S + "player");
             }
@@ -220,7 +225,7 @@ namespace AS3Context
                         if (playerglobal != null)
                         {
                             // add missing SWC in new SDKs
-                            if (!swcPresent && sdkLibs.IndexOf(S + "flexlibs") < 0 && Directory.Exists(compiler))
+                            if (!swcPresent && sdkLibs.IndexOfOrdinal(S + "flexlibs") < 0 && Directory.Exists(compiler))
                             {
                                 string swcDir = sdkLibs + S + "player" + S;
                                 if (!Directory.Exists(swcDir + "9") && !Directory.Exists(swcDir + "10"))
@@ -329,23 +334,14 @@ namespace AS3Context
             }
 
             // intrinsics (deprecated, excepted for FP10 Vector.<T>)
-            string fp9cp = as3settings.AS3ClassPath + S + "FP9";
-            AddPath(PathHelper.ResolvePath(fp9cp));
-            if (majorVersion > 9)
+            // add from the highest version number (FP11 > FP10 > FP9)
+            string fp = as3settings.AS3ClassPath + S + "FP";
+            for (int i = majorVersion; i >= 9; i--)
             {
-                for (int i = 10; i <= majorVersion; i++)
-                {
-                    string fp10cp = as3settings.AS3ClassPath + S + "FP" + i;
-                    AddPath(PathHelper.ResolvePath(fp10cp));
-                    for (int j = 1; j <= minorVersion; j++)
-                    {
-                        string fp101cp = as3settings.AS3ClassPath + S + "FP" + majorVersion + "." + minorVersion;
-                        AddPath(PathHelper.ResolvePath(fp101cp));
-                    }
-                }
+                AddPath(PathHelper.ResolvePath(fp + i));
             }
 
-            // add external pathes
+            // add external paths
             List<PathModel> initCP = classPath;
             classPath = new List<PathModel>();
             if (contextSetup.Classpath != null)
@@ -356,20 +352,20 @@ namespace AS3Context
 
             // add library
             AddPath(PathHelper.LibraryDir + S + "AS3" + S + "classes");
-            // add user pathes from settings
+            // add user paths from settings
             if (settings.UserClasspath != null && settings.UserClasspath.Length > 0)
             {
                 foreach (string cpath in settings.UserClasspath) AddPath(cpath.Trim());
             }
 
-            // add initial pathes
+            // add initial paths
             foreach (PathModel mpath in initCP) AddPath(mpath);
 
             // parse top-level elements
             InitTopLevelElements();
             if (cFile != null) UpdateTopLevelElements();
 
-            // add current temporaty path
+            // add current temporary path
             if (temporaryPath != null)
             {
                 string tempPath = temporaryPath;
@@ -386,7 +382,6 @@ namespace AS3Context
         {
             char S = Path.DirectorySeparatorChar;
             string libPlayer = sdkLibs + S + "player";
-            string playerglobal = null;
             for (int i = minorVersion; i >= 0; i--)
             {
                 string version = majorVersion + "." + i;
@@ -396,7 +391,8 @@ namespace AS3Context
                     return libPlayer + S + version + S + "playerglobal.swc";
                 }
             }
-            if (playerglobal == null && Directory.Exists(libPlayer + S + majorVersion))
+            string playerglobal = null;
+            if (Directory.Exists(libPlayer + S + majorVersion))
                 playerglobal = "player" + S + majorVersion + S + "playerglobal.swc";
 
             if (playerglobal == null && majorVersion > 9)
@@ -479,7 +475,7 @@ namespace AS3Context
                     lock (path)
                     {
                         path.WasExplored = true;
-                        SwfOp.ContentParser parser = new SwfOp.ContentParser(path.Path);
+                        ContentParser parser = new ContentParser(path.Path);
                         parser.Run();
                         AbcConverter.Convert(parser, path, this);
                     }
@@ -613,7 +609,7 @@ namespace AS3Context
                 if (doc.FileName == fileWithSquiggles) ClearSquiggles(doc.SciControl);
         }
 
-        public override void TrackTextChange(ScintillaNet.ScintillaControl sender, int position, int length, int linesAdded)
+        public override void TrackTextChange(ScintillaControl sender, int position, int length, int linesAdded)
         {
             base.TrackTextChange(sender, position, length, linesAdded);
             if (as3settings != null && !as3settings.DisableLiveChecking && IsFileValid)
@@ -635,7 +631,7 @@ namespace AS3Context
         {
             if (!IsFileValid) return;
 
-            ScintillaNet.ScintillaControl sci = CurSciControl;
+            ScintillaControl sci = CurSciControl;
             if (sci == null) return;
             ClearSquiggles(sci);
 
@@ -646,15 +642,15 @@ namespace AS3Context
             FlexShells.Instance.CheckAS3(CurrentFile, sdk, src);
         }
 
-        private void AddSquiggles(ScintillaNet.ScintillaControl sci, int line, int start, int end)
+        private void AddSquiggles(ScintillaControl sci, int line, int start, int end)
         {
             if (sci == null) return;
             fileWithSquiggles = CurrentFile;
             int position = sci.PositionFromLine(line) + start;
-            sci.AddHighlight(2, (int)ScintillaNet.Enums.IndicatorStyle.Squiggle, 0x000000ff, position, end - start);
+            sci.AddHighlight(2, (int)IndicatorStyle.Squiggle, 0x000000ff, position, end - start);
         }
 
-        private void ClearSquiggles(ScintillaNet.ScintillaControl sci)
+        private void ClearSquiggles(ScintillaControl sci)
         {
             if (sci == null) return;
             try
@@ -676,8 +672,8 @@ namespace AS3Context
             ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
             if (document == null || !document.IsEditable) return;
 
-            ScintillaNet.ScintillaControl sci = document.SplitSci1;
-            ScintillaNet.ScintillaControl sci2 = document.SplitSci2;
+            ScintillaControl sci = document.SplitSci1;
+            ScintillaControl sci2 = document.SplitSci2;
 
             if (m.Groups["filename"].Value != CurrentFile) return;
             try
@@ -695,7 +691,7 @@ namespace AS3Context
         /// <summary>
         /// Convert multibyte column to byte length
         /// </summary>
-        private int MBSafeColumn(ScintillaNet.ScintillaControl sci, int line, int length)
+        private int MBSafeColumn(ScintillaControl sci, int line, int length)
         {
             String text = sci.GetLine(line) ?? "";
             length = Math.Min(length, text.Length);
@@ -801,7 +797,7 @@ namespace AS3Context
             return fullList;
         }
 
-        public override bool OnCompletionInsert(ScintillaNet.ScintillaControl sci, int position, string text, char trigger)
+        public override bool OnCompletionInsert(ScintillaControl sci, int position, string text, char trigger)
         {
             if (text == "Vector")
             {
@@ -838,7 +834,6 @@ namespace AS3Context
                         return true;
                     }
                 }
-                if (insert == null) return false;
                 if (trigger == '.')
                 {
                     sci.InsertText(position + text.Length, insert.Substring(1));
@@ -865,7 +860,7 @@ namespace AS3Context
         /// <param name="atLine">Position in the file</param>
         public override bool IsImported(MemberModel member, int atLine)
         {
-            FileModel cFile = ASContext.Context.CurrentModel;
+            FileModel cFile = Context.CurrentModel;
             // same package is auto-imported
             string package = member.Type.Length > member.Name.Length 
                 ? member.Type.Substring(0, member.Type.Length - member.Name.Length - 1)

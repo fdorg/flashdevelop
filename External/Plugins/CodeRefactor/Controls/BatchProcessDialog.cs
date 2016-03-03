@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using System.Data;
 using System.Drawing;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -149,8 +148,8 @@ namespace CodeRefactor.Controls
             this.operationComboBox.Items.AddRange(new Object[] 
             {
                 TextHelper.GetString("Info.FormatCode"),
-                TextHelper.GetString("Label.OrganizeImports").Replace("&", ""),
-                TextHelper.GetString("Label.TruncateImports").Replace("&", ""),
+                TextHelper.GetStringWithoutMnemonics("Label.OrganizeImports"),
+                TextHelper.GetStringWithoutMnemonics("Label.TruncateImports"),
                 TextHelper.GetString("Info.ConsistentEOLs"),
             });
             this.Text = TextHelper.GetString("Title.BatchProcessDialog");

@@ -1,16 +1,14 @@
 using System;
-using System.IO;
 using System.ComponentModel;
 using System.Drawing;
-using System.Windows.Forms;
-using ASCompletion.Context;
-using PluginCore.Localization;
+using System.IO;
+using FlashDebugger.Debugger;
+using PluginCore;
 using PluginCore.Helpers;
+using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
-using ProjectManager.Projects;
-using ProjectManager.Projects.AS3;
-using PluginCore;
+using ProjectManager;
 
 namespace FlashDebugger
 {
@@ -24,11 +22,13 @@ namespace FlashDebugger
         private MenusHelper menusHelper;
         private String settingFilename;
         private Image pluginImage;
+        private Boolean firstRun = false;
 
         static internal Settings settingObject;
         static internal LiveDataTip liveDataTip;
         static internal DebuggerManager debugManager;
         static internal BreakPointManager breakPointManager;
+        static internal WatchManager watchManager;
         static internal Boolean disableDebugger = false;
 
         #region Required Properties
@@ -114,13 +114,14 @@ namespace FlashDebugger
         {
             SaveSettings();
             breakPointManager.Save();
+            watchManager.Save();
             debugManager.Cleanup();
         }
 
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             if (debugManager == null) return;
             switch (e.Type)
@@ -153,7 +154,7 @@ namespace FlashDebugger
                     break;
 
                 case EventType.Command:
-                    PluginCore.DataEvent buildevnt = (PluginCore.DataEvent)e;
+                    DataEvent buildevnt = (DataEvent)e;
                     if (buildevnt.Action == "AS3Context.StartDebugger")
                     {
                         if (settingObject.StartDebuggerOnTestMovie)
@@ -162,21 +163,26 @@ namespace FlashDebugger
                         }
                         return;
                     }
-                    if (!buildevnt.Action.StartsWith("ProjectManager"))  return;
-                    if (buildevnt.Action == ProjectManager.ProjectManagerEvents.Project)
+                    if (!buildevnt.Action.StartsWithOrdinal("ProjectManager"))  return;
+                    if (buildevnt.Action == ProjectManagerEvents.Project)
                     {
                         IProject project = PluginBase.CurrentProject;
                         if (project != null && project.EnableInteractiveDebugger)
                         {
                             disableDebugger = false;
-                            PanelsHelper.breakPointUI.Clear();
                             if (breakPointManager.Project != null && breakPointManager.Project != project)
                             {
                                 breakPointManager.Save();
+                                watchManager.Save();
                             }
+                            PanelsHelper.breakPointUI.Clear();
+                            PanelsHelper.watchUI.Clear();
                             breakPointManager.Project = project;
                             breakPointManager.Load();
                             breakPointManager.SetBreakPointsToEditor(PluginBase.MainForm.Documents);
+
+                            watchManager.Project = project;
+                            watchManager.Load();
                         }
                         else
                         {
@@ -184,12 +190,14 @@ namespace FlashDebugger
                             if (breakPointManager.Project != null)
                             {
                                 breakPointManager.Save();
+                                watchManager.Save();
                             }
                             PanelsHelper.breakPointUI.Clear();
+                            PanelsHelper.watchUI.Clear();
                         }
                     }
                     else if (disableDebugger) return;
-                    if (buildevnt.Action == ProjectManager.ProjectManagerCommands.HotBuild || buildevnt.Action == ProjectManager.ProjectManagerCommands.BuildProject)
+                    if (buildevnt.Action == ProjectManagerCommands.HotBuild || buildevnt.Action == ProjectManagerCommands.BuildProject)
                     {
                         if (debugManager.FlashInterface.isDebuggerStarted)
                         {
@@ -200,7 +208,7 @@ namespace FlashDebugger
                             debugManager.Stop_Click(null, null);
                         }
                     }
-                    if (buildevnt.Action == ProjectManager.ProjectManagerEvents.TestProject)
+                    if (buildevnt.Action == ProjectManagerEvents.TestProject)
                     {
                         if (debugManager.FlashInterface.isDebuggerStarted)
                         {
@@ -212,7 +220,7 @@ namespace FlashDebugger
                             }
                         }
                     }
-                    if (buildevnt.Action == ProjectManager.ProjectManagerEvents.TestProject)
+                    if (buildevnt.Action == ProjectManagerEvents.TestProject)
                     {
                         menusHelper.UpdateMenuState(this, DebuggerState.Initializing);
                     }
@@ -234,6 +242,7 @@ namespace FlashDebugger
             this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
             this.pluginImage = PluginBase.MainForm.FindImage("54|23|5|4");
             breakPointManager = new BreakPointManager();
+            watchManager = new WatchManager();
             debugManager = new DebuggerManager();
             liveDataTip = new LiveDataTip();
         }
@@ -252,6 +261,7 @@ namespace FlashDebugger
         private void CreatePluginPanel()
         {
             panelsHelpers = new PanelsHelper(this, pluginImage);
+            if (this.firstRun) this.panelsHelpers.DockTogether();
         }
 
         /// <summary>
@@ -282,7 +292,11 @@ namespace FlashDebugger
         public void LoadSettings()
         {
             settingObject = new Settings();
-            if (!File.Exists(this.settingFilename)) SaveSettings();
+            if (!File.Exists(this.settingFilename))
+            {
+                SaveSettings();
+                firstRun = true;
+            }
             else
             {
                 Object obj = ObjectSerializer.Deserialize(this.settingFilename, settingObject);

@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using PluginCore.Managers;
 using System.Diagnostics;
-using PluginCore.Helpers;
-using PluginCore;
+using System.IO;
 using System.Text.RegularExpressions;
+using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Managers;
 
 namespace CssCompletion
 {
@@ -47,7 +45,7 @@ namespace CssCompletion
             if (mParams.Success)
             {
                 options = mParams.Groups[1].Value.Trim();
-                int endComment = options.IndexOf("*/");
+                int endComment = options.IndexOfOrdinal("*/");
                 if (endComment > 0) options = options.Substring(0, endComment).Trim();
             }
 

@@ -1,13 +1,10 @@
 using System;
-using System.Linq;
-using System.Text;
-using System.Drawing;
 using System.Collections.Generic;
-using CodeFormatter.InfoCollector;
-using Antlr.Runtime.Tree;
+using System.Drawing;
+using System.Text;
 using Antlr.Runtime;
-using Antlr.Utility;
-using System.Text.RegularExpressions;
+using CodeFormatter.InfoCollector;
+using PluginCore;
 
 namespace CodeFormatter.Handlers
 {
@@ -154,7 +151,7 @@ namespace CodeFormatter.Handlers
         private bool mMLCommentKeepBlankLines=true;
         private bool mMLCommentCollapseLines=false;
         private bool mMLTextOnNewLines=false;
-        private int mMLAsteriskMode=ASPrettyPrinter.MLAsteriskStyle_AsIs; //0=don't change (if I can tell), 1=add, 2=remove
+        private int mMLAsteriskMode=MLAsteriskStyle_AsIs; //0=don't change (if I can tell), 1=add, 2=remove
         private int mDocCommentHangingIndentTabs=0;
         private bool mKeepRelativeCommentIndent=false;
     
@@ -316,10 +313,10 @@ namespace CodeFormatter.Handlers
         }
         public String print(int startIndent)
         {
-            if (mSourceData.IndexOf(mIgnoreFileProcessing)>=0)
+            if (mSourceData.IndexOfOrdinal(mIgnoreFileProcessing)>=0)
             {
                 mParseErrors=new List<Exception>();
-                mParseErrors.Add(new Exception("File ignored: Ignore tag exists in file==> "+ASPrettyPrinter.mIgnoreFileProcessing));
+                mParseErrors.Add(new Exception("File ignored: Ignore tag exists in file==> "+mIgnoreFileProcessing));
                 return null;
             }
         
@@ -408,15 +405,15 @@ namespace CodeFormatter.Handlers
                             {
                                 if (isRemoveBraces(info))
                                 {
-                                    int startBracePos = mOutputBuffer.ToString().IndexOf("{", info.getStartBracePos());
-                                    int endBracePos = mOutputBuffer.ToString().LastIndexOf("}", info.getEndBracePos());
+                                    int startBracePos = mOutputBuffer.ToString().IndexOf('{', info.getStartBracePos());
+                                    int endBracePos = mOutputBuffer.ToString().LastIndexOf('}', info.getEndBracePos());
                                     int endBracePosInSource=mSourceData.LastIndexOf('}', info.getOriginalDocEndPosition());
                                     editItems.Add(new DeleteItem(startBracePos, 1, info.getOriginalDocStartPosition()));
                                     editItems.Add(new DeleteItem(endBracePos, 1, endBracePosInSource));
                                 
                                     //if brace is followed by nothing but a carriage return, return the next
                                     //cr as well.
-                                    int nextCR = mOutputBuffer.ToString().IndexOf("\n", startBracePos + 1);
+                                    int nextCR = mOutputBuffer.ToString().IndexOf('\n', startBracePos + 1);
                                     if (nextCR>=0)
                                     {
                                         String nextChars = mOutputBuffer.ToString().Substring(startBracePos + 1, nextCR - (startBracePos + 1)).Trim();
@@ -425,7 +422,7 @@ namespace CodeFormatter.Handlers
                                             editItems.Add(new DeleteItem(nextCR, 1, -1));
                                         }
                                     }
-                                    nextCR = mOutputBuffer.ToString().IndexOf("\n", endBracePos + 1);
+                                    nextCR = mOutputBuffer.ToString().IndexOf('\n', endBracePos + 1);
                                     if (nextCR>=0)
                                     {
                                         String nextChars = mOutputBuffer.ToString().Substring(endBracePos + 1, nextCR - (endBracePos + 1)).Trim();
@@ -815,7 +812,7 @@ namespace CodeFormatter.Handlers
                     String line=lines[i];
                 
                     //skip to next (i.e. previous) line if this line starts with a line comment
-                    if (AntlrUtilities.asTrim(line).StartsWith("//"))
+                    if (AntlrUtilities.asTrim(line).StartsWithOrdinal("//"))
                         continue;
                     int spaceCount=findIndent(line, getTabSize());
                     if (spaceCount>=0)
@@ -1102,11 +1099,11 @@ namespace CodeFormatter.Handlers
                     //be on a new line afterward
                 
                     /////////////////////// Handling of "exclude from formatting" tags //////////////////////
-                    if (t.Text.IndexOf(mStartExcludeProcessing)>=0)
+                    if (t.Text.IndexOfOrdinal(mStartExcludeProcessing)>=0)
                     {
                         pushFormatterOff();
                     }
-                    else if (t.Text.IndexOf(mStopExcludeProcessing)>=0)
+                    else if (t.Text.IndexOfOrdinal(mStopExcludeProcessing)>=0)
                     {
                         popFormatterOff();
                     }
@@ -1237,15 +1234,15 @@ namespace CodeFormatter.Handlers
                         int indentAmount=getIndentForNextLine(mOutputBuffer);
                         int originalIndent=0;
                         bool useReplaceRange=false;
-                        if (t.Text.StartsWith("/**"))
+                        if (t.Text.StartsWithOrdinal("/**"))
                         {
                             if (isUseDocCommentWrapping() && !isKeepRelativeCommentIndent())
                             {
-                                commentLines=wrapMultilineComment(indentAmount, commentLines, mDocCommentCollapseLines, isDocCommentKeepBlankLines(), true, ASPrettyPrinter.MLAsteriskStyle_All, "/**", getDocCommentHangingIndentTabs());
+                                commentLines=wrapMultilineComment(indentAmount, commentLines, mDocCommentCollapseLines, isDocCommentKeepBlankLines(), true, MLAsteriskStyle_All, "/**", getDocCommentHangingIndentTabs());
                                 useReplaceRange=true;
                             }
                         }
-                        else if (t.Text.StartsWith("/*"))
+                        else if (t.Text.StartsWithOrdinal("/*"))
                         {
                             if (isUseMLCommentWrapping() && !isKeepRelativeCommentIndent())
                             {
@@ -1264,7 +1261,7 @@ namespace CodeFormatter.Handlers
                             else
                                 prevLineEnd++; //move to start of next line
                             lineData.Insert(0, mSourceData.Substring(prevLineEnd, ((CommonToken)t).StartIndex - prevLineEnd));
-                            originalIndent=ASPrettyPrinter.findIndent(lineData, getTabSize());
+                            originalIndent=findIndent(lineData, getTabSize());
                         }
                     
                         Point replaceArea=new Point(mOutputBuffer.Length, -1);
@@ -1278,12 +1275,12 @@ namespace CodeFormatter.Handlers
                             {
                                 if (isKeepRelativeCommentIndent() && originalIndent>=0)
                                 {
-                                    int existingIndent=ASPrettyPrinter.findIndent(commentLines[j], getTabSize());
+                                    int existingIndent=findIndent(commentLines[j], getTabSize());
                                     indentAmount=Math.Max(0, indentAmount+(existingIndent-originalIndent));
                                 }
                                 else //using rules assuming '*' lines
                                 {
-                                    if (onLastLine && data.StartsWith("*/")) //if we're on the last line and there's more than one line
+                                    if (onLastLine && data.StartsWithOrdinal("*/")) //if we're on the last line and there's more than one line
                                     {
                                         if (mIndentMultilineComments) indentAmount += 1;
                                         else indentAmount += 0;
@@ -1553,7 +1550,7 @@ namespace CodeFormatter.Handlers
                 for (int i=0;i<lines.Count;i++)
                 {
                     String line = lines[i];
-                    if (line.StartsWith("*") && !line.StartsWith("*/"))
+                    if (line.StartsWith('*') && !line.StartsWithOrdinal("*/"))
                     {
                         hasAsterisks=true;
                         line=line.Substring(1);
@@ -1592,7 +1589,7 @@ namespace CodeFormatter.Handlers
                             newLines.Add(""); //for the additional blank line
                             continue;
                         }
-                        else if (line.StartsWith("@")) //don't join lines that start with '@', because those are asdoc attributes
+                        else if (line.StartsWith('@')) //don't join lines that start with '@', because those are asdoc attributes
                         {
                             if (buffer.Length>0)
                                 newLines.Add(buffer);
@@ -1635,13 +1632,13 @@ namespace CodeFormatter.Handlers
                         workingOnAttribute=false;
                     int extraSpaces=0; //accounts for aligning text to right of "/* " or "*"
                     //                  bool lineHasAsterisk=line.StartsWith("*") && !line.StartsWith("*/");
-                    if (line.StartsWith("@"))
+                    if (line.StartsWith('@'))
                         workingOnAttribute=true; //once we see an attribute, we assume that subsequent lines are as well, until we see a blank line
                     while (true)
                     {
                         String currentLine;
                         int hangingSpaces=0;
-                        if (workingOnAttribute && !line.StartsWith("@"))
+                        if (workingOnAttribute && !line.StartsWith('@'))
                             hangingSpaces=mTabSize*hangingIndentTabs;
                         int nextBreakPoint=findCommentBreakpoint(line, indentAmount+extraSpaces+hangingSpaces, mMaxLineLength);
                         extraSpaces=3; //accounts for aligning text to right of "/* " or "*" on lines 2..n-1
@@ -1656,10 +1653,10 @@ namespace CodeFormatter.Handlers
                             line=AntlrUtilities.asTrim(line.Substring(nextBreakPoint));
                         }
 
-                        if (!currentLine.StartsWith("/*") && !currentLine.StartsWith("*/") && (asteriskMode==ASPrettyPrinter.MLAsteriskStyle_All || (asteriskMode==ASPrettyPrinter.MLAsteriskStyle_AsIs && hasAsterisks)))
+                        if (!currentLine.StartsWithOrdinal("/*") && !currentLine.StartsWithOrdinal("*/") && (asteriskMode==MLAsteriskStyle_All || (asteriskMode==MLAsteriskStyle_AsIs && hasAsterisks)))
                         {
                             //if we are on an attribute line, but not on the first loop iteration (i.e. we have already wrapped at least once)
-                            if (workingOnAttribute && hangingIndentTabs>0 && !currentLine.StartsWith("@"))
+                            if (workingOnAttribute && hangingIndentTabs>0 && !currentLine.StartsWith('@'))
                             {
                                 //I think I should always use spaces here
                                 currentLine=ASFormatter.generateIndent(mTabSize*hangingIndentTabs, false, mTabSize)+currentLine;
@@ -1686,7 +1683,7 @@ namespace CodeFormatter.Handlers
             List<CommentLineWrapData> lines=new List<CommentLineWrapData>();
             int originalOffset=0;
             String remainingText=text;
-            if (remainingText.StartsWith("//"))
+            if (remainingText.StartsWithOrdinal("//"))
             {
                 remainingText=remainingText.Substring(2);
                 originalOffset+=2;
@@ -2739,7 +2736,7 @@ namespace CodeFormatter.Handlers
             //shouldn't be.  This is mainly the case if the last line is just the end brace of a function expression
             //or the end bracket of an array decl, etc.  However, in the normal wrapping case, we want to leave the
             //regular hanging indent if there is other content on the line.
-            int lastCR=mOutputBuffer.ToString().LastIndexOf("\n");
+            int lastCR=mOutputBuffer.ToString().LastIndexOf('\n');
             if (lastCR>=0)
             {
                 int lastIndent=determineLastIndent(mOutputBuffer);
@@ -3259,7 +3256,7 @@ namespace CodeFormatter.Handlers
                     for (int i=0;i<wrapItems.Count;i++)
                     {
                         WrapItem item=wrapItems[i];
-                        int nextStartPos = mOutputBuffer.ToString().IndexOf("\n", item.getStartPos());
+                        int nextStartPos = mOutputBuffer.ToString().IndexOf('\n', item.getStartPos());
                         if (nextStartPos<0)
                             nextStartPos=mOutputBuffer.Length;
                         if (i+1<wrapItems.Count)
@@ -3338,7 +3335,7 @@ namespace CodeFormatter.Handlers
 
         private bool isFirstItemOnLine(int startPos) 
         {
-            int lastLineStart = mOutputBuffer.ToString().LastIndexOf("\n", startPos);
+            int lastLineStart = mOutputBuffer.ToString().LastIndexOf('\n', startPos);
             if (lastLineStart<0)
                 lastLineStart=0;
             else
@@ -3438,7 +3435,7 @@ namespace CodeFormatter.Handlers
         {
             //TODO: use the first parm pos to determine the number of columns to indent
             //search backward for line start from the first parm pos.
-            int previousNewline = mOutputBuffer.ToString().LastIndexOf("\n", filePosition);
+            int previousNewline = mOutputBuffer.ToString().LastIndexOf('\n', filePosition);
             if (previousNewline<0)
                 previousNewline=0;
             else
@@ -3733,9 +3730,9 @@ namespace CodeFormatter.Handlers
             {
                 //remove braces from statementData, if at ends
                 statementData=statementData.Trim();
-                if (statementData.StartsWith("{"))
+                if (statementData.StartsWith('{'))
                     statementData=statementData.Substring(1);
-                if (statementData.EndsWith("}"))
+                if (statementData.EndsWith('}'))
                     statementData=statementData.Substring(0, statementData.Length-1);
             }
             if (statementData.Trim().IndexOf('\n')>=0)
@@ -4739,7 +4736,7 @@ namespace CodeFormatter.Handlers
             mParent=parent;
             if (parent!=null)
             {
-                mPathCode=parent.mPathCode+index.ToString();
+                mPathCode = parent.mPathCode + index;
             }
             else
             {

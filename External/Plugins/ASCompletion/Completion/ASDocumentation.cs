@@ -3,17 +3,17 @@
  */
 
 using System;
-using System.Text;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Text;
 using System.Text.RegularExpressions;
-using System.Diagnostics;
-using PluginCore;
-using PluginCore.Managers;
-using PluginCore.Controls;
-using ASCompletion.Model;
 using ASCompletion.Context;
+using ASCompletion.Model;
+using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Localization;
+using PluginCore.Managers;
 using PluginCore.Utilities;
 using ScintillaNet;
 
@@ -248,13 +248,13 @@ namespace ASCompletion.Completion
                 get { return TextHelper.GetString("Label.DocBoxTemplate"); }
             }
             
-            public System.Drawing.Bitmap Icon {
-                get { return (System.Drawing.Bitmap)ASContext.Panel.GetIcon(PluginUI.ICON_TEMPLATE); }
+            public Bitmap Icon {
+                get { return (Bitmap)ASContext.Panel.GetIcon(PluginUI.ICON_TEMPLATE); }
             }
             
             public string Value { 
                 get {
-                    ASDocumentation.CompleteTemplate(Context);
+                    CompleteTemplate(Context);
                     return null;
                 }
             }
@@ -279,8 +279,8 @@ namespace ASCompletion.Completion
                 get { return TextHelper.GetString("Label.DocTagTemplate"); }
             }
             
-            public System.Drawing.Bitmap Icon {
-                get { return (System.Drawing.Bitmap)ASContext.Panel.GetIcon(PluginUI.ICON_DECLARATION); }
+            public Bitmap Icon {
+                get { return (Bitmap)ASContext.Panel.GetIcon(PluginUI.ICON_DECLARATION); }
             }
             
             public string Value { 
@@ -430,7 +430,7 @@ namespace ASCompletion.Completion
             string details = "";
             
             // get parameter detail
-            if (highlightParam != null && highlightParam.Length > 0 && cb.ParamName != null)
+            if (!string.IsNullOrEmpty(highlightParam) && cb.ParamName != null)
             {
                 for(int i=0; i<cb.ParamName.Count; i++)
                 {
@@ -445,9 +445,9 @@ namespace ASCompletion.Completion
             // get description extract
             if (ASContext.CommonSettings.SmartTipsEnabled)
             {
-                if (cb.InfoTip != null && cb.InfoTip.Length > 0)
+                if (!string.IsNullOrEmpty(cb.InfoTip))
                     details += "\n"+cb.InfoTip;
-                else if (cb.Description != null && cb.Description.Length > 0) 
+                else if (!string.IsNullOrEmpty(cb.Description)) 
                     details += Get2LinesOf(cb.Description, cb.IsFunctionWithArguments);
             }
 
@@ -456,7 +456,9 @@ namespace ASCompletion.Completion
 
         static private string GetShortcutDocs()
         {
-            return "\n[COLOR=#666666:MULTIPLY][i](" + TextHelper.GetString("Info.ShowDetails") + ")[/i][/COLOR]";
+            Color themeForeColor = PluginBase.MainForm.GetThemeColor("MethodCallTip.InfoColor");
+            string foreColorString = themeForeColor != Color.Empty ? DataConverter.ColorToHex(themeForeColor).Replace("0x", "#") : "#666666:MULTIPLY";
+            return "\n[COLOR=" + foreColorString + "][i](" + TextHelper.GetString("Info.ShowDetails") + ")[/i][/COLOR]";
         }
 
         /// <summary>

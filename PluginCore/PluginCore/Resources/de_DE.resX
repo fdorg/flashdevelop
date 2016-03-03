@@ -3570,7 +3570,7 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
   <data name="CodeAnalyzer.Description.PMDRuleset" xml:space="preserve">
     <value>Standard Regeldatei für Flex PMD.</value>
   </data>
-  <data name="CodeAnalyzer.Info.Decription" xml:space="preserve">
+  <data name="CodeAnalyzer.Info.Description" xml:space="preserve">
     <value>Fügt FlashDevelop Flex PMD Codeanalyse hinzu.</value>
   </data>
   <data name="CodeAnalyzer.Label.AnalyzeProject" xml:space="preserve">
@@ -3739,8 +3739,8 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <value>Fehlerzeile:</value>
   </data>
   <data name="ProjectManager.ToolTip.Synchronize" xml:space="preserve">
-    <value>Track Active Document</value>
-    <comment>Modified after 4.7.2</comment>
+    <value>Locate Active Document</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="ProjectManager.ToolTip.SynchronizeMain" xml:space="preserve">
     <value>Locate Document Class</value>
@@ -5955,5 +5955,37 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
   <data name="FlashDebugger.TreeExporter.DuplicatedObject" xml:space="preserve">
     <value>[Object {0} already listed before]</value>
     <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="ProjectManager.Label.InClasspathsOnly" xml:space="preserve">
+    <value>In Classpaths only</value>
+    <comment>Added after 5.0.1</comment>
+  </data>
+  <data name="FlashDevelop.Info.HighlightWordBack" xml:space="preserve">
+    <value>Highlight word:</value>
+    <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="FlashDevelop.Info.ShortcutConflictsPresent" xml:space="preserve">
+    <value>There are one or more conflicts present. Ignore and continue?</value>
+    <comment>REQUIRES TRANSLATION</comment>
+  </data>
+  <data name="ASCompletion.Info.NoContextGeneratorCode" xml:space="preserve">
+    <value>No contextual code generation available.</value>
+    <comment>REQUIRES TRANSLATION</comment>
+  </data>
+  <data name="CodeRefactor.Label.Move" xml:space="preserve">
+    <value>Move...</value>
+    <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="FlashDevelop.Label.Export" xml:space="preserve">
+    <value>&amp;Export...</value>
+    <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="FlashDevelop.Label.Import" xml:space="preserve">
+    <value>&amp;Import...</value>
+    <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="FlashDevelop.Label.ShortcutSearch" xml:space="preserve">
+    <value>Search: (Start the filter with * to view custom only, and ? to view conflicts only.)</value>
+    <comment>Added after 5.0.2</comment>
   </data>
 </root>

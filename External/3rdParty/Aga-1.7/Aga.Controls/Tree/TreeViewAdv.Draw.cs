@@ -40,7 +40,8 @@ namespace Aga.Controls.Tree
 		private void CreatePens()
 		{
 			CreateLinePen();
-			CreateMarkPen();
+            CreateMarkPen();
+            CreateLine2Pen();
 		}
 
 		private void CreateMarkPen()
@@ -60,6 +61,11 @@ namespace Aga.Controls.Tree
 			_linePen = new Pen(_lineColor);
 			_linePen.DashStyle = DashStyle.Dot;
 		}
+
+        private void CreateLine2Pen()
+        {
+            _line2Pen = new Pen(_lineColor);
+        }
 
         protected override void OnPaintBackground(PaintEventArgs pevent)
         {
@@ -90,7 +96,7 @@ namespace Aga.Controls.Tree
 
             if (UseColumns)
             {
-				DrawColumnHeaders(e.Graphics);
+				DrawColumnHeaders(e.Graphics, this.ColumnHeaderBackColor, this.ColumnHeaderBorderColor, this.ColumnHeaderTextColor);
 				y += ActualColumnHeaderHeight;
                 if (Columns.Count == 0 || e.ClipRectangle.Height + e.ClipRectangle.Top <= y)
                     return;
@@ -169,7 +175,7 @@ namespace Aga.Controls.Tree
 			}
 
             if ((GridLineStyle & GridLineStyle.Horizontal) == GridLineStyle.Horizontal)
-				e.Graphics.DrawLine(SystemPens.InactiveBorder, 0, rowRect.Bottom, e.Graphics.ClipBounds.Right, rowRect.Bottom);
+				e.Graphics.DrawLine(_line2Pen, 0, rowRect.Bottom, e.Graphics.ClipBounds.Right, rowRect.Bottom);
 
 			if (ShowLines)
 				DrawLines(e.Graphics, node, rowRect);
@@ -185,18 +191,21 @@ namespace Aga.Controls.Tree
 				if (c.IsVisible)
 				{
 					x += c.Width;
-					gr.DrawLine(SystemPens.InactiveBorder, x - 1, y, x - 1, gr.ClipBounds.Bottom);
+					gr.DrawLine(_line2Pen, x - 1, y, x - 1, gr.ClipBounds.Bottom);
 				}
 			}
 		}
 
-		private void DrawColumnHeaders(Graphics gr)
+		private void DrawColumnHeaders(Graphics gr, Color back, Color fore, Color text)
 		{
 			PerformanceAnalyzer.Start("DrawColumnHeaders");
 			ReorderColumnState reorder = Input as ReorderColumnState;
 			int x = 0;
-			TreeColumn.DrawBackground(gr, new Rectangle(0, 0, ClientRectangle.Width + 2, ActualColumnHeaderHeight - 1), false, false);
-			gr.TranslateTransform(-OffsetX, 0);
+
+            if (this.CustomDrawHeaders) TreeColumn.DrawCustomBackground(gr, back, fore, new Rectangle(0, 0, ClientRectangle.Width + 2, ActualColumnHeaderHeight - 1), false, false);
+            else TreeColumn.DrawBackground(gr, new Rectangle(0, 0, ClientRectangle.Width + 2, ActualColumnHeaderHeight - 1), false, false);
+
+            gr.TranslateTransform(-OffsetX, 0);
 			foreach (TreeColumn c in Columns)
 			{
 				if (c.IsVisible)
@@ -206,7 +215,12 @@ namespace Aga.Controls.Tree
 						Rectangle rect = new Rectangle(x, 0, c.Width, ActualColumnHeaderHeight - 1);
 						gr.SetClip(rect);
 						bool pressed = ((Input is ClickColumnState || reorder != null) && ((Input as ColumnState).Column == c));
-						c.Draw(gr, rect, Font, pressed, _hotColumn == c);
+
+                        if (this.CustomDrawHeaders) TreeColumn.DrawCustomBackground(gr, back, fore, rect, pressed, _hotColumn == c);
+                        else TreeColumn.DrawBackground(gr, rect, pressed, _hotColumn == c);
+
+                        c.Draw(gr, rect, Font, pressed, _hotColumn == c, text);
+
 						gr.ResetClip();
 
 						if (reorder != null && reorder.DropColumn == c)

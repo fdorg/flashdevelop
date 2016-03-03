@@ -1,16 +1,12 @@
 ﻿using System;
-using System.IO;
-using System.Text;
+using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using PluginCore.Localization;
-using PluginCore.Managers;
-using System.Collections;
-using PluginCore.Helpers;
-using PluginCore.Controls;
 using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Managers;
 
 namespace FlashDevelop.Managers
 {
@@ -54,7 +50,7 @@ namespace FlashDevelop.Managers
                     foreach (String rawLine in lines)
                     {
                         String line = rawLine.Trim();
-                        if (line.Length < 2 || line.StartsWith("#")) continue;
+                        if (line.Length < 2 || line.StartsWith('#')) continue;
                         String[] entry = line.Split(new Char[] { '=' }, 2);
                         if (entry.Length < 2) continue;
                         valueMap[entry[0]] = entry[1];
@@ -121,6 +117,7 @@ namespace FlashDevelop.Managers
                 {
                     NotifyEvent ne = new NotifyEvent(EventType.ApplyTheme);
                     EventManager.DispatchEvent(Globals.MainForm, ne);
+                    Globals.MainForm.AdjustAllImages();
                     Globals.MainForm.Refresh();
                 }
             }
@@ -149,7 +146,7 @@ namespace FlashDevelop.Managers
                 Boolean useIn = GetThemeValue("ThemeManager.UseInheritance") == "True";
                 if (useIn && type.BaseType != null) ThemeControl(obj, type.BaseType);
                 // Handle type with full name, with or without suffix 'Ex'
-                String name = type.Name.EndsWith("Ex") ? type.Name.Remove(type.Name.Length - 2) : type.Name;
+                String name = type.Name.EndsWithOrdinal("Ex") ? type.Name.Remove(type.Name.Length - 2) : type.Name;
                 PropertyInfo ground = type.GetProperty("BackgroundColor");
                 PropertyInfo alink = type.GetProperty("ActiveLinkColor");
                 PropertyInfo dlink = type.GetProperty("DisabledLinkColor");
@@ -158,6 +155,10 @@ namespace FlashDevelop.Managers
                 PropertyInfo dback = type.GetProperty("DisabledBackColor");
                 PropertyInfo afore = type.GetProperty("ActiveForeColor");
                 PropertyInfo border = type.GetProperty("BorderColor");
+                PropertyInfo hfore = type.GetProperty("HotForeColor");
+                PropertyInfo harrow = type.GetProperty("HotArrowColor");
+                PropertyInfo aarrow = type.GetProperty("ActiveArrowColor");
+                PropertyInfo arrow = type.GetProperty("ArrowColor");
                 PropertyInfo link = type.GetProperty("LinkColor");
                 PropertyInfo back = type.GetProperty("BackColor");
                 PropertyInfo fore = type.GetProperty("ForeColor");
@@ -258,6 +259,42 @@ namespace FlashDevelop.Managers
                     if (color != Color.Empty)
                     {
                         dback.SetValue(obj, color, null);
+                    }
+                }
+                if (hfore != null)
+                {
+                    String key = name + ".HotForeColor";
+                    Color color = GetThemeColor(key);
+                    if (color != Color.Empty)
+                    {
+                        hfore.SetValue(obj, color, null);
+                    }
+                }
+                if (harrow != null)
+                {
+                    String key = name + ".HotArrowColor";
+                    Color color = GetThemeColor(key);
+                    if (color != Color.Empty)
+                    {
+                        harrow.SetValue(obj, color, null);
+                    }
+                }
+                if (aarrow != null)
+                {
+                    String key = name + ".ActiveArrowColor";
+                    Color color = GetThemeColor(key);
+                    if (color != Color.Empty)
+                    {
+                        aarrow.SetValue(obj, color, null);
+                    }
+                }
+                if (arrow != null)
+                {
+                    String key = name + ".ArrowColor";
+                    Color color = GetThemeColor(key);
+                    if (color != Color.Empty)
+                    {
+                        arrow.SetValue(obj, color, null);
                     }
                 }
             }

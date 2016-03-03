@@ -1,8 +1,9 @@
 using System;
-using System.Text;
 using System.Collections.Generic;
+using System.Text;
 using CodeFormatter.Handlers;
 using CodeFormatter.InfoCollector;
+using PluginCore;
 
 namespace CodeFormatter.Preferences
 {
@@ -121,8 +122,8 @@ namespace CodeFormatter.Preferences
         {
             try
             {
-                int index = source.IndexOf(tagName);
-                int endIndex = source.IndexOf(TagSplitter, index);
+                int index = source.IndexOfOrdinal(tagName);
+                int endIndex = source.IndexOfOrdinal(TagSplitter, index);
                 if (index < 0 || endIndex < 0) return null;
                 String value = source.Substring(index + tagName.Length, endIndex - (index + tagName.Length));
                 value = value.Replace(SplitterEscape, TagSplitter);

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Data;
-using System.Text;
 using System.Drawing;
 using System.Threading;
 using System.Reflection;
@@ -35,14 +33,21 @@ namespace AppMan
         private Queue<String> fileQueue;
         private LocaleData localeData;
         private Boolean localeOverride;
+        private Boolean configOverride;
         private String[] notifyPaths;
         private Boolean haveUpdates;
         private Boolean checkOnly;
+        private String argsConfig;
 
         /**
         * Static link label margin constant
         */
         public static Int32 LINK_MARGIN = 4;
+
+        /**
+        * Static constant for current distribution
+        */
+        public static String DISTRO_NAME = "FlashDevelop";
 
         /**
         * Static constant for exposed config groups (separated with ,)
@@ -125,6 +130,12 @@ namespace AppMan
                 {
                     this.localeId = arg.Trim().Substring("-locale=".Length);
                     this.localeOverride = true;
+                }
+                // Handle config values
+                if (arg.Trim().Contains("-config="))
+                {
+                    this.argsConfig = arg.Trim().Substring("-config=".Length);
+                    this.configOverride = true;
                 }
             }
         }
@@ -226,12 +237,18 @@ namespace AppMan
                 if (File.Exists(file))
                 {
                     settings = ObjectSerializer.Deserialize(file, settings) as Settings;
+                    if (!String.IsNullOrEmpty(settings.Name)) MainForm.DISTRO_NAME = settings.Name;
+                    if (!String.IsNullOrEmpty(settings.Groups)) MainForm.EXPOSED_GROUPS = settings.Groups;
                     PathHelper.APPS_DIR = ArgProcessor.ProcessArguments(settings.Archive);
                     PathHelper.CONFIG_ADR = ArgProcessor.ProcessArguments(settings.Config);
                     PathHelper.HELP_ADR = ArgProcessor.ProcessArguments(settings.Help);
                     PathHelper.LOG_DIR = ArgProcessor.ProcessArguments(settings.Logs);
                     if (!this.localeOverride) this.localeId = settings.Locale;
                     this.notifyPaths = settings.Paths;
+                }
+                if (this.configOverride)
+                {
+                    PathHelper.CONFIG_ADR = this.argsConfig;
                 }
                 if (!Directory.Exists(PathHelper.LOG_DIR))
                 {
@@ -935,8 +952,8 @@ namespace AppMan
                 #if FLASHDEVELOP
                 if (file.ToLower().EndsWith(".fdz"))
                 {
-                    String fd = Path.Combine(PathHelper.GetExeDirectory(), @"..\..\FlashDevelop.exe");
-                    Boolean wait = Process.GetProcessesByName("FlashDevelop").Length == 0;
+                    String fd = Path.Combine(PathHelper.GetExeDirectory(), @"..\..\" + DISTRO_NAME + ".exe");
+                    Boolean wait = Process.GetProcessesByName(DISTRO_NAME).Length == 0;
                     if (File.Exists(fd))
                     {
                         Process.Start(Path.GetFullPath(fd), file + " -silent -reuse");
@@ -1658,18 +1675,22 @@ namespace AppMan
         public String Config = "";
         public String Archive = "";
         public String Locale = "en_US";
+        public String Name = "FlashDevelop";
+        public String Groups = "FD5";
 
         [XmlArrayItem("Path")]
         public String[] Paths = new String[0];
 
         public Settings() {}
-        public Settings(String config, String archive, String[] paths, String locale, String help, String logs)
+        public Settings(String config, String archive, String[] paths, String locale, String help, String logs, String name, String groups)
         {
             this.Logs = logs;
             this.Paths = paths;
             this.Config = config;
             this.Archive = archive;
             this.Locale = locale;
+            this.Groups = groups;
+            this.Name = name;
             this.Help = help;
         }
 

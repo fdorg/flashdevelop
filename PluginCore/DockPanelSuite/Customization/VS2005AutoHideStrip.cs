@@ -524,7 +524,6 @@ namespace WeifenLuo.WinFormsUI.Docking
 
                 foreach(Pane pane in GetPanes(state))
                 {
-                    DockState dockState = pane.DockPane.DockState;
                     foreach(TabVS2005 tab in pane.AutoHideTabs)
                     {
                         GraphicsPath path = GetTabOutline(tab, true, true);

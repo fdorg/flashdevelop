@@ -12,5 +12,5 @@
 	<button label="Label.SaveAs" click="SaveAs" keyid="FileMenu.SaveAs" flags="Enable:IsEditable" />
 	<separator />
 	<button label="Label.CommandPrompt" click="PluginCommand" tag="FileExplorer.PromptHere;$(CurDir)" image="57" keyid="GeneralToolsMenu.CommandPrompt" />
-	<button label="Label.WindowsExplorer" click="PluginCommand" tag="FileExplorer.Explore;$(CurDir)" image="56" keyid="GeneralToolsMenu.WindowsExplorer" />
+	<button label="Label.WindowsExplorer" click="PluginCommand" tag="FileExplorer.Explore;$(CurDir)" image="46" keyid="GeneralToolsMenu.WindowsExplorer" />
 </tabmenu>

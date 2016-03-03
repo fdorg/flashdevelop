@@ -1,15 +1,14 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+using PluginCore;
 
 // Information about this assembly is defined by the following attributes. 
 // Change them to the information which is associated with the assembly you compile.
 [assembly: AssemblyTitle("BridgeSettings")]
-[assembly: AssemblyDescription("BridgeSettings Plugin For " + PluginCore.DistroConfig.DISTRIBUTION_NAME)]
+[assembly: AssemblyDescription("BridgeSettings Plugin For " + DistroConfig.DISTRIBUTION_NAME)]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany(PluginCore.DistroConfig.DISTRIBUTION_COMPANY)]
+[assembly: AssemblyCompany(DistroConfig.DISTRIBUTION_COMPANY)]
 [assembly: AssemblyProduct("BridgeSettings")]
-[assembly: AssemblyCopyright(PluginCore.DistroConfig.DISTRIBUTION_COPYRIGHT)]
+[assembly: AssemblyCopyright(DistroConfig.DISTRIBUTION_COPYRIGHT)]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyVersion("1.0.0.0")]

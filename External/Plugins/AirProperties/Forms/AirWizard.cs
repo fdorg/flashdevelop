@@ -16,6 +16,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using PluginCore.Localization;
 using ProjectManager.Projects;
 using System.Collections;
+using PluginCore;
 using ProjectManager.Projects.AS3;
 using PluginCore.Managers;
 
@@ -84,9 +85,11 @@ namespace AirProperties
                 new PropertyManager.AirApplicationIconField("50", PropertyManager.AirVersion.V34),
                 new PropertyManager.AirApplicationIconField("57", PropertyManager.AirVersion.V20),
                 new PropertyManager.AirApplicationIconField("58", PropertyManager.AirVersion.V34),
+                new PropertyManager.AirApplicationIconField("64", PropertyManager.AirVersion.V170),
                 new PropertyManager.AirApplicationIconField("72", PropertyManager.AirVersion.V20),
                 new PropertyManager.AirApplicationIconField("76", PropertyManager.AirVersion.V39),
                 new PropertyManager.AirApplicationIconField("80", PropertyManager.AirVersion.V39),
+                new PropertyManager.AirApplicationIconField("87", PropertyManager.AirVersion.V170),
                 new PropertyManager.AirApplicationIconField("96", PropertyManager.AirVersion.V20),
                 new PropertyManager.AirApplicationIconField("100", PropertyManager.AirVersion.V34),
                 new PropertyManager.AirApplicationIconField("114", PropertyManager.AirVersion.V26),
@@ -94,7 +97,9 @@ namespace AirProperties
                 new PropertyManager.AirApplicationIconField("128", PropertyManager.AirVersion.V10),
                 new PropertyManager.AirApplicationIconField("144", PropertyManager.AirVersion.V33),
                 new PropertyManager.AirApplicationIconField("152", PropertyManager.AirVersion.V39),
+                new PropertyManager.AirApplicationIconField("180", PropertyManager.AirVersion.V170),
                 new PropertyManager.AirApplicationIconField("192", PropertyManager.AirVersion.V150),
+                new PropertyManager.AirApplicationIconField("320", PropertyManager.AirVersion.V170),
                 new PropertyManager.AirApplicationIconField("512", PropertyManager.AirVersion.V20),
                 new PropertyManager.AirApplicationIconField("1024", PropertyManager.AirVersion.V34)
             };
@@ -428,7 +433,7 @@ namespace AirProperties
 
         private Boolean GetSelectedLocaleIsDefault()
         {
-            return (Boolean)(LocalesField.SelectedIndex == 0);
+            return LocalesField.SelectedIndex == 0;
         }
 
         public void SetTitle(string projectName, string airVersion)
@@ -829,7 +834,7 @@ namespace AirProperties
             try
             {
                 String src = File.ReadAllText(file);
-                if (src.IndexOf("xmlns=\"http://ns.adobe.com/air/") > 0) return true;
+                if (src.IndexOfOrdinal("xmlns=\"http://ns.adobe.com/air/") > 0) return true;
             }
             catch { }
             return false;
@@ -1061,11 +1066,11 @@ namespace AirProperties
                 {
                     if (_pluginMain.Settings.UseUniformFilenames)
                     {
-                        destinationFileName = filePrefix + dimensions.X.ToString() + Path.GetExtension(fileName);
+                        destinationFileName = filePrefix + dimensions.X + Path.GetExtension(fileName);
                     }
                     else if (_pluginMain.Settings.RenameIconsWithSize)
                     {
-                        destinationFileName = Path.GetFileNameWithoutExtension(fileName) + dimensions.X.ToString() + Path.GetExtension(fileName);
+                        destinationFileName = Path.GetFileNameWithoutExtension(fileName) + dimensions.X + Path.GetExtension(fileName);
                     }
                     else destinationFileName = Path.GetFileName(fileName);
                     if (!Directory.Exists(destinationPath))
@@ -1085,7 +1090,7 @@ namespace AirProperties
             }
             else
             {
-                MessageBox.Show(String.Format(TextHelper.GetString("Alert.Message.InvalidIconDimensions"), dimensions.X.ToString(), dimensions.Y.ToString()), TextHelper.GetString("Alert.Title.InvalidIconDimensions"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(String.Format(TextHelper.GetString("Alert.Message.InvalidIconDimensions"), dimensions.X, dimensions.Y), TextHelper.GetString("Alert.Title.InvalidIconDimensions"), MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
 
@@ -1469,8 +1474,8 @@ namespace AirProperties
                     {
                         //create the affected properties now, even though value is empty, so the locale 
                         //will be preserved if the user closes the form without specifying a value
-                        PropertyManager.CreateLocalizedProperty("name", locale, (Boolean)_locales[0].Equals(locale));
-                        PropertyManager.CreateLocalizedProperty("description", locale, (Boolean)_locales[0].Equals(locale));
+                        PropertyManager.CreateLocalizedProperty("name", locale, _locales[0].Equals(locale));
+                        PropertyManager.CreateLocalizedProperty("description", locale, _locales[0].Equals(locale));
                     }
                 }
                 //Re-initialize locales and refresh affected property fields
@@ -1673,7 +1678,7 @@ namespace AirProperties
                 if (externalsFileDialog.ShowDialog(this) == DialogResult.OK)
                 {
                     var externalsFile = ProjectPaths.GetRelativePath(_propertiesFilePath, externalsFileDialog.FileName);
-                    if (externalsFile.StartsWith("..") || Path.IsPathRooted(externalsFile))
+                    if (externalsFile.StartsWithOrdinal("..") || Path.IsPathRooted(externalsFile))
                     {
                         String msg = TextHelper.GetString("Info.CheckFileLocation");
                         ErrorManager.ShowWarning(msg, null);
@@ -1865,7 +1870,7 @@ namespace AirProperties
         // validates that the supplied image URI is a PNG file
         private Boolean ValidateImageExtension(String imageURI)
         {
-            if (imageURI.ToLower().EndsWith(".png")) return true;
+            if (imageURI.ToLower().EndsWithOrdinal(".png")) return true;
             else return false;
         }
 
@@ -1879,11 +1884,11 @@ namespace AirProperties
                 // always true;
                 fileType.DescriptionIsValid = true;
                 // set validity based on validation requirements
-                if (fileType.Name.Length <= 0) fileType.NameIsValid = false;
+                if (fileType.Name.Length == 0) fileType.NameIsValid = false;
                 else fileType.NameIsValid = true;
                 if (!Regex.IsMatch(fileType.Extension, _FileNameRegexPattern)) fileType.ExtensionIsValid = false;
                 else fileType.ExtensionIsValid = true;
-                if (fileType.ContentType.Length <= 0) fileType.ContentTypeIsValid = false;
+                if (fileType.ContentType.Length == 0) fileType.ContentTypeIsValid = false;
                 else fileType.ContentTypeIsValid = true;
                 foreach (PropertyManager.AirFileType.AirFileTypeIcon icon in fileType.Icons)
                 {
@@ -1960,7 +1965,7 @@ namespace AirProperties
 
         private void VersionField_Validating(object sender, CancelEventArgs e)
         {
-            if (VersionField.Text.Length <= 0 && PropertyManager.MajorVersion < PropertyManager.AirVersion.V25)
+            if (VersionField.Text.Length == 0 && PropertyManager.MajorVersion < PropertyManager.AirVersion.V25)
             {
                 this.ValidationErrorProvider.SetError(VersionField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), VersionLabel.Text));
                 e.Cancel = true;
@@ -2160,7 +2165,7 @@ namespace AirProperties
             {
                 FileTypeNameField.Text = FileTypeNameField.Text.Trim();
                 selectedFileType.Name = FileTypeNameField.Text;
-                if (FileTypeNameField.Text.Length <= 0)
+                if (FileTypeNameField.Text.Length == 0)
                 {
                     selectedFileType.NameIsValid = false;
                     this.ValidationErrorProvider.SetError(FileTypeNameField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), FTNameLabel.Text));
@@ -2216,7 +2221,7 @@ namespace AirProperties
                 FileTypeContentTypeField.Text = FileTypeContentTypeField.Text.Trim();
                 selectedFileType.ContentType = FileTypeContentTypeField.Text;
                 // validate as required field for AIR 1.5+
-                if (FileTypeContentTypeField.Text.Length <= 0 && PropertyManager.MajorVersion >= PropertyManager.AirVersion.V15)
+                if (FileTypeContentTypeField.Text.Length == 0 && PropertyManager.MajorVersion >= PropertyManager.AirVersion.V15)
                 {
                     selectedFileType.ContentTypeIsValid = false;
                     this.ValidationErrorProvider.SetError(FileTypeContentTypeField, String.Format(TextHelper.GetString("Validation.InvalidProperty"), FTContentTypeLabel.Text));
@@ -2304,7 +2309,7 @@ namespace AirProperties
         {
             var externalsFile = IPhoneExternalSWFsField.Text;
             if (externalsFile == string.Empty) this.ValidationErrorProvider.SetError(IPhoneExternalSWFsField, string.Empty);
-            else if (externalsFile.StartsWith("..") || Path.IsPathRooted(externalsFile))
+            else if (externalsFile.StartsWithOrdinal("..") || Path.IsPathRooted(externalsFile))
             {
                 this.ValidationErrorProvider.SetError(IPhoneExternalSWFsField, TextHelper.GetString("Info.CheckFileLocation"));
 

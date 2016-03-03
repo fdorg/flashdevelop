@@ -106,7 +106,7 @@ namespace ASClassWizard
             // Nothing here...
         }
         
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             Project project;
             switch (e.Type)
@@ -117,7 +117,7 @@ namespace ASClassWizard
                     {
                         Hashtable table = evt.Data as Hashtable;
                         project = PluginBase.CurrentProject as Project;
-                        if ((project.Language.StartsWith("as") || project.Language == "haxe") && IsWizardTemplate(table["templatePath"] as String))
+                        if ((project.Language.StartsWithOrdinal("as") || project.Language == "haxe") && IsWizardTemplate(table["templatePath"] as String))
                         {
                             evt.Handled = true;
                             String className = table.ContainsKey("className") ? table["className"] as String : TextHelper.GetString("Wizard.Label.NewClass");
@@ -145,7 +145,7 @@ namespace ASClassWizard
                 case EventType.ProcessArgs:
                     TextEvent te = e as TextEvent;
                     project = PluginBase.CurrentProject as Project;
-                    if (lastFileFromTemplate != null && project != null && (project.Language.StartsWith("as") || project.Language == "haxe"))
+                    if (lastFileFromTemplate != null && project != null && (project.Language.StartsWithOrdinal("as") || project.Language == "haxe"))
                     {
                         te.Value = ProcessArgs(project, te.Value);
                     }
@@ -360,8 +360,9 @@ namespace ASClassWizard
                                 if (member.Parameters != null)
                                 foreach (MemberModel param in member.Parameters)
                                 {
-                                    if (param.Name.StartsWith(".")) break;
-                                    superConstructor += (index > 0 ? ", " : "") + param.Name;
+                                    if (param.Name.StartsWith('.')) break;
+                                    var pname = TemplateUtils.GetParamName(param);
+                                    superConstructor += (index > 0 ? ", " : "") + pname;
                                     index++;
                                 }
                                 superConstructor += ");\n" + (lastFileOptions.Language == "as3" ? "\t\t\t" : "\t\t");

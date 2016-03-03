@@ -1,9 +1,7 @@
 using System;
 using System.IO;
-using System.Text;
 using PluginCore.Localization;
 using ScintillaNet;
-using PluginCore;
 
 namespace PluginCore.Managers
 {
@@ -28,7 +26,7 @@ namespace PluginCore.Managers
                 else extension = "as";
             }
             Int32 count = DocumentCount++;
-            if (!extension.StartsWith(".")) extension = "." + extension;
+            if (!extension.StartsWith('.')) extension = "." + extension;
             String untitled = TextHelper.GetString("FlashDevelop.Info.UntitledFileStart");
             return untitled + count + extension;
         }
@@ -45,7 +43,7 @@ namespace PluginCore.Managers
                     path = Path.GetFullPath(path);
                     Char separator = Path.DirectorySeparatorChar;
                     String filename = Path.GetFullPath(document.FileName);
-                    if (filename == path || filename.StartsWith(path + separator))
+                    if (filename == path || filename.StartsWithOrdinal(path + separator))
                     {
                         document.Close();
                     }
@@ -68,10 +66,10 @@ namespace PluginCore.Managers
                 /* We need to check for virtual models, another more generic option would be 
                  * Path.GetFileName(document.FileName).IndexOfAny(Path.GetInvalidFileNameChars()) == -1
                  * But this one is used in more places */
-                if (document.IsEditable && !document.Text.StartsWith("[model] "))
+                if (document.IsEditable && !document.Text.StartsWithOrdinal("[model] "))
                 {
                     String filename = Path.GetFullPath(document.FileName);
-                    if (filename.StartsWith(oldPath))
+                    if (filename.StartsWithOrdinal(oldPath))
                     {
                         TextEvent ce = new TextEvent(EventType.FileClose, document.FileName);
                         EventManager.DispatchEvent(PluginBase.MainForm, ce);
@@ -106,7 +104,10 @@ namespace PluginCore.Managers
             {
                 PluginBase.MainForm.Documents[index].Activate();
             }
-            else PluginBase.MainForm.Documents[0].Activate();
+            else if (PluginBase.MainForm.Documents.Length > 0)
+            {
+                PluginBase.MainForm.Documents[0].Activate();
+            }
         }
 
         /// <summary>

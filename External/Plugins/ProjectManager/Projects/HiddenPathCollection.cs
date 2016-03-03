@@ -1,7 +1,7 @@
 using System;
-using System.IO;
 using System.Collections;
-using System.Text;
+using System.IO;
+using PluginCore;
 
 namespace ProjectManager.Projects
 {
@@ -14,7 +14,7 @@ namespace ProjectManager.Projects
             {
                 string hiddenPath = List[i] as string;
 
-                if (hiddenPath.StartsWith(path + Path.DirectorySeparatorChar) ||
+                if (hiddenPath.StartsWith(path + Path.DirectorySeparatorChar, StringComparison.Ordinal) ||
                     hiddenPath == path)
                 {
                     List.RemoveAt(i--); // search this index again
@@ -31,7 +31,7 @@ namespace ProjectManager.Projects
                 string hiddenPath = List[i] as string;
 
                 if (hiddenPath == path ||
-                    path.StartsWith(hiddenPath + Path.DirectorySeparatorChar))
+                    path.StartsWith(hiddenPath + Path.DirectorySeparatorChar, StringComparison.Ordinal))
                 {
                     List.RemoveAt(i--); // search this index again
                 }
@@ -42,7 +42,7 @@ namespace ProjectManager.Projects
         {
             foreach (string hiddenPath in List)
                 if (hiddenPath == path ||
-                    path.StartsWith(hiddenPath + Path.DirectorySeparatorChar))
+                    path.StartsWith(hiddenPath + Path.DirectorySeparatorChar, StringComparison.Ordinal))
                     return true;
             return false;
         }

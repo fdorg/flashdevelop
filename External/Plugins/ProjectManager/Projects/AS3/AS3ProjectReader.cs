@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.IO;
+using System.Xml;
 
 namespace ProjectManager.Projects.AS3
 {
@@ -33,11 +32,11 @@ namespace ProjectManager.Projects.AS3
                 project.MovieOptions.MinorVersion = 1;
             }
 
-            bool isAIR = project.MovieOptions.Platform.IndexOf("AIR") >= 0;
+            bool isAIR = project.MovieOptions.Platform.IndexOf("AIR", StringComparison.Ordinal) >= 0;
             if (project.CompilerOptions.Additional != null)
             {
                 string add = String.Join("\n", project.CompilerOptions.Additional).Trim().Replace("\n\n", "\n");
-                bool airdef = add.IndexOf("configname=air") >= 0;
+                bool airdef = add.IndexOf("configname=air", StringComparison.Ordinal) >= 0;
                 if (!isAIR && airdef)
                 {
                     add = Regex.Replace(add, "(\\+)?configname=air", "");
@@ -53,7 +52,7 @@ namespace ProjectManager.Projects.AS3
         // process AS3-specific stuff
         protected override void ProcessNode(string name)
         {
-            if (NodeType == System.Xml.XmlNodeType.Element)
+            if (NodeType == XmlNodeType.Element)
             switch (name)
             {
                 case "build": ReadBuildOptions(); break;

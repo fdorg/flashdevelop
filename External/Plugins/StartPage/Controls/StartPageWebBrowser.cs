@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Data;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
@@ -131,7 +130,7 @@ namespace StartPage.Controls
         private void WebBrowserNavigating(Object sender, WebBrowserNavigatingEventArgs e)
         {
             if (this.IsDownloadable(e.Url.ToString())) return;
-            if (!this.showingStartPage && !e.Url.ToString().StartsWith("javascript"))
+            if (!this.showingStartPage && !e.Url.ToString().StartsWithOrdinal("javascript"))
             {
                 this.startPageActions.ShowURL(e.Url.ToString());
                 e.Cancel = true;
@@ -144,8 +143,7 @@ namespace StartPage.Controls
         /// </summary>
         private Boolean IsDownloadable(String url)
         {
-            if (url.EndsWith(".exe") || url.EndsWith(".zip")) return true;
-            return false;
+            return url.EndsWithOrdinal(".exe") || url.EndsWithOrdinal(".zip");
         }
 
         #endregion
@@ -157,9 +155,7 @@ namespace StartPage.Controls
         {
             public event EventHandler DocumentCompleted;
 
-            private static String HOME_URL = "http://www.flashdevelop.org/";
             private static String RELEASE_NOTES_URL = Path.Combine(PathHelper.DocDir, "index.html");
-            private static String DOCUMENTATION_URL = "http://www.flashdevelop.org/wikidocs/";
 
             public void PageReady()
             {
@@ -179,7 +175,7 @@ namespace StartPage.Controls
             /// </summary>
             public void ShowHome()
             {
-                this.ShowURL(HOME_URL);
+                this.ShowURL(DistroConfig.DISTRIBUTION_HOME);
             }
 
             /// <summary>
@@ -195,7 +191,7 @@ namespace StartPage.Controls
             /// </summary>
             public void ShowDocumentation()
             {
-                this.ShowURL(DOCUMENTATION_URL);
+                this.ShowURL(DistroConfig.DISTRIBUTION_HELP);
             }
 
             /// <summary>

@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using ASCompletion.Model;
-using ASCompletion.Context;
-using PluginCore;
 using System.IO;
+using System.Text.RegularExpressions;
+using ASCompletion.Completion;
+using ASCompletion.Context;
+using ASCompletion.Model;
+using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
-using PluginCore.Controls;
-using System.Text.RegularExpressions;
-using ASCompletion.Completion;
+using ScintillaNet;
 
 namespace LoomContext
 {
@@ -73,6 +73,7 @@ namespace LoomContext
             features.objectKey = "Object";
             features.booleanKey = "Boolean";
             features.numberKey = "Number";
+            features.stringKey = "String";
             features.arrayKey = "Array";
             features.importKey = "import";
             features.typesPreKeys = new string[] { "import", "new", "typeof", "is", "as", "extends", "implements" };
@@ -129,9 +130,6 @@ namespace LoomContext
             majorVersion = 1;
             minorVersion = 0;
             ParseVersion(contextSetup.Version, ref majorVersion, ref minorVersion);
-
-            string cpCheck = contextSetup.Classpath != null ?
-                String.Join(";", contextSetup.Classpath).Replace('\\', '/') : "";
 
             //
             // Class pathes
@@ -221,7 +219,6 @@ namespace LoomContext
             {
                 if (File.Exists(path.Path) && !path.WasExplored)
                 {
-                    bool isRefresh = path.FilesCount > 0;
                     //TraceManager.AddAsync("parse " + path.Path);
                     lock (path)
                     {
@@ -322,7 +319,7 @@ namespace LoomContext
             return fullList;
         }
 
-        public override bool OnCompletionInsert(ScintillaNet.ScintillaControl sci, int position, string text, char trigger)
+        public override bool OnCompletionInsert(ScintillaControl sci, int position, string text, char trigger)
         {
             if (text == "Dictionary")
             {
@@ -396,10 +393,6 @@ namespace LoomContext
             if (IsFileValid && cFile.InlinedIn == null)
             {
                 PluginBase.MainForm.CallCommand("Save", null);
-
-                string sdk = PluginBase.CurrentProject != null
-                    ? PluginBase.CurrentProject.CurrentSDK
-                    : PathHelper.ResolvePath(loomSettings.GetDefaultSDK().Path);
                 // TODO CheckSyntax
             }
         }
@@ -416,7 +409,6 @@ namespace LoomContext
                 return;
             }
 
-            string command = (append ?? "") + " -- " + CurrentFile;
             // TODO RunCMD does it make sense?
         }
 
@@ -438,9 +430,6 @@ namespace LoomContext
 
             MainForm.CallCommand("SaveAllModified", null);
 
-            string sdk = PluginBase.CurrentProject != null
-                    ? PluginBase.CurrentProject.CurrentSDK
-                    : loomSettings.GetDefaultSDK().Path;
             // TODO BuildCMD does it make sense?
             return true;
         }

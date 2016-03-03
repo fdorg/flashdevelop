@@ -1,14 +1,13 @@
 using System;
-using System.IO;
-using System.Drawing;
-using System.Windows.Forms;
-using System.ComponentModel;
 using System.Collections.Generic;
-using PluginCore.Localization;
-using PluginCore.Utilities;
-using PluginCore.Managers;
-using PluginCore.Helpers;
+using System.ComponentModel;
+using System.IO;
+using System.Windows.Forms;
 using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
 
 namespace MacroManager
 {
@@ -112,7 +111,7 @@ namespace MacroManager
         /// <summary>
         /// Handles the incoming events
         /// </summary>
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority prority)
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             if (e.Type == EventType.UIStarted)
             {
@@ -173,7 +172,7 @@ namespace MacroManager
         {
             MenuStrip mainMenu = PluginBase.MainForm.MenuStrip;
             this.macroMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Macros"));
-            this.editMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.EditMacros"), null, this.EditMenuItemClick, Keys.Control | Keys.F10);
+            this.editMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.EditMacros"), null, this.EditMenuItemClick, Keys.Control | Keys.F11);
             PluginBase.MainForm.RegisterShortcutItem("MacrosMenu.EditMacros", this.editMenuItem);
             mainMenu.Items.Insert(mainMenu.Items.Count - 2, this.macroMenuItem);
         }
@@ -229,7 +228,7 @@ namespace MacroManager
                 {
                     ToolStripButton macroButton = new ToolStripButton();
                     macroButton.Click += new EventHandler(this.MacroMenuItemClick);
-                    macroButton.ToolTipText = macro.Label.Replace("&", "");
+                    macroButton.ToolTipText = TextHelper.RemoveMnemonics(macro.Label);
                     macroButton.Tag = macro;
                     if (!String.IsNullOrEmpty(macro.Image))
                     {
@@ -316,7 +315,7 @@ namespace MacroManager
                 foreach (String entry in ((Macro)macroItem.Tag).Entries)
                 {
                     String data = entry;
-                    if (data.StartsWith("#")) // Hardcore mode :)
+                    if (data.StartsWith('#')) // Hardcore mode :)
                     {
                         data = PluginBase.MainForm.ProcessArgString(entry.Substring(1));
                         if (data == "|") return; // Invalid, don't execute..

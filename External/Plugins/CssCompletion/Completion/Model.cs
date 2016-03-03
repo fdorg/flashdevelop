@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Drawing;
 using System.Text.RegularExpressions;
 using PluginCore;
 using PluginCore.Localization;
+using ScintillaNet;
 
 namespace CssCompletion
 {
@@ -34,7 +35,7 @@ namespace CssCompletion
             if (error.Length > 0)
             {
                 RegexOptions options = RegexOptions.Compiled | RegexOptions.IgnoreCase;
-                if (error.EndsWith("/s")) options |= RegexOptions.Singleline;
+                if (error.EndsWithOrdinal("/s")) options |= RegexOptions.Singleline;
                 else options |= RegexOptions.Multiline;
                 ErrorPattern = new Regex(error.Substring(1, error.Length - 3), options);
             }
@@ -52,7 +53,7 @@ namespace CssCompletion
 
     class LocalContext
     {
-        public ScintillaNet.ScintillaControl Sci;
+        public ScintillaControl Sci;
         public char Separator;
         public int Position;
         public bool InValue;
@@ -63,7 +64,7 @@ namespace CssCompletion
         public string Word;
         public string Property;
 
-        public LocalContext(ScintillaNet.ScintillaControl sci)
+        public LocalContext(ScintillaControl sci)
         {
             Sci = sci;
         }
@@ -105,12 +106,12 @@ namespace CssCompletion
     /// </summary>
     public class CompletionItem : ICompletionListItem, IComparable, IComparable<ICompletionListItem>
     {
-        static public System.Drawing.Bitmap TagIcon;
-        static public System.Drawing.Bitmap PropertyIcon;
-        static public System.Drawing.Bitmap VariableIcon;
-        static public System.Drawing.Bitmap ValueIcon;
-        static public System.Drawing.Bitmap PseudoIcon;
-        static public System.Drawing.Bitmap PrefixesIcon;
+        static public Bitmap TagIcon;
+        static public Bitmap PropertyIcon;
+        static public Bitmap VariableIcon;
+        static public Bitmap ValueIcon;
+        static public Bitmap PseudoIcon;
+        static public Bitmap PrefixesIcon;
 
         private string label;
         private string description;
@@ -148,7 +149,7 @@ namespace CssCompletion
                 }
                 if (description.Length > 0)
                 {
-                    int comment = description.IndexOf("//");
+                    int comment = description.IndexOfOrdinal("//");
                     if (comment >= 0)
                     {
                         desc = "[I]" + description.Substring(comment + 2).Trim() + "[/I]\n" 
@@ -160,7 +161,7 @@ namespace CssCompletion
             }
         }
         public ItemKind Kind { get { return kind; } }
-        public System.Drawing.Bitmap Icon
+        public Bitmap Icon
         {
             get 
             {

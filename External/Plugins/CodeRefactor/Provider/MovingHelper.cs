@@ -1,16 +1,16 @@
-﻿using CodeRefactor.Commands;
+﻿using System;
+using System.Collections.Generic;
+using CodeRefactor.Commands;
 using PluginCore;
 using PluginCore.FRService;
 using PluginCore.Managers;
-using System;
-using System.Collections.Generic;
 
 namespace CodeRefactor.Provider
 {
     class MovingHelper
     {
-        private static List<QueueItem> queue = new List<QueueItem>();
-        private static Dictionary<string, List<SearchMatch>> results = new Dictionary<string, List<SearchMatch>>();
+        private static readonly List<QueueItem> queue = new List<QueueItem>();
+        private static readonly Dictionary<string, List<SearchMatch>> results = new Dictionary<string, List<SearchMatch>>();
         private static Move currentCommand;
 
         public static void AddToQueue(Dictionary<string, string> oldPathToNewPath)
@@ -25,18 +25,22 @@ namespace CodeRefactor.Provider
 
         public static void AddToQueue(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming)
         {
-            queue.Add(new QueueItem(oldPathToNewPath, outputResults, renaming));
-            if (currentCommand == null) MoveFirst();
+            AddToQueue(oldPathToNewPath, outputResults, renaming, false);
         }
 
-        private static void MoveFirst()
+        public static void AddToQueue(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming, bool updatePackages)
+        {
+            queue.Add(new QueueItem(oldPathToNewPath, outputResults, renaming, updatePackages));
+            if (currentCommand == null) ExecuteFirst();
+        }
+
+        private static void ExecuteFirst()
         {
             try
             {
                 QueueItem item = queue[0];
-                Dictionary<string, string> oldPathToNewPath = item.oldPathToNewPath;
                 queue.Remove(item);
-                currentCommand = new Move(oldPathToNewPath, item.outputResults, item.renaming);
+                currentCommand = new Move(item.OldPathToNewPath, item.OutputResults, item.Renaming, item.UpdatePackages);
                 currentCommand.OnRefactorComplete += OnRefactorComplete;
                 currentCommand.Execute();
             }
@@ -60,7 +64,7 @@ namespace CodeRefactor.Provider
                     results[path].AddRange(entry.Value);
                 }
             }
-            if (queue.Count > 0) MoveFirst();
+            if (queue.Count > 0) ExecuteFirst();
             else
             {
                 if (results.Count > 0) ReportResults();
@@ -94,7 +98,7 @@ namespace CodeRefactor.Provider
                     string renamedLine = lineChanges[lineSetsToReport.Key].Trim();
                     foreach (string lineToReport in lineSetsToReport.Value)
                     {
-                        PluginCore.Managers.TraceManager.Add(string.Format(lineToReport, renamedLine), (int)TraceType.Info);
+                        TraceManager.Add(string.Format(lineToReport, renamedLine), (int)TraceType.Info);
                     }
                 }
             }
@@ -106,15 +110,17 @@ namespace CodeRefactor.Provider
 
     internal class QueueItem
     {
-        public Dictionary<string, string> oldPathToNewPath;
-        public bool outputResults;
-        public bool renaming;
+        public Dictionary<string, string> OldPathToNewPath;
+        public bool OutputResults;
+        public bool Renaming;
+        public readonly bool UpdatePackages;
 
-        public QueueItem(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming)
+        public QueueItem(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming, bool updatePackages)
         {
-            this.oldPathToNewPath = oldPathToNewPath;
-            this.outputResults = outputResults;
-            this.renaming = renaming;
+            OldPathToNewPath = oldPathToNewPath;
+            OutputResults = outputResults;
+            Renaming = renaming;
+            UpdatePackages = updatePackages;
         }
     }
 

@@ -53,7 +53,6 @@ namespace FlashDebugger.Controls
             {
                 this.watchMode = true;
                 NameNodeTextBox.EditEnabled = true;
-                NameNodeTextBox.DrawText += NameNodeTextBox_DrawText;
                 NameNodeTextBox.EditorShowing += NameNodeTextBox_EditorShowing;
                 NameNodeTextBox.EditorHided += NameNodeTextBox_EditorHided;
                 NameNodeTextBox.IsEditEnabledValueNeeded += NameNodeTextBox_IsEditEnabledValueNeeded;
@@ -69,6 +68,17 @@ namespace FlashDebugger.Controls
             _tree.NodeMouseDoubleClick += Tree_NodeMouseDoubleClick;
             _tree.LoadOnDemand = true;
             _tree.AutoRowHeight = true;
+            _tree.HideSelection = true;
+
+            _tree.CustomDrawHeaders = PluginBase.MainForm.GetThemeColor("ColumnHeader.BorderColor") != Color.Empty;
+            _tree.ColumnHeaderBackColor = PluginBase.MainForm.GetThemeColor("ColumnHeader.BackColor", SystemColors.Control);
+            _tree.ColumnHeaderTextColor = PluginBase.MainForm.GetThemeColor("ColumnHeader.TextColor", SystemColors.ControlText);
+            _tree.ColumnHeaderBorderColor = PluginBase.MainForm.GetThemeColor("ColumnHeader.BorderColor", SystemColors.ActiveBorder);
+            _tree.LineColor = PluginBase.MainForm.GetThemeColor("DataTreeControl.LineColor", SystemColors.ActiveBorder);
+            _tree.LineColor2 = PluginBase.MainForm.GetThemeColor("DataTreeControl.LineColor", SystemColors.ActiveBorder);
+            _tree.DragDropMarkColor = PluginBase.MainForm.GetThemeColor("DataTreeControl.ForeColor", SystemColors.WindowText);
+
+            NameNodeTextBox.DrawText += NameNodeTextBox_DrawText;
             ValueNodeTextBox.DrawText += ValueNodeTextBox_DrawText;
             ValueNodeTextBox.IsEditEnabledValueNeeded += ValueNodeTextBox_IsEditEnabledValueNeeded;
             ValueNodeTextBox.EditorShowing += ValueNodeTextBox_EditorShowing;
@@ -154,11 +164,13 @@ namespace FlashDebugger.Controls
 
         void NameNodeTextBox_DrawText(object sender, DrawEventArgs e)
         {
+            Color grayText = PluginBase.MainForm.GetThemeColor("DataTreeControl.GrayText", SystemColors.GrayText);
+            Color hiliteText = PluginBase.MainForm.GetThemeColor("DataTreeControl.HighlightText", SystemColors.HighlightText);
+            e.TextColor = PluginBase.MainForm.GetThemeColor("DataTreeControl.ForeColor", SystemColors.WindowText);
+            if (e.Node.IsSelected && this.ContainsFocus) e.TextColor = hiliteText;
             try
             {
-                if (e.Node.NextNode == null && e.Node.Level == 1 && !addingNewExpression) e.Font = new Font(e.Font, FontStyle.Italic);
-                else if (e.Node.Tag is ErrorNode) e.TextColor = e.Node.IsSelected ? Color.White : Color.Gray;
-
+                if (e.Node.Tag is ErrorNode) e.TextColor = e.Node.IsSelected ? hiliteText : grayText;
             }
             catch (Exception) { }
         }
@@ -286,6 +298,11 @@ namespace FlashDebugger.Controls
 
         void ValueNodeTextBox_DrawText(object sender, DrawEventArgs e)
         {
+            Color grayText = PluginBase.MainForm.GetThemeColor("DataTreeControl.GrayText", SystemColors.GrayText);
+            Color errorText = PluginBase.MainForm.GetThemeColor("DataTreeControl.ErrorText", Color.Red);
+            Color hiliteText = PluginBase.MainForm.GetThemeColor("DataTreeControl.HighlightText", SystemColors.HighlightText);
+            e.TextColor = PluginBase.MainForm.GetThemeColor("DataTreeControl.ForeColor", SystemColors.WindowText);
+            if (e.Node.IsSelected && this.ContainsFocus) e.TextColor = hiliteText;
             try
             {
                 VariableNode variableNode = e.Node.Tag as VariableNode;
@@ -294,12 +311,12 @@ namespace FlashDebugger.Controls
                     FlashInterface flashInterface = PluginMain.debugManager.FlashInterface;
                     if (variableNode.Variable != null && variableNode.Variable.hasValueChanged(flashInterface.Session)) 
                     {
-                        e.TextColor = Color.Red;
+                        e.TextColor = errorText;
                     }
                 }
                 else if (e.Node.Tag is ErrorNode)
                 {
-                    e.TextColor = e.Node.IsSelected ? Color.White : Color.Gray;
+                    e.TextColor = e.Node.IsSelected ? hiliteText : grayText;
                 }
             }
             catch (NullReferenceException) {}

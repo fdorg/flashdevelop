@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Diagnostics;
 using System.IO;
-using PluginCore.Localization;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Xml;
+using ProjectManager.Controls;
 using ProjectManager.Projects;
 
 namespace LoomContext.Projects
@@ -27,6 +25,7 @@ namespace LoomContext.Projects
         }
 
         public override string Language { get { return "loom"; } }
+        public override string LanguageDisplayName { get { return "Loom"; } }
         public override bool IsCompilable { get { return true; } }
         public override bool ReadOnly { get { return false; } }
         public override bool HasLibraries { get { return OutputType == OutputType.Application; } }
@@ -35,9 +34,9 @@ namespace LoomContext.Projects
 
         public new LoomOptions CompilerOptions { get { return (LoomOptions)base.CompilerOptions; } }
 
-        public override ProjectManager.Controls.PropertiesDialog CreatePropertiesDialog()
+        public override PropertiesDialog CreatePropertiesDialog()
         {
-            return new LoomContext.Projects.LoomPropertiesDialog();
+            return new LoomPropertiesDialog();
         }
 
         public override void ValidateBuild(out string error)
@@ -168,7 +167,7 @@ namespace LoomContext.Projects
             {
                 return reader.ReadProject() as LoomProject;
             }
-            catch (System.Xml.XmlException exception)
+            catch (XmlException exception)
             {
                 string format = string.Format("Error in XML Document line {0}, position {1}.",
                     exception.LineNumber, exception.LinePosition);

@@ -1,33 +1,35 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Runtime;
+using System.IO;
 using System.Xml.Serialization;
+using PluginCore;
 
 namespace ScintillaNet.Configuration
 {
-    [SerializableAttribute()]
+    [Serializable()]
     public class Scintilla : ConfigFile
     {
         private Language[] _languages;
         
-        [XmlArrayItemAttribute("value")]
-        [XmlArrayAttribute("globals")]
+        [XmlArrayItem("value")]
+        [XmlArray("globals")]
         public Value[] globals;
 
-        [XmlArrayAttribute("style-classes")]
-        [XmlArrayItemAttribute("style-class")]
+        [XmlArray("style-classes")]
+        [XmlArrayItem("style-class")]
         public StyleClass[] styleclasses;
 
-        [XmlArrayItemAttribute("keyword-class")]
-        [XmlArrayAttribute("keyword-classes")]
+        [XmlArrayItem("keyword-class")]
+        [XmlArray("keyword-classes")]
         public KeywordClass[] keywordclass;
 
-        [XmlArrayItemAttribute("language")]
-        [XmlArrayAttribute("languages")]
+        [XmlArrayItem("language")]
+        [XmlArray("languages")]
         public Language[] languages;
 
-        [XmlArrayItemAttribute("charcacter-class")]
-        [XmlArrayAttribute("character-classes")]
+        [XmlArrayItem("charcacter-class")]
+        [XmlArray("character-classes")]
         public CharacterClass[] characterclasses;
 
         protected override Scintilla ChildScintilla
@@ -37,11 +39,11 @@ namespace ScintillaNet.Configuration
         
         public bool IsKnownFile(string file)
         {
-            string filemask = System.IO.Path.GetExtension(file).ToLower().Substring(1);
+            string filemask = Path.GetExtension(file).ToLower().Substring(1);
             foreach (Language lang in this.AllLanguages)
             {
                 string extensions = ","+lang.fileextensions+",";
-                if (extensions.IndexOf(","+filemask+",") >- 1)
+                if (extensions.IndexOfOrdinal(","+filemask+",") >- 1)
                 {
                     return true;
                 }
@@ -52,17 +54,17 @@ namespace ScintillaNet.Configuration
         public string GetLanguageFromFile(string file)
         {
             string defaultLanguage = "text";
-            string filemask = System.IO.Path.GetExtension(file);
+            string filemask = Path.GetExtension(file);
             if (filemask.Length == 0) return defaultLanguage;
             filemask = filemask.ToLower().Substring(1);
             foreach (Language lang in this.AllLanguages)
             {
                 string extensions = ","+lang.fileextensions+",";
-                if (extensions.IndexOf(",*,") > -1)
+                if (extensions.IndexOfOrdinal(",*,") > -1)
                 {
                     defaultLanguage = lang.name;
                 }
-                if (extensions.IndexOf(","+filemask+",") > -1)
+                if (extensions.IndexOfOrdinal(","+filemask+",") > -1)
                 {
                     return lang.name;
                 }
@@ -76,7 +78,7 @@ namespace ScintillaNet.Configuration
             {
                 if (_languages == null)
                 {
-                    System.Collections.Hashtable result = new System.Collections.Hashtable();
+                    Hashtable result = new Hashtable();
                     if (MasterScintilla == this)
                     {
                         // Check the children first (from the end)

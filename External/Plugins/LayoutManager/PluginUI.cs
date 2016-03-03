@@ -1,17 +1,13 @@
 using System;
-using System.IO;
-using System.Text;
 using System.Drawing;
+using System.IO;
 using System.Reflection;
-using System.Collections;
+using System.Text;
 using System.Windows.Forms;
-using WeifenLuo.WinFormsUI;
-using WeifenLuo.WinFormsUI.Docking;
+using PluginCore;
+using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
-using PluginCore.Helpers;
-using PluginCore.Controls;
-using PluginCore;
 
 namespace LayoutManager
 {
@@ -30,7 +26,7 @@ namespace LayoutManager
         private ToolStripButton saveStripButton;
         private ToolStripButton loadStripButton;
         private PluginMain pluginMain;
-        private ImageList imageList;
+        private ImageListManager imageList;
         
         public PluginUI(PluginMain pluginMain)
         {
@@ -160,27 +156,27 @@ namespace LayoutManager
         /// </summary>
         private void InitializeGraphics()
         {
-            this.imageList = new ImageList();
-            this.imageList.ImageSize = PluginCore.Helpers.ScaleHelper.Scale(new Size(16, 16));
+            this.imageList = new ImageListManager();
+            this.imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             this.imageList.ColorDepth = ColorDepth.Depth32Bit;
             this.imageList.TransparentColor = Color.Transparent;
-            this.imageList.Images.Add(PluginBase.MainForm.FindImage("48"));
-            this.imageList.Images.Add(PluginBase.MainForm.FindImage("229"));
-            this.imageList.Images.Add(PluginBase.MainForm.FindImage("42|24|3|2"));
-            this.imageList.Images.Add(PluginBase.MainForm.FindImage("153"));
-            this.imageList.Images.Add(PluginBase.MainForm.FindImage("168"));
-            this.imageList.Images.Add(PluginBase.MainForm.FindImage("54"));
+            this.imageList.Initialize(ImageList_Populate);
             this.layoutsListView.SmallImageList = this.imageList;
-            this.layoutsListView.SmallImageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            this.deleteStripButton.Image = this.imageList.Images[3];
-            this.saveStripButton.Image = this.imageList.Images[4];
-            this.loadStripButton.Image = this.imageList.Images[2];
-            this.settingStripButton.Image = this.imageList.Images[5];
-            this.menuSettingButton.Image = this.imageList.Images[5];
-            this.menuDeleteButton.Image = this.imageList.Images[3];
-            this.menuSaveButton.Image = this.imageList.Images[4];
-            this.menuLoadButton.Image = this.imageList.Images[2];
+            this.menuLoadButton.Image = PluginBase.MainForm.FindImage("42|24|3|2");
+            this.loadStripButton.Image = PluginBase.MainForm.FindImage("42|24|3|2");
+            this.menuDeleteButton.Image = PluginBase.MainForm.FindImage("153");
+            this.deleteStripButton.Image = PluginBase.MainForm.FindImage("153");
+            this.menuSaveButton.Image = PluginBase.MainForm.FindImage("168");
+            this.saveStripButton.Image = PluginBase.MainForm.FindImage("168");
+            this.menuSettingButton.Image = PluginBase.MainForm.FindImage("54");
+            this.settingStripButton.Image = PluginBase.MainForm.FindImage("54");
             this.toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
+        }
+
+        private void ImageList_Populate(object sender, EventArgs e)
+        {
+            this.imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("48"));
+            this.imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("229"));
         }
 
         /// <summary>
@@ -206,10 +202,10 @@ namespace LayoutManager
         /// </summary>
         private void InitializeTexts()
         {
-            this.loadStripButton.ToolTipText = TextHelper.GetString("Label.LoadLayout").Replace("&", "");
-            this.deleteStripButton.ToolTipText = TextHelper.GetString("Label.DeleteLayout").Replace("&", "");
-            this.settingStripButton.ToolTipText = TextHelper.GetString("Label.ShowSettings").Replace("&", "");
-            this.saveStripButton.ToolTipText = TextHelper.GetString("Label.SaveCurrent").Replace("&", "");
+            this.loadStripButton.ToolTipText = TextHelper.GetStringWithoutMnemonics("Label.LoadLayout");
+            this.deleteStripButton.ToolTipText = TextHelper.GetStringWithoutMnemonics("Label.DeleteLayout");
+            this.settingStripButton.ToolTipText = TextHelper.GetStringWithoutMnemonics("Label.ShowSettings");
+            this.saveStripButton.ToolTipText = TextHelper.GetStringWithoutMnemonics("Label.SaveCurrent");
         }
 
         /// <summary>

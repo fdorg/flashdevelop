@@ -1,8 +1,6 @@
 using System;
-using System.Text;
 using System.Drawing;
 using PluginCore;
-using System.Collections.Generic;
 
 namespace ProjectManager.Projects
 {
@@ -135,7 +133,7 @@ namespace ProjectManager.Projects
                 foreach (string target in debugger)
                 {
                     if (target == "*") return true;
-                    else if (targetBuild.StartsWith(target)) return true;
+                    else if (targetBuild.StartsWith(target, StringComparison.Ordinal)) return true;
                 }
             }
             return false;

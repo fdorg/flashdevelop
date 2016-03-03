@@ -3575,7 +3575,7 @@ AfterSimilarAccessorMethod: 同様のアクセサメソッドの後に配置。"
   <data name="CodeAnalyzer.Description.PMDRuleset" xml:space="preserve">
     <value>Flex PMD に使用するための既定のカスタムルールセットファイルを指定します。</value>
   </data>
-  <data name="CodeAnalyzer.Info.Decription" xml:space="preserve">
+  <data name="CodeAnalyzer.Info.Description" xml:space="preserve">
     <value>FlashDevelop に Flex PMD コードアナライザ機能を統合します。</value>
   </data>
   <data name="CodeAnalyzer.Label.AnalyzeProject" xml:space="preserve">
@@ -3739,8 +3739,8 @@ AfterSimilarAccessorMethod: 同様のアクセサメソッドの後に配置。"
     <value>エラー行の背景:</value>
   </data>
   <data name="ProjectManager.ToolTip.Synchronize" xml:space="preserve">
-    <value>Track Active Document</value>
-    <comment>Modified after 4.7.2</comment>
+    <value>Locate Active Document</value>
+    <comment>Modified after 4.7.0</comment>
   </data>
   <data name="ProjectManager.ToolTip.SynchronizeMain" xml:space="preserve">
     <value>Locate Document Class</value>
@@ -6013,5 +6013,37 @@ UseData:"</value>
   <data name="FlashDebugger.TreeExporter.MaxDepthReached" xml:space="preserve">
     <value>[Recursion too deep, increase Copy Tree Max Level in FlashDebugger settings]</value>
     <comment>Added after 4.7.2</comment>
+  </data>
+  <data name="ProjectManager.Label.InClasspathsOnly" xml:space="preserve">
+    <value>In Classpaths only</value>
+    <comment>Added after 5.0.1</comment>
+  </data>
+  <data name="FlashDevelop.Info.HighlightWordBack" xml:space="preserve">
+    <value>Highlight word:</value>
+    <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="FlashDevelop.Info.ShortcutConflictsPresent" xml:space="preserve">
+    <value>There are one or more conflicts present. Ignore and continue?</value>
+    <comment>REQUIRES TRANSLATION</comment>
+  </data>
+  <data name="ASCompletion.Info.NoContextGeneratorCode" xml:space="preserve">
+    <value>No contextual code generation available.</value>
+    <comment>REQUIRES TRANSLATION</comment>
+  </data>
+  <data name="CodeRefactor.Label.Move" xml:space="preserve">
+    <value>Move...</value>
+    <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="FlashDevelop.Label.Export" xml:space="preserve">
+    <value>&amp;Export...</value>
+    <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="FlashDevelop.Label.Import" xml:space="preserve">
+    <value>&amp;Import...</value>
+    <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="FlashDevelop.Label.ShortcutSearch" xml:space="preserve">
+    <value>Search: (Start the filter with * to view custom only, and ? to view conflicts only.)</value>
+    <comment>Added after 5.0.2</comment>
   </data>
 </root>

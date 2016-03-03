@@ -1,0 +1,50 @@
+﻿명령 선택...
+-------------------------- MAIN ------------------------------------------------
+$(EntryPoint) - 선택 시작 위치
+$(ExitPoint) - 선택 끝 위치
+$(Boundary) - 경계 사이의 모든 텍스트를 유지
+$(CSLB) - 코딩 스타일의 줄 바꿈
+$(CBI) - 주석 블록 들여 쓰기
+$(STC) - 공백이나 탭 문자
+-------------------------- TEXT ------------------------------------------------
+$(SelText) - 선택한 텍스트
+$(CurWord) - 커서 위치 단어
+$(CurSyntax) - 현재 활성화된 구문
+$(Clipboard) - 클립 보드 내용
+-------------------------- FILE ------------------------------------------------
+$(CurFile) - 현재 파일
+$(CurFilename) - 현재 파일의 이름
+$(CurFilenameNoExt) - 확장자가없는 현재 파일의 이름
+$(CurDir) - 현재 파일의 디렉토리
+-------------------------- DIRECTORY ------------------------------------------------
+$(DesktopDir) - 사용자 바탕 화면 디렉토리
+$(SystemDir) - Windows 시스템 디렉토리
+$(ProgramsDir) - 프로그램 파일 디렉토리
+$(PersonalDir) - 사용자의 개인 파일 디렉토리
+$(WorkingDir) - 현재 작업 디렉토리
+$(AppDir) - FlashDevelop 프로그램 디렉토리
+$(BaseDir) - FlashDevelop 파일 디렉토리
+$(UserAppDir) - FlashDevelop 사용자 디렉토리
+-------------------------- TYPE ------------------------------------------------
+$(TypPkg) - 파일 패키지
+$(TypName) - 현재 유형 이름
+$(TypPkgName) - 현재 패키지 + 유형 이름
+$(TypKind) - 유형 종류 (인터페이스, 클래스)
+$(TypClosestListName) - 가장 가까운 배열 또는 벡터 변수 이름
+$(TypClosestListItemType) - 가장 가까운 벡터 항목 유형
+-------------------------- MEMBER ------------------------------------------------
+$(MbrName) - 현제 멤버 ie. 현제 메소드
+$(MbrKind) - 멤버 유형 (const, var, function)
+$(MbrTypPkg) - 멤버의 유형 패키지
+$(MbrTypName) - 멤버의 유형 이름
+$(MbrTypePkgName) - 멤버의 정규화된 유형 이름
+$(MbrTypKind) - 멤버의 유형의 종류 (interface, class)
+--------------------- ITEM ------------------------------------------------
+$(ItmTypName) - 커서 위치에서 현재 항목 이름
+$(ItmFile) - 항목이 선언 된 파일
+$(ItmKind) - 항목 종류 (const, var, function)
+$(ItmTypPkg) - 항목의 유형 패키지
+$(ItmTypName) - 항목의 유형 이름
+$(ItmTypPkgName) - 항목의 정규화된 유형 이름
+$(ItmTypKind) - 항목의 유형의 종류 (interface, class)
+$(ItmUniqueVar) - 고유 변수 이름 (i, j... etc.)

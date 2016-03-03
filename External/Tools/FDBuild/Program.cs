@@ -58,7 +58,7 @@ namespace FDBuild
             else
             {
                 string userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                string fdDir = Path.Combine(userAppDir, "FlashDevelop");
+                string fdDir = Path.Combine(userAppDir, PluginCore.DistroConfig.DISTRIBUTION_NAME);
                 PluginCore.PlatformData.Load(Path.Combine(fdDir, platformsFile));
             }
 
@@ -157,7 +157,7 @@ namespace FDBuild
         /// <param name="arguments">the compc arguments</param>
         public static void BuildCOMPC( string workingdir, string arguments )
         {
-            AS3ProjectBuilder builder = new AS3ProjectBuilder(null, Program.BuildOptions.CompilerPath, Program.BuildOptions.IpcName);
+            new AS3ProjectBuilder(null, Program.BuildOptions.CompilerPath, Program.BuildOptions.IpcName);
         }
     }
 }

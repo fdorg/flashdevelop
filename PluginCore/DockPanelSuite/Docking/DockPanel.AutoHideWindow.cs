@@ -183,7 +183,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 if (show)
                 {
                     Bounds = DockPanel.GetAutoHideWindowBounds(new Rectangle(-rectTarget.Width, -rectTarget.Height, rectTarget.Width, rectTarget.Height));
-                    if (Visible == false)
+                    if (!Visible)
                         Visible = true;
                     PerformLayout();
                 }
@@ -191,7 +191,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 SuspendLayout();
 
                 LayoutAnimateWindow(rectSource);
-                if (Visible == false)
+                if (!Visible)
                     Visible = true;
 
                 int speedFactor = 1;
@@ -298,7 +298,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 if (hovertime <= 0)
                     hovertime = 400;
 
-                m_timerMouseTrack.Interval = 2 * (int)hovertime;
+                m_timerMouseTrack.Interval = 2 * hovertime;
                 m_timerMouseTrack.Enabled = true;
             }
 
@@ -312,19 +312,22 @@ namespace WeifenLuo.WinFormsUI.Docking
                     // exclude the border and the splitter
                     if (DockState == DockState.DockBottomAutoHide)
                     {
-                        rect.Y += flat ? 1 : 2 + Measures.SplitterSize;
-                        rect.Height -= flat ? 1 : 2 + Measures.SplitterSize;
+                        rect.Y += flat ? 1 + Measures.SplitterSize : 2 + Measures.SplitterSize;
+                        rect.Height -= flat ? 1 + Measures.SplitterSize : 2 + Measures.SplitterSize;
                     }
                     else if (DockState == DockState.DockRightAutoHide)
                     {
-                        rect.X += flat ? 1 : 2 + Measures.SplitterSize;
-                        rect.Width -= flat ? 1 : 2 + Measures.SplitterSize;
+                        rect.X += flat ? 1 + Measures.SplitterSize : 2 + Measures.SplitterSize;
+                        rect.Width -= flat ? 1 + Measures.SplitterSize : 2 + Measures.SplitterSize;
                     }
                     else if (DockState == DockState.DockTopAutoHide)
-                        rect.Height -= flat ? 1 : 2 + Measures.SplitterSize;
+                    {
+                        rect.Height -= flat ? 1 + Measures.SplitterSize : 2 + Measures.SplitterSize;
+                    }
                     else if (DockState == DockState.DockLeftAutoHide)
-                        rect.Width -= flat ? 1 : 2 + Measures.SplitterSize;
-
+                    {
+                        rect.Width -= flat ? 1 + Measures.SplitterSize : 2 + Measures.SplitterSize;
+                    }
                     return rect;
                 }
             }
@@ -353,22 +356,15 @@ namespace WeifenLuo.WinFormsUI.Docking
                     DockPadding.Top = flat ? 1 : 2;
                     m_splitter.Dock = DockStyle.Top;
                 }
-
                 Rectangle rectDisplaying = DisplayingRectangle;
                 Rectangle rectHidden = new Rectangle(-rectDisplaying.Width, rectDisplaying.Y, rectDisplaying.Width, rectDisplaying.Height);
                 foreach (Control c in Controls)
                 {
                     DockPane pane = c as DockPane;
-                    if (pane == null)
-                        continue;
-                    
-                    
-                    if (pane == ActivePane)
-                        pane.Bounds = rectDisplaying;
-                    else
-                        pane.Bounds = rectHidden;
+                    if (pane == null) continue;
+                    if (pane == ActivePane) pane.Bounds = rectDisplaying;
+                    else pane.Bounds = rectHidden;
                 }
-
                 base.OnLayout(levent);
             }
 

@@ -1,11 +1,10 @@
 using System;
 using System.IO;
 using System.Text;
-using System.Collections.Generic;
 using FlashDevelop.Helpers;
-using PluginCore.Utilities;
-using PluginCore.Managers;
 using PluginCore.Helpers;
+using PluginCore.Managers;
+using PluginCore.Utilities;
 
 namespace FlashDevelop.Managers
 {

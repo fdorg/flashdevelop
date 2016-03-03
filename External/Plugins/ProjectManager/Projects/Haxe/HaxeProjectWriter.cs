@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace ProjectManager.Projects.Haxe
 {
     public class HaxeProjectWriter : ProjectWriter

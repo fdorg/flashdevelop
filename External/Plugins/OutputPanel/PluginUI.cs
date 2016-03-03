@@ -1,18 +1,14 @@
 using System;
-using System.Drawing;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Windows.Forms;
-using System.Text.RegularExpressions;
-using WeifenLuo.WinFormsUI.Docking;
-using WeifenLuo.WinFormsUI;
-using PluginCore.Managers;
-using PluginCore.Localization;
-using PluginCore.Controls;
-using PluginCore.Helpers;
-using PluginCore;
+using System.Drawing;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace OutputPanel
 {
@@ -29,11 +25,11 @@ namespace OutputPanel
         private ToolStripButton toggleButton;
         private ToolStripButton clearButton;
         private ToolStrip toolStrip;
-        private ImageList imageList;
         private Timer typingTimer;
         private Boolean scrolling;
         private Timer autoShow;
         private Boolean muted;
+        private Image toggleButtonImagePause, toggleButtonImagePlay, toggleButtonImagePlayNew;
 
         public PluginUI(PluginMain pluginMain)
         {
@@ -44,13 +40,9 @@ namespace OutputPanel
             this.InitializeComponent();
             this.InitializeContextMenu();
             this.InitializeLayout();
-            this.imageList = new ImageList();
-            this.imageList.ColorDepth = ColorDepth.Depth32Bit;
-            this.imageList.TransparentColor = Color.Transparent;
-            this.imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            this.imageList.Images.Add(PluginBase.MainForm.FindImage("146"));
-            this.imageList.Images.Add(PluginBase.MainForm.FindImage("147"));
-            this.imageList.Images.Add(PluginBase.MainForm.FindImage("147|17|5|4"));
+            this.toggleButtonImagePause = PluginBase.MainForm.FindImage("146");
+            this.toggleButtonImagePlay = PluginBase.MainForm.FindImage("147");
+            this.toggleButtonImagePlayNew = PluginBase.MainForm.FindImage("147|17|5|4");
             this.ToggleButtonClick(this, new EventArgs());
         }
 
@@ -63,7 +55,6 @@ namespace OutputPanel
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PluginUI));
             this.scrollTimer = new System.Timers.Timer();
             this.textLog = new System.Windows.Forms.RichTextBox();
             this.toolStrip = new PluginCore.Controls.ToolStripEx();
@@ -270,7 +261,7 @@ namespace OutputPanel
         /// </summary>
         public void UpdateAfterTheme()
         {
-            this.findTextBox.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.findTextBox.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.GrayText", SystemColors.GrayText);
         }
 
         /// <summary>
@@ -300,10 +291,10 @@ namespace OutputPanel
             {
                 DockContent panel = this.Parent as DockContent;
                 DockState ds = panel.VisibleState;
-                if (!panel.Visible || ds.ToString().EndsWith("AutoHide"))
+                if (!panel.Visible || ds.ToString().EndsWithOrdinal("AutoHide"))
                 {
                     panel.Show();
-                    if (ds.ToString().EndsWith("AutoHide")) panel.Activate();
+                    if (ds.ToString().EndsWithOrdinal("AutoHide")) panel.Activate();
                 }
             }
         }
@@ -347,7 +338,7 @@ namespace OutputPanel
             if (this.muted) return;
             if (!this.scrolling)
             {
-                this.toggleButton.Image = this.imageList.Images[2];
+                this.toggleButton.Image = this.toggleButtonImagePlayNew;
                 return;
             }
             IList<TraceItem> log = TraceManager.TraceLog;
@@ -360,8 +351,8 @@ namespace OutputPanel
             Int32 state;
             String message;
             TraceItem entry;
-            Color newColor = Color.Black;
-            Color currentColor = Color.Black;
+            Color newColor = Color.Red;
+            Color currentColor = Color.Red;
             int oldSelectionStart = this.textLog.SelectionStart;
             int oldSelectionLength = this.textLog.SelectionLength;
             List<HighlightMarker> markers = this.pluginMain.PluginSettings.HighlightMarkers;
@@ -399,28 +390,29 @@ namespace OutputPanel
                     switch (state)
                     {
                         case 0: // Info
-                            newColor = Color.Gray;
+                            newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.InfoColor", Color.Gray);
                             break;
                         case 1: // Debug
-                            newColor = this.ForeColor;
+                            newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.DebugColor", this.ForeColor);
                             break;
                         case 2: // Warning
-                            newColor = Color.Orange;
+                            newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.WarningColor", Color.Orange);
                             break;
                         case 3: // Error
-                            newColor = Color.Red;
+                            newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ErrorColor", Color.Red);
                             break;
                         case 4: // Fatal
-                            newColor = Color.Magenta;
+                            newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.FatalColor", Color.Magenta);
                             break;
                         case -1: // ProcessStart
-                            newColor = Color.Blue;
+                            newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ProcessStartColor", Color.Blue);
                             break;
                         case -2: // ProcessEnd
-                            newColor = Color.Blue;
+                            newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ProcessEndColor", Color.Blue);
                             break;
                         case -3: // ProcessError
-                            newColor = (message.IndexOf("Warning") >= 0) ? Color.Orange : Color.Red;
+                            if (message.IndexOfOrdinal("Warning") >= 0) newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.WarningColor", Color.Orange);
+                            else newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ErrorColor", Color.Red);
                             break;
                     }
                     if (newColor != currentColor)
@@ -486,7 +478,7 @@ namespace OutputPanel
                     Match match = results[i];
                     this.textLog.SelectionStart = match.Index;
                     this.textLog.SelectionLength = match.Length;
-                    this.textLog.SelectionBackColor = Color.LightSkyBlue;
+                    this.textLog.SelectionBackColor = PluginBase.MainForm.GetThemeColor("OutputPanel.HighlightColor", SystemColors.Highlight);
                 }
             }
         }
@@ -525,7 +517,7 @@ namespace OutputPanel
             if (this.findTextBox.Text == searchInvitation)
             {
                 this.findTextBox.Text = "";
-                this.findTextBox.ForeColor = System.Drawing.SystemColors.WindowText;
+                this.findTextBox.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.ForeColor", SystemColors.WindowText);
             }
         }
 
@@ -538,7 +530,7 @@ namespace OutputPanel
             {
                 this.clearButton.Enabled = false;
                 this.findTextBox.Text = searchInvitation;
-                this.findTextBox.ForeColor = System.Drawing.SystemColors.GrayText;
+                this.findTextBox.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripTextBoxControl.GrayText", SystemColors.GrayText);
             }
         }
 
@@ -549,7 +541,7 @@ namespace OutputPanel
         {
             this.findTextBox.Text = "";
             this.ClearCurrentSelection();
-            this.FindTextBoxLeave(null, null);
+            this.findTextBox.Focus();
         }
 
         /// <summary>
@@ -631,7 +623,7 @@ namespace OutputPanel
         private void ToggleButtonClick(object sender, EventArgs e)
         {
             this.scrolling = !this.scrolling;
-            this.toggleButton.Image = this.imageList.Images[(this.scrolling ? 0 : 1)];
+            this.toggleButton.Image = this.scrolling ? toggleButtonImagePause : toggleButtonImagePlay;
             this.toggleButton.ToolTipText = (this.scrolling ? TextHelper.GetString("ToolTip.StopScrolling") : TextHelper.GetString("ToolTip.StartScrolling"));
             if (this.scrolling) this.AddTraces();
         }

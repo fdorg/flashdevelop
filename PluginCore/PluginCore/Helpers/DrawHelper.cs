@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Text;
 using System.Drawing;
-using System.Collections.Generic;
 
 namespace PluginCore.Helpers
 {
@@ -15,10 +13,10 @@ namespace PluginCore.Helpers
         {
             try
             {
-                System.Drawing.StringFormat format = new System.Drawing.StringFormat();
-                System.Drawing.RectangleF rect = new System.Drawing.RectangleF(0, 0, 1000, 1000);
-                System.Drawing.CharacterRange[] ranges = { new System.Drawing.CharacterRange(0, text.Length) };
-                System.Drawing.Region[] regions = new System.Drawing.Region[1];
+                StringFormat format = new StringFormat();
+                RectangleF rect = new RectangleF(0, 0, 1000, 1000);
+                CharacterRange[] ranges = { new CharacterRange(0, text.Length) };
+                Region[] regions = new Region[1];
                 format.SetMeasurableCharacterRanges(ranges);
                 regions = graphics.MeasureCharacterRanges(text, font, rect, format);
                 rect = regions[0].GetBounds(graphics);

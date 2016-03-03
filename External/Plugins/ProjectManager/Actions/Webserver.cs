@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using ProjectManager.Projects;
 using System.Diagnostics;
-using PluginCore;
 using System.IO;
-using PluginCore.Managers;
+using PluginCore;
 using PluginCore.Helpers;
+using PluginCore.Managers;
 
 namespace ProjectManager.Actions
 {

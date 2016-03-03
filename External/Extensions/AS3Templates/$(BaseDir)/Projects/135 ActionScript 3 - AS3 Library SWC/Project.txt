@@ -1,0 +1,1 @@
+An ActionScript 3 library (SWC) project to compile with an 'ant' script.

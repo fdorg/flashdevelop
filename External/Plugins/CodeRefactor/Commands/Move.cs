@@ -7,12 +7,14 @@ using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using CodeRefactor.Provider;
+using PluginCore;
 using PluginCore.Controls;
 using PluginCore.FRService;
-using PluginCore.Localization;
-using ScintillaNet;
-using PluginCore;
 using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using ProjectManager.Projects;
+using ScintillaNet;
 
 /* Considerations and known problems: 
  *  A. When moving a model that makes use of other models in the old package there will be a problem
@@ -34,15 +36,14 @@ namespace CodeRefactor.Commands
 {
     class Move : RefactorCommand<IDictionary<string, List<SearchMatch>>>
     {
-
         public Dictionary<string, string> OldPathToNewPath;
         public bool OutputResults;
-        private bool renaming;
+        private readonly bool renaming;
+        private readonly bool updatePackages;
         private List<MoveTargetHelper> targets;
         private List<string> filesToReopen;
         private int currentTargetIndex;
         private ASResult currentTargetResult;
-
         private bool targetsOutsideClasspath;
 
         #region Constructors
@@ -54,15 +55,32 @@ namespace CodeRefactor.Commands
         {
         }
 
+        /// <summary>
+        /// A new Move refactoring command.
+        /// </summary>
+        /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
         public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults) : this(oldPathToNewPath, outputResults, false)
         {
         }
 
-        public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming)
+        /// <summary>
+        /// A new Move refactoring command.
+        /// </summary>
+        /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
+        public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming) : this(oldPathToNewPath, outputResults, renaming, false)
+        {
+        }
+
+        /// <summary>
+        /// A new Move refactoring command.
+        /// </summary>
+        /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
+        public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming, bool updatePackages)
         {
             OldPathToNewPath = oldPathToNewPath;
             OutputResults = outputResults;
             this.renaming = renaming;
+            this.updatePackages = updatePackages;
             Results = new Dictionary<string, List<SearchMatch>>();
         }
 
@@ -80,12 +98,17 @@ namespace CodeRefactor.Commands
             RegisterDocumentHelper(AssociatedDocumentHelper);
 
             CreateListOfMoveTargets();
-
+            DialogResult dialogResult;
             if (targetsOutsideClasspath)
             {
-                msg = TextHelper.GetString("Info.MovingOutsideClasspath");
-                title = TextHelper.GetString("FlashDevelop.Title.WarningDialog");
-                if (MessageBox.Show(msg, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (updatePackages) dialogResult = DialogResult.Yes;
+                else
+                {
+                    msg = TextHelper.GetString("Info.MovingOutsideClasspath");
+                    title = TextHelper.GetString("FlashDevelop.Title.WarningDialog");
+                    dialogResult = MessageBox.Show(msg, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                }
+                if (dialogResult == DialogResult.Yes)
                 {
                     MoveTargets();
                     ReopenInitialFiles();
@@ -93,22 +116,31 @@ namespace CodeRefactor.Commands
                 FireOnRefactorComplete();
                 return;
             }
-
-            if (renaming)
-            {
-                msg = TextHelper.GetString("Info.RenamingDirectory");
-                foreach (string path in OldPathToNewPath.Keys)
-                {
-                    title = string.Format(TextHelper.GetString("Title.RenameDialog"), Path.GetFileName(path));
-                    break;
-                }
-            }
+            if (updatePackages) dialogResult = DialogResult.Yes;
             else
             {
-                msg = TextHelper.GetString("Info.MovingFile");
-                title = TextHelper.GetString("Title.MoveDialog");
+                if (renaming)
+                {
+                    msg = TextHelper.GetString("Info.RenamingDirectory");
+                    foreach (string path in OldPathToNewPath.Keys)
+                    {
+                        title = string.Format(TextHelper.GetString("Title.RenameDialog"), Path.GetFileName(path));
+                        break;
+                    }
+                }
+                else
+                {
+                    msg = TextHelper.GetString("Info.MovingFile");
+                    title = TextHelper.GetString("Title.MoveDialog");
+                }
+                dialogResult = MessageBox.Show(msg, title, MessageBoxButtons.YesNoCancel);
             }
-            if (targets.Count > 0 && MessageBox.Show(msg, title, MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (dialogResult == DialogResult.Cancel)
+            {
+                FireOnRefactorComplete();
+                return;
+            }
+            if (targets.Count > 0 && dialogResult == DialogResult.Yes)
             {
                 // We must keep the original files for validating references
                 CopyTargets();
@@ -142,11 +174,11 @@ namespace CodeRefactor.Commands
             {
                 string oldPath = item.Key;
                 string newPath = item.Value;
-                ITabbedDocument doc;
                 if (File.Exists(oldPath))
                 {
                     newPath = Path.Combine(newPath, Path.GetFileName(oldPath));
 
+                    ITabbedDocument doc;
                     if (AssociatedDocumentHelper.InitiallyOpenedFiles.TryGetValue(oldPath, out doc))
                     {
                         doc.Save();
@@ -216,7 +248,7 @@ namespace CodeRefactor.Commands
                         newPackage = "";
                         break;
                     }
-                    if (newPackage.StartsWith(path))
+                    if (newPackage.StartsWithOrdinal(path))
                     {
                         newPackage = newPackage.Substring((path + "\\").Length).Replace("\\", ".");
                         break;
@@ -314,14 +346,14 @@ namespace CodeRefactor.Commands
             var fileMatches = new List<string>();
             foreach (var item in AssociatedDocumentHelper.InitiallyOpenedFiles)
             {
-                if (item.Key.StartsWith(oldPath))
+                if (item.Key.StartsWithOrdinal(oldPath))
                 {
                     item.Value.Save();
                     item.Value.Close();
                     filesToReopen.Add(item.Key.Replace(oldPath, newPath));
                     fileMatches.Add(item.Key);
                 }
-                else if (item.Key.StartsWith(newPath))
+                else if (item.Key.StartsWithOrdinal(newPath))
                 {
                     item.Value.Save();
                     item.Value.Close();
@@ -442,7 +474,7 @@ namespace CodeRefactor.Commands
 
                     // Look for document class changes
                     // Do not use RefactoringHelper to avoid possible dialogs that we don't want
-                    ProjectManager.Projects.Project project = (ProjectManager.Projects.Project)PluginBase.CurrentProject;
+                    Project project = (Project)PluginBase.CurrentProject;
                     string newDocumentClass = null;
                     string searchPattern = project.DefaultSearchFilter;
                     foreach (string pattern in searchPattern.Split(';'))
@@ -463,13 +495,13 @@ namespace CodeRefactor.Commands
                     {
                         string tmpPath = oldPath + "$renaming$";
                         FileHelper.ForceMoveDirectory(oldPath, tmpPath);
-                        PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, tmpPath);
+                        DocumentManager.MoveDocuments(oldPath, tmpPath);
                         oldPath = tmpPath;
                     }
 
                     // Move directory contents to final location
                     FileHelper.ForceMoveDirectory(oldPath, newPath);
-                    PluginCore.Managers.DocumentManager.MoveDocuments(oldPath, newPath);
+                    DocumentManager.MoveDocuments(oldPath, newPath);
 
                     if (!string.IsNullOrEmpty(newDocumentClass))
                     {
@@ -568,7 +600,7 @@ namespace CodeRefactor.Commands
                 {
                     sci.GotoLine(currLine);
                     ASGenerator.InsertImport(new MemberModel(targetName, newType, FlagType.Import, 0), false);
-                    int newLine = sci.LineFromPosition(sci.Text.IndexOf(newType));
+                    int newLine = sci.LineFromPosition(sci.Text.IndexOfOrdinal(newType));
                     var sm = new SearchMatch();
                     sm.Line = newLine + 1;
                     sm.LineText = sci.GetLine(newLine);

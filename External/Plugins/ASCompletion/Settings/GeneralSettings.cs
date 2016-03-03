@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
 using System.Drawing.Design;
-using System.Windows.Forms;
-using System.Windows.Forms.Design;
+using Ookii.Dialogs;
 using PluginCore.Localization;
 
 namespace ASCompletion.Settings
@@ -74,7 +71,7 @@ namespace ASCompletion.Settings
         const int DEFAULT_ALWAYSCOMPLETELENGTH = 2;
         const bool DEFAULT_DISABLECALLTIP = false;
         const string DEFAULT_COMPACTCHARS = ",;.():[]";
-        const string DEFAULT_SPACEDCHARS = ",;{}*+-=/%<>|&!^";
+        const string DEFAULT_SPACEDCHARS = ",;*+-=/%<>|&!^";
         const string DEFAULT_ADDSPACEAFTER = "if for while do catch with";
 
         private bool disableAutoCloseBraces = DEFAULT_DISABLE_CLOSEBRACE;
@@ -196,7 +193,7 @@ namespace ASCompletion.Settings
 
         [DisplayName("Path To Flash IDE")]
         [LocalizedCategory("ASCompletion.Category.FlashIDE"), LocalizedDescription("ASCompletion.Description.PathToFlashIDE")]
-        [Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
+        [Editor(typeof(VistaFolderNameEditor), typeof(UITypeEditor))]
         public string PathToFlashIDE
         {
             get { return pathToFlashIDE; }

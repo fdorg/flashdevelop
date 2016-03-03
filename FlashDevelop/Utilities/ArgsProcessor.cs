@@ -1,18 +1,16 @@
 using System;
-using System.IO;
-using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using FlashDevelop.Settings;
-using PluginCore.Utilities;
-using FlashDevelop.Managers;
 using FlashDevelop.Dialogs;
-using PluginCore.Managers;
-using PluginCore.Helpers;
-using ScintillaNet;
-using PluginCore;
 using Ookii.Dialogs;
+using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Managers;
+using PluginCore.Utilities;
+using ScintillaNet;
 
 namespace FlashDevelop.Utilities
 {
@@ -25,7 +23,7 @@ namespace FlashDevelop.Utilities
         private static Regex reArgs = new Regex("\\$\\(([a-z$]+)\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
         
         /// <summary>
-        /// Regexes and variabled for enhanced arguments
+        /// Regexes and variables for enhanced arguments
         /// </summary>
         private static Dictionary<String, String> userArgs;
         private static Regex reUserArgs = new Regex("\\$\\$\\(([a-z0-9]+)\\=?([^\\)]+)?\\)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
@@ -51,7 +49,7 @@ namespace FlashDevelop.Utilities
         }
 
         /// <summary>
-        /// Gets the users FlashDevelop directory
+        /// Gets the user's FlashDevelop directory
         /// </summary>
         public static String GetUserAppDir()
         {
@@ -271,9 +269,9 @@ namespace FlashDevelop.Utilities
         public static String ProcessCodeStyleLineBreaks(String text)
         {
             String CSLB = "$(CSLB)";
-            Int32 nextIndex = text.IndexOf(CSLB);
+            Int32 nextIndex = text.IndexOfOrdinal(CSLB);
             if (nextIndex < 0) return text;
-            CodingStyle cs = Globals.Settings.CodingStyle;
+            CodingStyle cs = PluginBase.Settings.CodingStyle;
             if (cs == CodingStyle.BracesOnLine) return text.Replace(CSLB, "");
             Int32 eolMode = (Int32)Globals.Settings.EOLMode;
             String lineBreak = LineEndDetector.GetNewLineMarker(eolMode);
@@ -282,7 +280,7 @@ namespace FlashDevelop.Utilities
             {
                 result += text.Substring(currentIndex, nextIndex - currentIndex) + lineBreak + GetLineIndentation(text, nextIndex);
                 currentIndex = nextIndex + CSLB.Length;
-                nextIndex = text.IndexOf(CSLB, currentIndex);
+                nextIndex = text.IndexOfOrdinal(CSLB, currentIndex);
             }
             return result + text.Substring(currentIndex);
         }
@@ -328,7 +326,7 @@ namespace FlashDevelop.Utilities
                 String result = args;
                 if (result == null) return String.Empty;
                 result = ProcessCodeStyleLineBreaks(result);
-                if (!Globals.Settings.UseTabs) result = reTabs.Replace(result, new MatchEvaluator(ReplaceTabs));
+                if (!PluginBase.Settings.UseTabs) result = reTabs.Replace(result, new MatchEvaluator(ReplaceTabs));
                 result = reArgs.Replace(result, new MatchEvaluator(ReplaceVars));
                 if (!dispatch || result.IndexOf('$') < 0) return result;
                 TextEvent te = new TextEvent(EventType.ProcessArgs, result);
@@ -350,7 +348,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static String ReplaceTabs(Match match)
         {
-            return new String(' ', match.Length * Globals.Settings.IndentSize);
+            return new String(' ', match.Length * PluginBase.Settings.IndentSize);
         }
         
         /// <summary>
@@ -404,7 +402,7 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static String ReplaceArgsWithGUI(String args)
         {
-            if (args.IndexOf("$$(") < 0) return args;
+            if (args.IndexOfOrdinal("$$(") < 0) return args;
             if (reEnvArgs.IsMatch(args)) // Environmental arguments
             {
                 args = reEnvArgs.Replace(args, new MatchEvaluator(ReplaceEnvArgs));
@@ -459,7 +457,7 @@ namespace FlashDevelop.Utilities
         {
             if (match.Groups.Count > 0)
             {
-                switch (match.Groups[1].Value.ToUpper(System.Globalization.CultureInfo.InvariantCulture))
+                switch (match.Groups[1].Value.ToUpper(CultureInfo.InvariantCulture))
                 {
                     case "DATETIME":
                     {

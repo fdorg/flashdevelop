@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using PluginCore.Helpers;
-using ASCompletion.Context;
-using System.Windows.Forms;
 using System.Text.RegularExpressions;
-using PluginCore.Managers;
-using PluginCore;
-using PluginCore.Localization;
+using System.Windows.Forms;
 using ASCompletion.Commands;
+using PluginCore;
 using PluginCore.Bridge;
+using PluginCore.Helpers;
+using PluginCore.Managers;
+using Timer = System.Timers.Timer;
 
 namespace ASCompletion.Helpers
 {
@@ -20,7 +17,7 @@ namespace ASCompletion.Helpers
         private string docInfo;
         private string publishInfo;
         private WatcherEx fsWatcher;
-        private System.Timers.Timer updater;
+        private Timer updater;
 
         private Regex reError = new Regex(
             @"^\*\*Error\*\*\s(?<file>.*\.as)[^0-9]+(?<line>[0-9]+)[:,\s]+(?<desc>[^\n\r]*)",
@@ -56,8 +53,8 @@ namespace ASCompletion.Helpers
                 fsWatcher.EnableRaisingEvents = true;
                 fsWatcher.Changed += new FileSystemEventHandler(fsWatcher_Changed);
 
-                updater = new System.Timers.Timer();
-                updater.SynchronizingObject = PluginCore.PluginBase.MainForm as Form;
+                updater = new Timer();
+                updater.SynchronizingObject = PluginBase.MainForm as Form;
                 updater.Interval = 200;
                 updater.Elapsed += updater_Tick;
             }

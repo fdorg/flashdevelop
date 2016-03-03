@@ -1,8 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
+using PluginCore;
 
 namespace ProjectManager.Projects
 {
@@ -35,7 +34,7 @@ namespace ProjectManager.Projects
             {
                 string p = this[i];
 
-                if (p.StartsWith(path + Path.DirectorySeparatorChar) ||
+                if (p.StartsWith(path + Path.DirectorySeparatorChar, StringComparison.Ordinal) ||
                     p == path)
                 {
                     RemoveAt(i--); // search this index again
@@ -50,7 +49,7 @@ namespace ProjectManager.Projects
         {
             string closest = "";
             foreach (string classpath in this)
-                if ((path.StartsWith(classpath) || classpath == ".") && classpath.Length > closest.Length)
+                if ((path.StartsWith(classpath, StringComparison.Ordinal) || classpath == ".") && classpath.Length > closest.Length)
                     closest = classpath;
             return (closest.Length > 0) ? closest : null;
         }

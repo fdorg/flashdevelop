@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using ASCompletion.Context;
 using ASCompletion.Model;
+using PluginCore;
 using SwfOp;
 using SwfOp.Data;
-
 
 namespace AS3Context
 {
@@ -53,7 +54,7 @@ namespace AS3Context
             if (parser.Docs.Count > 0)
                 foreach (string docFile in parser.Docs.Keys)
                 {
-                    if (docFile.EndsWith(".dita.xml"))
+                    if (docFile.EndsWithOrdinal(".dita.xml"))
                         continue;
                     try
                     {
@@ -129,8 +130,17 @@ namespace AS3Context
                     type.Flags = FlagType.Class;
                     conflicts.Add(type.Name, type.QualifiedName);
 
-                    if (instance.flags == TraitMember.Function)
+                    if ((instance.flags & TraitFlag.Interface) > 0)
                         type.Flags |= FlagType.Interface;
+                    else
+                    {
+                        if ((instance.flags & TraitFlag.Final) > 0)
+                            type.Flags |= FlagType.Final;
+
+                        if ((instance.flags & TraitFlag.Sealed) == 0)
+                            type.Flags |= FlagType.Dynamic;
+
+                    }
 
                     thisDocs = GetDocs(model.Package);
                     if (thisDocs != null)
@@ -140,7 +150,7 @@ namespace AS3Context
                         {
                             ASDocItem doc = thisDocs[docPath];
                             applyASDoc(doc, type);
-                            if (doc.Meta != null) model.MetaDatas = doc.Meta;
+                            if (doc.Meta != null) type.MetaDatas = doc.Meta;
                         }
                         if (model.Package.Length == 0) docPath = type.Name;
                     }
@@ -168,7 +178,7 @@ namespace AS3Context
                         type.Access = Visibility.Private;
                         type.Namespace = "private";
                         string genType = type.Name;
-                        if (type.Name.IndexOf("$") > 0)
+                        if (type.Name.IndexOf('$') > 0)
                         {
                             string[] itype = type.Name.Split('$');
                             genType = itype[0];
@@ -183,7 +193,7 @@ namespace AS3Context
                         }
                         else genericTypes[genType] = model;
                     }
-                    else if (type.Name.StartsWith("_") && string.IsNullOrEmpty(model.Package))
+                    else if (type.Name.StartsWith('_') && string.IsNullOrEmpty(model.Package))
                     {
                         type.Access = Visibility.Private;
                         type.Namespace = "private";
@@ -497,7 +507,7 @@ namespace AS3Context
                 {
                     if (metaInfo.name == "__go_to_definition_help") continue;
                     var meta = new ASMetaData(metaInfo.name);
-                    var rawParams = new System.Text.StringBuilder();
+                    var rawParams = new StringBuilder();
                     meta.Params = new Dictionary<string, string>(metaInfo.Count);
                     foreach (var entry in metaInfo)
                     {
@@ -694,7 +704,7 @@ namespace AS3Context
                 int colon = id.IndexOf(':') + 1;
                 if (colon > 0)
                 {
-                    int dup = id.IndexOf(id.Substring(0, colon), colon);
+                    int dup = id.IndexOfOrdinal(id.Substring(0, colon), colon);
                     if (dup > 0) id = id.Substring(dup);
                 }
                 doc.ApiType = id;
@@ -710,7 +720,7 @@ namespace AS3Context
 
             if (id != null)
             {
-                if (doc.ApiType == "String" && doc.Value != null && !doc.Value.StartsWith("\""))
+                if (doc.ApiType == "String" && doc.Value != null && !doc.Value.StartsWith('\"'))
                     doc.Value = "\"" + doc.Value + "\"";
 
                 if (doc.LongDesc == null)
@@ -975,6 +985,8 @@ namespace AS3Context
                     ReadPrologMetadataApiVersion(doc);
                 else if (Name == "styles")
                     ReadPrologMetadataStyles(doc);
+                else if (Name == "DefaultProperty")
+                    ReadPrologMetadataDefaultProperty(doc);
                 Read();
             }
         }
@@ -1040,6 +1052,23 @@ namespace AS3Context
                     ReadStyleMeta(doc);
                 Read();
             }
+        }
+
+        private void ReadPrologMetadataDefaultProperty(ASDocItem doc)
+        {
+            ASMetaData meta = new ASMetaData("DefaultProperty");
+            meta.Kind = ASMetaKind.DefaultProperty;
+            meta.Comments = "";
+
+            meta.Params = new Dictionary<string, string>();
+
+            string defValue = GetAttribute("name");
+            meta.Params["default"] = defValue;
+
+            meta.RawParams = string.Format("\"{0}\"", defValue);
+
+            if (doc.Meta == null) doc.Meta = new List<ASMetaData>();
+            doc.Meta.Add(meta);
         }
 
         private void ReadPrologCustoms(ASDocItem doc, string terminationNode)

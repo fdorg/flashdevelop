@@ -42,11 +42,9 @@
 
 using System;
 using System.IO;
-
 using ICSharpCode.SharpZipLib.Checksums;
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
-
 #if !NETCF_1_0
 using ICSharpCode.SharpZipLib.Encryption;
 #endif
@@ -487,7 +485,7 @@ namespace ICSharpCode.SharpZipLib.Zip
         int InitialRead(byte[] destination, int offset, int count)
         {
             if ( !CanDecompressEntry ) {
-                throw new ZipException("Library cannot extract this entry. Version required is (" + entry.Version.ToString() + ")");
+                throw new ZipException("Library cannot extract this entry. Version required is (" + entry.Version + ")");
             }
             
             // Handle encryption if required.

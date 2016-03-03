@@ -25,15 +25,15 @@ namespace ProjectManager.Building
         {
             string[] result = new String[2];
 
-            if (line.StartsWith("\""))
+            if (line.StartsWith("\"", StringComparison.Ordinal))
             {
-                int endQuote = line.IndexOf("\"", 1);
+                int endQuote = line.IndexOf('\"', 1);
                 result[0] = (endQuote > -1) ? line.Substring(1, endQuote - 1) : line;
                 result[1] = (endQuote > -1) ? line.Substring(endQuote + 1).TrimStart() : "";
             }
             else
             {
-                int space = line.IndexOf(" ");
+                int space = line.IndexOf(' ');
                 result[0] = (space > -1) ? line.Substring(0, space) : line;
                 result[1] = (space > -1) ? line.Substring(space + 1) : "";
             }
@@ -58,12 +58,12 @@ namespace ProjectManager.Building
                     continue; // nothing to do
 
                 // conditional execution
-                if (line.StartsWith("DEBUG:"))
+                if (line.StartsWith("DEBUG:", StringComparison.Ordinal))
                 {
                     if (noTrace) continue;
                     else line = line.Substring("DEBUG:".Length).Trim();
                 }
-                if (line.StartsWith("RELEASE:"))
+                if (line.StartsWith("RELEASE:", StringComparison.Ordinal))
                 {
                     if (!noTrace) continue;
                     else line = line.Substring("RELEASE:".Length).Trim();
