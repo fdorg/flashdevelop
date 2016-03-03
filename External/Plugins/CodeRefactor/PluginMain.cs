@@ -37,11 +37,10 @@ namespace CodeRefactor
         private RefactorMenu refactorMainMenu;
         private Settings settingObject;
         private String settingFilename;
-
-        #region Required Properties
-
         TreeView projectTreeView;
 
+        #region Required Properties
+        
         /// <summary>
         /// Api level of the plugin
         /// </summary>
