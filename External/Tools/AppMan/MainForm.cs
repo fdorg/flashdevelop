@@ -956,7 +956,7 @@ namespace AppMan
                     Boolean wait = Process.GetProcessesByName(DISTRO_NAME).Length == 0;
                     if (File.Exists(fd))
                     {
-                        Process.Start(Path.GetFullPath(fd), file + " -silent -reuse");
+                        Process.Start(Path.GetFullPath(fd), "\"" + file + "\" -silent -reuse");
                         // If FD was not running, give it a little time to start...
                         if (wait) Thread.Sleep(500);
                         return;
