@@ -98,7 +98,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\en_US.resX">
+    <EmbeddedResource Include="Resources\en_US.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

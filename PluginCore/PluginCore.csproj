@@ -563,24 +563,24 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="DockPanelSuite\Strings.resX">
+    <EmbeddedResource Include="DockPanelSuite\Strings.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Resources\de_DE.resX">
+    <EmbeddedResource Include="PluginCore\Resources\de_DE.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Resources\ko_KR.resX">
+    <EmbeddedResource Include="PluginCore\Resources\ko_KR.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Resources\en_US.resX">
+    <EmbeddedResource Include="PluginCore\Resources\en_US.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Resources\eu_ES.resX">
+    <EmbeddedResource Include="PluginCore\Resources\eu_ES.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Resources\ja_JP.resX">
+    <EmbeddedResource Include="PluginCore\Resources\ja_JP.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="PluginCore\Resources\MessageBarClose.bmp" />
