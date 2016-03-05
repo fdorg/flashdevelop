@@ -569,7 +569,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             m_selectMenu.Font = PluginCore.PluginBase.Settings.DefaultFont;
             m_selectMenu.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             m_selectMenu.Renderer = new DockPanelStripRenderer(false);
-            m_selectMenu.MouseWheel += ContextMenu_MouseWheel;
+            //m_selectMenu.MouseWheel += ContextMenu_MouseWheel;
 
             ResumeLayout();
         }
@@ -1443,6 +1443,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             SelectMenu.Show(ButtonWindowList, x, y);
         }
 
+        /*
         private static readonly Action<ToolStrip, int> ScrollInternal
             = (Action<ToolStrip, int>)Delegate.CreateDelegate(typeof(Action<ToolStrip, int>),
                 typeof(ToolStrip).GetMethod("ScrollInternal",
@@ -1461,7 +1462,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             ((ToolStripItem)typeof(ToolStripDropDownMenu).GetProperty ("DownScrollButton", 
                  System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance ).GetValue(ts, null)).
                  GetPreferredSize(Size.Empty).Height
-            */
+            *
             const int scrollButtonHeight = 9;
 
             var ts = (ContextMenuStrip)sender;
@@ -1487,6 +1488,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 UpdateScrollButtonStatus(ts);
             }
         }
+        */
 
         private void ContextMenuItem_Up(object sender, MouseEventArgs e)
         {

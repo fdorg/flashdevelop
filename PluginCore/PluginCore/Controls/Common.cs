@@ -173,8 +173,8 @@ namespace System.Windows.Forms
     {
         public DataGridViewEx()
         {
-            this.CellPainting += this.OnDataGridViewCellPainting;
-            EventManager.AddEventHandler(this, EventType.ApplyTheme);
+            //this.CellPainting += this.OnDataGridViewCellPainting;
+            //EventManager.AddEventHandler(this, EventType.ApplyTheme);
         }
 
         protected override void Dispose(bool disposing)
@@ -231,7 +231,7 @@ namespace System.Windows.Forms
 
         public ListViewEx()
         {
-            this.OwnerDraw = true;
+            /*this.OwnerDraw = true;
             this.DrawColumnHeader += this.OnDrawColumnHeader;
             this.DrawSubItem += this.OnDrawSubItem;
             this.DrawItem += this.OnDrawItem;
@@ -239,7 +239,7 @@ namespace System.Windows.Forms
             this.expandDelay.Interval = 50;
             this.expandDelay.Tick += this.ExpandDelayTick;
             this.expandDelay.Enabled = true;
-            this.expandDelay.Start();
+            this.expandDelay.Start();*/
         }
 
         private void OnDrawSubItem(object sender, DrawListViewSubItemEventArgs e)
@@ -277,7 +277,7 @@ namespace System.Windows.Forms
                 this.Columns[this.Columns.Count - 1].Width = -2;
             }
         }
-
+        /*
         protected override void WndProc(ref Message message)
         {
             switch (message.Msg)
@@ -289,7 +289,7 @@ namespace System.Windows.Forms
             }
             base.WndProc(ref message);
         }
-
+        */
     }
 
     public class TreeViewEx : TreeView
@@ -300,10 +300,10 @@ namespace System.Windows.Forms
 
         public TreeViewEx() : base()
         {
-            this.DrawMode = TreeViewDrawMode.OwnerDrawAll;
+            /*this.DrawMode = TreeViewDrawMode.OwnerDrawAll;
             this.DrawNode += OnDrawNode;
             this.DragOver += OnDragOver;
-            this.ShowPlusMinus = true;
+            this.ShowPlusMinus = true;*/
         }
 
         protected override CreateParams CreateParams
@@ -471,8 +471,8 @@ namespace System.Windows.Forms
         
         public FlatCombo()
         {
-            this.UseTheme = true;
-            EventManager.AddEventHandler(this, EventType.ApplyTheme);
+            this.UseTheme = false;
+            //EventManager.AddEventHandler(this, EventType.ApplyTheme);
         }
 
         protected override void Dispose(bool disposing)
@@ -512,7 +512,7 @@ namespace System.Windows.Forms
             this.ForeColor = useTheme && fore != Color.Empty ? fore : SystemColors.ControlText;
             this.BackColor = useTheme && back != Color.Empty ? back : SystemColors.Window;
         }
-
+        /*
         protected override void WndProc(ref Message m)
         {
             base.WndProc(ref m);
@@ -543,7 +543,8 @@ namespace System.Windows.Forms
                     break;
             }
         }
-
+        */
+        /*
         protected override void OnEnabledChanged(EventArgs e)
         {
             base.OnEnabledChanged(e);
@@ -556,7 +557,8 @@ namespace System.Windows.Forms
             }
             this.updatingStyle = false;
         }
-
+        */
+        /*
         protected override void OnDropDownStyleChanged(EventArgs e)
         {
             base.OnDropDownStyleChanged(e);
@@ -603,7 +605,7 @@ namespace System.Windows.Forms
             BorderPen.Color = border != Color.Empty ? border : SystemColors.Highlight;
             this.Invalidate();
         }
-
+        */
     }
 
     public class DescriptiveCollectionEditor : CollectionEditor

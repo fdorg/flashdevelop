@@ -106,14 +106,14 @@ namespace FastColoredTextBoxNS
             range.ClearFoldingMarkers();
             if (this.lexer == "xml" || this.lexer == "html")
             {
-                range.SetFoldingMarkers("<!--", "-->"); // comment
-                range.SetFoldingMarkers(@"(<(?!meta|link|base)\w+(?:)\w+.+(?<!\/)(?<!<\/\w+)>)", @"(</\w+.\w+>)"); // tag, not meta
+                //range.SetFoldingMarkers("<!--", "-->"); // comment
+                //range.SetFoldingMarkers(@"(<(?!meta|link|base)\w+(?:)\w+.+(?<!\/)(?<!<\/\w+)>)", @"(</\w+.\w+>)"); // tag, not meta
             }
             else // Others
             {
-                range.SetFoldingMarkers("{", "}"); // bracket
-                range.SetFoldingMarkers(@"/\*", @"\*/"); // comment
-                range.SetFoldingMarkers(@"////{", @"////}"); // comment bracket
+                //range.SetFoldingMarkers("{", "}"); // bracket
+                //range.SetFoldingMarkers(@"/\*", @"\*/"); // comment
+                //range.SetFoldingMarkers(@"////{", @"////}"); // comment bracket
             }
         }
 
@@ -223,7 +223,7 @@ namespace FastColoredTextBoxNS
         /// </summary>
         public void Colourize()
         {
-            this.OnVisibleRangeChanged(editor, new EventArgs());
+            //this.OnVisibleRangeChanged(editor, new EventArgs());
         }
 
         /// <summary>

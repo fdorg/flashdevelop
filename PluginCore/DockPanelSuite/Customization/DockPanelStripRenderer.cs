@@ -38,11 +38,20 @@ namespace System.Windows.Forms
             graphics.DrawLine(pen, xAxis, yAxis + radius, xAxis, yAxis + height - radius);
         }
 
-    } 
+    }
 
     #endregion
+    public class DockPanelStripRenderer : ToolStripProfessionalRenderer
+    {
+        private Boolean useTheme;
+        private Boolean drawBottomBorder;
 
-    public class DockPanelStripRenderer : ToolStripRenderer
+        public DockPanelStripRenderer() : this(true) { }
+        public DockPanelStripRenderer(Boolean drawBottomBorder) : this(drawBottomBorder, true) { }
+        public DockPanelStripRenderer(Boolean drawBottomBorder, Boolean useTheme){}
+    }
+
+    public class DockPanelStripRenderer2 : ToolStripRenderer
     {
         private Boolean useTheme;
         private ToolStrip toolStrip;
@@ -50,9 +59,9 @@ namespace System.Windows.Forms
         private ProfessionalColorTable colorTable;
         private static ToolStripRenderer renderer;
 
-        public DockPanelStripRenderer() : this(true) {}
-        public DockPanelStripRenderer(Boolean drawBottomBorder) : this(drawBottomBorder, true) {}
-        public DockPanelStripRenderer(Boolean drawBottomBorder, Boolean useTheme)
+        public DockPanelStripRenderer2() : this(true) {}
+        public DockPanelStripRenderer2(Boolean drawBottomBorder) : this(drawBottomBorder, true) {}
+        public DockPanelStripRenderer2(Boolean drawBottomBorder, Boolean useTheme)
         {
             this.useTheme = useTheme;
             this.drawBottomBorder = drawBottomBorder;
@@ -161,6 +170,9 @@ namespace System.Windows.Forms
                 e.Graphics.DrawLine(back == Color.Empty ? SystemPens.ControlDark : new Pen(back), 0, 0, e.ToolStrip.Width, 0);
                 Color fore = GetThemeColor("ToolStrip.3dLightColor");
                 e.Graphics.DrawLine(fore == Color.Empty ? SystemPens.ButtonHighlight : new Pen(fore), 1, 1, e.ToolStrip.Width, 1);
+                e.Graphics.FillRectangle(Brushes.Red, toolStrip.Bounds);
+
+
             }
             else if (e.ToolStrip is ToolStripDropDownMenu)
             {

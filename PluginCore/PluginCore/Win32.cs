@@ -10,7 +10,7 @@ namespace PluginCore
     public class Win32
     {
         // INIT
-        private static Boolean shouldUseWin32 = Type.GetType("Mono.Runtime") == null;
+        private static Boolean shouldUseWin32 = false;// Type.GetType("Mono.Runtime") == null;
 
         /// <summary>
         /// Checks if Win32 functionality should be used

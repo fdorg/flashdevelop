@@ -122,7 +122,7 @@ namespace ScintillaNet
             if (value == "True" || (value == null && color != Color.Empty))
             {
                 sender.AddScrollBars(sender);
-                sender.UpdateScrollBarTheme(sender);
+                //sender.UpdateScrollBarTheme(sender);
             }
             EventManager.AddEventHandler(this, EventType.ApplyTheme);
         }
@@ -969,8 +969,8 @@ namespace ScintillaNet
             get 
             {
                 // TODO: ok?
-                if (this.fctb != null) return this.fctb.Focused && Clipboard.ContainsText();
-                else return SPerform(2173, 0, 0) != 0;
+                /*if (this.fctb != null) return this.fctb.Focused && Clipboard.ContainsText();
+                else */return SPerform(2173, 0, 0) != 0;
             }
         }   
 
