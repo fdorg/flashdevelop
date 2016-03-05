@@ -1563,7 +1563,7 @@ namespace FlashDevelop
                     else if (keyData == (Keys.Control | Keys.X)) return false;
                     else if (keyData == (Keys.Control | Keys.A)) return false;
                     else if (keyData == (Keys.Control | Keys.Z)) return false;
-                    else if (keyData == (Keys.Control | Keys.V)) return false;
+                    else if (keyData == (Keys.Control | Keys.Y)) return false;
                 }
                 /**
                 * Process special key combinations and allow "chaining" of 
