@@ -86,7 +86,9 @@ namespace ScintillaNet
         {
             if (e.Type == EventType.ApplyTheme)
             {
-                Boolean enabled = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor") != Color.Empty;
+                Color color = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor");
+                String value = PluginBase.MainForm.GetThemeValue("ScrollBar.UseCustom");
+                Boolean enabled = value == "True" || (value == null && color != Color.Empty);
                 if (enabled && !this.Controls.Contains(this.vScrollBar))
                 {
                     this.AddScrollBars(this);
@@ -115,10 +117,13 @@ namespace ScintillaNet
             sender.hScrollBar.Orientation = ScrollBarOrientation.Horizontal;
             sender.hScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
             sender.hScrollBar.Dock = DockStyle.Bottom;
-            Color foreColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor");
-            if (foreColor != Color.Empty) sender.AddScrollBars(sender);
-            PluginBase.MainForm.ThemeControls(sender.vScrollBar);
-            PluginBase.MainForm.ThemeControls(sender.hScrollBar);
+            Color color = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor");
+            String value = PluginBase.MainForm.GetThemeValue("ScrollBar.UseCustom");
+            if (value == "True" || (value == null && color != Color.Empty))
+            {
+                sender.AddScrollBars(sender);
+                sender.UpdateScrollBarTheme(sender);
+            }
             EventManager.AddEventHandler(this, EventType.ApplyTheme);
         }
 

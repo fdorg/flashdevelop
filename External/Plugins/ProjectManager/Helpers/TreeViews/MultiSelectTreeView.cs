@@ -67,10 +67,15 @@ namespace System.Windows.Forms
         // prevents some flicker
         protected override void WndProc(ref Message m)
         {
-            // Stop erase background message
-            if (m.Msg == (int)0x0014 )
-                m.Msg = (int) 0x0000; // Set to null
-            
+            switch (m.Msg)
+            {
+                case 0x0014: // Stop erase background message
+                    m.Msg = (int)0x0000; // Set to null
+                    break;
+                case 0xf: // WM_PAINT
+                    OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));
+                    break;
+            }
             base.WndProc(ref m);
         }
 
