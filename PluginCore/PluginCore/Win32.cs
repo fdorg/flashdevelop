@@ -113,7 +113,19 @@ namespace PluginCore
             public String szDisplayName;
             [MarshalAs(UnmanagedType.LPStr, SizeConst = 80)]
             public String szTypeName;
-        };
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public class SCROLLINFO
+        {
+            public int cbSize = Marshal.SizeOf(typeof(Win32.SCROLLINFO));
+            public int fMask;
+            public int nMin;
+            public int nMax;
+            public int nPage;
+            public int nPos;
+            public int nTrackPos;
+        }
 
         #endregion
 
@@ -121,10 +133,14 @@ namespace PluginCore
 
         public const Int32 SB_HORZ = 0;
         public const Int32 SB_VERT = 1;
+        public const Int32 SB_BOTH = 3;
+        public const Int32 SB_THUMBPOSITION = 4;
+        public const Int32 SB_THUMBTRACK = 5;
         public const Int32 SB_LEFT = 6;
         public const Int32 SB_RIGHT = 7;
         public const Int32 WM_HSCROLL = 0x0114;
         public const Int32 WM_VSCROLL = 0x0115;
+        public const UInt32 LVM_SCROLL = 0x1014;
         public const UInt32 SWP_SHOWWINDOW = 64;
         public const Int32 SW_RESTORE = 9;
         public const Int32 WM_SETREDRAW = 0xB;
@@ -140,6 +156,12 @@ namespace PluginCore
         public const Int32 WM_MOUSEWHEEL = 0x20A;
         public const Int32 WM_KEYDOWN = 0x100;
         public const Int32 WM_KEYUP = 0x101;
+        public const Int32 SIF_RANGE = 0x0001;
+        public const Int32 SIF_PAGE = 0x0002;
+        public const Int32 SIF_POS = 0x0004;
+        public const Int32 SIF_DISABLENOSCROLL = 0x0008;
+        public const Int32 SIF_TRACKPOS = 0x0010;
+        public const Int32 SIF_ALL = (SIF_RANGE | SIF_PAGE | SIF_POS | SIF_TRACKPOS);
 
         #endregion
 
@@ -164,10 +186,16 @@ namespace PluginCore
         public static extern IntPtr WindowFromPoint(Point pt);
 
         [DllImport("user32.dll")]
+        public static extern Boolean ShowScrollBar(IntPtr hWnd, Int32 wBar, Boolean bShow);
+
+        [DllImport("user32.dll")]
         public static extern Int32 GetScrollPos(IntPtr hWnd, Int32 nBar);
 
         [DllImport("user32.dll")]
         public static extern Int32 SetScrollPos(IntPtr hWnd, Int32 nBar, Int32 nPos, Boolean bRedraw);
+
+        [DllImport("user32.dll")]
+        public static extern Boolean GetScrollInfo(IntPtr hWnd, Int32 fnBar, SCROLLINFO scrollInfo);
 
         [DllImport("user32.dll")]
         public static extern Boolean ReleaseCapture();
@@ -233,6 +261,18 @@ namespace PluginCore
         #endregion
 
         #region Scrolling
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static SCROLLINFO GetFullScrollInfo(Control lv, Boolean horizontalBar)
+        {
+            Int32 fnBar = (horizontalBar ? SB_HORZ : SB_VERT);
+            SCROLLINFO scrollInfo = new SCROLLINFO();
+            scrollInfo.fMask = SIF_ALL;
+            if (GetScrollInfo(lv.Handle, fnBar, scrollInfo)) return scrollInfo;
+            else return null;
+        }
 
         /// <summary>
         /// 

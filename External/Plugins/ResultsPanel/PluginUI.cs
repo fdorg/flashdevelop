@@ -13,6 +13,7 @@ using PluginCore.Utilities;
 using ScintillaNet;
 using ScintillaNet.Configuration;
 using WeifenLuo.WinFormsUI.Docking;
+using PluginCore.Controls;
 
 namespace ResultsPanel
 {
@@ -63,6 +64,7 @@ namespace ResultsPanel
             this.InitializeTexts();
             this.InitializeLayout();
             this.ApplySettings();
+            ScrollBarEx.Attach(entriesView);
         }
         
         #region Windows Forms Designer Generated Code

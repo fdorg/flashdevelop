@@ -48,6 +48,7 @@ namespace FlashDebugger
             InitializeComponents(imageList);
             InitializeContextMenu();
             InitializeLocalization();
+            ScrollBarEx.Attach(lv);
         }
 
         private void InitializeComponents(ImageList imageList)

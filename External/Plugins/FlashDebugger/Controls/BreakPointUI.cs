@@ -126,6 +126,7 @@ namespace FlashDebugger
             tsbImport.Image = PluginBase.MainForm.FindImage("549|8|4|4");
             this.tscbFilterColumns.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
             this.tsActions.Renderer = new DockPanelStripRenderer(false);
+            ScrollBarEx.Attach(dgv);
         }
 
         void dgv_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e)

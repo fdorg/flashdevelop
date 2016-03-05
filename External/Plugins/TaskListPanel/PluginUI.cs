@@ -13,6 +13,7 @@ using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using ScintillaNet;
+using PluginCore.Controls;
 
 namespace TaskListPanel
 {
@@ -84,6 +85,7 @@ namespace TaskListPanel
             this.parseTimer.Tick += delegate { this.ParseNextFile(); };
             this.parseTimer.Enabled = false;
             this.parseTimer.Tag = null;
+            ScrollBarEx.Attach(listView);
         }
 
         #region Windows Forms Designer Generated Code
