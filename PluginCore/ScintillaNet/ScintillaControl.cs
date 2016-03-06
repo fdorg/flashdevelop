@@ -90,7 +90,7 @@ namespace ScintillaNet
             {
                 Color color = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor");
                 String value = PluginBase.MainForm.GetThemeValue("ScrollBar.UseCustom");
-                Boolean enabled = value == "true" || (value == null && color != Color.Empty);
+                Boolean enabled = value == "True" || (value == null && color != Color.Empty);
                 if (enabled && !this.Controls.Contains(this.vScrollBar))
                 {
                     this.AddScrollBars(this);
@@ -140,7 +140,7 @@ namespace ScintillaNet
             sender.hScrollBar.Dock = DockStyle.Bottom;
             Color color = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor");
             String value = PluginBase.MainForm.GetThemeValue("ScrollBar.UseCustom");
-            if (value == "true" || (value == null && color != Color.Empty))
+            if (value == "True" || (value == null && color != Color.Empty))
             {
                 sender.AddScrollBars(sender);
                 sender.UpdateScrollBarTheme(sender);
