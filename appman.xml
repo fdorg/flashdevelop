@@ -524,14 +524,14 @@
 	<Entry>
 		<Id>solarizedfulltheme</Id>
 		<Name>Solarized Full Theme</Name>
-		<Version>1.0</Version>
+		<Version>1.1</Version>
 		<Build>1</Build>
 		<Checksum>0EFDD1753EB7C4D42607B52BF296624B</Checksum>
 		<Desc>Adds Solarized light and dark ui themes and syntax themes, based on Solarized by Ethan Schoonover.</Desc>
 		<Group>Themes</Group>
 		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=20&amp;t=12399</Info>
 		<Urls>
-			<Url>https://github.com/gene-pavlovsky/flashdevelop-colors-solarized/raw/v1.0/dist/SolarizedThemes.fdz</Url>
+			<Url>https://github.com/gene-pavlovsky/flashdevelop-colors-solarized/raw/v1.1/dist/SolarizedThemes.fdz</Url>
 		</Urls>
 	</Entry>
 	<Entry>
