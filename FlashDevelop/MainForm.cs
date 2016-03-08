@@ -2062,22 +2062,17 @@ namespace FlashDevelop
         {
             CloseAllDocuments(exceptCurrent, false);
         }
-
         public void CloseAllDocuments(Boolean exceptCurrent, Boolean exceptOtherPanes)
         {
             ITabbedDocument current = this.CurrentDocument;
             DockPane currentPane = (current == null) ? null : current.DockHandler.PanelPane;
             this.closeAllCanceled = false; this.closingAll = true;
             var documents = new List<ITabbedDocument>(Documents);
-
             foreach (var document in documents)
             {
                 Boolean close = true;
-                if (exceptCurrent && document == current)
-                    close = false;
-                if (exceptOtherPanes && document.DockHandler.PanelPane != currentPane)
-                    close = false;
-                
+                if (exceptCurrent && document == current) close = false;
+                if (exceptOtherPanes && document.DockHandler.PanelPane != currentPane) close = false;
                 if (close) document.Close();
             }
             this.closingAll = false;
