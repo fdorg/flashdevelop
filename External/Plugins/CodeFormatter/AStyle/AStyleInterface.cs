@@ -44,7 +44,7 @@ namespace CodeFormatter
         private AStyleErrorDelgate AStyleError;
 
         /// AStyleMainUtf16 Constants.
-        public const String DefaultOptions = "--indent-namespaces --indent-preproc-block --indent-switches --indent-cases --delete-empty-lines --pad-header --keep-one-line-blocks --keep-one-line-statements --close-templates --add-brackets";
+        public const String DefaultOptions = "--indent-namespaces --indent-preproc-block --indent-preproc-cond --indent-switches --indent-cases --delete-empty-lines --pad-header --keep-one-line-blocks --keep-one-line-statements --close-templates";
 
         /// <summary>
         /// Declare callback functions.

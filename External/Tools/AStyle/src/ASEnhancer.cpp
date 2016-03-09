@@ -577,7 +577,7 @@ void ASEnhancer::parseCurrentLine(string& line, bool isInPreprocessor, bool isIn
 			preproc = line.substr(i + 1);
 			if (preproc.substr(0, 2) == "if") // #if, #ifdef, #ifndef)
 				eventPreprocDepth += 1;
-			if (preproc.substr(0, 5) == "endif" && eventPreprocDepth > 0)
+			if (preproc.substr(0, 3) == "end" && eventPreprocDepth > 0) // #endif, #end
 				eventPreprocDepth -= 1;
 		}
 

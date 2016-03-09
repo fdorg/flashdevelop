@@ -6057,7 +6057,7 @@ bool ASFormatter::isIndentablePreprocessorBlock(string& firstLine, size_t index)
 						isFirstPreprocConditional = true;
 					}
 				}
-				else if (preproc == "endif")
+				else if (preproc == "endif" || preproc == "end")
 				{
 					if (numBlockIndents > 0)
 						numBlockIndents -= 1;

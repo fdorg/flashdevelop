@@ -1012,11 +1012,11 @@ string ASBeautifier::beautify(const string& originalLine)
 					preprocBlockIndent += 1;
 					isInIndentablePreprocBlock = true;
 				}
-				else if (preproc == "else" || preproc == "elif")
+				else if (preproc == "else" || preproc == "elif" || preproc == "elseif")
 				{
 					indentedLine = preLineWS(preprocBlockIndent - 1, 0) + line;
 				}
-				else if (preproc == "endif")
+				else if (preproc == "endif" || preproc == "end")
 				{
 					preprocBlockIndent -= 1;
 					indentedLine = preLineWS(preprocBlockIndent, 0) + line;
@@ -1042,7 +1042,7 @@ string ASBeautifier::beautify(const string& originalLine)
 					                         preprocIndentStack->back().second) + line;
 					return getIndentedLineReturn(indentedLine, originalLine);
 				}
-				else if (preproc == "else" || preproc == "elif")
+				else if (preproc == "else" || preproc == "elif" || preproc == "elseif")
 				{
 					if (preprocIndentStack->size() > 0)	// if no entry don't indent
 					{
@@ -1051,7 +1051,7 @@ string ASBeautifier::beautify(const string& originalLine)
 						return getIndentedLineReturn(indentedLine, originalLine);
 					}
 				}
-				else if (preproc == "endif")
+				else if (preproc == "endif" || preproc == "end")
 				{
 					if (preprocIndentStack->size() > 0)	// if no entry don't indent
 					{
@@ -2002,7 +2002,7 @@ void ASBeautifier::processPreprocessor(const string& preproc, const string& line
 			waitingBeautifierStack->pop_back();
 		}
 	}
-	else if (preproc == "elif")
+	else if (preproc == "elif" || preproc == "elseif")
 	{
 		if (waitingBeautifierStack && !waitingBeautifierStack->empty())
 		{
@@ -2010,7 +2010,7 @@ void ASBeautifier::processPreprocessor(const string& preproc, const string& line
 			activeBeautifierStack->push_back(new ASBeautifier(*(waitingBeautifierStack->back())));
 		}
 	}
-	else if (preproc == "endif")
+	else if (preproc == "endif" || preproc == "end")
 	{
 		int stackLength = 0;
 		ASBeautifier* beautifier = NULL;
