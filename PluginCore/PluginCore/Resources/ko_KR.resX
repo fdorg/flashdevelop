@@ -4460,8 +4460,8 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="CodeFormatter.Info.Description" xml:space="preserve">
-    <value>FlashDevelop에 MXML 및 ActionScript 코드 포맷터를 추가합니다.</value>
-    <comment>Added after 3.3.1</comment>
+    <value>Adds multiple code formatters to FlashDevelop.</value>
+    <comment>Modifed after 5.1.0</comment>
   </data>
   <data name="CodeFormatter.Label.CodeFormatter" xml:space="preserve">
     <value>코드 포맷터 (&amp;F)</value>
@@ -6004,5 +6004,13 @@ Complete: 현재 파일, 프로젝트 파일 및 수동 새로 고침.</value>
   <data name="FlashDevelop.Label.ShortcutSearch" xml:space="preserve">
     <value>검색: (필터를 *로 시작하면 수정된 항목만, ?로 시작하면 충돌하는 항목만 검색할 수 있습니다.)</value>
     <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="CodeFormatter.Description.AStyle.OptionsCPP" xml:space="preserve">
+    <value>Manual options for the CPP language, read more: http://astyle.sourceforge.net/astyle.html</value>
+    <comment>Added after 5.1.0</comment>
+  </data>
+  <data name="CodeFormatter.Description.AStyle.OptionsOthers" xml:space="preserve">
+    <value>Manual options for other C like languages, read more: http://astyle.sourceforge.net/astyle.html</value>
+    <comment>Added after 5.1.0</comment>
   </data>
 </root>

@@ -4442,8 +4442,8 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="CodeFormatter.Info.Description" xml:space="preserve">
-    <value>Fügt eine MXML und ActionScript Code-Formatierung hinzu.</value>
-    <comment>Added after 3.3.1</comment>
+    <value>Adds multiple code formatters to FlashDevelop.</value>
+    <comment>Modifed after 5.1.0</comment>
   </data>
   <data name="CodeFormatter.Label.CodeFormatter" xml:space="preserve">
     <value>Code-&amp;Formatierung</value>
@@ -5987,5 +5987,13 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
   <data name="FlashDevelop.Label.ShortcutSearch" xml:space="preserve">
     <value>Search: (Start the filter with * to view custom only, and ? to view conflicts only.)</value>
     <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="CodeFormatter.Description.AStyle.OptionsCPP" xml:space="preserve">
+    <value>Manual options for the CPP language, read more: http://astyle.sourceforge.net/astyle.html</value>
+    <comment>Added after 5.1.0</comment>
+  </data>
+  <data name="CodeFormatter.Description.AStyle.OptionsOthers" xml:space="preserve">
+    <value>Manual options for other C like languages, read more: http://astyle.sourceforge.net/astyle.html</value>
+    <comment>Added after 5.1.0</comment>
   </data>
 </root>
