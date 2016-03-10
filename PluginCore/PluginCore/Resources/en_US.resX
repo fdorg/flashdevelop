@@ -6002,4 +6002,8 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <value>Search: (Start the filter with * to view custom only, and ? to view conflicts only.)</value>
     <comment>Added after 5.0.2</comment>
   </data>
+  <data name="FlashConnect.Info.ConnectionFailed" xml:space="preserve">
+    <value>Connection failed. Default socket port '{0}' is already in use.</value>
+    <comment>Added after 5.1.0</comment>
+  </data>
 </root>
