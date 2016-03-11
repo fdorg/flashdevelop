@@ -362,7 +362,7 @@
 		</Bundles>
 		<Info>http://haxeflixel.com/</Info>
 		<Urls>
-			<Url>https://github.com/HaxeFlixel/flixel-templates/raw/8732ce62810d10d86c31b5aa5cc22ee2f1730c7b/pregenerated/FlxProject.fdz</Url>
+			<Url>https://raw.github.com/HaxeFlixel/flixel-templates/8732ce62810d10d86c31b5aa5cc22ee2f1730c7b/pregenerated/FlxProject.fdz</Url>
 		</Urls>
 	</Entry>
 	<Entry>
