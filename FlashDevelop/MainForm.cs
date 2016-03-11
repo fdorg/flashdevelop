@@ -728,14 +728,22 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// When AppMan is closed, it notifies of changes. Forward notifications.
+        /// When AppMan installs something it notifies of changes. Forward notifications.
         /// </summary>
         private void AppManUpdate(Object sender, FileSystemEventArgs e)
         {
             try
             {
+
                 NotifyEvent ne = new NotifyEvent(EventType.AppChanges);
-                EventManager.DispatchEvent(this, ne);
+                EventManager.DispatchEvent(this, ne); // Notify plugins...
+                String appMan = Path.Combine(PathHelper.BaseDir, ".appman");
+                String contents = File.ReadAllText(appMan);
+                if (contents == "restart")
+                {
+                    String message = TextHelper.GetString("Info.RequiresRestart");
+                    TraceManager.Add(message);
+                }
             }
             catch {} // No errors...
         }
@@ -3013,7 +3021,7 @@ namespace FlashDevelop
                     {
                         zipLog += "Restart required.\r\n";
                         if (!silentInstall) finish += "\n" + restart;
-                        else TraceManager.AddAsync(finish + "\r\n" + restart);
+                        else TraceManager.AddAsync(restart);
                     }
                     String logFile = Path.Combine(PathHelper.BaseDir, "Extensions.log");
                     File.AppendAllText(logFile, zipLog + "Done.\r\n\r\n", Encoding.UTF8);
@@ -3098,7 +3106,7 @@ namespace FlashDevelop
                     {
                         zipLog += "Restart required.\r\n";                        
                         if (!silentRemove) finish += "\n" + restart;
-                        else TraceManager.AddAsync(finish + "\r\n" + restart);
+                        else TraceManager.AddAsync(restart);
                     }
                     String logFile = Path.Combine(PathHelper.BaseDir, "Extensions.log");
                     File.AppendAllText(logFile, zipLog + "Done.\r\n\r\n", Encoding.UTF8);

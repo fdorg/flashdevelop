@@ -366,7 +366,7 @@ namespace AppMan
         /// <summary>
         /// Save notification files to the notify paths.
         /// </summary>
-        private void NotifyPaths()
+        private void NotifyPaths(Boolean restart)
         {
             try
             {
@@ -379,7 +379,8 @@ namespace AppMan
                         if (Directory.Exists(path))
                         {
                             String amFile = Path.Combine(path, ".appman");
-                            File.WriteAllText(amFile, "");
+                            if (restart) File.WriteAllText(amFile, "restart");
+                            else File.WriteAllText(amFile, "");
                         }
                     }
                     catch { /* NO ERRORS */ }
@@ -483,7 +484,7 @@ namespace AppMan
                             this.TryDeleteEntryDir(entry);
                         }
                     }
-                    this.NotifyPaths();
+                    this.NotifyPaths(false);
                 }
             }
             catch (Exception ex)
@@ -969,6 +970,7 @@ namespace AppMan
                 if (wait)
                 {
                     process.WaitForExit();
+                    this.NotifyPaths(true);
                 }
             }
             catch (Exception ex)
@@ -1365,7 +1367,7 @@ namespace AppMan
                         Thread.Sleep(100); // Wait for files...
                         this.LoadInstalledEntries();
                         this.UpdateEntryStates();
-                        this.NotifyPaths();
+                        this.NotifyPaths(false);
                     }
                     else this.RunExecutableProcess(this.tempFile, true);
                     if (this.downloadQueue.Count > 0) this.DownloadNextFromQueue();
