@@ -1034,14 +1034,14 @@ namespace FlashDevelop
             this.Font = this.appSettings.DefaultFont;
             this.StartPosition = FormStartPosition.Manual;
             this.Closing += new CancelEventHandler(this.OnMainFormClosing);
+            this.FormClosed += new FormClosedEventHandler(this.OnMainFormClosed);
             this.Activated += new EventHandler(this.OnMainFormActivate);
             this.Shown += new EventHandler(this.OnMainFormShow);
             this.Load += new EventHandler(this.OnMainFormLoad);
             this.LocationChanged += new EventHandler(this.OnMainFormLocationChange);
             this.GotFocus += new EventHandler(this.OnMainFormGotFocus);
             this.Resize += new EventHandler(this.OnMainFormResize);
-
-            ScintillaManager.ConfigurationLoaded += ApplyAllSettings;
+            ScintillaManager.ConfigurationLoaded += this.ApplyAllSettings;
         }
 
         #endregion
@@ -1216,14 +1216,21 @@ namespace FlashDevelop
                 PluginServices.DisposePlugins();
                 this.KillProcess();
                 this.SaveAllSettings();
-                /* Restart if requested */
-                if (this.restartRequested)
-                {
-                    this.restartRequested = false;
-                    Application.Restart();
-                }
             }
             else this.restartRequested = false;
+        }
+
+        /// <summary>
+        /// When form is closed restart if requested.
+        /// </summary>
+        public void OnMainFormClosed(Object sender, FormClosedEventArgs e)
+        {
+            if (this.restartRequested)
+            {
+                this.restartRequested = false;
+                Process.Start(Application.ExecutablePath);
+                Process.GetCurrentProcess().Kill();
+            }
         }
 
         /// <summary>
