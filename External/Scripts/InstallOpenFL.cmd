@@ -84,6 +84,24 @@ haxelib run openfl setup
 :: Check for errors
 if %errorlevel% neq 0 goto :install_error
 
+goto :options_vs
+
+:options_vs
+
+set /p option="Also install free Visual Studio for C++ Windows applications? [y/n] "
+if "%option%" == "y" goto :install_vs
+if "%option%" == "n" goto :done
+echo Invalid value, try again.
+
+goto :options_vs
+
+:install_vs
+
+lime setup windows
+
+:: Check for errors
+if %errorlevel% neq 0 goto :install_error
+
 goto :done
 
 :haxelib_error
@@ -94,7 +112,7 @@ exit -1
 
 :install_error
 
-echo Could not install required Haxelib library: openfl.
+echo Could not install the requested tools.
 pause
 exit -1
 
