@@ -433,7 +433,8 @@ namespace CodeRefactor
         {
             try
             {
-                RenamingHelper.AddToQueue(RefactoringHelper.GetDefaultRefactorTarget());
+                var target = RefactoringHelper.GetDefaultRefactorTarget();
+                if (target != null) RenamingHelper.AddToQueue(target);
             }
             catch (Exception ex)
             {

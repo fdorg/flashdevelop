@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
-using CodeRefactor.Controls;
 using CodeRefactor.Provider;
 using PluginCore;
 using PluginCore.Controls;
@@ -23,18 +22,14 @@ namespace CodeRefactor.Commands
     /// </summary>
     public class Rename : RefactorCommand<IDictionary<String, List<SearchMatch>>>
     {
-        private String newName;
         private Boolean outputResults;
         private FindAllReferences findAllReferencesCommand;
         private Move renamePackage;
-
         private String oldFileName;
         private String newFileName;
 
-        public String NewName
-        {
-            get { return this.newName; }
-        }
+        public string TargetName { get; }
+        public string NewName { get; }
 
         /// <summary>
         /// A new Rename refactoring command.
@@ -102,9 +97,10 @@ namespace CodeRefactor.Commands
                         string path = Path.Combine(aPath.Path, package);
                         if (aPath.IsValid && Directory.Exists(path))
                         {
-                            this.newName = string.IsNullOrEmpty(newName) ? GetNewName(Path.GetFileName(path)) : newName;
-                            if (string.IsNullOrEmpty(this.newName)) return;
-                            renamePackage = new Move(new Dictionary<string, string> { { path, this.newName } }, true, true);
+                            TargetName = Path.GetFileName(path);
+                            this.NewName = string.IsNullOrEmpty(newName) ? GetNewName(TargetName) : newName;
+                            if (string.IsNullOrEmpty(this.NewName)) return;
+                            renamePackage = new Move(new Dictionary<string, string> { { path, this.NewName } }, true, true);
                             return;
                         }
                     }
@@ -112,9 +108,10 @@ namespace CodeRefactor.Commands
                 return;
             }
 
-            this.newName = !string.IsNullOrEmpty(newName) ? newName : GetNewName(RefactoringHelper.GetRefactorTargetName(target));
+            TargetName = RefactoringHelper.GetRefactorTargetName(target);
+            this.NewName = !string.IsNullOrEmpty(newName) ? newName : GetNewName(TargetName);
 
-            if (string.IsNullOrEmpty(this.newName)) return;
+            if (string.IsNullOrEmpty(this.NewName)) return;
 
             // create a FindAllReferences refactor to get all the changes we need to make
             // we'll also let it output the results, at least until we implement a way of outputting the renamed results later
@@ -133,6 +130,7 @@ namespace CodeRefactor.Commands
             if (renamePackage != null)
             {
                 renamePackage.RegisterDocumentHelper(AssociatedDocumentHelper);
+                renamePackage.OnRefactorComplete += OnRenamePackageComplete;
                 renamePackage.Execute();
             }
             else
@@ -159,12 +157,18 @@ namespace CodeRefactor.Commands
         /// </summary>
         public override Boolean IsValid()
         {
-            return renamePackage != null ? renamePackage.IsValid() : !string.IsNullOrEmpty(this.newName);
+            return renamePackage != null ? renamePackage.IsValid() : !string.IsNullOrEmpty(this.NewName);
         }
 
         #endregion
 
         #region Private Helper Methods
+
+        void OnRenamePackageComplete(object sender, RefactorCompleteEventArgs<IDictionary<string, List<SearchMatch>>> args)
+        {
+            Results = args.Results;
+            FireOnRefactorComplete();
+        }
 
         private bool ValidateTargets()
         {
@@ -191,19 +195,8 @@ namespace CodeRefactor.Commands
             if (!isEnum && !isClass && !isGlobalFunction && !isGlobalNamespace)
                 return true;
 
-            FileModel inFile;
-            String originName;
-
-            if (isEnum || isClass)
-            {
-                inFile = target.Type.InFile;
-                originName = target.Type.Name;
-            }
-            else
-            {
-                inFile = target.Member.InFile;
-                originName = target.Member.Name;
-            }
+            var member = isEnum || isClass ? target.Type : target.Member;
+            FileModel inFile = member.InFile;
 
             // Is this possible? should return false? I'm inclined to think so
             if (inFile == null) return true;
@@ -212,7 +205,7 @@ namespace CodeRefactor.Commands
             String oldName = Path.GetFileNameWithoutExtension(oldFileName);
 
             // Private classes and similars
-            if (string.IsNullOrEmpty(oldName) || !oldName.Equals(originName))
+            if (string.IsNullOrEmpty(oldName) || !oldName.Equals(member.Name))
                 return true;
 
             String fullPath = Path.GetFullPath(inFile.FileName);
@@ -242,7 +235,7 @@ namespace CodeRefactor.Commands
                 var doc = AssociatedDocumentHelper.LoadDocument(entry.Key);
                 var sci = doc.SciControl;
                 // replace matches in the current file with the new name
-                RefactoringHelper.ReplaceMatches(entry.Value, sci, this.newName);
+                RefactoringHelper.ReplaceMatches(entry.Value, sci, this.NewName);
                 //Uncomment if we want to keep modified files
                 //if (sci.IsModify) AssociatedDocumentHelper.MarkDocumentToKeep(entry.Key);
                 doc.Save();
@@ -289,7 +282,6 @@ namespace CodeRefactor.Commands
                     project.SetDocumentClass(newFileName, true);
                     project.Save();
                 }
-
             }
 
             if (results.ContainsKey(oldFileName))
@@ -302,7 +294,7 @@ namespace CodeRefactor.Commands
         }
 
         /// <summary>
-        /// 
+        /// Outputs the results to the TraceManager
         /// </summary>
         private void ReportResults()
         {

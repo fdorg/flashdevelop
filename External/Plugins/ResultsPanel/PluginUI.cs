@@ -13,6 +13,7 @@ using PluginCore.Utilities;
 using ScintillaNet;
 using ScintillaNet.Configuration;
 using WeifenLuo.WinFormsUI.Docking;
+using PluginCore.Controls;
 
 namespace ResultsPanel
 {
@@ -63,6 +64,7 @@ namespace ResultsPanel
             this.InitializeTexts();
             this.InitializeLayout();
             this.ApplySettings();
+            ScrollBarEx.Attach(entriesView);
         }
         
         #region Windows Forms Designer Generated Code
@@ -283,6 +285,10 @@ namespace ResultsPanel
             
             this.copyEntryContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(PluginMain.CopyEntryKeys);
             this.ignoreEntryContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(PluginMain.IgnoreEntryKeys);
+            Keys keys = PluginBase.MainForm.GetShortcutItemKeys("ResultsPanel.ShowNextResult");
+            if (keys != Keys.None) this.nextEntryContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(keys);
+            keys = PluginBase.MainForm.GetShortcutItemKeys("ResultsPanel.ShowPrevResult");
+            if (keys != Keys.None) this.previousEntryContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(keys);
 
             menu.Items.Add(this.clearEntriesContextMenuItem);
             menu.Items.Add(this.copyEntryContextMenuItem);

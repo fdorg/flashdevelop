@@ -13,12 +13,11 @@ namespace FlashConnect
         private Socket server;
         private Socket client;
         private StringBuilder packets;
-        
         public event XmlReceivedEventHandler XmlReceived;
         public event DataReceivedEventHandler DataReceived;
-        
         private readonly String INCORRECT_PKT = TextHelper.GetString("Info.IncorrectPacket");
-        
+        private readonly String CONNECTION_FAILED = TextHelper.GetString("Info.ConnectionFailed");
+
         public XmlSocket(String address, Int32 port)
         {
             try
@@ -28,6 +27,11 @@ namespace FlashConnect
                 this.server.Bind(new IPEndPoint(ipAddress, port));
                 this.server.Listen(10);
                 this.server.BeginAccept(new AsyncCallback(this.OnConnectRequest), this.server);
+            }
+            catch (SocketException ex)
+            {
+                if (ex.ErrorCode == 10048) TraceManager.Add("FlashConnect: " + String.Format(CONNECTION_FAILED, port));
+                else ErrorManager.ShowError(ex);
             }
             catch (Exception ex)
             {
@@ -106,10 +110,7 @@ namespace FlashConnect
                         String msg = packets.ToString(); packets = null; 
                         if (msg == "<policy-file-request/>\0") 
                         {
-                            String policy = "<cross-domain-policy>"
-                                + "<site-control permitted-cross-domain-policies=\"master-only\"/>"
-                                + "<allow-access-from domain=\"*\" to-ports=\"*\" />"
-                                + "</cross-domain-policy>\0";
+                            String policy = "<cross-domain-policy><site-control permitted-cross-domain-policies=\"master-only\"/><allow-access-from domain=\"*\" to-ports=\"*\" /></cross-domain-policy>\0";
                             so.Client.Send(Encoding.ASCII.GetBytes(policy));
                         }
                         else if (msg.EndsWithOrdinal("</flashconnect>\0")) this.XmlReceived(this, new XmlReceivedEventArgs(msg, so.Client));
