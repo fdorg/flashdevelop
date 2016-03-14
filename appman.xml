@@ -566,7 +566,7 @@
 		<Id>cmdopenfl</Id>
 		<Name>OpenFL Installer Script</Name>
 		<Version>1.0.0</Version>
-		<Build>1</Build>
+		<Build>2</Build>
 		<Desc>Installs OpenFL and its dependencies with Haxelib.</Desc>
 		<Group>Haxelib</Group>
 		<Type>Executable</Type>
@@ -579,7 +579,7 @@
 		<Id>cmdflixel</Id>
 		<Name>HaxeFlixel Installer Script</Name>
 		<Version>1.0.0</Version>
-		<Build>1</Build>
+		<Build>2</Build>
 		<Desc>Installs HaxeFlixel and its dependencies with Haxelib.</Desc>
 		<Group>Haxelib</Group>
 		<Type>Executable</Type>
