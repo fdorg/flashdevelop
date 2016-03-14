@@ -133,6 +133,7 @@ namespace CodeRefactor.Commands
             if (renamePackage != null)
             {
                 renamePackage.RegisterDocumentHelper(AssociatedDocumentHelper);
+                renamePackage.OnRefactorComplete += (o, args) => FireOnRefactorComplete();
                 renamePackage.Execute();
             }
             else

@@ -24,12 +24,14 @@ namespace CodeRefactor.Provider
         }
         public static void AddToQueue(ASResult target, bool outputResults)
         {
-            string originalName = RefactoringHelper.GetRefactorTargetName(target);
-            string label = TextHelper.GetString("Label.NewName");
-            string title = string.Format(TextHelper.GetString("Title.RenameDialog"), originalName);
-            LineEntryDialog askName = new LineEntryDialog(title, label, originalName);
-            if (askName.ShowDialog() == DialogResult.OK)
+            if (target.IsPackage) queue.Add(new Rename(target, outputResults));
+            else
             {
+                string originalName = RefactoringHelper.GetRefactorTargetName(target);
+                string label = TextHelper.GetString("Label.NewName");
+                string title = string.Format(TextHelper.GetString("Title.RenameDialog"), originalName);
+                LineEntryDialog askName = new LineEntryDialog(title, label, originalName);
+                if (askName.ShowDialog() != DialogResult.OK) return;
                 string newName = askName.Line.Trim();
                 if (newName.Length == 0 || newName == originalName) return;
                 queue.Add(new Rename(target, outputResults, newName));
@@ -40,8 +42,8 @@ namespace CodeRefactor.Provider
                     if (list[0].Name == "get") RenameMember(target.InClass, "get_" + originalName, "get_" + newName, outputResults);
                     if (list[1].Name == "set") RenameMember(target.InClass, "set_" + originalName, "set_" + newName, outputResults);
                 }
-                if (currentCommand == null) ExecuteFirst();
             }
+            if (currentCommand == null) ExecuteFirst();
         }
 
         static void RenameMember(ClassModel inClass, string name, string newName, bool outputResults)
