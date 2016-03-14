@@ -728,14 +728,22 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// When AppMan is closed, it notifies of changes. Forward notifications.
+        /// When AppMan installs something it notifies of changes. Forward notifications.
         /// </summary>
         private void AppManUpdate(Object sender, FileSystemEventArgs e)
         {
             try
             {
+
                 NotifyEvent ne = new NotifyEvent(EventType.AppChanges);
-                EventManager.DispatchEvent(this, ne);
+                EventManager.DispatchEvent(this, ne); // Notify plugins...
+                String appMan = Path.Combine(PathHelper.BaseDir, ".appman");
+                String contents = File.ReadAllText(appMan);
+                if (contents == "restart")
+                {
+                    String message = TextHelper.GetString("Info.RequiresRestart");
+                    TraceManager.Add(message);
+                }
             }
             catch {} // No errors...
         }
@@ -1026,14 +1034,14 @@ namespace FlashDevelop
             this.Font = this.appSettings.DefaultFont;
             this.StartPosition = FormStartPosition.Manual;
             this.Closing += new CancelEventHandler(this.OnMainFormClosing);
+            this.FormClosed += new FormClosedEventHandler(this.OnMainFormClosed);
             this.Activated += new EventHandler(this.OnMainFormActivate);
             this.Shown += new EventHandler(this.OnMainFormShow);
             this.Load += new EventHandler(this.OnMainFormLoad);
             this.LocationChanged += new EventHandler(this.OnMainFormLocationChange);
             this.GotFocus += new EventHandler(this.OnMainFormGotFocus);
             this.Resize += new EventHandler(this.OnMainFormResize);
-
-            ScintillaManager.ConfigurationLoaded += ApplyAllSettings;
+            ScintillaManager.ConfigurationLoaded += this.ApplyAllSettings;
         }
 
         #endregion
@@ -1208,14 +1216,21 @@ namespace FlashDevelop
                 PluginServices.DisposePlugins();
                 this.KillProcess();
                 this.SaveAllSettings();
-                /* Restart if requested */
-                if (this.restartRequested)
-                {
-                    this.restartRequested = false;
-                    Application.Restart();
-                }
             }
             else this.restartRequested = false;
+        }
+
+        /// <summary>
+        /// When form is closed restart if requested.
+        /// </summary>
+        public void OnMainFormClosed(Object sender, FormClosedEventArgs e)
+        {
+            if (this.restartRequested)
+            {
+                this.restartRequested = false;
+                Process.Start(Application.ExecutablePath);
+                Process.GetCurrentProcess().Kill();
+            }
         }
 
         /// <summary>
@@ -1563,7 +1578,7 @@ namespace FlashDevelop
                     else if (keyData == (Keys.Control | Keys.X)) return false;
                     else if (keyData == (Keys.Control | Keys.A)) return false;
                     else if (keyData == (Keys.Control | Keys.Z)) return false;
-                    else if (keyData == (Keys.Control | Keys.V)) return false;
+                    else if (keyData == (Keys.Control | Keys.Y)) return false;
                 }
                 /**
                 * Process special key combinations and allow "chaining" of 
@@ -2062,22 +2077,17 @@ namespace FlashDevelop
         {
             CloseAllDocuments(exceptCurrent, false);
         }
-
         public void CloseAllDocuments(Boolean exceptCurrent, Boolean exceptOtherPanes)
         {
             ITabbedDocument current = this.CurrentDocument;
             DockPane currentPane = (current == null) ? null : current.DockHandler.PanelPane;
             this.closeAllCanceled = false; this.closingAll = true;
             var documents = new List<ITabbedDocument>(Documents);
-
             foreach (var document in documents)
             {
                 Boolean close = true;
-                if (exceptCurrent && document == current)
-                    close = false;
-                if (exceptOtherPanes && document.DockHandler.PanelPane != currentPane)
-                    close = false;
-                
+                if (exceptCurrent && document == current) close = false;
+                if (exceptOtherPanes && document.DockHandler.PanelPane != currentPane) close = false;
                 if (close) document.Close();
             }
             this.closingAll = false;
@@ -3018,7 +3028,7 @@ namespace FlashDevelop
                     {
                         zipLog += "Restart required.\r\n";
                         if (!silentInstall) finish += "\n" + restart;
-                        else TraceManager.AddAsync(finish + "\r\n" + restart);
+                        else TraceManager.AddAsync(restart);
                     }
                     String logFile = Path.Combine(PathHelper.BaseDir, "Extensions.log");
                     File.AppendAllText(logFile, zipLog + "Done.\r\n\r\n", Encoding.UTF8);
@@ -3103,7 +3113,7 @@ namespace FlashDevelop
                     {
                         zipLog += "Restart required.\r\n";                        
                         if (!silentRemove) finish += "\n" + restart;
-                        else TraceManager.AddAsync(finish + "\r\n" + restart);
+                        else TraceManager.AddAsync(restart);
                     }
                     String logFile = Path.Combine(PathHelper.BaseDir, "Extensions.log");
                     File.AppendAllText(logFile, zipLog + "Done.\r\n\r\n", Encoding.UTF8);

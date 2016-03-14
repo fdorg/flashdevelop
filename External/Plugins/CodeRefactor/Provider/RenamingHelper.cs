@@ -26,30 +26,42 @@ namespace CodeRefactor.Provider
         }
         public static void AddToQueue(ASResult target, bool outputResults)
         {
-            string originalName = RefactoringHelper.GetRefactorTargetName(target);
-            string label = TextHelper.GetString("Label.NewName");
-            string title = string.Format(TextHelper.GetString("Title.RenameDialog"), originalName);
-            LineEntryDialog askName = new LineEntryDialog(title, label, originalName);
-            if (askName.ShowDialog() != DialogResult.OK) return;
-            string newName = askName.Line.Trim();
-            if (newName.Length == 0 || newName == originalName) return;
-            var cmd = new Rename(target, outputResults, newName);
-            queue.Add(cmd);
-            if (ASContext.Context.CurrentModel.haXe && target.Member != null &&
-                (target.Member.Flags & (FlagType.Getter | FlagType.Setter)) > 0)
+            Rename cmd = null;
+            if (target.IsPackage)
             {
-                List<MemberModel> list = target.Member.Parameters;
-                if (list[0].Name == "get") RenameMember(target.InClass, "get_" + originalName, "get_" + newName, outputResults);
-                if (list[1].Name == "set") RenameMember(target.InClass, "set_" + originalName, "set_" + newName, outputResults);
+                cmd = new Rename(target, outputResults);
+                queue.Add(cmd);
+            }
+            else
+            {
+                string originalName = RefactoringHelper.GetRefactorTargetName(target);
+                string label = TextHelper.GetString("Label.NewName");
+                string title = string.Format(TextHelper.GetString("Title.RenameDialog"), originalName);
+                LineEntryDialog askName = new LineEntryDialog(title, label, originalName);
+                if (askName.ShowDialog() != DialogResult.OK) return;
+                string newName = askName.Line.Trim();
+                if (newName.Length == 0 || newName == originalName) return;
+                cmd = new Rename(target, outputResults, newName);
+                queue.Add(cmd);
+                if (ASContext.Context.CurrentModel.haXe && target.Member != null &&
+                    (target.Member.Flags & (FlagType.Getter | FlagType.Setter)) > 0)
+                {
+                    List<MemberModel> list = target.Member.Parameters;
+                    if (list[0].Name == "get") RenameMember(target.InClass, "get_" + originalName, "get_" + newName, outputResults);
+                    if (list[1].Name == "set") RenameMember(target.InClass, "set_" + originalName, "set_" + newName, outputResults);
+                }
             }
             if (currentCommand != null) return;
-            var doc = PluginBase.MainForm.CurrentDocument;
-            startState = new StartState
+            if (cmd != null)
             {
-                FileName = doc.FileName,
-                CursorPosition = doc.SciControl.CurrentPos,
-                Cmd = cmd
-            };
+                var doc = PluginBase.MainForm.CurrentDocument;
+                startState = new StartState
+                {
+                    FileName = doc.FileName,
+                    CursorPosition = doc.SciControl.CurrentPos,
+                    Cmd = cmd
+                };
+            }
             ExecuteFirst();
         }
 
@@ -85,7 +97,7 @@ namespace CodeRefactor.Provider
             if (queue.Count > 0) ExecuteFirst();
             else
             {
-                RestoreStartState();
+                if (startState != null) RestoreStartState();
                 currentCommand = null;
                 startState = null;
             }

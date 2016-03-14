@@ -9,6 +9,7 @@ using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using WeifenLuo.WinFormsUI.Docking;
+using PluginCore.Controls;
 
 namespace OutputPanel
 {
@@ -44,6 +45,7 @@ namespace OutputPanel
             this.toggleButtonImagePlay = PluginBase.MainForm.FindImage("147");
             this.toggleButtonImagePlayNew = PluginBase.MainForm.FindImage("147|17|5|4");
             this.ToggleButtonClick(this, new EventArgs());
+            ScrollBarEx.Attach(textLog);
         }
 
         #region Windows Forms Designer Generated Code
@@ -56,7 +58,7 @@ namespace OutputPanel
         private void InitializeComponent()
         {
             this.scrollTimer = new System.Timers.Timer();
-            this.textLog = new System.Windows.Forms.RichTextBox();
+            this.textLog = new System.Windows.Forms.RichTextBoxEx();
             this.toolStrip = new PluginCore.Controls.ToolStripEx();
             this.toggleButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();

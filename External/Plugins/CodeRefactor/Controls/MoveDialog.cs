@@ -102,7 +102,7 @@ namespace CodeRefactor.Controls
             if (search.Length > 0)
             {
                 char separator = Path.DirectorySeparatorChar;
-                string searchWord = search.Replace('\\', separator).Replace('/', separator);
+                string searchWord = search.Replace('\\', separator).Replace('/', separator).Replace('.', separator);
                 int searchLength = search.Length;
                 classpaths = classpaths.FindAll(path =>
                 {

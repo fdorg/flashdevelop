@@ -90,7 +90,7 @@ namespace ScintillaNet
             {
                 Color color = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor");
                 String value = PluginBase.MainForm.GetThemeValue("ScrollBar.UseCustom");
-                Boolean enabled = value == "true" || (value == null && color != Color.Empty);
+                Boolean enabled = value == "True" || (value == null && color != Color.Empty);
                 if (enabled && !this.Controls.Contains(this.vScrollBar))
                 {
                     this.AddScrollBars(this);
@@ -140,7 +140,7 @@ namespace ScintillaNet
             sender.hScrollBar.Dock = DockStyle.Bottom;
             Color color = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor");
             String value = PluginBase.MainForm.GetThemeValue("ScrollBar.UseCustom");
-            if (value == "true" || (value == null && color != Color.Empty))
+            if (value == "True" || (value == null && color != Color.Empty))
             {
                 sender.AddScrollBars(sender);
                 sender.UpdateScrollBarTheme(sender);
@@ -229,8 +229,7 @@ namespace ScintillaNet
 
         #region Scintilla Main
 
-        public ScintillaControl()
-            : this(IntPtr.Size == 4 ? "SciLexer.dll" : "SciLexer64.dll")
+        public ScintillaControl() : this(IntPtr.Size == 4 ? "SciLexer.dll" : "SciLexer64.dll")
         {
             if (Win32.ShouldUseWin32()) DragAcceptFiles(this.Handle, 1);
         }
@@ -245,19 +244,13 @@ namespace ScintillaNet
                     hwndScintilla = CreateWindowEx(0, "Scintilla", "", WS_CHILD_VISIBLE_TABSTOP, 0, 0, this.Width, this.Height, this.Handle, 0, new IntPtr(0), null);
                     directPointer = (IntPtr)SlowPerform(2185, 0, 0);
                     IntPtr sciFunctionPointer = GetProcAddress(new HandleRef(null, lib), "Scintilla_DirectFunction");
-                    if (sciFunctionPointer == IntPtr.Zero)
-                        sciFunctionPointer = GetProcAddress(new HandleRef(null, lib), "_Scintilla_DirectFunction@16");
-
+                    if (sciFunctionPointer == IntPtr.Zero) sciFunctionPointer = GetProcAddress(new HandleRef(null, lib), "_Scintilla_DirectFunction@16");
                     if (sciFunctionPointer == IntPtr.Zero)
                     {
                         string msg = "The Scintilla module has no export for the 'Scintilla_DirectFunction' procedure.";
                         throw new Win32Exception(msg, new Win32Exception(Marshal.GetLastWin32Error()));
                     }
-
-                    _sciFunction = (Perform)Marshal.GetDelegateForFunctionPointer(
-                        sciFunctionPointer,
-                        typeof(Perform));
-
+                    _sciFunction = (Perform)Marshal.GetDelegateForFunctionPointer(sciFunctionPointer, typeof(Perform));
                     directPointer = DirectPointer;
                 }
                 UpdateUI += new UpdateUIHandler(OnUpdateUI);
@@ -5296,11 +5289,7 @@ namespace ScintillaNet
         [DllImport("shell32.dll")]
         public static extern void DragAcceptFiles(IntPtr hwnd, int accept);
 
-        public delegate IntPtr Perform(
-            IntPtr sci,
-            int iMessage,
-            IntPtr wParam,
-            IntPtr lParam);
+        public delegate IntPtr Perform(IntPtr sci, int iMessage, IntPtr wParam, IntPtr lParam);
 
         public UInt32 SlowPerform(UInt32 message, UInt32 wParam, UInt32 lParam)
         {

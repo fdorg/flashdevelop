@@ -366,7 +366,7 @@ namespace AppMan
         /// <summary>
         /// Save notification files to the notify paths.
         /// </summary>
-        private void NotifyPaths()
+        private void NotifyPaths(Boolean restart)
         {
             try
             {
@@ -379,7 +379,8 @@ namespace AppMan
                         if (Directory.Exists(path))
                         {
                             String amFile = Path.Combine(path, ".appman");
-                            File.WriteAllText(amFile, "");
+                            if (restart) File.WriteAllText(amFile, "restart");
+                            else File.WriteAllText(amFile, "");
                         }
                     }
                     catch { /* NO ERRORS */ }
@@ -483,7 +484,7 @@ namespace AppMan
                             this.TryDeleteEntryDir(entry);
                         }
                     }
-                    this.NotifyPaths();
+                    this.NotifyPaths(false);
                 }
             }
             catch (Exception ex)
@@ -945,7 +946,7 @@ namespace AppMan
         /// <summary>
         /// Runs an executable process.
         /// </summary>
-        private void RunExecutableProcess(String file)
+        private void RunExecutableProcess(String file, Boolean wait)
         {
             try 
             {
@@ -953,22 +954,33 @@ namespace AppMan
                 if (file.ToLower().EndsWith(".fdz"))
                 {
                     String fd = Path.Combine(PathHelper.GetExeDirectory(), @"..\..\" + DISTRO_NAME + ".exe");
-                    Boolean wait = Process.GetProcessesByName(DISTRO_NAME).Length == 0;
+                    Boolean waitfd = Process.GetProcessesByName(DISTRO_NAME).Length == 0;
                     if (File.Exists(fd))
                     {
-                        Process.Start(Path.GetFullPath(fd), file + " -silent -reuse");
+                        Process.Start(Path.GetFullPath(fd), "\"" + file + "\" -silent -reuse");
                         // If FD was not running, give it a little time to start...
-                        if (wait) Thread.Sleep(500);
+                        if (waitfd) Thread.Sleep(500);
                         return;
                     }
                 }
                 #endif
-                Process.Start(file);
+                Process process = new Process();
+                process.StartInfo.FileName = file;
+                process.Start();
+                if (wait)
+                {
+                    process.WaitForExit();
+                    this.NotifyPaths(true);
+                }
             }
             catch (Exception ex)
             {
                 DialogHelper.ShowError(ex.ToString());
             }
+        }
+        private void RunExecutableProcess(String file)
+        {
+            RunExecutableProcess(file, false);
         }
 
         /// <summary>
@@ -1355,9 +1367,9 @@ namespace AppMan
                         Thread.Sleep(100); // Wait for files...
                         this.LoadInstalledEntries();
                         this.UpdateEntryStates();
-                        this.NotifyPaths();
+                        this.NotifyPaths(false);
                     }
-                    else this.RunExecutableProcess(this.tempFile);
+                    else this.RunExecutableProcess(this.tempFile, true);
                     if (this.downloadQueue.Count > 0) this.DownloadNextFromQueue();
                     else
                     {

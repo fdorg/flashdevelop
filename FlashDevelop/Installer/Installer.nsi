@@ -10,7 +10,7 @@
 ;--------------------------------
 
 ; Define version info
-!define VERSION "5.1.1"
+!define VERSION "5.2.0"
 
 ; Installer details
 VIAddVersionKey "CompanyName" "${DIST_COMP}"
@@ -389,6 +389,28 @@ Section "Basque" BasqueLocale
 	
 SectionEnd
 
+
+Section "Korean" KoreanLocale
+	
+	SetOverwrite on
+	IfFileExists "$INSTDIR\.local" Local 0
+	IfFileExists "$LOCALAPPDATA\${DIST_NAME}\*.*" User Done
+	Local:
+	ClearErrors
+	FileOpen $1 "$INSTDIR\.locale" w
+	IfErrors Done
+	FileWrite $1 "ko_KR"
+	FileClose $1
+	User:
+	ClearErrors
+	FileOpen $1 "$LOCALAPPDATA\${DIST_NAME}\.locale" w
+	IfErrors Done
+	FileWrite $1 "ko_KR"
+	FileClose $1
+	Done:
+	
+SectionEnd
+
 SectionGroupEnd
 
 SectionGroup "Advanced"
@@ -456,7 +478,7 @@ Section "Registry Modifications" RegistryMods
 	
 	; Write uninstall section keys
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${DIST_NAME}" "InstallLocation" "$INSTDIR"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${DIST_NAME}" "Publisher" "${DIST_COMP}g"
+	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${DIST_NAME}" "Publisher" "${DIST_COMP}"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${DIST_NAME}" "DisplayVersion" "${VERSION}"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${DIST_NAME}" "DisplayName" "${DIST_NAME}"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${DIST_NAME}" "Comments" "Thank you for using ${DIST_NAME}."
@@ -509,6 +531,7 @@ SectionGroupEnd
 !insertmacro MUI_DESCRIPTION_TEXT ${JapaneseLocale} "Changes ${DIST_NAME}'s display language to Japanese on next restart."
 !insertmacro MUI_DESCRIPTION_TEXT ${GermanLocale} "Changes ${DIST_NAME}'s display language to German on next restart."
 !insertmacro MUI_DESCRIPTION_TEXT ${BasqueLocale} "Changes ${DIST_NAME}'s display language to Basque on next restart."
+!insertmacro MUI_DESCRIPTION_TEXT ${KoreanLocale} "Changes ${DIST_NAME}'s display language to Korean on next restart."
 !insertmacro MUI_DESCRIPTION_TEXT ${StartMenuGroup} "Creates a start menu group and adds default ${DIST_NAME} links to the group."
 !insertmacro MUI_DESCRIPTION_TEXT ${QuickShortcut} "Installs a ${DIST_NAME} shortcut to the Quick Launch bar."
 !insertmacro MUI_DESCRIPTION_TEXT ${DesktopShortcut} "Installs a ${DIST_NAME} shortcut to the desktop."
@@ -692,6 +715,7 @@ Function .onSelChange
 	!insertmacro RadioButton ${JapaneseLocale}
 	!insertmacro RadioButton ${GermanLocale}
 	!insertmacro RadioButton ${BasqueLocale}
+	!insertmacro RadioButton ${KoreanLocale}
 	!insertmacro EndRadioButtons
 	${EndIf}
 	

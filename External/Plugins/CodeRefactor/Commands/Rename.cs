@@ -97,7 +97,8 @@ namespace CodeRefactor.Commands
                         string path = Path.Combine(aPath.Path, package);
                         if (aPath.IsValid && Directory.Exists(path))
                         {
-                            this.NewName = string.IsNullOrEmpty(newName) ? GetNewName(Path.GetFileName(path)) : newName;
+                            TargetName = Path.GetFileName(path);
+                            this.NewName = string.IsNullOrEmpty(newName) ? GetNewName(TargetName) : newName;
                             if (string.IsNullOrEmpty(this.NewName)) return;
                             renamePackage = new Move(new Dictionary<string, string> { { path, this.NewName } }, true, true);
                             return;
@@ -129,6 +130,7 @@ namespace CodeRefactor.Commands
             if (renamePackage != null)
             {
                 renamePackage.RegisterDocumentHelper(AssociatedDocumentHelper);
+                renamePackage.OnRefactorComplete += OnRenamePackageComplete;
                 renamePackage.Execute();
             }
             else
@@ -161,6 +163,12 @@ namespace CodeRefactor.Commands
         #endregion
 
         #region Private Helper Methods
+
+        void OnRenamePackageComplete(object sender, RefactorCompleteEventArgs<IDictionary<string, List<SearchMatch>>> args)
+        {
+            Results = args.Results;
+            FireOnRefactorComplete();
+        }
 
         private bool ValidateTargets()
         {
