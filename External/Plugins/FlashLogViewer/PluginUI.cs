@@ -8,6 +8,7 @@ using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Utilities;
+using PluginCore.Controls;
 
 namespace FlashLogViewer
 {
@@ -48,6 +49,7 @@ namespace FlashLogViewer
             this.InitializeGraphics();
             this.InitializeControls();
             this.UpdateMainRegexes();
+            ScrollBarEx.Attach(logTextBox);
         }
 
         #region Windows Forms Designer Generated Code
@@ -68,7 +70,7 @@ namespace FlashLogViewer
             this.logComboBox = new System.Windows.Forms.ToolStripComboBoxEx();
             this.filterLabel = new System.Windows.Forms.ToolStripLabel();
             this.filterComboBox = new System.Windows.Forms.ToolStripSpringComboBox();
-            this.logTextBox = new System.Windows.Forms.RichTextBox();
+            this.logTextBox = new System.Windows.Forms.RichTextBoxEx();
             this.toolStrip.SuspendLayout();
             this.SuspendLayout();
             // 

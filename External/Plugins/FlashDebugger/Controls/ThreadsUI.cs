@@ -2,6 +2,8 @@
 using System.Windows.Forms;
 using flash.tools.debugger;
 using System.Collections.Generic;
+using PluginCore;
+using PluginCore.Controls;
 
 namespace FlashDebugger
 {
@@ -39,6 +41,7 @@ namespace FlashDebugger
             lv.KeyDown += new KeyEventHandler(lv_KeyDown);
             lv.SizeChanged += new EventHandler(lv_SizeChanged);
             this.Controls.Add(lv);
+            ScrollBarEx.Attach(lv);
         }
 
         void lv_SizeChanged(object sender, EventArgs e)

@@ -8,6 +8,7 @@ using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
+using PluginCore.Controls;
 
 namespace LayoutManager
 {
@@ -36,6 +37,7 @@ namespace LayoutManager
             this.InitializeContextMenu();
             this.InitializeGraphics();
             this.InitializeTexts();
+            ScrollBarEx.Attach(layoutsListView);
         }
         
         #region Windows Forms Designer Generated Code
