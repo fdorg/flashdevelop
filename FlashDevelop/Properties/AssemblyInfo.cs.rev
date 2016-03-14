@@ -10,7 +10,7 @@ using System.Resources;
 //
 [assembly: AssemblyTitle(PluginCore.DistroConfig.DISTRIBUTION_NAME)]
 [assembly: AssemblyDescription(PluginCore.DistroConfig.DISTRIBUTION_DESC)]
-[assembly: AssemblyProduct(PluginCore.DistroConfig.DISTRIBUTION_NAME + " 5.1.1$BUILD$ for .NET 3.5 ($BRANCH$#$COMMIT$)")]
+[assembly: AssemblyProduct(PluginCore.DistroConfig.DISTRIBUTION_NAME + " 5.2.0$BUILD$ for .NET 3.5 ($BRANCH$#$COMMIT$)")]
 [assembly: AssemblyCopyright(PluginCore.DistroConfig.DISTRIBUTION_COPYRIGHT)]
 [assembly: AssemblyCompany(PluginCore.DistroConfig.DISTRIBUTION_COMPANY)]
 [assembly: AssemblyConfiguration("")]

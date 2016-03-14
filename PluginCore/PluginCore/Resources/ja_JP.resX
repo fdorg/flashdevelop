@@ -6054,4 +6054,8 @@ UseData:"</value>
     <value>Manual options for other C like languages, read more: http://astyle.sourceforge.net/astyle.html</value>
     <comment>Added after 5.1.0</comment>
   </data>
+  <data name="FlashConnect.Info.ConnectionFailed" xml:space="preserve">
+    <value>Connection failed. Default socket port '{0}' is already in use.</value>
+    <comment>Added after 5.1.0</comment>
+  </data>
 </root>

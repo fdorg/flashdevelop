@@ -283,6 +283,10 @@ namespace ResultsPanel
             
             this.copyEntryContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(PluginMain.CopyEntryKeys);
             this.ignoreEntryContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(PluginMain.IgnoreEntryKeys);
+            Keys keys = PluginBase.MainForm.GetShortcutItemKeys("ResultsPanel.ShowNextResult");
+            if (keys != Keys.None) this.nextEntryContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(keys);
+            keys = PluginBase.MainForm.GetShortcutItemKeys("ResultsPanel.ShowPrevResult");
+            if (keys != Keys.None) this.previousEntryContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(keys);
 
             menu.Items.Add(this.clearEntriesContextMenuItem);
             menu.Items.Add(this.copyEntryContextMenuItem);
