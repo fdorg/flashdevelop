@@ -84,6 +84,24 @@ haxelib run openfl setup
 :: Check for errors
 if %errorlevel% neq 0 goto :install_error
 
+goto :options_vs
+
+:options_vs
+
+set /p option="Also install free Visual Studio for C++ Windows applications? [y/n] "
+if "%option%" == "y" goto :install_vs
+if "%option%" == "n" goto :check_flixel
+echo Invalid value, try again.
+
+goto :options_vs
+
+:install_vs
+
+lime setup windows
+
+:: Check for errors
+if %errorlevel% neq 0 goto :install_error
+
 goto :check_flixel
 
 :check_flixel
@@ -117,7 +135,7 @@ exit -1
 
 :install_error
 
-echo Could not install required Haxelib libraries: openfl or flixel.
+echo Could not install the requested tools.
 pause
 exit -1
 
