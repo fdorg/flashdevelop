@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -402,7 +401,7 @@ namespace CodeFormatter
                     else if (ext == ".mxml") return TYPE_MXML;
                 }
                 else if (lang == "xml") return TYPE_XML;
-                else if (document.SciControl.Lexer == 3) return TYPE_CPP;
+                else if (document.SciControl.Lexer == 3 && Win32.ShouldUseWin32()) return TYPE_CPP;
                 return TYPE_UNKNOWN;
             }
         }
