@@ -28,8 +28,8 @@ namespace CodeRefactor.Commands
         private String oldFileName;
         private String newFileName;
 
-        public string TargetName { get; }
-        public string NewName { get; }
+        public string TargetName { get; private set; }
+        public string NewName { get; private set; }
 
         /// <summary>
         /// A new Rename refactoring command.
