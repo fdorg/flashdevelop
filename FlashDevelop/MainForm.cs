@@ -105,6 +105,7 @@ namespace FlashDevelop
         private ToolStripProgressBar toolStripProgressBar;
         private ToolStripStatusLabel toolStripProgressLabel;
         private ToolStripStatusLabel toolStripStatusLabel;
+        private ToolStripButton restartButton;
         private ProcessRunner processRunner;
 
         /* Dialogs */
@@ -741,11 +742,24 @@ namespace FlashDevelop
                 String contents = File.ReadAllText(appMan);
                 if (contents == "restart")
                 {
-                    String message = TextHelper.GetString("Info.RequiresRestart");
-                    TraceManager.Add(message);
+                    this.RestartRequired();
                 }
             }
             catch {} // No errors...
+        }
+
+        /// <summary>
+        /// Initializes the restart button
+        /// </summary>
+        private void InitializeRestartButton()
+        {
+            this.restartButton = new ToolStripButton();
+            this.restartButton.Image = this.FindImage("69");
+            this.restartButton.Alignment = ToolStripItemAlignment.Right;
+            this.restartButton.ToolTipText = TextHelper.GetString("Info.RequiresRestart");
+            this.restartButton.Click += delegate { this.Restart(null, null); };
+            this.restartButton.Visible = false;
+            this.toolStrip.Items.Add(this.restartButton);
         }
 
         /// <summary>
@@ -1163,6 +1177,10 @@ namespace FlashDevelop
             * Initialize window and continue layout
             */
             this.InitializeWindow();
+            /**
+            * Initializes the restart button
+            */
+            this.InitializeRestartButton();
             /**
             * Check for updates when needed
             */
@@ -1962,6 +1980,16 @@ namespace FlashDevelop
                 ErrorDialog.Show(new Exception(message));
             }
             else ErrorDialog.Show(ex);
+        }
+
+        /// <summary>
+        /// Show a message to the user to restart FD
+        /// </summary>
+        public void RestartRequired()
+        {
+            if (this.restartButton != null) this.restartButton.Visible = true;
+            String message = TextHelper.GetString("Info.RequiresRestart");
+            TraceManager.Add(message);
         }
 
         /// <summary>
@@ -3028,7 +3056,7 @@ namespace FlashDevelop
                     {
                         zipLog += "Restart required.\r\n";
                         if (!silentInstall) finish += "\n" + restart;
-                        else TraceManager.AddAsync(restart);
+                        this.RestartRequired();
                     }
                     String logFile = Path.Combine(PathHelper.BaseDir, "Extensions.log");
                     File.AppendAllText(logFile, zipLog + "Done.\r\n\r\n", Encoding.UTF8);
@@ -3113,7 +3141,7 @@ namespace FlashDevelop
                     {
                         zipLog += "Restart required.\r\n";                        
                         if (!silentRemove) finish += "\n" + restart;
-                        else TraceManager.AddAsync(restart);
+                        this.RestartRequired();
                     }
                     String logFile = Path.Combine(PathHelper.BaseDir, "Extensions.log");
                     File.AppendAllText(logFile, zipLog + "Done.\r\n\r\n", Encoding.UTF8);

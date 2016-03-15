@@ -112,6 +112,10 @@ namespace PluginCore
         /// </summary>
         void RefreshSciConfig();
         /// <summary>
+        /// Shows a message to restart FD.
+        /// </summary>
+        void RestartRequired();
+        /// <summary>
         /// Themes the controls from the parent.
         /// </summary>
         void ThemeControls(Object control);
