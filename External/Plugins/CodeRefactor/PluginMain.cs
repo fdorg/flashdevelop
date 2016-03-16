@@ -15,7 +15,9 @@ using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
+using ProjectManager;
 using ProjectManager.Actions;
+using ProjectManager.Controls.TreeView;
 using ProjectManager.Helpers;
 
 namespace CodeRefactor
@@ -35,6 +37,7 @@ namespace CodeRefactor
         private RefactorMenu refactorMainMenu;
         private Settings settingObject;
         private String settingFilename;
+        TreeView projectTreeView;
 
         #region Required Properties
         
@@ -94,11 +97,11 @@ namespace CodeRefactor
         {
             get { return this.settingObject; }
         }
-        
+
         #endregion
 
         #region Required Methods
-        
+
         /// <summary>
         /// Initializes the plugin
         /// </summary>
@@ -116,7 +119,7 @@ namespace CodeRefactor
         {
             this.SaveSettings();
         }
-        
+
         /// <summary>
         /// Handles the incoming events
         /// </summary>
@@ -135,6 +138,7 @@ namespace CodeRefactor
                     EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "CodeRefactor.ContextMenu", this.refactorContextMenu));
                     // Watch resolved context for menu item updating...
                     ASComplete.OnResolvedContextChanged += OnResolvedContextChanged;
+                    DirectoryNode.OnDirectoryNodeRefresh += OnDirectoryNodeRefresh;
                     this.UpdateMenuItems();
                     break;
 
@@ -157,7 +161,7 @@ namespace CodeRefactor
                             }
                             else if (IsValidForRename(oldPath, newPath))
                             {
-                                RenameFile(oldPath, newPath);
+                                MoveFile(oldPath, newPath);
                                 e.Handled = true;
                             }
                             break;
@@ -176,6 +180,10 @@ namespace CodeRefactor
 
                         case "ASCompletion.ContextualGenerator.AddOptions":
                             OnAddRefactorOptions(de.Data as List<ICompletionListItem>);
+                            break;
+
+                        case ProjectManagerEvents.TreeSelectionChanged:
+                            OnTreeSelectionChanged();
                             break;
                     }
                     break;
@@ -199,12 +207,20 @@ namespace CodeRefactor
         /// <summary>
         /// Checks if the file or directory is valid for move command
         /// </summary>
-        private static bool IsValidForMove(string oldPath, string newPath)
+        static bool IsValidForMove(string oldPath)
         {
             return PluginBase.CurrentProject != null
-                && (File.Exists(oldPath) || Directory.Exists(oldPath))
-                && IsValidFile(oldPath)
-                && Regex.Match(Path.GetFileNameWithoutExtension(newPath), REG_IDENTIFIER, RegexOptions.Singleline).Success;
+                   && (File.Exists(oldPath) || Directory.Exists(oldPath))
+                   && IsValidFile(oldPath);
+        }
+
+        /// <summary>
+        /// Checks if the file or directory is valid for move command
+        /// </summary>
+        static bool IsValidForMove(string oldPath, string newPath)
+        {
+            newPath = Path.GetFileNameWithoutExtension(newPath);
+            return IsValidForMove(oldPath) && Regex.Match(newPath, REG_IDENTIFIER, RegexOptions.Singleline).Success;
         }
 
         /// <summary>
@@ -220,9 +236,9 @@ namespace CodeRefactor
         }
 
         #endregion
-   
+
         #region Event Handling
-        
+
         /// <summary>
         /// Initializes important variables
         /// </summary>
@@ -447,7 +463,12 @@ namespace CodeRefactor
         /// </summary>
         static void MoveClicked(object sender, EventArgs e)
         {
-            MoveDialog dialog = new MoveDialog(PluginBase.MainForm.CurrentDocument.FileName);
+            MoveFile(PluginBase.MainForm.CurrentDocument.FileName);
+        }
+
+        static void MoveFile(string fileName)
+        {
+            MoveDialog dialog = new MoveDialog(fileName);
             if (dialog.ShowDialog() != DialogResult.OK) return;
             Dictionary<string, string> oldPathToNewPath = new Dictionary<string, string>();
             foreach (string file in dialog.MovingFiles)
@@ -460,7 +481,7 @@ namespace CodeRefactor
         /// <summary>
         /// 
         /// </summary>
-        private void RenameFile(string oldPath, string newPath)
+        private void MoveFile(string oldPath, string newPath)
         {
             try
             {
@@ -711,6 +732,40 @@ namespace CodeRefactor
                 if (features.hasImportsWildcard)
                     RefactorItem.AddItemToList(refactorMainMenu.TruncateMenuItem, list);
             }
+        }
+
+        void OnDirectoryNodeRefresh(DirectoryNode node)
+        {
+            projectTreeView = node.TreeView;
+        }
+
+        void OnTreeSelectionChanged()
+        {
+            if (projectTreeView == null) return;
+            string path = null;
+            var node = projectTreeView.SelectedNode as GenericNode;
+            if (node != null) path = node.BackingPath;
+            if (string.IsNullOrEmpty(path)) return;
+            path = Path.GetFullPath(path);
+            if (!IsValidForMove(path)) return;
+            var menu = (ProjectContextMenu) projectTreeView.ContextMenuStrip;
+            var index = menu.Items.IndexOf(menu.Rename);
+            if (index == -1) return;
+            var item = new ToolStripMenuItem(TextHelper.GetString("Label.Move"));
+            item.ShortcutKeys = PluginBase.MainForm.GetShortcutItemKeys("RefactorMenu.Move");
+            item.Click += OnMoveItemClick;
+            menu.Items.Insert(index + 1, item);
+        }
+
+        void OnMoveItemClick(object sender, EventArgs eventArgs)
+        {
+            string path = null;
+            var node = projectTreeView.SelectedNode as GenericNode;
+            if (node != null) path = node.BackingPath;
+            if (string.IsNullOrEmpty(path)) return;
+            path = Path.GetFullPath(path);
+            if (!IsValidForMove(path)) return;
+            MoveFile(path);
         }
 
         #endregion
