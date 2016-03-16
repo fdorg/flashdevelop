@@ -134,6 +134,14 @@ namespace FlashDevelop.Managers
             {
                 if (!mainForm.IsFullScreen) return false;
             }
+            if (action.Contains("!IsOnlyInstance"))
+            {
+                if (mainForm.GetInstanceCount() == 1) return false;
+            }
+            else if (action.Contains("IsOnlyInstance"))
+            {
+                if (mainForm.GetInstanceCount() > 1) return false;
+            }
             if (action.Contains("TracksBoolean"))
             {
                 Boolean value = (Boolean)Globals.Settings.GetValue(((ItemData)item.Tag).Tag);

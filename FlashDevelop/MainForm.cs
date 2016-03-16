@@ -754,8 +754,9 @@ namespace FlashDevelop
         private void InitializeRestartButton()
         {
             this.restartButton = new ToolStripButton();
-            this.restartButton.Image = this.FindImage("69");
+            this.restartButton.Image = this.FindImage("73|6|3|3");
             this.restartButton.Alignment = ToolStripItemAlignment.Right;
+            this.restartButton.Text = TextHelper.GetString("Label.Restart");
             this.restartButton.ToolTipText = TextHelper.GetString("Info.RequiresRestart");
             this.restartButton.Click += delegate { this.Restart(null, null); };
             this.restartButton.Visible = false;
@@ -2200,6 +2201,15 @@ namespace FlashDevelop
             }
             else return PathHelper.AppDir;
 
+        }
+
+        /// <summary>
+        /// Gets the amount instances running
+        /// </summary>
+        public Int32 GetInstanceCount()
+        {
+            Process current = Process.GetCurrentProcess();
+            return Process.GetProcessesByName(current.ProcessName).Length;
         }
 
         /// <summary>
@@ -4232,8 +4242,11 @@ namespace FlashDevelop
         /// </summary>
         public void Restart(Object sender, EventArgs e)
         {
-            this.restartRequested = true;
-            this.Close();
+            if (this.GetInstanceCount() == 1)
+            {
+                this.restartRequested = true;
+                this.Close();
+            }
         }
 
         #endregion
