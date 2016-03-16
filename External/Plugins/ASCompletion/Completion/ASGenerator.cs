@@ -1048,9 +1048,7 @@ namespace ASCompletion.Completion
 
                 case GeneratorJobType.Constructor:
                     member = new MemberModel(inClass.Name, inClass.QualifiedName, FlagType.Constructor | FlagType.Function, Visibility.Public);
-                    GenerateFunction(
-                        member,
-                        sci.CurrentPos, false, inClass);
+                    GenerateFunction(member, sci.CurrentPos, false, inClass);
                     break;
 
                 case GeneratorJobType.ToString:

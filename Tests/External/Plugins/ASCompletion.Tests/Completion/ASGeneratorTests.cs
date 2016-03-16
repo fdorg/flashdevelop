@@ -250,7 +250,7 @@ namespace ASCompletion.Completion
                     var sourceMember = sourceClassModel.Members[memberPos];
 
                     ASGenerator.SetJobContext(null, null, sourceMember.Parameters[parameterPos], null);
-                    ASGenerator.GenerateJob(GeneratorJobType.FieldFromPatameter, sourceMember, inClass, null, table);
+                    ASGenerator.GenerateJob(GeneratorJobType.FieldFromParameter, sourceMember, inClass, null, table);
 
                     return sci.Text;
                 }
