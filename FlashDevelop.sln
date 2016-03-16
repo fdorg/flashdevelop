@@ -74,8 +74,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicCompletion", "External
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CssCompletion", "External\Plugins\CssCompletion\CssCompletion.csproj", "{DCA7613E-7BC3-4610-A95E-73C0D64C5B98}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoomContext", "External\Plugins\LoomContext\LoomContext.csproj", "{92BBB3B6-E318-4B12-8378-6D46E69AB938}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FDBuild", "External\Tools\FDBuild\FDBuild.csproj", "{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}"
 	ProjectSection(ProjectDependencies) = postProject
 		{61885F70-B4DC-4B44-852D-5D6D03F2A734} = {61885F70-B4DC-4B44-852D-5D6D03F2A734}
@@ -339,14 +337,6 @@ Global
 		{DCA7613E-7BC3-4610-A95E-73C0D64C5B98}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DCA7613E-7BC3-4610-A95E-73C0D64C5B98}.Release|x86.ActiveCfg = Release|Any CPU
 		{DCA7613E-7BC3-4610-A95E-73C0D64C5B98}.Release|x86.Build.0 = Release|Any CPU
-		{92BBB3B6-E318-4B12-8378-6D46E69AB938}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{92BBB3B6-E318-4B12-8378-6D46E69AB938}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{92BBB3B6-E318-4B12-8378-6D46E69AB938}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{92BBB3B6-E318-4B12-8378-6D46E69AB938}.Debug|x86.Build.0 = Debug|Any CPU
-		{92BBB3B6-E318-4B12-8378-6D46E69AB938}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{92BBB3B6-E318-4B12-8378-6D46E69AB938}.Release|Any CPU.Build.0 = Release|Any CPU
-		{92BBB3B6-E318-4B12-8378-6D46E69AB938}.Release|x86.ActiveCfg = Release|Any CPU
-		{92BBB3B6-E318-4B12-8378-6D46E69AB938}.Release|x86.Build.0 = Release|Any CPU
 		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Debug|Any CPU.Build.0 = Debug|x86
 		{FF680DE0-9CB7-45F4-BAFA-6EFFAAFD9C09}.Debug|x86.ActiveCfg = Debug|x86
