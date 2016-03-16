@@ -55,17 +55,9 @@ if %errorlevel% neq 0 goto :error
 :: Reset bin files
 git clean -f -x -d FlashDevelop\Bin\Debug
 
-:: Exclude FD image files
+:: Remove bad files
 del FlashDevelop\Bin\Debug\StartPage\images\*.* /Q
-
-:: Exclude AS3 templates
 for /d %%G in ("FlashDevelop\Bin\Debug\Projects\*ActionScript 3*") do rd /s /q "%%~G"
-
-:: Exclude Loom stuff
-for /d %%G in ("FlashDevelop\Bin\Debug\Projects\*Loom*") do rd /s /q "%%~G"
-for /d %%G in ("FlashDevelop\Bin\Debug\Templates\ProjectFiles\LoomProject") do rd /s /q "%%~G"
-for /d %%G in ("FlashDevelop\Bin\Debug\Snippets\loom") do rd /s /q "%%~G"
-del FlashDevelop\Bin\Debug\Plugins\LoomContext.dll /Q
 
 :: Copy distro files
 xcopy Distros\HaxeDevelop /s /e /y
