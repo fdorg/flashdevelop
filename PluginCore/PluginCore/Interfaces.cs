@@ -112,6 +112,10 @@ namespace PluginCore
         /// </summary>
         void RefreshSciConfig();
         /// <summary>
+        /// Shows a message to restart FD.
+        /// </summary>
+        void RestartRequired();
+        /// <summary>
         /// Themes the controls from the parent.
         /// </summary>
         void ThemeControls(Object control);
@@ -268,6 +272,10 @@ namespace PluginCore
         /// Equivalent to calling <code>ImageSetAdjust(FindImage(data, false))</code>.
         /// </summary>
         Image FindImageAndSetAdjust(String data);
+        /// <summary>
+        /// Gets the amount of FD instances running
+        /// </summary>
+        Int32 GetInstanceCount();
 
         #endregion
 
