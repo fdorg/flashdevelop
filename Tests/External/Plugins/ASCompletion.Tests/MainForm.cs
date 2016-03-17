@@ -26,6 +26,11 @@ namespace FlashDevelop
             throw new NotImplementedException();
         }
 
+        public void RestartRequired()
+        {
+            throw new NotImplementedException();
+        }
+
         public void ThemeControls(object control)
         {
             // Not implemented
@@ -224,6 +229,11 @@ namespace FlashDevelop
         }
 
         public Image FindImageAndSetAdjust(string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetInstanceCount()
         {
             throw new NotImplementedException();
         }
