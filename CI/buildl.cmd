@@ -107,5 +107,5 @@ start FlashDevelop\Installer\Binary\FlashDevelop.exe
 exit
 
 :error
-
+pause
 exit -1
