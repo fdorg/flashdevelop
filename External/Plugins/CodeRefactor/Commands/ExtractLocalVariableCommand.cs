@@ -6,7 +6,7 @@ namespace CodeRefactor.Commands
 {
     class ExtractLocalVariableCommand
     {
-        private string NewName;
+        private readonly string NewName;
 
         public ExtractLocalVariableCommand(string newName)
         {
@@ -15,15 +15,15 @@ namespace CodeRefactor.Commands
 
         public void Execute()
         {
-            ScintillaControl Sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            Sci.BeginUndoAction();
+            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            sci.BeginUndoAction();
             try
             {
-                ASGenerator.GenerateExtractVariable(Sci, NewName);
+                ASGenerator.GenerateExtractVariable(sci, NewName);
             }
             finally
             {
-                Sci.EndUndoAction();
+                sci.EndUndoAction();
             }
         }
     }

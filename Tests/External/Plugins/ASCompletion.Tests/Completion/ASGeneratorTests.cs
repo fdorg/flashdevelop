@@ -1,8 +1,9 @@
 ﻿// TODO: Tests with different formatting options using parameterized tests
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using AS3Context;
+using System.Diagnostics;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using ASCompletion.Settings;
@@ -456,6 +457,46 @@ namespace ASCompletion.Completion
 
                     ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, sourceModel, null, null);
 
+                    return sci.Text;
+                }
+            }
+
+            [TestFixture]
+            public class GenerateExtractVariable : GenerateJob
+            {
+                public IEnumerable<TestCaseData> GenerateExtractVariableHaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateExtractVariableGeneric.hx"),
+                                    new MemberModel("main", null, FlagType.Static | FlagType.Function, 0)
+                                    {
+                                        LineFrom = 2,
+                                        LineTo = 4
+                                    },
+                                    "new Test<String>(\"test\").get()",
+                                    "s"
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGenerateExtractVariableGeneric.hx"))
+                                .SetName("GenerateExtractVariable");
+                    }
+                }
+
+                [Test, TestCaseSource("GenerateExtractVariableHaxeTestCases")]
+                public string Haxe(string sourceText, MemberModel sourceModel, string selectText, string newName)
+                {
+                    ASContext.Context.SetHaxeFeatures();
+                    ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
+                    ASContext.Context.CurrentMember.Returns(sourceModel);
+                    sci.Text = sourceText;
+                    sci.ConfigurationLanguage = "haxe";
+                    sci.SelectText(selectText, 0);
+                    ASGenerator.GenerateExtractVariable(sci, newName);
                     return sci.Text;
                 }
             }
