@@ -46,6 +46,7 @@ if %errorlevel% neq 0 goto :error
 git clean -f -x -d FlashDevelop\Bin\Debug
 
 :: Remove unnecessary files
+rd "FlashDevelop\Bin\Debug\Tools\flexpmd" /s /q
 del FlashDevelop\Bin\Debug\StartPage\images\*.* /q
 rd "FlashDevelop\Bin\Debug\Tools\flexlibs\frameworks\libs\player" /s /q
 for /d %%G in ("FlashDevelop\Bin\Debug\Projects\*ActionScript 3*") do rd /s /q "%%~G"
