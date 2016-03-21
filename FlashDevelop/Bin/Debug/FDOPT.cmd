@@ -61,6 +61,5 @@ if exist "%CDIR%FlashDevelop.exe" "%NGEN%" uninstall "%CDIR%FlashDevelop.exe"
 goto :end
 
 :end
-pause
 echo Done.
 exit 0
