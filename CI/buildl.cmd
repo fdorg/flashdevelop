@@ -57,9 +57,10 @@ git clean -f -x -d FlashDevelop\Bin\Debug
 
 :: Remove unnecessary files
 rd "FlashDevelop\Bin\Debug\Tools\flexpmd" /s /q
-del FlashDevelop\Bin\Debug\StartPage\images\*.* /q
+del "FlashDevelop\Bin\Debug\Plugins\CodeAnalyzer.dll" /q
 rd "FlashDevelop\Bin\Debug\Tools\flexlibs\frameworks\libs\player" /s /q
 for /d %%G in ("FlashDevelop\Bin\Debug\Projects\*ActionScript 3*") do rd /s /q "%%~G"
+del "FlashDevelop\Bin\Debug\StartPage\images\*.*" /q
 
 :: Copy distro files
 xcopy Distros\HaxeDevelop /s /e /y
