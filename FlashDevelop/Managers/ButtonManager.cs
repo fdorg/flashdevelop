@@ -206,6 +206,15 @@ namespace FlashDevelop.Managers
                         if (chunks[chunks.Length - 1] != language.ToUpper()) return false;
                     }
                 }
+                if (action.Contains("DistroIs?"))
+                {
+                    String[] chunks = action.Split('?');
+                    if (chunks.Length == 2)
+                    {
+                        String distro = DistroConfig.DISTRIBUTION_NAME;
+                        if (chunks[chunks.Length - 1] != distro) return false;
+                    }
+                }
                 if (action.Contains("IsActiveSyntax"))
                 {
                     String language = document.SciControl.ConfigurationLanguage;
@@ -257,6 +266,14 @@ namespace FlashDevelop.Managers
             else if (action.StartsWithOrdinal("Disable:"))
             {
                 item.Enabled = !value;
+            }
+            else if (action.StartsWithOrdinal("Visible:"))
+            {
+                item.Visible = value;
+            }
+            else if (action.StartsWithOrdinal("Invisible:"))
+            {
+                item.Visible = !value;
             }
         }
 
