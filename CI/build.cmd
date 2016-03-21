@@ -88,7 +88,7 @@ if %errorlevel% neq 0 goto :error
 7z a -tzip FlashDevelop\Installer\Binary\HaxeDevelop.zip .\FlashDevelop\Bin\Debug\* -xr!.empty
 
 :: Done
-exit
+exit 0
 
 :error
 

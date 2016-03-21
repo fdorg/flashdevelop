@@ -104,8 +104,8 @@ git stash save "Local CI Backup..."
 
 :: Done, Run FD
 start FlashDevelop\Installer\Binary\FlashDevelop.exe
-exit
+exit 0
 
 :error
-pause
+
 exit -1
