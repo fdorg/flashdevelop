@@ -47,7 +47,6 @@ git clean -f -x -d FlashDevelop\Bin\Debug
 
 :: Remove unnecessary files
 rd "FlashDevelop\Bin\Debug\Tools\flexpmd" /s /q
-del "FlashDevelop\Bin\Debug\Plugins\CodeAnalyzer.dll" /q
 rd "FlashDevelop\Bin\Debug\Tools\flexlibs\frameworks\libs\player" /s /q
 for /d %%G in ("FlashDevelop\Bin\Debug\Projects\*ActionScript 3*") do rd /s /q "%%~G"
 del "FlashDevelop\Bin\Debug\StartPage\images\*.*" /q
@@ -77,6 +76,9 @@ ren FlashDevelop\Bin\Debug\FlashDevelop.exe HaxeDevelop.exe
 ren FlashDevelop\Bin\Debug\FlashDevelop64.exe HaxeDevelop64.exe
 ren FlashDevelop\Bin\Debug\FlashDevelop.exe.config HaxeDevelop.exe.config
 ren FlashDevelop\Bin\Debug\FlashDevelop64.exe.config HaxeDevelop64.exe.config
+
+: Remove files after build
+del "FlashDevelop\Bin\Debug\Plugins\CodeAnalyzer.dll" /q
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
