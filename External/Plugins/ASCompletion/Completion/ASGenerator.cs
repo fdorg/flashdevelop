@@ -2742,7 +2742,6 @@ namespace ASCompletion.Completion
             info["constructorArgTypes"] = constructorArgTypes;
             DataEvent de = new DataEvent(EventType.Command, "ProjectManager.CreateNewFile", info);
             EventManager.DispatchEvent(null, de);
-            if (de.Handled) return;
         }
 
         public static void GenerateExtractVariable(ScintillaControl Sci, string NewName)
@@ -2766,7 +2765,6 @@ namespace ASCompletion.Completion
             var line = Sci.LineFromPosition(insertPosition);
             insertPosition = Sci.LineIndentPosition(line);
 
-            int stylemask = (1 << Sci.StyleBits) - 1;
             int lastPos = -1;
             Sci.Colourise(0, -1);
             while (true)
@@ -2793,7 +2791,7 @@ namespace ASCompletion.Completion
                     }
 
                     var pos = funcBodyStart + lastPos;
-                    int style = Sci.StyleAt(pos) & stylemask;
+                    int style = Sci.BaseStyleAt(pos);
                     if (ASComplete.IsCommentStyle(style)) continue;
                     Sci.SetSel(pos, pos + expression.Length);
                     Sci.ReplaceSel(NewName);
