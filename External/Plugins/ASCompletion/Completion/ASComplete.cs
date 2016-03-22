@@ -1627,12 +1627,9 @@ namespace ASCompletion.Completion
             int braCount = 0;
             int comaCount = 0;
             int arrCount = 0;
-            int style = 0;
-            int stylemask = (1 << Sci.StyleBits) - 1;
-            char c;
             while (position >= 0)
             {
-                style = Sci.StyleAt(position) & stylemask;
+                var style = Sci.BaseStyleAt(position);
                 if (style == 19)
                 {
                     string keyword = GetWordLeft(Sci, ref position);
@@ -1644,7 +1641,7 @@ namespace ASCompletion.Completion
                 }
                 if ((!IsLiteralStyle(style) && IsTextStyleEx(style)) || IsInterpolationExpr(Sci, position))
                 {
-                    c = (char)Sci.CharAt(position);
+                    var c = (char)Sci.CharAt(position);
                     if (c == ';')
                     {
                         position = -1;
@@ -3205,14 +3202,13 @@ namespace ASCompletion.Completion
             // file's member declared at this position
             expression.ContextMember = ASContext.Context.CurrentMember;
             int minPos = 0;
-            string body = null;
             if (expression.ContextMember != null)
             {
                 minPos = Sci.PositionFromLine(expression.ContextMember.LineFrom);
                 StringBuilder sbBody = new StringBuilder();
                 for (int i = expression.ContextMember.LineFrom; i <= expression.ContextMember.LineTo; i++)
                     sbBody.Append(Sci.GetLine(i));
-                body = sbBody.ToString();
+                var body = sbBody.ToString();
 
                 var hasBody = FlagType.Function | FlagType.Constructor;
                 if (!haXe) hasBody |= FlagType.Getter | FlagType.Setter;
@@ -3248,13 +3244,10 @@ namespace ASCompletion.Completion
 
             // get expression before cursor
             ContextFeatures features = ASContext.Context.Features;
-            int stylemask = (1 << Sci.StyleBits) -1;
-            int style = (position >= minPos) ? Sci.StyleAt(position) & stylemask : 0;
             StringBuilder sb = new StringBuilder();
             StringBuilder sbSub = new StringBuilder();
             int subCount = 0;
             char c = ' ';
-            char c2;
             int startPos = position;
             int braceCount = 0;
             int sqCount = 0;
@@ -3268,7 +3261,7 @@ namespace ASCompletion.Completion
             while (position > minPos)
             {
                 position--;
-                style = Sci.StyleAt(position) & stylemask;
+                var style = Sci.BaseStyleAt(position);
                 if (style == 14) // regex literal
                 {
                     if (hadDot) inRegex = true;
@@ -3276,7 +3269,7 @@ namespace ASCompletion.Completion
                 }
                 else if (!IsCommentStyle(style))
                 {
-                    c2 = c;
+                    var c2 = c;
                     c = (char)Sci.CharAt(position);
                     // end of regex literal
                     if (inRegex)
@@ -3494,10 +3487,9 @@ namespace ASCompletion.Completion
             int parCount = 0;
             int braceCount = 0;
             int sqCount = 0;
-            char c = (char)Sci.CharAt(position);
             while (position > minPos)
             {
-                c = (char)Sci.CharAt(position);
+                var c = (char)Sci.CharAt(position);
                 if (c == ';')
                 {
                     return ComaExpression.None;
@@ -3732,23 +3724,19 @@ namespace ASCompletion.Completion
                 || style == 17 || style == 18 /*javadoc tags*/;
         }
 
-        static public string GetWordLeft(ScintillaControl Sci, ref int position)
+        public static string GetWordLeft(ScintillaControl Sci, ref int position)
         {
             // get the word characters from the syntax definition
             string characterClass = ScintillaControl.Configuration.GetLanguage(Sci.ConfigurationLanguage).characterclass.Characters;
-
             string word = "";
             //string exclude = "(){};,+*/\\=:.%\"<>";
             bool skipWS = true;
-            int style;
-            int stylemask = (1 << Sci.StyleBits) -1;
-            char c;
             while (position >= 0)
             {
-                style = Sci.StyleAt(position) & stylemask;
+                var style = Sci.BaseStyleAt(position);
                 if (IsTextStyleEx(style))
                 {
-                    c = (char)Sci.CharAt(position);
+                    var c = (char)Sci.CharAt(position);
                     if (c <= ' ')
                     {
                         if (!skipWS)
@@ -3757,7 +3745,7 @@ namespace ASCompletion.Completion
                     else if (characterClass.IndexOf(c) < 0) break;
                     else if (style != 6)
                     {
-                        word = c+word;
+                        word = c + word;
                         skipWS = false;
                     }
                 }
@@ -3766,12 +3754,12 @@ namespace ASCompletion.Completion
             return word;
         }
 
-        static public ASResult GetExpressionType(ScintillaControl sci, int position)
+        public static ASResult GetExpressionType(ScintillaControl sci, int position)
         {
             return GetExpressionType(sci, position, true);
         }
 
-        static public ASResult GetExpressionType(ScintillaControl sci, int position, bool filterVisibility)
+        public static ASResult GetExpressionType(ScintillaControl sci, int position, bool filterVisibility)
         {
             // context
             int line = sci.LineFromPosition(position);
