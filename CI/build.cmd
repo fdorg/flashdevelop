@@ -45,8 +45,9 @@ if %errorlevel% neq 0 goto :error
 :: Reset bin files
 git clean -f -x -d FlashDevelop\Bin\Debug
 
-:: Remove bad files
-del FlashDevelop\Bin\Debug\StartPage\images\*.* /Q
+:: Remove unnecessary files
+del FlashDevelop\Bin\Debug\StartPage\images\*.* /q
+rd "FlashDevelop\Bin\Debug\Tools\flexlibs\frameworks\libs\player" /s /q
 for /d %%G in ("FlashDevelop\Bin\Debug\Projects\*ActionScript 3*") do rd /s /q "%%~G"
 
 :: Copy distro files
@@ -88,7 +89,7 @@ if %errorlevel% neq 0 goto :error
 7z a -tzip FlashDevelop\Installer\Binary\HaxeDevelop.zip .\FlashDevelop\Bin\Debug\* -xr!.empty
 
 :: Done
-exit
+exit 0
 
 :error
 

@@ -13,6 +13,7 @@ using NUnit.Framework;
 using PluginCore;
 using ScintillaNet;
 using ScintillaNet.Enums;
+using System.Text.RegularExpressions;
 
 namespace ASCompletion.Completion
 {
@@ -101,6 +102,90 @@ namespace ASCompletion.Completion
                 Assert.AreEqual(bodyStart, funcBodyStart);
                 Assert.AreEqual(resultText, sci.Text);
             }
+        }
+
+        [TestFixture]
+        public class ContextualActions : ASGeneratorTests
+        {
+            [TestFixtureSetUp]
+            public void ContextualActionsSetup()
+            {
+                var pluginMain = Substitute.For<PluginMain>();
+                var pluginUiMock = new PluginUIMock(pluginMain);
+                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
+                pluginMain.Settings.Returns(new GeneralSettings());
+                pluginMain.Panel.Returns(pluginUiMock);
+                ASContext.GlobalInit(pluginMain);
+                ASContext.Context = Substitute.For<IASContext>();
+            }
+
+            [TestFixture]
+            class ShowEventsList : ContextualActions
+            {
+                ClassModel dataEventModel;
+                FoundDeclaration found;
+
+                [TestFixtureSetUp]
+                public void ShowEventsListSetup()
+                {
+                    ASContext.Context.SetAs3Features();
+                    ASContext.Context.CurrentModel.Returns(new FileModel());
+                    dataEventModel = CreateDataEventModel();
+                    found = new FoundDeclaration
+                    {
+                        inClass = new ClassModel(),
+                        member = new MemberModel()
+                    };
+                }
+
+                [Test]
+                public void ShowEventsList_EventWithDataEvent()
+                {
+                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(dataEventModel);
+                    ASGenerator.contextParam = "Event";
+                    var options = new List<ICompletionListItem>();
+                    ASGenerator.ShowEventList(found, options);
+                    Assert.AreEqual(2, options.Count);
+                    Assert.IsTrue(Regex.IsMatch(options[0].Label, "\\bEvent\\b"));
+                    Assert.IsTrue(Regex.IsMatch(options[1].Label, "\\bDataEvent\\b"));
+                }
+
+                [Test]
+                public void ShowEventsList_EventWithoutDataEvent()
+                {
+                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(ClassModel.VoidClass);
+                    var options = new List<ICompletionListItem>();
+                    ASGenerator.contextParam = "Event";
+                    ASGenerator.ShowEventList(found, options);
+                    Assert.AreEqual(1, options.Count);
+                    Assert.IsTrue(Regex.IsMatch(options[0].Label, "\\bEvent\\b"));
+                }
+
+                [Test]
+                public void ShowEventsList_CustomEventWithDataEvent()
+                {
+                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(dataEventModel);
+                    var options = new List<ICompletionListItem>();
+                    ASGenerator.contextParam = "CustomEvent";
+                    ASGenerator.ShowEventList(found, options);
+                    Assert.AreEqual(2, options.Count);
+                    Assert.IsTrue(Regex.IsMatch(options[0].Label, "\\bCustomEvent\\b"));
+                    Assert.IsTrue(Regex.IsMatch(options[1].Label, "\\bEvent\\b"));
+                }
+
+                private ClassModel CreateDataEventModel()
+                {
+                    var dataEventFile = new FileModel();
+                    var dataEventModel = new ClassModel
+                    {
+                        Name = "DataEvent",
+                        InFile = dataEventFile
+                    };
+                    dataEventFile.Classes.Add(dataEventModel);
+                    return dataEventModel;
+                }
+            }
+
         }
 
         [TestFixture]

@@ -647,7 +647,7 @@ namespace ResultsPanel
             String projectDir = project != null ? Path.GetDirectoryName(project.ProjectPath) : "";
             Boolean limitMode = (count - this.logCount) > 1000;
             this.entriesView.BeginUpdate();
-            for (Int32 i = this.logCount; i < (limitMode ? 1000 : count); i++)
+            for (Int32 i = this.logCount; i < (limitMode ? this.logCount + 1000 : count); i++)
             {
                 entry = TraceManager.TraceLog[i];
                 if (entry.Message != null && entry.Message.Length > 7 && entry.Message.IndexOf(':') > 0)

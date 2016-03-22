@@ -107,6 +107,17 @@ Function GetIsWine
 	
 FunctionEnd
 
+Function un.GetIsWine
+	
+	Push $0
+	ClearErrors
+	EnumRegKey $0 HKLM "SOFTWARE\Wine" 0
+	IfErrors 0 +2
+	StrCpy $0 "not_found"
+	Exch $0
+	
+FunctionEnd
+
 Function GetDotNETVersion
 	
 	Push $0
@@ -490,7 +501,14 @@ Section "Registry Modifications" RegistryMods
 	WriteRegStr HKLM "Software\${DIST_NAME}" "CurrentVersion" ${VERSION}
 	WriteRegStr HKLM "Software\${DIST_NAME}" "" $INSTDIR
 	WriteUninstaller "$INSTDIR\Uninstall.exe"
-	
+
+	; Optimize with NGEN, not on CrossOver
+	;Call GetIsWine
+	;Pop $0
+	;${If} $0 == "not_found"
+	;nsExec::ExecToLog /TIMEOUT=1000 '"$INSTDIR\FDOPT.cmd" install'
+	;${EndIf}
+
 	!insertmacro UPDATEFILEASSOC
 	
 SectionEnd
@@ -546,6 +564,13 @@ Section "un.${DIST_NAME}" UninstMain
 	SectionIn 1 2 RO
 	SetShellVarContext all
 	
+	; Unoptimize with NGEN, not on CrossOver
+	;Call un.GetIsWine
+	;Pop $0
+	;${If} $0 == "not_found"
+	;nsExec::ExecToLog /TIMEOUT=1000 '"$INSTDIR\FDOPT.cmd" uninstall'
+	;${EndIf}
+	
 	Delete "$DESKTOP\${DIST_NAME}.lnk"
 	Delete "$QUICKLAUNCH\${DIST_NAME}.lnk"
 	Delete "$SMPROGRAMS\${DIST_NAME}\${DIST_NAME}.lnk"
@@ -568,6 +593,7 @@ Section "un.${DIST_NAME}" UninstMain
 	RMDir /r "$INSTDIR\Templates"
 	
 	Delete "$INSTDIR\FDMT.cmd"
+	Delete "$INSTDIR\FDOPT.cmd"
 	Delete "$INSTDIR\README.txt"
 	Delete "$INSTDIR\FirstRun.fdb"
 	Delete "$INSTDIR\Exceptions.log"
@@ -579,6 +605,8 @@ Section "un.${DIST_NAME}" UninstMain
 	Delete "$INSTDIR\SciLexer.dll"
 	Delete "$INSTDIR\SciLexer64.dll"
 	Delete "$INSTDIR\Scripting.dll"
+	Delete "$INSTDIR\AStyle64.dll"
+	Delete "$INSTDIR\AStyle.dll"
 	Delete "$INSTDIR\Antlr3.dll"
 	Delete "$INSTDIR\SwfOp.dll"
 	Delete "$INSTDIR\Aga.dll"
@@ -609,7 +637,7 @@ Section "un.${DIST_NAME}" UninstMain
 	DeleteRegKey /ifempty HKCR "Applications\${DIST_NAME}.exe"	
 	DeleteRegKey /ifempty HKLM "Software\Classes\Applications\${DIST_NAME}.exe"
 	DeleteRegKey /ifempty HKCU "Software\Classes\Applications\${DIST_NAME}.exe"
-	
+
 	!insertmacro UPDATEFILEASSOC
 	
 SectionEnd

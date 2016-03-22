@@ -34,11 +34,11 @@ namespace ASCompletion.Completion
         static private Regex reModifier = new Regex("(public |private |protected )", RegexOptions.Compiled);
         static private Regex reSuperCall = new Regex("^super\\s*\\(", RegexOptions.Compiled);
 
-        static private string contextToken;
-        static private string contextParam;
-        static private Match contextMatch;
-        static private ASResult contextResolved;
-        static private MemberModel contextMember;
+        static internal string contextToken;
+        static internal string contextParam;
+        static internal Match contextMatch;
+        static internal ASResult contextResolved;
+        static internal MemberModel contextMember;
         static private bool firstVar;
 
         static private bool IsHaxe
@@ -795,21 +795,28 @@ namespace ASCompletion.Completion
             options.Add(new GeneratorItem(label, GeneratorJobType.Delegate, found.member, found.inClass));
         }
 
-        private static void ShowEventList(FoundDeclaration found, List<ICompletionListItem> options)
+        internal static void ShowEventList(FoundDeclaration found, List<ICompletionListItem> options)
         {
             string tmp = TextHelper.GetString("ASCompletion.Label.GenerateHandler");
             string labelEvent = String.Format(tmp, "Event");
             string labelDataEvent = String.Format(tmp, "DataEvent");
             string labelContext = String.Format(tmp, contextParam);
-            string[] choices = (contextParam != "Event") ?
-                new string[] { labelContext, labelEvent } :
-                new string[] { labelEvent, labelDataEvent };
+            string[] choices;
+            if (contextParam != "Event") choices = new string[] { labelContext, labelEvent };
+            else if (HasDataEvent()) choices = new string[] { labelEvent, labelDataEvent };
+            else choices = new string[] { labelEvent };
+
             for (int i = 0; i < choices.Length; i++)
             {
                 options.Add(new GeneratorItem(choices[i],
                     choices[i] == labelContext ? GeneratorJobType.ComplexEvent : GeneratorJobType.BasicEvent,
                     found.member, found.inClass));
             }
+        }
+
+        private static bool HasDataEvent()
+        {
+            return !ASContext.Context.ResolveType("flash.events.DataEvent", ASContext.Context.CurrentModel).IsVoid();
         }
 
         private static void ShowGetSetList(FoundDeclaration found, List<ICompletionListItem> options)
@@ -3569,22 +3576,12 @@ namespace ASCompletion.Completion
                 ClassModel eventClass = ASContext.Context.ResolveType(type, ASContext.Context.CurrentModel);
                 if (eventClass.IsVoid())
                 {
-                    if (type == "Event")
+                    if (TryImportType("flash.events." + type, ref delta, sci.LineFromPosition(position)))
                     {
-                        List<string> typesUsed = new List<string>();
-                        typesUsed.Add("flash.events.Event");
-                        delta = AddImportsByName(typesUsed, sci.LineFromPosition(position));
                         position += delta;
                         sci.SetSel(position, position);
                     }
-                    else if (type == "DataEvent")
-                    {
-                        List<string> typesUsed = new List<string>();
-                        typesUsed.Add("flash.events.DataEvent");
-                        delta = AddImportsByName(typesUsed, sci.LineFromPosition(position));
-                        position += delta;
-                        sci.SetSel(position, position);
-                    }
+                    else type = null;
                 }
                 lookupPosition += delta;
                 string acc = GetPrivateAccessor(afterMethod, inClass);
@@ -3608,6 +3605,18 @@ namespace ASCompletion.Completion
             {
                 sci.EndUndoAction();
             }
+        }
+
+        private static bool TryImportType(string type, ref int delta, int atLine)
+        {
+            ClassModel eventClass = ASContext.Context.ResolveType(type, ASContext.Context.CurrentModel);
+            if (eventClass.IsVoid())
+                return false;
+            
+            List<string> typesUsed = new List<string>();
+            typesUsed.Add(type);
+            delta += AddImportsByName(typesUsed, atLine);
+            return true;
         }
 
         static private string AddRemoveEvent(string eventName)
@@ -4602,7 +4611,7 @@ namespace ASCompletion.Completion
         }
     }
 
-    class FoundDeclaration
+    internal class FoundDeclaration
     {
         public MemberModel member;
         public ClassModel inClass;
