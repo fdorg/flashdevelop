@@ -254,14 +254,16 @@ Section "${DIST_NAME}" Main
 	; Remove PluginCore from plugins...
 	Delete "$INSTDIR\Plugins\PluginCore.dll"
 	
-	; Patch CrossOver/Wine files
+	; Patch CrossOver/Wine files, remove 64bit
 	SetOverwrite on
 	SetOutPath "$INSTDIR"
 	Call GetIsWine
 	Pop $0
 	${If} $0 != "not_found"
-	SetOutPath "$INSTDIR"
 	File /r /x .svn /x .empty /x *.db "CrossOver\*.*"
+	Delete "$INSTDIR\*64.exe"
+	Delete "$INSTDIR\*64.exe.config"
+	Delete "$INSTDIR\*64.dll"
 	${EndIf}
 	
 	; Write update flag file...
