@@ -28,7 +28,6 @@ namespace FileExplorer
         private DockContent pluginPanel;
         private PluginUI pluginUI;
         private Image pluginImage;
-
         private const String explorerAction = "explorer.exe /e,{0}";
         private const String cmdAction = "cmd.exe";
 
@@ -131,6 +130,10 @@ namespace FileExplorer
         {
             switch (e.Type)
             {
+                case EventType.UIStarted:
+                    this.pluginUI.Initialize(null, null);
+                    break;
+
                 case EventType.Command:
                     DataEvent evnt = (DataEvent)e;
                     switch (evnt.Action)
@@ -272,7 +275,7 @@ namespace FileExplorer
         /// </summary> 
         public void AddEventHandlers()
         {
-            EventType eventMask = EventType.Command | EventType.FileOpen;
+            EventType eventMask = EventType.Command | EventType.FileOpen | EventType.UIStarted;
             EventManager.AddEventHandler(this, eventMask, HandlingPriority.Low);
         }
 
