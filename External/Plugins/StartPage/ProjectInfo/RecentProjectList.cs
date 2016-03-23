@@ -11,7 +11,7 @@ namespace StartPage.ProjectInfo
 
         public RecentProjectList()
         {
-            this.xmlSerializer = new XmlSerializer(this.GetType());
+            this.xmlSerializer = XmlSerializer.FromTypes(new[]{this.GetType()})[0];
         }
         public RecentProjectList(List<String> recentProjects)
         {
