@@ -192,7 +192,7 @@ namespace DataEncoder
                 Object settings = new Object();
                 MemoryStream stream = new MemoryStream();
                 settings = ObjectSerializer.Deserialize(file, settings, false);
-                XmlSerializer xs = new XmlSerializer(settings.GetType());
+                XmlSerializer xs = XmlSerializer.FromTypes(new[]{settings.GetType()})[0];
                 xs.Serialize(stream, settings); // Obj -> XML
                 XmlTextWriter xw = new XmlTextWriter(stream, Encoding.UTF8);
                 xw.Formatting = Formatting.Indented; stream.Close();
@@ -217,7 +217,7 @@ namespace DataEncoder
                 Byte[] buffer = Encoding.UTF8.GetBytes(text);
                 MemoryStream stream = new MemoryStream(buffer);
                 TypeData typeData = this.GetFileObjectType(file);
-                XmlSerializer xs = new XmlSerializer(typeData.Type);
+                XmlSerializer xs = XmlSerializer.FromTypes(new[]{typeData.Type})[0];
                 settings = xs.Deserialize(stream); // XML -> Obj
                 ObjectSerializer.Serialize(file, settings);
                 stream.Close();

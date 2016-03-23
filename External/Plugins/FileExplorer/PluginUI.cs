@@ -10,37 +10,38 @@ using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
+using Ookii.Dialogs;
 
 namespace FileExplorer
 {
     public class PluginUI : DockPanelControl
     {
-        private System.Windows.Forms.ListViewEx fileView;
-        private System.Windows.Forms.ToolStrip toolStrip;
-        private System.Windows.Forms.ContextMenuStrip menu;
-        private System.Windows.Forms.ToolStripMenuItem runButton;
-        private System.Windows.Forms.ToolStripMenuItem editButton;
-        private System.Windows.Forms.ToolStripMenuItem renameButton;
-        private System.Windows.Forms.ToolStripMenuItem deleteButton;
-        private System.Windows.Forms.ToolStripMenuItem shellButton;
-        private System.Windows.Forms.ToolStripMenuItem pasteButton;
-        private System.Windows.Forms.ToolStripMenuItem copyButton;
-        private System.Windows.Forms.ToolStripSeparator separator;
-        private System.Windows.Forms.ToolStripSpringComboBox selectedPath;
-        private System.Windows.Forms.ToolStripButton browseButton;
-        private System.Windows.Forms.ToolStripButton syncronizeButton;
-        private System.Windows.Forms.ColumnHeader fileHeader;
-        private System.Windows.Forms.ColumnHeader sizeHeader;
-        private System.Windows.Forms.ColumnHeader typeHeader;
-        private System.Windows.Forms.ColumnHeader modifiedHeader;
-        private Ookii.Dialogs.VistaFolderBrowserDialog folderBrowserDialog;
-        private System.Windows.Forms.ListViewItem highlightedItem;
+        private ListViewEx fileView;
+        private ToolStrip toolStrip;
+        private ContextMenuStrip menu;
+        private ToolStripMenuItem runButton;
+        private ToolStripMenuItem editButton;
+        private ToolStripMenuItem renameButton;
+        private ToolStripMenuItem deleteButton;
+        private ToolStripMenuItem shellButton;
+        private ToolStripMenuItem pasteButton;
+        private ToolStripMenuItem copyButton;
+        private ToolStripSeparator separator;
+        private ToolStripSpringComboBox selectedPath;
+        private ToolStripButton browseButton;
+        private ToolStripButton syncronizeButton;
+        private ColumnHeader fileHeader;
+        private ColumnHeader sizeHeader;
+        private ColumnHeader typeHeader;
+        private ColumnHeader modifiedHeader;
+        private VistaFolderBrowserDialog folderBrowserDialog;
+        private ListViewItem highlightedItem;
         private ImageListManager imageList;
-        private System.Boolean updateInProgress;
-        private System.String previousItemLabel;
-        private System.String autoSelectItem;
-        private System.Int64 lastUpdateTimeStamp;
-        private System.Int32 prevColumnClick;
+        private Boolean updateInProgress;
+        private String previousItemLabel;
+        private String autoSelectItem;
+        private Int64 lastUpdateTimeStamp;
+        private Int32 prevColumnClick;
         private ListViewSorter listViewSorter;
         private FileSystemWatcher watcher;
         private PluginMain pluginMain;
@@ -204,16 +205,6 @@ namespace FileExplorer
 
         #region Methods And Event Handlers
 
-        /// <summary> 
-        /// We have to do final initialization here because we might 
-        /// need to have a window handle to pre-populate the file list.
-        /// </summary>
-        protected override void OnCreateControl()
-        {
-            base.OnCreateControl();
-            this.Initialize(null, null);
-        }
-
         /// <summary>
         /// Shows the explorer shell menu
         /// </summary>
@@ -359,7 +350,7 @@ namespace FileExplorer
         /// <summary>
         /// List last open path on load
         /// </summary>
-        private void Initialize(Object sender, System.EventArgs e)
+        public void Initialize(Object sender, System.EventArgs e)
         {
             String path = PathHelper.AppDir;
             String pathToCheck = this.pluginMain.Settings.FilePath;
