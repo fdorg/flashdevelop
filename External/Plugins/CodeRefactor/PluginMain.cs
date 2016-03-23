@@ -379,33 +379,38 @@ namespace CodeRefactor
                 refactorContextMenu.MoveMenuItem.Enabled = false;
                 this.surroundContextMenu.Enabled = false;
                 this.refactorMainMenu.SurroundMenu.Enabled = false;
-                this.refactorContextMenu.ExtractMethodMenuItem.Enabled = false;
-                this.refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = false;
                 this.refactorMainMenu.ExtractMethodMenuItem.Enabled = false;
+                this.refactorContextMenu.ExtractMethodMenuItem.Enabled = false;
                 this.refactorMainMenu.ExtractLocalVariableMenuItem.Enabled = false;
+                this.refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = false;
                 ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
                 if (document != null && document.IsEditable && langIsValid)
                 {
                     bool isValidFile = IsValidFile(document.FileName);
                     refactorMainMenu.MoveMenuItem.Enabled = isValidFile;
                     refactorContextMenu.MoveMenuItem.Enabled = isValidFile;
-                    if (document.SciControl.SelTextSize > 1)
+                    var sci = document.SciControl;
+                    if (sci.SelTextSize > 0)
                     {
-                        Int32 selEnd = document.SciControl.SelectionEnd;
-                        Int32 selStart = document.SciControl.SelectionStart;
-                        if (!document.SciControl.PositionIsOnComment(selEnd) || !document.SciControl.PositionIsOnComment(selStart))
+                        if (!sci.PositionIsOnComment(sci.SelectionStart) || !sci.PositionIsOnComment(sci.SelectionEnd))
                         {
                             this.surroundContextMenu.Enabled = true;
                             this.refactorMainMenu.SurroundMenu.Enabled = true;
-                            this.refactorContextMenu.ExtractMethodMenuItem.Enabled = true;
                             this.refactorMainMenu.ExtractMethodMenuItem.Enabled = true;
-                            this.refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = true;
+                            this.refactorContextMenu.ExtractMethodMenuItem.Enabled = true;
+                        }
+                        var declAtSelStart = context.GetDeclarationAtLine(sci.LineFromPosition(sci.SelectionStart));
+                        var declAtSelEnd = context.GetDeclarationAtLine(sci.LineFromPosition(sci.SelectionEnd));
+                        if (declAtSelStart != null && declAtSelStart.Member != null && (declAtSelStart.Member.Flags & FlagType.Function) > 0
+                            && declAtSelEnd != null && declAtSelStart.Member.Equals(declAtSelEnd.Member))
+                        {
                             this.refactorMainMenu.ExtractLocalVariableMenuItem.Enabled = true;
+                            this.refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = true;
                         }
                     }
                 }
-                this.refactorContextMenu.CodeGeneratorMenuItem.Enabled = isValid;
                 this.refactorMainMenu.CodeGeneratorMenuItem.Enabled = isValid;
+                this.refactorContextMenu.CodeGeneratorMenuItem.Enabled = isValid;
             }
             catch {}
         }
