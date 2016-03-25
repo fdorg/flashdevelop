@@ -540,6 +540,7 @@ namespace PluginCore
         Boolean WrapList { get; set; }
         Boolean DisableSmartMatch { get; set; }
         Boolean SaveUnicodeWithBOM { get; set; }
+        Boolean KeepCaretCentered { get; set; }
         String InsertionTriggers { get; set; }
 
         #endregion

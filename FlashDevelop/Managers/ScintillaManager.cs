@@ -296,6 +296,19 @@ namespace FlashDevelop.Managers
                 else if (useFolding) sci.SetMarginWidthN(2, ScaleArea(sci, 15));
                 else sci.SetMarginWidthN(2, ScaleArea(sci, 2));
                 /**
+                * Adjust caret policy based on settings
+                */
+                if (settings.KeepCaretCentered)
+                {
+                    sci.SetXCaretPolicy((Int32)(CaretPolicy.Jumps | CaretPolicy.Even), 30);
+                    sci.SetYCaretPolicy((Int32)(CaretPolicy.Jumps | CaretPolicy.Even), 2);
+                }
+                else // Match edge...
+                {
+                    sci.SetXCaretPolicy((Int32)CaretPolicy.Even, 0);
+                    sci.SetYCaretPolicy((Int32)CaretPolicy.Even, 0);
+                }
+                /**
                 * Adjust the print margin
                 */
                 sci.EdgeColumn = settings.PrintMarginColumn;
@@ -417,8 +430,6 @@ namespace FlashDevelop.Managers
             sci.MarkerDefine((Int32)MarkerOutline.FolderEnd, MarkerSymbol.BoxPlusConnected);
             sci.MarkerDefine((Int32)MarkerOutline.FolderOpenMid, MarkerSymbol.BoxMinusConnected);
             sci.MarkerDefine((Int32)MarkerOutline.FolderMidTail, MarkerSymbol.TCorner);
-            sci.SetXCaretPolicy((Int32)CaretPolicy.Even, 0); // Match edge...
-            sci.SetYCaretPolicy((Int32)CaretPolicy.Even, 0); // Match edge...
             sci.ScrollWidthTracking = (PluginBase.Settings.ScrollWidth == 3000);
             sci.CodePage = 65001; // Editor handles text as UTF-8
             sci.Encoding = Encoding.GetEncoding(codepage);
