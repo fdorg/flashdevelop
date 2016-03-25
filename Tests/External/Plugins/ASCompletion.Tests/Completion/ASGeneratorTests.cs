@@ -15,6 +15,7 @@ using PluginCore;
 using ScintillaNet;
 using ScintillaNet.Enums;
 using System.Text.RegularExpressions;
+using PluginCore.Helpers;
 
 namespace ASCompletion.Completion
 {
@@ -562,25 +563,139 @@ namespace ASCompletion.Completion
                                         LineFrom = 2,
                                         LineTo = 4
                                     },
-                                    "new Test<String>(\"test\").get()",
-                                    "s"
+                                    "newVar"
                                 )
                                 .Returns(
                                     TestFile.ReadAllText(
                                         "ASCompletion.Test_Files.generated.haxe.AfterGenerateExtractVariableGeneric.hx"))
                                 .SetName("GenerateExtractVariable");
+
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforeExtractLocalVariable_fromString.hx"),
+                                    new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
+                                    {
+                                        LineFrom = 4,
+                                        LineTo = 7
+                                    },
+                                    "newVar"
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterExtractLocalVariable_fromString.hx"))
+                                .SetName("ExtractLocaleVariable from String");
+
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforeExtractLocalVariable_fromNumber.hx"),
+                                    new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
+                                    {
+                                        LineFrom = 4,
+                                        LineTo = 7
+                                    },
+                                    "newVar"
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterExtractLocalVariable_fromNumber.hx"))
+                                .SetName("ExtractLocaleVariable from Number");
+
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforeExtractLocalVariable_inSinglelineMethod.hx"),
+                                    new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
+                                    {
+                                        LineFrom = 4,
+                                        LineTo = 5
+                                    },
+                                    "newVar"
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterExtractLocalVariable_inSinglelineMethod.hx"))
+                                .SetName("ExtractLocaleVariable in single line method");
                     }
                 }
 
                 [Test, TestCaseSource("GenerateExtractVariableHaxeTestCases")]
-                public string Haxe(string sourceText, MemberModel sourceModel, string selectText, string newName)
+                public string Haxe(string sourceText, MemberModel currentMember, string newName)
                 {
                     ASContext.Context.SetHaxeFeatures();
                     ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
-                    ASContext.Context.CurrentMember.Returns(sourceModel);
+                    ASContext.Context.CurrentMember.Returns(currentMember);
                     sci.Text = sourceText;
                     sci.ConfigurationLanguage = "haxe";
-                    sci.SelectText(selectText, 0);
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    ASGenerator.GenerateExtractVariable(sci, newName);
+                    return sci.Text;
+                }
+
+                public IEnumerable<TestCaseData> GenerateExtractVariableAS3TestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeExtractLocalVariable.as"),
+                                    new MemberModel("ExtractLocalVariable", null, FlagType.Constructor | FlagType.Function, 0)
+                                    {
+                                        LineFrom = 4,
+                                        LineTo = 7
+                                    },
+                                    "newVar"
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterExtractLocalVariable.as"))
+                                .SetName("ExtractLocaleVariable");
+
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeExtractLocalVariable_fromString.as"),
+                                    new MemberModel("ExtractLocalVariable", null, FlagType.Constructor | FlagType.Function, 0)
+                                    {
+                                        LineFrom = 4,
+                                        LineTo = 7
+                                    },
+                                    "newVar"
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterExtractLocalVariable_fromString.as"))
+                                .SetName("ExtractLocaleVariable from String");
+
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeExtractLocalVariable_fromNumber.as"),
+                                    new MemberModel("ExtractLocalVariable", null, FlagType.Constructor | FlagType.Function, 0)
+                                    {
+                                        LineFrom = 4,
+                                        LineTo = 7
+                                    },
+                                    "newVar"
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterExtractLocalVariable_fromNumber.as"))
+                                .SetName("ExtractLocaleVariable from Number");
+                    }
+                }
+
+                [Test, TestCaseSource("GenerateExtractVariableAS3TestCases")]
+                public string AS3(string sourceText, MemberModel currentMember, string newName)
+                {
+                    ASContext.Context.SetHaxeFeatures();
+                    ASContext.Context.CurrentModel.Returns(new FileModel { Context = ASContext.Context });
+                    ASContext.Context.CurrentMember.Returns(currentMember);
+                    sci.Text = sourceText;
+                    sci.ConfigurationLanguage = "as3";
+                    SnippetHelper.PostProcessSnippets(sci, 0);
                     ASGenerator.GenerateExtractVariable(sci, newName);
                     return sci.Text;
                 }

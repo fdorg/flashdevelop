@@ -1,7 +1,7 @@
 ﻿package generatortest;
 class ExtractLocaleVariable {
 	static function main() {
-		new Test<String>("test").get().toString();
+		$(EntryPoint)new Test<String>("test").get()$(ExitPoint).toString();
 	}
 }
 

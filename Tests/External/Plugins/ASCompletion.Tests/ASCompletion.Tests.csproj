@@ -166,6 +166,18 @@
     <EmbeddedResource Include="Test Files\parser\haxe\MetadataTest.hx" />
     <EmbeddedResource Include="Test Files\parser\haxe\MethodAfterGenericReturnTest.hx" />
     <EmbeddedResource Include="Test Files\parser\haxe\WrongSyntaxCompilerMetaAfterVarWithNoType.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterExtractLocalVariable.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeExtractLocalVariable.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterExtractLocalVariable_fromString.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeExtractLocalVariable_fromString.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterExtractLocalVariable_fromNumber.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeExtractLocalVariable_fromNumber.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterExtractLocalVariable_fromNumber.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterExtractLocalVariable_fromString.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeExtractLocalVariable_fromNumber.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeExtractLocalVariable_fromString.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterExtractLocalVariable_inSinglelineMethod.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeExtractLocalVariable_inSinglelineMethod.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
