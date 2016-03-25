@@ -319,7 +319,7 @@ namespace BasicCompletion
                     String[] words = entry.Split(new char[]{' '}, StringSplitOptions.RemoveEmptyEntries);
                     for (Int32 j = 0; j < words.Length; j++)
                     {
-                        if (words[j].Length > 3 && !keywords.Contains(words[j]) && !words[j].StartsWith("\x5E"))
+                        if (words[j].Length > 3 && !keywords.Contains(words[j]) && !words[j].StartsWithOrdinal("\x5E"))
                         {
                             keywords.Add(words[j]);
                         }
@@ -438,7 +438,7 @@ namespace BasicCompletion
                 {
                     items.Sort();
                     CompletionList.Show(items, true, curWord);
-                    if (insert == AutoInsert.Never || (insert == AutoInsert.CPP && sci.Lexer != 3/*CPP*/) || lang == "text")
+                    if (insert == AutoInsert.Never || (insert == AutoInsert.CPP && (sci.Lexer != 3/*CPP*/ || sci.PositionIsOnComment(sci.CurrentPos)) || lang == "text"))
                     {
                         CompletionList.DisableAutoInsertion();
                     }

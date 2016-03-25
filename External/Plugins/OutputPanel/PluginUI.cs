@@ -1,18 +1,15 @@
 using System;
-using System.Drawing;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Windows.Forms;
-using System.Text.RegularExpressions;
-using WeifenLuo.WinFormsUI.Docking;
-using WeifenLuo.WinFormsUI;
-using PluginCore.Managers;
-using PluginCore.Localization;
-using PluginCore.Controls;
-using PluginCore.Helpers;
-using PluginCore;
+using System.Drawing;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using WeifenLuo.WinFormsUI.Docking;
+using PluginCore.Controls;
 
 namespace OutputPanel
 {
@@ -29,11 +26,11 @@ namespace OutputPanel
         private ToolStripButton toggleButton;
         private ToolStripButton clearButton;
         private ToolStrip toolStrip;
-        private ImageList imageList;
         private Timer typingTimer;
         private Boolean scrolling;
         private Timer autoShow;
         private Boolean muted;
+        private Image toggleButtonImagePause, toggleButtonImagePlay, toggleButtonImagePlayNew;
 
         public PluginUI(PluginMain pluginMain)
         {
@@ -44,14 +41,11 @@ namespace OutputPanel
             this.InitializeComponent();
             this.InitializeContextMenu();
             this.InitializeLayout();
-            this.imageList = new ImageList();
-            this.imageList.ColorDepth = ColorDepth.Depth32Bit;
-            this.imageList.TransparentColor = Color.Transparent;
-            this.imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            this.imageList.Images.Add(PluginBase.MainForm.FindImage("146"));
-            this.imageList.Images.Add(PluginBase.MainForm.FindImage("147"));
-            this.imageList.Images.Add(PluginBase.MainForm.FindImage("147|17|5|4"));
+            this.toggleButtonImagePause = PluginBase.MainForm.FindImage("146");
+            this.toggleButtonImagePlay = PluginBase.MainForm.FindImage("147");
+            this.toggleButtonImagePlayNew = PluginBase.MainForm.FindImage("147|17|5|4");
             this.ToggleButtonClick(this, new EventArgs());
+            ScrollBarEx.Attach(textLog);
         }
 
         #region Windows Forms Designer Generated Code
@@ -64,7 +58,7 @@ namespace OutputPanel
         private void InitializeComponent()
         {
             this.scrollTimer = new System.Timers.Timer();
-            this.textLog = new System.Windows.Forms.RichTextBox();
+            this.textLog = new System.Windows.Forms.RichTextBoxEx();
             this.toolStrip = new PluginCore.Controls.ToolStripEx();
             this.toggleButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -299,10 +293,10 @@ namespace OutputPanel
             {
                 DockContent panel = this.Parent as DockContent;
                 DockState ds = panel.VisibleState;
-                if (!panel.Visible || ds.ToString().EndsWith("AutoHide"))
+                if (!panel.Visible || ds.ToString().EndsWithOrdinal("AutoHide"))
                 {
                     panel.Show();
-                    if (ds.ToString().EndsWith("AutoHide")) panel.Activate();
+                    if (ds.ToString().EndsWithOrdinal("AutoHide")) panel.Activate();
                 }
             }
         }
@@ -346,7 +340,7 @@ namespace OutputPanel
             if (this.muted) return;
             if (!this.scrolling)
             {
-                this.toggleButton.Image = this.imageList.Images[2];
+                this.toggleButton.Image = this.toggleButtonImagePlayNew;
                 return;
             }
             IList<TraceItem> log = TraceManager.TraceLog;
@@ -419,7 +413,7 @@ namespace OutputPanel
                             newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ProcessEndColor", Color.Blue);
                             break;
                         case -3: // ProcessError
-                            if (message.IndexOf("Warning") >= 0) newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.WarningColor", Color.Orange);
+                            if (message.IndexOfOrdinal("Warning") >= 0) newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.WarningColor", Color.Orange);
                             else newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ErrorColor", Color.Red);
                             break;
                     }
@@ -631,7 +625,7 @@ namespace OutputPanel
         private void ToggleButtonClick(object sender, EventArgs e)
         {
             this.scrolling = !this.scrolling;
-            this.toggleButton.Image = this.imageList.Images[(this.scrolling ? 0 : 1)];
+            this.toggleButton.Image = this.scrolling ? toggleButtonImagePause : toggleButtonImagePlay;
             this.toggleButton.ToolTipText = (this.scrolling ? TextHelper.GetString("ToolTip.StopScrolling") : TextHelper.GetString("ToolTip.StartScrolling"));
             if (this.scrolling) this.AddTraces();
         }

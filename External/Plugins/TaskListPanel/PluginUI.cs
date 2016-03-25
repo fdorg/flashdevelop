@@ -1,23 +1,19 @@
 using System;
-using System.IO;
-using System.Text;
-using System.Drawing;
-using System.Threading;
-using System.Diagnostics;
 using System.Collections;
-using System.Windows.Forms;
 using System.Collections.Generic;
-using System.Windows.Forms.Layout;
-using System.Text.RegularExpressions;
-using PluginCore.Localization;
 using System.ComponentModel;
-using WeifenLuo.WinFormsUI;
+using System.Drawing;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Windows.Forms;
 using ASCompletion.Context;
-using PluginCore.Helpers;
-using PluginCore.Managers;
-using PluginCore.Controls;
-using ScintillaNet;
 using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using ScintillaNet;
+using PluginCore.Controls;
 
 namespace TaskListPanel
 {
@@ -49,6 +45,7 @@ namespace TaskListPanel
         private ColumnHeader columnPath;
         private BackgroundWorker bgWork;
         private ListViewEx listView;
+        private ImageListManager imageList;
 
         // Regex
         static private Regex reClean = new Regex(@"(\*)?\*/.*", RegexOptions.Compiled);
@@ -88,6 +85,7 @@ namespace TaskListPanel
             this.parseTimer.Tick += delegate { this.ParseNextFile(); };
             this.parseTimer.Enabled = false;
             this.parseTimer.Tag = null;
+            ScrollBarEx.Attach(listView);
         }
 
         #region Windows Forms Designer Generated Code
@@ -431,7 +429,7 @@ namespace TaskListPanel
             {
                 if (!String.IsNullOrEmpty(ext))
                 {
-                    if (!ext.StartsWith("*")) this.extensions.Add("*" + ext);
+                    if (!ext.StartsWith('*')) this.extensions.Add("*" + ext);
                     else this.extensions.Add(ext);
                 }
             }
@@ -651,17 +649,22 @@ namespace TaskListPanel
         /// </summary>
         private void InitGraphics()
         {
-            ImageList imageList = new ImageList();
+            imageList = new ImageListManager();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
-            Settings settings = (Settings)this.pluginMain.Settings;
+            imageList.Initialize(ImageList_Populate);
+            this.listView.SmallImageList = imageList;
+        }
+
+        private void ImageList_Populate(object sender, EventArgs e)
+        {
+            Settings settings = (Settings) this.pluginMain.Settings;
             if (settings != null && settings.ImageIndexes != null)
             {
                 foreach (Int32 index in settings.ImageIndexes)
                 {
-                    imageList.Images.Add(PluginBase.MainForm.FindImage(index.ToString()));
+                    imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust(index.ToString()));
                 }
             }
-            this.listView.SmallImageList = imageList;
         }
 
         /// <summary>

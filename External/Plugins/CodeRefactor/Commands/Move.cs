@@ -36,15 +36,14 @@ namespace CodeRefactor.Commands
 {
     class Move : RefactorCommand<IDictionary<string, List<SearchMatch>>>
     {
-
         public Dictionary<string, string> OldPathToNewPath;
         public bool OutputResults;
-        private bool renaming;
+        private readonly bool renaming;
+        private readonly bool updatePackages;
         private List<MoveTargetHelper> targets;
         private List<string> filesToReopen;
         private int currentTargetIndex;
         private ASResult currentTargetResult;
-
         private bool targetsOutsideClasspath;
 
         #region Constructors
@@ -56,15 +55,32 @@ namespace CodeRefactor.Commands
         {
         }
 
+        /// <summary>
+        /// A new Move refactoring command.
+        /// </summary>
+        /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
         public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults) : this(oldPathToNewPath, outputResults, false)
         {
         }
 
-        public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming)
+        /// <summary>
+        /// A new Move refactoring command.
+        /// </summary>
+        /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
+        public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming) : this(oldPathToNewPath, outputResults, renaming, false)
+        {
+        }
+
+        /// <summary>
+        /// A new Move refactoring command.
+        /// </summary>
+        /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
+        public Move(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming, bool updatePackages)
         {
             OldPathToNewPath = oldPathToNewPath;
             OutputResults = outputResults;
             this.renaming = renaming;
+            this.updatePackages = updatePackages;
             Results = new Dictionary<string, List<SearchMatch>>();
         }
 
@@ -82,12 +98,17 @@ namespace CodeRefactor.Commands
             RegisterDocumentHelper(AssociatedDocumentHelper);
 
             CreateListOfMoveTargets();
-
+            DialogResult dialogResult;
             if (targetsOutsideClasspath)
             {
-                msg = TextHelper.GetString("Info.MovingOutsideClasspath");
-                title = TextHelper.GetString("FlashDevelop.Title.WarningDialog");
-                if (MessageBox.Show(msg, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (updatePackages) dialogResult = DialogResult.Yes;
+                else
+                {
+                    msg = TextHelper.GetString("Info.MovingOutsideClasspath");
+                    title = TextHelper.GetString("FlashDevelop.Title.WarningDialog");
+                    dialogResult = MessageBox.Show(msg, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                }
+                if (dialogResult == DialogResult.Yes)
                 {
                     MoveTargets();
                     ReopenInitialFiles();
@@ -95,22 +116,25 @@ namespace CodeRefactor.Commands
                 FireOnRefactorComplete();
                 return;
             }
-
-            if (renaming)
-            {
-                msg = TextHelper.GetString("Info.RenamingDirectory");
-                foreach (string path in OldPathToNewPath.Keys)
-                {
-                    title = string.Format(TextHelper.GetString("Title.RenameDialog"), Path.GetFileName(path));
-                    break;
-                }
-            }
+            if (updatePackages) dialogResult = DialogResult.Yes;
             else
             {
-                msg = TextHelper.GetString("Info.MovingFile");
-                title = TextHelper.GetString("Title.MoveDialog");
+                if (renaming)
+                {
+                    msg = TextHelper.GetString("Info.RenamingDirectory");
+                    foreach (string path in OldPathToNewPath.Keys)
+                    {
+                        title = string.Format(TextHelper.GetString("Title.RenameDialog"), Path.GetFileName(path));
+                        break;
+                    }
+                }
+                else
+                {
+                    msg = TextHelper.GetString("Info.MovingFile");
+                    title = TextHelper.GetString("Title.MoveDialog");
+                }
+                dialogResult = MessageBox.Show(msg, title, MessageBoxButtons.YesNoCancel);
             }
-            var dialogResult = MessageBox.Show(msg, title, MessageBoxButtons.YesNoCancel);
             if (dialogResult == DialogResult.Cancel)
             {
                 FireOnRefactorComplete();
@@ -150,11 +174,11 @@ namespace CodeRefactor.Commands
             {
                 string oldPath = item.Key;
                 string newPath = item.Value;
-                ITabbedDocument doc;
                 if (File.Exists(oldPath))
                 {
                     newPath = Path.Combine(newPath, Path.GetFileName(oldPath));
 
+                    ITabbedDocument doc;
                     if (AssociatedDocumentHelper.InitiallyOpenedFiles.TryGetValue(oldPath, out doc))
                     {
                         doc.Save();
@@ -224,7 +248,7 @@ namespace CodeRefactor.Commands
                         newPackage = "";
                         break;
                     }
-                    if (newPackage.StartsWith(path))
+                    if (newPackage.StartsWithOrdinal(path))
                     {
                         newPackage = newPackage.Substring((path + "\\").Length).Replace("\\", ".");
                         break;
@@ -322,14 +346,14 @@ namespace CodeRefactor.Commands
             var fileMatches = new List<string>();
             foreach (var item in AssociatedDocumentHelper.InitiallyOpenedFiles)
             {
-                if (item.Key.StartsWith(oldPath))
+                if (item.Key.StartsWithOrdinal(oldPath))
                 {
                     item.Value.Save();
                     item.Value.Close();
                     filesToReopen.Add(item.Key.Replace(oldPath, newPath));
                     fileMatches.Add(item.Key);
                 }
-                else if (item.Key.StartsWith(newPath))
+                else if (item.Key.StartsWithOrdinal(newPath))
                 {
                     item.Value.Save();
                     item.Value.Close();
@@ -576,7 +600,7 @@ namespace CodeRefactor.Commands
                 {
                     sci.GotoLine(currLine);
                     ASGenerator.InsertImport(new MemberModel(targetName, newType, FlagType.Import, 0), false);
-                    int newLine = sci.LineFromPosition(sci.Text.IndexOf(newType));
+                    int newLine = sci.LineFromPosition(sci.Text.IndexOfOrdinal(newType));
                     var sm = new SearchMatch();
                     sm.Line = newLine + 1;
                     sm.LineText = sci.GetLine(newLine);

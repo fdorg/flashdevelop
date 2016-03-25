@@ -172,7 +172,7 @@ namespace MacroManager
         {
             MenuStrip mainMenu = PluginBase.MainForm.MenuStrip;
             this.macroMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Macros"));
-            this.editMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.EditMacros"), null, this.EditMenuItemClick, Keys.Control | Keys.F10);
+            this.editMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.EditMacros"), null, this.EditMenuItemClick, Keys.Control | Keys.F11);
             PluginBase.MainForm.RegisterShortcutItem("MacrosMenu.EditMacros", this.editMenuItem);
             mainMenu.Items.Insert(mainMenu.Items.Count - 2, this.macroMenuItem);
         }
@@ -315,7 +315,7 @@ namespace MacroManager
                 foreach (String entry in ((Macro)macroItem.Tag).Entries)
                 {
                     String data = entry;
-                    if (data.StartsWith("#")) // Hardcore mode :)
+                    if (data.StartsWith('#')) // Hardcore mode :)
                     {
                         data = PluginBase.MainForm.ProcessArgString(entry.Substring(1));
                         if (data == "|") return; // Invalid, don't execute..

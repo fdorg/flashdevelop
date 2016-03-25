@@ -19,8 +19,8 @@ namespace PluginCore.Utilities
         /// </summary>
         public static Int32 DetectNewLineMarker(String text, Int32 defaultMarker)
         {
-            Int32 cr = text.IndexOf("\r");
-            Int32 lf = text.IndexOf("\n");
+            Int32 cr = text.IndexOfOrdinal("\r");
+            Int32 lf = text.IndexOfOrdinal("\n");
             if ((cr >= 0) && (lf >= 0))
             {
                 if (cr < lf) return 0;

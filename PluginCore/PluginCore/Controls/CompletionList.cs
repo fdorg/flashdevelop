@@ -226,7 +226,7 @@ namespace PluginCore.Controls
                     completionList.SelectedItem = item;
                     return;
                 }
-                if (pname != null && item.Label.EndsWith(pname)) found = item;
+                if (pname != null && item.Label.EndsWithOrdinal(pname)) found = item;
             }
             if (found != null)
             {
@@ -650,7 +650,7 @@ namespace PluginCore.Controls
             {
                 if (label.StartsWith(word, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (label.StartsWith(word)) return 1;
+                    if (label.StartsWithOrdinal(word)) return 1;
                     else return 5;
                 }
                 return 0;
@@ -670,15 +670,15 @@ namespace PluginCore.Controls
                 int p2;
                 if (firstUpper) // try case sensitive search
                 {
-                    p2 = label.IndexOf(word);
+                    p2 = label.IndexOfOrdinal(word);
                     if (p2 >= 0)
                     {
-                        int p3 = label.LastIndexOf("." + word); // in qualified type name
+                        int p3 = label.LastIndexOfOrdinal("." + word); // in qualified type name
                         if (p3 > 0)
                         {
                             if (p3 == label.LastIndexOf('.'))
                             {
-                                if (label.EndsWith("." + word)) return 1;
+                                if (label.EndsWithOrdinal("." + word)) return 1;
                                 else return 3;
                             }
                             else return 4;
@@ -747,7 +747,7 @@ namespace PluginCore.Controls
             }
             else 
             {
-                p2 = label.IndexOf("." + c);
+                p2 = label.IndexOfOrdinal("." + c);
                 if (p2 >= 0) { score = 2; p2++; }
                 else
                 {
@@ -762,7 +762,7 @@ namespace PluginCore.Controls
             {
                 p = p2;
                 c = word[i++];
-                if (Char.IsUpper(c)) p2 = label.IndexOf(c.ToString(), p + 1);
+                if (Char.IsUpper(c)) p2 = label.IndexOfOrdinal(c.ToString(), p + 1);
                 else p2 = label.IndexOf(c.ToString(), p + 1, StringComparison.OrdinalIgnoreCase);
                 if (p2 < 0) return 0;
 
@@ -776,7 +776,7 @@ namespace PluginCore.Controls
             }
             if (dist == len - 1)
             {
-                if (label == word || label.EndsWith("." + word)) return 1;
+                if (label == word || label.EndsWithOrdinal("." + word)) return 1;
                 return score;
             }
             else return score + 2;
@@ -815,9 +815,9 @@ namespace PluginCore.Controls
                         sci.SetSel(startPos, sci.CurrentPos);
                         if (word != null && tail.Length > 0)
                         {
-                            if (replace.StartsWith(word, StringComparison.OrdinalIgnoreCase) && replace.IndexOf(tail) >= word.Length)
+                            if (replace.StartsWith(word, StringComparison.OrdinalIgnoreCase) && replace.IndexOfOrdinal(tail) >= word.Length)
                             {
-                                replace = replace.Substring(0, replace.IndexOf(tail));
+                                replace = replace.Substring(0, replace.IndexOfOrdinal(tail));
                             }
                         }
                         sci.ReplaceSel(replace);

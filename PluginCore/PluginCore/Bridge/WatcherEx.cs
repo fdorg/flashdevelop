@@ -28,7 +28,7 @@ namespace PluginCore.Bridge
         {
             this.path = path;
             this.filter = file;
-            isRemote = BridgeManager.Active && path.ToUpper().StartsWith(BridgeManager.Settings.SharedDrive);
+            isRemote = BridgeManager.Active && path.ToUpper().StartsWithOrdinal(BridgeManager.Settings.SharedDrive);
             if (!isRemote) SetupRegularWatcher();
         }
 
@@ -86,7 +86,7 @@ namespace PluginCore.Bridge
                     }
                     else
                     {
-                        if (Directory.Exists(path) && !path.EndsWith("\\")) path += "\\";
+                        if (Directory.Exists(path) && !path.EndsWith('\\')) path += "\\";
                         bridge.DataReceived += new DataReceivedEventHandler(bridge_DataReceived);
                         if (filter == null) bridge.Send("watch:" + path);
                         else bridge.Send("watch:" + Path.Combine(path, filter));
@@ -112,13 +112,13 @@ namespace PluginCore.Bridge
         void bridge_DataReceived(object sender, DataReceivedEventArgs e)
         {
             string fullPath = e.Text;
-            if (fullPath.StartsWith("BRIDGE:"))
+            if (fullPath.StartsWithOrdinal("BRIDGE:"))
             {
                 // Lets expose bridge location...
                 Environment.SetEnvironmentVariable("FDBRIDGE", fullPath.Replace("BRIDGE:", ""));
                 return;
             }
-            if (!fullPath.EndsWith("\\")) fullPath += '\\';
+            if (!fullPath.EndsWith('\\')) fullPath += '\\';
             if (fullPath.Length < 3) return;
             string folder = Path.GetDirectoryName(fullPath);
             string name = Path.GetFileName(fullPath);

@@ -48,6 +48,7 @@ namespace FlashDebugger
             InitializeComponents(imageList);
             InitializeContextMenu();
             InitializeLocalization();
+            ScrollBarEx.Attach(lv);
         }
 
         private void InitializeComponents(ImageList imageList)
@@ -262,8 +263,8 @@ namespace FlashDebugger
                             foreach (string cp in project.AbsoluteClasspaths)
                             {
                                 string pathBackSlash = cp.TrimEnd(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar });
-                                pathBackSlash = pathBackSlash.IndexOf(Path.AltDirectorySeparatorChar.ToString()) > -1 ? pathBackSlash + Path.AltDirectorySeparatorChar : pathBackSlash + Path.DirectorySeparatorChar;
-                                if (sourceFile.getFullPath().ToString().StartsWith(pathBackSlash))
+                                pathBackSlash = pathBackSlash.IndexOfOrdinal(Path.AltDirectorySeparatorChar.ToString()) > -1 ? pathBackSlash + Path.AltDirectorySeparatorChar : pathBackSlash + Path.DirectorySeparatorChar;
+                                if (sourceFile.getFullPath().ToString().StartsWithOrdinal(pathBackSlash))
                                 {
                                     ownFile = true;
                                     break;

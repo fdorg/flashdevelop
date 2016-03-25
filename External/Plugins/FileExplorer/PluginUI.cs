@@ -1,50 +1,47 @@
 using System;
+using System.Collections.Specialized;
+using System.Drawing;
 using System.IO;
 using System.Text;
-using System.Drawing;
-using System.Security;
-using System.Diagnostics;
-using System.Collections;
 using System.Windows.Forms;
-using System.ComponentModel;
-using System.Collections.Specialized;
-using PluginCore.Localization;
-using PluginCore.Utilities;
-using PluginCore.Managers;
+using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
-using PluginCore;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
+using Ookii.Dialogs;
 
 namespace FileExplorer
 {
     public class PluginUI : DockPanelControl
     {
-        private System.Windows.Forms.ListViewEx fileView;
-        private System.Windows.Forms.ToolStrip toolStrip;
-        private System.Windows.Forms.ContextMenuStrip menu;
-        private System.Windows.Forms.ToolStripMenuItem runButton;
-        private System.Windows.Forms.ToolStripMenuItem editButton;
-        private System.Windows.Forms.ToolStripMenuItem renameButton;
-        private System.Windows.Forms.ToolStripMenuItem deleteButton;
-        private System.Windows.Forms.ToolStripMenuItem shellButton;
-        private System.Windows.Forms.ToolStripMenuItem pasteButton;
-        private System.Windows.Forms.ToolStripMenuItem copyButton;
-        private System.Windows.Forms.ToolStripSeparator separator;
-        private System.Windows.Forms.ToolStripSpringComboBox selectedPath;
-        private System.Windows.Forms.ToolStripButton browseButton;
-        private System.Windows.Forms.ToolStripButton syncronizeButton;
-        private System.Windows.Forms.ColumnHeader fileHeader;
-        private System.Windows.Forms.ColumnHeader sizeHeader;
-        private System.Windows.Forms.ColumnHeader typeHeader;
-        private System.Windows.Forms.ColumnHeader modifiedHeader;
-        private Ookii.Dialogs.VistaFolderBrowserDialog folderBrowserDialog;
-        private System.Windows.Forms.ListViewItem highlightedItem;
-        private System.Windows.Forms.ImageList imageList;
-        private System.Boolean updateInProgress;
-        private System.String previousItemLabel;
-        private System.String autoSelectItem;
-        private System.Int64 lastUpdateTimeStamp;
-        private System.Int32 prevColumnClick;
+        private ListViewEx fileView;
+        private ToolStrip toolStrip;
+        private ContextMenuStrip menu;
+        private ToolStripMenuItem runButton;
+        private ToolStripMenuItem editButton;
+        private ToolStripMenuItem renameButton;
+        private ToolStripMenuItem deleteButton;
+        private ToolStripMenuItem shellButton;
+        private ToolStripMenuItem pasteButton;
+        private ToolStripMenuItem copyButton;
+        private ToolStripSeparator separator;
+        private ToolStripSpringComboBox selectedPath;
+        private ToolStripButton browseButton;
+        private ToolStripButton syncronizeButton;
+        private ColumnHeader fileHeader;
+        private ColumnHeader sizeHeader;
+        private ColumnHeader typeHeader;
+        private ColumnHeader modifiedHeader;
+        private VistaFolderBrowserDialog folderBrowserDialog;
+        private ListViewItem highlightedItem;
+        private ImageListManager imageList;
+        private Boolean updateInProgress;
+        private String previousItemLabel;
+        private String autoSelectItem;
+        private Int64 lastUpdateTimeStamp;
+        private Int32 prevColumnClick;
         private ListViewSorter listViewSorter;
         private FileSystemWatcher watcher;
         private PluginMain pluginMain;
@@ -59,6 +56,7 @@ namespace FileExplorer
             this.InitializeContextMenu();
             this.InitializeLayout();
             this.InitializeTexts();
+            ScrollBarEx.Attach(fileView);
         }
         
         #region Windows Forms Designer Generated Code
@@ -207,16 +205,6 @@ namespace FileExplorer
 
         #region Methods And Event Handlers
 
-        /// <summary> 
-        /// We have to do final initialization here because we might 
-        /// need to have a window handle to pre-populate the file list.
-        /// </summary>
-        protected override void OnCreateControl()
-        {
-            base.OnCreateControl();
-            this.Initialize(null, null);
-        }
-
         /// <summary>
         /// Shows the explorer shell menu
         /// </summary>
@@ -293,9 +281,11 @@ namespace FileExplorer
         /// </summary>
         private void InitializeGraphics()
         {
-            this.imageList = new ImageList();
+            this.imageList = new ImageListManager();
             this.imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             this.imageList.ColorDepth = ColorDepth.Depth32Bit;
+            this.imageList.Populate += RefreshFileView;
+            this.AddNonWin32Images();
             this.syncronizeButton.Image = PluginBase.MainForm.FindImage("203|9|-3|-3");
             this.browseButton.Image = PluginBase.MainForm.FindImage("203");
             this.fileView.SmallImageList = this.imageList;
@@ -360,7 +350,7 @@ namespace FileExplorer
         /// <summary>
         /// List last open path on load
         /// </summary>
-        private void Initialize(Object sender, System.EventArgs e)
+        public void Initialize(Object sender, System.EventArgs e)
         {
             String path = PathHelper.AppDir;
             String pathToCheck = this.pluginMain.Settings.FilePath;
@@ -424,7 +414,7 @@ namespace FileExplorer
                 ListViewItem item;
                 if (directory.Parent != null)
                 {
-                    item = new ListViewItem("[..]", ExtractIconIfNecessary("/Folder/"));
+                    item = new ListViewItem("[..]", ExtractIconIfNecessary("/Folder/", false));
                     item.Tag = directory.Parent.FullName;
                     item.SubItems.Add("-");
                     item.SubItems.Add("-");
@@ -436,7 +426,7 @@ namespace FileExplorer
                     DirectoryInfo subDir = info as DirectoryInfo;
                     if (subDir != null && (subDir.Attributes & FileAttributes.Hidden) == 0)
                     {
-                        item = new ListViewItem(subDir.Name, ExtractIconIfNecessary(subDir.FullName));
+                        item = new ListViewItem(subDir.Name, ExtractIconIfNecessary(subDir.FullName, false));
                         item.Tag = subDir.FullName;
                         item.SubItems.Add("-");
                         item.SubItems.Add("-");
@@ -450,7 +440,7 @@ namespace FileExplorer
                     if (file != null && (file.Attributes & FileAttributes.Hidden) == 0)
                     {
                         String kbs = TextHelper.GetString("Info.Kilobytes");
-                        item = new ListViewItem(file.Name, ExtractIconIfNecessary(file.FullName));
+                        item = new ListViewItem(file.Name, ExtractIconIfNecessary(file.FullName, true));
                         item.Tag = file.FullName;
                         if (file.Length / 1024 < 1) item.SubItems.Add("1 " + kbs);
                         else item.SubItems.Add((file.Length / 1024) + " " + kbs);
@@ -637,7 +627,7 @@ namespace FileExplorer
                 ListViewItem whereToMove = this.fileView.GetItemAt(cp.X, cp.Y);
                 if (whereToMove == null) return; // Item is dropped on nothing
                 String targetDirectory = whereToMove.Tag.ToString();
-                if (whereToMove.Text.StartsWith("[") || Directory.Exists(targetDirectory))
+                if (whereToMove.Text.StartsWith('[') || Directory.Exists(targetDirectory))
                 {
                     for (Int32 i = 0; i < this.fileView.SelectedItems.Count; i++)
                     {
@@ -701,7 +691,7 @@ namespace FileExplorer
             try
             {
                 this.previousItemLabel = this.fileView.Items[e.Item].Text;
-                if (this.previousItemLabel.StartsWith("[")) e.CancelEdit = true;
+                if (this.previousItemLabel.StartsWith('[')) e.CancelEdit = true;
             }
             catch
             {
@@ -780,7 +770,7 @@ namespace FileExplorer
             Boolean targetIsDirectory = false;
             Boolean onlyFiles = this.SelectedItemsAreOnlyFiles();
             Int32 selectedItems = this.fileView.SelectedItems.Count;
-            if (selectedItems > 0) notFirstItem = !this.fileView.SelectedItems[0].Text.StartsWith("[");
+            if (selectedItems > 0) notFirstItem = !this.fileView.SelectedItems[0].Text.StartsWith('[');
             if (selectedItems == 1) targetIsDirectory = Directory.Exists(this.fileView.SelectedItems[0].Tag.ToString());
             if (!targetIsDirectory) targetIsDirectory = Directory.Exists(this.selectedPath.Text);
             canPaste = (targetIsDirectory && notFirstItem && Clipboard.ContainsFileDropList());
@@ -813,7 +803,7 @@ namespace FileExplorer
         private void RefreshFileView(Object sender, System.EventArgs e)
         {
             String path = this.selectedPath.Text;
-            this.PopulateFileView(path);
+            if (!String.IsNullOrEmpty(path)) this.PopulateFileView(path);
         }
 
         /// <summary>
@@ -1128,25 +1118,22 @@ namespace FileExplorer
         /// Ask the shell to feed us the appropriate icon for the given file, but
         /// first try looking in our cache to see if we've already loaded it.
         /// </summary>
-        private int ExtractIconIfNecessary(String path)
+        private int ExtractIconIfNecessary(String path, bool isFile)
         {
             Icon icon; Image image;
             Size size = ScaleHelper.Scale(new Size(16, 16));
             if (Win32.ShouldUseWin32())
             {
-                if (File.Exists(path)) icon = IconExtractor.GetFileIcon(path, false, true);
+                if (isFile) icon = IconExtractor.GetFileIcon(path, false, true);
                 else icon = IconExtractor.GetFolderIcon(path, false, true);
                 image = ImageKonverter.ImageResize(icon.ToBitmap(), size.Width, size.Height);
                 image = PluginBase.MainForm.ImageSetAdjust(image);
                 icon.Dispose();
+                this.imageList.Images.Add(image);
+                return this.imageList.Images.Count - 1;
             }
-            else
-            {
-                if (File.Exists(path)) image = PluginBase.MainForm.FindImage("526");
-                else image = PluginBase.MainForm.FindImage("203");
-            }
-            this.imageList.Images.Add(image);
-            return this.imageList.Images.Count - 1;
+
+            return isFile ? 0 : 1;
         }
 
         /// <summary>
@@ -1155,11 +1142,14 @@ namespace FileExplorer
         private void ClearImageList()
         {
             this.imageList.Images.Clear();
-            this.imageList.Dispose();
-            this.imageList = new ImageList();
-            this.imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            this.imageList.ColorDepth = ColorDepth.Depth32Bit;
-            this.fileView.SmallImageList = this.imageList;
+            AddNonWin32Images();
+        }
+
+        private void AddNonWin32Images()
+        {
+            if (Win32.ShouldUseWin32()) return;
+            this.imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("526"));
+            this.imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("203"));
         }
 
         #endregion

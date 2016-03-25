@@ -43,4 +43,8 @@ class Test
 	{
 		return true;
 	}
+	
+	public function nestedGenerics(s:Array<Array<Int>>):Void
+	{
+	}
 }

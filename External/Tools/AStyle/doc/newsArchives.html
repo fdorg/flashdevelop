@@ -1,0 +1,1004 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Artistic Style - News Archives</title>
+    <meta http-equiv="Content-Language" content="en-us" />
+    <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+    <link href="favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link href="styles.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+    <h1>Artistic Style News Archives</h1>
+
+    <p>
+        &nbsp;
+    </p>
+
+    <h3>Artistic Style 2.02&nbsp; (May 2011)</h3>
+
+    <p>
+        With a new Artistic Style release some unchanged source files will be formatted because of changes to Artistic
+        Style. You may want to format your source before making program changes in order to bring it up to date.
+    </p>
+
+    <h4>Release 2.02.1 - November 2011</h4>
+
+    <p>
+        This bug fix release is issued because of the length of time required for the some of the changes in the next
+        release (2.03). Bugs with the breaking of "case" statements and a crash with pointer to pointer (**) in align-pointer=type
+        have been fixed. The "case" statements that have been incorrectly broken will be fixed in this release. Pointers
+        and references are now processed for C# files. See the "Release Notes" for more information and additional changes.
+    </p>
+
+    <h4><strong>The following information is for the original 2.02 release.</strong></h4>
+
+    <h4>Translations</h4>
+
+    <p>
+        A new program module and header, ASLocalizer.cpp and ASLocalizer.h, have been added. These are required for the
+        console build and are optional for the library builds. It contains language translations for several of the most
+        common users of Artistic Style. The method used was adapted from the Gnu "gettext" method.
+    </p>
+    <p>
+        The translation to use is determined from the User Locale for Windows and the LANG environment variable for other
+        systems. The translation will be done automatically from these settings. If no translation is available it will
+        default to English.
+    </p>
+    <p>
+        A new option, "ascii" or "I", will display the text in English regardless of your system settings. This option
+        must be input from the command line and not an option file. See the documentation for details.
+    </p>
+    <p>
+        The translations were mostly done with an automated translation program, Google Translate, so they may not be
+        the best translation possible. The translations are at the end of ASLocalizer.cpp in the form of an English&#8209;Translation
+        pair. If you correct a translation, send the source as a bug report and it will be included in the next release.
+    </p>
+    <p>
+        To add a language, add a new translation class to ASLocalizer.h. Add the English&#8209;Translation pair to the
+        constructor in ASLocalizer.cpp. Update the WinLangCode array, if necessary, and add the language code to the function
+        setTranslationClass(). The ASLocalizer.cpp program contains comments that give web pages for obtaining the LCIDs
+        and language codes. Send the source code as a bug report and it will be included in the next release.
+    </p>
+
+    <h4>Brackets</h4>
+
+    <p>
+        Since release 1.22 (April 2008) the predefined styles have increased from 5 to 12 and the bracket types have increased
+        from 4 to 6. Having two different ways of defining bracket styles has resulted in some confusion and unnecessary
+        duplication. This release starts a redesign of the bracket definitions to simplify the user interface. The predefined
+        styles and bracket types will be combined into a single option category.
+    </p>
+    <p>
+        The "Predefined Style" options have been renamed "Bracket Style" options. The "Bracket Options" have been depreciated
+        and will be removed in a future release. If you are using a "brackets=" option, you should start changing to one
+        of the "style=" options. There is a "style" option available for every "brackets" option.
+    </p>
+    <p>
+        All "Bracket Style" options now default to 4 spaces per indent. If you were using a "Predefined Style" with a
+        default indent other than 4, you will need to add one of the "Tab Options" to maintain the same indentation. The
+        styles which used indents other than 4 were:
+    </p>
+    <ul>
+        <li>Stroustrup - 5 spaces per indent. </li>
+        <li>Gnu - 2 spaces per indent. </li>
+        <li>Linux - 8 spaces per indent. </li>
+        <li>Horstmann - 3 spaces per indent.</li>
+    </ul>
+    <p>
+        There is a new "Bracket Style" option "style=pico" or "A11". It uses run-in brackets, like Horstmann style, and
+        attaches the closing bracket to the last line in the block. It sets the options "keep one line blocks" and "keep
+        one line statements". This is a very compact style and is a good style for small monitors.
+    </p>
+    <p>
+        Another new "Bracket Style" option is "style=lisp" or "style=python" or "A12". It uses attached brackets, like
+        Java style, and attaches the closing bracket to the last line in the block. It sets the option "keep one line
+        statements". This style makes indentation the only way of distinguishing blocks of code, but has the advantage
+        of containing no uninformative lines. Like Pico, it is also a very compact style.
+    </p>
+    <p>
+        The option "brackets=horstmann" has been removed. Instead use "style=horstmann" or "A9". The short option "g"
+        is now equivalent to the new "brackets=run-in". Run-in brackets are used for both Horstmann and Pico styles.
+    </p>
+    <p>
+        The option "indent-brackets" and short option "B" have been removed. Instead use "style=whitesmith" or "style=banner".
+    </p>
+    <p>
+        The option "indent-blocks" and short option "G" have been removed. Instead use "style=gnu".
+    </p>
+    <p>
+        Two new options, "style=break" and "style=attach", have been added for Allman and Java bracket styles respectively.
+    </p>
+
+    <h4>Other Changes</h4>
+
+    <p>
+        To allow for future expansion the short options will now allow an "x" prefix to be used. New short options may
+        start with an "x" and will be followed by another character (e.g. "xa", "xb", "xc" ...). The current options,
+        with one exception, will still be valid.
+    </p>
+    <p>
+        The short option for "delete-empty-lines" has been changed from "x" to "xd" to allow for the expansion of short
+        options.
+    </p>
+    <p>
+        A new option "align-reference=" (-W#) allows references to be aligned separate from pointers. See the documentation
+        for details.
+    </p>
+    <p>
+        Since computer screens are getting wider the maximum value for "max-instatement-indent" has been increased from
+        80 to 120.
+    </p>
+    <p>
+        New options ignore&#8209;exclude&#8209;errors (&#8209;i) and ignore&#8209;exclude&#8209;errors&#8209;x (&#8209;xi)
+        will allow processing to continue if there are errors in the "exclude" options. This lets the excludes for several
+        projects to be entered in a single option file. The "ignore" options may be placed in the same option file as
+        the excludes. The ignore&#8209;exclude&#8209;errors option will display the unmatched excludes, ignore&#8209;exclude&#8209;errors&#8209;x
+        will not display them.
+    </p>
+    <p>
+        Artistic Style can now format UTF-16 encoded files, both little and big endian. This encoding is the default for
+        Visual Studio Unicode files. The file is formatted by converting it to UTF&#8209;8 and then back to UTF&#8209;16.
+        The conversion process does not add a significant amount of time to the formatting. The UTF-16 file must be encoded
+        with a byte-order-mark (BOM) to be recognized. Again, this is the Visual Studio default.
+    </p>
+    <p>
+        The Visual Studio project files now have a solution for both Win32 and x64 compiles. The x64 version will be needed
+        if you are using an Artistic Style DLL for Java or C# on a Windows&nbsp;7 platform. Or you may just prefer an
+        x64 console program. The executable included in the Windows distribution is still Win32. It will work on both
+        Win32 and x64 systems.
+    </p>
+    <p>
+        If you use Visual Studio C++ Express the 2010 release has the ability to compile x64 code. But you must use Vista
+        or Windows&nbsp;7 and need to install the .NET Framework SDK. I have created a brief instruction page here. Note
+        that a fix is required if you apply Service Pack&nbsp;1 after installing the .NET Framework SDK.
+    </p>
+    <p>
+        The documentation contains a new section "Command-line Only" which lists commands that are not available from
+        an options file. The options were transferred from the "Other Options" section.
+    </p>
+    <p>
+        Thanks to Milian Wolff, Johannes Martin, and Arne F?rlie, and Marvin Humphrey for their contributions. The UTF&#8209;8
+        and UTF&#8209;16 conversions were obtained from the SciTE source code editor.
+    </p>
+
+    <h4>Survey Results</h4>
+
+    <p>
+        The results of the survey posted last release are available at General Information and Artistic Style Options.
+        Thanks to everyone who took the time to complete it.
+    </p>
+    <p>
+        Surveys give an indication of how many people are using an option or want certain features. This is information
+        that is not available in the bug reports.
+    </p>
+    <p>
+        In the "Enhancements" group there were three items with multiple requests. The most frequent request by far was
+        to enforce a maximum line length. This is also the oldest request in the bug reports. Another item with multiple
+        requests was to disable/enable Artistic Style formatting on request within source files. This is the second oldest
+        request in the bug reports. A third item with multiple requests was to customize namespace brackets independent
+        of the requested bracket style. I will try to address these in the next release.
+    </p>
+    <p>
+        Things that stand out to me in the multiple&#8209;choice sections:
+    </p>
+    <ul>
+        <li>The predefined styles and brackets options were each used about 50% each. That will change with this release.
+        </li>
+        <li>Over 50% of the survey uses Artistic Style for Windows. I have been working for a couple of years on a new program
+            based on wxWidgets. I will try to give this more priority in the future. </li>
+        <li>Over 75% of the survey uses Artistic Style to format entire projects.</li>
+        <li>About one&#8209;third of the Windows C++ users use Artistic Style for Managed C++.</li>
+        <li>The most popular option is add&#8209;brackets (60%), which was just recently added.</li>
+        <li>The attach&#8209;pointer options, in total (70%), are even more popular than add-brackets. They were also recently
+            added.</li>
+        <li>The preserve-date option is used by nearly one-third of the survey.</li>
+        <li>All of the options are used by someone in the survey, even the ones I thought were outdated. The bracket styles
+            that are not used are probably a result of not having enough response.</li>
+    </ul>
+
+    <h4>Developers</h4>
+
+    <p>
+        The Artistic Style for Windows program contains a sample GUI using the new bracket style options. The old predefined
+        styles are now the bracket styles. The bracket options have been removed along with the indent&#8209;brackets
+        and indent&#8209;blocks options. The new bracket styles all use the same default indent of 4 spaces, therefore
+        it is not necessary to set an indentation from the bracket style. The new format is available for use with this
+        release.
+    </p>
+    <p>
+        &nbsp;
+    </p>
+
+    <h3>Artistic Style 2.01&nbsp; (November 2010)</h3>
+
+    <p>
+        With a new Artistic Style release some unchanged source files will be formatted because of changes to Artistic
+        Style. You may want to format your source before making program changes in order to bring it up to date.
+    </p>
+    <p>
+        A new feature at SourceForge is download maps that show a list of downloads by country. It is available from the
+        top menu at Develop &gt; Download Stats (Beta), and clicking on the "top country" area. The list of downloads
+        shows about 75% of Artistic Style downloads are from non English speaking countries. This release is the start
+        of the internationalization of Artistic Style.
+    </p>
+    <p>
+        Artistic Style now sets the native local so that characters from the user&#8217;s native language will be recognized
+        in directory names and file names. Artistic Style for Windows has also been changed to use the native locale.
+        For Linux systems using UTF-8 locales, characters from any language will be recognized and any combination of
+        languages can be used. For Windows, only languages recognized by the native codepage can be used. For example,
+        the English locale (codepage 1252) also has French, German, Italian, Portuguese, Spanish, plus several other languages.
+        Other locals, such as Chinese and Japanese, only support one language. Unicode was not used due to the varying
+        degree of support by different compilers for console applications.
+    </p>
+    <p>
+        The locale setting also affects the way numbers are displayed. Language translations may be provided in a future
+        release.
+    </p>
+    <p>
+        This is a major release (2.01) because of the internationalization and changes that will occur in the next couple
+        of releases. Future releases will contain a major change to the bracket options and a rewrite of the file access
+        method. Some of the requested changes require looking at blocks of code instead of single lines. The current program
+        has been patched to do this but a rewrite of the file input is needed. These are both major changes but with the
+        new test framework in place they should be manageable.
+    </p>
+    <p>
+        There has been a change to the &#8209;&#8209;min&#8209;conditional&#8209;indent option. Instead of using the number
+        of spaces it now uses a code expressed in number of indents. This will allow the option to be set independently
+        of the spaces per indent. If you are using the default setting of two indents, or a setting of zero indents, there
+        is no change necessary to the input. Otherwise, check the documentation for the new codes.
+    </p>
+    <p>
+        The --style=linux has been changed to ALWAYS use a minimum conditional indent of one-half the indent length. This
+        is in the style definition and cannot be changed. If you do not want this setting use the K&amp;R style instead.
+    </p>
+    <p>
+        The MFC macros BEGIN_DISPATCH_MAP, BEGIN_EVENT_MAP, and BEGIN_PROPPAGEIDS are now formatted.
+    </p>
+    <p>
+        Checksum verification has been added to source file output that will help assure that no code has been duplicated
+        or omitted. This is effective only in the debug configuration used for testing.
+    </p>
+    <p>
+        The test framework has been changed from UnitTest++ to Google Test, which is actively maintained, has a mock object
+        framework (Google Mock), and good documentation. Regression and system testing have been automated with Python
+        scripts. Python has also been used for class verification checks and other repetitive procedures.
+    </p>
+    <p>
+        If you use Visual Studio C++ Express the 2010 release has the ability to create x64 code. But you must use Vista
+        or Windows 7 and need to install the .NET Framework SDK. I have created a brief instruction page here.
+    </p>
+    <p>
+        Thanks to Matthew Woehlke, Chris Schwarz, Chang Jiang, and Arseny Solokha for their contributions.
+    </p>
+
+    <h4>Developers</h4>
+
+    <p>
+        On the library build of Artistic Style, the second argument of the fpError typedef and the javaErrorHandler declaration
+        has been changed from "char*" to "const char*". This could cause a compile error if not changed in the source
+        statements.
+    </p>
+    <p>
+        There has been a change in the &#8209;&#8209;min&#8209;conditional&#8209;indent option. Instead of using number
+        of spaces to indent it now uses a code expressed in number of indents. In the past this option was a problem because
+        it was also affected by changes in indent length. With this release there is only one variable affected. The option
+        is not affected by changes in indent length. The minimum conditional indent length is computed automatically by
+        ASFormatter after all the options have been processed. Refer to the code in astyle_main.cpp to see how the option
+        is processed.
+    </p>
+    <p>
+        The --style=linux has been changed to ALWAYS use a minimum conditional indent of one-half the indent length. The
+        option is set in the function fixOptionVariableConflicts.
+    </p>
+    <p>
+        The use of locales affects only the command line build.
+    </p>
+
+    <h3>Artistic Style 1.24&nbsp; (February 2010)</h3>
+
+    <p>
+        With a new Artistic Style release some unchanged source files will be formatted because of changes to Artistic
+        Style. You may want to format your source before making program changes in order to bring it up to date.
+    </p>
+    <p>
+        A new bracket type option, &#8209;&#8209;brackets=horstmann (-g), uses broken brackets and places run-in statements
+        on the same line as an opening bracket. This bracket type has about the same vertical compression as attached
+        brackets and in addition provides bracket alignment. It is the only style that combines the advantages of saving
+        space and aligning brackets. The &quot;Tab and Bracket Options&quot; section in the documentation contains the
+        details. To accommodate Hostmann brackets the &quot;none mode&quot; brackets will now allow run-in statements.
+        Array formatting has been changed to format run-in statements when required. There have been some general improvements
+        to array formatting. The minimum value for spaces per tab was changed from one to two. The example programs in
+        the &quot;Developer Information&quot; section have been changed to Horstmann brackets.
+    </p>
+    <p>
+        Two new options, &#8209;&#8209;add&#8209;brackets (-j) and &#8209;&#8209;add&#8209;one&#8209;line&#8209;brackets
+        (-J), will add brackets to unbracketed one line conditional statements. The &#8209;&#8209;add-brackets will add
+        the brackets according to the currently requested predefined style or bracket type. If no style or bracket type
+        is requested the brackets will be the attached type. The &#8209;&#8209;add&#8209;one&#8209;line&#8209;brackets
+        will add the brackets as single line brackets. This option implies &#8209;&#8209;keep&#8209;one&#8209;line&#8209;blocks
+        and will not break single line blocks.
+    </p>
+    <p>
+        The above options allow two new predefined styles. Horstmann style, &#8209;&#8209;style=horstmann (-A9), uses
+        Horstmann brackets and three spaces per indent. The so called "One True Brace Style", &#8209;&#8209;style=1tbs
+        or &#8209;&#8209;style=otbs (-A10), uses linux brackets and the option &#8209;&#8209;add&#8209;brackets. The basic
+        criteria for most predefined styles were obtained from the Indent Style discussion at Wikipedia. The "Predefined
+        Style Options" section in the documentation contains the details.
+    </p>
+    <p>
+        The spaces per indent can now be changed for any of the predefined styles. In previous releases the option would
+        be ignored. This will allow any of the &#8209;&#8209;indent options to be used with a predefined style. If the
+        spaces per indent is not specified, the default for the style will be used.
+    </p>
+    <p>
+        A new option, &#8209;&#8209;pad&#8209;header (&#8209;H), will insert space padding after headers ('if', 'for',
+        'while'...). To remove any unwanted current space padding, use the option &#8209;&#8209;unpad&#8209;paren (&#8209;U).
+        If both &#8209;&#8209;pad&#8209;header and &#8209;&#8209;unpad&#8209;paren are used, the headers will be padded
+        and the padding will be removed from other parens. This has required a change to the default formatting of paren
+        headers. They will now be left unchanged instead of automatically inserting space padding, unless the new option
+        is requested.
+    </p>
+    <p>
+        New options --align-pointer=type (-k1), &#8209;&#8209;align&#8209;pointer=middle (-k2), and &#8209;&#8209;align&#8209;pointer=name
+        (-k3) will attach a pointer or reference operator (* or &amp;) to either the operator type (left), operator name
+        (right), or align it between the type and name. The spacing between the type and name will be preserved, if possible.
+        The recognition of pointers and references has been improved. This resulted in an improvement of the &#8209;&#8209;pad&#8209;oper
+        (-p) option.
+    </p>
+    <p>
+        A new option, &#8209;&#8209;indent&#8209;col1&#8209;comments (-Y), will indent C++ comments beginning in column
+        one. By default C++ comments beginning in column one are not indented. This option will allow the comments to
+        be indented with the code.
+    </p>
+    <p>
+        New options --lineend=windows&nbsp;(-z1), --lineend=linux&nbsp;(-z2), and --lineend=macold&nbsp;(-z3) will force
+        use of the specified line end style. Valid options are windows (CRLF), linux (LF), and macold (CR). MacOld style
+        is the format for OS 9 and earlier. Mac OS X uses the Linux style. Changes in line ends will cause the file to
+        be updated, even if no other changes occur. If one of these options is not used the line ends will be determined
+        automatically from the input file.
+    </p>
+    <p>
+        Default line end processing has been improved to always output consistent line ends. It will use the line ends
+        that are most frequently used in the input.
+    </p>
+    <p>
+        The Stroustrup predefined style has been changed to use 5 spaces per indent. This is the indentation used in the
+        book "The C++ Programming Language" by Bjarne Stroustrup.
+    </p>
+    <p>
+        The minimum conditional indent for the Linux predefined style has been changed to 4, or one-half the indent-length.
+        The previous minimum conditional indent was 16 (2 indents). The new value corresponds to the soft tab in the style
+        description at Wikipedia and gives a better conformance to the definition of the style. And it gives a better
+        appearance to the continuation lines.
+    </p>
+    <p>
+        Embedded SQL statements are now formatted correctly. The formatting of the SQL statements will be maintained as
+        long as the standard hanging indent format is used. If the "exec sql" statement is indented more than the following
+        statements, the SQL will be aligned in a single column.
+    </p>
+    <p>
+        Assembler statement processing has been improved to include extended assembly and Microsoft specific assembler
+        lines and blocks.
+    </p>
+    <p>
+        The --indent-classes (-C) option has been fixed to indent C++ struct blocks containing access modifiers (public,
+        protected, and private). The struct block is not indented if there are no access modifiers in the block.
+    </p>
+    <p>
+        The formatting for C++ class initializer statements has been changed from two indents to one and an in-statement
+        indent added for continuation lines.
+    </p>
+    <p>
+        The intermediate .tmp file used in formatting has been eliminated and memory is used instead. In most cases this
+        should result in a noticeable speed improvement.
+    </p>
+    <p>
+        Checks for the maximum in-statement indent have been fixed. The indent for some long continuation lines may be
+        decreased. If you want the previous indentation, increase the &#8209;&#8209;max&#8209;in&#8209;statement option.
+    </p>
+    <p>
+        Occasionally, someone will use Artistic Style to format a file encoded with UTF-16 or UTF-32 bit encoding. These
+        files contain many nul bytes are incompatible with the 8 bit encoding assumed by Artistic Style. Since this rarely
+        happens, Artistic Style has been changed to list these files as "unformatted" and display a warning message. The
+        files must have a Byte Order Mark (BOM) for the encoding to be recognized. These files can be changed with the
+        program iconv and with some text editors such as SciTE. For more information see the Wikipedia discussion on "Comparison
+        of Unicode encodings", "Compatibility issues".
+    </p>
+    <p>
+        The Artistic Style documentation has been changed to include a new "Padding Options" section. The padding options
+        were previously in the "Formatting Options" section. This was done to allow space for additional options in GUIs.
+    </p>
+    <p>
+        The Scripts page has a couple of new scripts, including a "clean" script in python.
+    </p>
+    <p>
+        There are new configuration and project files for Visual Studio, and additional files for Visual Studio 2010.
+        There are instructions in the &quot;Install Information&quot;.
+    </p>
+    <p>
+        The Intel compiler for Linux, release 11.1, has a new procedure for compiles. Read the new &quot;Install Information&quot;
+        before using this compiler release.
+    </p>
+    <p>
+        There is now a Subversion repository for Artistic Style. A new Subversion web page describes how to check-out
+        the files. The source code is under development and some changes take several weeks to complete. And the intermediate
+        source files have not been through the extensive system tests that are done before each release. Use reasonable
+        precautions when using source code from the repository.
+    </p>
+    <p>
+        SourceForge recently made changes to their website which caused a few problems. The web page links should be fixed
+        with this release. It seems that some bug reports may have been lost. If you have submitted a report that has
+        not been addressed please check to be sure it is still there. In addition Yahoo closed their GeoCities site which
+        made the AStyleWin programs temporarily unavailable. The new site is jimp03.zxq.net/.
+    </p>
+    <p>
+        The release announcements mailing list was discontinued with the new SourceForge system. There is a new astyle-announce
+        mailing list that will be used instead. This is a low volume list that will be used for new release announcements
+        and notification of important repository commits. Member postings will not be accepted. Membership in the old
+        list was not retained so you will need to register for the new list. There is information for subscribing on the
+        "Bug Reports, Change Requests, Notification" section of the Home page.
+    </p>
+    <p>
+        Thanks to J P Nurmi (align-pointer), Mario Gleichmann (pad-header), MrTact (lineend), Christian Stimming (&lt;&lt;
+        and &gt;&gt; operators), Wim Rosseel (Perl script), Colin D Bennett (64-bit code), and Ettl Martin (cppcheck)
+        for their contributions.
+    </p>
+    <p>
+        The OpenVMS distribution is prepared by Jim Duff, an OpenVMS Systems Specialist living in Sydney, Australia. His
+        website is eight&#8209;cubed.com.
+    </p>
+
+    <h4>Developers</h4>
+
+    <p>
+        The Artistic Style for Windows program has been updated to support the current release and can be used for an
+        example GUI. It will run on Linux under WINE. It is available at jimp03.zxq.net
+    </p>
+    <p>
+        The options --lineend=windows&nbsp;(-z1), --lineend=linux&nbsp;(-z2), and --lineend=macold&nbsp;(-z3) apply only
+        to the console build. It was not included in the developer builds because developers usually have their own method
+        for handling line ends.
+    </p>
+    <p>
+        The option --break-closing-brackets has been moved from Bracket Options to Formatting Options. It was being mistaken
+        for a bracket type, which it is not.
+    </p>
+    <p>
+        Rejecting a file for&nbsp; UTF-16 or UTF-32 bit encoding apply only to the console build. Some class libraries,
+        such as wxWidgets (and probably Qt), have the methods to convert the files to UTF-8. The handling for these types
+        of files must be determined by the individual applications.
+    </p>
+    <p>
+        There has been an additional variable, formattingStyle, added to the ASFormatter class. This is now the ONLY option
+        that needs to be set to define the style. Setting the individual options is no longer necessary. The individual
+        options are now set in the fixOptionVariableConflicts function in ASFormatter. The predefined style options will
+        now override all other options. The order of entry does not matter as in previous versions.
+    </p>
+    <p>
+        &nbsp;
+    </p>
+
+    <h3>Artistic Style 1.23&nbsp; (February 2009)</h3>
+
+    <p>
+        With a new Artistic Style release some unchanged source files will be formatted because of changes to Artistic
+        Style. You may want to format your source before making program changes in order to bring it up to date.
+    </p>
+    <p>
+        In the last few years the names of indent styles have been somewhat standardized. A typical example is the Indent
+        Style discussion at Wikipedia. To keep up to date with the industry, changes have been made to the names of two
+        of the styles. The ANSI style can now also be Allman or BSD, and for the KR or Java style you should now use only
+        Java. The KR style has always been basically the same as the Java style. The KR style is depreciated and will
+        be removed sometime in the future.
+    </p>
+    <p>
+        Four new predefined styles have been added, K&amp;R (with an &amp;), Stroustrup, Whitesmith, and Banner. K&amp;R
+        style uses Linux type brackets where the depreciated KR style uses attached brackets. Notice that K&amp;R and
+        KR are two different styles. Stroustrup style uses the new stroustrup brackets described below. Whitesmith has
+        broken brackets that are indented. Banner has attached brackets that are indented. The following table summarizes
+        the changes:
+    </p>
+
+    <center>
+        <table>
+            <tr>
+                <th>old&nbsp;style</th>
+                <th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                <th>new&nbsp;style</th>
+            </tr>
+            <tr>
+                <td>ansi</td>
+                <td></td>
+                <td>allman or ansi or bsd</td>
+            </tr>
+            <tr>
+                <td>java or kr</td>
+                <td></td>
+                <td>java</td>
+            </tr>
+            <tr>
+                <td>gnu</td>
+                <td></td>
+                <td>gnu</td>
+            </tr>
+            <tr>
+                <td>linux</td>
+                <td></td>
+                <td>linux</td>
+            </tr>
+            <tr>
+                <td>none</td>
+                <td></td>
+                <td>k&amp;r or k/r</td>
+            </tr>
+            <tr>
+                <td>none</td>
+                <td></td>
+                <td>stroustrup</td>
+            </tr>
+            <tr>
+                <td>none</td>
+                <td></td>
+                <td>whitesmith</td>
+            </tr>
+            <tr>
+                <td>none</td>
+                <td></td>
+                <td>banner</td>
+            </tr>
+        </table>
+    </center>
+
+    <p>
+        &nbsp;
+    </p>
+    <p>
+        There is a new Stroustrup style and bracket type. It is similar to the Linux bracket type except that the brackets
+        are attached to namespaces and classes instead of being broken. It is the style used by Bjarne Stroustrup, the
+        founding father of C++, in his book "The C++ Programming Language".
+    </p>
+    <p>
+        Indenting brackets in the Whitesmith and Banner styles causes a 'hanging indent' with switch statements and C++
+        class modifiers (public, private, protected). Microsoft Visual Studio avoids this by giving class and switch blocks
+        an extra indent when brackets are broken (Whitesmith style). Gnu Emacs gives switch blocks an extra indent but
+        not class blocks. With indented, attached brackets (Banner style), Visual Studio does not use an extra indent
+        and Emacs does not have the style. <strong>Artistic Style uses an extra indent for switch blocks and C++ class blocks
+            for both Whitesmith and Banner styles.</strong> This provides the best appearance in defining the style. If
+        a different format is wanted, use the individual options instead of the predefined style. You can try indent&#8209;brackets,
+        indent&#8209;classes, and indent&#8209;swiches on a class or switch block to see the results.
+    </p>
+    <p>
+        The GNU style and indent&#8209;blocks option have been changed to indent only the blocks within a function body.
+        The opening bracket for namespaces and classes is no longer indented. The opening bracket for functions remains
+        not indented. This is the same formatting used by the Emacs editor and is in compliance with the GNU standard.
+        The GNU style has also been changed to NOT indent namespaces by default. Namespaces can be indented by using the
+        indent&#8209;namespaces option. This is consistent with the other predefined style options.
+    </p>
+    <p>
+        The predefined style options will now override all other options. It does not depend on order of entry as in previous
+        versions. Using a predefined style will give that style regardless of other conflicting entries. The predefined
+        styles options now define only the bracket placement and sometimes the spaces per tab. This will give users the
+        option to define the other details according to their preference. The 'Predefined Style Options' section in the
+        documentation contains the details.
+    </p>
+    <p>
+        Changes have been made to some of the long options. Most configuration files will NOT allow options to have duplicate
+        keys (e.g. the Windows registry and wxWidgets). The key is the value before the first '=' sign. If there is no
+        &#39;=&#39; sign then the entire option is the key. The options were changed to eliminate duplicate keys when
+        more than one option is allowed. The old options are depreciated but will still be valid until at least the next
+        release. The short options remain the same. The following options have changed:
+    </p>
+
+    <center>
+        <table>
+            <tr>
+                <th>old&nbsp;option</th>
+                <th>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                <th>new&nbsp;option</th>
+            </tr>
+            <tr>
+                <td>force-indent=tab=#</td>
+                <td></td>
+                <td>indent=force-tab=#</td>
+            </tr>
+            <tr>
+                <td>brackets=break-closing</td>
+                <td></td>
+                <td>break-closing-brackets</td>
+            </tr>
+            <tr>
+                <td>pad=oper</td>
+                <td></td>
+                <td>pad-oper</td>
+            </tr>
+            <tr>
+                <td>pad=paren</td>
+                <td></td>
+                <td>pad-paren</td>
+            </tr>
+            <tr>
+                <td>pad=paren-out</td>
+                <td></td>
+                <td>pad-paren-out</td>
+            </tr>
+            <tr>
+                <td>pad=paren-in</td>
+                <td></td>
+                <td>pad-paren-in</td>
+            </tr>
+            <tr>
+                <td>unpad=paren</td>
+                <td></td>
+                <td>unpad-paren</td>
+            </tr>
+            <tr>
+                <td>one-line=keep-statements</td>
+                <td></td>
+                <td>keep-one-line-statements</td>
+            </tr>
+            <tr>
+                <td>one-line=keep-blocks</td>
+                <td></td>
+                <td>keep-one-line-blocks</td>
+            </tr>
+        </table>
+    </center>
+
+    <p>
+        &nbsp;
+    </p>
+    <p>
+        The "else if" statements will now be placed on a single line by default. This is described as a 'fix' since it
+        was apparently always supposed to do this. The headers will be broken only if the option 'break&#8209;elseifs'
+        is specified. Most users want the statements joined since breaking them requires an extra indent.
+    </p>
+    <p>
+        The convert&#8209;tabs option has been changed to maintain the correct spacing according to the current tab setting.
+        Previously a tab was replaced by a single space. The current option for spaces per tab is used. It may NOT produce
+        the expected results if convert&#8209;tabs is used when changing the spaces per tab. The tabs are NOT replaced
+        in quotes.
+    </p>
+    <p>
+        The break&#8209;blocks and break&#8209;blocks=all options have finally been fixed. They will no longer break statements
+        following the block and will keep preceding comments with the block. Many other fixes were required for the options
+        to work correctly. The "Release Notes" page has the details.
+    </p>
+    <p>
+        A new delete&#8209;empty&#8209;lines option will delete empty lines within a function or method. If used with
+        break&#8209;blocks or break&#8209;blocks=all it will delete all lines EXCEPT the lines added by the break&#8209;blocks
+        options.
+    </p>
+    <p>
+        There is a new 'formatted' (&#8209;Q) option that displays only the files that have been formatted. Files that
+        are unchanged are not displayed.
+    </p>
+    <p>
+        Short options have been added for the predefined styles.
+    </p>
+    <p>
+        Semi&#8209;colons are now always space padded. All commas are space padded if pad&#8209;oper is used.
+    </p>
+    <p>
+        The C/C++ keyword 'extern' no longer causes an extra indent.
+    </p>
+    <p>
+        There have been several important fixes to the indent&#8209;brackets and indent&#8209;blocks options.
+    </p>
+    <p>
+        There have been several important fixes to C# formatting.
+    </p>
+    <p>
+        The scripts page has a new Emacs script containing hooks that will set the Emacs style options to the default
+        options used by Artistic Style. It also defines a Banner style. It can be used to compare output from the two
+        programs. The files will not be exact but it should be reasonably close. If you can improve the Emacs script I
+        would like to have the changes.
+    </p>
+    <p>
+        There are two new projects on the Links page. <strong>CodeLite</strong> is a C++ development environment with
+        some useful features, including a template to generate a test program using the excellent tool UnitTest++. target="astyle"
+        title="open new window"><strong>Highlight</strong> converts source code to formatted text with syntax highlighting.
+        It was used it for the source code in the Developer Information section.
+    </p>
+    <p>
+        I need a Mac OS X user to do testing on new releases. The test usually take 30 minutes at the most. They may need
+        to be repeated two or three times depending on the results. Programming knowledge is not necessary but will probably
+        be helpful. Reply to the project email address if you would like to volunteer.
+    </p>
+    <p>
+        The OpenVMS distribution is prepared by Jim Duff, an OpenVMS Systems Specialist living in Sydney, Australia. His
+        website is eight&#8209;cubed.com.
+    </p>
+    <p>
+        Thanks to Eran Ifrah and Max Horn for their contributions. Travis Robinson wrote the original C# interface program.
+    </p>
+
+    <h4>Developers</h4>
+
+    <p>
+        There is a new page in the Developer Information that has an example of calling Artistic Style from a C# program.
+    </p>
+    <p>
+        There was an omission in the peekNextLine function added in the last release which causes it to bypass empty lines.
+        If you copied the function into a program, the change is at the end of peekNextLine in astyle_main. The line containing
+        the change is marked with comments. Not correcting it may cause an infrequent line break if the option break&#8209;blocks
+        or break&#8209;blocks=all is used. The break will occur only if there are empty lines within comment lines that
+        precede a header.
+    </p>
+    <p>
+        There has been an additional variable, formattingStyle, added to the ASFormatter class. This is now the ONLY option
+        that needs to be set to define the style. Setting the individual options is no longer necessary. The individual
+        options are now set in the fixOptionVariableConflicts function in ASFormatter.
+    </p>
+    <p>
+        The predefined style options will now override all other options. The order of entry does not matter as in previous
+        versions. This will be done even if astyle_main is not used by your system. This was done by moving the checks
+        from astyle_main to ASFormatter. The procedure is in the function fixOptionVariableConflicts in ASFormatter.
+    </p>
+    <p>
+        The predefined style options now define only the bracket placement and sometimes the spaces per tab. This will
+        give users the option to define the other details according to their preference. It is best if the other options
+        are NOT disabled when a predefined style is selected. All options should be left available to modify the style.
+        The conflicts will be resolved by the fixOptionVariableConflicts function which is called after all options have
+        been processed. All you need to do is set the options selected by the user.
+    </p>
+    <p>
+        The Artistic Style for Windows program has been updated to support the current release. It is available at jimp03.zxq.net
+    </p>
+    <p>
+        I apologize for the unplanned changes this may add to your system. But Artistic Style is starting to mature as
+        an application and the changes are needed to bring it up to date. If you have any questions or problems, email
+        me and I will do my best to help you resolve them.
+    </p>
+    <p>
+        &nbsp;
+    </p>
+
+    <h3>Artistic Style 1.22&nbsp; (April 2008)</h3>
+
+    <p>
+        This release contains many bug fixes. The emphasis was on formatting fixes for C# files. In the last two releases
+        there have been over 80 items removed from the bug report. There have been many more fixes which were not reported
+        but were discovered while testing. The new options in this release exposed many unreported formatting problems.
+        I will try to fix the ones remaining in the next two or three releases. Some of them will be difficult to fix.
+        See the Release Notes for a complete list of changes.
+    </p>
+    <p>
+        Starting with this release, if a file is <strong>not</strong> changed by Artistic Style a new file and a backup
+        file are not created. A "make" will not recompile the unchanged file and it will not be committed to a revision
+        control system. A console message will indicate that the file is unchanged. Note that this is different from using
+        the &#8209;&#8209;preserve&#8209;date option. This option retains the date on files that <strong>have</strong>
+        changed. In this case the changed files will still be recompiled and committed to revision control. (&#8209;&#8209;preserve&#8209;date
+        actually changes the time by one unit).
+    </p>
+    <p>
+        In the rare case when Artistic Style aborts, the file being formatted will no longer be deleted. This is done
+        by using a temporary output file (.tmp). It should now be safe to manually abort Artistic Style and restart at
+        any time. The backup of files that were previously formatted will not be replaced.
+    </p>
+    <p>
+        The console display has been changed. The default now displays one line per file. This will be useful if only
+        one file is being formatted, such as when Artistic Style is called from a text editor or development environment.
+        A new &#8209;&#8209;verbose (&#8209;v) option will display optional information, such as release number and statistical
+        data. A new &#8209;&#8209;quiet (-q) option will suppress all output except error messages. Some short options
+        have changed to accommodate the new options. The short option for &#8209;&#8209;version is now -V (old -v) and
+        for &#8209;&#8209;convert&#8209;tabs is &#8209;c (old &#8209;V).
+    </p>
+    <p>
+        A new &#8209;&#8209;recursive (-r, or -R) option will process subdirectories recursively. The filename should
+        contain a wildcard (e.g. "$HOME/astyle/src/*.cpp"). Linux users should place the filename in double quotes so
+        the shell will not resolve the wildcards. Windows users should <strong>not</strong> include wildcard object files,
+        like setargv (Visual C) or wildargs (Borland), in the compiles. Wildcard processing in MinGW was excluded by adding
+        "int&nbsp;_CRT_glob&nbsp;=&nbsp;0" as a global variable. (It could also be excluded by linking to CRT_noglob.o).
+        Artistic Style now does the wildcard processing internally.
+    </p>
+    <p>
+        When processing directories recursively it is sometimes necessary to exclude certain files or directories. This
+        can be done using a new exclude (&#8209;&#8209;exclude=file&#8209;or&#8209;directory) option. There is no short
+        option. Multiple exclude statements are allowed. The Other Options section of the documentation contains the details.
+    </p>
+    <p>
+        It is always a good idea to create a backup for files that have been formatted. This can cause a problem in that
+        it creates a lot of excess files in your source directories. There are now new script files available that will
+        move the files to a backup directory. The original directory structure will be maintained the in the backup. There
+        is a batch file for Windows and a shell script for everyone else. They are available in the Scripts section of
+        the home page.
+    </p>
+    <p>
+        There is a new Links page that lists programs using Artistic Style. In general, they seem to be good quality software.
+    </p>
+    <p>
+        If you are using a development environment to compile Artistic Style, be sure to read the Compiler Options section
+        in the Install Information. In particular, you should define NDEBUG in the Release compile to remove the assert
+        statements. There are quite a few of these and they will slow down processing if NDEBUG is not used. The assert
+        statements are necessary due to the nature of the program. Also, when reporting bugs it is a good idea to log
+        in first. Occasionally, more information is needed on a problem. If the poster did not log in there is no way
+        to contact them.
+    </p>
+    <p>
+        A Java Native Interface has been added for Java developers. This will allow an Artistic Style shared library (DLL)
+        to be called from a Java program. A shared library (Dll) using the Java interface can still be called from C,
+        C++, or C# programs. There is a sample program in the Developer Information.
+    </p>
+    <p>
+        <strong>Developers using Artistic Style in another project</strong> should be aware that there are two new functions
+        that have been added to the ASStreamIterator class (peekNextLine() and peekReset()). These will have to be coded
+        into source modules which use Artistic Style without astyle_main. In most cases the functions can simply be copied
+        without the template information. The assert statements may also be removed. A variable will need to be added
+        to the class and another may need to be modified. If the shared or static library configuration is being used
+        then no changes are necessary.
+    </p>
+    <p>
+        The file globing function was obtained from "The Code Project" and was written by Jack Handy. It was modified
+        slightly to make the comparisons case insensitive for Windows.
+    </p>
+    <p>
+        The OpenVMS distribution is prepared by Jim Duff, an OpenVMS Systems Specialist living in Sydney, Australia. His
+        website is eight&#8209;cubed.com.
+    </p>
+    <p>
+        Thanks to Emilio Guijarro and Jens Krinke for their contributions, and to Sam Cooler for testing the Mac OS X
+        version.
+    </p>
+    <p>
+        &nbsp;
+    </p>
+
+    <h3>Artistic Style 1.21&nbsp; (June 2007)</h3>
+
+    <p>
+        This release contains many bug fixes. Array formatting and indentation has been improved. Arrays and enums are
+        now formatted by a different procedure than functions. Brackets will now attach to lines with comments. Brackets
+        will be broken from lines with comments without bringing the comments with them. All comments will remain in their
+        original column, if possible. The formatting of empty blocks was fixed. The BracketType definition was expanded
+        and the bracket types are now correctly identified. There are several formatting fixes for Java files. See the
+        Release Notes for a complete list of changes.
+    </p>
+    <p>
+        A new option, --preserve-date (-Z), has been added. This will retain the date modified of the original file in
+        the new formatted file. Otherwise the new file will contain the current date.
+    </p>
+    <p>
+        The option --errors-to-standard-output has been shortened to --errors-to-stdout. The <strong>short</strong> options
+        -c (mode=c) and -j (mode=java) have been removed. The options should seldom be needed since the mode is now set
+        automatically from the file extension for <strong>each source file</strong> instead of for each program execution.
+        A new long option --mode=cs (C#) has been added. Key words are now set for each file depending on the file mode
+        (C, Java, or C#). This will eliminate formatting problems caused by not being able to identify the source code
+        language.
+    </p>
+    <p>
+        There has been a change to the Linux style bracket formatting for C++ header files. In the past brackets have
+        been broken for function definitions within a class. With this release the brackets will be attached. The brackets
+        will also be attached for arrays, structs, enums, and other top level objects that are not classes or functions.
+        The Linux style formatting for Java and C# has not been changed.
+    </p>
+    <p>
+        This release supports only one platform in each distribution package. In the past all platforms were included
+        in every package. If you use Artistic Style on more than one platform you will need to download packages for each
+        platform. The main difference in platforms is the build directory and the line endings. The source code and documentation
+        are the same for all packages.
+    </p>
+    <p>
+        There are new instructions about optimizing compiler options in the Install Instructions. If you are compiling
+        using a development environment you may want to read them.
+    </p>
+    <p>
+        If you have broken brackets with comments attached to the opening bracket instead of the previous line, do the
+        following <strong>before formatting</strong> again with broken brackets. Use the current Artistic Style release
+        (1.21). Format the source using attached brackets to reattach the brackets and the comments to the previous line.
+        Then format the source again using broken brackets. This will move the brackets to the next line without the comments.
+        The comments will now be on the correct line.
+    </p>
+    <p>
+        There is a new multi-platform GUI program, <strong>UniversalIndent</strong>, available at sourceforge.net/projects/universalindent.
+        It allows you to view the effects of the Artistic Style options on your source code without saving the file. You
+        can review the results of the formatting options before updating the file. It can be used with a test file or
+        with your actual source code. It supports several other formatting programs. The <strong>Artistic Style for Windows</strong>
+        program has been updated to support the current release. It is available at jimp03.zxq.net
+    </p>
+    <p>
+        There have been a few inquiries about how to customize Artistic Style for an unsupported format. Changes can be
+        made with Python or another text processing program after formatting the source, or you can modify the Artistic
+        Style source code itself. The best place to modify the code is usually in ASEnhancer.cpp. The ASEnhancer class
+        is called after the main formatting has been done so you are getting a formatted file. If you just need to change
+        the indentation of a few things this is probably the best place to do it.
+    </p>
+    <p>
+        There is now a distribution package for OpenVMS thanks to Jim Duff, an OpenVMS Systems Specialist living in Sydney
+        Australia. His website is at eight-cubed.com.
+    </p>
+    <p>
+        Thanks to Norbert Holzki and Siemens AG, Medical Solutions, Forchheim, Germany for testing the array formatting.
+    </p>
+    <p>
+        Thanks to Sam Cooler for testing the Mac OS X version.
+    </p>
+    <p>
+        &nbsp;
+    </p>
+
+    <h3>Artistic Style 1.20&nbsp; (January 2007)</h3>
+
+    <p>
+        Release 1.20.2 fixed problems with the new stream I/O procedure added in release 1.20.1. Release 1.20.1 improved
+        the processing for Mac OS X platforms. The compatibility with TextWrangler was improved. There is now a separate
+        release for Mac.
+    </p>
+    <p>
+        Artistic Style will now indent message maps for Microsoft Foundation Class (MFC) and event tables for wxWidgets.
+        The option --brackets=break-closing-headers has been shortened to --brackets=break-closing and a short option
+        added (-y). There have been short options added for --break-elseifs (-e), --indent-preprocessor (-w), --break-blocks
+        (-f), and --break-blocks=all (-F).
+    </p>
+    <p>
+        With this release the Artistic Style license changes from the GNU General Public License (GPL) to the GNU <em>Lesser</em>
+        General Public License (LGPL). You can use Artistic Style for free or commercial software without charge. Projects
+        that use Artistic Style do not have to make the their source code available. If Artistic Style itself is modified,
+        however, the modified Artistic Style source code must be made available. See the GNU Lesser General Public License
+        for more information.
+    </p>
+    <p>
+        There is a new preprocessor option to aid developers in using Artistic Style with a Graphical User Interface (GUI).
+        It is no longer necessary to remove the source module astyle_main.cpp and write embedded code to call the formatter.
+        It can be compiled as a static library or a shared library (DLL), or the entire source code can be included in
+        the project. See the Artistic Style Developer Information for the calling procedure and other details.
+    </p>
+    <p>
+        There is a sample GUI program for Windows available at http://jimp03.zxq.net/. It uses the unmodified Artistic
+        Style compiled for a GUI. The source code needs some work so it is not available for now. It should work under
+        Linux using WINE. Future enhancements and platform support will depend on the response to the sample program.
+    </p>
+    <p>
+        To support the new Artistic Style preprocessor option there are new makefiles and project files. Windows users
+        have a project file for Microsoft Visual C++ 2003 (version 7). Linux users have a new makefile that has several
+        new options. The location of both files is in the build directory. Be sure to read the "Artistic Style Install
+        Information" for the details.
+    </p>
+    <p>
+        Intel&reg; is now offering it's C++ and Fortran compilers free for non-commercial use. Information is available
+        at the Intel&reg; Software Development Products website. Click on the "Free Non-Commercial Download" link to see
+        if you qualify. The Intel Compilers on Windows and Linux require that other compilers be installed (Microsoft
+        Visual C++ or GNU gcc respectively). This is because the Intel Compilers require the header files, runtime libraries
+        and linkers distributed as part of these other compilers. If you want to use this compiler there is now a makefile
+        (makeintel) included with the project. See "Artistic Style Install Information" for instructions.
+    </p>
+    <p>
+        &nbsp;
+    </p>
+
+    <h3>Artistic Style 1.19&nbsp; (July 2006)</h3>
+
+    <p>
+        Most changes this release were again concerned with the options pad=oper and pad=paren. The formatting still worked
+        a little different if both options were declared than if only one was used. The problems with distinguishing the
+        multiplication operator from pointers, and of separating an object from the member access pointer (-&gt;) were
+        fixed.
+    </p>
+    <p>
+        A new option, unpad=paren, was added. This will undo the pad=paren, pad=paren-out and pad=paren-in options. It
+        can be used alone or with pad=paren-out or pad=paren-in. If used alone it will unpad all parens that have been
+        previously padded. If used with a paren padding option, the paren padding option will take precedence and only
+        the unnecessary padding will be removed. This will enable the paren padding to be changed in one formatting run.
+    </p>
+    <p>
+        Padding to paren headers (e.g. "if", "for", "while") was reinstated. This was done in previous releases if pad=oper
+        was used. Since most people used this option, the headers were usually padded. The general opinion was that they
+        looked better padded, especially in the case of "else if" statements. Since it is a minor point, it was not made
+        an option.
+    </p>
+    <p>
+        This is the third release of Artistic Style in the last four months. The reason for the frequent releases was
+        the number of pervasive errors in the formatting. In the future there will probably be two or three new releases
+        per year, or one every four to six months. It will take about three years to make all the changes that are planned
+        at this time.; The releases will be a combination of fixes, changes to formatting, and new features.
+    </p>
+    <p>
+        &nbsp;
+    </p>
+</body>
+
+</html>
+

@@ -473,7 +473,7 @@ namespace PluginCore.FRService
             if (!isRegex) pattern = Regex.Escape(pattern);
             if (wholeWord)
             {
-                if (pattern.StartsWith("\\$")) pattern += "\\b";
+                if (pattern.StartsWithOrdinal("\\$")) pattern += "\\b";
                 else pattern = "\\b" + pattern + "\\b";
             }
             

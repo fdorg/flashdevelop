@@ -2,6 +2,7 @@
 using flash.tools.debugger;
 using Double = java.lang.Double;
 using System.Text;
+using PluginCore;
 
 namespace FlashDebugger.Controls.DataTree
 {
@@ -53,7 +54,7 @@ namespace FlashDebugger.Controls.DataTree
                     typeStr = HideClassId ? typeStr.Before("@") : typeStr.Replace("@", " @");
 
                     // rename array
-                    if (typeStr.StartsWith("[]"))
+                    if (typeStr.StartsWithOrdinal("[]"))
                     {
                         typeStr = typeStr.Replace("[]", "Array");
                     }

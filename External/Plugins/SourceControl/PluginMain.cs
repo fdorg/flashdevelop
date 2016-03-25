@@ -123,7 +123,7 @@ namespace SourceControl
                     if (!this.ready) return;
                     DataEvent de = e as DataEvent;
                     String cmd = de.Action;
-                    if (!cmd.StartsWith("ProjectManager.")) return;
+                    if (!cmd.StartsWithOrdinal("ProjectManager.")) return;
                     switch (cmd)
                     {
                         case ProjectManagerEvents.Project:

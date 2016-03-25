@@ -80,7 +80,7 @@ namespace Mono.GetOptions
             for (int num1 = 0; num1 < textArray1.Length; num1++)
             {
                 string text1 = textArray1[num1];
-                if (text1.StartsWith("@"))
+                if (text1.StartsWith("@", StringComparison.Ordinal))
                 {
                     try
                     {
@@ -285,7 +285,7 @@ namespace Mono.GetOptions
                         text1 = null;
                     }
                     bool flag1 = false;
-                    if ((text2.Length <= 1) || (!text2.StartsWith("-") && !text2.StartsWith("/")))
+                    if ((text2.Length <= 1) || (!text2.StartsWith("-", StringComparison.Ordinal) && !text2.StartsWith("/", StringComparison.Ordinal)))
                     {
                         goto Label_00DA;
                     }

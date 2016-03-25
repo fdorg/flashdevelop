@@ -150,7 +150,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeGraphics()
         {
-            Image error = Globals.MainForm.FindImage("197");
+            Image error = Globals.MainForm.FindImage("197", false);
             if (error != null) this.pictureBox.Image = error;
         }
 

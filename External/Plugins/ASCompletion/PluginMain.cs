@@ -233,7 +233,7 @@ namespace ASCompletion
                     case EventType.SyntaxDetect:
                         // detect Actionscript language version
                         if (!doc.IsEditable) return;
-                        if (doc.FileName.ToLower().EndsWith(".as"))
+                        if (doc.FileName.ToLower().EndsWithOrdinal(".as"))
                         {
                             settingObject.LastASVersion = DetectActionscriptVersion(doc);
                             (e as TextEvent).Value = settingObject.LastASVersion;
@@ -268,7 +268,7 @@ namespace ASCompletion
                         de = e as DataEvent;
                         string command = de.Action ?? "";
 
-                        if (command.StartsWith("ASCompletion."))
+                        if (command.StartsWithOrdinal("ASCompletion."))
                         {
                             string cmdData = de.Data as string;
 
@@ -457,7 +457,7 @@ namespace ASCompletion
                                 Hashtable details = ASComplete.ResolveElement(sci, null);
                                 te.Value = ArgumentsProcessor.Process(te.Value, details);
 
-                                if (te.Value.IndexOf("$") >= 0 && reCostlyArgs.IsMatch(te.Value))
+                                if (te.Value.IndexOf('$') >= 0 && reCostlyArgs.IsMatch(te.Value))
                                 {
                                     ASResult result = ASComplete.CurrentResolvedContext.Result ?? new ASResult();
                                     details = new Hashtable();
@@ -596,6 +596,7 @@ namespace ASCompletion
             pluginDesc = TextHelper.GetString("Info.Description");
             dataPath = Path.Combine(PathHelper.DataDir, "ASCompletion");
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
+            else if (PluginBase.MainForm.RefreshConfig) CleanData(dataPath);
             settingsFile = Path.Combine(dataPath, "Settings.fdb");
             settingObject = new GeneralSettings();
             if (!File.Exists(settingsFile))
@@ -610,6 +611,14 @@ namespace ASCompletion
                 Object obj = ObjectSerializer.Deserialize(settingsFile, settingObject);
                 settingObject = (GeneralSettings)obj;
             }
+        }
+
+        /// <summary>
+        /// FD has been updated, clean some app data
+        /// </summary>
+        private void CleanData(string dataPath)
+        {
+            PathExplorer.ClearPersistentCache();
         }
 
         private void SaveSettings()
@@ -747,7 +756,6 @@ namespace ASCompletion
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Control | Keys.Enter);
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control | Keys.Alt); // complete project types
             PluginBase.MainForm.RegisterShortcutItem("Completion.ShowHelp", Keys.F1);
-            PluginBase.MainForm.RegisterShortcutItem("Completion.Delete", Keys.Back);
 
             // application events
             EventManager.AddEventHandler(this, eventMask);
@@ -782,7 +790,7 @@ namespace ASCompletion
             }
             else if (model.Version > 2) return "as3";
             else if (model.Version > 1) return "as2";
-            else if (settingObject.LastASVersion != null && settingObject.LastASVersion.StartsWith("as"))
+            else if (settingObject.LastASVersion != null && settingObject.LastASVersion.StartsWithOrdinal("as"))
             {
                 return settingObject.LastASVersion;
             }

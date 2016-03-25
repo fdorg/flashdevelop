@@ -270,7 +270,7 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                if (!key.StartsWith("Label.")) return key;
+                if (!key.StartsWithOrdinal("Label.")) return key;
                 else return TextHelper.GetString(key);
             }
             catch (Exception ex)

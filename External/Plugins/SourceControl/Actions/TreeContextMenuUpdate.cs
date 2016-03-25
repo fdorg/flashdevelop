@@ -79,7 +79,7 @@ namespace SourceControl.Actions
                 scItem.Image = PluginBase.MainForm.FindImage("480");
             }
             // add in same group as Open/Execute/Shell menu...
-            Boolean isProjectNode = tree.SelectedNodes.Count > 0 && tree.SelectedNodes[0].GetType().ToString().EndsWith("ProjectNode");
+            Boolean isProjectNode = tree.SelectedNodes.Count > 0 && tree.SelectedNodes[0].GetType().ToString().EndsWithOrdinal("ProjectNode");
             Int32 index = GetNthSeparatorIndex(tree.ContextMenuStrip, isProjectNode ? 2 : 1);
             if (index >= 0) tree.ContextMenuStrip.Items.Insert(index, scItem);
             else tree.ContextMenuStrip.Items.Add(scItem);

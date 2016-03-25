@@ -18,7 +18,7 @@
 		<menu label="Label.Modify" name="ModifyMenu" flags="Enable:IsEditable">
 			<button label="Label.Reload" click="Reload" shortcut="Control|Shift|R" flags="Enable:IsEditable|!IsUntitled" image="66" />
 			<button label="Label.Duplicate" click="Duplicate" shortcut="Control|Shift|N" flags="Enable:IsEditable" image="292" />
-			<button label="Label.Revert" click="Revert" shortcut="Control|Shift|T" flags="Enable:IsEditable|CanUndo" image="73" />
+			<button label="Label.Revert" click="Revert" shortcut="Control|Shift|M" flags="Enable:IsEditable|CanUndo" image="73" />
 		</menu>
 		<button label="Label.Open" click="Open" shortcut="Control|O" image="214" />
 		<separator />
@@ -59,7 +59,7 @@
 		<button label="Label.Print" click="Print" shortcut="Control|P" image="343" flags="Enable:IsEditable" />
 		<button label="Label.PrintPreview" click="PrintPreview" shortcut="Control|Shift|P" flags="Enable:IsEditable" />
 		<separator />
-		<button label="Label.Restart" click="Restart" flags="Enable:!MultiInstanceMode" />
+		<button label="Label.Restart" click="Restart" flags="Enable:IsOnlyInstance" />
 		<button label="Label.Exit" click="Exit" />
 	</menu>
 	<menu label="Label.Edit" name="EditMenu">
@@ -172,8 +172,8 @@
 	</menu>
 	<menu label="Label.Help" name="HelpMenu">
 		<button label="Label.ReleaseNotes" click="Browse" tag="$(AppDir)\Docs\index.html" image="222" />
-		<button label="Label.FDDocs" click="Browse" tag="http://www.flashdevelop.org/wikidocs/" image="95" />
-		<button label="Label.FDHome" click="Browse" tag="http://www.flashdevelop.org/" image="224" />
+		<button label="Label.FDDocs" click="ShowHelp" image="95" />
+		<button label="Label.FDHome" click="ShowHome" image="224" />
 		<button label="Label.CheckUpdates" click="CheckUpdates" image="181|8|0|4" />
 		<separator />
 		<menu label="Label.TechnicalSpecifications" name="TechSpecsMenu">

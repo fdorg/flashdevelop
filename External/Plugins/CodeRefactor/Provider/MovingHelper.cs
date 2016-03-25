@@ -9,8 +9,8 @@ namespace CodeRefactor.Provider
 {
     class MovingHelper
     {
-        private static List<QueueItem> queue = new List<QueueItem>();
-        private static Dictionary<string, List<SearchMatch>> results = new Dictionary<string, List<SearchMatch>>();
+        private static readonly List<QueueItem> queue = new List<QueueItem>();
+        private static readonly Dictionary<string, List<SearchMatch>> results = new Dictionary<string, List<SearchMatch>>();
         private static Move currentCommand;
 
         public static void AddToQueue(Dictionary<string, string> oldPathToNewPath)
@@ -25,7 +25,12 @@ namespace CodeRefactor.Provider
 
         public static void AddToQueue(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming)
         {
-            queue.Add(new QueueItem(oldPathToNewPath, outputResults, renaming));
+            AddToQueue(oldPathToNewPath, outputResults, renaming, false);
+        }
+
+        public static void AddToQueue(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming, bool updatePackages)
+        {
+            queue.Add(new QueueItem(oldPathToNewPath, outputResults, renaming, updatePackages));
             if (currentCommand == null) ExecuteFirst();
         }
 
@@ -34,9 +39,8 @@ namespace CodeRefactor.Provider
             try
             {
                 QueueItem item = queue[0];
-                Dictionary<string, string> oldPathToNewPath = item.oldPathToNewPath;
                 queue.Remove(item);
-                currentCommand = new Move(oldPathToNewPath, item.outputResults, item.renaming);
+                currentCommand = new Move(item.OldPathToNewPath, item.OutputResults, item.Renaming, item.UpdatePackages);
                 currentCommand.OnRefactorComplete += OnRefactorComplete;
                 currentCommand.Execute();
             }
@@ -106,15 +110,17 @@ namespace CodeRefactor.Provider
 
     internal class QueueItem
     {
-        public Dictionary<string, string> oldPathToNewPath;
-        public bool outputResults;
-        public bool renaming;
+        public Dictionary<string, string> OldPathToNewPath;
+        public bool OutputResults;
+        public bool Renaming;
+        public readonly bool UpdatePackages;
 
-        public QueueItem(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming)
+        public QueueItem(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming, bool updatePackages)
         {
-            this.oldPathToNewPath = oldPathToNewPath;
-            this.outputResults = outputResults;
-            this.renaming = renaming;
+            OldPathToNewPath = oldPathToNewPath;
+            OutputResults = outputResults;
+            Renaming = renaming;
+            UpdatePackages = updatePackages;
         }
     }
 

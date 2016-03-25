@@ -186,7 +186,7 @@ namespace XMLCompletion
                             temp = "";
                             foreach (String attribute in attributes)
                             {
-                                if (attribute.StartsWith("@"))
+                                if (attribute.StartsWith('@'))
                                 {
                                     if (groups.ContainsKey(attribute))
                                         temp += "," + groups[attribute];
@@ -273,7 +273,7 @@ namespace XMLCompletion
                     if (Control.ModifierKeys == Keys.Shift)
                     {
                         ctag = GetXMLContextTag(sci, position);
-                        if (ctag.Tag == null || ctag.Tag.EndsWith(">"))
+                        if (ctag.Tag == null || ctag.Tag.EndsWith('>'))
                         {
                             int start = sci.PositionFromLine(line)-((sci.EOLMode == 0)? 2:1);
                             sci.SetSel(start, position);
@@ -293,7 +293,7 @@ namespace XMLCompletion
                             text = sci.GetLine(line2).TrimEnd();
                             line2--;
                         }
-                        if ((text.EndsWith(">") && !text.EndsWith("?>") && !text.EndsWith("%>")) || text.EndsWith("<!--") || text.EndsWith("<![CDATA["))
+                        if ((text.EndsWith('>') && !text.EndsWithOrdinal("?>") && !text.EndsWithOrdinal("%>")) || text.EndsWithOrdinal("<!--") || text.EndsWithOrdinal("<![CDATA["))
                         {
                             // Get the previous tag.
                             do
@@ -308,8 +308,8 @@ namespace XMLCompletion
 
                             String checkStart = null;
                             bool subIndent = true;
-                            if (text.EndsWith("<!--")) { checkStart = "-->"; subIndent = false; }
-                            else if (text.EndsWith("<![CDATA[")) { checkStart = "]]>"; subIndent = false; }
+                            if (text.EndsWithOrdinal("<!--")) { checkStart = "-->"; subIndent = false; }
+                            else if (text.EndsWithOrdinal("<![CDATA[")) { checkStart = "]]>"; subIndent = false; }
                             else if (ctag.Closed || ctag.Closing)
                             {
                                 //Closed tag. Look for the nearest open and not closed tag for proper indentation
@@ -368,7 +368,7 @@ namespace XMLCompletion
                                 if (checkStart != null)
                                 {
                                     text = sci.GetLine(line).TrimStart();
-                                    if (text.StartsWith(checkStart))
+                                    if (text.StartsWithOrdinal(checkStart))
                                     {
                                         sci.SetLineIndentation(line, indent);
                                         sci.InsertText(sci.PositionFromLine(line), LineEndDetector.GetNewLineMarker(sci.EOLMode));
@@ -383,14 +383,14 @@ namespace XMLCompletion
                             finally { sci.EndUndoAction(); }
                             return;
                         }
-                        else if (!text.EndsWith(">"))
+                        else if (!text.EndsWith('>'))
                         {
                             ctag = GetXMLContextTag(sci, sci.CurrentPos);
                             if (ctag.Tag == null || ctag.Name == null) return;
                             // We're inside a tag. Visual Studio indents with regards to the first line, other IDEs indent using the indentation of the last line with text.
                             int indent;
                             string tag = (ctag.Tag.IndexOf('\r') > 0 || ctag.Tag.IndexOf('\n') > 0) ? ctag.Tag.Substring(0, ctag.Tag.IndexOfAny(new[] {'\r', '\n'})).TrimEnd() : ctag.Tag.TrimEnd();
-                            if (tag.EndsWith("\""))
+                            if (tag.EndsWith('\"'))
                             {
                                 int i;
                                 int l = tag.Length;
@@ -579,7 +579,7 @@ namespace XMLCompletion
 
                 case '"':
                     ctag = GetXMLContextTag(sci, position);
-                    if (position > 1 && ctag.Tag != null && !ctag.Tag.StartsWith("<!"))
+                    if (position > 1 && ctag.Tag != null && !ctag.Tag.StartsWithOrdinal("<!"))
                     {
                         // TODO  Colorize text change to highlight what's been done
                         if (justInsertedQuotesAt == position - 1)
@@ -612,7 +612,7 @@ namespace XMLCompletion
                     if (PluginSettings.CloseTags && position > 1)
                     {
                         ctag = GetXMLContextTag(sci, position-2);
-                        if (ctag.Tag == null || ctag.Tag.EndsWith(">"))
+                        if (ctag.Tag == null || ctag.Tag.EndsWith('>'))
                         {
                             if ((Char)sci.CharAt(position-2) == '<')
                             {
@@ -627,7 +627,7 @@ namespace XMLCompletion
                     if (PluginSettings.CloseTags && position > 1)
                     {
                         ctag = GetXMLContextTag(sci, position-2);
-                        if (ctag.Tag == null || ctag.Tag.EndsWith(">"))
+                        if (ctag.Tag == null || ctag.Tag.EndsWith('>'))
                         {
                             if ((Char)sci.CharAt(position-2) == '<')
                             {
@@ -661,12 +661,12 @@ namespace XMLCompletion
                     }
                     else return false;
                 }
-                else if (ctag.Tag.EndsWith(">"))
+                else if (ctag.Tag.EndsWith('>'))
                 {
                     return false;
                 }
                 // Closing tag
-                else if (ctag.Tag.StartsWith("</") && (ctag.Tag.IndexOf(' ') < 0))
+                else if (ctag.Tag.StartsWithOrdinal("</") && (ctag.Tag.IndexOf(' ') < 0))
                 {
                     ctag.Name = ctag.Tag.Substring(2);
                     ctag.Tag = "<"+ctag.Name;
@@ -776,8 +776,8 @@ namespace XMLCompletion
                 
                 if (c == '<')
                 {
-                    if ((inComment && !tag.StartsWith("<!--"))
-                        || (inCDATA && !tag.StartsWith("<![CDATA[")))
+                    if ((inComment && !tag.StartsWithOrdinal("<!--"))
+                        || (inCDATA && !tag.StartsWithOrdinal("<![CDATA[")))
                         continue;
                     break;
                 }
@@ -801,21 +801,21 @@ namespace XMLCompletion
             {
                 xtag.Name = mTag.Groups["name"].Value;
                 xtag.Closing = tag[1] == '/';
-                xtag.Closed = tag.EndsWith("/>") || tag.EndsWith("-->");
+                xtag.Closed = tag.EndsWithOrdinal("/>") || tag.EndsWithOrdinal("-->");
                 if (xtag.Name.IndexOf(':') > 0)
                 {
                     xtag.NameSpace = xtag.Name.Substring(0, xtag.Name.IndexOf(':'));
                 }
             }
-            else if (tag.StartsWith("<!--"))
+            else if (tag.StartsWithOrdinal("<!--"))
             {
                 xtag.Name = "!--";
-                xtag.Closed = tag.EndsWith("-->");
+                xtag.Closed = tag.EndsWithOrdinal("-->");
             }
-            else if (tag.StartsWith("<![CDATA["))
+            else if (tag.StartsWithOrdinal("<![CDATA["))
             {
                 xtag.Name = "![CDATA[";
-                xtag.Closed = tag.EndsWith("]]>");
+                xtag.Closed = tag.EndsWithOrdinal("]]>");
             }
             return xtag;
         }

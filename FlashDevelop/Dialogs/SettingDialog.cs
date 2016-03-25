@@ -259,11 +259,11 @@ namespace FlashDevelop.Dialogs
         {
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
-            imageList.Images.Add(Globals.MainForm.FindImage("341"));
-            imageList.Images.Add(Globals.MainForm.FindImage("342"));
-            imageList.Images.Add(Globals.MainForm.FindImage("50"));
-            imageList.Images.Add(Globals.MainForm.FindImage("153")); // clear
-            this.infoPictureBox.Image = Globals.MainForm.FindImage("229");
+            imageList.Images.Add(Globals.MainForm.FindImage("341", false));
+            imageList.Images.Add(Globals.MainForm.FindImage("342", false));
+            imageList.Images.Add(Globals.MainForm.FindImage("50", false));
+            imageList.Images.Add(Globals.MainForm.FindImage("153", false)); // clear
+            this.infoPictureBox.Image = Globals.MainForm.FindImage("229", false);
             this.itemListView.SmallImageList = imageList;
             this.itemListView.SmallImageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             this.clearFilterButton.ImageList = imageList;
@@ -484,7 +484,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public Boolean PartialName(MemberInfo candidate, Object part)
         {
-            if (candidate.Name.IndexOf(part.ToString()) > -1) return true;
+            if (candidate.Name.IndexOfOrdinal(part.ToString()) > -1) return true;
             else return false;
         }
 
@@ -547,7 +547,7 @@ namespace FlashDevelop.Dialogs
         }
 
         /// <summary>
-        /// Restore the selected index - only if a item id hasn't been provided
+        /// Restore the selected index - only if an item id hasn't been provided
         /// </summary>
         private void DialogShown(Object sender, EventArgs e)
         {
@@ -556,6 +556,7 @@ namespace FlashDevelop.Dialogs
                 this.itemListView.SelectedIndices.Add(lastItemIndex);
                 this.itemListView.EnsureVisible(lastItemIndex);
             }
+            this.filterText.Focus();
         }
 
         /// <summary>

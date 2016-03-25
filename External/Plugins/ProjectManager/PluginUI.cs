@@ -10,6 +10,7 @@ using ProjectManager.Projects;
 using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Managers;
+using PluginCore.Controls;
 
 namespace ProjectManager
 {
@@ -18,7 +19,6 @@ namespace ProjectManager
         public FDMenus menus;
         TreeBar treeBar;
         Project project;
-        PluginMain plugin;
         LinkLabel help;
         ProjectTreeView tree;
         ProjectContextMenu menu;
@@ -32,7 +32,6 @@ namespace ProjectManager
         public PluginUI(PluginMain plugin, FDMenus menus, FileActions fileActions, ProjectActions projectActions)
         {
             this.menus = menus;
-            this.plugin = plugin;
             this.AutoKeyHandling = true;
             this.Text = TextHelper.GetString("Title.PluginPanel");
             
@@ -64,6 +63,7 @@ namespace ProjectManager
             panel.Controls.Add(treeBar);
 
             menu.ProjectTree = tree;
+            ScrollBarEx.Attach(tree);
 
             #endregion
 
@@ -129,7 +129,6 @@ namespace ProjectManager
             List<Project> projects = tree.Projects;
             projects.Clear(); // only one project active
             if (project != null) projects.Add(project);
-            else projects.Clear();
             tree.Projects = projects;
             tree.Project = project;
             tree_AfterSelect(tree, null);
@@ -218,12 +217,47 @@ namespace ProjectManager
         /// </summary>
         private void tree_AfterLabelEdit(Object sender, NodeLabelEditEventArgs e)
         {
+            string languageDisplayName = "(" + project.LanguageDisplayName + ")";
             if (!string.IsNullOrEmpty(e.Label) && Rename != null)
             {
-                if (!Rename((e.Node as GenericNode).BackingPath, e.Label))
+                if (e.Node is ProjectNode)
+                {
+                    var oldName = project.ProjectPath;
+                    string label = e.Label;
+                    int index = label.IndexOf(languageDisplayName);
+                    if (index != -1) label = label.Remove(index).Trim();
+                    string newName = string.Empty;
+                    try
+                    {
+                        newName = Path.Combine(project.Directory, label);
+                        newName = Path.ChangeExtension(newName, Path.GetExtension(oldName));
+                    }
+                    catch (Exception)
+                    {
+                        e.CancelEdit = true;
+                        isEditingLabel = false;
+                        return;
+                    }
+                    if (Rename(oldName, newName))
+                    {
+                        PluginBase.MainForm.OpenEditableDocument(newName);
+                        try
+                        {
+                            File.Delete(oldName);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+                    else e.CancelEdit = true;
+                }
+                else if (!Rename(((GenericNode) e.Node).BackingPath, e.Label))
                     e.CancelEdit = true;
             }
             else e.CancelEdit = true;
+            if (e.Node is ProjectNode && !e.Node.Text.Contains(languageDisplayName))
+                e.Node.Text += " " + languageDisplayName;
             isEditingLabel = false;
         }
 
@@ -264,6 +298,12 @@ namespace ProjectManager
         /// </summary>
         private void RenameNode(Object sender, EventArgs e)
         {
+            if (tree.SelectedNode is ProjectNode)
+            {
+                string label = tree.SelectedNode.Text;
+                int index = label.IndexOf("(" + project.LanguageDisplayName + ")");
+                if (index != -1) tree.SelectedNode.Text = label.Remove(index).Trim();
+            }
             tree.ForceLabelEdit();
         }
 

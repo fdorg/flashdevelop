@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using PluginCore;
 
 namespace ASCompletion.Model
 {
@@ -234,8 +235,8 @@ namespace ASCompletion.Model
 
                 if (type.Substring(0, p) == "Array")
                     return type.Substring(0, p) + bbCodeOpen + "/*" + type.Substring(p + 1) + "*/" + bbCodeClose;
-                else if (type.IndexOf("<T>") > 0)
-                    return type.Substring(0, type.IndexOf("<T>")) + bbCodeOpen + "<" + type.Substring(p + 1) + ">" + bbCodeClose;
+                else if (type.IndexOfOrdinal("<T>") > 0)
+                    return type.Substring(0, type.IndexOfOrdinal("<T>")) + bbCodeOpen + "<" + type.Substring(p + 1) + ">" + bbCodeClose;
                 else
                     return bbCodeOpen + "/*" + type.Substring(p + 1) + "*/" + bbCodeClose + type.Substring(0, p);
             }
