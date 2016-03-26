@@ -1,5 +1,9 @@
 ### DimGray.fdi
 
+# FD UI THEME (5.2+)
+
+#ScrollBar.UseGlobally=True
+
 # FD UI THEME (5.1+)
 
 # System, Professional

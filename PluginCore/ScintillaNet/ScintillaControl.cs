@@ -2475,8 +2475,7 @@ namespace ScintillaNet
             bool wholeLine = SelectionStart == SelectionEnd;
             int selectionLength = SelectionEnd - SelectionStart;
             SelectionDuplicate();
-            if (wholeLine)
-                LineDown();
+            if (wholeLine) LineDown();
             else
             {
                 SelectionStart += selectionLength;

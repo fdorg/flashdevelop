@@ -6010,4 +6010,8 @@
     <value>Connection failed. Default socket port '{0}' is already in use.</value>
     <comment>Added after 5.1.0</comment>
   </data>
+  <data name="FlashDevelop.Description.KeepCaretCentered" xml:space="preserve">
+    <value>Keeps the caret centered when caret is navigated to.</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
 </root>

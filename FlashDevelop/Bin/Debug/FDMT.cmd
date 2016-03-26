@@ -1,4 +1,3 @@
-:init
 @echo off
 cd /d %~dp0
 echo FlashDevelop Maintenance Tool - v1.0.0
@@ -47,4 +46,3 @@ goto :menu
 
 :end
 exit 0
-

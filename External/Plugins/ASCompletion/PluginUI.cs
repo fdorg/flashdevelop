@@ -18,6 +18,7 @@ using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
+using PluginCore.Controls;
 
 namespace ASCompletion
 {
@@ -138,6 +139,7 @@ namespace ASCompletion
             outlineTree.ShowNodeToolTips = true;
             Controls.Add(outlineTree);
             outlineTree.BringToFront();
+            ScrollBarEx.Attach(outlineTree);
         }
 
         private void TreeIcons_Populate(object sender, EventArgs e)

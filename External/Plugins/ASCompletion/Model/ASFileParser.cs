@@ -1081,7 +1081,7 @@ namespace ASCompletion.Model
                         else if (valueError && c1 == ')') inValue = false;
                         else if (inType && inGeneric && (c1 == '<' || c1 == '.')) continue;
                         else if (inAnonType) continue;
-                        hadWS = true;
+                        else if (c1 != '_') hadWS = true;
                     }
                 }
 
@@ -1223,7 +1223,7 @@ namespace ASCompletion.Model
                             {
                                 if (!inValue && i > 2 && length > 1 && i < len - 3
                                     && char.IsLetterOrDigit(ba[i - 3]) && (char.IsLetter(ba[i]) || (haXe && ba[i] == '{'))
-                                    && (char.IsLetter(buffer[0]) || buffer[0] == '_'))
+                                    && (char.IsLetter(buffer[0]) || buffer[0] == '_' || inType && buffer[0] == '('))
                                 {
                                     if (curMember == null)
                                     {
@@ -1266,7 +1266,7 @@ namespace ASCompletion.Model
                                 if (!inValue)
                                 {
                                     addChar = true;
-                                    if (c1 == '>' && inGeneric)
+                                    if (c1 == '>')
                                     {
                                         if (paramTempCount > 0) paramTempCount--;
                                         if (paramTempCount == 0 && paramBraceCount == 0
@@ -1280,7 +1280,14 @@ namespace ASCompletion.Model
                                 {
                                     paramParCount--;
                                     addChar = true;
-                                }// else inType = false, error? it may depend on the context
+                                }
+                                else if (paramParCount == 0 && paramTempCount == 0 && paramBraceCount == 0
+                                    && paramSqCount == 0)
+                                {
+                                    inType = false;
+                                    shortcut = false;
+                                    evalToken = 1;
+                                }
                             }
                             else if (c1 == '(' && haXe && inType)
                             {
