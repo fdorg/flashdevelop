@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using FlashDevelop.Dialogs;
 using FlashDevelop.Utilities;
 using PluginCore;
 using ScintillaNet.Configuration;
@@ -148,6 +149,7 @@ namespace FlashDevelop
 
         public string GetThemeValue(string id)
         {
+            if (id == "ScrollBar.UseCustom") return string.Empty;
             throw new NotImplementedException();
         }
 
