@@ -137,7 +137,14 @@ namespace PluginCore.Controls
 
                 case EventType.Command:
                     string cmd = (e as DataEvent).Action;
-                    if (cmd.StartsWithOrdinal("ProjectManager") || cmd.IndexOfOrdinal("Changed") > 0 || cmd.IndexOfOrdinal("Context") > 0)
+                    if (cmd.IndexOfOrdinal("ProjectManager") > 0
+                        || cmd.IndexOfOrdinal("Changed") > 0
+                        || cmd.IndexOfOrdinal("Context") > 0
+                        || cmd.IndexOfOrdinal("ClassPath") > 0
+                        || cmd.IndexOfOrdinal("Watcher") > 0
+                        || cmd.IndexOfOrdinal("Get") > 0
+                        || cmd.IndexOfOrdinal("Set") > 0
+                        || cmd.IndexOfOrdinal("SDK") > 0)
                         return; // ignore notifications
                     break;
             }
@@ -288,6 +295,12 @@ namespace PluginCore.Controls
 
         private void OnUIRefresh(ScintillaControl sci)
         {
+            Form mainForm = PluginBase.MainForm as Form;
+            if (mainForm.InvokeRequired)
+            {
+                mainForm.BeginInvoke((MethodInvoker)delegate { this.OnUIRefresh(sci); });
+                return;
+            }
             if (sci != null && sci.IsFocus)
             {
                 int position = sci.CurrentPos;

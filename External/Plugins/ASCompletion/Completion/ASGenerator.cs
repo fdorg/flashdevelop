@@ -2749,18 +2749,15 @@ namespace ASCompletion.Completion
             info["constructorArgTypes"] = constructorArgTypes;
             DataEvent de = new DataEvent(EventType.Command, "ProjectManager.CreateNewFile", info);
             EventManager.DispatchEvent(null, de);
-            if (de.Handled) return;
         }
 
         public static void GenerateExtractVariable(ScintillaControl Sci, string NewName)
         {
-            FileModel cFile;
-
             string expression = Sci.SelText.Trim(new char[] { '=', ' ', '\t', '\n', '\r', ';', '.' });
             expression = expression.TrimEnd(new char[] { '(', '[', '{', '<' });
             expression = expression.TrimStart(new char[] { ')', ']', '}', '>' });
 
-            cFile = ASContext.Context.CurrentModel;
+            var cFile = ASContext.Context.CurrentModel;
             ASFileParser parser = new ASFileParser();
             parser.ParseSrc(cFile, Sci.Text);
 
@@ -2771,18 +2768,18 @@ namespace ASCompletion.Completion
             int funcBodyStart = GetBodyStart(current.LineFrom, current.LineTo, Sci);
             Sci.SetSel(funcBodyStart, Sci.LineEndPosition(current.LineTo));
             string currentMethodBody = Sci.SelText;
+            var insertPosition = funcBodyStart + currentMethodBody.IndexOfOrdinal(expression);
+            var line = Sci.LineFromPosition(insertPosition);
+            insertPosition = Sci.LineIndentPosition(line);
 
-            bool isExprInSingleQuotes = (expression.StartsWith('\'') && expression.EndsWith('\''));
-            bool isExprInDoubleQuotes = (expression.StartsWith('\"') && expression.EndsWith('\"'));
-            int stylemask = (1 << Sci.StyleBits) - 1;
             int lastPos = -1;
-            char prevOrNextChar;
             Sci.Colourise(0, -1);
             while (true)
             {
                 lastPos = currentMethodBody.IndexOfOrdinal(expression, lastPos + 1);
                 if (lastPos > -1)
                 {
+                    char prevOrNextChar;
                     if (lastPos > 0)
                     {
                         prevOrNextChar = currentMethodBody[lastPos - 1];
@@ -2800,22 +2797,10 @@ namespace ASCompletion.Completion
                         }
                     }
 
-                    int style = Sci.StyleAt(funcBodyStart + lastPos) & stylemask;
-                    if (ASComplete.IsCommentStyle(style))
-                    {
-                        continue;
-                    }
-                    else if ((isExprInDoubleQuotes && currentMethodBody[lastPos] == '"' && currentMethodBody[lastPos + expression.Length - 1] == '"')
-                        || (isExprInSingleQuotes && currentMethodBody[lastPos] == '\'' && currentMethodBody[lastPos + expression.Length - 1] == '\''))
-                    {
-
-                    }
-                    else if (!ASComplete.IsTextStyle(style))
-                    {
-                        continue;
-                    }
-
-                    Sci.SetSel(funcBodyStart + lastPos, funcBodyStart + lastPos + expression.Length);
+                    var pos = funcBodyStart + lastPos;
+                    int style = Sci.BaseStyleAt(pos);
+                    if (ASComplete.IsCommentStyle(style)) continue;
+                    Sci.SetSel(pos, pos + expression.Length);
                     Sci.ReplaceSel(NewName);
                     currentMethodBody = currentMethodBody.Substring(0, lastPos) + NewName + currentMethodBody.Substring(lastPos + expression.Length);
                     lastPos += NewName.Length;
@@ -2825,8 +2810,7 @@ namespace ASCompletion.Completion
                     break;
                 }
             }
-
-            Sci.CurrentPos = funcBodyStart;
+            Sci.CurrentPos = insertPosition;
             Sci.SetSel(Sci.CurrentPos, Sci.CurrentPos);
 
             MemberModel m = new MemberModel(NewName, "", FlagType.LocalVar, 0);
