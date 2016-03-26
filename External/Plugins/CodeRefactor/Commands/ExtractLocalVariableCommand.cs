@@ -73,7 +73,7 @@ namespace CodeRefactor.Commands
 
         public CompletionListItem(List<SearchMatch> matches, ScintillaControl sci, EventHandler onClick)
         {
-            if (matches == null)
+            if (matches.Count == 1)
             {
                 Text = "Replace one occurrence";
                 description = "Replace initial expression only.";
