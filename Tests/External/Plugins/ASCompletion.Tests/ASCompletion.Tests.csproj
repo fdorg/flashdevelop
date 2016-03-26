@@ -178,6 +178,8 @@
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeExtractLocalVariable_fromString.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterExtractLocalVariable_inSinglelineMethod.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeExtractLocalVariable_inSinglelineMethod.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterExtractLocalVariable_forCheckingThePositionOfNewVar.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeExtractLocalVariable_forCheckingThePositionOfNewVar.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

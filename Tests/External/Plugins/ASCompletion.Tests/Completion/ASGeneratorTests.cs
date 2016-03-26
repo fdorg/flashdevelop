@@ -684,6 +684,22 @@ namespace ASCompletion.Completion
                                     TestFile.ReadAllText(
                                         "ASCompletion.Test_Files.generated.as3.AfterExtractLocalVariable_fromNumber.as"))
                                 .SetName("ExtractLocaleVariable from Number");
+
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeExtractLocalVariable_forCheckingThePositionOfNewVar.as"),
+                                    new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
+                                    {
+                                        LineFrom = 4,
+                                        LineTo = 10
+                                    },
+                                    "newVar"
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterExtractLocalVariable_forCheckingThePositionOfNewVar.as"))
+                                .SetName("ExtractLocaleVariable with checking the position of a new variable");
                     }
                 }
 
