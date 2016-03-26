@@ -29,32 +29,34 @@ namespace CodeRefactor.Commands
             var currentMember = fileModel.Context.CurrentMember;
             var lineFrom = currentMember.LineFrom;
             var lineTo = currentMember.LineTo;
-            var currentLine = sci.CurrentLine + 1;
-            mathes.RemoveAll(it => it.Line < lineFrom || it.Line > lineTo || it.Line == currentLine);
-            var list = new List<ICompletionListItem> {new CompletionListItem(sci, OnItemClick)};
+            mathes.RemoveAll(it => it.Line < lineFrom || it.Line > lineTo);
+            var target = mathes.FindAll(it => sci.MBSafePosition(it.Index) == sci.SelectionStart);
+            var list = new List<ICompletionListItem> {new CompletionListItem(target, sci, OnItemClick)};
             if (mathes.Count > 1) list.Insert(0, new CompletionListItem(mathes, sci, OnItemClick));
             sci.DisableAllSciEvents = true;
-            CompletionList.Show(list, false);
+            CompletionList.Show(list, true);
         }
 
         static void OnItemClick(object sender, EventArgs e)
         {
-            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            sci.DisableAllSciEvents = false;
             var newName = "newVar";
             var label = TextHelper.GetString("Label.NewName");
             var title = TextHelper.GetString("Title.ExtractLocalVariableDialog");
             var askName = new LineEntryDialog(title, label, newName);
             var choice = askName.ShowDialog();
-            if (choice != DialogResult.OK) return;
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (choice != DialogResult.OK)
+            {
+                sci.DisableAllSciEvents = false;
+                return;
+            }
+            sci.DisableAllSciEvents = false;
             var name = askName.Line.Trim();
             if (name.Length > 0 && name != newName) newName = name;
             sci.BeginUndoAction();
             try
             {
-                //var item = (CompletionListItem) sender;
-                //RefactoringHelper.ReplaceMatches(item.Matches, sci, newName);
-                ASGenerator.GenerateExtractVariable(sci, newName);
+                ASGenerator.GenerateExtractVariable(sci, newName, ((CompletionListItem) sender).Matches);
             }
             finally
             {
@@ -69,9 +71,6 @@ namespace CodeRefactor.Commands
         public readonly List<SearchMatch> Matches;
         public readonly ScintillaControl Sci;
 
-        public CompletionListItem(ScintillaControl sci, EventHandler onClick) : this(null, sci, onClick)
-        {
-        }
         public CompletionListItem(List<SearchMatch> matches, ScintillaControl sci, EventHandler onClick)
         {
             if (matches == null)
@@ -99,7 +98,7 @@ namespace CodeRefactor.Commands
             {
                 RemoveHighlights();
                 PerformClick();
-                return string.Empty;
+                return null;
             }
         }
 
