@@ -1,18 +1,15 @@
 using System;
-using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using PluginCore.Localization;
 using FlashDevelop.Utilities;
-using FlashDevelop.Helpers;
 using PluginCore.FRService;
 using PluginCore.Managers;
 using PluginCore.Controls;
 using PluginCore.Helpers;
 using ScintillaNet;
-using PluginCore;
 
 namespace FlashDevelop.Dialogs
 {
@@ -553,7 +550,8 @@ namespace FlashDevelop.Dialogs
             if (Globals.SciControl == null) return;
             ScintillaControl sci = Globals.SciControl;
             List<SearchMatch> matches = this.GetResults(sci);
-            if (matches != null && this.lookComboBox.SelectedIndex == 1 && sci.SelText.Length > 0)
+            Boolean selectionOnly = this.lookComboBox.SelectedIndex == 1 && sci.SelText.Length > 0;
+            if (matches != null && selectionOnly)
             {
                 Int32 end = sci.MBSafeCharPosition(sci.SelectionEnd);
                 Int32 start = sci.MBSafeCharPosition(sci.SelectionStart);
@@ -566,11 +564,13 @@ namespace FlashDevelop.Dialogs
                 {
                     for (Int32 i = 0; i < matches.Count; i++)
                     {
-                        FRDialogGenerics.SelectMatch(sci, matches[i]);
+                        if (!selectionOnly) FRDialogGenerics.SelectMatch(sci, matches[i]);
+                        else FRDialogGenerics.SelectMatchInTarget(sci, matches[i]);
                         String replaceWith = this.GetReplaceText(matches[i]);
                         FRSearch.PadIndexes(matches, i, matches[i].Value, replaceWith);
                         sci.EnsureVisible(sci.CurrentLine);
-                        sci.ReplaceSel(replaceWith);
+                        if (!selectionOnly) sci.ReplaceSel(replaceWith);
+                        else sci.ReplaceTarget(matches[i].Length, replaceWith);
                     }
                 }
                 finally
