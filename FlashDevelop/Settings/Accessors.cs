@@ -216,6 +216,16 @@ namespace FlashDevelop.Settings
             set { this.caretLineVisible = value; }
         }
 
+        [DefaultValue(false)]
+        [DisplayName("Keep Caret Centered")]
+        [LocalizedCategory("FlashDevelop.Category.Editor")]
+        [LocalizedDescription("FlashDevelop.Description.KeepCaretCentered")]
+        public Boolean KeepCaretCentered
+        {
+            get { return this.keepCaretCentered; }
+            set { this.keepCaretCentered = value; }
+        }
+
         [DefaultValue(true)]
         [DisplayName("Disable Highlight Guide")]
         [LocalizedCategory("FlashDevelop.Category.Editor")]

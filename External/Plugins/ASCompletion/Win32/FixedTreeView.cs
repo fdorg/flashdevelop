@@ -5,7 +5,7 @@
  * - extends StateSavingTreeView
  */
 using PluginCore;
-using System.Runtime.InteropServices;
+using System.Drawing;
 
 namespace System.Windows.Forms
 {
@@ -132,6 +132,17 @@ namespace System.Windows.Forms
                 e.Graphics.ReleaseHdc(m.WParam);
             }
             base.OnPaint(e);
+        }
+
+        protected override void WndProc(ref Message message)
+        {
+            switch (message.Msg)
+            {
+                case 0xf: // WM_PAINT
+                    OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));
+                    break;
+            }
+            base.WndProc(ref message);
         }
 
     }

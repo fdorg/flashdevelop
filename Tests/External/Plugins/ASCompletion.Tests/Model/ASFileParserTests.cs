@@ -1591,6 +1591,97 @@ namespace ASCompletion.Model
                 }
             }
 
+            [Test(Description = "Issue 1125")]
+            public void ParseFile_FunctionTypesAsArguments()
+            {
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.FunctionTypesAsArgumentsTest.hx"))
+                {
+                    var srcModel = new FileModel(resourceFile.DestinationFile);
+                    srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                    var model = ASFileParser.ParseFile(srcModel);
+                    var classModel = model.Classes[0];
+                    Assert.AreEqual("Test", classModel.Name);
+                    Assert.AreEqual(FlagType.Class, classModel.Flags & FlagType.Class);
+                    Assert.AreEqual(2, classModel.LineFrom);
+                    Assert.AreEqual(15, classModel.LineTo);
+                    Assert.AreEqual(3, classModel.Members.Count);
+
+                    var memberModel = classModel.Members[0];
+                    Assert.AreEqual("func1", memberModel.Name);
+                    Assert.AreEqual("Array<Dynamic>", memberModel.Type);
+                    var flags = FlagType.Function;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Private, memberModel.Access);
+                    Assert.AreEqual(4, memberModel.LineFrom);
+                    Assert.AreEqual(6, memberModel.LineTo);
+                    Assert.AreEqual(1, memberModel.Parameters.Count);
+                    Assert.AreEqual("arg", memberModel.Parameters[0].Name);
+                    Assert.AreEqual("(Float->Int)->(Int->Array<Dynamic>)", memberModel.Parameters[0].Type);
+
+                    memberModel = classModel.Members[1];
+                    Assert.AreEqual("func2", memberModel.Name);
+                    Assert.AreEqual(null, memberModel.Type);
+                    flags = FlagType.Function;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Public, memberModel.Access);
+                    Assert.AreEqual(8, memberModel.LineFrom);
+                    Assert.AreEqual(10, memberModel.LineTo);
+                    Assert.AreEqual(2, memberModel.Parameters.Count);
+                    Assert.AreEqual("arg1", memberModel.Parameters[0].Name);
+                    Assert.AreEqual("Int->Void", memberModel.Parameters[0].Type);
+                    Assert.AreEqual("arg2", memberModel.Parameters[1].Name);
+                    Assert.AreEqual("Dynamic", memberModel.Parameters[1].Type);
+
+                    memberModel = classModel.Members[2];
+                    Assert.AreEqual("func3", memberModel.Name);
+                    Assert.AreEqual("Int", memberModel.Type);
+                    flags = FlagType.Function;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Private, memberModel.Access);
+                    Assert.AreEqual(12, memberModel.LineFrom);
+                    Assert.AreEqual(14, memberModel.LineTo);
+                    Assert.AreEqual(1, memberModel.Parameters.Count);
+                    Assert.AreEqual("arg", memberModel.Parameters[0].Name);
+                    Assert.AreEqual("Float", memberModel.Parameters[0].Type);
+                }
+            }
+
+            [Test(Description = "Issue 1141")]
+            public void ParseFile_KeywordAndUnderscoreInName()
+            {
+                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.KeywordAndUnderscoreInNameTest.hx"))
+                {
+                    var srcModel = new FileModel(resourceFile.DestinationFile);
+                    srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                    var model = ASFileParser.ParseFile(srcModel);
+                    var classModel = model.Classes[0];
+                    Assert.AreEqual(1, model.Classes.Count);
+                    Assert.AreEqual("Test", classModel.Name);
+                    Assert.AreEqual(FlagType.Class, classModel.Flags & FlagType.Class);
+                    Assert.AreEqual(2, classModel.LineFrom);
+                    Assert.AreEqual(6, classModel.LineTo);
+                    Assert.AreEqual(2, classModel.Members.Count);
+
+                    var memberModel = classModel.Members[0];
+                    Assert.AreEqual("var_1244", memberModel.Name);
+                    Assert.AreEqual("Int", memberModel.Type);
+                    var flags = FlagType.Variable | FlagType.Static;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Public, memberModel.Access & Visibility.Public);
+                    Assert.AreEqual(4, memberModel.LineFrom);
+                    Assert.AreEqual(4, memberModel.LineTo);
+
+                    memberModel = classModel.Members[1];
+                    Assert.AreEqual("ERR_LOGINFAILED", memberModel.Name);
+                    Assert.AreEqual("Int", memberModel.Type);
+                    flags = FlagType.Variable | FlagType.Static;
+                    Assert.AreEqual(flags, memberModel.Flags & flags);
+                    Assert.AreEqual(Visibility.Public, memberModel.Access & Visibility.Public);
+                    Assert.AreEqual(5, memberModel.LineFrom);
+                    Assert.AreEqual(5, memberModel.LineTo);
+                }
+            }
+
             [Test]
             public void ParseFile_IdentifiersWithUnicodeChars()
             {

@@ -169,6 +169,8 @@
     <EmbeddedResource Include="Test Files\parser\haxe\MetadataTest.hx" />
     <EmbeddedResource Include="Test Files\parser\haxe\MethodAfterGenericReturnTest.hx" />
     <EmbeddedResource Include="Test Files\parser\haxe\WrongSyntaxCompilerMetaAfterVarWithNoType.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\FunctionTypesAsArgumentsTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\KeywordAndUnderscoreInNameTest.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
