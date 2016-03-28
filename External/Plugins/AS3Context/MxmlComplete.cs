@@ -58,7 +58,7 @@ namespace AS3Context
                 else return true;
             }
 
-            if (word != null && !ctag.Name.EndsWith(word))
+            if (word != null && !ctag.Name.EndsWithOrdinal(word))
             {
                 ASResult found = ResolveAttribute(model, word);
                 ASComplete.OpenDocumentToDeclaration(sci, found);
@@ -207,15 +207,15 @@ namespace AS3Context
             string type = ResolveType(mxmlContext, tagContext.Name);
             ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
 
-            if (type.StartsWith("mx.builtin.") || type.StartsWith("fx.builtin.")) // special tags
+            if (type.StartsWithOrdinal("mx.builtin.") || type.StartsWithOrdinal("fx.builtin.")) // special tags
             {
-                if (type.EndsWith(".Script"))
+                if (type.EndsWithOrdinal(".Script"))
                 {
                     string snip = "$(Boundary)\n\t<![CDATA[\n\t$(EntryPoint)\n\t]]>\n</" + tagContext.Name + ">";
                     SnippetHelper.InsertSnippetText(sci, sci.CurrentPos, snip);
                     return true;
                 }
-                if (type.EndsWith(".Style"))
+                if (type.EndsWithOrdinal(".Style"))
                 {
                     string snip = "$(Boundary)";
                     foreach (string ns in mxmlContext.namespaces.Keys)
@@ -363,7 +363,7 @@ namespace AS3Context
                         mix.Add(new HtmlAttributeItem(member.Name, mtype, className, ns));
                     }
 
-                ExploreMetadatas(tmpClass.InFile, mix, excludes, ns, tagClass == tmpClass);
+                ExploreMetadatas(tmpClass, mix, excludes, ns, tagClass == tmpClass);
 
                 tmpClass = tmpClass.Extends;
                 if (tmpClass != null && tmpClass.InFile.Package == "" && tmpClass.Name == "Object")
@@ -431,7 +431,7 @@ namespace AS3Context
                     }
 
                 List<ICompletionListItem> retVal;
-                if (GetAutoCompletionValuesFromMetaData(tmpClass.InFile, attribute, tagClass, tmpClass, out retVal))
+                if (GetAutoCompletionValuesFromMetaData(tmpClass, attribute, tagClass, tmpClass, out retVal))
                     return retVal;
 
                 tmpClass = tmpClass.Extends;
@@ -473,7 +473,7 @@ namespace AS3Context
             return GetAutoCompletionValuesFromType(type);
         }
 
-        private static bool GetAutoCompletionValuesFromMetaData(FileModel model, string attribute, ClassModel tagClass, ClassModel tmpClass, out List<ICompletionListItem> result)
+        private static bool GetAutoCompletionValuesFromMetaData(ClassModel model, string attribute, ClassModel tagClass, ClassModel tmpClass, out List<ICompletionListItem> result)
         {
             if (model != null && model.MetaDatas != null)
             {
@@ -501,10 +501,10 @@ namespace AS3Context
                             break;
                         case ASMetaKind.Exclude:
                             break;
-                        case ASMetaKind.Include:    // Can this happen? if it happens I guess name == true will never be true? I don't know any test case
+                        case ASMetaKind.Include:    // TODO: Check this case...
                             Debug.Assert(false, "Please, check this case");
-                            FileModel incModel = ParseInclude(model, meta);
-                            return GetAutoCompletionValuesFromMetaData(incModel, attribute, tagClass, tmpClass, out result);
+                            FileModel incModel = ParseInclude(model.InFile, meta);
+                            return GetAutoCompletionValuesFromMetaData(incModel.GetPublicClass(), attribute, tagClass, tmpClass, out result);
                     }
                     if (meta.Params != null && meta.Params.ContainsKey("enumeration"))
                     {
@@ -632,13 +632,12 @@ namespace AS3Context
             return null;
         }
 
-        private static void ExploreMetadatas(FileModel fileModel, List<ICompletionListItem> mix, List<string> excludes, string ns, bool isCurrentModel)
+        private static void ExploreMetadatas(ClassModel model, List<ICompletionListItem> mix, List<string> excludes, string ns, bool isCurrentModel)
         {
-            if (fileModel == null || fileModel.MetaDatas == null) 
+            if (model == null || model.MetaDatas == null) 
                 return;
-            ClassModel model = fileModel.GetPublicClass();
-            string className = model.IsVoid() ? Path.GetFileNameWithoutExtension(fileModel.FileName) : model.Name;
-            foreach (ASMetaData meta in fileModel.MetaDatas)
+            string className = model.IsVoid() ? Path.GetFileNameWithoutExtension(model.InFile.FileName) : model.Name;
+            foreach (ASMetaData meta in model.MetaDatas)
             {
                 string add = null;
                 string type = null;
@@ -661,8 +660,8 @@ namespace AS3Context
                         if (meta.Params != null) excludes.Add(meta.Params["name"]);
                         break;
                     case ASMetaKind.Include:
-                        FileModel incModel = ParseInclude(fileModel, meta);
-                        ExploreMetadatas(incModel, mix, excludes, ns, isCurrentModel);
+                        FileModel incModel = ParseInclude(model.InFile, meta);
+                        ExploreMetadatas(incModel.GetPublicClass(), mix, excludes, ns, isCurrentModel);
                         break;
                 }
                 if (add != null && meta.Params.ContainsKey("name"))
@@ -695,7 +694,7 @@ namespace AS3Context
                 // parse & cache
                 if (!File.Exists(fileName)) return null;
                 string src = File.ReadAllText(fileName);
-                if (src.IndexOf("package") < 0) src = "package {" + src + "}";
+                if (src.IndexOfOrdinal("package") < 0) src = "package {" + src + "}";
                 ASFileParser parser = new ASFileParser();
                 FileModel model = new FileModel(path);
                 parser.ParseSrc(model, src);
@@ -760,7 +759,7 @@ namespace AS3Context
             foreach (string key in nss.Keys)
             {
                 string uri = nss[key];
-                if (uri.EndsWith(".*"))
+                if (uri.EndsWithOrdinal(".*"))
                     packages[uri.Substring(0, uri.LastIndexOf('.') + 1)] = key;
                 else if (uri == "*")
                     packages["*"] = key;
@@ -810,7 +809,7 @@ namespace AS3Context
             string uri = ctx.namespaces[ns];
             if (uri == "*")
                 return name;
-            if (uri.EndsWith(".*"))
+            if (uri.EndsWithOrdinal(".*"))
                 return uri.Substring(0, uri.Length - 1) + name;
 
             if (uri == MxmlFilter.BETA_MX || uri == MxmlFilter.OLD_MX) 
@@ -881,13 +880,13 @@ namespace AS3Context
             if (a is IHtmlCompletionListItem)
             {
                 a1 = ((IHtmlCompletionListItem)a).Name;
-                if (a.Value.StartsWith("mx:")) a1 += "z"; // push down mx: tags
+                if (a.Value.StartsWithOrdinal("mx:")) a1 += "z"; // push down mx: tags
             }
             else a1 = a.Label;
             if (b is IHtmlCompletionListItem)
             {
                 b1 = ((IHtmlCompletionListItem)b).Name;
-                if (b.Value.StartsWith("mx:")) b1 += "z"; // push down mx: tags
+                if (b.Value.StartsWithOrdinal("mx:")) b1 += "z"; // push down mx: tags
             }
             else b1 = b.Label;
             return string.Compare(a1, b1);

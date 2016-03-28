@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using ASCompletion.Model;
 using LitJson;
+using PluginCore;
 using PluginCore.Managers;
 
 namespace LoomContext
@@ -228,9 +229,9 @@ namespace LoomContext
         private string ExtractDoc(string comment)
         {
             if (string.IsNullOrEmpty(comment)) return "";
-            if (comment.StartsWith("/**")) return comment.Substring(3, comment.Length - 5).Trim();
-            if (comment.StartsWith("/*")) return comment.Substring(2, comment.Length - 4).Trim();
-            if (comment.StartsWith("//")) return comment.Substring(2).Trim();
+            if (comment.StartsWithOrdinal("/**")) return comment.Substring(3, comment.Length - 5).Trim();
+            if (comment.StartsWithOrdinal("/*")) return comment.Substring(2, comment.Length - 4).Trim();
+            if (comment.StartsWithOrdinal("//")) return comment.Substring(2).Trim();
             return comment;
         }
 
@@ -350,7 +351,7 @@ namespace LoomContext
                     switch (prop)
                     {
                         case "name": 
-                            if (!val.StartsWith("__op_")) {
+                            if (!val.StartsWithOrdinal("__op_")) {
                                 member.Name = val; 
                                 cClass.Members.Add(member); 
                             }
@@ -523,9 +524,9 @@ namespace LoomContext
 
         private string CleanType(string name)
         {
-            if (name.StartsWith("System.")) 
+            if (name.StartsWithOrdinal("System.")) 
                 return name.Substring(7);
-            if (name.StartsWith("Cocos2D."))
+            if (name.StartsWithOrdinal("Cocos2D."))
                 return "cocos2d." + name.Substring(8);
             return name;
         }

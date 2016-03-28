@@ -37,6 +37,7 @@ namespace CodeRefactor.Commands
         public string NewName { get; private set; }
         public bool OutputResults { get; private set; }
         public ASResult Target { get; private set; }
+        public string TargetName { get; private set; }
 
         /// <summary>
         /// A new Rename refactoring command.
@@ -119,15 +120,28 @@ namespace CodeRefactor.Commands
                     if (!aPath.IsValid || aPath.Updating) continue;
                     string path = Path.Combine(aPath.Path, package);
                     if (!aPath.IsValid || !Directory.Exists(path)) continue;
+                    TargetName = Path.GetFileName(path);
                     renamePackagePath = path;
-                    StartRename(inline, Path.GetFileName(path), newName);
+                    StartRename(inline, TargetName, newName);
                     return;
+                    //if (aPath.IsValid && !aPath.Updating)
+                    //{
+                    //    string path = Path.Combine(aPath.Path, package);
+                    //    if (aPath.IsValid && Directory.Exists(path))
+                    //    {
+                    //        TargetName = Path.GetFileName(path);
+                    //        this.NewName = string.IsNullOrEmpty(newName) ? GetNewName(TargetName) : newName;
+                    //        if (string.IsNullOrEmpty(this.NewName)) return;
+                    //        renamePackage = new Move(new Dictionary<string, string> { { path, this.NewName } }, true, true);
+                    //        return;
+                    //    }
+                    //}
                 }
                 return;
             }
 
             isRenamePackage = false;
-            string oldName = RefactoringHelper.GetRefactorTargetName(target);
+            TargetName = RefactoringHelper.GetRefactorTargetName(target);
 
             // create a FindAllReferences refactor to get all the changes we need to make
             // we'll also let it output the results, at least until we implement a way of outputting the renamed results later
@@ -135,7 +149,7 @@ namespace CodeRefactor.Commands
             // register a completion listener to the FindAllReferences so we can rename the entries
             findAllReferencesCommand.OnRefactorComplete += OnFindAllReferencesCompleted;
 
-            StartRename(inline, oldName, newName);
+            StartRename(inline, TargetName, newName);
         }
 
         #region RefactorCommand Implementation
@@ -148,6 +162,7 @@ namespace CodeRefactor.Commands
             if (isRenamePackage)
             {
                 renamePackage.RegisterDocumentHelper(AssociatedDocumentHelper);
+                renamePackage.OnRefactorComplete += OnRenamePackageComplete;
                 renamePackage.Execute();
             }
             else
@@ -183,6 +198,12 @@ namespace CodeRefactor.Commands
 
         #region Private Helper Methods
 
+        void OnRenamePackageComplete(object sender, RefactorCompleteEventArgs<IDictionary<string, List<SearchMatch>>> args)
+        {
+            Results = args.Results;
+            FireOnRefactorComplete();
+        }
+
         bool ValidateTargets()
         {
             ASResult target = findAllReferencesCommand.CurrentTarget;
@@ -208,19 +229,8 @@ namespace CodeRefactor.Commands
             if (!isEnum && !isClass && !isGlobalFunction && !isGlobalNamespace)
                 return true;
 
-            FileModel inFile;
-            string originName;
-
-            if (isEnum || isClass)
-            {
-                inFile = target.Type.InFile;
-                originName = target.Type.Name;
-            }
-            else
-            {
-                inFile = target.Member.InFile;
-                originName = target.Member.Name;
-            }
+            var member = isEnum || isClass ? target.Type : target.Member;
+            FileModel inFile = member.InFile;
 
             // Is this possible? should return false? I'm inclined to think so
             if (inFile == null) return true;
@@ -229,7 +239,7 @@ namespace CodeRefactor.Commands
             string oldName = Path.GetFileNameWithoutExtension(oldFileName);
 
             // Private classes and similars
-            if (string.IsNullOrEmpty(oldName) || !oldName.Equals(originName))
+            if (string.IsNullOrEmpty(oldName) || !oldName.Equals(member.Name))
                 return true;
 
             string fullPath = Path.GetFullPath(inFile.FileName);
@@ -306,7 +316,6 @@ namespace CodeRefactor.Commands
                     project.SetDocumentClass(newFileName, true);
                     project.Save();
                 }
-
             }
 
             if (results.ContainsKey(oldFileName))
@@ -319,7 +328,7 @@ namespace CodeRefactor.Commands
         }
 
         /// <summary>
-        /// 
+        /// Outputs the results to the TraceManager
         /// </summary>
         void ReportResults()
         {

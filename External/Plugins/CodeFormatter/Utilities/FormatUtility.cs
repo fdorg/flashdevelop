@@ -2,20 +2,23 @@ using System;
 using System.Collections.Generic;
 using CodeFormatter.Handlers;
 using CodeFormatter.Preferences;
+using PluginCore;
 
 namespace CodeFormatter.Utilities
 {
     public class FormatUtility
     {
-        public static void configureMXMLPrinter(MXMLPrettyPrinter printer, Settings settings, int tabSize)
+        public static void configureMXMLPrinter(MXMLPrettyPrinter printer, Settings settings)
         {
+            Boolean useTabs = PluginBase.Settings.UseTabs;
+            Int32 tabSize = PluginBase.Settings.TabWidth;
+            Int32 spaceSize = PluginBase.Settings.IndentSize;
             printer.setAttrSortMode((Int32)settings.Pref_MXML_SortAttrMode);
-            printer.setIndentAmount(settings.Pref_Flex_IndentSize);
-            printer.setUseTabs(settings.Pref_Flex_UseTabs);
-            printer.setTabSize(settings.Pref_Flex_TabSize);
+            printer.setIndentAmount(spaceSize);
+            printer.setUseTabs(useTabs);
+            printer.setTabSize(tabSize);
             printer.setTabSize(tabSize);
             printer.setIndentAmount(tabSize);
-            //printer.setManualAttrSortData(settings.Pref_MXML_SortAttrData.Split('\n'));
             printer.setSortOtherAttrs(settings.Pref_MXML_SortExtraAttrs);
             printer.setSpacesAroundEquals(settings.Pref_MXML_SpacesAroundEquals);
             printer.setSpacesBeforeEmptyTagEnd(settings.Pref_MXML_SpacesBeforeEmptyTagEnd);
@@ -35,7 +38,7 @@ namespace CodeFormatter.Utilities
             printer.setCDATAIndentTabs(settings.Pref_MXML_ScriptCDataIndentTabs);
             printer.setScriptIndentTabs(settings.Pref_MXML_ScriptIndentTabs);
             printer.setBlankLinesAtCDataStart(settings.Pref_MXML_BlankLinesAtCDataStart);
-            printer.setBlankLinesAtCDataEnd(settings.Pref_MXML_BlankLinesAtCDataStart); //TODO: change pref constant if I split them on the pref page
+            printer.setBlankLinesAtCDataEnd(settings.Pref_MXML_BlankLinesAtCDataStart);
             printer.setKeepCDataOnSameLine(settings.Pref_MXML_KeepScriptCDataOnSameLine);
             printer.setMaxLineLength(settings.Pref_MXML_MaxLineLength);
             printer.setWrapMode((Int32)settings.Pref_MXML_AttrWrapMode);
@@ -116,12 +119,16 @@ namespace CodeFormatter.Utilities
                 }
             }
             printer.setPrivateTags(tagList);
-            configureASPrinter(printer.getASPrinter(), settings, tabSize);
+            configureASPrinter(printer.getASPrinter(), settings);
             printer.getASPrinter().setBlankLinesBeforeImports(0); //special case: we only want blank lines before imports in .as files
         }
 
-        public static void configureASPrinter(ASPrettyPrinter printer, Settings settings, int tabSize)
+        public static void configureASPrinter(ASPrettyPrinter printer, Settings settings)
         {
+            Boolean useTabs = PluginBase.Settings.UseTabs;
+            Int32 tabSize = PluginBase.Settings.TabWidth;
+            Int32 spaceSize = PluginBase.Settings.IndentSize;
+            Int32 braceStyle = PluginBase.Settings.CodingStyle == CodingStyle.BracesOnLine ? 4 : 5;
             printer.setIndentMultilineComments(settings.Pref_AS_IndentMultilineComments);
             printer.setBlankLinesBeforeFunction(settings.Pref_AS_BlankLinesBeforeFunctions);
             printer.setBlankLinesBeforeClass(settings.Pref_AS_BlankLinesBeforeClasses);
@@ -130,8 +137,8 @@ namespace CodeFormatter.Utilities
             printer.setBlankLinesBeforeProperties(settings.Pref_AS_BlankLinesBeforeProperties);
             printer.setBlankLinesToStartFunctions(settings.Pref_AS_BlankLinesAtFunctionStart);
             printer.setBlankLinesToEndFunctions(settings.Pref_AS_BlankLinesAtFunctionEnd);
-            printer.setBlockIndent(tabSize);
-            printer.setUseTabs(settings.Pref_Flex_UseTabs);
+            printer.setBlockIndent(spaceSize);
+            printer.setUseTabs(useTabs);
             printer.setTabSize(tabSize);
             printer.setSpacesAfterComma(settings.Pref_AS_SpacesAfterComma);
             printer.setSpacesBeforeComma(settings.Pref_AS_SpacesBeforeComma);
@@ -139,8 +146,8 @@ namespace CodeFormatter.Utilities
             printer.setCRBeforeCatch(settings.Pref_AS_CatchOnNewLine);
             printer.setCRBeforeElse(settings.Pref_AS_ElseOnNewLine);
             printer.setCRBeforeWhile(settings.Pref_AS_WhileOnNewLine);
-            printer.setUseBraceStyleSetting(settings.Pref_AS_UseBraceStyle);
-            printer.setBraceStyleSetting((Int32)settings.Pref_AS_BraceStyle);
+            printer.setUseBraceStyleSetting(true);
+            printer.setBraceStyleSetting(braceStyle);
             printer.setKeepBlankLines(settings.Pref_AS_KeepBlankLines);
             printer.setBlankLinesToKeep(settings.Pref_AS_BlankLinesToKeep);
             printer.setSpacesAroundAssignment(settings.Pref_AS_SpacesAroundAssignment);

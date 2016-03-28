@@ -4,6 +4,7 @@ using FlashDebugger.Controls;
 using PluginCore;
 using PluginCore.Localization;
 using WeifenLuo.WinFormsUI.Docking;
+using System.Windows.Forms;
 
 namespace FlashDebugger
 {
@@ -65,6 +66,21 @@ namespace FlashDebugger
             threadsPanel = PluginBase.MainForm.CreateDockablePanel(threadsUI, threadsGuid, pluginImage, DockState.DockLeft);
             threadsPanel.Hide();
         }
+
+        /// <summary>
+        /// Docks all panels into a group
+        /// </summary>
+        public void DockTogether()
+        {
+            if (watchPanel!= null && watchPanel.Pane != null)
+            {
+                localsPanel.DockTo(watchPanel.Pane, DockStyle.Fill, -1);
+                stackframePanel.DockTo(watchPanel.Pane, DockStyle.Fill, -1);
+                immediatePanel.DockTo(watchPanel.Pane, DockStyle.Fill, -1);
+                threadsPanel.DockTo(watchPanel.Pane, DockStyle.Fill, -1);
+                breakPointPanel.DockTo(watchPanel.Pane, DockStyle.Fill, -1);
+            }
+        } 
 
     }
 

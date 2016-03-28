@@ -303,11 +303,11 @@ namespace ProjectManager.Controls.TreeView
                         foreach (string cls in names)
                         {
                             string name = cls.Replace(':', '.');
-                            if (cls.EndsWith("()"))
+                            if (cls.EndsWithOrdinal("()"))
                                 node.Nodes.Add(new MemberExportNode(BackingPath, name.Replace("()", ""), Icons.Method.Index));
-                            else if (cls.EndsWith("$"))
+                            else if (cls.EndsWith('$'))
                                 node.Nodes.Add(new MemberExportNode(BackingPath, name.Replace("$", ""), Icons.Variable.Index));
-                            else if (cls.EndsWith("#"))
+                            else if (cls.EndsWith('#'))
                                 node.Nodes.Add(new MemberExportNode(BackingPath, name.Replace("#", ""), Icons.Const.Index));
                             else
                                 node.Nodes.Add(new ClassExportNode(BackingPath, name));

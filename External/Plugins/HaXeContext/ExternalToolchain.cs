@@ -49,16 +49,16 @@ namespace HaXeContext
 
             string config = hxproj.TargetBuild;
             if (String.IsNullOrEmpty(config)) config = "flash";
-            else if (config.IndexOf("android") >= 0) CheckADB();
+            else if (config.IndexOfOrdinal("android") >= 0) CheckADB();
             
-            if (config.StartsWith("html5") && ProjectManager.Actions.Webserver.Enabled && hxproj.RawHXML != null) // webserver
+            if (config.StartsWithOrdinal("html5") && ProjectManager.Actions.Webserver.Enabled && hxproj.RawHXML != null) // webserver
             {
                 foreach (string line in hxproj.RawHXML)
                 {
-                    if (line.StartsWith("-js "))
+                    if (line.StartsWithOrdinal("-js "))
                     {
                         string path = line.Substring(4);
-                        path = path.Substring(0, path.LastIndexOf("/"));
+                        path = path.Substring(0, path.LastIndexOf('/'));
                         ProjectManager.Actions.Webserver.StartServer(hxproj.GetAbsolutePath(path));
                         return true;
                     }
@@ -70,7 +70,7 @@ namespace HaXeContext
             if (hxproj.TraceEnabled && hxproj.EnableInteractiveDebugger) // debugger
             {
                 DataEvent de;
-                if (config.StartsWith("flash"))
+                if (config.StartsWithOrdinal("flash"))
                 {
                     de = new DataEvent(EventType.Command, "AS3Context.StartProfiler", null);
                     EventManager.DispatchEvent(hxproj, de);
@@ -101,7 +101,7 @@ namespace HaXeContext
         {
             if (targets == null) return false;
             foreach (string target in targets)
-                if (config.StartsWith(target)) return true;
+                if (config.StartsWithOrdinal(target)) return true;
             return false;
         }
 
@@ -114,7 +114,7 @@ namespace HaXeContext
                 return;
 
             string adb = Environment.ExpandEnvironmentVariables("%ANDROID_SDK%/platform-tools");
-            if (adb.StartsWith("%") || !Directory.Exists(adb))
+            if (adb.StartsWith('%') || !Directory.Exists(adb))
                 adb = Path.Combine(PathHelper.ToolDir, "android/platform-tools");
             if (Directory.Exists(adb))
             {
@@ -289,7 +289,7 @@ namespace HaXeContext
                 TraceManager.Add(err, -3);
                 hxproj.RawHXML = null;
             }
-            else if (hxml.IndexOf("not installed") > 0)
+            else if (hxml.IndexOfOrdinal("not installed") > 0)
             {
                 TraceManager.Add(hxml, -3);
                 hxproj.RawHXML = null;

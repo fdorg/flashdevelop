@@ -50,7 +50,7 @@ namespace ASCompletion.Commands
             foreach (string flashexe in FLASHIDE_PATH)
             {
                 if (File.Exists(flashexe)
-                    && (!AS3CapableOnly || found.IndexOf("Flash CS") > 0))
+                    && (!AS3CapableOnly || found.IndexOfOrdinal("Flash CS") > 0))
                 {
                     found = flashexe;
                     break;
@@ -102,7 +102,7 @@ namespace ASCompletion.Commands
 
             try
             {
-                string file = args.StartsWith("\"") ? args.Substring(1, args.Length-2) : args;
+                string file = args.StartsWith('\"') ? args.Substring(1, args.Length-2) : args;
                 if (BridgeManager.Active && BridgeManager.Settings.TargetRemoteIDE 
                     && File.Exists(file) && Path.GetExtension(file) == ".jsfl" && file[0] <= 'H')
                 {

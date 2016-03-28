@@ -43,7 +43,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\..\FlashDevelop\Bin\Debug\Plugins\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -166,9 +166,7 @@
     <Compile Include="Controls\ClasspathDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\FDMenus.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Controls\FDMenus.cs" />
     <Compile Include="Controls\Icons.cs" />
     <Compile Include="Controls\AS2\LibraryAssetDialog.cs">
       <SubType>Form</SubType>

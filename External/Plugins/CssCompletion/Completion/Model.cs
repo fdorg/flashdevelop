@@ -35,7 +35,7 @@ namespace CssCompletion
             if (error.Length > 0)
             {
                 RegexOptions options = RegexOptions.Compiled | RegexOptions.IgnoreCase;
-                if (error.EndsWith("/s")) options |= RegexOptions.Singleline;
+                if (error.EndsWithOrdinal("/s")) options |= RegexOptions.Singleline;
                 else options |= RegexOptions.Multiline;
                 ErrorPattern = new Regex(error.Substring(1, error.Length - 3), options);
             }
@@ -149,7 +149,7 @@ namespace CssCompletion
                 }
                 if (description.Length > 0)
                 {
-                    int comment = description.IndexOf("//");
+                    int comment = description.IndexOfOrdinal("//");
                     if (comment >= 0)
                     {
                         desc = "[I]" + description.Substring(comment + 2).Trim() + "[/I]\n" 

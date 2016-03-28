@@ -4439,8 +4439,8 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="CodeFormatter.Info.Description" xml:space="preserve">
-    <value>MXML eta ActionScript kode formateatzaile bat gehitzen dio FlashDevelop-i.</value>
-    <comment>Added after 3.3.1</comment>
+    <value>Adds multiple code formatters to FlashDevelop.</value>
+    <comment>Modifed after 5.1.0</comment>
   </data>
   <data name="CodeFormatter.Label.CodeFormatter" xml:space="preserve">
     <value>Kode &amp;Formateatzailea</value>
@@ -5969,20 +5969,52 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <value>No contextual code generation available.</value>
     <comment>REQUIRES TRANSLATION</comment>
   </data>
+  <data name="CodeRefactor.Label.Move" xml:space="preserve">
+    <value>Move...</value>
+    <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="FlashDevelop.Label.Export" xml:space="preserve">
+    <value>&amp;Export...</value>
+    <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="FlashDevelop.Label.Import" xml:space="preserve">
+    <value>&amp;Import...</value>
+    <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="FlashDevelop.Label.ShortcutSearch" xml:space="preserve">
+    <value>Search: (Start the filter with * to view custom only, and ? to view conflicts only.)</value>
+    <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="CodeFormatter.Description.AStyle.OptionsCPP" xml:space="preserve">
+    <value>Manual options for the CPP language, read more: http://astyle.sourceforge.net/astyle.html</value>
+    <comment>Added after 5.1.0</comment>
+  </data>
+  <data name="CodeFormatter.Description.AStyle.OptionsOthers" xml:space="preserve">
+    <value>Manual options for other C like languages, read more: http://astyle.sourceforge.net/astyle.html</value>
+    <comment>Added after 5.1.0</comment>
+  </data>
+  <data name="FlashConnect.Info.ConnectionFailed" xml:space="preserve">
+    <value>Connection failed. Default socket port '{0}' is already in use.</value>
+    <comment>Added after 5.1.0</comment>
+  </data>
+  <data name="FlashDevelop.Description.KeepCaretCentered" xml:space="preserve">
+    <value>Keeps the caret centered when caret is navigated to.</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
   <data name="CodeRefactor.Description.UseInlineRenaming" xml:space="preserve">
     <value>Whether to use inline editing for renaming processes.</value>
-    <comment>REQUIRES TRANSLATION</comment>
+    <comment>Added after 5.1.1</comment>
   </data>
   <data name="CodeRefactor.Label.IncludeComments" xml:space="preserve">
     <value>Include comments</value>
-    <comment>REQUIRES TRANSLATION</comment>
+    <comment>Added after 5.1.1</comment>
   </data>
   <data name="CodeRefactor.Label.IncludeStrings" xml:space="preserve">
     <value>Include strings</value>
-    <comment>REQUIRES TRANSLATION</comment>
+    <comment>Added after 5.1.1</comment>
   </data>
   <data name="CodeRefactor.Label.PreviewChanges" xml:space="preserve">
     <value>Preview changes</value>
-    <comment>REQUIRES TRANSLATION</comment>
+    <comment>Added after 5.1.1</comment>
   </data>
 </root>

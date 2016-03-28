@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml;
+using PluginCore;
 using PluginCore.Localization;
 
 namespace AirProperties
@@ -19,7 +20,7 @@ namespace AirProperties
         private static AirVersion _version;
         private static Boolean _unsupportedVersion;
         private const String _BaseAirNamespace = "http://ns.adobe.com/air/application/";
-        private const String _MaxSupportedVersion = "20.0";
+        private const String _MaxSupportedVersion = "21.0";
 
         public enum AirVersion
         {
@@ -49,7 +50,8 @@ namespace AirProperties
             V170 = 24,    // Version 17.0
             V180 = 25,    // Version 18.0
             V190 = 26,    // Version 19.0
-            V200 = 27    // Version 20.0
+            V200 = 27,    // Version 20.0
+            V210 = 26    // Version 21.0
         }
 
         public static Exception LastException
@@ -97,44 +99,45 @@ namespace AirProperties
                 _unsupportedVersion = false;
                 string nsuri = _rootNode.NamespaceURI.ToLower();
                 // Determine if valid descriptor file, and which version of AIR is specified
-                if (!nsuri.StartsWith(_BaseAirNamespace))
+                if (!nsuri.StartsWithOrdinal(_BaseAirNamespace))
                 {
                     throw new Exception(String.Format(TextHelper.GetString("Exception.Message.NotAirDescriptorFile"), filePath));
                 }
                 else
                 {
-                    if (nsuri.StartsWith(_BaseAirNamespace + "1.0")) _version = AirVersion.V10;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "1.1")) _version = AirVersion.V11;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "1.5.3")) _version = AirVersion.V153;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "1.5")) _version = AirVersion.V15;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "2.0")) _version = AirVersion.V20;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "2.5")) _version = AirVersion.V25;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "2.6")) _version = AirVersion.V26;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "2.7")) _version = AirVersion.V27;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "3.0")) _version = AirVersion.V30;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "3.1")) _version = AirVersion.V31;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "3.2")) _version = AirVersion.V32;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "3.3")) _version = AirVersion.V33;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "3.4")) _version = AirVersion.V34;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "3.5")) _version = AirVersion.V35;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "3.6")) _version = AirVersion.V36;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "3.7")) _version = AirVersion.V37;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "3.8")) _version = AirVersion.V38;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "3.9")) _version = AirVersion.V39;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "4.0")) _version = AirVersion.V40;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "13.0")) _version = AirVersion.V130;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "14.0")) _version = AirVersion.V140;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "15.0")) _version = AirVersion.V150;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "16.0")) _version = AirVersion.V160;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "17.0")) _version = AirVersion.V170;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "18.0")) _version = AirVersion.V180;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "19.0")) _version = AirVersion.V190;
-                    else if (nsuri.StartsWith(_BaseAirNamespace + "20.0")) _version = AirVersion.V200;
+                    if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "1.0")) _version = AirVersion.V10;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "1.1")) _version = AirVersion.V11;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "1.5.3")) _version = AirVersion.V153;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "1.5")) _version = AirVersion.V15;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "2.0")) _version = AirVersion.V20;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "2.5")) _version = AirVersion.V25;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "2.6")) _version = AirVersion.V26;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "2.7")) _version = AirVersion.V27;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "3.0")) _version = AirVersion.V30;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "3.1")) _version = AirVersion.V31;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "3.2")) _version = AirVersion.V32;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "3.3")) _version = AirVersion.V33;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "3.4")) _version = AirVersion.V34;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "3.5")) _version = AirVersion.V35;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "3.6")) _version = AirVersion.V36;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "3.7")) _version = AirVersion.V37;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "3.8")) _version = AirVersion.V38;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "3.9")) _version = AirVersion.V39;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "4.0")) _version = AirVersion.V40;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "13.0")) _version = AirVersion.V130;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "14.0")) _version = AirVersion.V140;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "15.0")) _version = AirVersion.V150;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "16.0")) _version = AirVersion.V160;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "17.0")) _version = AirVersion.V170;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "18.0")) _version = AirVersion.V180;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "19.0")) _version = AirVersion.V190;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "20.0")) _version = AirVersion.V200;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "21.0")) _version = AirVersion.V210;
                     else
                     {
                         // Is a valid AIR descriptor, but version not supported so default to max supported version
                         _unsupportedVersion = true;
-                        _version = AirVersion.V190;
+                        _version = AirVersion.V210;
                     }
                 }
                 _namespaceManager = new XmlNamespaceManager(_descriptorFile.NameTable);
@@ -213,7 +216,7 @@ namespace AirProperties
                 if (!string.IsNullOrEmpty(value))
                 {
                     XmlNode propertyNode;
-                    string attributeName = attribute.Substring(attribute.IndexOf("@") + 1);
+                    string attributeName = attribute.Substring(attribute.IndexOf('@') + 1);
                     attributeNode = _descriptorFile.CreateAttribute(attributeName);
                     attributeNode.Value = value;
                     if (attribute.IndexOf('/') > -1)

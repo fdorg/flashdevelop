@@ -1016,7 +1016,7 @@ namespace ProjectManager.Controls
                 if (BuildActions.LatestSDKMatchQuality > 0)
                 {
                     string icon = BuildActions.LatestSDKMatchQuality < 10 ? "196" : "197";
-                    warningImage.Image = PluginBase.MainForm.FindImage(icon);
+                    warningImage.Image = PluginBase.MainForm.FindImage(icon, false);
                     warningImage.Visible = true;
                     string[] p = (project.PreferredSDK + ";;").Split(';');
                     labelWarning.Text = TextHelper.GetString("Label.SDKExpected") 
@@ -1250,7 +1250,7 @@ namespace ProjectManager.Controls
         private void testMovieCombo_SelectedIndexChanged(object sender, System.EventArgs e) 
         { 
             Modified();
-            editCommandButton.Visible = testMovieCombo.Text.IndexOf("..") > 0;
+            editCommandButton.Visible = testMovieCombo.Text.IndexOfOrdinal("..") > 0;
         }
 
         private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)

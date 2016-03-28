@@ -1,19 +1,19 @@
 using System;
-using System.IO;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Text.RegularExpressions;
-using WeifenLuo.WinFormsUI.Docking;
-using ScintillaNet.Configuration;
-using PluginCore.Localization;
-using PluginCore.Utilities;
-using PluginCore.Managers;
-using PluginCore.Helpers;
-using PluginCore.Controls;
-using ScintillaNet;
+using System.Windows.Forms;
 using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Localization;
+using PluginCore.Managers;
+using PluginCore.Utilities;
+using ScintillaNet;
+using ScintillaNet.Configuration;
+using WeifenLuo.WinFormsUI.Docking;
+using PluginCore.Controls;
 
 namespace ResultsPanel
 {
@@ -47,6 +47,7 @@ namespace ResultsPanel
         private PluginMain pluginMain;
         private Int32 logCount;
         private Timer autoShow;
+        private ImageListManager imageList;
          
         public PluginUI(PluginMain pluginMain)
         {
@@ -63,6 +64,7 @@ namespace ResultsPanel
             this.InitializeTexts();
             this.InitializeLayout();
             this.ApplySettings();
+            ScrollBarEx.Attach(entriesView);
         }
         
         #region Windows Forms Designer Generated Code
@@ -247,19 +249,24 @@ namespace ResultsPanel
         /// </summary>
         public void InitializeGraphics()
         {
-            ImageList imageList = new ImageList();
+            imageList = new ImageListManager();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
             imageList.TransparentColor = Color.Transparent;
             imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            imageList.Images.Add(PluginBase.MainForm.FindImage("131")); // info
-            imageList.Images.Add(PluginBase.MainForm.FindImage("197")); // error
-            imageList.Images.Add(PluginBase.MainForm.FindImage("196")); // warning
-            this.clearFilterButton.Image = PluginBase.MainForm.FindImage("153");
+            imageList.Initialize(ImageList_Populate);
             this.toolStripFilters.ImageList = imageList;
-            this.toolStripButtonError.ImageIndex = 1;
-            this.toolStripButtonWarning.ImageIndex = 2;
-            this.toolStripButtonInfo.ImageIndex = 0;
             this.entriesView.SmallImageList = imageList;
+            this.clearFilterButton.Image = PluginBase.MainForm.FindImage("153");
+            this.toolStripButtonInfo.Image = PluginBase.MainForm.FindImage("131");
+            this.toolStripButtonError.Image = PluginBase.MainForm.FindImage("197");
+            this.toolStripButtonWarning.Image = PluginBase.MainForm.FindImage("196");
+        }
+
+        private void ImageList_Populate(object sender, EventArgs e)
+        {
+            imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("131")); // info
+            imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("197")); // error
+            imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("196")); // warning
         }
 
         /// <summary>
@@ -278,6 +285,10 @@ namespace ResultsPanel
             
             this.copyEntryContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(PluginMain.CopyEntryKeys);
             this.ignoreEntryContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(PluginMain.IgnoreEntryKeys);
+            Keys keys = PluginBase.MainForm.GetShortcutItemKeys("ResultsPanel.ShowNextResult");
+            if (keys != Keys.None) this.nextEntryContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(keys);
+            keys = PluginBase.MainForm.GetShortcutItemKeys("ResultsPanel.ShowPrevResult");
+            if (keys != Keys.None) this.previousEntryContextMenuItem.ShortcutKeyDisplayString = DataConverter.KeysToString(keys);
 
             menu.Items.Add(this.clearEntriesContextMenuItem);
             menu.Items.Add(this.copyEntryContextMenuItem);
@@ -610,10 +621,10 @@ namespace ResultsPanel
             {
                 DockContent panel = this.Parent as DockContent;
                 DockState ds = panel.VisibleState;
-                if (!panel.Visible || ds.ToString().EndsWith("AutoHide"))
+                if (!panel.Visible || ds.ToString().EndsWithOrdinal("AutoHide"))
                 {
                     panel.Show();
-                    if (ds.ToString().EndsWith("AutoHide")) panel.Activate();
+                    if (ds.ToString().EndsWithOrdinal("AutoHide")) panel.Activate();
                 }
             }
         }
@@ -636,20 +647,20 @@ namespace ResultsPanel
             String projectDir = project != null ? Path.GetDirectoryName(project.ProjectPath) : "";
             Boolean limitMode = (count - this.logCount) > 1000;
             this.entriesView.BeginUpdate();
-            for (Int32 i = this.logCount; i < (limitMode ? 1000 : count); i++)
+            for (Int32 i = this.logCount; i < (limitMode ? this.logCount + 1000 : count); i++)
             {
                 entry = TraceManager.TraceLog[i];
                 if (entry.Message != null && entry.Message.Length > 7 && entry.Message.IndexOf(':') > 0)
                 {
                     fileTest = entry.Message.TrimStart();
                     inExec = false;
-                    if (fileTest.StartsWith("[mxmlc]") || fileTest.StartsWith("[compc]") || fileTest.StartsWith("[exec]") || fileTest.StartsWith("[haxe") || fileTest.StartsWith("[java]"))
+                    if (fileTest.StartsWithOrdinal("[mxmlc]") || fileTest.StartsWithOrdinal("[compc]") || fileTest.StartsWithOrdinal("[exec]") || fileTest.StartsWithOrdinal("[haxe") || fileTest.StartsWithOrdinal("[java]"))
                     {
                         inExec = true;
                         fileTest = fileTest.Substring(fileTest.IndexOf(']') + 1).TrimStart();
                     }
                     // relative to project root (Haxe)
-                    if (fileTest.StartsWith("~/")) fileTest = fileTest.Substring(2);
+                    if (fileTest.StartsWithOrdinal("~/")) fileTest = fileTest.Substring(2);
                     match = fileEntry.Match(fileTest);
                     if (!match.Success) match = fileEntry2.Match(fileTest);
                     if (match.Success && !this.ignoredEntries.ContainsKey(match.Value))
@@ -681,7 +692,7 @@ namespace ResultsPanel
                             }
                             if (state > 2) icon = 1;
                             else if (state == 2) icon = 2;
-                            else if (state == -3) icon = (description.IndexOf("Warning") >= 0) ? 2 : 1;
+                            else if (state == -3) icon = (description.IndexOfOrdinal("Warning") >= 0) ? 2 : 1;
                             else if (description.StartsWith("error", StringComparison.OrdinalIgnoreCase)) icon = 1;
                             else icon = 0;
                             ListViewItem item = new ListViewItem("", icon);

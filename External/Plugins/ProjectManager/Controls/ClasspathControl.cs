@@ -257,7 +257,7 @@ namespace ProjectManager.Controls
                         {
                             path = project.GetRelativePath(path);
                             // remove default classpath if you add a subfolder in the classpath
-                            if (!path.StartsWith("..") && listBox.Items.Count == 1 
+                            if (!path.StartsWithOrdinal("..") && listBox.Items.Count == 1 
                                 && (listBox.Items[0] as ClasspathEntry).Classpath == ".")
                                 listBox.Items.Clear();
                         }
@@ -376,7 +376,7 @@ namespace ProjectManager.Controls
 
                 if (project != null) cp = project.GetAbsolutePath(cp);
 
-                if (path.StartsWith(cp + sep) || cp.StartsWith(path + sep))
+                if (path.StartsWithOrdinal(cp + sep) || cp.StartsWithOrdinal(path + sep))
                 {
                     string info = TextHelper.GetString("Info.PathConflict");
                     string message = string.Format(info, cp);

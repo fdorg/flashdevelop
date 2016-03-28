@@ -1,7 +1,7 @@
 ﻿Select instruction...
 - MAIN -------------------------------------------------------------------------
 $(EntryPoint) - Selection's start position
-$(ExitPoint) - Selection's end position.
+$(ExitPoint) - Selection's end position
 $(Boundary) - Keep all text between boundaries
 $(CSLB) - Coding style line break
 $(CBI) - Comment block indent
@@ -36,9 +36,9 @@ $(TypClosestListItemType) - Closest Vector item type
 $(MbrName) - Current member, ie. current method
 $(MbrKind) - Member kind (const, var, function)
 $(MbrTypPkg) - Member's type package
-$(MbrTypName) - Members's type name
-$(MbrTypePkgName) - Members's type qualified name
-$(MbrTypKind) - Members's type kind (interface, class)
+$(MbrTypName) - Member's type name
+$(MbrTypePkgName) - Member's type qualified name
+$(MbrTypKind) - Member's type kind (interface, class)
 - ITEM -------------------------------------------------------------------------
 $(ItmTypName) - Current item name at cursor position
 $(ItmFile) - File where the item is declared

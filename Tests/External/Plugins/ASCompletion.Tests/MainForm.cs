@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using FlashDevelop.Dialogs;
 using FlashDevelop.Utilities;
 using PluginCore;
 using ScintillaNet.Configuration;
@@ -22,6 +23,11 @@ namespace FlashDevelop
         }
 
         public void RefreshSciConfig()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RestartRequired()
         {
             throw new NotImplementedException();
         }
@@ -143,6 +149,7 @@ namespace FlashDevelop
 
         public string GetThemeValue(string id)
         {
+            if (id == "ScrollBar.UseCustom") return string.Empty;
             throw new NotImplementedException();
         }
 
@@ -209,6 +216,26 @@ namespace FlashDevelop
         }
 
         public Image FindImage(string data, bool autoAdjust)
+        {
+            return null;
+        }
+
+        public Image FindImage16(string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Image FindImage16(string data, bool autoAdjusted)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Image FindImageAndSetAdjust(string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetInstanceCount()
         {
             throw new NotImplementedException();
         }

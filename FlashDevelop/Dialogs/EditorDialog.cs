@@ -1049,11 +1049,11 @@ namespace FlashDevelop.Dialogs
         {
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
-            imageList.Images.Add(PluginBase.MainForm.FindImage("129")); // snippet;
-            imageList.Images.Add(PluginBase.MainForm.FindImage("328")); // palette;
-            imageList.Images.Add(PluginBase.MainForm.FindImage("55|24|3|3")); // revert
-            imageList.Images.Add(PluginBase.MainForm.FindImage("55|9|3|3")); // export
-            imageList.Images.Add(PluginBase.MainForm.FindImage("55|25|3|3")); // default
+            imageList.Images.Add(PluginBase.MainForm.FindImage("129", false)); // snippet;
+            imageList.Images.Add(PluginBase.MainForm.FindImage("328", false)); // palette;
+            imageList.Images.Add(PluginBase.MainForm.FindImage("55|24|3|3", false)); // revert
+            imageList.Images.Add(PluginBase.MainForm.FindImage("55|9|3|3", false)); // export
+            imageList.Images.Add(PluginBase.MainForm.FindImage("55|25|3|3", false)); // default
             this.itemListView.SmallImageList = imageList;
             this.itemListView.SmallImageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             this.revertButton.ImageList = this.exportButton.ImageList = imageList;
@@ -1363,7 +1363,7 @@ namespace FlashDevelop.Dialogs
             else this.editorStyleNode.RemoveAttribute("disabledline-back");
             if (this.colorizeCheckBox.CheckState == CheckState.Checked) this.editorStyleNode.SetAttribute("colorize-marker-back", "true");
             else if (this.colorizeCheckBox.CheckState == CheckState.Unchecked) this.editorStyleNode.SetAttribute("colorize-marker-back", "false");
-            else this.currentStyleNode.RemoveAttribute("colorize-marker-back");
+            else this.editorStyleNode.RemoveAttribute("colorize-marker-back");
             this.isEditorSaved = true;
         }
 
@@ -1431,8 +1431,8 @@ namespace FlashDevelop.Dialogs
         {
             if (this.itemListView.SelectedIndices.Count > 0)
             {
-                String language = this.itemListView.SelectedItems[0].Text;
-                this.LoadLanguageItem(language);
+                String style = this.itemListView.SelectedItems[0].Text;
+                this.LoadLanguageItem(style);
             }
         }
 
@@ -1757,21 +1757,59 @@ namespace FlashDevelop.Dialogs
                 {
                     XmlDocument doc = new XmlDocument();
                     doc.Load(confFile);
-                    XmlElement node = doc.SelectSingleNode(defaultStylePath) as XmlElement;
-                    if (this.fontNameComboBox.Text != "") node.SetAttribute("font", fontNameComboBox.Text);
-                    else node.RemoveAttribute("font");
-                    if (this.fontSizeComboBox.Text != "") node.SetAttribute("size", fontSizeComboBox.Text);
-                    else node.RemoveAttribute("size");
-                    if (this.foregroundTextBox.Text != "") node.SetAttribute("fore", foregroundTextBox.Text);
-                    else node.RemoveAttribute("fore");
-                    if (this.backgroundTextBox.Text != "") node.SetAttribute("back", backgroundTextBox.Text);
-                    else node.RemoveAttribute("back");
-                    if (this.boldCheckBox.CheckState == CheckState.Checked) node.SetAttribute("bold", "true");
-                    else if (this.boldCheckBox.CheckState == CheckState.Unchecked) node.SetAttribute("bold", "false");
-                    else node.RemoveAttribute("bold");
-                    if (this.italicsCheckBox.CheckState == CheckState.Checked) node.SetAttribute("italics", "true");
-                    else if (this.italicsCheckBox.CheckState == CheckState.Unchecked) node.SetAttribute("italics", "false");
-                    else node.RemoveAttribute("italics");
+                    XmlElement currentNode = doc.SelectSingleNode(defaultStylePath) as XmlElement;
+                    XmlElement defaultNode = this.languageDoc.SelectSingleNode(defaultStylePath) as XmlElement;
+                    // Save default style
+                    if (defaultNode.Attributes["font"] != null) currentNode.SetAttribute("font", defaultNode.Attributes["font"].Value);
+                    else currentNode.RemoveAttribute("font");
+                    if (defaultNode.Attributes["size"] != null) currentNode.SetAttribute("size", defaultNode.Attributes["size"].Value);
+                    else currentNode.RemoveAttribute("size");
+                    if (defaultNode.Attributes["fore"] != null) currentNode.SetAttribute("fore", defaultNode.Attributes["fore"].Value);
+                    else currentNode.RemoveAttribute("fore");
+                    if (defaultNode.Attributes["back"] != null) currentNode.SetAttribute("back", defaultNode.Attributes["back"].Value);
+                    else currentNode.RemoveAttribute("back");
+                    if (defaultNode.Attributes["bold"] != null) currentNode.SetAttribute("bold", defaultNode.Attributes["bold"].Value);
+                    else currentNode.RemoveAttribute("bold");
+                    if (defaultNode.Attributes["italics"] != null) currentNode.SetAttribute("italics", defaultNode.Attributes["italics"].Value);
+                    else currentNode.RemoveAttribute("italics");
+                    // Save editor styles
+                    currentNode = doc.SelectSingleNode(editorStylePath) as XmlElement;
+                    if (this.caretForeTextBox.Text != "") currentNode.SetAttribute("caret-fore", this.caretForeTextBox.Text);
+                    else currentNode.RemoveAttribute("caret-fore");
+                    if (this.caretlineBackTextBox.Text != "") currentNode.SetAttribute("caretline-back", this.caretlineBackTextBox.Text);
+                    else currentNode.RemoveAttribute("caretline-back");
+                    if (this.selectionForeTextBox.Text != "") currentNode.SetAttribute("selection-fore", this.selectionForeTextBox.Text);
+                    else currentNode.RemoveAttribute("selection-fore");
+                    if (this.selectionBackTextBox.Text != "") currentNode.SetAttribute("selection-back", this.selectionBackTextBox.Text);
+                    else currentNode.RemoveAttribute("selection-back");
+                    if (this.marginForeTextBox.Text != "") currentNode.SetAttribute("margin-fore", this.marginForeTextBox.Text);
+                    else currentNode.RemoveAttribute("margin-fore");
+                    if (this.marginBackTextBox.Text != "") currentNode.SetAttribute("margin-back", this.marginBackTextBox.Text);
+                    else currentNode.RemoveAttribute("margin-back");
+                    if (this.markerForeTextBox.Text != "") currentNode.SetAttribute("marker-fore", this.markerForeTextBox.Text);
+                    else currentNode.RemoveAttribute("marker-fore");
+                    if (this.markerBackTextBox.Text != "") currentNode.SetAttribute("marker-back", this.markerBackTextBox.Text);
+                    else currentNode.RemoveAttribute("marker-back");
+                    if (this.printMarginTextBox.Text != "") currentNode.SetAttribute("print-margin", this.printMarginTextBox.Text);
+                    else currentNode.RemoveAttribute("print-margin");
+                    if (this.highlightBackTextBox.Text != "") currentNode.SetAttribute("highlight-back", this.highlightBackTextBox.Text);
+                    else currentNode.RemoveAttribute("highlight-back");
+                    if (this.highlightWordBackTextBox.Text != "") currentNode.SetAttribute("highlightword-back", this.highlightWordBackTextBox.Text);
+                    else currentNode.RemoveAttribute("highlightword-back");
+                    if (this.modifiedLineTextBox.Text != "") currentNode.SetAttribute("modifiedline-back", this.modifiedLineTextBox.Text);
+                    else currentNode.RemoveAttribute("modifiedline-back");
+                    if (this.bookmarkLineTextBox.Text != "") currentNode.SetAttribute("bookmarkline-back", this.bookmarkLineTextBox.Text);
+                    else currentNode.RemoveAttribute("bookmarkline-back");
+                    if (this.errorLineTextBox.Text != "") currentNode.SetAttribute("errorline-back", this.errorLineTextBox.Text);
+                    else currentNode.RemoveAttribute("errorline-back");
+                    if (this.debugLineTextBox.Text != "") currentNode.SetAttribute("debugline-back", this.debugLineTextBox.Text);
+                    else currentNode.RemoveAttribute("debugline-back");
+                    if (this.disabledLineTextBox.Text != "") currentNode.SetAttribute("disabledline-back", this.disabledLineTextBox.Text);
+                    else currentNode.RemoveAttribute("disabledline-back");
+                    if (this.colorizeCheckBox.CheckState == CheckState.Checked) currentNode.SetAttribute("colorize-marker-back", "true");
+                    else if (this.colorizeCheckBox.CheckState == CheckState.Unchecked) currentNode.SetAttribute("colorize-marker-back", "false");
+                    else currentNode.RemoveAttribute("colorize-marker-back");
+                    // Save the file
                     XmlTextWriter xmlWriter = new XmlTextWriter(confFile, Encoding.UTF8);
                     xmlWriter.Formatting = Formatting.Indented;
                     xmlWriter.IndentChar = '\t';
