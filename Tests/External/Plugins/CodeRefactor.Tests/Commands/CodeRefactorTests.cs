@@ -167,7 +167,7 @@ namespace CodeRefactor.Commands
                     new ExtractLocalVariableCommand(false, newName).Execute();
                     return Sci.Text;
                 }
-                
+
                 public IEnumerable<TestCaseData> GetAS3TestCases
                 {
                     get
@@ -219,22 +219,6 @@ namespace CodeRefactor.Commands
                                     TestFile.ReadAllText(
                                         "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.as3.AfterExtractLocalVariable_fromNumber.as"))
                                 .SetName("ExtractLocaleVariable from Number");
-
-                        yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.as3.BeforeExtractLocalVariable_forCheckingThePositionOfNewVar.as"),
-                                    new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
-                                    {
-                                        LineFrom = 4,
-                                        LineTo = 10
-                                    },
-                                    "newVar"
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.as3.AfterExtractLocalVariable_forCheckingThePositionOfNewVar.as"))
-                                .SetName("ExtractLocaleVariable with checking the position of a new variable");
                     }
                 }
                 
