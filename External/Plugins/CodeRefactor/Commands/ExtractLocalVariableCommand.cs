@@ -9,16 +9,51 @@ using CodeRefactor.Provider;
 using PluginCore;
 using PluginCore.Controls;
 using PluginCore.FRService;
+using PluginCore.Helpers;
 using PluginCore.Localization;
+using PluginCore.Managers;
 using ProjectManager.Helpers;
 using ScintillaNet;
 using ScintillaNet.Enums;
 
 namespace CodeRefactor.Commands
 {
-    class ExtractLocalVariableCommand
+    internal class ExtractLocalVariableCommand : RefactorCommand<IDictionary<string, List<SearchMatch>>>
     {
-        public void Execute()
+        readonly bool outputResults;
+        string newName;
+
+        /// <summary>
+        /// A new ExtractLocalVariableCommand refactoring command.
+        /// Outputs found results.
+        /// Uses the current selected text as the declaration target.
+        /// </summary>
+        public ExtractLocalVariableCommand() : this(true)
+        {
+        }
+
+        /// <summary>
+        /// A new ExtractLocalVariableCommand refactoring command.
+        /// Uses the current text as the declaration target.
+        /// </summary>
+        /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
+        public ExtractLocalVariableCommand(bool outputResults)
+        {
+            this.outputResults = outputResults;
+        }
+
+        /// <summary>
+        /// Indicates if the current settings for the refactoring are valid.
+        /// </summary>
+        public override bool IsValid()
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Entry point to execute renaming.
+        /// </summary>
+        protected override void ExecutionImplementation()
         {
             var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             var fileModel = ASContext.Context.CurrentModel;
@@ -31,13 +66,20 @@ namespace CodeRefactor.Commands
             var lineTo = currentMember.LineTo;
             mathes.RemoveAll(it => it.Line < lineFrom || it.Line > lineTo);
             var target = mathes.FindAll(it => sci.MBSafePosition(it.Index) == sci.SelectionStart);
-            var list = new List<ICompletionListItem> {new CompletionListItem(target, sci, OnItemClick)};
-            if (mathes.Count > 1) list.Insert(0, new CompletionListItem(mathes, sci, OnItemClick));
-            sci.DisableAllSciEvents = true;
-            CompletionList.Show(list, true);
+            if (mathes.Count > 1)
+            {
+                var list = new List<ICompletionListItem> {new CompletionListItem(target, sci, OnItemClick)};
+                list.Insert(0, new CompletionListItem(mathes, sci, OnItemClick));
+                sci.DisableAllSciEvents = true;
+                CompletionList.Show(list, true);
+            }
+            else GenerateExtractVariable(target);
         }
 
-        static void OnItemClick(object sender, EventArgs e)
+        /// <summary>
+        /// This retrieves the new name from the user
+        /// </summary>
+        static string GetNewName()
         {
             var newName = "newVar";
             var label = TextHelper.GetString("Label.NewName");
@@ -48,24 +90,99 @@ namespace CodeRefactor.Commands
             if (choice != DialogResult.OK)
             {
                 sci.DisableAllSciEvents = false;
-                return;
+                return null;
             }
             sci.DisableAllSciEvents = false;
             var name = askName.Line.Trim();
             if (name.Length > 0 && name != newName) newName = name;
+            return newName;
+        }
+
+        void GenerateExtractVariable(List<SearchMatch> matches)
+        {
+            newName = GetNewName();
+            if (string.IsNullOrEmpty(newName)) return;
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             sci.BeginUndoAction();
             try
             {
-                ASGenerator.GenerateExtractVariable(sci, newName, ((CompletionListItem) sender).Matches);
+                var expression = sci.SelText.Trim(new char[] {'=', ' ', '\t', '\n', '\r', ';', '.'});
+                expression = expression.TrimEnd(new char[] {'(', '[', '{', '<'});
+                expression = expression.TrimStart(new char[] {')', ']', '}', '>'});
+                var insertPosition = sci.PositionFromLine(ASContext.Context.CurrentMember.LineTo);
+                RefactoringHelper.ReplaceMatches(matches, sci, newName);
+                for (int i = 0, matchCount = matches.Count; i < matchCount; i++)
+                {
+                    var match = matches[i];
+                    var start = sci.MBSafePosition(match.Index);
+                    insertPosition = Math.Min(insertPosition, start);
+                    match.LineText = sci.GetLine(match.Line - 1);
+                    match.Line += 1;
+                    match.LineStart += 1;
+                    match.LineEnd += 1;
+                }
+                insertPosition = sci.LineFromPosition(insertPosition);
+                insertPosition = sci.LineIndentPosition(insertPosition);
+                sci.SetSel(insertPosition, insertPosition);
+                var member = new MemberModel(newName, string.Empty, FlagType.LocalVar, 0) {Value = expression};
+                var snippet = TemplateUtils.GetTemplate("Variable");
+                snippet = TemplateUtils.ReplaceTemplateVariable(snippet, "Modifiers", null);
+                snippet = TemplateUtils.ToDeclarationString(member, snippet);
+                snippet += "$(Boundary)\n$(Boundary)";
+                SnippetHelper.InsertSnippetText(sci, sci.CurrentPos, snippet);
+                Results = new Dictionary<string, List<SearchMatch>> {{sci.FileName, matches}};
+                if (outputResults) ReportResults();
             }
             finally
             {
                 sci.EndUndoAction();
             }
         }
+
+        /// <summary>
+        /// Outputs the results to the TraceManager
+        /// </summary>
+        void ReportResults()
+        {
+            var newNameLength = newName.Length;
+            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
+            foreach (var entry in Results)
+            {
+                var lineOffsets = new Dictionary<int, int>();
+                var lineChanges = new Dictionary<int, string>();
+                var reportableLines = new Dictionary<int, List<string>>();
+                foreach (var match in entry.Value)
+                {
+                    var column = match.Column;
+                    var lineNumber = match.Line;
+                    var changedLine = lineChanges.ContainsKey(lineNumber) ? lineChanges[lineNumber] : match.LineText;
+                    var offset = lineOffsets.ContainsKey(lineNumber) ? lineOffsets[lineNumber] : 0;
+                    column = column + offset;
+                    changedLine = changedLine.Substring(0, column) + newName + changedLine.Substring(column + match.Length);
+                    lineChanges[lineNumber] = changedLine;
+                    lineOffsets[lineNumber] = offset + (newNameLength - match.Length);
+                    if (!reportableLines.ContainsKey(lineNumber)) reportableLines[lineNumber] = new List<string>();
+                    reportableLines[lineNumber].Add(entry.Key + ":" + match.Line + ": chars " + column + "-" + (column + newNameLength) + " : {0}");
+                }
+                foreach (var lineSetsToReport in reportableLines)
+                {
+                    var renamedLine = lineChanges[lineSetsToReport.Key].Trim();
+                    foreach (var lineToReport in lineSetsToReport.Value)
+                    {
+                        TraceManager.Add(string.Format(lineToReport, renamedLine), (int) TraceType.Info);
+                    }
+                }
+            }
+            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
+        }
+
+        void OnItemClick(object sender, EventArgs e)
+        {
+            GenerateExtractVariable(((CompletionListItem) sender).Matches);
+        }
     }
 
-    internal class CompletionListItem : ToolStripMenuItem, ICompletionListItem
+    internal sealed class CompletionListItem : ToolStripMenuItem, ICompletionListItem
     {
         const int Indicator = 0;
         public readonly List<SearchMatch> Matches;
@@ -73,16 +190,11 @@ namespace CodeRefactor.Commands
 
         public CompletionListItem(List<SearchMatch> matches, ScintillaControl sci, EventHandler onClick)
         {
-            if (matches.Count == 1)
-            {
-                Text = "Replace one occurrence";
-                description = "Replace initial expression only.";
-            }
-            else
-            {
-                Text = string.Format("Replace {0} occurrences", matches.Count);
-                description = "Replace all highlighted occurrences of initial expression with new variable.";
-            }
+            var count = matches.Count;
+            Text = string.Format(TextHelper.GetString("Info.ReplacedOccurrences"), count);
+            description = count == 1
+                ? TextHelper.GetString("Description.ReplaceInitialOccurrence")
+                : TextHelper.GetString("Description.ReplaceAllOccurrences");
             Image = PluginBase.MainForm.FindImage("-1");
             Click += onClick;
             Icon = new Bitmap(Image);

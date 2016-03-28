@@ -11,7 +11,6 @@ using ASCompletion.Model;
 using ASCompletion.Settings;
 using PluginCore;
 using PluginCore.Controls;
-using PluginCore.FRService;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -2818,38 +2817,6 @@ namespace ASCompletion.Completion
             m.Value = expression;
 
             string snippet = TemplateUtils.GetTemplate("Variable");
-            snippet = TemplateUtils.ReplaceTemplateVariable(snippet, "Modifiers", null);
-            snippet = TemplateUtils.ToDeclarationString(m, snippet);
-            snippet += NewLine + "$(Boundary)";
-            SnippetHelper.InsertSnippetText(sci, sci.CurrentPos, snippet);
-        }
-
-        public static void GenerateExtractVariable(ScintillaControl sci, string newName, IList<SearchMatch> matches)
-        {
-            var expression = sci.SelText.Trim(new char[] { '=', ' ', '\t', '\n', '\r', ';', '.' });
-            expression = expression.TrimEnd(new char[] { '(', '[', '{', '<' });
-            expression = expression.TrimStart(new char[] { ')', ']', '}', '>' });
-            var current = ASContext.Context.CurrentMember;
-            var insertPosition = sci.PositionFromLine(current.LineTo);
-            for (int i = 0, matchCount = matches.Count; i < matchCount; i++)
-            {
-                var match = matches[i];
-                var start = sci.MBSafePosition(match.Index);
-                insertPosition = Math.Min(insertPosition, start);
-                var end = start + sci.MBSafeTextLength(match.Value);
-                var line = sci.LineFromPosition(start);
-                sci.EnsureVisible(line);
-                sci.SetSel(start, end);
-                FRSearch.PadIndexes((List<SearchMatch>)matches, i, match.Value, newName);
-                sci.EnsureVisible(sci.LineFromPosition(sci.MBSafePosition(match.Index)));
-                sci.ReplaceSel(newName);
-            }
-            insertPosition = sci.LineFromPosition(insertPosition);
-            insertPosition = sci.LineIndentPosition(insertPosition);
-            sci.CurrentPos = insertPosition;
-            sci.SetSel(sci.CurrentPos, sci.CurrentPos);
-            var m = new MemberModel(newName, "", FlagType.LocalVar, 0) {Value = expression};
-            var snippet = TemplateUtils.GetTemplate("Variable");
             snippet = TemplateUtils.ReplaceTemplateVariable(snippet, "Modifiers", null);
             snippet = TemplateUtils.ToDeclarationString(m, snippet);
             snippet += NewLine + "$(Boundary)";
