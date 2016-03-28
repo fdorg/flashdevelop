@@ -4442,8 +4442,8 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="CodeFormatter.Info.Description" xml:space="preserve">
-    <value>Fügt eine MXML und ActionScript Code-Formatierung hinzu.</value>
-    <comment>Added after 3.3.1</comment>
+    <value>Adds multiple code formatters to FlashDevelop.</value>
+    <comment>Modifed after 5.1.0</comment>
   </data>
   <data name="CodeFormatter.Label.CodeFormatter" xml:space="preserve">
     <value>Code-&amp;Formatierung</value>
@@ -5971,5 +5971,37 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
   <data name="ASCompletion.Info.NoContextGeneratorCode" xml:space="preserve">
     <value>No contextual code generation available.</value>
     <comment>REQUIRES TRANSLATION</comment>
+  </data>
+  <data name="CodeRefactor.Label.Move" xml:space="preserve">
+    <value>Move...</value>
+    <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="FlashDevelop.Label.Export" xml:space="preserve">
+    <value>&amp;Export...</value>
+    <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="FlashDevelop.Label.Import" xml:space="preserve">
+    <value>&amp;Import...</value>
+    <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="FlashDevelop.Label.ShortcutSearch" xml:space="preserve">
+    <value>Search: (Start the filter with * to view custom only, and ? to view conflicts only.)</value>
+    <comment>Added after 5.0.2</comment>
+  </data>
+  <data name="CodeFormatter.Description.AStyle.OptionsCPP" xml:space="preserve">
+    <value>Manual options for the CPP language, read more: http://astyle.sourceforge.net/astyle.html</value>
+    <comment>Added after 5.1.0</comment>
+  </data>
+  <data name="CodeFormatter.Description.AStyle.OptionsOthers" xml:space="preserve">
+    <value>Manual options for other C like languages, read more: http://astyle.sourceforge.net/astyle.html</value>
+    <comment>Added after 5.1.0</comment>
+  </data>
+  <data name="FlashConnect.Info.ConnectionFailed" xml:space="preserve">
+    <value>Connection failed. Default socket port '{0}' is already in use.</value>
+    <comment>Added after 5.1.0</comment>
+  </data>
+  <data name="FlashDevelop.Description.KeepCaretCentered" xml:space="preserve">
+    <value>Keeps the caret centered when caret is navigated to.</value>
+    <comment>Added after 5.1.1</comment>
   </data>
 </root>

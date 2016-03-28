@@ -232,7 +232,7 @@ namespace ProjectManager.Controls.TreeView
                 string absolute = projectClasspath;
                 if (!Path.IsPathRooted(absolute))
                     absolute = project.GetAbsolutePath(projectClasspath);
-                if ((absolute + "\\").StartsWith(project.Directory + "\\"))
+                if ((absolute + "\\").StartsWithOrdinal(project.Directory + "\\"))
                     continue;
                 if (!project.ShowHiddenPaths && project.IsPathHidden(absolute))
                     continue;
@@ -247,7 +247,7 @@ namespace ProjectManager.Controls.TreeView
                 string absolute = globalClasspath;
                 if (!Path.IsPathRooted(absolute))
                     absolute = project.GetAbsolutePath(globalClasspath);
-                if (absolute.StartsWith(project.Directory + Path.DirectorySeparatorChar))
+                if (absolute.StartsWithOrdinal(project.Directory + Path.DirectorySeparatorChar))
                     continue;
 
                 cpNode = ReuseNode(absolute, nodesToDie) as ProjectClasspathNode ?? new ClasspathNode(project, absolute, globalClasspath);
@@ -266,16 +266,16 @@ namespace ProjectManager.Controls.TreeView
                         absolute = project.GetAbsolutePath(asset.Path);
 
                     bool showNode = true;
-                    if (absolute.StartsWith(project.Directory))
+                    if (absolute.StartsWithOrdinal(project.Directory))
                         showNode = false;
                     foreach (string path in project.AbsoluteClasspaths)
-                        if (absolute.StartsWith(path))
+                        if (absolute.StartsWithOrdinal(path))
                         {
                             showNode = false;
                             break;
                         }
                     foreach (string path in PluginMain.Settings.GlobalClasspaths)
-                        if (absolute.StartsWith(path))
+                        if (absolute.StartsWithOrdinal(path))
                         {
                             showNode = false;
                             break;

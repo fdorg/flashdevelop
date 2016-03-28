@@ -3,7 +3,7 @@
 	<!-- Distro directory name -->
 	<Name>HaxeDevelop</Name>
 	<!-- Exposed app list groups -->
-	<Groups>FD5,HD5</Groups>
+	<Groups>FD5,HD5,Haxelib</Groups>
 	<!-- Directory where the archives should be stored -->
 	<Archive>$(BaseDir)\Apps</Archive>
 	<!-- Entry config file, can be an URL or a file path -->

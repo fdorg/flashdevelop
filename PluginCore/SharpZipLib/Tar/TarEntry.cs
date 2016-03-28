@@ -35,6 +35,7 @@
 
 using System;
 using System.IO;
+using PluginCore;
 
 namespace ICSharpCode.SharpZipLib.Tar 
 {
@@ -190,7 +191,7 @@ namespace ICSharpCode.SharpZipLib.Tar
                 throw new ArgumentNullException("toTest");
             }
 
-            return toTest.Name.StartsWith(Name);
+            return toTest.Name.StartsWithOrdinal(Name);
         }
         
         /// <summary>
@@ -350,7 +351,7 @@ namespace ICSharpCode.SharpZipLib.Tar
                 }
                 
                 if (header != null) {
-                    if ((header.TypeFlag == TarHeader.LF_DIR) || Name.EndsWith( "/" )) {
+                    if ((header.TypeFlag == TarHeader.LF_DIR) || Name.EndsWithOrdinal( "/" )) {
                         return true;
                     }
                 }
@@ -384,7 +385,7 @@ namespace ICSharpCode.SharpZipLib.Tar
 
 #if !NETCF_1_0 && !NETCF_2_0
             // 23-Jan-2004 GnuTar allows device names in path where the name is not local to the current directory
-            if (name.IndexOf(Environment.CurrentDirectory) == 0) {
+            if (name.IndexOfOrdinal(Environment.CurrentDirectory) == 0) {
                 name = name.Substring(Environment.CurrentDirectory.Length);
             }
 #endif
@@ -412,7 +413,7 @@ namespace ICSharpCode.SharpZipLib.Tar
             // No absolute pathnames
             // Windows (and Posix?) paths can start with UNC style "\\NetworkDrive\",
             // so we loop on starting /'s.
-            while (name.StartsWith("/")) {
+            while (name.StartsWith('/')) {
                 name = name.Substring(1);
             }
 
@@ -506,7 +507,7 @@ namespace ICSharpCode.SharpZipLib.Tar
                 throw new ArgumentNullException("name");
             }
 
-            bool isDir = name.EndsWith("/");
+            bool isDir = name.EndsWith('/');
             
             header.Name = name;
             header.Mode = isDir ? 1003 : 33216;

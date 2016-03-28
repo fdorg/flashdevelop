@@ -186,7 +186,7 @@ namespace PluginCore.Helpers
             stack.Push(String.Empty);
             String sep = Path.DirectorySeparatorChar.ToString();
             String alt = Path.AltDirectorySeparatorChar.ToString();
-            Int32 length = oldPath.EndsWith(sep) || oldPath.EndsWith(alt) ? oldPath.Length : oldPath.Length + 1;
+            Int32 length = oldPath.EndsWithOrdinal(sep) || oldPath.EndsWithOrdinal(alt) ? oldPath.Length : oldPath.Length + 1;
             while (stack.Count > 0)
             {
                 String subPath = stack.Pop();
@@ -213,7 +213,7 @@ namespace PluginCore.Helpers
             stack.Push(String.Empty);
             String sep = Path.DirectorySeparatorChar.ToString();
             String alt = Path.AltDirectorySeparatorChar.ToString();
-            Int32 length = oldPath.EndsWith(sep) || oldPath.EndsWith(alt) ? oldPath.Length : oldPath.Length + 1;
+            Int32 length = oldPath.EndsWithOrdinal(sep) || oldPath.EndsWithOrdinal(alt) ? oldPath.Length : oldPath.Length + 1;
             while (stack.Count > 0)
             {
                 String subPath = stack.Pop();
@@ -241,14 +241,14 @@ namespace PluginCore.Helpers
             if (Directory.Exists(path))
             {
                 String title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-                String message = TextHelper.GetString("Info.FolderAlreadyContainsFolder");
+                String message = TextHelper.GetString("PluginCore.Info.FolderAlreadyContainsFolder");
                 DialogResult result = MessageBox.Show(PluginBase.MainForm, String.Format(message, name, "\n"), title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
                 return result == DialogResult.Yes;
             }
             else if (File.Exists(path))
             {
                 String title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-                String message = TextHelper.GetString("Info.FolderAlreadyContainsFile");
+                String message = TextHelper.GetString("PluginCore.Info.FolderAlreadyContainsFile");
                 DialogResult result = MessageBox.Show(PluginBase.MainForm, String.Format(message, name, "\n"), title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
                 return result == DialogResult.Yes;
             }
@@ -435,7 +435,7 @@ namespace PluginCore.Helpers
                 {
                     foreach (DriveInfo drive in driveInfo)
                     {
-                        if (path.StartsWith(drive.RootDirectory.ToString())) return false;
+                        if (path.StartsWithOrdinal(drive.RootDirectory.ToString())) return false;
                     }
                     return true;
                 });

@@ -86,6 +86,7 @@ namespace ProjectManager
         private Timer buildTimer;
         private bool listenToPathChange;
         private ProjectManagerUIStatus uiStatus = ProjectManagerUIStatus.NotBuilding;
+        private bool firstRun;
 
         private ProjectTreeView Tree { get { return pluginUI.Tree; } }
         public static IMainForm MainForm { get { return PluginBase.MainForm; } }
@@ -104,7 +105,11 @@ namespace ProjectManager
         {
             Settings = new ProjectManagerSettings();
             if (!Directory.Exists(SettingsDir)) Directory.CreateDirectory(SettingsDir);
-            if (!File.Exists(SettingsPath)) this.SaveSettings();
+            if (!File.Exists(SettingsPath))
+            {
+                this.SaveSettings();
+                firstRun = true;
+            }
             else
             {
                 Object obj = ObjectSerializer.Deserialize(SettingsPath, Settings);
@@ -356,7 +361,8 @@ namespace ProjectManager
                     { 
                         BroadcastMenuInfo(); 
                         BroadcastToolBarInfo(); 
-                        OpenLastProject(); 
+                        OpenLastProject();
+                        if (firstRun) pluginPanel.Show();
                     });
                     break;
 
@@ -403,7 +409,7 @@ namespace ProjectManager
                         te.Handled = true;
                         OpenProjectSilent(te.Value);
                     }
-                    else if (te.Value.EndsWith(".swf"))
+                    else if (te.Value.EndsWithOrdinal(".swf"))
                     {
                         te.Handled = true;
                         OpenSwf(te.Value);
@@ -444,7 +450,7 @@ namespace ProjectManager
                     break;
 
                 case EventType.Command:
-                    if (de.Action.StartsWith("ProjectManager."))
+                    if (de.Action.StartsWithOrdinal("ProjectManager."))
                     if (de.Action == ProjectManagerCommands.NewProject)
                     {
                         NewProject();
@@ -785,7 +791,7 @@ namespace ProjectManager
         {
             if (FileInspector.ShouldUseShellExecute(path)) ShellOpenFile(path);
             else if (FileInspector.IsSwf(path, Path.GetExtension(path).ToLower())) PlaySwf(path);
-            else if (path.IndexOf("::") > 0)
+            else if (path.IndexOfOrdinal("::") > 0)
             {
                 DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.OpenVirtualFile, path);
                 EventManager.DispatchEvent(this, de);
@@ -839,7 +845,7 @@ namespace ProjectManager
 
             int w = project.MovieOptions.Width;
             int h = project.MovieOptions.Height;
-            if (path.StartsWith(project.Directory)) 
+            if (path.StartsWithOrdinal(project.Directory)) 
                 path = project.FixDebugReleasePath(path);
 
             if (project.TestMovieBehavior == TestMovieBehavior.NewTab)
@@ -1258,7 +1264,7 @@ namespace ProjectManager
             {
                 String file = openFileQueue.Dequeue();
                 if (File.Exists(file)) OpenFile(file);
-                if (file.IndexOf("::") > 0 && File.Exists(file.Substring(0, file.IndexOf("::")))) // virtual files
+                if (file.IndexOfOrdinal("::") > 0 && File.Exists(file.Substring(0, file.IndexOfOrdinal("::")))) // virtual files
                 {
                     OpenFile(file);
                 }
@@ -1534,7 +1540,7 @@ namespace ProjectManager
             Project project = Tree.ProjectOf(path);
             if (project != null)
             {
-                if (path.StartsWith(project.Directory)) path = project.GetRelativePath(path);
+                if (path.StartsWithOrdinal(project.Directory)) path = project.GetRelativePath(path);
                 if (project.Classpaths.Count == 1 && project.Classpaths[0] == ".")
                     project.Classpaths.Clear();
                 project.Classpaths.Add(path);

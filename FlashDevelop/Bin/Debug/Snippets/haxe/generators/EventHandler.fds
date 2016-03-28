@@ -1,4 +1,4 @@
 
-<<$(Modifiers) >>function $(Name)(e:$(Type)):$(Void) $(CSLB){
+<<$(Modifiers) >>function $(Name)(e<<:$(Type)>>)<<:$(Void)>> $(CSLB){
 	$(EntryPoint)
 }

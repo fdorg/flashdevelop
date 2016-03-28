@@ -137,7 +137,14 @@ namespace PluginCore.Controls
 
                 case EventType.Command:
                     string cmd = (e as DataEvent).Action;
-                    if (cmd.StartsWith("ProjectManager") || cmd.IndexOf("Changed") > 0 || cmd.IndexOf("Context") > 0)
+                    if (cmd.IndexOfOrdinal("ProjectManager") > 0
+                        || cmd.IndexOfOrdinal("Changed") > 0
+                        || cmd.IndexOfOrdinal("Context") > 0
+                        || cmd.IndexOfOrdinal("ClassPath") > 0
+                        || cmd.IndexOfOrdinal("Watcher") > 0
+                        || cmd.IndexOfOrdinal("Get") > 0
+                        || cmd.IndexOfOrdinal("Set") > 0
+                        || cmd.IndexOfOrdinal("SDK") > 0)
                         return; // ignore notifications
                     break;
             }
@@ -288,6 +295,12 @@ namespace PluginCore.Controls
 
         private void OnUIRefresh(ScintillaControl sci)
         {
+            Form mainForm = PluginBase.MainForm as Form;
+            if (mainForm.InvokeRequired)
+            {
+                mainForm.BeginInvoke((MethodInvoker)delegate { this.OnUIRefresh(sci); });
+                return;
+            }
             if (sci != null && sci.IsFocus)
             {
                 int position = sci.CurrentPos;
@@ -391,7 +404,7 @@ namespace PluginCore.Controls
             ScintillaControl sci = (ScintillaControl)lockedSciControl.Target;
             // chars
             string ks = key.ToString();
-            if (ks.Length == 1 || (ks.EndsWith(", Shift") && ks.IndexOf(',') == 1) || ks.StartsWith("NumPad"))
+            if (ks.Length == 1 || (ks.EndsWithOrdinal(", Shift") && ks.IndexOf(',') == 1) || ks.StartsWithOrdinal("NumPad"))
             {
                 return false;
             }

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Managers;
 
@@ -30,7 +31,7 @@ namespace ASCompletion.Commands
                 if (File.Exists(file))
                 {
                     string src = FileHelper.ReadFile(file, Encoding.Default);
-                    if (src.IndexOf(path) < 0) FileHelper.AddToFile(file, "\r\n" + path, Encoding.Default);
+                    if (src.IndexOfOrdinal(path) < 0) FileHelper.AddToFile(file, "\r\n" + path, Encoding.Default);
                 }
                 else FileHelper.WriteFile(file, path, Encoding.Default);
                 return true;

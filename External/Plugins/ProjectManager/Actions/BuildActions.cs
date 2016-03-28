@@ -130,7 +130,7 @@ namespace ProjectManager.Actions
             }
             
             // close running AIR projector
-            if (project.MovieOptions.Platform.StartsWith("AIR"))
+            if (project.MovieOptions.Platform.StartsWithOrdinal("AIR"))
             {
                 foreach (Process proc in Process.GetProcessesByName("adl"))
                 {
@@ -202,7 +202,7 @@ namespace ProjectManager.Actions
             if (project.Language == "as3") 
             {
                 string playerglobalHome = Environment.ExpandEnvironmentVariables("%PLAYERGLOBAL_HOME%");
-                if (playerglobalHome.StartsWith("%")) setPlayerglobalHomeEnv = true;
+                if (playerglobalHome.StartsWith('%')) setPlayerglobalHomeEnv = true;
                 if (setPlayerglobalHomeEnv)
                 {
                     Environment.SetEnvironmentVariable("PLAYERGLOBAL_HOME", Path.Combine(project.CurrentSDK, "frameworks/libs/player"));

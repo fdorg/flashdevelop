@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace PluginCore.Helpers
@@ -38,8 +39,8 @@ namespace PluginCore.Helpers
                 foreach (string rawLine in lines)
                 {
                     string line = rawLine.Trim();
-                    if (line.Length < 2 || line.StartsWith("#") || line.StartsWith(";")) continue;
-                    if (line.StartsWith("["))
+                    if (line.Length < 2 || line.StartsWith("#", StringComparison.Ordinal) || line.StartsWith(";", StringComparison.Ordinal)) continue;
+                    if (line.StartsWith("[", StringComparison.Ordinal))
                     {
                         if (currentSection != null) ini.Add(currentSection, config);
                         config = new Dictionary<string, string>();

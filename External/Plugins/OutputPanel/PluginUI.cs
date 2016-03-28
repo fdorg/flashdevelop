@@ -9,6 +9,7 @@ using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using WeifenLuo.WinFormsUI.Docking;
+using PluginCore.Controls;
 
 namespace OutputPanel
 {
@@ -44,6 +45,7 @@ namespace OutputPanel
             this.toggleButtonImagePlay = PluginBase.MainForm.FindImage("147");
             this.toggleButtonImagePlayNew = PluginBase.MainForm.FindImage("147|17|5|4");
             this.ToggleButtonClick(this, new EventArgs());
+            ScrollBarEx.Attach(textLog);
         }
 
         #region Windows Forms Designer Generated Code
@@ -56,7 +58,7 @@ namespace OutputPanel
         private void InitializeComponent()
         {
             this.scrollTimer = new System.Timers.Timer();
-            this.textLog = new System.Windows.Forms.RichTextBox();
+            this.textLog = new System.Windows.Forms.RichTextBoxEx();
             this.toolStrip = new PluginCore.Controls.ToolStripEx();
             this.toggleButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -291,10 +293,10 @@ namespace OutputPanel
             {
                 DockContent panel = this.Parent as DockContent;
                 DockState ds = panel.VisibleState;
-                if (!panel.Visible || ds.ToString().EndsWith("AutoHide"))
+                if (!panel.Visible || ds.ToString().EndsWithOrdinal("AutoHide"))
                 {
                     panel.Show();
-                    if (ds.ToString().EndsWith("AutoHide")) panel.Activate();
+                    if (ds.ToString().EndsWithOrdinal("AutoHide")) panel.Activate();
                 }
             }
         }
@@ -411,7 +413,7 @@ namespace OutputPanel
                             newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ProcessEndColor", Color.Blue);
                             break;
                         case -3: // ProcessError
-                            if (message.IndexOf("Warning") >= 0) newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.WarningColor", Color.Orange);
+                            if (message.IndexOfOrdinal("Warning") >= 0) newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.WarningColor", Color.Orange);
                             else newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ErrorColor", Color.Red);
                             break;
                     }

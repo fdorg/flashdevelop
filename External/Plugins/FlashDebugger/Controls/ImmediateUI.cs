@@ -7,6 +7,8 @@ using System.Text;
 using System.Windows.Forms;
 using flash.tools.debugger;
 using flash.tools.debugger.expression;
+using PluginCore;
+using PluginCore.Controls;
 
 namespace FlashDebugger.Controls
 {
@@ -21,6 +23,7 @@ namespace FlashDebugger.Controls
             this.InitializeComponent();
             this.contextMenuStrip.Renderer = new DockPanelStripRenderer(false);
             this.history = new List<string>();
+            ScrollBarEx.Attach(textBox);
         }
 
         private void textBox_KeyDown(object sender, KeyEventArgs e)
@@ -74,11 +77,11 @@ namespace FlashDebugger.Controls
                     {
                         this.textBox.AppendText(processSwfs());
                     }
-                    else if (line.StartsWith("p "))
+                    else if (line.StartsWithOrdinal("p "))
                     {
                         this.textBox.AppendText(processExpr(line.Substring(2)));
                     }
-                    else if (line.StartsWith("g "))
+                    else if (line.StartsWithOrdinal("g "))
                     {
                         this.textBox.AppendText(processGlobal(line.Substring(2)));
                     }

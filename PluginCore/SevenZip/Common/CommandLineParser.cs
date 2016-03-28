@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections;
+using PluginCore;
 
 namespace SevenZip.CommandLineParser
 {
@@ -196,7 +197,7 @@ namespace SevenZip.CommandLineParser
                 string id = commandForms[i].IDString;
                 if (commandForms[i].PostStringMode)
                 {
-                    if (commandString.IndexOf(id) == 0)
+                    if (commandString.IndexOfOrdinal(id) == 0)
                     {
                         postString = commandString.Substring(id.Length);
                         return i;

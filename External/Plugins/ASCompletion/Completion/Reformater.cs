@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using PluginCore;
 
 namespace ASCompletion.Completion
 {
@@ -495,7 +496,7 @@ namespace ASCompletion.Completion
                 // CDATA, HTML comments
                 if (c == '!' && n - i > 2)
                 {
-                    if (txt[i] == '[' && txt.Substring(i).StartsWith("[CDATA["))
+                    if (txt[i] == '[' && txt.Substring(i).StartsWithOrdinal("[CDATA["))
                     {
                         i += 7;
                         inCData = true;

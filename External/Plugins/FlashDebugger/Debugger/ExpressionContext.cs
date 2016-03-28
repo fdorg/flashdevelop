@@ -5,6 +5,7 @@ using ASCompletion.Model;
 using flash.tools.debugger;
 using flash.tools.debugger.concrete;
 using flash.tools.debugger.expression;
+using PluginCore;
 using PluginCore.Localization;
 using Object = java.lang.Object;
 using String = java.lang.String;
@@ -116,7 +117,7 @@ namespace FlashDebugger
             MemberList imports = ASContext.Context.GetVisibleExternalElements();
             foreach (MemberModel member in imports)
             {
-                if (member.Name == className || member.Name.EndsWith(endOfClassName))
+                if (member.Name == className || member.Name.EndsWithOrdinal(endOfClassName))
                 {
                     // If our member is some global variable/constant, return it
                     if ((member.Flags & (FlagType.Constant | FlagType.Variable)) > 0)

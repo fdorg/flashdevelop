@@ -1,6 +1,6 @@
 namespace PluginCore.Localization
 {
-    public enum LocaleVersion : sbyte
+    public enum LocaleVersion
     {
         /// <summary>
         /// English - UNITED STATES (US)

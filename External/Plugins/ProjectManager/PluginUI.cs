@@ -10,6 +10,7 @@ using ProjectManager.Projects;
 using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Managers;
+using PluginCore.Controls;
 
 namespace ProjectManager
 {
@@ -62,6 +63,7 @@ namespace ProjectManager
             panel.Controls.Add(treeBar);
 
             menu.ProjectTree = tree;
+            ScrollBarEx.Attach(tree);
 
             #endregion
 

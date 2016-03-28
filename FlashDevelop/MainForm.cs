@@ -105,6 +105,7 @@ namespace FlashDevelop
         private ToolStripProgressBar toolStripProgressBar;
         private ToolStripStatusLabel toolStripProgressLabel;
         private ToolStripStatusLabel toolStripStatusLabel;
+        private ToolStripButton restartButton;
         private ProcessRunner processRunner;
 
         /* Dialogs */
@@ -584,15 +585,15 @@ namespace FlashDevelop
                 }
                 else return null;
             }
-            else if (file.EndsWith(".delete.fdz"))
+            else if (file.EndsWithOrdinal(".delete.fdz"))
             {
                 this.CallCommand("RemoveZip", file);
                 return null;
             }
-            else if (file.EndsWith(".fdz"))
+            else if (file.EndsWithOrdinal(".fdz"))
             {
                 this.CallCommand("ExtractZip", file);
-                if (file.ToLower().IndexOf("theme") != -1)
+                if (file.IndexOf("theme", StringComparison.OrdinalIgnoreCase) != -1)
                 {
                     String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
                     if (File.Exists(currentTheme))
@@ -707,6 +708,8 @@ namespace FlashDevelop
                     File.Delete(appman);
                     this.refreshConfig = true;
                 }
+                // Load platform data from user files
+                PlatformData.Load(Path.Combine(PathHelper.SettingDir, "Platforms"));
                 // Load current theme for applying later
                 String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
                 if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
@@ -726,16 +729,38 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// When AppMan is closed, it notifies of changes. Forward notifications.
+        /// When AppMan installs something it notifies of changes. Forward notifications.
         /// </summary>
         private void AppManUpdate(Object sender, FileSystemEventArgs e)
         {
             try
             {
+
                 NotifyEvent ne = new NotifyEvent(EventType.AppChanges);
-                EventManager.DispatchEvent(this, ne);
+                EventManager.DispatchEvent(this, ne); // Notify plugins...
+                String appMan = Path.Combine(PathHelper.BaseDir, ".appman");
+                String contents = File.ReadAllText(appMan);
+                if (contents == "restart")
+                {
+                    this.RestartRequired();
+                }
             }
             catch {} // No errors...
+        }
+
+        /// <summary>
+        /// Initializes the restart button
+        /// </summary>
+        private void InitializeRestartButton()
+        {
+            this.restartButton = new ToolStripButton();
+            this.restartButton.Image = this.FindImage("73|6|3|3");
+            this.restartButton.Alignment = ToolStripItemAlignment.Right;
+            this.restartButton.Text = TextHelper.GetString("Label.Restart");
+            this.restartButton.ToolTipText = TextHelper.GetString("Info.RequiresRestart");
+            this.restartButton.Click += delegate { this.Restart(null, null); };
+            this.restartButton.Visible = false;
+            this.toolStrip.Items.Add(this.restartButton);
         }
 
         /// <summary>
@@ -790,7 +815,6 @@ namespace FlashDevelop
                 this.appSettings = (SettingObject)obj;
             }
             SettingObject.EnsureValidity(this.appSettings);
-            PlatformData.Load(Path.Combine(PathHelper.SettingDir, "Platforms"));
             FileStateManager.RemoveOldStateFiles();
         }
 
@@ -1025,14 +1049,14 @@ namespace FlashDevelop
             this.Font = this.appSettings.DefaultFont;
             this.StartPosition = FormStartPosition.Manual;
             this.Closing += new CancelEventHandler(this.OnMainFormClosing);
+            this.FormClosed += new FormClosedEventHandler(this.OnMainFormClosed);
             this.Activated += new EventHandler(this.OnMainFormActivate);
             this.Shown += new EventHandler(this.OnMainFormShow);
             this.Load += new EventHandler(this.OnMainFormLoad);
             this.LocationChanged += new EventHandler(this.OnMainFormLocationChange);
             this.GotFocus += new EventHandler(this.OnMainFormGotFocus);
             this.Resize += new EventHandler(this.OnMainFormResize);
-
-            ScintillaManager.ConfigurationLoaded += ApplyAllSettings;
+            ScintillaManager.ConfigurationLoaded += this.ApplyAllSettings;
         }
 
         #endregion
@@ -1155,6 +1179,10 @@ namespace FlashDevelop
             */
             this.InitializeWindow();
             /**
+            * Initializes the restart button
+            */
+            this.InitializeRestartButton();
+            /**
             * Check for updates when needed
             */
             this.CheckForUpdates();
@@ -1207,14 +1235,21 @@ namespace FlashDevelop
                 PluginServices.DisposePlugins();
                 this.KillProcess();
                 this.SaveAllSettings();
-                /* Restart if requested */
-                if (this.restartRequested)
-                {
-                    this.restartRequested = false;
-                    Application.Restart();
-                }
             }
             else this.restartRequested = false;
+        }
+
+        /// <summary>
+        /// When form is closed restart if requested.
+        /// </summary>
+        public void OnMainFormClosed(Object sender, FormClosedEventArgs e)
+        {
+            if (this.restartRequested)
+            {
+                this.restartRequested = false;
+                Process.Start(Application.ExecutablePath);
+                Process.GetCurrentProcess().Kill();
+            }
         }
 
         /// <summary>
@@ -1562,7 +1597,7 @@ namespace FlashDevelop
                     else if (keyData == (Keys.Control | Keys.X)) return false;
                     else if (keyData == (Keys.Control | Keys.A)) return false;
                     else if (keyData == (Keys.Control | Keys.Z)) return false;
-                    else if (keyData == (Keys.Control | Keys.V)) return false;
+                    else if (keyData == (Keys.Control | Keys.Y)) return false;
                 }
                 /**
                 * Process special key combinations and allow "chaining" of 
@@ -1949,6 +1984,16 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Show a message to the user to restart FD
+        /// </summary>
+        public void RestartRequired()
+        {
+            if (this.restartButton != null) this.restartButton.Visible = true;
+            String message = TextHelper.GetString("Info.RequiresRestart");
+            TraceManager.Add(message);
+        }
+
+        /// <summary>
         /// Refreshes the main form
         /// </summary>
         public void RefreshUI()
@@ -2061,22 +2106,17 @@ namespace FlashDevelop
         {
             CloseAllDocuments(exceptCurrent, false);
         }
-
         public void CloseAllDocuments(Boolean exceptCurrent, Boolean exceptOtherPanes)
         {
             ITabbedDocument current = this.CurrentDocument;
             DockPane currentPane = (current == null) ? null : current.DockHandler.PanelPane;
             this.closeAllCanceled = false; this.closingAll = true;
             var documents = new List<ITabbedDocument>(Documents);
-
             foreach (var document in documents)
             {
                 Boolean close = true;
-                if (exceptCurrent && document == current)
-                    close = false;
-                if (exceptOtherPanes && document.DockHandler.PanelPane != currentPane)
-                    close = false;
-                
+                if (exceptCurrent && document == current) close = false;
+                if (exceptOtherPanes && document.DockHandler.PanelPane != currentPane) close = false;
                 if (close) document.Close();
             }
             this.closingAll = false;
@@ -2161,6 +2201,15 @@ namespace FlashDevelop
             }
             else return PathHelper.AppDir;
 
+        }
+
+        /// <summary>
+        /// Gets the amount instances running
+        /// </summary>
+        public Int32 GetInstanceCount()
+        {
+            Process current = Process.GetCurrentProcess();
+            return Process.GetProcessesByName(current.ProcessName).Length;
         }
 
         /// <summary>
@@ -2421,7 +2470,7 @@ namespace FlashDevelop
             if (sci.CanPaste)
             {
                 // if clip is not line-based, then just do simple paste
-                if ((sci.SelTextSize > 0 && !sci.SelText.EndsWith("\n")) || !Clipboard.GetText().EndsWith("\n") || Clipboard.ContainsData("MSDEVColumnSelect")) sci.Paste();
+                if ((sci.SelTextSize > 0 && !sci.SelText.EndsWith('\n')) || !Clipboard.GetText().EndsWith('\n') || Clipboard.ContainsData("MSDEVColumnSelect")) sci.Paste();
                 else
                 {
                     sci.BeginUndoAction();
@@ -2655,7 +2704,7 @@ namespace FlashDevelop
                 for (Int32 i = 0; i < documents.Length; i++)
                 {
                     ITabbedDocument current = documents[i];
-                    if (current.IsEditable && current.IsModified && !current.IsUntitled && current.Text.EndsWith(filter))
+                    if (current.IsEditable && current.IsModified && !current.IsUntitled && current.Text.EndsWithOrdinal(filter))
                     {
                         current.Save();
                         current.IsModified = false;
@@ -3017,7 +3066,7 @@ namespace FlashDevelop
                     {
                         zipLog += "Restart required.\r\n";
                         if (!silentInstall) finish += "\n" + restart;
-                        else TraceManager.AddAsync(finish + "\r\n" + restart);
+                        this.RestartRequired();
                     }
                     String logFile = Path.Combine(PathHelper.BaseDir, "Extensions.log");
                     File.AppendAllText(logFile, zipLog + "Done.\r\n\r\n", Encoding.UTF8);
@@ -3102,7 +3151,7 @@ namespace FlashDevelop
                     {
                         zipLog += "Restart required.\r\n";                        
                         if (!silentRemove) finish += "\n" + restart;
-                        else TraceManager.AddAsync(finish + "\r\n" + restart);
+                        this.RestartRequired();
                     }
                     String logFile = Path.Combine(PathHelper.BaseDir, "Extensions.log");
                     File.AppendAllText(logFile, zipLog + "Done.\r\n\r\n", Encoding.UTF8);
@@ -3138,7 +3187,23 @@ namespace FlashDevelop
             }
             else browser.WebBrowser.GoHome();
         }
-        
+
+        /// <summary>
+        /// Opens the home page in browser
+        /// </summary>
+        public void ShowHome(Object sender, System.EventArgs e)
+        {
+            this.CallCommand("Browse", DistroConfig.DISTRIBUTION_HOME);
+        }
+
+        /// <summary>
+        /// Opens the help page in browser
+        /// </summary>
+        public void ShowHelp(Object sender, System.EventArgs e)
+        {
+            this.CallCommand("Browse", DistroConfig.DISTRIBUTION_HELP);
+        }
+
         /// <summary>
         /// Opens the arguments dialog
         /// </summary>
@@ -3379,13 +3444,13 @@ namespace FlashDevelop
                 ScintillaControl sci = Globals.SciControl;
                 if (sci.SelText.Length > 0)
                 {
-                    isAsterisk = sci.SelText.StartsWith("#");
-                    if (sci.SelText.StartsWith("0x") && sci.SelText.Length == 8)
+                    isAsterisk = sci.SelText.StartsWith('#');
+                    if (sci.SelText.StartsWithOrdinal("0x") && sci.SelText.Length == 8)
                     {
                         Int32 convertedColor = DataConverter.StringToColor(sci.SelText);
                         this.colorDialog.Color = ColorTranslator.FromWin32(convertedColor);
                     }
-                    else if (sci.SelText.StartsWith("#") && sci.SelText.Length == 7)
+                    else if (sci.SelText.StartsWith('#') && sci.SelText.Length == 7)
                     {
                         String foundColor = sci.SelText.Replace("#", "0x");
                         Int32 convertedColor = DataConverter.StringToColor(foundColor);
@@ -3660,7 +3725,7 @@ namespace FlashDevelop
                 {
                     if (sci.LineLength(line) == 0) text = "";
                     else text = sci.GetLine(line).TrimStart();
-                    if (text.StartsWith(lineComment))
+                    if (text.StartsWithOrdinal(lineComment))
                     {
                         position = sci.LineIndentPosition(line);
                         sci.SetSel(position, position + lineComment.Length);
@@ -3692,7 +3757,6 @@ namespace FlashDevelop
         {
             CommentSelection();
         }
-
         private bool? CommentSelection()
         {
             ScintillaControl sci = Globals.SciControl;
@@ -3700,7 +3764,7 @@ namespace FlashDevelop
             Int32 selStart = sci.SelectionStart;
             String commentEnd = ScintillaManager.GetCommentEnd(sci.ConfigurationLanguage);
             String commentStart = ScintillaManager.GetCommentStart(sci.ConfigurationLanguage);
-            if (sci.SelText.StartsWith(commentStart) && sci.SelText.EndsWith(commentEnd))
+            if (sci.SelText.StartsWithOrdinal(commentStart) && sci.SelText.EndsWithOrdinal(commentEnd))
             {
                 sci.BeginUndoAction();
                 try
@@ -3761,7 +3825,7 @@ namespace FlashDevelop
                     sci.SetSel(start + 1, end);
                     // remove comment
                     String selText = sci.SelText;
-                    if (selText.StartsWith(commentStart) && selText.EndsWith(commentEnd))
+                    if (selText.StartsWithOrdinal(commentStart) && selText.EndsWithOrdinal(commentEnd))
                     {
                         sci.SetSel(end - commentEnd.Length, end);
                         sci.ReplaceSel("");
@@ -3793,14 +3857,12 @@ namespace FlashDevelop
             ScintillaControl sci = Globals.SciControl;
             String lineComment = ScintillaManager.GetLineComment(sci.ConfigurationLanguage);
             Int32 position = sci.CurrentPos;
-            
             // try doing a block comment on the current line instead (xml, html...)
             if (lineComment == "")
             {
                 ToggleBlockOnCurrentLine(sci);
                 return;
             }
-
             Int32 curLine = sci.LineFromPosition(position);
             Int32 startPosInLine = position - sci.PositionFromLine(curLine);
             Int32 startLine = sci.LineFromPosition(sci.SelectionStart);
@@ -3817,38 +3879,30 @@ namespace FlashDevelop
             {
                 if (sci.LineLength(line) == 0) text = "";
                 else text = sci.GetLine(line).TrimStart();
-                if (!text.StartsWith(lineComment))
+                if (!text.StartsWithOrdinal(lineComment))
                 {
                     containsCodeLine = true;
                     break;
                 }
                 line++;
             }
-
             if (containsCodeLine) this.CommentLine(null, null);
             else this.UncommentLine(null, null);
         }
-
         private void ToggleBlockOnCurrentLine(ScintillaControl sci)
         {
             Int32 selStart = sci.SelectionStart;
-
             Int32 indentPos = sci.LineIndentPosition(sci.CurrentLine);
             Int32 lineEndPos = sci.LineEndPosition(sci.CurrentLine);
             bool afterBlockStart = sci.CurrentPos > indentPos;
             bool afterBlockEnd = sci.CurrentPos >= lineEndPos;
-
             sci.SelectionStart = indentPos;
             sci.SelectionEnd = lineEndPos;
-
-            bool? added = CommentSelection();
+            bool ? added = CommentSelection();
             if (added == null) return;
-
             int factor = (bool)added ? 1 : -1;
-
             String commentEnd = ScintillaManager.GetCommentEnd(sci.ConfigurationLanguage);
             String commentStart = ScintillaManager.GetCommentStart(sci.ConfigurationLanguage);
-
             // preserve cursor pos
             if (afterBlockStart) selStart += commentStart.Length * factor;
             if (afterBlockEnd) selStart += commentEnd.Length * factor;
@@ -4010,7 +4064,7 @@ namespace FlashDevelop
                 {
                     String message = TextHelper.GetString("Info.RunningProcess");
                     TraceManager.Add(message + " " + args, (Int32)TraceType.ProcessStart);
-                    if (args.ToLower().EndsWith(".bat"))
+                    if (args.ToLower().EndsWithOrdinal(".bat"))
                     {
                         Process bp = new Process();
                         bp.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -4136,7 +4190,7 @@ namespace FlashDevelop
                     zipFile.BeginUpdate();
                     foreach (String settingFile in settingFiles)
                     {
-                        Int32 index = settingFile.IndexOf(dirMarker) + dirMarker.Length;
+                        Int32 index = settingFile.IndexOfOrdinal(dirMarker) + dirMarker.Length;
                         zipFile.Add(settingFile, "$(BaseDir)\\" + settingFile.Substring(index));
                     }
                     zipFile.CommitUpdate();
@@ -4188,8 +4242,11 @@ namespace FlashDevelop
         /// </summary>
         public void Restart(Object sender, EventArgs e)
         {
-            this.restartRequested = true;
-            this.Close();
+            if (this.GetInstanceCount() == 1)
+            {
+                this.restartRequested = true;
+                this.Close();
+            }
         }
 
         #endregion

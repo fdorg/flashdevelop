@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using Antlr.Runtime;
 using CodeFormatter.InfoCollector;
 using CodeFormatter.Preferences;
+using PluginCore;
 
 #pragma warning disable 414
 
@@ -191,7 +192,7 @@ namespace CodeFormatter.Handlers
 
         public String print(int startIndent)
         {
-            if (mSource.IndexOf(ASPrettyPrinter.mIgnoreFileProcessing) >= 0)
+            if (mSource.IndexOfOrdinal(ASPrettyPrinter.mIgnoreFileProcessing) >= 0)
             {
                 mParseErrors = new List<Exception>();
                 mParseErrors.Add(new Exception("File ignored: Ignore tag exists in file==> " + ASPrettyPrinter.mIgnoreFileProcessing));
@@ -402,7 +403,7 @@ namespace CodeFormatter.Handlers
                                     else
                                     {
                                         //on a middle line, indent the text to the right of the <!-- .
-                                        if (!onLastLine || !data.StartsWith("-->"))
+                                        if (!onLastLine || !data.StartsWithOrdinal("-->"))
                                             indentAmount += 5;
                                     }
                                 }
@@ -576,7 +577,7 @@ namespace CodeFormatter.Handlers
                 String bufferString = buffer.ToString();
                 //if (bufferString[mOutputRange.X] == '\n')
                     //mOutputRange.X++;
-                int lastCR = buffer.ToString().LastIndexOf("\n", mOutputRange.X);
+                int lastCR = buffer.ToString().LastIndexOf('\n', mOutputRange.X);
                 if (lastCR >= 0)
                     mOutputRange.X = lastCR + 1;
                 else
@@ -587,7 +588,7 @@ namespace CodeFormatter.Handlers
                     mOutputRange.Y++;
 
                 //now, find the previous CR, which we will *not* include in the range
-                int nextCR = buffer.ToString().LastIndexOf("\n", mOutputRange.Y);
+                int nextCR = buffer.ToString().LastIndexOf('\n', mOutputRange.Y);
                 if (nextCR >= 0)
                     mOutputRange.Y = nextCR; //don't need to actually include the CR character
             }
@@ -656,8 +657,8 @@ namespace CodeFormatter.Handlers
             int methodSavedIndent = mCurrentIndent;
             try
             {
-                int startIndex = token.Text.IndexOf(CDataStart);
-                int endIndex = token.Text.LastIndexOf(CDataEnd);
+                int startIndex = token.Text.IndexOfOrdinal(CDataStart);
+                int endIndex = token.Text.LastIndexOfOrdinal(CDataEnd);
 
                 if (mKeepCDataOnSameLine)
                 {
@@ -1057,7 +1058,7 @@ namespace CodeFormatter.Handlers
 
             //if we are inside a CData section and the enclosing tag is not explicitly set to allow formatting,
             //then we just spit out the data.  I'm going to ignore the case of an empty CData section.
-            if (!mTagsWhoseTextContentsCanBeFormatted.Contains(getEnclosingTag()) && AntlrUtilities.asTrim(token.Text).StartsWith(CDataStart))
+            if (!mTagsWhoseTextContentsCanBeFormatted.Contains(getEnclosingTag()) && AntlrUtilities.asTrim(token.Text).StartsWithOrdinal(CDataStart))
             {
                 //put start of tag on new line and indent it
                 if (!ASFormatter.isOnlyWhitespaceOnLastLine(buffer))
@@ -1690,7 +1691,7 @@ namespace CodeFormatter.Handlers
                         {
                             //skip newlines and other meta flags
                             String newAttrName = newAttrOrder[j].mName;
-                            if (newAttrName == NewLineFlag || newAttrName.StartsWith("<"))
+                            if (newAttrName == NewLineFlag || newAttrName.StartsWith('<'))
                             {
                                 j++;
                                 continue;
@@ -1721,7 +1722,7 @@ namespace CodeFormatter.Handlers
                     Attr attr = attrs[j];
                     if (!allAttrsArePartOfCustomOrdering && attr.mName == NewLineFlag)
                         lastNewLine = j;
-                    if (!attr.mName.StartsWith("<"))
+                    if (!attr.mName.StartsWith('<'))
                         lastAttr = j;
                 }
 
@@ -1754,7 +1755,7 @@ namespace CodeFormatter.Handlers
                         int currentLineLength = ASPrettyPrinter.determineLastLineLength(buffer, getTabSize());
                         foreach (Attr attr in attrs)
                         {
-                            if (attr.mName.StartsWith("<"))
+                            if (attr.mName.StartsWith('<'))
                             {
                                 //do nothing
                                 continue;
@@ -1784,14 +1785,14 @@ namespace CodeFormatter.Handlers
                     Attr attr = attrs[j];
 
                     //check for a group wrap mode
-                    if (attr.mName.StartsWith("<"))
+                    if (attr.mName.StartsWith('<'))
                     {
                         if (disableWrapping)
                             continue;
 
                         //                  wrapMode=(j<lastNewLine) ? MXML_ATTR_WRAP_NONE : getWrapMode();
                         wrapMode = getWrapMode(); //set back to default until I determine otherwise
-                        if (attr.mName.StartsWith("<Wrap="))
+                        if (attr.mName.StartsWithOrdinal("<Wrap="))
                         {
                             inGroup = true;
                             String dataString = attr.mName.Substring("<Wrap=".Length, (attr.mName.Length - 1) - ("<Wrap=".Length));
@@ -2129,7 +2130,7 @@ namespace CodeFormatter.Handlers
 
         private int getLastLineColumnLength(StringBuilder buffer)
         {
-            int lastCR = buffer.ToString().LastIndexOf("\n");
+            int lastCR = buffer.ToString().LastIndexOf('\n');
             String lastLine = null;
             if (lastCR < 0)
                 lastLine = buffer.ToString();
@@ -2364,7 +2365,7 @@ namespace CodeFormatter.Handlers
 
         public static String isGroupAttr(String attr)
         {
-            if (attr.Length >= 2 && attr.StartsWith(Attr_Group_Marker) && attr.EndsWith(Attr_Group_Marker))
+            if (attr.Length >= 2 && attr.StartsWithOrdinal(Attr_Group_Marker) && attr.EndsWithOrdinal(Attr_Group_Marker))
                 return attr.Substring(1, (attr.Length - 1) - 1);
             return null;
         }

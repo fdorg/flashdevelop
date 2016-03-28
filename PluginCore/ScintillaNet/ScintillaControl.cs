@@ -1,13 +1,14 @@
 using System;
-using System.IO;
-using System.Text;
-using System.Drawing;
 using System.Collections;
-using System.Windows.Forms;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using ScintillaNet.Configuration;
+using System.ComponentModel;
+using System.Drawing;
 using System.Drawing.Printing;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Forms;
+using ScintillaNet.Configuration;
 using PluginCore.FRService;
 using PluginCore.Utilities;
 using PluginCore.Managers;
@@ -87,16 +88,37 @@ namespace ScintillaNet
         {
             if (e.Type == EventType.ApplyTheme)
             {
-                Boolean enabled = PluginBase.MainForm.GetThemeFlag("ScrollBar.UseCustom", false);
+                Color color = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor");
+                String value = PluginBase.MainForm.GetThemeValue("ScrollBar.UseCustom");
+                Boolean enabled = value == "True" || (value == null && color != Color.Empty);
                 if (enabled && !this.Controls.Contains(this.vScrollBar))
                 {
                     this.AddScrollBars(this);
+                    this.UpdateScrollBarTheme(this);
                 }
                 else if (!enabled && this.Controls.Contains(this.vScrollBar))
                 {
                     this.RemoveScrollBars(this);
                 }
             }
+        }
+
+        /// <summary>
+        /// Updates the scrollbar theme and applies old defaults
+        /// </summary>
+        private void UpdateScrollBarTheme(ScintillaControl sender)
+        {
+            PluginBase.MainForm.ThemeControls(sender.vScrollBar);
+            PluginBase.MainForm.ThemeControls(sender.hScrollBar);
+            // Apply settings so that old defaults work...
+            sender.vScrollBar.ArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ArrowColor", sender.vScrollBar.ForeColor);
+            sender.vScrollBar.HotArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotArrowColor", sender.vScrollBar.ForeColor);
+            sender.vScrollBar.ActiveArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ActiveArrowColor", sender.vScrollBar.ActiveForeColor);
+            sender.vScrollBar.HotForeColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotForeColor", sender.vScrollBar.ForeColor);
+            sender.hScrollBar.ArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ArrowColor", sender.hScrollBar.ForeColor);
+            sender.hScrollBar.HotArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotArrowColor", sender.hScrollBar.ForeColor);
+            sender.hScrollBar.ActiveArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ActiveArrowColor", sender.hScrollBar.ActiveForeColor);
+            sender.hScrollBar.HotForeColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotForeColor", sender.hScrollBar.ForeColor);
         }
 
         /// <summary>
@@ -116,20 +138,12 @@ namespace ScintillaNet
             sender.hScrollBar.Orientation = ScrollBarOrientation.Horizontal;
             sender.hScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
             sender.hScrollBar.Dock = DockStyle.Bottom;
-            if (PluginBase.MainForm.GetThemeFlag("ScrollBar.UseCustom", false))
+            Color color = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor");
+            String value = PluginBase.MainForm.GetThemeValue("ScrollBar.UseCustom");
+            if (value == "True" || (value == null && color != Color.Empty))
             {
                 sender.AddScrollBars(sender);
-                PluginBase.MainForm.ThemeControls(sender.vScrollBar);
-                PluginBase.MainForm.ThemeControls(sender.hScrollBar);
-                // Apply settings so that old defaults work...
-                this.vScrollBar.ArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ArrowColor", this.vScrollBar.ForeColor);
-                this.vScrollBar.HotArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotArrowColor", this.vScrollBar.ForeColor);
-                this.vScrollBar.ActiveArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ActiveArrowColor", this.vScrollBar.ActiveForeColor);
-                this.vScrollBar.HotForeColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotForeColor", this.vScrollBar.ForeColor);
-                this.hScrollBar.ArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ArrowColor", this.hScrollBar.ForeColor);
-                this.hScrollBar.HotArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotArrowColor", this.hScrollBar.ForeColor);
-                this.hScrollBar.ActiveArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ActiveArrowColor", this.hScrollBar.ActiveForeColor);
-                this.hScrollBar.HotForeColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotForeColor", this.hScrollBar.ForeColor);
+                sender.UpdateScrollBarTheme(sender);
             }
             EventManager.AddEventHandler(this, EventType.ApplyTheme);
         }
@@ -215,8 +229,7 @@ namespace ScintillaNet
 
         #region Scintilla Main
 
-        public ScintillaControl()
-            : this(IntPtr.Size == 4 ? "SciLexer.dll" : "SciLexer64.dll")
+        public ScintillaControl() : this(IntPtr.Size == 4 ? "SciLexer.dll" : "SciLexer64.dll")
         {
             if (Win32.ShouldUseWin32()) DragAcceptFiles(this.Handle, 1);
         }
@@ -231,13 +244,13 @@ namespace ScintillaNet
                     hwndScintilla = CreateWindowEx(0, "Scintilla", "", WS_CHILD_VISIBLE_TABSTOP, 0, 0, this.Width, this.Height, this.Handle, 0, new IntPtr(0), null);
                     directPointer = (IntPtr)SlowPerform(2185, 0, 0);
                     IntPtr sciFunctionPointer = GetProcAddress(new HandleRef(null, lib), "Scintilla_DirectFunction");
-/*                    if (sciFunctionPointer == IntPtr.Zero)
-                        throw new Win32Exception(Resources.Exception_CannotCreateDirectFunction, new Win32Exception(Marshal.GetLastWin32Error()));
-*/
-                    _sciFunction = (Perform)Marshal.GetDelegateForFunctionPointer(
-                        sciFunctionPointer,
-                        typeof(Perform));
-
+                    if (sciFunctionPointer == IntPtr.Zero) sciFunctionPointer = GetProcAddress(new HandleRef(null, lib), "_Scintilla_DirectFunction@16");
+                    if (sciFunctionPointer == IntPtr.Zero)
+                    {
+                        string msg = "The Scintilla module has no export for the 'Scintilla_DirectFunction' procedure.";
+                        throw new Win32Exception(msg, new Win32Exception(Marshal.GetLastWin32Error()));
+                    }
+                    _sciFunction = (Perform)Marshal.GetDelegateForFunctionPointer(sciFunctionPointer, typeof(Perform));
                     directPointer = DirectPointer;
                 }
                 UpdateUI += new UpdateUIHandler(OnUpdateUI);
@@ -2462,8 +2475,7 @@ namespace ScintillaNet
             bool wholeLine = SelectionStart == SelectionEnd;
             int selectionLength = SelectionEnd - SelectionStart;
             SelectionDuplicate();
-            if (wholeLine)
-                LineDown();
+            if (wholeLine) LineDown();
             else
             {
                 SelectionStart += selectionLength;
@@ -5201,7 +5213,7 @@ namespace ScintillaNet
         /// </summary>
         public static void UpdateShortcut(String id, Keys shortcut)
         {
-            if (id.StartsWith("Scintilla.")) shortcutOverrides[id].keys = shortcut;
+            if (id.StartsWithOrdinal("Scintilla.")) shortcutOverrides[id].keys = shortcut;
         }
 
         /// <summary>
@@ -5276,11 +5288,7 @@ namespace ScintillaNet
         [DllImport("shell32.dll")]
         public static extern void DragAcceptFiles(IntPtr hwnd, int accept);
 
-        public delegate IntPtr Perform(
-            IntPtr sci,
-            int iMessage,
-            IntPtr wParam,
-            IntPtr lParam);
+        public delegate IntPtr Perform(IntPtr sci, int iMessage, IntPtr wParam, IntPtr lParam);
 
         public UInt32 SlowPerform(UInt32 message, UInt32 wParam, UInt32 lParam)
         {
@@ -5749,13 +5757,13 @@ namespace ScintillaNet
                                 if (tempText.Length == 0) previousIndent = -1;
                             }
                             while ((tempLine > 0) && (previousIndent < 0));
-                            if (tempText.IndexOf("//") > 0) // remove comment at end of line
+                            if (tempText.IndexOfOrdinal("//") > 0) // remove comment at end of line
                             {
-                                int slashes = this.MBSafeTextLength(tempText.Substring(0, tempText.IndexOf("//") + 1));
+                                int slashes = this.MBSafeTextLength(tempText.Substring(0, tempText.IndexOfOrdinal("//") + 1));
                                 if (this.PositionIsOnComment(PositionFromLine(tempLine) + slashes))
-                                    tempText = tempText.Substring(0, tempText.IndexOf("//")).Trim();
+                                    tempText = tempText.Substring(0, tempText.IndexOfOrdinal("//")).Trim();
                             }
-                            if (tempText.EndsWith("{"))
+                            if (tempText.EndsWith('{'))
                             {
                                 int bracePos = CurrentPos - 1;
                                 while (bracePos > 0 && CharAt(bracePos) != '{') bracePos--;
@@ -5764,17 +5772,17 @@ namespace ScintillaNet
                                     previousIndent += TabWidth;
                             }
                             // TODO: Should this test a config variable for indenting after case : statements?
-                            if (Lexer == 3 && tempText.EndsWith(":") && !tempText.EndsWith("::") && !this.PositionIsOnComment(PositionFromLine(tempLine)))
+                            if (Lexer == 3 && tempText.EndsWith(':') && !tempText.EndsWithOrdinal("::") && !this.PositionIsOnComment(PositionFromLine(tempLine)))
                             {
                                 int prevLine = tempLine;
                                 while (--prevLine > 0)
                                 {
                                     tempText = GetLine(prevLine).Trim();
-                                    if (tempText.Length != 0 && !tempText.StartsWith("//"))
+                                    if (tempText.Length != 0 && !tempText.StartsWithOrdinal("//"))
                                     {
                                         int prevIndent = GetLineIndentation(prevLine);
-                                        if ((tempText.EndsWith(";") && previousIndent == prevIndent) ||
-                                            (tempText.EndsWith(":") && previousIndent == prevIndent + Indent))
+                                        if ((tempText.EndsWith(';') && previousIndent == prevIndent) ||
+                                            (tempText.EndsWith(':') && previousIndent == prevIndent + Indent))
                                         {
                                             previousIndent -= Indent;
                                             SetLineIndentation(tempLine, previousIndent);
@@ -5968,7 +5976,7 @@ namespace ScintillaNet
             string eolMarker = "\r\n";
             if (this.EOLMode == 1) eolMarker = "\r";
             else if (this.EOLMode == 2) eolMarker = "\n";
-            if (!this.Text.EndsWith(eolMarker))
+            if (!this.Text.EndsWithOrdinal(eolMarker))
             {
                 this.TargetStart = this.TargetEnd = this.TextLength;
                 this.ReplaceTarget(eolMarker.Length, eolMarker);
@@ -6377,7 +6385,7 @@ namespace ScintillaNet
         /// </summary>
         public int SelectText(string text)
         {
-            int pos = this.Text.IndexOf(text, MBSafeCharPosition(this.CurrentPos));
+            int pos = this.Text.IndexOfOrdinal(text, MBSafeCharPosition(this.CurrentPos));
             if (pos >= 0) this.MBSafeSetSel(pos, text);
             return pos;
         }
@@ -6387,7 +6395,7 @@ namespace ScintillaNet
         /// </summary>
         public int SelectText(string text, int startPos)
         {
-            int pos = this.Text.IndexOf(text, startPos);
+            int pos = this.Text.IndexOfOrdinal(text, startPos);
             if (pos >= 0) this.MBSafeSetSel(pos, text);
             return pos;
         }
@@ -6772,7 +6780,7 @@ namespace ScintillaNet
             if (this.SelectionStart == this.SelectionEnd && PluginBase.MainForm.Settings.CodingStyle == CodingStyle.BracesAfterLine)
             {
                 string str = this.GetLine(startLine).Trim();
-                if (str.StartsWith("{")) startLine = this.GetStartLine(startLine - 1);
+                if (str.StartsWith('{')) startLine = this.GetStartLine(startLine - 1);
                 else if (str.IndexOf('(') >= 0)
                 {
                     int pos = this.GetLine(startLine).IndexOf('(');
@@ -6781,7 +6789,7 @@ namespace ScintillaNet
                     if (pos != -1 /*INVALID_POSITION*/)
                     {
                         int nextLine = this.LineFromPosition(pos);
-                        if (this.GetLine(nextLine + 1).Trim().StartsWith("{")) endLine = nextLine + 2;
+                        if (this.GetLine(nextLine + 1).Trim().StartsWith('{')) endLine = nextLine + 2;
                     }
                 }
             }
@@ -6813,7 +6821,7 @@ namespace ScintillaNet
                 {
                     if (ConfigurationLanguage == "xml" || ConfigurationLanguage == "html" || ConfigurationLanguage == "css")
                     {
-                        if (ctrlBlock < 0 && (selectStr.IndexOf("</") >= 0 || selectStr.IndexOf("/>") >= 0)) ctrlBlock = 0;
+                        if (ctrlBlock < 0 && (selectStr.IndexOfOrdinal("</") >= 0 || selectStr.IndexOfOrdinal("/>") >= 0)) ctrlBlock = 0;
                         else if (len > 1) ctrlBlock = 0;
                     }
                     else
@@ -6974,7 +6982,7 @@ namespace ScintillaNet
             bool ret;
             String lineComment = Configuration.GetLanguage(ConfigurationLanguage).linecomment;
             String blockComment = Configuration.GetLanguage(ConfigurationLanguage).commentstart;
-            ret = ((!String.IsNullOrEmpty(lineComment) && str.StartsWith(lineComment)) || (!String.IsNullOrEmpty(blockComment) && str.StartsWith(blockComment)));
+            ret = ((!String.IsNullOrEmpty(lineComment) && str.StartsWithOrdinal(lineComment)) || (!String.IsNullOrEmpty(blockComment) && str.StartsWith(blockComment)));
             return ret;
         }
 
@@ -6990,8 +6998,8 @@ namespace ScintillaNet
             // TODO: Is there a lexer test for "start/end of control block"?
             if (ConfigurationLanguage == "xml" || ConfigurationLanguage == "html" || ConfigurationLanguage == "css")
             {
-                if (str.StartsWith("</")) ret = 1;
-                else if (!str.StartsWith("<?") && !str.StartsWith("<!") && !str.Contains("</") && !str.EndsWith("/>") && str.EndsWith(">")) ret = -1;
+                if (str.StartsWithOrdinal("</")) ret = 1;
+                else if (!str.StartsWithOrdinal("<?") && !str.StartsWithOrdinal("<!") && !str.Contains("</") && !str.EndsWithOrdinal("/>") && str.EndsWith('>')) ret = -1;
             }
             else
             {
@@ -7007,16 +7015,16 @@ namespace ScintillaNet
         public bool CodeEndsWith(string str, string value)
         {
             bool ret = false;
-            int startIndex = str.LastIndexOf(value);
+            int startIndex = str.LastIndexOfOrdinal(value);
             if (startIndex >= 0)
             {
                 String lineComment = Configuration.GetLanguage(ConfigurationLanguage).linecomment;
                 if (!String.IsNullOrEmpty(lineComment))
                 {
-                    int slashIndex = str.LastIndexOf(lineComment);
+                    int slashIndex = str.LastIndexOfOrdinal(lineComment);
                     if (slashIndex >= startIndex) str = str.Substring(0, slashIndex);
                 }
-                if (str.Trim().EndsWith(value)) ret = true;
+                if (str.Trim().EndsWithOrdinal(value)) ret = true;
             }
             return ret;
         }

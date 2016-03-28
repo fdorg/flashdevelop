@@ -177,7 +177,7 @@ namespace StartPage
             String dataDir = Path.Combine(PathHelper.DataDir, "StartPage");
             String startPageDir = Path.Combine(PathHelper.AppDir, "StartPage");
             String localeName = PluginBase.MainForm.Settings.LocaleVersion.ToString();
-            String version = Application.ProductName.Substring(lenght, Application.ProductName.IndexOf(" for") - lenght);
+            String version = Application.ProductName.Substring(lenght, Application.ProductName.IndexOfOrdinal(" for") - lenght);
             String fileWithArgs = "index.html?l=" + localeName + "&v=" + HttpUtility.HtmlEncode(version);
             this.defaultStartPageUrl = Path.Combine(startPageDir, fileWithArgs);
             this.defaultRssUrl = DistroConfig.DISTRIBUTION_RSS; // Default feed...

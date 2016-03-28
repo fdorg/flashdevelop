@@ -24,6 +24,7 @@ namespace ProjectManager.Controls
         private System.Windows.Forms.CheckBox cbInClasspathsOnly;
         private System.Windows.Forms.CheckBox checkBox;
         private System.Windows.Forms.Button refreshButton;
+        private static string previousSearch;
 
         public OpenResourceForm(PluginMain plugin)
         {
@@ -206,7 +207,9 @@ namespace ProjectManager.Controls
             if (openedFiles == null) this.CreateFileList();
             else
             {
-                this.textBox.Text = "";
+                this.textBox.Focus();
+                this.textBox.Text = previousSearch;
+                this.textBox.SelectAll();
                 this.UpdateOpenFiles();
                 this.textBox.Focus();
             }
@@ -295,7 +298,7 @@ namespace ProjectManager.Controls
             {
                 foreach (string folder in folders)
                 {
-                    if (file.StartsWith(folder))
+                    if (file.StartsWithOrdinal(folder))
                     {
                         openedFiles.Add(PluginBase.CurrentProject.GetRelativePath(file));
                         break;
@@ -408,7 +411,7 @@ namespace ProjectManager.Controls
                 else
                 {
                     String folder = Path.GetFullPath(Path.Combine(projectFolder, path));
-                    if (cbInClasspathsOnly.Checked || !folder.StartsWith(projectFolder)) folders.Add(folder);
+                    if (cbInClasspathsOnly.Checked || !folder.StartsWithOrdinal(projectFolder)) folders.Add(folder);
                 }
             }
             return folders;
@@ -509,6 +512,12 @@ namespace ProjectManager.Controls
 
         #endregion
 
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            previousSearch = this.textBox.Text;
+        }
+
     }
 
     #region Helpers
@@ -562,7 +571,7 @@ namespace ProjectManager.Controls
         private static Boolean SimpleSearchMatch(String file, String searchText, String pathSeparator)
         {
             String fileName = Path.GetFileName(file).ToLower();
-            return fileName.IndexOf(searchText.ToLower()) > -1;
+            return fileName.IndexOfOrdinal(searchText.ToLower()) > -1;
         }
 
     }

@@ -72,7 +72,7 @@ namespace CodeRefactor.Controls
             foreach (String itm in items)
             {
                 content = File.ReadAllText(itm);
-                if (content.IndexOf("{0}") > -1)
+                if (content.IndexOfOrdinal("{0}") > -1)
                 {
                     this.DropDownItems.Insert(this.DropDownItems.Count, new ToolStripMenuItem(Path.GetFileNameWithoutExtension(itm)));
                 }

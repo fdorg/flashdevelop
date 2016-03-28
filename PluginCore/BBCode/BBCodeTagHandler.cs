@@ -180,7 +180,7 @@ namespace PluginCore.BBCode
                 return null;
 
             String p = tagColorParam.Substring(1);
-            int colonIndex = p.IndexOf(":");
+            int colonIndex = p.IndexOfOrdinal(":");
 
             String colorStr = null;
             String modeStr = null;
