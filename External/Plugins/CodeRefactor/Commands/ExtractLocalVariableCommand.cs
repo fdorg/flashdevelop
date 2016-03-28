@@ -18,7 +18,7 @@ using ScintillaNet.Enums;
 
 namespace CodeRefactor.Commands
 {
-    internal class ExtractLocalVariableCommand : RefactorCommand<IDictionary<string, List<SearchMatch>>>
+    public class ExtractLocalVariableCommand : RefactorCommand<IDictionary<string, List<SearchMatch>>>
     {
         readonly bool outputResults;
         string newName;
@@ -37,9 +37,20 @@ namespace CodeRefactor.Commands
         /// Uses the current text as the declaration target.
         /// </summary>
         /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
-        public ExtractLocalVariableCommand(bool outputResults)
+        public ExtractLocalVariableCommand(bool outputResults) : this(outputResults, null)
+        {
+        }
+
+        /// <summary>
+        /// A new ExtractLocalVariableCommand refactoring command.
+        /// Uses the current text as the declaration target.
+        /// </summary>
+        /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
+        /// <param name="newName">If provided, will not query the user for a new name.</param>
+        public ExtractLocalVariableCommand(bool outputResults, string newName)
         {
             this.outputResults = outputResults;
+            this.newName = newName;
         }
 
         /// <summary>
@@ -100,7 +111,7 @@ namespace CodeRefactor.Commands
 
         void GenerateExtractVariable(List<SearchMatch> matches)
         {
-            newName = GetNewName();
+            if (string.IsNullOrEmpty(newName)) newName = GetNewName();
             if (string.IsNullOrEmpty(newName)) return;
             var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             sci.BeginUndoAction();
@@ -195,9 +206,8 @@ namespace CodeRefactor.Commands
             description = count == 1
                 ? TextHelper.GetString("Description.ReplaceInitialOccurrence")
                 : TextHelper.GetString("Description.ReplaceAllOccurrences");
-            Image = PluginBase.MainForm.FindImage("-1");
             Click += onClick;
-            Icon = new Bitmap(Image);
+            Icon = new Bitmap(16, 16);
             Matches = matches;
             Sci = sci;
         }
