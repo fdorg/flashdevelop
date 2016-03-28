@@ -121,19 +121,19 @@ namespace CodeRefactor.Commands
                 expression = expression.TrimEnd(new char[] {'(', '[', '{', '<'});
                 expression = expression.TrimStart(new char[] {')', ']', '}', '>'});
                 var insertPosition = sci.PositionFromLine(ASContext.Context.CurrentMember.LineTo);
-                RefactoringHelper.ReplaceMatches(matches, sci, newName);
-                for (int i = 0, matchCount = matches.Count; i < matchCount; i++)
+                foreach (var match in matches)
                 {
-                    var match = matches[i];
-                    var start = sci.MBSafePosition(match.Index);
-                    insertPosition = Math.Min(insertPosition, start);
-                    match.LineText = sci.GetLine(match.Line - 1);
-                    match.Line += 1;
-                    match.LineStart += 1;
-                    match.LineEnd += 1;
+                    var position = sci.MBSafePosition(match.Index);
+                    insertPosition = Math.Min(insertPosition, position);
                 }
                 insertPosition = sci.LineFromPosition(insertPosition);
                 insertPosition = sci.LineIndentPosition(insertPosition);
+                RefactoringHelper.ReplaceMatches(matches, sci, newName);
+                foreach (var match in matches)
+                {
+                    match.LineText = sci.GetLine(match.Line - 1);
+                    match.Line += 1;
+                }
                 sci.SetSel(insertPosition, insertPosition);
                 var member = new MemberModel(newName, string.Empty, FlagType.LocalVar, 0) {Value = expression};
                 var snippet = TemplateUtils.GetTemplate("Variable");

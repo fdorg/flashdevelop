@@ -101,6 +101,14 @@
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\as3\BeforeExtractLocalVariable_forCheckingThePositionOfNewVar.as" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\as3\BeforeExtractLocalVariable_fromNumber.as" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\as3\BeforeExtractLocalVariable_fromString.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_fromGeneric.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_inSinglelineMethod.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_fromString.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_fromNumber.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromGeneric.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_inSinglelineMethod.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromString.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromNumber.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
