@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using CodeRefactor.Provider;
@@ -115,7 +114,6 @@ namespace CodeRefactor.Controls
             // titleLabel
             // 
             this.titleLabel.AutoEllipsis = true;
-            this.titleLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
             this.titleLabel.Location = new System.Drawing.Point(9, 9);
             this.titleLabel.Name = "titleLabel";
             this.titleLabel.Size = new System.Drawing.Size(266, 18);
@@ -124,14 +122,13 @@ namespace CodeRefactor.Controls
             // 
             // inputTxt
             // 
-            this.inputTxt.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
             this.inputTxt.Location = new System.Drawing.Point(12, 30);
             this.inputTxt.Name = "inputTxt";
             this.inputTxt.Size = new System.Drawing.Size(260, 23);
             this.inputTxt.TabIndex = 0;
             this.inputTxt.KeyDown += new System.Windows.Forms.KeyEventHandler(this.InputTxt_KeyDown);
             // 
-            // btnOK
+            // btnOk
             // 
             this.btnOk.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.btnOk.Location = new System.Drawing.Point(73, 111);
@@ -154,7 +151,6 @@ namespace CodeRefactor.Controls
             // 
             // cbxComments
             // 
-            this.cbxComments.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
             this.cbxComments.Location = new System.Drawing.Point(12, 59);
             this.cbxComments.Name = "cbxComments";
             this.cbxComments.Size = new System.Drawing.Size(260, 20);
@@ -164,7 +160,6 @@ namespace CodeRefactor.Controls
             // 
             // cbxStrings
             // 
-            this.cbxStrings.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
             this.cbxStrings.Location = new System.Drawing.Point(12, 85);
             this.cbxStrings.Name = "cbxStrings";
             this.cbxStrings.Size = new System.Drawing.Size(260, 20);
@@ -175,7 +170,7 @@ namespace CodeRefactor.Controls
             // PopupRenameDialog
             // 
             this.AcceptButton = this.btnOk;
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(284, 141);
             this.Controls.Add(this.cbxStrings);
@@ -184,7 +179,6 @@ namespace CodeRefactor.Controls
             this.Controls.Add(this.btnOk);
             this.Controls.Add(this.inputTxt);
             this.Controls.Add(this.titleLabel);
-            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;

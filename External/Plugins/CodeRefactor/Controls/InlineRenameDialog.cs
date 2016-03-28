@@ -52,7 +52,6 @@ namespace CodeRefactor.Controls
             // titleLabel
             // 
             this.titleLabel.AutoEllipsis = true;
-            this.titleLabel.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.titleLabel.Location = new System.Drawing.Point(0, 0);
             this.titleLabel.Margin = new System.Windows.Forms.Padding(0);
             this.titleLabel.Name = "titleLabel";
@@ -134,7 +133,6 @@ namespace CodeRefactor.Controls
             this.Controls.Add(this.ApplyButton);
             this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.border);
-            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "InlineRenameDialog";
             this.Size = new System.Drawing.Size(200, 135);
             this.ResumeLayout(false);
@@ -174,7 +172,7 @@ namespace CodeRefactor.Controls
             PreviewChanges.ForeColor = foreColor;
             border.BackColor = backColor == inactiveBorder ? activeBorder : inactiveBorder;
 
-            CancelButton.Image = PluginBase.MainForm.FindImage("153");
+            CancelButton.Image = PluginBase.MainForm.FindImage16("153", false);
         }
 
         /// <summary>
