@@ -2458,32 +2458,37 @@ namespace ASCompletion.Completion
                         }
                         else
                         {
-                            double d = double.MaxValue;
-                            try
-                            {
-                                d = double.Parse(trimmed, CultureInfo.InvariantCulture);
-                            }
-                            catch (Exception)
-                            {
-                            }
-                            if (d != double.MaxValue && d.ToString().Length == trimmed.Length)
-                            {
-                                result = new ASResult();
-                                result.Type = ctx.ResolveType(ctx.Features.numberKey, null);
-                                types.Insert(0, result);
-                            }
-                            else if (trimmed.Equals("true") || trimmed.Equals("false"))
+                            if (trimmed.Equals("true") || trimmed.Equals("false"))
                             {
                                 result = new ASResult();
                                 result.Type = ctx.ResolveType(ctx.Features.booleanKey, null);
                                 types.Insert(0, result);
+                            }
+                            else if (trimmed[0] == '-' || char.IsDigit(trimmed[0]))
+                            {
+                                try
+                                {
+                                    double d = double.Parse(trimmed, CultureInfo.InvariantCulture);
+                                    result = new ASResult();
+                                    if (Math.Floor(d) == d && d.ToString() == trimmed && !string.IsNullOrEmpty(ctx.Features.intKey))
+                                        result.Type = ctx.ResolveType(ctx.Features.intKey, null);
+                                    else
+                                        result.Type = ctx.ResolveType(ctx.Features.numberKey, null);
+                                    types.Insert(0, result);
+                                }
+                                catch (Exception)
+                                {
+                                }
                             }
                         }
                         
                         if (types.Count == 0)
                         {
                             result = new ASResult();
-                            result.Type = ctx.ResolveType(ctx.Features.objectKey, null);
+                            Match m = Regex.Match(trimmed, "(^|\\.)([a-z0-9_$]+)$");
+                            if (m.Success) result.Member = new MemberModel { Name = m.Groups[2].Value };
+                            if (IsHaxe) result.Type = ClassModel.VoidClass;
+                            else result.Type = ctx.ResolveType(ctx.Features.objectKey, null);
                             types.Add(result);
                         }
 
@@ -2530,12 +2535,8 @@ namespace ASCompletion.Completion
 
             for (int i = 0; i < prms.Count; i++)
             {
-                if (prms[i].paramType == "void")
-                {
-                    prms[i].paramName = "object";
-                    prms[i].paramType = null;
-                }
-                else prms[i].paramName = GuessVarName(prms[i].paramName, FormatType(GetShortType(prms[i].paramType)));
+                if (string.IsNullOrEmpty(prms[i].paramName)) prms[i].paramName = "param";
+                if (prms[i].paramType == "void") prms[i].paramType = null;
             }
 
             for (int i = 0; i < prms.Count; i++)

@@ -71,6 +71,7 @@ namespace ASCompletion.Completion
         public string voidKey;
         public string objectKey;
         public string booleanKey;
+        public string intKey;
         public string numberKey;
         public string stringKey;
         public string arrayKey;

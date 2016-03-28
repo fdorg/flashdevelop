@@ -114,6 +114,7 @@ namespace HaXeContext
             features.voidKey = "Void";
             features.objectKey = "Dynamic";
             features.booleanKey = "Bool";
+            features.intKey = "Int";
             features.numberKey = "Float";
             features.stringKey = "String";
             features.arrayKey = "Array<T>";

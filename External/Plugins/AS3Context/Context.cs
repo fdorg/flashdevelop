@@ -100,6 +100,7 @@ namespace AS3Context
             features.voidKey = "void";
             features.objectKey = "Object";
             features.booleanKey = "Boolean";
+            features.intKey = "Int";
             features.numberKey = "Number";
             features.stringKey = "String";
             features.arrayKey = "Array";
