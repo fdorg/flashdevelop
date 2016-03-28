@@ -18,7 +18,7 @@ using ScintillaNet.Enums;
 
 namespace CodeRefactor.Commands
 {
-    public class ExtractLocalVariableCommand : RefactorCommand<IDictionary<string, List<SearchMatch>>>
+    internal class ExtractLocalVariableCommand : RefactorCommand<IDictionary<string, List<SearchMatch>>>
     {
         readonly bool outputResults;
         string newName;
