@@ -125,15 +125,11 @@ namespace CodeRefactor.Commands
                 {
                     var position = sci.MBSafePosition(match.Index);
                     insertPosition = Math.Min(insertPosition, position);
+                    match.LineText = sci.GetLine(match.Line - 1);
                 }
                 insertPosition = sci.LineFromPosition(insertPosition);
                 insertPosition = sci.LineIndentPosition(insertPosition);
                 RefactoringHelper.ReplaceMatches(matches, sci, newName);
-                foreach (var match in matches)
-                {
-                    match.LineText = sci.GetLine(match.Line - 1);
-                    match.Line += 1;
-                }
                 sci.SetSel(insertPosition, insertPosition);
                 var member = new MemberModel(newName, string.Empty, FlagType.LocalVar, 0) {Value = expression};
                 var snippet = TemplateUtils.GetTemplate("Variable");
@@ -141,6 +137,10 @@ namespace CodeRefactor.Commands
                 snippet = TemplateUtils.ToDeclarationString(member, snippet);
                 snippet += "$(Boundary)\n$(Boundary)";
                 SnippetHelper.InsertSnippetText(sci, sci.CurrentPos, snippet);
+                foreach (var match in matches)
+                {
+                    match.Line += 1;
+                }
                 Results = new Dictionary<string, List<SearchMatch>> {{sci.FileName, matches}};
                 if (outputResults) ReportResults();
             }
