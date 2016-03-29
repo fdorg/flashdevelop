@@ -7,7 +7,6 @@ using ASCompletion.Context;
 using ASCompletion.Model;
 using CodeRefactor.Provider;
 using PluginCore;
-using PluginCore.Controls;
 using PluginCore.FRService;
 using PluginCore.Helpers;
 using PluginCore.Localization;
@@ -21,6 +20,7 @@ namespace CodeRefactor.Commands
     internal class ExtractLocalVariableCommand : RefactorCommand<IDictionary<string, List<SearchMatch>>>
     {
         readonly bool outputResults;
+        internal List<ICompletionListItem> CompletionList;
         string newName;
 
         /// <summary>
@@ -79,10 +79,10 @@ namespace CodeRefactor.Commands
             var target = mathes.FindAll(it => sci.MBSafePosition(it.Index) == sci.SelectionStart);
             if (mathes.Count > 1)
             {
-                var list = new List<ICompletionListItem> {new CompletionListItem(target, sci, OnItemClick)};
-                list.Insert(0, new CompletionListItem(mathes, sci, OnItemClick));
+                CompletionList = new List<ICompletionListItem> {new CompletionListItem(target, sci, OnItemClick)};
+                CompletionList.Insert(0, new CompletionListItem(mathes, sci, OnItemClick));
                 sci.DisableAllSciEvents = true;
-                CompletionList.Show(list, true);
+                PluginCore.Controls.CompletionList.Show(CompletionList, true);
             }
             else GenerateExtractVariable(target);
         }

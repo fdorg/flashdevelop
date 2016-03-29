@@ -94,11 +94,11 @@
   <ItemGroup>
     <None Include="packages.config" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\as3\AfterExtractLocalVariable.as" />
-    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\as3\AfterExtractLocalVariable_forCheckingThePositionOfNewVar.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_ReplaceAllOccurrences.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\as3\AfterExtractLocalVariable_fromNumber.as" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\as3\AfterExtractLocalVariable_fromString.as" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\as3\BeforeExtractLocalVariable.as" />
-    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\as3\BeforeExtractLocalVariable_forCheckingThePositionOfNewVar.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_withContextualGenerator.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\as3\BeforeExtractLocalVariable_fromNumber.as" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\as3\BeforeExtractLocalVariable_fromString.as" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_fromGeneric.hx" />
@@ -109,6 +109,7 @@
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_inSinglelineMethod.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromString.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromNumber.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_ReplaceInitialOccurrence.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

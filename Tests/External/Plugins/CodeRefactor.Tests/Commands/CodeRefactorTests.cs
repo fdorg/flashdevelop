@@ -168,6 +168,61 @@ namespace CodeRefactor.Commands
                     return Sci.Text;
                 }
 
+                public IEnumerable<TestCaseData> GetHaxeTestCases_withContextualGenerator
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.haxe.BeforeExtractLocalVariable_withContextualGenerator.hx"),
+                                    new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
+                                    {
+                                        LineFrom = 4,
+                                        LineTo = 10
+                                    },
+                                    "newVar",
+                                    0
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.haxe.AfterExtractLocalVariable_ReplaceAllOccurrences.hx"))
+                                .SetName("ExtractLocaleVariable replace all occurrences");
+
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.haxe.BeforeExtractLocalVariable_withContextualGenerator.hx"),
+                                    new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
+                                    {
+                                        LineFrom = 4,
+                                        LineTo = 10
+                                    },
+                                    "newVar",
+                                    1
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.haxe.AfterExtractLocalVariable_ReplaceInitialOccurrence.hx"))
+                                .SetName("ExtractLocaleVariable replace initial occurrence");
+                    }
+                }
+
+                [Test, TestCaseSource("GetHaxeTestCases_withContextualGenerator")]
+                public string Haxe_withContextualGenerator(string sourceText, MemberModel currentMember, string newName, int contextualGeneratorItem)
+                {
+                    ASContext.Context.SetHaxeFeatures();
+                    ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
+                    ASContext.Context.CurrentMember.Returns(currentMember);
+                    Sci.Text = sourceText;
+                    Sci.ConfigurationLanguage = "haxe";
+                    SnippetHelper.PostProcessSnippets(Sci, 0);
+                    var command = new ExtractLocalVariableCommand(false, newName);
+                    command.Execute();
+                    ((CompletionListItem) command.CompletionList[contextualGeneratorItem]).PerformClick();
+                    return Sci.Text;
+                }
+
                 public IEnumerable<TestCaseData> GetAS3TestCases
                 {
                     get
