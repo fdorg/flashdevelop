@@ -11,10 +11,16 @@ namespace ASCompletion.Completion
     [Serializable]
     public sealed class Braces
     {
-        char opening, closing;
-        string afterChars, beforeChars;
-        Style[] afterStyles, beforeStyles;
-        Mode acMode, asMode, bcMode, bsMode;
+        char opening;
+        char closing;
+        string afterChars;
+        string beforeChars;
+        Style[] afterStyles;
+        Style[] beforeStyles;
+        Mode acMode;
+        Mode asMode;
+        Mode bcMode;
+        Mode bsMode;
         Logic logic;
 
         #region Browsable properties
@@ -22,7 +28,7 @@ namespace ASCompletion.Completion
         /// <summary>
         /// The opening brace character.
         /// </summary>
-        [Category("Brace Character"), DefaultValue('\0')]
+        [Category("Brace Character")]
         public char Opening
         {
             get { return opening; }
@@ -32,7 +38,7 @@ namespace ASCompletion.Completion
         /// <summary>
         /// The closing brace character.
         /// </summary>
-        [Category("Brace Character"), DefaultValue('\0')]
+        [Category("Brace Character")]
         public char Closing
         {
             get { return closing; }
@@ -42,7 +48,7 @@ namespace ASCompletion.Completion
         /// <summary>
         /// An array of Unicode characters to automatically close brace after.
         /// </summary>
-        [Category("Trigger Auto Close"), DefaultValue("")]
+        [Category("Trigger Auto Close")]
         public string AfterChars
         {
             get { return afterChars; }
@@ -62,7 +68,7 @@ namespace ASCompletion.Completion
         /// <summary>
         /// An array of <see cref="Style"/> values to automatically close brace after.
         /// </summary>
-        [Category("Trigger Auto Close"), DefaultValue(new Style[0])]
+        [Category("Trigger Auto Close")]
         public Style[] AfterStyles
         {
             get { return afterStyles; }
@@ -82,7 +88,7 @@ namespace ASCompletion.Completion
         /// <summary>
         /// An array of Unicode characters to automatically close brace before.
         /// </summary>
-        [Category("Trigger Auto Close"), DefaultValue("")]
+        [Category("Trigger Auto Close")]
         public string BeforeChars
         {
             get { return beforeChars; }
@@ -102,7 +108,7 @@ namespace ASCompletion.Completion
         /// <summary>
         /// An array of <see cref="Style"/> values to automatically close brace before.
         /// </summary>
-        [Category("Trigger Auto Close"), DefaultValue(new Style[0])]
+        [Category("Trigger Auto Close")]
         public Style[] BeforeStyles
         {
             get { return beforeStyles; }

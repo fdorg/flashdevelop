@@ -402,53 +402,76 @@ namespace ASCompletion.Completion
         public static void HandleAddClosingBraces(ScintillaControl sci, char c, bool addedChar)
         {
             if (!ASContext.CommonSettings.AddClosingBraces) return;
-
-            // when adding char, get the added char style
-            // otherwise get the style of the char before deleted char
-            int style = sci.BaseStyleAt(sci.CurrentPos - (addedChar ? 1 : 2));
-
+            
             if (addedChar)
             {
+                // Get the before & after style values unaffected by the entered char
+                sci.DeleteBack();
+                sci.Colourise(sci.CurrentPos - 1, sci.CurrentPos + 1);
+                byte styleAfter = (byte) sci.BaseStyleAt(sci.CurrentPos);
+                byte styleBefore = (byte) sci.BaseStyleAt(sci.CurrentPos - 1);
+                sci.AddText(1, c.ToString());
+
                 // not inside a string literal
-                if (!IsStringStyle(style) && !IsCharStyle(style) || IsInterpolationExpr(sci, sci.CurrentPos - 2)
-                    // or inside a string literal but a closing quote is entered and the string does terminate
-                    || (c == '\"' && IsStringStyle(style) || c == '\'' && IsCharStyle(style)) && sci.BaseStyleAt(sci.CurrentPos) == 12)
+                if (!IsStringStyle(styleBefore) && !IsCharStyle(styleBefore) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
                 {
                     foreach (var braces in ASContext.CommonSettings.AddClosingBracesData)
                     {
-                        if (HandleAddBrace(sci, c, braces)) break;
+                        // Handle opening first for braces that have equal opening & closing chars
+                        if (HandleAddOpeningBrace(sci, c, braces, styleAfter, styleBefore)
+                            || HandleAddClosingBrace(sci, c, braces))
+                            break;
+                    }
+                }
+                else if (c == '"' && IsStringStyle(styleAfter) || c == '\'' && IsCharStyle(styleAfter))
+                {
+                    if (!IsEscapedCharacter(sci, sci.CurrentPos - 1))
+                    {
+                        foreach (var braces in ASContext.CommonSettings.AddClosingBracesData)
+                        {
+                            if (HandleAddClosingBrace(sci, c, braces)) break;
+                        }
                     }
                 }
             }
-            // not inside a string literal
-            else if (!IsStringStyle(style) && !IsCharStyle(style) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
+            else
             {
-                foreach (var braces in ASContext.CommonSettings.AddClosingBracesData)
+                // get the style of the char before deleted char
+                int style = sci.BaseStyleAt(sci.CurrentPos - 2);
+
+                // not inside a string literal
+                if (!IsStringStyle(style) && !IsCharStyle(style) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
                 {
-                    if (HandleRemoveBrace(sci, c, braces)) break;
+                    foreach (var braces in ASContext.CommonSettings.AddClosingBracesData)
+                    {
+                        if (HandleRemoveBrace(sci, c, braces)) break;
+                    }
                 }
             }
         }
 
-        static bool HandleAddBrace(ScintillaControl sci, char c, Braces braces)
+        static bool HandleAddOpeningBrace(ScintillaControl sci, char c, Braces braces, byte styleAfter, byte styleBefore)
         {
-            // Handle closing first due to braces that have equal opening & closing chars
-            if (c == braces.Closing && c == sci.CurrentChar)
-            {
-                sci.DeleteForward();
-                return true;
-            }
-            else if (c == braces.Opening)
+            if (c == braces.Opening)
             {
                 char charAfter = (char) sci.CharAt(sci.CurrentPos);
                 char charBefore = (char) sci.CharAt(sci.CurrentPos - 2);
-                byte styleAfter = (byte) sci.BaseStyleAt(sci.CurrentPos);
-                byte styleBefore = (byte) sci.BaseStyleAt(sci.CurrentPos - 2);
 
                 if (braces.ShouldAutoClose(charAfter, styleAfter, charBefore, styleBefore))
                 {
-                    sci.InsertText(sci.CurrentPos, braces.Closing.ToString());
+                    sci.InsertText(-1, braces.Closing.ToString());
                 }
+                return true;
+            }
+
+            return false;
+        }
+
+        static bool HandleAddClosingBrace(ScintillaControl sci, char c, Braces braces)
+        {
+            if (c == braces.Closing && c == sci.CurrentChar)
+            {
+                sci.DeleteForward();
                 return true;
             }
 
@@ -3971,6 +3994,19 @@ namespace ASCompletion.Completion
                     return true;
             }
             return false;
+        }
+
+        static bool IsEscapedCharacter(ScintillaControl sci, int position)
+        {
+            bool escaped = false;
+
+            for (int i = position - 1; i >= 0; i--)
+            {
+                if (sci.CharAt(i) != '\\') break;
+                escaped = !escaped;
+            }
+
+            return escaped;
         }
 
         /// <summary>
