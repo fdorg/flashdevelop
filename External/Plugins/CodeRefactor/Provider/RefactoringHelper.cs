@@ -99,7 +99,7 @@ namespace CodeRefactor.Provider
             ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
             if (!ASContext.Context.IsFileValid || (sci == null)) return null;
             int position = sci.WordEndPosition(sci.CurrentPos, true);
-            return DeclarationLookupResult(sci, position);
+            return ASComplete.GetExpressionType(sci, position);
         }
 
         public static string GetRefactorTargetName(ASResult target)

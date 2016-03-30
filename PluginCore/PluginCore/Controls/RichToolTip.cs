@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using PluginCore.BBCode;
 using PluginCore.Managers;
 using ScintillaNet;
+using PluginCore.Helpers;
 
 namespace PluginCore.Controls
 {
@@ -73,7 +74,7 @@ namespace PluginCore.Controls
             (mainForm as Form).Controls.Add(toolTip);
             // text
             toolTipRTB = new RichTextBox();
-            toolTipRTB.Location = new Point(2,1);
+            toolTipRTB.Font = PluginBase.Settings.DefaultFont;
             toolTipRTB.BackColor = SystemColors.Info;
             toolTipRTB.ForeColor = SystemColors.InfoText;
             toolTipRTB.BorderStyle = BorderStyle.None;
@@ -122,43 +123,51 @@ namespace PluginCore.Controls
             bool wordWrap = false;
             Size txtSize = WinFormUtils.MeasureRichTextBox(toolTipRTB, false, toolTipRTB.Width, toolTipRTB.Height, false);
 
+            int smallOffsetH = ScaleHelper.Scale(1);
+            int smallOffsetW = ScaleHelper.Scale(2);
+            int smallPadding = ScaleHelper.Scale(4);
+            int mediumPadding = ScaleHelper.Scale(10);
+            int minWidth = ScaleHelper.Scale(200);
+            maxWidth = ScaleHelper.Scale(maxWidth);
+
             // tooltip larger than the window: wrap
-            int limitLeft = ((Form)PluginBase.MainForm).ClientRectangle.Left + 10;
-            int limitRight = ((Form)PluginBase.MainForm).ClientRectangle.Right - 10;
-            int limitBottom = ((Form)PluginBase.MainForm).ClientRectangle.Bottom - 26;
-            //
+            int limitLeft = ((Form)PluginBase.MainForm).ClientRectangle.Left + mediumPadding;
+            int limitRight = ((Form)PluginBase.MainForm).ClientRectangle.Right - mediumPadding;
+            int limitBottom = ((Form)PluginBase.MainForm).ClientRectangle.Bottom - ScaleHelper.Scale(26);
+            
             int maxW = availableWidth > 0 ? availableWidth : limitRight - limitLeft;
             if (maxW > maxWidth && maxWidth > 0)
                 maxW = maxWidth;
 
-            int w = txtSize.Width + 4;
+            int w = txtSize.Width + smallPadding;
             if (w > maxW)
             {
                 wordWrap = true;
                 w = maxW;
-                if (w < 200)
+                if (w < minWidth)
                 {
-                    w = 200;
+                    w = minWidth;
                     tooSmall = true;
                 }
 
-                txtSize = WinFormUtils.MeasureRichTextBox(toolTipRTB, false, w, 1000, true);
-                w = txtSize.Width + 4;
+                txtSize = WinFormUtils.MeasureRichTextBox(toolTipRTB, false, w, maxWidth, true);
+                w = txtSize.Width + smallPadding;
             }
 
-            int h = txtSize.Height + 2;
-            int dh = 1;
-            int dw = 2;
+            int h = txtSize.Height + smallOffsetH * 2;
+            int dh = smallOffsetH;
+            int dw = smallOffsetW;
             if (h > (limitBottom - toolTip.Top))
             {
-                w += 15;
+                w += ScaleHelper.Scale(15);
                 h = limitBottom - toolTip.Top;
-                dh = 4;
-                dw = 5;
+                dh = smallPadding;
+                dw = smallPadding + smallOffsetW / 2;
 
                 toolTipRTB.ScrollBars = RichTextBoxScrollBars.Vertical;
             }
 
+            toolTipRTB.Location = new Point(smallOffsetW, smallOffsetH);
             toolTipRTB.Size = new Size(w, h);
             toolTip.Size = new Size(w + dw, h + dh);
 
@@ -186,14 +195,13 @@ namespace PluginCore.Controls
         
         public void ShowAtMouseLocation()
         {
-            //ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
             mousePos = ((Form)PluginBase.MainForm).PointToClient(Control.MousePosition);
-            toolTip.Left = mousePos.X;// +sci.Left;
+            toolTip.Left = mousePos.X;
             if (toolTip.Right > ((Form)PluginBase.MainForm).ClientRectangle.Right)
             {
                 toolTip.Left -= (toolTip.Right - ((Form)PluginBase.MainForm).ClientRectangle.Right);
             }
-            toolTip.Top = mousePos.Y - toolTip.Height - 10;// +sci.Top;
+            toolTip.Top = mousePos.Y - toolTip.Height - ScaleHelper.Scale(10);
             toolTip.Show();
             toolTip.BringToFront();
         }

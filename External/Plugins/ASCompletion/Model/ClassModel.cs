@@ -322,7 +322,10 @@ namespace ASCompletion.Model
                     return sb.ToString();
                 }
             }*/
-
+            
+            // META
+            ASMetaData.GenerateIntrinsic(MetaDatas, sb, nl, tab0);
+            
             // CLASS
             sb.Append(CommentDeclaration(Comments, tab0)).Append(tab0);
             if (!caching && InFile.Version != 3 && (this.Flags & (FlagType.Intrinsic | FlagType.Interface)) == 0)

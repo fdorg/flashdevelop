@@ -155,6 +155,20 @@ namespace System.Windows.Forms
 
     }
 
+    public class RichTextBoxEx : RichTextBox
+    {
+        protected override void WndProc(ref Message message)
+        {
+            switch (message.Msg)
+            {
+                case 0xf: // WM_PAINT
+                    OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));
+                    break;
+            }
+            base.WndProc(ref message);
+        }
+    }
+
     public class DataGridViewEx : DataGridView, IEventHandler
     {
         public DataGridViewEx()
@@ -269,8 +283,8 @@ namespace System.Windows.Forms
             switch (message.Msg)
             {
                 case 0xf: // WM_PAINT
-                    // Delay column expand...
-                    this.expandDelay.Enabled = true;
+                    this.expandDelay.Enabled = true; // Delay column expand...
+                    OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));
                     break;
             }
             base.WndProc(ref message);
@@ -382,6 +396,17 @@ namespace System.Windows.Forms
             if ((e.State & TreeNodeStates.Selected) != 0) textColor = foreHl;
             if ((e.State & TreeNodeStates.Hot) != 0) nodeFont = new Font(nodeFont, FontStyle.Underline);
             TextRenderer.DrawText(e.Graphics, e.Node.Text, nodeFont, textRect, textColor);
+        }
+
+        protected override void WndProc(ref Message message)
+        {
+            switch (message.Msg)
+            {
+                case 0xf: // WM_PAINT
+                    OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));
+                    break;
+            }
+            base.WndProc(ref message);
         }
 
     }

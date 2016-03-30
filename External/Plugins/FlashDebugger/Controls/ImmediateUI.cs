@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using flash.tools.debugger;
 using flash.tools.debugger.expression;
 using PluginCore;
+using PluginCore.Controls;
 
 namespace FlashDebugger.Controls
 {
@@ -22,6 +23,7 @@ namespace FlashDebugger.Controls
             this.InitializeComponent();
             this.contextMenuStrip.Renderer = new DockPanelStripRenderer(false);
             this.history = new List<string>();
+            ScrollBarEx.Attach(textBox);
         }
 
         private void textBox_KeyDown(object sender, KeyEventArgs e)

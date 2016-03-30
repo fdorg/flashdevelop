@@ -88,16 +88,37 @@ namespace ScintillaNet
         {
             if (e.Type == EventType.ApplyTheme)
             {
-                Boolean enabled = PluginBase.MainForm.GetThemeFlag("ScrollBar.UseCustom", false);
+                Color color = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor");
+                String value = PluginBase.MainForm.GetThemeValue("ScrollBar.UseCustom");
+                Boolean enabled = value == "True" || (value == null && color != Color.Empty);
                 if (enabled && !this.Controls.Contains(this.vScrollBar))
                 {
                     this.AddScrollBars(this);
+                    this.UpdateScrollBarTheme(this);
                 }
                 else if (!enabled && this.Controls.Contains(this.vScrollBar))
                 {
                     this.RemoveScrollBars(this);
                 }
             }
+        }
+
+        /// <summary>
+        /// Updates the scrollbar theme and applies old defaults
+        /// </summary>
+        private void UpdateScrollBarTheme(ScintillaControl sender)
+        {
+            PluginBase.MainForm.ThemeControls(sender.vScrollBar);
+            PluginBase.MainForm.ThemeControls(sender.hScrollBar);
+            // Apply settings so that old defaults work...
+            sender.vScrollBar.ArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ArrowColor", sender.vScrollBar.ForeColor);
+            sender.vScrollBar.HotArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotArrowColor", sender.vScrollBar.ForeColor);
+            sender.vScrollBar.ActiveArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ActiveArrowColor", sender.vScrollBar.ActiveForeColor);
+            sender.vScrollBar.HotForeColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotForeColor", sender.vScrollBar.ForeColor);
+            sender.hScrollBar.ArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ArrowColor", sender.hScrollBar.ForeColor);
+            sender.hScrollBar.HotArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotArrowColor", sender.hScrollBar.ForeColor);
+            sender.hScrollBar.ActiveArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ActiveArrowColor", sender.hScrollBar.ActiveForeColor);
+            sender.hScrollBar.HotForeColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotForeColor", sender.hScrollBar.ForeColor);
         }
 
         /// <summary>
@@ -117,20 +138,12 @@ namespace ScintillaNet
             sender.hScrollBar.Orientation = ScrollBarOrientation.Horizontal;
             sender.hScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
             sender.hScrollBar.Dock = DockStyle.Bottom;
-            if (PluginBase.MainForm.GetThemeFlag("ScrollBar.UseCustom", false))
+            Color color = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor");
+            String value = PluginBase.MainForm.GetThemeValue("ScrollBar.UseCustom");
+            if (value == "True" || (value == null && color != Color.Empty))
             {
                 sender.AddScrollBars(sender);
-                PluginBase.MainForm.ThemeControls(sender.vScrollBar);
-                PluginBase.MainForm.ThemeControls(sender.hScrollBar);
-                // Apply settings so that old defaults work...
-                this.vScrollBar.ArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ArrowColor", this.vScrollBar.ForeColor);
-                this.vScrollBar.HotArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotArrowColor", this.vScrollBar.ForeColor);
-                this.vScrollBar.ActiveArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ActiveArrowColor", this.vScrollBar.ActiveForeColor);
-                this.vScrollBar.HotForeColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotForeColor", this.vScrollBar.ForeColor);
-                this.hScrollBar.ArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ArrowColor", this.hScrollBar.ForeColor);
-                this.hScrollBar.HotArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotArrowColor", this.hScrollBar.ForeColor);
-                this.hScrollBar.ActiveArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ActiveArrowColor", this.hScrollBar.ActiveForeColor);
-                this.hScrollBar.HotForeColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotForeColor", this.hScrollBar.ForeColor);
+                sender.UpdateScrollBarTheme(sender);
             }
             EventManager.AddEventHandler(this, EventType.ApplyTheme);
         }
@@ -216,8 +229,7 @@ namespace ScintillaNet
 
         #region Scintilla Main
 
-        public ScintillaControl()
-            : this(IntPtr.Size == 4 ? "SciLexer.dll" : "SciLexer64.dll")
+        public ScintillaControl() : this(IntPtr.Size == 4 ? "SciLexer.dll" : "SciLexer64.dll")
         {
             if (Win32.ShouldUseWin32()) DragAcceptFiles(this.Handle, 1);
         }
@@ -232,19 +244,13 @@ namespace ScintillaNet
                     hwndScintilla = CreateWindowEx(0, "Scintilla", "", WS_CHILD_VISIBLE_TABSTOP, 0, 0, this.Width, this.Height, this.Handle, 0, new IntPtr(0), null);
                     directPointer = (IntPtr)SlowPerform(2185, 0, 0);
                     IntPtr sciFunctionPointer = GetProcAddress(new HandleRef(null, lib), "Scintilla_DirectFunction");
-                    if (sciFunctionPointer == IntPtr.Zero)
-                        sciFunctionPointer = GetProcAddress(new HandleRef(null, lib), "_Scintilla_DirectFunction@16");
-
+                    if (sciFunctionPointer == IntPtr.Zero) sciFunctionPointer = GetProcAddress(new HandleRef(null, lib), "_Scintilla_DirectFunction@16");
                     if (sciFunctionPointer == IntPtr.Zero)
                     {
                         string msg = "The Scintilla module has no export for the 'Scintilla_DirectFunction' procedure.";
                         throw new Win32Exception(msg, new Win32Exception(Marshal.GetLastWin32Error()));
                     }
-
-                    _sciFunction = (Perform)Marshal.GetDelegateForFunctionPointer(
-                        sciFunctionPointer,
-                        typeof(Perform));
-
+                    _sciFunction = (Perform)Marshal.GetDelegateForFunctionPointer(sciFunctionPointer, typeof(Perform));
                     directPointer = DirectPointer;
                 }
                 UpdateUI += new UpdateUIHandler(OnUpdateUI);
@@ -2469,8 +2475,7 @@ namespace ScintillaNet
             bool wholeLine = SelectionStart == SelectionEnd;
             int selectionLength = SelectionEnd - SelectionStart;
             SelectionDuplicate();
-            if (wholeLine)
-                LineDown();
+            if (wholeLine) LineDown();
             else
             {
                 SelectionStart += selectionLength;
@@ -5283,11 +5288,7 @@ namespace ScintillaNet
         [DllImport("shell32.dll")]
         public static extern void DragAcceptFiles(IntPtr hwnd, int accept);
 
-        public delegate IntPtr Perform(
-            IntPtr sci,
-            int iMessage,
-            IntPtr wParam,
-            IntPtr lParam);
+        public delegate IntPtr Perform(IntPtr sci, int iMessage, IntPtr wParam, IntPtr lParam);
 
         public UInt32 SlowPerform(UInt32 message, UInt32 wParam, UInt32 lParam)
         {

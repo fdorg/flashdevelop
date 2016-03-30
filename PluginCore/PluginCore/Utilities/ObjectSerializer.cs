@@ -1,11 +1,12 @@
 using System;
-using System.Drawing;
 using System.IO;
-using System.Reflection;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Drawing;
 using System.Threading;
-using PluginCore.Helpers;
+using System.Reflection;
+using System.Runtime.Serialization.Formatters;
+using System.Runtime.Serialization.Formatters.Binary;
 using PluginCore.Managers;
+using PluginCore.Helpers;
 
 namespace PluginCore.Utilities
 {
@@ -15,6 +16,7 @@ namespace PluginCore.Utilities
 
         static ObjectSerializer()
         {
+            formatter.AssemblyFormat = FormatterAssemblyStyle.Simple;
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomainAssemblyResolve);
         }
 

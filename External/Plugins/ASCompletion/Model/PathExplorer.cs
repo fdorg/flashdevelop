@@ -26,6 +26,7 @@ namespace ASCompletion.Model
         }
 
         static private bool uistarted;
+        static private bool contextUpdating;
         static private Queue<PathExplorer> waiting = new Queue<PathExplorer>();
         static private volatile Thread explorerThread;
         static private volatile bool stopExploration;
@@ -67,6 +68,27 @@ namespace ASCompletion.Model
         static public void ClearAll()
         {
             lock (waiting) { waiting.Clear(); }
+        }
+
+        static public void BeginUpdate()
+        {
+            contextUpdating = true;
+        }
+
+        static public void EndUpdate()
+        {
+            contextUpdating = false;
+        }
+
+        static public void ClearPersistentCache()
+        {
+            string cacheDir = GetCachePath();
+            try
+            {
+                if (Directory.Exists(cacheDir))
+                    Directory.Delete(cacheDir, true);
+            }
+            catch { }
         }
 
         public event ExplorationProgressHandler OnExplorationProgress;
@@ -133,6 +155,12 @@ namespace ASCompletion.Model
             while (!stopExploration)
             {
                 PathExplorer next = null;
+
+                if (contextUpdating)
+                {
+                    Thread.Sleep(100);
+                    continue;
+                }
 
                 lock (waiting)
                 {
@@ -317,10 +345,15 @@ namespace ASCompletion.Model
 
         private string GetCacheFileName(string path)
         {
-            string pluginDir = Path.Combine(PathHelper.DataDir, "ASCompletion");
-            string cacheDir = Path.Combine(pluginDir, "FileCache");
+            string cacheDir = GetCachePath();
             string hashFileName = HashCalculator.CalculateSHA1(path);
             return Path.Combine(cacheDir, hashFileName + "." + context.Settings.LanguageId.ToLower() + ".bin");
+        }
+
+        private static string GetCachePath()
+        {
+            string pluginDir = Path.Combine(PathHelper.DataDir, "ASCompletion");
+            return Path.Combine(pluginDir, "FileCache");
         }
 
         private void NotifyProgress(string state, int value, int max)

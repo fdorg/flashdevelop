@@ -45,6 +45,7 @@ namespace BookmarkPanel
             this.InitializeLayout();
             this.InitializeTexts();
             this.UpdateSettings();
+            ScrollBarEx.Attach(listView);
         }
 
         #region Windows Forms Designer Generated Code

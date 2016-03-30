@@ -513,6 +513,8 @@ namespace ASCompletion.Context
         /// </summary>
         public virtual void ReleaseClasspath()
         {
+            PathExplorer.BeginUpdate();
+
             if (started && classPath != null)
             {
                 foreach (PathModel aPath in classPath) aPath.InUse = false;
@@ -529,6 +531,8 @@ namespace ASCompletion.Context
                 foreach (PathModel aPath in classPath) aPath.InUse = true;
             }
             PathModel.Compact();
+
+            PathExplorer.EndUpdate();
         }
 
         /// <summary>

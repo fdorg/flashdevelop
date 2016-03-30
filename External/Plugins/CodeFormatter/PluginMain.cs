@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ASCompletion.Context;
 using CodeFormatter.Handlers;
@@ -19,7 +19,7 @@ namespace CodeFormatter
     {
         private String pluginName = "CodeFormatter";
         private String pluginGuid = "f7f1e15b-282a-4e55-ba58-5f2c02765247";
-        private String pluginDesc = "Adds an MXML and ActionScript code formatter to FlashDevelop.";
+        private String pluginDesc = "Adds multiple code formatters to FlashDevelop.";
         private String pluginHelp = "www.flashdevelop.org/community/";
         private String pluginAuth = "FlashDevelop Team";
         private ToolStripMenuItem contextMenuItem;
@@ -167,7 +167,7 @@ namespace CodeFormatter
         {
             if (this.mainMenuItem == null || this.contextMenuItem == null) return;
             ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-            Boolean isValid = doc != null && doc.IsEditable && this.IsSupportedLanguage(doc.FileName);
+            Boolean isValid = doc != null && doc.IsEditable && this.DocumentType != TYPE_UNKNOWN;
             this.mainMenuItem.Enabled = this.contextMenuItem.Enabled = isValid;
         }
 
@@ -197,15 +197,6 @@ namespace CodeFormatter
         public void AttachContextMenuItem(ToolStripMenuItem contextMenu)
         {
             contextMenu.DropDownItems.Insert(6, this.contextMenuItem);
-        }
-
-        /// <summary>
-        /// Checks if the language is supported
-        /// </summary>
-        public Boolean IsSupportedLanguage(String file)
-        {
-            String lang = ScintillaControl.Configuration.GetLanguageFromFile(file);
-            return (lang == "as2" || lang == "as3" || lang == "xml");
         }
 
         /// <summary>
@@ -241,7 +232,8 @@ namespace CodeFormatter
         private const int TYPE_AS3 = 0;
         private const int TYPE_MXML = 1;
         private const int TYPE_XML = 2;
-        private const int TYPE_UNKNOWN = 3;
+        private const int TYPE_CPP = 3;
+        private const int TYPE_UNKNOWN = 4;
         
         /// <summary>
         /// Formats the current document
@@ -267,7 +259,7 @@ namespace CodeFormatter
                     {
                         case TYPE_AS3:
                             ASPrettyPrinter asPrinter = new ASPrettyPrinter(true, source);
-                            FormatUtility.configureASPrinter(asPrinter, this.settingObject, PluginBase.Settings.TabWidth);
+                            FormatUtility.configureASPrinter(asPrinter, this.settingObject);
                             String asResultData = asPrinter.print(0);
                             if (asResultData == null)
                             {
@@ -284,7 +276,7 @@ namespace CodeFormatter
                         case TYPE_MXML:
                         case TYPE_XML:
                             MXMLPrettyPrinter mxmlPrinter = new MXMLPrettyPrinter(source);
-                            FormatUtility.configureMXMLPrinter(mxmlPrinter, this.settingObject, PluginBase.Settings.TabWidth);
+                            FormatUtility.configureMXMLPrinter(mxmlPrinter, this.settingObject);
                             String mxmlResultData = mxmlPrinter.print(0);
                             if (mxmlResultData == null)
                             {
@@ -294,6 +286,27 @@ namespace CodeFormatter
                             else
                             {
                                 doc.SciControl.Text = mxmlResultData;
+                                doc.SciControl.ConvertEOLs(doc.SciControl.EOLMode);
+                            }
+                            break;
+
+                        case TYPE_CPP:
+                            AStyleInterface asi = new AStyleInterface();
+                            String optionData = this.GetOptionData(doc.SciControl.ConfigurationLanguage.ToLower());
+                            String resultData = asi.FormatSource(source, optionData);
+                            if (String.IsNullOrEmpty(resultData))
+                            {
+                                TraceManager.Add(TextHelper.GetString("Info.CouldNotFormat"), -3);
+                                PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
+                            }
+                            else
+                            {
+                                // Remove all empty lines if specified
+                                if (optionData.Contains("--delete-empty-lines"))
+                                {
+                                    resultData = Regex.Replace(resultData, @"(\r?\n){3,}", "$1");
+                                }
+                                doc.SciControl.Text = resultData;
                                 doc.SciControl.ConvertEOLs(doc.SciControl.EOLMode);
                             }
                             break;
@@ -310,7 +323,31 @@ namespace CodeFormatter
         }
 
         /// <summary>
-        /// 
+        /// Get the options for the formatter based on FD settings or manual command
+        /// </summary>
+        private String GetOptionData(String language)
+        {
+            String optionData;
+            if (language == "cpp") optionData = this.settingObject.Pref_AStyle_CPP;
+            else optionData = this.settingObject.Pref_AStyle_Others;
+            if (String.IsNullOrEmpty(optionData))
+            {
+                Int32 tabSize = PluginBase.Settings.TabWidth;
+                Boolean useTabs = PluginBase.Settings.UseTabs;
+                Int32 spaceSize = PluginBase.Settings.IndentSize;
+                CodingStyle codingStyle = PluginBase.Settings.CodingStyle;
+                optionData = AStyleInterface.DefaultOptions + " --mode=c";
+                if (language != "cpp") optionData += "s"; // --mode=cs
+                if (useTabs) optionData += " --indent=force-tab=" + tabSize.ToString();
+                else optionData += " --indent=spaces=" + spaceSize.ToString();
+                if (codingStyle == CodingStyle.BracesAfterLine) optionData += " --style=allman";
+                else optionData += " --style=attach";
+            }
+            return optionData;
+        }
+        
+        /// <summary>
+        /// Gets or sets the current position, ignoring whitespace
         /// </summary>
         public int CurrentPos
         {
@@ -348,28 +385,29 @@ namespace CodeFormatter
         }
 
         /// <summary>
-        /// 
+        /// Gets the formatting type of the document
         /// </summary>
         public Int32 DocumentType
         {
             get 
             {
-                var xmls = new List<String> { ".xml" };
                 ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
                 if (!document.IsEditable) return TYPE_UNKNOWN;
                 String ext = Path.GetExtension(document.FileName).ToLower();
+                String lang = document.SciControl.ConfigurationLanguage.ToLower();
                 if (ASContext.Context.CurrentModel.Context != null && ASContext.Context.CurrentModel.Context.GetType().ToString().Equals("AS3Context.Context")) 
                 {
                     if (ext == ".as") return TYPE_AS3;
                     else if (ext == ".mxml") return TYPE_MXML;
                 }
-                else if (xmls.Contains(ext)) return TYPE_XML;
+                else if (lang == "xml") return TYPE_XML;
+                else if (document.SciControl.Lexer == 3 && Win32.ShouldUseWin32()) return TYPE_CPP;
                 return TYPE_UNKNOWN;
             }
         }
 
         /// <summary>
-        /// 
+        /// Compress text for finding correct restore position
         /// </summary>
         public String CompressText(String originalText)
         {
@@ -378,14 +416,6 @@ namespace CodeFormatter
             compressedText = compressedText.Replace("\n", "");
             compressedText = compressedText.Replace("\r", "");
             return compressedText;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool IsBlankChar(Char ch)
-        {
-            return (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r');
         }
 
         #endregion
