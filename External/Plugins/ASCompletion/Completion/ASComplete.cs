@@ -407,11 +407,11 @@ namespace ASCompletion.Completion
             {
                 // Get the before & after style values unaffected by the entered char
                 sci.DeleteBack();
-                sci.Colourise(sci.CurrentPos - 1, sci.CurrentPos + 1);
+                sci.Colourise(0, -1);
                 byte styleAfter = (byte) sci.BaseStyleAt(sci.CurrentPos);
                 byte styleBefore = (byte) sci.BaseStyleAt(sci.CurrentPos - 1);
                 sci.AddText(1, c.ToString());
-
+                
                 // not inside a string literal
                 if (!IsStringStyle(styleBefore) && !IsCharStyle(styleBefore) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
                 {
