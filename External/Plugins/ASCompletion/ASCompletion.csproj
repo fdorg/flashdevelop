@@ -84,9 +84,7 @@
     <Compile Include="Completion\ASDocumentation.cs" />
     <Compile Include="Completion\ContextFeatures.cs" />
     <Compile Include="Context\IASContext.cs" />
-    <Compile Include="CustomControls\StateSavingTreeView.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="CustomControls\StateSavingTreeView.cs" />
     <Compile Include="CustomControls\ModelsExplorer.cs">
       <SubType>UserControl</SubType>
     </Compile>
