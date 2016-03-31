@@ -15,7 +15,7 @@ namespace ASCompletion.Completion
     [TestFixture]
     public class ASCompleteTests : ScintillaTest
     {
-        private static TestFilePathInfo pathInfo = new TestFilePathInfo("ASComplete", "completion");
+        private static TestFilePathInfo testFile = new TestFilePathInfo("ASComplete", "completion");
 
         // TODO: Add more tests!
         public class GetExpressionType : ASCompleteTests
@@ -62,7 +62,7 @@ namespace ASCompletion.Completion
                 ASContext.Context.CurrentMember.Returns(member);
 
                 var sci = GetBaseScintillaControl();
-                sci.Text = TestFile.ReadAllText(pathInfo.AS3("SimpleTest"));
+                sci.Text = TestFile.ReadAllText(testFile.AS3("SimpleTest"));
                 sci.ConfigurationLanguage = "as3";
                 sci.Colourise(0, -1);
 
