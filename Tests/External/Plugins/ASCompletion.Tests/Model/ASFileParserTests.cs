@@ -1530,7 +1530,7 @@ namespace ASCompletion.Model
             [Test(Description="Issue 1075")]
             public void ParseFile_MethodAfterGenericReturn()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.MethodAfterGenericReturnTest.hx"))
+                using (var resourceFile = new TestFile(testFile.Haxe("MethodAfterGenericReturnTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -1591,7 +1591,7 @@ namespace ASCompletion.Model
             [Test(Description = "Issue 1125")]
             public void ParseFile_FunctionTypesAsArguments()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.FunctionTypesAsArgumentsTest.hx"))
+                using (var resourceFile = new TestFile(testFile.Haxe("FunctionTypesAsArgumentsTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -1646,7 +1646,7 @@ namespace ASCompletion.Model
             [Test(Description = "Issue 1141")]
             public void ParseFile_KeywordAndUnderscoreInName()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.KeywordAndUnderscoreInNameTest.hx"))
+                using (var resourceFile = new TestFile(testFile.Haxe("KeywordAndUnderscoreInNameTest")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -1734,7 +1734,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_MetadataClass()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.MetadataTest.hx"))
+                using (var resourceFile = new TestFile(testFile.Haxe("MetadataTest.hx")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -1837,7 +1837,7 @@ namespace ASCompletion.Model
             [Test]
             public void ParseFile_WrongSyntaxCompilerMetaAfterMethodWithNoType()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.WrongSyntaxCompilerMetaAfterMethodWithNoType.hx"))
+                using (var resourceFile = new TestFile(testFile.Haxe("WrongSyntaxCompilerMetaAfterMethodWithNoType")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
@@ -1867,7 +1867,7 @@ namespace ASCompletion.Model
             [Ignore("Not working for now")]
             public void ParseFile_WrongSyntaxCompilerMetaAfterVarWithNoType()
             {
-                using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.WrongSyntaxCompilerMetaAfterVarWithNoType.hx"))
+                using (var resourceFile = new TestFile(testFile.Haxe("WrongSyntaxCompilerMetaAfterVarWithNoType")))
                 {
                     var srcModel = new FileModel(resourceFile.DestinationFile);
                     srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());

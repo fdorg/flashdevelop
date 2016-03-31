@@ -503,8 +503,7 @@ namespace ASCompletion.Completion
                     {
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateExtractVariableGeneric.hx"),
+                                TestFile.ReadAllText(testFile.Haxe("BeforeGenerateExtractVariableGeneric")),
                                     new MemberModel("main", null, FlagType.Static | FlagType.Function, 0)
                                     {
                                         LineFrom = 2,
@@ -513,14 +512,12 @@ namespace ASCompletion.Completion
                                     "newVar"
                                 )
                                 .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGenerateExtractVariableGeneric.hx"))
+                                    TestFile.ReadAllText(testFile.Haxe("AfterGenerateExtractVariableGeneric")))
                                 .SetName("GenerateExtractVariable");
 
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeExtractLocalVariable_fromString.hx"),
+                                TestFile.ReadAllText(testFile.Haxe("BeforeExtractLocalVariable_fromString")),
                                     new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
                                     {
                                         LineFrom = 4,
@@ -529,14 +526,12 @@ namespace ASCompletion.Completion
                                     "newVar"
                                 )
                                 .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterExtractLocalVariable_fromString.hx"))
+                                    TestFile.ReadAllText(testFile.Haxe("AfterExtractLocalVariable_fromString")))
                                 .SetName("ExtractLocaleVariable from String");
 
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeExtractLocalVariable_fromNumber.hx"),
+                                TestFile.ReadAllText(testFile.Haxe("BeforeExtractLocalVariable_fromNumber")),
                                     new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
                                     {
                                         LineFrom = 4,
@@ -545,14 +540,12 @@ namespace ASCompletion.Completion
                                     "newVar"
                                 )
                                 .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterExtractLocalVariable_fromNumber.hx"))
+                                    TestFile.ReadAllText(testFile.Haxe("AfterExtractLocalVariable_fromNumber")))
                                 .SetName("ExtractLocaleVariable from Number");
 
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeExtractLocalVariable_inSinglelineMethod.hx"),
+                                TestFile.ReadAllText(testFile.Haxe("BeforeExtractLocalVariable_inSinglelineMethod")),
                                     new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
                                     {
                                         LineFrom = 4,
@@ -561,8 +554,7 @@ namespace ASCompletion.Completion
                                     "newVar"
                                 )
                                 .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterExtractLocalVariable_inSinglelineMethod.hx"))
+                                    TestFile.ReadAllText(testFile.Haxe("AfterExtractLocalVariable_inSinglelineMethod")))
                                 .SetName("ExtractLocaleVariable in single line method");
                     }
                 }
@@ -586,8 +578,7 @@ namespace ASCompletion.Completion
                     {
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeExtractLocalVariable.as"),
+                                TestFile.ReadAllText(testFile.AS3("BeforeExtractLocalVariable")),
                                     new MemberModel("ExtractLocalVariable", null, FlagType.Constructor | FlagType.Function, 0)
                                     {
                                         LineFrom = 4,
@@ -596,14 +587,12 @@ namespace ASCompletion.Completion
                                     "newVar"
                                 )
                                 .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterExtractLocalVariable.as"))
+                                    TestFile.ReadAllText(testFile.AS3("AfterExtractLocalVariable")))
                                 .SetName("ExtractLocaleVariable");
 
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeExtractLocalVariable_fromString.as"),
+                                TestFile.ReadAllText(testFile.AS3("BeforeExtractLocalVariable_fromString")),
                                     new MemberModel("ExtractLocalVariable", null, FlagType.Constructor | FlagType.Function, 0)
                                     {
                                         LineFrom = 4,
@@ -612,14 +601,12 @@ namespace ASCompletion.Completion
                                     "newVar"
                                 )
                                 .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterExtractLocalVariable_fromString.as"))
+                                    TestFile.ReadAllText(testFile.AS3("AfterExtractLocalVariable_fromString")))
                                 .SetName("ExtractLocaleVariable from String");
 
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeExtractLocalVariable_fromNumber.as"),
+                                TestFile.ReadAllText(testFile.AS3("BeforeExtractLocalVariable_fromNumber")),
                                     new MemberModel("ExtractLocalVariable", null, FlagType.Constructor | FlagType.Function, 0)
                                     {
                                         LineFrom = 4,
@@ -628,14 +615,12 @@ namespace ASCompletion.Completion
                                     "newVar"
                                 )
                                 .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterExtractLocalVariable_fromNumber.as"))
+                                    TestFile.ReadAllText(testFile.AS3("AfterExtractLocalVariable_fromNumber")))
                                 .SetName("ExtractLocaleVariable from Number");
 
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeExtractLocalVariable_forCheckingThePositionOfNewVar.as"),
+                                TestFile.ReadAllText(testFile.AS3("BeforeExtractLocalVariable_forCheckingThePositionOfNewVar")),
                                     new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
                                     {
                                         LineFrom = 4,
@@ -644,8 +629,7 @@ namespace ASCompletion.Completion
                                     "newVar"
                                 )
                                 .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterExtractLocalVariable_forCheckingThePositionOfNewVar.as"))
+                                    TestFile.ReadAllText(testFile.AS3("AfterExtractLocalVariable_forCheckingThePositionOfNewVar")))
                                 .SetName("ExtractLocaleVariable with checking the position of a new variable");
                     }
                 }
