@@ -405,6 +405,9 @@ namespace ASCompletion.Completion
             
             if (addedChar)
             {
+                bool added = false;
+                sci.BeginUndoAction();
+
                 // Get the before & after style values unaffected by the entered char
                 sci.DeleteBack();
                 sci.Colourise(0, -1);
@@ -420,7 +423,10 @@ namespace ASCompletion.Completion
                         // Handle opening first for braces that have equal opening & closing chars
                         if (HandleAddOpeningBrace(sci, c, braces, styleAfter, styleBefore)
                             || HandleAddClosingBrace(sci, c, braces))
+                        {
+                            added = true;
                             break;
+                        }
                     }
                 }
                 else if (c == '"' && IsStringStyle(styleAfter) || c == '\'' && IsCharStyle(styleAfter))
@@ -429,10 +435,17 @@ namespace ASCompletion.Completion
                     {
                         foreach (var braces in ASContext.CommonSettings.AddClosingBracesData)
                         {
-                            if (HandleAddClosingBrace(sci, c, braces)) break;
+                            if (HandleAddClosingBrace(sci, c, braces))
+                            {
+                                added = true;
+                                break;
+                            }
                         }
                     }
                 }
+
+                sci.EndUndoAction();
+                if (!added) sci.Undo();
             }
             else
             {
