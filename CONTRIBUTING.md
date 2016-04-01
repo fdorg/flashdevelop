@@ -1,10 +1,10 @@
 # AppMan entries
 
-If you want to add your plugin, theme or extension to AppMan, you need to do a pull request to the appman.xml file adding a new entry inside the FD5 comments. Requirements for the offered plugins, themes or extensions are:
+If you want to add your plugin, theme or extension to AppMan, you need to do a pull request to the `appman.xml` file adding a new entry inside the FD5 comments. Requirements for the offered plugins, themes or extensions are:
 
 * Code needs to be open source and reviewable in a public repository
-* The item needs to be packaged into a FDZ file and provide a MD5 checksum for verification
-* The FDZ needs to extract the files to the automated plugin directory: $(BaseDir)/Plugins
+* The item needs to be packaged into a `.fdz` file and provide a MD5 checksum for verification
+* The `.fdz` needs to extract the files to the automated plugin directory: `$(BaseDir)/Plugins`
 
 # Coding style
 
@@ -132,7 +132,7 @@ Point[] myPoints = new Point[]
 ##### Code example:
 
 ```c#
-import System;
+using System;
 
 namespace MyNameSpace
 {
