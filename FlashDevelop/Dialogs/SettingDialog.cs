@@ -547,7 +547,7 @@ namespace FlashDevelop.Dialogs
         }
 
         /// <summary>
-        /// Restore the selected index - only if a item id hasn't been provided
+        /// Restore the selected index - only if an item id hasn't been provided
         /// </summary>
         private void DialogShown(Object sender, EventArgs e)
         {
@@ -556,6 +556,7 @@ namespace FlashDevelop.Dialogs
                 this.itemListView.SelectedIndices.Add(lastItemIndex);
                 this.itemListView.EnsureVisible(lastItemIndex);
             }
+            this.filterText.Focus();
         }
 
         /// <summary>

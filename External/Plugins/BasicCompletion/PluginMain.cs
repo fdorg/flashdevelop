@@ -440,7 +440,7 @@ namespace BasicCompletion
                 {
                     items.Sort();
                     CompletionList.Show(items, true, curWord);
-                    if (insert == AutoInsert.Never || (insert == AutoInsert.CPP && sci.Lexer != 3/*CPP*/) || lang == "text")
+                    if (insert == AutoInsert.Never || (insert == AutoInsert.CPP && (sci.Lexer != 3/*CPP*/ || sci.PositionIsOnComment(sci.CurrentPos)) || lang == "text"))
                     {
                         CompletionList.DisableAutoInsertion();
                     }

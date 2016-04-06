@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using PluginCore.BBCode;
 using PluginCore.Managers;
+using PluginCore.Helpers;
 
 namespace PluginCore.Controls
 {
@@ -111,7 +112,7 @@ namespace PluginCore.Controls
             host.Controls.Add(toolTip);
             // text
             toolTipRTB = new SelectableRichTextBox();
-            toolTipRTB.Location = new Point(2, 1);
+            toolTipRTB.Font = PluginBase.Settings.DefaultFont;
             toolTipRTB.BackColor = SystemColors.Info;
             toolTipRTB.ForeColor = SystemColors.InfoText;
             toolTipRTB.BorderStyle = BorderStyle.None;
@@ -176,44 +177,52 @@ namespace PluginCore.Controls
             bool wordWrap = false;
             Size txtSize = WinFormUtils.MeasureRichTextBox(toolTipRTB, false, toolTipRTB.Width, toolTipRTB.Height, false);
 
+            int smallOffsetH = ScaleHelper.Scale(1);
+            int smallOffsetW = ScaleHelper.Scale(2);
+            int smallPadding = ScaleHelper.Scale(4);
+            int mediumPadding = ScaleHelper.Scale(10);
+            int minWidth = ScaleHelper.Scale(200);
+            maxWidth = ScaleHelper.Scale(maxWidth);
+
             // tooltip larger than the window: wrap
             var screenArea = Screen.FromControl(owner.Owner).WorkingArea;
-            int limitLeft = screenArea.Left + 1;
-            int limitRight = screenArea.Right - 1;
-            int limitBottom = screenArea.Bottom - 26;
+            int limitLeft = screenArea.Left + smallOffsetH;
+            int limitRight = screenArea.Right - smallOffsetH;
+            int limitBottom = screenArea.Bottom - ScaleHelper.Scale(26);
             //
             int maxW = availableWidth > 0 ? availableWidth : limitRight - limitLeft;
             if (maxW > maxWidth && maxWidth > 0)
                 maxW = maxWidth;
 
-            int w = txtSize.Width + 4;
+            int w = txtSize.Width + smallPadding;
             if (w > maxW)
             {
                 wordWrap = true;
                 w = maxW;
-                if (w < 200)
+                if (w < minWidth)
                 {
-                    w = 200;
+                    w = minWidth;
                     tooSmall = true;
                 }
 
-                txtSize = WinFormUtils.MeasureRichTextBox(toolTipRTB, false, w, 1000, true);
-                w = txtSize.Width + 4;
+                txtSize = WinFormUtils.MeasureRichTextBox(toolTipRTB, false, w, maxWidth, true);
+                w = txtSize.Width + smallPadding;
             }
 
-            int h = txtSize.Height + 2;
-            int dh = 1;
-            int dw = 2;
+            int h = txtSize.Height + smallOffsetH * 2;
+            int dh = smallOffsetH;
+            int dw = smallOffsetW;
             if (h > (limitBottom - host.Top))
             {
-                w += 15;
+                w += ScaleHelper.Scale(15);
                 h = limitBottom - host.Top;
-                dh = 4;
-                dw = 5;
+                dh = smallPadding;
+                dw = smallPadding + smallOffsetW / 2;
 
                 toolTipRTB.ScrollBars = RichTextBoxScrollBars.Vertical;
             }
 
+            toolTipRTB.Location = new Point(smallOffsetW, smallOffsetH);
             toolTipRTB.Size = new Size(w, h);
             host.Size = new Size(w + dw, h + dh);
 
@@ -241,7 +250,6 @@ namespace PluginCore.Controls
 
         public void ShowAtMouseLocation()
         {
-            //ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
             mousePos = Control.MousePosition;
             host.Left = mousePos.X;// +sci.Left;
             var screen = Screen.FromPoint(mousePos);
@@ -249,7 +257,7 @@ namespace PluginCore.Controls
             {
                 host.Left -= (host.Right - screen.WorkingArea.Right);
             }
-            host.Top = mousePos.Y - host.Height - 10;// +sci.Top;
+            host.Top = mousePos.Y - host.Height - ScaleHelper.Scale(10);// +sci.Top;
             if (host.Top < 5)
                 host.Top = mousePos.Y + 10;
             Show();

@@ -1697,10 +1697,9 @@ namespace ASCompletion.Completion
             List<ASMetaData> events = new List<ASMetaData>();
             while (ofClass != null && !ofClass.IsVoid())
             {
-                FileModel inFile = ofClass.InFile;
-                if (inFile.MetaDatas != null)
+                if (ofClass.MetaDatas != null)
                 {
-                    foreach (ASMetaData meta in inFile.MetaDatas)
+                    foreach (ASMetaData meta in ofClass.MetaDatas)
                         if (meta.Kind == ASMetaKind.Event) events.Add(meta);
                 }
                 ofClass = ofClass.Extends;
@@ -3709,9 +3708,9 @@ namespace ASCompletion.Completion
         /// </summary>
         static public bool IsTextStyle(int style)
         {
-            return style == 0 || style == 10 /*punctuation*/ || style == 11 /*identifier*/ 
+            return style == 0 || style == 10 /*punctuation*/ || style == 11 /*identifier*/
                 || style == 16 /*word2 (secondary keywords: class name)*/
-                || style == 101 /*word4 (add keywords4)*/ || style == 102 /*word5 (add keywords5)*/
+                || style == 24 /*word4 (add keywords4)*/ || style == 25 /*word5 (add keywords5)*/
                 || style == 127 /*PHP*/;
         }
 
@@ -3721,10 +3720,10 @@ namespace ASCompletion.Completion
         static public bool IsTextStyleEx(int style)
         {
             return style == 0 || style == 5 /*word (secondary keywords)*/
-                || style == 10 /*punctuation*/ || style == 11 /*identifier*/ 
-                || style == 16 /*word2 (secondary keywords: class name)*/ 
-                || style == 19 /*globalclass (primary keywords)*/ || style == 100 /*word3 (add keywords3)*/
-                || style == 101 /*word4 (add keywords4)*/ || style == 102 /*word5 (add keywords5)*/
+                || style == 10 /*punctuation*/ || style == 11 /*identifier*/
+                || style == 16 /*word2 (secondary keywords: class name)*/
+                || style == 19 /*globalclass (primary keywords)*/ || style == 23 /*word3 (add keywords3)*/
+                || style == 24 /*word4 (add keywords4)*/ || style == 25 /*word5 (add keywords5)*/
                 || style == 127 /*PHP*/;
         }
 

@@ -60,7 +60,6 @@ namespace CodeRefactor.Controls
             this.tree.Size = new System.Drawing.Size(360, 108);
             this.tree.TabIndex = 2;
             this.tree.MouseDoubleClick += new MouseEventHandler(OnTreeMouseDoubleClick);
-            this.tree.SelectedValueChanged += new EventHandler(OnTreeSelectedValueChanged);
             // 
             // cancelButton
             // 

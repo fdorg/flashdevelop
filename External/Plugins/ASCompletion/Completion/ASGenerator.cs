@@ -34,11 +34,11 @@ namespace ASCompletion.Completion
         static private Regex reModifier = new Regex("(public |private |protected )", RegexOptions.Compiled);
         static private Regex reSuperCall = new Regex("^super\\s*\\(", RegexOptions.Compiled);
 
-        static private string contextToken;
-        static private string contextParam;
-        static private Match contextMatch;
-        static private ASResult contextResolved;
-        static private MemberModel contextMember;
+        static internal string contextToken;
+        static internal string contextParam;
+        static internal Match contextMatch;
+        static internal ASResult contextResolved;
+        static internal MemberModel contextMember;
         static private bool firstVar;
 
         static private bool IsHaxe
@@ -795,21 +795,28 @@ namespace ASCompletion.Completion
             options.Add(new GeneratorItem(label, GeneratorJobType.Delegate, found.member, found.inClass));
         }
 
-        private static void ShowEventList(FoundDeclaration found, List<ICompletionListItem> options)
+        internal static void ShowEventList(FoundDeclaration found, List<ICompletionListItem> options)
         {
             string tmp = TextHelper.GetString("ASCompletion.Label.GenerateHandler");
             string labelEvent = String.Format(tmp, "Event");
             string labelDataEvent = String.Format(tmp, "DataEvent");
             string labelContext = String.Format(tmp, contextParam);
-            string[] choices = (contextParam != "Event") ?
-                new string[] { labelContext, labelEvent } :
-                new string[] { labelEvent, labelDataEvent };
+            string[] choices;
+            if (contextParam != "Event") choices = new string[] { labelContext, labelEvent };
+            else if (HasDataEvent()) choices = new string[] { labelEvent, labelDataEvent };
+            else choices = new string[] { labelEvent };
+
             for (int i = 0; i < choices.Length; i++)
             {
                 options.Add(new GeneratorItem(choices[i],
                     choices[i] == labelContext ? GeneratorJobType.ComplexEvent : GeneratorJobType.BasicEvent,
                     found.member, found.inClass));
             }
+        }
+
+        private static bool HasDataEvent()
+        {
+            return !ASContext.Context.ResolveType("flash.events.DataEvent", ASContext.Context.CurrentModel).IsVoid();
         }
 
         private static void ShowGetSetList(FoundDeclaration found, List<ICompletionListItem> options)
@@ -2742,18 +2749,15 @@ namespace ASCompletion.Completion
             info["constructorArgTypes"] = constructorArgTypes;
             DataEvent de = new DataEvent(EventType.Command, "ProjectManager.CreateNewFile", info);
             EventManager.DispatchEvent(null, de);
-            if (de.Handled) return;
         }
 
         public static void GenerateExtractVariable(ScintillaControl Sci, string NewName)
         {
-            FileModel cFile;
-
             string expression = Sci.SelText.Trim(new char[] { '=', ' ', '\t', '\n', '\r', ';', '.' });
             expression = expression.TrimEnd(new char[] { '(', '[', '{', '<' });
             expression = expression.TrimStart(new char[] { ')', ']', '}', '>' });
 
-            cFile = ASContext.Context.CurrentModel;
+            var cFile = ASContext.Context.CurrentModel;
             ASFileParser parser = new ASFileParser();
             parser.ParseSrc(cFile, Sci.Text);
 
@@ -2764,18 +2768,18 @@ namespace ASCompletion.Completion
             int funcBodyStart = GetBodyStart(current.LineFrom, current.LineTo, Sci);
             Sci.SetSel(funcBodyStart, Sci.LineEndPosition(current.LineTo));
             string currentMethodBody = Sci.SelText;
+            var insertPosition = funcBodyStart + currentMethodBody.IndexOfOrdinal(expression);
+            var line = Sci.LineFromPosition(insertPosition);
+            insertPosition = Sci.LineIndentPosition(line);
 
-            bool isExprInSingleQuotes = (expression.StartsWith('\'') && expression.EndsWith('\''));
-            bool isExprInDoubleQuotes = (expression.StartsWith('\"') && expression.EndsWith('\"'));
-            int stylemask = (1 << Sci.StyleBits) - 1;
             int lastPos = -1;
-            char prevOrNextChar;
             Sci.Colourise(0, -1);
             while (true)
             {
                 lastPos = currentMethodBody.IndexOfOrdinal(expression, lastPos + 1);
                 if (lastPos > -1)
                 {
+                    char prevOrNextChar;
                     if (lastPos > 0)
                     {
                         prevOrNextChar = currentMethodBody[lastPos - 1];
@@ -2793,22 +2797,10 @@ namespace ASCompletion.Completion
                         }
                     }
 
-                    int style = Sci.StyleAt(funcBodyStart + lastPos) & stylemask;
-                    if (ASComplete.IsCommentStyle(style))
-                    {
-                        continue;
-                    }
-                    else if ((isExprInDoubleQuotes && currentMethodBody[lastPos] == '"' && currentMethodBody[lastPos + expression.Length - 1] == '"')
-                        || (isExprInSingleQuotes && currentMethodBody[lastPos] == '\'' && currentMethodBody[lastPos + expression.Length - 1] == '\''))
-                    {
-
-                    }
-                    else if (!ASComplete.IsTextStyle(style))
-                    {
-                        continue;
-                    }
-
-                    Sci.SetSel(funcBodyStart + lastPos, funcBodyStart + lastPos + expression.Length);
+                    var pos = funcBodyStart + lastPos;
+                    int style = Sci.BaseStyleAt(pos);
+                    if (ASComplete.IsCommentStyle(style)) continue;
+                    Sci.SetSel(pos, pos + expression.Length);
                     Sci.ReplaceSel(NewName);
                     currentMethodBody = currentMethodBody.Substring(0, lastPos) + NewName + currentMethodBody.Substring(lastPos + expression.Length);
                     lastPos += NewName.Length;
@@ -2818,8 +2810,7 @@ namespace ASCompletion.Completion
                     break;
                 }
             }
-
-            Sci.CurrentPos = funcBodyStart;
+            Sci.CurrentPos = insertPosition;
             Sci.SetSel(Sci.CurrentPos, Sci.CurrentPos);
 
             MemberModel m = new MemberModel(NewName, "", FlagType.LocalVar, 0);
@@ -3569,22 +3560,12 @@ namespace ASCompletion.Completion
                 ClassModel eventClass = ASContext.Context.ResolveType(type, ASContext.Context.CurrentModel);
                 if (eventClass.IsVoid())
                 {
-                    if (type == "Event")
+                    if (TryImportType("flash.events." + type, ref delta, sci.LineFromPosition(position)))
                     {
-                        List<string> typesUsed = new List<string>();
-                        typesUsed.Add("flash.events.Event");
-                        delta = AddImportsByName(typesUsed, sci.LineFromPosition(position));
                         position += delta;
                         sci.SetSel(position, position);
                     }
-                    else if (type == "DataEvent")
-                    {
-                        List<string> typesUsed = new List<string>();
-                        typesUsed.Add("flash.events.DataEvent");
-                        delta = AddImportsByName(typesUsed, sci.LineFromPosition(position));
-                        position += delta;
-                        sci.SetSel(position, position);
-                    }
+                    else type = null;
                 }
                 lookupPosition += delta;
                 string acc = GetPrivateAccessor(afterMethod, inClass);
@@ -3608,6 +3589,18 @@ namespace ASCompletion.Completion
             {
                 sci.EndUndoAction();
             }
+        }
+
+        private static bool TryImportType(string type, ref int delta, int atLine)
+        {
+            ClassModel eventClass = ASContext.Context.ResolveType(type, ASContext.Context.CurrentModel);
+            if (eventClass.IsVoid())
+                return false;
+            
+            List<string> typesUsed = new List<string>();
+            typesUsed.Add(type);
+            delta += AddImportsByName(typesUsed, atLine);
+            return true;
         }
 
         static private string AddRemoveEvent(string eventName)
@@ -4602,7 +4595,7 @@ namespace ASCompletion.Completion
         }
     }
 
-    class FoundDeclaration
+    internal class FoundDeclaration
     {
         public MemberModel member;
         public ClassModel inClass;

@@ -58,6 +58,19 @@ namespace FlashDevelop.Utilities
         }
 
         /// <summary>
+        /// Selects a search match in target
+        /// </summary>
+        public static void SelectMatchInTarget(ScintillaControl sci, SearchMatch match)
+        {
+            Int32 start = sci.MBSafePosition(match.Index); // wchar to byte position
+            Int32 end = start + sci.MBSafeTextLength(match.Value); // wchar to byte text length
+            Int32 line = sci.LineFromPosition(start);
+            sci.EnsureVisible(line);
+            sci.TargetStart = start;
+            sci.TargetEnd = end;
+        }
+
+        /// <summary>
         /// Bookmarks a search match
         /// </summary>
         public static void BookmarkMatches(ScintillaControl sci, List<SearchMatch> matches)

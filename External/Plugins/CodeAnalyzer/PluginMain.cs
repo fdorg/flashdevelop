@@ -164,7 +164,7 @@ namespace CodeAnalyzer
         /// </summary>
         private void OpenCreator(Object sender, EventArgs e)
         {
-            String url = "http://opensource.adobe.com/svn/opensource/flexpmd/bin/flex-pmd-ruleset-creator.html";
+            String url = "http://www.flashdevelop.org/flexpmd/index.html";
             PluginBase.MainForm.CallCommand("Browse", url);
         }
 

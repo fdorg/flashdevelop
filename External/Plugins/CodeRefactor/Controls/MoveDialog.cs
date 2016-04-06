@@ -11,15 +11,23 @@ namespace CodeRefactor.Controls
 {
     public partial class MoveDialog : Form
     {
-        static IEnumerable<string> GetClasspaths(string path)
+        IEnumerable<string> GetClasspaths(string path)
         {
             return GetClasspaths(path, null);
         }
-        static IEnumerable<string> GetClasspaths(string path, string projectDirName)
+        IEnumerable<string> GetClasspaths(string path, string projectDirName)
         {
-            string[] directories = Directory.GetDirectories(path, "*", SearchOption.AllDirectories);
-            List<string> result = new List<string> {GetClasspath(path, projectDirName)};
-            result.AddRange(directories.Select(it => GetClasspath(it, projectDirName)));
+            var directories = new List<string> {path};
+            directories.AddRange(Directory.GetDirectories(path, "*", SearchOption.AllDirectories));
+            directories.RemoveAll(it =>
+            {
+                foreach (var movingFile in MovingFiles)
+                {
+                    if (it.StartsWith(movingFile) || Path.GetDirectoryName(movingFile) == it) return true;
+                }
+                return false;
+            });
+            var result = directories.Select(it => GetClasspath(it, projectDirName));
             return result;
         }
 
@@ -102,7 +110,7 @@ namespace CodeRefactor.Controls
             if (search.Length > 0)
             {
                 char separator = Path.DirectorySeparatorChar;
-                string searchWord = search.Replace('\\', separator).Replace('/', separator);
+                string searchWord = search.Replace('\\', separator).Replace('/', separator).Replace('.', separator);
                 int searchLength = search.Length;
                 classpaths = classpaths.FindAll(path =>
                 {
@@ -112,15 +120,6 @@ namespace CodeRefactor.Controls
             }
             if (classpaths.Count > 0) tree.Items.AddRange(classpaths.ToArray());
             if (tree.Items.Count > 0) tree.SelectedIndex = 0;
-        }
-
-        bool GetCanProcess()
-        {
-            object selectedItem = tree.SelectedItem;
-            if (selectedItem == null) return false;
-            string selectedPath = selectedItem.ToString();
-            if (!Path.IsPathRooted(selectedPath)) selectedPath = Path.GetFullPath(selectedPath);
-            return MovingFiles.All(file => Path.GetDirectoryName(file) != selectedPath);
         }
 
         void OnShowExternalClasspathsCheckStateChanged(object sender, EventArgs e)
@@ -157,12 +156,7 @@ namespace CodeRefactor.Controls
             int indexFromPoint = tree.IndexFromPoint(e.Location);
             if (indexFromPoint == -1) return;
             tree.SelectedItem = tree.Items[indexFromPoint];
-            if (GetCanProcess()) DialogResult = DialogResult.OK;
-        }
-
-        void OnTreeSelectedValueChanged(object sender, EventArgs eventArgs)
-        {
-            processButton.Enabled = GetCanProcess();
+            DialogResult = DialogResult.OK;
         }
 
         protected override void OnKeyDown(KeyEventArgs e)

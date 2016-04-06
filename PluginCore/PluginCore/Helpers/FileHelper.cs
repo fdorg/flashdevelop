@@ -241,14 +241,14 @@ namespace PluginCore.Helpers
             if (Directory.Exists(path))
             {
                 String title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-                String message = TextHelper.GetString("Info.FolderAlreadyContainsFolder");
+                String message = TextHelper.GetString("PluginCore.Info.FolderAlreadyContainsFolder");
                 DialogResult result = MessageBox.Show(PluginBase.MainForm, String.Format(message, name, "\n"), title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
                 return result == DialogResult.Yes;
             }
             else if (File.Exists(path))
             {
                 String title = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-                String message = TextHelper.GetString("Info.FolderAlreadyContainsFile");
+                String message = TextHelper.GetString("PluginCore.Info.FolderAlreadyContainsFile");
                 DialogResult result = MessageBox.Show(PluginBase.MainForm, String.Format(message, name, "\n"), title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
                 return result == DialogResult.Yes;
             }

@@ -91,7 +91,7 @@ namespace ProjectManager.Controls
             TargetBuildSelector.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
             TargetBuildSelector.Font = PluginBase.Settings.DefaultFont;
             toolBar.Items.Add(TargetBuildSelector);
-            PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.TargetBuildSelector", Keys.Control | Keys.F6);
+            PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.TargetBuildSelector", Keys.Control | Keys.F7);
             PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.TargetBuildSelector", TargetBuildSelector);
             EnableTargetBuildSelector(false);
         }

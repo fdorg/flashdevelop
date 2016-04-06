@@ -14,6 +14,7 @@ using PluginCore.Managers;
 using ASCompletion.Completion;
 using System.Collections;
 using PluginCore.Helpers;
+using PluginCore.Controls;
 
 namespace ASCompletion
 {
@@ -123,6 +124,7 @@ namespace ASCompletion
             refreshButton.Image = PluginBase.MainForm.FindImage("24");
             rebuildButton.Image = PluginBase.MainForm.FindImage("153");
             toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
+            ScrollBarEx.Attach(outlineTreeView);
         }
 
         private void outlineContextMenuStrip_Opening(object sender, CancelEventArgs e)
