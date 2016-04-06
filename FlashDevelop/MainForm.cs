@@ -1566,7 +1566,11 @@ namespace FlashDevelop
                                 return true;
                             }
                         }
-                        else return Win32.SendMessage(hWnd, m.Msg, m.WParam, m.LParam) != IntPtr.Zero;
+                        else
+                        {
+                            Win32.SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
+                            return true;
+                        }
                     }
                 }
             }
