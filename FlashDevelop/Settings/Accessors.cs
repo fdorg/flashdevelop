@@ -902,7 +902,7 @@ namespace FlashDevelop.Settings
             set { this.customProjectsDir = value; }
         }
 
-        [DefaultValue("cmd.exe")]
+        [DefaultValue("")]
         [DisplayName("Custom Command Prompt")]
         [LocalizedCategory("FlashDevelop.Category.Paths")]
         [LocalizedDescription("FlashDevelop.Description.CustomCommandPrompt")]

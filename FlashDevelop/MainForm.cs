@@ -491,7 +491,12 @@ namespace FlashDevelop
         /// </summary>
         public string CommandPromptExecutable
         {
-            get { return File.Exists(Settings.CustomCommandPrompt) ? Settings.CustomCommandPrompt : "cmd.exe"; }
+            get
+            {
+                if (!String.IsNullOrEmpty(Settings.CustomCommandPrompt) && File.Exists(Settings.CustomCommandPrompt))
+                    return Settings.CustomCommandPrompt;
+                return "cmd.exe";
+            }
         }
 
         /// <summary>
