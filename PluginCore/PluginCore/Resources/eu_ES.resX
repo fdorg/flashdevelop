@@ -4939,6 +4939,10 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <value>Proiektu txantiloi pertsonalizatuen direktoriora bidea.</value>
     <comment>Added after 3.3.4</comment>
   </data>
+  <data name="FlashDevelop.Description.CustomCommandPrompt" xml:space="preserve">
+    <value>Path to the custom command prompt executable.</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
   <data name="ASCompletion.Description.HandlerNamingConvention" xml:space="preserve">
     <value>Sortzaileak gertaera kudeatzaile bat automatikoki sor dezake ondorengo izen konbentzioak erabiliz</value>
     <comment>Added after 3.3.4</comment>

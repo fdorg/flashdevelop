@@ -487,6 +487,14 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Gets the command prompt executable (custom or cmd.exe by default).
+        /// </summary>
+        public string CommandPromptExecutable
+        {
+            get { return File.Exists(Settings.CustomCommandPrompt) ? Settings.CustomCommandPrompt : "cmd.exe"; }
+        }
+
+        /// <summary>
         /// Gets the version of the operating system
         /// </summary>
         public Version OSVersion

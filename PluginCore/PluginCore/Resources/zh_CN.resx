@@ -4948,6 +4948,10 @@
     <value>指向自定项目模板目录路径.</value>
     <comment>Added after 3.3.4</comment>
   </data>
+  <data name="FlashDevelop.Description.CustomCommandPrompt" xml:space="preserve">
+    <value>Path to the custom command prompt executable.</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
   <data name="ASCompletion.Description.HandlerNamingConvention" xml:space="preserve">
     <value>自动生成使用以下命名约定的事件处理方法名称</value>
     <comment>Added after 3.3.4</comment>

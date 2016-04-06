@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using FlashDevelop.Dialogs;
 using FlashDevelop.Utilities;
 using PluginCore;
 using ScintillaNet.Configuration;
@@ -398,6 +397,11 @@ namespace FlashDevelop
         }
 
         public List<Keys> IgnoredKeys
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public string CommandPromptExecutable
         {
             get { throw new NotImplementedException(); }
         }
