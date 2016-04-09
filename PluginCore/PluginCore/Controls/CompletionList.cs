@@ -479,11 +479,12 @@ namespace PluginCore.Controls
                     ICompletionListItem item;
                     exactMatchInList = false;
                     smartMatchInList = false;
+                    bool allUpper = word == word.ToUpperInvariant();
                     while (i < n)
                     {
                         item = allItems[i];
                         // compare item's label with the searched word
-                        score = SmartMatch(item.Label, word, len);
+                        score = SmartMatch(item.Label, word, len, allUpper);
                         if (score > 0)
                         {
                             // first match found
@@ -635,13 +636,14 @@ namespace PluginCore.Controls
         {
             if (defaultItem != null && completionList.Items.Contains(defaultItem))
             {
-                Int32 score = (len == 0) ? 1 : SmartMatch(defaultItem.Label, word, len);
+                bool allUpper = word == word.ToUpperInvariant();
+                int score = (len == 0) ? 1 : SmartMatch(defaultItem.Label, word, len, allUpper);
                 if (score > 0 && score < 6) return completionList.Items.IndexOf(defaultItem);
             }
             return index;
         }
 
-        static public int SmartMatch(string label, string word, int len)
+        static public int SmartMatch(string label, string word, int len, bool allUpper)
         {
             if (label.Length < len) return 0;
 
@@ -657,13 +659,13 @@ namespace PluginCore.Controls
             }
 
             // try abbreviation
-            bool firstUpper = Char.IsUpper(word[0]);
-            if (firstUpper)
+            if (allUpper)
             {
                 int abbr = IsAbbreviation(label, word);
                 if (abbr > 0) return abbr;
             }
-                   
+
+            bool firstUpper = Char.IsUpper(word[0]);
             int p = label.IndexOf(word, StringComparison.OrdinalIgnoreCase);
             if (p >= 0)
             {
@@ -678,7 +680,7 @@ namespace PluginCore.Controls
                         {
                             if (p3 == label.LastIndexOf('.'))
                             {
-                                if (label.EndsWithOrdinal("." + word)) return 1;
+                                if (label.EndsWithOrdinal("." + word)) return 2;
                                 else return 3;
                             }
                             else return 4;
@@ -697,10 +699,10 @@ namespace PluginCore.Controls
                 {
                     if (p2 == label.LastIndexOf('.'))
                     {
-                        if (label.EndsWith("." + word, StringComparison.OrdinalIgnoreCase)) return 2;
-                        else return 4;
+                        if (label.EndsWith("." + word, StringComparison.OrdinalIgnoreCase)) return 3;
+                        else return 5;
                     }
-                    else return 5;
+                    else return 6;
                 }
                 if (p == 0)
                 {
@@ -714,8 +716,8 @@ namespace PluginCore.Controls
                 else
                 {
                     int p4 = label.IndexOf(':');
-                    if (p4 > 0) return SmartMatch(label.Substring(p4 + 1), word, len);
-                    return 5;
+                    if (p4 > 0) return SmartMatch(label.Substring(p4 + 1), word, len, allUpper);
+                    return 6;
                 }
             }
 
@@ -762,8 +764,7 @@ namespace PluginCore.Controls
             {
                 p = p2;
                 c = word[i++];
-                if (Char.IsUpper(c)) p2 = label.IndexOfOrdinal(c.ToString(), p + 1);
-                else p2 = label.IndexOf(c.ToString(), p + 1, StringComparison.OrdinalIgnoreCase);
+                p2 = label.IndexOf(c, p + 1);
                 if (p2 < 0) return 0;
 
                 int ups = 0; 
@@ -776,8 +777,9 @@ namespace PluginCore.Controls
             }
             if (dist == len - 1)
             {
-                if (label == word || label.EndsWithOrdinal("." + word)) return 1;
-                return score;
+                if (label == word) return 1;
+                if (label.EndsWithOrdinal("." + word)) return 2;
+                return score + 1;
             }
             else return score + 2;
         }
