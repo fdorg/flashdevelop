@@ -4968,6 +4968,10 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <value>사용자 정의 프로젝트 템플릿 디렉토리를 경로.</value>
     <comment>Added after 3.3.4</comment>
   </data>
+  <data name="FlashDevelop.Description.CustomCommandPrompt" xml:space="preserve">
+    <value>Path to the custom command prompt executable.</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
   <data name="ASCompletion.Description.HandlerNamingConvention" xml:space="preserve">
     <value>생성기가 자동으로 다음 명명 규칙을 사용하여 이벤트 핸들러 메소드 이름을 생성할 수 있습니다.</value>
     <comment>Added after 3.3.4</comment>

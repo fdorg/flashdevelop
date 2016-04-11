@@ -29,7 +29,6 @@ namespace FileExplorer
         private PluginUI pluginUI;
         private Image pluginImage;
         private const String explorerAction = "explorer.exe /e,{0}";
-        private const String cmdAction = "cmd.exe";
 
         #region Required Properties
         
@@ -240,7 +239,7 @@ namespace FileExplorer
                     return;
                 }*/
                 Dictionary<string, string> config = ConfigHelper.Parse(configFilename, true).Flatten();
-                if (!config.ContainsKey("cmd")) config["cmd"] = cmdAction;
+                if (!config.ContainsKey("cmd")) config["cmd"] = PluginBase.MainForm.CommandPromptExecutable;
                 String cmd = PluginBase.MainForm.ProcessArgString(config["cmd"]).Replace("{0}", path);
                 int start = cmd.StartsWith('\"') ? cmd.IndexOfOrdinal("\"", 2) : 0;
                 int p = cmd.IndexOfOrdinal(" ", start);
@@ -315,7 +314,7 @@ namespace FileExplorer
             }
             if (!File.Exists(configFilename))
             {
-                File.WriteAllText(configFilename, "[actions]\r\n#explorer=" + explorerAction + "\r\n#cmd=" + cmdAction + "\r\n");
+                File.WriteAllText(configFilename, "[actions]\r\n#explorer=" + explorerAction + "\r\n#cmd=" + PluginBase.MainForm.CommandPromptExecutable + "\r\n");
             }
         }
 
