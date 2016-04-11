@@ -433,14 +433,14 @@
 	<Entry>
 		<Id>quicknavigate</Id>
         	<Name>QuickNavigate</Name>
-		<Version>2.7</Version>
-		<Build>274</Build>
-		<Checksum>73b1a8232bee0d5c690736121b21458</Checksum>
+		<Version>2.8</Version>
+		<Build>2</Build>
+		<Checksum>9bcdff2283e010248f74a0f0ea577fa</Checksum>
 		<Desc>Quickly navigate through Types, Fields, Projects and more</Desc>
 		<Group>Plugins</Group>
 		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4_INFO_t=5961</Info>
 		<Urls>
-			<Url>https://github.com/SlavaRa/fdplugin-quicknavigate/releases/download/2.7.274/QuickNavigate.fdz</Url>
+			<Url>https://github.com/SlavaRa/fdplugin-quicknavigate/releases/download/2.8.2/QuickNavigate.fdz</Url>
 	        </Urls>
 	</Entry>
 	<Entry>
