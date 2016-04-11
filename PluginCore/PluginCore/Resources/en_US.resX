@@ -4967,6 +4967,10 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <value>Path to the custom project templates directory.</value>
     <comment>Added after 3.3.4</comment>
   </data>
+  <data name="FlashDevelop.Description.CustomCommandPrompt" xml:space="preserve">
+    <value>Path to the custom command prompt executable.</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
   <data name="ASCompletion.Description.HandlerNamingConvention" xml:space="preserve">
     <value>Generator can automatically generate an event handler method name using the following naming conventions</value>
     <comment>Added after 3.3.4</comment>

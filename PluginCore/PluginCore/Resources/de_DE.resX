@@ -4950,6 +4950,10 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
     <value>Pfad zum benutzerdefinierten Projektvorlagenverzeichnis.</value>
     <comment>Added after 3.3.4</comment>
   </data>
+  <data name="FlashDevelop.Description.CustomCommandPrompt" xml:space="preserve">
+    <value>Pfad zur benutzerdefinierten Kommandozeilen-Programmdatei.</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
   <data name="ASCompletion.Description.HandlerNamingConvention" xml:space="preserve">
     <value>Der Code-Generator kann automatisch einen Event-Handler erstellen wobei folgende Benennungsregeln verwendet werden</value>
     <comment>Added after 3.3.4</comment>

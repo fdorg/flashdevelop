@@ -24,6 +24,7 @@ namespace FlashDevelop.Settings
         private String customProjectsDir = String.Empty;
         private String customTemplateDir = String.Empty;
         private String customSnippetDir = String.Empty;
+        private String customCommandPrompt = String.Empty;
         private Font consoleFont = new Font("Courier New", 8.75F);
         private Font defaultFont = new Font("Tahoma", 8.25F);
         private Int32 tabWidth = 4;

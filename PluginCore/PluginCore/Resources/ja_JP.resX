@@ -4984,6 +4984,10 @@ UseData:"</value>
     <value>プロジェクトテンプレートを設置するディレクトリを変更します。</value>
     <comment>Added after 3.3.4</comment>
   </data>
+  <data name="FlashDevelop.Description.CustomCommandPrompt" xml:space="preserve">
+    <value>Path to the custom command prompt executable.</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
   <data name="ProjectManager.Info.NoAssociatedIDE" xml:space="preserve">
     <value>このターゲットは関連付けられた外部 IDE を持っていません。</value>
     <comment>Added after 3.3.4</comment>
