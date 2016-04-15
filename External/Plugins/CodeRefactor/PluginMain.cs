@@ -750,9 +750,7 @@ namespace CodeRefactor
             string path = null;
             var node = projectTreeView.SelectedNode as GenericNode;
             if (node != null) path = node.BackingPath;
-            if (string.IsNullOrEmpty(path)) return;
-            path = Path.GetFullPath(path);
-            if (!IsValidForMove(path)) return;
+            if (string.IsNullOrEmpty(path) || !IsValidForMove(path)) return;
             var menu = (ProjectContextMenu) projectTreeView.ContextMenuStrip;
             var index = menu.Items.IndexOf(menu.Rename);
             if (index == -1) return;
@@ -767,9 +765,7 @@ namespace CodeRefactor
             string path = null;
             var node = projectTreeView.SelectedNode as GenericNode;
             if (node != null) path = node.BackingPath;
-            if (string.IsNullOrEmpty(path)) return;
-            path = Path.GetFullPath(path);
-            if (!IsValidForMove(path)) return;
+            if (string.IsNullOrEmpty(path) || !IsValidForMove(path)) return;
             MoveFile(path);
         }
 
