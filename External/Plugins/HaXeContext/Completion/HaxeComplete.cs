@@ -12,6 +12,7 @@ using System.Xml;
 using ASCompletion.Model;
 using PluginCore.Helpers;
 using System.Windows.Forms;
+using PluginCore.Utilities;
 
 namespace HaXeContext
 {
@@ -45,8 +46,9 @@ namespace HaXeContext
 
         readonly IHaxeCompletionHandler handler;
         readonly string FileName;
+        private readonly SemVer haxeVersion;
 
-        public HaxeComplete(ScintillaControl sci, ASExpr expr, bool autoHide, IHaxeCompletionHandler completionHandler, HaxeCompilerService compilerService)
+        public HaxeComplete(ScintillaControl sci, ASExpr expr, bool autoHide, IHaxeCompletionHandler completionHandler, HaxeCompilerService compilerService, SemVer haxeVersion)
         {
             Sci = sci;
             Expr = expr;
@@ -56,6 +58,7 @@ namespace HaXeContext
             CompilerService = compilerService;
             Status = HaxeCompleteStatus.NONE;
             FileName = PluginBase.MainForm.CurrentDocument.FileName;
+            this.haxeVersion = haxeVersion;
         }
 
         /* EXECUTION */
@@ -207,7 +210,9 @@ namespace HaXeContext
 
                 case HaxeCompilerService.POSITION:
                 case HaxeCompilerService.USAGE:
-                    pos = Sci.WordEndPosition(Sci.CurrentPos, true) + 1;
+                    pos = Sci.WordEndPosition(Sci.CurrentPos, true);
+                    // necessary to get results with older versions due to a compiler bug
+                    if (haxeVersion.IsOlderThan(new SemVer("3.3.0"))) pos++;
                     break;
             }
             
