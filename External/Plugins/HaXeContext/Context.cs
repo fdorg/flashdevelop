@@ -1200,7 +1200,7 @@ namespace HaXeContext
             if (expression.Value != "")
             {
                 // async processing
-                var hc = new HaxeComplete(sci, expression, autoHide, completionModeHandler, HaxeCompilerService.COMPLETION);
+                var hc = new HaxeComplete(sci, expression, autoHide, completionModeHandler, HaxeCompilerService.COMPLETION, GetCurrentSDKVersion());
                 hc.GetList(OnDotCompletionResult);
                 resolvingDot = true;
             }
@@ -1378,7 +1378,7 @@ namespace HaXeContext
                 return null;
 
             expression.Position++;
-            var hc = new HaxeComplete(sci, expression, autoHide, completionModeHandler, HaxeCompilerService.COMPLETION);
+            var hc = new HaxeComplete(sci, expression, autoHide, completionModeHandler, HaxeCompilerService.COMPLETION, GetCurrentSDKVersion());
             hc.GetList(OnFunctionCompletionResult);
 
             resolvingFunction = true;
@@ -1407,7 +1407,7 @@ namespace HaXeContext
             if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || GetCurrentSDKVersion().IsOlderThan(new SemVer("3.2.0")))
                 return false;
 
-            var hc = new HaxeComplete(sci, expression, false, completionModeHandler, HaxeCompilerService.POSITION);
+            var hc = new HaxeComplete(sci, expression, false, completionModeHandler, HaxeCompilerService.POSITION, GetCurrentSDKVersion());
             hc.GetPosition(OnPositionResult);
             return true;
         }
@@ -1467,7 +1467,7 @@ namespace HaXeContext
             if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || PluginBase.MainForm.CurrentDocument.IsUntitled) return;
 
             EventManager.DispatchEvent(this, new NotifyEvent(EventType.ProcessStart));
-            var hc = new HaxeComplete(ASContext.CurSciControl, new ASExpr(), false, completionModeHandler, HaxeCompilerService.COMPLETION);
+            var hc = new HaxeComplete(ASContext.CurSciControl, new ASExpr(), false, completionModeHandler, HaxeCompilerService.COMPLETION, GetCurrentSDKVersion());
             hc.GetList(OnCheckSyntaxResult);
         }
 
