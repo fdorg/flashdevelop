@@ -1589,7 +1589,7 @@ namespace ASCompletion.Completion
 
             if (showTip)
             {
-                position++;
+                position = Sci.CurrentPos - 1;
                 int paramIndex = FindParameterIndex(Sci, ref position);
                 if (position < 0) return;
                 ShowCalltip(Sci, paramIndex, true);
