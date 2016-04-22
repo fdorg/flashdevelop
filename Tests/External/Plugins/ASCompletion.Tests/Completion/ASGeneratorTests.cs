@@ -1,72 +1,25 @@
 ﻿// TODO: Tests with different formatting options using parameterized tests
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using ASCompletion.Settings;
 using ASCompletion.TestUtils;
-using FlashDevelop;
+using ASCompletion.TestUtils.File;
 using NSubstitute;
 using NUnit.Framework;
-using PluginCore;
 using ScintillaNet;
-using ScintillaNet.Enums;
 using System.Text.RegularExpressions;
+using PluginCore;
 using PluginCore.Helpers;
 
 namespace ASCompletion.Completion
 {
     [TestFixture]
-    public class ASGeneratorTests
+    public class ASGeneratorTests : ScintillaTest
     {
-        private MainForm mainForm;
-        private ISettings settings;
-        private ITabbedDocument doc;
-
-        [TestFixtureSetUp]
-        public void FixtureSetUp()
-        {
-            mainForm = new MainForm();
-            settings = Substitute.For<ISettings>();
-            settings.UseTabs = true;
-            settings.IndentSize = 4;
-            settings.SmartIndentType = SmartIndent.CPP;
-            settings.TabIndents = true;
-            settings.TabWidth = 4;
-            doc = Substitute.For<ITabbedDocument>();
-            mainForm.Settings = settings;
-            mainForm.CurrentDocument = doc;
-            mainForm.StandaloneMode = false;
-            PluginBase.Initialize(mainForm);
-            FlashDevelop.Managers.ScintillaManager.LoadConfiguration();
-        }
-
-        [TestFixtureTearDown]
-        public void FixtureTearDown()
-        {
-            settings = null;
-            doc = null;
-            mainForm.Dispose();
-            mainForm = null;
-        }
-
-        private ScintillaControl GetBaseScintillaControl()
-        {
-            return new ScintillaControl
-            {
-                Encoding = System.Text.Encoding.UTF8,
-                CodePage = 65001,
-                Indent = settings.IndentSize,
-                Lexer = 3,
-                StyleBits = 7,
-                IsTabIndents = settings.TabIndents,
-                IsUseTabs = settings.UseTabs,
-                TabWidth = settings.TabWidth
-            };
-        }
+        private static TestFilePathInfo testFile = new TestFilePathInfo("ASCompletion", "generated");
 
         public class GetBodyStart : ASGeneratorTests
         {
@@ -238,8 +191,7 @@ namespace ASCompletion.Completion
                                 }
                             }, 0, 0)
                             .Returns(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.FieldFromParameterEmptyBody.as"))
+                                TestFile.ReadAllText(testFile.AS3("FieldFromParameterEmptyBody")))
                             .SetName("PublicScopeWithEmptyBody");
 
                         yield return new TestCaseData(Visibility.Public,
@@ -263,13 +215,11 @@ namespace ASCompletion.Completion
                                 }
                             }, 0, 0)
                             .Returns(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.FieldFromParameterWithSuperConstructor.as"))
+                                TestFile.ReadAllText(testFile.AS3("FieldFromParameterWithSuperConstructor")))
                             .SetName("PublicScopeWithSuperConstructor");
 
                         yield return new TestCaseData(Visibility.Public,
-                            TestFile.ReadAllText(
-                                "ASCompletion.Test_Files.generated.as3.BeforeFieldFromParameterWithSuperConstructorMultiLine.as"),
+                            TestFile.ReadAllText(testFile.AS3("BeforeFieldFromParameterWithSuperConstructorMultiLine")),
                             new ClassModel
                             {
                                 LineFrom = 1,
@@ -289,13 +239,11 @@ namespace ASCompletion.Completion
                                 }
                             }, 0, 0)
                             .Returns(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.FieldFromParameterWithSuperConstructorMultiLine.as"))
+                                TestFile.ReadAllText(testFile.AS3("FieldFromParameterWithSuperConstructorMultiLine")))
                             .SetName("PublicScopeWithSuperConstructorMultiLine");
 
                         yield return new TestCaseData(Visibility.Public,
-                            TestFile.ReadAllText(
-                                "ASCompletion.Test_Files.generated.as3.BeforeFieldFromParameterWithWrongSuperConstructor.as"),
+                            TestFile.ReadAllText(testFile.AS3("BeforeFieldFromParameterWithWrongSuperConstructor")),
                             new ClassModel
                             {
                                 LineFrom = 1,
@@ -315,8 +263,7 @@ namespace ASCompletion.Completion
                                 }
                             }, 0, 0)
                             .Returns(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.FieldFromParameterWithWrongSuperConstructor.as"))
+                                TestFile.ReadAllText(testFile.AS3("FieldFromParameterWithWrongSuperConstructor")))
                             .SetName("PublicScopeWithWrongSuperConstructor");
                     }
                 }
@@ -443,10 +390,10 @@ namespace ASCompletion.Completion
                     {
                         yield return new TestCaseData("package generatortest {\r\n\tpublic class ImplementTest{}\r\n}",
                             new ClassModel { InFile = new FileModel(), LineFrom = 1, LineTo = 1 }, GetAs3ImplementInterfaceModel())
-                            .Returns(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.ImplementInterfaceNoMembers.as"))
+                            .Returns(TestFile.ReadAllText(testFile.AS3("ImplementInterfaceNoMembers")))
                             .SetName("Full");
 
-                        yield return new TestCaseData(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.BeforeImplementInterfacePublicMemberBehindPrivate.as"),
+                        yield return new TestCaseData(TestFile.ReadAllText(testFile.AS3("BeforeImplementInterfacePublicMemberBehindPrivate")),
                             new ClassModel
                             {
                                 InFile = new FileModel(),
@@ -461,10 +408,10 @@ namespace ASCompletion.Completion
                                 }
                             },
                             GetAs3ImplementInterfaceModel())
-                            .Returns(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.ImplementInterfacePublicMemberBehindPrivate.as"))
+                            .Returns(TestFile.ReadAllText(testFile.AS3("ImplementInterfacePublicMemberBehindPrivate")))
                             .SetName("FullWithPublicMemberBehindPrivate");
 
-                        yield return new TestCaseData(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.BeforeImplementInterfaceNoPublicMember.as"),
+                        yield return new TestCaseData(TestFile.ReadAllText(testFile.AS3("BeforeImplementInterfaceNoPublicMember")),
                             new ClassModel
                             {
                                 InFile = new FileModel(),
@@ -480,7 +427,7 @@ namespace ASCompletion.Completion
                                 }
                             },
                             GetAs3ImplementInterfaceModel())
-                            .Returns(TestFile.ReadAllText("ASCompletion.Test_Files.generated.as3.ImplementInterfaceNoPublicMember.as"))
+                            .Returns(TestFile.ReadAllText(testFile.AS3("ImplementInterfaceNoPublicMember")))
                             .SetName("FullWithoutPublicMember");
                     }
                 }
@@ -491,7 +438,7 @@ namespace ASCompletion.Completion
                     {
                         yield return new TestCaseData("package generatortest;\r\n\r\nclass ImplementTest{}",
                             new ClassModel { InFile = new FileModel(), LineFrom = 2, LineTo = 2 }, GetHaxeImplementInterfaceModel())
-                            .Returns(TestFile.ReadAllText("ASCompletion.Test_Files.generated.haxe.ImplementInterfaceNoMembers.hx"))
+                            .Returns(TestFile.ReadAllText(testFile.Haxe("ImplementInterfaceNoMembers")))
                             .SetName("Full");
 
                         yield return new TestCaseData("package generatortest;\r\n\r\nclass ImplementTest{}",
@@ -511,7 +458,7 @@ namespace ASCompletion.Completion
                                     }
                                 }
                             })
-                            .Returns(TestFile.ReadAllText("ASCompletion.Test_Files.generated.haxe.ImplementInterfaceNoMembersInsertSingleProperty.hx"))
+                            .Returns(TestFile.ReadAllText(testFile.Haxe("ImplementInterfaceNoMembersInsertSingleProperty")))
                             .SetName("SingleProperty");
                     }
                 }
@@ -556,8 +503,7 @@ namespace ASCompletion.Completion
                     {
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateExtractVariableGeneric.hx"),
+                                TestFile.ReadAllText(testFile.Haxe("BeforeGenerateExtractVariableGeneric")),
                                     new MemberModel("main", null, FlagType.Static | FlagType.Function, 0)
                                     {
                                         LineFrom = 2,
@@ -566,14 +512,12 @@ namespace ASCompletion.Completion
                                     "newVar"
                                 )
                                 .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGenerateExtractVariableGeneric.hx"))
+                                    TestFile.ReadAllText(testFile.Haxe("AfterGenerateExtractVariableGeneric")))
                                 .SetName("GenerateExtractVariable");
 
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeExtractLocalVariable_fromString.hx"),
+                                TestFile.ReadAllText(testFile.Haxe("BeforeExtractLocalVariable_fromString")),
                                     new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
                                     {
                                         LineFrom = 4,
@@ -582,14 +526,12 @@ namespace ASCompletion.Completion
                                     "newVar"
                                 )
                                 .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterExtractLocalVariable_fromString.hx"))
+                                    TestFile.ReadAllText(testFile.Haxe("AfterExtractLocalVariable_fromString")))
                                 .SetName("ExtractLocaleVariable from String");
 
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeExtractLocalVariable_fromNumber.hx"),
+                                TestFile.ReadAllText(testFile.Haxe("BeforeExtractLocalVariable_fromNumber")),
                                     new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
                                     {
                                         LineFrom = 4,
@@ -598,14 +540,12 @@ namespace ASCompletion.Completion
                                     "newVar"
                                 )
                                 .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterExtractLocalVariable_fromNumber.hx"))
+                                    TestFile.ReadAllText(testFile.Haxe("AfterExtractLocalVariable_fromNumber")))
                                 .SetName("ExtractLocaleVariable from Number");
 
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeExtractLocalVariable_inSinglelineMethod.hx"),
+                                TestFile.ReadAllText(testFile.Haxe("BeforeExtractLocalVariable_inSinglelineMethod")),
                                     new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
                                     {
                                         LineFrom = 4,
@@ -614,8 +554,7 @@ namespace ASCompletion.Completion
                                     "newVar"
                                 )
                                 .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterExtractLocalVariable_inSinglelineMethod.hx"))
+                                    TestFile.ReadAllText(testFile.Haxe("AfterExtractLocalVariable_inSinglelineMethod")))
                                 .SetName("ExtractLocaleVariable in single line method");
                     }
                 }
@@ -639,8 +578,7 @@ namespace ASCompletion.Completion
                     {
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeExtractLocalVariable.as"),
+                                TestFile.ReadAllText(testFile.AS3("BeforeExtractLocalVariable")),
                                     new MemberModel("ExtractLocalVariable", null, FlagType.Constructor | FlagType.Function, 0)
                                     {
                                         LineFrom = 4,
@@ -649,14 +587,12 @@ namespace ASCompletion.Completion
                                     "newVar"
                                 )
                                 .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterExtractLocalVariable.as"))
+                                    TestFile.ReadAllText(testFile.AS3("AfterExtractLocalVariable")))
                                 .SetName("ExtractLocaleVariable");
 
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeExtractLocalVariable_fromString.as"),
+                                TestFile.ReadAllText(testFile.AS3("BeforeExtractLocalVariable_fromString")),
                                     new MemberModel("ExtractLocalVariable", null, FlagType.Constructor | FlagType.Function, 0)
                                     {
                                         LineFrom = 4,
@@ -665,14 +601,12 @@ namespace ASCompletion.Completion
                                     "newVar"
                                 )
                                 .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterExtractLocalVariable_fromString.as"))
+                                    TestFile.ReadAllText(testFile.AS3("AfterExtractLocalVariable_fromString")))
                                 .SetName("ExtractLocaleVariable from String");
 
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeExtractLocalVariable_fromNumber.as"),
+                                TestFile.ReadAllText(testFile.AS3("BeforeExtractLocalVariable_fromNumber")),
                                     new MemberModel("ExtractLocalVariable", null, FlagType.Constructor | FlagType.Function, 0)
                                     {
                                         LineFrom = 4,
@@ -681,14 +615,12 @@ namespace ASCompletion.Completion
                                     "newVar"
                                 )
                                 .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterExtractLocalVariable_fromNumber.as"))
+                                    TestFile.ReadAllText(testFile.AS3("AfterExtractLocalVariable_fromNumber")))
                                 .SetName("ExtractLocaleVariable from Number");
 
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeExtractLocalVariable_forCheckingThePositionOfNewVar.as"),
+                                TestFile.ReadAllText(testFile.AS3("BeforeExtractLocalVariable_forCheckingThePositionOfNewVar")),
                                     new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
                                     {
                                         LineFrom = 4,
@@ -697,8 +629,7 @@ namespace ASCompletion.Completion
                                     "newVar"
                                 )
                                 .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterExtractLocalVariable_forCheckingThePositionOfNewVar.as"))
+                                    TestFile.ReadAllText(testFile.AS3("AfterExtractLocalVariable_forCheckingThePositionOfNewVar")))
                                 .SetName("ExtractLocaleVariable with checking the position of a new variable");
                     }
                 }

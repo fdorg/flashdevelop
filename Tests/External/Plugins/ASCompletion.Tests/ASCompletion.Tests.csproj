@@ -98,6 +98,7 @@
   <ItemGroup>
     <Compile Include="Completion\ASCompleteTests.cs" />
     <Compile Include="Completion\ASGeneratorTests.cs" />
+    <Compile Include="Completion\ScintillaTest.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -110,7 +111,8 @@
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateExtractVariableGeneric.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateExtractVariableGeneric.hx" />
     <Compile Include="TestUtils\ContextExtensions.cs" />
-    <Compile Include="TestUtils\TestFile.cs" />
+    <Compile Include="TestUtils\File\TestFile.cs" />
+    <Compile Include="TestUtils\File\TestFilePathInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

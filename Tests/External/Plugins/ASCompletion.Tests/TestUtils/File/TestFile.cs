@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Reflection;
 using System.Text;
-using System.IO;
 
-namespace ASCompletion.TestUtils
+namespace ASCompletion.TestUtils.File
 {
     class TestFile : IDisposable
     {
@@ -13,30 +11,24 @@ namespace ASCompletion.TestUtils
 
         public string DestinationFile { get; private set; }
 
-        public TestFile(string resourceFile)
-            : this(resourceFile, GetTempFileName(resourceFile))
+        public TestFile(string resourceFile, string destinationFile = null)
         {
-        }
-
-        public TestFile(string resourceFile, string destinationFile)
-        {
-            DestinationFile = destinationFile;
             ResourceFile = resourceFile;
+            DestinationFile = destinationFile ?? GetTempFileName(ResourceFile);
 
-            File.WriteAllBytes(destinationFile, ReadAllBytes(resourceFile));
+            System.IO.File.WriteAllBytes(DestinationFile, ReadAllBytes(ResourceFile));
         }
 
         private static string GetTempFileName(string baseFileName)
         {
             string temp = Path.GetTempFileName();
-
             return Path.GetFileNameWithoutExtension(temp) + Path.GetExtension(baseFileName);
         }
 
         public void Dispose()
         {
-            if (File.Exists(DestinationFile))
-                File.Delete(DestinationFile);
+            if (System.IO.File.Exists(DestinationFile))
+                System.IO.File.Delete(DestinationFile);
         }
 
         public static string ReadAllText(string resourceFile)
@@ -46,11 +38,10 @@ namespace ASCompletion.TestUtils
 
         public static string ReadAllText(string resourceFile, Encoding encoding)
         {
-            var buffer = ReadAllBytes(resourceFile);
-            return encoding.GetString(buffer);
+            return encoding.GetString(ReadAllBytes(resourceFile));
         }
 
-        public static byte[] ReadAllBytes(string resourceFile)
+        private static byte[] ReadAllBytes(string resourceFile)
         {
             var asm = Assembly.GetExecutingAssembly();
 
