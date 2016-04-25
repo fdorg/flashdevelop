@@ -1,9 +1,6 @@
 ﻿// TODO: Tests with different formatting options using parameterized tests
-
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using ASCompletion.Settings;
@@ -713,6 +710,100 @@ namespace ASCompletion.Completion
                     sci.ConfigurationLanguage = "as3";
                     SnippetHelper.PostProcessSnippets(sci, 0);
                     ASGenerator.GenerateExtractVariable(sci, newName);
+                    return sci.Text;
+                }
+            }
+
+            [TestFixture]
+            public class GenerateGetterSetter : GenerateJob
+            {
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateGetterSetter.hx"))
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGenerateGetterSetter.hx"))
+                                .SetName("Generate getter and setter");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateGetterSetter_issue221.hx"))
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGenerateGetterSetter_issue221.hx"))
+                                .SetName("issue 221");
+                    }
+                }
+
+                [Test, TestCaseSource("HaxeTestCases")]
+                public string Haxe(string sourceText)
+                {
+                    sci.Text = sourceText;
+                    sci.ConfigurationLanguage = "haxe";
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    ASContext.Context.SetHaxeFeatures();
+                    var currentModel = new FileModel {haXe = true, Context = ASContext.Context};
+                    new ASFileParser().ParseSrc(currentModel, sci.Text);
+                    var currentClass = currentModel.Classes[0];
+                    var currentMember = currentClass.Members[0];
+                    ASContext.Context.CurrentModel.Returns(currentModel);
+                    ASContext.Context.CurrentClass.Returns(currentClass);
+                    ASContext.Context.CurrentMember.Returns(currentMember);
+                    ASGenerator.GenerateJob(GeneratorJobType.GetterSetter, currentMember, ASContext.Context.CurrentClass, null, null);
+                    return sci.Text;
+                }
+
+                public IEnumerable<TestCaseData> AS3TestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateGetterSetter_fromPublicField.as"))
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateGetterSetter_fromPublicField.as"))
+                                .SetName("Generate getter and setter from public field");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateGetterSetter_fromPublicFieldIfNameStartWith_.as"))
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateGetterSetter_fromPublicFieldIfNameStartWith_.as"))
+                                .SetName("Generate getter and setter from public field if name start with \"_\"");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateGetterSetter_fromPrivateField.as"))
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateGetterSetter_fromPrivateField.as"))
+                                .SetName("Generate getter and setter from private field");
+                    }
+                }
+
+                [Test, TestCaseSource("AS3TestCases")]
+                public string AS3(string sourceText)
+                {
+                    sci.Text = sourceText;
+                    sci.ConfigurationLanguage = "as3";
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    ASContext.Context.SetAs3Features();
+                    var currentModel = new FileModel {Context = ASContext.Context};
+                    new ASFileParser().ParseSrc(currentModel, sci.Text);
+                    ASContext.Context.CurrentModel.Returns(currentModel);
+                    var currentClass = currentModel.Classes[0];
+                    var currentMember = currentClass.Members[0];
+                    ASContext.Context.CurrentClass.Returns(currentClass);
+                    ASContext.Context.CurrentMember.Returns(currentMember);
+                    ASGenerator.GenerateJob(GeneratorJobType.GetterSetter, currentMember, ASContext.Context.CurrentClass, null, null);
                     return sci.Text;
                 }
             }
