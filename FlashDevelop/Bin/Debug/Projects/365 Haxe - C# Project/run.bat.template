@@ -3,8 +3,7 @@ cd bin/bin
 if "%1"=="debug" (
   :: run debug
   $(ProjectID)-Debug.exe
-)
-else (
+) else (
   :: run release
   $(ProjectID).exe
 )
