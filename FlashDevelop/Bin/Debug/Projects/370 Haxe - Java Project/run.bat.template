@@ -3,8 +3,7 @@ cd bin
 if "%1"=="debug" (
   :: run debug
   java -jar $(ProjectID)-Debug.jar
-)
-else (
+) else (
   :: run release
   java -jar $(ProjectID).jar
 )
