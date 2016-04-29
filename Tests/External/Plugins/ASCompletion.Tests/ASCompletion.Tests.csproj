@@ -182,6 +182,16 @@
     <EmbeddedResource Include="Test Files\generated\as3\BeforeExtractLocalVariable_forCheckingThePositionOfNewVar.as" />
     <EmbeddedResource Include="Test Files\parser\haxe\FunctionTypesAsArgumentsTest.hx" />
     <EmbeddedResource Include="Test Files\parser\haxe\KeywordAndUnderscoreInNameTest.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateGetterSetter_issue221.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateGetterSetter_issue221.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateGetterSetter.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateGetterSetter.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateGetterSetter_fromPrivateField.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateGetterSetter_fromPrivateField.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateGetterSetter_fromPublicField.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateGetterSetter_fromPublicField.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateGetterSetter_fromPublicFieldIfNameStartWith_.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateGetterSetter_fromPublicFieldIfNameStartWith_.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
