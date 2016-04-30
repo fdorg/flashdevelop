@@ -6018,4 +6018,16 @@
     <value>Keeps the caret centered when caret is navigated to.</value>
     <comment>Added after 5.1.1</comment>
   </data>
+  <data name="CodeRefactor.Description.ReplaceAllOccurrences" xml:space="preserve">
+    <value>Replace all highlighted occurrences of initial expression with new variable.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeRefactor.Description.ReplaceInitialOccurrence" xml:space="preserve">
+    <value>Replace initial expression only.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeRefactor.Info.ReplacedOccurrences" xml:space="preserve">
+    <value>Replaced {0} occurrence[s]</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
 </root>

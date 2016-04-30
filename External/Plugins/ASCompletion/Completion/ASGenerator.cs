@@ -2748,29 +2748,29 @@ namespace ASCompletion.Completion
             EventManager.DispatchEvent(null, de);
         }
 
-        public static void GenerateExtractVariable(ScintillaControl Sci, string NewName)
+        public static void GenerateExtractVariable(ScintillaControl sci, string newName)
         {
-            string expression = Sci.SelText.Trim(new char[] { '=', ' ', '\t', '\n', '\r', ';', '.' });
+            string expression = sci.SelText.Trim(new char[] { '=', ' ', '\t', '\n', '\r', ';', '.' });
             expression = expression.TrimEnd(new char[] { '(', '[', '{', '<' });
             expression = expression.TrimStart(new char[] { ')', ']', '}', '>' });
 
             var cFile = ASContext.Context.CurrentModel;
             ASFileParser parser = new ASFileParser();
-            parser.ParseSrc(cFile, Sci.Text);
+            parser.ParseSrc(cFile, sci.Text);
 
             MemberModel current = cFile.Context.CurrentMember;
 
-            string characterClass = ScintillaControl.Configuration.GetLanguage(Sci.ConfigurationLanguage).characterclass.Characters;
+            string characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
 
-            int funcBodyStart = GetBodyStart(current.LineFrom, current.LineTo, Sci);
-            Sci.SetSel(funcBodyStart, Sci.LineEndPosition(current.LineTo));
-            string currentMethodBody = Sci.SelText;
+            int funcBodyStart = GetBodyStart(current.LineFrom, current.LineTo, sci);
+            sci.SetSel(funcBodyStart, sci.LineEndPosition(current.LineTo));
+            string currentMethodBody = sci.SelText;
             var insertPosition = funcBodyStart + currentMethodBody.IndexOfOrdinal(expression);
-            var line = Sci.LineFromPosition(insertPosition);
-            insertPosition = Sci.LineIndentPosition(line);
-
+            var line = sci.LineFromPosition(insertPosition);
+            insertPosition = sci.LineIndentPosition(line);
+            
             int lastPos = -1;
-            Sci.Colourise(0, -1);
+            sci.Colourise(0, -1);
             while (true)
             {
                 lastPos = currentMethodBody.IndexOfOrdinal(expression, lastPos + 1);
@@ -2795,29 +2795,29 @@ namespace ASCompletion.Completion
                     }
 
                     var pos = funcBodyStart + lastPos;
-                    int style = Sci.BaseStyleAt(pos);
+                    int style = sci.BaseStyleAt(pos);
                     if (ASComplete.IsCommentStyle(style)) continue;
-                    Sci.SetSel(pos, pos + expression.Length);
-                    Sci.ReplaceSel(NewName);
-                    currentMethodBody = currentMethodBody.Substring(0, lastPos) + NewName + currentMethodBody.Substring(lastPos + expression.Length);
-                    lastPos += NewName.Length;
+                    sci.SetSel(pos, pos + expression.Length);
+                    sci.ReplaceSel(newName);
+                    currentMethodBody = currentMethodBody.Substring(0, lastPos) + newName + currentMethodBody.Substring(lastPos + expression.Length);
+                    lastPos += newName.Length;
                 }
                 else
                 {
                     break;
                 }
             }
-            Sci.CurrentPos = insertPosition;
-            Sci.SetSel(Sci.CurrentPos, Sci.CurrentPos);
-
-            MemberModel m = new MemberModel(NewName, "", FlagType.LocalVar, 0);
+            
+            sci.CurrentPos = insertPosition;
+            sci.SetSel(sci.CurrentPos, sci.CurrentPos);
+            MemberModel m = new MemberModel(newName, "", FlagType.LocalVar, 0);
             m.Value = expression;
 
             string snippet = TemplateUtils.GetTemplate("Variable");
             snippet = TemplateUtils.ReplaceTemplateVariable(snippet, "Modifiers", null);
             snippet = TemplateUtils.ToDeclarationString(m, snippet);
             snippet += NewLine + "$(Boundary)";
-            SnippetHelper.InsertSnippetText(Sci, Sci.CurrentPos, snippet);
+            SnippetHelper.InsertSnippetText(sci, sci.CurrentPos, snippet);
         }
 
         public static void GenerateExtractMethod(ScintillaControl Sci, string NewName)

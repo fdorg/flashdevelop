@@ -654,20 +654,8 @@ namespace CodeRefactor
         {
             try
             {
-                String suggestion = "newVar";
-                String label = TextHelper.GetString("Label.NewName");
-                String title = TextHelper.GetString("Title.ExtractLocalVariableDialog");
-                LineEntryDialog askName = new LineEntryDialog(title, label, suggestion);
-                DialogResult choice = askName.ShowDialog();
-                if (choice == DialogResult.OK && askName.Line.Trim().Length > 0 && askName.Line.Trim() != suggestion)
-                {
-                    suggestion = askName.Line.Trim();
-                }
-                if (choice == DialogResult.OK)
-                {
-                    ExtractLocalVariableCommand command = new ExtractLocalVariableCommand(suggestion);
-                    command.Execute();
-                }
+                var command = new ExtractLocalVariableCommand();
+                command.Execute();
             }
             catch (Exception ex)
             {
