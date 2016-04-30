@@ -216,6 +216,16 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateEventHandler_withAutoRemove_generateExplicitScopeIsTrue.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateEventHandler_withoutAutoRemove.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateEventHandler.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateGetterSetter_issue221.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateGetterSetter_issue221.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateGetterSetter.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateGetterSetter.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateGetterSetter_fromPrivateField.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateGetterSetter_fromPrivateField.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateGetterSetter_fromPublicField.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateGetterSetter_fromPublicField.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateGetterSetter_fromPublicFieldIfNameStartWith_.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateGetterSetter_fromPublicFieldIfNameStartWith_.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

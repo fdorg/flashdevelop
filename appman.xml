@@ -166,7 +166,7 @@
 	<Entry>
 		<Id>torgit</Id>
 		<Name>TortoiseGit (x86)</Name>
-		<Version>2.0.0</Version>
+		<Version>2.1.0</Version>
 		<Build>1</Build>
 		<Desc>Git client 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -176,13 +176,13 @@
 		<Type>Executable</Type>
 		<Info>https://code.google.com/p/tortoisegit/</Info>
 		<Urls>
-			<Url>https://download.tortoisegit.org/tgit/2.0.0.0/TortoiseGit-2.0.0.0-32bit.msi</Url>
+			<Url>https://download.tortoisegit.org/tgit/2.1.0.0/TortoiseGit-2.1.0.0-32bit.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torgit64</Id>
 		<Name>TortoiseGit (x64)</Name>
-		<Version>2.0.0</Version>
+		<Version>2.1.0</Version>
 		<Build>1</Build>
 		<Desc>Git client 64-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -192,13 +192,13 @@
 		<Type>Executable</Type>
 		<Info>https://code.google.com/p/tortoisegit/</Info>
 		<Urls>
-			<Url>https://download.tortoisegit.org/tgit/2.0.0.0/TortoiseGit-2.0.0.0-64bit.msi</Url>
+			<Url>https://download.tortoisegit.org/tgit/2.1.0.0/TortoiseGit-2.1.0.0-64bit.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>git4win</Id>
 		<Name>Git For Windows (x86)</Name>
-		<Version>2.7.2</Version>
+		<Version>2.8.1</Version>
 		<Build>1</Build>
 		<Desc>Git command line client 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -208,13 +208,13 @@
 		<Type>Executable</Type>
 		<Info>http://msysgit.github.io/</Info>
 		<Urls>
-			<Url>https://github.com/git-for-windows/git/releases/download/v2.7.2.windows.1/Git-2.7.2-32-bit.exe</Url>
+			<Url>https://github.com/git-for-windows/git/releases/download/v2.8.1.windows.1/Git-2.8.1-32-bit.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>git4win64</Id>
 		<Name>Git For Windows (x64)</Name>
-		<Version>2.7.2</Version>
+		<Version>2.8.1</Version>
 		<Build>1</Build>
 		<Desc>Git command line client 64-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -224,7 +224,7 @@
 		<Type>Executable</Type>
 		<Info>http://msysgit.github.io/</Info>
 		<Urls>
-			<Url>https://github.com/git-for-windows/git/releases/download/v2.7.2.windows.1/Git-2.7.2-64-bit.exe</Url>
+			<Url>https://github.com/git-for-windows/git/releases/download/v2.8.1.windows.1/Git-2.8.1-64-bit.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -294,7 +294,7 @@
 	<Entry>
 		<Id>torhg</Id>
 		<Name>TortoiseHg (x86)</Name>
-		<Version>3.7.1</Version>
+		<Version>3.7.3</Version>
 		<Build>1</Build>
 		<Desc>TortoiseHg (including Mercurial) 32-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -304,13 +304,13 @@
 		<Type>Executable</Type>
 		<Info>https://www.mercurial-scm.org/downloads</Info>
 		<Urls>
-			<Url>http://bitbucket.org/tortoisehg/files/downloads/tortoisehg-3.7.1-x86.msi</Url>
+			<Url>http://bitbucket.org/tortoisehg/files/downloads/tortoisehg-3.7.3-x86.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>torhg64</Id>
 		<Name>TortoiseHg (x64)</Name>
-		<Version>3.7.1</Version>
+		<Version>3.7.3</Version>
 		<Build>1</Build>
 		<Desc>TortoiseHg (including Mercurial) 64-bit installer</Desc>
 		<Group>Source Control</Group>
@@ -320,7 +320,7 @@
 		<Type>Executable</Type>
 		<Info>https://www.mercurial-scm.org/downloads</Info>
 		<Urls>
-			<Url>http://bitbucket.org/tortoisehg/files/downloads/tortoisehg-3.7.1-x64.msi</Url>
+			<Url>http://bitbucket.org/tortoisehg/files/downloads/tortoisehg-3.7.3-x64.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -433,14 +433,14 @@
 	<Entry>
 		<Id>quicknavigate</Id>
         	<Name>QuickNavigate</Name>
-		<Version>2.7</Version>
-		<Build>203</Build>
-		<Checksum>13419a790b9aad4370aedf6cbc123a49</Checksum>
+		<Version>2.8</Version>
+		<Build>3</Build>
+		<Checksum>996610b20995d47eec48d31d1f02914</Checksum>
 		<Desc>Quickly navigate through Types, Fields, Projects and more</Desc>
 		<Group>Plugins</Group>
 		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4_INFO_t=5961</Info>
 		<Urls>
-			<Url>https://github.com/SlavaRa/fdplugin-quicknavigate/releases/download/2.7.203/QuickNavigate.fdz</Url>
+			<Url>https://github.com/SlavaRa/fdplugin-quicknavigate/releases/download/2.8.3/QuickNavigate.fdz</Url>
 	        </Urls>
 	</Entry>
 	<Entry>

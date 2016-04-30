@@ -862,7 +862,7 @@ namespace ASCompletion.Completion
 
         #region code generation
 
-        static public void SetJobContext(String contextToken, String contextParam, MemberModel contextMember, Match contextMatch)
+        public static void SetJobContext(String contextToken, String contextParam, MemberModel contextMember, Match contextMatch)
         {
             ASGenerator.contextToken = contextToken;
             ASGenerator.contextParam = contextParam;
@@ -1157,11 +1157,10 @@ namespace ASCompletion.Completion
 
         private static void GenerateProperty(GeneratorJobType job, MemberModel member, ClassModel inClass, ScintillaControl sci)
         {
-            MemberModel latest;
             string name = GetPropertyNameFor(member);
             PropertiesGenerationLocations location = ASContext.CommonSettings.PropertiesGenerationLocation;
 
-            latest = TemplateUtils.GetTemplateBlockMember(sci, TemplateUtils.GetBoundary("AccessorsMethods"));
+            var latest = TemplateUtils.GetTemplateBlockMember(sci, TemplateUtils.GetBoundary("AccessorsMethods"));
             if (latest != null)
             {
                 location = PropertiesGenerationLocations.AfterLastPropertyDeclaration;
@@ -3412,17 +3411,14 @@ namespace ASCompletion.Completion
             if (features.publicKey == null || visibility == null) return false;
             Regex rePublic = new Regex(String.Format(@"\s*({0})\s+", features.publicKey));
 
-            string line;
-            Match m;
-            int index, position;
             for (int i = member.LineFrom; i <= member.LineTo; i++)
             {
-                line = Sci.GetLine(i);
-                m = rePublic.Match(line);
+                var line = Sci.GetLine(i);
+                var m = rePublic.Match(line);
                 if (m.Success)
                 {
-                    index = Sci.MBSafeTextLength(line.Substring(0, m.Groups[1].Index));
-                    position = Sci.PositionFromLine(i) + index;
+                    var index = Sci.MBSafeTextLength(line.Substring(0, m.Groups[1].Index));
+                    var position = Sci.PositionFromLine(i) + index;
                     Sci.SetSel(position, position + features.publicKey.Length);
                     Sci.ReplaceSel(visibility);
                     UpdateLookupPosition(position, features.publicKey.Length - visibility.Length);
@@ -3446,17 +3442,14 @@ namespace ASCompletion.Completion
 
             Regex reMember = new Regex(String.Format(@"{0}\s+({1})[\s:]", kind, member.Name));
 
-            string line;
-            Match m;
-            int index, position;
             for (int i = member.LineFrom; i <= member.LineTo; i++)
             {
-                line = Sci.GetLine(i);
-                m = reMember.Match(line);
+                var line = Sci.GetLine(i);
+                var m = reMember.Match(line);
                 if (m.Success)
                 {
-                    index = Sci.MBSafeTextLength(line.Substring(0, m.Groups[1].Index));
-                    position = Sci.PositionFromLine(i) + index;
+                    var index = Sci.MBSafeTextLength(line.Substring(0, m.Groups[1].Index));
+                    var position = Sci.PositionFromLine(i) + index;
                     Sci.SetSel(position, position + member.Name.Length);
                     Sci.ReplaceSel(member.Name + args);
                     UpdateLookupPosition(position, 1);
@@ -3480,17 +3473,14 @@ namespace ASCompletion.Completion
 
             Regex reMember = new Regex(String.Format(@"{0}\s+({1})[\s:]", kind, member.Name));
 
-            string line;
-            Match m;
-            int index, position;
             for (int i = member.LineFrom; i <= member.LineTo; i++)
             {
-                line = Sci.GetLine(i);
-                m = reMember.Match(line);
+                var line = Sci.GetLine(i);
+                var m = reMember.Match(line);
                 if (m.Success)
                 {
-                    index = Sci.MBSafeTextLength(line.Substring(0, m.Groups[1].Index));
-                    position = Sci.PositionFromLine(i) + index;
+                    var index = Sci.MBSafeTextLength(line.Substring(0, m.Groups[1].Index));
+                    var position = Sci.PositionFromLine(i) + index;
                     Sci.SetSel(position, position + member.Name.Length);
                     Sci.ReplaceSel(newName);
                     UpdateLookupPosition(position, 1);
@@ -3506,14 +3496,13 @@ namespace ASCompletion.Completion
         private static string GetPropertyNameFor(MemberModel member)
         {
             string name = member.Name;
-            if (name.Length == 0)
-                return null;
+            if (name.Length == 0 || (member.Access & Visibility.Public) > 0 || IsHaxe) return null;
             Match parts = Regex.Match(name, "([^_$]*)[_$]+(.*)");
             if (parts.Success)
             {
                 string pre = parts.Groups[1].Value;
                 string post = parts.Groups[2].Value;
-                return (pre.Length > post.Length) ? pre : post;
+                return pre.Length > post.Length ? pre : post;
             }
             return null;
         }
@@ -3758,7 +3747,7 @@ namespace ASCompletion.Completion
             return latest;
         }
 
-        static private MemberModel FindMember(string name, ClassModel inClass)
+        private static MemberModel FindMember(string name, ClassModel inClass)
         {
             MemberList list;
             if (inClass == ClassModel.VoidClass)
@@ -3777,18 +3766,17 @@ namespace ASCompletion.Completion
             return found;
         }
 
-        static private MemberModel FindLatest(FlagType match, ClassModel inClass)
+        private static MemberModel FindLatest(FlagType match, ClassModel inClass)
         {
             return FindLatest(match, 0, inClass);
         }
 
-        static private MemberModel FindLatest(FlagType match, Visibility visi, ClassModel inClass)
+        private static MemberModel FindLatest(FlagType match, Visibility visi, ClassModel inClass)
         {
             return FindLatest(match, visi, inClass, true, true);
         }
 
-        static private MemberModel FindLatest(FlagType match, Visibility visi, ClassModel inClass,
-                bool isFlagMatchStrict, bool isVisibilityMatchStrict)
+        private static MemberModel FindLatest(FlagType match, Visibility visi, ClassModel inClass, bool isFlagMatchStrict, bool isVisibilityMatchStrict)
         {
             MemberList list;
             if (inClass == ClassModel.VoidClass)
@@ -3808,14 +3796,14 @@ namespace ASCompletion.Completion
                         latest = member;
                     }
                 }
-                else if (isFlagMatchStrict && !isVisibilityMatchStrict)
+                else if (isFlagMatchStrict)
                 {
                     if ((member.Flags & match) == match && (visi == 0 || (member.Access & visi) > 0))
                     {
                         latest = member;
                     }
                 }
-                else if (!isFlagMatchStrict && isVisibilityMatchStrict)
+                else if (isVisibilityMatchStrict)
                 {
                     if ((member.Flags & match) > 0 && (visi == 0 || (member.Access & visi) == visi))
                     {
