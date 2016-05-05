@@ -74,7 +74,7 @@ namespace ProjectManager.Controls
             ConfigurationSelector.DropDownStyle = ComboBoxStyle.DropDownList;
             ConfigurationSelector.AutoSize = false;
             ConfigurationSelector.Enabled = false;
-            ConfigurationSelector.Width = ScaleHelper.Scale(85);
+            ConfigurationSelector.Width = ScaleHelper.Scale(GetThemeWidth("ProjectManager.TargetBuildSelectorWidth", 85));
             ConfigurationSelector.Margin = new Padding(1, 0, 0, 0);
             ConfigurationSelector.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
             ConfigurationSelector.Font = PluginBase.Settings.DefaultFont;
@@ -86,7 +86,7 @@ namespace ProjectManager.Controls
             TargetBuildSelector.Name = "TargetBuildSelector";
             TargetBuildSelector.ToolTipText = TextHelper.GetString("ToolTip.TargetBuild");
             TargetBuildSelector.AutoSize = false;
-            TargetBuildSelector.Width = ScaleHelper.Scale(85);
+            TargetBuildSelector.Width = ScaleHelper.Scale(GetThemeWidth("ProjectManager.ConfigurationSelectorWidth", 120));
             TargetBuildSelector.Margin = new Padding(1, 0, 0, 0);
             TargetBuildSelector.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
             TargetBuildSelector.Font = PluginBase.Settings.DefaultFont;
@@ -94,6 +94,14 @@ namespace ProjectManager.Controls
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.TargetBuildSelector", Keys.Control | Keys.F7);
             PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.TargetBuildSelector", TargetBuildSelector);
             EnableTargetBuildSelector(false);
+        }
+
+        private int GetThemeWidth(string themeId, int defaultValue)
+        {
+            string strValue = PluginBase.MainForm.GetThemeValue(themeId);
+            int intValue;
+            if (int.TryParse(strValue, out intValue)) return intValue;
+            else return defaultValue;
         }
 
         public void EnableTargetBuildSelector(bool enabled)

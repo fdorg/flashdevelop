@@ -332,6 +332,8 @@ namespace CodeRefactor
         {
             try
             {
+                var document = PluginBase.MainForm.CurrentDocument;
+                var curFileName = document != null ? document.FileName : string.Empty;
                 this.refactorMainMenu.DelegateMenuItem.Enabled = false;
                 this.refactorContextMenu.DelegateMenuItem.Enabled = false;
                 bool langIsValid = RefactoringHelper.GetLanguageIsValid();
@@ -346,9 +348,9 @@ namespace CodeRefactor
                         || result.IsPackage;
                     this.refactorContextMenu.RenameMenuItem.Enabled = isRenameable;
                     this.refactorMainMenu.RenameMenuItem.Enabled = isRenameable;
-                    bool isNotPackage = !result.IsPackage;
-                    this.editorReferencesItem.Enabled = isNotPackage;
-                    this.viewReferencesItem.Enabled = isNotPackage;
+                    var enabled = !result.IsPackage && (File.Exists(curFileName) || curFileName.Contains("[model]"));
+                    this.editorReferencesItem.Enabled = enabled;
+                    this.viewReferencesItem.Enabled = enabled;
                     if (result.Member != null && result.Type != null && result.InClass != null && result.InFile != null)
                     {
                         FlagType flags = result.Member.Flags;
@@ -383,10 +385,9 @@ namespace CodeRefactor
                 this.refactorContextMenu.ExtractMethodMenuItem.Enabled = false;
                 this.refactorMainMenu.ExtractLocalVariableMenuItem.Enabled = false;
                 this.refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = false;
-                ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
                 if (document != null && document.IsEditable && langIsValid)
                 {
-                    bool isValidFile = IsValidFile(document.FileName);
+                    bool isValidFile = IsValidFile(curFileName);
                     refactorMainMenu.MoveMenuItem.Enabled = isValidFile;
                     refactorContextMenu.MoveMenuItem.Enabled = isValidFile;
                     var sci = document.SciControl;
@@ -399,13 +400,16 @@ namespace CodeRefactor
                             this.refactorMainMenu.ExtractMethodMenuItem.Enabled = true;
                             this.refactorContextMenu.ExtractMethodMenuItem.Enabled = true;
                         }
-                        var declAtSelStart = context.GetDeclarationAtLine(sci.LineFromPosition(sci.SelectionStart));
-                        var declAtSelEnd = context.GetDeclarationAtLine(sci.LineFromPosition(sci.SelectionEnd));
-                        if (declAtSelStart != null && declAtSelStart.Member != null && (declAtSelStart.Member.Flags & FlagType.Function) > 0
-                            && declAtSelEnd != null && declAtSelStart.Member.Equals(declAtSelEnd.Member))
+                        if (context != null)
                         {
-                            this.refactorMainMenu.ExtractLocalVariableMenuItem.Enabled = true;
-                            this.refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = true;
+                            var declAtSelStart = context.GetDeclarationAtLine(sci.LineFromPosition(sci.SelectionStart));
+                            var declAtSelEnd = context.GetDeclarationAtLine(sci.LineFromPosition(sci.SelectionEnd));
+                            if (declAtSelStart != null && declAtSelStart.Member != null && (declAtSelStart.Member.Flags & FlagType.Function) > 0
+                                && declAtSelEnd != null && declAtSelStart.Member.Equals(declAtSelEnd.Member))
+                            {
+                                this.refactorMainMenu.ExtractLocalVariableMenuItem.Enabled = true;
+                                this.refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = true;
+                            }
                         }
                     }
                 }
@@ -650,20 +654,8 @@ namespace CodeRefactor
         {
             try
             {
-                String suggestion = "newVar";
-                String label = TextHelper.GetString("Label.NewName");
-                String title = TextHelper.GetString("Title.ExtractLocalVariableDialog");
-                LineEntryDialog askName = new LineEntryDialog(title, label, suggestion);
-                DialogResult choice = askName.ShowDialog();
-                if (choice == DialogResult.OK && askName.Line.Trim().Length > 0 && askName.Line.Trim() != suggestion)
-                {
-                    suggestion = askName.Line.Trim();
-                }
-                if (choice == DialogResult.OK)
-                {
-                    ExtractLocalVariableCommand command = new ExtractLocalVariableCommand(suggestion);
-                    command.Execute();
-                }
+                var command = new ExtractLocalVariableCommand();
+                command.Execute();
             }
             catch (Exception ex)
             {
