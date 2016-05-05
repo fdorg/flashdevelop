@@ -226,6 +226,8 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateGetterSetter_fromPublicField.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateGetterSetter_fromPublicFieldIfNameStartWith_.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateGetterSetter_fromPublicFieldIfNameStartWith_.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_forSomeObj.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_forSomeObj.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

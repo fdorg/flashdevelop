@@ -886,6 +886,17 @@ namespace ASCompletion.Completion
                                     TestFile.ReadAllText(
                                         "ASCompletion.Test_Files.generated.as3.AfterGeneratePublicFunction_generateExplicitScopeIsTrue.as"))
                                 .SetName("Generate public function if generate explicit scope is true");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction_forSomeObj.as"),
+                                false,
+                                GeneratorJobType.FunctionPublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateFunction_forSomeObj.as"))
+                                .SetName("From some.foo| if generate explicit scope is false");
                     }
                 }
 
@@ -913,7 +924,7 @@ namespace ASCompletion.Completion
                     });
                     ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
                     ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
-                    ASGenerator.GenerateJob(job, currentMember, ASContext.Context.CurrentClass, null, null);
+                    ASGenerator.GenerateJob(job, currentMember, currentClass, null, null);
                     return sci.Text;
                 }
 
