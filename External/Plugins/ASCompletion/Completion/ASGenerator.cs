@@ -2076,7 +2076,12 @@ namespace ASCompletion.Completion
         private static void GenerateVariableJob(GeneratorJobType job, ScintillaControl sci, MemberModel member, bool detach, ClassModel inClass)
         {
             var position = 0;
-            if (ASContext.CommonSettings.GenerateScope)
+            bool isOtherClass = false;
+            Visibility visibility = job.Equals(GeneratorJobType.Variable) ? GetDefaultVisibility(inClass) : Visibility.Public;
+            FlagType kind = job.Equals(GeneratorJobType.Constant) ? FlagType.Constant : FlagType.Variable;
+            // evaluate, if the variable (or constant) should be generated in other class
+            ASResult varResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
+            if (ASContext.CommonSettings.GenerateScope && !varResult.Context.Value.Contains(ASContext.Context.Features.dot))
             {
                 position = sci.CurrentPos;
                 var start = sci.WordStartPosition(position, true);
@@ -2086,12 +2091,6 @@ namespace ASCompletion.Completion
                 sci.ReplaceSel(text);
                 UpdateLookupPosition(position, text.Length - length);
             }
-            bool isOtherClass = false;
-            Visibility visibility = job.Equals(GeneratorJobType.Variable) ? GetDefaultVisibility(inClass) : Visibility.Public;
-            FlagType kind = job.Equals(GeneratorJobType.Constant) ? FlagType.Constant : FlagType.Variable;
-
-            // evaluate, if the variable (or constant) should be generated in other class
-            ASResult varResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
             int contextOwnerPos = GetContextOwnerEndPos(sci, sci.WordStartPosition(sci.CurrentPos, true));
             MemberModel isStatic = new MemberModel();
             if (contextOwnerPos != -1)
@@ -2569,7 +2568,14 @@ namespace ASCompletion.Completion
         private static void GenerateFunctionJob(GeneratorJobType job, ScintillaControl sci, MemberModel member, bool detach, ClassModel inClass)
         {
             var position = 0;
-            if (ASContext.CommonSettings.GenerateScope)
+            bool isOtherClass = false;
+            Visibility visibility = job.Equals(GeneratorJobType.FunctionPublic) ? Visibility.Public : GetDefaultVisibility(inClass);
+            int wordPos = sci.WordEndPosition(sci.CurrentPos, true);
+            List<FunctionParameter> functionParameters = ParseFunctionParameters(sci, wordPos);
+
+            // evaluate, if the function should be generated in other class
+            ASResult funcResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
+            if (ASContext.CommonSettings.GenerateScope && !funcResult.Context.Value.Contains(ASContext.Context.Features.dot))
             {
                 position = sci.CurrentPos;
                 var start = sci.WordStartPosition(position, true);
@@ -2579,14 +2585,6 @@ namespace ASCompletion.Completion
                 sci.ReplaceSel(text);
                 UpdateLookupPosition(position, text.Length - length);
             }
-            bool isOtherClass = false;
-            Visibility visibility = job.Equals(GeneratorJobType.FunctionPublic) ? Visibility.Public : GetDefaultVisibility(inClass);
-            int wordPos = sci.WordEndPosition(sci.CurrentPos, true);
-            List<FunctionParameter> functionParameters = ParseFunctionParameters(sci, wordPos);
-
-            // evaluate, if the function should be generated in other class
-            ASResult funcResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
-
             int contextOwnerPos = GetContextOwnerEndPos(sci, sci.WordStartPosition(sci.CurrentPos, true));
             MemberModel isStatic = new MemberModel();
             if (contextOwnerPos != -1)
@@ -2604,7 +2602,6 @@ namespace ASCompletion.Completion
             {
                 isStatic.Flags |= FlagType.Static;
             }
-
             if (funcResult.RelClass != null && !funcResult.RelClass.IsVoid() && !funcResult.RelClass.Equals(inClass))
             {
                 AddLookupPosition();

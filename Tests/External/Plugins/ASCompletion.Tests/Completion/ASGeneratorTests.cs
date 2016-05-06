@@ -1,9 +1,7 @@
 ﻿// TODO: Tests with different formatting options using parameterized tests
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using ASCompletion.Settings;
@@ -896,7 +894,62 @@ namespace ASCompletion.Completion
                                 .Returns(
                                     TestFile.ReadAllText(
                                         "ASCompletion.Test_Files.generated.as3.AfterGenerateFunction_forSomeObj.as"))
-                                .SetName("From some.foo| if generate explicit scope is false");
+                                .SetName("From some.foo|(); if generate explicit scope is false");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction_forSomeObj.as"),
+                                true,
+                                GeneratorJobType.FunctionPublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateFunction_forSomeObj.as"))
+                                .SetName("From some.foo|(); if generate explicit scope is true");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction_forSomeObj2.as"),
+                                false,
+                                GeneratorJobType.FunctionPublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateFunction_forSomeObj2.as"))
+                                .SetName("From new Some().foo|(); if generate explicit scope is false");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction_forSomeObj2.as"),
+                                true,
+                                GeneratorJobType.FunctionPublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateFunction_forSomeObj2.as"))
+                                .SetName("From new Some().foo|(); if generate explicit scope is true");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction_forSomeObj3.as"),
+                                false,
+                                GeneratorJobType.FunctionPublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateFunction_forSomeObj3.as"))
+                                .SetName("From new Some()\n.foo|(); if generate explicit scope is false");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction_forSomeObj3.as"),
+                                true,
+                                GeneratorJobType.FunctionPublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateFunction_forSomeObj3.as"))
+                                .SetName("From new Some()\n.foo|(); if generate explicit scope is true");
                     }
                 }
 
@@ -916,6 +969,7 @@ namespace ASCompletion.Completion
                     var currentMember = currentClass.Members[0];
                     ASContext.Context.CurrentMember.Returns(currentMember);
                     var context = new AS3Context.Context(new AS3Settings());
+                    context.BuildClassPath();
                     ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
                     ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
                     {
@@ -1059,6 +1113,72 @@ namespace ASCompletion.Completion
                                     TestFile.ReadAllText(
                                         "ASCompletion.Test_Files.generated.as3.AfterGeneratePublicVariable_generateExplicitScopeIsTrue.as"))
                                 .SetName("Generate public variable if generate explicit scope is true");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable_forSomeObj.as"),
+                                false,
+                                GeneratorJobType.VariablePublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateVariable_forSomeObj.as"))
+                                .SetName("From some.foo| if generate explicit scope is false");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable_forSomeObj.as"),
+                                true,
+                                GeneratorJobType.VariablePublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateVariable_forSomeObj.as"))
+                                .SetName("From some.foo| if generate explicit scope is true");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable_forSomeObj2.as"),
+                                false,
+                                GeneratorJobType.VariablePublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateVariable_forSomeObj2.as"))
+                                .SetName("From new Some().foo| if generate explicit scope is false");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable_forSomeObj2.as"),
+                                true,
+                                GeneratorJobType.VariablePublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateVariable_forSomeObj2.as"))
+                                .SetName("From new Some().foo| if generate explicit scope is true");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable_forSomeObj3.as"),
+                                false,
+                                GeneratorJobType.VariablePublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateVariable_forSomeObj3.as"))
+                                .SetName("From new Some()\n.foo| if generate explicit scope is false");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable_forSomeObj3.as"),
+                                true,
+                                GeneratorJobType.VariablePublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateVariable_forSomeObj3.as"))
+                                .SetName("From new Some()\n.foo| if generate explicit scope is true");
                     }
                 }
 
@@ -1078,6 +1198,7 @@ namespace ASCompletion.Completion
                     var currentMember = currentClass.Members[0];
                     ASContext.Context.CurrentMember.Returns(currentMember);
                     var context = new AS3Context.Context(new AS3Settings());
+                    context.BuildClassPath();
                     ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
                     ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
                     {
