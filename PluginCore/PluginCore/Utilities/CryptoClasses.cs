@@ -78,12 +78,28 @@ namespace PluginCore.Utilities
 
     public class SHA1
     {
+        static bool fipsComplianceRequired;
+
         /// <summary>
         /// Computes the SHA-1 checksum for the bytes.
         /// </summary>
         public static Byte[] Compute(Byte[] bytes)
         {
-            SHA1Managed sha1 = new SHA1Managed();
+            if (fipsComplianceRequired) return ComputeFIPS(bytes);
+            try
+            {
+                SHA1Managed sha1 = new SHA1Managed();
+                return sha1.ComputeHash(bytes);
+            }
+            catch (InvalidOperationException)
+            {
+                fipsComplianceRequired = true;
+                return ComputeFIPS(bytes);
+            }
+        }
+        static Byte[] ComputeFIPS(Byte[] bytes)
+        {
+            SHA1Cng sha1 = new SHA1Cng();
             return sha1.ComputeHash(bytes);
         }
 
@@ -100,12 +116,28 @@ namespace PluginCore.Utilities
 
     public class SHA256
     {
+        static bool fipsComplianceRequired;
+
         /// <summary>
         /// Computes the SHA-256 checksum for the bytes.
         /// </summary>
         public static Byte[] Compute(Byte[] bytes)
         {
-            SHA256Managed sha256 = new SHA256Managed();
+            if (fipsComplianceRequired) return ComputeFIPS(bytes);
+            try
+            {
+                SHA256Managed sha256 = new SHA256Managed();
+                return sha256.ComputeHash(bytes);
+            }
+            catch (InvalidOperationException)
+            {
+                fipsComplianceRequired = true;
+                return ComputeFIPS(bytes);
+            }
+        }
+        static Byte[] ComputeFIPS(Byte[] bytes)
+        {
+            SHA256Cng sha256 = new SHA256Cng();
             return sha256.ComputeHash(bytes);
         }
 
