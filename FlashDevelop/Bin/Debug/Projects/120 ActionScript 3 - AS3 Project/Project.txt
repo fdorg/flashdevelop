@@ -1,1 +1,1 @@
-A project written in ActionScript 3 for the Flash 9+ Player
+A project written in ActionScript 3 for the Flash 21+ Player
