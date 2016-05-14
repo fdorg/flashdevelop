@@ -15,6 +15,10 @@ namespace ASCompletion.Commands
         private delegate void RunBackgroundInvoker(string exe, string args);
 
         static readonly private string[] FLASHIDE_PATH = {
+            @"C:\Program Files\Adobe\Adobe Animate CC 2016\Animate.exe",
+            @"C:\Program Files (x86)\Adobe\Adobe Animate CC 2016\Animate.exe",
+            @"C:\Program Files\Adobe\Adobe Animate CC 2015\Animate.exe",
+            @"C:\Program Files (x86)\Adobe\Adobe Animate CC 2015\Animate.exe",
             @"C:\Program Files\Adobe\Adobe Flash CS5.5\Flash.exe",
             @"C:\Program Files (x86)\Adobe\Adobe Flash CS5.5\Flash.exe",
             @"C:\Program Files\Adobe\Adobe Flash CS5\Flash.exe",
@@ -50,7 +54,7 @@ namespace ASCompletion.Commands
             foreach (string flashexe in FLASHIDE_PATH)
             {
                 if (File.Exists(flashexe)
-                    && (!AS3CapableOnly || found.IndexOfOrdinal("Flash CS") > 0))
+                    && (!AS3CapableOnly || found.IndexOfOrdinal("Flash CS") > 0 || found.IndexOfOrdinal("Animate") > 0))
                 {
                     found = flashexe;
                     break;
@@ -70,7 +74,11 @@ namespace ASCompletion.Commands
             else
             {
                 if (pathToIDE != null && Directory.Exists(pathToIDE))
-                    pathToIDE = Path.Combine(pathToIDE, "Flash.exe");
+                {
+                    var exe = Path.Combine(pathToIDE, "Animate.exe");
+                    if (!File.Exists(exe)) exe = Path.Combine(pathToIDE, "Flash.exe");
+                    pathToIDE = exe;
+                }
                 if (pathToIDE == null || !File.Exists(pathToIDE))
                 {
                     string msg = TextHelper.GetString("Info.ConfigureFlashPath");
