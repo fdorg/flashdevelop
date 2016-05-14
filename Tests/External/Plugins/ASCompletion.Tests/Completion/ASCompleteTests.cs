@@ -90,10 +90,10 @@ namespace ASCompletion.Completion
                     LineFrom = 4,
                     LineTo = 10,
                     Parameters = new List<MemberModel>
-                {
-                    new MemberModel("arg1", "String", FlagType.ParameterVar, Visibility.Default),
-                    new MemberModel("arg2", "Boolean", FlagType.ParameterVar, Visibility.Default) {Value = "false"}
-                }
+                    {
+                        new MemberModel("arg1", "String", FlagType.ParameterVar, Visibility.Default),
+                        new MemberModel("arg2", "Boolean", FlagType.ParameterVar, Visibility.Default) {Value = "false"}
+                    }
                 };
 
                 var classModel = new ClassModel();
