@@ -1,4 +1,5 @@
 ﻿// TODO: Tests with different formatting options using parameterized tests
+
 using System.Collections;
 using System.Collections.Generic;
 using ASCompletion.Context;
@@ -12,6 +13,8 @@ using PluginCore;
 using ScintillaNet;
 using ScintillaNet.Enums;
 using System.Text.RegularExpressions;
+using AS3Context;
+using HaXeContext;
 using PluginCore.Helpers;
 
 namespace ASCompletion.Completion
@@ -334,7 +337,7 @@ namespace ASCompletion.Completion
                     var sourceMember = sourceClassModel.Members[memberPos];
 
                     ASGenerator.SetJobContext(null, null, sourceMember.Parameters[parameterPos], null);
-                    ASGenerator.GenerateJob(GeneratorJobType.FieldFromPatameter, sourceMember, inClass, null, table);
+                    ASGenerator.GenerateJob(GeneratorJobType.FieldFromParameter, sourceMember, inClass, null, table);
 
                     return sci.Text;
                 }
@@ -703,13 +706,739 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource("GenerateExtractVariableAS3TestCases")]
                 public string AS3(string sourceText, MemberModel currentMember, string newName)
                 {
-                    ASContext.Context.SetHaxeFeatures();
+                    ASContext.Context.SetAs3Features();
                     ASContext.Context.CurrentModel.Returns(new FileModel { Context = ASContext.Context });
                     ASContext.Context.CurrentMember.Returns(currentMember);
                     sci.Text = sourceText;
                     sci.ConfigurationLanguage = "as3";
                     SnippetHelper.PostProcessSnippets(sci, 0);
                     ASGenerator.GenerateExtractVariable(sci, newName);
+                    return sci.Text;
+                }
+            }
+
+            [TestFixture]
+            public class PromoteLocal : GenerateJob
+            {
+                public IEnumerable<TestCaseData> AS3TestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforePromoteLocal.as"),
+                                false
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterPromoteLocal_generateExplicitScopeIsFalse.as"))
+                                .SetName("Promote to class member if generate explicit scope is false");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforePromoteLocal.as"),
+                                true
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterPromoteLocal_generateExplicitScopeIsTrue.as"))
+                                .SetName("Promote to class member if generate explicit scope is true");
+                    }
+                }
+
+                [Test, TestCaseSource("AS3TestCases")]
+                public string AS3(string sourceText, bool generateExplicitScope)
+                {
+                    sci.Text = sourceText;
+                    sci.ConfigurationLanguage = "as3";
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    ASContext.Context.SetAs3Features();
+                    ASContext.CommonSettings.GenerateScope = generateExplicitScope;
+                    var currentModel = new FileModel {Context = ASContext.Context};
+                    new ASFileParser().ParseSrc(currentModel, sci.Text);
+                    var currentClass = currentModel.Classes[0];
+                    ASContext.Context.CurrentClass.Returns(currentClass);
+                    ASContext.Context.CurrentModel.Returns(currentModel);
+                    ASContext.Context.CurrentMember.Returns(currentClass.Members[0]);
+                    var context = new AS3Context.Context(new AS3Settings());
+                    ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
+                    ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
+                    {
+                        var src = x[0] as string;
+                        return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
+                    });
+                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
+                    var expr = ASComplete.GetExpressionType(sci, sci.CurrentPos);
+                    var currentMember = expr.Context.LocalVars[0];
+                    ASGenerator.contextMember = currentMember;
+                    ASGenerator.GenerateJob(GeneratorJobType.PromoteLocal, currentMember, ASContext.Context.CurrentClass, null, null);
+                    return sci.Text;
+                }
+
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforePromoteLocal.hx"),
+                                false
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterPromoteLocal_generateExplicitScopeIsFalse.hx"))
+                                .SetName("Promote to class member if generate explicit scope is false");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforePromoteLocal.hx"),
+                                true
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterPromoteLocal_generateExplicitScopeIsTrue.hx"))
+                                .SetName("Promote to class member if generate explicit scope is true");
+                    }
+                }
+
+                [Test, TestCaseSource("HaxeTestCases")]
+                public string Haxe(string sourceText, bool generateExplicitScope)
+                {
+                    sci.Text = sourceText;
+                    sci.ConfigurationLanguage = "haxe";
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    ASContext.Context.SetHaxeFeatures();
+                    ASContext.CommonSettings.GenerateScope = generateExplicitScope;
+                    var currentModel = new FileModel {haXe = true, Context = ASContext.Context};
+                    new ASFileParser().ParseSrc(currentModel, sci.Text);
+                    var currentClass = currentModel.Classes[0];
+                    ASContext.Context.CurrentClass.Returns(currentClass);
+                    ASContext.Context.CurrentModel.Returns(currentModel);
+                    ASContext.Context.CurrentMember.Returns(currentClass.Members[0]);
+                    var context = new HaXeContext.Context(new HaXeSettings());
+                    ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
+                    ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
+                    {
+                        var src = x[0] as string;
+                        return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
+                    });
+                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
+                    var expr = ASComplete.GetExpressionType(sci, sci.CurrentPos);
+                    var currentMember = expr.Context.LocalVars[0];
+                    ASGenerator.contextMember = currentMember;
+                    ASGenerator.GenerateJob(GeneratorJobType.PromoteLocal, currentMember, ASContext.Context.CurrentClass, null, null);
+                    return sci.Text;
+                }
+            }
+
+            [TestFixture]
+            public class GenerateFunction : GenerateJob
+            {
+                public IEnumerable<TestCaseData> AS3TestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction.as"),
+                                false,
+                                GeneratorJobType.Function
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePrivateFunction_generateExplicitScopeIsFalse.as"))
+                                .SetName("Generate private function if generate explicit scope is false");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction.as"),
+                                true,
+                                GeneratorJobType.Function
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePrivateFunction_generateExplicitScopeIsTrue.as"))
+                                .SetName("Generate private function if generate explicit scope is true");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction.as"),
+                                false,
+                                GeneratorJobType.FunctionPublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePublicFunction_generateExplicitScopeIsFalse.as"))
+                                .SetName("Generate public function if generate explicit scope is false");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction.as"),
+                                true,
+                                GeneratorJobType.FunctionPublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePublicFunction_generateExplicitScopeIsTrue.as"))
+                                .SetName("Generate public function if generate explicit scope is true");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction_forSomeObj.as"),
+                                false,
+                                GeneratorJobType.FunctionPublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateFunction_forSomeObj.as"))
+                                .SetName("From some.foo|(); if generate explicit scope is false");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction_forSomeObj.as"),
+                                true,
+                                GeneratorJobType.FunctionPublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateFunction_forSomeObj.as"))
+                                .SetName("From some.foo|(); if generate explicit scope is true");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction_forSomeObj2.as"),
+                                false,
+                                GeneratorJobType.FunctionPublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateFunction_forSomeObj2.as"))
+                                .SetName("From new Some().foo|(); if generate explicit scope is false");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction_forSomeObj2.as"),
+                                true,
+                                GeneratorJobType.FunctionPublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateFunction_forSomeObj2.as"))
+                                .SetName("From new Some().foo|(); if generate explicit scope is true");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction_forSomeObj3.as"),
+                                false,
+                                GeneratorJobType.FunctionPublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateFunction_forSomeObj3.as"))
+                                .SetName("From new Some()\n.foo|(); if generate explicit scope is false");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction_forSomeObj3.as"),
+                                true,
+                                GeneratorJobType.FunctionPublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateFunction_forSomeObj3.as"))
+                                .SetName("From new Some()\n.foo|(); if generate explicit scope is true");
+                    }
+                }
+
+                [Test, TestCaseSource("AS3TestCases")]
+                public string AS3(string sourceText, bool generateExplicitScope, GeneratorJobType job)
+                {
+                    sci.Text = sourceText;
+                    sci.ConfigurationLanguage = "as3";
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    ASContext.Context.SetAs3Features();
+                    ASContext.CommonSettings.GenerateScope = generateExplicitScope;
+                    var currentModel = new FileModel {Context = ASContext.Context};
+                    new ASFileParser().ParseSrc(currentModel, sci.Text);
+                    var currentClass = currentModel.Classes[0];
+                    ASContext.Context.CurrentClass.Returns(currentClass);
+                    ASContext.Context.CurrentModel.Returns(currentModel);
+                    var currentMember = currentClass.Members[0];
+                    ASContext.Context.CurrentMember.Returns(currentMember);
+                    var context = new AS3Context.Context(new AS3Settings());
+                    context.BuildClassPath();
+                    ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
+                    ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
+                    {
+                        var src = x[0] as string;
+                        return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
+                    });
+                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
+                    ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
+                    ASGenerator.GenerateJob(job, currentMember, currentClass, null, null);
+                    return sci.Text;
+                }
+
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateFunction.hx"),
+                                false,
+                                GeneratorJobType.Function
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateFunction_generateExplicitScopeIsFalse.hx"))
+                                .SetName("Generate private function if generate explicit scope is false");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateFunction.hx"),
+                                true,
+                                GeneratorJobType.Function
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateFunction_generateExplicitScopeIsTrue.hx"))
+                                .SetName("Generate private function if generate explicit scope is true");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateFunction.hx"),
+                                false,
+                                GeneratorJobType.FunctionPublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePublicFunction_generateExplicitScopeIsFalse.hx"))
+                                .SetName("Generate public function if generate explicit scope is false");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateFunction.hx"),
+                                true,
+                                GeneratorJobType.FunctionPublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePublicFunction_generateExplicitScopeIsTrue.hx"))
+                                .SetName("Generate public function if generate explicit scope is true");
+                    }
+                }
+
+                [Test, TestCaseSource("HaxeTestCases")]
+                public string Haxe(string sourceText, bool generateExplicitScope, GeneratorJobType job)
+                {
+                    sci.Text = sourceText;
+                    sci.ConfigurationLanguage = "haxe";
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    ASContext.Context.SetHaxeFeatures();
+                    ASContext.CommonSettings.GenerateScope = generateExplicitScope;
+                    var currentModel = new FileModel {haXe = true, Context = ASContext.Context};
+                    new ASFileParser().ParseSrc(currentModel, sci.Text);
+                    var currentClass = currentModel.Classes[0];
+                    ASContext.Context.CurrentClass.Returns(currentClass);
+                    ASContext.Context.CurrentModel.Returns(currentModel);
+                    var currentMember = currentClass.Members[0];
+                    ASContext.Context.CurrentMember.Returns(currentMember);
+                    var context = new HaXeContext.Context(new HaXeSettings());
+                    ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
+                    ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
+                    {
+                        var src = x[0] as string;
+                        return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
+                    });
+                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
+                    ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
+                    ASGenerator.GenerateJob(job, currentMember, ASContext.Context.CurrentClass, null, null);
+                    return sci.Text;
+                }
+            }
+
+            [TestFixture]
+            public class GenerateVariable : GenerateJob
+            {
+                public IEnumerable<TestCaseData> AS3TestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable.as"),
+                                false,
+                                GeneratorJobType.Variable
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePrivateVariable_generateExplicitScopeIsFalse.as"))
+                                .SetName("Generate private variable if generate explicit scope is false");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable.as"),
+                                true,
+                                GeneratorJobType.Variable
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePrivateVariable_generateExplicitScopeIsTrue.as"))
+                                .SetName("Generate private variable if generate explicit scope is true");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable.as"),
+                                false,
+                                GeneratorJobType.VariablePublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePublicVariable_generateExplicitScopeIsFalse.as"))
+                                .SetName("Generate public variable if generate explicit scope is false");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable.as"),
+                                true,
+                                GeneratorJobType.VariablePublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePublicVariable_generateExplicitScopeIsTrue.as"))
+                                .SetName("Generate public variable if generate explicit scope is true");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable_forSomeObj.as"),
+                                false,
+                                GeneratorJobType.VariablePublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateVariable_forSomeObj.as"))
+                                .SetName("From some.foo| if generate explicit scope is false");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable_forSomeObj.as"),
+                                true,
+                                GeneratorJobType.VariablePublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateVariable_forSomeObj.as"))
+                                .SetName("From some.foo| if generate explicit scope is true");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable_forSomeObj2.as"),
+                                false,
+                                GeneratorJobType.VariablePublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateVariable_forSomeObj2.as"))
+                                .SetName("From new Some().foo| if generate explicit scope is false");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable_forSomeObj2.as"),
+                                true,
+                                GeneratorJobType.VariablePublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateVariable_forSomeObj2.as"))
+                                .SetName("From new Some().foo| if generate explicit scope is true");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable_forSomeObj3.as"),
+                                false,
+                                GeneratorJobType.VariablePublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateVariable_forSomeObj3.as"))
+                                .SetName("From new Some()\n.foo| if generate explicit scope is false");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable_forSomeObj3.as"),
+                                true,
+                                GeneratorJobType.VariablePublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateVariable_forSomeObj3.as"))
+                                .SetName("From new Some()\n.foo| if generate explicit scope is true");
+                    }
+                }
+
+                [Test, TestCaseSource("AS3TestCases")]
+                public string AS3(string sourceText, bool generateExplicitScope, GeneratorJobType job)
+                {
+                    sci.Text = sourceText;
+                    sci.ConfigurationLanguage = "as3";
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    ASContext.Context.SetAs3Features();
+                    ASContext.CommonSettings.GenerateScope = generateExplicitScope;
+                    var currentModel = new FileModel {Context = ASContext.Context};
+                    new ASFileParser().ParseSrc(currentModel, sci.Text);
+                    var currentClass = currentModel.Classes[0];
+                    ASContext.Context.CurrentClass.Returns(currentClass);
+                    ASContext.Context.CurrentModel.Returns(currentModel);
+                    var currentMember = currentClass.Members[0];
+                    ASContext.Context.CurrentMember.Returns(currentMember);
+                    var context = new AS3Context.Context(new AS3Settings());
+                    context.BuildClassPath();
+                    ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
+                    ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
+                    {
+                        var src = x[0] as string;
+                        return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
+                    });
+                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
+                    ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
+                    ASGenerator.GenerateJob(job, currentMember, ASContext.Context.CurrentClass, null, null);
+                    return sci.Text;
+                }
+
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateVariable.hx"),
+                                false,
+                                GeneratorJobType.Variable
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateVariable_generateExplicitScopeIsFalse.hx"))
+                                .SetName("Generate private variable if generate explicit scope is false");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateVariable.hx"),
+                                true,
+                                GeneratorJobType.Variable
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateVariable_generateExplicitScopeIsTrue.hx"))
+                                .SetName("Generate private variable if generate explicit scope is true");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateVariable.hx"),
+                                false,
+                                GeneratorJobType.VariablePublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePublicVariable_generateExplicitScopeIsFalse.hx"))
+                                .SetName("Generate public variable if generate explicit scope is false");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateVariable.hx"),
+                                true,
+                                GeneratorJobType.VariablePublic
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePublicVariable_generateExplicitScopeIsTrue.hx"))
+                                .SetName("Generate public variable if generate explicit scope is true");
+                    }
+                }
+
+                [Test, TestCaseSource("HaxeTestCases")]
+                public string Haxe(string sourceText, bool generateExplicitScope, GeneratorJobType job)
+                {
+                    sci.Text = sourceText;
+                    sci.ConfigurationLanguage = "haxe";
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    ASContext.Context.SetHaxeFeatures();
+                    ASContext.CommonSettings.GenerateScope = generateExplicitScope;
+                    var currentModel = new FileModel {haXe = true, Context = ASContext.Context};
+                    new ASFileParser().ParseSrc(currentModel, sci.Text);
+                    var currentClass = currentModel.Classes[0];
+                    ASContext.Context.CurrentClass.Returns(currentClass);
+                    ASContext.Context.CurrentModel.Returns(currentModel);
+                    var currentMember = currentClass.Members[0];
+                    ASContext.Context.CurrentMember.Returns(currentMember);
+                    var context = new HaXeContext.Context(new HaXeSettings());
+                    ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
+                    ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
+                    {
+                        var src = x[0] as string;
+                        return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
+                    });
+                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
+                    ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
+                    ASGenerator.GenerateJob(job, currentMember, ASContext.Context.CurrentClass, null, null);
+                    return sci.Text;
+                }
+            }
+
+            [TestFixture]
+            public class GenerateEventHandler : GenerateJob
+            {
+                public IEnumerable<TestCaseData> AS3TestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateEventHandler.as"),
+                                new string[0],
+                                false
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateEventHandler_withoutAutoRemove.as"))
+                                .SetName("Generate event handler without auto remove");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateEventHandler.as"),
+                                new[] {"Event.ADDED", "Event.REMOVED"},
+                                false
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateEventHandler_withAutoRemove.as"))
+                                .SetName("Generate event handler with auto remove");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateEventHandler.as"),
+                                new[] {"Event.ADDED", "Event.REMOVED"},
+                                true
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateEventHandler_withAutoRemove_generateExplicitScopeIsTrue.as"))
+                                .SetName("Generate event handler with auto remove if generate explicit scope is true");
+                    }
+                }
+
+                [Test, TestCaseSource("AS3TestCases")]
+                public string AS3(string sourceText, string[] autoRemove, bool generateExplicitScope)
+                {
+                    sci.Text = sourceText;
+                    sci.ConfigurationLanguage = "as3";
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    ASContext.Context.SetAs3Features();
+                    ASContext.CommonSettings.EventListenersAutoRemove = autoRemove;
+                    ASContext.CommonSettings.GenerateScope = generateExplicitScope;
+                    var currentModel = new FileModel {Context = ASContext.Context};
+                    new ASFileParser().ParseSrc(currentModel, sci.Text);
+                    var currentClass = currentModel.Classes[0];
+                    ASContext.Context.CurrentClass.Returns(currentClass);
+                    ASContext.Context.CurrentModel.Returns(currentModel);
+                    var currentMember = currentClass.Members[0];
+                    ASContext.Context.CurrentMember.Returns(currentMember);
+                    var context = new AS3Context.Context(new AS3Settings());
+                    ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
+                    ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
+                    {
+                        var src = x[0] as string;
+                        return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
+                    });
+                    var eventModel = new ClassModel {Name = "Event", Type = "flash.events.Event"};
+                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => eventModel);
+                    ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
+                    var re = string.Format(ASGenerator.patternEvent, ASGenerator.contextToken);
+                    var m = Regex.Match(sci.GetLine(sci.CurrentLine), re, RegexOptions.IgnoreCase);
+                    ASGenerator.contextMatch = m;
+                    ASGenerator.contextParam = ASGenerator.CheckEventType(m.Groups["event"].Value);
+                    ASGenerator.GenerateJob(GeneratorJobType.ComplexEvent, currentMember, ASContext.Context.CurrentClass, null, null);
+                    return sci.Text;
+                }
+
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateEventHandler.hx"),
+                                new string[0],
+                                false
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGenerateEventHandler_withoutAutoRemove.hx"))
+                                .SetName("Generate event handler without auto remove");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateEventHandler.hx"),
+                                new[] { "Event.ADDED", "Event.REMOVED" },
+                                false
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGenerateEventHandler_withAutoRemove.hx"))
+                                .SetName("Generate event handler with auto remove");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateEventHandler.hx"),
+                                new[] {"Event.ADDED", "Event.REMOVED"},
+                                true
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGenerateEventHandler_withAutoRemove_generateExplicitScopeIsTrue.hx"))
+                                .SetName("Generate event handler with auto remove if generate explicit scope is true");
+                    }
+                }
+
+                [Test, TestCaseSource("HaxeTestCases")]
+                public string Haxe(string sourceText, string[] autoRemove, bool generateExplicitScope)
+                {
+                    sci.Text = sourceText;
+                    sci.ConfigurationLanguage = "haxe";
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    ASContext.Context.SetHaxeFeatures();
+                    ASContext.CommonSettings.EventListenersAutoRemove = autoRemove;
+                    ASContext.CommonSettings.GenerateScope = generateExplicitScope;
+                    var currentModel = new FileModel {haXe = true, Context = ASContext.Context};
+                    new ASFileParser().ParseSrc(currentModel, sci.Text);
+                    var currentClass = currentModel.Classes[0];
+                    ASContext.Context.CurrentClass.Returns(currentClass);
+                    ASContext.Context.CurrentModel.Returns(currentModel);
+                    var currentMember = currentClass.Members[0];
+                    ASContext.Context.CurrentMember.Returns(currentMember);
+                    var context = new AS3Context.Context(new AS3Settings());
+                    ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
+                    ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
+                    {
+                        var src = x[0] as string;
+                        return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
+                    });
+                    var eventModel = new ClassModel {Name = "Event", Type = "flash.events.Event"};
+                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => eventModel);
+                    ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
+                    var re = string.Format(ASGenerator.patternEvent, ASGenerator.contextToken);
+                    var m = Regex.Match(sci.GetLine(sci.CurrentLine), re, RegexOptions.IgnoreCase);
+                    ASGenerator.contextMatch = m;
+                    ASGenerator.contextParam = ASGenerator.CheckEventType(m.Groups["event"].Value);
+                    ASGenerator.GenerateJob(GeneratorJobType.ComplexEvent, currentMember, ASContext.Context.CurrentClass, null, null);
                     return sci.Text;
                 }
             }

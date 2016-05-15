@@ -172,7 +172,7 @@ namespace ASCompletion.Completion
                     case ':':
                         if (ASContext.Context.CurrentModel.haXe && prevValue == '@')
                         {
-                            return HandleMetadataCompletion(Sci, autoHide);
+                            return HandleMetadataCompletion(autoHide);
                         }
                         if (features.hasEcmaTyping)
                         {
@@ -2392,7 +2392,7 @@ namespace ASCompletion.Completion
         }
         #endregion
 
-        static private bool HandleMetadataCompletion(ScintillaControl sci, bool autoHide)
+        private static bool HandleMetadataCompletion(bool autoHide)
         {
             List<ICompletionListItem> list = new List<ICompletionListItem>();
             foreach (KeyValuePair<string, string> meta in ASContext.Context.Features.metadata)
@@ -2419,7 +2419,7 @@ namespace ASCompletion.Completion
         /// <param name="complete">Complete (sub-expression) or partial (dot-completion) evaluation</param>
         /// <param name="asFunction"></param>
         /// <returns>Class/member struct</returns>
-        static private ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction)
+        private static ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction)
         {
             return EvalExpression(expression, context, inFile, inClass, complete, asFunction, true);
         }
@@ -2435,7 +2435,7 @@ namespace ASCompletion.Completion
         /// <param name="asFunction"></param>
         /// <param name="filterVisibility"></param>
         /// <returns>Class/member struct</returns>
-        static private ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility)
+        private static ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility)
         {
             ASResult notFound = new ASResult();
             notFound.Context = context;
@@ -2673,7 +2673,7 @@ namespace ASCompletion.Completion
         /// <param name="inFile">File context</param>
         /// <param name="inClass">Class context</param>
         /// <returns>Class/member struct</returns>
-        static private ASResult EvalVariable(string token, ASExpr local, FileModel inFile, ClassModel inClass)
+        private static ASResult EvalVariable(string token, ASExpr local, FileModel inFile, ClassModel inClass)
         {
             ASResult result = new ASResult();
             IASContext context = ASContext.Context;
@@ -2837,8 +2837,8 @@ namespace ASCompletion.Completion
 
         private static ClassModel ResolveType(string qname, FileModel inFile)
         {
-            IASContext context = ASContext.Context;
             if (qname == null) return ClassModel.VoidClass;
+            IASContext context = ASContext.Context;
             bool isQualified = qname.IndexOf('.') > 0;
 
             if (inFile == null || inFile == context.CurrentModel)
@@ -2907,7 +2907,7 @@ namespace ASCompletion.Completion
         /// <param name="result">Class/Member struct</param>
         /// <param name="mask">Flags mask</param>
         /// <param name="acc">Visibility mask</param>
-        static public void FindMember(string token, FileModel inFile, ASResult result, FlagType mask, Visibility acc)
+        public static void FindMember(string token, FileModel inFile, ASResult result, FlagType mask, Visibility acc)
         {
             if (string.IsNullOrEmpty(token))
                 return;
@@ -3006,7 +3006,7 @@ namespace ASCompletion.Completion
         /// <param name="result">Class/Member struct</param>
         /// <param name="mask">Flags mask</param>
         /// <param name="acc">Visibility mask</param>
-        static public void FindMember(string token, ClassModel inClass, ASResult result, FlagType mask, Visibility acc)
+        public static void FindMember(string token, ClassModel inClass, ASResult result, FlagType mask, Visibility acc)
         {
             if (string.IsNullOrEmpty(token))
                 return;
@@ -3172,7 +3172,7 @@ namespace ASCompletion.Completion
         #endregion
 
         #region main_code_parser
-        static private List<string> ExtractedSubex;
+        private static List<string> ExtractedSubex;
 
         /// <summary>
         /// Find Actionscript expression at cursor position
@@ -3180,9 +3180,9 @@ namespace ASCompletion.Completion
         /// <param name="sci">Scintilla Control</param>
         /// <param name="position">Cursor position</param>
         /// <returns></returns>
-        static private ASExpr GetExpression(ScintillaControl Sci, int position)
+        private static ASExpr GetExpression(ScintillaControl sci, int position)
         {
-            return GetExpression(Sci, position, false);
+            return GetExpression(sci, position, false);
         }
 
         /// <summary>
@@ -3192,7 +3192,7 @@ namespace ASCompletion.Completion
         /// <param name="position">Cursor position</param>
         /// <param name="ignoreWhiteSpace">Skip whitespace at position</param>
         /// <returns></returns>
-        static private ASExpr GetExpression(ScintillaControl Sci, int position, bool ignoreWhiteSpace)
+        private static ASExpr GetExpression(ScintillaControl sci, int position, bool ignoreWhiteSpace)
         {
             bool haXe = ASContext.Context.CurrentModel.haXe;
             ASExpr expression = new ASExpr();
@@ -3204,10 +3204,10 @@ namespace ASCompletion.Completion
             int minPos = 0;
             if (expression.ContextMember != null)
             {
-                minPos = Sci.PositionFromLine(expression.ContextMember.LineFrom);
+                minPos = sci.PositionFromLine(expression.ContextMember.LineFrom);
                 StringBuilder sbBody = new StringBuilder();
                 for (int i = expression.ContextMember.LineFrom; i <= expression.ContextMember.LineTo; i++)
-                    sbBody.Append(Sci.GetLine(i));
+                    sbBody.Append(sci.GetLine(i));
                 var body = sbBody.ToString();
 
                 var hasBody = FlagType.Function | FlagType.Constructor;
@@ -3223,7 +3223,7 @@ namespace ASCompletion.Completion
                     {
                         // cleanup function body & offset
                         int pos = mStart.Index + mStart.Length - 1;
-                        expression.BeforeBody = (position < Sci.PositionFromLine(expression.ContextMember.LineFrom) + pos);
+                        expression.BeforeBody = (position < sci.PositionFromLine(expression.ContextMember.LineFrom) + pos);
                         string pre = body.Substring(0, pos);
                         for (int i = 0; i < pre.Length - 1; i++)
                             if (pre[i] == '\r') { expression.FunctionOffset++; if (pre[i + 1] == '\n') i++; }
@@ -3235,12 +3235,12 @@ namespace ASCompletion.Completion
                 else
                 {
                     int eqPos = body.IndexOf('=');
-                    expression.BeforeBody = (eqPos < 0 || position < Sci.PositionFromLine(expression.ContextMember.LineFrom) + eqPos);
+                    expression.BeforeBody = (eqPos < 0 || position < sci.PositionFromLine(expression.ContextMember.LineFrom) + eqPos);
                 }
             }
 
             // get the word characters from the syntax definition
-            string characterClass = ScintillaControl.Configuration.GetLanguage(Sci.ConfigurationLanguage).characterclass.Characters;
+            string characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
 
             // get expression before cursor
             ContextFeatures features = ASContext.Context.Features;
@@ -3261,7 +3261,7 @@ namespace ASCompletion.Completion
             while (position > minPos)
             {
                 position--;
-                var style = Sci.BaseStyleAt(position);
+                var style = sci.BaseStyleAt(position);
                 if (style == 14) // regex literal
                 {
                     if (hadDot) inRegex = true;
@@ -3270,7 +3270,7 @@ namespace ASCompletion.Completion
                 else if (!IsCommentStyle(style))
                 {
                     var c2 = c;
-                    c = (char)Sci.CharAt(position);
+                    c = (char)sci.CharAt(position);
                     // end of regex literal
                     if (inRegex)
                     {
@@ -3316,7 +3316,7 @@ namespace ASCompletion.Completion
                         if (braceCount == 0 && sqCount == 0)
                         {
                             int testPos = position - 1;
-                            string testWord = GetWordLeft(Sci, ref testPos);
+                            string testWord = GetWordLeft(sci, ref testPos);
 
                             sbSub.Insert(0, c);
                             if (haXe && testWord == "cast") expression.SubExpressions.Add("cast");
@@ -3337,8 +3337,8 @@ namespace ASCompletion.Completion
                         {
                             expression.Separator = ';';
                             int testPos = position - 1;
-                            string testWord = GetWordLeft(Sci, ref testPos); // anonymous function
-                            string testWord2 = GetWordLeft(Sci, ref testPos) ?? "null"; // regular function
+                            string testWord = GetWordLeft(sci, ref testPos); // anonymous function
+                            string testWord2 = GetWordLeft(sci, ref testPos) ?? "null"; // regular function
                             if (testWord == features.functionKey || testWord == "catch"
                                 || testWord2 == features.functionKey
                                 || testWord2 == features.getKey || testWord2 == features.setKey)
@@ -3389,7 +3389,7 @@ namespace ASCompletion.Completion
                     else if (c == dot)
                     {
                         if (features.dot.Length == 2)
-                            hadDot = position > 0 && Sci.CharAt(position - 1) == features.dot[0];
+                            hadDot = position > 0 && sci.CharAt(position - 1) == features.dot[0];
                         else
                         {
                             hadDot = true;
@@ -3425,13 +3425,13 @@ namespace ASCompletion.Completion
                     }
                     else if (c == '{')
                     {
-                        expression.coma = DisambiguateComa(Sci, position, minPos);
+                        expression.coma = DisambiguateComa(sci, position, minPos);
                         expression.Separator = (expression.coma == ComaExpression.None) ? ';' : ',';
                         break;
                     }
                     else if (c == ',')
                     {
-                        expression.coma = DisambiguateComa(Sci, position, minPos);
+                        expression.coma = DisambiguateComa(sci, position, minPos);
                         expression.Separator = (expression.coma == ComaExpression.None) ? ';' : ',';
                         break;
                     }
@@ -3466,7 +3466,7 @@ namespace ASCompletion.Completion
             // check if there is a particular keyword
             if (expression.Separator == ' ') 
             {
-                expression.WordBefore = GetWordLeft(Sci, ref position);
+                expression.WordBefore = GetWordLeft(sci, ref position);
             }
 
             // result
@@ -3480,7 +3480,7 @@ namespace ASCompletion.Completion
         /// Find out in what context is a coma-separated expression
         /// </summary>
         /// <returns></returns>
-        internal static ComaExpression DisambiguateComa(ScintillaControl Sci, int position, int minPos)
+        internal static ComaExpression DisambiguateComa(ScintillaControl sci, int position, int minPos)
         {
             ContextFeatures features = ASContext.Context.Features;
             // find block start '(' or '{'
@@ -3489,7 +3489,7 @@ namespace ASCompletion.Completion
             int sqCount = 0;
             while (position > minPos)
             {
-                var c = (char)Sci.CharAt(position);
+                var c = (char)sci.CharAt(position);
                 if (c == ';')
                 {
                     return ComaExpression.None;
@@ -3498,8 +3498,8 @@ namespace ASCompletion.Completion
                 else if (c == ':')
                 {
                     position--;
-                    string word = GetWordLeft(Sci, ref position);
-                    word = GetWordLeft(Sci, ref position);
+                    string word = GetWordLeft(sci, ref position);
+                    word = GetWordLeft(sci, ref position);
                     if (word == features.varKey) return ComaExpression.VarDeclaration;
                     else continue;
                 }
@@ -3523,25 +3523,25 @@ namespace ASCompletion.Completion
                     if (parCount < 0)
                     {
                         position--;
-                        string word1 = GetWordLeft(Sci, ref position);
-                        if (word1 == "" && Sci.CharAt(position) == '>' && features.hasGenerics)
+                        string word1 = GetWordLeft(sci, ref position);
+                        if (word1 == "" && sci.CharAt(position) == '>' && features.hasGenerics)
                         {
                             // Generic function: function generic<K>(arg:K)
                             int groupCount = 1;
                             position--;
                             while (position >= 0 && groupCount > 0)
                             {
-                                c = (char)Sci.CharAt(position);
+                                c = (char)sci.CharAt(position);
                                 if ("({[<".IndexOf(c) > -1)
                                     groupCount--;
                                 else if (")}]>".IndexOf(c) > -1)
                                     groupCount++;
                                 position--;
                             }
-                            word1 = GetWordLeft(Sci, ref position);
+                            word1 = GetWordLeft(sci, ref position);
                         }
                         if (word1 == features.functionKey) return ComaExpression.FunctionDeclaration; // anonymous function
-                        string word2 = GetWordLeft(Sci, ref position);
+                        string word2 = GetWordLeft(sci, ref position);
                         if (word2 == features.functionKey || word2 == features.setKey || word2 == features.getKey)
                             return ComaExpression.FunctionDeclaration; // function declaration
                         if (features.hasDelegates && word2 == "delegate")
@@ -3560,17 +3560,17 @@ namespace ASCompletion.Completion
                     if (braceCount < 0)
                     {
                         position--;
-                        string word1 = GetWordLeft(Sci, ref position);
-                        c = (word1.Length > 0) ? word1[word1.Length - 1] : (char)Sci.CharAt(position);
+                        string word1 = GetWordLeft(sci, ref position);
+                        c = (word1.Length > 0) ? word1[word1.Length - 1] : (char)sci.CharAt(position);
                         if (":,(=".IndexOf(c) >= 0)
                         {
-                            string line = Sci.GetLine(Sci.LineFromPosition(position));
+                            string line = sci.GetLine(sci.LineFromPosition(position));
                             //TODO: Very limited check, the case|default could be in a previous line, or it could be something else in the same line
                             if (Regex.IsMatch(line, @"\b(case|default)\b.*:")) break; // case: code block
-                            if (c == ':' && Sci.ConfigurationLanguage == "haxe")
+                            if (c == ':' && sci.ConfigurationLanguage == "haxe")
                             {
                                 // Anonymous structures
-                                ComaExpression coma = DisambiguateComa(Sci, position, minPos);
+                                ComaExpression coma = DisambiguateComa(sci, position, minPos);
                                 if (coma == ComaExpression.FunctionDeclaration || coma == ComaExpression.VarDeclaration)
                                 {
                                     return ComaExpression.VarDeclaration;
@@ -3589,9 +3589,9 @@ namespace ASCompletion.Completion
                 else if (c == '?')
                 {
                     //TODO: Change to ASContext.Context.CurrentModel
-                    if (Sci.ConfigurationLanguage == "haxe") // Haxe optional fields
+                    if (sci.ConfigurationLanguage == "haxe") // Haxe optional fields
                     {
-                        ComaExpression coma = DisambiguateComa(Sci, position - 1, minPos);
+                        ComaExpression coma = DisambiguateComa(sci, position - 1, minPos);
                         if (coma == ComaExpression.FunctionDeclaration)
                         {
                             // Function optional argument
@@ -3601,8 +3601,8 @@ namespace ASCompletion.Completion
                         {
                             // Possible anonymous structure optional field. Check we are not in a ternary operator
                             position--;
-                            string word1 = GetWordLeft(Sci, ref position);
-                            c = (word1.Length > 0) ? word1[word1.Length - 1] : (char) Sci.CharAt(position);
+                            string word1 = GetWordLeft(sci, ref position);
+                            c = (word1.Length > 0) ? word1[word1.Length - 1] : (char) sci.CharAt(position);
                             if (c == ',' || c == '{') return coma;
                         }
                     }
@@ -3619,7 +3619,7 @@ namespace ASCompletion.Completion
         /// </summary>
         /// <param name="expression">Expression source</param>
         /// <returns>Local vars dictionnary (name, type)</returns>
-        static public MemberList ParseLocalVars(ASExpr expression)
+        public static MemberList ParseLocalVars(ASExpr expression)
         {
             FileModel model;
             if (!string.IsNullOrEmpty(expression.FunctionBody))
@@ -3679,7 +3679,7 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Extract sub-expressions
         /// </summary>
-        static private string ExtractSubex(Match m)
+        private static string ExtractSubex(Match m)
         {
             ExtractedSubex.Add(m.Value);
             return ".#" + (ExtractedSubex.Count - 1) + "~";
@@ -3688,8 +3688,7 @@ namespace ASCompletion.Completion
 
         #region tools_functions
 
-
-        static public bool IsLiteralStyle(int style)
+        public static bool IsLiteralStyle(int style)
         {
             return (style == 4) || (style == 6) || (style == 7);
         }
@@ -3697,7 +3696,7 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Text is word 
         /// </summary>
-        static public bool IsTextStyle(int style)
+        public static bool IsTextStyle(int style)
         {
             return style == 0 || style == 10 /*punctuation*/ || style == 11 /*identifier*/
                 || style == 16 /*word2 (secondary keywords: class name)*/
@@ -3708,7 +3707,7 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Text is word or keyword
         /// </summary>
-        static public bool IsTextStyleEx(int style)
+        public static bool IsTextStyleEx(int style)
         {
             return style == 0 || style == 5 /*word (secondary keywords)*/
                 || style == 10 /*punctuation*/ || style == 11 /*identifier*/
@@ -3718,25 +3717,25 @@ namespace ASCompletion.Completion
                 || style == 127 /*PHP*/;
         }
 
-        static public bool IsCommentStyle(int style)
+        public static bool IsCommentStyle(int style)
         {
             return style == 1 || style == 2 || style == 3 /*comments*/
                 || style == 17 || style == 18 /*javadoc tags*/;
         }
 
-        public static string GetWordLeft(ScintillaControl Sci, ref int position)
+        public static string GetWordLeft(ScintillaControl sci, ref int position)
         {
             // get the word characters from the syntax definition
-            string characterClass = ScintillaControl.Configuration.GetLanguage(Sci.ConfigurationLanguage).characterclass.Characters;
+            string characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
             string word = "";
             //string exclude = "(){};,+*/\\=:.%\"<>";
             bool skipWS = true;
             while (position >= 0)
             {
-                var style = Sci.BaseStyleAt(position);
+                var style = sci.BaseStyleAt(position);
                 if (IsTextStyleEx(style))
                 {
-                    var c = (char)Sci.CharAt(position);
+                    var c = (char)sci.CharAt(position);
                     if (c <= ' ')
                     {
                         if (!skipWS)
@@ -3788,7 +3787,7 @@ namespace ASCompletion.Completion
             }
         }
 
-        static private MemberList GetTypeParameters(MemberModel model)
+        private static MemberList GetTypeParameters(MemberModel model)
         {
             MemberList retVal = null;
             string template = model.Template;
@@ -3852,7 +3851,7 @@ namespace ASCompletion.Completion
             return retVal;
         }
 
-        static private MemberList GetVisibleElements()
+        private static MemberList GetVisibleElements()
         {
             MemberList known = ASContext.Context.GetVisibleExternalElements();
 
@@ -3872,7 +3871,7 @@ namespace ASCompletion.Completion
             return known;
         }
 
-        static private MemberList GetVisibleTypeParameters()
+        private static MemberList GetVisibleTypeParameters()
         {
             var typeParams = GetTypeParameters(ASContext.Context.CurrentClass);
 
@@ -3890,10 +3889,10 @@ namespace ASCompletion.Completion
         }
 
         /// <summary>
-        /// Returns whether or not position is insidse of an expression
+        /// Returns whether or not position is inside of an expression
         /// block in Haxe String interpolation ('${expr}')
         /// </summary>
-        static private bool IsInterpolationExpr(ScintillaControl sci, int position)
+        private static bool IsInterpolationExpr(ScintillaControl sci, int position)
         {
             ContextFeatures features = ASContext.Context.Features;
             if (!features.hasStringInterpolation ||
@@ -3922,7 +3921,7 @@ namespace ASCompletion.Completion
         /// Whether the character at the position is inside of the
         /// brackets of haxe metadata (@:allow(path) etc)
         /// </summary>
-        static private bool IsMetadataArgument(ScintillaControl sci, int position)
+        private static bool IsMetadataArgument(ScintillaControl sci, int position)
         {
             if (!ASContext.Context.CurrentModel.haXe || ASContext.Context.CurrentMember != null)
                 return false;
@@ -4612,5 +4611,3 @@ namespace ASCompletion.Completion
     }
     #endregion
 }
-
-

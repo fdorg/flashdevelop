@@ -25,6 +25,7 @@
     <version value="19.0" swf-version="30" />
     <version value="20.0" swf-version="31" />
     <version value="21.0" swf-version="32" />
+    <version value="22.0" swf-version="33" />
   </versions>
   <templates>
     <template target="as3" value="190 ActionScript 3 - AIR Mobile AS3 App" />

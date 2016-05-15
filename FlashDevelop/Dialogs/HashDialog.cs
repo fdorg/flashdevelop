@@ -233,23 +233,30 @@ namespace FlashDevelop.Dialogs
         private void InputTextBoxChanged(Object sender, EventArgs e)
         {
             Byte[] plainBytes = Encoding.UTF8.GetBytes(this.inputTextBox.Text);
-            if (this.hashComboBox.SelectedIndex == 1) 
+            try
             {
-                this.OutputHash(MD5.Compute(plainBytes));
+                if (this.hashComboBox.SelectedIndex == 1)
+                {
+                    this.OutputHash(MD5.Compute(plainBytes));
+                }
+                else if (this.hashComboBox.SelectedIndex == 2)
+                {
+                    this.OutputHash(SHA1.Compute(plainBytes));
+                }
+                else if (this.hashComboBox.SelectedIndex == 3)
+                {
+                    this.OutputHash(SHA256.Compute(plainBytes));
+                }
+                else if (this.hashComboBox.SelectedIndex == 4)
+                {
+                    this.OutputHash(RMD160.Compute(plainBytes));
+                }
+                else this.OutputHash(plainBytes);
             }
-            else if (this.hashComboBox.SelectedIndex == 2) 
+            catch (InvalidOperationException)
             {
-                this.OutputHash(SHA1.Compute(plainBytes));
+                this.outputTextBox.Text = "[ERROR: FIPS 140-2 compliance]";
             }
-            else if (this.hashComboBox.SelectedIndex == 3)
-            {
-                this.OutputHash(SHA256.Compute(plainBytes));
-            }
-            else if (this.hashComboBox.SelectedIndex == 4)
-            {
-                this.OutputHash(RMD160.Compute(plainBytes));
-            }
-            else this.OutputHash(plainBytes);
         }
 
         /// <summary>
