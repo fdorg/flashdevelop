@@ -432,5 +432,7 @@ namespace FlashDevelop
         {
             get { throw new NotImplementedException(); }
         }
+
+        public string CommandPromptExecutable { get; }
     }
 }

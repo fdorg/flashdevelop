@@ -20,7 +20,7 @@ namespace AirProperties
         private static AirVersion _version;
         private static Boolean _unsupportedVersion;
         private const String _BaseAirNamespace = "http://ns.adobe.com/air/application/";
-        private const String _MaxSupportedVersion = "21.0";
+        private const String _MaxSupportedVersion = "22.0";
 
         public enum AirVersion
         {
@@ -51,7 +51,8 @@ namespace AirProperties
             V180 = 25,    // Version 18.0
             V190 = 26,    // Version 19.0
             V200 = 27,    // Version 20.0
-            V210 = 26    // Version 21.0
+            V210 = 28,    // Version 21.0
+            V220 = 29     // Version 22.0
         }
 
         public static Exception LastException
@@ -133,11 +134,12 @@ namespace AirProperties
                     else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "19.0")) _version = AirVersion.V190;
                     else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "20.0")) _version = AirVersion.V200;
                     else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "21.0")) _version = AirVersion.V210;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "22.0")) _version = AirVersion.V220;
                     else
                     {
                         // Is a valid AIR descriptor, but version not supported so default to max supported version
                         _unsupportedVersion = true;
-                        _version = AirVersion.V210;
+                        _version = AirVersion.V220;
                     }
                 }
                 _namespaceManager = new XmlNamespaceManager(_descriptorFile.NameTable);
@@ -230,16 +232,14 @@ namespace AirProperties
 
         public static String GetProperty(string property)
         {
-            XmlNode propertyNode;
-            propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
+            var propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
             if (propertyNode != null) return propertyNode.InnerText.Trim();
             else return "";
         }
 
         private static String GetProperty(string property, XmlNode rootNode)
         {
-            XmlNode propertyNode;
-            propertyNode = rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
+            var propertyNode = rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
             if (propertyNode != null) return propertyNode.InnerText.Trim();
             else return "";
         }
@@ -251,9 +251,7 @@ namespace AirProperties
 
         public static void GetProperty(string property, TextBox field, string locale)
         {
-            XmlNode propertyNode;
-            XmlNode localeNode;
-            propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
+            var propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
             if (propertyNode != null)
             {
                 if (locale != String.Empty && propertyNode.HasChildNodes)
@@ -262,7 +260,7 @@ namespace AirProperties
                     {
                         if (childNode.Attributes != null)
                         {
-                            localeNode = childNode.Attributes.GetNamedItem("xml:lang");
+                            var localeNode = childNode.Attributes.GetNamedItem("xml:lang");
                             if (localeNode != null)
                             {
                                 if (localeNode.InnerText.Equals(locale))
@@ -284,11 +282,10 @@ namespace AirProperties
             }
             else field.Text = "";
         }
-        
+
         public static void GetProperty(string property, CheckBox field)
         {
-            XmlNode propertyNode;
-            propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
+            var propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
             if (propertyNode != null)
             {
                 if (propertyNode.InnerText.ToLower() == "true") field.Checked = true;
@@ -299,9 +296,8 @@ namespace AirProperties
 
         public static void GetProperty(string property, ComboBox field, int defaultIndex)
         {
-            XmlNode propertyNode;
             Boolean foundListItem = false;
-            propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
+            var propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
             if (propertyNode != null)
             {
                 foreach (ListItem listItem in field.Items)
@@ -319,10 +315,7 @@ namespace AirProperties
 
         public static void SetProperty(string property, string value)
         {
-            XmlNode propertyNode;
-            String childName;
-            int index;
-            propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
+            var propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
             if (propertyNode != null)
             {
                 if (value != "") propertyNode.InnerText = value;
@@ -337,8 +330,8 @@ namespace AirProperties
                 // Only add property if there is a value to add
                 if (value != "")
                 {
-                    index = property.IndexOf('/');
-                    childName = property.Substring(index + 1, property.Length - (index + 1));
+                    var index = property.IndexOf('/');
+                    var childName = property.Substring(index + 1, property.Length - (index + 1));
                     propertyNode = _descriptorFile.CreateNode(XmlNodeType.Element, childName, _namespaceManager.LookupNamespace("air"));
                     if (propertyNode != null)
                     {
@@ -351,10 +344,7 @@ namespace AirProperties
 
         public static void SetProperty(string property, TextBox field)
         {
-            XmlNode propertyNode;
-            String childName;
-            int index;
-            propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
+            var propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
             if (propertyNode != null)
             {
                 if (field.Text != "") propertyNode.InnerText = field.Text;
@@ -369,8 +359,8 @@ namespace AirProperties
                 // Only add property if there is a value to add
                 if (field.Text != "")
                 {
-                    index = property.IndexOf('/');
-                    childName = property.Substring(index + 1, property.Length - (index + 1));
+                    var index = property.IndexOf('/');
+                    var childName = property.Substring(index + 1, property.Length - (index + 1));
                     propertyNode = _descriptorFile.CreateNode(XmlNodeType.Element, childName, _namespaceManager.LookupNamespace("air"));
                     if (propertyNode != null)
                     {
@@ -383,10 +373,7 @@ namespace AirProperties
 
         public static void SetPropertyCData(string property, Control field)
         {
-            XmlNode propertyNode;
-            String childName;
-            int index;
-            propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
+            var propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
             if (propertyNode != null)
             {
                 if (field.Text != "")
@@ -406,8 +393,8 @@ namespace AirProperties
                 // Only add property if there is a value to add
                 if (field.Text != "")
                 {
-                    index = property.IndexOf('/');
-                    childName = property.Substring(index + 1, property.Length - (index + 1));
+                    var index = property.IndexOf('/');
+                    var childName = property.Substring(index + 1, property.Length - (index + 1));
                     propertyNode = _descriptorFile.CreateNode(XmlNodeType.Element, childName, _namespaceManager.LookupNamespace("air"));
                     if (propertyNode != null)
                     {
@@ -425,7 +412,6 @@ namespace AirProperties
         private static Boolean GetLocalizedElement(XmlNode propertyNode, String locale, ref XmlElement element)
         {
             Boolean found = false;
-            XmlNode localeAttribute;
             XmlElement localeElement = null;
             if (locale != String.Empty)
             {
@@ -435,7 +421,7 @@ namespace AirProperties
                     {
                         if (childNode.Attributes != null)
                         {
-                            localeAttribute = childNode.Attributes.GetNamedItem("xml:lang");
+                            var localeAttribute = childNode.Attributes.GetNamedItem("xml:lang");
                             if (localeAttribute != null)
                             {
                                 if (localeAttribute.InnerText.Equals(locale))
@@ -465,21 +451,17 @@ namespace AirProperties
 
         public static void SetProperty(string property, TextBox field, String locale, Boolean isDefaultLocale)
         {
-            XmlNode propertyNode;
             XmlElement localeElement = null;
-            Boolean elementExists;
-            String childName;
-            int index;
             // If no locale then just add/edit the node
             if (locale == String.Empty)
             {
                 SetProperty(property, field);
                 return;
             }
-            propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
+            var propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
             if (propertyNode != null)
             {
-                elementExists = GetLocalizedElement(propertyNode, locale, ref localeElement);
+                var elementExists = GetLocalizedElement(propertyNode, locale, ref localeElement);
                 localeElement.InnerText = field.Text;
                 if (!elementExists)
                 {
@@ -510,8 +492,8 @@ namespace AirProperties
                 // Only add property if there is a value to add
                 if (field.Text != "")
                 {
-                    index = property.IndexOf('/');
-                    childName = property.Substring(index + 1, property.Length - (index + 1));
+                    var index = property.IndexOf('/');
+                    var childName = property.Substring(index + 1, property.Length - (index + 1));
                     propertyNode = _descriptorFile.CreateNode(XmlNodeType.Element, childName, _namespaceManager.LookupNamespace("air"));
                     if (propertyNode != null)
                     {
@@ -526,10 +508,7 @@ namespace AirProperties
         
         public static void SetProperty(string property, CheckBox field)
         {
-            XmlNode propertyNode;
-            String childName;
-            int index;
-            propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
+            var propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
             if (propertyNode != null)
             {
                 if (field.CheckState != CheckState.Indeterminate)
@@ -547,8 +526,8 @@ namespace AirProperties
                 // Only add property if there is a value to add
                 if (field.CheckState != CheckState.Indeterminate)
                 {
-                    index = property.IndexOf('/');
-                    childName = property.Substring(index + 1, property.Length - (index + 1));
+                    var index = property.IndexOf('/');
+                    var childName = property.Substring(index + 1, property.Length - (index + 1));
                     propertyNode = _descriptorFile.CreateNode(XmlNodeType.Element, childName, _namespaceManager.LookupNamespace("air"));
                     if (propertyNode != null)
                     {
@@ -561,14 +540,10 @@ namespace AirProperties
 
         public static void SetProperty(string property, ComboBox field)
         {
-            XmlNode propertyNode;
-            ListItem selectedItem;
-            String childName;
-            int index;
-            selectedItem = (ListItem)field.SelectedItem;
+            var selectedItem = (ListItem)field.SelectedItem;
             if (selectedItem != null)
             {
-                propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
+                var propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
                 if (propertyNode != null)
                 {
                     if (selectedItem.Value != String.Empty) propertyNode.InnerText = selectedItem.Value;
@@ -583,8 +558,8 @@ namespace AirProperties
                     // Only add property if there is a value to add
                     if (selectedItem.Value != String.Empty)
                     {
-                        index = property.IndexOf('/');
-                        childName = property.Substring(index + 1, property.Length - (index + 1));
+                        var index = property.IndexOf('/');
+                        var childName = property.Substring(index + 1, property.Length - (index + 1));
                         propertyNode = _descriptorFile.CreateNode(XmlNodeType.Element, childName, _namespaceManager.LookupNamespace("air"));
                         if (propertyNode != null)
                         {
@@ -598,28 +573,22 @@ namespace AirProperties
 
         public static void RemoveLocalizedProperty(string property, String locale)
         {
-            XmlNode propertyNode;
             XmlElement localeElement = null;
-            Boolean elementExists;
-            propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
+            var propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
             if (propertyNode != null)
             {
-                elementExists = GetLocalizedElement(propertyNode, locale, ref localeElement);
+                var elementExists = GetLocalizedElement(propertyNode, locale, ref localeElement);
                 if (elementExists) propertyNode.RemoveChild(localeElement);
             }
         }
 
         public static void CreateLocalizedProperty(string property, String locale, Boolean isDefaultLocale)
         {
-            XmlNode propertyNode;
             XmlElement localeElement = null;
-            Boolean elementExists;
-            String childName;
-            int index;
-            propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
+            var propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
             if (propertyNode != null)
             {
-                elementExists = GetLocalizedElement(propertyNode, locale, ref localeElement);
+                var elementExists = GetLocalizedElement(propertyNode, locale, ref localeElement);
                 localeElement.InnerText = String.Empty;
                 if (!elementExists)
                 {
@@ -649,8 +618,8 @@ namespace AirProperties
             }
             else
             {
-                index = property.IndexOf('/');
-                childName = property.Substring(index + 1, property.Length - (index + 1));
+                var index = property.IndexOf('/');
+                var childName = property.Substring(index + 1, property.Length - (index + 1));
                 propertyNode = _descriptorFile.CreateNode(XmlNodeType.Element, childName, _namespaceManager.LookupNamespace("air"));
                 if (propertyNode != null)
                 {
@@ -671,36 +640,28 @@ namespace AirProperties
         */
         private static XmlNode GetParentNode(string property)
         {
-            XmlNode parentNode;
-            String parentName;
-            int index;
-            index = property.IndexOf('/');
+            var index = property.IndexOf('/');
             if (index == -1) return _rootNode;
-            else
+            var parentName = property.Substring(0, index);
+            var parentNode = _rootNode.SelectSingleNode("air:" + parentName, _namespaceManager);
+            if (parentNode == null)
             {
-                parentName = property.Substring(0, index);
-                parentNode = _rootNode.SelectSingleNode("air:" + parentName, _namespaceManager);
-                if (parentNode == null)
-                {
-                    parentNode = _descriptorFile.CreateNode(XmlNodeType.Element, parentName, _namespaceManager.LookupNamespace("air"));
-                    _rootNode.AppendChild(parentNode);
-                }
-                return parentNode;
+                parentNode = _descriptorFile.CreateNode(XmlNodeType.Element, parentName, _namespaceManager.LookupNamespace("air"));
+                _rootNode.AppendChild(parentNode);
             }
+            return parentNode;
         }
 
         public static void GetPropertyLocales(string property, List<string> locales)
         {
-            XmlNode propertyNode;
-            XmlNode localeNode;
-            propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
+            var propertyNode = _rootNode.SelectSingleNode("air:" + property.Replace("/", "/air:"), _namespaceManager);
             if (propertyNode != null && propertyNode.HasChildNodes)
             {
                 foreach (XmlNode childNode in propertyNode.ChildNodes)
                 {
                     if (childNode.Attributes != null)
                     {
-                        localeNode = childNode.Attributes.GetNamedItem("xml:lang");
+                        var localeNode = childNode.Attributes.GetNamedItem("xml:lang");
                         if (localeNode != null)
                         {
                             if (!locales.Contains(localeNode.InnerText))
@@ -719,17 +680,15 @@ namespace AirProperties
         //collection of 'fileType' business objects rather than straight XML
         public static void GetFileTypes(List<AirFileType> fileTypes)
         {
-            XmlNode propertyNode;
-            AirFileType fileType;
             fileTypes.Clear();
-            propertyNode = _rootNode.SelectSingleNode("air:fileTypes", _namespaceManager);
+            var propertyNode = _rootNode.SelectSingleNode("air:fileTypes", _namespaceManager);
             if (propertyNode != null && propertyNode.HasChildNodes)
             {
                 // Loop through collection of xml fileType nodes
                 foreach (XmlNode childNode in propertyNode.ChildNodes)
                 {
                     // Create a new fileType business object
-                    fileType = new AirFileType();
+                    var fileType = new AirFileType();
                     fileType.Name = GetProperty("name", childNode);
                     fileType.Extension = GetProperty("extension", childNode);
                     fileType.Description = GetProperty("description", childNode);
@@ -752,10 +711,8 @@ namespace AirProperties
         // away from the UI, but that's the way it is.
         public static void SetFileTypes(List<AirFileType> fileTypes)
         {
-            XmlNode fileTypesNode;
-            XmlNode fileTypeNode;
             // Get fileTypes node
-            fileTypesNode = _rootNode.SelectSingleNode("air:fileTypes", _namespaceManager);
+            var fileTypesNode = _rootNode.SelectSingleNode("air:fileTypes", _namespaceManager);
             if (fileTypesNode == null)
             {
                 fileTypesNode = _descriptorFile.CreateNode(XmlNodeType.Element, "fileTypes", _namespaceManager.LookupNamespace("air"));
@@ -770,7 +727,7 @@ namespace AirProperties
                 foreach (AirFileType fileType in fileTypes)
                 {
                     // Create a new fileType node
-                    fileTypeNode = _descriptorFile.CreateNode(XmlNodeType.Element, "fileType", _namespaceManager.LookupNamespace("air"));
+                    var fileTypeNode = _descriptorFile.CreateNode(XmlNodeType.Element, "fileType", _namespaceManager.LookupNamespace("air"));
                     if (fileTypeNode != null)
                     {
                         CreateChildNode(fileTypeNode, "name", fileType.Name);
@@ -798,10 +755,8 @@ namespace AirProperties
         // collection of 'extension' business objects rather than straight XML
         public static void GetExtensions(List<AirExtension> extensions)
         {
-            XmlNode propertyNode;
-            AirExtension extension;
             extensions.Clear();
-            propertyNode = _rootNode.SelectSingleNode("air:extensions", _namespaceManager);
+            var propertyNode = _rootNode.SelectSingleNode("air:extensions", _namespaceManager);
             if (propertyNode != null && propertyNode.HasChildNodes)
             {
                 // Loop through collection of xml fileType nodes
@@ -811,7 +766,7 @@ namespace AirProperties
                         continue;
 
                     // Create a new extension business object
-                    extension = new AirExtension();
+                    var extension = new AirExtension();
                     extension.ExtensionId = childNode.InnerText.Trim();
                     // Add to the business object collection
                     extensions.Add(extension);
@@ -824,9 +779,8 @@ namespace AirProperties
         // away from the UI, but that's the way it is.
         public static void SetExtensions(List<AirExtension> extensions)
         {
-            XmlNode extensionsNode;
             // Get fileTypes node
-            extensionsNode = _rootNode.SelectSingleNode("air:extensions", _namespaceManager);
+            var extensionsNode = _rootNode.SelectSingleNode("air:extensions", _namespaceManager);
             if (extensionsNode == null)
             {
                 extensionsNode = _descriptorFile.CreateNode(XmlNodeType.Element, "extensions", _namespaceManager.LookupNamespace("air"));
@@ -852,18 +806,14 @@ namespace AirProperties
         private static void CreateChildNode(XmlNode parentNode, String childNodeName, String childNodeValue)
         {
             XmlNode subParentNode;
-            XmlNode childNode;
-            String subParentName;
-            String childName;
-            int index;
             if (childNodeValue == String.Empty) return;
             // Determine if there is a sub parent
-            index = childNodeName.IndexOf('/');
+            var index = childNodeName.IndexOf('/');
             if (index == -1) subParentNode = parentNode;
             else
             {
                 //create a sub parent element if required
-                subParentName = childNodeName.Substring(0, index);
+                var subParentName = childNodeName.Substring(0, index);
                 subParentNode = parentNode.SelectSingleNode("air:" + subParentName, _namespaceManager);
                 if (subParentNode == null)
                 {
@@ -874,8 +824,8 @@ namespace AirProperties
                     }
                 }
             }
-            childName = childNodeName.Substring(index + 1, childNodeName.Length - (index + 1));
-            childNode = _descriptorFile.CreateNode(XmlNodeType.Element, childName, _namespaceManager.LookupNamespace("air"));
+            var childName = childNodeName.Substring(index + 1, childNodeName.Length - (index + 1));
+            var childNode = _descriptorFile.CreateNode(XmlNodeType.Element, childName, _namespaceManager.LookupNamespace("air"));
             if (childNode != null)
             {
                 childNode.InnerText = childNodeValue;

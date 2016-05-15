@@ -88,6 +88,7 @@ namespace FlashDevelop
 
         public DockContent OpenEditableDocument(string file, bool restoreFileState)
         {
+            if (CurrentDocument != null && CurrentDocument.FileName == file) return CurrentDocument as DockContent;
             throw new NotImplementedException();
         }
 
