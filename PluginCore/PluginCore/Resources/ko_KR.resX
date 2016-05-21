@@ -5996,7 +5996,7 @@ Complete: 현재 파일, 프로젝트 파일 및 수동 새로 고침.</value>
     <comment>Added after 5.0.2</comment>
   </data>
   <data name="ASCompletion.Description.AddClosingBracesData" xml:space="preserve">
-    <value>List of auto closing braces and their trigger options.</value>
+    <value>자동 괄호 닫기 기능에 사용되는 괄호 목록.</value>
     <comment>Added after 5.0.2</comment>
   </data>
   <data name="CodeRefactor.Label.Move" xml:space="preserve">
@@ -6041,6 +6041,60 @@ Complete: 현재 파일, 프로젝트 파일 및 수동 새로 고침.</value>
   </data>
   <data name="CodeRefactor.Info.ReplacedOccurrences" xml:space="preserve">
     <value>Replaced {0} occurrence[s]</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ASCompletion.Description.BracesAfterChars" xml:space="preserve">
+    <value>문자열에 포함된 (또는 포함되지 않은) 문자 뒤에 자동으로 닫는 괄호를 삽입합니다. </value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ASCompletion.Description.BracesAfterCharsMode" xml:space="preserve">
+    <value>AfterChars 모드:
+Inclusive - 문자열에 포함된 문자 뒤에 자동 삽입.
+Exclusive - 문자열에 포함되지 않는 문자 뒤에 자동 삽입.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ASCompletion.Description.BracesAfterStyles" xml:space="preserve">
+    <value>지정된 (또는 지정되지 않은) 스타일 뒤에 자동으로 닫는 괄호를 삽입합니다.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ASCompletion.Description.BracesAfterStylesMode" xml:space="preserve">
+    <value>AfterStyles 모드:
+Inclusive - 지정된 스타일 뒤에 자동 삽입.
+Exclusive - 지정되지 않은 스타일 뒤에 자동 삽입.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ASCompletion.Description.BracesBeforeChars" xml:space="preserve">
+    <value>문자열에 포함된 (또는 포함되지 않은) 문자 앞에 자동으로 닫는 괄호를 삽입합니다.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ASCompletion.Description.BracesBeforeCharsMode" xml:space="preserve">
+    <value>AfterChars 모드:
+Inclusive - 문자열에 포함된 문자 앞에 자동 삽입.
+Exclusive - 문자열에 포함되지 않는 문자 앞에 자동 삽입.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ASCompletion.Description.BracesBeforeStyles" xml:space="preserve">
+    <value>지정된 (또는 지정되지 않은) 스타일 앞에 자동으로 닫는 괄호를 삽입합니다.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ASCompletion.Description.BracesBeforeStylesMode" xml:space="preserve">
+    <value>AfterStyles 모드:
+Inclusive - 지정된 스타일 앞에 자동 삽입.
+Exclusive - 지정되지 않은 스타일 앞에 자동 삽입.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ASCompletion.Description.BracesClosing" xml:space="preserve">
+    <value>닫는 괄호 문자</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ASCompletion.Description.BracesOpening" xml:space="preserve">
+    <value>여는 괄호 문자.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ASCompletion.Description.BracesTriggerLogic" xml:space="preserve">
+    <value>닫는 괄호 자동 삽입에 사용할 논리 연산자:
+OR - 하나 이상의 조건을 만족할때.
+AND - 모든 조건을 만족할때.</value>
     <comment>Added after 5.2.0</comment>
   </data>
 </root>
