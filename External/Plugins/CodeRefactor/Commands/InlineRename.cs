@@ -59,7 +59,7 @@ namespace CodeRefactor.Commands
         ITabbedDocument currentDoc;
         InlineRenameDialog dialog;
 
-        ReferenceInfo declaration;
+        ReferenceInfo currentRef;
         ReferenceInfo[] refs;
 
         DelayedExecution delayedExecution;
@@ -273,9 +273,9 @@ namespace CodeRefactor.Commands
                     var @ref = new ReferenceInfo { Index = index, Value = value };
                     tempRefs.Add(@ref);
 
-                    if (declaration == null && match.Index == start)
+                    if (currentRef == null && match.Index == start)
                     {
-                        declaration = @ref;
+                        currentRef = @ref;
                     }
                     else if (previewChanges && (!insideComment || includeComments) && (!insideString || includeStrings))
                     {
@@ -428,7 +428,7 @@ namespace CodeRefactor.Commands
             dialog.Dispose();
             dialog = null;
 
-            declaration = null;
+            currentRef = null;
             refs = null;
 
             history.Clear();
@@ -478,7 +478,7 @@ namespace CodeRefactor.Commands
                     int s = @ref.Index;
                     int e = s + oldLength;
 
-                    if (@ref == declaration)
+                    if (@ref == currentRef)
                     {
                         if (!decl) continue;
                     }
@@ -507,8 +507,8 @@ namespace CodeRefactor.Commands
                         Highlight(s, newLength);
                 }
 
-                start = declaration.Index;
-                end = start + declaration.Value.Length;
+                start = currentRef.Index;
+                end = start + currentRef.Value.Length;
 
                 pos += start;
                 sci.SetSel(pos, pos);
