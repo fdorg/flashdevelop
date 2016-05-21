@@ -29,6 +29,7 @@ namespace ASCompletion.Completion
         /// The opening brace character.
         /// </summary>
         [Category("Brace Character")]
+        [Description("The opening brace character.")]
         public char Opening
         {
             get { return opening; }
@@ -39,6 +40,7 @@ namespace ASCompletion.Completion
         /// The closing brace character.
         /// </summary>
         [Category("Brace Character")]
+        [Description("The closing brace character.")]
         public char Closing
         {
             get { return closing; }
@@ -49,6 +51,7 @@ namespace ASCompletion.Completion
         /// An array of Unicode characters to automatically close brace after.
         /// </summary>
         [Category("Trigger Auto Close")]
+        [Description("List of characters to automatically add a closing brace after.")]
         public string AfterChars
         {
             get { return afterChars; }
@@ -59,6 +62,7 @@ namespace ASCompletion.Completion
         /// Gets or set the mode to treat <see cref="AfterChars"/> as.
         /// </summary>
         [Category("Trigger Auto Close"), DefaultValue(Mode.Inclusive)]
+        [Description("The mode for AfterChars:\nInclusive - Add closing brace after the characters.\nExclusive - Do not add closing brace after the characters.")]
         public Mode AfterCharsMode
         {
             get { return acMode; }
@@ -69,6 +73,7 @@ namespace ASCompletion.Completion
         /// An array of <see cref="Style"/> values to automatically close brace after.
         /// </summary>
         [Category("Trigger Auto Close")]
+        [Description("List of styles to automatically add a closing brace after.")]
         public Style[] AfterStyles
         {
             get { return afterStyles; }
@@ -79,6 +84,7 @@ namespace ASCompletion.Completion
         /// Gets or set the mode to treat <see cref="AfterStyles"/> as.
         /// </summary>
         [Category("Trigger Auto Close"), DefaultValue(Mode.Inclusive)]
+        [Description("The mode for AfterStyles:\nInclusive - Add closing brace after the styles.\nExclusive - Do not add closing brace after the styles.")]
         public Mode AfterStylesMode
         {
             get { return asMode; }
@@ -89,6 +95,7 @@ namespace ASCompletion.Completion
         /// An array of Unicode characters to automatically close brace before.
         /// </summary>
         [Category("Trigger Auto Close")]
+        [Description("List of characters to automatically add a closing brace before.")]
         public string BeforeChars
         {
             get { return beforeChars; }
@@ -99,6 +106,7 @@ namespace ASCompletion.Completion
         /// Gets or set the mode to treat <see cref="BeforeChars"/> as.
         /// </summary>
         [Category("Trigger Auto Close"), DefaultValue(Mode.Inclusive)]
+        [Description("The mode for BeforeChars:\nInclusive - Add closing brace before the characters.\nExclusive - Do not add closing brace before the characters.")]
         public Mode BeforeCharsMode
         {
             get { return bcMode; }
@@ -109,6 +117,7 @@ namespace ASCompletion.Completion
         /// An array of <see cref="Style"/> values to automatically close brace before.
         /// </summary>
         [Category("Trigger Auto Close")]
+        [Description("List of styles to automatically add a closing brace before.")]
         public Style[] BeforeStyles
         {
             get { return beforeStyles; }
@@ -119,6 +128,7 @@ namespace ASCompletion.Completion
         /// Gets or set the mode to treat <see cref="BeforeStyles"/> as.
         /// </summary>
         [Category("Trigger Auto Close"), DefaultValue(Mode.Inclusive)]
+        [Description("The mode for BeforeStyles:\nInclusive - Add closing brace before the styles.\nExclusive - Do not add closing brace before the styles.")]
         public Mode BeforeStylesMode
         {
             get { return bsMode; }
@@ -129,6 +139,7 @@ namespace ASCompletion.Completion
         /// The logic to use for conditions for automatic closing.
         /// </summary>
         [Category("Trigger Auto Close"), DefaultValue(Logic.OR)]
+        [Description("The logic to use for the automatic insertion of closing braces.\nOR - One or more conditions are met.\nAND - All conditions are met.")]
         public Logic TriggerLogic
         {
             get { return logic; }

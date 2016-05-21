@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using ASCompletion.Completion;
 using Ookii.Dialogs;
+using PluginCore.Controls;
 using PluginCore.Localization;
 
 namespace ASCompletion.Settings
@@ -384,6 +385,7 @@ namespace ASCompletion.Settings
 
         [DisplayName("Add Closing Braces Data")]
         [LocalizedCategory("ASCompletion.Category.Generation"), LocalizedDescription("ASCompletion.Description.AddClosingBracesData")]
+        [Editor(typeof(DescriptiveCollectionEditor<Braces>), typeof(UITypeEditor))]
         public Braces[] AddClosingBracesData
         {
             get { return addClosingBracesData ?? DEFAULT_ADD_CLOSING_BRACES_DATA; }

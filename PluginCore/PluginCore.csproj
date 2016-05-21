@@ -312,6 +312,7 @@
     <Compile Include="PluginCore\Controls\Common.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="PluginCore\Controls\DescriptiveCollectionEditor.cs" />
     <Compile Include="PluginCore\Controls\MessageBoxManager.cs" />
     <Compile Include="PluginCore\Controls\ScrollBarEx.cs">
       <SubType>Component</SubType>
