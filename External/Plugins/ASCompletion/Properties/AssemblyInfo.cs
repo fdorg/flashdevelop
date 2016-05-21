@@ -17,3 +17,4 @@ using PluginCore;
 [assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.MainAssembly)]
 
 [assembly: InternalsVisibleTo("ASCompletion.Tests")]
+[assembly: InternalsVisibleTo("CodeRefactor.Tests")]

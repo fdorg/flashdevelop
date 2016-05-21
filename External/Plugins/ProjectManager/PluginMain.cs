@@ -1429,7 +1429,7 @@ namespace ProjectManager
             if (!de.Handled)
             {
                 ProcessStartInfo cmdPrompt = new ProcessStartInfo();
-                cmdPrompt.FileName = "cmd.exe";
+                cmdPrompt.FileName = PluginBase.MainForm.CommandPromptExecutable;
                 cmdPrompt.WorkingDirectory = Tree.SelectedPath;
                 Process.Start(cmdPrompt);
             }

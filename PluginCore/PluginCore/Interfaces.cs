@@ -421,6 +421,10 @@ namespace PluginCore
         /// Gets the full human readable version string.
         /// </summary>
         String ProductName { get; }
+        /// <summary>
+        /// Gets the command prompt executable (custom or cmd.exe by default).
+        /// </summary>
+        String CommandPromptExecutable { get; }
 
         #endregion
     }
@@ -476,6 +480,7 @@ namespace PluginCore
         String CustomSnippetDir { get; set; }
         String CustomTemplateDir { get; set; }
         String CustomProjectsDir { get; set; }
+        String CustomCommandPrompt { get; set; }
         Boolean DisableFindOptionSync { get; set; }
         Boolean DisableSimpleQuickFind { get; set; }
         Boolean DisableReplaceFilesConfirm { get; set; }
