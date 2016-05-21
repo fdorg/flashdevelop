@@ -55,7 +55,7 @@ namespace ASCompletion.Completion
         public string AfterChars
         {
             get { return afterChars; }
-            set { afterChars = value; }
+            set { afterChars = Unescape(value); }
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace ASCompletion.Completion
         public string BeforeChars
         {
             get { return beforeChars; }
-            set { beforeChars = value; }
+            set { beforeChars = Unescape(value); }
         }
 
         /// <summary>
@@ -190,6 +190,14 @@ namespace ASCompletion.Completion
         static bool Check<T>(IEnumerable<T> array, T value, Mode mode)
         {
             return mode == 0 == array.Contains(value);
+        }
+
+        /// <summary>
+        /// Unescapes the specified string.
+        /// </summary>
+        static string Unescape(string text)
+        {
+            return text.Replace(@"\t", "\t").Replace(@"\r", "\r").Replace(@"\n", "\n").Replace(@"\\", "\\");
         }
 
         /// <summary>
