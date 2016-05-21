@@ -1,1 +1,1 @@
-A project written in ActionScript 3 for the Flash 9+ Player - optimized with a preloader
+A project written in ActionScript 3 for the Flash 21+ Player - optimized with a preloader

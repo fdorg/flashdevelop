@@ -12,6 +12,9 @@ ScrollBar.UseGlobally=True
 # Flat, Popup, Standard, System
 #ComboBox.FlatStyle=Popup
 
+#ProjectManager.TargetBuildSelectorWidth=85
+#ProjectManager.ConfigurationSelectorWidth=120
+
 ScrollBar.UseCustom=True
 ScrollBar.HotForeColor=#686A68
 ScrollBar.ArrowColor=#686A68
