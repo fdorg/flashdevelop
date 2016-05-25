@@ -2081,13 +2081,15 @@ namespace ASCompletion.Completion
             FlagType kind = job.Equals(GeneratorJobType.Constant) ? FlagType.Constant : FlagType.Variable;
             // evaluate, if the variable (or constant) should be generated in other class
             ASResult varResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
+            var memberIsStatic = member != null && (member.Flags & FlagType.Static) > 0;
             if (ASContext.CommonSettings.GenerateScope && !varResult.Context.Value.Contains(ASContext.Context.Features.dot))
             {
                 position = sci.CurrentPos;
                 var start = sci.WordStartPosition(position, true);
                 var length = sci.MBSafeTextLength(contextToken);
                 sci.SetSel(start, start + length);
-                var text = "this." + contextToken;
+                var scope = memberIsStatic ? inClass.QualifiedName : "this";
+                var text = string.Format("{0}.{1}", scope, contextToken);
                 sci.ReplaceSel(text);
                 UpdateLookupPosition(position, text.Length - length);
             }
@@ -2096,15 +2098,14 @@ namespace ASCompletion.Completion
             if (contextOwnerPos != -1)
             {
                 ASResult contextOwnerResult = ASComplete.GetExpressionType(sci, contextOwnerPos);
-                if (contextOwnerResult != null)
+                if (contextOwnerResult != null
+                    && (contextOwnerResult.Member == null || (contextOwnerResult.Member.Flags & FlagType.Constructor) > 0)
+                    && contextOwnerResult.Type != null)
                 {
-                    if (contextOwnerResult.Member == null && contextOwnerResult.Type != null)
-                    {
-                        isStatic.Flags |= FlagType.Static;
-                    }
+                    isStatic.Flags |= FlagType.Static;
                 }
             }
-            else if (member != null && (member.Flags & FlagType.Static) > 0)
+            else if (memberIsStatic)
             {
                 isStatic.Flags |= FlagType.Static;
             }
@@ -2572,16 +2573,17 @@ namespace ASCompletion.Completion
             Visibility visibility = job.Equals(GeneratorJobType.FunctionPublic) ? Visibility.Public : GetDefaultVisibility(inClass);
             int wordPos = sci.WordEndPosition(sci.CurrentPos, true);
             List<FunctionParameter> functionParameters = ParseFunctionParameters(sci, wordPos);
-
             // evaluate, if the function should be generated in other class
             ASResult funcResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
+            var memberIsStatic = member != null && (member.Flags & FlagType.Static) > 0;
             if (ASContext.CommonSettings.GenerateScope && !funcResult.Context.Value.Contains(ASContext.Context.Features.dot))
             {
                 position = sci.CurrentPos;
                 var start = sci.WordStartPosition(position, true);
                 var length = sci.MBSafeTextLength(contextToken);
                 sci.SetSel(start, start + length);
-                var text = "this." + contextToken;
+                var scope = memberIsStatic ? inClass.QualifiedName : "this";
+                var text = string.Format("{0}.{1}", scope, contextToken);
                 sci.ReplaceSel(text);
                 UpdateLookupPosition(position, text.Length - length);
             }
@@ -2590,15 +2592,14 @@ namespace ASCompletion.Completion
             if (contextOwnerPos != -1)
             {
                 ASResult contextOwnerResult = ASComplete.GetExpressionType(sci, contextOwnerPos);
-                if (contextOwnerResult != null)
+                if (contextOwnerResult != null
+                    && (contextOwnerResult.Member == null || (contextOwnerResult.Member.Flags & FlagType.Constructor) > 0)
+                    && contextOwnerResult.Type != null)
                 {
-                    if (contextOwnerResult.Member == null && contextOwnerResult.Type != null)
-                    {
-                        isStatic.Flags |= FlagType.Static;
-                    }
+                    isStatic.Flags |= FlagType.Static;
                 }
             }
-            else if (member != null && (member.Flags & FlagType.Static) > 0)
+            else if (memberIsStatic)
             {
                 isStatic.Flags |= FlagType.Static;
             }
@@ -2646,7 +2647,6 @@ namespace ASCompletion.Completion
             if (latest == null || (!isOtherClass && member == null))
             {
                 latest = GetLatestMemberForFunction(inClass, visibility, isStatic);
-
                 // if we generate function in current class..
                 if (!isOtherClass)
                 {
@@ -2692,16 +2692,16 @@ namespace ASCompletion.Completion
             // add imports to function argument types
             if (functionParameters.Count > 0)
             {
-                List<string> l = new List<string>();
-                foreach (FunctionParameter fp in functionParameters)
+                List<string> typesUsed = new List<string>();
+                foreach (FunctionParameter parameter in functionParameters)
                 {
                     try
                     {
-                        l.Add(fp.paramQualType);
+                        typesUsed.Add(parameter.paramQualType);
                     }
                     catch (Exception) { }
                 }
-                int o = AddImportsByName(l, sci.LineFromPosition(position));
+                int o = AddImportsByName(typesUsed, sci.LineFromPosition(position));
                 position += o;
                 if (latest == null)
                     sci.SetSel(position, sci.WordEndPosition(position, true));
@@ -2709,9 +2709,9 @@ namespace ASCompletion.Completion
                     sci.SetSel(position, position);
             }
             List<MemberModel> parameters = new List<MemberModel>();
-            foreach (FunctionParameter param in functionParameters)
+            foreach (FunctionParameter parameter in functionParameters)
             {
-                parameters.Add(new MemberModel(param.paramName, param.paramType, FlagType.ParameterVar, 0));
+                parameters.Add(new MemberModel(parameter.paramName, parameter.paramType, FlagType.ParameterVar, 0));
             }
             var newMember = NewMember(contextToken, isStatic, FlagType.Function, visibility);
             newMember.Parameters = parameters;
