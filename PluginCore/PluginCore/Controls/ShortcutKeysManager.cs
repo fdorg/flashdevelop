@@ -6,6 +6,9 @@ using PluginCore.Controls;
 
 namespace PluginCore
 {
+    /// <summary>
+    /// A static manager class for advanced shortcut keys.
+    /// </summary>
     public static class ShortcutKeysManager
     {
         private static PropertyInfo p_Shortcuts;
@@ -39,6 +42,10 @@ namespace PluginCore
 
         #region Methods
 
+        /// <summary>
+        /// Retrieves a value indicating whether the specified shortcut key is used by any of the <see cref="ToolStrip"/> controls of a form.
+        /// </summary>
+        /// <param name="shortcut">The shortcut key for which to search.</param>
         public static bool IsShortcutDefined(ShortcutKeys shortcut)
         {
             foreach (ToolStrip strip in ToolStrips)
@@ -51,6 +58,11 @@ namespace PluginCore
             return false;
         }
 
+        /// <summary>
+        /// Retrieves a value indicating whether a defined shortcut key is valid.
+        /// </summary>
+        /// <param name="shortcut">The shortcut key to test for validity.</param>
+        /// <returns></returns>
         public static bool IsValidShortcut(ShortcutKeys shortcut)
         {
             if (shortcut.IsExtended)
@@ -60,11 +72,19 @@ namespace PluginCore
             return IsValidSimpleShortcut(shortcut.First);
         }
 
+        /// <summary>
+        /// Retrieves a value indicating whether a defined shortcut key is a valid simple shortcut.
+        /// </summary>
+        /// <param name="first">The shortcut key to test for validity.</param>
         public static bool IsValidSimpleShortcut(Keys first)
         {
             return ToolStripManager.IsValidShortcut(first);
         }
 
+        /// <summary>
+        /// Retrieves a value indicating whether a defined shortcut key is valid for the first part of an extended shortcut.
+        /// </summary>
+        /// <param name="first">The shortcut key to test for validity.</param>
         public static bool IsValidExtendedShortcutFirst(Keys first)
         {
             if (first == 0)
@@ -88,6 +108,10 @@ namespace PluginCore
             return true;
         }
 
+        /// <summary>
+        /// Retrieves a value indicating whether a defined shortcut key is valid for the second part of an extended shortcut.
+        /// </summary>
+        /// <param name="first">The shortcut key to test for validity.</param>
         public static bool IsValidExtendedShortcutSecond(Keys second)
         {
             if (second == 0)
@@ -105,6 +129,11 @@ namespace PluginCore
             return true;
         }
 
+        /// <summary>
+        /// Processes a command key. Do not call this method.
+        /// </summary>
+        /// <param name="m">A <see cref="Message"/>, passed by reference, that represents the window message to process.</param>
+        /// <param name="keyData">A <see cref="ShortcutKeys"/> value that represents the key to process.</param>
         public static bool ProcessCmdKey(ref Message m, ShortcutKeys keyData)
         {
             if (IsValidShortcut(keyData))
