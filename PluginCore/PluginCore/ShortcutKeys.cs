@@ -148,18 +148,6 @@ namespace PluginCore
             get { return m_second != 0; }
         }
 
-        internal object Value
-        {
-            get
-            {
-                if (IsExtended)
-                {
-                    return this;
-                }
-                return m_first;
-            }
-        }
-
         #endregion
 
         #region Methods

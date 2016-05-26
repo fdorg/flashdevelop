@@ -181,7 +181,7 @@ namespace PluginCore
             for (int i = 0; i < ToolStrips.Count; i++)
             {
                 var strip = ToolStrips[i] as ToolStrip;
-                bool found = false;
+                bool flag = false;
                 bool isAssignedToDropDownItem = false;
                 if (strip == null)
                 {
@@ -203,19 +203,19 @@ namespace PluginCore
                                 {
                                     continue;
                                 }
-                                found = true;
+                                flag = true;
                             }
                         }
                     }
-                    if (!found)
+                    if (!flag)
                     {
                         var toplevelOwnerToolStrip = strip.GetToplevelOwnerToolStrip();
                         if (toplevelOwnerToolStrip != null && control != null)
                         {
                             var rootHWnd = WindowsFormsUtils_GetRootHWnd(toplevelOwnerToolStrip);
                             var controlRef = WindowsFormsUtils_GetRootHWnd(control);
-                            found = rootHWnd.Handle == controlRef.Handle;
-                            if (found)
+                            flag = rootHWnd.Handle == controlRef.Handle;
+                            if (flag)
                             {
                                 var form = Control.FromHandle(controlRef.Handle) as Form;
                                 if (form != null && form.IsMdiContainer)
@@ -223,13 +223,13 @@ namespace PluginCore
                                     var form2 = toplevelOwnerToolStrip.FindForm();
                                     if (form2 != form && form2 != null)
                                     {
-                                        found = form2 == form.ActiveMdiChild;
+                                        flag = form2 == form.ActiveMdiChild;
                                     }
                                 }
                             }
                         }
                     }
-                    if (found || isAssignedToDropDownItem)
+                    if (flag || isAssignedToDropDownItem)
                     {
                         var item = strip.Shortcuts()[shortcut] as ToolStripMenuItemEx;
                         if (item != null && item.ProcessCmdKeyInternal(ref m, shortcut))

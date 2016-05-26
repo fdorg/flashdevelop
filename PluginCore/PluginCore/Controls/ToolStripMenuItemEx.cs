@@ -86,27 +86,46 @@ namespace PluginCore.Controls
                 }
                 if (!m_shortcutKeys.Equals(value))
                 {
-                    if (Owner != null)
+                    if (value.IsExtended)
                     {
-                        if (!m_shortcutKeys.IsNone)
+                        if (m_shortcutKeys.IsSimple)
                         {
-                            Owner.Shortcuts().Remove(m_shortcutKeys.Value);
+                            base.ShortcutKeys = 0;
                         }
-                        if (!value.IsNone)
+                        if (Owner != null)
                         {
-                            var Owner_Shortcuts = Owner.Shortcuts();
-                            if (Owner_Shortcuts.Contains(value.Value))
+                            if (m_shortcutKeys.IsExtended)
                             {
-                                Owner_Shortcuts[value.Value] = this;
+                                Owner.Shortcuts().Remove(m_shortcutKeys);
                             }
-                            else
+                            if (!value.IsNone)
                             {
-                                Owner_Shortcuts.Add(value.Value, this);
+                                var Owner_Shortcuts = Owner.Shortcuts();
+                                if (Owner_Shortcuts.Contains(value))
+                                {
+                                    Owner_Shortcuts[value] = this;
+                                }
+                                else
+                                {
+                                    Owner_Shortcuts.Add(value, this);
+                                }
                             }
                         }
+                        m_shortcutKeys = value;
+                        ShortcutKeyDisplayString = m_shortcutKeys.IsNone ? null : m_shortcutKeys.ToString();
                     }
-                    m_shortcutKeys = value;
-                    ShortcutKeyDisplayString = m_shortcutKeys.ToString();
+                    else
+                    {
+                        if (m_shortcutKeys.IsExtended)
+                        {
+                            if (Owner != null)
+                            {
+                                Owner.Shortcuts().Remove(m_shortcutKeys);
+                            }
+                        }
+                        m_shortcutKeys = value;
+                        base.ShortcutKeys = m_shortcutKeys;
+                    }
                 }
             }
         }
@@ -114,7 +133,6 @@ namespace PluginCore.Controls
         #endregion
 
         #region Methods
-
 
         internal bool ProcessCmdKeyInternal(ref Message m, ShortcutKeys keyData)
         {
@@ -139,14 +157,17 @@ namespace PluginCore.Controls
         {
             if (disposing)
             {
-                if (lastOwner != null && !m_shortcutKeys.IsNone)
+                if (lastOwner != null)
                 {
-                    var shortcutKeys = m_shortcutKeys.Value;
-                    var lastOwner_Shortcuts = lastOwner.Shortcuts();
-                    if (lastOwner_Shortcuts.Contains(shortcutKeys))
+                    if (m_shortcutKeys.IsExtended)
                     {
-                        lastOwner_Shortcuts.Remove(shortcutKeys);
+                        var lastOwner_Shortcuts = lastOwner.Shortcuts();
+                        if (lastOwner_Shortcuts.Contains(m_shortcutKeys))
+                        {
+                            lastOwner_Shortcuts.Remove(m_shortcutKeys);
+                        }
                     }
+                    lastOwner = null;
                 }
             }
             base.Dispose(disposing);
@@ -154,23 +175,22 @@ namespace PluginCore.Controls
 
         protected override void OnOwnerChanged(EventArgs e)
         {
-            if (!m_shortcutKeys.IsNone)
+            if (m_shortcutKeys.IsExtended)
             {
-                var shortcutKeys = m_shortcutKeys.Value;
                 if (lastOwner != null)
                 {
-                    lastOwner.Shortcuts().Remove(shortcutKeys);
+                    lastOwner.Shortcuts().Remove(m_shortcutKeys);
                 }
                 if (Owner != null)
                 {
                     var Owner_Shortcuts = Owner.Shortcuts();
-                    if (Owner_Shortcuts.Contains(shortcutKeys))
+                    if (Owner_Shortcuts.Contains(m_shortcutKeys))
                     {
-                        Owner_Shortcuts[shortcutKeys] = this;
+                        Owner_Shortcuts[m_shortcutKeys] = this;
                     }
                     else
                     {
-                        Owner_Shortcuts.Add(shortcutKeys, this);
+                        Owner_Shortcuts.Add(m_shortcutKeys, this);
                     }
                 }
             }
