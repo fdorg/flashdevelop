@@ -144,6 +144,7 @@ namespace FlashDevelop
         private Boolean restartRequested = false;
         private Boolean refreshConfig = false;
         private Boolean closingAll = false;
+        private ShortcutKeys currentKeys;
         
         /* Singleton */
         public static Boolean Silent;
@@ -506,7 +507,7 @@ namespace FlashDevelop
         {
             get { return Environment.OSVersion.Version; }
         }
-
+        
         #endregion
 
         #region Component Creation
@@ -1587,62 +1588,138 @@ namespace FlashDevelop
         /// <summary>
         /// Handles the application shortcuts
         /// </summary>
-        protected override Boolean ProcessCmdKey(ref Message msg, Keys keyData)
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             /**
-            * Notify plugins. Don't notify ControlKey or ShiftKey as it polls a lot
-            */
-            KeyEvent ke = new KeyEvent(EventType.Keys, keyData);
+             * Don't notify ControlKey or ShiftKey as it polls a lot
+             */
             Keys keyCode = keyData & Keys.KeyCode;
-            if ((keyCode != Keys.ControlKey) && (keyCode != Keys.ShiftKey))
+            if (keyCode == Keys.ControlKey || keyCode == Keys.ShiftKey)
             {
-                EventManager.DispatchEvent(this, ke);
-            }
-            if (!ke.Handled)
-            {
-                /**
-                * Ignore basic control keys if sci doesn't have focus.
-                */ 
-                if (Globals.SciControl == null || !Globals.SciControl.IsFocus)
-                {
-                    if (keyData == (Keys.Control | Keys.C)) return false;
-                    else if (keyData == (Keys.Control | Keys.V)) return false;
-                    else if (keyData == (Keys.Control | Keys.X)) return false;
-                    else if (keyData == (Keys.Control | Keys.A)) return false;
-                    else if (keyData == (Keys.Control | Keys.Z)) return false;
-                    else if (keyData == (Keys.Control | Keys.Y)) return false;
-                }
-                /**
-                * Process special key combinations and allow "chaining" of 
-                * Ctrl-Tab commands if you keep holding control down.
-                */
-                if ((keyData & Keys.Control) != 0)
-                {
-                    Boolean sequentialTabbing = this.appSettings.SequentialTabbing;
-                    if ((keyData == (Keys.Control | Keys.Next)) || (keyData == (Keys.Control | Keys.Tab)))
-                    {
-                        TabbingManager.TabTimer.Enabled = true;
-                        if (keyData == (Keys.Control | Keys.Next) || sequentialTabbing)
-                        {
-                            TabbingManager.NavigateTabsSequentially(1);
-                        }
-                        else TabbingManager.NavigateTabHistory(1);
-                        return true;
-                    }
-                    if ((keyData == (Keys.Control | Keys.Prior)) || (keyData == (Keys.Control | Keys.Shift | Keys.Tab)))
-                    {
-                        TabbingManager.TabTimer.Enabled = true;
-                        if (keyData == (Keys.Control | Keys.Prior) || sequentialTabbing)
-                        {
-                            TabbingManager.NavigateTabsSequentially(-1);
-                        }
-                        else TabbingManager.NavigateTabHistory(-1);
-                        return true;
-                    }
-                }
                 return base.ProcessCmdKey(ref msg, keyData);
             }
+
+            /**
+             * Update the current keys
+             */
+            if (currentKeys.IsSimple &&
+                ShortcutKeysManager.IsValidExtendedShortcutFirst(currentKeys) &&
+                ShortcutKeysManager.IsValidExtendedShortcutSecond(keyData))
+            {
+                currentKeys = new ShortcutKeys(currentKeys, keyData);
+            }
+            else
+            {
+                currentKeys = keyData;
+            }
+
+            /**
+             * Process shortcut
+             */
+            if (ProcessCmdKeyImpl(ref msg, keyData))
+            {
+                if (currentKeys.IsExtended)
+                {
+                    currentKeys = ShortcutKeys.None;
+                }
+            }
+            else if (currentKeys.IsExtended)
+            {
+                if (!ShortcutKeysManager.ProcessCmdKey(ref msg, currentKeys))
+                {
+                    // string.Format("The key combination ({0}) is not defined.", currentKeys)
+                }
+            }
+            else if (base.ProcessCmdKey(ref msg, keyData))
+            {
+                currentKeys = ShortcutKeys.None;
+            }
+
+            /**
+             * Shortcut may exist but not handled
+             */
+            else if (IgnoredKeys.Contains(currentKeys))
+            {
+                if (currentKeys.IsExtended)
+                {
+                    currentKeys = ShortcutKeys.None;
+                }
+            }
+            else
+            {
+                // string.Format("({0}) was pressed. Waiting for a second key input...", currentKeys)
+                return false;
+            }
+
             return true;
+        }
+
+        private bool ProcessCmdKeyImpl(ref Message msg, Keys keyData)
+        {
+            /**
+             * Notify plugins.
+             */
+            var ke = new KeyEvent(EventType.Keys, currentKeys);
+            EventManager.DispatchEvent(this, ke);
+            if (ke.Handled)
+            {
+                return true;
+            }
+
+            /**
+             * Do not handle when the new key combination is a part of an extended key combination.
+             */
+            if (currentKeys.IsExtended)
+            {
+                return false;
+            }
+
+            /**
+             * Ignore basic control keys if sci doesn't have focus.
+             */
+            if (Globals.SciControl == null || !Globals.SciControl.IsFocus)
+            {
+                if (keyData == (Keys.Control | Keys.A) ||
+                    keyData == (Keys.Control | Keys.C) ||
+                    keyData == (Keys.Control | Keys.V) ||
+                    keyData == (Keys.Control | Keys.X) ||
+                    keyData == (Keys.Control | Keys.Y) ||
+                    keyData == (Keys.Control | Keys.Z))
+                {
+                    return false;
+                }
+            }
+
+            /**
+             * Process special key combinations and allow "chaining" of 
+             * Ctrl-Tab commands if you keep holding control down.
+             */
+            if ((keyData & Keys.Control) != 0)
+            {
+                bool sequentialTabbing = appSettings.SequentialTabbing;
+                if (keyData == (Keys.Control | Keys.Next) || keyData == (Keys.Control | Keys.Tab))
+                {
+                    TabbingManager.TabTimer.Enabled = true;
+                    if (keyData == (Keys.Control | Keys.Next) || sequentialTabbing)
+                    {
+                        TabbingManager.NavigateTabsSequentially(1);
+                    }
+                    else TabbingManager.NavigateTabHistory(1);
+                    return true;
+                }
+                if (keyData == (Keys.Control | Keys.Prior) || keyData == (Keys.Control | Keys.Shift | Keys.Tab))
+                {
+                    TabbingManager.TabTimer.Enabled = true;
+                    if (keyData == (Keys.Control | Keys.Prior) || sequentialTabbing)
+                    {
+                        TabbingManager.NavigateTabsSequentially(-1);
+                    }
+                    else TabbingManager.NavigateTabHistory(-1);
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>

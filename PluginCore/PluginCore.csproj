@@ -317,10 +317,14 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="PluginCore\Controls\ShellContextMenu.cs" />
+    <Compile Include="PluginCore\Controls\ShortcutKeysManager.cs" />
     <Compile Include="PluginCore\Controls\SmartForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="PluginCore\Controls\ToolStripEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="PluginCore\Controls\ToolStripMenuItemEx.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="PluginCore\Controls\WinFormUtils.cs" />
@@ -344,6 +348,7 @@
     <Compile Include="PluginCore\Bridge\WatcherEx.cs" />
     <Compile Include="PluginCore\Managers\ImageListManager.cs" />
     <Compile Include="PluginCore\PlatformData.cs" />
+    <Compile Include="PluginCore\ShortcutKeys.cs" />
     <Compile Include="PluginCore\Utilities\CryptoClasses.cs" />
     <Compile Include="PluginCore\Utilities\ExtensionClasses.cs" />
     <Compile Include="PluginCore\Utilities\ImageKonverter.cs" />

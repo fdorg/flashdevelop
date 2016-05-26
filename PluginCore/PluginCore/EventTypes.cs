@@ -73,10 +73,10 @@ namespace PluginCore
     /// </summary>
     public class KeyEvent : NotifyEvent
     {
-        private Keys value;
+        private ShortcutKeys value;
         private Boolean processKey;
 
-        public Keys Value
+        public ShortcutKeys Value
         {
             get { return this.value; }
             set { this.value = value; }
@@ -88,7 +88,7 @@ namespace PluginCore
             set { this.processKey = value; }
         }
 
-        public KeyEvent(EventType type, Keys value) : base(type)
+        public KeyEvent(EventType type, ShortcutKeys value) : base(type)
         {
             this.value = value;
         }

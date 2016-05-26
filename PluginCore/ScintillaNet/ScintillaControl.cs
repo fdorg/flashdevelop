@@ -5318,31 +5318,27 @@ namespace ScintillaNet
             switch (m.Msg)
             {
                 case WM_KEYDOWN:
+                    int code = (int) m.WParam;
+                    int keys = code | (int) ModifierKeys;
+                    if (!IsFocus || ignoreAllKeys || ignoredKeys.ContainsKey(keys))
                     {
-                        Int32 keys = (Int32)Control.ModifierKeys + (Int32)m.WParam;
-                        if (!IsFocus || ignoreAllKeys || ignoredKeys.ContainsKey(keys))
+                        if (ExecuteShortcut(keys))
                         {
-                            if (this.ExecuteShortcut(keys) || base.PreProcessMessage(ref m)) return true;
+                            return true;
                         }
-                        if (((Control.ModifierKeys & Keys.Control) != 0) && ((Control.ModifierKeys & Keys.Alt) == 0))
-                        {
-                            Int32 code = (Int32)m.WParam;
-                            if ((code >= 65) && (code <= 90)) return true; // Eat non-writable characters
-                            else if ((code == 9) || (code == 33) || (code == 34)) // Transmit Ctrl with Tab, PageUp/PageDown
-                            {
-                                return base.PreProcessMessage(ref m);
-                            }
-                        }
-                        break;
                     }
+                    if (base.PreProcessMessage(ref m) ||
+                        (ModifierKeys & Keys.Control) != 0 &&
+                        (ModifierKeys & Keys.Alt) == 0 &&
+                        'A' <= code && code <= 'Z') // Eat non-writable characters
+                    {
+                        return true;
+                    }
+                    break;
+
                 case WM_SYSKEYDOWN:
-                    {
-                        return base.PreProcessMessage(ref m);
-                    }
                 case WM_SYSCHAR:
-                    {
-                        return base.PreProcessMessage(ref m);
-                    }
+                    return base.PreProcessMessage(ref m);
             }
             return false;
         }
