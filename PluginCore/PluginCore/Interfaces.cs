@@ -142,7 +142,7 @@ namespace PluginCore
         /// <summary>
         /// Registers a new menu item with the shortcut manager.
         /// </summary>
-        void RegisterShortcutItem(String id, Keys keys);
+        void RegisterShortcutItem(String id, ShortcutKeys keys, bool supportsExtended);
         /// <summary>
         /// Registers a new menu item with the shortcut manager.
         /// </summary>
@@ -199,11 +199,11 @@ namespace PluginCore
         /// <summary>
         /// Gets the specified item's shortcut keys.
         /// </summary>
-        Keys GetShortcutItemKeys(String id);
+        ShortcutKeys GetShortcutItemKeys(String id);
         /// <summary>
         /// Gets the specified item's id.
         /// </summary>
-        String GetShortcutItemId(Keys keys);
+        String GetShortcutItemId(ShortcutKeys keys);
         /// <summary>
         /// Gets a theme property value.
         /// </summary>
@@ -412,7 +412,7 @@ namespace PluginCore
         /// <summary>
         /// Gets the ignored keys.
         /// </summary>
-        List<Keys> IgnoredKeys { get; }
+        List<ShortcutKeys> IgnoredKeys { get; }
         /// <summary>
         /// Gets the version of the application.
         /// </summary>

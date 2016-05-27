@@ -10,6 +10,7 @@ using PluginCore.Localization;
 using PluginCore.Helpers;
 using PluginCore;
 using PluginCore.Utilities;
+using PluginCore.Controls;
 
 namespace ProjectManager.Controls.TreeView
 {
@@ -45,12 +46,12 @@ namespace ProjectManager.Controls.TreeView
         public ToolStripMenuItem DocumentClass = new ToolStripMenuItem(TextHelper.GetString("Label.DocumentClass"));
         public ToolStripMenuItem SetDocumentClass = new ToolStripMenuItem(TextHelper.GetString("Label.SetDocumentClass"), Icons.DocumentClass.Img);
         public ToolStripMenuItem AddLibrary = new ToolStripMenuItem(TextHelper.GetString("Label.AddToLibrary"));
-        public ToolStripMenuItem TestMovie = new ToolStripMenuItem(TextHelper.GetString("Label.TestMovie"), Icons.GreenCheck.Img);
-        public ToolStripMenuItem RunProject = new ToolStripMenuItem(TextHelper.GetString("Label.RunProject"));
-        public ToolStripMenuItem BuildProject = new ToolStripMenuItem(TextHelper.GetString("Label.BuildProject"), Icons.Gear.Img);
-        public ToolStripMenuItem CleanProject = new ToolStripMenuItem(TextHelper.GetString("Label.CleanProject"));
-        public ToolStripMenuItem CloseProject = new ToolStripMenuItem(TextHelper.GetString("Label.CloseProject"));
-        public ToolStripMenuItem Properties = new ToolStripMenuItem(TextHelper.GetString("Label.Properties"), Icons.Options.Img);
+        public ToolStripMenuItemEx TestMovie = new ToolStripMenuItemEx(TextHelper.GetString("Label.TestMovie"), Icons.GreenCheck.Img);
+        public ToolStripMenuItemEx RunProject = new ToolStripMenuItemEx(TextHelper.GetString("Label.RunProject"));
+        public ToolStripMenuItemEx BuildProject = new ToolStripMenuItemEx(TextHelper.GetString("Label.BuildProject"), Icons.Gear.Img);
+        public ToolStripMenuItemEx CleanProject = new ToolStripMenuItemEx(TextHelper.GetString("Label.CleanProject"));
+        public ToolStripMenuItemEx CloseProject = new ToolStripMenuItemEx(TextHelper.GetString("Label.CloseProject"));
+        public ToolStripMenuItemEx Properties = new ToolStripMenuItemEx(TextHelper.GetString("Label.Properties"), Icons.Options.Img);
         public ToolStripMenuItem ShellMenu = new ToolStripMenuItem(TextHelper.GetString("Label.ShellMenu"));
         public ToolStripMenuItem TestAllProjects = new ToolStripMenuItem(TextHelper.GetString("Label.TestAllProjects"));
         public ToolStripMenuItem BuildAllProjects = new ToolStripMenuItem(TextHelper.GetString("Label.BuildAllProjects"));

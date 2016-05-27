@@ -13,6 +13,7 @@ using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -366,7 +367,7 @@ namespace AS3Context
             ToolStripMenuItem menu = PluginBase.MainForm.FindMenuItem("ViewMenu") as ToolStripMenuItem;
             if (menu == null) return;
 
-            ToolStripMenuItem viewItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), pluginIcon, new EventHandler(OpenPanel));
+            ToolStripMenuItemEx viewItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.ViewMenuItem"), pluginIcon, new EventHandler(OpenPanel));
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowProfiler", viewItem);
             menu.DropDownItems.Add(viewItem);
 

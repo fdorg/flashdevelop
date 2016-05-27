@@ -6,6 +6,7 @@ namespace PluginCore
     /// <summary>
     /// Represents an extended shortcut combination.
     /// </summary>
+    [Serializable]
     public struct ShortcutKeys
     {
         private static KeysConverter keysConverter;
@@ -55,7 +56,27 @@ namespace PluginCore
             return !a.Equals(b);
         }
 
-        public static implicit operator Keys(ShortcutKeys value)
+        public static bool operator ==(ShortcutKeys a, Keys b)
+        {
+            return a.m_first == b && a.m_second == 0;
+        }
+
+        public static bool operator !=(ShortcutKeys a, Keys b)
+        {
+            return a.m_first != b || a.m_second != 0;
+        }
+
+        public static bool operator ==(Keys a, ShortcutKeys b)
+        {
+            return b.m_first == a && b.m_second == 0;
+        }
+
+        public static bool operator !=(Keys a, ShortcutKeys b)
+        {
+            return b.m_first != a || b.m_second != 0;
+        }
+
+        public static explicit operator Keys(ShortcutKeys value)
         {
             return value.IsExtended ? 0 : value.m_first;
         }
@@ -94,7 +115,7 @@ namespace PluginCore
             if (index >= 0)
             {
                 value.m_first = (Keys) keysConverter.ConvertFromString(s.Substring(0, index));
-                value.m_second = (Keys) keysConverter.ConvertFromString(s.Substring(index + 2));
+                value.m_second = (Keys) keysConverter.ConvertFromString(s.Substring(index + 1));
             }
             else
             {

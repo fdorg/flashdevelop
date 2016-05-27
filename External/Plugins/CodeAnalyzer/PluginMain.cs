@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -17,8 +18,8 @@ namespace CodeAnalyzer
         private String pluginDesc = "Integrates Flex PMD code analyzer into FlashDevelop.";
         private String pluginHelp = "www.flashdevelop.org/community/";
         private String pluginAuth = "FlashDevelop Team";
-        private ToolStripMenuItem analyzeMenuItem;
-        private ToolStripMenuItem creatorMenuItem;
+        private ToolStripMenuItemEx analyzeMenuItem;
+        private ToolStripMenuItemEx creatorMenuItem;
         private String settingFilename;
         private Settings settingObject;
 
@@ -150,8 +151,8 @@ namespace CodeAnalyzer
         private void CreateMenuItem()
         {
             ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("FlashToolsMenu");
-            this.creatorMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.RulesetCreator"), null, new EventHandler(this.OpenCreator));
-            this.analyzeMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.AnalyzeProject"), null, new EventHandler(this.AnalyzeProject), Keys.None);
+            this.creatorMenuItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.RulesetCreator"), null, new EventHandler(this.OpenCreator));
+            this.analyzeMenuItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.AnalyzeProject"), null, new EventHandler(this.AnalyzeProject), Keys.None);
             PluginBase.MainForm.RegisterShortcutItem("FlashToolsMenu.AnalyzeProject", this.analyzeMenuItem);
             PluginBase.MainForm.RegisterShortcutItem("FlashToolsMenu.RulesetCreator", this.creatorMenuItem);
             viewMenu.DropDownItems.Insert(2, this.analyzeMenuItem);

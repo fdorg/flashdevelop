@@ -285,7 +285,7 @@ namespace MacroManager
         {
             String untitled = TextHelper.GetString("Info.Untitled");
             ListViewItem item = new ListViewItem(untitled, 0);
-            item.Tag = new Macro(untitled, new String[0], String.Empty, Keys.None);
+            item.Tag = new Macro(untitled, new String[0], String.Empty, ShortcutKeys.None);
             this.macroGroup.Items.Add(item);
             this.listView.Items.Add(item);
         }

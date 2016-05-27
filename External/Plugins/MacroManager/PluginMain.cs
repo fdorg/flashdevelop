@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -21,7 +22,7 @@ namespace MacroManager
         private ToolStripSeparator toolbarSeparator;
         private List<ToolStripItem> toolbarItems;
         private ToolStripMenuItem macroMenuItem;
-        private ToolStripMenuItem editMenuItem;
+        private ToolStripMenuItemEx editMenuItem;
         private String settingFilename;
         private Settings settingObject;
 
@@ -172,7 +173,7 @@ namespace MacroManager
         {
             MenuStrip mainMenu = PluginBase.MainForm.MenuStrip;
             this.macroMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.Macros"));
-            this.editMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.EditMacros"), null, this.EditMenuItemClick, Keys.Control | Keys.F11);
+            this.editMenuItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.EditMacros"), null, this.EditMenuItemClick, Keys.Control | Keys.F11);
             PluginBase.MainForm.RegisterShortcutItem("MacrosMenu.EditMacros", this.editMenuItem);
             mainMenu.Items.Insert(mainMenu.Items.Count - 2, this.macroMenuItem);
         }
@@ -187,7 +188,7 @@ namespace MacroManager
             {
                 if (!macro.AutoRun)
                 {
-                    ToolStripMenuItem macroItem = new ToolStripMenuItem();
+                    ToolStripMenuItemEx macroItem = new ToolStripMenuItemEx();
                     macroItem.Click += new EventHandler(this.MacroMenuItemClick);
                     macroItem.ShortcutKeys = macro.Shortcut;
                     macroItem.Text = macro.Label;
@@ -264,12 +265,12 @@ namespace MacroManager
             }
             if (this.settingObject.UserMacros.Count == 0)
             {
-                Macro execScript = new Macro("&Execute Script", new String[1] { "ExecuteScript|Development;$(OpenFile)" }, String.Empty, Keys.None);
-                Macro execCommand = new Macro("E&xecute Command", new String[1] { "#$$(Command=RunProcess)|$$(Arguments=cmd.exe)" }, String.Empty, Keys.None);
-                Macro execfCommand = new Macro("Execu&te Current File", new String[1] { "RunProcess|$(CurFile)" }, String.Empty, Keys.None);
-                Macro runSelected = new Macro("Execute &Selected Text", new String[1] { "RunProcess|$(SelText)" }, String.Empty, Keys.None);
-                Macro browseSelected = new Macro("&Browse Current File", new String[1] { "Browse|$(CurFile)" }, String.Empty, Keys.None);
-                Macro copyTextAsRtf = new Macro("&Copy Text As RTF", new String[1] { "ScintillaCommand|CopyRTF" }, String.Empty, Keys.None);
+                Macro execScript = new Macro("&Execute Script", new String[1] { "ExecuteScript|Development;$(OpenFile)" }, String.Empty, ShortcutKeys.None);
+                Macro execCommand = new Macro("E&xecute Command", new String[1] { "#$$(Command=RunProcess)|$$(Arguments=cmd.exe)" }, String.Empty, ShortcutKeys.None);
+                Macro execfCommand = new Macro("Execu&te Current File", new String[1] { "RunProcess|$(CurFile)" }, String.Empty, ShortcutKeys.None);
+                Macro runSelected = new Macro("Execute &Selected Text", new String[1] { "RunProcess|$(SelText)" }, String.Empty, ShortcutKeys.None);
+                Macro browseSelected = new Macro("&Browse Current File", new String[1] { "Browse|$(CurFile)" }, String.Empty, ShortcutKeys.None);
+                Macro copyTextAsRtf = new Macro("&Copy Text As RTF", new String[1] { "ScintillaCommand|CopyRTF" }, String.Empty, ShortcutKeys.None);
                 this.settingObject.UserMacros.Add(execScript);
                 this.settingObject.UserMacros.Add(execCommand);
                 this.settingObject.UserMacros.Add(execfCommand);
@@ -360,7 +361,7 @@ namespace MacroManager
     [Serializable]
     public class Macro
     {
-        private Keys shortcut = Keys.None;
+        private ShortcutKeys shortcut = ShortcutKeys.None;
         private String image = String.Empty;
         private String label = String.Empty;
         private String[] entries = new String[0];
@@ -368,7 +369,7 @@ namespace MacroManager
         private Boolean autoRun = false;
 
         public Macro(){}
-        public Macro(String label, String[] entries, String image, Keys shortcut)
+        public Macro(String label, String[] entries, String image, ShortcutKeys shortcut)
         {
             this.Label = label;
             this.image = image;
@@ -377,7 +378,7 @@ namespace MacroManager
             this.showInToolbar = false;
             this.autoRun = false;
         }
-        public Macro(String label, String[] entries, String image, Keys shortcut, Boolean autoRun, Boolean showInToolbar) 
+        public Macro(String label, String[] entries, String image, ShortcutKeys shortcut, Boolean autoRun, Boolean showInToolbar) 
         {
             this.Label = label;
             this.image = image;
@@ -442,7 +443,7 @@ namespace MacroManager
         /// Gets and sets the shortcut
         /// </summary>
         [LocalizedDescription("MacroManager.Description.Shortcut")]
-        public Keys Shortcut
+        public ShortcutKeys Shortcut
         {
             get { return this.shortcut; }
             set { this.shortcut = value; }

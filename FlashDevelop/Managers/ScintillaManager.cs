@@ -317,9 +317,9 @@ namespace FlashDevelop.Managers
                 /**
                 * Add missing ignored keys
                 */
-                foreach (Keys keys in ShortcutManager.AllShortcuts)
+                foreach (ShortcutKeys keys in ShortcutManager.AllShortcuts)
                 {
-                    if (keys != Keys.None && !sci.ContainsIgnoredKeys(keys))
+                    if (!keys.IsNone && !sci.ContainsIgnoredKeys(keys))
                     {
                         sci.AddIgnoredKeys(keys);
                     }

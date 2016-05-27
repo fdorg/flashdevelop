@@ -274,7 +274,7 @@ namespace FlashDevelop.Dialogs
             else
             {
                 item.ForeColor = SystemColors.ControlText;
-                item.SubItems[1].ForeColor = item.Custom == 0 ? SystemColors.GrayText : SystemColors.ControlText;
+                item.SubItems[1].ForeColor = item.Custom.IsNone ? SystemColors.GrayText : SystemColors.ControlText;
             }
             item.Font = new Font(Globals.Settings.DefaultFont, item.IsModified ? FontStyle.Bold : 0);
             item.UseItemStyleForSubItems = item.IsModified;
@@ -420,10 +420,10 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Assign the new shortcut.
         /// </summary>
-        private void AssignNewShortcut(ShortcutListItem item, Keys shortcut)
+        private void AssignNewShortcut(ShortcutListItem item, ShortcutKeys shortcut)
         {
-            if (shortcut == 0 || shortcut == Keys.Delete) shortcut = 0;
-            else if (!ToolStripManager.IsValidShortcut(shortcut)) return;
+            if (shortcut.IsNone || shortcut == Keys.Delete) shortcut = ShortcutKeys.None;
+            else if (!ShortcutKeysManager.IsValidShortcut(shortcut)) return;
             if (item.Custom == shortcut) return;
             this.listView.BeginUpdate();
             var oldShortcut = item.Custom;
@@ -522,7 +522,7 @@ namespace FlashDevelop.Dialogs
         {
             if (this.listView.SelectedItems.Count > 0)
             {
-                this.AssignNewShortcut((ShortcutListItem) this.listView.SelectedItems[0], 0);
+                this.AssignNewShortcut((ShortcutListItem) this.listView.SelectedItems[0], ShortcutKeys.None);
             }
         }
 
@@ -677,7 +677,7 @@ namespace FlashDevelop.Dialogs
         {
             readonly ShortcutItem item;
             List<ShortcutListItem> conflicts;
-            Keys custom;
+            ShortcutKeys custom;
 
             /// <summary>
             /// Gets the associated <see cref="ShortcutItem"/> object.
@@ -720,7 +720,7 @@ namespace FlashDevelop.Dialogs
             /// <summary>
             /// Gets the default shortcut keys.
             /// </summary>
-            public Keys Default
+            public ShortcutKeys Default
             {
                 get { return this.Item.Default; }
             }
@@ -728,14 +728,14 @@ namespace FlashDevelop.Dialogs
             /// <summary>
             /// Gets or sets the custom shortcut keys.
             /// </summary>
-            public Keys Custom
+            public ShortcutKeys Custom
             {
                 get { return this.custom; }
                 set
                 {
                     if (this.custom == value) return;
                     this.custom = value;
-                    this.KeysString = DataConverter.KeysToString(this.custom);
+                    this.KeysString = this.custom.ToString();
                     this.SubItems[1].Text = this.KeysString;
                     ResetConflicts(this);
                     UpdateItemHighlightFont(this);
@@ -760,6 +760,14 @@ namespace FlashDevelop.Dialogs
             }
 
             /// <summary>
+            /// Gets whether this item supports extended shortcut keys.
+            /// </summary>
+            public bool SupportsExtended
+            {
+                get { return this.item.SupportsExtended; }
+            }
+
+            /// <summary>
             /// Creates a new instance of <see cref="ShortcutListItem"/> with an associated <see cref="ShortcutItem"/>.
             /// </summary>
             public ShortcutListItem(ShortcutItem shortcutItem)
@@ -767,7 +775,7 @@ namespace FlashDevelop.Dialogs
                 this.item = shortcutItem;
                 this.conflicts = null;
                 this.custom = this.Item.Custom;
-                this.KeysString = DataConverter.KeysToString(this.Custom);
+                this.KeysString = this.Custom.ToString();
                 this.Name = this.Text = this.Id;
                 this.SubItems.Add(this.KeysString);
                 UpdateItemHighlightFont(this);

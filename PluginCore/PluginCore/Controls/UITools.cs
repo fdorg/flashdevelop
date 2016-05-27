@@ -128,7 +128,7 @@ namespace PluginCore.Controls
             switch (e.Type)
             {
                 case EventType.Keys:
-                    e.Handled = HandleKeys(((KeyEvent)e).Value);
+                    e.Handled = HandleKeys((Keys) (e as KeyEvent).Value);
                     return;
                     
                 case EventType.FileSave:

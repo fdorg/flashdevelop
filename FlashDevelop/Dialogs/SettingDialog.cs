@@ -305,11 +305,11 @@ namespace FlashDevelop.Dialogs
         private void InitializeContextMenu()
         {
             ContextMenuStrip contextMenu = new ContextMenuStrip();
-            ToolStripMenuItem collapseAll = new ToolStripMenuItem(TextHelper.GetString("Label.CollapseAll"));
+            ToolStripMenuItemEx collapseAll = new ToolStripMenuItemEx(TextHelper.GetString("Label.CollapseAll"));
             collapseAll.ShortcutKeys = PluginBase.MainForm.GetShortcutItemKeys("ViewMenu.CollapseAll");
             collapseAll.Click += delegate { this.itemPropertyGrid.CollapseAllGridItems(); };
             contextMenu.Items.Add(collapseAll);
-            ToolStripMenuItem expandAll = new ToolStripMenuItem(TextHelper.GetString("Label.ExpandAll"));
+            ToolStripMenuItemEx expandAll = new ToolStripMenuItemEx(TextHelper.GetString("Label.ExpandAll"));
             expandAll.ShortcutKeys = PluginBase.MainForm.GetShortcutItemKeys("ViewMenu.ExpandAll");
             expandAll.Click += delegate { this.itemPropertyGrid.ExpandAllGridItems(); };
             contextMenu.Items.Add(expandAll);

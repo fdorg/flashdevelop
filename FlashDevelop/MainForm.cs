@@ -246,7 +246,7 @@ namespace FlashDevelop
         /// <summary>
         /// Gets the IgnoredKeys
         /// </summary>
-        public List<Keys> IgnoredKeys
+        public List<ShortcutKeys> IgnoredKeys
         {
             get { return ShortcutManager.AllShortcuts; }
         }
@@ -1603,10 +1603,10 @@ namespace FlashDevelop
              * Update the current keys
              */
             if (currentKeys.IsSimple &&
-                ShortcutKeysManager.IsValidExtendedShortcutFirst(currentKeys) &&
+                ShortcutKeysManager.IsValidExtendedShortcutFirst(currentKeys.First) &&
                 ShortcutKeysManager.IsValidExtendedShortcutSecond(keyData))
             {
-                currentKeys = new ShortcutKeys(currentKeys, keyData);
+                currentKeys = new ShortcutKeys(currentKeys.First, keyData);
             }
             else
             {
@@ -1674,19 +1674,30 @@ namespace FlashDevelop
                 return false;
             }
 
+            ///**
+            // * Ignore basic control keys if sci doesn't have focus.
+            // */
+            //if (Globals.SciControl == null || !Globals.SciControl.IsFocus)
+            //{
+            //    if (keyData == (Keys.Control | Keys.A) ||
+            //        keyData == (Keys.Control | Keys.C) ||
+            //        keyData == (Keys.Control | Keys.V) ||
+            //        keyData == (Keys.Control | Keys.X) ||
+            //        keyData == (Keys.Control | Keys.Y) ||
+            //        keyData == (Keys.Control | Keys.Z))
+            //    {
+            //        return false;
+            //    }
+            //}
+
             /**
-             * Ignore basic control keys if sci doesn't have focus.
+             * Handle ScintillaControl shortcuts
              */
-            if (Globals.SciControl == null || !Globals.SciControl.IsFocus)
+            if (Globals.SciControl != null)
             {
-                if (keyData == (Keys.Control | Keys.A) ||
-                    keyData == (Keys.Control | Keys.C) ||
-                    keyData == (Keys.Control | Keys.V) ||
-                    keyData == (Keys.Control | Keys.X) ||
-                    keyData == (Keys.Control | Keys.Y) ||
-                    keyData == (Keys.Control | Keys.Z))
+                if (Globals.SciControl.IsFocus && Globals.SciControl.ExecuteShortcut(currentKeys))
                 {
-                    return false;
+                    return true;
                 }
             }
 
@@ -2000,16 +2011,16 @@ namespace FlashDevelop
         /// <summary>
         /// Gets the specified item's shortcut keys.
         /// </summary>
-        public Keys GetShortcutItemKeys(String id)
+        public ShortcutKeys GetShortcutItemKeys(String id)
         {
             ShortcutItem item = ShortcutManager.GetRegisteredItem(id);
-            return item == null ? Keys.None : item.Custom;
+            return item == null ? ShortcutKeys.None : item.Custom;
         }
 
         /// <summary>
         /// Gets the specified item's id.
         /// </summary>
-        public String GetShortcutItemId(Keys keys)
+        public String GetShortcutItemId(ShortcutKeys keys)
         {
             ShortcutItem item = ShortcutManager.GetRegisteredItem(keys);
             return item == null ? string.Empty : item.Id;
@@ -2018,11 +2029,11 @@ namespace FlashDevelop
         /// <summary>
         /// Registers a new menu item with the shortcut manager
         /// </summary>
-        public void RegisterShortcutItem(String id, Keys keys)
+        public void RegisterShortcutItem(String id, ShortcutKeys keys, bool supportsExteded)
         {
-            ShortcutManager.RegisterItem(id, keys);
+            ShortcutManager.RegisterItem(id, keys, supportsExteded);
         }
-
+        
         /// <summary>
         /// Registers a new menu item with the shortcut manager
         /// </summary>
@@ -2030,7 +2041,7 @@ namespace FlashDevelop
         {
             ShortcutManager.RegisterItem(id, item);
         }
-
+        
         /// <summary>
         /// Registers a new secondary menu item with the shortcut manager
         /// </summary>

@@ -82,6 +82,7 @@ namespace PluginCore.Controls
             {
                 if (!value.IsNone && !ShortcutKeysManager.IsValidShortcut(value))
                 {
+                    MessageBox.Show(new System.Diagnostics.StackTrace().ToString());
                     throw new ArgumentException("Passed value is not a valid shortcut.", "value");
                 }
                 if (!m_shortcutKeys.Equals(value))
@@ -124,7 +125,7 @@ namespace PluginCore.Controls
                             }
                         }
                         m_shortcutKeys = value;
-                        base.ShortcutKeys = m_shortcutKeys;
+                        base.ShortcutKeys = m_shortcutKeys.First;
                     }
                 }
             }
@@ -144,14 +145,14 @@ namespace PluginCore.Controls
             return false;
         }
 
-        protected override bool ProcessCmdKey(ref Message m, Keys keyData)
-        {
-            if (m_shortcutKeys.IsSimple && ProcessCmdKeyInternal(ref m, keyData))
-            {
-                return true;
-            }
-            return base.ProcessCmdKey(ref m, keyData);
-        }
+        //protected override bool ProcessCmdKey(ref Message m, Keys keyData)
+        //{
+        //    if (m_shortcutKeys.IsSimple && ProcessCmdKeyInternal(ref m, keyData))
+        //    {
+        //        return true;
+        //    }
+        //    return base.ProcessCmdKey(ref m, keyData);
+        //}
 
         protected override void Dispose(bool disposing)
         {
