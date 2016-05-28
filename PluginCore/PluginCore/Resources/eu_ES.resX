@@ -6017,4 +6017,8 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <value>Replaced {0} occurrence[s]</value>
     <comment>Added after 5.2.0</comment>
   </data>
+  <data name="FlashDevelop.Info.PressNewShortcut" xml:space="preserve">
+    <value>Press new shortcut keys:</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
 </root>

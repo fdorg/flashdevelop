@@ -8,11 +8,15 @@ using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Utilities;
 using PluginCore;
+using PluginCore.Managers;
 
 namespace FlashDevelop.Dialogs
 {
     public class ShortcutDialog : SmartForm
     {
+        private const char ViewConflictsKey = '?';
+        private const char ViewCustomKey = '*';
+
         private Timer updateTimer;
         private ToolStripMenuItem removeShortcut;
         private ToolStripMenuItem revertToDefault;
@@ -29,8 +33,6 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.Button closeButton;
         private System.Windows.Forms.Button importButton;
         private System.Windows.Forms.Button exportButton;
-        private const char ViewConflictsKey = '?';
-        private const char ViewCustomKey = '*';
 
         public ShortcutDialog()
         {
@@ -66,7 +68,7 @@ namespace FlashDevelop.Dialogs
             this.importButton = new System.Windows.Forms.Button();
             this.exportButton = new System.Windows.Forms.Button();
             this.closeButton = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)this.pictureBox).BeginInit();
+            ((System.ComponentModel.ISupportInitialize) this.pictureBox).BeginInit();
             this.SuspendLayout();
             // 
             // searchLabel
@@ -117,7 +119,7 @@ namespace FlashDevelop.Dialogs
             this.listView.TabIndex = 2;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
-            this.listView.KeyDown += new KeyEventHandler(this.ListViewKeyDown);
+            this.listView.DoubleClick += new EventHandler(this.ListViewDoubleClick);
             // 
             // pictureBox
             // 
@@ -193,7 +195,7 @@ namespace FlashDevelop.Dialogs
             this.FormClosed += new FormClosedEventHandler(this.DialogClosed);
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            ((System.ComponentModel.ISupportInitialize)this.pictureBox).EndInit();
+            ((System.ComponentModel.ISupportInitialize) this.pictureBox).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
         }
@@ -276,8 +278,11 @@ namespace FlashDevelop.Dialogs
                 item.ForeColor = SystemColors.ControlText;
                 item.SubItems[1].ForeColor = item.Custom.IsNone ? SystemColors.GrayText : SystemColors.ControlText;
             }
-            item.Font = new Font(Globals.Settings.DefaultFont, item.IsModified ? FontStyle.Bold : 0);
-            item.UseItemStyleForSubItems = item.IsModified;
+            var fontStyle = FontStyle.Regular;
+            if (item.IsModified) fontStyle |= FontStyle.Bold;
+            if (!item.SupportsExtended) fontStyle |= FontStyle.Italic;
+            item.Font = new Font(Globals.Settings.DefaultFont, fontStyle);
+            item.UseItemStyleForSubItems = fontStyle != 0;
         }
 
         /// <summary>
@@ -408,13 +413,15 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Assign a new valid shortcut when keys are pressed.
         /// </summary>
-        private void ListViewKeyDown(object sender, KeyEventArgs e)
+        private void ListViewDoubleClick(object sender, EventArgs e)
         {
             if (this.listView.SelectedItems.Count == 0) return;
-            var item = (ShortcutListItem) this.listView.SelectedItems[0];
-            this.AssignNewShortcut(item, e.KeyData);
-            // Don't trigger list view default shortcuts like Ctrl+Add
-            if (e.KeyData != Keys.Up && e.KeyData != Keys.Down) e.Handled = true;
+            var item = this.listView.SelectedItems[0] as ShortcutListItem;
+            var dialog = new ShortcutModificationDialog(item.SupportsExtended);
+            if (dialog.ShowDialog(this) == DialogResult.OK)
+            {
+                this.AssignNewShortcut(item, dialog.NewKeys);
+            }
         }
 
         /// <summary>
@@ -633,7 +640,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void DialogClosed(object sender, FormClosedEventArgs e)
         {
-            for (int i = 0; i < this.shortcutListItems.Length; i++) this.shortcutListItems[i].ApplyChanges(); 
+            for (int i = 0; i < this.shortcutListItems.Length; i++) this.shortcutListItems[i].ApplyChanges();
             Globals.MainForm.ApplyAllSettings();
         }
 

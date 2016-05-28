@@ -76,7 +76,7 @@ namespace PluginCore
             return b.m_first != a || b.m_second != 0;
         }
 
-        public static explicit operator Keys(ShortcutKeys value)
+        public static implicit operator Keys(ShortcutKeys value)
         {
             return value.IsExtended ? 0 : value.m_first;
         }

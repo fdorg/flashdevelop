@@ -321,7 +321,7 @@ namespace FlashDevelop.Managers
             Item = item;
             ItemEx = item as ToolStripMenuItemEx;
             SupportsExtended = ItemEx != null;
-            Default = Custom = SupportsExtended ? ItemEx.ShortcutKeys : Item.ShortcutKeys;
+            Default = Custom = SupportsExtended ? ItemEx.ShortcutKeys : (ShortcutKeys) Item.ShortcutKeys;
         }
 
         public override string ToString()

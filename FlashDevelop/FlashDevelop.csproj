@@ -109,6 +109,9 @@
     <Compile Include="Dialogs\ShortcutDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Dialogs\ShortcutModificationDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Dialogs\SnippetDialog.cs">
       <SubType>Form</SubType>
     </Compile>

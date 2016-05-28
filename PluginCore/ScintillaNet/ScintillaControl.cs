@@ -5320,7 +5320,7 @@ namespace ScintillaNet
             {
                 case WM_KEYDOWN:
                     int code = (int) m.WParam;
-                    if (base.PreProcessMessage(ref m) ||
+                    if (ProcessCmdKey(ref m, (Keys) code | ModifierKeys) ||
                         (ModifierKeys & Keys.Control) != 0 &&
                         (ModifierKeys & Keys.Alt) == 0 &&
                         'A' <= code && code <= 'Z') // Eat non-writable characters

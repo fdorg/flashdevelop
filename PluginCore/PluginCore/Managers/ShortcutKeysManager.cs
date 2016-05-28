@@ -1,10 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using PluginCore.Controls;
 
-namespace PluginCore
+namespace PluginCore.Managers
 {
     /// <summary>
     /// A static manager class for advanced shortcut keys.
@@ -16,7 +17,6 @@ namespace PluginCore
         private static PropertyInfo p_IsAssignedToDropDownItem;
         private static MethodInfo m_GetFirstDropDown;
         private static MethodInfo m_GetToplevelOwnerToolStrip;
-        private static MethodInfo m_WindowsFormsUtils_GetRootHWnd;
 
         private static IList toolStrips;
 
@@ -212,8 +212,8 @@ namespace PluginCore
                         var toplevelOwnerToolStrip = strip.GetToplevelOwnerToolStrip();
                         if (toplevelOwnerToolStrip != null && control != null)
                         {
-                            var rootHWnd = WindowsFormsUtils_GetRootHWnd(toplevelOwnerToolStrip);
-                            var controlRef = WindowsFormsUtils_GetRootHWnd(control);
+                            var rootHWnd = GetRootHWnd(toplevelOwnerToolStrip);
+                            var controlRef = GetRootHWnd(control);
                             flag = rootHWnd.Handle == controlRef.Handle;
                             if (flag)
                             {
@@ -306,15 +306,13 @@ namespace PluginCore
             return (ToolStrip) m_GetToplevelOwnerToolStrip.Invoke(@this, null);
         }
 
-        internal static HandleRef WindowsFormsUtils_GetRootHWnd(Control control)
+        internal static HandleRef GetRootHWnd(Control control)
         {
-            if (m_WindowsFormsUtils_GetRootHWnd == null)
-            {
-                var WindowsFormsUtils = typeof(Form).Assembly.GetType("System.Windows.Forms.WindowsFormsUtils");
-                m_WindowsFormsUtils_GetRootHWnd = WindowsFormsUtils.GetMethod("GetRootHWnd", BindingFlags.Static | BindingFlags.NonPublic);
-            }
-            return (HandleRef) m_WindowsFormsUtils_GetRootHWnd.Invoke(null, new object[] { control });
+            return new HandleRef(control, GetAncestor(new HandleRef(new HandleRef(control, control.Handle), control.Handle), 2));
         }
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+        internal static extern IntPtr GetAncestor(HandleRef hWnd, int flags);
 
         #endregion
     }
