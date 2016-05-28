@@ -15,7 +15,6 @@ namespace PluginCore.Managers
         private static PropertyInfo p_Shortcuts;
         private static PropertyInfo p_ToolStrips;
         private static PropertyInfo p_IsAssignedToDropDownItem;
-        private static MethodInfo m_GetFirstDropDown;
         private static MethodInfo m_GetToplevelOwnerToolStrip;
 
         private static IList toolStrips;
@@ -41,6 +40,41 @@ namespace PluginCore.Managers
         #endregion
 
         #region Methods
+
+        /// <summary>
+        /// Returns an updated <see cref="ShortcutKeys"/> value with the specified input <see cref="Keys"/> value.
+        /// </summary>
+        /// <param name="currentShortcutKeys">The <see cref="ShortcutKeys"/> value to update.</param>
+        /// <param name="input">The <see cref="Keys"/> value to update with.</param>
+        public static ShortcutKeys UpdateShortcutKeys(ShortcutKeys currentShortcutKeys, Keys input)
+        {
+            if (currentShortcutKeys.IsSimple &&
+                IsValidExtendedShortcutFirst(currentShortcutKeys.First) &&
+                IsValidExtendedShortcutSecond(input))
+            {
+                return new ShortcutKeys(currentShortcutKeys.First, input);
+            }
+            return input;
+        }
+
+        /// <summary>
+        /// Updates the <see cref="ShortcutKeys"/> value with the specified input <see cref="Keys"/> value.
+        /// </summary>
+        /// <param name="shortcutKeys">The reference to the <see cref="ShortcutKeys"/> value to update.</param>
+        /// <param name="input">The <see cref="Keys"/> value to update with.</param>
+        public static void UpdateShortcutKeys(ref ShortcutKeys shortcutKeys, Keys input)
+        {
+            if (shortcutKeys.IsSimple &&
+                IsValidExtendedShortcutFirst(shortcutKeys.First) &&
+                IsValidExtendedShortcutSecond(input))
+            {
+                shortcutKeys = new ShortcutKeys(shortcutKeys.First, input);
+            }
+            else
+            {
+                shortcutKeys = input;
+            }
+        }
 
         /// <summary>
         /// Retrieves a value indicating whether the specified shortcut key is used by any of the <see cref="ToolStrip"/> controls of a form.
@@ -290,11 +324,31 @@ namespace PluginCore.Managers
 
         internal static ToolStripDropDown GetFirstDropDown(this ToolStripDropDown @this)
         {
-            if (m_GetFirstDropDown == null)
+            var down = @this;
+            for (var down2 = down.OwnerToolStrip() as ToolStripDropDown; down2 != null; down2 = down.OwnerToolStrip() as ToolStripDropDown)
             {
-                m_GetFirstDropDown = typeof(ToolStripDropDown).GetMethod("GetFirstDropDown", BindingFlags.Instance | BindingFlags.NonPublic);
+                down = down2;
             }
-            return (ToolStripDropDown) m_GetFirstDropDown.Invoke(@this, null);
+            return down;
+        }
+
+        internal static ToolStrip OwnerToolStrip(this ToolStripDropDown @this)
+        {
+            var ownerItem = @this.OwnerItem;
+            if (ownerItem != null)
+            {
+                var parentInternal = ownerItem.GetCurrentParent();
+                if (parentInternal != null)
+                {
+                    return parentInternal;
+                }
+                if (ownerItem.Placement == ToolStripItemPlacement.Overflow && ownerItem.Owner != null)
+                {
+                    return ownerItem.Owner.OverflowButton.DropDown;
+                }
+                return ownerItem.Owner;
+            }
+            return null;
         }
 
         internal static ToolStrip GetToplevelOwnerToolStrip(this ToolStrip @this)

@@ -85,7 +85,7 @@ namespace FlashDevelop.Dialogs
         }
 
         #endregion
-        
+
         internal ShortcutKeys NewKeys
         {
             get { return newKeys; }
@@ -108,12 +108,9 @@ namespace FlashDevelop.Dialogs
         {
             if (e.KeyCode != Keys.ControlKey && e.KeyCode != Keys.ShiftKey)
             {
-                if (supportExtended &&
-                    newKeys.IsSimple &&
-                    ShortcutKeysManager.IsValidExtendedShortcutFirst(newKeys.First) &&
-                    ShortcutKeysManager.IsValidExtendedShortcutSecond(e.KeyData))
+                if (supportExtended)
                 {
-                    newKeys = new ShortcutKeys(newKeys.First, e.KeyData);
+                    newKeys = ShortcutKeysManager.UpdateShortcutKeys(newKeys, e.KeyData);
                 }
                 else
                 {

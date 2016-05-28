@@ -1602,16 +1602,7 @@ namespace FlashDevelop
             /**
              * Update the current keys
              */
-            if (currentKeys.IsSimple &&
-                ShortcutKeysManager.IsValidExtendedShortcutFirst(currentKeys.First) &&
-                ShortcutKeysManager.IsValidExtendedShortcutSecond(keyData))
-            {
-                currentKeys = new ShortcutKeys(currentKeys.First, keyData);
-            }
-            else
-            {
-                currentKeys = keyData;
-            }
+            currentKeys = ShortcutKeysManager.UpdateShortcutKeys(currentKeys, keyData);
 
             /**
              * Process shortcut
