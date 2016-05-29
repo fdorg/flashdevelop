@@ -106,7 +106,7 @@ namespace FlashDevelop.Dialogs
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            if (e.KeyCode != Keys.ControlKey && e.KeyCode != Keys.ShiftKey)
+            if (e.KeyCode != Keys.ControlKey && e.KeyCode != Keys.ShiftKey && e.KeyCode != Keys.Menu)
             {
                 if (supportExtended)
                 {

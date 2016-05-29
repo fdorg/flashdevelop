@@ -83,7 +83,6 @@ namespace PluginCore.Controls
             {
                 if (!value.IsNone && !ShortcutKeysManager.IsValidShortcut(value))
                 {
-                    MessageBox.Show(new System.Diagnostics.StackTrace().ToString());
                     throw new ArgumentException("Passed value is not a valid shortcut.", "value");
                 }
                 if (!m_shortcutKeys.Equals(value))

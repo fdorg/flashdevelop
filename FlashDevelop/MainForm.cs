@@ -1591,10 +1591,10 @@ namespace FlashDevelop
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             /**
-             * Don't notify ControlKey or ShiftKey as it polls a lot
+             * Don't notify ControlKey, ShiftKey or Menu as it polls a lot
              */
             Keys keyCode = keyData & Keys.KeyCode;
-            if (keyCode == Keys.ControlKey || keyCode == Keys.ShiftKey)
+            if (keyCode == Keys.ControlKey || keyCode == Keys.ShiftKey || keyCode == Keys.Menu)
             {
                 return base.ProcessCmdKey(ref msg, keyData);
             }
