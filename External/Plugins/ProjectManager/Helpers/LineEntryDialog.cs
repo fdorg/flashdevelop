@@ -149,7 +149,7 @@ namespace ProjectManager.Helpers
         private void LineBox_KeyDown(object sender, KeyEventArgs e)
         {
             string shortcutId;
-            if (ShortcutKeysManager.HandleShortcutManually(ref this.currentKeys, e.KeyData, out shortcutId))
+            if (PluginBase.MainForm.HandleShortcutManually(ref this.currentKeys, e.KeyData, out shortcutId))
             {
                 switch (shortcutId)
                 {
@@ -199,7 +199,7 @@ namespace ProjectManager.Helpers
                 e.Handled = true;
                 e.SuppressKeyPress = true;
             }
-            else if ((e.KeyData & Keys.Control) != 0 || e.KeyData == (Keys.Shift | Keys.Delete) || e.KeyData == (Keys.Shift | Keys.Insert))
+            else if (this.currentKeys.IsExtended || (e.KeyData & Keys.Control) != 0 || e.KeyData == (Keys.Shift | Keys.Delete) || e.KeyData == (Keys.Shift | Keys.Insert))
             {
                 e.Handled = true;
                 e.SuppressKeyPress = true;

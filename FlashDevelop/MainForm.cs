@@ -205,6 +205,16 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Sets the text of the <see cref="StatusLabel"/>.
+        /// Use this method instead of directly accessing the <code>Text</code> property of <see cref="StatusLabel"/>.
+        /// </summary>
+        public string StatusLabelText
+        {
+            get { return this.StatusLabel.Text; }
+            set { if (!lockStatusLabel) StatusLabel.Text = value; }
+        }
+
+        /// <summary>
         /// Gets the toolStripProgressLabel
         /// </summary>
         public ToolStripStatusLabel ProgressLabel
@@ -1570,9 +1580,12 @@ namespace FlashDevelop
                     case 0x201: // WM_LBUTTONDOWN
                     case 0x204: // WM_RBUTTONDOWN
                     case 0x207: // WM_MBUTTONDOWN
-                        // Cancel any extended shortcut in progress
-                        currentKeys = ShortcutKeys.None;
-                        lockStatusLabel = false;
+                        if (lockStatusLabel)
+                        {
+                            // Cancel any extended shortcut in progress
+                            currentKeys = ShortcutKeys.None;
+                            lockStatusLabel = false; 
+                        }
                         break;
                     case 0x20A: // WM_MOUSEWHEEL
                         Int32 x = unchecked((short) (long) m.LParam);
@@ -1622,17 +1635,23 @@ namespace FlashDevelop
              */
             if (ProcessCmdKeyImpl(ref msg, keyData))
             {
+                if (currentKeys.IsExtended)
+                {
+                    lockStatusLabel = false;
+                }
+                else currentKeys = ShortcutKeys.None;
             }
             else if (currentKeys.IsExtended)
             {
+                lockStatusLabel = false;
                 if (!ShortcutKeysManager.ProcessCmdKey(ref msg, currentKeys))
                 {
-                    lockStatusLabel = false;
                     StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefinedExtended"), currentKeys);
                 }
             }
             else if (base.ProcessCmdKey(ref msg, keyData))
             {
+                currentKeys = ShortcutKeys.None;
             }
 
             /**
@@ -1640,16 +1659,18 @@ namespace FlashDevelop
              */
             else if (IgnoredKeys.Contains(currentKeys))
             {
+                currentKeys = ShortcutKeys.None;
             }
-            else
+            else if (ShortcutKeysManager.IsValidExtendedShortcutFirst(currentKeys.First))
             {
                 StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefinedSimple"), currentKeys);
                 lockStatusLabel = true;
+            }
+            else
+            {
                 return false;
             }
 
-            currentKeys = ShortcutKeys.None;
-            lockStatusLabel = false;
             return true;
         }
 
@@ -1806,16 +1827,6 @@ namespace FlashDevelop
         #endregion
 
         #region General Methods
-
-        /// <summary>
-        /// Sets the text of the <see cref="StatusLabel"/>.
-        /// Use this method instead of directly accessing the <code>Text</code> property of <see cref="StatusLabel"/>.
-        /// </summary>
-        public string StatusLabelText
-        {
-            get { return this.StatusLabel.Text; }
-            set { if (!lockStatusLabel) StatusLabel.Text = value; }
-        }
 
         /// <summary>
         /// Finds the specified plugin
@@ -2066,6 +2077,45 @@ namespace FlashDevelop
         public void ApplySecondaryShortcut(ToolStripItem item)
         {
             ShortcutManager.ApplySecondaryShortcut(item);
+        }
+
+        /// <summary>
+        /// A utility method for handling extended shortcuts where the context prevents the default mechanism (e.g. in a dialog form).
+        /// Returns <code>true</code> if the current key press should be handled, <code>false</code> otherwise.
+        /// <para/>
+        /// When this method returns <code>true</code>, make sure to always set <code>previousKeys</code> to <see cref="ShortcutKeys.None"/>,
+        /// so the next call to this method will correctly handle the new keyboard input as the first part of a shortcut.
+        /// </summary>
+        /// <param name="previousKeys">The reference to the stored previous <see cref="ShortcutKeys"/> value.</param>
+        /// <param name="input">The <see cref="Keys"/> value specifying the current keyboard input.</param>
+        /// <param name="shortcutId">The shortcut ID to process, or <see cref="string.Empty"/> if this method returns <code>false</code>.</param>
+        public bool HandleShortcutManually(ref ShortcutKeys previousKeys, Keys input, out string shortcutId)
+        {
+            var keyCode = input & Keys.KeyCode;
+            switch (keyCode)
+            {
+                case Keys.None:
+                case Keys.ControlKey:
+                case Keys.ShiftKey:
+                case Keys.Menu:
+                    shortcutId = string.Empty;
+                    return false;
+            }
+            previousKeys = ShortcutKeysManager.UpdateShortcutKeys(previousKeys, input);
+            shortcutId = GetShortcutItemId(previousKeys);
+            if (shortcutId.Length == 0)
+            {
+                if (previousKeys.IsExtended)
+                {
+                    StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefinedExtended"), previousKeys);
+                }
+                else if (ShortcutKeysManager.IsValidExtendedShortcutFirst(input))
+                {
+                    StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefinedSimple"), previousKeys);
+                }
+                return false;
+            }
+            return true;
         }
 
         /// <summary>
