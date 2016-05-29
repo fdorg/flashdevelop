@@ -144,6 +144,7 @@ namespace FlashDevelop
         private Boolean restartRequested = false;
         private Boolean refreshConfig = false;
         private Boolean closingAll = false;
+        private Boolean lockStatusLabel = false;
         private ShortcutKeys currentKeys;
         
         /* Singleton */
@@ -1467,9 +1468,9 @@ namespace FlashDevelop
                 String file = oldOS ? PathHelper.GetCompactPath(sci.FileName) : sci.FileName;
                 String eol = (sci.EOLMode == 0) ? "CR+LF" : ((sci.EOLMode == 1) ? "CR" : "LF");
                 String encoding = ButtonManager.GetActiveEncodingName();
-                this.toolStripStatusLabel.Text = String.Format(statusText, line, column, eol, encoding, file);
+                this.StatusLabelText = String.Format(statusText, line, column, eol, encoding, file);
             }
-            else this.toolStripStatusLabel.Text = " ";
+            else this.StatusLabelText = "";
             this.OnUpdateMainFormDialogTitle();
             ButtonManager.UpdateFlaggedButtons();
             NotifyEvent ne = new NotifyEvent(EventType.UIRefresh);
@@ -1562,24 +1563,36 @@ namespace FlashDevelop
         /// </summary>
         public Boolean PreFilterMessage(ref Message m)
         {
-            if (Win32.ShouldUseWin32() && m.Msg == 0x20a) // WM_MOUSEWHEEL
+            if (Win32.ShouldUseWin32())
             {
-                Int32 x = unchecked((short)(long)m.LParam);
-                Int32 y = unchecked((short)((long)m.LParam >> 16));
-                IntPtr hWnd = Win32.WindowFromPoint(new Point(x, y));
-                if (hWnd != IntPtr.Zero)
+                switch (m.Msg)
                 {
-                    ITabbedDocument doc = Globals.CurrentDocument;
-                    if (Control.FromHandle(hWnd) != null)
-                    {
-                        Win32.SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
-                        return true;
-                    }
-                    else if (doc != null && doc.IsEditable && (hWnd == doc.SplitSci1.HandleSci || hWnd == doc.SplitSci2.HandleSci))
-                    {
-                        Win32.SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
-                        return true;
-                    }
+                    case 0x201: // WM_LBUTTONDOWN
+                    case 0x204: // WM_RBUTTONDOWN
+                    case 0x207: // WM_MBUTTONDOWN
+                        // Cancel any extended shortcut in progress
+                        currentKeys = ShortcutKeys.None;
+                        lockStatusLabel = false;
+                        break;
+                    case 0x20A: // WM_MOUSEWHEEL
+                        Int32 x = unchecked((short) (long) m.LParam);
+                        Int32 y = unchecked((short) ((long) m.LParam >> 16));
+                        IntPtr hWnd = Win32.WindowFromPoint(new Point(x, y));
+                        if (hWnd != IntPtr.Zero)
+                        {
+                            ITabbedDocument doc = Globals.CurrentDocument;
+                            if (Control.FromHandle(hWnd) != null)
+                            {
+                                Win32.SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
+                                return true;
+                            }
+                            else if (doc != null && doc.IsEditable && (hWnd == doc.SplitSci1.HandleSci || hWnd == doc.SplitSci2.HandleSci))
+                            {
+                                Win32.SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
+                                return true;
+                            }
+                        }
+                        break;
                 }
             }
             return false;
@@ -1591,7 +1604,7 @@ namespace FlashDevelop
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             /**
-             * Don't notify ControlKey, ShiftKey or Menu as it polls a lot
+             * Don't process ControlKey, ShiftKey or Menu
              */
             Keys keyCode = keyData & Keys.KeyCode;
             if (keyCode == Keys.ControlKey || keyCode == Keys.ShiftKey || keyCode == Keys.Menu)
@@ -1609,21 +1622,17 @@ namespace FlashDevelop
              */
             if (ProcessCmdKeyImpl(ref msg, keyData))
             {
-                if (currentKeys.IsExtended)
-                {
-                    currentKeys = ShortcutKeys.None;
-                }
             }
             else if (currentKeys.IsExtended)
             {
                 if (!ShortcutKeysManager.ProcessCmdKey(ref msg, currentKeys))
                 {
-                    // string.Format("The key combination ({0}) is not defined.", currentKeys)
+                    lockStatusLabel = false;
+                    StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefinedExtended"), currentKeys);
                 }
             }
             else if (base.ProcessCmdKey(ref msg, keyData))
             {
-                currentKeys = ShortcutKeys.None;
             }
 
             /**
@@ -1631,17 +1640,16 @@ namespace FlashDevelop
              */
             else if (IgnoredKeys.Contains(currentKeys))
             {
-                if (currentKeys.IsExtended)
-                {
-                    currentKeys = ShortcutKeys.None;
-                }
             }
             else
             {
-                // string.Format("({0}) was pressed. Waiting for a second key input...", currentKeys)
+                StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefinedSimple"), currentKeys);
+                lockStatusLabel = true;
                 return false;
             }
 
+            currentKeys = ShortcutKeys.None;
+            lockStatusLabel = false;
             return true;
         }
 
@@ -1798,6 +1806,16 @@ namespace FlashDevelop
         #endregion
 
         #region General Methods
+
+        /// <summary>
+        /// Sets the text of the <see cref="StatusLabel"/>.
+        /// Use this method instead of directly accessing the <code>Text</code> property of <see cref="StatusLabel"/>.
+        /// </summary>
+        public string StatusLabelText
+        {
+            get { return this.StatusLabel.Text; }
+            set { if (!lockStatusLabel) StatusLabel.Text = value; }
+        }
 
         /// <summary>
         /// Finds the specified plugin

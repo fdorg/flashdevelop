@@ -537,7 +537,7 @@ namespace ASCompletion
                                             EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "ASCompletion.ContextualGenerator.AddOptions", options));
                                             if (options.Count == 0)
                                             {
-                                                PluginBase.MainForm.StatusLabel.Text = TextHelper.GetString("Info.NoContextGeneratorCode");
+                                                PluginBase.MainForm.StatusLabelText = TextHelper.GetString("Info.NoContextGeneratorCode");
                                             }
                                             CompletionList.Show(options, false);
                                         }

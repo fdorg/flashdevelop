@@ -2,14 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using PluginCore.Controls;
 using PluginCore.Localization;
-using PluginCore.Managers;
 using ScintillaNet;
 using ScintillaNet.Configuration;
 using ScintillaNet.Enums;
 using WeifenLuo.WinFormsUI.Docking;
-using Keys = System.Windows.Forms.Keys;
 
 namespace PluginCore
 {
@@ -325,6 +322,11 @@ namespace PluginCore
         /// Gets the tool strip status label.
         /// </summary>
         ToolStripStatusLabel StatusLabel { get; }
+        /// <summary>
+        /// Gets or sets the text of the <see cref="StatusLabel"/>.
+        /// Use this property instead of directly accessing the <code>Text</code> property of <see cref="StatusLabel"/>.
+        /// </summary>
+        string StatusLabelText { get; set; }
         /// <summary>
         /// Gets the tool strip progress label.
         /// </summary>
