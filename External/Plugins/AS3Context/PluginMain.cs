@@ -182,7 +182,7 @@ namespace AS3Context
                         if (inMXML)
                         {
                             KeyEvent ke = e as KeyEvent;
-                            if (ke.Value == PluginBase.MainForm.GetShortcutItemKeys("SearchMenu.GotoDeclaration"))
+                            if (PluginBase.MainForm.GetShortcutItemId(ke.Value) == "SearchMenu.GotoDeclaration")
                             {
                                 if (MxmlComplete.GotoDeclaration())
                                 {

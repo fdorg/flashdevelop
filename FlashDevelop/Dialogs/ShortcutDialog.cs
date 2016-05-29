@@ -290,7 +290,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeShortcutListItems()
         {
-            var collection = ShortcutManager.RegisteredItems.Values;
+            var collection = ShortcutManager.RegisteredItems;
             this.shortcutListItems = new ShortcutListItem[collection.Count];
             int counter = 0;
             foreach (var item in collection)

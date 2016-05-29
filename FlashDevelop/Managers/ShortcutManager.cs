@@ -11,81 +11,102 @@ using ScintillaNet;
 
 namespace FlashDevelop.Managers
 {
-
-    static class ShortcutManager
+    /// <summary>
+    /// A manager class for shortcuts.
+    /// </summary>
+    internal static class ShortcutManager
     {
-        public static readonly List<ShortcutKeys> AllShortcuts;
-        public static readonly List<ToolStripItem> SecondaryItems;
-        public static readonly Dictionary<string, ShortcutItem> RegisteredItems;
+        private static readonly List<ShortcutKeys> allShortcuts;
+        private static readonly List<ToolStripItem> secondaryItems;
+        private static readonly List</*Dictionary<string, */ShortcutItem> registeredItems;
+        private static readonly Dictionary<ShortcutKeys, ShortcutItem> cachedItems;
 
         static ShortcutManager()
         {
-            AllShortcuts = new List<ShortcutKeys>();
-            SecondaryItems = new List<ToolStripItem>();
-            RegisteredItems = new Dictionary<string, ShortcutItem>();
+            allShortcuts = new List<ShortcutKeys>();
+            secondaryItems = new List<ToolStripItem>();
+            registeredItems = new List</*Dictionary<string, */ShortcutItem>();
+            cachedItems = new Dictionary<ShortcutKeys, ShortcutItem>();
         }
 
         /// <summary>
-        /// Registers a shortcut item
+        /// Gets a list of all shortcut keys.
+        /// </summary>
+        public static List<ShortcutKeys> AllShortcuts
+        {
+            get { return allShortcuts; }
+        }
+
+        /// <summary>
+        /// Gets a collection of all registered shortcut items.
+        /// </summary>
+        public static ICollection<ShortcutItem> RegisteredItems
+        {
+            get { return registeredItems/*.Values*/; }
+        }
+
+        /// <summary>
+        /// Registers a shortcut item.
         /// </summary>
         public static void RegisterItem(string key, ShortcutKeys keys, bool supportsExtended)
         {
-            RegisteredItems.Add(key, new ShortcutItem(key, keys, supportsExtended));
+            registeredItems.Add(/*key, */new ShortcutItem(key, keys, supportsExtended));
         }
 
         /// <summary>
-        /// Registers a shortcut item
+        /// Registers a shortcut item.
         /// </summary>
         public static void RegisterItem(string key, ToolStripMenuItem item)
         {
-            RegisteredItems.Add(key, new ShortcutItem(key, item));
+            registeredItems.Add(/*key, */new ShortcutItem(key, item));
         }
 
         /// <summary>
-        /// Registers a secondary item
+        /// Registers a secondary item.
         /// </summary>
         public static void RegisterSecondaryItem(ToolStripItem item)
         {
-            SecondaryItems.Add(item);
+            secondaryItems.Add(item);
         }
 
         /// <summary>
-        /// Registers a secondary item
+        /// Registers a secondary item.
         /// </summary>
         public static void RegisterSecondaryItem(string id, ToolStripItem item)
         {
             item.Tag = new ItemData("none;" + id, null, null);
-            SecondaryItems.Add(item);
+            secondaryItems.Add(item);
         }
 
         /// <summary>
-        /// Gets the specified registered shortcut item
+        /// Gets the specified registered shortcut item.
         /// </summary>
         public static ShortcutItem GetRegisteredItem(string id)
         {
-            ShortcutItem item;
-            return RegisteredItems.TryGetValue(id, out item) ? item : null;
-        }
-
-        /// <summary>
-        /// Gets the specified registered shortcut item
-        /// </summary>
-        public static ShortcutItem GetRegisteredItem(ShortcutKeys keys)
-        {
-            if (keys.IsNone) return null;
-            foreach (ShortcutItem item in RegisteredItems.Values)
+            //ShortcutItem item;
+            //return RegisteredItems.TryGetValue(id, out item) ? item : null;
+            foreach (ShortcutItem item in registeredItems)
             {
-                if (item.Custom == keys) return item;
+                if (item.Id == id) return item;
             }
             return null;
         }
 
         /// <summary>
-        /// Gets the specified registered shortcut item
+        /// Gets the specified registered shortcut item.
+        /// </summary>
+        public static ShortcutItem GetRegisteredItem(ShortcutKeys keys)
+        {
+            ShortcutItem item;
+            return !keys.IsNone && cachedItems.TryGetValue(keys, out item) ? item : null;
+        }
+
+        /// <summary>
+        /// Gets the specified registered shortcut item.
         /// </summary>
         public static ToolStripItem GetSecondaryItem(string id)
         {
-            foreach (ToolStripItem item in SecondaryItems)
+            foreach (ToolStripItem item in secondaryItems)
             {
                 string[] ids = ((ItemData) item.Tag).Id.Split(';');
                 if (ids.Length == 2)
@@ -98,26 +119,28 @@ namespace FlashDevelop.Managers
         }
 
         /// <summary>
-        /// Updates the list of all shortcuts
+        /// Updates the list of all shortcuts.
         /// </summary>
         public static void UpdateAllShortcuts()
         {
-            foreach (ShortcutItem item in RegisteredItems.Values)
+            cachedItems.Clear();
+            foreach (ShortcutItem item in registeredItems/*.Values*/)
             {
-                if (!AllShortcuts.Contains(item.Custom))
+                if (!allShortcuts.Contains(item.Custom))
                 {
-                    AllShortcuts.Add(item.Custom);
+                    allShortcuts.Add(item.Custom);
                 }
+                cachedItems.Add(item.Custom, item);
             }
         }
 
         /// <summary>
-        /// Applies all shortcuts to the items
+        /// Applies all shortcuts to the items.
         /// </summary>
         public static void ApplyAllShortcuts()
         {
             UpdateAllShortcuts();
-            foreach (ShortcutItem item in RegisteredItems.Values)
+            foreach (ShortcutItem item in registeredItems/*.Values*/)
             {
                 if (item.ItemEx != null)
                 {
@@ -134,14 +157,14 @@ namespace FlashDevelop.Managers
                     EventManager.DispatchEvent(Globals.MainForm, de);
                 }
             }
-            foreach (ToolStripItem button in SecondaryItems)
+            foreach (ToolStripItem button in secondaryItems)
             {
                 ApplySecondaryShortcut(button);
             }
         }
 
         /// <summary>
-        /// Applies the shortcut display string to items with keyid or same id
+        /// Applies the shortcut display string to items with keyid or same id.
         /// </summary>
         public static void ApplySecondaryShortcut(ToolStripItem item)
         {
@@ -186,7 +209,7 @@ namespace FlashDevelop.Managers
         }
 
         /// <summary>
-        /// Loads the custom shortcuts from a file
+        /// Loads the custom shortcuts from a file.
         /// </summary>
         public static void LoadCustomShortcuts()
         {
@@ -215,12 +238,12 @@ namespace FlashDevelop.Managers
         }
 
         /// <summary>
-        /// Saves the custom shortcuts to a file
+        /// Saves the custom shortcuts to a file.
         /// </summary>
         public static void SaveCustomShortcuts()
         {
             List<Argument> shortcuts = new List<Argument>();
-            foreach (ShortcutItem item in RegisteredItems.Values)
+            foreach (ShortcutItem item in registeredItems/*.Values*/)
             {
                 if (item.Custom != item.Default)
                 {
