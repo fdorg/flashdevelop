@@ -3,9 +3,9 @@
   <Entry>
 		<Id>haxe3setup</Id>
 		<Name>Haxe + Neko</Name>
-		<Version>3.3.0</Version>
+		<Version>3.3.0-rc1</Version>
 		<Build>1</Build>
-		<Desc>Haxe 3 and Neko virtual machine installer</Desc>
+		<Desc>Haxe 3.3.0-rc1 and Neko virtual machine installer</Desc>
 		<Group>Compilers</Group>
 		<Bundles>
 			<Bundle>Haxe</Bundle>
