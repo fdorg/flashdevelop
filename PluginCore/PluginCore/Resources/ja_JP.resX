@@ -3963,7 +3963,7 @@ AfterSimilarAccessorMethod: 同様のアクセサメソッドの後に配置。"
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Label.RevertAllToDefault" xml:space="preserve">
-    <value>Revert All To &amp;Default</value>
+    <value>Revert &amp;All To Default</value>
     <comment>Added after 4.7.0</comment>
   </data>
   <data name="FlashDevelop.Label.Shortcut" xml:space="preserve">

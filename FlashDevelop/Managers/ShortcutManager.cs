@@ -126,11 +126,15 @@ namespace FlashDevelop.Managers
             cachedItems.Clear();
             foreach (ShortcutItem item in registeredItems/*.Values*/)
             {
-                if (!allShortcuts.Contains(item.Custom))
+                var keys = item.Custom;
+                if (!keys.IsNone)
                 {
-                    allShortcuts.Add(item.Custom);
+                    if (!allShortcuts.Contains(item.Custom))
+                    {
+                        allShortcuts.Add(item.Custom);
+                    }
+                    cachedItems.Add(item.Custom, item);
                 }
-                cachedItems.Add(item.Custom, item);
             }
         }
 
