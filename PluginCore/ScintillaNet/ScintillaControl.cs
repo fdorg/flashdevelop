@@ -5226,7 +5226,7 @@ namespace ScintillaNet
             {
                 foreach (ShortcutOverride shortcut in shortcutOverrides.Values)
                 {
-                    if (keys.Equals(shortcut.keys))
+                    if (keys == shortcut.keys)
                     {
                         shortcut.action(this);
                         return true;

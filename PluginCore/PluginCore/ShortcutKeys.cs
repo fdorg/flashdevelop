@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using PluginCore.Helpers;
 
 namespace PluginCore
 {
@@ -9,16 +10,10 @@ namespace PluginCore
     [Serializable]
     public struct ShortcutKeys
     {
-        private static KeysConverter keysConverter;
         private Keys m_first;
         private Keys m_second;
 
         #region Constructors
-
-        static ShortcutKeys()
-        {
-            keysConverter = new KeysConverter();
-        }
 
         /// <summary>
         /// Creates a simple <see cref="ShortcutKeys"/> with the specified <see cref="Keys"/> value.
@@ -48,12 +43,12 @@ namespace PluginCore
 
         public static bool operator ==(ShortcutKeys a, ShortcutKeys b)
         {
-            return a.Equals(b);
+            return a.m_first == b.m_first && a.m_second == b.m_second;
         }
 
         public static bool operator !=(ShortcutKeys a, ShortcutKeys b)
         {
-            return !a.Equals(b);
+            return a.m_first != b.m_first || a.m_second != b.m_second;
         }
 
         public static bool operator ==(ShortcutKeys a, Keys b)
@@ -108,21 +103,7 @@ namespace PluginCore
         /// <param name="s">A string representation of <see cref="ShortcutKeys"/> to convert.</param>
         public static ShortcutKeys Parse(string s)
         {
-            if (s == null) throw new ArgumentNullException("s");
-
-            ShortcutKeys value;
-            int index = s.IndexOf(',');
-            if (index >= 0)
-            {
-                value.m_first = (Keys) keysConverter.ConvertFromString(s.Substring(0, index));
-                value.m_second = (Keys) keysConverter.ConvertFromString(s.Substring(index + 1));
-            }
-            else
-            {
-                value.m_first = (Keys) keysConverter.ConvertFromString(s);
-                value.m_second = 0;
-            }
-            return value;
+            return ShortcutKeysConverter.ConvertFromString(s);
         }
 
         #endregion
@@ -179,7 +160,7 @@ namespace PluginCore
         /// <param name="obj">The <see cref="ShortcutKeys"/> to compare with the current <see cref="ShortcutKeys"/>.</param>
         public bool Equals(ShortcutKeys obj)
         {
-            return m_first == obj.m_first && m_second == obj.m_second;
+            return this == obj;
         }
 
         /// <summary>
@@ -188,7 +169,7 @@ namespace PluginCore
         /// <param name="obj">The <see cref="object"/> to compare with the current <see cref="object"/>.</param>
         public override bool Equals(object obj)
         {
-            return obj != null && obj is ShortcutKeys && Equals((ShortcutKeys) obj);
+            return obj != null && obj is ShortcutKeys && this == (ShortcutKeys) obj;
         }
 
         /// <summary>
@@ -204,9 +185,7 @@ namespace PluginCore
         /// </summary>
         public override string ToString()
         {
-            return IsExtended ?
-                keysConverter.ConvertToString(m_first) + ", " + keysConverter.ConvertToString(m_second)
-                : keysConverter.ConvertToString(m_first);
+            return ShortcutKeysConverter.ConvertToString(this);
         }
 
         #endregion

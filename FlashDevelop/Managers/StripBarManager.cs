@@ -310,12 +310,20 @@ namespace FlashDevelop.Managers
         {
             try
             {
-                return ShortcutKeys.Parse(data.Replace('|', '+'));
+                data = data.Replace('|', '+');
+                return ShortcutKeys.Parse(data);
             }
-            catch (Exception ex)
+            catch
             {
-                ErrorManager.ShowError(ex);
-                return Keys.None;
+                try
+                {
+                    return (Keys) Enum.Parse(typeof(Keys), data); // for backward compatibility
+                }
+                catch (Exception ex)
+                {
+                    ErrorManager.ShowError(ex);
+                    return Keys.None;
+                }
             }
         }
 

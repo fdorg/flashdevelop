@@ -85,7 +85,7 @@ namespace PluginCore.Controls
                 {
                     throw new ArgumentException("Passed value is not a valid shortcut.", "value");
                 }
-                if (!m_shortcutKeys.Equals(value))
+                if (m_shortcutKeys != value)
                 {
                     if (value.IsExtended)
                     {
@@ -126,6 +126,7 @@ namespace PluginCore.Controls
                         }
                         m_shortcutKeys = value;
                         base.ShortcutKeys = m_shortcutKeys.First;
+                        ShortcutKeyDisplayString = m_shortcutKeys.IsNone ? null : m_shortcutKeys.ToString();
                     }
                 }
             }
@@ -137,7 +138,7 @@ namespace PluginCore.Controls
 
         internal bool ProcessCmdKeyInternal(ref Message m, ShortcutKeys keyData)
         {
-            if (Enabled && m_shortcutKeys.Equals(keyData) && !HasDropDownItems)
+            if (Enabled && m_shortcutKeys == keyData && !HasDropDownItems)
             {
                 PerformClick();
                 return true;

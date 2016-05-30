@@ -6,7 +6,6 @@ using FlashDevelop.Managers;
 using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
-using PluginCore.Utilities;
 using PluginCore;
 using PluginCore.Managers;
 
@@ -845,7 +844,7 @@ namespace FlashDevelop.Dialogs
             /// </summary>
             public bool IsModified
             {
-                get { return !this.Custom.Equals(this.Default); }
+                get { return this.Custom != this.Default; }
             }
 
             /// <summary>

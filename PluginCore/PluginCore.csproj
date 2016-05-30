@@ -317,6 +317,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="PluginCore\Controls\ShellContextMenu.cs" />
+    <Compile Include="PluginCore\Helpers\ShortcutKeysConverter.cs" />
     <Compile Include="PluginCore\Managers\ShortcutKeysManager.cs" />
     <Compile Include="PluginCore\Controls\SmartForm.cs">
       <SubType>Form</SubType>
