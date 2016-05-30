@@ -2,7 +2,6 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Localization;
-using PluginCore.Managers;
 
 namespace ProjectManager.Helpers
 {
@@ -199,7 +198,7 @@ namespace ProjectManager.Helpers
                 e.Handled = true;
                 e.SuppressKeyPress = true;
             }
-            else if (this.currentKeys.IsExtended || (e.KeyData & Keys.Control) != 0 || e.KeyData == (Keys.Shift | Keys.Delete) || e.KeyData == (Keys.Shift | Keys.Insert))
+            else if ((e.KeyData & Keys.Control) != 0 || e.KeyData == (Keys.Shift | Keys.Delete) || e.KeyData == (Keys.Shift | Keys.Insert))
             {
                 e.Handled = true;
                 e.SuppressKeyPress = true;

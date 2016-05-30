@@ -2081,10 +2081,11 @@ namespace FlashDevelop
 
         /// <summary>
         /// A utility method for handling extended shortcuts where the context prevents the default mechanism (e.g. in a dialog form).
-        /// Returns <code>true</code> if the current key press should be handled, <code>false</code> otherwise.
+        /// Returns <code>true</code> if the current key press is processed; <code>false</code> otherwise.
         /// <para/>
         /// When this method returns <code>true</code>, make sure to always set <code>previousKeys</code> to <see cref="ShortcutKeys.None"/>,
         /// so the next call to this method will correctly handle the new keyboard input as the first part of a shortcut.
+        /// Also, when calling from <see cref="Control.ProcessCmdKey(ref Message, Keys)"/>, make sure to return <code>true</code> if this method returns <code>true</code>.
         /// </summary>
         /// <param name="previousKeys">The reference to the stored previous <see cref="ShortcutKeys"/> value.</param>
         /// <param name="input">The <see cref="Keys"/> value specifying the current keyboard input.</param>
@@ -2109,11 +2110,14 @@ namespace FlashDevelop
                 {
                     StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefinedExtended"), previousKeys);
                 }
-                else if (ShortcutKeysManager.IsValidExtendedShortcutFirst(input))
+                else
                 {
-                    StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefinedSimple"), previousKeys);
+                    if (ShortcutKeysManager.IsValidExtendedShortcutFirst(input))
+                    {
+                        StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefinedSimple"), previousKeys);
+                    }
+                    return false;
                 }
-                return false;
             }
             return true;
         }
