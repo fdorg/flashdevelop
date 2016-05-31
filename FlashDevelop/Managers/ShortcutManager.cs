@@ -223,35 +223,40 @@ namespace FlashDevelop.Managers
         {
             ScintillaControl.InitShortcuts();
             string file = FileNameHelper.ShortcutData;
-            if (File.Exists(file))
+            if (!File.Exists(file))
             {
-                var shortcuts = new List<Argument>();
-                shortcuts = (List<Argument>) ObjectSerializer.Deserialize(file, shortcuts, false);
-
-                int version = 0;
-                int i = 0;
-                int count = shortcuts.Count;
-
-                if (count > 0 && shortcuts[0].Key == VersionKey)
+                if (File.Exists(FileNameHelper.ShortcutDataOld))
                 {
-                    version = int.Parse(shortcuts[0].Value);
-                    i = 1;
+                    File.Move(FileNameHelper.ShortcutDataOld, file);
                 }
+                else return;
+            }
+            var shortcuts = new List<Argument>();
+            shortcuts = (List<Argument>) ObjectSerializer.Deserialize(file, shortcuts, false);
 
-                for (; i < count; i++)
+            int version = 0;
+            int i = 0;
+            int count = shortcuts.Count;
+
+            if (count > 0 && shortcuts[0].Key == VersionKey)
+            {
+                version = int.Parse(shortcuts[0].Value);
+                i = 1;
+            }
+
+            for (; i < count; i++)
+            {
+                var arg = shortcuts[i];
+                var item = GetRegisteredItem(arg.Key);
+                if (item != null)
                 {
-                    var arg = shortcuts[i];
-                    var item = GetRegisteredItem(arg.Key);
-                    if (item != null)
+                    if (version >= ExtendedShortcutMinimumFileVersion)
                     {
-                        if (version >= ExtendedShortcutMinimumFileVersion)
-                        {
-                            item.Custom = ShortcutKeys.Parse(arg.Value);
-                        }
-                        else
-                        {
-                            item.Custom = (Keys) Enum.Parse(typeof(Keys), arg.Value); // for backward compatibility
-                        }
+                        item.Custom = ShortcutKeys.Parse(arg.Value);
+                    }
+                    else
+                    {
+                        item.Custom = (Keys) Enum.Parse(typeof(Keys), arg.Value); // for backward compatibility
                     }
                 }
             }
