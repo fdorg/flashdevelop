@@ -308,23 +308,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         private static ShortcutKeys GetKeys(String data)
         {
-            try
-            {
-                data = data.Replace('|', '+');
-                return ShortcutKeys.Parse(data);
-            }
-            catch
-            {
-                try
-                {
-                    return (Keys) Enum.Parse(typeof(Keys), data); // for backward compatibility
-                }
-                catch (Exception ex)
-                {
-                    ErrorManager.ShowError(ex);
-                    return Keys.None;
-                }
-            }
+            return ShortcutKeys.Parse(data.Replace('|', '+'));
         }
 
         /// <summary>

@@ -137,7 +137,7 @@ namespace FlashDevelop.Managers
                     {
                         allShortcuts.Add(item.Custom);
                     }
-                    cachedItems.Add(item.Custom, item);
+                    cachedItems[item.Custom] = item;
                 }
             }
         }

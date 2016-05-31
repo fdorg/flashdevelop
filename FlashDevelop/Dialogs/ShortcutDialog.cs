@@ -319,6 +319,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void PopulateListView(string filter)
         {
+            var selectedItem = this.listView.SelectedItems.Count > 0 ? this.listView.SelectedItems[0] : null;
             bool viewCustom = false;
             bool viewConflicts = false;
             filter = ExtractFilterKeywords(filter, ref viewCustom, ref viewConflicts);
@@ -337,7 +338,17 @@ namespace FlashDevelop.Dialogs
                 }
             }
             this.listView.EndUpdate();
-            if (this.listView.Items.Count > 0) this.listView.Items[0].Selected = true;
+            if (this.listView.Items.Count > 0 && selectedItem != null)
+            {
+                int index = this.listView.Items.IndexOf(selectedItem);
+                index = index >= 0 ? index : 0;
+                this.listView.Items[index].Selected = true;
+                this.listView.EnsureVisible(index);
+            }
+            else
+            {
+                this.filterTextBox.Focus();
+            }
         }
 
         /// <summary>
@@ -357,7 +368,7 @@ namespace FlashDevelop.Dialogs
             {
                 string text = TextHelper.GetString("Info.ShortcutIsAlreadyUsed");
                 string caption = TextHelper.GetString("Title.WarningDialog");
-                switch (MessageBox.Show(Globals.MainForm, text, " " + caption, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Warning))
+                switch (MessageBox.Show(this, text, " " + caption, MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Warning))
                 {
                     case DialogResult.Abort:
                         this.listView.BeginUpdate();
@@ -366,9 +377,8 @@ namespace FlashDevelop.Dialogs
                         this.listView.EndUpdate();
                         break;
                     case DialogResult.Retry:
-                        this.filterTextBox.Text = ViewConflictsKey + item.KeysString;
+                        this.filterTextBox.Text = ViewConflictsKey + ShortcutKeysConverter.ConvertToString(item.Custom.First);
                         this.filterTextBox.SelectAll();
-                        this.filterTextBox.Focus(); // Set focus to filter...
                         break;
                 }
             }
@@ -420,15 +430,12 @@ namespace FlashDevelop.Dialogs
         {
             var keys = target.Custom;
             if (keys.IsNone) return;
-            bool isSimple = keys.IsSimple;
-            var first = keys.First;
+
             List<ShortcutListItem> conflicts = null;
             for (int i = 0; i < this.shortcutListItems.Length; i++)
             {
                 var item = this.shortcutListItems[i];
-                if (item == target) continue;
-                var itemKeys = item.Custom;
-                if (keys == itemKeys || (isSimple || itemKeys.IsSimple) && first == itemKeys.First)
+                if (item != target && Conflicts(keys, item.Custom))
                 {
                     if (conflicts == null)
                     {
@@ -441,6 +448,7 @@ namespace FlashDevelop.Dialogs
                     }
                     else if (!conflicts.Contains(item))
                     {
+                        item.Conflicts = conflicts;
                         conflicts.Add(item);
                     }
                 }
@@ -519,13 +527,38 @@ namespace FlashDevelop.Dialogs
                 var conflicts = item.Conflicts;
                 item.Conflicts = null;
                 conflicts.Remove(item);
-                if (conflicts.Count == 1)
+
+                bool noConflicts = true;
+                int count = conflicts.Count;
+                if (count > 1)
                 {
-                    item = conflicts[0];
-                    item.Conflicts = null; // empty conflicts list will be garbage collected
+                    var keys = conflicts[0].Custom;
+                    for (int i = 1; i < count; i++)
+                    {
+                        if (Conflicts(keys, conflicts[i].Custom))
+                        {
+                            noConflicts = false;
+                            break;
+                        }
+                    }
+                }
+                if (noConflicts)
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        conflicts[i].Conflicts = null;
+                    }
                     conflicts.Clear();
                 }
             }
+        }
+
+        /// <summary>
+        /// Returns whether two <see cref="ShortcutKeys"/> values conflict.
+        /// </summary>
+        public static bool Conflicts(ShortcutKeys a, ShortcutKeys b)
+        {
+            return a == b || (!a.IsExtended || !b.IsExtended) && a.First == b.First;
         }
 
         #endregion
@@ -558,8 +591,8 @@ namespace FlashDevelop.Dialogs
             this.filterTextBox.TextChanged -= this.FilterTextBox_TextChanged;
             this.filterTextBox.Text = string.Empty;
             this.filterTextBox.TextChanged += this.FilterTextBox_TextChanged;
-            this.filterTextBox.Select();
             this.PopulateListView(string.Empty);
+            if (clearButton.Focused) this.listView.Focus();
         }
 
         /// <summary>
@@ -567,7 +600,9 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void ListView_ClientSizeChanged(object sender, EventArgs e)
         {
+            this.listView.BeginUpdate();
             this.keyHeader.Width = this.listView.ClientSize.Width - this.idHeader.Width;
+            this.listView.EndUpdate();
         }
 
         /// <summary>
