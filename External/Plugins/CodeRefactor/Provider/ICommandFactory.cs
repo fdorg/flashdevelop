@@ -105,6 +105,7 @@ namespace CodeRefactor.Provider
         /// <summary>
         /// A new Move refactoring command.
         /// </summary>
+        /// <param name="oldPathToNewPath"></param>
         /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
         /// <param name="renaming"></param>
         /// <param name="updatePackages"></param>
