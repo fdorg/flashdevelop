@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace HaXeContext
 {
-    class CompilerCompletionHandler : IHaxeCompletionHandler
+    public class CompilerCompletionHandler : IHaxeCompletionHandler
     {
         private Process haxeProcess;
 

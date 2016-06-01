@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ASCompletion.Completion;
 using ASCompletion.Model;
+using CodeRefactor.Provider.Haxe;
 using PluginCore;
 
 namespace CodeRefactor.Provider
@@ -13,7 +14,7 @@ namespace CodeRefactor.Provider
         {
             Register("as2", new CommandFactory());
             Register("as3", new CommandFactory());
-            Register("haxe", new CommandFactory());
+            Register("haxe", new HaxeCommandFactory());
             Register("loom", new CommandFactory());
         }
 

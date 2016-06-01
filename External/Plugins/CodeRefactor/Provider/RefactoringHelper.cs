@@ -349,17 +349,14 @@ namespace CodeRefactor.Provider
             {
                 return null;
             }
-            else
+            // if the target we are trying to rename exists as a local variable or a function parameter we only need to search the current file
+            if (target.Member != null && (
+                target.Member.Access == Visibility.Private
+                || CheckFlag(target.Member.Flags, FlagType.LocalVar)
+                || CheckFlag(target.Member.Flags, FlagType.ParameterVar))
+                )
             {
-                // if the target we are trying to rename exists as a local variable or a function parameter we only need to search the current file
-                if (target.Member != null && (
-                        target.Member.Access == Visibility.Private
-                        || CheckFlag(target.Member.Flags, FlagType.LocalVar)
-                        || CheckFlag(target.Member.Flags, FlagType.ParameterVar))
-                    )
-                {
-                    currentFileOnly = true;
-                }
+                currentFileOnly = true;
             }
             FRConfiguration config;
             IProject project = PluginBase.CurrentProject;

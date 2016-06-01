@@ -37,25 +37,25 @@ namespace CodeRefactor.Provider
 
         public virtual Command CreateFindAllReferencesCommand()
         {
-            return new FindAllReferences();
+            return CreateFindAllReferencesCommand(true);
         }
 
         public virtual Command CreateFindAllReferencesCommand(bool output)
         {
-            return new FindAllReferences(output);
+            return this.CreateFindAllReferencesCommand(RefactoringHelper.GetDefaultRefactorTarget(), output);
         }
 
         public virtual Command CreateFindAllReferencesCommand(ASResult target, bool output)
         {
-            return new FindAllReferences(target, output);
+            return this.CreateFindAllReferencesCommand(target, output, false);
         }
 
         public virtual Command CreateFindAllReferencesCommand(ASResult target, bool output, bool ignoreDeclarations)
         {
-            return new FindAllReferences(target, output, ignoreDeclarations);
+            return this.CreateFindAllReferencesCommand(target, output, ignoreDeclarations, true);
         }
 
-        public Command CreateFindAllReferencesCommand(ASResult target, bool output, bool ignoreDeclarations, bool onlySourceFiles)
+        public virtual Command CreateFindAllReferencesCommand(ASResult target, bool output, bool ignoreDeclarations, bool onlySourceFiles)
         {
             return new FindAllReferences(target, output, ignoreDeclarations) {OnlySourceFiles = onlySourceFiles};
         }

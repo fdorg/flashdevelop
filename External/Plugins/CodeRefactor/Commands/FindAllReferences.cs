@@ -100,7 +100,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Invoked when the FRSearch completes its search
         /// </summary>
-        private void FindFinished(FRResults results)
+        protected void FindFinished(FRResults results)
         {
 
             UserInterfaceManager.ProgressDialog.Reset();
