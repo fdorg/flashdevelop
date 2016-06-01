@@ -118,7 +118,10 @@
     <Compile Include="PluginMain.cs" />
     <Compile Include="Commands\RefactorCommand.cs" />
     <Compile Include="Commands\RefactorCompleteEventArgs.cs" />
+    <Compile Include="Provider\CommandFactory.cs" />
+    <Compile Include="Provider\CommandFactoryProvider.cs" />
     <Compile Include="Provider\DocumentHelper.cs" />
+    <Compile Include="Provider\ICommandFactory.cs" />
     <Compile Include="Provider\MovingHelper.cs" />
     <Compile Include="Provider\RefactoringHelper.cs" />
     <Compile Include="Provider\RenamingHelper.cs" />

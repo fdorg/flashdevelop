@@ -16,22 +16,13 @@ namespace CodeRefactor.Commands
     /// </summary>
     public class FindAllReferences : RefactorCommand<IDictionary<String, List<SearchMatch>>>
     {
-        private ASResult currentTarget;
-        private Boolean outputResults;
-        private Boolean ignoreDeclarationSource;
+        private readonly Boolean outputResults;
+        private readonly Boolean ignoreDeclarationSource;
 
         /// <summary>
         /// Gets or sets if searching is only performed on user defined classpaths
         /// </summary>
         public Boolean OnlySourceFiles { get; set; }
-
-        /// <summary>
-        /// The current declaration target that references are being found to.
-        /// </summary>
-        public ASResult CurrentTarget
-        {
-            get { return this.currentTarget; }
-        }
 
         /// <summary>
         /// A new FindAllReferences refactoring command. Outputs found results.
@@ -61,13 +52,13 @@ namespace CodeRefactor.Commands
         }
 
         /// <summary>
-        /// 
+        /// A new FindAllReferences refactoring command.
         /// </summary>
         /// <param name="target">The target declaration to find references to.</param>
         /// <param name="output">If true, will send the found results to the trace log and results panel</param>
         public FindAllReferences(ASResult target, Boolean output, Boolean ignoreDeclarations)
         {
-            this.currentTarget = target;
+            CurrentTarget = target;
             this.outputResults = output;
             this.ignoreDeclarationSource = ignoreDeclarations;
         }
@@ -82,7 +73,7 @@ namespace CodeRefactor.Commands
             UserInterfaceManager.ProgressDialog.Show();
             UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("Info.FindingReferences"));
             UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.SearchingFiles"));
-            RefactoringHelper.FindTargetInFiles(currentTarget, new FRProgressReportHandler(this.RunnerProgress), new FRFinishedHandler(this.FindFinished), true, OnlySourceFiles, true);
+            RefactoringHelper.FindTargetInFiles(CurrentTarget, RunnerProgress, FindFinished, true, OnlySourceFiles, true);
         }
 
         /// <summary>
@@ -90,7 +81,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         public override Boolean IsValid()
         {
-            return this.currentTarget != null;
+            return CurrentTarget != null;
         }
 
         #endregion
@@ -115,7 +106,7 @@ namespace CodeRefactor.Commands
             UserInterfaceManager.ProgressDialog.Reset();
             UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.ResolvingReferences"));
             // First filter out any results that don't actually point to our source declaration
-            this.Results = ResolveActualMatches(results, currentTarget);
+            this.Results = ResolveActualMatches(results, CurrentTarget);
             if (this.outputResults) this.ReportResults();
             UserInterfaceManager.ProgressDialog.Hide();
             // Select first match

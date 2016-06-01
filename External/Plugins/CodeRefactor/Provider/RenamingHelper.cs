@@ -29,7 +29,7 @@ namespace CodeRefactor.Provider
             Rename cmd = null;
             if (target.IsPackage)
             {
-                cmd = new Rename(target, outputResults);
+                cmd = (Rename) CommandFactoryProvider.GetFactoryFromTarget(target).CreateRenameCommand(target, outputResults);
                 queue.Add(cmd);
             }
             else
@@ -41,7 +41,7 @@ namespace CodeRefactor.Provider
                 if (askName.ShowDialog() != DialogResult.OK) return;
                 string newName = askName.Line.Trim();
                 if (newName.Length == 0 || newName == originalName) return;
-                cmd = new Rename(target, outputResults, newName);
+                cmd = (Rename) CommandFactoryProvider.GetFactoryFromTarget(target).CreateRenameCommand(target, outputResults, newName);
                 queue.Add(cmd);
                 if (ASContext.Context.CurrentModel.haXe && target.Member != null &&
                     (target.Member.Flags & (FlagType.Getter | FlagType.Setter)) > 0)
@@ -67,12 +67,13 @@ namespace CodeRefactor.Provider
 
         static void RenameMember(ClassModel inClass, string name, string newName, bool outputResults)
         {
-            MemberModel m = inClass.Members.Items.FirstOrDefault(it => it.Name == name);
+            var m = inClass.Members.Items.FirstOrDefault(it => it.Name == name);
             if (m == null) return;
-            ASResult result = new ASResult();
-            ASComplete.FindMember(name, inClass, result, FlagType.Dynamic | FlagType.Function, 0);
-            if (result.Member == null) return;
-            queue.Add(new Rename(result, outputResults, newName));
+            var target = new ASResult();
+            ASComplete.FindMember(name, inClass, target, FlagType.Dynamic | FlagType.Function, 0);
+            if (target.Member == null) return;
+            var command = (Rename) CommandFactoryProvider.GetFactoryFromFile(inClass.InFile).CreateRenameCommand(target, outputResults, newName);
+            queue.Add(command);
         }
          
         static void ExecuteFirst()

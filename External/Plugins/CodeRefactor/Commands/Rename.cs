@@ -17,14 +17,16 @@ using ProjectManager.Projects;
 
 namespace CodeRefactor.Commands
 {
+    using Command = RefactorCommand<IDictionary<string, List<SearchMatch>>>;
+
     /// <summary>
     /// Refactors by renaming the given declaration and all its references.
     /// </summary>
-    public class Rename : RefactorCommand<IDictionary<String, List<SearchMatch>>>
+    public class Rename : Command
     {
-        private Boolean outputResults;
-        private FindAllReferences findAllReferencesCommand;
-        private Move renamePackage;
+        private readonly Boolean outputResults;
+        private readonly Command findAllReferencesCommand;
+        private readonly Command renamePackage;
         private String oldFileName;
         private String newFileName;
 
@@ -100,7 +102,8 @@ namespace CodeRefactor.Commands
                             TargetName = Path.GetFileName(path);
                             this.NewName = string.IsNullOrEmpty(newName) ? GetNewName(TargetName) : newName;
                             if (string.IsNullOrEmpty(this.NewName)) return;
-                            renamePackage = new Move(new Dictionary<string, string> { { path, this.NewName } }, true, true);
+                            var language = PluginBase.MainForm.SciConfig.GetLanguageFromFile(TargetName);
+                            renamePackage = CommandFactoryProvider.GetFactoryFromLanguage(language).CreateMoveCommand(new Dictionary<string, string> {{path, this.NewName}}, true, true);
                             return;
                         }
                     }
@@ -115,7 +118,7 @@ namespace CodeRefactor.Commands
 
             // create a FindAllReferences refactor to get all the changes we need to make
             // we'll also let it output the results, at least until we implement a way of outputting the renamed results later
-            this.findAllReferencesCommand = new FindAllReferences(target, false, ignoreDeclarationSource) { OnlySourceFiles = true };
+            this.findAllReferencesCommand = CommandFactoryProvider.GetFactoryFromTarget(target).CreateFindAllReferencesCommand(target, false, ignoreDeclarationSource, false);
             // register a completion listener to the FindAllReferences so we can rename the entries
             this.findAllReferencesCommand.OnRefactorComplete += OnFindAllReferencesCompleted;
         }
@@ -197,9 +200,6 @@ namespace CodeRefactor.Commands
 
             var member = isEnum || isClass ? target.Type : target.Member;
             FileModel inFile = member.InFile;
-
-            // Is this possible? should return false? I'm inclined to think so
-            if (inFile == null) return true;
 
             oldFileName = inFile.FileName;
             String oldName = Path.GetFileNameWithoutExtension(oldFileName);

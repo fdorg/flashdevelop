@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using ASCompletion.Context;
 using ASCompletion.Model;
