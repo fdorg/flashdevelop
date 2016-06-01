@@ -145,7 +145,7 @@ namespace PluginCore.Managers
         /// <summary>
         /// Retrieves a value indicating whether a defined shortcut key is valid for the second part of an extended shortcut.
         /// </summary>
-        /// <param name="first">The shortcut key to test for validity.</param>
+        /// <param name="second">The shortcut key to test for validity.</param>
         public static bool IsValidExtendedShortcutSecond(Keys second)
         {
             if (second == 0)
@@ -206,13 +206,11 @@ namespace PluginCore.Managers
                 parent = parent.Parent;
             }
             while (parent != null);
-            if (parent != null)
-            {
-                control = parent;
-            }
+
             bool handled = false;
             bool prune = false;
-            for (int i = 0; i < ToolStrips.Count; i++)
+            int count = ToolStrips.Count;
+            for (int i = 0; i < count; i++)
             {
                 var strip = ToolStrips[i] as ToolStrip;
                 bool flag = false;
@@ -222,7 +220,7 @@ namespace PluginCore.Managers
                     prune = true;
                     continue;
                 }
-                if (control == null || strip != control.ContextMenuStrip && strip.Shortcuts().Contains(shortcut))
+                if (strip != control.ContextMenuStrip && strip.Shortcuts().Contains(shortcut))
                 {
                     if (strip.IsDropDown)
                     {
@@ -244,7 +242,7 @@ namespace PluginCore.Managers
                     if (!flag)
                     {
                         var toplevelOwnerToolStrip = strip.GetToplevelOwnerToolStrip();
-                        if (toplevelOwnerToolStrip != null && control != null)
+                        if (toplevelOwnerToolStrip != null)
                         {
                             var rootHWnd = GetRootHWnd(toplevelOwnerToolStrip);
                             var controlRef = GetRootHWnd(control);

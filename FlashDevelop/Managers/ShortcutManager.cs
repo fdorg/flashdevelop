@@ -179,13 +179,9 @@ namespace FlashDevelop.Managers
             bool view = Globals.Settings.ViewShortcuts;
             if (item != null && item.Tag != null)
             {
-                string id = string.Empty;
                 string[] ids = ((ItemData) item.Tag).Id.Split(';');
-                if (ids.Length == 2)
-                {
-                    id = string.IsNullOrEmpty(ids[1]) ? StripBarManager.GetMenuItemId(item) : ids[1];
-                }
-                else return; // No work for us here...
+                if (ids.Length != 2) return; // No work for us here...
+                string id = string.IsNullOrEmpty(ids[1]) ? StripBarManager.GetMenuItemId(item) : ids[1];
                 var keys = Globals.MainForm.GetShortcutItemKeys(id);
                 if (!keys.IsNone)
                 {
@@ -207,8 +203,8 @@ namespace FlashDevelop.Managers
                     }
                     else
                     {
-                        int end = item.ToolTipText.IndexOfOrdinal(" (");
-                        string keytext = view ? " (" + keys + ")" : "";
+                        int end = item.ToolTipText.LastIndexOfOrdinal(" (");
+                        string keytext = view ? " (" + keys + ")" : string.Empty;
                         if (end != -1) item.ToolTipText = item.ToolTipText.Substring(0, end) + keytext;
                         else item.ToolTipText += keytext;
                     }
@@ -269,7 +265,7 @@ namespace FlashDevelop.Managers
         {
             var shortcuts = new List<Argument>();
             shortcuts.Add(new Argument(VersionKey, CurrentShortcutFileVersion.ToString()));
-            foreach (ShortcutItem item in RegisteredItems)
+            foreach (var item in RegisteredItems)
             {
                 if (item.Custom != item.Default)
                 {
@@ -360,21 +356,21 @@ namespace FlashDevelop.Managers
 
     internal class ShortcutItem
     {
-        public string Id;
-        public bool SupportsExtended;
-        public ShortcutKeys Default;
-        public ShortcutKeys Custom;
-        public ToolStripMenuItem Item;
-        public ToolStripMenuItemEx ItemEx;
+        internal string Id;
+        internal bool SupportsExtended;
+        internal ShortcutKeys Default;
+        internal ShortcutKeys Custom;
+        internal ToolStripMenuItem Item;
+        internal ToolStripMenuItemEx ItemEx;
 
-        public ShortcutItem(string id, ShortcutKeys keys, bool supportsExtended)
+        internal ShortcutItem(string id, ShortcutKeys keys, bool supportsExtended)
         {
             Id = id;
             Default = Custom = keys;
             SupportsExtended = supportsExtended;
         }
 
-        public ShortcutItem(string id, ToolStripMenuItem item)
+        internal ShortcutItem(string id, ToolStripMenuItem item)
         {
             Id = id;
             Item = item;

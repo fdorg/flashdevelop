@@ -169,7 +169,7 @@ namespace PluginCore
         /// <param name="obj">The <see cref="object"/> to compare with the current <see cref="object"/>.</param>
         public override bool Equals(object obj)
         {
-            return obj != null && obj is ShortcutKeys && this == (ShortcutKeys) obj;
+            return obj is ShortcutKeys && this == (ShortcutKeys) obj;
         }
 
         /// <summary>

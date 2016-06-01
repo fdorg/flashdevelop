@@ -149,7 +149,7 @@ namespace FlashDevelop.Dialogs
             // 
             this.importButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.importButton.Location = new System.Drawing.Point(454, 382);
-            this.importButton.Name = "openButton";
+            this.importButton.Name = "importButton";
             this.importButton.Size = new System.Drawing.Size(25, 23);
             this.importButton.TabIndex = 3;
             this.importButton.UseVisualStyleBackColor = true;
@@ -159,7 +159,7 @@ namespace FlashDevelop.Dialogs
             // 
             this.exportButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.exportButton.Location = new System.Drawing.Point(484, 382);
-            this.exportButton.Name = "saveButton";
+            this.exportButton.Name = "exportButton";
             this.exportButton.Size = new System.Drawing.Size(25, 23);
             this.exportButton.TabIndex = 4;
             this.exportButton.UseVisualStyleBackColor = true;

@@ -161,14 +161,14 @@ namespace PluginCore.Helpers
             return GetString(keys);
         }
 
-        private unsafe static ShortcutKeys ConvertFromStringInternal(string value)
+        private static unsafe ShortcutKeys ConvertFromStringInternal(string value)
         {
             // For performance reasons, use an unsafe context and char pointers.
             int index = 0;
             bool extended = false;
             var first = Keys.None;
             var second = Keys.None;
-            var length = value.Length;
+            int length = value.Length;
 
             fixed (char* c = value)
             {
