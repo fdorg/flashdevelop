@@ -6041,11 +6041,11 @@ Complete: 현재 파일, 프로젝트 파일 및 수동 새로 고침.</value>
     <value>새 단축키를 누르세요:</value>
     <comment>Added after 5.2.0</comment>
   </data>
-  <data name="FlashDevelop.Info.ShortcutUndefinedExtended" xml:space="preserve">
+  <data name="FlashDevelop.Info.ShortcutUndefined" xml:space="preserve">
     <value>단축키 조합 ({0})이 정의되어 있지 않습니다.</value>
     <comment>Added after 5.2.0</comment>
   </data>
-  <data name="FlashDevelop.Info.ShortcutUndefinedSimple" xml:space="preserve">
+  <data name="FlashDevelop.Info.ShortcutWaiting" xml:space="preserve">
     <value>({0}) 키를 눌렀습니다. 두번째 키 입력을 기다리는 중...</value>
     <comment>Added after 5.2.0</comment>
   </data>

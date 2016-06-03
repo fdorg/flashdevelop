@@ -1619,10 +1619,12 @@ namespace FlashDevelop
             /**
              * Don't process ControlKey, ShiftKey or Menu
              */
-            Keys keyCode = keyData & Keys.KeyCode;
-            if (keyCode == Keys.ControlKey || keyCode == Keys.ShiftKey || keyCode == Keys.Menu)
+            switch (keyData & Keys.KeyCode)
             {
-                return base.ProcessCmdKey(ref msg, keyData);
+                case Keys.ControlKey:
+                case Keys.ShiftKey:
+                case Keys.Menu:
+                    return base.ProcessCmdKey(ref msg, keyData);
             }
 
             /**
@@ -1646,7 +1648,7 @@ namespace FlashDevelop
                 lockStatusLabel = false;
                 if (!ShortcutKeysManager.ProcessCmdKey(ref msg, currentKeys))
                 {
-                    StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefinedExtended"), currentKeys);
+                    StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefined"), currentKeys);
                 }
             }
             else if (base.ProcessCmdKey(ref msg, keyData))
@@ -1661,10 +1663,18 @@ namespace FlashDevelop
             {
                 currentKeys = ShortcutKeys.None;
             }
+
+            /**
+             * Shortcut doesn't exist
+             */
             else if (ShortcutKeysManager.IsValidExtendedShortcutFirst(currentKeys.First))
             {
-                StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefinedSimple"), currentKeys);
+                StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutWaiting"), currentKeys);
                 lockStatusLabel = true;
+            }
+            else if (ShortcutKeysManager.IsValidSimpleShortcut(currentKeys.First) && currentKeys != Keys.Delete && currentKeys != Keys.Insert)
+            {
+                StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefined"), currentKeys);
             }
             else
             {
@@ -1679,7 +1689,7 @@ namespace FlashDevelop
             /**
              * Notify plugins.
              */
-            var ke = new KeyEvent(EventType.Keys, currentKeys);
+            var ke = new KeyEvent(EventType.Keys, currentKeys, GetShortcutItemId(currentKeys));
             EventManager.DispatchEvent(this, ke);
             if (ke.Handled)
             {

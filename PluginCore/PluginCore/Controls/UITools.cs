@@ -128,7 +128,7 @@ namespace PluginCore.Controls
             switch (e.Type)
             {
                 case EventType.Keys:
-                    e.Handled = HandleKeys((Keys) (e as KeyEvent).Value);
+                    e.Handled = HandleKeys(e as KeyEvent);
                     return;
                     
                 case EventType.FileSave:
@@ -351,8 +351,10 @@ namespace PluginCore.Controls
             if (OnCharAdded != null) OnCharAdded(sci, value);   
         }
         
-        private bool HandleKeys(Keys key)
+        private bool HandleKeys(KeyEvent e)
         {
+            Keys key = e.Value;
+
             // UITools is currently broadcasting a shortcut, ignore!
             if (ignoreKeys || DisableEvents) return false;
             
@@ -367,7 +369,7 @@ namespace PluginCore.Controls
                 }*/
                 // offer to handle the shortcut
                 ignoreKeys = true;
-                KeyEvent ke = new KeyEvent(EventType.Keys, key);
+                KeyEvent ke = new KeyEvent(EventType.Keys, key, e.Command);
                 EventManager.DispatchEvent(this, ke);
                 ignoreKeys = false;
                 // if not handled - show snippets

@@ -559,35 +559,47 @@ namespace ProjectManager
         {
             if (activeProject == null) return false;
 
-            string shortcutId = PluginBase.MainForm.GetShortcutItemId(ke.Value);
-
-            if (shortcutId == "ProjectMenu.ConfigurationSelector")
+            if (ke.Command == "ProjectMenu.ConfigurationSelector")
             {
                 pluginUI.menus.ConfigurationSelector.Focus();
             }
-            else if (shortcutId == "ProjectMenu.ConfigurationSelectorToggle")
+            else if (ke.Command == "ProjectMenu.ConfigurationSelectorToggle")
             {
                 pluginUI.menus.ToggleDebugRelease();
             }
-            else if (shortcutId == "ProjectMenu.TargetBuildSelector")
+            else if (ke.Command == "ProjectMenu.TargetBuildSelector")
             {
                 pluginUI.menus.TargetBuildSelector.Focus();
             }
-            else if (shortcutId == "ProjectTree.LocateActiveFile")
+            else if (ke.Command == "ProjectTree.LocateActiveFile")
             {
                 TreeSyncToCurrentFile();
             }
 
             // Handle tree-level simple shortcuts like copy/paste/del
-            else if (Tree.Focused && !pluginUI.IsEditingLabel && ke != null)
+            else if (Tree.Focused && !pluginUI.IsEditingLabel)
             {
-                if (ke.Value == (Keys.Control | Keys.C) && pluginUI.Menu.Contains(pluginUI.Menu.Copy)) TreeCopyItems();
-                else if (ke.Value == (Keys.Control | Keys.X) && pluginUI.Menu.Contains(pluginUI.Menu.Cut)) TreeCutItems();
-                else if (ke.Value == (Keys.Control | Keys.V) && pluginUI.Menu.Contains(pluginUI.Menu.Paste)) TreePasteItems();
-                else if (ke.Value == Keys.Delete && pluginUI.Menu.Contains(pluginUI.Menu.Delete)) TreeDeleteItems();
-                else if (ke.Value == Keys.Enter && pluginUI.Menu.Contains(pluginUI.Menu.Open)) TreeOpenItems();
-                else if (ke.Value == Keys.Enter && pluginUI.Menu.Contains(pluginUI.Menu.Insert)) TreeInsertItem();
-                else return false;
+                switch ((Keys) ke.Value)
+                {
+                    case Keys.Control | Keys.C:
+                        if (pluginUI.Menu.Contains(pluginUI.Menu.Copy)) TreeCopyItems();
+                        break;
+                    case Keys.Control | Keys.X:
+                        if (pluginUI.Menu.Contains(pluginUI.Menu.Cut)) TreeCutItems();
+                        break;
+                    case Keys.Control | Keys.V:
+                        if (pluginUI.Menu.Contains(pluginUI.Menu.Paste)) TreePasteItems();
+                        break;
+                    case Keys.Delete:
+                        if (pluginUI.Menu.Contains(pluginUI.Menu.Delete)) TreeDeleteItems();
+                        break;
+                    case Keys.Enter:
+                        if (pluginUI.Menu.Contains(pluginUI.Menu.Open)) TreeOpenItems();
+                        else if (pluginUI.Menu.Contains(pluginUI.Menu.Insert)) TreeInsertItem();
+                        break;
+                    default:
+                        return false;
+                }
             }
             else return false;
             return true;

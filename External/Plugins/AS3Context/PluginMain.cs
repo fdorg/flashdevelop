@@ -182,12 +182,12 @@ namespace AS3Context
                         if (inMXML)
                         {
                             KeyEvent ke = e as KeyEvent;
-                            if (PluginBase.MainForm.GetShortcutItemId(ke.Value) == "SearchMenu.GotoDeclaration")
+                            if (ke.Command == "SearchMenu.GotoDeclaration")
                             {
                                 if (MxmlComplete.GotoDeclaration())
                                 {
                                     ke.Handled = true;
-                                    ke.ProcessKey = false;
+                                    //ke.ProcessKey = false; // Setting Handled to true stop the event propagation.
                                 }
                             }
                         }

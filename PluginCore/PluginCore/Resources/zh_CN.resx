@@ -6034,11 +6034,11 @@
     <value>Press new shortcut keys:</value>
     <comment>Added after 5.2.0</comment>
   </data>
-  <data name="FlashDevelop.Info.ShortcutUndefinedExtended" xml:space="preserve">
+  <data name="FlashDevelop.Info.ShortcutUndefined" xml:space="preserve">
     <value>The key combination ({0}) is not defined.</value>
     <comment>Added after 5.2.0</comment>
   </data>
-  <data name="FlashDevelop.Info.ShortcutUndefinedSimple" xml:space="preserve">
+  <data name="FlashDevelop.Info.ShortcutWaiting" xml:space="preserve">
     <value>({0}) was pressed. Waiting for a second key input...</value>
     <comment>Added after 5.2.0</comment>
   </data>

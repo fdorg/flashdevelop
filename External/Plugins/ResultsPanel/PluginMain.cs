@@ -156,7 +156,7 @@ namespace ResultsPanel
 
                 case EventType.Keys:
                     KeyEvent ke = (KeyEvent)e;
-                    switch (PluginBase.MainForm.GetShortcutItemId(ke.Value))
+                    switch (ke.Command)
                     {
                         case null:
                             break;

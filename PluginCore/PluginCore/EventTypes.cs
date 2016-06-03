@@ -74,25 +74,54 @@ namespace PluginCore
     public class KeyEvent : NotifyEvent
     {
         private ShortcutKeys value;
+        private String command;
         private Boolean processKey;
 
+        /// <summary>
+        /// Gets the <see cref="ShortcutKeys"/> value associated with this <see cref="KeyEvent"/>.
+        /// </summary>
         public ShortcutKeys Value
         {
             get { return this.value; }
-            set { this.value = value; }
+            //set { this.value = value; }
         }
 
+        /// <summary>
+        /// Gets the shortcut command string associated with this <see cref="KeyEvent"/>.
+        /// </summary>
+        public String Command
+        {
+            get { return this.command; }
+        }
+
+        /// <summary>
+        /// Gets or sets whether to process the keys associated with this <see cref="KeyEvent"/>.
+        /// <para/>
+        /// This property is currently not used by any of the default plugins. Prefer using the <see cref="NotifyEvent.Handled"/> property.
+        /// </summary>
         public Boolean ProcessKey
         {
             get { return this.processKey; }
             set { this.processKey = value; }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KeyEvent"/> class.
+        /// </summary>
         public KeyEvent(EventType type, ShortcutKeys value) : base(type)
         {
             this.value = value;
+            this.command = PluginBase.MainForm.GetShortcutItemId(this.value);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KeyEvent"/> class.
+        /// </summary>
+        public KeyEvent(EventType type, ShortcutKeys value, String command) : base(type)
+        {
+            this.value = value;
+            this.command = command;
+        }
     }
 
     /// <summary>
