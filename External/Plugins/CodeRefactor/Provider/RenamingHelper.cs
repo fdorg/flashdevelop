@@ -10,11 +10,11 @@ using PluginCore.Managers;
 
 namespace CodeRefactor.Provider
 {
-    static class RenamingHelper
+    internal static class RenamingHelper
     {
-        static readonly Queue<Rename> queue = new Queue<Rename>();
-        static Rename currentCommand;
-        static StartState startState;
+        private static readonly Queue<Rename> queue = new Queue<Rename>();
+        private static Rename currentCommand;
+        private static StartState startState;
 
         internal static void AddToQueue(Rename rename)
         {
@@ -23,7 +23,15 @@ namespace CodeRefactor.Provider
             if (currentCommand != null) return;
             currentCommand = rename;
 
-            ASResult target = rename.Target;
+            var doc = PluginBase.MainForm.CurrentDocument;
+            startState = new StartState
+            {
+                FileName = doc.FileName,
+                CursorPosition = doc.SciControl.CurrentPos,
+                Commands = new[] { rename, null, null }
+            };
+
+            var target = rename.Target;
             bool outputResults = rename.OutputResults;
             if (!target.IsPackage &&
                 ASContext.Context.CurrentModel.haXe
@@ -32,42 +40,36 @@ namespace CodeRefactor.Provider
             {
                 string oldName = rename.OldName;
                 string newName = rename.NewName;
-                List<MemberModel> list = target.Member.Parameters;
-                if (list[0].Name == "get") RenameMember(target.InClass, "get_" + oldName, "get_" + newName, outputResults);
-                if (list[1].Name == "set") RenameMember(target.InClass, "set_" + oldName, "set_" + newName, outputResults);
+                var list = target.Member.Parameters;
+                if (list[0].Name == "get") startState.Commands[1] = RenameMember(target.InClass, "get_" + oldName, "get_" + newName, outputResults);
+                if (list[1].Name == "set") startState.Commands[2] = RenameMember(target.InClass, "set_" + oldName, "set_" + newName, outputResults);
             }
 
             if (outputResults) PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
 
-            var doc = PluginBase.MainForm.CurrentDocument;
-            startState = new StartState
-            {
-                FileName = doc.FileName,
-                CursorPosition = doc.SciControl.CurrentPos,
-                Command = rename
-            };
-
             ExecuteFirst();
         }
 
-        static void RenameMember(ClassModel inClass, string name, string newName, bool outputResults)
+        private static Rename RenameMember(ClassModel inClass, string name, string newName, bool outputResults)
         {
-            List<MemberModel> members = inClass.Members.Items;
+            var members = inClass.Members.Items;
             for (int i = 0, length = members.Count; i < length; i++)
             {
-                MemberModel member = members[i];
+                var member = members[i];
                 if (member.Name == name)
                 {
-                    ASResult result = new ASResult();
+                    var result = new ASResult();
                     ASComplete.FindMember(name, inClass, result, FlagType.Dynamic | FlagType.Function, 0);
-                    if (result.Member == null) return;
-                    new Rename(result, false, outputResults, newName);
-                    break;
+                    if (result.Member != null)
+                    {
+                        return Rename.Create(result, false, outputResults, newName);
+                    }
                 }
             }
+            return null;
         }
 
-        static void ExecuteFirst()
+        private static void ExecuteFirst()
         {
             try
             {
@@ -84,54 +86,61 @@ namespace CodeRefactor.Provider
             }
         }
 
-        static void OnRefactorComplete(object sender, RefactorCompleteEventArgs<IDictionary<string, List<SearchMatch>>> e)
+        private static void OnRefactorComplete(object sender, RefactorCompleteEventArgs<IDictionary<string, List<SearchMatch>>> e)
         {
             currentCommand.OnRefactorComplete -= OnRefactorComplete;
             if (queue.Count == 0)
             {
-                if (currentCommand.OutputResults)
-                {
-                    PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
-                }
+                //if (currentCommand.OutputResults)
+                //{
+                //    PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
+                //}
                 if (startState != null) RestoreStartState();
                 currentCommand = null;
                 startState = null;
             }
+            else ExecuteFirst();
         }
 
-        static void RestoreStartState()
+        private static void RestoreStartState()
         {
-            var fileName = startState.FileName;
-            var cursorPosition = startState.CursorPosition;
-            var command = startState.Command;
-            var charsDiff = command.NewName.Length - command.TargetName.Length;
-            foreach (var entry in command.Results)
+            int pos = startState.CursorPosition;
+            GetOffset(startState.Commands[0], ref pos);
+            GetOffset(startState.Commands[1], ref pos);
+            GetOffset(startState.Commands[2], ref pos);
+            ((ITabbedDocument) PluginBase.MainForm.OpenEditableDocument(startState.FileName)).SciControl.SetSel(pos, pos);
+
+            ASContext.Context.UpdateCurrentFile(true);
+        }
+
+        private static void GetOffset(Rename command, ref int pos)
+        {
+            if (command != null)
             {
-                if (entry.Key != fileName) continue;
-                SearchMatch match = null;
-                foreach (var tmpMatch in entry.Value)
+                foreach (var entry in command.Results)
                 {
-                    var start = tmpMatch.Index - charsDiff;
-                    if (cursorPosition >= start)
+                    if (entry.Key == startState.FileName)
                     {
-                        charsDiff += charsDiff;
-                        match = tmpMatch;
+                        int offset = command.NewName.Length - command.TargetName.Length;
+                        foreach (var match in entry.Value)
+                        {
+                            if (pos > match.Index)
+                            {
+                                pos += offset;
+                            }
+                            else break; // Assuming the results are sorted in ascending order of Index. Basically all rename (and many other refactoring) operations have this assumption.
+                        }
+                        break;
                     }
-                    else break;
                 }
-                var doc = (ITabbedDocument) PluginBase.MainForm.OpenEditableDocument(fileName);
-                var sci = doc.SciControl;
-                var pos = sci.PositionFromLine(match.Line - 1) + match.Column;
-                sci.SetSel(pos, pos);
-                break;
             }
         }
     }
 
-    class StartState
+    internal class StartState
     {
         public string FileName;
         public int CursorPosition;
-        public Rename Command;
+        public Rename[] Commands;
     }
 }

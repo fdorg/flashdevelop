@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Drawing;
+using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Localization;
 
@@ -7,15 +8,15 @@ namespace CodeRefactor.Controls
     /// <summary>
     /// A small utility dialog present at the top right corner during inline renaming.
     /// </summary>
-    class InlineRenameDialog : UserControl
+    internal class InlineRenameDialog : UserControl
     {
         internal CheckBox IncludeComments;
         internal CheckBox IncludeStrings;
         internal CheckBox PreviewChanges;
         internal Button ApplyButton;
         internal Button CancelButton;
-        Label titleLabel;
-        Label border;
+        private Label titleLabel;
+        private Label border;
 
         /// <summary>
         /// Creates a new instance of <see cref="InlineRenameDialog"/>.
@@ -145,7 +146,7 @@ namespace CodeRefactor.Controls
         /// Localizes texts in this control.
         /// </summary>
         /// <param name="targetName">The target name to initialize the title with.</param>
-        void InitializeLocalization(string targetName)
+        private void InitializeLocalization(string targetName)
         {
             titleLabel.Text = string.Format(TextHelper.GetString("Title.RenameDialog"), targetName);
             IncludeComments.Text = TextHelper.GetString("Label.IncludeComments");
@@ -158,12 +159,12 @@ namespace CodeRefactor.Controls
         /// <summary>
         /// Initializes the colors and images.
         /// </summary>
-        void InitializeVisualization()
+        private void InitializeVisualization()
         {
-            var foreColor = PluginBase.MainForm.GetThemeColor("QuickFind.ForeColor");
-            var backColor = PluginBase.MainForm.GetThemeColor("QuickFind.BackColor");
-            var activeBorder = PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.TabGradientStart");
-            var inactiveBorder = PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.BackColor");
+            var foreColor = PluginBase.MainForm.GetThemeColor("QuickFind.ForeColor", Color.Black);
+            var backColor = PluginBase.MainForm.GetThemeColor("QuickFind.BackColor", Color.WhiteSmoke);
+            var activeBorder = PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.TabGradientStart", Color.DarkGray);
+            var inactiveBorder = PluginBase.MainForm.GetThemeColor("VS2005DockPaneCaption.BackColor", Color.Silver);
 
             BackColor = backColor;
             titleLabel.ForeColor = foreColor;
@@ -181,7 +182,7 @@ namespace CodeRefactor.Controls
         /// <param name="includeComments">Initial <see cref="CheckBox.Checked"/> value of <see cref="IncludeComments"/>. Pass <code>null</code> to disable this check box.</param>
         /// <param name="includeStrings">Initial <see cref="CheckBox.Checked"/> value of <see cref="IncludeStrings"/>. Pass <code>null</code> to disable this check box.</param>
         /// <param name="previewChanges">Initial <see cref="CheckBox.Checked"/> value of <see cref="PreviewChanges"/>. Pass <code>null</code> to disable this check box.</param>
-        void InitializeCheckBoxes(bool? includeComments, bool? includeStrings, bool? previewChanges)
+        private void InitializeCheckBoxes(bool? includeComments, bool? includeStrings, bool? previewChanges)
         {
             if (includeComments.HasValue)
                 IncludeComments.Checked = includeComments.Value;

@@ -42,7 +42,7 @@ namespace CodeRefactor.Commands
                 var target = RefactoringHelper.GetRefactorTargetFromFile(oldPath, AssociatedDocumentHelper);
                 if (target != null)
                 {
-                    Rename command = new Rename(target, false, true, newFileName);
+                    Rename command = Rename.Create(target, false, true, newFileName);
                     command.RegisterDocumentHelper(AssociatedDocumentHelper);
                     command.Execute();
                     return;

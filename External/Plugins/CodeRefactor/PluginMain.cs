@@ -460,7 +460,7 @@ namespace CodeRefactor
             {
                 if (!InlineRename.InProgress)
                 {
-                    new Rename(settingObject.UseInlineRenaming);
+                    Rename.Create(settingObject.UseInlineRenaming);
                 }
             }
             catch (Exception ex)

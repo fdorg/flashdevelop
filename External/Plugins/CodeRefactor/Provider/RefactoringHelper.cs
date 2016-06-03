@@ -536,7 +536,7 @@ namespace CodeRefactor.Provider
                 {
                     var match = matches[i];
                     SelectMatch(sci, match);
-                    FRSearch.PadIndexes(matches, i, match.Value, replacement);
+                    FRSearch.PadIndexes(matches, i + 1, match.Value, replacement);
                     sci.EnsureVisible(sci.LineFromPosition(sci.MBSafePosition(match.Index)));
                     sci.ReplaceSel(replacement);
                 }
