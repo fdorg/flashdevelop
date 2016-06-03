@@ -249,16 +249,7 @@ namespace CodeRefactor.Commands
         {
             if (!supportPreviewChanges) return;
 
-            string file = currentDoc.FileName;
-            var config = new FRConfiguration(file, sci.Text, new FRSearch(oldName)
-            {
-                Filter = SearchFilter.None,
-                IsRegex = false,
-                IsEscaped = false,
-                NoCase = false,
-                WholeWord = true
-            });
-            var results = new FRRunner().SearchSync(config)[file];
+            var results = new FRRunner().SearchSync(GetConfig(oldName))[currentDoc.FileName];
             var tempRefs = new List<ReferenceInfo>();
 
             foreach (var match in results)
@@ -287,7 +278,68 @@ namespace CodeRefactor.Commands
                 }
             }
 
+            if (RenamingHelper.HasGetterSetter(target))
+            {
+                var list = target.Member.Parameters;
+                if (list[0].Name == RenamingHelper.ParamGetter)
+                {
+                    AddGetterSetterPreview(tempRefs, target, RenamingHelper.PrefixGetter, oldName, supportInsideComment, supportInsideString);
+                }
+                if (list[1].Name == RenamingHelper.ParamSetter)
+                {
+                    AddGetterSetterPreview(tempRefs, target, RenamingHelper.PrefixSetter, oldName, supportInsideComment, supportInsideString);
+                }
+                tempRefs.Sort();
+            }
+
             refs = tempRefs.ToArray();
+        }
+
+        private void AddGetterSetterPreview(List<ReferenceInfo> refInfos, ASResult target, string prefix, string name, bool supportInsideComment, bool supportInsideString)
+        {
+            target = RenamingHelper.FindGetterSetter(target, prefix + name);
+            if (target == null) return;
+
+            var results = new FRRunner().SearchSync(GetConfig(prefix + name))[currentDoc.FileName];
+            int offset = prefix.Length;
+
+            foreach (var match in results)
+            {
+                int index = match.Index + offset;
+                string value = match.Value.Substring(offset);
+                int style = sci.BaseStyleAt(index);
+                bool insideComment = RefactoringHelper.IsCommentStyle(style);
+                bool insideString = RefactoringHelper.IsStringStyle(style);
+
+                if (RefactoringHelper.DoesMatchPointToTarget(sci, match, target, null)
+                    || insideComment && supportInsideComment
+                    || insideString && supportInsideString)
+                {
+                    var @ref = new ReferenceInfo()
+                    {
+                        Index = index,
+                        Value = value
+                    };
+                    refInfos.Add(@ref);
+
+                    if (previewChanges && (!insideComment || includeComments) && (!insideString || includeStrings))
+                    {
+                        Highlight(index, value.Length);
+                    }
+                }
+            }
+        }
+
+        private FRConfiguration GetConfig(string name)
+        {
+            return new FRConfiguration(currentDoc.FileName, sci.Text, new FRSearch(name)
+            {
+                Filter = SearchFilter.None,
+                IsRegex = false,
+                IsEscaped = false,
+                NoCase = false,
+                WholeWord = true
+            });
         }
 
         /// <summary>
@@ -1078,7 +1130,7 @@ namespace CodeRefactor.Commands
         /// Simplified version of <see cref="SearchMatch"/>, only containing fields that are needed
         /// by <see cref="InlineRename"/>.
         /// </summary>
-        private class ReferenceInfo
+        private class ReferenceInfo : IComparable<ReferenceInfo>
         {
             /// <summary>
             /// The index of this reference.
@@ -1089,6 +1141,15 @@ namespace CodeRefactor.Commands
             /// The value of this reference.
             /// </summary>
             public string Value;
+
+            /// <summary>Compares the current instance with another object of the same type and
+            /// returns an integer that indicates whether the current instance precedes, follows,
+            /// or occurs in the same position in the sort order as the other object. </summary>
+            /// <param name="other">An object to compare with this instance. </param>
+            int IComparable<ReferenceInfo>.CompareTo(ReferenceInfo other)
+            {
+                return Index.CompareTo(other.Index);
+            }
         }
 
         /// <summary>

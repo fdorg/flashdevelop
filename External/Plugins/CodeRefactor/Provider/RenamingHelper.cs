@@ -12,6 +12,10 @@ namespace CodeRefactor.Provider
 {
     internal static class RenamingHelper
     {
+        internal const string ParamGetter = "get";
+        internal const string ParamSetter = "set";
+        internal const string PrefixGetter = "get_";
+        internal const string PrefixSetter = "set_";
         private static readonly Queue<Rename> queue = new Queue<Rename>();
         private static Rename currentCommand;
         private static StartState startState;
@@ -33,16 +37,13 @@ namespace CodeRefactor.Provider
 
             var target = rename.Target;
             bool outputResults = rename.OutputResults;
-            if (!target.IsPackage &&
-                ASContext.Context.CurrentModel.haXe
-                && target.Member != null
-                && (target.Member.Flags & (FlagType.Getter | FlagType.Setter)) != 0)
+            if (HasGetterSetter(target))
             {
                 string oldName = rename.OldName;
                 string newName = rename.NewName;
                 var list = target.Member.Parameters;
-                if (list[0].Name == "get") startState.Commands[1] = RenameMember(target.InClass, "get_" + oldName, "get_" + newName, outputResults);
-                if (list[1].Name == "set") startState.Commands[2] = RenameMember(target.InClass, "set_" + oldName, "set_" + newName, outputResults);
+                if (list[0].Name == ParamGetter) startState.Commands[1] = RenameMember(target, PrefixGetter + oldName, PrefixGetter + newName, outputResults);
+                if (list[1].Name == ParamSetter) startState.Commands[2] = RenameMember(target, PrefixSetter + oldName, PrefixSetter + newName, outputResults);
             }
 
             if (outputResults) PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
@@ -50,8 +51,17 @@ namespace CodeRefactor.Provider
             ExecuteFirst();
         }
 
-        private static Rename RenameMember(ClassModel inClass, string name, string newName, bool outputResults)
+        internal static bool HasGetterSetter(ASResult target)
         {
+            return !target.IsPackage
+                && ASContext.Context.CurrentModel.haXe
+                && target.Member != null
+                && (target.Member.Flags & (FlagType.Getter | FlagType.Setter)) != 0;
+        }
+
+        internal static ASResult FindGetterSetter(ASResult target, string name)
+        {
+            var inClass = target.InClass;
             var members = inClass.Members.Items;
             for (int i = 0, length = members.Count; i < length; i++)
             {
@@ -62,9 +72,19 @@ namespace CodeRefactor.Provider
                     ASComplete.FindMember(name, inClass, result, FlagType.Dynamic | FlagType.Function, 0);
                     if (result.Member != null)
                     {
-                        return Rename.Create(result, false, outputResults, newName);
+                        return result;
                     }
                 }
+            }
+            return null;
+        }
+
+        private static Rename RenameMember(ASResult target, string name, string newName, bool outputResults)
+        {
+            var result = FindGetterSetter(target, name);
+            if (result != null)
+            {
+                return Rename.Create(result, false, outputResults, newName);
             }
             return null;
         }
