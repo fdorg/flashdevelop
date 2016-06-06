@@ -137,10 +137,10 @@ namespace FlashDevelop.Managers
                     {
                         allShortcuts.Add(keys);
                     }
-					if (!cachedItems.ContainsKey(keys))
-					{
-						cachedItems.Add(keys, item); 
-					}
+                    if (!cachedItems.ContainsKey(keys))
+                    {
+                        cachedItems.Add(keys, item);
+                    }
                 }
             }
         }

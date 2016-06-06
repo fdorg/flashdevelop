@@ -1585,7 +1585,7 @@ namespace FlashDevelop
                             // Cancel any extended shortcut in progress
                             currentKeys = ShortcutKeys.None;
                             lockStatusLabel = false;
-							StatusLabelText = null;
+                            StatusLabelText = null;
                         }
                         break;
                     case 0x20A: // WM_MOUSEWHEEL
@@ -1676,7 +1676,7 @@ namespace FlashDevelop
             else if (ShortcutKeysManager.IsValidSimpleShortcut(currentKeys.First))
             {
                 StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefined"), currentKeys);
-			}
+            }
             else
             {
                 return false;
