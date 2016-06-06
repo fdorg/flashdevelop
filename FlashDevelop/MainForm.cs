@@ -257,7 +257,7 @@ namespace FlashDevelop
         /// <summary>
         /// Gets the IgnoredKeys
         /// </summary>
-        public List<ShortcutKeys> IgnoredKeys
+        public HashSet<ShortcutKeys> IgnoredKeys
         {
             get { return ShortcutManager.AllShortcuts; }
         }
@@ -1584,7 +1584,8 @@ namespace FlashDevelop
                         {
                             // Cancel any extended shortcut in progress
                             currentKeys = ShortcutKeys.None;
-                            lockStatusLabel = false; 
+                            lockStatusLabel = false;
+							StatusLabelText = null;
                         }
                         break;
                     case 0x20A: // WM_MOUSEWHEEL
@@ -1672,10 +1673,10 @@ namespace FlashDevelop
                 StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutWaiting"), currentKeys);
                 lockStatusLabel = true;
             }
-            else if (ShortcutKeysManager.IsValidSimpleShortcut(currentKeys.First) && currentKeys != Keys.Delete && currentKeys != Keys.Insert)
+            else if (ShortcutKeysManager.IsValidSimpleShortcut(currentKeys.First))
             {
                 StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefined"), currentKeys);
-            }
+			}
             else
             {
                 return false;

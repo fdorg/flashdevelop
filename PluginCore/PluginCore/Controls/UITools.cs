@@ -99,9 +99,11 @@ namespace PluginCore.Controls
             {
                 ErrorManager.ShowError(/*"Error while creating editor controls.",*/ ex);
             }
-            //
-            // Events
-            //
+			//
+			// Events
+			//
+			PluginBase.MainForm.IgnoredKeys.Add(Keys.Delete); // do not treat delete and insert as undefined shortcuts
+			PluginBase.MainForm.IgnoredKeys.Add(Keys.Insert);
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control); // complete member
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control | Keys.Shift); // complete method
             PluginBase.MainForm.DockPanel.ActivePaneChanged += new EventHandler(DockPanel_ActivePaneChanged);

@@ -23,5 +23,6 @@ PluginCore/Bin
 /FlashDevelop/Bin/Debug/Settings/Recovery
 /FlashDevelop/Bin/Debug/Exceptions.log
 /FlashDevelop/Bin/Debug/Tools/fdbuild/fdbuild.exe
-FlashDevelop/Bin/Debug/Settings/Themes/CURRENT
+/FlashDevelop/Bin/Debug/Settings/Themes/CURRENT
+/FlashDevelop/Bin/Debug/Settings/Shortcuts/CURRENT
 packages/

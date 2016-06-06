@@ -426,7 +426,7 @@ namespace PluginCore
         /// <summary>
         /// Gets the ignored keys.
         /// </summary>
-        List<ShortcutKeys> IgnoredKeys { get; }
+        HashSet<ShortcutKeys> IgnoredKeys { get; }
         /// <summary>
         /// Gets the version of the application.
         /// </summary>

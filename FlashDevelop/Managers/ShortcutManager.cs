@@ -20,14 +20,14 @@ namespace FlashDevelop.Managers
         private const int CurrentShortcutFileVersion = 1;
         private const int ExtendedShortcutMinimumFileVersion = 1;
 
-        private static readonly List<ShortcutKeys> allShortcuts;
+        private static readonly HashSet<ShortcutKeys> allShortcuts;
         private static readonly List<ToolStripItem> secondaryItems;
         private static readonly List</*Dictionary<string, */ShortcutItem> registeredItems;
         private static readonly Dictionary<ShortcutKeys, ShortcutItem> cachedItems;
 
         static ShortcutManager()
         {
-            allShortcuts = new List<ShortcutKeys>();
+            allShortcuts = new HashSet<ShortcutKeys>();
             secondaryItems = new List<ToolStripItem>();
             registeredItems = new List</*Dictionary<string, */ShortcutItem>();
             cachedItems = new Dictionary<ShortcutKeys, ShortcutItem>();
@@ -36,7 +36,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets a list of all shortcut keys.
         /// </summary>
-        public static List<ShortcutKeys> AllShortcuts
+        public static HashSet<ShortcutKeys> AllShortcuts
         {
             get { return allShortcuts; }
         }
@@ -133,11 +133,14 @@ namespace FlashDevelop.Managers
                 var keys = item.Custom;
                 if (!keys.IsNone)
                 {
-                    if (!allShortcuts.Contains(item.Custom))
+                    if (!allShortcuts.Contains(keys))
                     {
-                        allShortcuts.Add(item.Custom);
+                        allShortcuts.Add(keys);
                     }
-                    cachedItems[item.Custom] = item;
+					if (!cachedItems.ContainsKey(keys))
+					{
+						cachedItems.Add(keys, item); 
+					}
                 }
             }
         }
