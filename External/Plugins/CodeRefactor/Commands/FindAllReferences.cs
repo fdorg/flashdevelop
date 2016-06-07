@@ -17,7 +17,7 @@ namespace CodeRefactor.Commands
     public class FindAllReferences : RefactorCommand<IDictionary<String, List<SearchMatch>>>
     {
         private readonly Boolean outputResults;
-        private readonly Boolean ignoreDeclarationSource;
+        protected bool IgnoreDeclarationSource { get; private set; }
 
         /// <summary>
         /// Gets or sets if searching is only performed on user defined classpaths
@@ -56,11 +56,12 @@ namespace CodeRefactor.Commands
         /// </summary>
         /// <param name="target">The target declaration to find references to.</param>
         /// <param name="output">If true, will send the found results to the trace log and results panel</param>
+        /// <param name="ignoreDeclarations"></param>
         public FindAllReferences(ASResult target, Boolean output, Boolean ignoreDeclarations)
         {
             CurrentTarget = target;
-            this.outputResults = output;
-            this.ignoreDeclarationSource = ignoreDeclarations;
+            outputResults = output;
+            IgnoreDeclarationSource = ignoreDeclarations;
         }
 
         #region RefactorCommand Implementation
@@ -154,7 +155,7 @@ namespace CodeRefactor.Commands
                     // if the search result does point to the member source, store it
                     if (RefactoringHelper.DoesMatchPointToTarget(sci, match, target, this.AssociatedDocumentHelper))
                     {
-                        if (ignoreDeclarationSource && !foundDeclarationSource && RefactoringHelper.IsMatchTheTarget(sci, match, target))
+                        if (IgnoreDeclarationSource && !foundDeclarationSource && RefactoringHelper.IsMatchTheTarget(sci, match, target))
                         {
                             //ignore the declaration source
                             foundDeclarationSource = true;

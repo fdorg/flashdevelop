@@ -27,7 +27,7 @@ namespace CodeRefactor.Commands.Haxe
 
         public HaxeFindAllReferencesCommand(ASResult target, bool output, bool ignoreDeclarations) : base(target, output, ignoreDeclarations)
         {
-            this.sdkVersion = ((Context)ASContext.Context).GetCurrentSDKVersion();
+            sdkVersion = ((Context)ASContext.Context).GetCurrentSDKVersion();
         }
 
         protected override void ExecutionImplementation()
@@ -144,9 +144,13 @@ namespace CodeRefactor.Commands.Haxe
                             Value = name
                         });
                     }
-                    sci = AssociatedDocumentHelper.LoadDocument(CurrentTarget.InFile.FileName).SciControl;
-                    hc = new HaxeComplete(sci, hc.Expr, false, completionModeHandler, HaxeCompilerService.POSITION, sdkVersion);
-                    hc.GetPosition(OnPositionResult);
+                    if (!IgnoreDeclarationSource)
+                    {
+                        sci = AssociatedDocumentHelper.LoadDocument(CurrentTarget.InFile.FileName).SciControl;
+                        hc = new HaxeComplete(sci, hc.Expr, false, completionModeHandler, HaxeCompilerService.POSITION, sdkVersion);
+                        hc.GetPosition(OnPositionResult);
+                    }
+                    else FindFinished(usageResults);
                     break;
             }
         }
@@ -160,7 +164,7 @@ namespace CodeRefactor.Commands.Haxe
             else HandlePositionResult(hc, result, status);
         }
 
-        private void HandlePositionResult(HaxeComplete hc, HaxePositionResult result, HaxeCompleteStatus status)
+        void HandlePositionResult(HaxeComplete hc, HaxePositionResult result, HaxeCompleteStatus status)
         {
             switch (status)
             {
