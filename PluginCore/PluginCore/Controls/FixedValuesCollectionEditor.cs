@@ -195,7 +195,6 @@ namespace PluginCore.Controls
             this.Controls.Add(this.btnDown);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.btnCancel);
-            this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.HelpButton = true;
             this.Name = "FixedValuesCollectionEditor";
@@ -224,6 +223,7 @@ namespace PluginCore.Controls
 
         void InitializeGraphics()
         {
+            Font = PluginBase.MainForm.Settings.DefaultFont;
             btnAdd.Image = PluginBase.MainForm.FindImage16("67", false);
             btnRemove.Image = PluginBase.MainForm.FindImage16("63", false);
             btnUp.Image = PluginBase.MainForm.FindImage16("74", false);
