@@ -332,6 +332,7 @@ namespace PluginCore
         ToolStripPanel ToolStripPanel { get; }
         /// <summary>
         /// Gets the tool strip status label.
+        /// Use <see cref="StatusLabelText"/> instead to modify the status text.
         /// </summary>
         ToolStripStatusLabel StatusLabel { get; }
         /// <summary>

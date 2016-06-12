@@ -127,6 +127,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void UpdateAllShortcuts()
         {
+            allShortcuts.Clear();
             cachedItems.Clear();
             foreach (var item in RegisteredItems)
             {

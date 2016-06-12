@@ -197,7 +197,8 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Gets the toolStripStatusLabel
+        /// Gets the toolStripStatusLabel.
+        /// Use <see cref="StatusLabelText"/> instead to modify the status text.
         /// </summary>
         public ToolStripStatusLabel StatusLabel
         {
@@ -1585,7 +1586,7 @@ namespace FlashDevelop
                             // Cancel any extended shortcut in progress
                             currentKeys = ShortcutKeys.None;
                             lockStatusLabel = false;
-                            StatusLabelText = null;
+                            StatusLabelText = string.Empty;
                         }
                         break;
                     case 0x20A: // WM_MOUSEWHEEL
