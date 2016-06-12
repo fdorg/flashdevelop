@@ -8,18 +8,23 @@ namespace FlashDevelop.Dialogs
 {
     internal class ShortcutModificationDialog : Form
     {
-        private bool supportExtended;
         private ShortcutKeys newKeys;
+        private bool allowNone;
+        private bool supportExtended;
         private System.Windows.Forms.Button applyBtn;
         private System.Windows.Forms.Button cancelBtn;
-        private System.Windows.Forms.Label shortcutDisplayTxt;
+        private System.Windows.Forms.Button resetBtn;
+        private System.Windows.Forms.Label shortcutTxt;
 
-        internal ShortcutModificationDialog(bool supportExtended)
+        internal ShortcutModificationDialog(ShortcutKeys defaultKeys, bool allowNone, bool supportExtended)
         {
+            this.newKeys = defaultKeys;
+            this.allowNone = allowNone;
+            this.supportExtended = supportExtended;
             InitializeComponent();
             InitializeLocalization();
             InitializeFont();
-            this.supportExtended = supportExtended;
+            UpdateDisplay();
         }
 
         #region Windows Form Designer generated code
@@ -32,16 +37,16 @@ namespace FlashDevelop.Dialogs
         {
             this.applyBtn = new System.Windows.Forms.Button();
             this.cancelBtn = new System.Windows.Forms.Button();
-            this.shortcutDisplayTxt = new System.Windows.Forms.Label();
+            this.resetBtn = new System.Windows.Forms.Button();
+            this.shortcutTxt = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // applyBtn
             // 
             this.applyBtn.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.applyBtn.Enabled = false;
-            this.applyBtn.Location = new System.Drawing.Point(116, 35);
+            this.applyBtn.Location = new System.Drawing.Point(141, 25);
             this.applyBtn.Name = "applyBtn";
-            this.applyBtn.Size = new System.Drawing.Size(75, 23);
+            this.applyBtn.Size = new System.Drawing.Size(65, 20);
             this.applyBtn.TabIndex = 0;
             this.applyBtn.TabStop = false;
             this.applyBtn.Text = "Apply";
@@ -50,29 +55,44 @@ namespace FlashDevelop.Dialogs
             // cancelBtn
             // 
             this.cancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelBtn.Location = new System.Drawing.Point(197, 35);
+            this.cancelBtn.Location = new System.Drawing.Point(209, 25);
             this.cancelBtn.Name = "cancelBtn";
-            this.cancelBtn.Size = new System.Drawing.Size(75, 23);
+            this.cancelBtn.Size = new System.Drawing.Size(65, 20);
             this.cancelBtn.TabIndex = 1;
             this.cancelBtn.TabStop = false;
             this.cancelBtn.Text = "Cancel";
             this.cancelBtn.UseVisualStyleBackColor = true;
             // 
-            // shortcutDisplayTxt
+            // resetBtn
             // 
-            this.shortcutDisplayTxt.Location = new System.Drawing.Point(0, 9);
-            this.shortcutDisplayTxt.Margin = new System.Windows.Forms.Padding(0);
-            this.shortcutDisplayTxt.Name = "shortcutDisplayTxt";
-            this.shortcutDisplayTxt.Size = new System.Drawing.Size(284, 23);
-            this.shortcutDisplayTxt.TabIndex = 2;
-            this.shortcutDisplayTxt.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.resetBtn.Location = new System.Drawing.Point(6, 25);
+            this.resetBtn.Name = "resetBtn";
+            this.resetBtn.Size = new System.Drawing.Size(65, 20);
+            this.resetBtn.TabIndex = 2;
+            this.resetBtn.TabStop = false;
+            this.resetBtn.Text = "Reset";
+            this.resetBtn.UseVisualStyleBackColor = true;
+            this.resetBtn.Click += new System.EventHandler(this.ResetBtn_Click);
+            // 
+            // shortcutTxt
+            // 
+            this.shortcutTxt.BackColor = System.Drawing.SystemColors.Window;
+            this.shortcutTxt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.shortcutTxt.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.shortcutTxt.Location = new System.Drawing.Point(6, 6);
+            this.shortcutTxt.Margin = new System.Windows.Forms.Padding(0);
+            this.shortcutTxt.Name = "shortcutTxt";
+            this.shortcutTxt.Size = new System.Drawing.Size(268, 16);
+            this.shortcutTxt.TabIndex = 3;
+            this.shortcutTxt.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // ShortcutModificationDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 70);
-            this.Controls.Add(this.shortcutDisplayTxt);
+            this.ClientSize = new System.Drawing.Size(280, 51);
+            this.Controls.Add(this.shortcutTxt);
+            this.Controls.Add(this.resetBtn);
             this.Controls.Add(this.cancelBtn);
             this.Controls.Add(this.applyBtn);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
@@ -96,12 +116,27 @@ namespace FlashDevelop.Dialogs
             Text = TextHelper.GetString("Info.PressNewShortcut");
             applyBtn.Text = TextHelper.GetStringWithoutMnemonics("Label.Apply");
             cancelBtn.Text = TextHelper.GetStringWithoutMnemonics("Label.Cancel");
-            shortcutDisplayTxt.Text = string.Empty;
+            resetBtn.Text = TextHelper.GetStringWithoutMnemonics("Label.Reset");
         }
 
         private void InitializeFont()
         {
-            shortcutDisplayTxt.Font = new Font(Globals.Settings.DefaultFont.FontFamily, 12F);
+            Font = Globals.Settings.DefaultFont;
+        }
+
+        private void UpdateDisplay()
+        {
+            shortcutTxt.Text = newKeys.ToString();
+            if (ShortcutKeysManager.IsValidShortcut(newKeys) || allowNone && newKeys.IsNone)
+            {
+                applyBtn.Enabled = true;
+                shortcutTxt.ForeColor = Color.DarkGreen;
+            }
+            else
+            {
+                applyBtn.Enabled = false;
+                shortcutTxt.ForeColor = Color.DarkRed;
+            }
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
@@ -116,20 +151,17 @@ namespace FlashDevelop.Dialogs
                 {
                     newKeys = e.KeyData;
                 }
-                shortcutDisplayTxt.Text = newKeys.ToString();
-                if (ShortcutKeysManager.IsValidShortcut(newKeys))
-                {
-                    applyBtn.Enabled = true;
-                    shortcutDisplayTxt.ForeColor = Color.DarkGreen;
-                }
-                else
-                {
-                    applyBtn.Enabled = false;
-                    shortcutDisplayTxt.ForeColor = Color.DarkRed;
-                }
+                UpdateDisplay();
                 e.Handled = true;
             }
             base.OnKeyDown(e);
+        }
+
+        private void ResetBtn_Click(object sender, System.EventArgs e)
+        {
+            newKeys = ShortcutKeys.None;
+            UpdateDisplay();
+            shortcutTxt.Focus();
         }
     }
 }

@@ -125,8 +125,9 @@ namespace FlashDevelop.Dialogs
             this.listView.TabIndex = 2;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
-            this.listView.ClientSizeChanged += new EventHandler(this.ListView_ClientSizeChanged);
-            this.listView.DoubleClick += new EventHandler(this.ListView_DoubleClick);
+            this.listView.ClientSizeChanged += new System.EventHandler(this.ListView_ClientSizeChanged);
+            this.listView.DoubleClick += new System.EventHandler(this.ListView_DoubleClick);
+            this.listView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ListView_KeyDown);
             // 
             // pictureBox
             // 
@@ -183,7 +184,7 @@ namespace FlashDevelop.Dialogs
             this.MinimizeBox = false;
             this.ShowInTaskbar = false;
             this.Name = "ShortcutDialog";
-            this.AcceptButton = this.closeButton;
+            //this.AcceptButton = this.closeButton;
             this.CancelButton = this.closeButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -352,11 +353,27 @@ namespace FlashDevelop.Dialogs
         }
 
         /// <summary>
+        /// Allows users to enter a new shortcut.
+        /// </summary>
+        private void EnterNewShortcut()
+        {
+            if (this.listView.SelectedItems.Count > 0)
+            {
+                var item = this.listView.SelectedItems[0] as ShortcutListItem;
+                var dialog = new ShortcutModificationDialog(item.Custom, true, item.SupportsExtended);
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    this.AssignNewShortcut(item, dialog.NewKeys);
+                }
+            }
+        }
+
+        /// <summary>
         /// Assign the new shortcut.
         /// </summary>
         private void AssignNewShortcut(ShortcutListItem item, ShortcutKeys shortcut)
         {
-            if (!shortcut.IsNone && !ShortcutKeysManager.IsValidShortcut(shortcut)) return;
+            //if (!shortcut.IsNone && !ShortcutKeysManager.IsValidShortcut(shortcut)) return;
             if (item.Custom == shortcut) return;
             this.listView.BeginUpdate();
             var oldShortcut = item.Custom;
@@ -610,14 +627,25 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void ListView_DoubleClick(object sender, EventArgs e)
         {
-            if (this.listView.SelectedItems.Count > 0)
+            EnterNewShortcut();
+        }
+
+        /// <summary>
+        /// Handle key presses on the list view.
+        /// </summary>
+        private void ListView_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyData)
             {
-                var item = this.listView.SelectedItems[0] as ShortcutListItem;
-                var dialog = new ShortcutModificationDialog(item.SupportsExtended);
-                if (dialog.ShowDialog(this) == DialogResult.OK)
-                {
-                    this.AssignNewShortcut(item, dialog.NewKeys);
-                }
+                case Keys.Enter:
+                    EnterNewShortcut();
+                    break;
+                case Keys.Up:
+                case Keys.Down:
+                    break;
+                default:
+                    e.SuppressKeyPress = true;
+                    break;
             }
         }
 

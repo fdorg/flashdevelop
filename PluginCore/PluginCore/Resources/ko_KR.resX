@@ -6049,4 +6049,8 @@ Complete: 현재 파일, 프로젝트 파일 및 수동 새로 고침.</value>
     <value>({0}) 키를 눌렀습니다. 두번째 키 입력을 기다리는 중...</value>
     <comment>Added after 5.2.0</comment>
   </data>
+  <data name="FlashDevelop.Label.Reset" xml:space="preserve">
+    <value>초기화 (&amp;R)</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
 </root>

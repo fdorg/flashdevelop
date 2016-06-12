@@ -6029,4 +6029,8 @@ Lokalizazio pertsonalizatuek lehenetsiaren luzapen bat izan behar dute, adb. en-
     <value>({0}) was pressed. Waiting for a second key input...</value>
     <comment>Added after 5.2.0</comment>
   </data>
+  <data name="FlashDevelop.Label.Reset" xml:space="preserve">
+    <value>&amp;Reset</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
 </root>

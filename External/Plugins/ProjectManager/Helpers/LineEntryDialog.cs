@@ -195,12 +195,10 @@ namespace ProjectManager.Helpers
                 }
 
                 this.currentKeys = ShortcutKeys.None;
-                e.Handled = true;
                 e.SuppressKeyPress = true;
             }
             else if ((e.KeyData & Keys.Control) != 0 || e.KeyData == (Keys.Shift | Keys.Delete) || e.KeyData == (Keys.Shift | Keys.Insert))
             {
-                e.Handled = true;
                 e.SuppressKeyPress = true;
             }
         }
