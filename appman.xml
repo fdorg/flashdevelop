@@ -560,6 +560,19 @@
 			<Url>https://github.com/CamWiseOwl/flashdevelop-wakatime/releases/download/1.1.1/WakaTime.fdz</Url>
 		</Urls>
 	</Entry>
+	<Entry>
+		<Id>swcbuild</Id>
+		<Name>SwcBuild</Name>
+		<Version>1.5.0</Version>
+		<Build>36162</Build>
+		<Checksum>F42A2992F97EE8D5D706453DFAAF054F</Checksum>
+		<Desc>ActionScript Component Compiler Tool for FlashDevelop Projects</Desc>
+		<Group>Extensions</Group>
+		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&t=12458</Info>
+		<Urls>
+			<Url>https://github.com/wise0704/SwcBuild/releases/download/v1.5.0/swcbuild.fdz</Url>
+		</Urls>
+	</Entry>
 	FD5-->
 	<!--Haxelib
 	<Entry>
