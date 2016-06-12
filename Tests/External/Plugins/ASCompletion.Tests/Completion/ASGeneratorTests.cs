@@ -1459,8 +1459,7 @@ namespace ASCompletion.Completion
                             new TestCaseData(
                                 TestFile.ReadAllText(
                                     "ASCompletion.Test_Files.generated.as3.BeforeGenerateEventHandler.as"),
-                                new string[0],
-                                false
+                                new string[0]
                                 )
                                 .Returns(
                                     TestFile.ReadAllText(
@@ -1470,44 +1469,71 @@ namespace ASCompletion.Completion
                             new TestCaseData(
                                 TestFile.ReadAllText(
                                     "ASCompletion.Test_Files.generated.as3.BeforeGenerateEventHandler.as"),
-                                new[] {"Event.ADDED", "Event.REMOVED"},
-                                false
+                                new[] {"Event.ADDED", "Event.REMOVED"}
                                 )
                                 .Returns(
                                     TestFile.ReadAllText(
                                         "ASCompletion.Test_Files.generated.as3.AfterGenerateEventHandler_withAutoRemove.as"))
-                                .SetName("Generate event handler with auto remove if generate explicit scope is false");
-                        yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateEventHandler.as"),
-                                new[] {"Event.ADDED", "Event.REMOVED"},
-                                true
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateEventHandler_withAutoRemove_generateExplicitScopeIsTrue.as"))
-                                .SetName("Generate event handler with auto remove if generate explicit scope is true");
+                                .SetName("Generate event handler with auto remove");
                     }
                 }
 
                 [Test, TestCaseSource("AS3TestCases")]
-                public string AS3(string sourceText, string[] autoRemove, bool generateExplicitScope)
+                public string AS3(string sourceText, string[] autoRemove)
+                {
+                    sci.ConfigurationLanguage = "as3";
+                    ASContext.Context.SetAs3Features();
+                    ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
+                    return Generate(sourceText, autoRemove, new AS3Context.Context(new AS3Settings()));
+                }
+
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateEventHandler.hx"),
+                                new string[0]
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGenerateEventHandler_withoutAutoRemove.hx"))
+                                .SetName("Generate event handler without auto remove");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateEventHandler.hx"),
+                                new[] {"Event.ADDED", "Event.REMOVED"}
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGenerateEventHandler_withAutoRemove.hx"))
+                                .SetName("Generate event handler with auto remove");
+                    }
+                }
+
+                [Test, TestCaseSource("HaxeTestCases")]
+                public string Haxe(string sourceText, string[] autoRemove)
+                {
+                    sci.ConfigurationLanguage = "haxe";
+                    ASContext.Context.SetHaxeFeatures();
+                    ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
+                    return Generate(sourceText, autoRemove, new HaXeContext.Context(new HaXeSettings()));
+                }
+
+                string Generate(string sourceText, string[] autoRemove, IASContext context)
                 {
                     sci.Text = sourceText;
-                    sci.ConfigurationLanguage = "as3";
                     SnippetHelper.PostProcessSnippets(sci, 0);
-                    ASContext.Context.SetAs3Features();
                     ASContext.CommonSettings.EventListenersAutoRemove = autoRemove;
-                    ASContext.CommonSettings.GenerateScope = generateExplicitScope;
-                    var currentModel = new FileModel {Context = ASContext.Context};
+                    var currentModel = ASContext.Context.CurrentModel;
                     new ASFileParser().ParseSrc(currentModel, sci.Text);
                     var currentClass = currentModel.Classes[0];
                     ASContext.Context.CurrentClass.Returns(currentClass);
-                    ASContext.Context.CurrentModel.Returns(currentModel);
                     var currentMember = currentClass.Members[0];
                     ASContext.Context.CurrentMember.Returns(currentMember);
-                    var context = new AS3Context.Context(new AS3Settings());
                     ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
                     ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
                     {
@@ -1524,6 +1550,42 @@ namespace ASCompletion.Completion
                     ASGenerator.GenerateJob(GeneratorJobType.ComplexEvent, currentMember, ASContext.Context.CurrentClass, null, null);
                     return sci.Text;
                 }
+            }
+
+            [TestFixture]
+            public class GenerateEventHandlerWithExplicitScope : GenerateJob
+            {
+                [TestFixtureSetUp]
+                public void GenerateEventHandlerWithExplicitScopeSetup()
+                {
+                    ASContext.CommonSettings.GenerateScope = true;
+                }
+
+                public IEnumerable<TestCaseData> AS3TestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateEventHandler.as"),
+                                new[] {"Event.ADDED", "Event.REMOVED"}
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateEventHandler_withAutoRemove_generateExplicitScopeIsTrue.as"))
+                                .SetName("Generate event handler with auto remove");
+                    }
+                }
+
+                [Test, TestCaseSource("AS3TestCases")]
+                public string AS3(string sourceText, string[] autoRemove)
+                {
+                    sci.ConfigurationLanguage = "as3";
+                    ASContext.Context.SetAs3Features();
+                    ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
+                    return Generate(sourceText, autoRemove, new AS3Context.Context(new AS3Settings()));
+                }
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -1533,62 +1595,42 @@ namespace ASCompletion.Completion
                             new TestCaseData(
                                 TestFile.ReadAllText(
                                     "ASCompletion.Test_Files.generated.haxe.BeforeGenerateEventHandler.hx"),
-                                new string[0],
-                                false
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGenerateEventHandler_withoutAutoRemove.hx"))
-                                .SetName("Generate event handler without auto remove");
-                        yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateEventHandler.hx"),
-                                new[] { "Event.ADDED", "Event.REMOVED" },
-                                false
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGenerateEventHandler_withAutoRemove.hx"))
-                                .SetName("Generate event handler with auto remove");
-                        yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateEventHandler.hx"),
-                                new[] {"Event.ADDED", "Event.REMOVED"},
-                                true
+                                new[] {"Event.ADDED", "Event.REMOVED"}
                                 )
                                 .Returns(
                                     TestFile.ReadAllText(
                                         "ASCompletion.Test_Files.generated.haxe.AfterGenerateEventHandler_withAutoRemove_generateExplicitScopeIsTrue.hx"))
-                                .SetName("Generate event handler with auto remove if generate explicit scope is true");
+                                .SetName("Generate event handler with auto remove");
                     }
                 }
 
                 [Test, TestCaseSource("HaxeTestCases")]
-                public string Haxe(string sourceText, string[] autoRemove, bool generateExplicitScope)
+                public string Haxe(string sourceText, string[] autoRemove)
+                {
+                    sci.ConfigurationLanguage = "haxe";
+                    ASContext.Context.SetHaxeFeatures();
+                    ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
+                    return Generate(sourceText, autoRemove, new HaXeContext.Context(new HaXeSettings()));
+                }
+
+                string Generate(string sourceText, string[] autoRemove, IASContext context)
                 {
                     sci.Text = sourceText;
-                    sci.ConfigurationLanguage = "haxe";
                     SnippetHelper.PostProcessSnippets(sci, 0);
-                    ASContext.Context.SetHaxeFeatures();
                     ASContext.CommonSettings.EventListenersAutoRemove = autoRemove;
-                    ASContext.CommonSettings.GenerateScope = generateExplicitScope;
-                    var currentModel = new FileModel {haXe = true, Context = ASContext.Context};
+                    var currentModel = ASContext.Context.CurrentModel;
                     new ASFileParser().ParseSrc(currentModel, sci.Text);
                     var currentClass = currentModel.Classes[0];
                     ASContext.Context.CurrentClass.Returns(currentClass);
-                    ASContext.Context.CurrentModel.Returns(currentModel);
                     var currentMember = currentClass.Members[0];
                     ASContext.Context.CurrentMember.Returns(currentMember);
-                    var context = new AS3Context.Context(new AS3Settings());
                     ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
                     ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
                     {
                         var src = x[0] as string;
                         return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
                     });
-                    var eventModel = new ClassModel {Name = "Event", Type = "flash.events.Event"};
+                    var eventModel = new ClassModel { Name = "Event", Type = "flash.events.Event" };
                     ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => eventModel);
                     ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
                     var re = string.Format(ASGenerator.patternEvent, ASGenerator.contextToken);
