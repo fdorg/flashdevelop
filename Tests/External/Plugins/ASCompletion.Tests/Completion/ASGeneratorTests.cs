@@ -727,41 +727,59 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(
                                 TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforePromoteLocal.as"),
-                                false
+                                    "ASCompletion.Test_Files.generated.as3.BeforePromoteLocal.as")
                                 )
                                 .Returns(
                                     TestFile.ReadAllText(
                                         "ASCompletion.Test_Files.generated.as3.AfterPromoteLocal_generateExplicitScopeIsFalse.as"))
-                                .SetName("Promote to class member if generate explicit scope is false");
-                        yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforePromoteLocal.as"),
-                                true
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterPromoteLocal_generateExplicitScopeIsTrue.as"))
-                                .SetName("Promote to class member if generate explicit scope is true");
+                                .SetName("Promote to class member");
                     }
                 }
 
                 [Test, TestCaseSource("AS3TestCases")]
-                public string AS3(string sourceText, bool generateExplicitScope)
+                public string AS3(string sourceText)
+                {
+                    sci.ConfigurationLanguage = "as3";
+                    ASContext.Context.SetAs3Features();
+                    ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
+                    var context = new AS3Context.Context(new AS3Settings());
+                    return Generate(sourceText, context);
+                }
+
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforePromoteLocal.hx")
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterPromoteLocal_generateExplicitScopeIsFalse.hx"))
+                                .SetName("Promote to class member");
+                    }
+                }
+
+                [Test, TestCaseSource("HaxeTestCases")]
+                public string Haxe(string sourceText)
+                {
+                    sci.ConfigurationLanguage = "haxe";
+                    ASContext.Context.SetHaxeFeatures();
+                    ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
+                    return Generate(sourceText, new HaXeContext.Context(new HaXeSettings()));
+                }
+
+                string Generate(string sourceText, IASContext context)
                 {
                     sci.Text = sourceText;
-                    sci.ConfigurationLanguage = "as3";
                     SnippetHelper.PostProcessSnippets(sci, 0);
-                    ASContext.Context.SetAs3Features();
-                    ASContext.CommonSettings.GenerateScope = generateExplicitScope;
-                    var currentModel = new FileModel {Context = ASContext.Context};
+                    var currentModel = ASContext.Context.CurrentModel;
                     new ASFileParser().ParseSrc(currentModel, sci.Text);
                     var currentClass = currentModel.Classes[0];
                     ASContext.Context.CurrentClass.Returns(currentClass);
-                    ASContext.Context.CurrentModel.Returns(currentModel);
                     ASContext.Context.CurrentMember.Returns(currentClass.Members[0]);
-                    var context = new AS3Context.Context(new AS3Settings());
                     ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
                     ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
                     {
@@ -775,6 +793,42 @@ namespace ASCompletion.Completion
                     ASGenerator.GenerateJob(GeneratorJobType.PromoteLocal, currentMember, ASContext.Context.CurrentClass, null, null);
                     return sci.Text;
                 }
+            }
+
+            [TestFixture]
+            public class PromoteLocalWithExplicitScope : GenerateJob
+            {
+                [TestFixtureSetUp]
+                public void PromoteLocalWithExplicitScopeSetup()
+                {
+                    ASContext.CommonSettings.GenerateScope = true;
+                }
+
+                public IEnumerable<TestCaseData> AS3TestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.as3.BeforePromoteLocal.as")
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterPromoteLocal_generateExplicitScopeIsTrue.as"))
+                                .SetName("Promote to class member");
+                    }
+                }
+
+                [Test, TestCaseSource("AS3TestCases")]
+                public string AS3(string sourceText)
+                {
+                    sci.ConfigurationLanguage = "as3";
+                    ASContext.Context.SetAs3Features();
+                    ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
+                    var context = new AS3Context.Context(new AS3Settings());
+                    return Generate(sourceText, context);
+                }
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -783,41 +837,33 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(
                                 TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforePromoteLocal.hx"),
-                                false
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterPromoteLocal_generateExplicitScopeIsFalse.hx"))
-                                .SetName("Promote to class member if generate explicit scope is false");
-                        yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforePromoteLocal.hx"),
-                                true
+                                    "ASCompletion.Test_Files.generated.haxe.BeforePromoteLocal.hx")
                                 )
                                 .Returns(
                                     TestFile.ReadAllText(
                                         "ASCompletion.Test_Files.generated.haxe.AfterPromoteLocal_generateExplicitScopeIsTrue.hx"))
-                                .SetName("Promote to class member if generate explicit scope is true");
+                                .SetName("Promote to class member");
                     }
                 }
 
                 [Test, TestCaseSource("HaxeTestCases")]
-                public string Haxe(string sourceText, bool generateExplicitScope)
+                public string Haxe(string sourceText)
+                {
+                    sci.ConfigurationLanguage = "haxe";
+                    ASContext.Context.SetHaxeFeatures();
+                    ASContext.Context.CurrentModel.Returns(new FileModel { haXe = true, Context = ASContext.Context });
+                    return Generate(sourceText, new HaXeContext.Context(new HaXeSettings()));
+                }
+
+                string Generate(string sourceText, IASContext context)
                 {
                     sci.Text = sourceText;
-                    sci.ConfigurationLanguage = "haxe";
                     SnippetHelper.PostProcessSnippets(sci, 0);
-                    ASContext.Context.SetHaxeFeatures();
-                    ASContext.CommonSettings.GenerateScope = generateExplicitScope;
-                    var currentModel = new FileModel {haXe = true, Context = ASContext.Context};
+                    var currentModel = ASContext.Context.CurrentModel;
                     new ASFileParser().ParseSrc(currentModel, sci.Text);
                     var currentClass = currentModel.Classes[0];
                     ASContext.Context.CurrentClass.Returns(currentClass);
-                    ASContext.Context.CurrentModel.Returns(currentModel);
                     ASContext.Context.CurrentMember.Returns(currentClass.Members[0]);
-                    var context = new HaXeContext.Context(new HaXeSettings());
                     ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
                     ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
                     {
