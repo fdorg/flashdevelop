@@ -17,6 +17,7 @@ namespace FlashDevelop.Dialogs
         private const char ViewCustomKey = '*';
 
         private Timer updateTimer;
+        private ShortcutKeysEditor editor;
         private ToolStripMenuItem removeShortcut;
         private ToolStripMenuItem revertToDefault;
         private ToolStripMenuItem revertAllToDefault;
@@ -184,7 +185,7 @@ namespace FlashDevelop.Dialogs
             this.MinimizeBox = false;
             this.ShowInTaskbar = false;
             this.Name = "ShortcutDialog";
-            //this.AcceptButton = this.closeButton;
+            this.AcceptButton = this.closeButton;
             this.CancelButton = this.closeButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -221,10 +222,9 @@ namespace FlashDevelop.Dialogs
             cms.Font = Globals.Settings.DefaultFont;
             cms.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             cms.Renderer = new DockPanelStripRenderer(false, false);
-            this.removeShortcut = new ToolStripMenuItem(TextHelper.GetString("Label.RemoveShortcut"), null, this.RemoveShortcut_Click);
+            this.removeShortcut = new ToolStripMenuItem(TextHelper.GetString("Label.RemoveShortcut"), null, this.RemoveShortcut_Click, Keys.Delete);
             this.revertToDefault = new ToolStripMenuItem(TextHelper.GetString("Label.RevertToDefault"), null, this.RevertToDefault_Click);
             this.revertAllToDefault = new ToolStripMenuItem(TextHelper.GetString("Label.RevertAllToDefault"), null, this.RevertAllToDefault_Click);
-            this.removeShortcut.ShortcutKeys = Keys.Delete;
             cms.Items.Add(this.removeShortcut);
             cms.Items.Add(this.revertToDefault);
             cms.Items.Add(this.revertAllToDefault);
@@ -270,6 +270,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeShortcutListItems()
         {
+            this.editor = new ShortcutKeysEditor();
             var collection = ShortcutManager.RegisteredItems;
             this.shortcutListItems = new ShortcutListItem[collection.Count];
             int counter = 0;
@@ -360,11 +361,7 @@ namespace FlashDevelop.Dialogs
             if (this.listView.SelectedItems.Count > 0)
             {
                 var item = this.listView.SelectedItems[0] as ShortcutListItem;
-                var dialog = new ShortcutModificationDialog(item.Custom, true, item.SupportsExtended);
-                if (dialog.ShowDialog(this) == DialogResult.OK)
-                {
-                    this.AssignNewShortcut(item, dialog.NewKeys);
-                }
+                this.AssignNewShortcut(item, editor.EditValue(item.Custom, true, item.SupportsExtended));
             }
         }
 

@@ -1,12 +1,11 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
-using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Managers;
 
-namespace FlashDevelop.Dialogs
+namespace PluginCore.Controls
 {
-    internal class ShortcutModificationDialog : Form
+    internal class ShortcutKeysEditorDialog : Form
     {
         private ShortcutKeys newKeys;
         private bool allowNone;
@@ -16,7 +15,7 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.Button resetBtn;
         private System.Windows.Forms.Label shortcutTxt;
 
-        internal ShortcutModificationDialog(ShortcutKeys defaultKeys, bool allowNone, bool supportExtended)
+        internal ShortcutKeysEditorDialog(ShortcutKeys defaultKeys, bool allowNone, bool supportExtended)
         {
             this.newKeys = defaultKeys;
             this.allowNone = allowNone;
@@ -113,15 +112,15 @@ namespace FlashDevelop.Dialogs
 
         private void InitializeLocalization()
         {
-            Text = TextHelper.GetString("Info.PressNewShortcut");
-            applyBtn.Text = TextHelper.GetStringWithoutMnemonics("Label.Apply");
-            cancelBtn.Text = TextHelper.GetStringWithoutMnemonics("Label.Cancel");
-            resetBtn.Text = TextHelper.GetStringWithoutMnemonics("Label.Reset");
+            Text = TextHelper.GetString("FlashDevelop.Info.PressNewShortcut");
+            applyBtn.Text = TextHelper.GetStringWithoutMnemonics("FlashDevelop.Label.Apply");
+            cancelBtn.Text = TextHelper.GetStringWithoutMnemonics("FlashDevelop.Label.Cancel");
+            resetBtn.Text = TextHelper.GetStringWithoutMnemonics("FlashDevelop.Label.Reset");
         }
 
         private void InitializeFont()
         {
-            Font = Globals.Settings.DefaultFont;
+            Font = PluginBase.Settings.DefaultFont;
         }
 
         private void UpdateDisplay()
