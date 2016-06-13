@@ -129,6 +129,7 @@ namespace FlashDevelop.Dialogs
             this.listView.ClientSizeChanged += new System.EventHandler(this.ListView_ClientSizeChanged);
             this.listView.DoubleClick += new System.EventHandler(this.ListView_DoubleClick);
             this.listView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ListView_KeyDown);
+            this.listView.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ListView_KeyPress);
             // 
             // pictureBox
             // 
@@ -313,7 +314,7 @@ namespace FlashDevelop.Dialogs
         {
             var shortcutDialog = new ShortcutDialog();
             shortcutDialog.Show(Globals.MainForm);
-            shortcutDialog.filterTextBox.Focus();
+            shortcutDialog.filterTextBox.Select();
         }
 
         /// <summary>
@@ -321,7 +322,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void PopulateListView(string filter)
         {
-            var selectedItem = this.listView.SelectedItems.Count > 0 ? this.listView.SelectedItems[0] : null;
+            var selectedItem = this.listView.Focused && this.listView.SelectedItems.Count > 0 ? this.listView.SelectedItems[0] : null;
             bool viewCustom = false;
             bool viewConflicts = false;
             filter = ExtractFilterKeywords(filter, ref viewCustom, ref viewConflicts);
@@ -340,16 +341,12 @@ namespace FlashDevelop.Dialogs
                 }
             }
             this.listView.EndUpdate();
-            if (this.listView.Items.Count > 0 && selectedItem != null)
+            if (selectedItem != null && this.listView.Items.Count > 0)
             {
                 int index = this.listView.Items.IndexOf(selectedItem);
                 index = index >= 0 ? index : 0;
                 this.listView.Items[index].Selected = true;
                 this.listView.EnsureVisible(index);
-            }
-            else
-            {
-                this.filterTextBox.Focus();
             }
         }
 
@@ -481,7 +478,7 @@ namespace FlashDevelop.Dialogs
             {
                 this.filterTextBox.Text = ViewConflictsKey.ToString();
                 this.filterTextBox.SelectAll();
-                this.filterTextBox.Focus();
+                this.filterTextBox.Select();
                 return true;
             }
             return false;
@@ -542,27 +539,26 @@ namespace FlashDevelop.Dialogs
                 item.Conflicts = null;
                 conflicts.Remove(item);
 
-                bool noConflicts = true;
                 int count = conflicts.Count;
-                if (count > 1)
+                for (int i = 0; i < count; i++)
                 {
-                    var keys = conflicts[0].Custom;
-                    for (int i = 1; i < count; i++)
+                    item = conflicts[i];
+                    var keys = item.Custom;
+                    bool noConflicts = true;
+                    for (int j = i + 1; j < count; j++)
                     {
-                        if (Conflicts(keys, conflicts[i].Custom))
+                        if (Conflicts(keys, conflicts[j].Custom))
                         {
                             noConflicts = false;
                             break;
                         }
                     }
-                }
-                if (noConflicts)
-                {
-                    for (int i = 0; i < count; i++)
+                    if (noConflicts)
                     {
-                        conflicts[i].Conflicts = null;
+                        item.Conflicts = null;
+                        conflicts.RemoveAt(i--);
+                        count--;
                     }
-                    conflicts.Clear();
                 }
             }
         }
@@ -606,7 +602,7 @@ namespace FlashDevelop.Dialogs
             this.filterTextBox.Text = string.Empty;
             this.filterTextBox.TextChanged += this.FilterTextBox_TextChanged;
             this.PopulateListView(string.Empty);
-            if (clearButton.Focused) this.listView.Focus();
+            this.filterTextBox.Select();
         }
 
         /// <summary>
@@ -624,7 +620,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void ListView_DoubleClick(object sender, EventArgs e)
         {
-            EnterNewShortcut();
+            this.EnterNewShortcut();
         }
 
         /// <summary>
@@ -635,15 +631,26 @@ namespace FlashDevelop.Dialogs
             switch (e.KeyData)
             {
                 case Keys.Enter:
-                    EnterNewShortcut();
+                    this.EnterNewShortcut();
                     break;
-                case Keys.Up:
-                case Keys.Down:
-                    break;
-                default:
+                case Keys.Back:
+                    string text = this.filterTextBox.Text;
+                    if (text.Length > 0)
+                    {
+                        this.filterTextBox.Text = text.Substring(0, text.Length - 1);
+                    }
                     e.SuppressKeyPress = true;
                     break;
             }
+        }
+
+        /// <summary>
+        /// Handle key presses on the list view.
+        /// </summary>
+        private void ListView_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            this.filterTextBox.AppendText(e.KeyChar.ToString());
+            e.Handled = true;
         }
 
         /// <summary>
@@ -724,6 +731,7 @@ namespace FlashDevelop.Dialogs
                     this.ShowConflictsPresent(); // Make sure the warning message shows up after listView is rendered.
                 }
             }
+            this.filterTextBox.Select();
         }
 
         /// <summary>
@@ -744,6 +752,7 @@ namespace FlashDevelop.Dialogs
             {
                 ShortcutManager.SaveCustomShortcuts(dialog.FileName, this.shortcutListItems);
             }
+            this.filterTextBox.Select();
         }
 
         /// <summary>
