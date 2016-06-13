@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace PluginCore.Helpers
 {
     /// <summary>
-    /// A converter class for <see cref="ShortcutKeys"/>.
+    /// Provides a <see cref="TypeConverter"/> to convert <see cref="ShortcutKeys"/> objects to and from other representations.
     /// </summary>
-    public static class ShortcutKeysConverter
+    public class ShortcutKeysConverter : TypeConverter
     {
         private const string Alt = "Alt+";
         private const string Ctrl = "Ctrl+";
@@ -16,6 +18,141 @@ namespace PluginCore.Helpers
         private static Dictionary<Keys, string> names;
         private static Dictionary<string, Keys> keys;
 
+        #region Constructor
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ShortcutKeysConverter"/> class.
+        /// </summary>
+        public ShortcutKeysConverter()
+        {
+
+        }
+
+        #endregion
+
+        #region TypeConverter Overrides
+
+        /// <summary>
+        /// Returns whether this converter can convert an object of the given type to the type of this converter, using the specified context.
+        /// </summary>
+        /// <param name="context">An <see cref="ITypeDescriptorContext"/> that provides a format context.</param>
+        /// <param name="sourceType">A <see cref="Type"/> that represents the type you want to convert from.</param>
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        {
+            return sourceType == typeof(string) || sourceType == typeof(Keys) || sourceType == typeof(Keys[]) || base.CanConvertFrom(context, sourceType);
+        }
+
+        /// <summary>
+        /// Returns whether this converter can convert the object to the specified type, using the specified context.
+        /// </summary>
+        /// <param name="context">An <see cref="ITypeDescriptorContext"/> that provides a format context.</param>
+        /// <param name="destinationType">A <see cref="Type"/> that represents the type you want to convert to.</param>
+        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+        {
+            return base.CanConvertTo(context, destinationType) || destinationType == typeof(Keys) || destinationType == typeof(Keys[]);
+        }
+
+        /// <summary>
+        /// Converts the given object to the type of this converter, using the specified context and culture information.
+        /// </summary>
+        /// <param name="context">An <see cref="ITypeDescriptorContext"/> that provides a format context.</param>
+        /// <param name="culture">The <see cref="CultureInfo"/> to use as the current culture.</param>
+        /// <param name="value">The <see cref="object"/> to convert.</param>
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+        {
+            if (value is string)
+            {
+                return ConvertFromString((string) value);
+            }
+            if (value is Keys)
+            {
+                return (ShortcutKeys) (Keys) value;
+            }
+            if (value is Keys[])
+            {
+                var array = (Keys[]) value;
+                switch (array.Length)
+                {
+                    case 0: return new ShortcutKeys();
+                    case 1: return new ShortcutKeys(array[0]);
+                    case 2: return new ShortcutKeys(array[0], array[1]);
+                    default:
+                        throw new FormatException("Length of the specified array is out of range.");
+                }
+            }
+            if (value == null)
+            {
+                return ShortcutKeys.None;
+            }
+            return base.ConvertFrom(context, culture, value);
+        }
+
+        /// <summary>
+        /// Converts the given value object to the specified type, using the specified context and culture information.
+        /// </summary>
+        /// <param name="context">An <see cref="ITypeDescriptorContext"/> that provides a format context.</param>
+        /// <param name="culture">A <see cref="CultureInfo"/>. If <code>null</code> is passed, the current culture is assumed.</param>
+        /// <param name="value">The <see cref="object"/> to convert.</param>
+        /// <param name="destinationType">The <see cref="Type"/> to convert the <code>value</code> parameter to.</param>
+        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+        {
+            if (destinationType == null)
+            {
+                throw new ArgumentNullException("destinationType");
+            }
+            if (value is ShortcutKeys)
+            {
+                var keys = (ShortcutKeys) value;
+                if (destinationType == typeof(string))
+                {
+                    return ConvertToString(keys);
+                }
+                if (destinationType == typeof(Keys))
+                {
+                    return (Keys) keys;
+                }
+                if (destinationType == typeof(Keys[]))
+                {
+                    return new[] { keys.First, keys.Second };
+                }
+            }
+            else if (value is Keys)
+            {
+                var keys = (Keys) value;
+                if (destinationType == typeof(string))
+                {
+                    return ConvertToString(keys);
+                }
+                if (destinationType == typeof(Keys))
+                {
+                    return keys;
+                }
+                if (destinationType == typeof(Keys[]))
+                {
+                    return new[] { keys, Keys.None };
+                }
+            }
+            return base.ConvertTo(context, culture, value, destinationType);
+        }
+
+        #endregion
+
+        #region Public Methods
+        
+        /// <summary>
+        /// Converts a <see cref="string"/> to <see cref="ShortcutKeys"/>.
+        /// </summary>
+        /// <param name="value">A <see cref="string"/> to convert.</param>
+        public new static ShortcutKeys ConvertFromString(string value)
+        {
+            if (value == null) throw new ArgumentNullException("value");
+            if (keys == null)
+            {
+                Initialize();
+            }
+            return ConvertFromStringInternal(value);
+        }
+        
         /// <summary>
         /// Converts a <see cref="ShortcutKeys"/> value to <see cref="string"/>.
         /// </summary>
@@ -26,12 +163,10 @@ namespace PluginCore.Helpers
             {
                 Initialize();
             }
-
             if (keys.IsExtended)
             {
                 return ConvertToStringInternal(keys.First) + ", " + ConvertToStringInternal(keys.Second);
             }
-
             return ConvertToStringInternal(keys.First);
         }
 
@@ -45,25 +180,12 @@ namespace PluginCore.Helpers
             {
                 Initialize();
             }
-
             return ConvertToStringInternal(keys);
         }
 
-        /// <summary>
-        /// Converts a <see cref="string"/> to <see cref="ShortcutKeys"/>.
-        /// </summary>
-        /// <param name="value">A <see cref="string"/> to convert.</param>
-        /// <returns></returns>
-        public static ShortcutKeys ConvertFromString(string value)
-        {
-            if (value == null) throw new ArgumentNullException("value");
-            if (keys == null)
-            {
-                Initialize();
-            }
+        #endregion
 
-            return ConvertFromStringInternal(value);
-        }
+        #region Private Methods
 
         private static void Initialize()
         {
@@ -125,42 +247,6 @@ namespace PluginCore.Helpers
             keys[name] = key;
         }
 
-        private static string ConvertToStringInternal(Keys keys)
-        {
-            // For performance reasons, instead of using a string or StringBuilder buffer and appending
-            // text such as Ctrl, Alt and Shift on it, use the string concatenation to utilize the compiler optimization,
-            // which turns them into string.Concat() calls.
-            if ((keys & Keys.Control) == Keys.Control)
-            {
-                if ((keys & Keys.Alt) == Keys.Alt)
-                {
-                    if ((keys & Keys.Shift) == Keys.Shift)
-                    {
-                        return Ctrl + Alt + Shift + GetString(keys & Keys.KeyCode);
-                    }
-                    return Ctrl + Alt + GetString(keys & Keys.KeyCode);
-                }
-                if ((keys & Keys.Shift) == Keys.Shift)
-                {
-                    return Ctrl + Shift + GetString(keys & Keys.KeyCode);
-                }
-                return Ctrl + GetString(keys & Keys.KeyCode);
-            }
-            if ((keys & Keys.Alt) == Keys.Alt)
-            {
-                if ((keys & Keys.Shift) == Keys.Shift)
-                {
-                    return Alt + Shift + GetString(keys & Keys.KeyCode);
-                }
-                return Alt + GetString(keys & Keys.KeyCode);
-            }
-            if ((keys & Keys.Shift) == Keys.Shift)
-            {
-                return Shift + GetString(keys & Keys.KeyCode);
-            }
-            return GetString(keys);
-        }
-
         private static ShortcutKeys ConvertFromStringInternal(string value)
         {
             int index = 0;
@@ -209,16 +295,54 @@ namespace PluginCore.Helpers
             return new ShortcutKeys(first, second);
         }
 
-        private static string GetString(Keys keys)
+        private static string ConvertToStringInternal(Keys keys)
+        {
+            // For performance reasons, instead of using a string or StringBuilder buffer and appending
+            // text such as Ctrl, Alt and Shift on it, use the string concatenation to utilize the compiler optimization,
+            // which turns them into string.Concat() calls.
+            if ((keys & Keys.Control) == Keys.Control)
+            {
+                if ((keys & Keys.Alt) == Keys.Alt)
+                {
+                    if ((keys & Keys.Shift) == Keys.Shift)
+                    {
+                        return Ctrl + Alt + Shift + GetName(keys & Keys.KeyCode);
+                    }
+                    return Ctrl + Alt + GetName(keys & Keys.KeyCode);
+                }
+                if ((keys & Keys.Shift) == Keys.Shift)
+                {
+                    return Ctrl + Shift + GetName(keys & Keys.KeyCode);
+                }
+                return Ctrl + GetName(keys & Keys.KeyCode);
+            }
+            if ((keys & Keys.Alt) == Keys.Alt)
+            {
+                if ((keys & Keys.Shift) == Keys.Shift)
+                {
+                    return Alt + Shift + GetName(keys & Keys.KeyCode);
+                }
+                return Alt + GetName(keys & Keys.KeyCode);
+            }
+            if ((keys & Keys.Shift) == Keys.Shift)
+            {
+                return Shift + GetName(keys & Keys.KeyCode);
+            }
+            return GetName(keys);
+        }
+
+        private static Keys GetKey(string name)
+        {
+            Keys key;
+            return keys.TryGetValue(name.Trim(), out key) ? key : (Keys) Enum.Parse(typeof(Keys), name);
+        }
+
+        private static string GetName(Keys keys)
         {
             string name;
             return names.TryGetValue(keys, out name) ? name : keys.ToString();
         }
 
-        private static Keys GetKey(string value)
-        {
-            Keys key;
-            return keys.TryGetValue(value.Trim(), out key) ? key : (Keys) Enum.Parse(typeof(Keys), value);
-        }
+        #endregion
     }
 }

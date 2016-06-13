@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using PluginCore.Helpers;
 
@@ -8,6 +9,7 @@ namespace PluginCore
     /// Represents an extended shortcut combination.
     /// </summary>
     [Serializable]
+    [TypeConverter(typeof(ShortcutKeysConverter))]
     public struct ShortcutKeys
     {
         private Keys m_first;
