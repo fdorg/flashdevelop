@@ -524,9 +524,9 @@
 	<Entry>
 		<Id>solarizedfulltheme</Id>
 		<Name>Solarized Full Theme</Name>
-		<Version>1.1</Version>
+		<Version>1.1.1</Version>
 		<Build>1</Build>
-		<Checksum>ecf7273e7b72a1d57a84247345a0b667</Checksum>
+		<Checksum>86bdb532d572538609bacd7fe55c7712</Checksum>
 		<Desc>Adds Solarized light and dark ui themes and syntax themes, based on Solarized by Ethan Schoonover.</Desc>
 		<Group>Themes</Group>
 		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=20&amp;t=12399</Info>
