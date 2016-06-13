@@ -2082,14 +2082,15 @@ namespace ASCompletion.Completion
             // evaluate, if the variable (or constant) should be generated in other class
             ASResult varResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
             var memberIsStatic = member != null && (member.Flags & FlagType.Static) > 0;
-            if (ASContext.CommonSettings.GenerateScope && !varResult.Context.Value.Contains(ASContext.Context.Features.dot))
+            var dot = ASContext.Context.Features.dot;
+            if (ASContext.CommonSettings.GenerateScope && !varResult.Context.Value.Contains(dot))
             {
                 position = sci.CurrentPos;
                 var start = sci.WordStartPosition(position, true);
                 var length = sci.MBSafeTextLength(contextToken);
                 sci.SetSel(start, start + length);
                 var scope = memberIsStatic ? inClass.QualifiedName : "this";
-                var text = string.Format("{0}.{1}", scope, contextToken);
+                var text = scope + dot + contextToken;
                 sci.ReplaceSel(text);
                 UpdateLookupPosition(position, text.Length - length);
             }
@@ -2576,14 +2577,15 @@ namespace ASCompletion.Completion
             // evaluate, if the function should be generated in other class
             ASResult funcResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
             var memberIsStatic = member != null && (member.Flags & FlagType.Static) > 0;
-            if (ASContext.CommonSettings.GenerateScope && !funcResult.Context.Value.Contains(ASContext.Context.Features.dot))
+            var dot = ASContext.Context.Features.dot;
+            if (ASContext.CommonSettings.GenerateScope && !funcResult.Context.Value.Contains(dot))
             {
                 position = sci.CurrentPos;
                 var start = sci.WordStartPosition(position, true);
                 var length = sci.MBSafeTextLength(contextToken);
                 sci.SetSel(start, start + length);
                 var scope = memberIsStatic ? inClass.QualifiedName : "this";
-                var text = string.Format("{0}.{1}", scope, contextToken);
+                var text = scope + dot + contextToken;
                 sci.ReplaceSel(text);
                 UpdateLookupPosition(position, text.Length - length);
             }
