@@ -108,7 +108,7 @@ namespace PluginCore.Helpers
             Add(Keys.OemMinus, "-");
             Add(Keys.OemPeriod, ".");
             Add(Keys.OemQuestion, "/"); // Keys.Oem2
-            Add(Keys.Oemtilde, "~"); // Keys.Oem3
+            Add(Keys.Oemtilde, "`"); // Keys.Oem3
             Add(Keys.OemOpenBrackets, "["); // Keys.Oem4
             Add(Keys.OemPipe, "\\"); // Keys.Oem5
             Add(Keys.OemCloseBrackets, "]"); // Keys.Oem6
@@ -161,50 +161,50 @@ namespace PluginCore.Helpers
             return GetString(keys);
         }
 
-        private static unsafe ShortcutKeys ConvertFromStringInternal(string value)
+        private static ShortcutKeys ConvertFromStringInternal(string value)
         {
-            // For performance reasons, use an unsafe context and char pointers.
             int index = 0;
             bool extended = false;
             var first = Keys.None;
             var second = Keys.None;
             int length = value.Length;
 
-            fixed (char* c = value)
+            for (int i = 0; i < length; i++)
             {
-                for (int i = 0; i < length; i++)
+                switch (value[i])
                 {
-                    switch (*(c + i))
-                    {
-                        case '+':
-                            char* o = c + i;
-                            if (i < 4 || *(o - 4) != 'N' || *(o - 3) != 'u' || *(o - 2) != 'm' || *(o - 1) != ' ')
+                    case '+':
+                        if (i < 4 || string.CompareOrdinal(value, i - 4, "Num +", 0, 4) != 0)
+                        {
+                            if (extended) second |= GetKey(value.Substring(index, i - index));
+                            else first |= GetKey(value.Substring(index, i - index));
+                            do
                             {
-                                if (extended) second |= GetKey(new string(c, index, i - index));
-                                else first |= GetKey(new string(c, index, i - index));
-                                index = i + 1;
+                                if (++i == length) throw new FormatException("Missing part after '+'");
                             }
-                            break;
-                        case ',':
-                            if (index != i)
+                            while (char.IsWhiteSpace(value[i]));
+                            index = i--;
+                        }
+                        break;
+                    case ',':
+                        if (index != i)
+                        {
+                            if (extended) throw new FormatException("ShortcutKeys cannot have more than two parts.");
+                            else first |= GetKey(value.Substring(index, i - index));
+                            do
                             {
-                                if (extended) throw new FormatException();
-                                first |= GetKey(new string(c, index, i - index));
-                                do
-                                {
-                                    if (++i == length) throw new FormatException();
-                                }
-                                while (char.IsWhiteSpace(*(c + i)));
-                                index = i--;
-                                extended = true;
+                                if (++i == length) throw new FormatException("Missing part after ','");
                             }
-                            break;
-                    }
+                            while (char.IsWhiteSpace(value[i]));
+                            index = i--;
+                            extended = true;
+                        }
+                        break;
                 }
-
-                if (extended) second |= GetKey(new string(c, index, length - index));
-                else first |= GetKey(new string(c, index, length - index));
             }
+
+            if (extended) second |= GetKey(value.Substring(index, length - index));
+            else first |= GetKey(value.Substring(index, length - index));
 
             return new ShortcutKeys(first, second);
         }
