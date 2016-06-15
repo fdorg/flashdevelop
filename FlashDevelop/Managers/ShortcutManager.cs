@@ -21,6 +21,7 @@ namespace FlashDevelop.Managers
         private const int ExtendedShortcutMinimumFileVersion = 1;
 
         private static readonly HashSet<ShortcutKeys> allShortcuts;
+        private static readonly List<ShortcutKeys> ignoredKeys;
         private static readonly List<ToolStripItem> secondaryItems;
         private static readonly List</*Dictionary<string, */ShortcutItem> registeredItems;
         private static readonly Dictionary<ShortcutKeys, ShortcutItem> cachedItems;
@@ -28,17 +29,26 @@ namespace FlashDevelop.Managers
         static ShortcutManager()
         {
             allShortcuts = new HashSet<ShortcutKeys>();
+            ignoredKeys = new List<ShortcutKeys>();
             secondaryItems = new List<ToolStripItem>();
             registeredItems = new List</*Dictionary<string, */ShortcutItem>();
             cachedItems = new Dictionary<ShortcutKeys, ShortcutItem>();
         }
 
         /// <summary>
-        /// Gets a list of all shortcut keys.
+        /// Gets a collection of all shortcut keys.
         /// </summary>
         public static HashSet<ShortcutKeys> AllShortcuts
         {
             get { return allShortcuts; }
+        }
+
+        /// <summary>
+        /// Gets a list of ignored keys.
+        /// </summary>
+        public static List<ShortcutKeys> IgnoredKeys
+        {
+            get { return ignoredKeys; }
         }
 
         /// <summary>
@@ -89,7 +99,7 @@ namespace FlashDevelop.Managers
         {
             //ShortcutItem item;
             //return RegisteredItems.TryGetValue(id, out item) ? item : null;
-            foreach (var item in RegisteredItems)
+            foreach (var item in registeredItems)
             {
                 if (item.Id == id) return item;
             }
@@ -129,7 +139,7 @@ namespace FlashDevelop.Managers
         {
             allShortcuts.Clear();
             cachedItems.Clear();
-            foreach (var item in RegisteredItems)
+            foreach (var item in registeredItems/*.Values*/)
             {
                 var keys = item.Custom;
                 if (!keys.IsNone)
@@ -144,6 +154,13 @@ namespace FlashDevelop.Managers
                     }
                 }
             }
+            foreach (var item in ignoredKeys)
+            {
+                if (!allShortcuts.Contains(item))
+                {
+                    allShortcuts.Add(item);
+                }
+            }
         }
 
         /// <summary>
@@ -152,7 +169,7 @@ namespace FlashDevelop.Managers
         public static void ApplyAllShortcuts()
         {
             UpdateAllShortcuts();
-            foreach (var item in RegisteredItems)
+            foreach (var item in registeredItems/*.Values*/)
             {
                 if (item.ItemEx != null)
                 {
@@ -269,7 +286,7 @@ namespace FlashDevelop.Managers
         {
             var shortcuts = new List<Argument>();
             shortcuts.Add(new Argument(VersionKey, CurrentShortcutFileVersion.ToString()));
-            foreach (var item in RegisteredItems)
+            foreach (var item in registeredItems/*.Values*/)
             {
                 if (item.Custom != item.Default)
                 {

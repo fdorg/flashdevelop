@@ -102,8 +102,6 @@ namespace PluginCore.Controls
             //
             // Events
             //
-            PluginBase.MainForm.IgnoredKeys.Add(Keys.Delete); // do not treat delete and insert as undefined shortcuts
-            PluginBase.MainForm.IgnoredKeys.Add(Keys.Insert);
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control); // complete member
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control | Keys.Shift); // complete method
             PluginBase.MainForm.DockPanel.ActivePaneChanged += new EventHandler(DockPanel_ActivePaneChanged);
@@ -277,7 +275,7 @@ namespace PluginCore.Controls
             if (lockedSciControl != null && lockedSciControl.IsAlive && lockedSciControl.Target == sci)
                 return;
             UnlockControl();
-            sci.IgnoreAllKeys = true;
+            //sci.IgnoreAllKeys = true;
             lockedSciControl = new WeakReference(sci);
             Application.AddMessageFilter(this);
         }
@@ -290,7 +288,7 @@ namespace PluginCore.Controls
             if (lockedSciControl != null && lockedSciControl.IsAlive)
             {
                 ScintillaControl sci = (ScintillaControl)lockedSciControl.Target;
-                sci.IgnoreAllKeys = false;
+                //sci.IgnoreAllKeys = false;
             }
             lockedSciControl = null;
         }

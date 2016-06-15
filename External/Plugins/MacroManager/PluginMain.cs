@@ -198,10 +198,10 @@ namespace MacroManager
                         macroItem.Image = PluginBase.MainForm.FindImage(macro.Image);
                     }
                     this.macroMenuItem.DropDownItems.Add(macroItem);
-                    if (!PluginBase.MainForm.IgnoredKeys.Contains(macro.Shortcut))
-                    {
-                        PluginBase.MainForm.IgnoredKeys.Add(macro.Shortcut);
-                    }
+                    //if (!PluginBase.MainForm.IgnoredKeys.Contains(macro.Shortcut))
+                    //{
+                    //    PluginBase.MainForm.IgnoredKeys.Add(macro.Shortcut);
+                    //}
                 }
             }
             this.macroMenuItem.DropDownItems.Add(new ToolStripSeparator());
@@ -236,10 +236,10 @@ namespace MacroManager
                         macroButton.Image = PluginBase.MainForm.FindImage(macro.Image);
                     }
                     else macroButton.Image = PluginBase.MainForm.FindImage("528|13|0|0");
-                    if (!PluginBase.MainForm.IgnoredKeys.Contains(macro.Shortcut))
-                    {
-                        PluginBase.MainForm.IgnoredKeys.Add(macro.Shortcut);
-                    }
+                    //if (!PluginBase.MainForm.IgnoredKeys.Contains(macro.Shortcut))
+                    //{
+                    //    PluginBase.MainForm.IgnoredKeys.Add(macro.Shortcut);
+                    //}
                     this.toolbarItems.Add(macroButton);
                 }
             }

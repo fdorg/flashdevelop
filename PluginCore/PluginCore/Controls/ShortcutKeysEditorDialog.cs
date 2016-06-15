@@ -7,9 +7,10 @@ namespace PluginCore.Controls
 {
     internal class ShortcutKeysEditorDialog : Form
     {
-        private ShortcutKeys newKeys;
         private bool allowNone;
         private bool supportExtended;
+        private bool shouldReset;
+        private ShortcutKeys newKeys;
         private System.Windows.Forms.Button applyBtn;
         private System.Windows.Forms.Button cancelBtn;
         private System.Windows.Forms.Button resetBtn;
@@ -20,6 +21,7 @@ namespace PluginCore.Controls
             this.newKeys = defaultKeys;
             this.allowNone = allowNone;
             this.supportExtended = supportExtended;
+            this.shouldReset = true;
             InitializeComponent();
             InitializeLocalization();
             InitializeFont();
@@ -138,29 +140,31 @@ namespace PluginCore.Controls
             }
         }
 
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            if (e.KeyCode != Keys.ControlKey && e.KeyCode != Keys.ShiftKey && e.KeyCode != Keys.Menu)
-            {
-                if (supportExtended)
-                {
-                    newKeys = ShortcutKeysManager.UpdateShortcutKeys(newKeys, e.KeyData);
-                }
-                else
-                {
-                    newKeys = e.KeyData;
-                }
-                UpdateDisplay();
-                e.Handled = true;
-            }
-            base.OnKeyDown(e);
-        }
-
         private void ResetBtn_Click(object sender, System.EventArgs e)
         {
             newKeys = ShortcutKeys.None;
             UpdateDisplay();
             shortcutTxt.Focus();
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            var keyCode = keyData & Keys.KeyCode;
+            if (keyCode != Keys.ControlKey && keyCode != Keys.ShiftKey && keyCode != Keys.Menu)
+            {
+                if (supportExtended && !shouldReset)
+                {
+                    newKeys = ShortcutKeysManager.UpdateShortcutKeys(newKeys, keyData);
+                }
+                else
+                {
+                    newKeys = keyData;
+                    shouldReset = false;
+                }
+                UpdateDisplay();
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
         }
     }
 }

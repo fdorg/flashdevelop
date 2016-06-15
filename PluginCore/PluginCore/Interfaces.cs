@@ -137,6 +137,10 @@ namespace PluginCore
         /// </summary>
         void AutoUpdateMenuItem(ToolStripItem item, String action);
         /// <summary>
+        /// [Deprecated] Registers a new menu item with the shortcut manager.
+        /// </summary>
+        void RegisterShortcutItem(String id, System.Windows.Forms.Keys keys);
+        /// <summary>
         /// Registers a new menu item with the shortcut manager.
         /// </summary>
         void RegisterShortcutItem(String id, ShortcutKeys keys, bool supportsExtended);
@@ -426,8 +430,11 @@ namespace PluginCore
         Boolean RefreshConfig { get; }
         /// <summary>
         /// Gets the ignored keys.
+        /// <para/>
+        /// Ignored keys are valid shortcut keys that are not defined but should not prompt an "undefined shortcut keys" message.
+        /// Instead those keys should have their default behaviors.
         /// </summary>
-        HashSet<ShortcutKeys> IgnoredKeys { get; }
+        List<ShortcutKeys> IgnoredKeys { get; }
         /// <summary>
         /// Gets the version of the application.
         /// </summary>
