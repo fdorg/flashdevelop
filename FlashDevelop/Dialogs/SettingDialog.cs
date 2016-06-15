@@ -446,6 +446,7 @@ namespace FlashDevelop.Dialogs
                 }
                 this.itemPropertyGrid.BrowsableProperties = browsables;
                 this.itemPropertyGrid.SelectedObject = settingsObj;
+                this.itemPropertyGrid.SelectedGridItem.Parent.Parent.GridItems[0].GridItems[0].Select();
                 this.itemPropertyGrid.Refresh();
             }
         }
