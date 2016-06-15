@@ -10,10 +10,17 @@ namespace PluginCore.Controls
     /// </summary>
     public class ToolStripMenuItemEx : ToolStripMenuItem
     {
-        private ShortcutKeys m_shortcutKeys;
+        private static readonly int PropShortcutKeys;
         private ToolStrip lastOwner;
+        private ShortcutKeys shortcutKeys;
+        private object properties;
 
         #region Constructors
+
+        static ToolStripMenuItemEx()
+        {
+            PropShortcutKeys = ShortcutKeysManager.ToolStripMenuItem_PropShortcutKeys();
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ToolStripMenuItemEx"/> class.
@@ -70,6 +77,18 @@ namespace PluginCore.Controls
 
         #region Properties
 
+        internal object Properties
+        {
+            get
+            {
+                if (properties == null)
+                {
+                    properties = this.Properties();
+                }
+                return properties;
+            }
+        }
+
         /// <summary>
         /// Gets or sets the shortcut keys associated with the <see cref="ToolStripMenuItemEx"/>.
         /// </summary>
@@ -77,7 +96,7 @@ namespace PluginCore.Controls
         {
             get
             {
-                return m_shortcutKeys;
+                return shortcutKeys;
             }
             set
             {
@@ -85,49 +104,25 @@ namespace PluginCore.Controls
                 {
                     throw new ArgumentException("Passed value is not a valid shortcut.", "value");
                 }
-                if (m_shortcutKeys != value)
+                if (shortcutKeys != value)
                 {
-                    if (value.IsExtended)
+                    if (Owner != null)
                     {
-                        if (m_shortcutKeys.IsSimple)
+                        var Owner_Shortcuts = Owner.Shortcuts();
+                        object key = shortcutKeys.IsExtended ? (object) shortcutKeys : (object) shortcutKeys.First;
+                        if (Owner_Shortcuts[key] == this)
                         {
-                            base.ShortcutKeys = 0;
+                            Owner_Shortcuts.Remove(key);
                         }
-                        if (Owner != null)
+                        key = value.IsExtended ? (object) value : (object) value.First;
+                        if (!value.IsNone)
                         {
-                            if (m_shortcutKeys.IsExtended)
-                            {
-                                Owner.Shortcuts().Remove(m_shortcutKeys);
-                            }
-                            if (!value.IsNone)
-                            {
-                                var Owner_Shortcuts = Owner.Shortcuts();
-                                if (Owner_Shortcuts.Contains(value))
-                                {
-                                    Owner_Shortcuts[value] = this;
-                                }
-                                else
-                                {
-                                    Owner_Shortcuts.Add(value, this);
-                                }
-                            }
+                            Owner_Shortcuts[key] = this;
                         }
-                        m_shortcutKeys = value;
-                        ShortcutKeyDisplayString = m_shortcutKeys.IsNone ? null : m_shortcutKeys.ToString();
                     }
-                    else
-                    {
-                        if (m_shortcutKeys.IsExtended)
-                        {
-                            if (Owner != null)
-                            {
-                                Owner.Shortcuts().Remove(m_shortcutKeys);
-                            }
-                        }
-                        m_shortcutKeys = value;
-                        base.ShortcutKeys = m_shortcutKeys.First;
-                        ShortcutKeyDisplayString = m_shortcutKeys.IsNone ? null : m_shortcutKeys.ToString();
-                    }
+                    this.Properties_SetInteger(PropShortcutKeys, (int) (Keys) value);
+                    ShortcutKeyDisplayString = value.IsNone ? null : value.ToString();
+                    shortcutKeys = value;
                 }
             }
         }
@@ -138,7 +133,7 @@ namespace PluginCore.Controls
 
         internal bool ProcessCmdKeyInternal(ref Message m, ShortcutKeys keyData)
         {
-            if (Enabled && m_shortcutKeys == keyData && !HasDropDownItems)
+            if (Enabled && shortcutKeys == keyData && !HasDropDownItems)
             {
                 PerformClick();
                 return true;
@@ -146,58 +141,49 @@ namespace PluginCore.Controls
             return false;
         }
 
-        //protected override bool ProcessCmdKey(ref Message m, Keys keyData)
-        //{
-        //    if (m_shortcutKeys.IsSimple && ProcessCmdKeyInternal(ref m, keyData))
-        //    {
-        //        return true;
-        //    }
-        //    return base.ProcessCmdKey(ref m, keyData);
-        //}
-
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            if (disposing && lastOwner != null)
             {
-                if (lastOwner != null)
+                if (shortcutKeys.IsExtended)
                 {
-                    if (m_shortcutKeys.IsExtended)
+                    var lastOwner_Shortcuts = lastOwner.Shortcuts();
+                    if (lastOwner_Shortcuts[shortcutKeys] == this)
                     {
-                        var lastOwner_Shortcuts = lastOwner.Shortcuts();
-                        if (lastOwner_Shortcuts.Contains(m_shortcutKeys))
-                        {
-                            lastOwner_Shortcuts.Remove(m_shortcutKeys);
-                        }
+                        lastOwner_Shortcuts.Remove(shortcutKeys);
                     }
-                    lastOwner = null;
                 }
+                lastOwner = null;
             }
             base.Dispose(disposing);
         }
 
         protected override void OnOwnerChanged(EventArgs e)
         {
-            if (m_shortcutKeys.IsExtended)
+            if (!shortcutKeys.IsNone)
             {
+                object key = shortcutKeys.IsExtended ? (object) shortcutKeys : (object) shortcutKeys.First;
                 if (lastOwner != null)
                 {
-                    lastOwner.Shortcuts().Remove(m_shortcutKeys);
+                    var lastOwner_Shortcuts = lastOwner.Shortcuts();
+                    if (lastOwner_Shortcuts[key] == this)
+                    {
+                        lastOwner_Shortcuts.Remove(key);
+                    }
                 }
                 if (Owner != null)
                 {
-                    var Owner_Shortcuts = Owner.Shortcuts();
-                    if (Owner_Shortcuts.Contains(m_shortcutKeys))
-                    {
-                        Owner_Shortcuts[m_shortcutKeys] = this;
-                    }
-                    else
-                    {
-                        Owner_Shortcuts.Add(m_shortcutKeys, this);
-                    }
+                    Owner.Shortcuts()[key] = this;
                 }
+                this.Properties_SetInteger(PropShortcutKeys, 0);
+                base.OnOwnerChanged(e);
+                this.Properties_SetInteger(PropShortcutKeys, (int) (Keys) shortcutKeys);
+            }
+            else
+            {
+                base.OnOwnerChanged(e);
             }
             lastOwner = Owner;
-            base.OnOwnerChanged(e);
         }
 
         #endregion
