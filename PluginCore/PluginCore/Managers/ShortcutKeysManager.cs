@@ -106,10 +106,39 @@ namespace PluginCore.Managers
         /// <summary>
         /// Retrieves a value indicating whether a defined shortcut key is a valid simple shortcut.
         /// </summary>
-        /// <param name="first">The shortcut key to test for validity.</param>
-        public static bool IsValidSimpleShortcut(Keys first)
+        /// <param name="keys">The shortcut key to test for validity.</param>
+        public static bool IsValidSimpleShortcut(Keys keys)
         {
-            return ToolStripManager.IsValidShortcut(first);
+            return ToolStripManager.IsValidShortcut(keys);
+        }
+
+        /// <summary>
+        /// Retrieves a value indicating whether a defined shortcut key is a valid simple shortcut, excluding <see cref="Keys.Delete"/> and <see cref="Keys.Insert"/>.
+        /// </summary>
+        /// <param name="keys">The shortcut key to test for validity.</param>
+        public static bool IsValidSimpleShortcutExclDeleteInsert(Keys keys)
+        {
+            if (keys == 0)
+            {
+                return false;
+            }
+            var keyCode = keys & Keys.KeyCode;
+            switch (keyCode)
+            {
+                case Keys.None:
+                case Keys.ShiftKey:
+                case Keys.ControlKey:
+                case Keys.Menu:
+                    return false;
+            }
+            switch (keys & Keys.Modifiers)
+            {
+                case Keys.None:
+                case Keys.Shift:
+                    if (Keys.F1 <= keyCode && keyCode <= Keys.F24) break;
+                    return false;
+            }
+            return true;
         }
 
         /// <summary>

@@ -12,7 +12,6 @@ using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using WeifenLuo.WinFormsUI.Docking;
-using PluginCore.Controls;
 
 namespace AS3Context.Controls
 {

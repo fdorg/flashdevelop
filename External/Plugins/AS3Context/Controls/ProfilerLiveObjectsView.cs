@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using PluginCore;
-using PluginCore.Controls;
 using PluginCore.Localization;
 
 namespace AS3Context.Controls

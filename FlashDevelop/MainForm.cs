@@ -1689,7 +1689,7 @@ namespace FlashDevelop
                 lockStatusLabel = true;
                 return true;
             }
-            else if (ShortcutKeysManager.IsValidSimpleShortcut(keyData) && keyData != Keys.Delete && keyData != Keys.Insert)
+            else if (ShortcutKeysManager.IsValidSimpleShortcutExclDeleteInsert(keyData))
             {
                 StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefined"), currentKeys);
                 return true;
@@ -2143,17 +2143,23 @@ namespace FlashDevelop
             {
                 if (previousKeys.IsExtended)
                 {
-                    StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefinedExtended"), previousKeys);
+                    StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefined"), previousKeys);
+                    return true;
                 }
-                else
+                else if (!ShortcutManager.AllShortcuts.Contains(previousKeys))
                 {
                     if (ShortcutKeysManager.IsValidExtendedShortcutFirst(input))
                     {
-                        StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefinedSimple"), previousKeys);
+                        StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutWaiting"), previousKeys);
+                    }
+                    else if (ShortcutKeysManager.IsValidSimpleShortcutExclDeleteInsert(input))
+                    {
+                        StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefined"), previousKeys);
                     }
                     return false;
                 }
             }
+            StatusLabelText = null;
             return true;
         }
 
