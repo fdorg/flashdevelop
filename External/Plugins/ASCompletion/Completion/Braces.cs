@@ -52,6 +52,7 @@ namespace ASCompletion.Completion
         /// An array of Unicode characters to automatically close brace after.
         /// </summary>
         [Category("Trigger Auto Close")]
+        [DisplayName("After Chars")]
         [LocalizedDescription("ASCompletion.Description.BracesAfterChars")]
         public string AfterChars
         {
@@ -63,6 +64,7 @@ namespace ASCompletion.Completion
         /// Gets or set the mode to treat <see cref="AfterChars"/> as.
         /// </summary>
         [Category("Trigger Auto Close"), DefaultValue(Mode.Inclusive)]
+        [DisplayName("After Chars Mode")]
         [LocalizedDescription("ASCompletion.Description.BracesAfterCharsMode")]
         public Mode AfterCharsMode
         {
@@ -74,6 +76,7 @@ namespace ASCompletion.Completion
         /// An array of <see cref="Style"/> values to automatically close brace after.
         /// </summary>
         [Category("Trigger Auto Close")]
+        [DisplayName("After Styles")]
         [LocalizedDescription("ASCompletion.Description.BracesAfterStyles")]
         public Style[] AfterStyles
         {
@@ -85,6 +88,7 @@ namespace ASCompletion.Completion
         /// Gets or set the mode to treat <see cref="AfterStyles"/> as.
         /// </summary>
         [Category("Trigger Auto Close"), DefaultValue(Mode.Inclusive)]
+        [DisplayName("After Styles Mode")]
         [LocalizedDescription("ASCompletion.Description.BracesAfterStylesMode")]
         public Mode AfterStylesMode
         {
@@ -96,6 +100,7 @@ namespace ASCompletion.Completion
         /// An array of Unicode characters to automatically close brace before.
         /// </summary>
         [Category("Trigger Auto Close")]
+        [DisplayName("Before Chars")]
         [LocalizedDescription("ASCompletion.Description.BracesBeforeChars")]
         public string BeforeChars
         {
@@ -107,6 +112,7 @@ namespace ASCompletion.Completion
         /// Gets or set the mode to treat <see cref="BeforeChars"/> as.
         /// </summary>
         [Category("Trigger Auto Close"), DefaultValue(Mode.Inclusive)]
+        [DisplayName("Before Chars Mode")]
         [LocalizedDescription("ASCompletion.Description.BracesBeforeCharsMode")]
         public Mode BeforeCharsMode
         {
@@ -118,6 +124,7 @@ namespace ASCompletion.Completion
         /// An array of <see cref="Style"/> values to automatically close brace before.
         /// </summary>
         [Category("Trigger Auto Close")]
+        [DisplayName("Before Styles")]
         [LocalizedDescription("ASCompletion.Description.BracesBeforeStyles")]
         public Style[] BeforeStyles
         {
@@ -129,6 +136,7 @@ namespace ASCompletion.Completion
         /// Gets or set the mode to treat <see cref="BeforeStyles"/> as.
         /// </summary>
         [Category("Trigger Auto Close"), DefaultValue(Mode.Inclusive)]
+        [DisplayName("Before Styles Mode")]
         [LocalizedDescription("ASCompletion.Description.BracesBeforeStylesMode")]
         public Mode BeforeStylesMode
         {
@@ -140,6 +148,7 @@ namespace ASCompletion.Completion
         /// The logic to use for conditions for automatic closing.
         /// </summary>
         [Category("Trigger Auto Close"), DefaultValue(Logic.OR)]
+        [DisplayName("Trigger Logic")]
         [LocalizedDescription("ASCompletion.Description.BracesTriggerLogic")]
         public Logic TriggerLogic
         {

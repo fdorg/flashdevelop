@@ -5995,9 +5995,9 @@ Complete: 현재 파일, 프로젝트 파일 및 수동 새로 고침.</value>
     <value>사용할 수 있는 컨텍스트 코드 생성이 없습니다.</value>
     <comment>Added after 5.0.2</comment>
   </data>
-  <data name="ASCompletion.Description.AddClosingBracesData" xml:space="preserve">
+  <data name="ASCompletion.Description.AddClosingBracesOptions" xml:space="preserve">
     <value>자동 괄호 닫기 기능에 사용되는 괄호 목록.</value>
-    <comment>Added after 5.0.2</comment>
+    <comment>Added after 5.2.0</comment>
   </data>
   <data name="CodeRefactor.Label.Move" xml:space="preserve">
     <value>Move...</value>

@@ -102,7 +102,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Model\ASFileParserTests.cs" />
-    <Compile Include="PluginUIMock.cs" />
+    <Compile Include="PluginUIMock.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Test Files\parser\haxe\WrongSyntaxCompilerMetaAfterMethodWithNoType.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateExtractVariableGeneric.hx" />

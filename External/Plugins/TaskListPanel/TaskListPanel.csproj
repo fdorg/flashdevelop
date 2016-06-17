@@ -80,7 +80,9 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PluginMain.cs" />
-    <Compile Include="PluginUI.cs" />
+    <Compile Include="PluginUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="ListViewSorter.cs" />
   </ItemGroup>

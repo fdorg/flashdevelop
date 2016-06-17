@@ -300,7 +300,7 @@ namespace ASCompletion.Settings
               "//e.target:Event.COMPLETE", "//e.target:Event.INIT"
         };
 
-        static Braces[] DEFAULT_ADD_CLOSING_BRACES_DATA =
+        static Braces[] DEFAULT_ADD_CLOSING_BRACES_OPTIONS =
         {
             new Braces('(',  ')',  null, null, null, null, ")]}>", Mode.Inclusive, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Mode.Inclusive, Logic.OR),
             new Braces('[',  ']',  null, null, null, null, ")]}>", Mode.Inclusive, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Mode.Inclusive, Logic.OR),
@@ -317,7 +317,7 @@ namespace ASCompletion.Settings
         private MethodsGenerationLocations methodsGenerationLocation;
         private string prefixFields = DEFAULT_GENERATE_PREFIXFIELDS;
         private bool addClosingBraces = DEFAULT_GENERATE_ADDCLOSINGBRACES;
-        private Braces[] addClosingBracesData;
+        private Braces[] addClosingBracesOptions;
         private bool generateScope = DEFAULT_GENERATE_SCOPE;
         private HandlerNamingConventions handlerNamingConvention = DEFAULT_HANDLER_CONVENTION;
 
@@ -383,13 +383,13 @@ namespace ASCompletion.Settings
             set { addClosingBraces = value; }
         }
 
-        [DisplayName("Add Closing Braces Data")]
-        [LocalizedCategory("ASCompletion.Category.Generation"), LocalizedDescription("ASCompletion.Description.AddClosingBracesData")]
+        [DisplayName("Add Closing Braces Options")]
+        [LocalizedCategory("ASCompletion.Category.Generation"), LocalizedDescription("ASCompletion.Description.AddClosingBracesOptions")]
         [Editor(typeof(DescriptiveCollectionEditor<Braces>), typeof(UITypeEditor))]
-        public Braces[] AddClosingBracesData
+        public Braces[] AddClosingBracesOptions
         {
-            get { return addClosingBracesData ?? DEFAULT_ADD_CLOSING_BRACES_DATA; }
-            set { addClosingBracesData = value; }
+            get { return addClosingBracesOptions ?? DEFAULT_ADD_CLOSING_BRACES_OPTIONS; }
+            set { addClosingBracesOptions = value; }
         }
 
         [DisplayName("Prefix Fields When Generating From Params")]

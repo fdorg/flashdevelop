@@ -418,7 +418,7 @@ namespace ASCompletion.Completion
                 // not inside a string literal
                 if (!IsStringStyle(styleBefore) && !IsCharStyle(styleBefore) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
                 {
-                    foreach (var braces in ASContext.CommonSettings.AddClosingBracesData)
+                    foreach (var braces in ASContext.CommonSettings.AddClosingBracesOptions)
                     {
                         // Handle opening first for braces that have equal opening & closing chars
                         if (HandleAddOpeningBrace(sci, c, braces, styleAfter, styleBefore)
@@ -433,7 +433,7 @@ namespace ASCompletion.Completion
                 {
                     if (!IsEscapedCharacter(sci, sci.CurrentPos - 1))
                     {
-                        foreach (var braces in ASContext.CommonSettings.AddClosingBracesData)
+                        foreach (var braces in ASContext.CommonSettings.AddClosingBracesOptions)
                         {
                             if (HandleAddClosingBrace(sci, c, braces))
                             {
@@ -455,7 +455,7 @@ namespace ASCompletion.Completion
                 // not inside a string literal
                 if (!IsStringStyle(style) && !IsCharStyle(style) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
                 {
-                    foreach (var braces in ASContext.CommonSettings.AddClosingBracesData)
+                    foreach (var braces in ASContext.CommonSettings.AddClosingBracesOptions)
                     {
                         if (HandleRemoveBrace(sci, c, braces)) break;
                     }

@@ -5986,9 +5986,9 @@
     <value>No contextual code generation available.</value>
     <comment>Added after 5.0.2</comment>
   </data>
-  <data name="ASCompletion.Description.AddClosingBracesData" xml:space="preserve">
+  <data name="ASCompletion.Description.AddClosingBracesOptions" xml:space="preserve">
     <value>List of auto closing braces and their trigger options.</value>
-    <comment>Added after 5.0.2</comment>
+    <comment>Added after 5.2.0</comment>
   </data>
   <data name="CodeRefactor.Label.Move" xml:space="preserve">
     <value>Move...</value>

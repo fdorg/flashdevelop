@@ -55,7 +55,9 @@
     <Compile Include="LoomHelper.cs" />
     <Compile Include="LoomSettings.cs" />
     <Compile Include="PluginMain.cs" />
-    <Compile Include="Projects\LoomPropertiesDialog.cs" />
+    <Compile Include="Projects\LoomPropertiesDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Projects\LoomPropertiesDialog.Designer.cs">
       <DependentUpon>LoomPropertiesDialog.cs</DependentUpon>
     </Compile>

@@ -93,7 +93,9 @@
     <Compile Include="Controls\BatchProcessDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controls\DelegateMethodsDialog.cs" />
+    <Compile Include="Controls\DelegateMethodsDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Controls\DividedCheckedListBox.cs">
       <SubType>Component</SubType>
     </Compile>

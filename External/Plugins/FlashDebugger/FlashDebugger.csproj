@@ -102,19 +102,29 @@
     <Compile Include="Controls\DataTree\ScalarNode.cs" />
     <Compile Include="Controls\DataTree\ValueNode.cs" />
     <Compile Include="Controls\DataTree\VariableNode.cs" />
-    <Compile Include="Controls\LocalsUI.cs" />
-    <Compile Include="Controls\ThreadsUI.cs" />
+    <Compile Include="Controls\LocalsUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ThreadsUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Controls\DataTreeModel.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\ImmediateUI.cs" />
+    <Compile Include="Controls\ImmediateUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Controls\ImmediateUI.Designer.cs">
       <DependentUpon>ImmediateUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\LiveDataTip.cs" />
-    <Compile Include="Controls\WatchUI.cs" />
+    <Compile Include="Controls\WatchUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Debugger\BreakPointManager.cs" />
-    <Compile Include="Controls\BreakPointUI.cs" />
+    <Compile Include="Controls\BreakPointUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Controls\DataTipForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -153,7 +163,9 @@
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
-    <Compile Include="Controls\StackframeUI.cs" />
+    <Compile Include="Controls\StackframeUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
