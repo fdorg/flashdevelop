@@ -1,14 +1,9 @@
 using System;
-using System.Text;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
-using System.ComponentModel;
-using System.Collections.Generic;
 using PluginCore.Localization;
 using FlashDevelop.Utilities;
-using FlashDevelop.Dialogs;
-using FlashDevelop.Helpers;
 using PluginCore.Managers;
 using PluginCore.Controls;
 using PluginCore.Helpers;

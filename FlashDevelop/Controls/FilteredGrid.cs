@@ -218,8 +218,8 @@ namespace FlashDevelop.Controls
         {
             if (a == null) return b == null ? 0 : -1;
             else if (b == null) return 1;
-            int value = string.CompareOrdinal(a.Category, b.Category);
-            return value == 0 ? string.CompareOrdinal(a.DisplayName, b.DisplayName) : value;
+            int value = string.Compare(a.Category, b.Category);
+            return value == 0 ? string.Compare(a.DisplayName, b.DisplayName) : value;
         }
 
         /// <summary>
