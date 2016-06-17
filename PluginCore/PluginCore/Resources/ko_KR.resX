@@ -3932,7 +3932,7 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Info.ShortcutEditInfo" xml:space="preserve">
-    <value>항목을 선택하고 유효한 단축키를 눌러 단축키를 편집 할 수 있습니다.</value>
+    <value>항목을 더블클릭하고 유효한 단축키를 눌러 단축키를 편집 할 수 있습니다.</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Label.Command" xml:space="preserve">

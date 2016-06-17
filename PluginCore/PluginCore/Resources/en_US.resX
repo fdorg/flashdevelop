@@ -3931,7 +3931,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Info.ShortcutEditInfo" xml:space="preserve">
-    <value>Shortcuts can be edited by selecting an item and pressing valid menu item shortcut keys.</value>
+    <value>Shortcuts can be edited by double-clicking an item and pressing valid menu item shortcut keys.</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Label.Command" xml:space="preserve">

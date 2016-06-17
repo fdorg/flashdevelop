@@ -3920,7 +3920,7 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Info.ShortcutEditInfo" xml:space="preserve">
-    <value>Wählen Sie einen Eintrag aus und drücken Sie die gewünschte Tastenkombination.</value>
+    <value>Doppelklick Sie einen Eintrag und drücken Sie die gewünschte Tastenkombination.</value>
     <comment>Added after 3.3.1</comment>
   </data>
   <data name="FlashDevelop.Label.Command" xml:space="preserve">
