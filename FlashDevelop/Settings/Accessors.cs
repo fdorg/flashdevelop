@@ -360,6 +360,7 @@ namespace FlashDevelop.Settings
         [DefaultValue(LocaleVersion.en_US)]
         [LocalizedCategory("FlashDevelop.Category.Locale")]
         [LocalizedDescription("FlashDevelop.Description.LocaleVersion")]
+        [RequiresRestart]
         public LocaleVersion LocaleVersion
         {
             get { return this.localeVersion; }

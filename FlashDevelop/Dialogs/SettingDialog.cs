@@ -1,13 +1,14 @@
 using System;
+using System.Collections;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
-using PluginCore.Localization;
 using FlashDevelop.Utilities;
-using PluginCore.Managers;
+using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
-using PluginCore;
+using PluginCore.Localization;
+using PluginCore.Managers;
 
 namespace FlashDevelop.Dialogs
 {
@@ -32,6 +33,7 @@ namespace FlashDevelop.Dialogs
         private String itemFilter = String.Empty;
         private static Int32 lastItemIndex = 0;
         private InstalledSDKContext sdkContext;
+        private static Hashtable requireRestart = new Hashtable();
 
         public SettingDialog(String itemName, String filter)
         {
@@ -495,6 +497,29 @@ namespace FlashDevelop.Dialogs
                 String settingId = this.nameLabel.Text + "." + changedItem.Label.Replace(" ", "");
                 TextEvent te = new TextEvent(EventType.SettingChanged, settingId);
                 EventManager.DispatchEvent(Globals.MainForm, te);
+
+                if (changedItem.PropertyDescriptor.Attributes.Matches(new RequiresRestartAttribute()))
+                {
+                    if (requireRestart.Contains(settingId))
+                    {
+                        if (requireRestart[settingId].Equals(changedItem.Value))
+                        {
+                            requireRestart.Remove(settingId);
+                        }
+                    }
+                    else requireRestart.Add(settingId, e.OldValue);
+
+                    if (requireRestart.Count > 0)
+                    {
+                        this.infoLabel.Text = TextHelper.GetString("Info.RequiresRestart");
+                        this.infoPictureBox.Image = Globals.MainForm.FindImage("196", false);
+                    }
+                    else
+                    {
+                        this.infoLabel.Text = TextHelper.GetString("Info.SettingsTakeEffect");
+                        this.infoPictureBox.Image = Globals.MainForm.FindImage("229", false);
+                    }
+                }
             }
         }
 
@@ -570,6 +595,8 @@ namespace FlashDevelop.Dialogs
         {
             if (sdkContext != null) sdkContext.Dispose();
             Globals.MainForm.ApplyAllSettings();
+            if (requireRestart.Count > 0) Globals.MainForm.RestartRequired();
+            else Globals.MainForm.CancelRestartRequired();
         }
 
         /// <summary>

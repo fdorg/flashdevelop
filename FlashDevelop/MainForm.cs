@@ -2007,6 +2007,14 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Cancel a restart required message.
+        /// </summary>
+        public void CancelRestartRequired()
+        {
+            if (this.restartButton != null) this.restartButton.Visible = false;
+        }
+
+        /// <summary>
         /// Refreshes the main form
         /// </summary>
         public void RefreshUI()
