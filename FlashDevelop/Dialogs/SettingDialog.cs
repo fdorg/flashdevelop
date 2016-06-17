@@ -103,6 +103,7 @@ namespace FlashDevelop.Dialogs
             this.itemPropertyGrid.Size = new System.Drawing.Size(502, 386);
             this.itemPropertyGrid.TabIndex = 3;
             this.itemPropertyGrid.ToolbarVisible = false;
+            this.itemPropertyGrid.PropertySort = System.Windows.Forms.PropertySort.Categorized;
             this.itemPropertyGrid.PropertyValueChanged += new PropertyValueChangedEventHandler(this.PropertyValueChanged);
             // 
             // closeButton
@@ -446,7 +447,6 @@ namespace FlashDevelop.Dialogs
                 }
                 this.itemPropertyGrid.BrowsableProperties = browsables;
                 this.itemPropertyGrid.SelectedObject = settingsObj;
-                this.itemPropertyGrid.SelectedGridItem.Parent.Parent.GridItems[0].GridItems[0].Select();
                 this.itemPropertyGrid.Refresh();
             }
         }
