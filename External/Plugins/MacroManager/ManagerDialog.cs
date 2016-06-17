@@ -62,6 +62,7 @@ namespace MacroManager
             this.propertyGrid.HelpVisible = true;
             this.propertyGrid.Location = new System.Drawing.Point(182, 12);
             this.propertyGrid.Name = "propertyGrid";
+            this.propertyGrid.PropertySort = System.Windows.Forms.PropertySort.Alphabetical;
             this.propertyGrid.Size = new System.Drawing.Size(355, 299);
             this.propertyGrid.TabIndex = 2;
             this.propertyGrid.ToolbarVisible = false;

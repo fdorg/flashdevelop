@@ -345,7 +345,7 @@ namespace FlashDevelop.Dialogs
             {
                 int index = this.listView.Items.IndexOf(selectedItem);
                 index = index >= 0 ? index : 0;
-                this.listView.Items[index].Selected = true;
+                this.listView.Items[index].Focused = true;
                 this.listView.EnsureVisible(index);
             }
         }
@@ -639,7 +639,6 @@ namespace FlashDevelop.Dialogs
                     {
                         this.filterTextBox.Text = text.Substring(0, text.Length - 1);
                     }
-                    e.SuppressKeyPress = true;
                     break;
             }
         }
@@ -649,7 +648,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void ListView_KeyPress(object sender, KeyPressEventArgs e)
         {
-            this.filterTextBox.AppendText(e.KeyChar.ToString());
+            if (!char.IsControl(e.KeyChar)) this.filterTextBox.AppendText(e.KeyChar.ToString());
             e.Handled = true;
         }
 

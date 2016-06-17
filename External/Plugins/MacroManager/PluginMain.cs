@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Controls;
@@ -359,19 +360,27 @@ namespace MacroManager
     #region Custom Types
 
     [Serializable]
-    public class Macro
+    public class Macro : ISerializable
     {
-        private ShortcutKeys shortcut = ShortcutKeys.None;
-        private String image = String.Empty;
-        private String label = String.Empty;
-        private String[] entries = new String[0];
-        private Boolean showInToolbar = false;
-        private Boolean autoRun = false;
+        private String label;
+        private String image;
+        private String[] entries;
+        private ShortcutKeys shortcut;
+        private Boolean showInToolbar;
+        private Boolean autoRun;
 
-        public Macro(){}
+        public Macro()
+        {
+            this.label = String.Empty;
+            this.image = String.Empty;
+            this.entries = new String[0];
+            this.shortcut = ShortcutKeys.None;
+            this.showInToolbar = false;
+            this.autoRun = false;
+        }
         public Macro(String label, String[] entries, String image, ShortcutKeys shortcut)
         {
-            this.Label = label;
+            this.label = label;
             this.image = image;
             this.entries = entries;
             this.shortcut = shortcut;
@@ -380,12 +389,29 @@ namespace MacroManager
         }
         public Macro(String label, String[] entries, String image, ShortcutKeys shortcut, Boolean autoRun, Boolean showInToolbar) 
         {
-            this.Label = label;
+            this.label = label;
             this.image = image;
             this.entries = entries;
             this.shortcut = shortcut;
             this.showInToolbar = showInToolbar;
             this.autoRun = autoRun;
+        }
+        private Macro(SerializationInfo info, StreamingContext context)
+        {
+            this.label = info.GetString("label");
+            this.image = info.GetString("image");
+            this.entries = info.GetValue("entries", typeof(String[])) as String[];
+            this.showInToolbar = info.GetBoolean("showInToolbar");
+            this.autoRun = info.GetBoolean("autoRun");
+
+            try
+            {
+                this.shortcut = (ShortcutKeys) info.GetValue("shortcut", typeof(ShortcutKeys));
+            }
+            catch (InvalidCastException)
+            {
+                this.shortcut = (Keys) info.GetValue("shortcut", typeof(Keys));
+            }
         }
 
         /// <summary>
@@ -423,6 +449,7 @@ namespace MacroManager
         /// </summary>
         [DisplayName("Show In Toolbar")]
         [LocalizedDescription("MacroManager.Description.ShowInToolbar")]
+        [DefaultValue(false)]
         public Boolean ShowInToolbar
         {
             get { return this.showInToolbar; }
@@ -433,6 +460,7 @@ namespace MacroManager
         /// Gets and sets the autoRun
         /// </summary>
         [LocalizedDescription("MacroManager.Description.AutoRun")]
+        [DefaultValue(false)]
         public Boolean AutoRun
         {
             get { return this.autoRun; }
@@ -443,6 +471,7 @@ namespace MacroManager
         /// Gets and sets the shortcut
         /// </summary>
         [LocalizedDescription("MacroManager.Description.Shortcut")]
+        [DefaultValue(typeof(ShortcutKeys), "None")]
         public ShortcutKeys Shortcut
         {
             get { return this.shortcut; }
@@ -457,6 +486,15 @@ namespace MacroManager
             return "Macro";
         }
 
+        void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("label", label);
+            info.AddValue("image", image);
+            info.AddValue("entries", entries, typeof(String[]));
+            info.AddValue("shortcut", shortcut, typeof(ShortcutKeys));
+            info.AddValue("showInToolbar", showInToolbar);
+            info.AddValue("autoRun", autoRun);
+        }
     }
 
     #endregion
