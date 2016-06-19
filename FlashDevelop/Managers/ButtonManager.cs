@@ -292,7 +292,7 @@ namespace FlashDevelop.Managers
                     ToolStripMenuItem item = new ToolStripMenuItem();
                     item.Click += new EventHandler(Globals.MainForm.Reopen);
                     item.Tag = file; item.Text = PathHelper.GetCompactPath(file);
-                    if (i < 15) reopenMenu.DropDownItems.Add(item);
+                    if (i < Globals.Settings.MaxRecentFiles) reopenMenu.DropDownItems.Add(item);
                     else Globals.PreviousDocuments.Remove(file);
                 }
                 if (Globals.PreviousDocuments.Count > 0)

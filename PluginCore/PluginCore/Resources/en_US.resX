@@ -6034,4 +6034,8 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <value>Replaced {0} occurrence[s]</value>
     <comment>Added after 5.2.0</comment>
   </data>
+  <data name="FlashDevelop.Description.MaxRecentFiles" xml:space="preserve">
+    <value>The number of recent files to remember in the recent files drop-down.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
 </root>
