@@ -15,7 +15,9 @@ using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
+using ProjectManager;
 using ProjectManager.Actions;
+using ProjectManager.Controls.TreeView;
 using ProjectManager.Helpers;
 
 namespace CodeRefactor
@@ -35,6 +37,7 @@ namespace CodeRefactor
         private RefactorMenu refactorMainMenu;
         private Settings settingObject;
         private String settingFilename;
+        TreeView projectTreeView;
 
         #region Required Properties
         
@@ -94,11 +97,11 @@ namespace CodeRefactor
         {
             get { return this.settingObject; }
         }
-        
+
         #endregion
 
         #region Required Methods
-        
+
         /// <summary>
         /// Initializes the plugin
         /// </summary>
@@ -116,7 +119,7 @@ namespace CodeRefactor
         {
             this.SaveSettings();
         }
-        
+
         /// <summary>
         /// Handles the incoming events
         /// </summary>
@@ -135,6 +138,7 @@ namespace CodeRefactor
                     EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "CodeRefactor.ContextMenu", this.refactorContextMenu));
                     // Watch resolved context for menu item updating...
                     ASComplete.OnResolvedContextChanged += OnResolvedContextChanged;
+                    DirectoryNode.OnDirectoryNodeRefresh += OnDirectoryNodeRefresh;
                     this.UpdateMenuItems();
                     break;
 
@@ -157,7 +161,7 @@ namespace CodeRefactor
                             }
                             else if (IsValidForRename(oldPath, newPath))
                             {
-                                RenameFile(oldPath, newPath);
+                                MoveFile(oldPath, newPath);
                                 e.Handled = true;
                             }
                             break;
@@ -176,6 +180,10 @@ namespace CodeRefactor
 
                         case "ASCompletion.ContextualGenerator.AddOptions":
                             OnAddRefactorOptions(de.Data as List<ICompletionListItem>);
+                            break;
+
+                        case ProjectManagerEvents.TreeSelectionChanged:
+                            OnTreeSelectionChanged();
                             break;
                     }
                     break;
@@ -199,12 +207,20 @@ namespace CodeRefactor
         /// <summary>
         /// Checks if the file or directory is valid for move command
         /// </summary>
-        private static bool IsValidForMove(string oldPath, string newPath)
+        static bool IsValidForMove(string oldPath)
         {
             return PluginBase.CurrentProject != null
-                && (File.Exists(oldPath) || Directory.Exists(oldPath))
-                && IsValidFile(oldPath)
-                && Regex.Match(Path.GetFileNameWithoutExtension(newPath), REG_IDENTIFIER, RegexOptions.Singleline).Success;
+                   && (File.Exists(oldPath) || Directory.Exists(oldPath))
+                   && IsValidFile(oldPath);
+        }
+
+        /// <summary>
+        /// Checks if the file or directory is valid for move command
+        /// </summary>
+        static bool IsValidForMove(string oldPath, string newPath)
+        {
+            newPath = Path.GetFileNameWithoutExtension(newPath);
+            return IsValidForMove(oldPath) && Regex.Match(newPath, REG_IDENTIFIER, RegexOptions.Singleline).Success;
         }
 
         /// <summary>
@@ -220,9 +236,9 @@ namespace CodeRefactor
         }
 
         #endregion
-   
+
         #region Event Handling
-        
+
         /// <summary>
         /// Initializes important variables
         /// </summary>
@@ -316,6 +332,8 @@ namespace CodeRefactor
         {
             try
             {
+                var document = PluginBase.MainForm.CurrentDocument;
+                var curFileName = document != null ? document.FileName : string.Empty;
                 this.refactorMainMenu.DelegateMenuItem.Enabled = false;
                 this.refactorContextMenu.DelegateMenuItem.Enabled = false;
                 bool langIsValid = RefactoringHelper.GetLanguageIsValid();
@@ -330,9 +348,9 @@ namespace CodeRefactor
                         || result.IsPackage;
                     this.refactorContextMenu.RenameMenuItem.Enabled = isRenameable;
                     this.refactorMainMenu.RenameMenuItem.Enabled = isRenameable;
-                    bool isNotPackage = !result.IsPackage;
-                    this.editorReferencesItem.Enabled = isNotPackage;
-                    this.viewReferencesItem.Enabled = isNotPackage;
+                    var enabled = !result.IsPackage && (File.Exists(curFileName) || curFileName.Contains("[model]"));
+                    this.editorReferencesItem.Enabled = enabled;
+                    this.viewReferencesItem.Enabled = enabled;
                     if (result.Member != null && result.Type != null && result.InClass != null && result.InFile != null)
                     {
                         FlagType flags = result.Member.Flags;
@@ -363,33 +381,40 @@ namespace CodeRefactor
                 refactorContextMenu.MoveMenuItem.Enabled = false;
                 this.surroundContextMenu.Enabled = false;
                 this.refactorMainMenu.SurroundMenu.Enabled = false;
-                this.refactorContextMenu.ExtractMethodMenuItem.Enabled = false;
-                this.refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = false;
                 this.refactorMainMenu.ExtractMethodMenuItem.Enabled = false;
+                this.refactorContextMenu.ExtractMethodMenuItem.Enabled = false;
                 this.refactorMainMenu.ExtractLocalVariableMenuItem.Enabled = false;
-                ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
+                this.refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = false;
                 if (document != null && document.IsEditable && langIsValid)
                 {
-                    bool isValidFile = IsValidFile(document.FileName);
+                    bool isValidFile = IsValidFile(curFileName);
                     refactorMainMenu.MoveMenuItem.Enabled = isValidFile;
                     refactorContextMenu.MoveMenuItem.Enabled = isValidFile;
-                    if (document.SciControl.SelTextSize > 1)
+                    var sci = document.SciControl;
+                    if (sci.SelTextSize > 0)
                     {
-                        Int32 selEnd = document.SciControl.SelectionEnd;
-                        Int32 selStart = document.SciControl.SelectionStart;
-                        if (!document.SciControl.PositionIsOnComment(selEnd) || !document.SciControl.PositionIsOnComment(selStart))
+                        if (!sci.PositionIsOnComment(sci.SelectionStart) || !sci.PositionIsOnComment(sci.SelectionEnd))
                         {
                             this.surroundContextMenu.Enabled = true;
                             this.refactorMainMenu.SurroundMenu.Enabled = true;
-                            this.refactorContextMenu.ExtractMethodMenuItem.Enabled = true;
                             this.refactorMainMenu.ExtractMethodMenuItem.Enabled = true;
-                            this.refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = true;
-                            this.refactorMainMenu.ExtractLocalVariableMenuItem.Enabled = true;
+                            this.refactorContextMenu.ExtractMethodMenuItem.Enabled = true;
+                        }
+                        if (context != null)
+                        {
+                            var declAtSelStart = context.GetDeclarationAtLine(sci.LineFromPosition(sci.SelectionStart));
+                            var declAtSelEnd = context.GetDeclarationAtLine(sci.LineFromPosition(sci.SelectionEnd));
+                            if (declAtSelStart != null && declAtSelStart.Member != null && (declAtSelStart.Member.Flags & FlagType.Function) > 0
+                                && declAtSelEnd != null && declAtSelStart.Member.Equals(declAtSelEnd.Member))
+                            {
+                                this.refactorMainMenu.ExtractLocalVariableMenuItem.Enabled = true;
+                                this.refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = true;
+                            }
                         }
                     }
                 }
-                this.refactorContextMenu.CodeGeneratorMenuItem.Enabled = isValid;
                 this.refactorMainMenu.CodeGeneratorMenuItem.Enabled = isValid;
+                this.refactorContextMenu.CodeGeneratorMenuItem.Enabled = isValid;
             }
             catch {}
         }
@@ -447,7 +472,12 @@ namespace CodeRefactor
         /// </summary>
         static void MoveClicked(object sender, EventArgs e)
         {
-            MoveDialog dialog = new MoveDialog(PluginBase.MainForm.CurrentDocument.FileName);
+            MoveFile(PluginBase.MainForm.CurrentDocument.FileName);
+        }
+
+        static void MoveFile(string fileName)
+        {
+            MoveDialog dialog = new MoveDialog(fileName);
             if (dialog.ShowDialog() != DialogResult.OK) return;
             Dictionary<string, string> oldPathToNewPath = new Dictionary<string, string>();
             foreach (string file in dialog.MovingFiles)
@@ -460,7 +490,7 @@ namespace CodeRefactor
         /// <summary>
         /// 
         /// </summary>
-        private void RenameFile(string oldPath, string newPath)
+        private void MoveFile(string oldPath, string newPath)
         {
             try
             {
@@ -624,20 +654,8 @@ namespace CodeRefactor
         {
             try
             {
-                String suggestion = "newVar";
-                String label = TextHelper.GetString("Label.NewName");
-                String title = TextHelper.GetString("Title.ExtractLocalVariableDialog");
-                LineEntryDialog askName = new LineEntryDialog(title, label, suggestion);
-                DialogResult choice = askName.ShowDialog();
-                if (choice == DialogResult.OK && askName.Line.Trim().Length > 0 && askName.Line.Trim() != suggestion)
-                {
-                    suggestion = askName.Line.Trim();
-                }
-                if (choice == DialogResult.OK)
-                {
-                    ExtractLocalVariableCommand command = new ExtractLocalVariableCommand(suggestion);
-                    command.Execute();
-                }
+                var command = new ExtractLocalVariableCommand();
+                command.Execute();
             }
             catch (Exception ex)
             {
@@ -711,6 +729,36 @@ namespace CodeRefactor
                 if (features.hasImportsWildcard)
                     RefactorItem.AddItemToList(refactorMainMenu.TruncateMenuItem, list);
             }
+        }
+
+        void OnDirectoryNodeRefresh(DirectoryNode node)
+        {
+            projectTreeView = node.TreeView;
+        }
+
+        void OnTreeSelectionChanged()
+        {
+            if (projectTreeView == null) return;
+            string path = null;
+            var node = projectTreeView.SelectedNode as GenericNode;
+            if (node != null) path = node.BackingPath;
+            if (string.IsNullOrEmpty(path) || !IsValidForMove(path)) return;
+            var menu = (ProjectContextMenu) projectTreeView.ContextMenuStrip;
+            var index = menu.Items.IndexOf(menu.Rename);
+            if (index == -1) return;
+            var item = new ToolStripMenuItem(TextHelper.GetString("Label.Move"));
+            item.ShortcutKeys = PluginBase.MainForm.GetShortcutItemKeys("RefactorMenu.Move");
+            item.Click += OnMoveItemClick;
+            menu.Items.Insert(index + 1, item);
+        }
+
+        void OnMoveItemClick(object sender, EventArgs eventArgs)
+        {
+            string path = null;
+            var node = projectTreeView.SelectedNode as GenericNode;
+            if (node != null) path = node.BackingPath;
+            if (string.IsNullOrEmpty(path) || !IsValidForMove(path)) return;
+            MoveFile(path);
         }
 
         #endregion

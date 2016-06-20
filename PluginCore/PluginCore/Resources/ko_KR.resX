@@ -4968,6 +4968,10 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <value>사용자 정의 프로젝트 템플릿 디렉토리를 경로.</value>
     <comment>Added after 3.3.4</comment>
   </data>
+  <data name="FlashDevelop.Description.CustomCommandPrompt" xml:space="preserve">
+    <value>Path to the custom command prompt executable.</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
   <data name="ASCompletion.Description.HandlerNamingConvention" xml:space="preserve">
     <value>생성기가 자동으로 다음 명명 규칙을 사용하여 이벤트 핸들러 메소드 이름을 생성할 수 있습니다.</value>
     <comment>Added after 3.3.4</comment>
@@ -6016,5 +6020,25 @@ Complete: 현재 파일, 프로젝트 파일 및 수동 새로 고침.</value>
   <data name="FlashConnect.Info.ConnectionFailed" xml:space="preserve">
     <value>Connection failed. Default socket port '{0}' is already in use.</value>
     <comment>Added after 5.1.0</comment>
+  </data>
+  <data name="FlashDevelop.Description.KeepCaretCentered" xml:space="preserve">
+    <value>Keeps the caret centered when caret is navigated to.</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
+  <data name="CodeRefactor.Description.ReplaceAllOccurrences" xml:space="preserve">
+    <value>Replace all highlighted occurrences of initial expression with new variable.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeRefactor.Description.ReplaceInitialOccurrence" xml:space="preserve">
+    <value>Replace initial expression only.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeRefactor.Info.ReplacedOccurrences" xml:space="preserve">
+    <value>Replaced {0} occurrence[s]</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="FlashDevelop.Description.MaxRecentFiles" xml:space="preserve">
+    <value>최근 파일 목록의 최대 길이.</value>
+    <comment>Added after 5.2.0</comment>
   </data>
 </root>

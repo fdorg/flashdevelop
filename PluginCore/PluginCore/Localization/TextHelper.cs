@@ -114,7 +114,7 @@ namespace PluginCore.Localization
         /// </summary>
         static String GetStringInternal(String key, Assembly assembly)
         {
-            if (!RefreshStoredLocale()) return key ?? String.Empty;
+            if (!ValidateStoredLocale()) return key ?? String.Empty;
             String prefix = assembly.GetName().Name;
             // On different distro we need to use FlashDevelop prefix
             if (prefix == DistroConfig.DISTRIBUTION_NAME) prefix = "FlashDevelop";
@@ -139,16 +139,15 @@ namespace PluginCore.Localization
         }
 
         /// <summary>
-        /// Checks and updates the stored locale and resource manager if necessary.
+        /// Validates the stored locale and resource manager if necessary.
         /// Returns whether the operation succeeded (<code>true</code>) or failed (<code>false</code>).
         /// </summary>
-        static bool RefreshStoredLocale()
+        static bool ValidateStoredLocale()
         {
-            if (PluginBase.MainForm == null || PluginBase.MainForm.Settings == null) return false;
-            LocaleVersion localeSetting = PluginBase.MainForm.Settings.LocaleVersion;
-            if (localeSetting != storedLocale)
+            if (storedLocale == LocaleVersion.Invalid)
             {
-                storedLocale = localeSetting;
+                if (PluginBase.MainForm == null || PluginBase.MainForm.Settings == null) return false;
+                storedLocale = PluginBase.MainForm.Settings.LocaleVersion;
                 String path = "PluginCore.PluginCore.Resources." + storedLocale;
                 resourceManager = new ResourceManager(path, Assembly.GetExecutingAssembly());
             }

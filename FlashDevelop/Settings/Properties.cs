@@ -4,25 +4,26 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using PluginCore.Localization;
 using System.Windows.Forms;
+using ScintillaNet.Enums;
 using PluginCore;
 
 namespace FlashDevelop.Settings
 {
     [Serializable]
-    [DefaultProperty("AutoFilterList")]
     public partial class SettingObject : ISettings
     {
         private CodePage defaultCodePage = CodePage.UTF8;
-        private ScintillaNet.Enums.EndOfLine eolMode = ScintillaNet.Enums.EndOfLine.CRLF;
-        private ScintillaNet.Enums.IndentView indentView = ScintillaNet.Enums.IndentView.Real;
-        private ScintillaNet.Enums.FoldFlag foldFlags = ScintillaNet.Enums.FoldFlag.LineAfterContracted;
-        private ScintillaNet.Enums.SmartIndent smartIndentType = ScintillaNet.Enums.SmartIndent.CPP;
-        private ScintillaNet.Enums.VirtualSpaceMode virtualSpaceMode = ScintillaNet.Enums.VirtualSpaceMode.RectangularSelection;
+        private EndOfLine eolMode = EndOfLine.CRLF;
+        private IndentView indentView = IndentView.Real;
+        private FoldFlag foldFlags = FoldFlag.LineAfterContracted;
+        private SmartIndent smartIndentType = SmartIndent.CPP;
+        private VirtualSpaceMode virtualSpaceMode = VirtualSpaceMode.RectangularSelection;
         private CommentBlockStyle commentBlockStyle = CommentBlockStyle.Indented;
         private CodingStyle codingStyle = CodingStyle.BracesAfterLine;
         private String customProjectsDir = String.Empty;
         private String customTemplateDir = String.Empty;
         private String customSnippetDir = String.Empty;
+        private String customCommandPrompt = String.Empty;
         private Font consoleFont = new Font("Courier New", 8.75F);
         private Font defaultFont = new Font("Tahoma", 8.25F);
         private Int32 tabWidth = 4;
@@ -34,8 +35,9 @@ namespace FlashDevelop.Settings
         private Int32 printMarginColumn = 0;
         private Int32 backupInterval = 15000;
         private Int32 filePollInterval = 3000;
+        private Int32 maxRecentFiles = 15;
         private Int32 highlightMatchingWordsDelay = 1200;
-        private ScintillaNet.Enums.HighlightMatchingWordsMode highlightMatchingWordsMode = ScintillaNet.Enums.HighlightMatchingWordsMode.SelectionOrPosition;
+        private HighlightMatchingWordsMode highlightMatchingWordsMode = HighlightMatchingWordsMode.SelectionOrPosition;
         private LocaleVersion localeVersion = LocaleVersion.en_US;
         private List<String> previousDocuments = new List<String>();
         private List<String> disabledPlugins = new List<String>();
@@ -43,6 +45,7 @@ namespace FlashDevelop.Settings
         private String defaultFileExtension = DistroConfig.DISTRIBUTION_EXT;
         private Boolean confirmOnExit = false;
         private Boolean keepIndentTabs = false;
+        private Boolean keepCaretCentered = false;
         private Boolean disableFindOptionSync = false;
         private Boolean disableSimpleQuickFind = false;
         private Boolean disableTabDifferentiation = false;

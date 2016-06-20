@@ -210,7 +210,6 @@ namespace ProjectManager.Controls
                 this.textBox.Focus();
                 this.textBox.Text = previousSearch;
                 this.textBox.SelectAll();
-                
                 this.UpdateOpenFiles();
                 this.textBox.Focus();
             }

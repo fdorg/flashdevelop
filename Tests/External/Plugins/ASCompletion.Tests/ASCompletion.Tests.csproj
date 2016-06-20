@@ -106,12 +106,9 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="Test Files\parser\haxe\WrongSyntaxCompilerMetaAfterMethodWithNoType.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateExtractVariableGeneric.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateExtractVariableGeneric.hx" />
     <Compile Include="TestUtils\ContextExtensions.cs" />
     <Compile Include="TestUtils\TestFile.cs" />
   </ItemGroup>
@@ -169,6 +166,95 @@
     <EmbeddedResource Include="Test Files\parser\haxe\MetadataTest.hx" />
     <EmbeddedResource Include="Test Files\parser\haxe\MethodAfterGenericReturnTest.hx" />
     <EmbeddedResource Include="Test Files\parser\haxe\WrongSyntaxCompilerMetaAfterVarWithNoType.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterExtractLocalVariable.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeExtractLocalVariable.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterExtractLocalVariable_fromString.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeExtractLocalVariable_fromString.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterExtractLocalVariable_fromNumber.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeExtractLocalVariable_fromNumber.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterExtractLocalVariable_fromNumber.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterExtractLocalVariable_fromString.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeExtractLocalVariable_fromNumber.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeExtractLocalVariable_fromString.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterExtractLocalVariable_inSinglelineMethod.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeExtractLocalVariable_inSinglelineMethod.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterExtractLocalVariable_forCheckingThePositionOfNewVar.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeExtractLocalVariable_forCheckingThePositionOfNewVar.as" />
+    <EmbeddedResource Include="Test Files\parser\haxe\FunctionTypesAsArgumentsTest.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\KeywordAndUnderscoreInNameTest.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterPromoteLocal_generateExplicitScopeIsFalse.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforePromoteLocal.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterPromoteLocal_generateExplicitScopeIsTrue.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforePromoteLocal.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterPromoteLocal_generateExplicitScopeIsFalse.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterPromoteLocal_generateExplicitScopeIsTrue.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicFunction_generateExplicitScopeIsFalse.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePrivateFunction_generateExplicitScopeIsTrue.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePrivateFunction_generateExplicitScopeIsFalse.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicFunction_generateExplicitScopeIsTrue.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicFunction_generateExplicitScopeIsTrue.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateFunction_generateExplicitScopeIsFalse.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateFunction_generateExplicitScopeIsTrue.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicFunction_generateExplicitScopeIsFalse.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVariable.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicVariable_generateExplicitScopeIsTrue.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePrivateVariable_generateExplicitScopeIsFalse.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePrivateVariable_generateExplicitScopeIsTrue.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicVariable_generateExplicitScopeIsFalse.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateVariable.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicVariable_generateExplicitScopeIsTrue.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicVariable_generateExplicitScopeIsFalse.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateVariable_generateExplicitScopeIsTrue.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateVariable_generateExplicitScopeIsFalse.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateEventHandler.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateEventHandler_withoutAutoRemove.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateEventHandler_withAutoRemove.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateEventHandler_withAutoRemove_generateExplicitScopeIsTrue.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateEventHandler_withAutoRemove.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateEventHandler_withAutoRemove_generateExplicitScopeIsTrue.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateEventHandler_withoutAutoRemove.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateEventHandler.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateGetterSetter_issue221.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateGetterSetter_issue221.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateGetterSetter.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateGetterSetter.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateGetterSetter_fromPrivateField.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateGetterSetter_fromPrivateField.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateGetterSetter_fromPublicField.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateGetterSetter_fromPublicField.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateGetterSetter_fromPublicFieldIfNameStartWith_.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateGetterSetter_fromPublicFieldIfNameStartWith_.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_forSomeObj.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_forSomeObj.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_forSomeObj2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_forSomeObj2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_forSomeObj3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_forSomeObj3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVariable_forSomeObj.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateVariable_forSomeObj.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateVariable_forSomeObj2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVariable_forSomeObj2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVariable_forSomeObj3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateVariable_forSomeObj3.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateStaticVariable.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicStaticVariable_generateExplicitScopeIsTrue.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicStaticVariable_generateExplicitScopeIsFalse.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGeneratePublicStaticVariable_forSomeType.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicStaticVariable_forSomeType.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateStaticVariable_forCurrentType.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicStaticVariable_forCurrentType.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateStaticVariable_forSomeType.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicStaticVariable_forSomeType.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateStaticFunction.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicStaticFunction_generateExplicitScopeIsFalse.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicStaticFunction_generateExplicitScopeIsTrue.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateStaticFunction_forCurrentType.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateStaticFunction_forSomeType.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicStaticFunction_forSomeType.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGeneratePublicStaticVariable_forCurrentType.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicStaticVariable_forCurrentType.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
@@ -212,12 +298,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

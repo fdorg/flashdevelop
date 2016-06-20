@@ -59,7 +59,7 @@
 		<button label="Label.Print" click="Print" shortcut="Control|P" image="343" flags="Enable:IsEditable" />
 		<button label="Label.PrintPreview" click="PrintPreview" shortcut="Control|Shift|P" flags="Enable:IsEditable" />
 		<separator />
-		<button label="Label.Restart" click="Restart" flags="Enable:!MultiInstanceMode" />
+		<button label="Label.Restart" click="Restart" flags="Enable:IsOnlyInstance" />
 		<button label="Label.Exit" click="Exit" />
 	</menu>
 	<menu label="Label.Edit" name="EditMenu">

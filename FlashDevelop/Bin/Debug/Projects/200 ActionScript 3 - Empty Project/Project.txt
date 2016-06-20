@@ -1,1 +1,1 @@
-An empty project written in ActionScript 3 for Flash 9+ Player
+An empty project written in ActionScript 3 for Flash 21+ Player

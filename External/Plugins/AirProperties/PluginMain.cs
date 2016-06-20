@@ -18,13 +18,12 @@ namespace AirProperties
         private String pluginName = "AirProperties";
         private String pluginGuid = "275b4759-0bc8-43bf-8b33-a69a16a9a978";
         private String pluginDesc = "Adds an AIR application properties management form for AIR projects.";
-        private String pluginHelp = "www.flashdevelop.org/community/";
+        private String pluginHelp = "http://www.flashdevelop.org/community/";
         private String pluginAuth = "FlashDevelop Team";
         private ToolStripMenuItem pluginMenuItem;
         private ToolStripButton pmMenuButton;
         private String settingFilename;
         private Settings settingObject;
-        private Image pluginImage;
         private AirWizard wizard;
 
         #region Required Properties
@@ -157,7 +156,6 @@ namespace AirProperties
             String dataPath = Path.Combine(PathHelper.DataDir, "AirProperties");
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
-            this.pluginImage = PluginBase.MainForm.FindImage("100");
         }
 
         /// <summary>
@@ -174,7 +172,7 @@ namespace AirProperties
         private void CreateMenuItems()
         {
             Image image = PluginBase.MainForm.GetAutoAdjustedImage(GetImage("blockdevice_small.png"));
-            this.pluginMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.ProjectMenuItem"), image, new EventHandler(this.OpenWizard), null);
+            this.pluginMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.ProjectMenuItem"), image, this.OpenWizard, null);
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.AirApplicationProperties", this.pluginMenuItem);
             this.pluginMenuItem.Enabled = false;
         }
@@ -196,7 +194,7 @@ namespace AirProperties
             this.pmMenuButton.Image = this.pluginMenuItem.Image;
             this.pmMenuButton.Text = TextHelper.GetStringWithoutMnemonicsOrEllipsis("Label.ProjectMenuItem");
             this.pmMenuButton.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            this.pmMenuButton.Click += new EventHandler(this.OpenWizard);
+            this.pmMenuButton.Click += this.OpenWizard;
             PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.AirApplicationProperties", this.pmMenuButton);
             toolStrip.Items.Insert(6, this.pmMenuButton);
         }

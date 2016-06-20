@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CodeRefactor</RootNamespace>
+    <AssemblyName>CodeRefactor.Tests</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\..\FlashDevelop\Bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="NSubstitute, Version=1.10.0.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\NSubstitute.1.10.0.0\lib\net35\NSubstitute.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Commands\CodeRefactorTests.cs" />
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PluginUIMock.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestUtils\ContextExtensions.cs" />
+    <Compile Include="TestUtils\TestFile.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
+      <Project>{74ad0487-cef9-43fe-9283-bc6f79539ade}</Project>
+      <Name>AS2Context</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\External\Plugins\AS3Context\AS3Context.csproj">
+      <Project>{0263e5f6-d5b2-4118-b12e-87f9a74de8af}</Project>
+      <Name>AS3Context</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\External\Plugins\ASCompletion\ASCompletion.csproj">
+      <Project>{4EBF2653-9654-4E40-880E-0046B3D6210E}</Project>
+      <Name>ASCompletion</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\External\Plugins\CodeRefactor\CodeRefactor.csproj">
+      <Project>{1f6df858-6011-4cac-b33e-7000ee90ffbe}</Project>
+      <Name>CodeRefactor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\External\Plugins\HaXeContext\HaXeContext.csproj">
+      <Project>{5b4e9515-994a-4da7-9916-cda8fd874701}</Project>
+      <Name>HaXeContext</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\FlashDevelop\FlashDevelop.csproj">
+      <Project>{EFD07485-9A64-4EEC-94E7-ACBD4DA5CA93}</Project>
+      <Name>FlashDevelop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\PluginCore\PluginCore.csproj">
+      <Project>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</Project>
+      <Name>PluginCore</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\as3\AfterExtractLocalVariable.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_ReplaceAllOccurrences.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\as3\AfterExtractLocalVariable_fromNumber.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\as3\AfterExtractLocalVariable_fromString.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\as3\BeforeExtractLocalVariable.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_withContextualGenerator.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\as3\BeforeExtractLocalVariable_fromNumber.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\as3\BeforeExtractLocalVariable_fromString.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_fromGeneric.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_inSinglelineMethod.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_fromString.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_fromNumber.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromGeneric.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_inSinglelineMethod.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromString.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromNumber.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_ReplaceInitialOccurrence.hx" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

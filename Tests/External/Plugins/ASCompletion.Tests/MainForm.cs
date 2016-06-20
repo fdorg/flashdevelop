@@ -26,6 +26,11 @@ namespace FlashDevelop
             throw new NotImplementedException();
         }
 
+        public void RestartRequired()
+        {
+            throw new NotImplementedException();
+        }
+
         public void ThemeControls(object control)
         {
             // Not implemented
@@ -83,6 +88,7 @@ namespace FlashDevelop
 
         public DockContent OpenEditableDocument(string file, bool restoreFileState)
         {
+            if (CurrentDocument != null && CurrentDocument.FileName == file) return CurrentDocument as DockContent;
             throw new NotImplementedException();
         }
 
@@ -143,6 +149,7 @@ namespace FlashDevelop
 
         public string GetThemeValue(string id)
         {
+            if (id == "ScrollBar.UseCustom") return string.Empty;
             throw new NotImplementedException();
         }
 
@@ -224,6 +231,11 @@ namespace FlashDevelop
         }
 
         public Image FindImageAndSetAdjust(string data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetInstanceCount()
         {
             throw new NotImplementedException();
         }
@@ -386,6 +398,11 @@ namespace FlashDevelop
         }
 
         public List<Keys> IgnoredKeys
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public string CommandPromptExecutable
         {
             get { throw new NotImplementedException(); }
         }

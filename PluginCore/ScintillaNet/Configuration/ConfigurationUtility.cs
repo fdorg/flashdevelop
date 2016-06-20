@@ -47,7 +47,7 @@ namespace ScintillaNet.Configuration
 
         protected object Deserialize(TextReader reader, Type aType)
         {
-            XmlSerializer xmlSerializer = new XmlSerializer(aType);
+            XmlSerializer xmlSerializer = XmlSerializer.FromTypes(new[]{aType})[0];
             object local = xmlSerializer.Deserialize(reader);
             reader.Close();
             return local;
