@@ -6037,4 +6037,8 @@ Complete: 현재 파일, 프로젝트 파일 및 수동 새로 고침.</value>
     <value>Replaced {0} occurrence[s]</value>
     <comment>Added after 5.2.0</comment>
   </data>
+  <data name="FlashDevelop.Description.MaxRecentFiles" xml:space="preserve">
+    <value>최근 파일 목록의 최대 길이.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
 </root>
