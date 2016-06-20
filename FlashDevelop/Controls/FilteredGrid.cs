@@ -208,6 +208,18 @@ namespace FlashDevelop.Controls
                     }
                 }
             }
+            m_PropertyDescriptors.Sort(CompareDescriptors);
+        }
+
+        /// <summary>
+        /// Compare two property descriptors.
+        /// </summary>
+        private static int CompareDescriptors(PropertyDescriptor a, PropertyDescriptor b)
+        {
+            if (a == null) return b == null ? 0 : -1;
+            else if (b == null) return 1;
+            int value = string.Compare(a.Category, b.Category);
+            return value == 0 ? string.Compare(a.DisplayName, b.DisplayName) : value;
         }
 
         /// <summary>
