@@ -2570,13 +2570,14 @@ namespace ASCompletion.Completion
         private static void GenerateFunctionJob(GeneratorJobType job, ScintillaControl sci, MemberModel member, bool detach, ClassModel inClass)
         {
             var position = 0;
-            bool isOtherClass = false;
-            Visibility visibility = job.Equals(GeneratorJobType.FunctionPublic) ? Visibility.Public : GetDefaultVisibility(inClass);
-            int wordPos = sci.WordEndPosition(sci.CurrentPos, true);
-            List<FunctionParameter> functionParameters = ParseFunctionParameters(sci, wordPos);
+            var isOtherClass = false;
+            var visibility = job.Equals(GeneratorJobType.FunctionPublic) ? Visibility.Public : GetDefaultVisibility(inClass);
+            var wordStartPos = sci.WordStartPosition(sci.CurrentPos, true);
+            var wordPos = sci.WordEndPosition(sci.CurrentPos, true);
+            var functionParameters = ParseFunctionParameters(sci, wordPos);
 
             // evaluate, if the function should be generated in other class
-            ASResult funcResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
+            var funcResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
             var memberIsStatic = member != null && (member.Flags & FlagType.Static) > 0;
             var dot = ASContext.Context.Features.dot;
             if (ASContext.CommonSettings.GenerateScope && !funcResult.Context.Value.Contains(dot))
@@ -2590,11 +2591,11 @@ namespace ASCompletion.Completion
                 sci.ReplaceSel(text);
                 UpdateLookupPosition(position, text.Length - length);
             }
-            int contextOwnerPos = GetContextOwnerEndPos(sci, sci.WordStartPosition(sci.CurrentPos, true));
-            MemberModel isStatic = new MemberModel();
+            var contextOwnerPos = GetContextOwnerEndPos(sci, sci.WordStartPosition(sci.CurrentPos, true));
+            var isStatic = new MemberModel();
             if (contextOwnerPos != -1)
             {
-                ASResult contextOwnerResult = ASComplete.GetExpressionType(sci, contextOwnerPos);
+                var contextOwnerResult = ASComplete.GetExpressionType(sci, contextOwnerPos);
                 if (contextOwnerResult != null
                     && (contextOwnerResult.Member == null || (contextOwnerResult.Member.Flags & FlagType.Constructor) > 0)
                     && contextOwnerResult.Type != null)
@@ -2615,9 +2616,8 @@ namespace ASCompletion.Completion
                 sci = ASContext.CurSciControl;
                 isOtherClass = true;
 
-                FileModel fileModel = new FileModel();
-                fileModel.Context = ASContext.Context;
-                ASFileParser parser = new ASFileParser();
+                var fileModel = new FileModel {Context = ASContext.Context};
+                var parser = new ASFileParser();
                 parser.ParseSrc(fileModel, sci.Text);
 
                 foreach (ClassModel cm in fileModel.Classes)
@@ -2653,7 +2653,7 @@ namespace ASCompletion.Completion
                 // if we generate function in current class..
                 if (!isOtherClass)
                 {
-                    MethodsGenerationLocations location = ASContext.CommonSettings.MethodsGenerationLocations;
+                    var location = ASContext.CommonSettings.MethodsGenerationLocations;
                     if (member == null)
                     {
                         detach = false;
@@ -2709,9 +2709,9 @@ namespace ASCompletion.Completion
                         break;
                     }
                 }
-                if (caller != null && caller.Parameters.Count > 0)
+                if (caller != null && caller.Parameters != null && caller.Parameters.Count > 0)
                 {
-                    var types = caller.Parameters[parameterIndex].Type.Split(new[] { "->" }, StringSplitOptions.RemoveEmptyEntries);
+                    var types = caller.Parameters[parameterIndex].Type.Split(new[] {"->"}, StringSplitOptions.RemoveEmptyEntries);
                     for (var i = 0; i < types.Length - 1; i++)
                     {
                         var type = types[i].Trim();
@@ -2724,8 +2724,8 @@ namespace ASCompletion.Completion
             // add imports to function argument types
             if (functionParameters.Count > 0)
             {
-                List<string> typesUsed = new List<string>();
-                foreach (FunctionParameter parameter in functionParameters)
+                var typesUsed = new List<string>();
+                foreach (var parameter in functionParameters)
                 {
                     try
                     {
@@ -2740,8 +2740,8 @@ namespace ASCompletion.Completion
                 else
                     sci.SetSel(position, position);
             }
-            List<MemberModel> parameters = new List<MemberModel>();
-            foreach (FunctionParameter parameter in functionParameters)
+            var parameters = new List<MemberModel>();
+            foreach (var parameter in functionParameters)
             {
                 parameters.Add(new MemberModel(parameter.paramName, parameter.paramType, FlagType.ParameterVar, 0));
             }
