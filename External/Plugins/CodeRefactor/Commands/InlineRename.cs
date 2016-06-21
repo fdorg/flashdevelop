@@ -16,7 +16,7 @@ namespace CodeRefactor.Commands
     /// <summary>
     /// An asynchronously working command that enables users to rename variables in line with code.
     /// </summary>
-    public class InlineRename : IDisposable, IMessageFilter, IRenameHelper
+    public class InlineRename : IDisposable, IMessageFilter
     {
         private const int MaxHistoryCount = 256;
         private const int Indicator = 0;
@@ -54,9 +54,8 @@ namespace CodeRefactor.Commands
         private bool previewChanges;
 
         private ScintillaControl sci;
-        private Control.ControlCollection controls;
+        //private Control.ControlCollection controls;
         private ITabbedDocument currentDoc;
-        private InlineRenameDialog dialog;
 
         private ReferenceInfo currentRef;
         private ReferenceInfo[] refs;
@@ -142,9 +141,9 @@ namespace CodeRefactor.Commands
             //prevName = original;
             end = position;
 
-            InitializeFields();
+            InitializeFields(includeComments, includeStrings, previewChanges);
             InitializeHighlights();
-            CreateDialog(includeComments, includeStrings, previewChanges);
+            //CreateDialog(includeComments, includeStrings, previewChanges);
             SetupLivePreview(includeComments.HasValue, includeStrings.HasValue, previewChanges.HasValue, previewTarget);
             AddMessageFilter();
             DisableControls();
@@ -187,11 +186,15 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Initialize delayed execution, shortcuts and history.
         /// </summary>
-        private void InitializeFields()
+        private void InitializeFields(bool? comments, bool? strings, bool? preview)
         {
+            currentDoc = PluginBase.MainForm.CurrentDocument;
             delayedExecution = new DelayedExecution();
             history = new List<string>() { oldName };
             historyIndex = 0;
+            includeComments = comments ?? false;
+            includeStrings = strings ?? false;
+            previewChanges = preview ?? false;
         }
 
         /// <summary>
@@ -218,25 +221,24 @@ namespace CodeRefactor.Commands
         /// Specify <code>true</code> or <code>false</code> to initially show/hide live preview
         /// during rename. Specify <code>null</code> to disable.
         /// </param>
-        private void CreateDialog(bool? comments, bool? strings, bool? preview)
-        {
-            currentDoc = PluginBase.MainForm.CurrentDocument;
-            dialog = new InlineRenameDialog(oldName, comments, strings, preview);
-            Sci_Resize(null, null);
-            controls = currentDoc.SplitContainer.Parent.Controls;
-            controls.Add(dialog);
-            controls.SetChildIndex(dialog, 0);
+        //private void CreateDialog(bool? comments, bool? strings, bool? preview)
+        //{
+            //controls = currentDoc.SplitContainer.Parent.Controls;
+            //dialog = new InlineRenameDialog(oldName, comments, strings, preview);
+            //controls.Add(dialog);
+            //controls.SetChildIndex(dialog, 0);
 
-            dialog.IncludeComments.CheckedChanged += IncludeComments_CheckedChanged;
-            dialog.IncludeStrings.CheckedChanged += IncludeStrings_CheckedChanged;
-            dialog.PreviewChanges.CheckedChanged += PreviewChanges_CheckedChanged;
-            dialog.ApplyButton.Click += ApplyButton_Click;
-            dialog.CancelButton.Click += CancelButton_Click;
+            //dialog.IncludeComments.CheckedChanged += IncludeComments_CheckedChanged;
+            //dialog.IncludeStrings.CheckedChanged += IncludeStrings_CheckedChanged;
+            //dialog.PreviewChanges.CheckedChanged += PreviewChanges_CheckedChanged;
+            //dialog.ApplyButton.Click += ApplyButton_Click;
+            //dialog.CancelButton.Click += CancelButton_Click;
 
-            includeComments = dialog.IncludeComments.Checked;
-            includeStrings = dialog.IncludeStrings.Checked;
-            previewChanges = dialog.PreviewChanges.Checked;
-        }
+            //includeComments = dialog.IncludeComments.Checked;
+            //includeStrings = dialog.IncludeStrings.Checked;
+            //previewChanges = dialog.PreviewChanges.Checked;
+            //Sci_Resize(null, null);
+        //}
 
         /// <summary>
         /// Set up required variables for live preview features.
@@ -257,12 +259,10 @@ namespace CodeRefactor.Commands
                 int index = match.Index;
                 string value = match.Value;
                 int style = sci.BaseStyleAt(index);
-                bool insideComment = RefactoringHelper.IsCommentStyle(style);
-                bool insideString = RefactoringHelper.IsStringStyle(style);
+                bool insideComment = supportInsideComment && RefactoringHelper.IsCommentStyle(style);
+                bool insideString = supportInsideString && RefactoringHelper.IsStringStyle(style);
 
-                if (RefactoringHelper.DoesMatchPointToTarget(sci, match, target, null)
-                    || insideComment && supportInsideComment
-                    || insideString && supportInsideString)
+                if (RefactoringHelper.DoesMatchPointToTarget(sci, match, target, null) || insideComment || insideString)
                 {
                     var @ref = new ReferenceInfo() { Index = index, Value = value };
                     tempRefs.Add(@ref);
@@ -308,12 +308,10 @@ namespace CodeRefactor.Commands
                 int index = match.Index + offset;
                 string value = match.Value.Substring(offset);
                 int style = sci.BaseStyleAt(index);
-                bool insideComment = RefactoringHelper.IsCommentStyle(style);
-                bool insideString = RefactoringHelper.IsStringStyle(style);
+                bool insideComment = supportInsideComment && RefactoringHelper.IsCommentStyle(style);
+                bool insideString = supportInsideString && RefactoringHelper.IsStringStyle(style);
 
-                if (RefactoringHelper.DoesMatchPointToTarget(sci, match, target, null)
-                    || insideComment && supportInsideComment
-                    || insideString && supportInsideString)
+                if (RefactoringHelper.DoesMatchPointToTarget(sci, match, target, null) || insideComment || insideString)
                 {
                     var @ref = new ReferenceInfo()
                     {
@@ -352,9 +350,8 @@ namespace CodeRefactor.Commands
             sci.SelectionChanged += Sci_SelectionChanged;
             sci.TextInserted += Sci_TextInserted;
             sci.TextDeleted += Sci_TextDeleted;
-            sci.Resize += Sci_Resize;
+            //sci.Resize += Sci_Resize;
             Current = this;
-
         }
 
         /// <summary>
@@ -485,15 +482,15 @@ namespace CodeRefactor.Commands
             sci.SelectionChanged -= Sci_SelectionChanged;
             sci.TextInserted -= Sci_TextInserted;
             sci.TextDeleted -= Sci_TextDeleted;
-            sci.Resize -= Sci_Resize;
+            //sci.Resize -= Sci_Resize;
             Current = null;
 
             sci = null;
-            controls.Remove(dialog);
-            controls = null;
+            //controls.Remove(dialog);
+            //controls = null;
             currentDoc = null;
-            dialog.Dispose();
-            dialog = null;
+            //dialog.Dispose();
+            //dialog = null;
 
             currentRef = null;
             refs = null;
@@ -608,47 +605,47 @@ namespace CodeRefactor.Commands
         /// </summary>
         /// <param name="sender">The event sender object.</param>
         /// <param name="e">The event arguments.</param>
-        private void IncludeComments_CheckedChanged(object sender, EventArgs e)
-        {
-            includeComments = dialog.IncludeComments.Checked;
+        //private void IncludeComments_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    includeComments = dialog.IncludeComments.Checked;
 
-            if (previewChanges)
-            {
-                UpdateReferences(includeComments ? newName : oldName, false, true, false, false, includeComments);
-            }
+        //    if (previewChanges)
+        //    {
+        //        UpdateReferences(includeComments ? newName : oldName, false, true, false, false, includeComments);
+        //    }
 
-            sci.Focus();
-        }
+        //    sci.Focus();
+        //}
 
         /// <summary>
         /// Invoked when the checked state of the checkbox <see cref="InlineRenameDialog.IncludeStrings"/> changes.
         /// </summary>
         /// <param name="sender">The event sender object.</param>
         /// <param name="e">The event arguments.</param>
-        private void IncludeStrings_CheckedChanged(object sender, EventArgs e)
-        {
-            includeStrings = dialog.IncludeStrings.Checked;
+        //private void IncludeStrings_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    includeStrings = dialog.IncludeStrings.Checked;
 
-            if (previewChanges)
-            {
-                UpdateReferences(includeStrings ? newName : oldName, false, false, true, false, includeStrings);
-            }
+        //    if (previewChanges)
+        //    {
+        //        UpdateReferences(includeStrings ? newName : oldName, false, false, true, false, includeStrings);
+        //    }
 
-            sci.Focus();
-        }
+        //    sci.Focus();
+        //}
 
         /// <summary>
         /// Invoked when the checked state of the checkbox <see cref="InlineRenameDialog.PreviewChanges"/> changes.
         /// </summary>
         /// <param name="sender">The event sender object.</param>
         /// <param name="e">The event arguments.</param>
-        private void PreviewChanges_CheckedChanged(object sender, EventArgs e)
-        {
-            previewChanges = dialog.PreviewChanges.Checked;
-            UpdateReferences(previewChanges ? newName : oldName, false, includeComments, includeStrings, true, previewChanges);
+        //private void PreviewChanges_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    previewChanges = dialog.PreviewChanges.Checked;
+        //    UpdateReferences(previewChanges ? newName : oldName, false, includeComments, includeStrings, true, previewChanges);
 
-            sci.Focus();
-        }
+        //    sci.Focus();
+        //}
 
         /// <summary>
         /// Invoked when the button <see cref="InlineRenameDialog.ApplyButton"/> is clicked.
@@ -810,10 +807,10 @@ namespace CodeRefactor.Commands
         /// </summary>
         /// <param name="sender">The event sender object.</param>
         /// <param name="e">The event arguments.</param>
-        private void Sci_Resize(object sender, EventArgs e)
-        {
-            dialog.Left = sci.Width - dialog.Width - SystemInformation.VerticalScrollBarWidth;
-        }
+        //private void Sci_Resize(object sender, EventArgs e)
+        //{
+        //    dialog.Left = sci.Width - dialog.Width - SystemInformation.VerticalScrollBarWidth;
+        //}
 
         #endregion
 

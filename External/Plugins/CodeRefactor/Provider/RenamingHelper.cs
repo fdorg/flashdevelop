@@ -84,7 +84,7 @@ namespace CodeRefactor.Provider
             var result = FindGetterSetter(target, name);
             if (result != null)
             {
-                return Rename.Create(result, false, outputResults, newName);
+                return new Rename(result, outputResults, newName);
             }
             return null;
         }

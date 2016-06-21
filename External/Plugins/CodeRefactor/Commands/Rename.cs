@@ -13,6 +13,7 @@ using PluginCore.FRService;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
+using ProjectManager.Helpers;
 using ProjectManager.Projects;
 
 namespace CodeRefactor.Commands
@@ -22,15 +23,10 @@ namespace CodeRefactor.Commands
     /// </summary>
     public class Rename : RefactorCommand<IDictionary<string, List<SearchMatch>>>
     {
-        private static bool includeComments = false;
-        private static bool includeStrings = false;
-        private static bool previewChanges = true;
-
         private bool isRenamePackage;
         private string renamePackagePath;
         private FindAllReferences findAllReferencesCommand;
         private Move renamePackage;
-        private IRenameHelper helper;
 
         private string oldFileName;
         private string newFileName;
@@ -47,78 +43,46 @@ namespace CodeRefactor.Commands
         /// Outputs found results.
         /// Uses the current text location as the declaration target.
         /// </summary>
-        public static Rename Create()
-        {
-            return Create(false);
-        }
-
-        /// <summary>
-        /// A new Rename refactoring command.
-        /// Outputs found results.
-        /// Uses the current text location as the declaration target.
-        /// </summary>
-        /// <param name="inline">Whether to use inline renaming.</param>
-        public static Rename Create(bool inline)
-        {
-            return Create(inline, true);
-        }
-
+        public Rename()
+            : this(true) { }
+        
         /// <summary>
         /// A new Rename refactoring command.
         /// Uses the current text location as the declaration target.
         /// </summary>
-        /// <param name="inline">Whether to use inline renaming.</param>
         /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
-        public static Rename Create(bool inline, bool outputResults)
-        {
-            return Create(RefactoringHelper.GetDefaultRefactorTarget(), inline, outputResults);
-        }
-
-        /// <summary>
-        /// A new Rename refactoring command.
-        /// </summary>
         /// <param name="inline">Whether to use inline renaming.</param>
-        /// <param name="target">The target declaration to find references to.</param>
-        /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
-        public static Rename Create(ASResult target, bool inline, bool outputResults)
-        {
-            return Create(target, inline, outputResults, null);
-        }
+        public Rename(bool outputResults, bool inline = false)
+           : this(RefactoringHelper.GetDefaultRefactorTarget(), outputResults, inline) { }
 
         /// <summary>
         /// A new Rename refactoring command.
         /// </summary>
         /// <param name="target">The target declaration to find references to.</param>
+        /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
         /// <param name="inline">Whether to use inline renaming.</param>
+        public Rename(ASResult target, bool outputResults, bool inline = false)
+            : this(target, outputResults, null, inline) { }
+
+        /// <summary>
+        /// A new Rename refactoring command.
+        /// </summary>
+        /// <param name="target">The target declaration to find references to.</param>
         /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
         /// <param name="newName">If provided, will not query the user for a new name.</param>
-        public static Rename Create(ASResult target, bool inline, bool outputResults, string newName)
-        {
-            return Create(target, inline, outputResults, newName, false);
-        }
-
-        /// <summary>
-        /// A new Rename refactoring command.
-        /// </summary>
-        /// <param name="target">The target declaration to find references to.</param>
         /// <param name="inline">Whether to use inline renaming.</param>
-        /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
-        /// <param name="newName">If provided, will not query the user for a new name.</param>
-        /// <param name="ignoreDeclarationSource">If true, will not rename the original declaration source.  Useful for Encapsulation refactoring.</param>
-        public static Rename Create(ASResult target, bool inline, bool outputResults, string newName, bool ignoreDeclarationSource)
-        {
-            return new Rename(target, inline, outputResults, newName, ignoreDeclarationSource);
-        }
-
+        public Rename(ASResult target, bool outputResults, string newName, bool inline = false)
+            : this(target, outputResults, newName, false, inline) { }
+        
         /// <summary>
         /// Initializes a new instance of <see cref="Rename"/> class.
         /// </summary>
         /// <param name="target">The target declaration to find references to.</param>
-        /// <param name="inline">Whether to use inline renaming.</param>
         /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
         /// <param name="newName">If provided, will not query the user for a new name.</param>
         /// <param name="ignoreDeclarationSource">If true, will not rename the original declaration source.  Useful for Encapsulation refactoring.</param>
-        private Rename(ASResult target, bool inline, bool outputResults, string newName, bool ignoreDeclarationSource)
+        /// <param name="inline">Whether to use inline renaming.</param>
+        public Rename(ASResult target, bool outputResults, string newName, bool ignoreDeclarationSource, bool inline = false)
         {
             if (target == null)
             {
@@ -183,8 +147,6 @@ namespace CodeRefactor.Commands
                 // Targets have to be validated before getting and modifying all references, otherwise we may end with some bad state
                 if (ValidateTargets())
                 {
-                    findAllReferencesCommand.IncludeComments = includeComments;
-                    findAllReferencesCommand.IncludeStrings = includeStrings;
                     findAllReferencesCommand.Execute();
                 }
                 else
@@ -405,23 +367,20 @@ namespace CodeRefactor.Commands
                 var sci = PluginBase.MainForm.CurrentDocument.SciControl;
                 int position = sci.WordEndPosition(sci.CurrentPos, true);
 
-                var inlineRename = isRenamePackage ?
-                    new InlineRename(sci, oldName, position, null, null, null, null) :
-                    new InlineRename(sci, oldName, position, includeComments, includeStrings, previewChanges, Target);
-                helper = inlineRename;
-
+                var inlineRename = new InlineRename(sci, oldName, position, null, null, isRenamePackage ? new bool?() : new bool?(true), Target);
                 inlineRename.Apply += OnApply;
                 inlineRename.Cancel += OnCancel;
             }
             else
             {
-                var dialog = new PopupRenameDialog(oldName, includeComments, includeStrings, isRenamePackage);
-                helper = dialog;
+                string title = " " + string.Format(TextHelper.GetString("Title.RenameDialog"), oldName);
+                string label = TextHelper.GetString("Label.NewName");
+                var dialog = new LineEntryDialog(title, label, oldName);
 
                 switch (dialog.ShowDialog())
                 {
                     case DialogResult.OK:
-                        OnApply(null, oldName, dialog.Value.Trim());
+                        OnApply(null, oldName, dialog.Line.Trim());
                         break;
                     case DialogResult.Cancel:
                         OnCancel(null);
@@ -465,14 +424,11 @@ namespace CodeRefactor.Commands
         /// </summary>
         private void UpdateDefaultFlags(InlineRename inlineRename)
         {
-            if (helper == null) return;
-            includeComments = helper.IncludeComments;
-            includeStrings = helper.IncludeStrings;
-            helper = null;
-            if (inlineRename == null) return;
-            previewChanges = inlineRename.PreviewChanges;
-            inlineRename.Apply -= OnApply;
-            inlineRename.Cancel -= OnCancel;
+            if (inlineRename != null)
+            {
+                inlineRename.Apply -= OnApply;
+                inlineRename.Cancel -= OnCancel;
+            }
         }
 
         #endregion
