@@ -6030,6 +6030,10 @@
     <value>Replaced {0} occurrence[s]</value>
     <comment>Added after 5.2.0</comment>
   </data>
+  <data name="FlashDevelop.Description.MaxRecentFiles" xml:space="preserve">
+    <value>The number of recent files to remember in the recent files drop-down.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
   <data name="CodeRefactor.Description.UseInlineRenaming" xml:space="preserve">
     <value>Whether to use inline editing for renaming processes.</value>
     <comment>Added after 5.2.0</comment>
