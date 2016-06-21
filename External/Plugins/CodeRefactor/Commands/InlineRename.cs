@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using ASCompletion.Completion;
-using ASCompletion.Context;
-using CodeRefactor.Controls;
 using CodeRefactor.Provider;
 using PluginCore;
+using PluginCore.Controls;
 using PluginCore.FRService;
 using ScintillaNet;
 using ScintillaNet.Enums;
@@ -214,6 +213,7 @@ namespace CodeRefactor.Commands
             foreach (var match in results)
             {
                 int index = match.Index;
+                int length = match.Length;
                 string value = match.Value;
                 int style = sci.BaseStyleAt(index);
                 bool insideComment = supportInsideComment && RefactoringHelper.IsCommentStyle(style);
@@ -221,7 +221,7 @@ namespace CodeRefactor.Commands
 
                 if (RefactoringHelper.DoesMatchPointToTarget(sci, match, target, null) || insideComment || insideString)
                 {
-                    var @ref = new ReferenceInfo() { Index = index, Value = value };
+                    var @ref = new ReferenceInfo() { Index = index, Length = length, Value = value };
                     tempRefs.Add(@ref);
 
                     if (currentRef == null && match.Index == start)
@@ -230,7 +230,7 @@ namespace CodeRefactor.Commands
                     }
                     else if (previewChanges && (!insideComment || includeComments) && (!insideString || includeStrings))
                     {
-                        Highlight(index, value.Length);
+                        Highlight(index, length);
                     }
                 }
             }
@@ -263,6 +263,7 @@ namespace CodeRefactor.Commands
             foreach (var match in results)
             {
                 int index = match.Index + offset;
+                int length = match.Length - offset;
                 string value = match.Value.Substring(offset);
                 int style = sci.BaseStyleAt(index);
                 bool insideComment = supportInsideComment && RefactoringHelper.IsCommentStyle(style);
@@ -270,11 +271,7 @@ namespace CodeRefactor.Commands
 
                 if (RefactoringHelper.DoesMatchPointToTarget(sci, match, target, null) || insideComment || insideString)
                 {
-                    var @ref = new ReferenceInfo()
-                    {
-                        Index = index,
-                        Value = value
-                    };
+                    var @ref = new ReferenceInfo() { Index = index, Length = length, Value = value };
                     refInfos.Add(@ref);
 
                     if (previewChanges && (!insideComment || includeComments) && (!insideString || includeStrings))
@@ -318,6 +315,7 @@ namespace CodeRefactor.Commands
             PluginBase.MainForm.MenuStrip.Enabled = false;
             PluginBase.MainForm.ToolStrip.Enabled = false;
             PluginBase.MainForm.EditorMenu.Enabled = false;
+            UITools.Manager.DisableEvents = true;
         }
 
         #endregion
@@ -340,7 +338,7 @@ namespace CodeRefactor.Commands
                 Finish();
             }
 
-            delayedExecution.Invoke(DelayedExecution_UndoApply);
+            delayedExecution.Invoke(DelayedExecution_Apply);
         }
 
         /// <summary>
@@ -353,7 +351,7 @@ namespace CodeRefactor.Commands
                 Finish();
             }
 
-            delayedExecution.Invoke(DelayedExecution_UndoCancel);
+            delayedExecution.Invoke(DelayedExecution_Cancel);
         }
 
         /// <summary>
@@ -425,6 +423,7 @@ namespace CodeRefactor.Commands
             PluginBase.MainForm.MenuStrip.Enabled = true;
             PluginBase.MainForm.ToolStrip.Enabled = true;
             PluginBase.MainForm.EditorMenu.Enabled = true;
+            UITools.Manager.DisableEvents = false;
         }
 
         #endregion
@@ -442,7 +441,6 @@ namespace CodeRefactor.Commands
         /// <param name="highlight">Whether to highlight the matches.</param>
         private void UpdateReferences(string replacement, bool current, bool comments, bool strings, bool others, bool highlight)
         {
-            sci.BeginUndoAction();
             sci.DisableAllSciEvents = true;
 
             try
@@ -451,15 +449,12 @@ namespace CodeRefactor.Commands
                 int newLength = replacement.Length;
                 int delta = 0;
 
-                //if (pos < start) pos = 0;
-                //else if (pos > end) pos = end - start;
-                //else pos -= start;
                 pos -= start;
 
                 for (int i = 0, l = refs.Length; i < l; i++)
                 {
                     var @ref = refs[i];
-                    int oldLength = @ref.Value.Length;
+                    int oldLength = @ref.Length;
 
                     @ref.Index += delta;
                     int s = @ref.Index;
@@ -493,6 +488,7 @@ namespace CodeRefactor.Commands
                         sci.ReplaceSel(replacement);
                     }
 
+                    @ref.Length = newLength;
                     @ref.Value = replacement;
                     delta += newLength - oldLength;
 
@@ -500,14 +496,13 @@ namespace CodeRefactor.Commands
                 }
 
                 start = currentRef.Index;
-                end = start + currentRef.Value.Length;
+                end = start + currentRef.Length;
 
                 pos += start;
                 sci.SetSel(pos, pos);
             }
             finally
             {
-                sci.EndUndoAction();
                 sci.DisableAllSciEvents = false;
             }
         }
@@ -525,7 +520,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Undo the whole action and raise apply event
         /// </summary>
-        private void DelayedExecution_UndoApply()
+        private void DelayedExecution_Apply()
         {
             delayedExecution.Dispose();
             sci.EndUndoAction();
@@ -537,33 +532,13 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Undo the whole action and raise cancel event
         /// </summary>
-        private void DelayedExecution_UndoCancel()
+        private void DelayedExecution_Cancel()
         {
             delayedExecution.Dispose();
             sci.EndUndoAction();
             sci.Undo();
 
             if (Cancel != null) Cancel(this);
-        }
-
-        /// <summary>
-        /// Invoked when the button <see cref="InlineRenameDialog.ApplyButton"/> is clicked.
-        /// </summary>
-        /// <param name="sender">The event sender object.</param>
-        /// <param name="e">The event arguments.</param>
-        private void ApplyButton_Click(object sender, EventArgs e)
-        {
-            OnApply();
-        }
-
-        /// <summary>
-        /// Invoked when the button <see cref="InlineRenameDialog.CancelButton"/> is clicked.
-        /// </summary>
-        /// <param name="sender">The event sender object.</param>
-        /// <param name="e">The event arguments.</param>
-        private void CancelButton_Click(object sender, EventArgs e)
-        {
-            OnCancel();
         }
 
         #endregion
@@ -641,22 +616,43 @@ namespace CodeRefactor.Commands
             {
                 int s = sci.SelectionStart;
                 int e = sci.SelectionEnd;
+                int pos = sci.CurrentPos;
 
-                if (sci.CurrentPos == e)
+                if (pos < start || end < pos)
                 {
-                    if (s < start) { /*if (e > start) sci.SetSel(s, start);*/ }
-                    else if (s < end) { if (e > end) sci.SetSel(s, end); }
+                    if (!UpdateCurrentRef(pos))
+                    {
+                        pos = pos < start ? start : end;
+                        sci.SetSel(pos, pos);
+                        return;
+                    }
                 }
-                else
-                {
-                    if (e > end) { /*if (s < end) sci.SetSel(e, end);*/ }
-                    else if (e > start) { if (s < start) sci.SetSel(e, start); }
-                }
+
+                if (s < start) sci.SetSel(start, e);
+                else if (e > end) sci.SetSel(s, end);
             }
             finally
             {
                 sci.DisableAllSciEvents = false;
             }
+        }
+
+        private bool UpdateCurrentRef(int pos)
+        {
+            for (int i = 0, length = refs.Length; i < length; i++)
+            {
+                var @ref = refs[i];
+                int s = @ref.Index;
+                int e = s + @ref.Length;
+                if (s <= pos && pos <= e)
+                {
+                    currentRef = @ref;
+                    start = s;
+                    end = e;
+                    return true;
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -675,7 +671,7 @@ namespace CodeRefactor.Commands
             }
             else
             {
-                // throw exception?
+                OnCancel();
             }
         }
 
@@ -697,7 +693,7 @@ namespace CodeRefactor.Commands
             }
             else
             {
-                // throw exception?
+                //OnCancel();
             }
         }
 
@@ -778,21 +774,21 @@ namespace CodeRefactor.Commands
                     if (CanWrite && IsValidChar((int) m.WParam)) break;
                     return true;
 
-                    //case 0x0200: //WM_MOUSEMOVE
-                    //case 0x0201: //WM_LBUTTONDOWN
-                    //case 0x0202: //WM_LBUTTONUP
-                    //case 0x0203: //WM_LBUTTONDBCLICK
-                    //case 0x0204: //WM_RBUTTONDOWN
-                    //case 0x0205: //WM_RBUTTONUP
-                    //case 0x0206: //WM_RBUTTONDBCLICK
-                    //case 0x0207: //WM_MBUTTONDOWN
-                    //case 0x0208: //WM_MBUTTONUP
-                    //case 0x0209: //WM_MBUTTONDBCLICK
-                    //    if (sci.ClientRectangle.Contains(sci.PointToClient(Control.MousePosition))) break;
-                    //    return true;
+                //case 0x0200: //WM_MOUSEMOVE
+                //case 0x0201: //WM_LBUTTONDOWN
+                //case 0x0202: //WM_LBUTTONUP
+                //case 0x0203: //WM_LBUTTONDBCLICK
+                //case 0x0204: //WM_RBUTTONDOWN
+                //case 0x0205: //WM_RBUTTONUP
+                //case 0x0206: //WM_RBUTTONDBCLICK
+                //case 0x0207: //WM_MBUTTONDOWN
+                //case 0x0208: //WM_MBUTTONUP
+                //case 0x0209: //WM_MBUTTONDBCLICK
+                //    if (sci.ClientRectangle.Contains(sci.PointToClient(Control.MousePosition))) break;
+                //    return true;
 
-                    //case 0x007B: //WM_CONTEXTMENU
-                    //    return true;
+                //case 0x007B: //WM_CONTEXTMENU
+                //    return true;
             }
 
             return false;
@@ -1022,6 +1018,11 @@ namespace CodeRefactor.Commands
             /// The index of this reference.
             /// </summary>
             public int Index;
+
+            /// <summary>
+            /// The length of the value of this reference.
+            /// </summary>
+            public int Length;
 
             /// <summary>
             /// The value of this reference.
