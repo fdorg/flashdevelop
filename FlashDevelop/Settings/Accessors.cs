@@ -561,6 +561,20 @@ namespace FlashDevelop.Settings
             set { this.moveCursorAfterComment = value; }
         }
 
+        [DefaultValue(15)]
+        [DisplayName("Max Recent Files")]
+        [LocalizedCategory("FlashDevelop.Category.Features")]
+        [LocalizedDescription("FlashDevelop.Description.MaxRecentFiles")]
+        public Int32 MaxRecentFiles
+        {
+            get { return this.maxRecentFiles; }
+            set
+            {
+                if (value < 0) throw new ArgumentOutOfRangeException();
+                this.maxRecentFiles = value;
+            }
+        }
+
         [DefaultValue(true)]
         [DisplayName("Restore File States")]
         [LocalizedCategory("FlashDevelop.Category.Features")]
