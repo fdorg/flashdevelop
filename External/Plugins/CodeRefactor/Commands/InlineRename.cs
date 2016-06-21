@@ -54,7 +54,6 @@ namespace CodeRefactor.Commands
         private bool previewChanges;
 
         private ScintillaControl sci;
-        //private Control.ControlCollection controls;
         private ITabbedDocument currentDoc;
 
         private ReferenceInfo currentRef;
@@ -140,10 +139,16 @@ namespace CodeRefactor.Commands
             newName = original;
             //prevName = original;
             end = position;
+            currentDoc = PluginBase.MainForm.CurrentDocument;
+            delayedExecution = new DelayedExecution();
+            history = new List<string>() { oldName };
+            historyIndex = 0;
+            this.includeComments = includeComments ?? false;
+            this.includeStrings = includeStrings ?? false;
+            this.previewChanges = previewChanges ?? false;
 
-            InitializeFields(includeComments, includeStrings, previewChanges);
+            sci.BeginUndoAction();
             InitializeHighlights();
-            //CreateDialog(includeComments, includeStrings, previewChanges);
             SetupLivePreview(includeComments.HasValue, includeStrings.HasValue, previewChanges.HasValue, previewTarget);
             AddMessageFilter();
             DisableControls();
@@ -184,20 +189,6 @@ namespace CodeRefactor.Commands
         #region Initialization
 
         /// <summary>
-        /// Initialize delayed execution, shortcuts and history.
-        /// </summary>
-        private void InitializeFields(bool? comments, bool? strings, bool? preview)
-        {
-            currentDoc = PluginBase.MainForm.CurrentDocument;
-            delayedExecution = new DelayedExecution();
-            history = new List<string>() { oldName };
-            historyIndex = 0;
-            includeComments = comments ?? false;
-            includeStrings = strings ?? false;
-            previewChanges = preview ?? false;
-        }
-
-        /// <summary>
         /// Modify the highlight indicator alpha and select current word.
         /// </summary>
         private void InitializeHighlights()
@@ -205,40 +196,6 @@ namespace CodeRefactor.Commands
             sci.RemoveHighlights(Indicator);
             sci.SetIndicSetAlpha(Indicator, 100);
         }
-
-        /// <summary>
-        /// Show rename dialog at the corner of the text editor.
-        /// </summary>
-        /// <param name="comments">
-        /// Specify <code>true</code> or <code>false</code> to initially include/exclude matches in
-        /// comments. Specify <code>null</code> to disable.
-        /// </param>
-        /// <param name="strings">
-        /// Specify <code>true</code> or <code>false</code> to initially include/exclude matches in
-        /// strings. Specify <code>null</code> to disable.
-        /// </param>
-        /// <param name="preview">
-        /// Specify <code>true</code> or <code>false</code> to initially show/hide live preview
-        /// during rename. Specify <code>null</code> to disable.
-        /// </param>
-        //private void CreateDialog(bool? comments, bool? strings, bool? preview)
-        //{
-            //controls = currentDoc.SplitContainer.Parent.Controls;
-            //dialog = new InlineRenameDialog(oldName, comments, strings, preview);
-            //controls.Add(dialog);
-            //controls.SetChildIndex(dialog, 0);
-
-            //dialog.IncludeComments.CheckedChanged += IncludeComments_CheckedChanged;
-            //dialog.IncludeStrings.CheckedChanged += IncludeStrings_CheckedChanged;
-            //dialog.PreviewChanges.CheckedChanged += PreviewChanges_CheckedChanged;
-            //dialog.ApplyButton.Click += ApplyButton_Click;
-            //dialog.CancelButton.Click += CancelButton_Click;
-
-            //includeComments = dialog.IncludeComments.Checked;
-            //includeStrings = dialog.IncludeStrings.Checked;
-            //previewChanges = dialog.PreviewChanges.Checked;
-            //Sci_Resize(null, null);
-        //}
 
         /// <summary>
         /// Set up required variables for live preview features.
@@ -350,7 +307,6 @@ namespace CodeRefactor.Commands
             sci.SelectionChanged += Sci_SelectionChanged;
             sci.TextInserted += Sci_TextInserted;
             sci.TextDeleted += Sci_TextDeleted;
-            //sci.Resize += Sci_Resize;
             Current = this;
         }
 
@@ -384,7 +340,7 @@ namespace CodeRefactor.Commands
                 Finish();
             }
 
-            if (Apply != null) Apply(this, oldName, newName);
+            delayedExecution.Invoke(DelayedExecution_UndoApply);
         }
 
         /// <summary>
@@ -397,7 +353,7 @@ namespace CodeRefactor.Commands
                 Finish();
             }
 
-            if (Cancel != null) Cancel(this);
+            delayedExecution.Invoke(DelayedExecution_UndoCancel);
         }
 
         /// <summary>
@@ -428,7 +384,7 @@ namespace CodeRefactor.Commands
             }
             else
             {
-                delayedExecution.Start(DelayedExecution_Update);
+                delayedExecution.Invoke(DelayedExecution_Update);
             }
         }
 
@@ -443,33 +399,8 @@ namespace CodeRefactor.Commands
             sci.RemoveHighlights(Indicator);
             sci.SetIndicSetAlpha(Indicator, 40);
 
-            sci.DisableAllSciEvents = true;
-
-            try
-            {
-                sci.SetSel(start, end);
-                newName = sci.SelText;
-
-                if (newName == oldName)
-                {
-                    sci.SetSel(end, end);
-                }
-                else
-                {
-                    sci.ReplaceSel(oldName);
-                }
-            }
-            finally
-            {
-                sci.DisableAllSciEvents = false;
-            }
-
-            if (refs != null)
-            {
-                UpdateReferences(oldName, true, previewChanges && includeComments, previewChanges && includeStrings, previewChanges, false);
-            }
-
-            ASContext.Context.UpdateCurrentFile(true);
+            sci.SetSel(start, end);
+            newName = sci.SelText;
         }
 
         /// <summary>
@@ -482,23 +413,14 @@ namespace CodeRefactor.Commands
             sci.SelectionChanged -= Sci_SelectionChanged;
             sci.TextInserted -= Sci_TextInserted;
             sci.TextDeleted -= Sci_TextDeleted;
-            //sci.Resize -= Sci_Resize;
             Current = null;
 
-            sci = null;
-            //controls.Remove(dialog);
-            //controls = null;
             currentDoc = null;
-            //dialog.Dispose();
-            //dialog = null;
-
             currentRef = null;
             refs = null;
 
             history.Clear();
             history = null;
-            delayedExecution.Dispose();
-            delayedExecution = null;
 
             PluginBase.MainForm.MenuStrip.Enabled = true;
             PluginBase.MainForm.ToolStrip.Enabled = true;
@@ -601,51 +523,28 @@ namespace CodeRefactor.Commands
         }
 
         /// <summary>
-        /// Invoked when the checked state of the checkbox <see cref="InlineRenameDialog.IncludeComments"/> changes.
+        /// Undo the whole action and raise apply event
         /// </summary>
-        /// <param name="sender">The event sender object.</param>
-        /// <param name="e">The event arguments.</param>
-        //private void IncludeComments_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    includeComments = dialog.IncludeComments.Checked;
+        private void DelayedExecution_UndoApply()
+        {
+            delayedExecution.Dispose();
+            sci.EndUndoAction();
+            sci.Undo();
 
-        //    if (previewChanges)
-        //    {
-        //        UpdateReferences(includeComments ? newName : oldName, false, true, false, false, includeComments);
-        //    }
-
-        //    sci.Focus();
-        //}
+            if (Apply != null) Apply(this, oldName, newName);
+        }
 
         /// <summary>
-        /// Invoked when the checked state of the checkbox <see cref="InlineRenameDialog.IncludeStrings"/> changes.
+        /// Undo the whole action and raise cancel event
         /// </summary>
-        /// <param name="sender">The event sender object.</param>
-        /// <param name="e">The event arguments.</param>
-        //private void IncludeStrings_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    includeStrings = dialog.IncludeStrings.Checked;
+        private void DelayedExecution_UndoCancel()
+        {
+            delayedExecution.Dispose();
+            sci.EndUndoAction();
+            sci.Undo();
 
-        //    if (previewChanges)
-        //    {
-        //        UpdateReferences(includeStrings ? newName : oldName, false, false, true, false, includeStrings);
-        //    }
-
-        //    sci.Focus();
-        //}
-
-        /// <summary>
-        /// Invoked when the checked state of the checkbox <see cref="InlineRenameDialog.PreviewChanges"/> changes.
-        /// </summary>
-        /// <param name="sender">The event sender object.</param>
-        /// <param name="e">The event arguments.</param>
-        //private void PreviewChanges_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    previewChanges = dialog.PreviewChanges.Checked;
-        //    UpdateReferences(previewChanges ? newName : oldName, false, includeComments, includeStrings, true, previewChanges);
-
-        //    sci.Focus();
-        //}
+            if (Cancel != null) Cancel(this);
+        }
 
         /// <summary>
         /// Invoked when the button <see cref="InlineRenameDialog.ApplyButton"/> is clicked.
@@ -801,16 +700,6 @@ namespace CodeRefactor.Commands
                 // throw exception?
             }
         }
-
-        /// <summary>
-        /// Invoked when the <see cref="ScintillaControl"/> object is resized.
-        /// </summary>
-        /// <param name="sender">The event sender object.</param>
-        /// <param name="e">The event arguments.</param>
-        //private void Sci_Resize(object sender, EventArgs e)
-        //{
-        //    dialog.Left = sci.Width - dialog.Width - SystemInformation.VerticalScrollBarWidth;
-        //}
 
         #endregion
 
@@ -1186,7 +1075,7 @@ namespace CodeRefactor.Commands
             /// Invoke the specified delegate after a certain delay.
             /// </summary>
             /// <param name="callback">The delegate to invoke asynchronously.</param>
-            public void Start(Action callback)
+            public void Invoke(Action callback)
             {
                 action = callback;
                 timer.Start();
