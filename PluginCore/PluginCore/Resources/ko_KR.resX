@@ -6027,18 +6027,18 @@ Complete: 현재 파일, 프로젝트 파일 및 수동 새로 고침.</value>
   </data>
   <data name="CodeRefactor.Description.ReplaceAllOccurrences" xml:space="preserve">
     <value>강조된 모든 항목을 새로운 변수로 교체합니다.</value>
-    <comment>Added after 5.2.0</comment>
+    <comment>Added after 5.1.1</comment>
   </data>
   <data name="CodeRefactor.Description.ReplaceInitialOccurrence" xml:space="preserve">
     <value>새로운 변수로 교체합니다.</value>
-    <comment>Added after 5.2.0</comment>
+    <comment>Added after 5.1.1</comment>
   </data>
   <data name="CodeRefactor.Info.ReplacedOccurrences" xml:space="preserve">
     <value>{0}개의 항목 교체</value>
-    <comment>Added after 5.2.0</comment>
+    <comment>Added after 5.1.1</comment>
   </data>
   <data name="FlashDevelop.Description.MaxRecentFiles" xml:space="preserve">
     <value>최근 파일 목록의 최대 길이.</value>
-    <comment>Added after 5.2.0</comment>
+    <comment>Added after 5.1.1</comment>
   </data>
 </root>
