@@ -6024,6 +6024,10 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
     <value>Replaced {0} occurrence[s]</value>
     <comment>Added after 5.2.0</comment>
   </data>
+  <data name="FlashDevelop.Description.MaxRecentFiles" xml:space="preserve">
+    <value>Länge der Liste der zuletzt geöffneten Dateien.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
   <data name="ASCompletion.Description.BracesAfterChars" xml:space="preserve">
     <value>Automatically add a closing brace after the specified/unspecified characters (depending on the mode).</value>
     <comment>Added after 5.2.0</comment>
