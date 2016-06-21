@@ -10,7 +10,6 @@ using PluginCore;
 namespace FlashDevelop.Settings
 {
     [Serializable]
-    [DefaultProperty("AutoFilterList")]
     public partial class SettingObject : ISettings
     {
         private CodePage defaultCodePage = CodePage.UTF8;
@@ -36,6 +35,7 @@ namespace FlashDevelop.Settings
         private Int32 printMarginColumn = 0;
         private Int32 backupInterval = 15000;
         private Int32 filePollInterval = 3000;
+        private Int32 maxRecentFiles = 15;
         private Int32 highlightMatchingWordsDelay = 1200;
         private HighlightMatchingWordsMode highlightMatchingWordsMode = HighlightMatchingWordsMode.SelectionOrPosition;
         private LocaleVersion localeVersion = LocaleVersion.en_US;

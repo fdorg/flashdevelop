@@ -6020,4 +6020,8 @@ Eigene Sprachumgebungen müssen eine Erweiterung der Standard-Sprachumgebung sei
     <value>Replaced {0} occurrence[s]</value>
     <comment>Added after 5.2.0</comment>
   </data>
+  <data name="FlashDevelop.Description.MaxRecentFiles" xml:space="preserve">
+    <value>Länge der Liste der zuletzt geöffneten Dateien.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
 </root>
