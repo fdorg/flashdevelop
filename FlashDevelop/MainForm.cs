@@ -903,10 +903,19 @@ namespace FlashDevelop
         public void InitializeWindow()
         {
             this.WindowState = this.appSettings.WindowState;
-            Point position = new Point(this.appSettings.WindowPosition.X, this.appSettings.WindowPosition.Y);
-            if (position.X < -4) position.X = 0;
-            if (position.Y < -25) position.Y = 0;
-            this.Location = position;
+            Rectangle bounds = new Rectangle(this.appSettings.WindowPosition, this.appSettings.WindowSize);
+            bounds.Inflate(-4, -25);
+            Boolean validPosition = false;
+            foreach (Screen screen in Screen.AllScreens)
+            {
+                if (screen.Bounds.IntersectsWith(bounds))
+                {
+                    this.Location = this.appSettings.WindowPosition;
+                    validPosition = true;
+                    break;
+                }
+            }
+            if (!validPosition) this.Location = new Point(0, 0);
             // Continue/perform layout!
             this.ResumeLayout(false);
             this.PerformLayout();
