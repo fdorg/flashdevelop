@@ -343,7 +343,7 @@ namespace FlashDebugger
             ScintillaControl sci = doc.SciControl;
             if (line >= 0)
             {
-                sci.EnsureVisibleEnforcePolicy(line);
+                sci.EnsureVisible(line);
                 Int32 start = sci.PositionFromLine(line);
                 if (bSelectLine)
                 {

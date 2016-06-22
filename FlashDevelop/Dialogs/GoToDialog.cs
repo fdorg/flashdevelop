@@ -168,7 +168,7 @@ namespace FlashDevelop.Dialogs
             try
             {
                 Int32 line = Convert.ToInt32(this.lineTextBox.Text) - 1;
-                Globals.SciControl.EnsureVisibleEnforcePolicy(line);
+                Globals.SciControl.EnsureVisible(line);
                 Globals.SciControl.GotoLineIndent(line);
                 this.Close();
             }
@@ -189,7 +189,7 @@ namespace FlashDevelop.Dialogs
             {
                 Int32 pos = Convert.ToInt32(this.lineTextBox.Text) - 1;
                 Int32 line = Globals.SciControl.LineFromPosition(pos);
-                Globals.SciControl.EnsureVisibleEnforcePolicy(line);
+                Globals.SciControl.EnsureVisible(line);
                 Globals.SciControl.GotoPos(pos);
                 this.Close();
             }

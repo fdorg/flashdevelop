@@ -1001,7 +1001,7 @@ namespace ASCompletion
         {
             int pos = sci.MBSafePosition(position);
             int line = sci.LineFromPosition(pos);
-            sci.EnsureVisibleEnforcePolicy(line);
+            sci.EnsureVisible(line);
             sci.GotoPos(pos);
         }
 
@@ -1031,7 +1031,7 @@ namespace ASCompletion
                 int position = sci.PositionFromLine(location.line) + location.column;
                 sci.SetSel(position, position);
                 int line = sci.CurrentLine;
-                sci.EnsureVisibleEnforcePolicy(line);
+                sci.EnsureVisible(line);
                 int top = sci.FirstVisibleLine;
                 int middle = top + sci.LinesOnScreen / 2;
                 sci.LineScroll(0, line - middle);

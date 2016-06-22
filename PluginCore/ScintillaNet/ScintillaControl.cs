@@ -3790,11 +3790,13 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// Ensure a particular line is visible by expanding any header line hiding it.
+        /// Calls <see cref="EnsureVisibleEnforcePolicy"/>.
+        /// To use the SCI_ENSUREVISIBLE method instead, call <code>SPerform(2232, line, 0)</code>.
         /// </summary>
         public void EnsureVisible(int line)
         {
-            SPerform(2232, line, 0);
+            //SPerform(2232, line, 0);
+            EnsureVisibleEnforcePolicy(line);
         }
 
         /// <summary>

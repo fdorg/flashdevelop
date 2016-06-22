@@ -656,7 +656,7 @@ namespace ASCompletion.Completion
                         if (m.Success)
                         {
                             int position = sci.PositionFromLine(i) + sci.MBSafeTextLength(text.Substring(0, m.Groups["name"].Index));
-                            sci.EnsureVisibleEnforcePolicy(sci.LineFromPosition(position));
+                            sci.EnsureVisible(sci.LineFromPosition(position));
                             sci.SetSel(position, position + m.Groups["name"].Length);
                             found = true;
                             break;
@@ -665,7 +665,7 @@ namespace ASCompletion.Completion
 
                 if (!found)
                 {
-                    sci.EnsureVisibleEnforcePolicy(line);
+                    sci.EnsureVisible(line);
                     int linePos = sci.PositionFromLine(line);
                     sci.SetSel(linePos, linePos);
                 }
