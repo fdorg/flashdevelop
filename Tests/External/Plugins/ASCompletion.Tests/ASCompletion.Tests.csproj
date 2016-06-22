@@ -238,6 +238,23 @@
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVariable_forSomeObj2.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVariable_forSomeObj3.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateVariable_forSomeObj3.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateStaticVariable.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicStaticVariable_generateExplicitScopeIsTrue.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicStaticVariable_generateExplicitScopeIsFalse.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGeneratePublicStaticVariable_forSomeType.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicStaticVariable_forSomeType.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateStaticVariable_forCurrentType.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicStaticVariable_forCurrentType.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateStaticVariable_forSomeType.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicStaticVariable_forSomeType.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateStaticFunction.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicStaticFunction_generateExplicitScopeIsFalse.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicStaticFunction_generateExplicitScopeIsTrue.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateStaticFunction_forCurrentType.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateStaticFunction_forSomeType.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicStaticFunction_forSomeType.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGeneratePublicStaticVariable_forCurrentType.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicStaticVariable_forCurrentType.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

@@ -595,6 +595,7 @@ namespace FlashDevelop.Dialogs
         {
             if (sdkContext != null) sdkContext.Dispose();
             Globals.MainForm.ApplyAllSettings();
+            Globals.MainForm.SaveSettings();
             if (requireRestart.Count > 0) Globals.MainForm.RestartRequired();
             else Globals.MainForm.CancelRestartRequired();
         }
