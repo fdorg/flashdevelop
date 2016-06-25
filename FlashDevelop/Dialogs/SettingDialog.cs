@@ -46,6 +46,7 @@ namespace FlashDevelop.Dialogs
             this.InitializeContextMenu();
             this.PopulatePluginList(itemName, filter);
             this.ApplyLocalizedTexts();
+            this.UpdateInfo();
         }
 
         #region Windows Form Designer Generated Code
@@ -257,13 +258,13 @@ namespace FlashDevelop.Dialogs
         {
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
+            imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             imageList.Images.Add(Globals.MainForm.FindImage("341", false));
             imageList.Images.Add(Globals.MainForm.FindImage("342", false));
             imageList.Images.Add(Globals.MainForm.FindImage("50", false));
             imageList.Images.Add(Globals.MainForm.FindImage("153", false)); // clear
-            this.infoPictureBox.Image = Globals.MainForm.FindImage("229", false);
+            //this.infoPictureBox.Image = Globals.MainForm.FindImage("229", false);
             this.itemListView.SmallImageList = imageList;
-            this.itemListView.SmallImageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             this.clearFilterButton.ImageList = imageList;
             this.clearFilterButton.ImageIndex = 3;
         }
@@ -276,7 +277,7 @@ namespace FlashDevelop.Dialogs
             this.helpLabel.Text = TextHelper.GetString("Info.Help");
             this.Text = " " + TextHelper.GetString("Title.SettingDialog");
             this.disableCheckBox.Text = " " + TextHelper.GetString("Info.Disable");
-            this.infoLabel.Text = TextHelper.GetString("Info.SettingsTakeEffect");
+            //this.infoLabel.Text = TextHelper.GetString("Info.SettingsTakeEffect");
             this.filterLabel.Text = TextHelper.GetString("Info.FilterSettings");
             this.nameLabel.Text = TextHelper.GetString("Info.NoItemSelected");
             this.closeButton.Text = TextHelper.GetString("Label.Close");
@@ -500,6 +501,7 @@ namespace FlashDevelop.Dialogs
 
                 if (changedItem.PropertyDescriptor.Attributes.Matches(new RequiresRestartAttribute()))
                 {
+                    bool previous = requireRestart.Count > 0;
                     if (requireRestart.Contains(settingId))
                     {
                         if (requireRestart[settingId].Equals(changedItem.Value))
@@ -508,18 +510,22 @@ namespace FlashDevelop.Dialogs
                         }
                     }
                     else requireRestart.Add(settingId, e.OldValue);
-
-                    if (requireRestart.Count > 0)
-                    {
-                        this.infoLabel.Text = TextHelper.GetString("Info.RequiresRestart");
-                        this.infoPictureBox.Image = Globals.MainForm.FindImage("196", false);
-                    }
-                    else
-                    {
-                        this.infoLabel.Text = TextHelper.GetString("Info.SettingsTakeEffect");
-                        this.infoPictureBox.Image = Globals.MainForm.FindImage("229", false);
-                    }
+                    if (requireRestart.Count > 0 != previous)  UpdateInfo();
                 }
+            }
+        }
+
+        private void UpdateInfo()
+        {
+            if (requireRestart.Count > 0)
+            {
+                this.infoLabel.Text = TextHelper.GetString("Info.RequiresRestart");
+                this.infoPictureBox.Image = Globals.MainForm.FindImage("196", false);
+            }
+            else
+            {
+                this.infoLabel.Text = TextHelper.GetString("Info.SettingsTakeEffect");
+                this.infoPictureBox.Image = Globals.MainForm.FindImage("229", false);
             }
         }
 
@@ -596,8 +602,7 @@ namespace FlashDevelop.Dialogs
             if (sdkContext != null) sdkContext.Dispose();
             Globals.MainForm.ApplyAllSettings();
             Globals.MainForm.SaveSettings();
-            if (requireRestart.Count > 0) Globals.MainForm.RestartRequired();
-            else Globals.MainForm.CancelRestartRequired();
+            if (requireRestart.Count > 0 && !Globals.MainForm.RequiresRestart) Globals.MainForm.RestartRequired();
         }
 
         /// <summary>
