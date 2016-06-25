@@ -635,6 +635,7 @@ namespace FlashDevelop.Dialogs
         {
             for (int i = 0; i < this.shortcutListItems.Length; i++) this.shortcutListItems[i].ApplyChanges(); 
             Globals.MainForm.ApplyAllSettings();
+            ShortcutManager.SaveCustomShortcuts();
         }
 
         /// <summary>

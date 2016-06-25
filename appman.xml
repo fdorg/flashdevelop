@@ -433,14 +433,14 @@
 	<Entry>
 		<Id>quicknavigate</Id>
         	<Name>QuickNavigate</Name>
-		<Version>2.8</Version>
-		<Build>3</Build>
-		<Checksum>996610b20995d47eec48d31d1f02914</Checksum>
+		<Version>2.9</Version>
+		<Build>2</Build>
+		<Checksum>bc8c5da14d2be9e631d3efaf17c9f42</Checksum>
 		<Desc>Quickly navigate through Types, Fields, Projects and more</Desc>
 		<Group>Plugins</Group>
 		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4_INFO_t=5961</Info>
 		<Urls>
-			<Url>https://github.com/SlavaRa/fdplugin-quicknavigate/releases/download/2.8.3/QuickNavigate.fdz</Url>
+			<Url>https://github.com/SlavaRa/fdplugin-quicknavigate/releases/download/2.9.2/QuickNavigate.fdz</Url>
 	        </Urls>
 	</Entry>
 	<Entry>
@@ -568,7 +568,7 @@
 		<Checksum>F42A2992F97EE8D5D706453DFAAF054F</Checksum>
 		<Desc>ActionScript Component Compiler Tool for FlashDevelop Projects</Desc>
 		<Group>Extensions</Group>
-		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&t=12458</Info>
+		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=12458</Info>
 		<Urls>
 			<Url>https://github.com/wise0704/SwcBuild/releases/download/v1.5.0/swcbuild.fdz</Url>
 		</Urls>

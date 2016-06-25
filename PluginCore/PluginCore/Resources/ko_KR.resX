@@ -6016,89 +6016,89 @@ Complete: 현재 파일, 프로젝트 파일 및 수동 새로 고침.</value>
     <comment>Added after 5.0.2</comment>
   </data>
   <data name="CodeFormatter.Description.AStyle.OptionsCPP" xml:space="preserve">
-    <value>Manual options for the CPP language, read more: http://astyle.sourceforge.net/astyle.html</value>
+    <value>CPP 언어에 대한 수동 옵션. 자세한 내용: http://astyle.sourceforge.net/astyle.html</value>
     <comment>Added after 5.1.0</comment>
   </data>
   <data name="CodeFormatter.Description.AStyle.OptionsOthers" xml:space="preserve">
-    <value>Manual options for other C like languages, read more: http://astyle.sourceforge.net/astyle.html</value>
+    <value>다른 C와 같은 언어에 대한 수동 옵션. 자세한 내용: http://astyle.sourceforge.net/astyle.html</value>
     <comment>Added after 5.1.0</comment>
   </data>
   <data name="FlashConnect.Info.ConnectionFailed" xml:space="preserve">
-    <value>Connection failed. Default socket port '{0}' is already in use.</value>
+    <value>연결 실패. 기본 소켓 포트 '{0}'(은)는 이미 사용 중입니다.</value>
     <comment>Added after 5.1.0</comment>
   </data>
   <data name="FlashDevelop.Description.KeepCaretCentered" xml:space="preserve">
-    <value>Keeps the caret centered when caret is navigated to.</value>
+    <value>탐색 할 때 중앙에 커서를 유지합니다.</value>
     <comment>Added after 5.1.1</comment>
   </data>
   <data name="CodeRefactor.Description.ReplaceAllOccurrences" xml:space="preserve">
-    <value>Replace all highlighted occurrences of initial expression with new variable.</value>
-    <comment>Added after 5.2.0</comment>
+    <value>강조된 모든 항목을 새로운 변수로 교체합니다.</value>
+    <comment>Added after 5.1.1</comment>
   </data>
   <data name="CodeRefactor.Description.ReplaceInitialOccurrence" xml:space="preserve">
-    <value>Replace initial expression only.</value>
-    <comment>Added after 5.2.0</comment>
+    <value>새로운 변수로 교체합니다.</value>
+    <comment>Added after 5.1.1</comment>
   </data>
   <data name="CodeRefactor.Info.ReplacedOccurrences" xml:space="preserve">
-    <value>Replaced {0} occurrence[s]</value>
-    <comment>Added after 5.2.0</comment>
+    <value>{0}개의 항목 교체</value>
+    <comment>Added after 5.1.1</comment>
   </data>
   <data name="FlashDevelop.Description.MaxRecentFiles" xml:space="preserve">
     <value>최근 파일 목록의 최대 길이.</value>
-    <comment>Added after 5.2.0</comment>
+    <comment>Added after 5.1.1</comment>
   </data>
   <data name="ASCompletion.Description.BracesAfterChars" xml:space="preserve">
     <value>문자열에 포함된 (또는 포함되지 않은) 문자 뒤에 자동으로 닫는 괄호를 삽입합니다. </value>
-    <comment>Added after 5.2.0</comment>
+    <comment>Added after 5.1.1</comment>
   </data>
   <data name="ASCompletion.Description.BracesAfterCharsMode" xml:space="preserve">
     <value>AfterChars 모드:
 Inclusive - 문자열에 포함된 문자 뒤에 자동 삽입.
 Exclusive - 문자열에 포함되지 않는 문자 뒤에 자동 삽입.</value>
-    <comment>Added after 5.2.0</comment>
+    <comment>Added after 5.1.1</comment>
   </data>
   <data name="ASCompletion.Description.BracesAfterStyles" xml:space="preserve">
     <value>지정된 (또는 지정되지 않은) 스타일 뒤에 자동으로 닫는 괄호를 삽입합니다.</value>
-    <comment>Added after 5.2.0</comment>
+    <comment>Added after 5.1.1</comment>
   </data>
   <data name="ASCompletion.Description.BracesAfterStylesMode" xml:space="preserve">
     <value>AfterStyles 모드:
 Inclusive - 지정된 스타일 뒤에 자동 삽입.
 Exclusive - 지정되지 않은 스타일 뒤에 자동 삽입.</value>
-    <comment>Added after 5.2.0</comment>
+    <comment>Added after 5.1.1</comment>
   </data>
   <data name="ASCompletion.Description.BracesBeforeChars" xml:space="preserve">
     <value>문자열에 포함된 (또는 포함되지 않은) 문자 앞에 자동으로 닫는 괄호를 삽입합니다.</value>
-    <comment>Added after 5.2.0</comment>
+    <comment>Added after 5.1.1</comment>
   </data>
   <data name="ASCompletion.Description.BracesBeforeCharsMode" xml:space="preserve">
     <value>AfterChars 모드:
 Inclusive - 문자열에 포함된 문자 앞에 자동 삽입.
 Exclusive - 문자열에 포함되지 않는 문자 앞에 자동 삽입.</value>
-    <comment>Added after 5.2.0</comment>
+    <comment>Added after 5.1.1</comment>
   </data>
   <data name="ASCompletion.Description.BracesBeforeStyles" xml:space="preserve">
     <value>지정된 (또는 지정되지 않은) 스타일 앞에 자동으로 닫는 괄호를 삽입합니다.</value>
-    <comment>Added after 5.2.0</comment>
+    <comment>Added after 5.1.1</comment>
   </data>
   <data name="ASCompletion.Description.BracesBeforeStylesMode" xml:space="preserve">
     <value>AfterStyles 모드:
 Inclusive - 지정된 스타일 앞에 자동 삽입.
 Exclusive - 지정되지 않은 스타일 앞에 자동 삽입.</value>
-    <comment>Added after 5.2.0</comment>
+    <comment>Added after 5.1.1</comment>
   </data>
   <data name="ASCompletion.Description.BracesClosing" xml:space="preserve">
     <value>닫는 괄호 문자</value>
-    <comment>Added after 5.2.0</comment>
+    <comment>Added after 5.1.1</comment>
   </data>
   <data name="ASCompletion.Description.BracesOpening" xml:space="preserve">
     <value>여는 괄호 문자.</value>
-    <comment>Added after 5.2.0</comment>
+    <comment>Added after 5.1.1</comment>
   </data>
   <data name="ASCompletion.Description.BracesTriggerLogic" xml:space="preserve">
     <value>닫는 괄호 자동 삽입에 사용할 논리 연산자:
 OR - 하나 이상의 조건을 만족할때.
 AND - 모든 조건을 만족할때.</value>
-    <comment>Added after 5.2.0</comment>
+    <comment>Added after 5.1.1</comment>
   </data>
 </root>
