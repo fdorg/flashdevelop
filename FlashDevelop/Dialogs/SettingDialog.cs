@@ -570,6 +570,7 @@ namespace FlashDevelop.Dialogs
         {
             if (sdkContext != null) sdkContext.Dispose();
             Globals.MainForm.ApplyAllSettings();
+            Globals.MainForm.SaveSettings();
         }
 
         /// <summary>

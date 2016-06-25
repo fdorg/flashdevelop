@@ -787,6 +787,7 @@ namespace FlashDevelop.Dialogs
                 this.shortcutListItems[i].ApplyChanges();
             }
             Globals.MainForm.ApplyAllSettings();
+            ShortcutManager.SaveCustomShortcuts();
         }
 
         #endregion
