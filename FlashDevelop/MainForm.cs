@@ -903,10 +903,19 @@ namespace FlashDevelop
         public void InitializeWindow()
         {
             this.WindowState = this.appSettings.WindowState;
-            Point position = new Point(this.appSettings.WindowPosition.X, this.appSettings.WindowPosition.Y);
-            if (position.X < -4) position.X = 0;
-            if (position.Y < -25) position.Y = 0;
-            this.Location = position;
+            Rectangle bounds = new Rectangle(this.appSettings.WindowPosition, this.appSettings.WindowSize);
+            bounds.Inflate(-4, -25);
+            Boolean validPosition = false;
+            foreach (Screen screen in Screen.AllScreens)
+            {
+                if (screen.Bounds.IntersectsWith(bounds))
+                {
+                    this.Location = this.appSettings.WindowPosition;
+                    validPosition = true;
+                    break;
+                }
+            }
+            if (!validPosition) this.Location = new Point(0, 0);
             // Continue/perform layout!
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -2168,6 +2177,15 @@ namespace FlashDevelop
         /// </summary>
         public void SaveAllSettings()
         {
+            SaveSettings();
+            SaveLayout();
+        }
+
+        /// <summary>
+        /// Saves settings to a file.
+        /// </summary>
+        public void SaveSettings()
+        {
             try
             {
                 this.appSettings.WindowState = this.WindowState;
@@ -2183,16 +2201,26 @@ namespace FlashDevelop
                     if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
                 }
                 ObjectSerializer.Serialize(FileNameHelper.SettingData, this.appSettings);
-                try { this.dockPanel.SaveAsXml(FileNameHelper.LayoutData); }
-                catch (Exception ex2)
-                {
-                    // Ignore errors on multi instance full close...
-                    if (this.MultiInstanceMode && this.ClosingEntirely) return;
-                    else throw ex2;
-                }
             }
             catch (Exception ex)
             {
+                ErrorManager.ShowError(ex);
+            }
+        }
+
+        /// <summary>
+        /// Saves layout to a file.
+        /// </summary>
+        public void SaveLayout()
+        {
+            try
+            {
+                this.dockPanel.SaveAsXml(FileNameHelper.LayoutData);
+            }
+            catch (Exception ex)
+            {
+                // Ignore errors on multi instance full close...
+                if (this.MultiInstanceMode && this.ClosingEntirely) return;
                 ErrorManager.ShowError(ex);
             }
         }

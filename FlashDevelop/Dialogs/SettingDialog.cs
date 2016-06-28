@@ -1,14 +1,9 @@
 using System;
-using System.Text;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
-using System.ComponentModel;
-using System.Collections.Generic;
 using PluginCore.Localization;
 using FlashDevelop.Utilities;
-using FlashDevelop.Dialogs;
-using FlashDevelop.Helpers;
 using PluginCore.Managers;
 using PluginCore.Controls;
 using PluginCore.Helpers;
@@ -103,6 +98,7 @@ namespace FlashDevelop.Dialogs
             this.itemPropertyGrid.Size = new System.Drawing.Size(502, 386);
             this.itemPropertyGrid.TabIndex = 3;
             this.itemPropertyGrid.ToolbarVisible = false;
+            this.itemPropertyGrid.PropertySort = System.Windows.Forms.PropertySort.Categorized;
             this.itemPropertyGrid.PropertyValueChanged += new PropertyValueChangedEventHandler(this.PropertyValueChanged);
             // 
             // closeButton
@@ -574,6 +570,7 @@ namespace FlashDevelop.Dialogs
         {
             if (sdkContext != null) sdkContext.Dispose();
             Globals.MainForm.ApplyAllSettings();
+            Globals.MainForm.SaveSettings();
         }
 
         /// <summary>
