@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ASCompletion.Completion;
@@ -23,7 +20,7 @@ namespace CodeRefactor.Commands.Haxe
     {
         readonly SemVer sdkVersion;
         IHaxeCompletionHandler completionModeHandler;
-        private FRResults usageResults;
+        FRResults usageResults;
 
         public HaxeFindAllReferencesCommand(ASResult target, bool output, bool ignoreDeclarations) : base(target, output, ignoreDeclarations)
         {
@@ -59,9 +56,8 @@ namespace CodeRefactor.Commands.Haxe
                     if (settings.CompletionServerPort < 1024) completionModeHandler = new CompilerCompletionHandler(CreateHaxeProcess(""));
                     else
                     {
-                        completionModeHandler = new CompletionServerCompletionHandler(
-                                CreateHaxeProcess("--wait " + settings.CompletionServerPort),
-                                settings.CompletionServerPort);
+                        var args = "--wait " + settings.CompletionServerPort;
+                        completionModeHandler = new CompletionServerCompletionHandler(CreateHaxeProcess(args), settings.CompletionServerPort);
                         ((CompletionServerCompletionHandler) completionModeHandler).FallbackNeeded += Context_FallbackNeeded;
                     }
                     break;
@@ -102,14 +98,11 @@ namespace CodeRefactor.Commands.Haxe
 
         void OnUsagesResult(HaxeComplete hc, List<HaxePositionResult> result, HaxeCompleteStatus status)
         {
-            if (hc.Sci.InvokeRequired)
-            {
-                hc.Sci.BeginInvoke((MethodInvoker)(() => HandleUsageResult(hc, result, status)));
-            }
+            if (hc.Sci.InvokeRequired) hc.Sci.BeginInvoke((MethodInvoker)(() => HandleUsageResult(hc, result, status)));
             else HandleUsageResult(hc, result, status);
         }
 
-        void HandleUsageResult(HaxeComplete hc, List<HaxePositionResult> result, HaxeCompleteStatus status)
+        void HandleUsageResult(HaxeComplete hc, IEnumerable<HaxePositionResult> result, HaxeCompleteStatus status)
         {
             UserInterfaceManager.ProgressDialog.Reset();
             UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.ResolvingReferences"));

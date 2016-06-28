@@ -42,17 +42,17 @@ namespace CodeRefactor.Provider
 
         public virtual Command CreateFindAllReferencesCommand(bool output)
         {
-            return this.CreateFindAllReferencesCommand(RefactoringHelper.GetDefaultRefactorTarget(), output);
+            return CreateFindAllReferencesCommand(RefactoringHelper.GetDefaultRefactorTarget(), output);
         }
 
         public virtual Command CreateFindAllReferencesCommand(ASResult target, bool output)
         {
-            return this.CreateFindAllReferencesCommand(target, output, false);
+            return CreateFindAllReferencesCommand(target, output, false);
         }
 
         public virtual Command CreateFindAllReferencesCommand(ASResult target, bool output, bool ignoreDeclarations)
         {
-            return this.CreateFindAllReferencesCommand(target, output, ignoreDeclarations, true);
+            return CreateFindAllReferencesCommand(target, output, ignoreDeclarations, true);
         }
 
         public virtual Command CreateFindAllReferencesCommand(ASResult target, bool output, bool ignoreDeclarations, bool onlySourceFiles)
@@ -87,22 +87,22 @@ namespace CodeRefactor.Provider
 
         public virtual Command CreateRenameCommand()
         {
-            return new Rename();
+            return CreateRenameCommand(true);
         }
 
         public virtual Command CreateRenameCommand(bool outputResults)
         {
-            return new Rename(outputResults);
+            return CreateRenameCommand(RefactoringHelper.GetDefaultRefactorTarget(), outputResults);
         }
 
         public virtual Command CreateRenameCommand(ASResult target, bool outputResults)
         {
-            return new Rename(target, outputResults);
+            return CreateRenameCommand(target, outputResults, null);
         }
 
         public virtual Command CreateRenameCommand(ASResult target, bool outputResults, string newName)
         {
-            return new Rename(target, outputResults, newName);
+            return CreateRenameCommand(target, outputResults, newName, false);
         }
 
         public virtual Command CreateRenameCommand(ASResult target, bool outputResults, string newName, bool ignoreDeclarationSource)
