@@ -17,12 +17,12 @@ namespace CodeRefactor.Provider
 
         public virtual Command CreateExtractLocalVariableCommand()
         {
-            return new ExtractLocalVariableCommand();
+            return CreateExtractLocalVariableCommand(true);
         }
 
         public virtual Command CreateExtractLocalVariableCommand(bool outputResults)
         {
-            return new ExtractLocalVariableCommand(outputResults);
+            return CreateExtractLocalVariableCommand(outputResults, null);
         }
 
         public virtual Command CreateExtractLocalVariableCommand(bool outputResults, string newName)
@@ -62,17 +62,17 @@ namespace CodeRefactor.Provider
 
         public virtual Command CreateMoveCommand(Dictionary<string, string> oldPathToNewPath)
         {
-            return new Move(oldPathToNewPath);
+            return CreateMoveCommand(oldPathToNewPath, true);
         }
 
         public virtual Command CreateMoveCommand(Dictionary<string, string> oldPathToNewPath, bool outputResults)
         {
-            return new Move(oldPathToNewPath, outputResults);
+            return CreateMoveCommand(oldPathToNewPath, outputResults, false);
         }
 
         public virtual Command CreateMoveCommand(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming)
         {
-            return new Move(oldPathToNewPath, outputResults, renaming);
+            return CreateMoveCommand(oldPathToNewPath, outputResults, renaming, false);
         }
 
         public virtual Command CreateMoveCommand(Dictionary<string, string> oldPathToNewPath, bool outputResults, bool renaming, bool updatePackages)
@@ -112,7 +112,7 @@ namespace CodeRefactor.Provider
 
         public virtual Command CreateRenameFileCommand(string oldPath, string newPath)
         {
-            return new RenameFile(oldPath, newPath);
+            return CreateRenameFileCommand(oldPath, newPath, true);
         }
 
         public virtual Command CreateRenameFileCommand(string oldPath, string newPath, bool outputResults)
