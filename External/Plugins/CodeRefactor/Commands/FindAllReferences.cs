@@ -16,7 +16,6 @@ namespace CodeRefactor.Commands
     /// </summary>
     public class FindAllReferences : RefactorCommand<IDictionary<String, List<SearchMatch>>>
     {
-        private readonly Boolean outputResults;
         protected bool IgnoreDeclarationSource { get; private set; }
 
         /// <summary>
@@ -39,7 +38,6 @@ namespace CodeRefactor.Commands
         /// <param name="output">If true, will send the found results to the trace log and results panel</param>
         public FindAllReferences(Boolean output) : this(RefactoringHelper.GetDefaultRefactorTarget(), output)
         {
-            this.outputResults = output;
         }
 
         /// <summary>
@@ -60,7 +58,7 @@ namespace CodeRefactor.Commands
         public FindAllReferences(ASResult target, Boolean output, Boolean ignoreDeclarations)
         {
             CurrentTarget = target;
-            outputResults = output;
+            OutputResults = output;
             IgnoreDeclarationSource = ignoreDeclarations;
         }
 
@@ -108,7 +106,7 @@ namespace CodeRefactor.Commands
             UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.ResolvingReferences"));
             // First filter out any results that don't actually point to our source declaration
             this.Results = ResolveActualMatches(results, CurrentTarget);
-            if (this.outputResults) this.ReportResults();
+            if (OutputResults) this.ReportResults();
             UserInterfaceManager.ProgressDialog.Hide();
             // Select first match
             if (this.Results.Count > 0)

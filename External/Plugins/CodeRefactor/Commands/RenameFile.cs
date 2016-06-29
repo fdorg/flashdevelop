@@ -14,7 +14,6 @@ namespace CodeRefactor.Commands
     {
         private string oldPath;
         private string newPath;
-        private readonly bool outputResults;
 
         public RenameFile(String oldPath, String newPath) : this(oldPath, newPath, true)
         {
@@ -26,7 +25,7 @@ namespace CodeRefactor.Commands
         {
             this.oldPath = oldPath;
             this.newPath = newPath;
-            this.outputResults = outputResults;
+            OutputResults = outputResults;
         }
 
         #region RefactorCommand Implementation

@@ -24,7 +24,6 @@ namespace CodeRefactor.Commands
     /// </summary>
     public class Rename : Command
     {
-        private readonly Boolean outputResults;
         private readonly Command findAllReferencesCommand;
         private readonly Command renamePackage;
         private String oldFileName;
@@ -88,7 +87,7 @@ namespace CodeRefactor.Commands
                 TraceManager.Add("refactor target is null");
                 return;
             }
-            this.outputResults = outputResults;
+            OutputResults = outputResults;
             if (target.IsPackage)
             {
                 string package = target.Path.Replace('.', Path.DirectorySeparatorChar);
@@ -243,7 +242,7 @@ namespace CodeRefactor.Commands
             if (newFileName != null) RenameFile(eventArgs.Results);
             this.Results = eventArgs.Results;
             AssociatedDocumentHelper.CloseTemporarilyOpenedDocuments();
-            if (this.outputResults) this.ReportResults();
+            if (OutputResults) this.ReportResults();
             UserInterfaceManager.ProgressDialog.Hide();
             MessageBar.Locked = false;
             this.FireOnRefactorComplete();

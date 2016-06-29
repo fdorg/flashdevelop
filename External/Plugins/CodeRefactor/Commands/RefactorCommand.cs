@@ -26,6 +26,9 @@ namespace CodeRefactor.Commands
         /// </summary>
         public ASResult CurrentTarget { get; protected set; }
 
+
+        public bool OutputResults { get; protected set; }
+
         private RefactorResultType results;
         private DocumentHelper associatedDocumentHelper;
 

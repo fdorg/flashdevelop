@@ -8,14 +8,15 @@ namespace CodeRefactor.Provider
 {
     public static class CommandFactoryProvider
     {
+        public static readonly ICommandFactory DefaultFactory = new CommandFactory();
         static readonly Dictionary<string, ICommandFactory> LanguageToFactory = new Dictionary<string, ICommandFactory>();
 
         static CommandFactoryProvider()
         {
-            Register("as2", new CommandFactory());
-            Register("as3", new CommandFactory());
+            Register("as2", DefaultFactory);
+            Register("as3", DefaultFactory);
+            Register("loom", DefaultFactory);
             Register("haxe", new HaxeCommandFactory());
-            Register("loom", new CommandFactory());
         }
 
         public static void Register(string language, ICommandFactory factory)
