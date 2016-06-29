@@ -111,6 +111,7 @@ namespace CodeRefactor.Commands.Haxe
             {
                 case HaxeCompleteStatus.ERROR:
                     TraceManager.Add(hc.Errors, -3);
+                    FindFinished(usageResults);
                     break;
                 case HaxeCompleteStatus.USAGE:
                     ScintillaControl sci;
@@ -150,10 +151,7 @@ namespace CodeRefactor.Commands.Haxe
 
         void OnPositionResult(HaxeComplete hc, HaxePositionResult result, HaxeCompleteStatus status)
         {
-            if (hc.Sci.InvokeRequired)
-            {
-                hc.Sci.BeginInvoke((MethodInvoker)(() => HandlePositionResult(hc, result, status)));
-            }
+            if (hc.Sci.InvokeRequired) hc.Sci.BeginInvoke((MethodInvoker) (() => HandlePositionResult(hc, result, status)));
             else HandlePositionResult(hc, result, status);
         }
 
