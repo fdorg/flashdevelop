@@ -236,35 +236,28 @@ namespace ScintillaNet
 
         public ScintillaControl(string fullpath)
         {
-            try
+            if (Win32.ShouldUseWin32())
             {
-                if (Win32.ShouldUseWin32())
+                IntPtr lib = LoadLibrary(fullpath);
+                hwndScintilla = CreateWindowEx(0, "Scintilla", "", WS_CHILD_VISIBLE_TABSTOP, 0, 0, this.Width, this.Height, this.Handle, 0, new IntPtr(0), null);
+                directPointer = (IntPtr)SlowPerform(2185, 0, 0);
+                IntPtr sciFunctionPointer = GetProcAddress(new HandleRef(null, lib), "Scintilla_DirectFunction");
+                if (sciFunctionPointer == IntPtr.Zero) sciFunctionPointer = GetProcAddress(new HandleRef(null, lib), "_Scintilla_DirectFunction@16");
+                if (sciFunctionPointer == IntPtr.Zero)
                 {
-                    IntPtr lib = LoadLibrary(fullpath);
-                    hwndScintilla = CreateWindowEx(0, "Scintilla", "", WS_CHILD_VISIBLE_TABSTOP, 0, 0, this.Width, this.Height, this.Handle, 0, new IntPtr(0), null);
-                    directPointer = (IntPtr)SlowPerform(2185, 0, 0);
-                    IntPtr sciFunctionPointer = GetProcAddress(new HandleRef(null, lib), "Scintilla_DirectFunction");
-                    if (sciFunctionPointer == IntPtr.Zero) sciFunctionPointer = GetProcAddress(new HandleRef(null, lib), "_Scintilla_DirectFunction@16");
-                    if (sciFunctionPointer == IntPtr.Zero)
-                    {
-                        string msg = "The Scintilla module has no export for the 'Scintilla_DirectFunction' procedure.";
-                        throw new Win32Exception(msg, new Win32Exception(Marshal.GetLastWin32Error()));
-                    }
-                    _sciFunction = (Perform)Marshal.GetDelegateForFunctionPointer(sciFunctionPointer, typeof(Perform));
-                    directPointer = DirectPointer;
+                    string msg = "The Scintilla module has no export for the 'Scintilla_DirectFunction' procedure.";
+                    throw new Win32Exception(msg, new Win32Exception(Marshal.GetLastWin32Error()));
                 }
-                UpdateUI += new UpdateUIHandler(OnUpdateUI);
-                UpdateUI += new UpdateUIHandler(OnBraceMatch);
-                UpdateUI += new UpdateUIHandler(OnCancelHighlight);
-                DoubleClick += new DoubleClickHandler(OnBlockSelect);
-                CharAdded += new CharAddedHandler(OnSmartIndent);
-                Resize += new EventHandler(OnResize);
-                this.InitScrollBars(this);
+                _sciFunction = (Perform)Marshal.GetDelegateForFunctionPointer(sciFunctionPointer, typeof(Perform));
+                directPointer = DirectPointer;
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            UpdateUI += new UpdateUIHandler(OnUpdateUI);
+            UpdateUI += new UpdateUIHandler(OnBraceMatch);
+            UpdateUI += new UpdateUIHandler(OnCancelHighlight);
+            DoubleClick += new DoubleClickHandler(OnBlockSelect);
+            CharAdded += new CharAddedHandler(OnSmartIndent);
+            Resize += new EventHandler(OnResize);
+            this.InitScrollBars(this);
         }
 
         protected override void Dispose(bool disposing)
