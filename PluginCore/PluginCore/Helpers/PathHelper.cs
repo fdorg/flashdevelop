@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Reflection;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
@@ -19,7 +20,7 @@ namespace PluginCore.Helpers
         {
             get
             {
-                if (PluginBase.MainForm.StandaloneMode) return AppDir;
+                if (PluginBase.MainForm.StandaloneMode) return Path.GetDirectoryName(GetAssemblyPath(Assembly.GetExecutingAssembly()));
                 else return UserAppDir;
             }
         }
@@ -416,6 +417,34 @@ namespace PluginCore.Helpers
                     return key.GetValue("JavaHome").ToString();
                 }
             }
+        }
+
+        private static String GetAssemblyPath(Assembly assembly)
+        {
+            String codeBase = assembly.CodeBase;
+
+            if (codeBase.ToLower().StartsWith(Uri.UriSchemeFile))
+            {
+                // Skip over the file:// part
+                int start = Uri.UriSchemeFile.Length + Uri.SchemeDelimiter.Length;
+
+                if (codeBase[start] == '/') // third slash means a local path
+                {
+                    // Handle Windows Drive specifications
+                    if (codeBase[start + 2] == ':')
+                        ++start;
+                    // else leave the last slash so path is absolute
+                }
+                else // It's either a Windows Drive spec or a share
+                {
+                    if (codeBase[start + 1] != ':')
+                        start -= 2; // Back up to include two slashes
+                }
+
+                return codeBase.Substring(start);
+            }
+
+            return assembly.Location;
         }
 
     }
