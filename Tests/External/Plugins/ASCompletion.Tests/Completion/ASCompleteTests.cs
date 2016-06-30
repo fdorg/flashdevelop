@@ -36,7 +36,7 @@ namespace ASCompletion.Completion
             doc = Substitute.For<ITabbedDocument>();
             mainForm.Settings = settings;
             mainForm.CurrentDocument = doc;
-            mainForm.StandaloneMode = false;
+            mainForm.StandaloneMode = true;
             PluginBase.Initialize(mainForm);
             FlashDevelop.Managers.ScintillaManager.LoadConfiguration();
         }

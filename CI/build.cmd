@@ -11,19 +11,27 @@ set PATH=%PATH%;C:\Program Files\7-Zip\
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
 
-:: Build the PluginCore
-msbuild PluginCore\PluginCore.csproj /p:Configuration=Release /p:Platform="AnyCPU" /t:Rebuild
+:: Extract version from HEAD
+call SetVersion.bat
+
+:: Build the main solution and run tests
+msbuild FlashDevelop.sln /p:Configuration=Release+Tests /p:Platform="x86" /t:Rebuild %MSBuildLogger%
+
+powershell.exe -file ci\tests.ps1
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
 
-:: Extract version from HEAD
-call SetVersion.bat
+:: Check if the build was triggered by a pull request
+if "%APPVEYOR_PULL_REQUEST_NUMBER%" neq "" exit
 
-:: Build the solutions
-msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Rebuild
-ping -n 5 127.0.0.1 > nul
-msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
+:: Remove testing binaries so we can reuse the current build
+del "FlashDevelop\Bin/Debug\*.Tests.*" /Q
+del "FlashDevelop\Bin/Debug\NSubstitute.*" /Q
+del "FlashDevelop\Bin/Debug\nunit.framework.*" /Q
+
+:: Build AnyCPU version for 64bits support
+msbuild FlashDevelop.sln /p:Configuration=Release /p:Platform="Any CPU" /t:Rebuild %MSBuildLogger%
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error
@@ -53,9 +61,6 @@ del "FlashDevelop\Bin\Debug\StartPage\images\*.*" /q
 
 :: Copy distro files
 xcopy Distros\HaxeDevelop /s /e /y
-
-:: Build the PluginCore
-msbuild PluginCore\PluginCore.csproj /p:Configuration=Release /p:Platform="AnyCPU" /t:Rebuild
 
 :: Check for build errors
 if %errorlevel% neq 0 goto :error

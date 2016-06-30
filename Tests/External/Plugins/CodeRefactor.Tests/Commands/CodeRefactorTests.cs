@@ -34,7 +34,7 @@ namespace CodeRefactor.Commands
             mainForm.Settings = settings;
             mainForm.CurrentDocument = doc;
             mainForm.Documents = new[] {doc};
-            mainForm.StandaloneMode = false;
+            mainForm.StandaloneMode = true;
             PluginBase.Initialize(mainForm);
             FlashDevelop.Managers.ScintillaManager.LoadConfiguration();
         }
