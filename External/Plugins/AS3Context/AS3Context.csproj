@@ -79,9 +79,7 @@
     <Compile Include="Context.cs" />
     <Compile Include="Controls\ProfilerLiveObjectsView.cs">
     </Compile>
-    <Compile Include="Controls\ProfilerMemView.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Controls\ProfilerMemView.cs" />
     <Compile Include="Controls\ProfilerObjectsView.cs">
     </Compile>
     <Compile Include="Controls\ProfilerUI.cs">
