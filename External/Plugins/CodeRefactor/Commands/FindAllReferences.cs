@@ -25,6 +25,10 @@ namespace CodeRefactor.Commands
         /// </summary>
         public Boolean OnlySourceFiles { get; set; }
 
+        public bool IncludeComments { get; set; }
+
+        public bool IncludeStrings { get; set; }
+
         /// <summary>
         /// The current declaration target that references are being found to.
         /// </summary>
@@ -82,7 +86,7 @@ namespace CodeRefactor.Commands
             UserInterfaceManager.ProgressDialog.Show();
             UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("Info.FindingReferences"));
             UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.SearchingFiles"));
-            RefactoringHelper.FindTargetInFiles(currentTarget, new FRProgressReportHandler(this.RunnerProgress), new FRFinishedHandler(this.FindFinished), true, OnlySourceFiles, true);
+            RefactoringHelper.FindTargetInFiles(currentTarget, new FRProgressReportHandler(this.RunnerProgress), new FRFinishedHandler(this.FindFinished), true, OnlySourceFiles, true, IncludeComments, IncludeStrings);
         }
 
         /// <summary>
@@ -150,6 +154,7 @@ namespace CodeRefactor.Commands
                 totalMatches += entry.Value.Count;
             }
             Boolean foundDeclarationSource = false;
+            bool optionsEnabled = IncludeComments || IncludeStrings;
             foreach (KeyValuePair<String, List<SearchMatch>> entry in initialResultsList)
             {
                 String currentFileName = entry.Key;
@@ -161,6 +166,7 @@ namespace CodeRefactor.Commands
                     // we have to do it each time as the process of checking the declaration source can change the currently open file!
                     ScintillaControl sci = this.AssociatedDocumentHelper.LoadDocument(currentFileName).SciControl;
                     // if the search result does point to the member source, store it
+                    bool add = false;
                     if (RefactoringHelper.DoesMatchPointToTarget(sci, match, target, this.AssociatedDocumentHelper))
                     {
                         if (ignoreDeclarationSource && !foundDeclarationSource && RefactoringHelper.IsMatchTheTarget(sci, match, target))
@@ -170,13 +176,22 @@ namespace CodeRefactor.Commands
                         }
                         else
                         {
-                            if (!actualMatches.ContainsKey(currentFileName))
-                            {
-                                actualMatches.Add(currentFileName, new List<SearchMatch>());
-                            }
-                            actualMatches[currentFileName].Add(match);
+                            add = true;
                         }
                     }
+                    else if (optionsEnabled)
+                    {
+                        add = RefactoringHelper.IsInsideCommentOrString(match, sci, IncludeComments, IncludeStrings);
+                    }
+
+                    if (add)
+                    {
+                        if (!actualMatches.ContainsKey(currentFileName))
+                            actualMatches.Add(currentFileName, new List<SearchMatch>());
+
+                        actualMatches[currentFileName].Add(match);
+                    }
+
                     matchesChecked++;
                     UserInterfaceManager.ProgressDialog.UpdateProgress((100 * matchesChecked) / totalMatches);
                 }
