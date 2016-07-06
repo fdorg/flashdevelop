@@ -294,7 +294,11 @@ namespace FlashDevelop.Settings
         public Int32 ScrollWidth
         {
             get { return this.scrollWidth; }
-            set { this.scrollWidth = value; }
+            set
+            {
+                if (value < 0) throw new ArgumentOutOfRangeException();
+                this.scrollWidth = value;
+            }
         }
 
         [DefaultValue(DistroConfig.DISTRIBUTION_EXT)]
