@@ -125,7 +125,7 @@ namespace CssCompletion
             {
                 case EventType.Keys:
                 {
-                        if (this.IsSupported(document) && (e as KeyEvent).Value == (Keys.Control | Keys.Space))
+                        if (this.IsSupported(document) && (e as KeyEvent).Keys == (Keys.Control | Keys.Space))
                     {
                         if (completion != null)
                         {

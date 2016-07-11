@@ -173,8 +173,8 @@ namespace ResultsPanel
                             ke.Handled = pluginUI.ClearIgnoredEntries();
                             break;
                         default:
-                            if (ke.Value == CopyEntryKeys) ke.Handled = pluginUI.CopyTextShortcut();
-                            else if (ke.Value == IgnoreEntryKeys) ke.Handled = pluginUI.IgnoreEntryShortcut();
+                            if (ke.Keys == CopyEntryKeys) ke.Handled = pluginUI.CopyTextShortcut();
+                            else if (ke.Keys == IgnoreEntryKeys) ke.Handled = pluginUI.IgnoreEntryShortcut();
                             break;
                     }
                     

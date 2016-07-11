@@ -256,14 +256,11 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Gets the IgnoredKeys
-        /// <para/>
-        /// Ignored keys are shortcut keys that are not defined with <see cref="RegisterShortcutItem(string, ShortcutKeys, bool)"/>.
-        /// These are constant shortcuts which cannot be modified using the shortcut dialog.
+        /// [Deprecated] Gets the IgnoredKeys
         /// </summary>
-        public List<ShortcutKeys> IgnoredKeys
+        public List<Keys> IgnoredKeys
         {
-            get { return ShortcutManager.IgnoredKeys; }
+            get { return new List<Keys>(); }
         }
 
         /// <summary>
@@ -1714,7 +1711,7 @@ namespace FlashDevelop
             /**
              * Notify plugins.
              */
-            var ke = new KeyEvent(EventType.Keys, currentKeys, GetShortcutItemId(currentKeys));
+            var ke = new KeyEvent(EventType.Keys, currentKeys, GetShortcutId(currentKeys));
             EventManager.DispatchEvent(this, ke);
             if (ke.Handled)
             {
@@ -2064,9 +2061,25 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// [Deprecated] Gets the specified item's shortcut keys.
+        /// </summary>
+        public Keys GetShortcutItemKeys(String id)
+        {
+            return GetShortcutKeys(id);
+        }
+
+        /// <summary>
+        /// [Deprecated] Gets the specified item's id.
+        /// </summary>
+        public String GetShortcutItemId(Keys keys)
+        {
+            return GetShortcutId(keys);
+        }
+
+        /// <summary>
         /// Gets the specified item's shortcut keys.
         /// </summary>
-        public ShortcutKeys GetShortcutItemKeys(String id)
+        public ShortcutKeys GetShortcutKeys(String id)
         {
             ShortcutItem item = ShortcutManager.GetRegisteredItem(id);
             return item == null ? ShortcutKeys.None : item.Custom;
@@ -2075,12 +2088,46 @@ namespace FlashDevelop
         /// <summary>
         /// Gets the specified item's id.
         /// </summary>
-        public String GetShortcutItemId(ShortcutKeys keys)
+        public String GetShortcutId(ShortcutKeys keys)
         {
             ShortcutItem item = ShortcutManager.GetRegisteredItem(keys);
             return item == null ? string.Empty : item.Id;
         }
 
+        /// <summary>
+        /// Adds an ignored key. Ignored keys are valid shortcut keys that are not defined with <see cref="RegisterShortcutItem(string, ShortcutKeys, bool)"/>,
+        /// but should not prompt an "undefined shortcut keys" message. Instead these keys should have their default behaviors.
+        /// These are constant shortcuts which cannot be modified using the shortcut dialog.
+        /// </summary>
+        public void AddIgnoredKeys(ShortcutKeys keys)
+        {
+            ShortcutManager.IgnoredKeys.Add(keys);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="bool"/> value indicating whether the specified key is ignored.
+        /// </summary>
+        public Boolean ContainsIgnoredKeys(ShortcutKeys keys)
+        {
+            return ShortcutManager.IgnoredKeys.Contains(keys);
+        }
+
+        /// <summary>
+        /// Removes the specified key from ignored keys.
+        /// </summary>
+        public void RemoveIgnoredKeys(ShortcutKeys keys)
+        {
+            ShortcutManager.IgnoredKeys.Remove(keys);
+        }
+
+        /// <summary>
+        /// Clears all ignored keys.
+        /// </summary>
+        public void ClearIgnoredKeys()
+        {
+            ShortcutManager.IgnoredKeys.Clear();
+        }
+        
         /// <summary>
         /// [Deprecated] Registers a new menu item with the shortcut manager
         /// </summary>
@@ -2093,9 +2140,9 @@ namespace FlashDevelop
         /// <summary>
         /// Registers a new menu item with the shortcut manager
         /// </summary>
-        public void RegisterShortcutItem(String id, ShortcutKeys keys, bool supportsExteded)
+        public void RegisterShortcutItem(String id, ShortcutKeys keys, bool supportsExtended = true)
         {
-            ShortcutManager.RegisterItem(id, keys, supportsExteded);
+            ShortcutManager.RegisterItem(id, keys, supportsExtended);
         }
         
         /// <summary>
@@ -2147,7 +2194,7 @@ namespace FlashDevelop
                     return false;
             }
             previousKeys = ShortcutKeysManager.UpdateShortcutKeys(previousKeys, input);
-            shortcutId = GetShortcutItemId(previousKeys);
+            shortcutId = GetShortcutId(previousKeys);
             if (shortcutId.Length == 0)
             {
                 if (previousKeys.IsExtended)

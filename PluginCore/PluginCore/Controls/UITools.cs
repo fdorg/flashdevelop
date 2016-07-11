@@ -102,8 +102,8 @@ namespace PluginCore.Controls
             //
             // Events
             //
-            PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control); // complete member
-            PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control | Keys.Shift); // complete method
+            PluginBase.MainForm.AddIgnoredKeys(Keys.Space | Keys.Control); // complete member
+            PluginBase.MainForm.AddIgnoredKeys(Keys.Space | Keys.Control | Keys.Shift); // complete method
             PluginBase.MainForm.DockPanel.ActivePaneChanged += new EventHandler(DockPanel_ActivePaneChanged);
             EventManager.AddEventHandler(this, eventMask);
         }
@@ -353,7 +353,7 @@ namespace PluginCore.Controls
         
         private bool HandleKeys(KeyEvent e)
         {
-            Keys key = e.Value;
+            Keys key = e.Keys;
 
             // UITools is currently broadcasting a shortcut, ignore!
             if (ignoreKeys || DisableEvents) return false;

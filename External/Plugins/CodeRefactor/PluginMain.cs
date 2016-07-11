@@ -750,7 +750,7 @@ namespace CodeRefactor
             var index = menu.Items.IndexOf(menu.Rename);
             if (index == -1) return;
             var item = new ToolStripMenuItemEx(TextHelper.GetString("Label.Move"));
-            item.ShortcutKeys = PluginBase.MainForm.GetShortcutItemKeys("RefactorMenu.Move");
+            item.ShortcutKeys = PluginBase.MainForm.GetShortcutKeys("RefactorMenu.Move");
             item.Click += OnMoveItemClick;
             menu.Items.Insert(index + 1, item);
         }

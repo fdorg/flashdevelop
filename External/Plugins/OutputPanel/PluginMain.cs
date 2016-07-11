@@ -136,7 +136,7 @@ namespace OutputPanel
                     break;
 
                 case EventType.Keys:
-                    e.Handled = this.pluginUI.OnShortcut((Keys) (e as KeyEvent).Value);
+                    e.Handled = this.pluginUI.OnShortcut((Keys) (e as KeyEvent).Keys);
                     break;
 
                 case EventType.ApplySettings:

@@ -5206,7 +5206,7 @@ namespace ScintillaNet
         private static void AddShortcut(String displayName, ShortcutKeys keys, Action<ScintillaControl> action)
         {
             shortcutOverrides.Add("Scintilla." + displayName, new ShortcutOverride(keys, action));
-            PluginBase.MainForm.RegisterShortcutItem("Scintilla." + displayName, keys, true);
+            PluginBase.MainForm.RegisterShortcutItem("Scintilla." + displayName, keys);
         }
 
         /// <summary>

@@ -579,7 +579,7 @@ namespace ProjectManager
             // Handle tree-level simple shortcuts like copy/paste/del
             else if (Tree.Focused && !pluginUI.IsEditingLabel)
             {
-                switch ((Keys) ke.Value)
+                switch ((Keys) ke.Keys)
                 {
                     case Keys.Control | Keys.C:
                         if (pluginUI.Menu.Contains(pluginUI.Menu.Copy)) TreeCopyItems();

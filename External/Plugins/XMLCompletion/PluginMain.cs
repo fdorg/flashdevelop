@@ -118,7 +118,7 @@ namespace XMLCompletion
                     return;
 
                 case EventType.Keys:
-                    e.Handled = XMLComplete.OnShortCut((Keys) (e as KeyEvent).Value);
+                    e.Handled = XMLComplete.OnShortCut((Keys) (e as KeyEvent).Keys);
                     break;
 
                 case EventType.Command:

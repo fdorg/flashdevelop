@@ -78,9 +78,21 @@ namespace PluginCore
         private Boolean processKey;
 
         /// <summary>
+        /// [Deprecated] Gets the <see cref="System.Windows.Forms.Keys"/> value associated with this <see cref="KeyEvent"/>.
+        /// <para/>
+        /// This property is deprecated and is preserved only for backward-compatibility purposes.
+        /// Use <see cref="Keys"/> property instead.
+        /// </summary>
+        public Keys Value
+        {
+            get { return this.value; }
+            set { }
+        }
+
+        /// <summary>
         /// Gets the <see cref="ShortcutKeys"/> value associated with this <see cref="KeyEvent"/>.
         /// </summary>
-        public ShortcutKeys Value
+        public ShortcutKeys Keys
         {
             get { return this.value; }
             //set { this.value = value; }
@@ -106,12 +118,17 @@ namespace PluginCore
         }
 
         /// <summary>
+        /// [Deprecated] Initializes a new instance of the <see cref="KeyEvent"/> class.
+        /// </summary>
+        public KeyEvent(EventType type, Keys value) : this(type, (ShortcutKeys) value) { }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="KeyEvent"/> class.
         /// </summary>
         public KeyEvent(EventType type, ShortcutKeys value) : base(type)
         {
             this.value = value;
-            this.command = PluginBase.MainForm.GetShortcutItemId(this.value);
+            this.command = PluginBase.MainForm.GetShortcutId(this.value);
         }
 
         /// <summary>

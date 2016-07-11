@@ -804,7 +804,7 @@ namespace CodeRefactor.Commands
         /// </returns>
         private bool HandleShortcuts(Keys keys)
         {
-            switch (PluginBase.MainForm.GetShortcutItemId(keys))
+            switch (PluginBase.MainForm.GetShortcutId(keys))
             {
                 case "EditMenu.Paste":
                     PerformPaste();

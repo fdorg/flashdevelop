@@ -203,7 +203,7 @@ namespace FlashDevelop.Managers
                 string[] ids = ((ItemData) item.Tag).Id.Split(';');
                 if (ids.Length != 2) return; // No work for us here...
                 string id = string.IsNullOrEmpty(ids[1]) ? StripBarManager.GetMenuItemId(item) : ids[1];
-                var keys = Globals.MainForm.GetShortcutItemKeys(id);
+                var keys = Globals.MainForm.GetShortcutKeys(id);
                 if (!keys.IsNone)
                 {
                     if (item is ToolStripMenuItemEx)

@@ -7,6 +7,7 @@ using ScintillaNet;
 using ScintillaNet.Configuration;
 using ScintillaNet.Enums;
 using WeifenLuo.WinFormsUI.Docking;
+using Keys = System.Windows.Forms.Keys;
 
 namespace PluginCore
 {
@@ -137,13 +138,31 @@ namespace PluginCore
         /// </summary>
         void AutoUpdateMenuItem(ToolStripItem item, String action);
         /// <summary>
+        /// Adds an ignored key. Ignored keys are valid shortcut keys that are not defined with <see cref="RegisterShortcutItem(string, ShortcutKeys, bool)"/>,
+        /// but should not prompt an "undefined shortcut keys" message. Instead these keys should have their default behaviors.
+        /// These are constant shortcuts which cannot be modified using the shortcut dialog.
+        /// </summary>
+        void AddIgnoredKeys(ShortcutKeys keys);
+        /// <summary>
+        /// Returns a <see cref="bool"/> value indicating whether the specified key is ignored.
+        /// </summary>
+        Boolean ContainsIgnoredKeys(ShortcutKeys keys);
+        /// <summary>
+        /// Removes the specified key from ignored keys.
+        /// </summary>
+        void RemoveIgnoredKeys(ShortcutKeys keys);
+        /// <summary>
+        /// Clears all ignored keys.
+        /// </summary>
+        void ClearIgnoredKeys();
+        /// <summary>
         /// [Deprecated] Registers a new menu item with the shortcut manager.
         /// </summary>
-        void RegisterShortcutItem(String id, System.Windows.Forms.Keys keys);
+        void RegisterShortcutItem(String id, Keys keys);
         /// <summary>
         /// Registers a new menu item with the shortcut manager.
         /// </summary>
-        void RegisterShortcutItem(String id, ShortcutKeys keys, bool supportsExtended);
+        void RegisterShortcutItem(String id, ShortcutKeys keys, bool supportsExtended = true);
         /// <summary>
         /// Registers a new menu item with the shortcut manager.
         /// </summary>
@@ -210,13 +229,21 @@ namespace PluginCore
         /// </summary>
         String ProcessArgString(String args);
         /// <summary>
+        /// [Deprecated] Gets the specified item's shortcut keys.
+        /// </summary>
+        Keys GetShortcutItemKeys(String id);
+        /// <summary>
+        /// [Deprecated] Gets the specified item's id.
+        /// </summary>
+        String GetShortcutItemId(Keys keys);
+        /// <summary>
         /// Gets the specified item's shortcut keys.
         /// </summary>
-        ShortcutKeys GetShortcutItemKeys(String id);
+        ShortcutKeys GetShortcutKeys(String id);
         /// <summary>
         /// Gets the specified item's id.
         /// </summary>
-        String GetShortcutItemId(ShortcutKeys keys);
+        String GetShortcutId(ShortcutKeys keys);
         /// <summary>
         /// Gets a theme property value.
         /// </summary>
@@ -429,12 +456,13 @@ namespace PluginCore
         /// </summary>
         Boolean RefreshConfig { get; }
         /// <summary>
-        /// Gets the ignored keys.
+        /// [Deprecated] Gets the ignored keys.
         /// <para/>
-        /// Ignored keys are valid shortcut keys that are not defined but should not prompt an "undefined shortcut keys" message.
-        /// Instead those keys should have their default behaviors.
+        /// This method is deprecated and is preserved only for backward-compatibility purposes,
+        /// and will always return an empty <see cref="List{T}"/>.
+        /// Instead, use <see cref="AddIgnoredKeys"/>.
         /// </summary>
-        List<ShortcutKeys> IgnoredKeys { get; }
+        List<Keys> IgnoredKeys { get; }
         /// <summary>
         /// Gets the version of the application.
         /// </summary>

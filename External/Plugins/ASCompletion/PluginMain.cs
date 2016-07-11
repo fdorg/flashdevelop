@@ -195,7 +195,7 @@ namespace ASCompletion
 
                     // key combinations
                     case EventType.Keys:
-                        ShortcutKeys key = (e as KeyEvent).Value;
+                        ShortcutKeys key = (e as KeyEvent).Keys;
                         if (ModelsExplorer.HasFocus)
                         {
                             e.Handled = ModelsExplorer.Instance.OnShortcut((Keys) key);
@@ -753,9 +753,9 @@ namespace ASCompletion
             CompletionList.OnInsert += new InsertedTextHandler(ASComplete.HandleCompletionInsert);
 
             // shortcuts
-            PluginBase.MainForm.IgnoredKeys.Add(Keys.Control | Keys.Enter);
-            PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control | Keys.Alt); // complete project types
-            PluginBase.MainForm.RegisterShortcutItem("Completion.ShowHelp", ASComplete.HelpKeys, true);
+            PluginBase.MainForm.AddIgnoredKeys(Keys.Control | Keys.Enter);
+            PluginBase.MainForm.AddIgnoredKeys(Keys.Space | Keys.Control | Keys.Alt); // complete project types
+            PluginBase.MainForm.RegisterShortcutItem("Completion.ShowHelp", ASComplete.HelpKeys);
 
             // application events
             EventManager.AddEventHandler(this, eventMask);
