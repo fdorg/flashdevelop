@@ -1580,13 +1580,19 @@ namespace FlashDevelop
                     ITabbedDocument doc = Globals.CurrentDocument;
                     if (Control.FromHandle(hWnd) != null)
                     {
-                        Win32.SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
-                        return true;
-                    }
-                    else if (doc != null && doc.IsEditable && (hWnd == doc.SplitSci1.HandleSci || hWnd == doc.SplitSci2.HandleSci))
-                    {
-                        Win32.SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
-                        return true;
+                        if (hWnd == doc.SplitSci1.Handle || hWnd == doc.SplitSci2.Handle)
+                        {
+                            if (doc != null && doc.IsEditable)
+                            {
+                                Win32.SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
+                                return true;
+                            }
+                        }
+                        else
+                        {
+                            Win32.SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
+                            return true;
+                        }
                     }
                 }
             }

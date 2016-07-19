@@ -242,7 +242,7 @@ namespace ASCompletion.Completion
             // dot complete
             if (keys == (Keys.Control | Keys.Space))
             {
-                if (ASContext.HasContext && ASContext.Context.IsFileValid)
+                if (ASContext.HasContext && ASContext.Context.IsFileValid && Sci.ContainsFocus)
                 {
                     // try to get completion as if we had just typed the previous char
                     if (OnChar(Sci, Sci.CharAt(Sci.PositionBefore(Sci.CurrentPos)), false))
@@ -258,7 +258,7 @@ namespace ASCompletion.Completion
             }
             else if (keys == Keys.Back)
             {
-                HandleAddClosingBraces(Sci, Sci.CurrentChar, false);
+                if (Sci.ContainsFocus) HandleAddClosingBraces(Sci, Sci.CurrentChar, false);
                 return false;
             }
             // show calltip
@@ -276,7 +276,8 @@ namespace ASCompletion.Completion
             // project types completion
             else if (keys == (Keys.Control | Keys.Alt | Keys.Space))
             {
-                if (ASContext.HasContext && ASContext.Context.IsFileValid && !ASContext.Context.Settings.LazyClasspathExploration)
+                if (ASContext.HasContext && ASContext.Context.IsFileValid &&
+                    !ASContext.Context.Settings.LazyClasspathExploration && Sci.ContainsFocus)
                 {
                     int position = Sci.CurrentPos-1;
                     string tail = GetWordLeft(Sci, ref position);
@@ -1332,7 +1333,7 @@ namespace ASCompletion.Completion
                 prevParam = paramName;
                 calltipDetails = UITools.Manager.ShowDetails;
                 string text = calltipDef + ASDocumentation.GetTipDetails(calltipMember, paramName);
-                UITools.CallTip.CallTipShow(Sci, calltipPos - calltipOffset, text, forceRedraw);
+                UITools.CallTip.CallTipShow(calltipPos - calltipOffset, text, forceRedraw);
             }
 
             // highlight

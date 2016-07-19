@@ -921,22 +921,21 @@ namespace ASCompletion
             ASContext.OnTextChanged(sender, position, length, linesAdded);
         }
 
-        private void OnUpdateCallTip(ScintillaControl sci, int position)
+        private void OnUpdateCallTip(Control control, int position)
         {
-            if (ASComplete.HasCalltip())
-            {
-                int pos = sci.CurrentPos - 1;
-                char c = (char)sci.CharAt(pos);
-                if ((c == ',' || c == '(') && sci.BaseStyleAt(pos) == 0)
-                    sci.Colourise(0, -1);
-                ASComplete.HandleFunctionCompletion(sci, false, true);
-            }
+            var sci = (ScintillaControl) control;
+            int pos = sci.CurrentPos - 1;
+            char c = (char)sci.CharAt(pos);
+            if ((c == ',' || c == '(') && sci.BaseStyleAt(pos) == 0)
+                sci.Colourise(0, -1);
+            if (!ASComplete.HandleFunctionCompletion(sci, false, true))
+                UITools.CallTip.Hide();
         }
 
-        private void OnUpdateSimpleTip(ScintillaControl sci, Point mousePosition)
+        private void OnUpdateSimpleTip(Control sci, Point mousePosition)
         {
             if (UITools.Tip.Visible)
-                OnMouseHover(sci, lastHoverPosition);
+                OnMouseHover((ScintillaNet.ScintillaControl)sci, lastHoverPosition);
         }
 
         void timerPosition_Elapsed(object sender, ElapsedEventArgs e)
