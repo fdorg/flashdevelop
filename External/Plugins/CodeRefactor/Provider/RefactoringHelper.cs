@@ -344,6 +344,23 @@ namespace CodeRefactor.Provider
         /// <returns>If "asynchronous" is false, will return the search results, otherwise returns null on bad input or if running in asynchronous mode.</returns>
         public static FRResults FindTargetInFiles(ASResult target, FRProgressReportHandler progressReportHandler, FRFinishedHandler findFinishedHandler, Boolean asynchronous, Boolean onlySourceFiles, Boolean ignoreSdkFiles)
         {
+            return FindTargetInFiles(target, progressReportHandler, findFinishedHandler, asynchronous, onlySourceFiles, ignoreSdkFiles, false, false);
+        }
+
+        /// <summary>
+        /// Finds the given target in all project files.
+        /// If the target is a local variable or function parameter, it will only search the associated file.
+        /// Note: if running asynchronously, you must supply a listener to "findFinishedHandler" to retrieve the results.
+        /// If running synchronously, do not set listeners and instead use the return value.
+        /// </summary>
+        /// <param name="target">the source member to find references to</param>
+        /// <param name="progressReportHandler">event to fire as search results are compiled</param>
+        /// <param name="findFinishedHandler">event to fire once searching is finished</param>
+        /// <param name="asynchronous">executes in asynchronous mode</param>
+        /// <param name="onlySourceFiles">searches only on defined classpaths</param>
+        /// <returns>If "asynchronous" is false, will return the search results, otherwise returns null on bad input or if running in asynchronous mode.</returns>
+        public static FRResults FindTargetInFiles(ASResult target, FRProgressReportHandler progressReportHandler, FRFinishedHandler findFinishedHandler, Boolean asynchronous, Boolean onlySourceFiles, Boolean ignoreSdkFiles, bool includeComments, bool includeStrings)
+        {
             Boolean currentFileOnly = false;
             // checks target is a member
             if (target == null || ((target.Member == null || String.IsNullOrEmpty(target.Member.Name))
@@ -379,16 +396,16 @@ namespace CodeRefactor.Provider
                     }
                     return null;
                 }
-                config = new FRConfiguration(path, mask, false, GetFRSearch(target.Member != null ? target.Member.Name : target.Type.Name));
+                config = new FRConfiguration(path, mask, false, GetFRSearch(target.Member != null ? target.Member.Name : target.Type.Name, includeComments, includeStrings));
             }
             else if (target.Member != null && !CheckFlag(target.Member.Flags, FlagType.Constructor))
             {
-                config = new FRConfiguration(GetAllProjectRelatedFiles(project, onlySourceFiles, ignoreSdkFiles), GetFRSearch(target.Member.Name));
+                config = new FRConfiguration(GetAllProjectRelatedFiles(project, onlySourceFiles, ignoreSdkFiles), GetFRSearch(target.Member.Name, includeComments, includeStrings));
             }
             else
             {
                 target.Member = null;
-                config = new FRConfiguration(GetAllProjectRelatedFiles(project, onlySourceFiles, ignoreSdkFiles), GetFRSearch(target.Type.Name));
+                config = new FRConfiguration(GetAllProjectRelatedFiles(project, onlySourceFiles, ignoreSdkFiles), GetFRSearch(target.Type.Name, includeComments, includeStrings));
             }
             config.CacheDocuments = true;
             FRRunner runner = new FRRunner();
@@ -491,21 +508,25 @@ namespace CodeRefactor.Provider
         /// Generates an FRSearch to find all instances of the given member name.
         /// Enables WholeWord and Match Case. No comment/string literal, escape characters, or regex searching.
         /// </summary>
-        private static FRSearch GetFRSearch(string memberName)
+        private static FRSearch GetFRSearch(string memberName, bool includeComments, bool includeStrings)
         {
             FRSearch search = new FRSearch(memberName);
             search.IsRegex = false;
             search.IsEscaped = false;
             search.WholeWord = true;
             search.NoCase = false;
-            search.Filter = SearchFilter.None | SearchFilter.OutsideCodeComments | SearchFilter.OutsideStringLiterals;
+            search.Filter = SearchFilter.None;
+
+            if (!includeComments) search.Filter |= SearchFilter.OutsideCodeComments;
+            if (!includeStrings) search.Filter |= SearchFilter.OutsideStringLiterals;
+
             return search;
         }
 
         /// <summary>
         /// Replaces only the matches in the current sci control
         /// </summary>
-        public static void ReplaceMatches(IList<SearchMatch> matches, ScintillaControl sci, String replacement)
+        public static void ReplaceMatches(List<SearchMatch> matches, ScintillaControl sci, String replacement)
         {
             if (sci == null || matches == null || matches.Count == 0) return;
             sci.BeginUndoAction();
@@ -515,7 +536,7 @@ namespace CodeRefactor.Provider
                 {
                     var match = matches[i];
                     SelectMatch(sci, match);
-                    FRSearch.PadIndexes((List<SearchMatch>)matches, i, match.Value, replacement);
+                    FRSearch.PadIndexes(matches, i + 1, match.Value, replacement);
                     sci.EnsureVisible(sci.LineFromPosition(sci.MBSafePosition(match.Index)));
                     sci.ReplaceSel(replacement);
                 }
@@ -648,7 +669,40 @@ namespace CodeRefactor.Provider
                 project.Save();
             }
         }
+        
+        public static bool IsInsideCommentOrString(SearchMatch match, ScintillaControl sci, bool includeComments, bool includeStrings)
+        {
+            int style = sci.BaseStyleAt(match.Index);
+            return includeComments && IsCommentStyle(style) || includeStrings && IsStringStyle(style);
+        }
 
+        public static bool IsCommentStyle(int style)
+        {
+            switch (style)
+            {
+                case 1: //COMMENT
+                case 2: //COMMENTLINE
+                case 3: //COMMENTDOC
+                case 15: //COMMENTLINEDOC
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public static bool IsStringStyle(int style)
+        {
+            switch (style)
+            {
+                case 6: //STRING
+                case 7: //CHARACTER
+                case 13: //VERBATIM
+                case 14: //REGEX
+                    return true;
+                default:
+                    return false;
+            }
+        }
     }
 
 }

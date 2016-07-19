@@ -81,6 +81,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FDBuild", "External\Tools\F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASCompletion.Tests", "Tests\External\Plugins\ASCompletion.Tests\ASCompletion.Tests.csproj", "{ABC71D26-295C-4C6C-B6DE-320AD49EEF79}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeRefactor.Tests", "Tests\External\Plugins\CodeRefactor.Tests\CodeRefactor.Tests.csproj", "{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -351,6 +353,12 @@ Global
 		{ABC71D26-295C-4C6C-B6DE-320AD49EEF79}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABC71D26-295C-4C6C-B6DE-320AD49EEF79}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ABC71D26-295C-4C6C-B6DE-320AD49EEF79}.Release|x86.ActiveCfg = Release|x86
+		{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -4968,6 +4968,10 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <value>사용자 정의 프로젝트 템플릿 디렉토리를 경로.</value>
     <comment>Added after 3.3.4</comment>
   </data>
+  <data name="FlashDevelop.Description.CustomCommandPrompt" xml:space="preserve">
+    <value>Path to the custom command prompt executable.</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
   <data name="ASCompletion.Description.HandlerNamingConvention" xml:space="preserve">
     <value>생성기가 자동으로 다음 명명 규칙을 사용하여 이벤트 핸들러 메소드 이름을 생성할 수 있습니다.</value>
     <comment>Added after 3.3.4</comment>
@@ -6006,19 +6010,51 @@ Complete: 현재 파일, 프로젝트 파일 및 수동 새로 고침.</value>
     <comment>Added after 5.0.2</comment>
   </data>
   <data name="CodeFormatter.Description.AStyle.OptionsCPP" xml:space="preserve">
-    <value>Manual options for the CPP language, read more: http://astyle.sourceforge.net/astyle.html</value>
+    <value>CPP 언어에 대한 수동 옵션. 자세한 내용: http://astyle.sourceforge.net/astyle.html</value>
     <comment>Added after 5.1.0</comment>
   </data>
   <data name="CodeFormatter.Description.AStyle.OptionsOthers" xml:space="preserve">
-    <value>Manual options for other C like languages, read more: http://astyle.sourceforge.net/astyle.html</value>
+    <value>다른 C와 같은 언어에 대한 수동 옵션. 자세한 내용: http://astyle.sourceforge.net/astyle.html</value>
     <comment>Added after 5.1.0</comment>
   </data>
   <data name="FlashConnect.Info.ConnectionFailed" xml:space="preserve">
-    <value>Connection failed. Default socket port '{0}' is already in use.</value>
+    <value>연결 실패. 기본 소켓 포트 '{0}'(은)는 이미 사용 중입니다.</value>
     <comment>Added after 5.1.0</comment>
   </data>
   <data name="FlashDevelop.Description.KeepCaretCentered" xml:space="preserve">
-    <value>Keeps the caret centered when caret is navigated to.</value>
+    <value>탐색 할 때 중앙에 커서를 유지합니다.</value>
     <comment>Added after 5.1.1</comment>
+  </data>
+  <data name="CodeRefactor.Description.ReplaceAllOccurrences" xml:space="preserve">
+    <value>강조된 모든 항목을 새로운 변수로 교체합니다.</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
+  <data name="CodeRefactor.Description.ReplaceInitialOccurrence" xml:space="preserve">
+    <value>새로운 변수로 교체합니다.</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
+  <data name="CodeRefactor.Info.ReplacedOccurrences" xml:space="preserve">
+    <value>{0}개의 항목 교체</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
+  <data name="FlashDevelop.Description.MaxRecentFiles" xml:space="preserve">
+    <value>최근 파일 목록의 최대 길이.</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
+  <data name="CodeRefactor.Description.UseInlineRenaming" xml:space="preserve">
+    <value>이름 바꾸기를 사용할때 인라인 편집을 사용합니다.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeRefactor.Label.IncludeComments" xml:space="preserve">
+    <value>주석 포함</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeRefactor.Label.IncludeStrings" xml:space="preserve">
+    <value>문자열 포함</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeRefactor.Label.PreviewChanges" xml:space="preserve">
+    <value>미리보기</value>
+    <comment>Added after 5.2.0</comment>
   </data>
 </root>

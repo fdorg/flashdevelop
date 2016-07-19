@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using FlashDevelop.Dialogs;
 using FlashDevelop.Utilities;
 using PluginCore;
 using ScintillaNet.Configuration;
@@ -89,6 +88,7 @@ namespace FlashDevelop
 
         public DockContent OpenEditableDocument(string file, bool restoreFileState)
         {
+            if (CurrentDocument != null && CurrentDocument.FileName == file) return CurrentDocument as DockContent;
             throw new NotImplementedException();
         }
 
@@ -398,6 +398,11 @@ namespace FlashDevelop
         }
 
         public List<Keys> IgnoredKeys
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public string CommandPromptExecutable
         {
             get { throw new NotImplementedException(); }
         }
