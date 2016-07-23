@@ -665,7 +665,7 @@ namespace ASCompletion.Completion
 
                 if (!found)
                 {
-                    sci.EnsureVisibleEnforcePolicy(line);
+                    sci.EnsureVisible(line);
                     int linePos = sci.PositionFromLine(line);
                     sci.SetSel(linePos, linePos);
                 }
