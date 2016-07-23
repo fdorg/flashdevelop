@@ -48,17 +48,19 @@ namespace CodeRefactor.Commands
                     return;
                 }
             }
+
+            newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
+
             // refactor failed or was refused
             if (Path.GetFileName(oldPath).Equals(newPath, StringComparison.OrdinalIgnoreCase))
             {
                 // name casing changed
                 string tmpPath = oldPath + "$renaming$";
                 File.Move(oldPath, tmpPath);
-                oldPath = tmpPath;
+                File.Move(tmpPath, newPath);
+                DocumentManager.MoveDocuments(oldPath, newPath);
             }
-            if (!Path.IsPathRooted(newPath)) newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
-
-            if (FileHelper.ConfirmOverwrite(newPath))
+            else if (FileHelper.ConfirmOverwrite(newPath))
             {
                 FileHelper.ForceMove(oldPath, newPath);
                 DocumentManager.MoveDocuments(oldPath, newPath);

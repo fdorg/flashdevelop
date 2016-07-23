@@ -222,7 +222,7 @@ namespace CodeRefactor.Commands
             if (string.IsNullOrEmpty(oldFileName) || oldFileName.Equals(newFileName)) return false;
 
             // Check if the new file name already exists
-            return FileHelper.ConfirmOverwrite(newFileName);
+            return oldFileName.Equals(newFileName, StringComparison.OrdinalIgnoreCase) || FileHelper.ConfirmOverwrite(newFileName);
         }
 
         /// <summary>
