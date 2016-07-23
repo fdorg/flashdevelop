@@ -501,18 +501,23 @@ namespace FlashDevelop.Dialogs
 
                 if (changedItem.PropertyDescriptor.Attributes.Matches(new RequiresRestartAttribute()))
                 {
-                    bool previous = requireRestart.Count > 0;
-                    if (requireRestart.Contains(settingId))
-                    {
-                        if (requireRestart[settingId].Equals(changedItem.Value))
-                        {
-                            requireRestart.Remove(settingId);
-                        }
-                    }
-                    else requireRestart.Add(settingId, e.OldValue);
-                    if (requireRestart.Count > 0 != previous)  UpdateInfo();
+                    UpdateRestartRequired(settingId, e.OldValue, changedItem.Value);
                 }
             }
+        }
+
+        private void UpdateRestartRequired(string key, object oldValue, object newValue)
+        {
+            bool previous = requireRestart.Count > 0;
+            if (requireRestart.Contains(key))
+            {
+                if (requireRestart[key].Equals(newValue))
+                {
+                    requireRestart.Remove(key);
+                }
+            }
+            else requireRestart.Add(key, oldValue);
+            if (requireRestart.Count > 0 != previous) UpdateInfo();
         }
 
         private void UpdateInfo()
@@ -560,7 +565,8 @@ namespace FlashDevelop.Dialogs
             if (selectedIndex != 0)
             {
                 IPlugin plugin = PluginServices.AvailablePlugins[selectedIndex - 1].Instance;
-                if (this.disableCheckBox.Checked)
+                bool disabled = this.disableCheckBox.Checked;
+                if (disabled)
                 {
                     this.itemListView.Items[selectedIndex].ImageIndex = 1;
                     Globals.Settings.DisabledPlugins.Add(plugin.Guid);
@@ -570,6 +576,7 @@ namespace FlashDevelop.Dialogs
                     this.itemListView.Items[selectedIndex].ImageIndex = 0;
                     Globals.Settings.DisabledPlugins.Remove(plugin.Guid);
                 }
+                UpdateRestartRequired(nameLabel.Text, !disabled, disabled);
             }
         }
 
