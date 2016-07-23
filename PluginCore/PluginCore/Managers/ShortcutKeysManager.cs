@@ -437,7 +437,7 @@ namespace PluginCore.Managers
 
         // Reflection: System.Windows.Forms.UnsafeNativeMethods.GetAncestor(HandleRef, Int32)
         // Cache: N/A
-        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+        [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "GetAncestor", ExactSpelling = true)]
         internal static extern IntPtr UnsafeNativeMethods_GetAncestor(HandleRef hWnd, int flags);
 
         // Reflection: System.Windows.Forms.WindowsFormsUtils.GetRootHWnd(Control), [inline] System.Windows.Forms.WindowsFormsUtils.GetRootHWnd(HandleRef)
