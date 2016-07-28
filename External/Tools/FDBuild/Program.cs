@@ -47,7 +47,7 @@ namespace FDBuild
             if (File.Exists(Path.Combine(swfmillPath, "swfmill.exe")))
                 SwfmillLibraryBuilder.ExecutablePath = Path.Combine(swfmillPath, "swfmill.exe");
             else
-                SwfmillLibraryBuilder.ExecutablePath = "swfmill.exe"; // hope you have it in your environment path!
+                SwfmillLibraryBuilder.ExecutablePath = "swfmill"; // hope you have it in your environment path!
 
             // figure user settings PlatformData
             string platformsFile = Path.Combine("Settings", "Platforms");

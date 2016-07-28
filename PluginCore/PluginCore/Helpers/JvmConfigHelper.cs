@@ -79,11 +79,11 @@ namespace PluginCore.Helpers
         }
         public static string GetJavaEXE(Dictionary<string, string> jvmConfig, string flexSdkPath)
         {
-            string defaultExe = "java.exe";
+            string defaultExe = "java";
             string home = GetJavaHome(jvmConfig, flexSdkPath);
             if (!String.IsNullOrEmpty(home) && !home.StartsWith("%", StringComparison.Ordinal))
             {
-                return Path.Combine(home, "bin\\java.exe");
+                return Path.Combine(home, "bin\\java");
             }
             return defaultExe;
         }

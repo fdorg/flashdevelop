@@ -33,7 +33,7 @@ namespace ProjectManager.Building.AS2
                 if (File.Exists(mtascPath))
                     return mtascPath;
                 else
-                    return "mtasc.exe"; // hope you have it in your environment path!
+                    return "mtasc"; // hope you have it in your environment path!
             }
         }
         #endregion
