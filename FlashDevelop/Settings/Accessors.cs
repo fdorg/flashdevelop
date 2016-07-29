@@ -197,6 +197,7 @@ namespace FlashDevelop.Settings
         [LocalizedCategory("FlashDevelop.Category.Display")]
         [LocalizedDescription("FlashDevelop.Description.DefaultFont")]
         [DefaultValue(typeof(Font), "Tahoma, 8.25pt")]
+        [RequiresRestart]
         public Font DefaultFont
         {
             get { return this.defaultFont; }
@@ -364,6 +365,7 @@ namespace FlashDevelop.Settings
         [DefaultValue(LocaleVersion.en_US)]
         [LocalizedCategory("FlashDevelop.Category.Locale")]
         [LocalizedDescription("FlashDevelop.Description.LocaleVersion")]
+        [RequiresRestart]
         public LocaleVersion LocaleVersion
         {
             get { return this.localeVersion; }
