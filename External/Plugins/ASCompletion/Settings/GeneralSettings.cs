@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Drawing.Design;
+using ASCompletion.Helpers;
 using Ookii.Dialogs;
 using PluginCore.Localization;
 
@@ -285,7 +286,13 @@ namespace ASCompletion.Settings
         #region Generator
 
         const bool DEFAULT_GENERATE_PROTECTED = false;
-        const bool DEFAULT_GENERATE_STARTWITHMODIFIERS = false;
+        public const string DECLARATION_MODIFIER_REST = "<rest>";
+        public static readonly string[] DEFAULT_DECLARATION_MODIFIER_ORDER = { DECLARATION_MODIFIER_REST };
+        public static readonly string[] ALL_DECLARATION_MODIFIERS =
+        {
+            DECLARATION_MODIFIER_REST,
+            "public", "internal", "protected", "private", "static", "override", "final", "inline", "extern", "dynamic", "macro", "native", "intrinsic"
+        };
         const bool DEFAULT_GENERATE_ADDCLOSINGBRACES = false;
         const PropertiesGenerationLocations DEFAULT_GENERATE_PROPERTIES = PropertiesGenerationLocations.AfterLastPropertyDeclaration;
         const MethodsGenerationLocations DEFAULT_GENERATE_METHODS = MethodsGenerationLocations.AfterCurrentMethod;
@@ -300,7 +307,7 @@ namespace ASCompletion.Settings
 
         private bool generateProtectedDeclarations = DEFAULT_GENERATE_PROTECTED;
         private string[] eventListenersAutoRemove;
-        private bool startWithModifiers;
+        private string[] declarationModifierOrder = null;
         private PropertiesGenerationLocations propertiesGenerationLocation;
         private MethodsGenerationLocations methodsGenerationLocation;
         private string prefixFields = DEFAULT_GENERATE_PREFIXFIELDS;
@@ -325,13 +332,14 @@ namespace ASCompletion.Settings
             set { generateProtectedDeclarations = value; }
         }
         
-        [DisplayName("Start Declarations With Access Modifiers")]
-        [LocalizedCategory("ASCompletion.Category.Generation"), LocalizedDescription("ASCompletion.Description.StartWithModifiers"),
-        DefaultValue(DEFAULT_GENERATE_STARTWITHMODIFIERS)]
-        public bool StartWithModifiers
+        [DisplayName("Declaration Modifier Order")]
+        [LocalizedCategory("ASCompletion.Category.Generation"), LocalizedDescription("ASCompletion.Description.StartWithModifiers")]
+        [DefaultValue(new[] { DECLARATION_MODIFIER_REST })]
+        [Editor(typeof(ModifierOrderEditor), typeof(UITypeEditor))]
+        public string[] DeclarationModifierOrder
         {
-            get { return startWithModifiers; }
-            set { startWithModifiers = value; }
+            get { return declarationModifierOrder ?? DEFAULT_DECLARATION_MODIFIER_ORDER; }
+            set { declarationModifierOrder = value; }
         }
 
         [DisplayName("Generate Explicit Scope")]
