@@ -309,6 +309,7 @@ namespace FlashDevelop.Managers
                     sci.SetXCaretPolicy((Int32)CaretPolicy.Even, 0);
                     sci.SetYCaretPolicy((Int32)CaretPolicy.Even, 0);
                 }
+                sci.SetVisiblePolicy((Int32)(CaretPolicy.Strict | CaretPolicy.Even), 0);
                 /**
                 * Adjust the print margin
                 */

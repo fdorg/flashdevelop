@@ -51,7 +51,7 @@ namespace AS3Context.Controls
                         ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
                         int pos = sci.PositionFromLine(lineToOpen);
                         sci.SetSel(pos, pos);
-                        sci.EnsureVisible(lineToOpen);
+                        sci.EnsureVisibleEnforcePolicy(lineToOpen);
                     }
                 }
                 fileToOpen = null;

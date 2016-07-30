@@ -48,21 +48,38 @@ namespace FlashDevelop.Managers
             if ((lineMask & GetMarkerMask(marker)) != 0)
             {
                 next = sci.MarkerNext(line + 1, GetMarkerMask(marker));
-                if (next != -1) sci.GotoLineIndent(next);
+                if (next != -1)
+                {
+                    sci.EnsureVisibleEnforcePolicy(next);
+                    sci.GotoLineIndent(next);
+                }
                 else
                 {
                     next = sci.MarkerNext(0, GetMarkerMask(marker));
-                    if (next != -1) sci.GotoLineIndent(next);
+                    if (next != -1)
+                    {
+
+                        sci.EnsureVisibleEnforcePolicy(next);
+                        sci.GotoLineIndent(next);
+                    }
                 }
             }
             else
             {
                 next = sci.MarkerNext(line, GetMarkerMask(marker));
-                if (next != -1) sci.GotoLineIndent(next);
+                if (next != -1)
+                {
+                    sci.EnsureVisibleEnforcePolicy(next);
+                    sci.GotoLineIndent(next);
+                }
                 else
                 {
                     next = sci.MarkerNext(0, GetMarkerMask(marker));
-                    if (next != -1) sci.GotoLineIndent(next);
+                    if (next != -1)
+                    {
+                        sci.EnsureVisibleEnforcePolicy(next);
+                        sci.GotoLineIndent(next);
+                    }
                 }
             }
         }
@@ -77,23 +94,39 @@ namespace FlashDevelop.Managers
             if ((lineMask & GetMarkerMask(marker)) != 0)
             {
                 prev = sci.MarkerPrevious(line - 1, GetMarkerMask(marker));
-                if (prev != -1) sci.GotoLineIndent(prev);
+                if (prev != -1)
+                {
+                    sci.EnsureVisibleEnforcePolicy(prev);
+                    sci.GotoLineIndent(prev);
+                }
                 else
                 {
                     count = sci.LineCount;
                     prev = sci.MarkerPrevious(count, GetMarkerMask(marker));
-                    if (prev != -1) sci.GotoLineIndent(prev);
+                    if (prev != -1)
+                    {
+                        sci.EnsureVisibleEnforcePolicy(prev);
+                        sci.GotoLineIndent(prev);
+                    }
                 }
             }
             else
             {
                 prev = sci.MarkerPrevious(line, GetMarkerMask(marker));
-                if (prev != -1) sci.GotoLineIndent(prev);
+                if (prev != -1)
+                {
+                    sci.EnsureVisibleEnforcePolicy(prev);
+                    sci.GotoLineIndent(prev);
+                }
                 else
                 {
                     count = sci.LineCount;
                     prev = sci.MarkerPrevious(count, GetMarkerMask(marker));
-                    if (prev != -1) sci.GotoLineIndent(prev);
+                    if (prev != -1)
+                    {
+                        sci.EnsureVisibleEnforcePolicy(prev);
+                        sci.GotoLineIndent(prev);
+                    }
                 }
             }
         }

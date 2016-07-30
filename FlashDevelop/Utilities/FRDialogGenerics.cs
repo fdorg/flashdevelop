@@ -53,7 +53,7 @@ namespace FlashDevelop.Utilities
             Int32 start = sci.MBSafePosition(match.Index); // wchar to byte position
             Int32 end = start + sci.MBSafeTextLength(match.Value); // wchar to byte text length
             Int32 line = sci.LineFromPosition(start);
-            sci.EnsureVisible(line);
+            sci.EnsureVisibleEnforcePolicy(line);
             sci.SetSel(start, end);
         }
 
