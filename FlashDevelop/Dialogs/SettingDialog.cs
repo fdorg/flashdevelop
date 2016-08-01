@@ -1,13 +1,14 @@
 using System;
+using System.Collections;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
-using PluginCore.Localization;
 using FlashDevelop.Utilities;
-using PluginCore.Managers;
+using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
-using PluginCore;
+using PluginCore.Localization;
+using PluginCore.Managers;
 
 namespace FlashDevelop.Dialogs
 {
@@ -30,9 +31,10 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.Label infoLabel;
         private System.Windows.Forms.Label descLabel;
         private String itemFilter = String.Empty;
-        private static Int32 lastItemIndex = 0;
         private InstalledSDKContext sdkContext;
         private ShortcutKeys currentKeys;
+        private static Int32 lastItemIndex = 0;
+        private static Hashtable requireRestart = new Hashtable();
 
         public SettingDialog(String itemName, String filter)
         {
@@ -45,6 +47,7 @@ namespace FlashDevelop.Dialogs
             this.InitializeContextMenu();
             this.PopulatePluginList(itemName, filter);
             this.ApplyLocalizedTexts();
+            this.UpdateInfo();
         }
 
         #region Windows Form Designer Generated Code
@@ -256,13 +259,13 @@ namespace FlashDevelop.Dialogs
         {
             ImageList imageList = new ImageList();
             imageList.ColorDepth = ColorDepth.Depth32Bit;
+            imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             imageList.Images.Add(Globals.MainForm.FindImage("341", false));
             imageList.Images.Add(Globals.MainForm.FindImage("342", false));
             imageList.Images.Add(Globals.MainForm.FindImage("50", false));
             imageList.Images.Add(Globals.MainForm.FindImage("153", false)); // clear
-            this.infoPictureBox.Image = Globals.MainForm.FindImage("229", false);
+            //this.infoPictureBox.Image = Globals.MainForm.FindImage("229", false);
             this.itemListView.SmallImageList = imageList;
-            this.itemListView.SmallImageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
             this.clearFilterButton.ImageList = imageList;
             this.clearFilterButton.ImageIndex = 3;
         }
@@ -275,7 +278,7 @@ namespace FlashDevelop.Dialogs
             this.helpLabel.Text = TextHelper.GetString("Info.Help");
             this.Text = " " + TextHelper.GetString("Title.SettingDialog");
             this.disableCheckBox.Text = " " + TextHelper.GetString("Info.Disable");
-            this.infoLabel.Text = TextHelper.GetString("Info.SettingsTakeEffect");
+            //this.infoLabel.Text = TextHelper.GetString("Info.SettingsTakeEffect");
             this.filterLabel.Text = TextHelper.GetString("Info.FilterSettings");
             this.nameLabel.Text = TextHelper.GetString("Info.NoItemSelected");
             this.closeButton.Text = TextHelper.GetString("Label.Close");
@@ -516,6 +519,39 @@ namespace FlashDevelop.Dialogs
                 String settingId = this.nameLabel.Text + "." + changedItem.Label.Replace(" ", "");
                 TextEvent te = new TextEvent(EventType.SettingChanged, settingId);
                 EventManager.DispatchEvent(Globals.MainForm, te);
+
+                if (changedItem.PropertyDescriptor.Attributes.Matches(new RequiresRestartAttribute()))
+                {
+                    UpdateRestartRequired(settingId, e.OldValue, changedItem.Value);
+                }
+            }
+        }
+
+        private void UpdateRestartRequired(string key, object oldValue, object newValue)
+        {
+            bool previous = requireRestart.Count > 0;
+            if (requireRestart.Contains(key))
+            {
+                if (requireRestart[key].Equals(newValue))
+                {
+                    requireRestart.Remove(key);
+                }
+            }
+            else requireRestart.Add(key, oldValue);
+            if (requireRestart.Count > 0 != previous) UpdateInfo();
+        }
+
+        private void UpdateInfo()
+        {
+            if (requireRestart.Count > 0)
+            {
+                this.infoLabel.Text = TextHelper.GetString("Info.RequiresRestart");
+                this.infoPictureBox.Image = Globals.MainForm.FindImage("196", false);
+            }
+            else
+            {
+                this.infoLabel.Text = TextHelper.GetString("Info.SettingsTakeEffect");
+                this.infoPictureBox.Image = Globals.MainForm.FindImage("229", false);
             }
         }
 
@@ -550,7 +586,8 @@ namespace FlashDevelop.Dialogs
             if (selectedIndex != 0)
             {
                 IPlugin plugin = PluginServices.AvailablePlugins[selectedIndex - 1].Instance;
-                if (this.disableCheckBox.Checked)
+                bool disabled = this.disableCheckBox.Checked;
+                if (disabled)
                 {
                     this.itemListView.Items[selectedIndex].ImageIndex = 1;
                     Globals.Settings.DisabledPlugins.Add(plugin.Guid);
@@ -560,6 +597,7 @@ namespace FlashDevelop.Dialogs
                     this.itemListView.Items[selectedIndex].ImageIndex = 0;
                     Globals.Settings.DisabledPlugins.Remove(plugin.Guid);
                 }
+                UpdateRestartRequired(nameLabel.Text, !disabled, disabled);
             }
         }
 
@@ -592,6 +630,7 @@ namespace FlashDevelop.Dialogs
             if (sdkContext != null) sdkContext.Dispose();
             Globals.MainForm.ApplyAllSettings();
             Globals.MainForm.SaveSettings();
+            if (requireRestart.Count > 0 && !Globals.MainForm.RequiresRestart) Globals.MainForm.RestartRequired();
         }
 
         /// <summary>

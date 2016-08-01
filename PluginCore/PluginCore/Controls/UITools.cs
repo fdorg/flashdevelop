@@ -303,7 +303,7 @@ namespace PluginCore.Controls
             }
             if (sci != null && sci.IsFocus)
             {
-                int position = sci.CurrentPos;
+                int position = sci.SelectionEnd;
                 if (CompletionList.Active && CompletionList.CheckPosition(position)) return;
                 if (callTip.CallTipActive && callTip.CheckPosition(position)) return;
             }

@@ -562,7 +562,7 @@ namespace ResultsPanel
         private void SetSelAndFocus(ScintillaControl sci, Int32 line, Int32 startPosition, Int32 endPosition)
         {
             sci.SetSel(startPosition, endPosition);
-            sci.EnsureVisible(line);
+            sci.EnsureVisibleEnforcePolicy(line);
         }
 
         /// <summary>
@@ -571,7 +571,7 @@ namespace ResultsPanel
         private void MBSafeSetSelAndFocus(ScintillaControl sci, Int32 line, Int32 startPosition, Int32 endPosition)
         {
             sci.MBSafeSetSel(startPosition, endPosition);
-            sci.EnsureVisible(line);
+            sci.EnsureVisibleEnforcePolicy(line);
         }
 
         /// <summary>

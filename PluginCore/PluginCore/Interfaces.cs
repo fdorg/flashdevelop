@@ -452,6 +452,10 @@ namespace PluginCore
         /// </summary>
         Boolean RestartRequested { get; }
         /// <summary>
+        /// Gets whether the application requires a restart to apply changes.
+        /// </summary>
+        Boolean RequiresRestart { get; }
+        /// <summary>
         /// Gets whether the config should be refreshed.
         /// </summary>
         Boolean RefreshConfig { get; }
