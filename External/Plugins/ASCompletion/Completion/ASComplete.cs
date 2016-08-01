@@ -708,7 +708,7 @@ namespace ASCompletion.Completion
                         if (m.Success)
                         {
                             int position = sci.PositionFromLine(i) + sci.MBSafeTextLength(text.Substring(0, m.Groups["name"].Index));
-                            sci.EnsureVisible(sci.LineFromPosition(position));
+                            sci.EnsureVisibleEnforcePolicy(sci.LineFromPosition(position));
                             sci.SetSel(position, position + m.Groups["name"].Length);
                             found = true;
                             break;

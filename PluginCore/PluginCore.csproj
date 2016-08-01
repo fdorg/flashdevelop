@@ -110,6 +110,7 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
+    <Reference Include="System.Data" />
     <Reference Include="System.Design">
       <Name>System.Design</Name>
     </Reference>
@@ -313,6 +314,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="PluginCore\Controls\DescriptiveCollectionEditor.cs" />
+    <Compile Include="PluginCore\Controls\FixedValuesCollectionEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="PluginCore\Controls\MessageBoxManager.cs" />
     <Compile Include="PluginCore\Controls\ScrollBarEx.cs">
       <SubType>Component</SubType>

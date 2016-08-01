@@ -32,7 +32,6 @@ namespace ASCompletion.Completion
         const string BlankLine = "$(Boundary)\n\n";
         const string NewLine = "$(Boundary)\n";
         static private Regex reModifiers = new Regex("^\\s*(\\$\\(Boundary\\))?([a-z ]+)(function|var|const)", RegexOptions.Compiled);
-        static private Regex reModifier = new Regex("(public |private |protected )", RegexOptions.Compiled);
         static private Regex reSuperCall = new Regex("^super\\s*\\(", RegexOptions.Compiled);
 
         static internal string contextToken;
@@ -4428,8 +4427,8 @@ namespace ASCompletion.Completion
             sci.BeginUndoAction();
             try
             {
-                if (ASContext.CommonSettings.StartWithModifiers)
-                    src = FixModifiersLocation(src);
+                if (ASContext.CommonSettings.DeclarationModifierOrder.Length > 1)
+                    src = FixModifiersLocation(src, ASContext.CommonSettings.DeclarationModifierOrder);
 
                 int len = SnippetHelper.InsertSnippetText(sci, position + sci.MBSafeTextLength(sci.SelText), src);
                 UpdateLookupPosition(position, len);
@@ -4439,9 +4438,9 @@ namespace ASCompletion.Completion
         }
 
         /// <summary>
-        /// Move "visibility" modifier at the beginning of the line
+        /// Order declaration modifiers
         /// </summary>
-        private static string FixModifiersLocation(string src)
+        private static string FixModifiersLocation(string src, string[] modifierOrder)
         {
             bool needUpdate = false;
             string[] lines = src.Split('\n');
@@ -4450,20 +4449,44 @@ namespace ASCompletion.Completion
                 string line = lines[i];
 
                 Match m = reModifiers.Match(line);
-                if (m.Success)
+                if (!m.Success) continue;
+
+                Group decl = m.Groups[2];
+                string modifiers = decl.Value;
+                string before = "", after = "";
+                bool insertAfter = false;
+
+                for (int j = 0; j < modifierOrder.Length; j++)
                 {
-                    Group decl = m.Groups[2];
-                    Match m2 = reModifier.Match(decl.Value);
-                    if (m2.Success)
+                    string modifier = modifierOrder[j];
+                    if (modifier == GeneralSettings.DECLARATION_MODIFIER_REST) insertAfter = true;
+                    else
                     {
-                        string repl = m2.Value + decl.Value.Remove(m2.Index, m2.Length);
-                        lines[i] = line.Remove(decl.Index, decl.Length).Insert(decl.Index, repl);
-                        needUpdate = true;
+                        modifier = RemoveAndExtractModifier(modifier, ref modifiers);
+                        if (insertAfter) after += modifier;
+                        else before += modifier;
                     }
                 }
+
+                modifiers = before + modifiers + after;
+
+                if (decl.Value != modifiers)
+                {
+                    lines[i] = line.Remove(decl.Index, decl.Length).Insert(decl.Index, modifiers);
+                    needUpdate = true;
+                }
             }
-            if (needUpdate) return String.Join("\n", lines);
-            else return src;
+            return needUpdate ? string.Join("\n", lines) : src;
+        }
+
+        private static string RemoveAndExtractModifier(string modifier, ref string modifiers)
+        {
+            modifier += " ";
+            int index = modifiers.IndexOf(modifier, StringComparison.Ordinal);
+
+            if (index == -1) return null;
+            modifiers = modifiers.Remove(index, modifier.Length);
+            return modifier;
         }
 
         private static void UpdateLookupPosition(int position, int delta)

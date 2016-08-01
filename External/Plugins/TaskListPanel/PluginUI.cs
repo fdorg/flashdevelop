@@ -698,7 +698,7 @@ namespace TaskListPanel
             {
                 position = sci.MBSafePosition(position); // scintilla indexes are in 8bits
                 Int32 line = sci.LineFromPosition(position);
-                sci.EnsureVisible(line);
+                sci.EnsureVisibleEnforcePolicy(line);
                 sci.GotoPos(position);
                 sci.SetSel(position, sci.LineEndPosition(line));
                 sci.Focus();

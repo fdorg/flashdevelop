@@ -253,7 +253,8 @@ namespace FlashDevelop.Managers
                 sci.IsTabIndents = settings.TabIndents;
                 sci.IsUseTabs = settings.UseTabs;
                 sci.IsViewEOL = settings.ViewEOL;
-                sci.ScrollWidth = settings.ScrollWidth;
+                sci.ScrollWidth = Math.Max(settings.ScrollWidth, 1);
+                sci.ScrollWidthTracking = settings.ScrollWidth == 0 || settings.ScrollWidth == 3000;
                 sci.TabWidth = settings.TabWidth;
                 sci.ViewWS = Convert.ToInt32(settings.ViewWhitespace);
                 sci.WrapMode = Convert.ToInt32(settings.WrapText);
@@ -308,6 +309,7 @@ namespace FlashDevelop.Managers
                     sci.SetXCaretPolicy((Int32)CaretPolicy.Even, 0);
                     sci.SetYCaretPolicy((Int32)CaretPolicy.Even, 0);
                 }
+                sci.SetVisiblePolicy((Int32)(CaretPolicy.Strict | CaretPolicy.Even), 0);
                 /**
                 * Adjust the print margin
                 */
@@ -430,7 +432,6 @@ namespace FlashDevelop.Managers
             sci.MarkerDefine((Int32)MarkerOutline.FolderEnd, MarkerSymbol.BoxPlusConnected);
             sci.MarkerDefine((Int32)MarkerOutline.FolderOpenMid, MarkerSymbol.BoxMinusConnected);
             sci.MarkerDefine((Int32)MarkerOutline.FolderMidTail, MarkerSymbol.TCorner);
-            sci.ScrollWidthTracking = (PluginBase.Settings.ScrollWidth == 3000);
             sci.CodePage = 65001; // Editor handles text as UTF-8
             sci.Encoding = Encoding.GetEncoding(codepage);
             sci.SaveBOM = IsUnicode(codepage) && PluginBase.Settings.SaveUnicodeWithBOM;

@@ -65,4 +65,12 @@ namespace PluginCore.Localization
 
     }
 
+    [AttributeUsage(AttributeTargets.Property)]
+    public class RequiresRestartAttribute : Attribute
+    {
+        public override bool Match(object obj)
+        {
+            return obj is RequiresRestartAttribute;
+        }
+    }
 }
