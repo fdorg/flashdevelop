@@ -19,8 +19,8 @@ namespace PluginCore.Helpers
             if (Cache.ContainsKey(hash)) return Cache[hash];
             if (Directory.Exists(configPath))
             {
-                if (File.Exists(Path.Combine(configPath, "bin/jvm.config")))
-                    configPath = Path.Combine(configPath, "bin/jvm.config");
+                if (File.Exists(Path.Combine(configPath, Path.Combine("bin","jvm.config"))))
+                    configPath = Path.Combine(configPath, Path.Combine("bin","jvm.config"));
                 else if (File.Exists(Path.Combine(configPath, "build.properties")))
                     configPath = Path.Combine(configPath, "build.properties");
             }
@@ -83,7 +83,7 @@ namespace PluginCore.Helpers
             string home = GetJavaHome(jvmConfig, flexSdkPath);
             if (!String.IsNullOrEmpty(home) && !home.StartsWith("%", StringComparison.Ordinal))
             {
-                return Path.Combine(home, "bin/java");
+                return Path.Combine(home, Path.Combine("bin","java"));
             }
             return defaultExe;
         }
