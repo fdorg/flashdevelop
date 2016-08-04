@@ -44,8 +44,10 @@ namespace FDBuild
                 catch { }
 
             string swfmillPath = options.SwfmillPath ?? Path.Combine(toolsDir, "swfmill");
-            if (File.Exists(Path.Combine(swfmillPath, "swfmill.exe")))
+            if (File.Exists(Path.Combine(swfmillPath, "swfmill.exe"))) //Windows binary
                 SwfmillLibraryBuilder.ExecutablePath = Path.Combine(swfmillPath, "swfmill.exe");
+            else if (File.Exists(Path.Combine(swfmillPath, "swfmill"))) //Linux binary
+                SwfmillLibraryBuilder.ExecutablePath = Path.Combine(swfmillPath, "swfmill");
             else
                 SwfmillLibraryBuilder.ExecutablePath = "swfmill"; // hope you have it in your environment path!
 
