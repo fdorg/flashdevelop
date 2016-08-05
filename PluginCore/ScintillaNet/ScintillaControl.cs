@@ -2947,6 +2947,22 @@ namespace ScintillaNet
         }
 
         /// <summary>
+        /// Gets the cursor of a margin.
+        /// </summary>
+        public int GetMarginCursorN(int margin)
+        {
+            return SPerform(2249, margin, 0);
+        }
+
+        /// <summary>
+        /// Set the cursor of a margin.
+        /// </summary>
+        public void SetMarginCursorN(int margin, int cursor)
+        {
+            SPerform(2248, margin, cursor);
+        }
+
+        /// <summary>
         /// Retrieve the style of an indicator.
         /// </summary>
         public int GetIndicStyle(int indic)

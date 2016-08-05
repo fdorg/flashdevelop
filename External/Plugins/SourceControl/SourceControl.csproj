@@ -85,6 +85,7 @@
     <Compile Include="Managers\OverlayManager.cs" />
     <Compile Include="Managers\VCManager.cs" />
     <Compile Include="Sources\Git\BaseCommand.cs" />
+    <Compile Include="Sources\Git\BlameCommand.cs" />
     <Compile Include="Sources\Git\CommitCommand.cs" />
     <Compile Include="Sources\Git\ResetCommand.cs" />
     <Compile Include="Sources\Git\DeleteCommand.cs" />
