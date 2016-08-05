@@ -423,7 +423,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void FilterPropertySheet()
         {
-            if (Win32.IsRunningOnMono()) return;
+            if (PlatformHelper.IsRunningOnMono()) return;
             Object settingsObj = this.itemPropertyGrid.SelectedObject;
             String text = this.filterText.Text;
             if (settingsObj != null)
