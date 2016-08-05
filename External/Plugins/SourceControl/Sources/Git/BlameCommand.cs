@@ -35,9 +35,8 @@ namespace SourceControl.Sources.Git
             {
                 if (doc.FileName == documentName)
                 {
-                    sci = doc.SciControl;
-                    doc.Activate();
-                    return;
+                    doc.Close();
+                    break;
                 }
             }
             var document = PluginBase.MainForm.CreateEditableDocument(documentName, "Loading...", Encoding.UTF8.CodePage) as ITabbedDocument;
@@ -67,6 +66,7 @@ namespace SourceControl.Sources.Git
                         AnnotationData lastAnnotation = null;
                         var sb = new StringBuilder();
                         var commits = new Dictionary<string, AnnotationData>();
+                        var random = new Random();
                         for (i = 0; 0 < outputLines.Count; i++)
                         {
                             var annotation = ParseAnnotation();
@@ -94,8 +94,15 @@ namespace SourceControl.Sources.Git
                                     annotation.FileName = def.FileName;
                                     annotation.IsEdit = def.IsEdit;
                                     annotation.Summary = def.Summary;
+                                    annotation.Color = def.Color;
                                 }
-                                else commits.Add(annotation.Commit, annotation);
+                                else
+                                {
+                                    commits.Add(annotation.Commit, annotation);
+                                    int color = 128 + (commits.Count % 128);
+                                    sci.StyleSetBack(color, random.Next(0xFFFFFF));
+                                    annotation.Color = color;
+                                }
 
                                 maxWidth = Math.Max(annotation.GetInfo().Length, maxWidth);
                                 annotation.LineStart = i;
@@ -116,13 +123,20 @@ namespace SourceControl.Sources.Git
                         {
                             var annotation = annotations[i];
                             sci.SetMarginText(annotation.LineStart, annotation.GetInfo(maxWidth));
+                            for (int j = annotation.LineStart; j <= annotation.LineEnd; j++)
+                            {
+                                sci.SetMarginStyle(j, annotation.Color);
+                            }
                         }
 
                         outputLines.Clear();
                         outputLines = null;
                         annotations.TrimExcess();
                         tooltip = new ToolTip();
+                        sci.MouseDwellTime = 1000;
                         sci.Disposed += Sci_Disposed;
+                        sci.DwellStart += Sci_DwellStart;
+                        sci.DwellEnd += Sci_DwellEnd;
                         sci.MarginClick += Sci_MarginClick;
                     }
                 }
@@ -134,12 +148,32 @@ namespace SourceControl.Sources.Git
             }
             base.Runner_ProcessEnded(sender, exitCode);
         }
+        
+        private void Sci_DwellStart(ScintillaControl sender, int position, int x, int y)
+        {
+            if (position == -1)
+            {
+                int line = sci.LineFromPosition(sci.PositionFromPoint(x, y));
+                var annotationData = GetAnnotationData(line);
+                if (annotationData != null)
+                {
+                    tooltip.Show(annotationData.ToString(), sci, x, y);
+                }
+            }
+        }
+
+        private void Sci_DwellEnd(ScintillaControl sender, int position, int x, int y)
+        {
+            tooltip.Hide(sci);
+        }
 
         private void Sci_Disposed(object sender, EventArgs e)
         {
             annotations.Clear();
             tooltip.Dispose();
             sci.Disposed -= Sci_Disposed;
+            sci.DwellStart -= Sci_DwellStart;
+            sci.DwellEnd -= Sci_DwellEnd;
             sci.MarginClick -= Sci_MarginClick;
         }
 
@@ -147,9 +181,9 @@ namespace SourceControl.Sources.Git
         {
             int line = sci.LineFromPosition(position);
             var annotationData = GetAnnotationData(line);
-            if (annotationData != null)
+            if (annotationData != null && line == annotationData.LineStart)
             {
-                tooltip.Show(annotationData.ToString(), sci, sci.PointXFromPosition(position), sci.PointYFromPosition(position), 3000);
+                TortoiseProc.ExecuteCustom("log", string.Format("/path:\"{0}\" /rev:{1}", annotationData.FileName, annotationData.Commit));
             }
         }
 
@@ -252,6 +286,7 @@ namespace SourceControl.Sources.Git
             public bool IsEdit;
             public int LineStart;
             public int LineEnd;
+            public int Color;
 
             public string GetInfo(int width = 0)
             {

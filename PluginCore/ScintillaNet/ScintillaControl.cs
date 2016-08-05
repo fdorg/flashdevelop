@@ -2589,7 +2589,7 @@ namespace ScintillaNet
         {
             SPerform(2051, style, fore);
         }
-
+        
         /// <summary>
         /// Set the background colour of a style.
         /// </summary>
@@ -2597,7 +2597,7 @@ namespace ScintillaNet
         {
             SPerform(2052, style, back);
         }
-
+        
         /// <summary>
         /// Set a style to be bold or not.
         /// </summary>
@@ -5437,11 +5437,11 @@ namespace ScintillaNet
                             break;
 
                         case (uint)Enums.ScintillaEvents.DwellStart:
-                            if (DwellStart != null) DwellStart(this, scn.position);
+                            if (DwellStart != null) DwellStart(this, scn.position, scn.x, scn.y);
                             break;
 
                         case (uint)Enums.ScintillaEvents.DwellEnd:
-                            if (DwellEnd != null) DwellEnd(this, scn.position);
+                            if (DwellEnd != null) DwellEnd(this, scn.position, scn.x, scn.y);
                             break;
 
                         case (uint)Enums.ScintillaEvents.Zoom:
