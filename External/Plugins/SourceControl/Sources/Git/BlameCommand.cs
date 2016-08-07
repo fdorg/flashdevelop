@@ -4,27 +4,26 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using PluginCore;
-using PluginCore.Managers;
 using ScintillaNet;
 using ScintillaNet.Enums;
 
 namespace SourceControl.Sources.Git
 {
-    class BlameCommand : BaseCommand
+    class BlameCommand : BaseCommand, IDisposable
     {
+        ITabbedDocument document;
         ScintillaControl sci;
-        ToolTip tooltip;
         LinkedList<string> outputLines;
         List<AnnotationData> annotations;
+        ToolTip tooltip;
 
         public BlameCommand(string file)
         {
             if (!string.IsNullOrEmpty(file))
             {
-                string args = "blame --porcelain \"" + file + "\"";
                 OpenAnnotatedDocument(file);
                 outputLines = new LinkedList<string>();
-                Run(args, Path.GetDirectoryName(file));
+                Run("blame --porcelain \"" + file + "\"", Path.GetDirectoryName(file));
             }
         }
 
@@ -39,9 +38,14 @@ namespace SourceControl.Sources.Git
                     break;
                 }
             }
-            var document = PluginBase.MainForm.CreateEditableDocument(documentName, "Loading...", Encoding.UTF8.CodePage) as ITabbedDocument;
-            if (document != null)
+            document = PluginBase.MainForm.CreateEditableDocument(documentName, "Loading...", Encoding.UTF8.CodePage) as ITabbedDocument;
+            if (document == null)
             {
+                Dispose();
+            }
+            else
+            {
+                ((Form) document).FormClosed += Document_FormClosed;
                 sci = document.SciControl;
                 sci.IsReadOnly = true;
             }
@@ -49,12 +53,15 @@ namespace SourceControl.Sources.Git
 
         protected override void Runner_Output(object sender, string line)
         {
-            outputLines.AddLast(line);
+            if (!disposed)
+            {
+                outputLines.AddLast(line);
+            }
         }
 
         protected override void Runner_ProcessEnded(object sender, int exitCode)
         {
-            if (exitCode == 0)
+            if (!disposed && exitCode == 0)
             {
                 sci.IsReadOnly = false;
                 try
@@ -73,7 +80,7 @@ namespace SourceControl.Sources.Git
                             if (lastAnnotation != null)
                             {
                                 lastAnnotation.LineEnd = i - 1;
-                                annotation.Line = Environment.NewLine + annotation.Line;
+                                annotation.Line = sci.NewLineMarker + annotation.Line;
                             }
 
                             sb.Append(annotation.Line);
@@ -99,9 +106,9 @@ namespace SourceControl.Sources.Git
                                 else
                                 {
                                     commits.Add(annotation.Commit, annotation);
-                                    int color = 128 + (commits.Count % 128);
-                                    sci.StyleSetBack(color, random.Next(0xFFFFFF));
-                                    annotation.Color = color;
+                                    int style = 128 + commits.Count % 128;
+                                    sci.StyleSetBack(style, random.Next(0xFFFFFF));
+                                    annotation.Color = style;
                                 }
 
                                 maxWidth = Math.Max(annotation.GetInfo().Length, maxWidth);
@@ -133,8 +140,6 @@ namespace SourceControl.Sources.Git
                         outputLines = null;
                         annotations.TrimExcess();
                         tooltip = new ToolTip();
-                        sci.MouseDwellTime = 1000;
-                        sci.Disposed += Sci_Disposed;
                         sci.DwellStart += Sci_DwellStart;
                         sci.DwellEnd += Sci_DwellEnd;
                         sci.MarginClick += Sci_MarginClick;
@@ -149,9 +154,14 @@ namespace SourceControl.Sources.Git
             base.Runner_ProcessEnded(sender, exitCode);
         }
         
+        private void Document_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Dispose();
+        }
+
         private void Sci_DwellStart(ScintillaControl sender, int position, int x, int y)
         {
-            if (position == -1)
+            if (!disposed && position == -1)
             {
                 int line = sci.LineFromPosition(sci.PositionFromPoint(x, y));
                 var annotationData = GetAnnotationData(line);
@@ -164,48 +174,20 @@ namespace SourceControl.Sources.Git
 
         private void Sci_DwellEnd(ScintillaControl sender, int position, int x, int y)
         {
-            tooltip.Hide(sci);
+            if (!disposed) tooltip.Hide(sci);
         }
-
-        private void Sci_Disposed(object sender, EventArgs e)
-        {
-            annotations.Clear();
-            tooltip.Dispose();
-            sci.Disposed -= Sci_Disposed;
-            sci.DwellStart -= Sci_DwellStart;
-            sci.DwellEnd -= Sci_DwellEnd;
-            sci.MarginClick -= Sci_MarginClick;
-        }
-
+        
         private void Sci_MarginClick(ScintillaControl sender, int modifiers, int position, int margin)
         {
-            int line = sci.LineFromPosition(position);
-            var annotationData = GetAnnotationData(line);
-            if (annotationData != null && line == annotationData.LineStart)
+            if (!disposed)
             {
-                TortoiseProc.ExecuteCustom("log", string.Format("/path:\"{0}\" /rev:{1}", annotationData.FileName, annotationData.Commit));
-            }
-        }
-
-        private AnnotationData GetAnnotationData(int line)
-        {
-            int low = 0;
-            int high = annotations.Count - 1;
-            while (low <= high)
-            {
-                int i = low + (high - low >> 1);
-                var annotationData = annotations[i];
-                if (line < annotationData.LineStart)
+                int line = sci.LineFromPosition(position);
+                var annotationData = GetAnnotationData(line);
+                if (annotationData != null && annotationData.LineStart == line)
                 {
-                    high = i - 1;
+                    TortoiseProc.ExecuteCustom("log", string.Format("/path:\"{0}\" /rev:{1}", annotationData.FileName, annotationData.Commit));
                 }
-                else if (line > annotationData.LineEnd)
-                {
-                    low = i + 1;
-                }
-                else return annotationData;
             }
-            return null;
         }
 
         private AnnotationData ParseAnnotation()
@@ -262,12 +244,72 @@ namespace SourceControl.Sources.Git
             return data;
         }
 
+        private AnnotationData GetAnnotationData(int line)
+        {
+            int low = 0;
+            int high = annotations.Count - 1;
+            while (low <= high)
+            {
+                int i = low + (high - low >> 1);
+                var annotationData = annotations[i];
+                if (line < annotationData.LineStart)
+                {
+                    high = i - 1;
+                }
+                else if (line > annotationData.LineEnd)
+                {
+                    low = i + 1;
+                }
+                else return annotationData;
+            }
+            return null;
+        }
+
         private string GetNextOutputLine()
         {
             string value = outputLines.First.Value;
             outputLines.RemoveFirst();
             return value;
         }
+
+        #region IDisposable
+
+        private bool disposed = false;
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    if (document != null) ((Form) document).FormClosed -= Document_FormClosed;
+                    if (sci != null)
+                    {
+                        sci.DwellStart -= Sci_DwellStart;
+                        sci.DwellEnd -= Sci_DwellEnd;
+                        sci.MarginClick -= Sci_MarginClick;
+                    }
+                    if (outputLines != null) outputLines.Clear();
+                    if (annotations != null) annotations.Clear();
+                    if (tooltip != null) tooltip.Dispose();
+                }
+
+                document = null;
+                sci = null;
+                outputLines = null;
+                annotations = null;
+                tooltip = null;
+
+                disposed = true;
+            }
+        }
+
+        #endregion
 
         class AnnotationData
         {
