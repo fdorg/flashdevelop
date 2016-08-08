@@ -350,7 +350,6 @@ namespace ProjectManager.Projects.Haxe
                 raw = null;
             rawHXML = raw;
 
-            Regex reHxOp = new Regex("-([a-z0-9-]+)\\s*(.*)", RegexOptions.IgnoreCase);
             List<string> libs = new List<string>();
             List<string> defs = new List<string>();
             List<string> cps = new List<string>();
@@ -359,52 +358,8 @@ namespace ProjectManager.Projects.Haxe
             string haxeTarget = "js";
             string output = "";
             if (raw != null)
-            foreach(string line in raw)
-            {
-                if (line == null) break;
-                Match m = reHxOp.Match(line.Trim());
-                if (m.Success)
-                {
-                    string op = m.Groups[1].Value;
-                    if (op == "-next")
-                        break; // ignore the rest
+                ParseHxmlEntries(raw, defs, cps, libs, add, ref target, ref haxeTarget, ref output);
 
-                    string value = m.Groups[2].Value.Trim();
-                    switch (op)
-                    {
-                        case "D": defs.Add(value); break;
-                        case "cp": cps.Add(CleanPath(value)); break;
-                        case "lib": libs.Add(value); break;
-                        case "main": CompilerOptions.MainClass = value; break;
-                        case "swf":
-                        case "swf9": 
-                            target = PlatformData.FLASHPLAYER_PLATFORM;
-                            haxeTarget = "flash";
-                            output = value; 
-                            break;
-                        case "swf-header":
-                            var header = value.Split(':');
-                            int.TryParse(header[0], out MovieOptions.Width);
-                            int.TryParse(header[1], out MovieOptions.Height);
-                            int.TryParse(header[2], out MovieOptions.Fps);
-                            MovieOptions.Background = header[3];
-                            break;
-                        case "-connect": break; // ignore
-                        case "-each": break; // ignore
-                        default:
-                            // detect platform (-cpp output, -js output, ...)
-                            var targetPlatform = FindPlatform(op);
-                            if (targetPlatform != null)
-                            {
-                                target = targetPlatform.Name;
-                                haxeTarget = targetPlatform.HaxeTarget;
-                                output = value;
-                            }
-                            else add.Add(line); 
-                            break;
-                    }
-                }
-            }
             CompilerOptions.Directives = defs.ToArray();
             CompilerOptions.Libraries = libs.ToArray();
             CompilerOptions.Additional = add.ToArray();
@@ -427,6 +382,66 @@ namespace ProjectManager.Projects.Haxe
                 OutputPath = output;
                 OutputType = OutputType.Application;
                 MovieOptions.Platform = target;
+            }
+        }
+
+        private void ParseHxmlEntries(string[] lines, List<string> defs, List<string> cps, List<string> libs, List<string> add, ref string target, ref string haxeTarget, ref string output)
+        {
+            Regex reHxOp = new Regex("-([a-z0-9-]+)\\s*(.*)", RegexOptions.IgnoreCase);
+            foreach (string line in lines)
+            {
+                if (line == null) break;
+                string trimmedLine = line.Trim();
+                Match m = reHxOp.Match(trimmedLine);
+                if (m.Success)
+                {
+                    string op = m.Groups[1].Value;
+                    if (op == "-next")
+                        break; // ignore the rest
+
+                    string value = m.Groups[2].Value.Trim();
+                    switch (op)
+                    {
+                        case "D": defs.Add(value); break;
+                        case "cp": cps.Add(CleanPath(value)); break;
+                        case "lib": libs.Add(value); break;
+                        case "main": CompilerOptions.MainClass = value; break;
+                        case "swf":
+                        case "swf9":
+                            target = PlatformData.FLASHPLAYER_PLATFORM;
+                            haxeTarget = "flash";
+                            output = value;
+                            break;
+                        case "swf-header":
+                            var header = value.Split(':');
+                            int.TryParse(header[0], out MovieOptions.Width);
+                            int.TryParse(header[1], out MovieOptions.Height);
+                            int.TryParse(header[2], out MovieOptions.Fps);
+                            MovieOptions.Background = header[3];
+                            break;
+                        case "-connect": break; // ignore
+                        case "-each": break; // ignore
+                        default:
+                            // detect platform (-cpp output, -js output, ...)
+                            var targetPlatform = FindPlatform(op);
+                            if (targetPlatform != null)
+                            {
+                                target = targetPlatform.Name;
+                                haxeTarget = targetPlatform.HaxeTarget;
+                                output = value;
+                            }
+                            else add.Add(line);
+                            break;
+                    }
+                }
+                else if (!trimmedLine.StartsWith("#") && trimmedLine.EndsWith(".hxml", StringComparison.OrdinalIgnoreCase))
+                {
+                    string subhxml = this.GetAbsolutePath(trimmedLine);
+                    if (File.Exists(subhxml))
+                    {
+                        ParseHxmlEntries(File.ReadAllLines(subhxml), defs, cps, libs, add, ref target, ref haxeTarget, ref output);
+                    }
+                }
             }
         }
 
