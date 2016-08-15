@@ -82,11 +82,13 @@ namespace SourceControl
         {
             get { return settingObject; }
         }
-        
+
         #endregion
-        
+
         #region Required Methods
-        
+
+        internal static event EventHandler ApplyTheme;
+
         /// <summary>
         /// Initializes the plugin
         /// </summary>
@@ -280,6 +282,9 @@ namespace SourceControl
                         e.Handled = true;
                     }
                     break;
+                case EventType.ApplyTheme:
+                    if (ApplyTheme != null) ApplyTheme(this, EventArgs.Empty);
+                    break;
             }
         }
         
@@ -311,7 +316,7 @@ namespace SourceControl
         /// </summary> 
         public void AddEventHandlers()
         {
-            EventManager.AddEventHandler(this, EventType.UIStarted | EventType.Command | EventType.FileModifyRO | EventType.FileOpen | EventType.FileReload | EventType.FileNew | EventType.FileTemplate);
+            EventManager.AddEventHandler(this, EventType.UIStarted | EventType.Command | EventType.FileModifyRO | EventType.FileOpen | EventType.FileReload | EventType.FileNew | EventType.FileTemplate | EventType.ApplyTheme);
         }
 
         /// <summary>

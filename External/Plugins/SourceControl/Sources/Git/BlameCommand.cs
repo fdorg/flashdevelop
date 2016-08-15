@@ -9,45 +9,93 @@ using ScintillaNet.Enums;
 
 namespace SourceControl.Sources.Git
 {
-    class BlameCommand : BaseCommand, IDisposable
+    internal class BlameCommand : BaseCommand, IDisposable
     {
-        ITabbedDocument document;
-        ScintillaControl sci;
-        LinkedList<string> outputLines;
-        List<AnnotationData> annotations;
-        ToolTip tooltip;
+        private static List<BlameCommand> blameCommands;
+
+        private string fileName;
+        private ITabbedDocument document;
+        private ScintillaControl sci;
+        private LinkedList<string> outputLines;
+        private List<AnnotationData> annotations;
+        private Dictionary<string, AnnotationData> commits;
+        private ToolTip tooltip;
+        private bool loading;
+
+        static BlameCommand()
+        {
+            blameCommands = new List<BlameCommand>();
+            PluginMain.ApplyTheme += ApplyTheme;
+        }
 
         public BlameCommand(string file)
         {
-            if (!string.IsNullOrEmpty(file))
-            {
-                OpenAnnotatedDocument(file);
-                outputLines = new LinkedList<string>();
-                Run("blame --porcelain \"" + file + "\"", Path.GetDirectoryName(file));
-            }
-        }
-
-        private void OpenAnnotatedDocument(string file)
-        {
-            string documentName = Path.Combine(Path.GetDirectoryName(file), "[Annotated] " + Path.GetFileName(file));
-            foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
-            {
-                if (doc.FileName == documentName)
-                {
-                    doc.Close();
-                    break;
-                }
-            }
-            document = PluginBase.MainForm.CreateEditableDocument(documentName, "Loading...", Encoding.UTF8.CodePage) as ITabbedDocument;
-            if (document == null)
+            if (string.IsNullOrEmpty(file))
             {
                 Dispose();
             }
             else
             {
-                ((Form) document).FormClosed += Document_FormClosed;
-                sci = document.SciControl;
+                fileName = file;
+                annotations = new List<AnnotationData>();
+                commits = new Dictionary<string, AnnotationData>();
+                CheckExisting();
+                OpenAnnotatedDocument();
+                Update();
+            }
+        }
+
+        private static void ApplyTheme(object sender, EventArgs e)
+        {
+            foreach (var cmd in blameCommands)
+            {
+                cmd.UpdateBackColor(true);
+            }
+        }
+        
+        private void CheckExisting()
+        {
+            for (int i = 0, length = blameCommands.Count; i < length; i++)
+            {
+                var cmd = blameCommands[i];
+                if (cmd.fileName == fileName)
+                {
+                    cmd.Update();
+                    Dispose();
+                    return;
+                }
+            }
+            blameCommands.Add(this);
+        }
+
+        private void OpenAnnotatedDocument()
+        {
+            if (!disposed)
+            {
+                string documentName = Path.Combine(Path.GetDirectoryName(fileName), "[Annotated] " + Path.GetFileName(fileName));
+                document = PluginBase.MainForm.CreateEditableDocument(documentName, "", Encoding.UTF8.CodePage) as ITabbedDocument;
+                if (document == null)
+                {
+                    Dispose();
+                }
+                else
+                {
+                    ((Form) document).FormClosed += Document_FormClosed;
+                    sci = document.SciControl;
+                } 
+            }
+        }
+
+        private void Update()
+        {
+            if (!disposed && !loading)
+            {
+                loading = true;
+                sci.IsReadOnly = false;
+                sci.SetText("Loading..."); // TODO: Localisation
                 sci.IsReadOnly = true;
+                outputLines = new LinkedList<string>();
+                Run("blame --porcelain \"" + fileName + "\"", Path.GetDirectoryName(fileName));
             }
         }
 
@@ -61,19 +109,19 @@ namespace SourceControl.Sources.Git
 
         protected override void Runner_ProcessEnded(object sender, int exitCode)
         {
-            if (!disposed && exitCode == 0)
+            if (!disposed)
             {
                 sci.IsReadOnly = false;
                 try
                 {
-                    if (outputLines.Count > 0)
+                    if (outputLines.Count > 0 && exitCode == 0)
                     {
-                        annotations = new List<AnnotationData>();
-                        int i, maxWidth = 0;
-                        AnnotationData lastAnnotation = null;
+                        annotations.Clear();
+                        commits.Clear();
+                        int i;
+                        string longestInfo = "";
                         var sb = new StringBuilder();
-                        var commits = new Dictionary<string, AnnotationData>();
-                        var random = new Random();
+                        AnnotationData lastAnnotation = null;
                         for (i = 0; 0 < outputLines.Count; i++)
                         {
                             var annotation = ParseAnnotation();
@@ -107,20 +155,30 @@ namespace SourceControl.Sources.Git
                                 {
                                     commits.Add(annotation.Commit, annotation);
                                     int style = 128 + commits.Count % 128;
-                                    sci.StyleSetBack(style, random.Next(0xFFFFFF));
+                                    sci.StyleSetFont(style, sci.StyleGetFont(0));
+                                    sci.StyleSetSize(style, sci.StyleGetSize(0));
+                                    sci.StyleSetFore(style, sci.StyleGetFore(0));
+                                    sci.StyleSetBack(style, sci.StyleGetBack(0));
+                                    sci.StyleSetBold(style, sci.StyleGetBold(0));
+                                    sci.StyleSetItalic(style, sci.StyleGetItalic(0));
                                     annotation.Color = style;
                                 }
 
-                                maxWidth = Math.Max(annotation.GetInfo().Length, maxWidth);
+                                string info = annotation.GetInfo();
+                                if (info.Length > longestInfo.Length)
+                                {
+                                    longestInfo = info;
+                                }
                                 annotation.LineStart = i;
                                 lastAnnotation = annotation;
                                 annotations.Add(annotation);
                             }
                         }
+
                         lastAnnotation.LineEnd = i - 1;
 
                         sci.SetMarginTypeN(4, (int) MarginType.Text);
-                        sci.SetMarginWidthN(4, sci.TextWidth(0, "".PadRight(maxWidth)));
+                        sci.SetMarginWidthN(4, sci.TextWidth(0, longestInfo));
                         sci.MarginSensitiveN(4, true);
                         sci.SetMarginCursorN(4, 2);
 
@@ -129,12 +187,14 @@ namespace SourceControl.Sources.Git
                         for (i = 0; i < annotations.Count; i++)
                         {
                             var annotation = annotations[i];
-                            sci.SetMarginText(annotation.LineStart, annotation.GetInfo(maxWidth));
+                            sci.SetMarginText(annotation.LineStart, annotation.GetInfo(longestInfo.Length));
                             for (int j = annotation.LineStart; j <= annotation.LineEnd; j++)
                             {
                                 sci.SetMarginStyle(j, annotation.Color);
                             }
                         }
+
+                        UpdateBackColor(false);
 
                         outputLines.Clear();
                         outputLines = null;
@@ -149,11 +209,35 @@ namespace SourceControl.Sources.Git
                 {
                     sci.SetSavePoint();
                     sci.IsReadOnly = true;
+                    loading = false;
                 }
             }
             base.Runner_ProcessEnded(sender, exitCode);
         }
         
+        private void UpdateBackColor(bool applyingTheme)
+        {
+            if (applyingTheme)
+            {
+                sci.BeginInvoke((MethodInvoker) delegate { UpdateBackColor(false); });
+                return;
+            }
+            var random = new Random();
+            int count = 0;
+            int color = sci.StyleGetBack(0);
+            int r = color >> 16 & 0xFF;
+            int g = color >> 8 & 0xFF;
+            int b = color & 0xFF;
+            foreach (var annotation in commits.Values)
+            {
+                int style = 128 + ++count % 128;
+                int newR = r + random.Next(0xFF) >> 1;
+                int newG = g + random.Next(0xFF) >> 1;
+                int newB = b + random.Next(0xFF) >> 1;
+                sci.StyleSetBack(style, newR << 16 | newG << 8 | newB);
+            }
+        }
+
         private void Document_FormClosed(object sender, FormClosedEventArgs e)
         {
             Dispose();
@@ -181,6 +265,7 @@ namespace SourceControl.Sources.Git
         {
             if (!disposed)
             {
+                Console.WriteLine(Control.MouseButtons);
                 int line = sci.LineFromPosition(position);
                 var annotationData = GetAnnotationData(line);
                 if (annotationData != null && annotationData.LineStart == line)
@@ -287,6 +372,7 @@ namespace SourceControl.Sources.Git
             {
                 if (disposing)
                 {
+                    blameCommands.Remove(this);
                     if (document != null) ((Form) document).FormClosed -= Document_FormClosed;
                     if (sci != null)
                     {
@@ -296,14 +382,18 @@ namespace SourceControl.Sources.Git
                     }
                     if (outputLines != null) outputLines.Clear();
                     if (annotations != null) annotations.Clear();
+                    if (commits != null) commits.Clear();
                     if (tooltip != null) tooltip.Dispose();
                 }
-
+                
+                fileName = null;
                 document = null;
                 sci = null;
                 outputLines = null;
                 annotations = null;
+                commits = null;
                 tooltip = null;
+                loading = false;
 
                 disposed = true;
             }
