@@ -1599,7 +1599,7 @@ namespace FlashDevelop
                     case 0x201: // WM_LBUTTONDOWN
                     case 0x204: // WM_RBUTTONDOWN
                     case 0x207: // WM_MBUTTONDOWN
-                        if (lockStatusLabel)
+                        if (currentKeys.IsSimple)
                         {
                             // Cancel any extended shortcut in progress
                             currentKeys = ShortcutKeys.None;
@@ -1707,6 +1707,7 @@ namespace FlashDevelop
             else if (ShortcutKeysManager.IsValidSimpleShortcutExclDeleteInsert(keyData))
             {
                 StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefined"), currentKeys);
+                currentKeys = ShortcutKeys.None;
                 return true;
             }
             else
