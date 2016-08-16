@@ -52,10 +52,10 @@ namespace CodeRefactor.Commands
             newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
 
             // refactor failed or was refused
-            if (Path.GetFileName(oldPath).Equals(newPath, StringComparison.OrdinalIgnoreCase))
+            if (oldPath.Equals(newPath, StringComparison.OrdinalIgnoreCase))
             {
                 // name casing changed
-                string tmpPath = oldPath + "$renaming$";
+                String tmpPath = oldPath + "$renaming$";
                 File.Move(oldPath, tmpPath);
                 File.Move(tmpPath, newPath);
                 DocumentManager.MoveDocuments(oldPath, newPath);

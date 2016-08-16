@@ -465,7 +465,7 @@ namespace CodeRefactor.Commands
                 if (File.Exists(oldPath))
                 {
                     newPath = Path.Combine(newPath, Path.GetFileName(oldPath));
-                    if (!Path.IsPathRooted(newPath)) newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
+                    newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
                     RefactoringHelper.Move(oldPath, newPath, true);
                 }
                 else if (Directory.Exists(oldPath))
@@ -493,15 +493,17 @@ namespace CodeRefactor.Commands
                     // Check if this is a name casing change
                     if (oldPath.Equals(newPath, StringComparison.OrdinalIgnoreCase))
                     {
-                        string tmpPath = oldPath + "$renaming$";
-                        FileHelper.ForceMoveDirectory(oldPath, tmpPath);
-                        DocumentManager.MoveDocuments(oldPath, tmpPath);
-                        oldPath = tmpPath;
+                        String tmpPath = oldPath + "$renaming$";
+                        Directory.Move(oldPath, tmpPath);
+                        Directory.Move(tmpPath, newPath);
+                        DocumentManager.MoveDocuments(oldPath, newPath);
                     }
-
-                    // Move directory contents to final location
-                    FileHelper.ForceMoveDirectory(oldPath, newPath);
-                    DocumentManager.MoveDocuments(oldPath, newPath);
+                    else
+                    {
+                        // Move directory contents to final location
+                        FileHelper.ForceMoveDirectory(oldPath, newPath);
+                        DocumentManager.MoveDocuments(oldPath, newPath);
+                    }
 
                     if (!string.IsNullOrEmpty(newDocumentClass))
                     {

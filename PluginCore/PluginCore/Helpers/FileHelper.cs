@@ -212,9 +212,7 @@ namespace PluginCore.Helpers
         {
             Stack<String> stack = new Stack<String>();
             stack.Push(String.Empty);
-            String sep = Path.DirectorySeparatorChar.ToString();
-            String alt = Path.AltDirectorySeparatorChar.ToString();
-            Int32 length = oldPath.EndsWithOrdinal(sep) || oldPath.EndsWithOrdinal(alt) ? oldPath.Length : oldPath.Length + 1;
+            Int32 length = oldPath.EndsWith(Path.DirectorySeparatorChar) || oldPath.EndsWith(Path.AltDirectorySeparatorChar) ? oldPath.Length : oldPath.Length + 1;
             while (stack.Count > 0)
             {
                 String subPath = stack.Pop();

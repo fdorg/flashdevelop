@@ -274,19 +274,21 @@ namespace CodeRefactor.Commands
             if (oldFileName.Equals(newFileName, StringComparison.OrdinalIgnoreCase))
             {
                 string tmpPath = oldFileName + "$renaming$";
-                RefactoringHelper.Move(oldFileName, tmpPath);
-                RefactoringHelper.Move(tmpPath, newFileName);
+                File.Move(oldFileName, tmpPath);
+                File.Move(tmpPath, newFileName);
+                DocumentManager.MoveDocuments(oldFileName, newFileName);
             }
             else
             {
-                var project = (Project) PluginBase.CurrentProject;
                 FileHelper.ForceMove(oldFileName, newFileName);
                 DocumentManager.MoveDocuments(oldFileName, newFileName);
-                if (project.IsDocumentClass(oldFileName))
-                {
-                    project.SetDocumentClass(newFileName, true);
-                    project.Save();
-                }
+            }
+
+            var project = (Project) PluginBase.CurrentProject;
+            if (project.IsDocumentClass(oldFileName))
+            {
+                project.SetDocumentClass(newFileName, true);
+                project.Save();
             }
 
             if (results.ContainsKey(oldFileName))
