@@ -1698,7 +1698,7 @@ namespace FlashDevelop
             /**
              * Shortcut doesn't exist
              */
-            else if (ShortcutKeysManager.IsValidExtendedShortcutFirst(keyData))
+            else if (ShortcutKeysManager.IsValidExtendedShortcutFirst(keyData) && !appSettings.DisableExtendedShortcutKeys)
             {
                 StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutWaiting"), currentKeys);
                 lockStatusLabel = true;

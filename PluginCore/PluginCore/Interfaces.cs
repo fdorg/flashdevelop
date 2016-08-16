@@ -538,6 +538,7 @@ namespace PluginCore
         Boolean DisableFindOptionSync { get; set; }
         Boolean DisableSimpleQuickFind { get; set; }
         Boolean DisableReplaceFilesConfirm { get; set; }
+        Boolean DisableExtendedShortcutKeys { get; set; }
         Boolean AutoReloadModifiedFiles { get; set; }
         Boolean UseListViewGrouping { get; set; }
         Boolean RedirectFilesResults { get; set; }
