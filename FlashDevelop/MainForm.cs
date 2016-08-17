@@ -2203,7 +2203,14 @@ namespace FlashDevelop
                     shortcutId = string.Empty;
                     return false;
             }
-            previousKeys = ShortcutKeysManager.UpdateShortcutKeys(previousKeys, input);
+            if (appSettings.DisableExtendedShortcutKeys)
+            {
+                previousKeys = input;
+            }
+            else
+            {
+                previousKeys = ShortcutKeysManager.UpdateShortcutKeys(previousKeys, input);
+            }
             shortcutId = GetShortcutId(previousKeys);
             if (shortcutId.Length == 0)
             {
@@ -2214,7 +2221,7 @@ namespace FlashDevelop
                 }
                 else if (!ShortcutManager.AllShortcuts.Contains(previousKeys))
                 {
-                    if (ShortcutKeysManager.IsValidExtendedShortcutFirst(input))
+                    if (ShortcutKeysManager.IsValidExtendedShortcutFirst(input) && !appSettings.DisableExtendedShortcutKeys)
                     {
                         StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutWaiting"), previousKeys);
                     }

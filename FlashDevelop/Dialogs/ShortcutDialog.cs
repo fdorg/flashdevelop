@@ -358,7 +358,7 @@ namespace FlashDevelop.Dialogs
             if (this.listView.SelectedItems.Count > 0)
             {
                 var item = this.listView.SelectedItems[0] as ShortcutListItem;
-                this.AssignNewShortcut(item, editor.EditValue(item.Custom, true, item.SupportsExtended));
+                this.AssignNewShortcut(item, editor.EditValue(item.Custom, true, item.SupportsExtended && !Globals.Settings.DisableExtendedShortcutKeys));
             }
         }
 

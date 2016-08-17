@@ -35,7 +35,7 @@ namespace PluginCore.Helpers
         /// <param name="value">The <see cref="object"/> to edit.</param>
         public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
         {
-            return EditValue((ShortcutKeys) value, true, true);
+            return EditValue((ShortcutKeys) value, true, !PluginBase.Settings.DisableExtendedShortcutKeys);
         }
 
         /// <summary>

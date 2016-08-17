@@ -150,21 +150,25 @@ namespace PluginCore.Controls
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             var keyCode = keyData & Keys.KeyCode;
-            if (keyCode != Keys.ControlKey && keyCode != Keys.ShiftKey && keyCode != Keys.Menu)
+            switch (keyCode)
             {
-                if (supportExtended && !shouldReset)
-                {
-                    newKeys = ShortcutKeysManager.UpdateShortcutKeys(newKeys, keyData);
-                }
-                else
-                {
-                    newKeys = keyData;
-                    shouldReset = false;
-                }
-                UpdateDisplay();
-                return true;
+                case Keys.ControlKey:
+                case Keys.ShiftKey:
+                case Keys.Menu:
+                    return base.ProcessCmdKey(ref msg, keyData);
+                default:
+                    if (supportExtended && !shouldReset)
+                    {
+                        newKeys = ShortcutKeysManager.UpdateShortcutKeys(newKeys, keyData);
+                    }
+                    else
+                    {
+                        newKeys = keyData;
+                        shouldReset = false;
+                    }
+                    UpdateDisplay();
+                    return true;
             }
-            return base.ProcessCmdKey(ref msg, keyData);
         }
     }
 }
