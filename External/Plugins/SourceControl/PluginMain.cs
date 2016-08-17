@@ -10,6 +10,7 @@ using ProjectManager;
 using ProjectManager.Actions;
 using ProjectManager.Projects;
 using SourceControl.Actions;
+using SourceControl.Helpers;
 
 namespace SourceControl
 {
@@ -86,9 +87,7 @@ namespace SourceControl
         #endregion
 
         #region Required Methods
-
-        internal static event EventHandler ApplyTheme;
-
+        
         /// <summary>
         /// Initializes the plugin
         /// </summary>
@@ -283,7 +282,7 @@ namespace SourceControl
                     }
                     break;
                 case EventType.ApplyTheme:
-                    if (ApplyTheme != null) ApplyTheme(this, EventArgs.Empty);
+                    AnnotatedDocument.ApplyTheme();
                     break;
             }
         }

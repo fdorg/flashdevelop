@@ -81,6 +81,8 @@
   <ItemGroup>
     <Compile Include="Actions\ProjectWatcher.cs" />
     <Compile Include="Actions\TreeContextMenuUpdate.cs" />
+    <Compile Include="Helpers\AnnotatedDocument.cs" />
+    <Compile Include="Helpers\Commit.cs" />
     <Compile Include="Managers\FSWatchers.cs" />
     <Compile Include="Managers\OverlayManager.cs" />
     <Compile Include="Managers\VCManager.cs" />
