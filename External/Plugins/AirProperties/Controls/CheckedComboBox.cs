@@ -66,28 +66,26 @@ namespace AirProperties.Controls
                 /// <param name="e">The Key event arguments</param>
                 protected override void OnKeyDown(KeyEventArgs e)
                 {
-                    if (e.KeyCode == Keys.Enter)
+                    switch (e.KeyCode)
                     {
-                        // Enact selection.
-                        ((CheckedComboBox.Dropdown)Parent).OnDeactivate(new CCBoxEventArgs(null, true));
-                        e.Handled = true;
-
-                    }
-                    else if (e.KeyCode == Keys.Escape)
-                    {
-                        // Cancel selection.
-                        ((CheckedComboBox.Dropdown)Parent).OnDeactivate(new CCBoxEventArgs(null, false));
-                        e.Handled = true;
-
-                    }
-                    else if (e.KeyCode == Keys.Delete)
-                    {
-                        // Delete unckecks all, [Shift + Delete] checks all.
-                        for (int i = 0; i < Items.Count; i++)
-                        {
-                            SetItemChecked(i, e.Shift);
-                        }
-                        e.Handled = true;
+                        case Keys.Enter:
+                            // Enact selection.
+                            ((Dropdown) Parent).OnDeactivate(new CCBoxEventArgs(null, true));
+                            e.Handled = true;
+                            break;
+                        case Keys.Escape:
+                            // Cancel selection.
+                            ((Dropdown) Parent).OnDeactivate(new CCBoxEventArgs(null, false));
+                            e.Handled = true;
+                            break;
+                        case Keys.Delete:
+                            // Delete unchecks all, [Shift + Delete] checks all.
+                            for (int i = 0; i < Items.Count; i++)
+                            {
+                                SetItemChecked(i, e.Shift);
+                            }
+                            e.Handled = true;
+                            break;
                     }
                     // If no Enter or Esc keys presses, let the base class handle it.
                     base.OnKeyDown(e);

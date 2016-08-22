@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -20,7 +21,7 @@ namespace AirProperties
         private String pluginDesc = "Adds an AIR application properties management form for AIR projects.";
         private String pluginHelp = "http://www.flashdevelop.org/community/";
         private String pluginAuth = "FlashDevelop Team";
-        private ToolStripMenuItem pluginMenuItem;
+        private ToolStripMenuItemEx pluginMenuItem;
         private ToolStripButton pmMenuButton;
         private String settingFilename;
         private Settings settingObject;
@@ -172,7 +173,7 @@ namespace AirProperties
         private void CreateMenuItems()
         {
             Image image = PluginBase.MainForm.GetAutoAdjustedImage(GetImage("blockdevice_small.png"));
-            this.pluginMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.ProjectMenuItem"), image, this.OpenWizard, null);
+            this.pluginMenuItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.ProjectMenuItem"), image, this.OpenWizard, null);
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.AirApplicationProperties", this.pluginMenuItem);
             this.pluginMenuItem.Enabled = false;
         }
