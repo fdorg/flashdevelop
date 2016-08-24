@@ -994,7 +994,7 @@ namespace FlashDevelop
             // toolStripPanel
             //
             this.toolStripPanel.Dock = DockStyle.Top;
-            if (Win32.IsRunningOnMono())
+            if (PlatformHelper.IsRunningOnMono())
             {
                 this.toolStripPanel.Controls.Add(this.menuStrip);
                 this.toolStripPanel.Controls.Add(this.toolStrip);

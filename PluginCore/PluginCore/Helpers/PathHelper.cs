@@ -235,7 +235,7 @@ namespace PluginCore.Helpers
                 }
                 catch {} // Not working...
             }
-            String userProfile = Environment.GetEnvironmentVariable(Win32.IsRunningOnWindows() ? "USERPROFILE" : "HOME");
+            String userProfile = Environment.GetEnvironmentVariable(PlatformHelper.IsRunningOnWindows() ? "USERPROFILE" : "HOME");
             return Path.Combine(userProfile, "mm.cfg");
         }
 
