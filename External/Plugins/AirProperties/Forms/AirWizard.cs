@@ -1313,7 +1313,7 @@ namespace AirProperties
 
         private void FilliPhoneAdditionsFields()
         {
-            WizardHelper.SetControlValue(iPhoneAdditions.ValueOrNull("UIBackgroundModes") as string,
+            WizardHelper.SetControlValue(iPhoneAdditions.ValueOrNull("UIBackgroundModes") as IEnumerable, 
                                          IPhoneBGModesCombo);
             WizardHelper.SetControlValue(iPhoneAdditions.ValueOrNull("UIDeviceFamily") as IEnumerable,
                                          IPhoneDeviceCombo);
