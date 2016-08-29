@@ -234,12 +234,12 @@ namespace ASCompletion.Completion
         /// </summary>
         /// <param name="keys">Test keys</param>
         /// <returns></returns>
-        static public bool OnShortcut(Keys keys, ScintillaControl Sci)
+        static public bool OnShortcut(ShortcutKeys keys, ScintillaControl Sci)
         {
             if (Sci.IsSelectionRectangle) 
                 return false;
 
-            switch (keys)
+            switch ((Keys) keys)
             {
                 case Keys.Control | Keys.Space: // dot complete
                     if (ASContext.HasContext && ASContext.Context.IsFileValid)
