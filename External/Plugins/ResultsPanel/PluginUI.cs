@@ -19,12 +19,12 @@ namespace ResultsPanel
 {
     public class PluginUI : DockPanelControl
     {
-        public ToolStripMenuItemEx clearEntriesContextMenuItem;
-        public ToolStripMenuItemEx copyEntryContextMenuItem;
-        public ToolStripMenuItemEx ignoreEntryContextMenuItem;
-        public ToolStripMenuItemEx clearIgnoredEntriesContextMenuItem;
-        public ToolStripMenuItemEx nextEntryContextMenuItem;
-        public ToolStripMenuItemEx previousEntryContextMenuItem;
+        public ToolStripMenuItem clearEntriesContextMenuItem;
+        public ToolStripMenuItem copyEntryContextMenuItem;
+        public ToolStripMenuItem ignoreEntryContextMenuItem;
+        public ToolStripMenuItem clearIgnoredEntriesContextMenuItem;
+        public ToolStripMenuItem nextEntryContextMenuItem;
+        public ToolStripMenuItem previousEntryContextMenuItem;
 
         private ListViewEx entriesView;
         private ColumnHeader entryFile;
