@@ -191,7 +191,7 @@ namespace MacroManager
                 {
                     ToolStripMenuItemEx macroItem = new ToolStripMenuItemEx();
                     macroItem.Click += new EventHandler(this.MacroMenuItemClick);
-                    macroItem.ShortcutKeys = macro.Shortcut;
+                    macroItem.ShortcutKeys = macro.ShortcutKeys;
                     macroItem.Text = macro.Label;
                     macroItem.Tag = macro;
                     if (!String.IsNullOrEmpty(macro.Image))
@@ -378,6 +378,18 @@ namespace MacroManager
             this.showInToolbar = false;
             this.autoRun = false;
         }
+        /// <summary>
+        /// [Deprecated]
+        /// </summary>
+        public Macro(String label, String[] entries, String image, Keys shortcut)
+        {
+            this.label = label;
+            this.image = image;
+            this.entries = entries;
+            this.shortcut = (ShortcutKeys) shortcut;
+            this.showInToolbar = false;
+            this.autoRun = false;
+        }
         public Macro(String label, String[] entries, String image, ShortcutKeys shortcut)
         {
             this.label = label;
@@ -386,6 +398,18 @@ namespace MacroManager
             this.shortcut = shortcut;
             this.showInToolbar = false;
             this.autoRun = false;
+        }
+        /// <summary>
+        /// [Deprecated]
+        /// </summary>
+        public Macro(String label, String[] entries, String image, Keys shortcut, Boolean autoRun, Boolean showInToolbar)
+        {
+            this.label = label;
+            this.image = image;
+            this.entries = entries;
+            this.shortcut = (Keys) shortcut;
+            this.showInToolbar = showInToolbar;
+            this.autoRun = autoRun;
         }
         public Macro(String label, String[] entries, String image, ShortcutKeys shortcut, Boolean autoRun, Boolean showInToolbar) 
         {
@@ -468,11 +492,21 @@ namespace MacroManager
         }
 
         /// <summary>
+        /// [Deprecated]
+        /// </summary>
+        [Browsable(false)]
+        public Keys Shortcut
+        {
+            get { return (Keys) this.shortcut; }
+            set { this.shortcut = (ShortcutKeys) value; }
+        }
+
+        /// <summary>
         /// Gets and sets the shortcut
         /// </summary>
         [LocalizedDescription("MacroManager.Description.Shortcut")]
         [DefaultValue(typeof(ShortcutKeys), "None")]
-        public ShortcutKeys Shortcut
+        public ShortcutKeys ShortcutKeys
         {
             get { return this.shortcut; }
             set { this.shortcut = value; }

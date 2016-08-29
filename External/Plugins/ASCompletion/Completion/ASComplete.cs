@@ -230,13 +230,20 @@ namespace ASCompletion.Completion
         }
 
         /// <summary>
-        /// Handle shortcuts
+        /// [Deprecated] Handle shortcuts.
+        /// </summary>
+        public static bool OnShortcut(Keys keys, ScintillaControl sci)
+        {
+            return OnShortcut((ShortcutKeys) keys, sci);
+        }
+
+        /// <summary>
+        /// Handle shortcuts.
         /// </summary>
         /// <param name="keys">Test keys</param>
-        /// <returns></returns>
-        static public bool OnShortcut(ShortcutKeys keys, ScintillaControl Sci)
+        public static bool OnShortcut(ShortcutKeys keys, ScintillaControl sci)
         {
-            if (Sci.IsSelectionRectangle) 
+            if (sci.IsSelectionRectangle) 
                 return false;
 
             switch ((Keys) keys)
@@ -245,19 +252,19 @@ namespace ASCompletion.Completion
                     if (ASContext.HasContext && ASContext.Context.IsFileValid)
                     {
                         // try to get completion as if we had just typed the previous char
-                        if (OnChar(Sci, Sci.CharAt(Sci.PositionBefore(Sci.CurrentPos)), false))
+                        if (OnChar(sci, sci.CharAt(sci.PositionBefore(sci.CurrentPos)), false))
                             return true;
                         else
                         {
                             // force dot completion
-                            OnChar(Sci, '.', false);
+                            OnChar(sci, '.', false);
                             return true;
                         }
                     }
                     return false;
 
                 case Keys.Back:
-                    HandleAddClosingBraces(Sci, Sci.CurrentChar, false);
+                    HandleAddClosingBraces(sci, sci.CurrentChar, false);
                     return false;
 
                 case Keys.Control | Keys.Shift | Keys.Space: // show calltip
@@ -265,7 +272,7 @@ namespace ASCompletion.Completion
                     {
                         //HandleFunctionCompletion(Sci);
                         // force function completion
-                        OnChar(Sci, '(', false);
+                        OnChar(sci, '(', false);
                         return true;
                     }
                     return false;
@@ -273,12 +280,12 @@ namespace ASCompletion.Completion
                 case Keys.Control | Keys.Alt | Keys.Space: // project types completion
                     if (ASContext.HasContext && ASContext.Context.IsFileValid && !ASContext.Context.Settings.LazyClasspathExploration)
                     {
-                        int position = Sci.CurrentPos - 1;
-                        string tail = GetWordLeft(Sci, ref position);
+                        int position = sci.CurrentPos - 1;
+                        string tail = GetWordLeft(sci, ref position);
                         ContextFeatures features = ASContext.Context.Features;
                         if (tail.IndexOfOrdinal(features.dot) < 0 && features.HasTypePreKey(tail)) tail = "";
                         // display the full project classes list
-                        HandleAllClassesCompletion(Sci, tail, false, true);
+                        HandleAllClassesCompletion(sci, tail, false, true);
                         return true;
                     }
                     return false;
@@ -313,7 +320,7 @@ namespace ASCompletion.Completion
                     // help
                     if (keys == HelpKeys && ASContext.HasContext && ASContext.Context.IsFileValid)
                     {
-                        ResolveElement(Sci, "ShowDocumentation");
+                        ResolveElement(sci, "ShowDocumentation");
                         return true;
                     }
                     return false;
