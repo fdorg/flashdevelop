@@ -1702,7 +1702,10 @@ namespace FlashDevelop
             else if (ShortcutKeysManager.IsValidExtendedShortcutFirst(keyData) && !appSettings.DisableExtendedShortcutKeys)
             {
                 if (ShortcutManager.AllShortcuts.FirstOrDefault(s => s.First == keyData) == ShortcutKeys.None)
+                {
+                    currentKeys = ShortcutKeys.None;
                     return false;
+                }
 
                 StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutWaiting"), currentKeys);
                 lockStatusLabel = true;
