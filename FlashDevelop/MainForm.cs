@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -1700,6 +1701,9 @@ namespace FlashDevelop
              */
             else if (ShortcutKeysManager.IsValidExtendedShortcutFirst(keyData) && !appSettings.DisableExtendedShortcutKeys)
             {
+                if (ShortcutManager.AllShortcuts.FirstOrDefault(s => s.First == keyData) == ShortcutKeys.None)
+                    return false;
+
                 StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutWaiting"), currentKeys);
                 lockStatusLabel = true;
                 return true;
@@ -2223,6 +2227,9 @@ namespace FlashDevelop
                 {
                     if (ShortcutKeysManager.IsValidExtendedShortcutFirst(input) && !appSettings.DisableExtendedShortcutKeys)
                     {
+                        if (ShortcutManager.AllShortcuts.FirstOrDefault(s => s.First == input) == ShortcutKeys.None)
+                            return true;
+
                         StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutWaiting"), previousKeys);
                     }
                     else if (ShortcutKeysManager.IsValidSimpleShortcutExclDeleteInsert(input))
