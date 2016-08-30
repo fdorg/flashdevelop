@@ -93,7 +93,6 @@ namespace PluginCore.Managers
         /// Retrieves a value indicating whether a defined shortcut key is valid.
         /// </summary>
         /// <param name="shortcut">The shortcut key to test for validity.</param>
-        /// <returns></returns>
         public static bool IsValidShortcut(ShortcutKeys shortcut)
         {
             if (shortcut.IsExtended)
@@ -109,14 +108,37 @@ namespace PluginCore.Managers
         /// <param name="keys">The shortcut key to test for validity.</param>
         public static bool IsValidSimpleShortcut(Keys keys)
         {
-            return ToolStripManager.IsValidShortcut(keys);
+            if (keys == 0)
+            {
+                return false;
+            }
+            var keyCode = keys & Keys.KeyCode;
+            switch (keyCode)
+            {
+                case Keys.None:
+                case Keys.ShiftKey:
+                case Keys.ControlKey:
+                case Keys.Menu:
+                    return false;
+                case Keys.Insert:
+                case Keys.Delete:
+                    return true;
+            }
+            switch (keys & Keys.Modifiers)
+            {
+                case Keys.None:
+                case Keys.Shift:
+                    if (Keys.F1 <= keyCode && keyCode <= Keys.F24) return true;
+                    return false;
+            }
+            return true;
         }
 
         /// <summary>
-        /// Retrieves a value indicating whether a defined shortcut key is a valid simple shortcut, excluding <see cref="Keys.Delete"/> and <see cref="Keys.Insert"/>.
+        /// Retrieves a value indicating whether a defined shortcut key is a valid simple shortcut, excluding <see cref="Keys.Insert"/> and <see cref="Keys.Delete"/>.
         /// </summary>
         /// <param name="keys">The shortcut key to test for validity.</param>
-        public static bool IsValidSimpleShortcutExclDeleteInsert(Keys keys)
+        public static bool IsValidSimpleShortcutExclInsertDelete(Keys keys)
         {
             if (keys == 0)
             {
@@ -135,7 +157,7 @@ namespace PluginCore.Managers
             {
                 case Keys.None:
                 case Keys.Shift:
-                    if (Keys.F1 <= keyCode && keyCode <= Keys.F24) break;
+                    if (Keys.F1 <= keyCode && keyCode <= Keys.F24) return true;
                     return false;
             }
             return true;
@@ -187,6 +209,28 @@ namespace PluginCore.Managers
                     return false;
             }
             return true;
+        }
+
+        /// <summary>
+        /// Retrieves a value indicating whether the specified virtual key code and keyboard state has a corresponding Unicode character or characters.
+        /// </summary>
+        /// <param name="keyData">The virtual key code to be translated.</param>
+        public static bool IsCharacterKeys(Keys keyData)
+        {
+            byte[] keyStates = new byte[256];
+            if ((keyData & Keys.Shift) == Keys.Shift)
+            {
+                keyStates[(int) Keys.ShiftKey] = 0xFF;
+            }
+            if ((keyData & Keys.Control) == Keys.Control)
+            {
+                keyStates[(int) Keys.ControlKey] = 0xFF;
+            }
+            if ((keyData & Keys.Alt) == Keys.Alt)
+            {
+                keyStates[(int) Keys.Menu] = 0xFF;
+            }
+            return ToUnicode((uint) keyData, 0, keyStates, new char[1], 1, 0) != 0;
         }
 
         /// <summary>
@@ -446,6 +490,11 @@ namespace PluginCore.Managers
         {
             return new HandleRef(control, UnsafeNativeMethods_GetAncestor(new HandleRef(new HandleRef(control, control.Handle), control.Handle), 2));
         }
+
+        // Reflection: N/A
+        // Cache: N/A
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+        internal static extern int ToUnicode(uint wVirtKey, uint wScanCode, byte[] lpKeyState, [Out, MarshalAs(UnmanagedType.LPArray)] char[] pwszBuff, int cchBuff, uint wFlags);
 
         #endregion
     }

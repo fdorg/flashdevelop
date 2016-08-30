@@ -821,14 +821,10 @@ namespace CodeRefactor.Commands
                     case "Scintilla.ResetZoom":  sci.ResetZoom(); break;
                     case "Scintilla.ZoomIn":     sci.ZoomIn(); break;
                     case "Scintilla.ZoomOut":    sci.ZoomOut(); break;
-                    default:
-                        //PluginBase.MainForm.StatusLabelText = string.Format("Shortcut \"{0}\" cannot be used during renaming.", shortcutId);
-                        break;
                 }
-                currentKeys = ShortcutKeys.None;
                 return true;
             }
-            return !currentKeys.IsNone && (ShortcutKeysManager.IsValidExtendedShortcutFirst(currentKeys.First) || ShortcutKeysManager.IsValidSimpleShortcutExclDeleteInsert(currentKeys.First));
+            return false;
         }
 
         #endregion
