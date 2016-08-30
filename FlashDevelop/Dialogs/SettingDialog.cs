@@ -373,8 +373,7 @@ namespace FlashDevelop.Dialogs
                         if (this.itemPropertyGrid.ContainsFocus) this.itemPropertyGrid.ExpandAllGridItems();
                         return true;
                 }
-                if (this.currentKeys.IsExtended) return true;
-                this.currentKeys = ShortcutKeys.None;
+                return true;
             }
             return false;
         }

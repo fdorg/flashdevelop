@@ -193,11 +193,10 @@ namespace ProjectManager.Helpers
                         this.lineBox.Undo();
                         break;
                 }
-
-                this.currentKeys = ShortcutKeys.None;
+                
                 e.SuppressKeyPress = true;
             }
-            else if ((e.KeyData & Keys.Control) != 0 || e.KeyData == (Keys.Shift | Keys.Delete) || e.KeyData == (Keys.Shift | Keys.Insert))
+            else if (e.KeyData == (Keys.Shift | Keys.Delete) || e.KeyData == (Keys.Shift | Keys.Insert))
             {
                 e.SuppressKeyPress = true;
             }
