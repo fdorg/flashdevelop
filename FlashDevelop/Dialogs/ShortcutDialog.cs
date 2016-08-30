@@ -85,7 +85,7 @@ namespace FlashDevelop.Dialogs
             this.filterTextBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.filterTextBox.Location = new System.Drawing.Point(12, 32);
             this.filterTextBox.Name = "filterTextBox";
-            this.filterTextBox.Size = new System.Drawing.Size(561, 20);
+            this.filterTextBox.Size = new System.Drawing.Size(591, 20);
             this.filterTextBox.TabIndex = 0;
             this.filterTextBox.ForeColor = System.Drawing.SystemColors.GrayText;
             this.filterTextBox.TextChanged += new System.EventHandler(this.FilterTextBox_TextChanged);
@@ -93,7 +93,7 @@ namespace FlashDevelop.Dialogs
             // clearButton
             // 
             this.clearButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            this.clearButton.Location = new System.Drawing.Point(579, 30);
+            this.clearButton.Location = new System.Drawing.Point(609, 30);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(26, 23);
             this.clearButton.TabIndex = 1;
@@ -121,7 +121,7 @@ namespace FlashDevelop.Dialogs
             this.listView.Location = new System.Drawing.Point(12, 62);
             this.listView.MultiSelect = false;
             this.listView.Name = "listView";
-            this.listView.Size = new System.Drawing.Size(592, 312);
+            this.listView.Size = new System.Drawing.Size(622, 312);
             this.listView.SmallImageList = this.imageList;
             this.listView.TabIndex = 2;
             this.listView.UseCompatibleStateImageBehavior = false;
@@ -145,13 +145,13 @@ namespace FlashDevelop.Dialogs
             this.infoLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.infoLabel.Location = new System.Drawing.Point(33, 378);
             this.infoLabel.Name = "infoLabel";
-            this.infoLabel.Size = new System.Drawing.Size(420, 32);
+            this.infoLabel.Size = new System.Drawing.Size(450, 32);
             this.infoLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // importButton
             // 
             this.importButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            this.importButton.Location = new System.Drawing.Point(454, 382);
+            this.importButton.Location = new System.Drawing.Point(484, 382);
             this.importButton.Name = "importButton";
             this.importButton.Size = new System.Drawing.Size(25, 23);
             this.importButton.TabIndex = 3;
@@ -161,7 +161,7 @@ namespace FlashDevelop.Dialogs
             // exportButton
             // 
             this.exportButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            this.exportButton.Location = new System.Drawing.Point(484, 382);
+            this.exportButton.Location = new System.Drawing.Point(514, 382);
             this.exportButton.Name = "exportButton";
             this.exportButton.Size = new System.Drawing.Size(25, 23);
             this.exportButton.TabIndex = 4;
@@ -172,7 +172,7 @@ namespace FlashDevelop.Dialogs
             // 
             this.closeButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.closeButton.Location = new System.Drawing.Point(515, 382);
+            this.closeButton.Location = new System.Drawing.Point(545, 382);
             this.closeButton.Name = "closeButton";
             this.closeButton.Size = new System.Drawing.Size(90, 23);
             this.closeButton.TabIndex = 5;
@@ -190,7 +190,7 @@ namespace FlashDevelop.Dialogs
             this.CancelButton = this.closeButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(616, 418);
+            this.ClientSize = new System.Drawing.Size(646, 418);
             this.MinimumSize = new System.Drawing.Size(400, 250);
             this.Controls.Add(this.searchLabel);
             this.Controls.Add(this.filterTextBox);
