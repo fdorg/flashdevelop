@@ -3018,7 +3018,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <comment>Added after 3.3.2</comment>
   </data>
   <data name="ASCompletion.Description.AddClosingBraces" xml:space="preserve">
-    <value>Defines whether to add the closing brace after an opening brace automatically for the defined braces in AddClosingBracesData.</value>
+    <value>Defines whether to add the closing brace after an opening brace automatically for the defined braces in AddClosingBracesOptions.</value>
   </data>
   <data name="ASClassWizard.Info.Description" xml:space="preserve">
     <value>Adds an ActionScript and Haxe class wizard to FlashDevelop.</value>
@@ -5991,10 +5991,6 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
     <value>No contextual code generation available.</value>
     <comment>Added after 5.0.2</comment>
   </data>
-  <data name="ASCompletion.Description.AddClosingBracesOptions" xml:space="preserve">
-    <value>List of auto closing braces and their trigger options.</value>
-    <comment>Added after 5.2.0</comment>
-  </data>
   <data name="CodeRefactor.Label.Move" xml:space="preserve">
     <value>Move...</value>
     <comment>Added after 5.0.2</comment>
@@ -6077,6 +6073,10 @@ Custom locales must be an extension of a default locale, e.g. en-US.</value>
   </data>
   <data name="FlashDevelop.Description.DisableExtendedShortcutKeys" xml:space="preserve">
     <value>Disable extended shortcut keys. Extended shortcut keys allow two key combinations to be input as one shortcut.</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
+  <data name="ASCompletion.Description.AddClosingBracesOptions" xml:space="preserve">
+    <value>List of auto closing braces and their trigger options.</value>
     <comment>Added after 5.1.1</comment>
   </data>
   <data name="ASCompletion.Description.BracesAfterChars" xml:space="preserve">
