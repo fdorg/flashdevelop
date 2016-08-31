@@ -3,6 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -155,7 +156,7 @@ namespace ResultsPanel
 
                 case EventType.Keys:
                     KeyEvent ke = (KeyEvent)e;
-                    switch (PluginBase.MainForm.GetShortcutItemId(ke.Value))
+                    switch (ke.Command)
                     {
                         case null:
                             break;
@@ -172,8 +173,8 @@ namespace ResultsPanel
                             ke.Handled = pluginUI.ClearIgnoredEntries();
                             break;
                         default:
-                            if (ke.Value == CopyEntryKeys) ke.Handled = pluginUI.CopyTextShortcut();
-                            else if (ke.Value == IgnoreEntryKeys) ke.Handled = pluginUI.IgnoreEntryShortcut();
+                            if (ke.Keys == CopyEntryKeys) ke.Handled = pluginUI.CopyTextShortcut();
+                            else if (ke.Keys == IgnoreEntryKeys) ke.Handled = pluginUI.IgnoreEntryShortcut();
                             break;
                     }
                     
@@ -235,7 +236,7 @@ namespace ResultsPanel
         {
             String title = TextHelper.GetString("Label.ViewMenuItem");
             ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
-            ToolStripMenuItem viewItem = new ToolStripMenuItem(title, this.pluginImage, new EventHandler(this.OpenPanel));
+            ToolStripMenuItemEx viewItem = new ToolStripMenuItemEx(title, this.pluginImage, new EventHandler(this.OpenPanel));
             PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowNextResult", this.pluginUI.nextEntryContextMenuItem);
             PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowPrevResult", this.pluginUI.previousEntryContextMenuItem);
             PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearResults", this.pluginUI.clearEntriesContextMenuItem);

@@ -671,6 +671,16 @@ namespace FlashDevelop.Settings
             set { this.disableTabDifferentiation = value; }
         }
 
+
+        [DefaultValue(false)]
+        [DisplayName("Disable Extended Shortcut Keys")]
+        [LocalizedCategory("FlashDevelop.Category.Features")]
+        [LocalizedDescription("FlashDevelop.Description.DisableExtendedShortcutKeys")]
+        public Boolean DisableExtendedShortcutKeys
+        {
+            get { return this.disableExtendedShortcutKeys; }
+            set { this.disableExtendedShortcutKeys = value; }
+        }
         #endregion
 
         #region Formatting

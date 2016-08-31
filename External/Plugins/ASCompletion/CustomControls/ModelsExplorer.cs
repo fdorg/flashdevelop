@@ -488,26 +488,26 @@ namespace ASCompletion
 
         internal bool OnShortcut(Keys keys)
         {
-            if (keys == Keys.F3)
+            switch (keys)
             {
-                FindNextMatch(filterTextBox.Text);
-                return true;
-            }
-            else if (keys == (Keys.Shift | Keys.F3))
-            {
-                FindPrevMatch(filterTextBox.Text);
-                return true;
-            }
-            else if (keys == Keys.F5 || keys == (Keys.Control | Keys.J))
-            {
-                UpdateTree();
-                return true;
-            }
-            else if (keys == Keys.Escape)
-            {
-                if (panelCtrl.DockState == DockState.Float) panelCtrl.Hide();
-                if (PluginBase.MainForm.CurrentDocument.IsEditable)
-                    PluginBase.MainForm.CurrentDocument.SciControl.Focus();
+                case Keys.F3:
+                    FindNextMatch(filterTextBox.Text);
+                    return true;
+
+                case Keys.Shift | Keys.F3:
+                    FindPrevMatch(filterTextBox.Text);
+                    return true;
+
+                case Keys.F5:
+                case Keys.Control | Keys.J:
+                    UpdateTree();
+                    return true;
+
+                case Keys.Escape:
+                    if (panelCtrl.DockState == DockState.Float) panelCtrl.Hide();
+                    if (PluginBase.MainForm.CurrentDocument.IsEditable)
+                        PluginBase.MainForm.CurrentDocument.SciControl.Focus();
+                    break;
             }
             return false;
         }

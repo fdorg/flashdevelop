@@ -129,7 +129,7 @@ namespace BasicCompletion
             {
                 case EventType.Keys:
                 {
-                    Keys keys = (e as KeyEvent).Value;
+                    ShortcutKeys keys = (e as KeyEvent).Keys;
                     if (this.isSupported && keys == (Keys.Control | Keys.Space))
                     {
                         String lang = document.SciControl.ConfigurationLanguage;

@@ -6,6 +6,7 @@ using CodeRefactor.Provider;
 using PluginCore;
 using PluginCore.Controls;
 using PluginCore.FRService;
+using PluginCore.Managers;
 using ScintillaNet;
 using ScintillaNet.Enums;
 using Keys = System.Windows.Forms.Keys;
@@ -59,6 +60,7 @@ namespace CodeRefactor.Commands
         private ReferenceInfo[] refs;
 
         private DelayedExecution delayedExecution;
+        private ShortcutKeys currentKeys;
         private List<string> history;
         private int historyIndex;
 
@@ -140,6 +142,7 @@ namespace CodeRefactor.Commands
             end = position;
             currentDoc = PluginBase.MainForm.CurrentDocument;
             delayedExecution = new DelayedExecution();
+            currentKeys = ShortcutKeys.None;
             history = new List<string>() { oldName };
             historyIndex = 0;
             this.includeComments = includeComments ?? false;
@@ -723,50 +726,48 @@ namespace CodeRefactor.Commands
                 case 0x0104: //WM_SYSKEYDOWN
                     var key = (Keys) (int) m.WParam;
                     var modifier = Control.ModifierKeys;
-                    switch (key)
+                    if (!ShortcutKeysManager.IsValidExtendedShortcutFirst(currentKeys.First))
                     {
-                        case Keys.Escape:
-                            OnCancel();
-                            return true;
-                        case Keys.Enter:
-                            OnApply();
-                            return true;
-                        case Keys.Back:
-                            if (CanBackspace) break;
-                            return true;
-                        case Keys.Left:
-                            if (!AtLeftmost) break;
-                            return true;
-                        case Keys.Delete:
-                            if (CanDelete) break;
-                            return true;
-                        case Keys.Right:
-                            if (!AtRightmost) break;
-                            if (sci.SelTextSize != 0) sci.SetSel(end, end);
-                            return true;
-                        case Keys.PageUp:
-                        case Keys.PageDown:
-                        case Keys.Up:
-                        case Keys.Down:
-                            if (!CanWrite) break;
-                            return true;
-                        case Keys.End:
-                            if (!CanWrite) break;
-                            sci.SetSel((modifier & Keys.Shift) == 0 ? end : sci.SelectionStart, end);
-                            return true;
-                        case Keys.Home:
-                            if (!CanWrite) break;
-                            sci.SetSel((modifier & Keys.Shift) == 0 ? start : sci.SelectionEnd, start);
-                            return true;
-                        case Keys.Tab:
-                            return true;
-                        default:
-                            if (ToolStripManager.IsValidShortcut(key | modifier))
-                            {
-                                return HandleShortcuts(key | modifier);
-                            }
-                            break;
+                        switch (key)
+                        {
+                            case Keys.Escape:
+                                OnCancel();
+                                return true;
+                            case Keys.Enter:
+                                OnApply();
+                                return true;
+                            case Keys.Back:
+                                if (CanBackspace) break;
+                                return true;
+                            case Keys.Left:
+                                if (!AtLeftmost) break;
+                                return true;
+                            case Keys.Delete:
+                                if (CanDelete) break;
+                                return true;
+                            case Keys.Right:
+                                if (!AtRightmost) break;
+                                if (sci.SelTextSize != 0) sci.SetSel(end, end);
+                                return true;
+                            case Keys.PageUp:
+                            case Keys.PageDown:
+                            case Keys.Up:
+                            case Keys.Down:
+                                if (!CanWrite) break;
+                                return true;
+                            case Keys.End:
+                                if (!CanWrite) break;
+                                sci.SetSel((modifier & Keys.Shift) == 0 ? end : sci.SelectionStart, end);
+                                return true;
+                            case Keys.Home:
+                                if (!CanWrite) break;
+                                sci.SetSel((modifier & Keys.Shift) == 0 ? start : sci.SelectionEnd, start);
+                                return true;
+                            case Keys.Tab:
+                                return true;
+                        }
                     }
+                    if (HandleShortcuts(key | modifier)) return true;
                     break;
 
                 case 0x0102: //WM_CHAR
@@ -804,34 +805,30 @@ namespace CodeRefactor.Commands
         /// </returns>
         private bool HandleShortcuts(Keys keys)
         {
-            switch (PluginBase.MainForm.GetShortcutItemId(keys))
+            string shortcutId;
+            if (PluginBase.MainForm.HandleShortcutManually(ref currentKeys, keys, out shortcutId))
             {
-                case "EditMenu.Paste":
-                    PerformPaste();
-                    break;
-                case "EditMenu.Redo":
-                    PerformRedo();
-                    break;
-                case "EditMenu.SelectAll":
-                    PerformSelectAll();
-                    break;
-                case "EditMenu.Undo":
-                    PerformUndo();
-                    break;
-                case "EditMenu.Copy":
-                case "EditMenu.Cut":
-                case "EditMenu.ToLowercase":
-                case "EditMenu.ToUppercase":
-                case "Scintilla.ResetZoom":
-                case "Scintilla.ZoomIn":
-                case "Scintilla.ZoomOut":
-                    return false;
-                default:
-                    //string.Format("Shortcut \"{0}\" cannot be used during renaming", shortcut.Key)
-                    break;
+                switch (shortcutId)
+                {
+                    case "EditMenu.Paste":       PerformPaste(); break;
+                    case "EditMenu.Redo":        PerformRedo(); break;
+                    case "EditMenu.SelectAll":   PerformSelectAll(); break;
+                    case "EditMenu.Undo":        PerformUndo(); break;
+                    case "EditMenu.Copy":        sci.Copy(); break;
+                    case "EditMenu.Cut":         if (sci.SelTextSize > 0) sci.Cut(); break;
+                    case "EditMenu.ToLowercase": sci.UpperCase(); break;
+                    case "EditMenu.ToUppercase": sci.LowerCase(); break;
+                    case "Scintilla.ResetZoom":  sci.ResetZoom(); break;
+                    case "Scintilla.ZoomIn":     sci.ZoomIn(); break;
+                    case "Scintilla.ZoomOut":    sci.ZoomOut(); break;
+                    default:
+                        //PluginBase.MainForm.StatusLabelText = string.Format("Shortcut \"{0}\" cannot be used during renaming.", shortcutId);
+                        break;
+                }
+                currentKeys = ShortcutKeys.None;
+                return true;
             }
-
-            return true;
+            return !currentKeys.IsNone && (ShortcutKeysManager.IsValidExtendedShortcutFirst(currentKeys.First) || ShortcutKeysManager.IsValidSimpleShortcutExclDeleteInsert(currentKeys.First));
         }
 
         #endregion

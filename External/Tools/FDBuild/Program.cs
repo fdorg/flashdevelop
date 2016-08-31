@@ -1,11 +1,11 @@
 using System;
-using System.Reflection;
 using System.IO;
 using ProjectManager.Projects;
 using ProjectManager.Building;
 using ProjectManager.Building.AS3;
 using FDBuild.Building;
 using System.Text;
+using PluginCore.Helpers;
 
 
 namespace FDBuild
@@ -44,10 +44,12 @@ namespace FDBuild
                 catch { }
 
             string swfmillPath = options.SwfmillPath ?? Path.Combine(toolsDir, "swfmill");
-            if (File.Exists(Path.Combine(swfmillPath, "swfmill.exe")))
+            if (PlatformHelper.IsRunningOnWindows() && File.Exists(Path.Combine(swfmillPath, "swfmill.exe")))
                 SwfmillLibraryBuilder.ExecutablePath = Path.Combine(swfmillPath, "swfmill.exe");
+            else if (!PlatformHelper.IsRunningOnWindows() && File.Exists(Path.Combine(swfmillPath, "swfmill")))
+                SwfmillLibraryBuilder.ExecutablePath = Path.Combine(swfmillPath, "swfmill");
             else
-                SwfmillLibraryBuilder.ExecutablePath = "swfmill.exe"; // hope you have it in your environment path!
+                SwfmillLibraryBuilder.ExecutablePath = "swfmill"; // hope you have it in your environment path!
 
             // figure user settings PlatformData
             string platformsFile = Path.Combine("Settings", "Platforms");

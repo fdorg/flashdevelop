@@ -328,8 +328,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             get
             {   
-                 TextFormatFlags textFormat = TextFormatFlags.PathEllipsis |
-                    TextFormatFlags.SingleLine |
+                 TextFormatFlags textFormat = TextFormatFlags.SingleLine |
                     TextFormatFlags.VerticalCenter |
                     TextFormatFlags.PreserveGraphicsClipping |
                     TextFormatFlags.HorizontalCenter;
@@ -1282,6 +1281,8 @@ namespace WeifenLuo.WinFormsUI.Docking
                 if (temp != Color.Empty) stripColor = temp;
             }
 
+            string tabText = tab.MaxWidth >= rect.Width ? PathHelper.Ellipsis.Compact(tab.Content.DockHandler.TabText, BoldFont, rectText.Width,
+                PathHelper.Ellipsis.EllipsisFormat.Path | PathHelper.Ellipsis.EllipsisFormat.Middle) : tab.Content.DockHandler.TabText;
             if (DockPane.ActiveContent == tab.Content)
             {
                 if (tabStyle == "Rect") g.FillRectangle(BrushDocumentActiveBackground, rectTab);
@@ -1324,9 +1325,9 @@ namespace WeifenLuo.WinFormsUI.Docking
 
                 if (DockPane.IsActiveDocumentPane)
                 {
-                    TextRenderer.DrawText(g, tab.Content.DockHandler.TabText, BoldFont, rectText, ColorDocumentActiveText, DocumentTextFormat);
+                    TextRenderer.DrawText(g, tabText, BoldFont, rectText, ColorDocumentActiveText, DocumentTextFormat);
                 }
-                else TextRenderer.DrawText(g, tab.Content.DockHandler.TabText, Font, rectText, ColorDocumentInactiveText, DocumentTextFormat);
+                else TextRenderer.DrawText(g, tabText, Font, rectText, ColorDocumentInactiveText, DocumentTextFormat);
             }
             else
             {
@@ -1356,7 +1357,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 if (tabStyle == "Rect") g.DrawRectangle(PenDocumentTabInactiveBorder, rectTab);
                 else g.DrawPath(PenDocumentTabInactiveBorder, path);
 
-                TextRenderer.DrawText(g, tab.Content.DockHandler.TabText, Font, rectText, ColorDocumentInactiveText, DocumentTextFormat);
+                TextRenderer.DrawText(g, tabText, Font, rectText, ColorDocumentInactiveText, DocumentTextFormat);
             }
 
             if (rectTab.Contains(rectIcon) && DockPane.DockPanel.ShowDocumentIcon)

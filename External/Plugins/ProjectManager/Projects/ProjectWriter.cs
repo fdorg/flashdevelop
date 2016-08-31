@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.IO;
 using System.Text;
 using System.Xml;
 
@@ -9,7 +10,7 @@ namespace ProjectManager.Projects
     {
         Project project;
 
-        public ProjectWriter(Project project, string filename) : base(filename,Encoding.UTF8)
+        public ProjectWriter(Project project, string filename) : base(new FileStream(filename,FileMode.OpenOrCreate),Encoding.UTF8)
         {
             this.project = project;
             this.Formatting = Formatting.Indented;

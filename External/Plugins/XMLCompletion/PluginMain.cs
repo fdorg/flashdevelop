@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Localization;
@@ -117,7 +118,7 @@ namespace XMLCompletion
                     return;
 
                 case EventType.Keys:
-                    e.Handled = XMLComplete.OnShortCut(((KeyEvent)e).Value);
+                    e.Handled = XMLComplete.OnShortCut((Keys) (e as KeyEvent).Keys);
                     break;
 
                 case EventType.Command:
