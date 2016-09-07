@@ -31,9 +31,8 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.Label infoLabel;
         private System.Windows.Forms.Label descLabel;
         private String itemFilter = String.Empty;
-        private InstalledSDKContext sdkContext;
-        private ShortcutKeys currentKeys;
         private static Int32 lastItemIndex = 0;
+        private InstalledSDKContext sdkContext;
         private static Hashtable requireRestart = new Hashtable();
 
         public SettingDialog(String itemName, String filter)
@@ -42,7 +41,7 @@ namespace FlashDevelop.Dialogs
             this.Font = Globals.Settings.DefaultFont;
             this.FormGuid = "48a75ac0-479a-49b9-8ec0-5db7c8d36388";
             this.InitializeComponent();
-            this.InitializeGraphics();
+            this.InitializeGraphics(); 
             this.InitializeItemGroups();
             this.InitializeContextMenu();
             this.PopulatePluginList(itemName, filter);
@@ -305,12 +304,12 @@ namespace FlashDevelop.Dialogs
         private void InitializeContextMenu()
         {
             ContextMenuStrip contextMenu = new ContextMenuStrip();
-            ToolStripMenuItemEx collapseAll = new ToolStripMenuItemEx(TextHelper.GetString("Label.CollapseAll"));
-            collapseAll.ShortcutKeyDisplayString = PluginBase.MainForm.GetShortcutKeys("ViewMenu.CollapseAll").ToString();
+            ToolStripMenuItem collapseAll = new ToolStripMenuItem(TextHelper.GetString("Label.CollapseAll"));
+            collapseAll.ShortcutKeys = PluginBase.MainForm.GetShortcutItemKeys("ViewMenu.CollapseAll");
             collapseAll.Click += delegate { this.itemPropertyGrid.CollapseAllGridItems(); };
             contextMenu.Items.Add(collapseAll);
-            ToolStripMenuItemEx expandAll = new ToolStripMenuItemEx(TextHelper.GetString("Label.ExpandAll"));
-            expandAll.ShortcutKeyDisplayString = PluginBase.MainForm.GetShortcutKeys("ViewMenu.ExpandAll").ToString();
+            ToolStripMenuItem expandAll = new ToolStripMenuItem(TextHelper.GetString("Label.ExpandAll"));
+            expandAll.ShortcutKeys = PluginBase.MainForm.GetShortcutItemKeys("ViewMenu.ExpandAll");
             expandAll.Click += delegate { this.itemPropertyGrid.ExpandAllGridItems(); };
             contextMenu.Items.Add(expandAll);
             this.itemPropertyGrid.ContextMenuStrip = contextMenu;
@@ -357,26 +356,6 @@ namespace FlashDevelop.Dialogs
             }
             itemFilter = itemName;
             this.SelectCorrectItem(itemName);
-        }
-
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
-            string shortcutId;
-            if (Globals.MainForm.HandleShortcutManually(ref this.currentKeys, keyData, out shortcutId))
-            {
-                switch (shortcutId)
-                {
-                    case "ViewMenu.CollapseAll":
-                        if (this.itemPropertyGrid.ContainsFocus) this.itemPropertyGrid.CollapseAllGridItems();
-                        return true;
-                    case "ViewMenu.ExpandAll":
-                        if (this.itemPropertyGrid.ContainsFocus) this.itemPropertyGrid.ExpandAllGridItems();
-                        return true;
-                }
-                if (this.currentKeys.IsExtended) return true;
-                this.currentKeys = ShortcutKeys.None;
-            }
-            return false;
         }
 
         /// <summary>

@@ -254,7 +254,7 @@ namespace ProjectManager.Actions
 
         public void NotifyBuildStarted() { fdProcess.ProcessStartedEventCaught(); }
         public void NotifyBuildEnded(string result) { fdProcess.ProcessEndedEventCaught(result); }
-        public void SetStatusBar(string text) { mainForm.StatusLabelText = " " + text; }
+        public void SetStatusBar(string text) { mainForm.StatusLabel.Text = " " + text; }
 
         /* SDK MANAGEMENT */
 

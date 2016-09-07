@@ -4,7 +4,6 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using PluginCore;
-using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -158,7 +157,7 @@ namespace LayoutManager
         {
             String label = TextHelper.GetString("Label.ViewMenuItem");
             ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
-            ToolStripMenuItemEx viewItem = new ToolStripMenuItemEx(label, this.pluginImage, new EventHandler(this.OpenPanel));
+            ToolStripMenuItem viewItem = new ToolStripMenuItem(label, this.pluginImage, new EventHandler(this.OpenPanel));
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowLayouts", viewItem);
             viewMenu.DropDownItems.Add(viewItem);
         }

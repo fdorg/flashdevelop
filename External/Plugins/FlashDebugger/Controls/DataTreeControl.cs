@@ -67,6 +67,7 @@ namespace FlashDebugger.Controls
             _tree.Expanding += TreeExpanding;
             _tree.NodeMouseDoubleClick += Tree_NodeMouseDoubleClick;
             _tree.LoadOnDemand = true;
+            _tree.AutoHeaderHeight = true;
             _tree.AutoRowHeight = true;
             _tree.HideSelection = true;
 
@@ -77,6 +78,8 @@ namespace FlashDebugger.Controls
             _tree.LineColor = PluginBase.MainForm.GetThemeColor("DataTreeControl.LineColor", SystemColors.ActiveBorder);
             _tree.LineColor2 = PluginBase.MainForm.GetThemeColor("DataTreeControl.LineColor", SystemColors.ActiveBorder);
             _tree.DragDropMarkColor = PluginBase.MainForm.GetThemeColor("DataTreeControl.ForeColor", SystemColors.WindowText);
+            _tree.ForeColor = PluginBase.MainForm.GetThemeColor("TreeViewAdv.ForeColor", SystemColors.ControlText);
+            _tree.BackColor = PluginBase.MainForm.GetThemeColor("TreeViewAdv.BackColor", SystemColors.Control);
 
             NameNodeTextBox.DrawText += NameNodeTextBox_DrawText;
             ValueNodeTextBox.DrawText += ValueNodeTextBox_DrawText;

@@ -10,23 +10,60 @@ namespace ProjectManager.Helpers
     /// </summary>
     public class LineEntryDialog : Form
     {
-        private ShortcutKeys currentKeys;
-        private string line;
-        
+        string line;
+
+        #region Form Designer Components
+
         private System.Windows.Forms.TextBox lineBox;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Button btnCancel;
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.Container components = null;
         private System.Windows.Forms.Label titleLabel;
-        
+
+        #endregion
+
+        /// <summary>
+        /// Gets the line entered by the user.
+        /// </summary>
+        public string Line
+        {
+            get { return line; }
+        }
+
         public LineEntryDialog(string captionText, string labelText, string defaultLine)
         {
             InitializeComponent();
-            InititalizeLocalization(captionText, labelText);
+            InititalizeLocalization();
             this.Font = PluginBase.Settings.DefaultFont;
-            this.lineBox.Text = (defaultLine != null) ? defaultLine : string.Empty;
-            this.lineBox.SelectAll();
-            this.lineBox.Focus();
+            this.Text = " " + captionText;
+            titleLabel.Text = labelText;
+            lineBox.KeyDown += OnLineBoxOnKeyDown;
+            lineBox.Text = (defaultLine != null) ? defaultLine : string.Empty;
+            lineBox.SelectAll();
+            lineBox.Focus();
         }
+
+        #region Dispose
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        protected override void Dispose( bool disposing )
+        {
+            if( disposing )
+            {
+                if(components != null)
+                {
+                    components.Dispose();
+                }
+            }
+            base.Dispose( disposing );
+        }
+
+        #endregion
 
         #region Windows Form Designer Generated Code
 
@@ -56,7 +93,6 @@ namespace ProjectManager.Helpers
             this.lineBox.Name = "lineBox";
             this.lineBox.Size = new System.Drawing.Size(260, 20);
             this.lineBox.TabIndex = 0;
-            this.lineBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.LineBox_KeyDown);
             // 
             // btnOK
             // 
@@ -103,37 +139,21 @@ namespace ProjectManager.Helpers
 
         #endregion
 
-        /// <summary>
-        /// Gets the line entered by the user.
-        /// </summary>
-        public string Line
-        {
-            get { return this.line; }
-        }
-
-        /// <summary>
-        /// Selects the specified range of text.
-        /// </summary>
-        public void SelectRange(int start, int length)
-        {
-            this.lineBox.Select(start, length);
-        }
-
-        private void InititalizeLocalization(string captionText, string labelText)
+        private void InititalizeLocalization()
         {
             this.btnOK.Text = TextHelper.GetString("Label.OK");
             this.btnCancel.Text = TextHelper.GetString("Label.Cancel");
-            this.titleLabel.Text = string.IsNullOrEmpty(labelText) ? TextHelper.GetString("Info.EnterText") : labelText;
-            this.Text = " " + (string.IsNullOrEmpty(captionText) ? TextHelper.GetString("Title.EnterText") : captionText);
+            this.titleLabel.Text = TextHelper.GetString("Info.EnterText");
+            this.Text = " " + TextHelper.GetString("Title.EnterText");
         }
 
         private void btnOK_Click(object sender, System.EventArgs e)
         {
-            var cancelArgs = new CancelEventArgs(false);
-            this.OnValidating(cancelArgs);
+            this.line = lineBox.Text;
+            CancelEventArgs cancelArgs = new CancelEventArgs(false);
+            OnValidating(cancelArgs);
             if (!cancelArgs.Cancel)
             {
-                this.line = this.lineBox.Text;
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
@@ -145,63 +165,31 @@ namespace ProjectManager.Helpers
             this.Close();
         }
 
-        private void LineBox_KeyDown(object sender, KeyEventArgs e)
+        void OnLineBoxOnKeyDown(object sender, KeyEventArgs args)
         {
-            string shortcutId;
-            if (PluginBase.MainForm.HandleShortcutManually(ref this.currentKeys, e.KeyData, out shortcutId))
-            {
-                switch (shortcutId)
-                {
-                    case "EditMenu.Copy":
-                        this.lineBox.Copy();
-                        break;
-                    case "EditMenu.CopyLine":
-                        {
-                            int start = this.lineBox.SelectionStart;
-                            int length = this.lineBox.SelectionLength;
-                            this.lineBox.SelectAll();
-                            this.lineBox.Copy();
-                            this.lineBox.Select(start, length);
-                        }
-                        break;
-                    case "EditMenu.Cut":
-                        this.lineBox.Cut();
-                        break;
-                    case "EditMenu.CutLine":
-                        this.lineBox.SelectAll();
-                        this.lineBox.Cut();
-                        break;
-                    case "EditMenu.DeleteLine":
-                        this.lineBox.Clear();
-                        break;
-                    case "EditMenu.Paste":
-                        this.lineBox.Paste();
-                        break;
-                    case "EditMenu.SelectAll":
-                        this.lineBox.SelectAll();
-                        break;
-                    case "EditMenu.ToLowercase":
-                    case "EditMenu.ToUppercase":
-                        {
-                            int start = this.lineBox.SelectionStart;
-                            int length = this.lineBox.SelectionLength;
-                            this.lineBox.SelectedText = shortcutId == "EditMenu.ToLowercase" ? this.lineBox.SelectedText.ToLower() : this.lineBox.SelectedText.ToUpper();
-                            this.lineBox.Select(start, length);
-                        }
-                        break;
-                    case "EditMenu.Undo":
-                        this.lineBox.Undo();
-                        break;
-                }
+            string shortcutId = PluginBase.MainForm.GetShortcutItemId(args.KeyData);
+            if (string.IsNullOrEmpty(shortcutId)) return;
 
-                this.currentKeys = ShortcutKeys.None;
-                e.SuppressKeyPress = true;
-            }
-            else if ((e.KeyData & Keys.Control) != 0 || e.KeyData == (Keys.Shift | Keys.Delete) || e.KeyData == (Keys.Shift | Keys.Insert))
+            switch (shortcutId)
             {
-                e.SuppressKeyPress = true;
+                case "EditMenu.ToLowercase":
+                case "EditMenu.ToUppercase":
+                    string selectedText = lineBox.SelectedText;
+                    if (string.IsNullOrEmpty(selectedText)) break;
+                    selectedText = shortcutId == "EditMenu.ToLowercase" ? selectedText.ToLower() : selectedText.ToUpper();
+                    int selectionStart = lineBox.SelectionStart;
+                    int selectionLength = lineBox.SelectionLength;
+                    lineBox.Paste(selectedText);
+                    SelectRange(selectionStart, selectionLength);
+                    break;
             }
         }
+
+        public void SelectRange(int start, int length)
+        {
+            lineBox.Select(start, length);
+        }
+
     }
 
 }

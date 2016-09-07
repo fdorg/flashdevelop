@@ -26,9 +26,20 @@ namespace FlashDebugger.Controls
             }
         }
 
+        public AutoRowHeightLayout RowLayout
+        {
+            get
+            {
+                return rowLayout;
+            }
+        }
+
+        AutoRowHeightLayout rowLayout;
+
         public DataTipForm()
         {
             InitializeComponent();
+            rowLayout = new AutoRowHeightLayout(Tree, Tree.RowHeight);
             Tree.Cursor = Cursors.Default;
             Tree.ShowLines = false;
             Tree.Expanded += Tree_SizeChanged;
@@ -97,8 +108,8 @@ namespace FlashDebugger.Controls
         {
             Point screenPoint = PointToScreen(new Point(e.X, e.Y));
             Win32.HitTest ht = DoHitTest(e.X, e.Y);
-            if (Win32.ShouldUseWin32()) 
-            { 
+            if (Win32.ShouldUseWin32())
+            {
                 Win32.ReleaseCapture();
                 Win32.SendMessage(Handle, Win32.WM_NCLBUTTONDOWN, (int)ht, (int)(screenPoint.Y << 16 | screenPoint.X));
             }
@@ -161,8 +172,8 @@ namespace FlashDebugger.Controls
         {
             using (Graphics g = Tree.CreateGraphics())
             {
-                int nameMaxW = 0;
-                int valueMaxW = 0;
+                int nameMaxW = TextWidth(g, Tree.Columns[0].Header) + DataTree.Margin.Horizontal;
+                int valueMaxW = TextWidth(g, Tree.Columns[1].Header) + DataTree.Margin.Horizontal;
                 int height = 0;
                 DataTree.Tree.Columns[0].Width = Screen.GetWorkingArea(this).Width;
                 foreach (TreeNodeAdv node in DataTree.Tree.Root.Children)
@@ -180,7 +191,7 @@ namespace FlashDebugger.Controls
                     width = maxWidth;
                 }
                 Width = width;
-                int h = DataTree.Tree.ColumnHeaderHeight + height * DataTree.Tree.RowHeight + Padding.Vertical + SystemInformation.HorizontalScrollBarHeight;
+                int h = DataTree.Tree.ColumnHeaderHeight + height + Padding.Vertical + SystemInformation.HorizontalScrollBarHeight;
                 int maxHeight = parentForm.Height - locationMainForm.Y - Padding.Vertical - 2 * SystemInformation.HorizontalScrollBarHeight;
                 if (h > maxHeight)
                 {
@@ -199,7 +210,7 @@ namespace FlashDebugger.Controls
                     CalcHeightWidth(g, child, ref height, ref widthName, ref widthValue);
                 }
             }
-            height++;
+            height += RowLayout.GetRowBounds(node.Row).Height;
             int nodeWidth = 0;
             foreach (NodeControlInfo nodeInfo in DataTree.Tree.GetNodeControls(node))
             {
