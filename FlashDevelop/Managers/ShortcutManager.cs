@@ -21,6 +21,7 @@ namespace FlashDevelop.Managers
         private const int ExtendedShortcutMinimumFileVersion = 1;
 
         private static readonly HashSet<ShortcutKeys> allShortcuts;
+        private static readonly HashSet<Keys> altFirstKeys;
         private static readonly List<ShortcutKeys> ignoredKeys;
         private static readonly List<ToolStripItem> secondaryItems;
         private static readonly List</*Dictionary<string, */ShortcutItem> registeredItems;
@@ -29,6 +30,7 @@ namespace FlashDevelop.Managers
         static ShortcutManager()
         {
             allShortcuts = new HashSet<ShortcutKeys>();
+            altFirstKeys = new HashSet<Keys>();
             ignoredKeys = new List<ShortcutKeys>();
             secondaryItems = new List<ToolStripItem>();
             registeredItems = new List</*Dictionary<string, */ShortcutItem>();
@@ -41,6 +43,14 @@ namespace FlashDevelop.Managers
         public static HashSet<ShortcutKeys> AllShortcuts
         {
             get { return allShortcuts; }
+        }
+
+        /// <summary>
+        /// Gets a collection of the first parts of all extended shortcuts with only <see cref="Keys.Alt"/> as their modifiers in the first parts.
+        /// </summary>
+        internal static HashSet<Keys> AltFirstKeys
+        {
+            get { return altFirstKeys; }
         }
 
         /// <summary>
@@ -138,28 +148,24 @@ namespace FlashDevelop.Managers
         public static void UpdateAllShortcuts()
         {
             allShortcuts.Clear();
+            altFirstKeys.Clear();
             cachedItems.Clear();
             foreach (var item in registeredItems/*.Values*/)
             {
                 var keys = item.Custom;
                 if (!keys.IsNone)
                 {
-                    if (!allShortcuts.Contains(keys))
+                    allShortcuts.Add(keys);
+                    cachedItems.Add(keys, item);
+                    if (keys.IsExtended && (keys.First & Keys.Modifiers) == Keys.Alt)
                     {
-                        allShortcuts.Add(keys);
-                    }
-                    if (!cachedItems.ContainsKey(keys))
-                    {
-                        cachedItems.Add(keys, item);
+                        altFirstKeys.Add(keys.First);
                     }
                 }
             }
             foreach (var item in ignoredKeys)
             {
-                if (!allShortcuts.Contains(item))
-                {
-                    allShortcuts.Add(item);
-                }
+                allShortcuts.Add(item);
             }
         }
 

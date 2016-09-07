@@ -180,14 +180,14 @@ namespace PluginCore
         /// A utility method for handling extended shortcuts where the context prevents the default mechanism (e.g. in a dialog form).
         /// Returns <code>true</code> if the current key press is processed; <code>false</code> otherwise.
         /// <para/>
-        /// When this method returns <code>true</code>, make sure to always set <code>previousKeys</code> to <see cref="ShortcutKeys.None"/>,
-        /// so the next call to this method will correctly handle the new keyboard input as the first part of a shortcut.
-        /// Also, when calling from <see cref="Control.ProcessCmdKey(ref Message, Keys)"/>, make sure to return <code>true</code> if this method returns <code>true</code>.
+        /// This method alters the value of <code>previousKeys</code>, therefore its value should not be used in context after calling this method.
+        /// <para/>
+        /// When calling from <see cref="Control.ProcessCmdKey(ref Message, Keys)"/>, make sure to return <code>true</code> if this method returns <code>true</code>.
         /// </summary>
         /// <param name="previousKeys">The reference to the stored previous <see cref="ShortcutKeys"/> value.</param>
         /// <param name="input">The <see cref="Keys"/> value specifying the current keyboard input.</param>
         /// <param name="shortcutId">The shortcut ID to process, or <see cref="string.Empty"/> if this method returns <code>false</code>.</param>
-        bool HandleShortcutManually(ref ShortcutKeys previousKeys, System.Windows.Forms.Keys input, out string shortcutId);
+        bool HandleShortcutManually(ref ShortcutKeys previousKeys, Keys input, out string shortcutId);
         /// <summary>
         /// Create the specified new document from the given template.
         /// </summary>
