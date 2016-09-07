@@ -102,13 +102,18 @@ namespace CodeRefactor.Provider
             return ASComplete.GetExpressionType(sci, position);
         }
 
+        public static MemberModel GetRefactoringTarget(ASResult target)
+        {
+            var type = target.Type;
+            var member = target.Member;
+            if (type.IsEnum() || !type.IsVoid() && target.IsStatic && (member == null || (member.Flags & FlagType.Constructor) > 0))
+                return type;
+            return member;
+        }
+
         public static string GetRefactorTargetName(ASResult target)
         {
-            ClassModel type = target.Type;
-            MemberModel member = target.Member;
-            if (type.IsEnum() || !type.IsVoid() && target.IsStatic && (member == null || (member.Flags & FlagType.Constructor) > 0))
-                return type.Name;
-            return member.Name;
+            return GetRefactoringTarget(target).Name;
         }
 
         /// <summary>
