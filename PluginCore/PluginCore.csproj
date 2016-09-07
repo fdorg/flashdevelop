@@ -110,6 +110,7 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
+    <Reference Include="System.Data" />
     <Reference Include="System.Design">
       <Name>System.Design</Name>
     </Reference>
@@ -311,6 +312,10 @@
     <Compile Include="PluginCore\Bridge\IBridgeSettings.cs" />
     <Compile Include="PluginCore\Controls\Common.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="PluginCore\Controls\DescriptiveCollectionEditor.cs" />
+    <Compile Include="PluginCore\Controls\FixedValuesCollectionEditor.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="PluginCore\Controls\MessageBoxManager.cs" />
     <Compile Include="PluginCore\Controls\ScrollBarEx.cs">
@@ -638,7 +643,9 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="PluginCore\Helpers\PlatformHelper.cs" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>

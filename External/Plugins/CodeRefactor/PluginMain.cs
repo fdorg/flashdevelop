@@ -458,8 +458,10 @@ namespace CodeRefactor
         {
             try
             {
-                var target = RefactoringHelper.GetDefaultRefactorTarget();
-                if (target != null) RenamingHelper.AddToQueue(target);
+                if (!InlineRename.InProgress)
+                {
+                    new Rename(true, settingObject.UseInlineRenaming);
+                }
             }
             catch (Exception ex)
             {

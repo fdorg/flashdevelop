@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using ASCompletion.Completion;
 using ASCompletion.Model;
-using CodeRefactor.Provider.Haxe;
 using PluginCore;
 
 namespace CodeRefactor.Provider
@@ -16,7 +15,7 @@ namespace CodeRefactor.Provider
             Register("as2", DefaultFactory);
             Register("as3", DefaultFactory);
             Register("loom", DefaultFactory);
-            Register("haxe", new HaxeCommandFactory());
+            Register("haxe", DefaultFactory);
         }
 
         public static void Register(string language, ICommandFactory factory)
@@ -44,7 +43,7 @@ namespace CodeRefactor.Provider
 
         public static ICommandFactory GetFactoryFromTarget(ASResult target)
         {
-            return GetFactoryFromFile(target.InFile);
+            return GetFactoryFromFile(target.InFile ?? target.Type.InFile);
         }
 
         public static ICommandFactory GetFactoryFromFile(FileModel file)

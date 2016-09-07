@@ -129,14 +129,16 @@ namespace CodeRefactor.Provider
         /// Uses the current text location as the declaration target.
         /// </summary>
         /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
-        Command CreateRenameCommand(bool outputResults);
+        /// <param name="inline">Whether to use inline renaming.</param>
+        Command CreateRenameCommand(bool outputResults, bool inline = false);
 
         /// <summary>
         /// Create a new Rename refactoring command.
         /// </summary>
         /// <param name="target">The target declaration to find references to.</param>
         /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
-        Command CreateRenameCommand(ASResult target, bool outputResults);
+        /// <param name="inline">Whether to use inline renaming.</param>
+        Command CreateRenameCommand(ASResult target, bool outputResults, bool inline = false);
 
         /// <summary>
         /// Create a new Rename refactoring command.
@@ -144,7 +146,8 @@ namespace CodeRefactor.Provider
         /// <param name="target">The target declaration to find references to.</param>
         /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
         /// <param name="newName">If provided, will not query the user for a new name.</param>
-        Command CreateRenameCommand(ASResult target, bool outputResults, string newName);
+        /// <param name="inline">Whether to use inline renaming.</param>
+        Command CreateRenameCommand(ASResult target, bool outputResults, string newName, bool inline = false);
 
         /// <summary>
         /// Create a new Rename refactoring command.
@@ -153,7 +156,8 @@ namespace CodeRefactor.Provider
         /// <param name="outputResults">If true, will send the found results to the trace log and results panel</param>
         /// <param name="newName">If provided, will not query the user for a new name.</param>
         /// <param name="ignoreDeclarationSource">If true, will not rename the original declaration source.  Useful for Encapsulation refactoring.</param>
-        Command CreateRenameCommand(ASResult target, bool outputResults, string newName, bool ignoreDeclarationSource);
+        /// <param name="inline">Whether to use inline renaming.</param>
+        Command CreateRenameCommand(ASResult target, bool outputResults, string newName, bool ignoreDeclarationSource, bool inline = false);
 
         /// <summary>
         /// Create a new RenameFile refactoring command.

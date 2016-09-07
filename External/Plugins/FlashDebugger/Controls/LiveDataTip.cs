@@ -19,6 +19,11 @@ namespace FlashDebugger
 
         public LiveDataTip()
         {
+            UITools.Manager.OnMouseHover += new UITools.MouseHoverHandler(Manager_OnMouseHover);
+        }
+
+        private void Initialize()
+        {
             m_ToolTip = new DataTipForm();
             m_ToolTip.Dock = DockStyle.Fill;
             m_ToolTip.Visible = false;
@@ -27,7 +32,6 @@ namespace FlashDebugger
             m_MouseMessageFilter.MouseDownEvent += new MouseDownEventHandler(MouseMessageFilter_MouseDownEvent);
             m_MouseMessageFilter.KeyDownEvent += new EventHandler(MouseMessageFilter_KeyDownEvent);
             Application.AddMessageFilter(m_MouseMessageFilter);
-            UITools.Manager.OnMouseHover += new UITools.MouseHoverHandler(Manager_OnMouseHover);
         }
 
         public void Show(Point point, Variable variable, String path)
@@ -67,6 +71,9 @@ namespace FlashDebugger
 
         private void Manager_OnMouseHover(ScintillaControl sci, Int32 position)
         {
+            if (m_ToolTip == null)
+                Initialize();
+
             DebuggerManager debugManager = PluginMain.debugManager;
             FlashInterface flashInterface = debugManager.FlashInterface;
             if (!PluginBase.MainForm.EditorMenu.Visible && flashInterface != null && flashInterface.isDebuggerStarted && flashInterface.isDebuggerSuspended)

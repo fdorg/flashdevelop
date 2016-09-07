@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using System.IO;
 using System.Security.AccessControl;
 using System.Security.Principal;
@@ -235,7 +236,7 @@ namespace PluginCore.Helpers
                 }
                 catch {} // Not working...
             }
-            String userProfile = Environment.GetEnvironmentVariable(Win32.IsRunningOnWindows() ? "USERPROFILE" : "HOME");
+            String userProfile = Environment.GetEnvironmentVariable(PlatformHelper.IsRunningOnWindows() ? "USERPROFILE" : "HOME");
             return Path.Combine(userProfile, "mm.cfg");
         }
 
@@ -418,6 +419,195 @@ namespace PluginCore.Helpers
             }
         }
 
+        public class Ellipsis
+        {
+            /// <summary>
+            /// Specifies ellipsis format and alignment.
+            /// </summary>
+            [Flags]
+            public enum EllipsisFormat
+            {
+                /// <summary>
+                /// Text is not modified.
+                /// </summary>
+                None = 0,
+                /// <summary>
+                /// Text is trimmed at the end of the string. An ellipsis (...) is drawn in place of remaining text.
+                /// </summary>
+                End = 1,
+                /// <summary>
+                /// Text is trimmed at the begining of the string. An ellipsis (...) is drawn in place of remaining text. 
+                /// </summary>
+                Start = 2,
+                /// <summary>
+                /// Text is trimmed in the middle of the string. An ellipsis (...) is drawn in place of remaining text.
+                /// </summary>
+                Middle = 3,
+                /// <summary>
+                /// Preserve as much as possible of the drive and filename information. Must be combined with alignment information.
+                /// </summary>
+                Path = 4,
+                /// <summary>
+                /// Text is trimmed at a word boundary. Must be combined with alignment information.
+                /// </summary>
+                Word = 8
+            }
+
+            /// <summary>
+            /// String used as a place holder for trimmed text.
+            /// </summary>
+            public const string EllipsisChars = "...";
+
+            private static Regex prevWord = new Regex(@"\W*\w*$", RegexOptions.Compiled);
+            private static Regex nextWord = new Regex(@"\w*\W*", RegexOptions.Compiled);
+
+            /// <summary>
+            /// Truncates a text string to fit within a given width by replacing trimmed text with ellipses. 
+            /// </summary>
+            /// <param name="text">String to be trimmed.</param>
+            /// <param name="font">Font to be used to measure the text.</param>
+            /// <param name="proposedWidth">The target width to accomodate the text.</param>
+            /// <param name="options">Format and alignment of ellipsis.</param>
+            /// <returns>This function returns text trimmed to the specified witdh.</returns>
+            public static string Compact(string text, Font font, int proposedWidth, EllipsisFormat options)
+            {
+                if (string.IsNullOrEmpty(text))
+                    return text;
+
+                // no aligment information
+                if (((EllipsisFormat.Path | EllipsisFormat.Start | EllipsisFormat.End | EllipsisFormat.Middle) & options) == 0)
+                    return text;
+
+                if (font == null)
+                    throw new ArgumentNullException("font");
+
+                Size s = TextRenderer.MeasureText(text, font);
+
+                // control is large enough to display the whole text
+                if (s.Width <= proposedWidth)
+                    return text;
+
+                string pre = "";
+                string mid = text;
+                string post = "";
+
+                bool isPath = (EllipsisFormat.Path & options) != 0;
+
+                // split path string into <drive><directory><filename>
+                if (isPath)
+                {
+                    pre = Path.GetPathRoot(text);
+                    mid = Path.GetDirectoryName(text).Substring(pre.Length);
+                    post = Path.GetFileName(text);
+                }
+
+                int len = 0;
+                int seg = mid.Length;
+                string fit = "";
+
+                // find the longest string that fits into 
+                // the control boundaries using bisection method
+                while (seg > 1)
+                {
+                    seg -= seg / 2;
+
+                    int left = len + seg;
+                    int right = mid.Length;
+
+                    if (left > right)
+                        continue;
+
+                    if ((EllipsisFormat.Middle & options) == EllipsisFormat.Middle)
+                    {
+                        right -= left / 2;
+                        left -= left / 2;
+                    }
+                    else if ((EllipsisFormat.Start & options) != 0)
+                    {
+                        right -= left;
+                        left = 0;
+                    }
+
+                    // trim at a word boundary using regular expressions
+                    if ((EllipsisFormat.Word & options) != 0)
+                    {
+                        if ((EllipsisFormat.End & options) != 0)
+                        {
+                            left -= prevWord.Match(mid, 0, left).Length;
+                        }
+                        if ((EllipsisFormat.Start & options) != 0)
+                        {
+                            right += nextWord.Match(mid, right).Length;
+                        }
+                    }
+
+                    // build and measure a candidate string with ellipsis
+                    string tst = mid.Substring(0, left) + EllipsisChars + mid.Substring(right);
+
+                    // restore path with <drive> and <filename>
+                    if (isPath)
+                    {
+                        tst = Path.Combine(Path.Combine(pre, tst), post);
+                    }
+                    s = TextRenderer.MeasureText(tst, font);
+
+                    // candidate string fits into control boundaries, try a longer string
+                    // stop when seg <= 1
+                    if (s.Width <= proposedWidth)
+                    {
+                        len += seg;
+                        fit = tst;
+                    }
+                }
+
+                if (len == 0) // string can't fit into control
+                {
+                    // "path" mode is off, just return ellipsis characters
+                    if (!isPath)
+                        return EllipsisChars;
+
+                    // <directory> is empty
+                    if (mid.Length == 0)
+                    {
+                        // <drive> is empty, return compacted <filename>
+                        if (pre.Length == 0)
+                            return Compact(text, font, proposedWidth, options & ~EllipsisFormat.Path);
+
+                        // we compare ellipsis and <drive> to get the shorter
+                        string testEllipsis = Path.Combine(EllipsisChars, ".");
+                        testEllipsis = testEllipsis.Substring(0, testEllipsis.Length - 1);
+                        if (TextRenderer.MeasureText(testEllipsis, font).Width < TextRenderer.MeasureText(pre, font).Width)
+                            pre = EllipsisChars;
+                    }
+                    else
+                    {
+                        // "C:\...\filename.ext" No need to check for drive, but generates extra check
+                        if (pre.Length > 0)
+                        {
+                            fit = Path.Combine(Path.Combine(pre, EllipsisChars), post);
+
+                            s = TextRenderer.MeasureText(fit, font);
+
+                            if (s.Width <= proposedWidth) return fit;
+                        }
+
+                        pre = EllipsisChars;
+                    }
+
+                    // Try "...\filename.ext" or "c:\filename.ext"
+                    fit = Path.Combine(pre, post);
+
+                    s = TextRenderer.MeasureText(fit, font);
+
+                    // if still not fit then return "...\f...e.ext"
+                    if (s.Width > proposedWidth)
+                    {
+                        fit = Path.Combine(pre, Compact(post, font, proposedWidth - TextRenderer.MeasureText(fit.Substring(0, fit.Length - post.Length), font).Width, options & ~EllipsisFormat.Path));
+                    }
+                }
+                return fit;
+            }
+        }
     }
 
 }

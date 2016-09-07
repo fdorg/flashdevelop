@@ -190,6 +190,9 @@
     <Compile Include="..\..\Plugins\ProjectManager\Projects\ProjectWriter.cs">
       <Link>Projects\ProjectWriter.cs</Link>
     </Compile>
+    <Compile Include="..\..\..\PluginCore\PluginCore\Helpers\PlatformHelper.cs">
+      <Link>Helpers\PlatformHelper.cs</Link>
+    </Compile>
     <Compile Include="Building\ArgumentBuilder.cs" />
     <Compile Include="Building\AS2\AS2ProjectBuilder.cs" />
     <Compile Include="Building\AS2\MtascArgumentBuilder.cs" />

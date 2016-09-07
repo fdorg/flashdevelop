@@ -297,7 +297,7 @@ namespace HaXeContext
             else
             {
                 hxml = hxml.Replace("--macro keep", "#--macro keep"); // TODO remove this hack
-                hxml = Regex.Replace(hxml, "(-[a-z0-9-]+)\\s*[\r\n]+([^-])", "$1 $2", RegexOptions.IgnoreCase);
+                hxml = Regex.Replace(hxml, "(-[a-z0-9-]+)\\s*[\r\n]+([^-#])", "$1 $2", RegexOptions.IgnoreCase);
                 hxproj.RawHXML = Regex.Split(hxml, "[\r\n]+");
 
                 args = GetCommand(hxproj, "build", false);

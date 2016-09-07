@@ -446,6 +446,15 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Gets whether the application requires a restart to apply changes.
+        /// </summary>
+        public Boolean RequiresRestart
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// Gets or sets the RefreshConfig
         /// </summary>
         public Boolean RefreshConfig
@@ -972,7 +981,7 @@ namespace FlashDevelop
             // toolStripPanel
             //
             this.toolStripPanel.Dock = DockStyle.Top;
-            if (Win32.IsRunningOnMono())
+            if (PlatformHelper.IsRunningOnMono())
             {
                 this.toolStripPanel.Controls.Add(this.menuStrip);
                 this.toolStripPanel.Controls.Add(this.toolStrip);
@@ -2011,6 +2020,7 @@ namespace FlashDevelop
         public void RestartRequired()
         {
             if (this.restartButton != null) this.restartButton.Visible = true;
+            this.RequiresRestart = true;
             String message = TextHelper.GetString("Info.RequiresRestart");
             TraceManager.Add(message);
         }

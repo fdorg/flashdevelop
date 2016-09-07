@@ -21,7 +21,7 @@ namespace HaXeContext
     public class HaxeComplete
     {
         static readonly Regex reArg =
-            new Regex("^(-cp|-resource)\\s*([^\"'].*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            new Regex("^(-cp|-resource|-cmd)\\s*([^\"'].*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         static readonly Regex reMacro =
             new Regex("^(--macro)\\s*([^\"'].*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         static readonly Regex reQuote =

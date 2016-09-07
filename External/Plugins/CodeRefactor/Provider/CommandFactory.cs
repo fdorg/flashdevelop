@@ -90,24 +90,24 @@ namespace CodeRefactor.Provider
             return CreateRenameCommand(true);
         }
 
-        public virtual Command CreateRenameCommand(bool outputResults)
+        public virtual Command CreateRenameCommand(bool outputResults, bool inline = false)
         {
-            return CreateRenameCommand(RefactoringHelper.GetDefaultRefactorTarget(), outputResults);
+            return CreateRenameCommand(RefactoringHelper.GetDefaultRefactorTarget(), outputResults, inline);
         }
 
-        public virtual Command CreateRenameCommand(ASResult target, bool outputResults)
+        public virtual Command CreateRenameCommand(ASResult target, bool outputResults, bool inline = false)
         {
-            return CreateRenameCommand(target, outputResults, null);
+            return CreateRenameCommand(target, outputResults, null, inline);
         }
 
-        public virtual Command CreateRenameCommand(ASResult target, bool outputResults, string newName)
+        public virtual Command CreateRenameCommand(ASResult target, bool outputResults, string newName, bool inline = false)
         {
-            return CreateRenameCommand(target, outputResults, newName, false);
+            return CreateRenameCommand(target, outputResults, newName, false, inline);
         }
 
-        public virtual Command CreateRenameCommand(ASResult target, bool outputResults, string newName, bool ignoreDeclarationSource)
+        public virtual Command CreateRenameCommand(ASResult target, bool outputResults, string newName, bool ignoreDeclarationSource, bool inline = false)
         {
-            return new Rename(target, outputResults, newName, ignoreDeclarationSource);
+            return new Rename(target, outputResults, newName, ignoreDeclarationSource, inline);
         }
 
         public virtual Command CreateRenameFileCommand(string oldPath, string newPath)
