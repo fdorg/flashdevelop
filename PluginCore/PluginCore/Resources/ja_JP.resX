@@ -6028,11 +6028,11 @@ UseData:"</value>
   </data>
   <data name="FlashDevelop.Info.ShortcutConflictsPresent" xml:space="preserve">
     <value>There are one or more conflicts present. Ignore and continue?</value>
-    <comment>REQUIRES TRANSLATION</comment>
+    <comment>Added after 5.0.2</comment>
   </data>
   <data name="ASCompletion.Info.NoContextGeneratorCode" xml:space="preserve">
     <value>No contextual code generation available.</value>
-    <comment>REQUIRES TRANSLATION</comment>
+    <comment>Added after 5.0.2</comment>
   </data>
   <data name="CodeRefactor.Label.Move" xml:space="preserve">
     <value>Move...</value>
@@ -6097,5 +6097,63 @@ UseData:"</value>
   <data name="CodeRefactor.Label.PreviewChanges" xml:space="preserve">
     <value>Preview changes</value>
     <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ASCompletion.Description.AddClosingBracesOptions" xml:space="preserve">
+    <value>List of auto closing braces and their trigger options.</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
+  <data name="ASCompletion.Description.BracesAfterChars" xml:space="preserve">
+    <value>Automatically add a closing brace after the specified/unspecified characters (depending on the mode).</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
+  <data name="ASCompletion.Description.BracesAfterCharsMode" xml:space="preserve">
+    <value>The mode for AfterChars:
+Inclusive - Add closing brace after the specified characters.
+Exclusive - Add closing brace after the unspecified characters.</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
+  <data name="ASCompletion.Description.BracesAfterStyles" xml:space="preserve">
+    <value>Automatically add a closing brace after the specified/unspecified styles (depending on the mode).</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
+  <data name="ASCompletion.Description.BracesAfterStylesMode" xml:space="preserve">
+    <value>The mode for AfterStyles:
+Inclusive - Add closing brace after the specified styles.
+Exclusive - Add closing brace after the unspecified styles.</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
+  <data name="ASCompletion.Description.BracesBeforeChars" xml:space="preserve">
+    <value>Automatically add a closing brace before the specified/unspecified characters (depending on the mode).</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
+  <data name="ASCompletion.Description.BracesBeforeCharsMode" xml:space="preserve">
+    <value>The mode for BeforeChars:
+Inclusive - Add closing brace before the specified characters.
+Exclusive - Add closing brace before the unspecified characters.</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
+  <data name="ASCompletion.Description.BracesBeforeStyles" xml:space="preserve">
+    <value>Automatically add a closing brace before the specified/unspecified styles(depending on the mode).</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
+  <data name="ASCompletion.Description.BracesBeforeStylesMode" xml:space="preserve">
+    <value>The mode for BeforeStyles:
+Inclusive - Add closing brace before the specified styles.
+Exclusive - Add closing brace before the unspecified styles.</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
+  <data name="ASCompletion.Description.BracesClosing" xml:space="preserve">
+    <value>The closing brace character.</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
+  <data name="ASCompletion.Description.BracesOpening" xml:space="preserve">
+    <value>The opening brace character.</value>
+    <comment>Added after 5.1.1</comment>
+  </data>
+  <data name="ASCompletion.Description.BracesTriggerLogic" xml:space="preserve">
+    <value>The trigger logic; automatically insert closing braces when:
+OR - One or more conditions are met.
+AND - All conditions are met.</value>
+    <comment>Added after 5.1.1</comment>
   </data>
 </root>

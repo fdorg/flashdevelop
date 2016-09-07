@@ -55,8 +55,6 @@ namespace ASCompletion.Completion
         static public ResolvedContext CurrentResolvedContext;
         static public event ResolvedContextChangeHandler OnResolvedContextChanged;
 
-        static private Braces[] AddClosingBracesData = new Braces[] { 
-            new Braces('(', ')'), new Braces('[', ']'), new Braces('{', '}'), new Braces('"', '"'), new Braces('\'', '\'') };
         #endregion
 
         #region application_event_handlers
@@ -400,56 +398,110 @@ namespace ASCompletion.Completion
         #endregion
 
         #region add_closing_braces
+
         public static void HandleAddClosingBraces(ScintillaControl sci, char c, bool addedChar)
         {
-            if (!ASContext.CommonSettings.AddClosingBraces)
-                return;
-
-            if (IsTextStyle(sci.BaseStyleAt(sci.CurrentPos - 2)) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
+            if (!ASContext.CommonSettings.AddClosingBraces) return;
+            
+            if (addedChar)
             {
-                foreach (Braces braces in AddClosingBracesData)
-                {
-                    if (addedChar)
-                        HandleAddBrace(sci, c, braces);
-                    else
-                        HandleRemoveBrace(sci, c, braces);
-                }
-            }
-        }
+                bool added = false;
+                sci.BeginUndoAction();
 
-        private static void HandleAddBrace(ScintillaControl sci, char c, Braces braces)
-        {
-            if (ASContext.CommonSettings.AddClosingBraces)
-            {
-                if (c == braces.opening)
+                // Get the before & after style values unaffected by the entered char
+                sci.DeleteBack();
+                sci.Colourise(0, -1);
+                byte styleAfter = (byte) sci.BaseStyleAt(sci.CurrentPos);
+                byte styleBefore = (byte) sci.BaseStyleAt(sci.CurrentPos - 1);
+                sci.AddText(1, c.ToString());
+                
+                // not inside a string literal
+                if (!IsStringStyle(styleBefore) && !IsCharStyle(styleBefore) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
                 {
-                    // already an opening brace?
-                    if ((char)sci.CharAt(sci.CurrentPos - 2) != braces.opening)
+                    foreach (var braces in ASContext.CommonSettings.AddClosingBracesOptions)
                     {
-                        sci.InsertText(sci.CurrentPos, braces.closing.ToString());
+                        // Handle opening first for braces that have equal opening & closing chars
+                        if (HandleAddOpeningBrace(sci, c, braces, styleAfter, styleBefore)
+                            || HandleAddClosingBrace(sci, c, braces))
+                        {
+                            added = true;
+                            break;
+                        }
                     }
                 }
-                else if (c == braces.closing)
+                else if (c == '"' && IsStringStyle(styleAfter) || c == '\'' && IsCharStyle(styleAfter))
                 {
-                    // already a closing brace?
-                    if (sci.CurrentChar == braces.closing)
+                    if (!IsEscapedCharacter(sci, sci.CurrentPos - 1))
                     {
-                        sci.DeleteForward();
+                        foreach (var braces in ASContext.CommonSettings.AddClosingBracesOptions)
+                        {
+                            if (HandleAddClosingBrace(sci, c, braces))
+                            {
+                                added = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                sci.EndUndoAction();
+                if (!added) sci.Undo();
+            }
+            else
+            {
+                // get the style of the char before deleted char
+                int style = sci.BaseStyleAt(sci.CurrentPos - 2);
+
+                // not inside a string literal
+                if (!IsStringStyle(style) && !IsCharStyle(style) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
+                {
+                    foreach (var braces in ASContext.CommonSettings.AddClosingBracesOptions)
+                    {
+                        if (HandleRemoveBrace(sci, c, braces)) break;
                     }
                 }
             }
         }
 
-        private static void HandleRemoveBrace(ScintillaControl sci, char c, Braces braces)
+        static bool HandleAddOpeningBrace(ScintillaControl sci, char c, Braces braces, byte styleAfter, byte styleBefore)
         {
-            if (ASContext.CommonSettings.AddClosingBraces && c == braces.closing)
+            if (c == braces.Opening)
             {
-                if ((char)sci.CharAt(sci.CurrentPos - 1) == braces.opening)
+                char charAfter = (char) sci.CharAt(sci.CurrentPos);
+                char charBefore = (char) sci.CharAt(sci.CurrentPos - 2);
+
+                if (braces.ShouldAutoClose(charAfter, styleAfter, charBefore, styleBefore))
                 {
-                    sci.DeleteForward();
+                    sci.InsertText(-1, braces.Closing.ToString());
                 }
+                return true;
             }
+
+            return false;
         }
+
+        static bool HandleAddClosingBrace(ScintillaControl sci, char c, Braces braces)
+        {
+            if (c == braces.Closing && c == sci.CurrentChar)
+            {
+                sci.DeleteForward();
+                return true;
+            }
+
+            return false;
+        }
+
+        static bool HandleRemoveBrace(ScintillaControl sci, char c, Braces braces)
+        {
+            if (c == braces.Closing && sci.CharAt(sci.CurrentPos - 1) == braces.Opening)
+            {
+                sci.DeleteForward();
+                return true;
+            }
+
+            return false;
+        }
+
         #endregion
 
         #region plugin commands
@@ -495,7 +547,7 @@ namespace ASCompletion.Completion
                 // open the file
                 return OpenDocumentToDeclaration(Sci, result);
             }
-            // show overriden method
+            // show overridden method
             else if (ASContext.Context.CurrentMember != null 
                 && ASContext.Context.Features.overrideKey != null
                 && Sci.GetWordFromPosition(position) == ASContext.Context.Features.overrideKey)
@@ -3618,7 +3670,7 @@ namespace ASCompletion.Completion
         /// TODO  ASComplete: parse coma separated local vars definitions
         /// </summary>
         /// <param name="expression">Expression source</param>
-        /// <returns>Local vars dictionnary (name, type)</returns>
+        /// <returns>Local vars dictionary (name, type)</returns>
         public static MemberList ParseLocalVars(ASExpr expression)
         {
             FileModel model;
@@ -3688,9 +3740,36 @@ namespace ASCompletion.Completion
 
         #region tools_functions
 
+        /// <summary>
+        /// Text style is a literal.
+        /// </summary>
         public static bool IsLiteralStyle(int style)
         {
-            return (style == 4) || (style == 6) || (style == 7);
+            return IsNumericStyle(style) || IsStringStyle(style) || IsCharStyle(style);
+        }
+
+        /// <summary>
+        /// Text style is a numeric literal.
+        /// </summary>
+        public static bool IsNumericStyle(int style)
+        {
+            return style == 4;
+        }
+
+        /// <summary>
+        /// Text style is a string literal.
+        /// </summary>
+        public static bool IsStringStyle(int style)
+        {
+            return style == 6;
+        }
+
+        /// <summary>
+        /// Text style is character literal.
+        /// </summary>
+        public static bool IsCharStyle(int style)
+        {
+            return style == 7;
         }
 
         /// <summary>
@@ -3915,6 +3994,19 @@ namespace ASCompletion.Completion
                     return true;
             }
             return false;
+        }
+
+        static bool IsEscapedCharacter(ScintillaControl sci, int position)
+        {
+            bool escaped = false;
+
+            for (int i = position - 1; i >= 0; i--)
+            {
+                if (sci.CharAt(i) != '\\') break;
+                escaped = !escaped;
+            }
+
+            return escaped;
         }
 
         /// <summary>
@@ -4587,18 +4679,6 @@ namespace ASCompletion.Completion
         public bool IsNull()
         {
             return (Type == null && Member == null && !IsPackage);
-        }
-    }
-
-    sealed class Braces
-    {
-        public char opening;
-        public char closing;
-
-        public Braces(char opening, char closing)
-        {
-            this.opening = opening;
-            this.closing = closing;
         }
     }
 

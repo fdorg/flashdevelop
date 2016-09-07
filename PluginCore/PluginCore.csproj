@@ -313,6 +313,7 @@
     <Compile Include="PluginCore\Controls\Common.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="PluginCore\Controls\DescriptiveCollectionEditor.cs" />
     <Compile Include="PluginCore\Controls\FixedValuesCollectionEditor.cs">
       <SubType>Form</SubType>
     </Compile>

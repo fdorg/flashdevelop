@@ -887,16 +887,15 @@ namespace PluginCore.Controls
             switch (key)
             {
                 case Keys.Back:
-                    if (!UITools.CallTip.CallTipActive) sci.DeleteBack();
-                    if (word.Length > MinWordLength)
+                    if (word.Length >= MinWordLength)
                     {
-                        word = word.Substring(0, word.Length-1);
-                        currentPos = sci.CurrentPos;
+                        word = word.Substring(0, word.Length - 1);
+                        currentPos = sci.CurrentPos - 1;
                         lastIndex = 0;
                         FindWordStartingWith(word);
                     }
                     else CompletionList.Hide((char)8);
-                    return true;
+                    return false;
                     
                 case Keys.Enter:
                     if (noAutoInsert || !ReplaceText(sci, '\n'))
