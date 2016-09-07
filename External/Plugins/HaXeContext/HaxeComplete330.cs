@@ -26,7 +26,7 @@ namespace HaXeContext
             return result;
         }
 
-        protected override string GetStdin()
+        protected override string GetFileContent()
         {
             return Sci.Text;
         }
