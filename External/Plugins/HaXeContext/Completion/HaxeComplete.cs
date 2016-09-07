@@ -80,13 +80,17 @@ namespace HaXeContext
 
         private void StartThread<T>(HaxeCompleteResultHandler<T> callback, Func<T> resultFunc)
         {
-            PluginBase.MainForm.CallCommand("Save", null);
-
+            SaveFile();
             ThreadPool.QueueUserWorkItem(_ =>
             {
-                Status = ParseLines(handler.GetCompletion(BuildHxmlArgs()));
+                Status = ParseLines(handler.GetCompletion(BuildHxmlArgs(), GetStdin()));
                 Notify(callback, resultFunc());
             });
+        }
+
+        protected virtual void SaveFile()
+        {
+            PluginBase.MainForm.CallCommand("Save", null);
         }
 
         void Notify<T>(HaxeCompleteResultHandler<T> callback, T result)
@@ -103,7 +107,7 @@ namespace HaXeContext
 
         /* HAXE COMPILER ARGS */
 
-        string[] BuildHxmlArgs()
+        protected virtual string[] BuildHxmlArgs()
         {
             // check haxe project & context
             if (PluginBase.CurrentProject == null || !(PluginBase.CurrentProject is HaxeProject)
@@ -120,13 +124,16 @@ namespace HaXeContext
             QuotePath(hxmlArgs);
             EscapeMacros(hxmlArgs);
 
-            hxmlArgs.Insert(0, String.Format("--display \"{0}\"@{1}{2}", FileName, pos, GetMode()));
-            hxmlArgs.Insert(1, "-D use_rtti_doc");
-            hxmlArgs.Insert(2, "-D display-details");
-            
-            if (hxproj.TraceEnabled) hxmlArgs.Insert(2, "-debug");
-
+            hxmlArgs.Add(String.Format("--display \"{0}\"@{1}{2}", FileName, pos, GetMode()));
+            hxmlArgs.Add("-D use_rtti_doc");
+            hxmlArgs.Add("-D display-details");
+            if (hxproj.TraceEnabled) hxmlArgs.Add("-debug");
             return hxmlArgs.ToArray();
+        }
+
+        protected virtual string GetStdin()
+        {
+            return null;
         }
 
         private string GetMode()

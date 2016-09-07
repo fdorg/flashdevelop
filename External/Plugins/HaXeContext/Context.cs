@@ -1200,13 +1200,21 @@ namespace HaXeContext
             if (expression.Value != "")
             {
                 // async processing
-                var hc = new HaxeComplete(sci, expression, autoHide, completionModeHandler, HaxeCompilerService.COMPLETION, GetCurrentSDKVersion());
+                var hc = GetHaxeComplete(sci, expression, autoHide, HaxeCompilerService.COMPLETION);
                 hc.GetList(OnDotCompletionResult);
                 resolvingDot = true;
             }
 
             if (hxsettings.DisableMixedCompletion) return new MemberList();
             return null; 
+        }
+
+        HaxeComplete GetHaxeComplete(ScintillaControl sci, ASExpr expression, bool autoHide, HaxeCompilerService compilerService)
+        {
+            var sdkVersion = GetCurrentSDKVersion();
+            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.CompletionServer && new SemVer("3.2.1").IsOlderThan(sdkVersion))
+                return new HaxeComplete330(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
+            return new HaxeComplete(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
         }
 
         internal void OnDotCompletionResult(HaxeComplete hc,  HaxeCompleteResult result, HaxeCompleteStatus status)
@@ -1378,7 +1386,7 @@ namespace HaXeContext
                 return null;
 
             expression.Position++;
-            var hc = new HaxeComplete(sci, expression, autoHide, completionModeHandler, HaxeCompilerService.COMPLETION, GetCurrentSDKVersion());
+            var hc = GetHaxeComplete(sci, expression, autoHide, HaxeCompilerService.COMPLETION);
             hc.GetList(OnFunctionCompletionResult);
 
             resolvingFunction = true;
@@ -1407,7 +1415,7 @@ namespace HaXeContext
             if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || GetCurrentSDKVersion().IsOlderThan(new SemVer("3.2.0")))
                 return false;
 
-            var hc = new HaxeComplete(sci, expression, false, completionModeHandler, HaxeCompilerService.POSITION, GetCurrentSDKVersion());
+            var hc = GetHaxeComplete(sci, expression, false, HaxeCompilerService.POSITION);
             hc.GetPosition(OnPositionResult);
             return true;
         }
@@ -1467,7 +1475,7 @@ namespace HaXeContext
             if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || PluginBase.MainForm.CurrentDocument.IsUntitled) return;
 
             EventManager.DispatchEvent(this, new NotifyEvent(EventType.ProcessStart));
-            var hc = new HaxeComplete(ASContext.CurSciControl, new ASExpr(), false, completionModeHandler, HaxeCompilerService.COMPLETION, GetCurrentSDKVersion());
+            var hc = GetHaxeComplete(ASContext.CurSciControl, new ASExpr(), false, HaxeCompilerService.COMPLETION);
             hc.GetList(OnCheckSyntaxResult);
         }
 
