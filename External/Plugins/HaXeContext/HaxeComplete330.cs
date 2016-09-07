@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using ASCompletion.Completion;
-using ICSharpCode.SharpZipLib.Zip;
-using PluginCore.Managers;
+using PluginCore;
 using PluginCore.Utilities;
 using ScintillaNet;
 
@@ -15,6 +14,10 @@ namespace HaXeContext
 
         protected override void SaveFile()
         {
+            foreach (var document in PluginBase.MainForm.Documents)
+            {
+                if(document.FileName != Sci.FileName && document.IsModified) document.Save();
+            }
         }
 
         protected override string[] BuildHxmlArgs()
