@@ -7,7 +7,6 @@ using ASCompletion.Context;
 using CodeFormatter.Handlers;
 using CodeFormatter.Utilities;
 using PluginCore;
-using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -23,8 +22,8 @@ namespace CodeFormatter
         private String pluginDesc = "Adds multiple code formatters to FlashDevelop.";
         private String pluginHelp = "www.flashdevelop.org/community/";
         private String pluginAuth = "FlashDevelop Team";
-        private ToolStripMenuItemEx contextMenuItem;
-        private ToolStripMenuItemEx mainMenuItem;
+        private ToolStripMenuItem contextMenuItem;
+        private ToolStripMenuItem mainMenuItem;
         private String settingFilename;
         private Settings settingObject;
 
@@ -178,7 +177,7 @@ namespace CodeFormatter
         public void CreateMainMenuItem()
         {
             String label = TextHelper.GetString("Label.CodeFormatter");
-            this.mainMenuItem = new ToolStripMenuItemEx(label, null, new EventHandler(this.Format), Keys.Control | Keys.Shift | Keys.D2);
+            this.mainMenuItem = new ToolStripMenuItem(label, null, new EventHandler(this.Format), Keys.Control | Keys.Shift | Keys.D2);
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.CodeFormatter", this.mainMenuItem);
         }
         private void AttachMainMenuItem(ToolStripMenuItem mainMenu)
@@ -192,7 +191,7 @@ namespace CodeFormatter
         public void CreateContextMenuItem()
         {
             String label = TextHelper.GetString("Label.CodeFormatter");
-            this.contextMenuItem = new ToolStripMenuItemEx(label, null, new EventHandler(this.Format), Keys.None);
+            this.contextMenuItem = new ToolStripMenuItem(label, null, new EventHandler(this.Format), Keys.None);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.CodeFormatter", this.contextMenuItem);
         }
         public void AttachContextMenuItem(ToolStripMenuItem contextMenu)

@@ -73,72 +73,26 @@ namespace PluginCore
     /// </summary>
     public class KeyEvent : NotifyEvent
     {
-        private ShortcutKeys value;
-        private String command;
+        private Keys value;
         private Boolean processKey;
 
-        /// <summary>
-        /// [Deprecated] Gets the <see cref="System.Windows.Forms.Keys"/> value associated with this <see cref="KeyEvent"/>.
-        /// <para/>
-        /// This property is deprecated and is preserved only for backward-compatibility purposes.
-        /// Use <see cref="Keys"/> property instead.
-        /// </summary>
         public Keys Value
         {
             get { return this.value; }
-            set { }
+            set { this.value = value; }
         }
 
-        /// <summary>
-        /// Gets the <see cref="ShortcutKeys"/> value associated with this <see cref="KeyEvent"/>.
-        /// </summary>
-        public ShortcutKeys Keys
-        {
-            get { return this.value; }
-            //set { this.value = value; }
-        }
-
-        /// <summary>
-        /// Gets the shortcut command string associated with this <see cref="KeyEvent"/>.
-        /// </summary>
-        public String Command
-        {
-            get { return this.command; }
-        }
-
-        /// <summary>
-        /// Gets or sets whether to process the keys associated with this <see cref="KeyEvent"/>.
-        /// <para/>
-        /// This property is currently not used by any of the default plugins. Prefer using the <see cref="NotifyEvent.Handled"/> property.
-        /// </summary>
         public Boolean ProcessKey
         {
             get { return this.processKey; }
             set { this.processKey = value; }
         }
 
-        /// <summary>
-        /// [Deprecated] Initializes a new instance of the <see cref="KeyEvent"/> class.
-        /// </summary>
-        public KeyEvent(EventType type, Keys value) : this(type, (ShortcutKeys) value) { }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="KeyEvent"/> class.
-        /// </summary>
-        public KeyEvent(EventType type, ShortcutKeys value) : base(type)
+        public KeyEvent(EventType type, Keys value) : base(type)
         {
             this.value = value;
-            this.command = PluginBase.MainForm.GetShortcutId(this.value);
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="KeyEvent"/> class.
-        /// </summary>
-        public KeyEvent(EventType type, ShortcutKeys value, String command) : base(type)
-        {
-            this.value = value;
-            this.command = command;
-        }
     }
 
     /// <summary>

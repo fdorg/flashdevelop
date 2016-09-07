@@ -62,7 +62,6 @@ namespace MacroManager
             this.propertyGrid.HelpVisible = true;
             this.propertyGrid.Location = new System.Drawing.Point(182, 12);
             this.propertyGrid.Name = "propertyGrid";
-            this.propertyGrid.PropertySort = System.Windows.Forms.PropertySort.Alphabetical;
             this.propertyGrid.Size = new System.Drawing.Size(355, 299);
             this.propertyGrid.TabIndex = 2;
             this.propertyGrid.ToolbarVisible = false;
@@ -286,7 +285,7 @@ namespace MacroManager
         {
             String untitled = TextHelper.GetString("Info.Untitled");
             ListViewItem item = new ListViewItem(untitled, 0);
-            item.Tag = new Macro(untitled, new String[0], String.Empty, ShortcutKeys.None);
+            item.Tag = new Macro(untitled, new String[0], String.Empty, Keys.None);
             this.macroGroup.Items.Add(item);
             this.listView.Items.Add(item);
         }

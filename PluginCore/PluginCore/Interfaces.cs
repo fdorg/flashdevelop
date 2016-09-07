@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using PluginCore.Controls;
 using PluginCore.Localization;
+using PluginCore.Managers;
 using ScintillaNet;
 using ScintillaNet.Configuration;
 using ScintillaNet.Enums;
@@ -138,31 +140,9 @@ namespace PluginCore
         /// </summary>
         void AutoUpdateMenuItem(ToolStripItem item, String action);
         /// <summary>
-        /// Adds an ignored key. Ignored keys are valid shortcut keys that are not defined with <see cref="RegisterShortcutItem(string, ShortcutKeys, bool)"/>,
-        /// but should not prompt an "undefined shortcut keys" message. Instead these keys should have their default behaviors.
-        /// These are constant shortcuts which cannot be modified using the shortcut dialog.
-        /// </summary>
-        void AddIgnoredKeys(ShortcutKeys keys);
-        /// <summary>
-        /// Returns a <see cref="bool"/> value indicating whether the specified key is ignored.
-        /// </summary>
-        Boolean ContainsIgnoredKeys(ShortcutKeys keys);
-        /// <summary>
-        /// Removes the specified key from ignored keys.
-        /// </summary>
-        void RemoveIgnoredKeys(ShortcutKeys keys);
-        /// <summary>
-        /// Clears all ignored keys.
-        /// </summary>
-        void ClearIgnoredKeys();
-        /// <summary>
-        /// [Deprecated] Registers a new menu item with the shortcut manager.
-        /// </summary>
-        void RegisterShortcutItem(String id, Keys keys);
-        /// <summary>
         /// Registers a new menu item with the shortcut manager.
         /// </summary>
-        void RegisterShortcutItem(String id, ShortcutKeys keys, bool supportsExtended = true);
+        void RegisterShortcutItem(String id, Keys keys);
         /// <summary>
         /// Registers a new menu item with the shortcut manager.
         /// </summary>
@@ -176,18 +156,6 @@ namespace PluginCore
         /// - should be called when the tooltip changes.
         /// </summary>
         void ApplySecondaryShortcut(ToolStripItem item);
-        /// <summary>
-        /// A utility method for handling extended shortcuts where the context prevents the default mechanism (e.g. in a dialog form).
-        /// Returns <code>true</code> if the current key press is processed; <code>false</code> otherwise.
-        /// <para/>
-        /// When this method returns <code>true</code>, make sure to always set <code>previousKeys</code> to <see cref="ShortcutKeys.None"/>,
-        /// so the next call to this method will correctly handle the new keyboard input as the first part of a shortcut.
-        /// Also, when calling from <see cref="Control.ProcessCmdKey(ref Message, Keys)"/>, make sure to return <code>true</code> if this method returns <code>true</code>.
-        /// </summary>
-        /// <param name="previousKeys">The reference to the stored previous <see cref="ShortcutKeys"/> value.</param>
-        /// <param name="input">The <see cref="Keys"/> value specifying the current keyboard input.</param>
-        /// <param name="shortcutId">The shortcut ID to process, or <see cref="string.Empty"/> if this method returns <code>false</code>.</param>
-        bool HandleShortcutManually(ref ShortcutKeys previousKeys, System.Windows.Forms.Keys input, out string shortcutId);
         /// <summary>
         /// Create the specified new document from the given template.
         /// </summary>
@@ -229,21 +197,13 @@ namespace PluginCore
         /// </summary>
         String ProcessArgString(String args);
         /// <summary>
-        /// [Deprecated] Gets the specified item's shortcut keys.
+        /// Gets the specified item's shortcut keys.
         /// </summary>
         Keys GetShortcutItemKeys(String id);
         /// <summary>
-        /// [Deprecated] Gets the specified item's id.
-        /// </summary>
-        String GetShortcutItemId(Keys keys);
-        /// <summary>
-        /// Gets the specified item's shortcut keys.
-        /// </summary>
-        ShortcutKeys GetShortcutKeys(String id);
-        /// <summary>
         /// Gets the specified item's id.
         /// </summary>
-        String GetShortcutId(ShortcutKeys keys);
+        String GetShortcutItemId(Keys keys);
         /// <summary>
         /// Gets a theme property value.
         /// </summary>
@@ -363,14 +323,8 @@ namespace PluginCore
         ToolStripPanel ToolStripPanel { get; }
         /// <summary>
         /// Gets the tool strip status label.
-        /// Use <see cref="StatusLabelText"/> instead to modify the status text.
         /// </summary>
         ToolStripStatusLabel StatusLabel { get; }
-        /// <summary>
-        /// Gets or sets the text of the <see cref="StatusLabel"/>.
-        /// Use this property instead of directly accessing the <code>Text</code> property of <see cref="StatusLabel"/>.
-        /// </summary>
-        string StatusLabelText { get; set; }
         /// <summary>
         /// Gets the tool strip progress label.
         /// </summary>
@@ -460,11 +414,7 @@ namespace PluginCore
         /// </summary>
         Boolean RefreshConfig { get; }
         /// <summary>
-        /// [Deprecated] Gets the ignored keys.
-        /// <para/>
-        /// This method is deprecated and is preserved only for backward-compatibility purposes,
-        /// and will always return an empty <see cref="List{T}"/>.
-        /// Instead, use <see cref="AddIgnoredKeys"/>.
+        /// Gets the ignored keys.
         /// </summary>
         List<Keys> IgnoredKeys { get; }
         /// <summary>
@@ -538,7 +488,6 @@ namespace PluginCore
         Boolean DisableFindOptionSync { get; set; }
         Boolean DisableSimpleQuickFind { get; set; }
         Boolean DisableReplaceFilesConfirm { get; set; }
-        Boolean DisableExtendedShortcutKeys { get; set; }
         Boolean AutoReloadModifiedFiles { get; set; }
         Boolean UseListViewGrouping { get; set; }
         Boolean RedirectFilesResults { get; set; }

@@ -9,14 +9,13 @@ using PluginCore.Utilities;
 using System.Collections.Generic;
 using ProjectManager.Projects;
 using PluginCore.Helpers;
-using PluginCore.Controls;
 
 namespace ProjectManager.Controls
 {
     public class FDMenus
     {
-        public ToolStripMenuItemEx View;
-        public ToolStripMenuItemEx GlobalClasspaths;
+        public ToolStripMenuItem View;
+        public ToolStripMenuItem GlobalClasspaths;
         public ToolStripButton TestMovie;
         public ToolStripButton BuildProject;
         public ToolStripComboBoxEx ConfigurationSelector;
@@ -33,14 +32,14 @@ namespace ProjectManager.Controls
 
             // modify the view menu
             ToolStripMenuItem viewMenu = (ToolStripMenuItem)mainForm.FindMenuItem("ViewMenu");
-            View = new ToolStripMenuItemEx(TextHelper.GetString("Label.MainMenuItem"));
+            View = new ToolStripMenuItem(TextHelper.GetString("Label.MainMenuItem"));
             View.Image = Icons.Project.Img;
             viewMenu.DropDownItems.Add(View);
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowProject", View);
 
             // modify the tools menu - add a nice GUI classpath editor
             ToolStripMenuItem toolsMenu = (ToolStripMenuItem)mainForm.FindMenuItem("ToolsMenu");
-            GlobalClasspaths = new ToolStripMenuItemEx(TextHelper.GetString("Label.GlobalClasspaths"));
+            GlobalClasspaths = new ToolStripMenuItem(TextHelper.GetString("Label.GlobalClasspaths"));
             GlobalClasspaths.ShortcutKeys = Keys.F9 | Keys.Control;
             GlobalClasspaths.Image = Icons.Classpath.Img;
             toolsMenu.DropDownItems.Insert(toolsMenu.DropDownItems.Count - 4, GlobalClasspaths);
@@ -80,7 +79,7 @@ namespace ProjectManager.Controls
             ConfigurationSelector.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
             ConfigurationSelector.Font = PluginBase.Settings.DefaultFont;
             toolBar.Items.Add(ConfigurationSelector);
-            PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.ConfigurationSelectorToggle", Keys.Control | Keys.F5, true);
+            PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.ConfigurationSelectorToggle", Keys.Control | Keys.F5);
             PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.ConfigurationSelectorToggle", ConfigurationSelector);
 
             TargetBuildSelector = new ToolStripComboBoxEx();
@@ -92,7 +91,7 @@ namespace ProjectManager.Controls
             TargetBuildSelector.FlatStyle = PluginBase.MainForm.Settings.ComboBoxFlatStyle;
             TargetBuildSelector.Font = PluginBase.Settings.DefaultFont;
             toolBar.Items.Add(TargetBuildSelector);
-            PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.TargetBuildSelector", Keys.Control | Keys.F7, true);
+            PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.TargetBuildSelector", Keys.Control | Keys.F7);
             PluginBase.MainForm.RegisterSecondaryItem("ProjectMenu.TargetBuildSelector", TargetBuildSelector);
             EnableTargetBuildSelector(false);
         }
@@ -182,16 +181,16 @@ namespace ProjectManager.Controls
     /// </summary>
     public class ProjectMenu : ToolStripMenuItem
     {
-        public ToolStripMenuItemEx NewProject;
-        public ToolStripMenuItemEx OpenProject;
-        public ToolStripMenuItemEx ImportProject;
-        public ToolStripMenuItemEx CloseProject;
-        public ToolStripMenuItemEx OpenResource;
-        public ToolStripMenuItemEx TestMovie;
-        public ToolStripMenuItemEx RunProject;
-        public ToolStripMenuItemEx BuildProject;
-        public ToolStripMenuItemEx CleanProject;
-        public ToolStripMenuItemEx Properties;
+        public ToolStripMenuItem NewProject;
+        public ToolStripMenuItem OpenProject;
+        public ToolStripMenuItem ImportProject;
+        public ToolStripMenuItem CloseProject;
+        public ToolStripMenuItem OpenResource;
+        public ToolStripMenuItem TestMovie;
+        public ToolStripMenuItem RunProject;
+        public ToolStripMenuItem BuildProject;
+        public ToolStripMenuItem CleanProject;
+        public ToolStripMenuItem Properties;
 
         private List<ToolStripItem> AllItems;
 
@@ -199,51 +198,51 @@ namespace ProjectManager.Controls
         {
             AllItems = new List<ToolStripItem>();
 
-            NewProject = new ToolStripMenuItemEx(TextHelper.GetString("Label.NewProject"));
+            NewProject = new ToolStripMenuItem(TextHelper.GetString("Label.NewProject"));
             NewProject.Image = Icons.NewProject.Img;
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.NewProject", NewProject);
             //AllItems.Add(NewProject);
 
-            OpenProject = new ToolStripMenuItemEx(TextHelper.GetString("Label.OpenProject"));
+            OpenProject = new ToolStripMenuItem(TextHelper.GetString("Label.OpenProject"));
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.OpenProject", OpenProject);
             //AllItems.Add(OpenProject);
 
-            ImportProject = new ToolStripMenuItemEx(TextHelper.GetString("Label.ImportProject"));
+            ImportProject = new ToolStripMenuItem(TextHelper.GetString("Label.ImportProject"));
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.ImportProject", ImportProject);
             //AllItems.Add(ImportProject);
 
-            CloseProject = new ToolStripMenuItemEx(TextHelper.GetString("Label.CloseProject"));
+            CloseProject = new ToolStripMenuItem(TextHelper.GetString("Label.CloseProject"));
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.CloseProject", CloseProject);
             AllItems.Add(CloseProject);
 
-            OpenResource = new ToolStripMenuItemEx(TextHelper.GetString("Label.OpenResource"));
+            OpenResource = new ToolStripMenuItem(TextHelper.GetString("Label.OpenResource"));
             OpenResource.Image = PluginBase.MainForm.FindImage("209");
             OpenResource.ShortcutKeys = Keys.Control | Keys.R;
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.OpenResource", OpenResource);
             AllItems.Add(OpenResource);
 
-            TestMovie = new ToolStripMenuItemEx(TextHelper.GetString("Label.TestMovie"));
+            TestMovie = new ToolStripMenuItem(TextHelper.GetString("Label.TestMovie"));
             TestMovie.Image = Icons.GreenCheck.Img;
             TestMovie.ShortcutKeys = Keys.F5;
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.TestMovie", TestMovie);
             AllItems.Add(TestMovie);
 
-            RunProject = new ToolStripMenuItemEx(TextHelper.GetString("Label.RunProject"));
+            RunProject = new ToolStripMenuItem(TextHelper.GetString("Label.RunProject"));
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.RunProject", RunProject);
             AllItems.Add(RunProject);
 
-            BuildProject = new ToolStripMenuItemEx(TextHelper.GetString("Label.BuildProject"));
+            BuildProject = new ToolStripMenuItem(TextHelper.GetString("Label.BuildProject"));
             BuildProject.Image = Icons.Gear.Img;
             BuildProject.ShortcutKeys = Keys.F8;
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.BuildProject", BuildProject);
             AllItems.Add(BuildProject);
 
-            CleanProject = new ToolStripMenuItemEx(TextHelper.GetString("Label.CleanProject"));
+            CleanProject = new ToolStripMenuItem(TextHelper.GetString("Label.CleanProject"));
             CleanProject.ShortcutKeys = Keys.Shift | Keys.F8;
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.CleanProject", CleanProject);
             AllItems.Add(CleanProject);
 
-            Properties = new ToolStripMenuItemEx(TextHelper.GetString("Label.Properties"));
+            Properties = new ToolStripMenuItem(TextHelper.GetString("Label.Properties"));
             Properties.Image = Icons.Options.Img;
             PluginBase.MainForm.RegisterShortcutItem("ProjectMenu.Properties", Properties);
             AllItems.Add(Properties);

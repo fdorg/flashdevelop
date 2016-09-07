@@ -102,8 +102,8 @@ namespace PluginCore.Controls
             //
             // Events
             //
-            PluginBase.MainForm.AddIgnoredKeys(Keys.Space | Keys.Control); // complete member
-            PluginBase.MainForm.AddIgnoredKeys(Keys.Space | Keys.Control | Keys.Shift); // complete method
+            PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control); // complete member
+            PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control | Keys.Shift); // complete method
             PluginBase.MainForm.DockPanel.ActivePaneChanged += new EventHandler(DockPanel_ActivePaneChanged);
             EventManager.AddEventHandler(this, eventMask);
         }
@@ -128,7 +128,7 @@ namespace PluginCore.Controls
             switch (e.Type)
             {
                 case EventType.Keys:
-                    e.Handled = HandleKeys(e as KeyEvent);
+                    e.Handled = HandleKeys(((KeyEvent)e).Value);
                     return;
                     
                 case EventType.FileSave:
@@ -275,7 +275,7 @@ namespace PluginCore.Controls
             if (lockedSciControl != null && lockedSciControl.IsAlive && lockedSciControl.Target == sci)
                 return;
             UnlockControl();
-            //sci.IgnoreAllKeys = true;
+            sci.IgnoreAllKeys = true;
             lockedSciControl = new WeakReference(sci);
             Application.AddMessageFilter(this);
         }
@@ -288,7 +288,7 @@ namespace PluginCore.Controls
             if (lockedSciControl != null && lockedSciControl.IsAlive)
             {
                 ScintillaControl sci = (ScintillaControl)lockedSciControl.Target;
-                //sci.IgnoreAllKeys = false;
+                sci.IgnoreAllKeys = false;
             }
             lockedSciControl = null;
         }
@@ -351,10 +351,8 @@ namespace PluginCore.Controls
             if (OnCharAdded != null) OnCharAdded(sci, value);   
         }
         
-        private bool HandleKeys(KeyEvent e)
+        private bool HandleKeys(Keys key)
         {
-            Keys key = e.Keys;
-
             // UITools is currently broadcasting a shortcut, ignore!
             if (ignoreKeys || DisableEvents) return false;
             
@@ -369,7 +367,7 @@ namespace PluginCore.Controls
                 }*/
                 // offer to handle the shortcut
                 ignoreKeys = true;
-                KeyEvent ke = new KeyEvent(EventType.Keys, key, e.Command);
+                KeyEvent ke = new KeyEvent(EventType.Keys, key);
                 EventManager.DispatchEvent(this, ke);
                 ignoreKeys = false;
                 // if not handled - show snippets

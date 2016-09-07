@@ -45,7 +45,7 @@ namespace ASCompletion.Completion
         #endregion
 
         #region fields
-        static public ShortcutKeys HelpKeys = Keys.F1;
+        static public Keys HelpKeys = Keys.F1;
 
         //stores the currently used class namespace and name
         static private String currentClassHash = null;
@@ -234,90 +234,95 @@ namespace ASCompletion.Completion
         /// </summary>
         /// <param name="keys">Test keys</param>
         /// <returns></returns>
-        static public bool OnShortcut(ShortcutKeys keys, ScintillaControl Sci)
+        static public bool OnShortcut(Keys keys, ScintillaControl Sci)
         {
             if (Sci.IsSelectionRectangle) 
                 return false;
 
-            switch ((Keys) keys)
+            // dot complete
+            if (keys == (Keys.Control | Keys.Space))
             {
-                case Keys.Control | Keys.Space: // dot complete
-                    if (ASContext.HasContext && ASContext.Context.IsFileValid)
+                if (ASContext.HasContext && ASContext.Context.IsFileValid)
+                {
+                    // try to get completion as if we had just typed the previous char
+                    if (OnChar(Sci, Sci.CharAt(Sci.PositionBefore(Sci.CurrentPos)), false))
+                        return true;
+                    else
                     {
-                        // try to get completion as if we had just typed the previous char
-                        if (OnChar(Sci, Sci.CharAt(Sci.PositionBefore(Sci.CurrentPos)), false))
-                            return true;
-                        else
-                        {
-                            // force dot completion
-                            OnChar(Sci, '.', false);
-                            return true;
-                        }
-                    }
-                    return false;
-
-                case Keys.Back:
-                    HandleAddClosingBraces(Sci, Sci.CurrentChar, false);
-                    return false;
-
-                case Keys.Control | Keys.Shift | Keys.Space: // show calltip
-                    if (ASContext.HasContext && ASContext.Context.IsFileValid)
-                    {
-                        //HandleFunctionCompletion(Sci);
-                        // force function completion
-                        OnChar(Sci, '(', false);
+                        // force dot completion
+                        OnChar(Sci, '.', false);
                         return true;
                     }
-                    return false;
-
-                case Keys.Control | Keys.Alt | Keys.Space: // project types completion
-                    if (ASContext.HasContext && ASContext.Context.IsFileValid && !ASContext.Context.Settings.LazyClasspathExploration)
+                }
+                else return false;
+            }
+            else if (keys == Keys.Back)
+            {
+                HandleAddClosingBraces(Sci, Sci.CurrentChar, false);
+                return false;
+            }
+            // show calltip
+            else if (keys == (Keys.Control | Keys.Shift | Keys.Space))
+            {
+                if (ASContext.HasContext && ASContext.Context.IsFileValid)
+                {
+                    //HandleFunctionCompletion(Sci);
+                    // force function completion
+                    OnChar(Sci, '(', false);
+                    return true;
+                }
+                else return false;
+            }
+            // project types completion
+            else if (keys == (Keys.Control | Keys.Alt | Keys.Space))
+            {
+                if (ASContext.HasContext && ASContext.Context.IsFileValid && !ASContext.Context.Settings.LazyClasspathExploration)
+                {
+                    int position = Sci.CurrentPos-1;
+                    string tail = GetWordLeft(Sci, ref position);
+                    ContextFeatures features = ASContext.Context.Features;
+                    if (tail.IndexOfOrdinal(features.dot) < 0 && features.HasTypePreKey(tail)) tail = "";
+                    // display the full project classes list
+                    HandleAllClassesCompletion(Sci, tail, false, true);
+                    return true;
+                }
+                else return false;
+            }
+            // hot build
+            else if (keys == (Keys.Control | Keys.Enter))
+            {
+                // project build
+                DataEvent de = new DataEvent(EventType.Command, "ProjectManager.HotBuild", null);
+                EventManager.DispatchEvent(ASContext.Context, de);
+                //
+                if (!de.Handled)
+                {
+                    // quick build
+                    if (!ASContext.Context.BuildCMD(true))
                     {
-                        int position = Sci.CurrentPos - 1;
-                        string tail = GetWordLeft(Sci, ref position);
-                        ContextFeatures features = ASContext.Context.Features;
-                        if (tail.IndexOfOrdinal(features.dot) < 0 && features.HasTypePreKey(tail)) tail = "";
-                        // display the full project classes list
-                        HandleAllClassesCompletion(Sci, tail, false, true);
-                        return true;
-                    }
-                    return false;
-
-                case Keys.Control | Keys.Enter: // hot build
-                    // project build
-                    DataEvent de = new DataEvent(EventType.Command, "ProjectManager.HotBuild", null);
-                    EventManager.DispatchEvent(ASContext.Context, de);
-                    //
-                    if (!de.Handled)
-                    {
-                        // quick build
-                        if (!ASContext.Context.BuildCMD(true))
+                        // Flash IDE
+                        if (PluginBase.CurrentProject == null)
                         {
-                            // Flash IDE
-                            if (PluginBase.CurrentProject == null)
+                            string idePath = ASContext.CommonSettings.PathToFlashIDE;
+                            if (idePath != null && File.Exists(Path.Combine(idePath, "Flash.exe")))
                             {
-                                string idePath = ASContext.CommonSettings.PathToFlashIDE;
-                                if (idePath != null && File.Exists(Path.Combine(idePath, "Flash.exe")))
-                                {
-                                    string cmd = Path.Combine("Tools", Path.Combine("flashide", "testmovie.jsfl"));
-                                    cmd = PathHelper.ResolvePath(cmd);
-                                    if (cmd != null && File.Exists(cmd))
-                                        CallFlashIDE.Run(idePath, cmd);
-                                }
+                                string cmd = Path.Combine("Tools", Path.Combine("flashide", "testmovie.jsfl"));
+                                cmd = PathHelper.ResolvePath(cmd);
+                                if (cmd != null && File.Exists(cmd))
+                                    CallFlashIDE.Run(idePath, cmd);
                             }
                         }
                     }
-                    return true;
-
-                default:
-                    // help
-                    if (keys == HelpKeys && ASContext.HasContext && ASContext.Context.IsFileValid)
-                    {
-                        ResolveElement(Sci, "ShowDocumentation");
-                        return true;
-                    }
-                    return false;
+                }
+                return true;
             }
+            // help
+            else if (keys == HelpKeys && ASContext.HasContext && ASContext.Context.IsFileValid)
+            {
+                ResolveElement(Sci, "ShowDocumentation");
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
