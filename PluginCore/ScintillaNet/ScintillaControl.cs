@@ -2420,7 +2420,7 @@ namespace ScintillaNet
         /// <summary>
         /// Adds a new keys to ignore
         /// </summary> 
-        public virtual void AddIgnoredKeys(Keys keys)
+        public virtual void AddIgnoredKeys(ShortcutKeys keys)
         {
             //ignoredKeys.Add((int)keys, (int)keys);
         }
@@ -2428,7 +2428,7 @@ namespace ScintillaNet
         /// <summary>
         /// Removes the ignored keys
         /// </summary> 
-        public virtual void RemoveIgnoredKeys(Keys keys)
+        public virtual void RemoveIgnoredKeys(ShortcutKeys keys)
         {
             //ignoredKeys.Remove((int)keys);
         }
@@ -2444,7 +2444,7 @@ namespace ScintillaNet
         /// <summary>
         /// Does the container have keys?
         /// </summary> 
-        public virtual bool ContainsIgnoredKeys(Keys keys)
+        public virtual bool ContainsIgnoredKeys(ShortcutKeys keys)
         {
             //return ignoredKeys.ContainsKey((int)keys);
             return false;
@@ -5207,14 +5207,6 @@ namespace ScintillaNet
         {
             shortcutOverrides.Add("Scintilla." + displayName, new ShortcutOverride(keys, action));
             PluginBase.MainForm.RegisterShortcutItem("Scintilla." + displayName, keys);
-        }
-
-        /// <summary>
-        /// [Deprecated]
-        /// </summary>
-        public static void UpdateShortcut(String id, Keys shortcut)
-        {
-            UpdateShortcut(id, (ShortcutKeys) shortcut);
         }
 
         /// <summary>

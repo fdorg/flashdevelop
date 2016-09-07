@@ -48,47 +48,47 @@ namespace CodeRefactor.Controls
         /// <summary>
         /// Accessor to the BatchMenuItem
         /// </summary>
-        public ToolStripMenuItem BatchMenuItem { get; private set; }
+        public ToolStripMenuItemEx BatchMenuItem { get; private set; }
 
         /// <summary>
         /// Accessor to the RenameMenuItem
         /// </summary>
-        public ToolStripMenuItem RenameMenuItem { get; private set; }
+        public ToolStripMenuItemEx RenameMenuItem { get; private set; }
 
         /// <summary>
         /// Accessor to the MoveMenuItem
         /// </summary>
-        public ToolStripMenuItem MoveMenuItem { get; private set; }
+        public ToolStripMenuItemEx MoveMenuItem { get; private set; }
 
         /// <summary>
         /// Accessor to the TruncateMenuItem
         /// </summary>
-        public ToolStripMenuItem TruncateMenuItem { get; private set; }
+        public ToolStripMenuItemEx TruncateMenuItem { get; private set; }
 
         /// <summary>
         /// Accessor to the OrganizeMenuItem
         /// </summary>
-        public ToolStripMenuItem OrganizeMenuItem { get; private set; }
+        public ToolStripMenuItemEx OrganizeMenuItem { get; private set; }
 
         /// <summary>
         /// Accessor to the ExtractMethodMenuItem
         /// </summary>
-        public ToolStripMenuItem ExtractMethodMenuItem { get; private set; }
+        public ToolStripMenuItemEx ExtractMethodMenuItem { get; private set; }
 
         /// <summary>
         /// Accessor to the DelegateMenuItem
         /// </summary>
-        public ToolStripMenuItem DelegateMenuItem { get; private set; }
+        public ToolStripMenuItemEx DelegateMenuItem { get; private set; }
 
         /// <summary>
         /// Accessor to the ExtractLocalVariableMenuItem
         /// </summary>
-        public ToolStripMenuItem ExtractLocalVariableMenuItem { get; private set; }
+        public ToolStripMenuItemEx ExtractLocalVariableMenuItem { get; private set; }
 
         /// <summary>
         /// Accessor to the CodeGeneratorMenuItem
         /// </summary>
-        public ToolStripMenuItem CodeGeneratorMenuItem { get; private set; }
+        public ToolStripMenuItemEx CodeGeneratorMenuItem { get; private set; }
 
     }
 
