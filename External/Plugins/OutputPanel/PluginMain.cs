@@ -4,7 +4,6 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using PluginCore;
-using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -136,7 +135,8 @@ namespace OutputPanel
                     break;
 
                 case EventType.Keys:
-                    e.Handled = this.pluginUI.OnShortcut((Keys) (e as KeyEvent).Keys);
+                    Keys keys = (e as KeyEvent).Value;
+                    e.Handled = this.pluginUI.OnShortcut(keys);
                     break;
 
                 case EventType.ApplySettings:
@@ -203,7 +203,7 @@ namespace OutputPanel
         {
             String label = TextHelper.GetString("Label.ViewMenuItem");
             ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
-            ToolStripMenuItemEx viewItem = new ToolStripMenuItemEx(label, this.pluginImage, new EventHandler(this.OpenPanel));
+            ToolStripMenuItem viewItem = new ToolStripMenuItem(label, this.pluginImage, new EventHandler(this.OpenPanel));
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowOutput", viewItem);
             viewMenu.DropDownItems.Add(viewItem);
         }

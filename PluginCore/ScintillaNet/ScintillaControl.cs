@@ -35,7 +35,7 @@ namespace ScintillaNet
         private static Dictionary<String, ShortcutOverride> shortcutOverrides = new Dictionary<String, ShortcutOverride>();
         private Enums.IndentView indentView = Enums.IndentView.Real;
         private Enums.SmartIndent smartIndent = Enums.SmartIndent.CPP;
-        //private Hashtable ignoredKeys = new Hashtable();
+        private Hashtable ignoredKeys = new Hashtable();
         private string configLanguage = String.Empty;
         private string fileName = String.Empty;
         private int lastSelectionLength = 0;
@@ -2422,7 +2422,7 @@ namespace ScintillaNet
         /// </summary> 
         public virtual void AddIgnoredKeys(Keys keys)
         {
-            //ignoredKeys.Add((int)keys, (int)keys);
+            ignoredKeys.Add((int)keys, (int)keys);
         }
 
         /// <summary>
@@ -2430,7 +2430,7 @@ namespace ScintillaNet
         /// </summary> 
         public virtual void RemoveIgnoredKeys(Keys keys)
         {
-            //ignoredKeys.Remove((int)keys);
+            ignoredKeys.Remove((int)keys);
         }
 
         /// <summary>
@@ -2438,7 +2438,7 @@ namespace ScintillaNet
         /// </summary> 
         public virtual void ClearIgnoredKeys()
         {
-            //ignoredKeys.Clear();
+            ignoredKeys.Clear();
         }
 
         /// <summary>
@@ -2446,8 +2446,7 @@ namespace ScintillaNet
         /// </summary> 
         public virtual bool ContainsIgnoredKeys(Keys keys)
         {
-            //return ignoredKeys.ContainsKey((int)keys);
-            return false;
+            return ignoredKeys.ContainsKey((int)keys);
         }
 
         /// <summary>
@@ -5203,24 +5202,16 @@ namespace ScintillaNet
         /// <summary>
         /// Adds a new shortcut override
         /// </summary>
-        private static void AddShortcut(String displayName, ShortcutKeys keys, Action<ScintillaControl> action)
+        private static void AddShortcut(String displayName, Keys keys, Action<ScintillaControl> action)
         {
             shortcutOverrides.Add("Scintilla." + displayName, new ShortcutOverride(keys, action));
             PluginBase.MainForm.RegisterShortcutItem("Scintilla." + displayName, keys);
         }
 
         /// <summary>
-        /// [Deprecated]
-        /// </summary>
-        public static void UpdateShortcut(String id, Keys shortcut)
-        {
-            UpdateShortcut(id, (ShortcutKeys) shortcut);
-        }
-
-        /// <summary>
         /// Updates the shortcut if it changes or needs updating
         /// </summary>
-        public static void UpdateShortcut(String id, ShortcutKeys shortcut)
+        public static void UpdateShortcut(String id, Keys shortcut)
         {
             if (id.StartsWithOrdinal("Scintilla.")) shortcutOverrides[id].keys = shortcut;
         }
@@ -5228,13 +5219,13 @@ namespace ScintillaNet
         /// <summary>
         /// Execute the shortcut override using reflection
         /// </summary>
-        public Boolean ExecuteShortcut(ShortcutKeys keys)
+        private Boolean ExecuteShortcut(Int32 keys)
         {
             try
             {
                 foreach (ShortcutOverride shortcut in shortcutOverrides.Values)
                 {
-                    if (keys == shortcut.keys)
+                    if ((Keys)keys == shortcut.keys)
                     {
                         shortcut.action(this);
                         return true;
@@ -5250,10 +5241,10 @@ namespace ScintillaNet
         /// </summary>
         private class ShortcutOverride
         {
-            public ShortcutKeys keys;
+            public Keys keys;
             public Action<ScintillaControl> action;
 
-            public ShortcutOverride(ShortcutKeys keys, Action<ScintillaControl> action)
+            public ShortcutOverride(Keys keys, Action<ScintillaControl> action)
             {
                 this.keys = keys;
                 this.action = action;
@@ -5327,20 +5318,31 @@ namespace ScintillaNet
             switch (m.Msg)
             {
                 case WM_KEYDOWN:
-                    int code = (int) m.WParam;
-                    if (ignoreAllKeys ||
-                        ProcessCmdKey(ref m, (Keys) code | ModifierKeys) ||
-                        (ModifierKeys & Keys.Control) != 0 &&
-                        (ModifierKeys & Keys.Alt) == 0 &&
-                        'A' <= code && code <= 'Z') // Eat non-writable characters
                     {
-                        return true;
+                        Int32 keys = (Int32)Control.ModifierKeys + (Int32)m.WParam;
+                        if (!IsFocus || ignoreAllKeys || ignoredKeys.ContainsKey(keys))
+                        {
+                            if (this.ExecuteShortcut(keys) || base.PreProcessMessage(ref m)) return true;
+                        }
+                        if (((Control.ModifierKeys & Keys.Control) != 0) && ((Control.ModifierKeys & Keys.Alt) == 0))
+                        {
+                            Int32 code = (Int32)m.WParam;
+                            if ((code >= 65) && (code <= 90)) return true; // Eat non-writable characters
+                            else if ((code == 9) || (code == 33) || (code == 34)) // Transmit Ctrl with Tab, PageUp/PageDown
+                            {
+                                return base.PreProcessMessage(ref m);
+                            }
+                        }
+                        break;
                     }
-                    break;
-
                 case WM_SYSKEYDOWN:
+                    {
+                        return base.PreProcessMessage(ref m);
+                    }
                 case WM_SYSCHAR:
-                    return base.PreProcessMessage(ref m);
+                    {
+                        return base.PreProcessMessage(ref m);
+                    }
             }
             return false;
         }

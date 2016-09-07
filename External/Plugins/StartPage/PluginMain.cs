@@ -5,7 +5,6 @@ using System.IO;
 using System.Web;
 using System.Windows.Forms;
 using PluginCore;
-using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -227,7 +226,7 @@ namespace StartPage
         {
             String title = TextHelper.GetString("Label.ViewMenuItem");
             ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
-            ToolStripMenuItemEx viewItem = new ToolStripMenuItemEx(title, this.pluginImage, new EventHandler(this.ViewMenuClick));
+            ToolStripMenuItem viewItem = new ToolStripMenuItem(title, this.pluginImage, new EventHandler(this.ViewMenuClick));
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowStartPage", viewItem);
             viewMenu.DropDownItems.Add(viewItem);
         }

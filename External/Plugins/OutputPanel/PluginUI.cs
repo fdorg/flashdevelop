@@ -308,20 +308,25 @@ namespace OutputPanel
         {
             if (ContainsFocus)
             {
-                switch (keys) {
-                    case Keys.F3:
-                        this.FindNextMatch(true);
-                        return true;
-                    case Keys.Shift | Keys.F3:
-                        this.FindNextMatch(false);
-                        return true;
-                    case Keys.Escape:
-                        ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-                        if (doc != null && doc.IsEditable) doc.SciControl.Focus();
-                        break;
-                    case Keys.Control | Keys.F:
-                        findTextBox.Focus();
-                        return true;
+                if (keys == Keys.F3)
+                {
+                    this.FindNextMatch(true);
+                    return true;
+                }
+                else if (keys == (Keys.Shift | Keys.F3))
+                {
+                    this.FindNextMatch(false);
+                    return true;
+                }
+                else if (keys == Keys.Escape)
+                {
+                    ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
+                    if (doc != null && doc.IsEditable) doc.SciControl.Focus();
+                }
+                else if (keys == (Keys.Control | Keys.F))
+                {
+                    findTextBox.Focus();
+                    return true;
                 }
             }
             return false;
