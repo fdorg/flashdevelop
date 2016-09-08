@@ -50,7 +50,6 @@ namespace FlashDevelop.Settings
         private Boolean disableSimpleQuickFind = false;
         private Boolean disableTabDifferentiation = false;
         private Boolean disableReplaceFilesConfirm = false;
-        private Boolean disableExtendedShortcutKeys = false;
         private Boolean autoReloadModifiedFiles = false;
         private Boolean saveUnicodeWithBOM = false;
         private Boolean disableFindTextUpdating = false;

@@ -111,12 +111,12 @@ namespace FlashDevelop.Managers
                     items.Add(GetSeparator(node));
                     break;
                 case "button" :
-                    ToolStripMenuItemEx menu = GetMenuItem(node);
+                    ToolStripMenuItem menu = GetMenuItem(node);
                     items.Add(menu); // Add menu first to get the id correct
                     String id = GetMenuItemId(menu);
-                    if (id.IndexOf('.') >= 0 && ShortcutManager.GetRegisteredItem(id) == null)
+                    if (id.IndexOf('.') > -1 && ShortcutManager.GetRegisteredItem(id) == null)
                     {
-                        Globals.MainForm.RegisterShortcutItem(id, menu);
+                        ShortcutManager.RegisterItem(id, menu);
                     }
                     else ShortcutManager.RegisterSecondaryItem(menu);
                     break;
@@ -199,9 +199,9 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Get a menu item from the specified xml node
         /// </summary>
-        public static ToolStripMenuItemEx GetMenuItem(XmlNode node)
+        public static ToolStripMenuItem GetMenuItem(XmlNode node)
         {
-            ToolStripMenuItemEx menu = new ToolStripMenuItemEx();
+            ToolStripMenuItem menu = new ToolStripMenuItem();
             String name = XmlHelper.GetAttribute(node, "name");
             String image = XmlHelper.GetAttribute(node, "image");
             String label = XmlHelper.GetAttribute(node, "label");
@@ -298,7 +298,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         private static String GetKeyText(String data)
         {
-            data = data.Replace('|', '+');
+            data = data.Replace("|", "+");
             data = data.Replace("Control", "Ctrl");
             return data;
         }
@@ -306,9 +306,20 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets a shortcut keys from a string
         /// </summary>
-        private static ShortcutKeys GetKeys(String data)
+        private static Keys GetKeys(String data)
         {
-            return ShortcutKeys.Parse(data.Replace('|', '+'));
+            try
+            {
+                Keys shortcut = Keys.None;
+                String[] keys = data.Split('|');
+                for (Int32 i = 0; i < keys.Length; i++) shortcut = shortcut | (Keys)Enum.Parse(typeof(Keys), keys[i]);
+                return shortcut;
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+                return Keys.None;
+            }
         }
 
         /// <summary>

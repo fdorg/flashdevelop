@@ -2,7 +2,6 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using PluginCore;
-using PluginCore.Controls;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using WeifenLuo.WinFormsUI.Docking;
@@ -156,7 +155,7 @@ namespace BookmarkPanel
         public void CreateMenuItem()
         {
             ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
-            ToolStripMenuItemEx viewItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.ViewMenuItem"), this.pluginImage, new EventHandler(this.OpenPanel));
+            ToolStripMenuItem viewItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), this.pluginImage, new EventHandler(this.OpenPanel));
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowBookmarks", viewItem);
             viewMenu.DropDownItems.Add(viewItem);
         }

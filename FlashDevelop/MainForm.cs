@@ -144,8 +144,6 @@ namespace FlashDevelop
         private Boolean restartRequested = false;
         private Boolean refreshConfig = false;
         private Boolean closingAll = false;
-        private Boolean lockStatusLabel = false;
-        private ShortcutKeys currentKeys;
         
         /* Singleton */
         public static Boolean Silent;
@@ -197,22 +195,11 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Gets the toolStripStatusLabel.
-        /// Use <see cref="StatusLabelText"/> instead to modify the status text.
+        /// Gets the toolStripStatusLabel
         /// </summary>
         public ToolStripStatusLabel StatusLabel
         {
             get { return this.toolStripStatusLabel; }
-        }
-
-        /// <summary>
-        /// Sets the text of the <see cref="StatusLabel"/>.
-        /// Use this method instead of directly accessing the <code>Text</code> property of <see cref="StatusLabel"/>.
-        /// </summary>
-        public string StatusLabelText
-        {
-            get { return this.StatusLabel.Text; }
-            set { if (!lockStatusLabel) StatusLabel.Text = value; }
         }
 
         /// <summary>
@@ -256,11 +243,11 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// [Deprecated] Gets the IgnoredKeys
+        /// Gets the IgnoredKeys
         /// </summary>
         public List<Keys> IgnoredKeys
         {
-            get { return new List<Keys>(); }
+            get { return ShortcutManager.AllShortcuts; }
         }
 
         /// <summary>
@@ -528,7 +515,7 @@ namespace FlashDevelop
         {
             get { return Environment.OSVersion.Version; }
         }
-        
+
         #endregion
 
         #region Component Creation
@@ -1497,9 +1484,9 @@ namespace FlashDevelop
                 String file = oldOS ? PathHelper.GetCompactPath(sci.FileName) : sci.FileName;
                 String eol = (sci.EOLMode == 0) ? "CR+LF" : ((sci.EOLMode == 1) ? "CR" : "LF");
                 String encoding = ButtonManager.GetActiveEncodingName();
-                this.StatusLabelText = String.Format(statusText, line, column, eol, encoding, file);
+                this.toolStripStatusLabel.Text = String.Format(statusText, line, column, eol, encoding, file);
             }
-            else this.StatusLabelText = null;
+            else this.toolStripStatusLabel.Text = " ";
             this.OnUpdateMainFormDialogTitle();
             ButtonManager.UpdateFlaggedButtons();
             NotifyEvent ne = new NotifyEvent(EventType.UIRefresh);
@@ -1592,40 +1579,24 @@ namespace FlashDevelop
         /// </summary>
         public Boolean PreFilterMessage(ref Message m)
         {
-            if (Win32.ShouldUseWin32())
+            if (Win32.ShouldUseWin32() && m.Msg == 0x20a) // WM_MOUSEWHEEL
             {
-                switch (m.Msg)
+                Int32 x = unchecked((short)(long)m.LParam);
+                Int32 y = unchecked((short)((long)m.LParam >> 16));
+                IntPtr hWnd = Win32.WindowFromPoint(new Point(x, y));
+                if (hWnd != IntPtr.Zero)
                 {
-                    case 0x201: // WM_LBUTTONDOWN
-                    case 0x204: // WM_RBUTTONDOWN
-                    case 0x207: // WM_MBUTTONDOWN
-                        if (currentKeys.IsSimple)
-                        {
-                            // Cancel any extended shortcut in progress
-                            currentKeys = ShortcutKeys.None;
-                            lockStatusLabel = false;
-                            StatusLabelText = null;
-                        }
-                        break;
-                    case 0x20A: // WM_MOUSEWHEEL
-                        Int32 x = unchecked((short) (long) m.LParam);
-                        Int32 y = unchecked((short) ((long) m.LParam >> 16));
-                        IntPtr hWnd = Win32.WindowFromPoint(new Point(x, y));
-                        if (hWnd != IntPtr.Zero)
-                        {
-                            ITabbedDocument doc = Globals.CurrentDocument;
-                            if (Control.FromHandle(hWnd) != null)
-                            {
-                                Win32.SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
-                                return true;
-                            }
-                            else if (doc != null && doc.IsEditable && (hWnd == doc.SplitSci1.HandleSci || hWnd == doc.SplitSci2.HandleSci))
-                            {
-                                Win32.SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
-                                return true;
-                            }
-                        }
-                        break;
+                    ITabbedDocument doc = Globals.CurrentDocument;
+                    if (Control.FromHandle(hWnd) != null)
+                    {
+                        Win32.SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
+                        return true;
+                    }
+                    else if (doc != null && doc.IsEditable && (hWnd == doc.SplitSci1.HandleSci || hWnd == doc.SplitSci2.HandleSci))
+                    {
+                        Win32.SendMessage(hWnd, m.Msg, m.WParam, m.LParam);
+                        return true;
+                    }
                 }
             }
             return false;
@@ -1634,165 +1605,62 @@ namespace FlashDevelop
         /// <summary>
         /// Handles the application shortcuts
         /// </summary>
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        protected override Boolean ProcessCmdKey(ref Message msg, Keys keyData)
         {
             /**
-             * Don't process ControlKey, ShiftKey or Menu
-             */
-            switch (keyData & Keys.KeyCode)
+            * Notify plugins. Don't notify ControlKey or ShiftKey as it polls a lot
+            */
+            KeyEvent ke = new KeyEvent(EventType.Keys, keyData);
+            Keys keyCode = keyData & Keys.KeyCode;
+            if ((keyCode != Keys.ControlKey) && (keyCode != Keys.ShiftKey))
             {
-                case Keys.ControlKey:
-                case Keys.ShiftKey:
-                case Keys.Menu:
-                    return base.ProcessCmdKey(ref msg, keyData);
+                EventManager.DispatchEvent(this, ke);
             }
-
-            /**
-             * Update the current keys
-             */
-            currentKeys = ShortcutKeysManager.UpdateShortcutKeys(currentKeys, keyData);
-
-            /**
-             * Process shortcut
-             */
-            if (ProcessCmdKeyImpl(ref msg, keyData))
+            if (!ke.Handled)
             {
-                if (currentKeys.IsExtended)
+                /**
+                * Ignore basic control keys if sci doesn't have focus.
+                */ 
+                if (Globals.SciControl == null || !Globals.SciControl.IsFocus)
                 {
-                    lockStatusLabel = false;
+                    if (keyData == (Keys.Control | Keys.C)) return false;
+                    else if (keyData == (Keys.Control | Keys.V)) return false;
+                    else if (keyData == (Keys.Control | Keys.X)) return false;
+                    else if (keyData == (Keys.Control | Keys.A)) return false;
+                    else if (keyData == (Keys.Control | Keys.Z)) return false;
+                    else if (keyData == (Keys.Control | Keys.Y)) return false;
                 }
-                else
+                /**
+                * Process special key combinations and allow "chaining" of 
+                * Ctrl-Tab commands if you keep holding control down.
+                */
+                if ((keyData & Keys.Control) != 0)
                 {
-                    currentKeys = ShortcutKeys.None;
-                }
-                return true;
-            }
-            else if (currentKeys.IsExtended)
-            {
-                lockStatusLabel = false;
-                if (ShortcutKeysManager.ProcessCmdKey(ref msg, currentKeys))
-                {
-                    StatusLabelText = null;
-                }
-                else
-                {
-                    StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefined"), currentKeys);
-                }
-                return true;
-            }
-            else if (base.ProcessCmdKey(ref msg, keyData))
-            {
-                currentKeys = ShortcutKeys.None;
-                return true;
-            }
-
-            /**
-             * Shortcut may exist but not handled
-             */
-            else if (ShortcutManager.AllShortcuts.Contains(currentKeys))
-            {
-                currentKeys = ShortcutKeys.None;
-                return true;
-            }
-            
-            /**
-             * Shortcut doesn't exist
-             */
-            else if (ShortcutKeysManager.IsValidExtendedShortcutFirst(keyData) && !appSettings.DisableExtendedShortcutKeys)
-            {
-                StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutWaiting"), currentKeys);
-                lockStatusLabel = true;
-                return true;
-            }
-            else if (ShortcutKeysManager.IsValidSimpleShortcutExclDeleteInsert(keyData))
-            {
-                StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefined"), currentKeys);
-                currentKeys = ShortcutKeys.None;
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        private bool ProcessCmdKeyImpl(ref Message msg, Keys keyData)
-        {
-            /**
-             * Notify plugins.
-             */
-            var ke = new KeyEvent(EventType.Keys, currentKeys, GetShortcutId(currentKeys));
-            EventManager.DispatchEvent(this, ke);
-            if (ke.Handled)
-            {
-                return true;
-            }
-
-            /**
-             * Do not handle when the new key combination is a part of an extended key combination.
-             */
-            if (currentKeys.IsExtended)
-            {
-                return false;
-            }
-
-            ///**
-            // * Ignore basic control keys if sci doesn't have focus.
-            // */
-            //if (Globals.SciControl == null || !Globals.SciControl.IsFocus)
-            //{
-            //    if (keyData == (Keys.Control | Keys.A) ||
-            //        keyData == (Keys.Control | Keys.C) ||
-            //        keyData == (Keys.Control | Keys.V) ||
-            //        keyData == (Keys.Control | Keys.X) ||
-            //        keyData == (Keys.Control | Keys.Y) ||
-            //        keyData == (Keys.Control | Keys.Z))
-            //    {
-            //        return false;
-            //    }
-            //}
-
-            /**
-             * Handle ScintillaControl shortcuts
-             */
-            if (Globals.SciControl != null)
-            {
-                if (Globals.SciControl.IsFocus && Globals.SciControl.ExecuteShortcut(currentKeys))
-                {
-                    return true;
-                }
-            }
-
-            /**
-             * Process special key combinations and allow "chaining" of 
-             * Ctrl-Tab commands if you keep holding control down.
-             */
-            if ((keyData & Keys.Control) != 0)
-            {
-                bool sequentialTabbing = appSettings.SequentialTabbing;
-                if (keyData == (Keys.Control | Keys.Next) || keyData == (Keys.Control | Keys.Tab))
-                {
-                    TabbingManager.TabTimer.Enabled = true;
-                    if (keyData == (Keys.Control | Keys.Next) || sequentialTabbing)
+                    Boolean sequentialTabbing = this.appSettings.SequentialTabbing;
+                    if ((keyData == (Keys.Control | Keys.Next)) || (keyData == (Keys.Control | Keys.Tab)))
                     {
-                        TabbingManager.NavigateTabsSequentially(1);
+                        TabbingManager.TabTimer.Enabled = true;
+                        if (keyData == (Keys.Control | Keys.Next) || sequentialTabbing)
+                        {
+                            TabbingManager.NavigateTabsSequentially(1);
+                        }
+                        else TabbingManager.NavigateTabHistory(1);
+                        return true;
                     }
-                    else TabbingManager.NavigateTabHistory(1);
-                    return true;
-                }
-                if (keyData == (Keys.Control | Keys.Prior) || keyData == (Keys.Control | Keys.Shift | Keys.Tab))
-                {
-                    TabbingManager.TabTimer.Enabled = true;
-                    if (keyData == (Keys.Control | Keys.Prior) || sequentialTabbing)
+                    if ((keyData == (Keys.Control | Keys.Prior)) || (keyData == (Keys.Control | Keys.Shift | Keys.Tab)))
                     {
-                        TabbingManager.NavigateTabsSequentially(-1);
+                        TabbingManager.TabTimer.Enabled = true;
+                        if (keyData == (Keys.Control | Keys.Prior) || sequentialTabbing)
+                        {
+                            TabbingManager.NavigateTabsSequentially(-1);
+                        }
+                        else TabbingManager.NavigateTabHistory(-1);
+                        return true;
                     }
-                    else TabbingManager.NavigateTabHistory(-1);
-                    return true;
                 }
+                return base.ProcessCmdKey(ref msg, keyData);
             }
-
-            return false;
+            return true;
         }
 
         /// <summary>
@@ -2071,90 +1939,31 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// [Deprecated] Gets the specified item's shortcut keys.
+        /// Gets the specified item's shortcut keys.
         /// </summary>
         public Keys GetShortcutItemKeys(String id)
         {
-            return GetShortcutKeys(id);
-        }
-
-        /// <summary>
-        /// [Deprecated] Gets the specified item's id.
-        /// </summary>
-        public String GetShortcutItemId(Keys keys)
-        {
-            return GetShortcutId(keys);
-        }
-
-        /// <summary>
-        /// Gets the specified item's shortcut keys.
-        /// </summary>
-        public ShortcutKeys GetShortcutKeys(String id)
-        {
             ShortcutItem item = ShortcutManager.GetRegisteredItem(id);
-            return item == null ? ShortcutKeys.None : item.Custom;
+            return item == null ? Keys.None : item.Custom;
         }
 
         /// <summary>
         /// Gets the specified item's id.
         /// </summary>
-        public String GetShortcutId(ShortcutKeys keys)
+        public String GetShortcutItemId(Keys keys)
         {
             ShortcutItem item = ShortcutManager.GetRegisteredItem(keys);
             return item == null ? string.Empty : item.Id;
         }
 
         /// <summary>
-        /// Adds an ignored key. Ignored keys are valid shortcut keys that are not defined with <see cref="RegisterShortcutItem(string, ShortcutKeys, bool)"/>,
-        /// but should not prompt an "undefined shortcut keys" message. Instead these keys should have their default behaviors.
-        /// These are constant shortcuts which cannot be modified using the shortcut dialog.
-        /// </summary>
-        public void AddIgnoredKeys(ShortcutKeys keys)
-        {
-            ShortcutManager.IgnoredKeys.Add(keys);
-        }
-
-        /// <summary>
-        /// Returns a <see cref="bool"/> value indicating whether the specified key is ignored.
-        /// </summary>
-        public Boolean ContainsIgnoredKeys(ShortcutKeys keys)
-        {
-            return ShortcutManager.IgnoredKeys.Contains(keys);
-        }
-
-        /// <summary>
-        /// Removes the specified key from ignored keys.
-        /// </summary>
-        public void RemoveIgnoredKeys(ShortcutKeys keys)
-        {
-            ShortcutManager.IgnoredKeys.Remove(keys);
-        }
-
-        /// <summary>
-        /// Clears all ignored keys.
-        /// </summary>
-        public void ClearIgnoredKeys()
-        {
-            ShortcutManager.IgnoredKeys.Clear();
-        }
-        
-        /// <summary>
-        /// [Deprecated] Registers a new menu item with the shortcut manager
+        /// Registers a new menu item with the shortcut manager
         /// </summary>
         public void RegisterShortcutItem(String id, Keys keys)
         {
-            RegisterShortcutItem(id, keys, false);
+            ShortcutManager.RegisterItem(id, keys);
         }
 
-
-        /// <summary>
-        /// Registers a new menu item with the shortcut manager
-        /// </summary>
-        public void RegisterShortcutItem(String id, ShortcutKeys keys, bool supportsExtended = true)
-        {
-            ShortcutManager.RegisterItem(id, keys, supportsExtended);
-        }
-        
         /// <summary>
         /// Registers a new menu item with the shortcut manager
         /// </summary>
@@ -2162,7 +1971,7 @@ namespace FlashDevelop
         {
             ShortcutManager.RegisterItem(id, item);
         }
-        
+
         /// <summary>
         /// Registers a new secondary menu item with the shortcut manager
         /// </summary>
@@ -2178,62 +1987,6 @@ namespace FlashDevelop
         public void ApplySecondaryShortcut(ToolStripItem item)
         {
             ShortcutManager.ApplySecondaryShortcut(item);
-        }
-
-        /// <summary>
-        /// A utility method for handling extended shortcuts where the context prevents the default mechanism (e.g. in a dialog form).
-        /// Returns <code>true</code> if the current key press is processed; <code>false</code> otherwise.
-        /// <para/>
-        /// When this method returns <code>true</code>, make sure to always set <code>previousKeys</code> to <see cref="ShortcutKeys.None"/>,
-        /// so the next call to this method will correctly handle the new keyboard input as the first part of a shortcut.
-        /// Also, when calling from <see cref="Control.ProcessCmdKey(ref Message, Keys)"/>, make sure to return <code>true</code> if this method returns <code>true</code>.
-        /// </summary>
-        /// <param name="previousKeys">The reference to the stored previous <see cref="ShortcutKeys"/> value.</param>
-        /// <param name="input">The <see cref="Keys"/> value specifying the current keyboard input.</param>
-        /// <param name="shortcutId">The shortcut ID to process, or <see cref="string.Empty"/> if this method returns <code>false</code>.</param>
-        public bool HandleShortcutManually(ref ShortcutKeys previousKeys, Keys input, out string shortcutId)
-        {
-            var keyCode = input & Keys.KeyCode;
-            switch (keyCode)
-            {
-                case Keys.None:
-                case Keys.ControlKey:
-                case Keys.ShiftKey:
-                case Keys.Menu:
-                    shortcutId = string.Empty;
-                    return false;
-            }
-            if (appSettings.DisableExtendedShortcutKeys)
-            {
-                previousKeys = input;
-            }
-            else
-            {
-                previousKeys = ShortcutKeysManager.UpdateShortcutKeys(previousKeys, input);
-            }
-            shortcutId = GetShortcutId(previousKeys);
-            if (shortcutId.Length == 0)
-            {
-                if (previousKeys.IsExtended)
-                {
-                    StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefined"), previousKeys);
-                    return true;
-                }
-                else if (!ShortcutManager.AllShortcuts.Contains(previousKeys))
-                {
-                    if (ShortcutKeysManager.IsValidExtendedShortcutFirst(input) && !appSettings.DisableExtendedShortcutKeys)
-                    {
-                        StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutWaiting"), previousKeys);
-                    }
-                    else if (ShortcutKeysManager.IsValidSimpleShortcutExclDeleteInsert(input))
-                    {
-                        StatusLabelText = string.Format(TextHelper.GetString("Info.ShortcutUndefined"), previousKeys);
-                    }
-                    return false;
-                }
-            }
-            StatusLabelText = null;
-            return true;
         }
 
         /// <summary>

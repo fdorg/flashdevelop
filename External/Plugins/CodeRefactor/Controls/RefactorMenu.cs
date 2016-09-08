@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
 using PluginCore;
-using PluginCore.Controls;
 using PluginCore.Localization;
 
 namespace CodeRefactor.Controls
@@ -11,33 +10,25 @@ namespace CodeRefactor.Controls
         public RefactorMenu(Boolean createSurroundMenu)
         {
             this.Text = TextHelper.GetString("Label.Refactor");
-            this.RenameMenuItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.Rename"));
+            this.RenameMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.Rename")) as ToolStripMenuItem;
             this.RenameMenuItem.Image = PluginBase.MainForm.FindImage("331");
-            this.DropDownItems.Add(this.RenameMenuItem);
-            this.MoveMenuItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.Move"));
-            this.DropDownItems.Add(this.MoveMenuItem);
-            this.ExtractMethodMenuItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.ExtractMethod"), null);
-            this.DropDownItems.Add(this.ExtractMethodMenuItem);
-            this.ExtractLocalVariableMenuItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.ExtractLocalVariable"), null);
-            this.DropDownItems.Add(this.ExtractLocalVariableMenuItem);
-            this.DelegateMenuItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.DelegateMethods"), null);
-            this.DropDownItems.Add(this.DelegateMenuItem);
+            this.MoveMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.Move")) as ToolStripMenuItem;
+            this.ExtractMethodMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.ExtractMethod"), null) as ToolStripMenuItem;
+            this.ExtractLocalVariableMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.ExtractLocalVariable"), null) as ToolStripMenuItem;
+            this.DelegateMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.DelegateMethods"), null) as ToolStripMenuItem;
             if (createSurroundMenu)
             {
                 this.SurroundMenu = new SurroundMenu();
                 this.DropDownItems.Add(this.SurroundMenu);
             }
             this.DropDownItems.Add(new ToolStripSeparator());
-            this.CodeGeneratorMenuItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.InvokeCodeGenerator"), null, null, createSurroundMenu ? Keys.Control | Keys.Shift | Keys.D1 : Keys.None);
+            this.CodeGeneratorMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.InvokeCodeGenerator"), null, null, createSurroundMenu ? Keys.Control | Keys.Shift | Keys.D1 : Keys.None);
             this.DropDownItems.Add(this.CodeGeneratorMenuItem);
             this.DropDownItems.Add(new ToolStripSeparator());
-            this.OrganizeMenuItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.OrganizeImports"), null);
-            this.DropDownItems.Add(this.OrganizeMenuItem);
-            this.TruncateMenuItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.TruncateImports"), null);
-            this.DropDownItems.Add(this.TruncateMenuItem);
+            this.OrganizeMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.OrganizeImports"), null) as ToolStripMenuItem;
+            this.TruncateMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.TruncateImports"), null) as ToolStripMenuItem;
             this.DropDownItems.Add(new ToolStripSeparator());
-            this.BatchMenuItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.BatchProcess"), null);
-            this.DropDownItems.Add(this.BatchMenuItem);
+            this.BatchMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.BatchProcess"), null) as ToolStripMenuItem;
         }
 
         /// <summary>

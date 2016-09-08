@@ -1,8 +1,10 @@
 using System;
 using System.ComponentModel;
 using System.Drawing.Design;
+using ASCompletion.Completion;
 using ASCompletion.Helpers;
 using Ookii.Dialogs;
+using PluginCore.Controls;
 using PluginCore.Localization;
 
 namespace ASCompletion.Settings
@@ -305,6 +307,16 @@ namespace ASCompletion.Settings
               "//e.target:Event.COMPLETE", "//e.target:Event.INIT"
         };
 
+        static Braces[] DEFAULT_ADD_CLOSING_BRACES_OPTIONS =
+        {
+            new Braces('(',  ')',  null, null, null, null, ")]}>", Mode.Inclusive, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Mode.Inclusive, Logic.OR),
+            new Braces('[',  ']',  null, null, null, null, ")]}>", Mode.Inclusive, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Mode.Inclusive, Logic.OR),
+            new Braces('{',  '}',  null, null, null, null, ")]}>", Mode.Inclusive, new[] { Style.Default }, Mode.Inclusive, Logic.OR),
+            new Braces('"',  '"',  null, null, null, null, null,   null,           new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.String, Style.Character, Style.Operator, Style.Preprocessor, Style.Attribute }, Mode.Inclusive, null),
+            new Braces('\'', '\'', null, null, null, null, null,   null,           new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.String, Style.Character, Style.Operator, Style.Preprocessor, Style.Attribute }, Mode.Inclusive, null),
+            new Braces('<',  '>',  null, null, new[] { Style.Operator, Style.Type }, Mode.Inclusive, "<", Mode.Exclusive, new[] { Style.Identifier, Style.Type }, Mode.Exclusive, Logic.AND),
+        };
+
         private bool generateProtectedDeclarations = DEFAULT_GENERATE_PROTECTED;
         private string[] eventListenersAutoRemove;
         private string[] declarationModifierOrder = null;
@@ -312,6 +324,7 @@ namespace ASCompletion.Settings
         private MethodsGenerationLocations methodsGenerationLocation;
         private string prefixFields = DEFAULT_GENERATE_PREFIXFIELDS;
         private bool addClosingBraces = DEFAULT_GENERATE_ADDCLOSINGBRACES;
+        private Braces[] addClosingBracesOptions;
         private bool generateScope = DEFAULT_GENERATE_SCOPE;
         private HandlerNamingConventions handlerNamingConvention = DEFAULT_HANDLER_CONVENTION;
 
@@ -376,6 +389,15 @@ namespace ASCompletion.Settings
         {
             get { return addClosingBraces; }
             set { addClosingBraces = value; }
+        }
+
+        [DisplayName("Add Closing Braces Options")]
+        [LocalizedCategory("ASCompletion.Category.Generation"), LocalizedDescription("ASCompletion.Description.AddClosingBracesOptions")]
+        [Editor(typeof(DescriptiveCollectionEditor<Braces>), typeof(UITypeEditor))]
+        public Braces[] AddClosingBracesOptions
+        {
+            get { return addClosingBracesOptions ?? DEFAULT_ADD_CLOSING_BRACES_OPTIONS; }
+            set { addClosingBracesOptions = value; }
         }
 
         [DisplayName("Prefix Fields When Generating From Params")]
