@@ -3840,7 +3840,7 @@ namespace ASCompletion.Completion
             List<MemberModel> members = new List<MemberModel>();
             curClass.ResolveExtends(); // Resolve inheritance chain
 
-            // explore function or getters or setters
+            // explore getters or setters
             FlagType mask = FlagType.Function | FlagType.Getter | FlagType.Setter;
             ClassModel tmpClass = curClass.Extends;
             Visibility acc = ctx.TypesAffinity(curClass, tmpClass);
@@ -3858,9 +3858,16 @@ namespace ASCompletion.Completion
                 else
                 {
                     foreach (MemberModel member in tmpClass.Members)
+                    {
+                        var parameters = member.Parameters;
                         if ((member.Flags & FlagType.Dynamic) > 0
-                            && (member.Flags & mask) > 0
-                            && (member.Access & acc) > 0) members.Add(member);
+                            && (member.Access & acc) > 0
+                            && ((member.Flags & FlagType.Function) > 0 
+                                || ((member.Flags & mask) > 0 && (!IsHaxe || parameters[0].Name == "get" || parameters[1].Name == "set"))))
+                        {
+                            members.Add(member);
+                        }
+                    }
 
                     tmpClass = tmpClass.Extends;
                     // members visibility
@@ -3926,13 +3933,14 @@ namespace ASCompletion.Completion
             {
                 string type = member.Type;
                 string name = member.Name;
-                if (member.Parameters != null && member.Parameters.Count == 1)
-                    type = member.Parameters[0].Type;
+                var parameters = member.Parameters;
+                if (parameters != null && parameters.Count == 1)
+                    type = parameters[0].Type;
                 type = FormatType(type);
                 if (type == null && !features.hasInference) type = features.objectKey;
 
-                bool genGetter = ofClass.Members.Search(name, FlagType.Getter, 0) != null;
-                bool genSetter = ofClass.Members.Search(name, FlagType.Setter, 0) != null;
+                bool genGetter = ofClass.Members.Search(name, FlagType.Getter, 0) != null && (!IsHaxe || parameters[0].Name == "get");
+                bool genSetter = ofClass.Members.Search(name, FlagType.Setter, 0) != null && (!IsHaxe || parameters[1].Name == "set");
 
                 if (IsHaxe)
                 {
