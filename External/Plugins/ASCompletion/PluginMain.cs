@@ -753,6 +753,7 @@ namespace ASCompletion
             CompletionList.OnInsert += new InsertedTextHandler(ASComplete.HandleCompletionInsert);
 
             // shortcuts
+            PluginBase.MainForm.IgnoredKeys.Add(Keys.Back);
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Control | Keys.Enter);
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control | Keys.Alt); // complete project types
             PluginBase.MainForm.RegisterShortcutItem("Completion.ShowHelp", Keys.F1);
