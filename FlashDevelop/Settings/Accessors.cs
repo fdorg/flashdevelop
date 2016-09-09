@@ -576,8 +576,8 @@ namespace FlashDevelop.Settings
             get { return this.maxRecentFiles; }
             set
             {
-                if (value < 0) throw new ArgumentOutOfRangeException();
-                this.maxRecentFiles = value;
+                if (value <= 0) this.maxRecentFiles = 15;
+                else this.maxRecentFiles = value;
             }
         }
 
