@@ -152,7 +152,7 @@ namespace CodeRefactor.Controls
                 TextHelper.GetStringWithoutMnemonics("Label.TruncateImports"),
                 TextHelper.GetString("Info.ConsistentEOLs"),
             });
-            this.Text = TextHelper.GetString("Title.BatchProcessDialog");
+            this.Text = " " + TextHelper.GetString("Title.BatchProcessDialog");
             this.targetComboBox.SelectedIndex = 0;
             this.operationComboBox.SelectedIndex = 0;
             this.processButton.Focus();

@@ -255,6 +255,12 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicStaticFunction_forSomeType.as" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGeneratePublicStaticVariable_forCurrentType.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicStaticVariable_forCurrentType.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideGetNull.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideGetNull.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideNullSet.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideNullSet.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideGetSet.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideGetSet.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
