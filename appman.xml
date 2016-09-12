@@ -435,7 +435,7 @@
         	<Name>QuickNavigate</Name>
 		<Version>2.9</Version>
 		<Build>22</Build>
-		<Checksum3ee2eb49f8ed5887d4bd4879b9bf373</Checksum>
+		<Checksum>3ee2eb49f8ed5887d4bd4879b9bf373</Checksum>
 		<Desc>Quickly navigate through Types, Fields, Projects and more</Desc>
 		<Group>Plugins</Group>
 		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4_INFO_t=5961</Info>
