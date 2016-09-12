@@ -4050,7 +4050,12 @@ namespace ASCompletion.Completion
         {
             if (result.Member == null)
             {
-                return null;
+                return result.Type != null ? result.Type.ToString() : null;
+            }
+
+            if (result.InFile == null)
+            {
+                return null; // Could do something similar to MemberToolTip
             }
 
             var file = GetFileContents(result.InFile);
@@ -4063,8 +4068,15 @@ namespace ASCompletion.Completion
             {
                 ClassModel inClass = result.InClass ?? result.Type;
                 result.InFile = ASContext.Context.GetCodeModel(file);
-                inClass = result.InFile.GetClassByName(inClass.Name);
-                result.Member = inClass.Members.Search(result.Member.Name, 0, 0);
+                if (inClass.Name != "void")
+                {
+                    inClass = result.InFile.GetClassByName(inClass.Name);
+                    result.Member = inClass.Members.Search(result.Member.Name, 0, 0);
+                }
+                else
+                {
+                    result.Member = result.InFile.Members.Search(result.Member.Name, 0, 0);
+                }
             }
 
             var lines = file.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
