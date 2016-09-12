@@ -4059,6 +4059,14 @@ namespace ASCompletion.Completion
                 return null;
             }
 
+            if (result.Member.LineFrom == 0 && result.Member.LineTo == 0)
+            {
+                ClassModel inClass = result.InClass ?? result.Type;
+                result.InFile = ASContext.Context.GetCodeModel(file);
+                inClass = result.InFile.GetClassByName(inClass.Name);
+                result.Member = inClass.Members.Search(result.Member.Name, 0, 0);
+            }
+
             var lines = file.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
             var code = new StringBuilder();
             for (var index = result.Member.LineFrom; index < result.Member.LineTo; index++)
@@ -4087,7 +4095,7 @@ namespace ASCompletion.Completion
             {
                 model.Members.Sort();
                 foreach (ClassModel aClass in model.Classes) aClass.Members.Sort();
-                string src = "//\n// " + model.FileName + "\n//\n" + model.GenerateIntrinsic(false);
+                string src = "//\r\n// " + model.FileName + "\r\n//\r\n" + model.GenerateIntrinsic(false);
                 return src;
             }
         }
