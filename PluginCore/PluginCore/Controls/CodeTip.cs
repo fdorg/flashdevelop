@@ -135,14 +135,18 @@ namespace PluginCore.Controls
         void PositionEditor(ScintillaControl sci, int position)
         {
             Point p = new Point(sci.PointXFromPosition(position), sci.PointYFromPosition(position));
-            p = ((Form)PluginBase.MainForm).PointToClient(sci.PointToScreen(p));
+            Form mainForm = ((Form)PluginBase.MainForm);
+            p = mainForm.PointToClient(sci.PointToScreen(p));
 
             if (p.Y > codeTip.Height)
                 codeTip.Top = p.Y - codeTip.Height;
             else
                 codeTip.Top = p.Y + rowHeight;
 
-            codeTip.Left = p.X;
+            if (p.X + codeTip.Width < mainForm.ClientSize.Width)
+                codeTip.Left = p.X;
+            else
+                codeTip.Left = mainForm.ClientSize.Width - codeTip.Width;
         }
 
         Language GetLanguage(string name)
