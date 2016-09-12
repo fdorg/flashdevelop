@@ -4068,7 +4068,7 @@ namespace ASCompletion.Completion
             {
                 ClassModel inClass = result.InClass ?? result.Type;
                 result.InFile = ASContext.Context.GetCodeModel(file);
-                if (inClass.Name != "void")
+                if (inClass != ClassModel.VoidClass)
                 {
                     inClass = result.InFile.GetClassByName(inClass.Name);
                     result.Member = inClass.Members.Search(result.Member.Name, 0, 0);
