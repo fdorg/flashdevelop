@@ -260,7 +260,7 @@ namespace PluginCore.Controls
                 needResize = false;
                 Graphics g = cl.CreateGraphics();
                 SizeF size = g.MeasureString(widestLabel, cl.Font);
-                cl.Width = (int)Math.Min(Math.Max(size.Width + 40, 100), 400) + ScaleHelper.Scale(10);
+                cl.Width = (int)Math.Min(Math.Max(size.Width + 40, 100), ScaleHelper.Scale(400)) + ScaleHelper.Scale(10);
             }
             int newHeight = Math.Min(cl.Items.Count, 10) * cl.ItemHeight + 4;
             if (newHeight != cl.Height) cl.Height = newHeight;
