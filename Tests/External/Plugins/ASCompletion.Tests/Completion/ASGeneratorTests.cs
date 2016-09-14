@@ -15,7 +15,6 @@ using ScintillaNet.Enums;
 using System.Text.RegularExpressions;
 using AS3Context;
 using HaXeContext;
-using NSubstitute.Extensions;
 using PluginCore.Helpers;
 
 namespace ASCompletion.Completion
