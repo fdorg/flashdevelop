@@ -387,7 +387,7 @@ namespace ProjectManager.Projects.Haxe
 
         private void ParseHxmlEntries(string[] lines, List<string> defs, List<string> cps, List<string> libs, List<string> add, ref string target, ref string haxeTarget, ref string output)
         {
-            Regex reHxOp = new Regex("-([a-z0-9-]+)\\s*(.*)", RegexOptions.IgnoreCase);
+            Regex reHxOp = new Regex("^-([a-z0-9-]+)\\s*(.*)", RegexOptions.IgnoreCase);
             foreach (string line in lines)
             {
                 if (line == null) break;
