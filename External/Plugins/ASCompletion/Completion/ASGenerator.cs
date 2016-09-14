@@ -138,9 +138,22 @@ namespace ASCompletion.Completion
                     return;
                 }
                 // inside a function
-                else if ((found.member.Flags & (FlagType.Function | FlagType.Getter | FlagType.Setter)) > 0
+                if ((found.member.Flags & (FlagType.Function | FlagType.Getter | FlagType.Setter)) > 0
                     && resolve.Member == null && resolve.Type == null)
                 {
+                    if (IsHaxe)
+                    {
+                        if (contextToken == "get")
+                        {
+                            ShowGetterList(found, options);
+                            return;
+                        }
+                        if (contextToken == "set")
+                        {
+                            ShowSetterList(found, options);
+                            return;
+                        }
+                    }
                     if (contextToken != null)
                     {
                         // "generate event handlers" suggestion
@@ -834,16 +847,28 @@ namespace ASCompletion.Completion
                 string label = TextHelper.GetString("ASCompletion.Label.GenerateGetSet");
                 options.Add(new GeneratorItem(label, GeneratorJobType.GetterSetter, found.member, found.inClass));
             }
-            if (!hasGetter)
-            {
-                string label = TextHelper.GetString("ASCompletion.Label.GenerateGet");
-                options.Add(new GeneratorItem(label, GeneratorJobType.Getter, found.member, found.inClass));
-            }
-            if (!hasSetter)
-            {
-                string label = TextHelper.GetString("ASCompletion.Label.GenerateSet");
-                options.Add(new GeneratorItem(label, GeneratorJobType.Setter, found.member, found.inClass));
-            }
+            ShowGetterList(found, options);
+            ShowSetterList(found, options);
+        }
+
+        static void ShowGetterList(FoundDeclaration found, ICollection<ICompletionListItem> options)
+        {
+            var name = GetPropertyNameFor(found.member);
+            var result = new ASResult();
+            ASComplete.FindMember(name, ASContext.Context.CurrentClass, result, FlagType.Getter, 0);
+            if (!result.IsNull()) return;
+            var label = TextHelper.GetString("ASCompletion.Label.GenerateGet");
+            options.Add(new GeneratorItem(label, GeneratorJobType.Getter, found.member, found.inClass));
+        }
+
+        static void ShowSetterList(FoundDeclaration found, ICollection<ICompletionListItem> options)
+        {
+            var name = GetPropertyNameFor(found.member);
+            var result = new ASResult();
+            ASComplete.FindMember(name, ASContext.Context.CurrentClass, result, FlagType.Setter, 0);
+            if (!result.IsNull()) return;
+            var label = TextHelper.GetString("ASCompletion.Label.GenerateSet");
+            options.Add(new GeneratorItem(label, GeneratorJobType.Setter, found.member, found.inClass));
         }
 
         private static bool GetLangIsValid()
