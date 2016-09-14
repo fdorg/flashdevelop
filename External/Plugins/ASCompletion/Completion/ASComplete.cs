@@ -4053,30 +4053,10 @@ namespace ASCompletion.Completion
                 return result.Type != null ? result.Type.ToString() : null;
             }
 
-            if (result.InFile == null)
-            {
-                return null; // Could do something similar to MemberToolTip
-            }
-
             var file = GetFileContents(result.InFile);
             if (string.IsNullOrEmpty(file))
             {
-                return null;
-            }
-
-            if (result.Member.LineFrom == 0 && result.Member.LineTo == 0)
-            {
-                ClassModel inClass = result.InClass ?? result.Type;
-                result.InFile = ASContext.Context.GetCodeModel(file);
-                if (inClass != ClassModel.VoidClass)
-                {
-                    inClass = result.InFile.GetClassByName(inClass.Name);
-                    result.Member = inClass.Members.Search(result.Member.Name, 0, 0);
-                }
-                else
-                {
-                    result.Member = result.InFile.Members.Search(result.Member.Name, 0, 0);
-                }
+                return MemberTooltipText(result.Member, ClassModel.VoidClass);
             }
 
             var lines = file.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
@@ -4089,9 +4069,9 @@ namespace ASCompletion.Completion
             return code.ToString();
         }
 
-        static string GetFileContents(FileModel model)
+        static private string GetFileContents(FileModel model)
         {
-            if (model.FileName.Length > 0 && File.Exists(model.FileName))
+            if (model != null && model.FileName.Length > 0 && File.Exists(model.FileName))
             {
                 foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
                 {
@@ -4103,13 +4083,7 @@ namespace ASCompletion.Completion
                 var info = FileHelper.GetEncodingFileInfo(model.FileName);
                 return info != null ? info.Contents : null;
             }
-            else
-            {
-                model.Members.Sort();
-                foreach (ClassModel aClass in model.Classes) aClass.Members.Sort();
-                string src = "//\r\n// " + model.FileName + "\r\n//\r\n" + model.GenerateIntrinsic(false);
-                return src;
-            }
+            return null;
         }
 
         static public string GetToolTipText(ASResult result)

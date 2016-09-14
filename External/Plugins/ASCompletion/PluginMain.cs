@@ -912,10 +912,8 @@ namespace ASCompletion
                 if (Control.ModifierKeys == Keys.Control)
                 {
                     var code = ASComplete.GetCodeTipCode(result);
-                    if (!string.IsNullOrEmpty(code))
-                    {
-                        UITools.CodeTip.Show(sci, position - result.Path.Length, code);
-                    }
+                    if (code == null) return;
+                    UITools.CodeTip.Show(sci, position - result.Path.Length, code);
                 }
                 else
                 {
