@@ -261,6 +261,10 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideNullSet.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideGetSet.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideGetSet.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_useSpaces.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_useSpaces.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_useTabs.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_useTabs.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
