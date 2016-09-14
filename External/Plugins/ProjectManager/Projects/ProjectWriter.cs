@@ -10,7 +10,8 @@ namespace ProjectManager.Projects
     {
         Project project;
 
-        public ProjectWriter(Project project, string filename) : base(new FileStream(filename,FileMode.OpenOrCreate),Encoding.UTF8)
+        public ProjectWriter(Project project, string filename)
+            : base(new FileStream(filename, File.Exists(filename) ? FileMode.Truncate : FileMode.CreateNew), Encoding.UTF8)
         {
             this.project = project;
             this.Formatting = Formatting.Indented;
