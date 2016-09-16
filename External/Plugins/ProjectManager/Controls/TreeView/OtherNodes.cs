@@ -33,7 +33,11 @@ namespace ProjectManager.Controls.TreeView
 
             if (References != null && References.Parent == null)
             {
-                if (recursive) RefreshReferences(recursive);
+                if (recursive)
+                {
+                    RefreshReferences(recursive);
+                    return;
+                }
                 Nodes.Insert(0, References);
             }
 
