@@ -11,6 +11,8 @@ namespace PluginCore.Helpers
         /// </summary>
         public static Int32 MeasureDisplayStringWidth(Graphics graphics, String text, Font font)
         {
+            if (String.IsNullOrEmpty(text)) return 0;
+
             try
             {
                 StringFormat format = new StringFormat();
