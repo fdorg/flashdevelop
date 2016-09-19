@@ -370,6 +370,7 @@
 		<Name>HaxeFlixel Demos</Name>
 		<Version>2.2.0</Version>
 		<Build>1</Build>
+		<Checksum>DA4F54284942FBBB5BC74A4F26F39A55</Checksum>
 		<Desc>Adds a collection of 75+ demos using the HaxeFlixel engine and demonstrating its capabilities.</Desc>
 		<Group>Templates</Group>
 		<Bundles>
