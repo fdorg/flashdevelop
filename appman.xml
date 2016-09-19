@@ -366,6 +366,22 @@
 		</Urls>
 	</Entry>
 	<Entry>
+		<Id>flixeldemos</Id>
+		<Name>HaxeFlixel Demos</Name>
+		<Version>2.2.0</Version>
+		<Build>1</Build>
+		<Checksum>DA4F54284942FBBB5BC74A4F26F39A55</Checksum>
+		<Desc>Adds a collection of 75+ demos using the HaxeFlixel engine and demonstrating its capabilities.</Desc>
+		<Group>Templates</Group>
+		<Bundles>
+			<Bundle>HaxeFlixel</Bundle>
+		</Bundles>
+		<Info>http://haxeflixel.com/demos/</Info>
+		<Urls>
+			<Url>https://raw.github.com/PeyTy/PeyTy.github.io/9051de731d528f3bbbf7521af34914eb3c2b5ca0/bin/FlxDemos.fdz</Url>
+		</Urls>
+	</Entry>
+	<Entry>
 		<Id>colorbox</Id>
 		<Name>ColorBox</Name>
 		<Version>0.1.5</Version>
