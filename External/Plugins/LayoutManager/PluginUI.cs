@@ -71,6 +71,7 @@ namespace LayoutManager
             this.layoutsListView.UseCompatibleStateImageBehavior = false;
             this.layoutsListView.View = System.Windows.Forms.View.List;
             this.layoutsListView.DoubleClick += new System.EventHandler(this.LayoutsListViewDoubleClick);
+            this.layoutsListView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.LayoutsListViewKeyDown);
             this.layoutsListView.SelectedIndexChanged += new System.EventHandler(this.LayoutsListViewSelectedIndexChanged);
             // 
             // toolStrip
@@ -365,6 +366,16 @@ namespace LayoutManager
             {
                 PluginBase.MainForm.CallCommand("RestoreLayout", item.Tag.ToString());
             }
+        }
+
+        /// <summary>
+        /// If the user presses Enter, dispatch double click
+        /// </summary>
+        void LayoutsListViewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter) return;
+            LayoutsListViewDoubleClick(null, null);
+            e.Handled = true;
         }
 
         /// <summary>

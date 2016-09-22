@@ -3920,7 +3920,7 @@ namespace ASCompletion.Completion
             return true;
         }
 
-        static public void GenerateOverride(ScintillaControl Sci, ClassModel ofClass, MemberModel member, int position)
+        public static void GenerateOverride(ScintillaControl Sci, ClassModel ofClass, MemberModel member, int position)
         {
             ContextFeatures features = ASContext.Context.Features;
             List<string> typesUsed = new List<string>();
@@ -3951,11 +3951,9 @@ namespace ASCompletion.Completion
             else if ((member.Access & Visibility.Private) > 0 && features.methodModifierDefault != Visibility.Private) 
                 acc = features.privateKey;
 
-            bool isStatic = (flags & FlagType.Static) > 0;
-            if (isStatic) acc = features.staticKey + " " + acc;
+            if ((flags & FlagType.Static) > 0) acc = features.staticKey + " " + acc;
 
-            if (!isAS2Event && !isObjectMethod)
-                acc = features.overrideKey + " " + acc;
+            if (!isAS2Event && !isObjectMethod) acc = features.overrideKey + " " + acc;
 
             acc = Regex.Replace(acc, "[ ]+", " ").Trim();
 
@@ -3964,21 +3962,15 @@ namespace ASCompletion.Completion
                 string type = member.Type;
                 string name = member.Name;
                 var parameters = member.Parameters;
-                if (parameters != null && parameters.Count == 1)
-                    type = parameters[0].Type;
+                if (parameters != null && parameters.Count == 1) type = parameters[0].Type;
                 type = FormatType(type);
                 if (type == null && !features.hasInference) type = features.objectKey;
-
-                bool genGetter = ofClass.Members.Search(name, FlagType.Getter, 0) != null && (!IsHaxe || parameters[0].Name == "get");
-                bool genSetter = ofClass.Members.Search(name, FlagType.Setter, 0) != null && (!IsHaxe || parameters[1].Name == "set");
-
                 if (IsHaxe)
                 {
                     // property is public but not the methods
                     acc = features.overrideKey;
                 }
-
-                if (genGetter)
+                if (ofClass.Members.Search(name, FlagType.Getter, 0) != null && (!IsHaxe || parameters[0].Name == "get"))
                 {
                     string tpl = TemplateUtils.GetTemplate("OverrideGetter", "Getter");
                     tpl = TemplateUtils.ReplaceTemplateVariable(tpl, "Modifiers", acc);
@@ -3987,7 +3979,7 @@ namespace ASCompletion.Completion
                     tpl = TemplateUtils.ReplaceTemplateVariable(tpl, "Member", "super." + name);
                     decl += tpl;
                 }
-                if (genSetter)
+                if (ofClass.Members.Search(name, FlagType.Setter, 0) != null && (!IsHaxe || parameters[1].Name == "set"))
                 {
                     string tpl = TemplateUtils.GetTemplate("OverrideSetter", "Setter");
                     tpl = TemplateUtils.ReplaceTemplateVariable(tpl, "Modifiers", acc);
@@ -4002,6 +3994,7 @@ namespace ASCompletion.Completion
                     decl += tpl;
                 }
                 decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", "");
+                typesUsed.Add(GetQualifiedType(type, ofClass));
             }
             else
             {
@@ -4028,7 +4021,7 @@ namespace ASCompletion.Completion
                 // fix parameters if needed
                 if (member.Parameters != null)
                     foreach (MemberModel para in member.Parameters)
-                       if (para.Type == "any") para.Type = "*";
+                        if (para.Type == "any") para.Type = "*";
 
                 template = TemplateUtils.ReplaceTemplateVariable(template, "Modifiers", acc);
                 template = TemplateUtils.ReplaceTemplateVariable(template, "Name", member.Name);
