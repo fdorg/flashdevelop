@@ -261,6 +261,8 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideNullSet.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideGetSet.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideGetSet.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideIssue793.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideIssue793.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
