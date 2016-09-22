@@ -1688,40 +1688,57 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateOverride : GenerateJob
             {
+                [TestFixtureSetUp]
+                public void GenerateOverrideSetUp()
+                {
+                    ASContext.Context.Settings.GenerateImports = true;
+                }
+
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeOverrideGetNull.hx"),
-                                "Foo",
-                                "foo")
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverrideGetNull.hx"),
+                                    "Foo",
+                                    "foo")
                                 .Returns(
                                     TestFile.ReadAllText(
                                         "ASCompletion.Test_Files.generated.haxe.AfterOverrideGetNull.hx"))
                                 .SetName("Override var foo(get, null)");
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeOverrideNullSet.hx"),
-                                "Foo",
-                                "foo")
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverrideNullSet.hx"),
+                                    "Foo",
+                                    "foo")
                                 .Returns(
                                     TestFile.ReadAllText(
                                         "ASCompletion.Test_Files.generated.haxe.AfterOverrideNullSet.hx"))
                                 .SetName("Override var foo(null, set)");
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeOverrideGetSet.hx"),
-                                "Foo",
-                                "foo")
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverrideGetSet.hx"),
+                                    "Foo",
+                                    "foo")
                                 .Returns(
                                     TestFile.ReadAllText(
                                         "ASCompletion.Test_Files.generated.haxe.AfterOverrideGetSet.hx"))
                                 .SetName("Override var foo(get, set)");
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverrideIssue793.hx"),
+                                    "Foo",
+                                    "foo"
+                                    )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterOverrideIssue793.hx"))
+                                .SetName("issue #793");
                     }
                 }
 
@@ -1731,6 +1748,8 @@ namespace ASCompletion.Completion
                     sci.ConfigurationLanguage = "haxe";
                     ASContext.Context.SetHaxeFeatures();
                     ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
+                    var context = new HaXeContext.Context(new HaXeSettings());
+                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(it => context.ResolveType(it.ArgAt<string>(0), it.ArgAt<FileModel>(1)));
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
                     var currentModel = ASContext.Context.CurrentModel;
