@@ -2410,7 +2410,7 @@ namespace ASCompletion.Completion
                 prev = member.Name;
                 list.Add(new MemberItem(member));
             }
-
+            list.Sort(new CompletionItemCaseSensitiveImportComparer());
             CompletionList.Show(list, false, tail);
         }
 
@@ -4613,6 +4613,14 @@ namespace ASCompletion.Completion
         public int Compare(ICompletionListItem a, ICompletionListItem b)
         {
             return a.Label.CompareTo(b.Label);
+        }
+    }
+
+    public class CompletionItemCaseSensitiveImportComparer : IComparer<ICompletionListItem>
+    {
+        public int Compare(ICompletionListItem x, ICompletionListItem y)
+        {
+            return CaseSensitiveImportComparer.CompareImports(x.Label, y.Label);
         }
     }
     #endregion
