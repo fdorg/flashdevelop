@@ -369,7 +369,7 @@ namespace ResultsPanel
         }
 
         /// <summary>
-        /// Copies the current item or all items to clipboard
+        /// Copies the selected items or all items to clipboard
         /// </summary>
         public bool CopyTextShortcut()
         {
@@ -379,14 +379,21 @@ namespace ResultsPanel
         }
 
         /// <summary>
-        /// Copies the current item or all items to clipboard
+        /// Copies the selected items or all items to clipboard
         /// </summary>
         public void CopyTextClick(Object sender, System.EventArgs e)
         {
-            if (this.entriesView.SelectedItems.Count > 0)
+            var selectedItems = entriesView.SelectedItems;
+            if (selectedItems.Count > 0)
             {
-                Match match = (Match)this.entriesView.SelectedItems[0].Tag;
-                Clipboard.SetDataObject(match.Value);
+                var copy = string.Empty;
+                for (var i = 0; i < selectedItems.Count; i++)
+                {
+                    var it = selectedItems[i];
+                    var m = (Match) it.Tag;
+                    copy += m.Value + "\n";
+                }
+                Clipboard.SetDataObject(copy);
             }
             else
             {
