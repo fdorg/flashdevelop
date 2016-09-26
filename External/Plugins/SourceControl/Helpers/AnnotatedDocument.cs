@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
@@ -21,6 +22,9 @@ namespace SourceControl.Helpers
         private AnnotationData[] annotations;
         private Dictionary<string, AnnotationData> commits;
         private ToolTip tooltip;
+        private ContextMenuStrip contextMenu;
+        private int MarginStart;
+        private int MarginEnd;
 
         static AnnotatedDocument()
         {
@@ -37,11 +41,9 @@ namespace SourceControl.Helpers
             annotations = null;
             commits = new Dictionary<string, AnnotationData>();
             tooltip = new ToolTip();
+            contextMenu = CreateContextMenuStrip();
 
             ((Form) document).FormClosed += Document_FormClosed;
-            sci.DwellStart += Sci_DwellStart;
-            sci.DwellEnd += Sci_DwellEnd;
-            sci.MarginClick += Sci_MarginClick;
         }
 
         public static AnnotatedDocument CreateAnnotatedDocument(IBlameCommand command, string fileName)
@@ -74,9 +76,14 @@ namespace SourceControl.Helpers
 
         public void Initialize()
         {
+            sci.DwellStart -= Sci_DwellStart;
+            sci.DwellEnd -= Sci_DwellEnd;
+            ((Form) document).ContextMenuStrip.Opening -= ContextMenuStrip_Opening;
+
             sci.IsReadOnly = false;
             sci.MarginTextClearAll();
             sci.SetText("Loading..."); // TODO: Localisation
+            sci.SetSavePoint();
             sci.IsReadOnly = true;
 
             annotations = null;
@@ -95,12 +102,35 @@ namespace SourceControl.Helpers
                 string longestInfo = ParseCommits();
                 ShowAnnotation(longestInfo);
                 UpdateBackColor(false);
+                GetMarginBounds();
+
+                sci.DwellStart += Sci_DwellStart;
+                sci.DwellEnd += Sci_DwellEnd;
+                ((Form) document).ContextMenuStrip.Opening += ContextMenuStrip_Opening;
             }
             finally
             {
                 sci.SetSavePoint();
                 sci.IsReadOnly = true;
             }
+        }
+
+        public void ShowError(string message = null)
+        {
+            sci.IsReadOnly = false;
+            sci.SetText(message ?? "Error"); //TODO: Localisation
+            sci.SetSavePoint();
+            sci.IsReadOnly = true;
+        }
+
+        private ContextMenuStrip CreateContextMenuStrip()
+        {
+            var cms = new ContextMenuStrip();
+            //TODO: add more context menu items
+            var showOnFileHistoryMenuItem = new ToolStripMenuItem("Show on File &History"); //TODO: Localisation
+            showOnFileHistoryMenuItem.Click += ShowOnFileHistory;
+            cms.Items.Add(showOnFileHistoryMenuItem);
+            return cms;
         }
 
         private void OrganizeAnnotations()
@@ -197,17 +227,25 @@ namespace SourceControl.Helpers
                 return;
             }
             var random = new Random();
-            int color = sci.StyleGetBack(0);
-            int r = color >> 16 & 0xFF;
-            int g = color >> 8 & 0xFF;
-            int b = color & 0xFF;
+            int fore = sci.StyleGetFore(0);
+            int back = sci.StyleGetBack(0);
+            int r = back >> 16 & 0xFF;
+            int g = back >> 8 & 0xFF;
+            int b = back & 0xFF;
             foreach (var annotation in commits.Values)
             {
                 int newR = r + random.Next(0xFF) >> 1;
                 int newG = g + random.Next(0xFF) >> 1;
                 int newB = b + random.Next(0xFF) >> 1;
+                sci.StyleSetFore(annotation.MarginStyle, fore);
                 sci.StyleSetBack(annotation.MarginStyle, newR << 16 | newG << 8 | newB);
             }
+        }
+
+        private void GetMarginBounds()
+        {
+            MarginStart = sci.GetMarginWidthN(0) + sci.GetMarginWidthN(1) + sci.GetMarginWidthN(2) + sci.GetMarginWidthN(3);
+            MarginEnd = MarginStart + sci.GetMarginWidthN(4);
         }
 
         private void Document_FormClosed(object sender, FormClosedEventArgs e)
@@ -217,7 +255,7 @@ namespace SourceControl.Helpers
 
         private void Sci_DwellStart(ScintillaControl sender, int position, int x, int y)
         {
-            if (!disposed && position == -1)
+            if (!disposed && MarginStart <= x && x < MarginEnd)
             {
                 int line = sci.LineFromPosition(sci.PositionFromPoint(x, y));
                 var annotationData = GetAnnotationData(line);
@@ -235,18 +273,26 @@ namespace SourceControl.Helpers
                 tooltip.Hide(sci);
             }
         }
-
-        private void Sci_MarginClick(ScintillaControl sender, int modifiers, int position, int margin)
+        
+        private void ContextMenuStrip_Opening(object sender, CancelEventArgs e)
         {
-            if (!disposed)
+            var mousePosition = sci.PointToClient(Control.MousePosition);
+            if (!disposed && MarginStart <= mousePosition.X && mousePosition.X < MarginEnd)
             {
-                int line = sci.LineFromPosition(position);
+                int line = sci.LineFromPosition(sci.PositionFromPoint(mousePosition.X, mousePosition.Y));
                 var annotationData = GetAnnotationData(line);
-                if (annotationData != null && annotationData.ResultLine == line)
+                if (annotationData != null)
                 {
-                    command.ShowOnFileHistory(annotationData.Hash);
+                    e.Cancel = true;
+                    contextMenu.Tag = annotationData;
+                    contextMenu.Show(sci, mousePosition);
                 }
             }
+        }
+
+        private void ShowOnFileHistory(object sender, EventArgs e)
+        {
+            command.ShowOnFileHistory(((AnnotationData) contextMenu.Tag).Hash);
         }
 
         private AnnotationData GetAnnotationData(int line)
@@ -288,12 +334,15 @@ namespace SourceControl.Helpers
                     documents.Remove(this);
                     if (command != null) command.Dispose();
                     if (tooltip != null) tooltip.Dispose();
-                    if (document != null) ((Form) document).FormClosed -= Document_FormClosed;
+                    if (document != null)
+                    {
+                        ((Form) document).FormClosed -= Document_FormClosed;
+                        ((Form) document).ContextMenuStrip.Opening -= ContextMenuStrip_Opening;
+                    }
                     if (sci != null)
                     {
                         sci.DwellStart -= Sci_DwellStart;
                         sci.DwellEnd -= Sci_DwellEnd;
-                        sci.MarginClick -= Sci_MarginClick;
                     }
                 }
 

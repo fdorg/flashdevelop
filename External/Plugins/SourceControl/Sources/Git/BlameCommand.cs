@@ -77,15 +77,19 @@ namespace SourceControl.Sources.Git
                             annotations.Add(ParseAnnotation());
                         }
                         document.Annotate(annotations.ToArray());
+                        return;
                     }
                 }
+                catch { }
                 finally
                 {
                     outputLines = null;
                     running = false;
                 }
             }
-            base.Runner_ProcessEnded(sender, exitCode);
+            runner = null;
+            document.ShowError(string.Join("\n", errors.ToArray()));
+            errors.Clear();
         }
 
         private AnnotationData ParseAnnotation()
