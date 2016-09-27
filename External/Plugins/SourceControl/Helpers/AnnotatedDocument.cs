@@ -13,6 +13,8 @@ namespace SourceControl.Helpers
 {
     internal class AnnotatedDocument : IDisposable
     {
+        #region Fields
+
         private static List<AnnotatedDocument> documents;
 
         private IBlameCommand command;
@@ -23,8 +25,13 @@ namespace SourceControl.Helpers
         private Dictionary<string, AnnotationData> commits;
         private ToolTip tooltip;
         private ContextMenuStrip contextMenu;
+        private ToolStripMenuItem showOnFileHistoryMenuItem;
         private int MarginStart;
         private int MarginEnd;
+
+        #endregion
+
+        #region Constructors
 
         static AnnotatedDocument()
         {
@@ -41,11 +48,21 @@ namespace SourceControl.Helpers
             annotations = null;
             commits = new Dictionary<string, AnnotationData>();
             tooltip = new ToolTip();
-            contextMenu = CreateContextMenuStrip();
+            contextMenu = new ContextMenuStrip();
 
-            ((Form) document).FormClosed += Document_FormClosed;
+            InitializeContextMenu();
+            AddEventHandlers();
         }
 
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Creates a new instance of <see cref="AnnotatedDocument"/>.
+        /// </summary>
+        /// <param name="command">The command object associated with this annoated document.</param>
+        /// <param name="fileName">The path of the target file to annotate.</param>
         public static AnnotatedDocument CreateAnnotatedDocument(IBlameCommand command, string fileName)
         {
             string title = Path.Combine(Path.GetDirectoryName(fileName), "[Annotated] " + Path.GetFileName(fileName));
@@ -53,6 +70,11 @@ namespace SourceControl.Helpers
             return doc == null ? null : new AnnotatedDocument(command, fileName, doc);
         }
 
+        /// <summary>
+        /// Checks whether a document with the specified filename is already open,
+        /// and if <code>true</code>, calls <see cref="IBlameCommand.Update"/> on the <see cref="IBlameCommand"/> object associated with the <see cref="AnnotatedDocument"/> object.
+        /// </summary>
+        /// <param name="fileName">The path of the file to check.</param>
         public static bool CheckExisting(string fileName)
         {
             foreach (var doc in documents)
@@ -66,19 +88,25 @@ namespace SourceControl.Helpers
             return false;
         }
 
+        /// <summary>
+        /// Applies the current theme to all open <see cref="AnnotatedDocument"/> objects.
+        /// </summary>
         public static void ApplyTheme()
         {
             foreach (var doc in documents)
             {
-                doc.UpdateBackColor(true);
+                doc.UpdateTheme(true);
             }
         }
 
+        /// <summary>
+        /// Initializes this <see cref="AnnotatedDocument"/> object.
+        /// </summary>
         public void Initialize()
         {
             sci.DwellStart -= Sci_DwellStart;
             sci.DwellEnd -= Sci_DwellEnd;
-            ((Form) document).ContextMenuStrip.Opening -= ContextMenuStrip_Opening;
+            ((Form) document).ContextMenuStrip = PluginBase.MainForm.EditorMenu;
 
             sci.IsReadOnly = false;
             sci.MarginTextClearAll();
@@ -90,6 +118,10 @@ namespace SourceControl.Helpers
             commits.Clear();
         }
 
+        /// <summary>
+        /// Displays the content of the file and the annotation data provided.
+        /// </summary>
+        /// <param name="annotationData">The annotation data to display on the left margin.</param>
         public void Annotate(AnnotationData[] annotationData)
         {
             sci.IsReadOnly = false;
@@ -101,12 +133,12 @@ namespace SourceControl.Helpers
                 OrganizeAnnotations();
                 string longestInfo = ParseCommits();
                 ShowAnnotation(longestInfo);
-                UpdateBackColor(false);
+                UpdateTheme(false);
                 GetMarginBounds();
 
                 sci.DwellStart += Sci_DwellStart;
                 sci.DwellEnd += Sci_DwellEnd;
-                ((Form) document).ContextMenuStrip.Opening += ContextMenuStrip_Opening;
+                ((Form) document).ContextMenuStrip = contextMenu;
             }
             finally
             {
@@ -115,6 +147,10 @@ namespace SourceControl.Helpers
             }
         }
 
+        /// <summary>
+        /// Shows the specified error message, or a generic message if <code>null</code> is passed.
+        /// </summary>
+        /// <param name="message">The error message to display instead of the content.</param>
         public void ShowError(string message = null)
         {
             sci.IsReadOnly = false;
@@ -123,20 +159,39 @@ namespace SourceControl.Helpers
             sci.IsReadOnly = true;
         }
 
-        private ContextMenuStrip CreateContextMenuStrip()
+        #endregion
+
+        #region Initialization
+
+        private void InitializeContextMenu()
         {
-            var cms = new ContextMenuStrip();
+            showOnFileHistoryMenuItem = new ToolStripMenuItem("Show on File &History"); //TODO: Localisation
+            showOnFileHistoryMenuItem.Click += ShowOnFileHistoryMenuItem_Click;
+
             //TODO: add more context menu items
-            var showOnFileHistoryMenuItem = new ToolStripMenuItem("Show on File &History"); //TODO: Localisation
-            showOnFileHistoryMenuItem.Click += ShowOnFileHistory;
-            cms.Items.Add(showOnFileHistoryMenuItem);
-            return cms;
+
+            contextMenu.Items.AddRange(new[]
+            {
+                showOnFileHistoryMenuItem
+            });
         }
+
+        private void AddEventHandlers()
+        {
+            ((Form) document).FormClosed += Document_FormClosed;
+            contextMenu.Opening += ContextMenu_Opening;
+        }
+
+        #endregion
+
+        #region Private Functions
 
         private void OrganizeAnnotations()
         {
             Array.Sort(annotations, (x, y) => x.ResultLine.CompareTo(y.ResultLine));
-            int i = 0, offset = 0, length = annotations.Length - 1;
+            int i = 0;
+            int offset = 0;
+            int length = annotations.Length - 1;
             while (i < length)
             {
                 var current = annotations[i++ - offset];
@@ -219,11 +274,11 @@ namespace SourceControl.Helpers
             }
         }
 
-        private void UpdateBackColor(bool applyingTheme)
+        private void UpdateTheme(bool applyingTheme)
         {
             if (applyingTheme)
             {
-                sci.BeginInvoke((MethodInvoker) delegate { UpdateBackColor(false); });
+                sci.BeginInvoke((MethodInvoker) delegate { UpdateTheme(false); });
                 return;
             }
             var random = new Random();
@@ -248,17 +303,62 @@ namespace SourceControl.Helpers
             MarginEnd = MarginStart + sci.GetMarginWidthN(4);
         }
 
+        private AnnotationData GetAnnotationData(int x, int y)
+        {
+            if (MarginStart <= x && x < MarginEnd)
+            {
+                int line = sci.LineFromPosition(sci.PositionFromPoint(x, y));
+                // Binary search
+                int low = 0;
+                int high = annotations.Length - 1;
+                while (low <= high)
+                {
+                    int i = low + (high - low >> 1);
+                    var annotationData = annotations[i];
+                    if (line < annotationData.ResultLine)
+                    {
+                        high = i - 1;
+                    }
+                    else if (line >= annotationData.ResultLine + annotationData.LineCount)
+                    {
+                        low = i + 1;
+                    }
+                    else return annotationData;
+                }
+            }
+            return null;
+        }
+
+        #endregion
+
+        #region Event Handlers
+
         private void Document_FormClosed(object sender, FormClosedEventArgs e)
         {
             Dispose();
         }
 
+        private void ContextMenu_Opening(object sender, CancelEventArgs e)
+        {
+            var mousePosition = sci.PointToClient(Control.MousePosition);
+            if (!disposed)
+            {
+                var annotationData = GetAnnotationData(mousePosition.X, mousePosition.Y);
+                if (annotationData != null)
+                {
+                    contextMenu.Tag = annotationData;
+                    return;
+                }
+            }
+            e.Cancel = true;
+            PluginBase.MainForm.EditorMenu.Show(sci, mousePosition);
+        }
+
         private void Sci_DwellStart(ScintillaControl sender, int position, int x, int y)
         {
-            if (!disposed && MarginStart <= x && x < MarginEnd)
+            if (!disposed)
             {
-                int line = sci.LineFromPosition(sci.PositionFromPoint(x, y));
-                var annotationData = GetAnnotationData(line);
+                var annotationData = GetAnnotationData(x, y);
                 if (annotationData != null)
                 {
                     tooltip.Show(annotationData.ToString(), sci, x, y + 10);
@@ -273,48 +373,13 @@ namespace SourceControl.Helpers
                 tooltip.Hide(sci);
             }
         }
-        
-        private void ContextMenuStrip_Opening(object sender, CancelEventArgs e)
-        {
-            var mousePosition = sci.PointToClient(Control.MousePosition);
-            if (!disposed && MarginStart <= mousePosition.X && mousePosition.X < MarginEnd)
-            {
-                int line = sci.LineFromPosition(sci.PositionFromPoint(mousePosition.X, mousePosition.Y));
-                var annotationData = GetAnnotationData(line);
-                if (annotationData != null)
-                {
-                    e.Cancel = true;
-                    contextMenu.Tag = annotationData;
-                    contextMenu.Show(sci, mousePosition);
-                }
-            }
-        }
 
-        private void ShowOnFileHistory(object sender, EventArgs e)
+        private void ShowOnFileHistoryMenuItem_Click(object sender, EventArgs e)
         {
             command.ShowOnFileHistory(((AnnotationData) contextMenu.Tag).Hash);
         }
 
-        private AnnotationData GetAnnotationData(int line)
-        {
-            int low = 0;
-            int high = annotations.Length - 1;
-            while (low <= high)
-            {
-                int i = low + (high - low >> 1);
-                var annotationData = annotations[i];
-                if (line < annotationData.ResultLine)
-                {
-                    high = i - 1;
-                }
-                else if (line >= annotationData.ResultLine + annotationData.LineCount)
-                {
-                    low = i + 1;
-                }
-                else return annotationData;
-            }
-            return null;
-        }
+        #endregion
 
         #region IDisposable
 
@@ -334,15 +399,16 @@ namespace SourceControl.Helpers
                     documents.Remove(this);
                     if (command != null) command.Dispose();
                     if (tooltip != null) tooltip.Dispose();
-                    if (document != null)
-                    {
-                        ((Form) document).FormClosed -= Document_FormClosed;
-                        ((Form) document).ContextMenuStrip.Opening -= ContextMenuStrip_Opening;
-                    }
+                    if (document != null) ((Form) document).FormClosed -= Document_FormClosed;
                     if (sci != null)
                     {
                         sci.DwellStart -= Sci_DwellStart;
                         sci.DwellEnd -= Sci_DwellEnd;
+                    }
+                    if (contextMenu != null)
+                    {
+                        contextMenu.Opening -= ContextMenu_Opening;
+                        showOnFileHistoryMenuItem.Click -= ShowOnFileHistoryMenuItem_Click;
                     }
                 }
 
@@ -353,6 +419,8 @@ namespace SourceControl.Helpers
                 annotations = null;
                 commits = null;
                 tooltip = null;
+                contextMenu = null;
+                showOnFileHistoryMenuItem = null;
 
                 disposed = true;
             }
@@ -369,6 +437,10 @@ namespace SourceControl.Helpers
         public int LineCount;
         public int MarginStyle;
 
+        /// <summary>
+        /// Gets a simple one-line information of this <see cref="AnnotationData"/>.
+        /// </summary>
+        /// <param name="width">The minimum total width of characters.</param>
         public string GetInfo(int width = 0)
         {
             string commit = Hash.Substring(0, 8);
@@ -382,15 +454,21 @@ namespace SourceControl.Helpers
             return Hash.Substring(0, 8) + " " + (width > 0 ? Author.PadRight(width) : Author) + " " + authorTime;
         }
 
+        /// <summary>
+        /// Returns a detailed string representation of this <see cref="AnnotationData"/> for tooltips.
+        /// </summary>
         public override string ToString()
         {
+            //TODO: Localisation(?)
             return "Commit" + ": " + Hash + "\n" +
                 "Author" + ": " + Author + " " + AuthorMail + "\n" +
                 "Author Date" + ": " + AuthorTime + " " + AuthorTimeZone + "\n" +
                 "Committer" + ": " + Committer + " " + CommitterMail + "\n" +
                 "Committer Date" + ": " + CommitterTime + " " + CommitterTimeZone + "\n" +
                 "Change" + ": " + (IsEdit ? "edit" : "add") + "\n" +
-                "Lines" + ": " + (ResultLine + 1) + "~" + (ResultLine + LineCount) + "\n" +
+                (LineCount > 1 ?
+                "Lines" + ": " + (ResultLine + 1) + "~" + (ResultLine + LineCount) :
+                "Line" + ": " + (ResultLine + 1)) + "\n" +
                 "Path" + ": " + FileName + "\n" +
                 "\n" + Message;
         }
