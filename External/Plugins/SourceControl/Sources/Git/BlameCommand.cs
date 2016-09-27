@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using PluginCore.Managers;
 using SourceControl.Helpers;
 
 namespace SourceControl.Sources.Git
@@ -79,17 +80,28 @@ namespace SourceControl.Sources.Git
                         document.Annotate(annotations.ToArray());
                         return;
                     }
+                    if (errors.Count > 0)
+                    {
+                        document.ShowError(string.Join("\n", errors.ToArray()));
+                    }
                 }
-                catch { }
+                catch (Exception e)
+                {
+                    ErrorManager.ShowError(e);
+                }
                 finally
                 {
-                    outputLines = null;
                     running = false;
+                    outputLines = null;
+                    runner = null;
+                    errors.Clear();
                 }
             }
-            runner = null;
-            document.ShowError(string.Join("\n", errors.ToArray()));
-            errors.Clear();
+            else
+            {
+                runner = null;
+                errors.Clear();
+            }
         }
 
         private AnnotationData ParseAnnotation()
