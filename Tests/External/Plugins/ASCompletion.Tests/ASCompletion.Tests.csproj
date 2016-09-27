@@ -261,6 +261,14 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePublicStaticFunction_forSomeType.as" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGeneratePublicStaticVariable_forCurrentType.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePublicStaticVariable_forCurrentType.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideGetNull.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideGetNull.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideNullSet.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideNullSet.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideGetSet.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideGetSet.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideIssue793.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideIssue793.hx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

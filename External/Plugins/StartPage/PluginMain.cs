@@ -173,7 +173,7 @@ namespace StartPage
         /// </summary>
         public void InitBasics()
         {
-            Int32 lenght = DistroConfig.DISTRIBUTION_NAME.Length - 1;
+            Int32 lenght = DistroConfig.DISTRIBUTION_NAME.Length + 1;
             String dataDir = Path.Combine(PathHelper.DataDir, "StartPage");
             String startPageDir = Path.Combine(PathHelper.AppDir, "StartPage");
             String localeName = PluginBase.MainForm.Settings.LocaleVersion.ToString();

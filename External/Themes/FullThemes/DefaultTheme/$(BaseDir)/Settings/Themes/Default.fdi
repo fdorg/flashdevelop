@@ -4,6 +4,9 @@
 
 #ScrollBar.UseGlobally=True
 
+#ProjectManager.TargetBuildSelectorWidth=85
+#ProjectManager.ConfigurationSelectorWidth=120
+
 # FD UI THEME (5.1+)
 
 # System, Professional

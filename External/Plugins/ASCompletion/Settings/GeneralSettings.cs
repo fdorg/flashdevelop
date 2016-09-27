@@ -1,7 +1,10 @@
 using System;
 using System.ComponentModel;
 using System.Drawing.Design;
+using ASCompletion.Completion;
+using ASCompletion.Helpers;
 using Ookii.Dialogs;
+using PluginCore.Controls;
 using PluginCore.Localization;
 
 namespace ASCompletion.Settings
@@ -285,7 +288,13 @@ namespace ASCompletion.Settings
         #region Generator
 
         const bool DEFAULT_GENERATE_PROTECTED = false;
-        const bool DEFAULT_GENERATE_STARTWITHMODIFIERS = false;
+        public const string DECLARATION_MODIFIER_REST = "<rest>";
+        public static readonly string[] DEFAULT_DECLARATION_MODIFIER_ORDER = { DECLARATION_MODIFIER_REST };
+        public static readonly string[] ALL_DECLARATION_MODIFIERS =
+        {
+            DECLARATION_MODIFIER_REST,
+            "public", "internal", "protected", "private", "static", "override", "final", "inline", "extern", "dynamic", "macro", "native", "intrinsic"
+        };
         const bool DEFAULT_GENERATE_ADDCLOSINGBRACES = false;
         const PropertiesGenerationLocations DEFAULT_GENERATE_PROPERTIES = PropertiesGenerationLocations.AfterLastPropertyDeclaration;
         const MethodsGenerationLocations DEFAULT_GENERATE_METHODS = MethodsGenerationLocations.AfterCurrentMethod;
@@ -298,13 +307,24 @@ namespace ASCompletion.Settings
               "//e.target:Event.COMPLETE", "//e.target:Event.INIT"
         };
 
+        static Braces[] DEFAULT_ADD_CLOSING_BRACES_OPTIONS =
+        {
+            new Braces('(',  ')',  null, null, null, null, ")]}>", Mode.Inclusive, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Mode.Inclusive, Logic.OR),
+            new Braces('[',  ']',  null, null, null, null, ")]}>", Mode.Inclusive, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Mode.Inclusive, Logic.OR),
+            new Braces('{',  '}',  null, null, null, null, ")]}>", Mode.Inclusive, new[] { Style.Default }, Mode.Inclusive, Logic.OR),
+            new Braces('"',  '"',  null, null, null, null, null,   null,           new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.String, Style.Character, Style.Operator, Style.Preprocessor, Style.Attribute }, Mode.Inclusive, null),
+            new Braces('\'', '\'', null, null, null, null, null,   null,           new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.String, Style.Character, Style.Operator, Style.Preprocessor, Style.Attribute }, Mode.Inclusive, null),
+            new Braces('<',  '>',  null, null, new[] { Style.Operator, Style.Type }, Mode.Inclusive, "<", Mode.Exclusive, new[] { Style.Identifier, Style.Type }, Mode.Exclusive, Logic.AND),
+        };
+
         private bool generateProtectedDeclarations = DEFAULT_GENERATE_PROTECTED;
         private string[] eventListenersAutoRemove;
-        private bool startWithModifiers;
+        private string[] declarationModifierOrder = null;
         private PropertiesGenerationLocations propertiesGenerationLocation;
         private MethodsGenerationLocations methodsGenerationLocation;
         private string prefixFields = DEFAULT_GENERATE_PREFIXFIELDS;
         private bool addClosingBraces = DEFAULT_GENERATE_ADDCLOSINGBRACES;
+        private Braces[] addClosingBracesOptions;
         private bool generateScope = DEFAULT_GENERATE_SCOPE;
         private HandlerNamingConventions handlerNamingConvention = DEFAULT_HANDLER_CONVENTION;
 
@@ -325,13 +345,14 @@ namespace ASCompletion.Settings
             set { generateProtectedDeclarations = value; }
         }
         
-        [DisplayName("Start Declarations With Access Modifiers")]
-        [LocalizedCategory("ASCompletion.Category.Generation"), LocalizedDescription("ASCompletion.Description.StartWithModifiers"),
-        DefaultValue(DEFAULT_GENERATE_STARTWITHMODIFIERS)]
-        public bool StartWithModifiers
+        [DisplayName("Declaration Modifier Order")]
+        [LocalizedCategory("ASCompletion.Category.Generation"), LocalizedDescription("ASCompletion.Description.StartWithModifiers")]
+        [DefaultValue(new[] { DECLARATION_MODIFIER_REST })]
+        [Editor(typeof(ModifierOrderEditor), typeof(UITypeEditor))]
+        public string[] DeclarationModifierOrder
         {
-            get { return startWithModifiers; }
-            set { startWithModifiers = value; }
+            get { return declarationModifierOrder ?? DEFAULT_DECLARATION_MODIFIER_ORDER; }
+            set { declarationModifierOrder = value; }
         }
 
         [DisplayName("Generate Explicit Scope")]
@@ -368,6 +389,15 @@ namespace ASCompletion.Settings
         {
             get { return addClosingBraces; }
             set { addClosingBraces = value; }
+        }
+
+        [DisplayName("Add Closing Braces Options")]
+        [LocalizedCategory("ASCompletion.Category.Generation"), LocalizedDescription("ASCompletion.Description.AddClosingBracesOptions")]
+        [Editor(typeof(DescriptiveCollectionEditor<Braces>), typeof(UITypeEditor))]
+        public Braces[] AddClosingBracesOptions
+        {
+            get { return addClosingBracesOptions ?? DEFAULT_ADD_CLOSING_BRACES_OPTIONS; }
+            set { addClosingBracesOptions = value; }
         }
 
         [DisplayName("Prefix Fields When Generating From Params")]
