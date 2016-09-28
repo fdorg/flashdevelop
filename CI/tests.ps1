@@ -30,7 +30,7 @@ If ((Get-Command "nunit-console-x86.exe" -ErrorAction SilentlyContinue) -ne $nul
             {
                 $args = "$args "
             }
-            $args = """$testFile"""
+            $args = "$args""$testFile"""
         }
         nunit-console-x86.exe $args
         #It turns out it's not needed to upload the file
