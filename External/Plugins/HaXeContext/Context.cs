@@ -389,39 +389,49 @@ namespace HaXeContext
                 if (Directory.Exists(extraCP)) AddPath(extraCP);
             }
             HaxeProject proj = PluginBase.CurrentProject as HaxeProject;
-
-            // swf-libs
-            if (HaxeTarget == "flash" && majorVersion >= 9 && proj != null)
-            {
-                foreach(LibraryAsset asset in proj.LibraryAssets)
-                    if (asset.IsSwc)
-                    {
-                        string path = proj.GetAbsolutePath(asset.Path);
-                        if (File.Exists(path)) AddPath(path);
-                    }
-                foreach(string p in proj.CompilerOptions.Additional)
-                    if (p.IndexOfOrdinal("-swf-lib ") == 0) {
-                        string path = proj.GetAbsolutePath(p.Substring(9));
-                        if (File.Exists(path)) AddPath(path);
-                    }
-            }
-
-            // add haxe libraries
             if (proj != null)
             {
-                foreach (string param in proj.BuildHXML(new string[0], "", false))
-                    if (!string.IsNullOrEmpty(param) && param.IndexOfOrdinal("-lib ") == 0)
-                    {
-                        List<string> libPaths = LookupLibrary(param.Substring(5));
-                        if (libPaths != null)
+                // swf-libs
+                if (HaxeTarget == "flash" && majorVersion >= 9)
+                {
+                    foreach(LibraryAsset asset in proj.LibraryAssets)
+                        if (asset.IsSwc)
                         {
-                            foreach (string path in libPaths)
-                            {
-                                PathModel libPath = AddPath(path);
-                                if (libPath != null) AppendPath(contextSetup, libPath.Path);
-                            }
+                            string path = proj.GetAbsolutePath(asset.Path);
+                            if (File.Exists(path)) AddPath(path);
                         }
+                    foreach(string p in proj.CompilerOptions.Additional)
+                        if (p.IndexOfOrdinal("-swf-lib ") == 0) {
+                            string path = proj.GetAbsolutePath(p.Substring(9));
+                            if (File.Exists(path)) AddPath(path);
+                        }
+                }
+
+                // add haxe libraries
+                var libs = new List<string>();
+                Action<string[]> parseHxml = null;
+                parseHxml = lines =>
+                {
+                    foreach (var line in lines)
+                    {
+                        if (string.IsNullOrEmpty(line)) continue;
+                        var trimmedLine = line.Trim();
+                        if (trimmedLine.StartsWithOrdinal("-lib ")) libs.Add(line);
+                        else if (!trimmedLine.StartsWith("#") && trimmedLine.EndsWith(".hxml", StringComparison.OrdinalIgnoreCase))
+                            parseHxml(File.ReadAllLines(trimmedLine));
                     }
+                };
+                parseHxml(proj.BuildHXML(new string[0], "", false));
+                foreach (string param in libs)
+                {
+                    var libPaths = LookupLibrary(param.Substring(5));
+                    if (libPaths == null) continue;
+                    foreach (string path in libPaths)
+                    {
+                        var libPath = AddPath(path);
+                        if (libPath != null) AppendPath(contextSetup, libPath.Path);
+                    }
+                }
             }
 
             // add external pathes
