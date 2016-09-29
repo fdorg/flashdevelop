@@ -392,7 +392,11 @@ namespace FlashDevelop
             get { throw new NotImplementedException(); }
         }
 
-        public bool RequiresRestart { get; }
+        public bool RequiresRestart
+        {
+            get { throw new NotImplementedException(); }
+        }
+
 
         public bool RefreshConfig
         {

@@ -22,17 +22,7 @@ If ((Get-Command "nunit-console-x86.exe" -ErrorAction SilentlyContinue) -ne $nul
     ELSE
     {
         #Maybe in the future we want to set categories and priorities
-        $args = ""
-        for ($i=0;$i -lt $testFiles.Count; $i++)
-        {
-            $testFile = $testFiles[$i]
-            IF ($i -ne 0)
-            {
-                $args = "$args "
-            }
-            $args = """$testFile"""
-        }
-        nunit-console-x86.exe $args
+        nunit-console-x86.exe $testFiles
         #It turns out it's not needed to upload the file
         #if ((Test-Path env:\APPVEYOR_JOB_ID) -And (Test-Path TestResult.xml))
         #{
