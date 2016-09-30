@@ -34,7 +34,7 @@ namespace CodeRefactor.Commands
             mainForm.Settings = settings;
             mainForm.CurrentDocument = doc;
             mainForm.Documents = new[] {doc};
-            mainForm.StandaloneMode = false;
+            mainForm.StandaloneMode = true;
             PluginBase.Initialize(mainForm);
             FlashDevelop.Managers.ScintillaManager.LoadConfiguration();
         }
@@ -148,6 +148,7 @@ namespace CodeRefactor.Commands
                                     },
                                     "newVar"
                                 )
+                                .Ignore("Not supported at the moment")
                                 .Returns(
                                     TestFile.ReadAllText(
                                         "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.haxe.AfterExtractLocalVariable_inSinglelineMethod.hx"))
@@ -254,6 +255,7 @@ namespace CodeRefactor.Commands
                                     },
                                     "newVar"
                                 )
+                                .Ignore("Not supported at the moment")
                                 .Returns(
                                     TestFile.ReadAllText(
                                         "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.as3.AfterExtractLocalVariable_fromString.as"))
@@ -270,6 +272,7 @@ namespace CodeRefactor.Commands
                                     },
                                     "newVar"
                                 )
+                                .Ignore("Not supported at the moment")
                                 .Returns(
                                     TestFile.ReadAllText(
                                         "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.as3.AfterExtractLocalVariable_fromNumber.as"))

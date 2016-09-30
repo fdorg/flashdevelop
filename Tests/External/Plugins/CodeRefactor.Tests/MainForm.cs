@@ -423,7 +423,11 @@ namespace FlashDevelop
             get { throw new NotImplementedException(); }
         }
 
-        public bool RequiresRestart { get; }
+        public bool RequiresRestart
+        {
+            get { throw new NotImplementedException(); }
+        }
+
 
         public bool RefreshConfig
         {
@@ -435,6 +439,10 @@ namespace FlashDevelop
             get { throw new NotImplementedException(); }
         }
 
-        public string CommandPromptExecutable { get; }
+        public string CommandPromptExecutable
+        {
+            get { throw new NotImplementedException(); }
+        }
+
     }
 }
