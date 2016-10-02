@@ -150,6 +150,7 @@ namespace HaXeContext
             haxelibsCache = new Dictionary<string, List<string>>();
             //BuildClassPath(); // defered to first use
         }
+
         #endregion
 
         #region classpath management
@@ -364,7 +365,7 @@ namespace HaXeContext
                     PathModel std = PathModel.GetModel(haxeCP, this);
                     if (!std.WasExplored && !Settings.LazyClasspathExploration)
                     {
-                        string[] keep = new string[] { "sys", "haxe", "libs" };
+                        string[] keep = new string[] { "sys", "haxe", "list" };
                         List<String> hide = new List<string>();
                         foreach (string dir in Directory.GetDirectories(haxeCP))
                             if (Array.IndexOf<string>(keep, Path.GetFileName(dir)) < 0)
@@ -390,7 +391,7 @@ namespace HaXeContext
             }
             HaxeProject proj = PluginBase.CurrentProject as HaxeProject;
 
-            // swf-libs
+            // swf-list
             if (HaxeTarget == "flash" && majorVersion >= 9 && proj != null)
             {
                 foreach(LibraryAsset asset in proj.LibraryAssets)
@@ -1449,7 +1450,7 @@ namespace HaXeContext
 
         #region command line compiler
 
-        static public string TemporaryOutputFile;
+        public static string TemporaryOutputFile;
 
         /// <summary>
         /// Retrieve the context's default compiler path
@@ -1467,7 +1468,7 @@ namespace HaXeContext
             if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || PluginBase.MainForm.CurrentDocument.IsUntitled) return;
 
             EventManager.DispatchEvent(this, new NotifyEvent(EventType.ProcessStart));
-            var hc = new HaxeComplete(ASContext.CurSciControl, new ASExpr(), false, completionModeHandler, HaxeCompilerService.COMPLETION, GetCurrentSDKVersion());
+            var hc = new HaxeComplete(CurSciControl, new ASExpr(), false, completionModeHandler, HaxeCompilerService.COMPLETION, GetCurrentSDKVersion());
             hc.GetList(OnCheckSyntaxResult);
         }
 
@@ -1511,10 +1512,10 @@ namespace HaXeContext
                 else MainForm.CallCommand("SaveAllModified", ".hx");
 
                 // change current directory
-                string currentPath = System.IO.Directory.GetCurrentDirectory();
-                string filePath = (temporaryPath == null) ? Path.GetDirectoryName(cFile.FileName) : temporaryPath;
+                string currentPath = Directory.GetCurrentDirectory();
+                string filePath = temporaryPath ?? Path.GetDirectoryName(cFile.FileName);
                 filePath = NormalizePath(filePath);
-                System.IO.Directory.SetCurrentDirectory(filePath);
+                Directory.SetCurrentDirectory(filePath);
                 
                 // prepare command
                 string command = haxePath;
@@ -1539,8 +1540,8 @@ namespace HaXeContext
                 // run
                 MainForm.CallCommand("RunProcessCaptured", command + " " + append);
                 // restaure current directory
-                if (System.IO.Directory.GetCurrentDirectory() == filePath)
-                    System.IO.Directory.SetCurrentDirectory(currentPath);
+                if (Directory.GetCurrentDirectory() == filePath)
+                    Directory.SetCurrentDirectory(currentPath);
             }
             catch (Exception ex)
             {
@@ -1663,8 +1664,26 @@ namespace HaXeContext
             RunCMD(command);
             return true;
         }
+
         #endregion
 
+        #region haxelib
+
+        internal void Install(List<string> libraries)
+        {
+            var haxePath = PathHelper.ResolvePath(hxsettings.GetDefaultSDK().Path);
+            if (!Directory.Exists(haxePath) && !File.Exists(haxePath))
+            {
+                ErrorManager.ShowInfo(TextHelper.GetString("Info.InvalidHaXePath"));
+                return;
+            }
+            if (Path.GetExtension(haxePath) == string.Empty) haxePath = Path.Combine(haxePath, "haxelib.exe");
+            libraries.Select(it => $"{haxePath};install {it}")
+                     .ToList()
+                     .ForEach(it => MainForm.CallCommand("RunProcessCaptured", it));
+        }
+
+        #endregion
     }
 
     class HaxeCompletionCache: CompletionCache
