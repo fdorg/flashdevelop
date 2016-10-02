@@ -409,10 +409,10 @@ namespace HaXeContext
             // add haxe libraries
             if (proj != null)
             {
-                foreach (string param in proj.BuildHXML(new string[0], "", false))
-                    if (!string.IsNullOrEmpty(param) && param.IndexOfOrdinal("-lib ") == 0)
+                foreach (string library in proj.CompilerOptions.Libraries)
+                    if (!string.IsNullOrEmpty(library.Trim()))
                     {
-                        List<string> libPaths = LookupLibrary(param.Substring(5));
+                        List<string> libPaths = LookupLibrary(library);
                         if (libPaths != null)
                         {
                             foreach (string path in libPaths)
