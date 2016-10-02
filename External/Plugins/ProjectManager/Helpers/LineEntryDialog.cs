@@ -167,20 +167,20 @@ namespace ProjectManager.Helpers
 
         void OnLineBoxOnKeyDown(object sender, KeyEventArgs args)
         {
-            string shortcutId = PluginBase.MainForm.GetShortcutItemId(args.KeyData);
+            var shortcutId = PluginBase.MainForm.GetShortcutItemId(args.KeyData);
             if (string.IsNullOrEmpty(shortcutId)) return;
-
+            var label = lineBox;
             switch (shortcutId)
             {
                 case "EditMenu.ToLowercase":
                 case "EditMenu.ToUppercase":
-                    string selectedText = lineBox.SelectedText;
+                    var selectedText = label.SelectedText;
                     if (string.IsNullOrEmpty(selectedText)) break;
                     selectedText = shortcutId == "EditMenu.ToLowercase" ? selectedText.ToLower() : selectedText.ToUpper();
-                    int selectionStart = lineBox.SelectionStart;
-                    int selectionLength = lineBox.SelectionLength;
-                    lineBox.Paste(selectedText);
-                    SelectRange(selectionStart, selectionLength);
+                    var selectionStart = label.SelectionStart;
+                    var selectionLength = label.SelectionLength;
+                    label.SelectedText = selectedText;
+                    label.Select(selectionStart, selectionLength);
                     break;
             }
         }

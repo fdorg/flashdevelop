@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using PluginCore.Localization;
 using FlashDevelop.Utilities;
+using PluginCore;
 using PluginCore.FRService;
 using PluginCore.Managers;
 using PluginCore.Controls;
@@ -156,6 +157,7 @@ namespace FlashDevelop.Dialogs
             this.findComboBox.TabIndex = 1;
             this.findComboBox.TextChanged += new System.EventHandler(this.LookupChanged);
             this.findComboBox.TextChanged += new EventHandler(this.FindComboBoxTextChanged);
+            this.findComboBox.KeyDown += OnComboBoxKeyDown;
             // 
             // findLabel
             // 
@@ -237,6 +239,7 @@ namespace FlashDevelop.Dialogs
             this.replaceComboBox.Size = new System.Drawing.Size(252, 21);
             this.replaceComboBox.TabIndex = 2;
             this.replaceComboBox.TextChanged += new System.EventHandler(this.LookupChanged);
+            this.replaceComboBox.KeyDown += OnComboBoxKeyDown;
             // 
             // replaceLabel
             // 
@@ -339,7 +342,7 @@ namespace FlashDevelop.Dialogs
             this.PerformLayout();
 
         }
-        
+
         #endregion
         
         #region Methods And Event Handlers
@@ -771,7 +774,25 @@ namespace FlashDevelop.Dialogs
         }
 
         #endregion
-        
+
+        static void OnComboBoxKeyDown(object sender, KeyEventArgs e)
+        {
+            var shortcutId = PluginBase.MainForm.GetShortcutItemId(e.KeyData);
+            if (string.IsNullOrEmpty(shortcutId)) return;
+            var comboBox = (ComboBox)sender;
+            switch (shortcutId)
+            {
+                case "EditMenu.ToLowercase":
+                case "EditMenu.ToUppercase":
+                    var selectedText = comboBox.SelectedText;
+                    if (string.IsNullOrEmpty(selectedText)) break;
+                    selectedText = shortcutId == "EditMenu.ToLowercase" ? selectedText.ToLower() : selectedText.ToUpper();
+                    var selectionStart = comboBox.SelectionStart;
+                    var selectionLength = comboBox.SelectionLength;
+                    comboBox.SelectedText = selectedText;
+                    comboBox.Select(selectionStart, selectionLength);
+                    break;
+            }
+        }
     }
-    
 }
