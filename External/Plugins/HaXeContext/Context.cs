@@ -638,7 +638,7 @@ namespace HaXeContext
             MemberList fullList = new MemberList();
             MemberModel item;
             // public & internal classes
-            string package = CurrentModel.Package;
+            string package = CurrentModel?.Package;
             foreach (PathModel aPath in classPath) if (aPath.IsValid && !aPath.Updating)
             {
                 aPath.ForeachFile((aFile) =>
