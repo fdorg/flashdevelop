@@ -255,13 +255,13 @@ namespace CodeRefactor.Commands
                             var match = matches[i];
                             var expr = ASComplete.GetExpressionType(sci, sci.MBSafePosition(match.Index) + sci.MBSafeTextLength(match.Value));
                             if (expr.IsNull()) continue;
-                            var member = expr.Member;
-                            if ((member.Flags & FlagType.Static) > 0)
+                            var flags = expr.Member.Flags;
+                            if ((flags & FlagType.Static) > 0)
                             {
                                 var classNameWithDot = ASContext.Context.CurrentClass.Name + ".";
                                 if (!expr.Context.Value.StartsWith(classNameWithDot)) replacement = classNameWithDot + NewName;
                             }
-                            else if((member.Flags & FlagType.LocalVar) == 0)
+                            else if((flags & FlagType.LocalVar) == 0)
                             {
                                 var decl = expr.Context.Value;
                                 if (!decl.StartsWith("this.") && !decl.StartsWith("super.")) replacement = "this." + NewName;
