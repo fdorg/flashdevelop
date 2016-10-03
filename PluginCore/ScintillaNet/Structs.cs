@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 
 namespace ScintillaNet
 {
@@ -30,13 +31,15 @@ namespace ScintillaNet
         public int x;
         public int y;
     };
-    
+
+    [StructLayout(LayoutKind.Sequential)]
     public struct CharacterRange
     {
         public int cpMin;
         public int cpMax;
     };
-    
+
+    [StructLayout(LayoutKind.Sequential)]
     public struct TextRange
     {
         public CharacterRange chrg;
