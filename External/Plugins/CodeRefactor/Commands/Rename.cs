@@ -243,9 +243,9 @@ namespace CodeRefactor.Commands
                 if (isParameterVar)
                 {
                     var replacement = string.Empty;
+                    var lineFrom = Target.Context.ContextFunction.LineFrom;
                     var search = new FRSearch(NewName) {WholeWord = true, NoCase = false, SingleLine = true};
-                    var contextFunction = Target.Context.ContextFunction;
-                    var matches = search.Matches(sci.Text, sci.PositionFromLine(contextFunction.LineFrom), contextFunction.LineFrom);
+                    var matches = search.Matches(sci.Text, sci.PositionFromLine(lineFrom), lineFrom);
                     if(matches.Count == 0) continue;
                     sci.BeginUndoAction();
                     try
