@@ -1306,13 +1306,7 @@ namespace ASCompletion.Completion
             template = TemplateUtils.ReplaceTemplateVariable(template, "Name", varname);
             template = TemplateUtils.ReplaceTemplateVariable(template, "Type", cleanType);
 
-            var indent = 0;
-            foreach (var c in line)
-            {
-                if (c == '\t' || c == ' ') indent++;
-                else break;
-            }
-            int pos = sci.PositionFromLine(lineNum) + indent;
+            var pos = sci.LineIndentPosition(lineNum);
 
             sci.CurrentPos = pos;
             sci.SetSel(pos, pos);
