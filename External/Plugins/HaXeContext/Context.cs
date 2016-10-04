@@ -1212,7 +1212,7 @@ namespace HaXeContext
         HaxeComplete GetHaxeComplete(ScintillaControl sci, ASExpr expression, bool autoHide, HaxeCompilerService compilerService)
         {
             var sdkVersion = GetCurrentSDKVersion();
-            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.CompletionServer && new SemVer("3.2.1").IsOlderThan(sdkVersion))
+            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.CompletionServer && sdkVersion.IsGreaterThanOrEquals(new SemVer("3.3.0")))
                 return new HaxeComplete330(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
             return new HaxeComplete(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
         }

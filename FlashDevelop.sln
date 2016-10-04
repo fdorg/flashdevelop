@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashDevelop", "FlashDevelop\FlashDevelop.csproj", "{EFD07485-9A64-4EEC-94E7-ACBD4DA5CA93}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -82,6 +82,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASCompletion.Tests", "Tests\External\Plugins\ASCompletion.Tests\ASCompletion.Tests.csproj", "{ABC71D26-295C-4C6C-B6DE-320AD49EEF79}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeRefactor.Tests", "Tests\External\Plugins\CodeRefactor.Tests\CodeRefactor.Tests.csproj", "{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginCore.Tests", "Tests\PluginCore\PluginCore.Tests\PluginCore.Tests.csproj", "{F44D3125-12E8-4143-B250-84C5D89D253C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -493,6 +495,17 @@ Global
 		{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}.Release+Tests|Any CPU.Build.0 = Release|Any CPU
 		{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}.Release+Tests|x86.ActiveCfg = Release|x86
 		{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}.Release+Tests|x86.Build.0 = Release|x86
+		{F44D3125-12E8-4143-B250-84C5D89D253C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F44D3125-12E8-4143-B250-84C5D89D253C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F44D3125-12E8-4143-B250-84C5D89D253C}.Debug|x86.Build.0 = Debug|Any CPU
+		{F44D3125-12E8-4143-B250-84C5D89D253C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F44D3125-12E8-4143-B250-84C5D89D253C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F44D3125-12E8-4143-B250-84C5D89D253C}.Release|x86.ActiveCfg = Release|Any CPU
+		{F44D3125-12E8-4143-B250-84C5D89D253C}.Release|x86.Build.0 = Release|Any CPU
+		{F44D3125-12E8-4143-B250-84C5D89D253C}.Release+Tests|Any CPU.ActiveCfg = Release|Any CPU
+		{F44D3125-12E8-4143-B250-84C5D89D253C}.Release+Tests|Any CPU.Build.0 = Release|Any CPU
+		{F44D3125-12E8-4143-B250-84C5D89D253C}.Release+Tests|x86.ActiveCfg = Release|Any CPU
+		{F44D3125-12E8-4143-B250-84C5D89D253C}.Release+Tests|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
