@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
@@ -14,7 +13,6 @@ using PluginCore.FRService;
 using PluginCore.Managers;
 using PluginCore.Helpers;
 using Ookii.Dialogs;
-using ScintillaNet;
 using PluginCore;
 
 namespace FlashDevelop.Dialogs
@@ -218,6 +216,7 @@ namespace FlashDevelop.Dialogs
             this.replaceComboBox.Name = "replaceComboBox";
             this.replaceComboBox.Size = new System.Drawing.Size(324, 21);
             this.replaceComboBox.TabIndex = 2;
+            this.replaceComboBox.KeyDown += OnComboBoxKeyDown;
             // 
             // replaceLabel
             // 
@@ -237,6 +236,7 @@ namespace FlashDevelop.Dialogs
             this.findComboBox.Name = "findComboBox";
             this.findComboBox.Size = new System.Drawing.Size(324, 21);
             this.findComboBox.TabIndex = 1;
+            this.findComboBox.KeyDown += OnComboBoxKeyDown;
             // 
             // findLabel
             // 
@@ -1055,6 +1055,26 @@ namespace FlashDevelop.Dialogs
         {
             this.UpdateDialogArguments();
             base.Show();
+        }
+
+        static void OnComboBoxKeyDown(object sender, KeyEventArgs e)
+        {
+            var shortcutId = PluginBase.MainForm.GetShortcutItemId(e.KeyData);
+            if (string.IsNullOrEmpty(shortcutId)) return;
+            var comboBox = (ComboBox) sender;
+            switch (shortcutId)
+            {
+                case "EditMenu.ToLowercase":
+                case "EditMenu.ToUppercase":
+                    var selectedText = comboBox.SelectedText;
+                    if (string.IsNullOrEmpty(selectedText)) break;
+                    selectedText = shortcutId == "EditMenu.ToLowercase" ? selectedText.ToLower() : selectedText.ToUpper();
+                    var selectionStart = comboBox.SelectionStart;
+                    var selectionLength = comboBox.SelectionLength;
+                    comboBox.SelectedText = selectedText;
+                    comboBox.Select(selectionStart, selectionLength);
+                    break;
+            }
         }
 
         #endregion
