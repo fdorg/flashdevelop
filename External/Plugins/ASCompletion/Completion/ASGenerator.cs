@@ -1306,8 +1306,7 @@ namespace ASCompletion.Completion
             template = TemplateUtils.ReplaceTemplateVariable(template, "Name", varname);
             template = TemplateUtils.ReplaceTemplateVariable(template, "Type", cleanType);
 
-            int indent = sci.GetLineIndentation(lineNum);
-            int pos = sci.PositionFromLine(lineNum) + indent / sci.Indent;
+            var pos = sci.LineIndentPosition(lineNum);
 
             sci.CurrentPos = pos;
             sci.SetSel(pos, pos);
@@ -1330,7 +1329,7 @@ namespace ASCompletion.Completion
                 }
                 List<string> l = new List<string>();
                 l.Add(GetQualifiedType(type, inClassForImport));
-                pos += AddImportsByName(l, sci.LineFromPosition(pos));
+                AddImportsByName(l, sci.LineFromPosition(pos));
             }
         }
 
