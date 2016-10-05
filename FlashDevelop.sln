@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashDevelop", "FlashDevelop\FlashDevelop.csproj", "{EFD07485-9A64-4EEC-94E7-ACBD4DA5CA93}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -82,6 +82,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASCompletion.Tests", "Tests\External\Plugins\ASCompletion.Tests\ASCompletion.Tests.csproj", "{ABC71D26-295C-4C6C-B6DE-320AD49EEF79}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeRefactor.Tests", "Tests\External\Plugins\CodeRefactor.Tests\CodeRefactor.Tests.csproj", "{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsolePanel", "External\Plugins\ConsolePanel\ConsolePanel.csproj", "{2A36ADDC-B30E-472B-BDD6-0E6E35649FAA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -493,6 +495,18 @@ Global
 		{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}.Release+Tests|Any CPU.Build.0 = Release|Any CPU
 		{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}.Release+Tests|x86.ActiveCfg = Release|x86
 		{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}.Release+Tests|x86.Build.0 = Release|x86
+		{2A36ADDC-B30E-472B-BDD6-0E6E35649FAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A36ADDC-B30E-472B-BDD6-0E6E35649FAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A36ADDC-B30E-472B-BDD6-0E6E35649FAA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2A36ADDC-B30E-472B-BDD6-0E6E35649FAA}.Debug|x86.Build.0 = Debug|Any CPU
+		{2A36ADDC-B30E-472B-BDD6-0E6E35649FAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A36ADDC-B30E-472B-BDD6-0E6E35649FAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A36ADDC-B30E-472B-BDD6-0E6E35649FAA}.Release|x86.ActiveCfg = Release|Any CPU
+		{2A36ADDC-B30E-472B-BDD6-0E6E35649FAA}.Release|x86.Build.0 = Release|Any CPU
+		{2A36ADDC-B30E-472B-BDD6-0E6E35649FAA}.Release+Tests|Any CPU.ActiveCfg = Release|Any CPU
+		{2A36ADDC-B30E-472B-BDD6-0E6E35649FAA}.Release+Tests|Any CPU.Build.0 = Release|Any CPU
+		{2A36ADDC-B30E-472B-BDD6-0E6E35649FAA}.Release+Tests|x86.ActiveCfg = Release|Any CPU
+		{2A36ADDC-B30E-472B-BDD6-0E6E35649FAA}.Release+Tests|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
