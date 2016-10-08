@@ -364,7 +364,8 @@ namespace FlashDevelop.Docking
             if (!Globals.MainForm.ClosingEntirely && File.Exists(this.FileName))
             {
                 FileInfo fi = new FileInfo(this.FileName);
-                if (this.fileInfo.LastWriteTime != fi.LastWriteTime) return true;
+				if (this.fileInfo.IsReadOnly != fi.IsReadOnly) return true;
+				if (this.fileInfo.LastWriteTime != fi.LastWriteTime) return true;
             }
             return false;
         }
@@ -468,7 +469,8 @@ namespace FlashDevelop.Docking
                 this.SciControl.SetSel(position, position);
                 this.SciControl.EmptyUndoBuffer();
                 this.InitBookmarks();
-            }
+				this.fileInfo = new FileInfo(this.FileName);
+			}
             Globals.MainForm.OnDocumentReload(this);
         }
 
