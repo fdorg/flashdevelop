@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
-using CodeRefactor.Controls;
 using CodeRefactor.Provider;
 using PluginCore;
 using PluginCore.Controls;
@@ -233,14 +232,68 @@ namespace CodeRefactor.Commands
             UserInterfaceManager.ProgressDialog.Show();
             UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("Info.UpdatingReferences"));
             MessageBar.Locked = true;
+            var isParameterVar = (Target.Member?.Flags & FlagType.ParameterVar) > 0;
             foreach (var entry in eventArgs.Results)
             {
                 UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.Updating") + " \"" + entry.Key + "\"");
                 // re-open the document and replace all the text
                 var doc = AssociatedDocumentHelper.LoadDocument(entry.Key);
                 var sci = doc.SciControl;
+                var targetMatches = entry.Value;
+                if (isParameterVar)
+                {
+                    var replacement = string.Empty;
+                    var lineFrom = Target.Context.ContextFunction.LineFrom;
+                    var search = new FRSearch(NewName) {WholeWord = true, NoCase = false, SingleLine = true};
+                    var matches = search.Matches(sci.Text, sci.PositionFromLine(lineFrom), lineFrom);
+                    if (matches.Count != 0)
+                    {
+                        sci.BeginUndoAction();
+                        try
+                        {
+                            for (var i = 0; i < matches.Count; i++)
+                            {
+                                var match = matches[i];
+                                var expr = ASComplete.GetExpressionType(sci, sci.MBSafePosition(match.Index) + sci.MBSafeTextLength(match.Value));
+                                if (expr.IsNull()) continue;
+                                var flags = expr.Member.Flags;
+                                if ((flags & FlagType.Static) > 0)
+                                {
+                                    var classNameWithDot = ASContext.Context.CurrentClass.Name + ".";
+                                    if (!expr.Context.Value.StartsWith(classNameWithDot)) replacement = classNameWithDot + NewName;
+                                }
+                                else if((flags & FlagType.LocalVar) == 0)
+                                {
+                                    var decl = expr.Context.Value;
+                                    if (!decl.StartsWith("this.") && !decl.StartsWith("super.")) replacement = "this." + NewName;
+                                }
+                                if (string.IsNullOrEmpty(replacement)) continue;
+                                RefactoringHelper.SelectMatch(sci, match);
+                                sci.EnsureVisible(sci.LineFromPosition(sci.MBSafePosition(match.Index)));
+                                sci.ReplaceSel(replacement);
+                                for (var j = 0; j < targetMatches.Count; j++)
+                                {
+                                    var targetMatch = targetMatches[j];
+                                    if (targetMatch.Line <= match.Line) continue;
+                                    FRSearch.PadIndexes(targetMatches, j, match.Value, replacement);
+                                    if (targetMatch.Line == match.Line + 1)
+                                    {
+                                        targetMatch.LineText = sci.GetLine(match.Line);
+                                        targetMatch.Column += replacement.Length - match.Value.Length;
+                                    }
+                                    break;
+                                }
+                                FRSearch.PadIndexes(matches, i + 1, match.Value, replacement);
+                            }
+                        }
+                        finally
+                        {
+                            sci.EndUndoAction();
+                        }
+                    }
+                }
                 // replace matches in the current file with the new name
-                RefactoringHelper.ReplaceMatches(entry.Value, sci, NewName);
+                RefactoringHelper.ReplaceMatches(targetMatches, sci, NewName);
                 //Uncomment if we want to keep modified files
                 //if (sci.IsModify) AssociatedDocumentHelper.MarkDocumentToKeep(entry.Key);
                 doc.Save();
