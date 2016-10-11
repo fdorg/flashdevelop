@@ -322,6 +322,17 @@ namespace CodeRefactor.Provider
         /// <summary>
         /// Finds the given target in all project files.
         /// If the target is a local variable or function parameter, it will only search the associated file.
+        /// </summary>
+        /// <param name="target">the source member to find references to</param>
+        /// <returns>The search results, otherwise returns null on bad input</returns>
+        public static FRResults FindTargetInFiles(ASResult target)
+        {
+            return FindTargetInFiles(target, null, null, false, false, false);
+        }
+
+        /// <summary>
+        /// Finds the given target in all project files.
+        /// If the target is a local variable or function parameter, it will only search the associated file.
         /// Note: if running asynchronously, you must supply a listener to "findFinishedHandler" to retrieve the results.
         /// If running synchronously, do not set listeners and instead use the return value.
         /// </summary>
