@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("CodeRefactor.Tests")]
+[assembly: AssemblyTitle("PluginCore.Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("DistroConfig.DISTRIBUTION_COMPANY")]
-[assembly: AssemblyProduct("CodeRefactor.Tests")]
+[assembly: AssemblyProduct("PluginCore.Tests")]
 [assembly: AssemblyCopyright("DistroConfig.DISTRIBUTION_COPYRIGHT")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("19c1fee5-cec3-442b-99b2-3f3fc955cab4")]
+[assembly: Guid("f44d3125-12e8-4143-b250-84c5d89d253c")]
 
 // Version information for an assembly consists of the following four values:
 //

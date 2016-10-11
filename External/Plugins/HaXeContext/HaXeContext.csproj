@@ -113,6 +113,7 @@
     <Compile Include="Completion\IHaxeCompletionHandler.cs" />
     <Compile Include="Completion\CompilerCompletionHandler.cs" />
     <Compile Include="Completion\CompletionServerCompletionHandler.cs" />
+    <Compile Include="HaxeComplete330.cs" />
     <Compile Include="HaXeSettings.cs" />
     <Compile Include="ExternalToolchain.cs" />
     <Compile Include="PluginMain.cs" />

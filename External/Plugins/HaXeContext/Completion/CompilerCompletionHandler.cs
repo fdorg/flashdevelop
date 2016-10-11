@@ -15,6 +15,10 @@ namespace HaXeContext
 
         public string GetCompletion(string[] args)
         {
+            return GetCompletion(args, null);
+        }
+        public string GetCompletion(string[] args, string fileContent)
+        {
             if (args == null || haxeProcess == null)
                 return string.Empty;
             try
@@ -33,7 +37,6 @@ namespace HaXeContext
 
         public void Stop()
         {
-            
         }
     }
 }
