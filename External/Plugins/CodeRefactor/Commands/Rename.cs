@@ -246,48 +246,50 @@ namespace CodeRefactor.Commands
                     var lineFrom = Target.Context.ContextFunction.LineFrom;
                     var search = new FRSearch(NewName) {WholeWord = true, NoCase = false, SingleLine = true};
                     var matches = search.Matches(sci.Text, sci.PositionFromLine(lineFrom), lineFrom);
-                    if(matches.Count == 0) continue;
-                    sci.BeginUndoAction();
-                    try
+                    if (matches.Count != 0)
                     {
-                        for (var i = 0; i < matches.Count; i++)
+                        sci.BeginUndoAction();
+                        try
                         {
-                            var match = matches[i];
-                            var expr = ASComplete.GetExpressionType(sci, sci.MBSafePosition(match.Index) + sci.MBSafeTextLength(match.Value));
-                            if (expr.IsNull()) continue;
-                            var flags = expr.Member.Flags;
-                            if ((flags & FlagType.Static) > 0)
+                            for (var i = 0; i < matches.Count; i++)
                             {
-                                var classNameWithDot = ASContext.Context.CurrentClass.Name + ".";
-                                if (!expr.Context.Value.StartsWith(classNameWithDot)) replacement = classNameWithDot + NewName;
-                            }
-                            else if((flags & FlagType.LocalVar) == 0)
-                            {
-                                var decl = expr.Context.Value;
-                                if (!decl.StartsWith("this.") && !decl.StartsWith("super.")) replacement = "this." + NewName;
-                            }
-                            if (string.IsNullOrEmpty(replacement)) continue;
-                            RefactoringHelper.SelectMatch(sci, match);
-                            sci.EnsureVisible(sci.LineFromPosition(sci.MBSafePosition(match.Index)));
-                            sci.ReplaceSel(replacement);
-                            for (var j = 0; j < targetMatches.Count; j++)
-                            {
-                                var targetMatch = targetMatches[j];
-                                if (targetMatch.Line <= match.Line) continue;
-                                FRSearch.PadIndexes(targetMatches, j, match.Value, replacement);
-                                if (targetMatch.Line == match.Line + 1)
+                                var match = matches[i];
+                                var expr = ASComplete.GetExpressionType(sci, sci.MBSafePosition(match.Index) + sci.MBSafeTextLength(match.Value));
+                                if (expr.IsNull()) continue;
+                                var flags = expr.Member.Flags;
+                                if ((flags & FlagType.Static) > 0)
                                 {
-                                    targetMatch.LineText = sci.GetLine(match.Line);
-                                    targetMatch.Column += replacement.Length - match.Value.Length;
+                                    var classNameWithDot = ASContext.Context.CurrentClass.Name + ".";
+                                    if (!expr.Context.Value.StartsWith(classNameWithDot)) replacement = classNameWithDot + NewName;
                                 }
-                                break;
+                                else if((flags & FlagType.LocalVar) == 0)
+                                {
+                                    var decl = expr.Context.Value;
+                                    if (!decl.StartsWith("this.") && !decl.StartsWith("super.")) replacement = "this." + NewName;
+                                }
+                                if (string.IsNullOrEmpty(replacement)) continue;
+                                RefactoringHelper.SelectMatch(sci, match);
+                                sci.EnsureVisible(sci.LineFromPosition(sci.MBSafePosition(match.Index)));
+                                sci.ReplaceSel(replacement);
+                                for (var j = 0; j < targetMatches.Count; j++)
+                                {
+                                    var targetMatch = targetMatches[j];
+                                    if (targetMatch.Line <= match.Line) continue;
+                                    FRSearch.PadIndexes(targetMatches, j, match.Value, replacement);
+                                    if (targetMatch.Line == match.Line + 1)
+                                    {
+                                        targetMatch.LineText = sci.GetLine(match.Line);
+                                        targetMatch.Column += replacement.Length - match.Value.Length;
+                                    }
+                                    break;
+                                }
+                                FRSearch.PadIndexes(matches, i + 1, match.Value, replacement);
                             }
-                            FRSearch.PadIndexes(matches, i + 1, match.Value, replacement);
                         }
-                    }
-                    finally
-                    {
-                        sci.EndUndoAction();
+                        finally
+                        {
+                            sci.EndUndoAction();
+                        }
                     }
                 }
                 // replace matches in the current file with the new name
