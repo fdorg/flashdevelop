@@ -34,6 +34,7 @@
             this.ForeColor = System.Drawing.Color.White;
             this.Name = "ConsoleControl";
             this.Size = new System.Drawing.Size(246, 149);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.ConsoleControl_Paint);
             this.Enter += new System.EventHandler(this.CmdPanel_Enter);
             this.Resize += new System.EventHandler(this.CmdPanel_Resize);
             this.ResumeLayout(false);

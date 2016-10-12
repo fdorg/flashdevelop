@@ -137,7 +137,12 @@ namespace ConsoleControl
                 if (!process.HasExited)
                 {
                     SendString("^(c)", false);
-                    process.Kill();
+                    try
+                    {
+                        process.Kill();
+                    }
+                    catch { }
+                    
                 }
                 
                 process = null;
@@ -317,6 +322,11 @@ namespace ConsoleControl
             catch { }
             
             ProcessCommandCache();
+        }
+
+        private void ConsoleControl_Paint(object sender, PaintEventArgs e)
+        {
+            ResizeConsole();
         }
     }
 }
