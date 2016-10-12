@@ -267,6 +267,10 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideNullSet.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideGetSet.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideGetSet.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_useSpaces.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_useSpaces.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_useTabs.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_useTabs.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideIssue793.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideIssue793.hx" />
     <None Include="Properties\Settings.settings">

@@ -409,10 +409,10 @@ namespace HaXeContext
             // add haxe libraries
             if (proj != null)
             {
-                foreach (string param in proj.BuildHXML(new string[0], "", false))
-                    if (!string.IsNullOrEmpty(param) && param.IndexOfOrdinal("-lib ") == 0)
+                foreach (string library in proj.CompilerOptions.Libraries)
+                    if (!string.IsNullOrEmpty(library.Trim()))
                     {
-                        List<string> libPaths = LookupLibrary(param.Substring(5));
+                        List<string> libPaths = LookupLibrary(library);
                         if (libPaths != null)
                         {
                             foreach (string path in libPaths)
@@ -638,7 +638,7 @@ namespace HaXeContext
             MemberList fullList = new MemberList();
             MemberModel item;
             // public & internal classes
-            string package = CurrentModel.Package;
+            string package = CurrentModel?.Package;
             foreach (PathModel aPath in classPath) if (aPath.IsValid && !aPath.Updating)
             {
                 aPath.ForeachFile((aFile) =>
@@ -1200,13 +1200,21 @@ namespace HaXeContext
             if (expression.Value != "")
             {
                 // async processing
-                var hc = new HaxeComplete(sci, expression, autoHide, completionModeHandler, HaxeCompilerService.COMPLETION, GetCurrentSDKVersion());
+                var hc = GetHaxeComplete(sci, expression, autoHide, HaxeCompilerService.COMPLETION);
                 hc.GetList(OnDotCompletionResult);
                 resolvingDot = true;
             }
 
             if (hxsettings.DisableMixedCompletion) return new MemberList();
             return null; 
+        }
+
+        HaxeComplete GetHaxeComplete(ScintillaControl sci, ASExpr expression, bool autoHide, HaxeCompilerService compilerService)
+        {
+            var sdkVersion = GetCurrentSDKVersion();
+            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.CompletionServer && sdkVersion.IsGreaterThanOrEquals(new SemVer("3.3.0")))
+                return new HaxeComplete330(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
+            return new HaxeComplete(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
         }
 
         internal void OnDotCompletionResult(HaxeComplete hc,  HaxeCompleteResult result, HaxeCompleteStatus status)
@@ -1378,7 +1386,7 @@ namespace HaXeContext
                 return null;
 
             expression.Position++;
-            var hc = new HaxeComplete(sci, expression, autoHide, completionModeHandler, HaxeCompilerService.COMPLETION, GetCurrentSDKVersion());
+            var hc = GetHaxeComplete(sci, expression, autoHide, HaxeCompilerService.COMPLETION);
             hc.GetList(OnFunctionCompletionResult);
 
             resolvingFunction = true;
@@ -1407,7 +1415,7 @@ namespace HaXeContext
             if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || GetCurrentSDKVersion().IsOlderThan(new SemVer("3.2.0")))
                 return false;
 
-            var hc = new HaxeComplete(sci, expression, false, completionModeHandler, HaxeCompilerService.POSITION, GetCurrentSDKVersion());
+            var hc = GetHaxeComplete(sci, expression, false, HaxeCompilerService.POSITION);
             hc.GetPosition(OnPositionResult);
             return true;
         }
@@ -1467,7 +1475,7 @@ namespace HaXeContext
             if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || PluginBase.MainForm.CurrentDocument.IsUntitled) return;
 
             EventManager.DispatchEvent(this, new NotifyEvent(EventType.ProcessStart));
-            var hc = new HaxeComplete(ASContext.CurSciControl, new ASExpr(), false, completionModeHandler, HaxeCompilerService.COMPLETION, GetCurrentSDKVersion());
+            var hc = GetHaxeComplete(ASContext.CurSciControl, new ASExpr(), false, HaxeCompilerService.COMPLETION);
             hc.GetList(OnCheckSyntaxResult);
         }
 

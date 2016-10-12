@@ -3474,6 +3474,28 @@ namespace ScintillaNet
         }
 
         /// <summary>
+        /// Gets a range of text from the document.
+        /// </summary>
+        /// <param name="position">The zero-based starting byte position of the range to get.</param>
+        /// <param name="end">The end byte position of the range to get.</param>
+        /// <returns>A string representing the text range.</returns>
+        unsafe public string GetTextRange(int position, int end)
+        {
+            int length = end - position;
+            var bytes = new byte[length + 1];
+            fixed (byte* bp = bytes)
+            {
+                TextRange* range = stackalloc TextRange[1];
+                range->chrg.cpMin = position;
+                range->chrg.cpMax = end;
+                range->lpstrText = new IntPtr(bp);
+
+                SPerform(2162 /*SCI_GETTEXTRANGE*/, 0, new IntPtr(range));
+                return new string((sbyte*)bp, 0, length, Encoding);
+            }
+        }
+
+        /// <summary>
         /// Draw the selection in normal style or with selection highlighted.
         /// </summary>
         public void HideSelection(bool normal)

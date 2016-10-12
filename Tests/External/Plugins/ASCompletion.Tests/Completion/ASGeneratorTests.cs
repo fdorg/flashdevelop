@@ -15,6 +15,7 @@ using ScintillaNet.Enums;
 using System.Text.RegularExpressions;
 using AS3Context;
 using HaXeContext;
+using NSubstitute.Extensions;
 using PluginCore.Helpers;
 
 namespace ASCompletion.Completion
@@ -1036,6 +1037,59 @@ namespace ASCompletion.Completion
                         return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
                     });
                     ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
+                    ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
+                    ASGenerator.GenerateJob(job, currentMember, ASContext.Context.CurrentClass, null, null);
+                    return sci.Text;
+                }
+            }
+
+            [TestFixture]
+            public class AssignStatementToVar : GenerateJob
+            {
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get {
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText("ASCompletion.Test_Files.generated.haxe.BeforeAssignStatementToVar_useSpaces.hx"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(TestFile.ReadAllText("ASCompletion.Test_Files.generated.haxe.AfterAssignStatementToVar_useSpaces.hx"))
+                                .SetName("Assign statement to var. Use spaces instead of tabs.");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText("ASCompletion.Test_Files.generated.haxe.BeforeAssignStatementToVar_useTabs.hx"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(TestFile.ReadAllText("ASCompletion.Test_Files.generated.haxe.AfterAssignStatementToVar_useTabs.hx"))
+                                .SetName("Assign statement to var. Use tabs instead of spaces.");
+                    }
+                }
+
+                [Test, TestCaseSource("HaxeTestCases")]
+                public string Haxe(string sourceText, GeneratorJobType job, bool isUseTabs)
+                {
+                    sci.ConfigurationLanguage = "haxe";
+                    sci.IsUseTabs = isUseTabs;
+                    ASContext.Context.SetHaxeFeatures();
+                    ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
+                    return Generate(sourceText, job, new HaXeContext.Context(new HaXeSettings()));
+                }
+
+                string Generate(string sourceText, GeneratorJobType job, IASContext context)
+                {
+                    sci.Text = sourceText;
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    var currentModel = ASContext.Context.CurrentModel;
+                    new ASFileParser().ParseSrc(currentModel, sci.Text);
+                    var currentClass = currentModel.Classes[0];
+                    ASContext.Context.CurrentClass.Returns(currentClass);
+                    ASContext.Context.CurrentModel.Returns(currentModel);
+                    var currentMember = currentClass.Members[0];
+                    ASContext.Context.CurrentMember.Returns(currentMember);
+                    ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
+                    ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
+                    {
+                        var src = x[0] as string;
+                        return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
+                    });
+                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(_ => new ClassModel {Name = "String", Type = "String", InFile = currentModel});
                     ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
                     ASGenerator.GenerateJob(job, currentMember, ASContext.Context.CurrentClass, null, null);
                     return sci.Text;

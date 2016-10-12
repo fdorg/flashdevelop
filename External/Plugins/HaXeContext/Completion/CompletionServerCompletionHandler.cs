@@ -40,6 +40,10 @@ namespace HaXeContext
 
         public string GetCompletion(string[] args)
         {
+            return GetCompletion(args, null);
+        }
+        public string GetCompletion(string[] args, string fileContent)
+        {
             if (args == null || haxeProcess == null)
                 return string.Empty;
             if (!IsRunning()) StartServer();
@@ -50,6 +54,11 @@ namespace HaXeContext
                 writer.WriteLine("--cwd " + (PluginBase.CurrentProject as HaxeProject).Directory);
                 foreach (var arg in args)
                     writer.WriteLine(arg);
+                if (fileContent != null)
+                {
+                    writer.Write("\x01");
+                    writer.Write(fileContent);
+                }
                 writer.Write("\0");
                 writer.Flush();
                 var reader = new StreamReader(client.GetStream());
