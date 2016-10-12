@@ -300,7 +300,7 @@ namespace CodeRefactor.Commands
                     else if ((flags & FlagType.LocalVar) == 0)
                     {
                         var decl = expr.Context.Value;
-                        if (!decl.StartsWith($"this{dot}") && !decl.StartsWith($"super{dot}")) replacement = $"this{dot}{NewName}";
+                        if (decl != $"this{dot}{decl}" && decl != $"super{dot}{decl}") replacement = $"this{dot}{NewName}";
                     }
                     if (string.IsNullOrEmpty(replacement)) continue;
                     RefactoringHelper.SelectMatch(sci, match);
