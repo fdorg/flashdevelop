@@ -308,13 +308,13 @@ namespace CodeRefactor.Commands
                     sci.ReplaceSel(replacement);
                     for (var j = 0; j < parameterMatches.Count; j++)
                     {
-                        var targetMatch = parameterMatches[j];
-                        if (targetMatch.Line <= match.Line) continue;
+                        var parameterMatch = parameterMatches[j];
+                        if (parameterMatch.Line <= match.Line) continue;
                         FRSearch.PadIndexes(parameterMatches, j, match.Value, replacement);
-                        if (targetMatch.Line == match.Line + 1)
+                        if (parameterMatch.Line == match.Line + 1)
                         {
-                            targetMatch.LineText = sci.GetLine(match.Line);
-                            targetMatch.Column += replacement.Length - match.Value.Length;
+                            parameterMatch.LineText = sci.GetLine(match.Line);
+                            parameterMatch.Column += replacement.Length - match.Value.Length;
                         }
                         break;
                     }
