@@ -285,9 +285,9 @@ namespace CodeRefactor.Commands
                 var contextFunction = Target.Context.ContextFunction;
                 var functionLineFrom = contextFunction.LineFrom;
                 var functionLineTo = contextFunction.LineTo;
-                var replacement = string.Empty;
                 for (var i = 0; i < matches.Count; i++)
                 {
+                    string replacement = null;
                     var match = matches[i];
                     if (match.Line <= functionLineFrom || match.Line > functionLineTo) continue;
                     var expr = ASComplete.GetExpressionType(sci, sci.MBSafePosition(match.Index) + sci.MBSafeTextLength(match.Value));
