@@ -242,7 +242,7 @@ namespace CodeRefactor.Commands
                 var doc = AssociatedDocumentHelper.LoadDocument(entry.Key);
                 var sci = doc.SciControl;
                 var targetMatches = entry.Value;
-                if (isParameterVar) BeforeReplaceParameterVarMatches(sci, targetMatches);
+                if (isParameterVar) BeforeReplaceParameterVarMatches(targetMatches, sci);
                 // replace matches in the current file with the new name
                 RefactoringHelper.ReplaceMatches(targetMatches, sci, NewName);
                 //Uncomment if we want to keep modified files
@@ -258,7 +258,7 @@ namespace CodeRefactor.Commands
             FireOnRefactorComplete();
         }
 
-        void BeforeReplaceParameterVarMatches(ScintillaControl sci, List<SearchMatch> targetMatches)
+        void BeforeReplaceParameterVarMatches(List<SearchMatch> parameterMatches, ScintillaControl sci)
         {
             var memberResult = new ASResult();
             var cls = ASContext.Context.CurrentClass;
@@ -275,43 +275,42 @@ namespace CodeRefactor.Commands
                 cls = cls.Extends;
             }
             if (memberResult.IsNull()) return;
-            var results = RefactoringHelper.FindTargetInFiles(memberResult);
+            var results = RefactoringHelper.FindTargetInFile(memberResult, PluginBase.MainForm.CurrentDocument.FileName);
             if (results.Count == 0) return;
-            var replacement = string.Empty;
-            var matches = results.Values.First();
-            var contextFunction = Target.Context.ContextFunction;
-            var lineFrom = contextFunction.LineFrom;
-            var lineTo = contextFunction.LineTo;
-            matches.RemoveAll(it => it.Line <= lineFrom || it.Line > lineTo);
-            if (matches.Count == 0) return;
             sci.BeginUndoAction();
             try
             {
+                var dot = ASContext.Context.Features.dot;
+                var matches = results.Values.First();
+                var contextFunction = Target.Context.ContextFunction;
+                var functionLineFrom = contextFunction.LineFrom;
+                var functionLineTo = contextFunction.LineTo;
+                var replacement = string.Empty;
                 for (var i = 0; i < matches.Count; i++)
                 {
                     var match = matches[i];
+                    if (match.Line <= functionLineFrom || match.Line > functionLineTo) continue;
                     var expr = ASComplete.GetExpressionType(sci, sci.MBSafePosition(match.Index) + sci.MBSafeTextLength(match.Value));
                     if (expr.IsNull()) continue;
                     var flags = expr.Member.Flags;
                     if ((flags & FlagType.Static) > 0)
                     {
-                        var classNameWithDot = memberResult.InClass.Name + ".";
-                        if (!expr.Context.Value.StartsWith(classNameWithDot)) replacement = classNameWithDot + NewName;
+                        if (!expr.Context.Value.EndsWith($"{dot}{NewName}")) replacement = $"{memberResult.InClass.Name}{dot}{NewName}";
                     }
                     else if ((flags & FlagType.LocalVar) == 0)
                     {
                         var decl = expr.Context.Value;
-                        if (!decl.StartsWith("this.") && !decl.StartsWith("super.")) replacement = "this." + NewName;
+                        if (!decl.StartsWith($"this{dot}") && !decl.StartsWith($"super{dot}")) replacement = $"this{dot}{NewName}";
                     }
                     if (string.IsNullOrEmpty(replacement)) continue;
                     RefactoringHelper.SelectMatch(sci, match);
                     sci.EnsureVisible(sci.LineFromPosition(sci.MBSafePosition(match.Index)));
                     sci.ReplaceSel(replacement);
-                    for (var j = 0; j < targetMatches.Count; j++)
+                    for (var j = 0; j < parameterMatches.Count; j++)
                     {
-                        var targetMatch = targetMatches[j];
+                        var targetMatch = parameterMatches[j];
                         if (targetMatch.Line <= match.Line) continue;
-                        FRSearch.PadIndexes(targetMatches, j, match.Value, replacement);
+                        FRSearch.PadIndexes(parameterMatches, j, match.Value, replacement);
                         if (targetMatch.Line == match.Line + 1)
                         {
                             targetMatch.LineText = sci.GetLine(match.Line);
