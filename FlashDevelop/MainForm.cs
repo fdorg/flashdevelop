@@ -2938,11 +2938,7 @@ namespace FlashDevelop
         public void FindAndReplaceInFiles(Object sender, System.EventArgs e)
         {
             if (!this.frInFilesDialog.Visible) this.frInFilesDialog.Show();
-            else
-            {
-                this.frInFilesDialog.UpdateFindTextWithSelection();
-                this.frInFilesDialog.Activate();
-            }
+            else this.frInFilesDialog.Activate();
         }
 
         /// <summary>
