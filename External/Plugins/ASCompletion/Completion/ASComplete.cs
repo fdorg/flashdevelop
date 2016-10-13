@@ -4046,6 +4046,46 @@ namespace ASCompletion.Completion
         #endregion
 
         #region tooltips formatting
+        static public string GetCodeTipCode(ASResult result)
+        {
+            if (result.Member == null)
+            {
+                return result.Type != null ? result.Type.ToString() : null;
+            }
+
+            var file = GetFileContents(result.InFile);
+            if (string.IsNullOrEmpty(file))
+            {
+                return MemberTooltipText(result.Member, ClassModel.VoidClass);
+            }
+
+            var lines = file.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            var code = new StringBuilder();
+            for (var index = result.Member.LineFrom; index < result.Member.LineTo; index++)
+            {
+                code.AppendLine(lines[index]);
+            }
+            code.Append(lines[result.Member.LineTo]);
+            return code.ToString();
+        }
+
+        static private string GetFileContents(FileModel model)
+        {
+            if (model != null && model.FileName.Length > 0 && File.Exists(model.FileName))
+            {
+                foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
+                {
+                    if (doc.IsEditable && doc.FileName.ToUpper() == model.FileName.ToUpper())
+                    {
+                        return doc.SciControl.Text;
+                    }
+                }
+                var info = FileHelper.GetEncodingFileInfo(model.FileName);
+                return info != null ? info.Contents : null;
+            }
+            return null;
+        }
+
         static public string GetToolTipText(ASResult result)
         {
             if (result.Member != null && result.InClass != null)
