@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using ASCompletion.Context;
 using ASCompletion.Model;
@@ -28,7 +27,7 @@ namespace CodeRefactor.Commands
         protected override void ExecutionImplementation()
         {
             IASContext context = ASContext.Context;
-            ScintillaControl sci = SciControl == null ? PluginBase.MainForm.CurrentDocument.SciControl : SciControl;
+            ScintillaControl sci = SciControl ?? PluginBase.MainForm.CurrentDocument.SciControl;
             Int32 pos = sci.CurrentPos;
             List<MemberModel> imports = new List<MemberModel>(context.CurrentModel.Imports.Items);
             int cppPpStyle = (int)CPP.PREPROCESSOR;
