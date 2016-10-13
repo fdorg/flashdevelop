@@ -918,7 +918,7 @@ namespace FlashDevelop.Dialogs
                     this.extensionComboBox.Text = "*." + def;
                 }
             }
-            UpdateFindTextWithSelection();
+            UpdateFindText();
             if (project != null) lastProject = project;
         }
 
@@ -1056,7 +1056,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Update the find combo box with the currently selected text.
         /// </summary>
-        public void UpdateFindTextWithSelection()
+        public void UpdateFindText()
         {
             ITabbedDocument document = Globals.CurrentDocument;
             if (document.IsEditable && document.SciControl.SelText.Length > 0)

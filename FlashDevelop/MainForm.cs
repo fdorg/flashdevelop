@@ -2914,7 +2914,11 @@ namespace FlashDevelop
         public void FindAndReplace(Object sender, System.EventArgs e)
         {
             if (!this.frInDocDialog.Visible) this.frInDocDialog.Show();
-            else this.frInDocDialog.Activate();
+            else
+            {
+                this.frInDocDialog.InitializeFindText();
+                this.frInDocDialog.Activate();
+            }
         }
 
         /// <summary>
@@ -2940,7 +2944,7 @@ namespace FlashDevelop
             if (!this.frInFilesDialog.Visible) this.frInFilesDialog.Show();
             else
             {
-                this.frInFilesDialog.UpdateFindTextWithSelection();
+                this.frInFilesDialog.UpdateFindText();
                 this.frInFilesDialog.Activate();
             }
         }
