@@ -12,7 +12,7 @@ namespace ProjectManager.Projects
         Project project;
         protected int version;
 
-        public ProjectReader(string filename, Project project) : base(new FileStream(filename,FileMode.Open))
+        public ProjectReader(string filename, Project project) : base(new FileStream(filename, FileMode.Open, FileAccess.Read))
         {
             this.project = project;
             WhitespaceHandling = WhitespaceHandling.None;
