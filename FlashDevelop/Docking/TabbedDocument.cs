@@ -468,13 +468,6 @@ namespace FlashDevelop.Docking
                 this.SciControl.IsReadOnly = FileHelper.FileIsReadOnly(this.FileName);
                 this.SciControl.SetSel(position, position);
                 this.SciControl.EmptyUndoBuffer();
-
-                List<Int32> bookmarksCopy = this.bookmarks;
-                foreach (var lineNum in bookmarksCopy)
-                {
-                    MarkerManager.ToggleMarker(SciControl, 0, lineNum);
-                }
-
                 this.InitBookmarks();
 
                 this.fileInfo = new FileInfo(this.FileName);
