@@ -385,79 +385,17 @@ namespace ProjectManager.Actions
                     {
                         DisableWatchers();
 
-                        // Split directories and files into separate sorted dictionaries for fast lookup.
-                        SortedDictionary<string, int> dirs = new SortedDictionary<string, int>();
-                        SortedDictionary<string, int> files = new SortedDictionary<string, int>();
-
                         foreach (string path in paths)
                         {
-                            if (File.Exists(path))
-                            {
-                                files.Add(path, 0);
-                            }
-                            else if (Directory.Exists(path))
-                            {
-                                dirs.Add(path, 0);
-                            }
-                        }
-
-                        if (dirs.Count > 0)
-                        {
-                            // Iterate over the list of loose files and ignore any files that are within a directory that's about to be deleted.
-                            List<string> filesToDelete = new List<string>(files.Count);
-                            foreach (KeyValuePair<string, int> filePair in files)
-                            {
-                                bool isSafeToDelete = true;
-
-                                foreach (KeyValuePair<string, int> dirPair in dirs)
-                                {
-                                    if (filePair.Key.Contains(dirPair.Key))
-                                    {
-                                        isSafeToDelete = false;
-                                        break;
-                                    }
-                                }
-
-                                if (isSafeToDelete)
-                                {
-                                    filesToDelete.Add(filePair.Key);
-                                }
-                            }
-
-                            // Clear out the directories first.
-                            foreach (KeyValuePair<string, int> dirPair in dirs)
-                            {
-                                if (!FileHelper.Recycle(dirPair.Key))
-                                {
-                                    String error = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
-                                    throw new Exception(error + " " + dirPair.Key);
-                                }
-                                OnFileDeleted(dirPair.Key);
-                            }
-
-                            // Then do the remaining files.
-                            foreach (string file in filesToDelete)
-                            {
-                                if (!FileHelper.Recycle(file))
-                                {
-                                    String error = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
-                                    throw new Exception(error + " " + file);
-                                }
-                                OnFileDeleted(file);
-                            }
-                        }
-                        else
-                        {
-                            // There are no directories being deleted so it's safe to just kill everything.
-                            foreach (string path in paths)
+                            if (File.Exists(path) || Directory.Exists(path))
                             {
                                 if (!FileHelper.Recycle(path))
                                 {
                                     String error = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
                                     throw new Exception(error + " " + path);
                                 }
-                                OnFileDeleted(path);
                             }
+                            OnFileDeleted(path);
                         }
                     }
                 }
