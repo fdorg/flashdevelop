@@ -469,8 +469,7 @@ namespace FlashDevelop.Docking
                 this.SciControl.SetSel(position, position);
                 this.SciControl.EmptyUndoBuffer();
 
-                List<Int32> bookmarksCopy = this.bookmarks;
-                foreach (var lineNum in bookmarksCopy)
+                foreach (var lineNum in this.bookmarks)
                 {
                     MarkerManager.ToggleMarker(SciControl, 0, lineNum);
                 }
