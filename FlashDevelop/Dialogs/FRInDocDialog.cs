@@ -422,8 +422,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void UpdateFindText()
         {
-            ScintillaControl sci = Globals.SciControl;
             if (this.useRegexCheckBox.Checked) return;
+            ScintillaControl sci = Globals.SciControl;
             if (sci != null && sci.SelText.Length > 0 && !this.lookupIsDirty)
             {
                 this.findComboBox.Text = sci.SelText;
