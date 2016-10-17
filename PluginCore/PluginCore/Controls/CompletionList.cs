@@ -214,9 +214,7 @@ namespace PluginCore.Controls
         /// </summary>
         static public void SelectItem(String name)
         {
-            int p = name.IndexOf('<');
-            if (p > 1) name = name.Substring(0, p) + "<T>";
-            string pname = (name.IndexOf('.') < 0) ? "." + name : null;
+            string pname = name.IndexOf('.') < 0 ? "." + name : null;
             ICompletionListItem found = null;
             foreach (ICompletionListItem item in completionList.Items)
             {

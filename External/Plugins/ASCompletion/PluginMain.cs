@@ -909,10 +909,19 @@ namespace ASCompletion
             // set tooltip
             if (!result.IsNull())
             {
-                string text = ASComplete.GetToolTipText(result);
-                if (text == null) return;
-                // show tooltip
-                UITools.Tip.ShowAtMouseLocation(text);
+                if (Control.ModifierKeys == Keys.Control)
+                {
+                    var code = ASComplete.GetCodeTipCode(result);
+                    if (code == null) return;
+                    UITools.CodeTip.Show(sci, position - result.Path.Length, code);
+                }
+                else
+                {
+                    string text = ASComplete.GetToolTipText(result);
+                    if (text == null) return;
+                    // show tooltip
+                    UITools.Tip.ShowAtMouseLocation(text);
+                }
             }
         }
 
