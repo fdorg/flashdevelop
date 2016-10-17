@@ -387,6 +387,8 @@ namespace ProjectManager.Actions
 
                         foreach (string path in paths)
                         {
+                            // Once a directory is deleted we need to ignore all remaining files/sub-directories still in the paths
+                            // array since they are already gone.
                             if (File.Exists(path) || Directory.Exists(path))
                             {
                                 if (!FileHelper.Recycle(path))
