@@ -4116,7 +4116,9 @@ namespace ASCompletion.Completion
                 return MemberTooltipText(result.Member, ClassModel.VoidClass);
             }
 
-            var lines = file.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            int eolMode = LineEndDetector.DetectNewLineMarker(file, (Int32)PluginBase.MainForm.Settings.EOLMode);
+            var eolMarker = LineEndDetector.GetNewLineMarker(eolMode);
+            var lines = file.Split(new[] { eolMarker }, StringSplitOptions.None);
             var code = new StringBuilder();
             for (var index = result.Member.LineFrom; index < result.Member.LineTo; index++)
             {
