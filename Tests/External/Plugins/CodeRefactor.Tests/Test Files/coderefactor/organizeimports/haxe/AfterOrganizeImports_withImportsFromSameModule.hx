@@ -1,4 +1,5 @@
 package;
+import Main.Bar.test;
 
 class Main
 {
@@ -11,4 +12,8 @@ class Main
 enum TestEnum
 {
     Value;
+}
+
+class Bar {
+    public static function test() {}
 }

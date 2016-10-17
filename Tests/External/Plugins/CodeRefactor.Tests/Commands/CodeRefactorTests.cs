@@ -300,21 +300,33 @@ namespace CodeRefactor.Commands
             {
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
-                    get {
+                    get
+                    {
                         yield return
-                          new TestCaseData(
-                              TestFile.ReadAllText(
-                                  "CodeRefactor.Test_Files.coderefactor.organizeimports.haxe.BeforeOrganizeImports.hx")
-                              )
-                              .Returns(
-                                  TestFile.ReadAllText(
-                                      "CodeRefactor.Test_Files.coderefactor.organizeimports.haxe.AfterOrganizeImports.hx"))
-                              .SetName("OrganizeImports");
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "CodeRefactor.Test_Files.coderefactor.organizeimports.haxe.BeforeOrganizeImports.hx"),
+                                    "BeforeOrganizeImports.hx"
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "CodeRefactor.Test_Files.coderefactor.organizeimports.haxe.AfterOrganizeImports.hx"))
+                                .SetName("OrganizeImports");
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "CodeRefactor.Test_Files.coderefactor.organizeimports.haxe.BeforeOrganizeImports_withImportsFromSameModule.hx"),
+                                    "BeforeOrganizeImports_withImportsFromSameModule.hx"
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "CodeRefactor.Test_Files.coderefactor.organizeimports.haxe.AfterOrganizeImports_withImportsFromSameModule.hx"))
+                                .SetName("Issue782");
                     }
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText)
+                public string Haxe(string sourceText, string fileName)
                 {
                     Sci.ConfigurationLanguage = "haxe";
                     ASContext.Context.SetHaxeFeatures();
@@ -322,7 +334,7 @@ namespace CodeRefactor.Commands
                     {
                         haXe = true,
                         Context = ASContext.Context,
-                        FileName = "BeforeOrganizeImports.hx"
+                        FileName = fileName
                     });
                     Sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(Sci, 0);

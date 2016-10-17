@@ -65,6 +65,26 @@ namespace CodeRefactor.Commands
             sci.BeginUndoAction();
             try
             {
+                if (context.Features.hasModules)
+                {
+                    var offset = 0;
+                    for (var i = imports.Count - 1; i >= 0; i--)
+                    {
+                        var import = imports[i];
+                        if (ContainsType(context.CurrentModel, import))
+                        {
+                            imports.RemoveAt(i);
+                            sci.GotoLine(import.LineFrom);
+                            sci.LineDelete();
+                            offset++;
+                        }
+                        else
+                        {
+                            import.LineFrom -= offset;
+                            import.LineTo -= offset;
+                        }
+                    }
+                }
                 foreach (MemberModel import in imports)
                 {
                     sci.GotoLine(import.LineFrom);
@@ -126,6 +146,17 @@ namespace CodeRefactor.Commands
                 separatedImports.PrivateImportsIndent = this.GetLineIndentFor(first);
             }
             return separatedImports;
+        }
+
+        static bool ContainsType(FileModel module, MemberModel type)
+        {
+            var currentModelPackage = module.Package;
+            if (!string.IsNullOrEmpty(currentModelPackage) && type.Value.Contains("."))
+            {
+                var importPackage = type.Value.Substring(0, type.Value.LastIndexOf('.'));
+                if (importPackage != currentModelPackage) return false;
+            }
+            return module.Classes.Exists(cls => cls.Name == type.Name);
         }
 
         /// <summary>
