@@ -71,7 +71,7 @@ namespace CodeRefactor.Commands
                     for (var i = imports.Count - 1; i >= 0; i--)
                     {
                         var import = imports[i];
-                        if (ContainsType(context.CurrentModel, import))
+                        if (ContainsMember(context.CurrentModel, import))
                         {
                             imports.RemoveAt(i);
                             sci.GotoLine(import.LineFrom);
@@ -148,15 +148,15 @@ namespace CodeRefactor.Commands
             return separatedImports;
         }
 
-        static bool ContainsType(FileModel module, MemberModel type)
+        static bool ContainsMember(FileModel file, MemberModel member)
         {
-            var currentModelPackage = module.Package;
-            if (!string.IsNullOrEmpty(currentModelPackage) && type.Value.Contains("."))
+            var currentModelPackage = file.Package;
+            if (!string.IsNullOrEmpty(currentModelPackage) && member.Value.Contains("."))
             {
-                var importPackage = type.Value.Substring(0, type.Value.LastIndexOf('.'));
+                var importPackage = member.Value.Substring(0, member.Value.LastIndexOf('.'));
                 if (importPackage != currentModelPackage) return false;
             }
-            return module.Classes.Exists(cls => cls.Name == type.Name);
+            return file.Classes.Exists(cls => cls.Name == member.Name);
         }
 
         /// <summary>
