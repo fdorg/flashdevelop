@@ -2201,15 +2201,28 @@ namespace ASCompletion.Completion
                 ICompletionListItem newItem;
                 if (!aClass.IsVoid())
                 {
-                    if (!string.IsNullOrEmpty(aClass.IndexType))
+                    // AS2 special srictly typed Arrays supports
+                    int p = newItemType.IndexOf('@');
+                    if (p > -1)
                     {
-                        newItemType = !string.IsNullOrEmpty(aClass.IndexType) ? aClass.QualifiedName : aClass.Type;
+                        newItemType = newItemType.Substring(0, p);
+                        newItem = null;
+                    }
+                    else if (!string.IsNullOrEmpty(aClass.IndexType))
+                    {
+                        newItemType = aClass.QualifiedName;
                         newItem = new MemberItem(new MemberModel(newItemType, aClass.Type, aClass.Flags, aClass.Access));
                     }
                     else
                     {
                         newItem = null;
                     }
+                }
+                else if (newItemType == "Vector.")
+                {
+                    // HACK: Vector.<*> is wrongly parsed! should be looked into. Remove once it's fixed.
+                    newItemType = "Vector";
+                    newItem = null;
                 }
                 else
                 {
@@ -4604,6 +4617,8 @@ namespace ASCompletion.Completion
     /// </summary>
     public class NonexistentMemberItem : ICompletionListItem
     {
+        private static Bitmap icon; 
+
         private string memberName;
 
         public NonexistentMemberItem(string memberName)
@@ -4626,7 +4641,11 @@ namespace ASCompletion.Completion
 
         public Bitmap Icon
         {
-            get { return (Bitmap)PluginBase.MainForm.FindImage("197"); }
+            get
+            {
+                if (icon == null) icon = (Bitmap)PluginBase.MainForm.FindImage("197");
+                return icon;
+            }
         }
 
         public string Value
