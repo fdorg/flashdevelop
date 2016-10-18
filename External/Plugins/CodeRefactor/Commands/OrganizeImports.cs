@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using ASCompletion.Context;
 using ASCompletion.Model;
@@ -28,7 +27,7 @@ namespace CodeRefactor.Commands
         protected override void ExecutionImplementation()
         {
             IASContext context = ASContext.Context;
-            ScintillaControl sci = SciControl == null ? PluginBase.MainForm.CurrentDocument.SciControl : SciControl;
+            ScintillaControl sci = SciControl ?? PluginBase.MainForm.CurrentDocument.SciControl;
             Int32 pos = sci.CurrentPos;
             List<MemberModel> imports = new List<MemberModel>(context.CurrentModel.Imports.Items);
             int cppPpStyle = (int)CPP.PREPROCESSOR;
@@ -66,6 +65,26 @@ namespace CodeRefactor.Commands
             sci.BeginUndoAction();
             try
             {
+                if (context.Features.hasModules)
+                {
+                    var offset = 0;
+                    for (var i = imports.Count - 1; i >= 0; i--)
+                    {
+                        var import = imports[i];
+                        if (ContainsMember(context.CurrentModel, import))
+                        {
+                            imports.RemoveAt(i);
+                            sci.GotoLine(import.LineFrom);
+                            sci.LineDelete();
+                            offset++;
+                        }
+                        else
+                        {
+                            import.LineFrom -= offset;
+                            import.LineTo -= offset;
+                        }
+                    }
+                }
                 foreach (MemberModel import in imports)
                 {
                     sci.GotoLine(import.LineFrom);
@@ -127,6 +146,17 @@ namespace CodeRefactor.Commands
                 separatedImports.PrivateImportsIndent = this.GetLineIndentFor(first);
             }
             return separatedImports;
+        }
+
+        static bool ContainsMember(FileModel file, MemberModel member)
+        {
+            var currentModelPackage = file.Package;
+            if (!string.IsNullOrEmpty(currentModelPackage) && member.Value.Contains("."))
+            {
+                var importPackage = member.Value.Substring(0, member.Value.LastIndexOf('.'));
+                if (importPackage != currentModelPackage) return false;
+            }
+            return file.Classes.Exists(cls => cls.Name == member.Name);
         }
 
         /// <summary>
