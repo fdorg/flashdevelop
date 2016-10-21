@@ -6113,4 +6113,8 @@ OR - One or more conditions are met.
 AND - All conditions are met.</value>
     <comment>Added after 5.1.1</comment>
   </data>
+  <data name="OutputPanel.Description.ClearMode" xml:space="preserve">
+    <value>Defines which method should be used to clean the contents of the output panel.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
 </root>
