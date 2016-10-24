@@ -129,11 +129,13 @@ namespace SourceControl.Sources.Git
         {
             String title = TextHelper.GetString("Label.Commit");
             String msg = TextHelper.GetString("Info.EnterMessage");
-            LineEntryDialog led = new LineEntryDialog(title, msg, "");
-            if (led.ShowDialog() != DialogResult.OK || led.Line == "")
-                return;
+            using (LineEntryDialog led = new LineEntryDialog(title, msg, ""))
+            {
+                if (led.ShowDialog() != DialogResult.OK || led.Line == "")
+                    return;
 
-            new CommitCommand(GetPathsArray(), led.Line);
+                new CommitCommand(GetPathsArray(), led.Line);
+            }
         }
 
         void Update_Click(object sender, EventArgs e)

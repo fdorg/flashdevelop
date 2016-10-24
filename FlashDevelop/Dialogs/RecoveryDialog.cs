@@ -186,8 +186,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public static new void Show()
         {
-            RecoveryDialog recoveryDialog = new RecoveryDialog();
-            recoveryDialog.ShowDialog();
+            using (RecoveryDialog recoveryDialog = new RecoveryDialog())
+                recoveryDialog.ShowDialog();
         }
 
         #endregion

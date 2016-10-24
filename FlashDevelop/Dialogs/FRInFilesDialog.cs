@@ -597,23 +597,25 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void BrowseButtonClick(Object sender, EventArgs e)
         {
-            VistaFolderBrowserDialog fbd = new VistaFolderBrowserDialog();
-            fbd.Multiselect = true;
-            String curDir = this.folderComboBox.Text;
-            if (curDir == "<Project>") 
+            using (VistaFolderBrowserDialog fbd = new VistaFolderBrowserDialog())
             {
-                if (PluginBase.CurrentProject != null)
+                fbd.Multiselect = true;
+                String curDir = this.folderComboBox.Text;
+                if (curDir == "<Project>")
                 {
-                    String projectPath = PluginBase.CurrentProject.ProjectPath;
-                    curDir = Path.GetDirectoryName(projectPath);
+                    if (PluginBase.CurrentProject != null)
+                    {
+                        String projectPath = PluginBase.CurrentProject.ProjectPath;
+                        curDir = Path.GetDirectoryName(projectPath);
+                    }
+                    else curDir = Globals.MainForm.WorkingDirectory;
                 }
-                else curDir = Globals.MainForm.WorkingDirectory;
-            }
-            if (Directory.Exists(curDir)) fbd.SelectedPath = curDir;
-            if (fbd.ShowDialog() == DialogResult.OK && Directory.Exists(fbd.SelectedPath))
-            {
-                this.folderComboBox.Text = String.Join(";", fbd.SelectedPaths);
-                this.folderComboBox.SelectionStart = this.folderComboBox.Text.Length;
+                if (Directory.Exists(curDir)) fbd.SelectedPath = curDir;
+                if (fbd.ShowDialog() == DialogResult.OK && Directory.Exists(fbd.SelectedPath))
+                {
+                    this.folderComboBox.Text = String.Join(";", fbd.SelectedPaths);
+                    this.folderComboBox.SelectionStart = this.folderComboBox.Text.Length;
+                }
             }
         }
 

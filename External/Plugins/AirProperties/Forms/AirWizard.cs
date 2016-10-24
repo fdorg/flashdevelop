@@ -1455,40 +1455,42 @@ namespace AirProperties
             //Save active 
             PropertyManager.SetProperty("name", NameField, GetSelectedLocale(), GetSelectedLocaleIsDefault());
             PropertyManager.SetProperty("description", DescriptionField, GetSelectedLocale(), GetSelectedLocaleIsDefault());
-            LocaleManager frmLocaleMan = new LocaleManager(ref _locales);
-            if (frmLocaleMan.ShowDialog(this) == DialogResult.OK)
+            using (LocaleManager frmLocaleMan = new LocaleManager(_locales))
             {
-                //Check to see if any locales have been removed
-                foreach (string locale in originalLocales)
+                if (frmLocaleMan.ShowDialog(this) == DialogResult.OK)
                 {
-                    if (!_locales.Contains(locale))
+                    //Check to see if any locales have been removed
+                    foreach (string locale in originalLocales)
                     {
-                        //remove affected properties from properties file
-                        PropertyManager.RemoveLocalizedProperty("name", locale);
-                        PropertyManager.RemoveLocalizedProperty("description", locale);
+                        if (!_locales.Contains(locale))
+                        {
+                            //remove affected properties from properties file
+                            PropertyManager.RemoveLocalizedProperty("name", locale);
+                            PropertyManager.RemoveLocalizedProperty("description", locale);
+                        }
                     }
+                    //Check to see if any locales have been added
+                    foreach (string locale in _locales)
+                    {
+                        if (!originalLocales.Contains(locale))
+                        {
+                            //create the affected properties now, even though value is empty, so the locale 
+                            //will be preserved if the user closes the form without specifying a value
+                            PropertyManager.CreateLocalizedProperty("name", locale, _locales[0].Equals(locale));
+                            PropertyManager.CreateLocalizedProperty("description", locale, _locales[0].Equals(locale));
+                        }
+                    }
+                    //Re-initialize locales and refresh affected property fields
+                    InitializeLocales();
+                    PropertyManager.GetProperty("name", NameField, GetSelectedLocale());
+                    PropertyManager.GetProperty("description", DescriptionField, GetSelectedLocale());
                 }
-                //Check to see if any locales have been added
-                foreach (string locale in _locales)
+                else
                 {
-                    if (!originalLocales.Contains(locale))
-                    {
-                        //create the affected properties now, even though value is empty, so the locale 
-                        //will be preserved if the user closes the form without specifying a value
-                        PropertyManager.CreateLocalizedProperty("name", locale, _locales[0].Equals(locale));
-                        PropertyManager.CreateLocalizedProperty("description", locale, _locales[0].Equals(locale));
-                    }
+                    //reset the locales in case any changes were made
+                    _locales.Clear();
+                    _locales.AddRange(originalLocales);
                 }
-                //Re-initialize locales and refresh affected property fields
-                InitializeLocales();
-                PropertyManager.GetProperty("name", NameField, GetSelectedLocale());
-                PropertyManager.GetProperty("description", DescriptionField, GetSelectedLocale());
-            }
-            else
-            {
-                //reset the locales in case any changes were made
-                _locales.Clear();
-                _locales.AddRange(originalLocales);
             }
         }
 
@@ -1565,12 +1567,13 @@ namespace AirProperties
         {
             List<string> locales = new List<string>();
             locales.AddRange(SupportedLanguagesField.Text.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries));
-            LocaleManager frmLocaleMan = new LocaleManager(ref locales);
-            if (frmLocaleMan.ShowDialog(this) == DialogResult.OK)
+            using (LocaleManager frmLocaleMan = new LocaleManager(locales))
             {
-                SupportedLanguagesField.Text = String.Join(" ", locales.ToArray());
+                if (frmLocaleMan.ShowDialog(this) == DialogResult.OK)
+                {
+                    SupportedLanguagesField.Text = String.Join(" ", locales.ToArray());
+                }
             }
-
         }
 
         private void AndroidManifestAdditionsButton_Click(object sender, EventArgs e)

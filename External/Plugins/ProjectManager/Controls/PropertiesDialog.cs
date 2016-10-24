@@ -1323,20 +1323,22 @@ namespace ProjectManager.Controls
 
         private void outputBrowseButton_Click(object sender, EventArgs e)
         {
-            SaveFileDialog dialog = new SaveFileDialog();
-            dialog.Filter = "*.*|*.*"; // TextHelper.GetString("Info.FlashMovieFilter");
-            dialog.OverwritePrompt = false;
-            dialog.InitialDirectory = project.Directory;
-            // try pre-setting the current output path
-            try
+            using (SaveFileDialog dialog = new SaveFileDialog())
             {
-                string path = project.GetAbsolutePath(outputSwfBox.Text);
-                if (File.Exists(path)) dialog.FileName = path;
-            }
-            catch { }
-            if (dialog.ShowDialog(this) == DialogResult.OK)
-            {
-                outputSwfBox.Text = project.GetRelativePath(dialog.FileName);
+                dialog.Filter = "*.*|*.*"; // TextHelper.GetString("Info.FlashMovieFilter");
+                dialog.OverwritePrompt = false;
+                dialog.InitialDirectory = project.Directory;
+                // try pre-setting the current output path
+                try
+                {
+                    string path = project.GetAbsolutePath(outputSwfBox.Text);
+                    if (File.Exists(path)) dialog.FileName = path;
+                }
+                catch { }
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    outputSwfBox.Text = project.GetRelativePath(dialog.FileName);
+                }
             }
         }
 
@@ -1354,12 +1356,14 @@ namespace ProjectManager.Controls
                 caption = TextHelper.GetString("Title.CustomTestMovieCommand");
                 label = TextHelper.GetString("Label.CustomTestMovieCommand");
             }
-            LineEntryDialog dialog = new LineEntryDialog(caption, label, project.TestMovieCommand ?? "");
-            if (dialog.ShowDialog() == DialogResult.OK)
+            using (LineEntryDialog dialog = new LineEntryDialog(caption, label, project.TestMovieCommand ?? ""))
             {
-                project.TestMovieCommand = dialog.Line;
-                Modified();
-                btnOK.Focus();
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    project.TestMovieCommand = dialog.Line;
+                    Modified();
+                    btnOK.Focus();
+                }
             }
         }
 
@@ -1419,12 +1423,14 @@ namespace ProjectManager.Controls
 
         private void browseButton_Click(object sender, EventArgs e)
         {
-            VistaFolderBrowserDialog folder = new VistaFolderBrowserDialog();
-            if (customTextBox.Text.Length > 0 && Directory.Exists(customTextBox.Text))
-                folder.SelectedPath = customTextBox.Text;
-            if (folder.ShowDialog() == DialogResult.OK)
+            using (VistaFolderBrowserDialog folder = new VistaFolderBrowserDialog())
             {
-                customTextBox.Text = folder.SelectedPath;
+                if (customTextBox.Text.Length > 0 && Directory.Exists(customTextBox.Text))
+                    folder.SelectedPath = customTextBox.Text;
+                if (folder.ShowDialog() == DialogResult.OK)
+                {
+                    customTextBox.Text = folder.SelectedPath;
+                }
             }
         }
 

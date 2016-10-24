@@ -40,21 +40,23 @@ namespace ProjectManager.Actions
 
         public Project NewProject()
         {
-            NewProjectDialog dialog = new NewProjectDialog();
-            if (dialog.ShowDialog(owner) == DialogResult.OK)
+            using (NewProjectDialog dialog = new NewProjectDialog())
             {
-                try
+                if (dialog.ShowDialog(owner) == DialogResult.OK)
                 {
-                    FlashDevelopActions.CheckAuthorName();
-                    ProjectCreator creator = new ProjectCreator();
-                    Project created = creator.CreateProject(dialog.TemplateDirectory, dialog.ProjectLocation, dialog.ProjectName, dialog.PackageName);
-                    PatchProject(created);
-                    return created;
-                }
-                catch (Exception exception)
-                {
-                    string msg = TextHelper.GetString("Info.CouldNotCreateProject");
-                    ErrorManager.ShowInfo(msg + " " + exception.Message);
+                    try
+                    {
+                        FlashDevelopActions.CheckAuthorName();
+                        ProjectCreator creator = new ProjectCreator();
+                        Project created = creator.CreateProject(dialog.TemplateDirectory, dialog.ProjectLocation, dialog.ProjectName, dialog.PackageName);
+                        PatchProject(created);
+                        return created;
+                    }
+                    catch (Exception exception)
+                    {
+                        string msg = TextHelper.GetString("Info.CouldNotCreateProject");
+                        ErrorManager.ShowInfo(msg + " " + exception.Message);
+                    }
                 }
             }
 
@@ -63,14 +65,16 @@ namespace ProjectManager.Actions
 
         public Project OpenProject()
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Title = " " + TextHelper.GetString("Title.OpenProjectDialog");
-            dialog.Filter = ProjectCreator.GetProjectFilters();
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Title = " " + TextHelper.GetString("Title.OpenProjectDialog");
+                dialog.Filter = ProjectCreator.GetProjectFilters();
 
-            if (dialog.ShowDialog(owner) == DialogResult.OK)
-                return OpenProjectSilent(dialog.FileName);
-            else
-                return null;
+                if (dialog.ShowDialog(owner) == DialogResult.OK)
+                    return OpenProjectSilent(dialog.FileName);
+            }
+
+            return null;
         }
 
         public Project OpenProjectSilent(string path)
@@ -92,41 +96,43 @@ namespace ProjectManager.Actions
 
         public string ImportProject()
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Title = TextHelper.GetString("Title.ImportProject");
-            dialog.Filter = TextHelper.GetString("Info.ImportProjectFilter");
-            if (dialog.ShowDialog() == DialogResult.OK && File.Exists(dialog.FileName))
+            using (OpenFileDialog dialog = new OpenFileDialog())
             {
-                string fbProject = dialog.FileName;
-                string currentDirectory = Directory.GetCurrentDirectory();
-
-                try
+                dialog.Title = TextHelper.GetString("Title.ImportProject");
+                dialog.Filter = TextHelper.GetString("Info.ImportProjectFilter");
+                if (dialog.ShowDialog() == DialogResult.OK && File.Exists(dialog.FileName))
                 {
-                    if (FileInspector.IsFlexBuilderPackagedProject(fbProject))
-                    {
-                        fbProject = ExtractPackagedProject(fbProject);
-                    }
+                    string fbProject = dialog.FileName;
+                    string currentDirectory = Directory.GetCurrentDirectory();
 
-                    if (FileInspector.IsFlexBuilderProject(fbProject))
+                    try
                     {
-                        AS3Project imported = AS3Project.Load(fbProject);
-                        string path = Path.GetDirectoryName(imported.ProjectPath);
-                        string name = Path.GetFileNameWithoutExtension(imported.OutputPath);
-                        string newPath = Path.Combine(path, name + ".as3proj");
-                        PatchProject(imported);
-                        PatchFbProject(imported);
-                        imported.SaveAs(newPath);
+                        if (FileInspector.IsFlexBuilderPackagedProject(fbProject))
+                        {
+                            fbProject = ExtractPackagedProject(fbProject);
+                        }
 
-                        return newPath;
+                        if (FileInspector.IsFlexBuilderProject(fbProject))
+                        {
+                            AS3Project imported = AS3Project.Load(fbProject);
+                            string path = Path.GetDirectoryName(imported.ProjectPath);
+                            string name = Path.GetFileNameWithoutExtension(imported.OutputPath);
+                            string newPath = Path.Combine(path, name + ".as3proj");
+                            PatchProject(imported);
+                            PatchFbProject(imported);
+                            imported.SaveAs(newPath);
+
+                            return newPath;
+                        }
+                        else
+                            ErrorManager.ShowInfo(TextHelper.GetString("Info.NotValidFlashBuilderProject"));
                     }
-                    else
-                        ErrorManager.ShowInfo(TextHelper.GetString("Info.NotValidFlashBuilderProject"));
-                }
-                catch (Exception exception)
-                {
-                    Directory.SetCurrentDirectory(currentDirectory);
-                    string msg = TextHelper.GetString("Info.CouldNotOpenProject");
-                    ErrorManager.ShowInfo(msg + " " + exception.Message);
+                    catch (Exception exception)
+                    {
+                        Directory.SetCurrentDirectory(currentDirectory);
+                        string msg = TextHelper.GetString("Info.CouldNotOpenProject");
+                        ErrorManager.ShowInfo(msg + " " + exception.Message);
+                    }
                 }
             }
             return null;

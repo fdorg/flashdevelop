@@ -226,8 +226,8 @@ namespace FlashDevelop.Dialogs
         public static void Show(Boolean silent)
         {
             silentCheck = silent;
-            UpdateDialog updateDialog = new UpdateDialog();
-            if (!silentCheck) updateDialog.ShowDialog();
+            using (UpdateDialog updateDialog = new UpdateDialog())
+                if (!silentCheck) updateDialog.ShowDialog();
         }
 
         #endregion
