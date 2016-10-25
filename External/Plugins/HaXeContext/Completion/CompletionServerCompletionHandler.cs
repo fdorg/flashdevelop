@@ -9,9 +9,9 @@ using System.Text.RegularExpressions;
 
 namespace HaXeContext
 {
-    delegate void FallbackNeededHandler(bool notSupported);
+    public delegate void FallbackNeededHandler(bool notSupported);
 
-    class CompletionServerCompletionHandler : IHaxeCompletionHandler
+    public class CompletionServerCompletionHandler : IHaxeCompletionHandler
     {
         public event FallbackNeededHandler FallbackNeeded;
 

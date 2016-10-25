@@ -63,7 +63,7 @@ namespace CodeRefactor.Provider
             ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
             if (document == null || !document.IsEditable) return false;
             string lang = document.SciControl.ConfigurationLanguage;
-            return lang == "as2" || lang == "as3" || lang == "haxe" || lang == "loom"; // TODO: look for /Snippets/Generators
+            return CommandFactoryProvider.ContainsLanguage(lang);
         }
 
         /// <summary>
@@ -71,8 +71,7 @@ namespace CodeRefactor.Provider
         /// </summary>
         public static Boolean ModelFileExists(FileModel model)
         {
-            if (model != null && File.Exists(model.FileName)) return true;
-            else return false;
+            return model != null && File.Exists(model.FileName);
         }
 
         /// <summary>
@@ -85,8 +84,7 @@ namespace CodeRefactor.Provider
         public static Boolean IsUnderSDKPath(String file)
         {
             InstalledSDK sdk = PluginBase.CurrentSDK;
-            if (sdk != null && !String.IsNullOrEmpty(sdk.Path) && file.StartsWithOrdinal(sdk.Path)) return true;
-            return false;
+            return sdk != null && !String.IsNullOrEmpty(sdk.Path) && file.StartsWithOrdinal(sdk.Path);
         }
 
         /// <summary>
@@ -373,17 +371,14 @@ namespace CodeRefactor.Provider
             {
                 return null;
             }
-            else
+            // if the target we are trying to rename exists as a local variable or a function parameter we only need to search the current file
+            if (target.Member != null && (
+                target.Member.Access == Visibility.Private
+                || CheckFlag(target.Member.Flags, FlagType.LocalVar)
+                || CheckFlag(target.Member.Flags, FlagType.ParameterVar))
+                )
             {
-                // if the target we are trying to rename exists as a local variable or a function parameter we only need to search the current file
-                if (target.Member != null && (
-                        target.Member.Access == Visibility.Private
-                        || CheckFlag(target.Member.Flags, FlagType.LocalVar)
-                        || CheckFlag(target.Member.Flags, FlagType.ParameterVar))
-                    )
-                {
-                    currentFileOnly = true;
-                }
+                currentFileOnly = true;
             }
             FRConfiguration config;
             IProject project = PluginBase.CurrentProject;

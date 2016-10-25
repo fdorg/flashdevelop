@@ -16,9 +16,9 @@ using PluginCore.Utilities;
 
 namespace HaXeContext
 {
-    internal delegate void HaxeCompleteResultHandler<T>(HaxeComplete hc, T result, HaxeCompleteStatus status);
+    public delegate void HaxeCompleteResultHandler<T>(HaxeComplete hc, T result, HaxeCompleteStatus status);
 
-    internal class HaxeComplete
+    public class HaxeComplete
     {
         static readonly Regex reArg =
             new Regex("^(-cp|-resource|-cmd)\\s*([^\"'].*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -450,7 +450,7 @@ namespace HaXeContext
         }
     }
 
-    enum HaxeCompleteStatus: int
+    public enum HaxeCompleteStatus: int
     {
         NONE = 0,
         FAILED = 1,
@@ -461,20 +461,20 @@ namespace HaXeContext
         USAGE = 6
     }
 
-    enum HaxeCompilerService
+    public enum HaxeCompilerService
     {
         COMPLETION,
         POSITION,
         USAGE
     }
 
-    class HaxeCompleteResult
+    public class HaxeCompleteResult
     {
         public MemberModel Type;
         public MemberList Members;
     }
 
-    class HaxePositionResult
+    public class HaxePositionResult
     {
         public string Path;
         public HaxePositionCompleteRangeType RangeType;
@@ -484,7 +484,7 @@ namespace HaXeContext
         public int CharacterEnd;
     }
 
-    enum HaxePositionCompleteRangeType
+    public enum HaxePositionCompleteRangeType
     {
         CHARACTERS,
         LINES
