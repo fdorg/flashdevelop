@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using PluginCore;
@@ -150,13 +151,9 @@ namespace CodeRefactor.Commands
 
         static bool ContainsMember(FileModel file, MemberModel member)
         {
-            var currentModelPackage = file.Package;
-            if (!string.IsNullOrEmpty(currentModelPackage) && member.Type.Contains("."))
-            {
-                var importPackage = member.Type.Substring(0, member.Type.LastIndexOf('.'));
-                if (importPackage != currentModelPackage) return false;
-            }
-            return file.Classes.Exists(cls => cls.Name == member.Name);
+            var dot = ASContext.Context.Features.dot;
+            var package = string.IsNullOrEmpty(file.Package) ? string.Empty : $"{file.Package}{dot}";
+            return $"{package}{Path.GetFileNameWithoutExtension(file.FileName)}{dot}{member.Name}" == member.Type;
         }
 
         /// <summary>

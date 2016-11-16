@@ -149,6 +149,8 @@
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\AfterOrganizeImports.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\BeforeOrganizeImports_withImportsFromSameModule.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\AfterOrganizeImports_withImportsFromSameModule.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\BeforeOrganizeImports_withImportsFromSameModule2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\AfterOrganizeImports_withImportsFromSameModule2.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
