@@ -151,9 +151,9 @@ namespace CodeRefactor.Commands
         static bool ContainsMember(FileModel file, MemberModel member)
         {
             var currentModelPackage = file.Package;
-            if (!string.IsNullOrEmpty(currentModelPackage) && member.Value.Contains("."))
+            if (!string.IsNullOrEmpty(currentModelPackage) && member.Type.Contains("."))
             {
-                var importPackage = member.Value.Substring(0, member.Value.LastIndexOf('.'));
+                var importPackage = member.Type.Substring(0, member.Type.LastIndexOf('.'));
                 if (importPackage != currentModelPackage) return false;
             }
             return file.Classes.Exists(cls => cls.Name == member.Name);
