@@ -317,12 +317,22 @@ namespace CodeRefactor.Commands
                             new TestCaseData(
                                     TestFile.ReadAllText(
                                         "CodeRefactor.Test_Files.coderefactor.organizeimports.haxe.BeforeOrganizeImports_withImportsFromSameModule.hx"),
-                                    "BeforeOrganizeImports_withImportsFromSameModule.hx"
+                                    "Main.hx"
                                 )
                                 .Returns(
                                     TestFile.ReadAllText(
                                         "CodeRefactor.Test_Files.coderefactor.organizeimports.haxe.AfterOrganizeImports_withImportsFromSameModule.hx"))
-                                .SetName("Issue782");
+                                .SetName("Issue782. Package is empty.");
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "CodeRefactor.Test_Files.coderefactor.organizeimports.haxe.BeforeOrganizeImports_withImportsFromSameModule2.hx"),
+                                    "Main.hx"
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "CodeRefactor.Test_Files.coderefactor.organizeimports.haxe.AfterOrganizeImports_withImportsFromSameModule2.hx"))
+                                .SetName("Issue782. Package is not empty.");
                     }
                 }
 
