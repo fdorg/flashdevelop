@@ -522,31 +522,53 @@ namespace ProjectManager.Controls
 
     #region Helpers
 
+    struct SearchResult
+    {
+        public double score;
+        public String value;
+    }
+
     class SearchUtil
     {
-        public delegate Boolean Comparer(String value1, String value2, String value3);
+        public delegate double Comparer(String value1, String value2, String value3);
 
         public static List<String> getMatchedItems(List<String> source, String searchText, String pathSeparator, Int32 limit)
         {
             Int32 i = 0;
-            List<String> matchedItems = new List<String>();
+            List<SearchResult> matchedItems = new List<SearchResult>();
             String firstChar = searchText.Substring(0, 1);
             Comparer searchMatch = (firstChar == firstChar.ToUpper()) ? new Comparer(AdvancedSearchMatch) : new Comparer(SimpleSearchMatch);
             foreach (String item in source)
             {
-                if (searchMatch(item, searchText, pathSeparator))
+                SearchResult result = new SearchResult();
+                result.score = searchMatch(item, searchText, pathSeparator);
+                result.value = item;
+
+                if (result.score > 0)
                 {
-                    matchedItems.Add(item);
+                    matchedItems.Add(result);
                     if (limit > 0 && i++ > limit) break;
                 }
             }
-            return matchedItems;
+
+            matchedItems.Sort(delegate (SearchResult r1, SearchResult r2)
+            {
+                return r1.score.CompareTo(r2.score);
+            });
+
+            List<String> results = new List<String>();
+            foreach (SearchResult r in matchedItems)
+            {
+                results.Add(r.value);
+            }
+
+            return results;
         }
 
-        static private bool AdvancedSearchMatch(String file, String searchText, String pathSeparator)
+        static private double AdvancedSearchMatch(String file, String searchText, String pathSeparator)
         {
             int i = 0; int j = 0;
-            if (file.Length < searchText.Length) return false;
+            if (file.Length < searchText.Length) return 0;
             Char[] text = Path.GetFileName(file).ToCharArray();
             Char[] pattern = searchText.ToCharArray();
             while (i < pattern.Length)
@@ -556,22 +578,63 @@ namespace ProjectManager.Controls
                     i++;
                     j++;
                 }
-                if (i == pattern.Length) return true;
-                if (Char.IsLower(pattern[i])) return false;
+                if (i == pattern.Length) return 1;
+                if (Char.IsLower(pattern[i])) return 0;
                 while (j < text.Length && Char.IsLower(text[j]))
                 {
                     j++;
                 }
-                if (j == text.Length) return false;
-                if (pattern[i] != text[j]) return false;
+                if (j == text.Length) return 0;
+                if (pattern[i] != text[j]) return 0;
             }
-            return (i == pattern.Length);
+            return (i == pattern.Length) ? 1 : 0;
         }
 
-        private static Boolean SimpleSearchMatch(String file, String searchText, String pathSeparator)
+        private static double SimpleSearchMatch(String file, String searchText, String pathSeparator)
         {
             String fileName = Path.GetFileName(file).ToLower();
-            return fileName.IndexOfOrdinal(searchText.ToLower()) > -1;
+            searchText = searchText.ToLower();
+
+            return Score(fileName, searchText, pathSeparator[0]);
+        }
+
+        /**
+         * Ported from: https://github.com/atom/fuzzaldrin/
+         */
+        private static double Score(String str, String query, char pathSeparator)
+        {
+            double score = 0;
+
+            int strIndex = 0;
+
+            for (int i = 0; i < query.Length; i++)
+            {
+                var character = query[i].ToString();
+
+                var index = str.IndexOf(character, strIndex, StringComparison.OrdinalIgnoreCase);
+
+                if (index == -1)
+                {
+                    return 0;
+                }
+
+                double charScore = 0.1;
+
+                if (str[index] == query[i])
+                {
+                    charScore += 0.1;
+                }
+                else if (index > 0 && str[index - 1] == pathSeparator)
+                {
+                    charScore += 0.8;
+                }
+
+                score += charScore;
+
+                strIndex = index + 1;
+            }
+
+            return (score / str.Length + score / query.Length) / 2;
         }
 
     }
