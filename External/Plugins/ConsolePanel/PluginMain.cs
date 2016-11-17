@@ -26,6 +26,8 @@ namespace ConsolePanel
         private Gui.TabbedConsole tabView;
         private Image image;
 
+        private IConsoleProvider provider;
+
         public int Api
         {
             get
@@ -83,11 +85,24 @@ namespace ConsolePanel
             }
         }
 
+        public IConsoleProvider ConsoleProvider
+        {
+            get
+            {
+                return provider;
+            }
+            set
+            {
+                provider = value;
+            }
+        }
+
         public void Initialize()
         {
             InitBasics();
             LoadSettings();
             CreatePluginPanel();
+            CreateDefaultConsoleProvider();
             CreateConsolePanel();
             CreateMenuItem();
 
@@ -151,14 +166,20 @@ namespace ConsolePanel
             cmdPanelDockContent.Text = "Console";
         }
 
-        public ConsoleControl.ConsoleControl CreateConsolePanel()
+        private void CreateDefaultConsoleProvider()
+        {
+            ConsoleProvider = new Implementation.CmdProcess.CmdConsoleProvider();
+        }
+
+        public IConsole CreateConsolePanel()
         {
             cmdPanelDockContent.Show();
 
-            var cmdPanel = new ConsoleControl.ConsoleControl("cmd", false);
-            cmdPanel.Text = "Console";
-            cmdPanel.ConsoleBackColor = settingObject.BackgroundColor;
-            cmdPanel.ConsoleForeColor = settingObject.ForegroundColor;
+            var cmdPanel = ConsoleProvider.GetConsole();
+            //var cmdPanel = new ConsoleControl.ConsoleControl(false);
+            //cmdPanel.Text = "Console";
+            //cmdPanel.ConsoleBackColor = settingObject.BackgroundColor;
+            //cmdPanel.ConsoleForeColor = settingObject.ForegroundColor;
 
             cmdPanel.Exited += delegate
             {
@@ -176,8 +197,6 @@ namespace ConsolePanel
                         tabView.RemoveConsole(cmdPanel);
                 }
             };
-
-            cmdPanel.Create();
 
             tabView.AddConsole(cmdPanel);
 

@@ -38,10 +38,12 @@
     <Reference Include="UIAutomationClient" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConsoleControl.cs">
+    <Compile Include="Implementation\CmdProcess\CmdConsole.cs" />
+    <Compile Include="Implementation\CmdProcess\CmdConsoleProvider.cs" />
+    <Compile Include="Implementation\CmdProcess\ConsoleControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ConsoleControl.Designer.cs">
+    <Compile Include="Implementation\CmdProcess\ConsoleControl.Designer.cs">
       <DependentUpon>ConsoleControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Gui\TabbedConsole.cs">
@@ -50,6 +52,8 @@
     <Compile Include="Gui\TabbedConsole.Designer.cs">
       <DependentUpon>TabbedConsole.cs</DependentUpon>
     </Compile>
+    <Compile Include="IConsole.cs" />
+    <Compile Include="IConsoleProvider.cs" />
     <Compile Include="Managers\ConsoleManager.cs" />
     <Compile Include="PluginMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

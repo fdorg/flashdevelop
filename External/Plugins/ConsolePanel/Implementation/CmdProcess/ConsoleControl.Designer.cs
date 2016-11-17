@@ -1,4 +1,4 @@
-﻿namespace ConsoleControl
+﻿namespace ConsolePanel.Implementation.CmdProcess
 {
     partial class ConsoleControl
     {

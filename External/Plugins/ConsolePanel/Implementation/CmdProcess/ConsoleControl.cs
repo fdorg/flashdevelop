@@ -4,8 +4,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Collections.Generic;
 using System.Windows.Automation;
+using ConsoleControl;
 
-namespace ConsoleControl
+namespace ConsolePanel.Implementation.CmdProcess
 {
     public partial class ConsoleControl : UserControl
     {
@@ -18,7 +19,6 @@ namespace ConsoleControl
         ConsoleColor foreColor = ConsoleColor.White;
         List<string> commandsToDo = new List<string>();
         string lastWorkingDir;
-        string cmd;
 
         public event EventHandler Exited;
 
@@ -115,13 +115,12 @@ namespace ConsoleControl
         /// </summary>
         /// <param name="init"></param>
         /// <param name="workingDirectory"></param>
-        public ConsoleControl(string command, bool init = true, string workingDirectory = null)
+        public ConsoleControl(bool init = true, string workingDirectory = null)
         {
             InitializeComponent();
             SetStyle(ControlStyles.Selectable, true);
 
             lastWorkingDir = workingDirectory;
-            cmd = command;
 
             if (init)
                 Create();
@@ -163,7 +162,7 @@ namespace ConsoleControl
             {
                 process = new Process();
 
-                process.StartInfo.FileName = cmd;
+                process.StartInfo.FileName = "cmd";
 
                 if (lastWorkingDir != null)
                     process.StartInfo.WorkingDirectory = lastWorkingDir;

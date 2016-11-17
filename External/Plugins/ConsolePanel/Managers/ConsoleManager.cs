@@ -12,20 +12,17 @@ namespace ConsolePanel.Managers
         static PluginMain main;
 
         static List<string> commandList = new List<string>();
+        static IConsoleProvider cachedProvider;
 
         /// <summary>
-        /// Runs a command in a new console window.
+        /// Creates a new console panel and sends the given string to it.
         /// </summary>
-        /// <param name="command">the command to run, uses standard cmd input syntax</param>
-        public static void RunCommand(string command)
+        /// <param name="command">the command to send</param>
+        public static void CreateConsole(string command)
         {
             if (main != null)
             {
-                while(commandList.Count > 0)
-                {
-                    main.CreateConsolePanel().SendString(commandList[0]);
-                    commandList.RemoveAt(0);
-                }
+                processCommandList();
                 main.CreateConsolePanel().SendString(command);
             }
             else
@@ -34,9 +31,40 @@ namespace ConsolePanel.Managers
             }
         }
 
+        public static void SetConsoleProvider(IConsoleProvider provider)
+        {
+            if (main != null)
+            {
+                main.ConsoleProvider = provider;
+            }
+            else
+            {
+                cachedProvider = provider;
+            }
+        }
+
         public static void Init(PluginMain plugin)
         {
             main = plugin;
+            processCachedProvider();
+            processCommandList();
+        }
+
+        static void processCommandList()
+        {
+            while (commandList.Count > 0)
+            {
+                main.CreateConsolePanel().SendString(commandList[0]);
+                commandList.RemoveAt(0);
+            }
+        }
+
+        static void processCachedProvider()
+        {
+            if (cachedProvider != null)
+            {
+                main.ConsoleProvider = cachedProvider;
+            }
         }
     }
 }
