@@ -553,7 +553,7 @@ namespace ProjectManager.Controls
 
             matchedItems.Sort(delegate (SearchResult r1, SearchResult r2)
             {
-                return r1.score.CompareTo(r2.score);
+                return r2.score.CompareTo(r1.score);
             });
 
             List<String> results = new List<String>();
