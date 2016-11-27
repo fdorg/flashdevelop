@@ -240,10 +240,11 @@ namespace CodeRefactor.Commands
                 var targetMatches = entry.Value;
                 if (isParameterVar)
                 {
-                    var replacement = string.Empty;
                     var lineFrom = Target.Context.ContextFunction.LineFrom;
+                    var lineTo = Target.Context.ContextFunction.LineTo;
                     var search = new FRSearch(NewName) {WholeWord = true, NoCase = false, SingleLine = true};
                     var matches = search.Matches(sci.Text, sci.PositionFromLine(lineFrom), lineFrom);
+                    matches.RemoveAll(it => it.Line < lineFrom || it.Line > lineTo);
                     if (matches.Count != 0)
                     {
                         sci.BeginUndoAction();
@@ -254,6 +255,7 @@ namespace CodeRefactor.Commands
                                 var match = matches[i];
                                 var expr = ASComplete.GetExpressionType(sci, sci.MBSafePosition(match.Index) + sci.MBSafeTextLength(match.Value));
                                 if (expr.IsNull()) continue;
+                                var replacement = string.Empty;
                                 var flags = expr.Member.Flags;
                                 if ((flags & FlagType.Static) > 0)
                                 {
