@@ -252,10 +252,10 @@ namespace CodeRefactor.Commands
                         {
                             for (var i = 0; i < matches.Count; i++)
                             {
-                                var replacement = string.Empty;
                                 var match = matches[i];
                                 var expr = ASComplete.GetExpressionType(sci, sci.MBSafePosition(match.Index) + sci.MBSafeTextLength(match.Value));
                                 if (expr.IsNull()) continue;
+                                var replacement = string.Empty;
                                 var flags = expr.Member.Flags;
                                 if ((flags & FlagType.Static) > 0)
                                 {
