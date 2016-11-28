@@ -285,11 +285,11 @@ namespace CodeRefactor.Commands
                 var functionLineTo = contextFunction.LineTo;
                 for (var i = 0; i < matches.Count; i++)
                 {
-                    string replacement = null;
                     var match = matches[i];
                     if (match.Line <= functionLineFrom || match.Line > functionLineTo) continue;
                     var expr = ASComplete.GetExpressionType(sci, sci.MBSafePosition(match.Index) + sci.MBSafeTextLength(match.Value));
                     if (expr.IsNull()) continue;
+                    string replacement = null;
                     var flags = expr.Member.Flags;
                     if ((flags & FlagType.Static) > 0)
                     {
@@ -307,7 +307,7 @@ namespace CodeRefactor.Commands
                     for (var j = 0; j < parameterMatches.Count; j++)
                     {
                         var parameterMatch = parameterMatches[j];
-                        if (parameterMatch.Line <= match.Line) continue;
+                        if (parameterMatch.Line < match.Line) continue;
                         FRSearch.PadIndexes(parameterMatches, j, match.Value, replacement);
                         if (parameterMatch.Line == match.Line + 1)
                         {
