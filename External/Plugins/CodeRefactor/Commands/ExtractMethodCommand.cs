@@ -4,9 +4,9 @@ using ScintillaNet;
 
 namespace CodeRefactor.Commands
 {
-    class ExtractMethodCommand
+    public class ExtractMethodCommand
     {
-        private string NewName;
+        private readonly string NewName;
 
         public ExtractMethodCommand(string newName)
         {

@@ -6117,4 +6117,8 @@ OR - 하나 이상의 조건을 만족할때.
 AND - 모든 조건을 만족할때.</value>
     <comment>Added after 5.1.1</comment>
   </data>
+  <data name="OutputPanel.Description.ClearMode" xml:space="preserve">
+    <value>Defines which method should be used to clean the contents of the output panel.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
 </root>

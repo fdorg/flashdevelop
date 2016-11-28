@@ -1,4 +1,5 @@
 using System;
+using ASCompletion.Completion;
 using CodeRefactor.Provider;
 
 namespace CodeRefactor.Commands
@@ -19,6 +20,14 @@ namespace CodeRefactor.Commands
         #endregion
 
         #region Fields and Properties
+
+        /// <summary>
+        /// The current declaration target that references are being found to.
+        /// </summary>
+        public ASResult CurrentTarget { get; protected set; }
+
+
+        public bool OutputResults { get; protected set; }
 
         private RefactorResultType results;
         private DocumentHelper associatedDocumentHelper;

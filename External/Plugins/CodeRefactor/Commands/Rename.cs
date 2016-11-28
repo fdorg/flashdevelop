@@ -19,22 +19,23 @@ using ScintillaNet;
 
 namespace CodeRefactor.Commands
 {
+    using Command = RefactorCommand<IDictionary<string, List<SearchMatch>>>;
+
     /// <summary>
     /// Refactors by renaming the given declaration and all its references.
     /// </summary>
-    public class Rename : RefactorCommand<IDictionary<string, List<SearchMatch>>>
+    public class Rename : Command
     {
+        private readonly Command findAllReferencesCommand;
+        private Command renamePackage;
         private bool isRenamePackage;
         private string renamePackagePath;
-        private FindAllReferences findAllReferencesCommand;
-        private Move renamePackage;
 
         private string oldFileName;
         private string newFileName;
 
         public string OldName { get; private set; }
         public string NewName { get; private set; }
-        public bool OutputResults { get; private set; }
         public ASResult Target { get; private set; }
         public string TargetName { get; private set; }
 
@@ -119,7 +120,7 @@ namespace CodeRefactor.Commands
 
             // create a FindAllReferences refactor to get all the changes we need to make
             // we'll also let it output the results, at least until we implement a way of outputting the renamed results later
-            findAllReferencesCommand = new FindAllReferences(target, false, ignoreDeclarationSource) { OnlySourceFiles = true };
+            findAllReferencesCommand = CommandFactoryProvider.GetFactoryFromTarget(target).CreateFindAllReferencesCommand(target, false, ignoreDeclarationSource, true);
             // register a completion listener to the FindAllReferences so we can rename the entries
             findAllReferencesCommand.OnRefactorComplete += OnFindAllReferencesCompleted;
 
@@ -203,9 +204,6 @@ namespace CodeRefactor.Commands
 
             var member = isEnum || isClass ? target.Type : target.Member;
             var inFile = member.InFile;
-
-            // Is this possible? should return false? I'm inclined to think so
-            if (inFile == null) return true;
 
             oldFileName = inFile.FileName;
             string oldName = Path.GetFileNameWithoutExtension(oldFileName);

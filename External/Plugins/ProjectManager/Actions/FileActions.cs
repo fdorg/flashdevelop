@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using PluginCore;
@@ -386,10 +387,15 @@ namespace ProjectManager.Actions
 
                         foreach (string path in paths)
                         {
-                            if (!FileHelper.Recycle(path))
+                            // Once a directory is deleted we need to ignore all remaining files/sub-directories still in the paths
+                            // array since they are already gone.
+                            if (File.Exists(path) || Directory.Exists(path))
                             {
-                                String error = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
-                                throw new Exception(error + " " + path);
+                                if (!FileHelper.Recycle(path))
+                                {
+                                    String error = TextHelper.GetString("FlashDevelop.Info.CouldNotBeRecycled");
+                                    throw new Exception(error + " " + path);
+                                }
                             }
                             OnFileDeleted(path);
                         }

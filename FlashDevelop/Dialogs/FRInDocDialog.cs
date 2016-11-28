@@ -422,15 +422,28 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void UpdateFindText()
         {
-            ScintillaControl sci = Globals.SciControl;
             if (this.useRegexCheckBox.Checked) return;
+            ScintillaControl sci = Globals.SciControl;
             if (sci != null && sci.SelText.Length > 0 && !this.lookupIsDirty)
             {
                 this.findComboBox.Text = sci.SelText;
                 this.lookupIsDirty = false;
             }
         }
-        
+
+        /// <summary>
+        /// If there is a word selected, insert it to the find box. This will always update the text regardless of any settings.
+        /// </summary>
+        public void InitializeFindText()
+        {
+            ScintillaControl sci = Globals.SciControl;
+            if (sci != null && sci.SelText.Length > 0)
+            {
+                this.findComboBox.Text = sci.SelText;
+                this.lookupIsDirty = false;
+            }
+        }
+
         /// <summary>
         /// Finds the next result based on direction
         /// </summary>
@@ -767,7 +780,7 @@ namespace FlashDevelop.Dialogs
         {
             base.Show();
             this.lookupIsDirty = false;
-            this.UpdateFindText();
+            this.InitializeFindText();
         }
 
         #endregion

@@ -587,7 +587,7 @@ namespace HaXeContext
             return hxsettings.InstalledSDKs.FirstOrDefault(sdk => sdk.Path == currentSDK);
         }
 
-        private SemVer GetCurrentSDKVersion()
+        public SemVer GetCurrentSDKVersion()
         {
             InstalledSDK currentSDK = GetCurrentSDK();
             if (currentSDK != null)

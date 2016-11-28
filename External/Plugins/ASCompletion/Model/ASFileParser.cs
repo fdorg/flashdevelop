@@ -1804,11 +1804,14 @@ namespace ASCompletion.Model
                         line = line0;
                         return null;
                     }
-                    else if (c == '(') parCount++;
+                    else if (c == '(')
+                    {
+                        parCount++;
+                        isComplex = true;
+                    }
                     else if (c == ')')
                     {
                         parCount--;
-                        isComplex = true;
                         if (parCount <= 0) break;
                     }
                     else if (c <= 32 && parCount <= 0)
