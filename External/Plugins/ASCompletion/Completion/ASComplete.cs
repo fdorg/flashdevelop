@@ -541,9 +541,8 @@ namespace ASCompletion.Completion
                 if (type.IsVoid()) return false;
             }
             result.Member = null;
-            result.RelClass = type;
-            result.InClass = type;
-            result.InFile = type.InFile;
+            result.InClass = null;
+            result.InFile = null;
             var path = type.Name;
             result.Path = path.Contains(".") ? path.Substring(0, path.IndexOfOrdinal(".")) : path;
             return OpenDocumentToDeclaration(sci, result);
