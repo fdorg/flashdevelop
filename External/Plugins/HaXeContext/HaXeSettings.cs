@@ -253,6 +253,16 @@ namespace HaXeContext
             }
         }
 
+        bool _completionServerWaitStdio = true;
+
+        [DisplayName("Completion Server --wait stdio")]
+        [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("HaXeContext.Description.CompletionServerWaitStdio"), DefaultValue(true)]
+        public bool CompletionServerWaitStdio
+        {
+            get { return _completionServerWaitStdio; }
+            set { _completionServerWaitStdio = value; }
+        }
+
         [DisplayName("Disable Mixed Completion")]
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("HaXeContext.Description.DisableMixedCompletion"), DefaultValue(DEFAULT_DISABLEMIXEDCOMPLETION)]
         public bool DisableMixedCompletion

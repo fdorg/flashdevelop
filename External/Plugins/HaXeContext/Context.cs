@@ -1132,7 +1132,7 @@ namespace HaXeContext
                     else
                     {
                         var sdkVersion = GetCurrentSDKVersion();
-                        var args = sdkVersion.IsGreaterThanOrEquals(new SemVer("3.3.0")) ? "--wait stdio" : $"--wait {port}";
+                        var args = haxeSettings.CompletionServerWaitStdio && sdkVersion.IsGreaterThanOrEquals(new SemVer("3.3.0")) ? "--wait stdio" : $"--wait {port}";
                         completionModeHandler = new CompletionServerCompletionHandler(createHaxeProcess(args), port);
                         ((CompletionServerCompletionHandler) completionModeHandler).FallbackNeeded += Context_FallbackNeeded;
                     }
