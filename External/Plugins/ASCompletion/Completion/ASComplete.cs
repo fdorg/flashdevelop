@@ -55,8 +55,6 @@ namespace ASCompletion.Completion
         static public ResolvedContext CurrentResolvedContext;
         static public event ResolvedContextChangeHandler OnResolvedContextChanged;
 
-        static private Braces[] AddClosingBracesData = new Braces[] { 
-            new Braces('(', ')'), new Braces('[', ']'), new Braces('{', '}'), new Braces('"', '"'), new Braces('\'', '\'') };
         #endregion
 
         #region application_event_handlers
@@ -400,56 +398,110 @@ namespace ASCompletion.Completion
         #endregion
 
         #region add_closing_braces
+
         public static void HandleAddClosingBraces(ScintillaControl sci, char c, bool addedChar)
         {
-            if (!ASContext.CommonSettings.AddClosingBraces)
-                return;
-
-            if (IsTextStyle(sci.BaseStyleAt(sci.CurrentPos - 2)) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
+            if (!ASContext.CommonSettings.AddClosingBraces) return;
+            
+            if (addedChar)
             {
-                foreach (Braces braces in AddClosingBracesData)
-                {
-                    if (addedChar)
-                        HandleAddBrace(sci, c, braces);
-                    else
-                        HandleRemoveBrace(sci, c, braces);
-                }
-            }
-        }
+                bool added = false;
+                sci.BeginUndoAction();
 
-        private static void HandleAddBrace(ScintillaControl sci, char c, Braces braces)
-        {
-            if (ASContext.CommonSettings.AddClosingBraces)
-            {
-                if (c == braces.opening)
+                // Get the before & after style values unaffected by the entered char
+                sci.DeleteBack();
+                sci.Colourise(0, -1);
+                byte styleAfter = (byte) sci.BaseStyleAt(sci.CurrentPos);
+                byte styleBefore = (byte) sci.BaseStyleAt(sci.CurrentPos - 1);
+                sci.AddText(1, c.ToString());
+                
+                // not inside a string literal
+                if (!IsStringStyle(styleBefore) && !IsCharStyle(styleBefore) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
                 {
-                    // already an opening brace?
-                    if ((char)sci.CharAt(sci.CurrentPos - 2) != braces.opening)
+                    foreach (var braces in ASContext.CommonSettings.AddClosingBracesOptions)
                     {
-                        sci.InsertText(sci.CurrentPos, braces.closing.ToString());
+                        // Handle opening first for braces that have equal opening & closing chars
+                        if (HandleAddOpeningBrace(sci, c, braces, styleAfter, styleBefore)
+                            || HandleAddClosingBrace(sci, c, braces))
+                        {
+                            added = true;
+                            break;
+                        }
                     }
                 }
-                else if (c == braces.closing)
+                else if (c == '"' && IsStringStyle(styleAfter) || c == '\'' && IsCharStyle(styleAfter))
                 {
-                    // already a closing brace?
-                    if (sci.CurrentChar == braces.closing)
+                    if (!IsEscapedCharacter(sci, sci.CurrentPos - 1))
                     {
-                        sci.DeleteForward();
+                        foreach (var braces in ASContext.CommonSettings.AddClosingBracesOptions)
+                        {
+                            if (HandleAddClosingBrace(sci, c, braces))
+                            {
+                                added = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                sci.EndUndoAction();
+                if (!added) sci.Undo();
+            }
+            else
+            {
+                // get the style of the char before deleted char
+                int style = sci.BaseStyleAt(sci.CurrentPos - 2);
+
+                // not inside a string literal
+                if (!IsStringStyle(style) && !IsCharStyle(style) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
+                {
+                    foreach (var braces in ASContext.CommonSettings.AddClosingBracesOptions)
+                    {
+                        if (HandleRemoveBrace(sci, c, braces)) break;
                     }
                 }
             }
         }
 
-        private static void HandleRemoveBrace(ScintillaControl sci, char c, Braces braces)
+        static bool HandleAddOpeningBrace(ScintillaControl sci, char c, Braces braces, byte styleAfter, byte styleBefore)
         {
-            if (ASContext.CommonSettings.AddClosingBraces && c == braces.closing)
+            if (c == braces.Opening)
             {
-                if ((char)sci.CharAt(sci.CurrentPos - 1) == braces.opening)
+                char charAfter = (char) sci.CharAt(sci.CurrentPos);
+                char charBefore = (char) sci.CharAt(sci.CurrentPos - 2);
+
+                if (braces.ShouldAutoClose(charAfter, styleAfter, charBefore, styleBefore))
                 {
-                    sci.DeleteForward();
+                    sci.InsertText(-1, braces.Closing.ToString());
                 }
+                return true;
             }
+
+            return false;
         }
+
+        static bool HandleAddClosingBrace(ScintillaControl sci, char c, Braces braces)
+        {
+            if (c == braces.Closing && c == sci.CurrentChar)
+            {
+                sci.DeleteForward();
+                return true;
+            }
+
+            return false;
+        }
+
+        static bool HandleRemoveBrace(ScintillaControl sci, char c, Braces braces)
+        {
+            if (c == braces.Closing && sci.CharAt(sci.CurrentPos - 1) == braces.Opening)
+            {
+                sci.DeleteForward();
+                return true;
+            }
+
+            return false;
+        }
+
         #endregion
 
         #region plugin commands
@@ -495,7 +547,7 @@ namespace ASCompletion.Completion
                 // open the file
                 return OpenDocumentToDeclaration(Sci, result);
             }
-            // show overriden method
+            // show overridden method
             else if (ASContext.Context.CurrentMember != null 
                 && ASContext.Context.Features.overrideKey != null
                 && Sci.GetWordFromPosition(position) == ASContext.Context.Features.overrideKey)
@@ -656,7 +708,7 @@ namespace ASCompletion.Completion
                         if (m.Success)
                         {
                             int position = sci.PositionFromLine(i) + sci.MBSafeTextLength(text.Substring(0, m.Groups["name"].Index));
-                            sci.EnsureVisible(sci.LineFromPosition(position));
+                            sci.EnsureVisibleEnforcePolicy(sci.LineFromPosition(position));
                             sci.SetSel(position, position + m.Groups["name"].Length);
                             found = true;
                             break;
@@ -2080,12 +2132,12 @@ namespace ASCompletion.Completion
 
         #region types_completion
 
-        static private void SelectTypedNewMember(ScintillaControl sci)
+        static private string SelectTypedNewMember(ScintillaControl sci)
         {
             try
             {
                 ASExpr expr = GetExpression(sci, sci.CurrentPos);
-                if (expr.Value == null) return;
+                if (expr.Value == null) return null;
                 IASContext ctx = ASContext.Context;
                 // try local var
                 expr.LocalVars = ParseLocalVars(expr);
@@ -2093,14 +2145,7 @@ namespace ASCompletion.Completion
                 {
                     if (localVar.LineTo == ctx.CurrentLine)
                     {
-                        if (localVar.Type != null) // Might be non typed var
-                        {
-                            string typeName = localVar.Type;
-                            ClassModel aClass = ctx.ResolveType(typeName, ctx.CurrentModel);
-                            if (!aClass.IsVoid()) typeName = aClass.Type;
-                            CompletionList.SelectItem(typeName);
-                        }
-                        return;
+                        return localVar.Type;
                     }
                 }
                 // try member
@@ -2112,36 +2157,93 @@ namespace ASCompletion.Completion
                     ASResult result = EvalExpression(name, expr, ctx.CurrentModel, ctx.CurrentClass, true, false);
                     if (result != null && result.Member != null && result.Member.Type != null) // Might be missing or wrongly typed member
                     {
-                        string typeName = result.Member.Type;
-                        ClassModel aClass = ctx.ResolveType(typeName, ctx.CurrentModel);
-                        if (!aClass.IsVoid()) typeName = aClass.Type;
-                        CompletionList.SelectItem(typeName);
+                        return result.Member.Type;
                     }
                 }
             }
             catch {} // Do not throw exception with incorrect types
+
+            return null;
         }
 
-        static private bool HandleNewCompletion(ScintillaControl Sci, string tail, bool autoHide, string keyword)
+        static private bool HandleNewCompletion(ScintillaControl sci, string tail, bool autoHide, string keyword)
         {
+            List<ICompletionListItem> list;
+
             if (!ASContext.Context.Settings.LazyClasspathExploration
                 && ASContext.Context.Settings.CompletionListAllTypes)
             {
                 // show all project classes
-                HandleAllClassesCompletion(Sci, tail, true, true);
-                SelectTypedNewMember(Sci);
+                list = GetAllClasses(sci, true, true);
+
+                if (list == null) return true;
             }
             else
             {
                 // Consolidate known classes
                 MemberList known = GetVisibleElements();
-                // show
-                List<ICompletionListItem> list = new List<ICompletionListItem>();
+                list = new List<ICompletionListItem>();
                 foreach (MemberModel member in known)
                     list.Add(new MemberItem(new MemberModel(member.Type, member.Type, member.Flags, member.Access)));
-                CompletionList.Show(list, autoHide, tail);
-                SelectTypedNewMember(Sci);
             }
+
+            // If we are instantiating a class:
+            //    1. Type exists:
+            //       a. Generic type -> Show it with our index type.
+            //       b. Not generic type -> Show existing one
+            //    2. Type doesn't exist -> Show it with a warning symbol.
+            string newItemType;
+            if (keyword == "new" && (newItemType = SelectTypedNewMember(sci)) != null)
+            {
+                IASContext ctx = ASContext.Context;
+                ClassModel aClass = ctx.ResolveType(newItemType, ctx.CurrentModel);
+
+                ICompletionListItem newItem;
+                if (!aClass.IsVoid())
+                {
+                    // AS2 special srictly typed Arrays supports
+                    int p = newItemType.IndexOf('@');
+                    if (p > -1)
+                    {
+                        newItemType = newItemType.Substring(0, p);
+                        newItem = null;
+                    }
+                    else if (!string.IsNullOrEmpty(aClass.IndexType))
+                    {
+                        newItemType = aClass.QualifiedName;
+                        newItem = new MemberItem(new MemberModel(newItemType, aClass.Type, aClass.Flags, aClass.Access));
+                    }
+                    else
+                    {
+                        newItem = null;
+                    }
+                }
+                else if (newItemType == "Vector.")
+                {
+                    // HACK: Vector.<*> is wrongly parsed! should be looked into. Remove once it's fixed.
+                    newItemType = "Vector";
+                    newItem = null;
+                }
+                else
+                {
+                    newItem = new NonexistentMemberItem(newItemType);
+                }
+
+                if (newItem != null)
+                {
+                    int itemIndex = list.FindIndex(item => string.Compare(item.Label, newItemType, StringComparison.OrdinalIgnoreCase) >= 0);
+                    itemIndex = itemIndex > 0 ? itemIndex - 1 : 0;
+                    list.Insert(itemIndex, newItem);
+                }
+
+                CompletionList.Show(list, autoHide, tail);
+                CompletionList.SelectItem(newItemType);
+            }
+            else
+            {
+                CompletionList.Show(list, autoHide, tail);
+            }
+
             return true;
         }
 
@@ -2290,74 +2392,7 @@ namespace ASCompletion.Completion
         /// <param name="Sci"></param>
         static public void HandleAllClassesCompletion(ScintillaControl Sci, string tail, bool classesOnly, bool showClassVars)
         {
-            MemberList known = ASContext.Context.GetAllProjectClasses();
-            if (known.Count == 0) return;
-
-            // get local Class vars
-            if (showClassVars)
-            {
-                MemberList found = new MemberList();
-
-                ASExpr expr = GetExpression(Sci, Sci.CurrentPos);
-                if (expr.Value != null)
-                {
-                    MemberList locals = ParseLocalVars(expr);
-                    foreach (MemberModel local in locals)
-                        if (local.Type == "Class")
-                            found.Add(local);
-                }
-
-                if (found.Count > 0)
-                {
-                    found.Sort();
-                    found.Merge(known);
-                    known = found;
-                }
-            }
-
-            if (!ASContext.Context.CurrentClass.IsVoid())
-            {
-                if (ASContext.Context.Features.hasDelegates)
-                {
-                    MemberList delegates = new MemberList();
-
-                    foreach (MemberModel field in ASContext.Context.CurrentClass.Members)
-                        if ((field.Flags & FlagType.Delegate) > 0)
-                            delegates.Add(field);
-
-                    if (delegates.Count > 0)
-                    {
-                        delegates.Sort();
-                        delegates.Merge(known);
-                        known = delegates;
-                    }
-                }
-
-                if (ASContext.Context.Features.hasGenerics)
-                {
-                    var typeParams = GetVisibleTypeParameters();
-
-                    if (typeParams != null && typeParams.Items.Count > 0)
-                    {
-                        typeParams.Sort();
-                        typeParams.Merge(known);
-                        known = typeParams;
-                    }
-                }
-            }
-
-            List<ICompletionListItem> list = new List<ICompletionListItem>();
-            string prev = null;
-            FlagType mask = (classesOnly) ? 
-                FlagType.Class | FlagType.Interface | FlagType.Enum | FlagType.Delegate | FlagType.Struct | FlagType.TypeDef
-                : (FlagType)uint.MaxValue;
-            foreach (MemberModel member in known)
-            {
-                if ((member.Flags & mask) == 0 || prev == member.Name) 
-                    if (!showClassVars || member.Type != "Class") continue;
-                prev = member.Name;
-                list.Add(new MemberItem(member));
-            }
+            List<ICompletionListItem> list = GetAllClasses(Sci, classesOnly, showClassVars);
 
             CompletionList.Show(list, false, tail);
         }
@@ -3618,7 +3653,7 @@ namespace ASCompletion.Completion
         /// TODO  ASComplete: parse coma separated local vars definitions
         /// </summary>
         /// <param name="expression">Expression source</param>
-        /// <returns>Local vars dictionnary (name, type)</returns>
+        /// <returns>Local vars dictionary (name, type)</returns>
         public static MemberList ParseLocalVars(ASExpr expression)
         {
             FileModel model;
@@ -3688,9 +3723,36 @@ namespace ASCompletion.Completion
 
         #region tools_functions
 
+        /// <summary>
+        /// Text style is a literal.
+        /// </summary>
         public static bool IsLiteralStyle(int style)
         {
-            return (style == 4) || (style == 6) || (style == 7);
+            return IsNumericStyle(style) || IsStringStyle(style) || IsCharStyle(style);
+        }
+
+        /// <summary>
+        /// Text style is a numeric literal.
+        /// </summary>
+        public static bool IsNumericStyle(int style)
+        {
+            return style == 4;
+        }
+
+        /// <summary>
+        /// Text style is a string literal.
+        /// </summary>
+        public static bool IsStringStyle(int style)
+        {
+            return style == 6;
+        }
+
+        /// <summary>
+        /// Text style is character literal.
+        /// </summary>
+        public static bool IsCharStyle(int style)
+        {
+            return style == 7;
         }
 
         /// <summary>
@@ -3851,6 +3913,80 @@ namespace ASCompletion.Completion
             return retVal;
         }
 
+        static private List<ICompletionListItem> GetAllClasses(ScintillaControl sci, bool classesOnly, bool showClassVars)
+        {
+            MemberList known = ASContext.Context.GetAllProjectClasses();
+            if (known.Count == 0) return null;
+
+            // get local Class vars
+            if (showClassVars)
+            {
+                MemberList found = new MemberList();
+
+                ASExpr expr = GetExpression(sci, sci.CurrentPos);
+                if (expr.Value != null)
+                {
+                    MemberList locals = ParseLocalVars(expr);
+                    foreach (MemberModel local in locals)
+                        if (local.Type == "Class")
+                            found.Add(local);
+                }
+
+                if (found.Count > 0)
+                {
+                    found.Sort();
+                    found.Merge(known);
+                    known = found;
+                }
+            }
+
+            if (!ASContext.Context.CurrentClass.IsVoid())
+            {
+                if (ASContext.Context.Features.hasDelegates)
+                {
+                    MemberList delegates = new MemberList();
+
+                    foreach (MemberModel field in ASContext.Context.CurrentClass.Members)
+                        if ((field.Flags & FlagType.Delegate) > 0)
+                            delegates.Add(field);
+
+                    if (delegates.Count > 0)
+                    {
+                        delegates.Sort();
+                        delegates.Merge(known);
+                        known = delegates;
+                    }
+                }
+
+                if (ASContext.Context.Features.hasGenerics)
+                {
+                    var typeParams = GetVisibleTypeParameters();
+
+                    if (typeParams != null && typeParams.Items.Count > 0)
+                    {
+                        typeParams.Sort();
+                        typeParams.Merge(known);
+                        known = typeParams;
+                    }
+                }
+            }
+
+            List<ICompletionListItem> list = new List<ICompletionListItem>();
+            string prev = null;
+            FlagType mask = (classesOnly) ?
+                FlagType.Class | FlagType.Interface | FlagType.Enum | FlagType.Delegate | FlagType.Struct | FlagType.TypeDef
+                : (FlagType)uint.MaxValue;
+            foreach (MemberModel member in known)
+            {
+                if ((member.Flags & mask) == 0 || prev == member.Name)
+                    if (!showClassVars || member.Type != "Class") continue;
+                prev = member.Name;
+                list.Add(new MemberItem(member));
+            }
+
+            return list;
+        }
+
         private static MemberList GetVisibleElements()
         {
             MemberList known = ASContext.Context.GetVisibleExternalElements();
@@ -3917,6 +4053,19 @@ namespace ASCompletion.Completion
             return false;
         }
 
+        static bool IsEscapedCharacter(ScintillaControl sci, int position)
+        {
+            bool escaped = false;
+
+            for (int i = position - 1; i >= 0; i--)
+            {
+                if (sci.CharAt(i) != '\\') break;
+                escaped = !escaped;
+            }
+
+            return escaped;
+        }
+
         /// <summary>
         /// Whether the character at the position is inside of the
         /// brackets of haxe metadata (@:allow(path) etc)
@@ -3954,6 +4103,48 @@ namespace ASCompletion.Completion
         #endregion
 
         #region tooltips formatting
+        static public string GetCodeTipCode(ASResult result)
+        {
+            if (result.Member == null)
+            {
+                return result.Type != null ? result.Type.ToString() : null;
+            }
+
+            var file = GetFileContents(result.InFile);
+            if (string.IsNullOrEmpty(file))
+            {
+                return MemberTooltipText(result.Member, ClassModel.VoidClass);
+            }
+
+            int eolMode = LineEndDetector.DetectNewLineMarker(file, (Int32)PluginBase.MainForm.Settings.EOLMode);
+            var eolMarker = LineEndDetector.GetNewLineMarker(eolMode);
+            var lines = file.Split(new[] { eolMarker }, StringSplitOptions.None);
+            var code = new StringBuilder();
+            for (var index = result.Member.LineFrom; index < result.Member.LineTo; index++)
+            {
+                code.AppendLine(lines[index]);
+            }
+            code.Append(lines[result.Member.LineTo]);
+            return code.ToString();
+        }
+
+        static private string GetFileContents(FileModel model)
+        {
+            if (model != null && model.FileName.Length > 0 && File.Exists(model.FileName))
+            {
+                foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
+                {
+                    if (doc.IsEditable && doc.FileName.ToUpper() == model.FileName.ToUpper())
+                    {
+                        return doc.SciControl.Text;
+                    }
+                }
+                var info = FileHelper.GetEncodingFileInfo(model.FileName);
+                return info != null ? info.Contents : null;
+            }
+            return null;
+        }
+
         static public string GetToolTipText(ASResult result)
         {
             if (result.Member != null && result.InClass != null)
@@ -4406,13 +4597,70 @@ namespace ASCompletion.Completion
         {
             get 
             {
-                if (member.Name.IndexOf('<') > 0)
+                if (member.Name.IndexOf('<') > 0 && member.Template != null)
                 {
-                    if (member.Name.IndexOfOrdinal(".<") > 0) 
+                    if (member.Name.IndexOfOrdinal(".<") > 0)
                         return member.Name.Substring(0, member.Name.IndexOfOrdinal(".<"));
-                    else return member.Name.Substring(0, member.Name.IndexOf('<'));
+
+                    return member.Name.Substring(0, member.Name.IndexOf('<'));
                 }
-                return member.Name; 
+                return member.Name;
+            }
+        }
+
+        public override string ToString()
+        {
+            return Label;
+        }
+    }
+
+    /// <summary>
+    /// Nonexistent member completion list item
+    /// </summary>
+    public class NonexistentMemberItem : ICompletionListItem
+    {
+        private static Bitmap icon; 
+
+        private string memberName;
+
+        public NonexistentMemberItem(string memberName)
+        {
+            this.memberName = memberName;
+        }
+
+        public string Label
+        {
+            get { return memberName; }
+        }
+
+        public virtual string Description
+        {
+            get
+            {
+                return memberName;
+            }
+        }
+
+        public Bitmap Icon
+        {
+            get
+            {
+                if (icon == null) icon = (Bitmap)PluginBase.MainForm.FindImage("197");
+                return icon;
+            }
+        }
+
+        public string Value
+        {
+            get
+            {
+                if (memberName.IndexOf('<') > 0)
+                {
+                    if (memberName.IndexOfOrdinal(".<") > 0)
+                        return memberName.Substring(0, memberName.IndexOfOrdinal(".<"));
+                    else return memberName.Substring(0, memberName.IndexOf('<'));
+                }
+                return memberName;
             }
         }
 
@@ -4587,18 +4835,6 @@ namespace ASCompletion.Completion
         public bool IsNull()
         {
             return (Type == null && Member == null && !IsPackage);
-        }
-    }
-
-    sealed class Braces
-    {
-        public char opening;
-        public char closing;
-
-        public Braces(char opening, char closing)
-        {
-            this.opening = opening;
-            this.closing = closing;
         }
     }
 

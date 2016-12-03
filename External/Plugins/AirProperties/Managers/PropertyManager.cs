@@ -52,7 +52,8 @@ namespace AirProperties
             V190 = 26,    // Version 19.0
             V200 = 27,    // Version 20.0
             V210 = 28,    // Version 21.0
-            V220 = 29     // Version 22.0
+            V220 = 29,    // Version 22.0
+            V230 = 34     // Version 23.0
         }
 
         public static Exception LastException
@@ -135,11 +136,12 @@ namespace AirProperties
                     else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "20.0")) _version = AirVersion.V200;
                     else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "21.0")) _version = AirVersion.V210;
                     else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "22.0")) _version = AirVersion.V220;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "23.0")) _version = AirVersion.V230;
                     else
                     {
                         // Is a valid AIR descriptor, but version not supported so default to max supported version
                         _unsupportedVersion = true;
-                        _version = AirVersion.V220;
+                        _version = AirVersion.V230;
                     }
                 }
                 _namespaceManager = new XmlNamespaceManager(_descriptorFile.NameTable);

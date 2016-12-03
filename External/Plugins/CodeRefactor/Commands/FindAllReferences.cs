@@ -16,22 +16,16 @@ namespace CodeRefactor.Commands
     /// </summary>
     public class FindAllReferences : RefactorCommand<IDictionary<String, List<SearchMatch>>>
     {
-        private ASResult currentTarget;
-        private Boolean outputResults;
-        private Boolean ignoreDeclarationSource;
+        protected bool IgnoreDeclarationSource { get; private set; }
 
         /// <summary>
         /// Gets or sets if searching is only performed on user defined classpaths
         /// </summary>
         public Boolean OnlySourceFiles { get; set; }
 
-        /// <summary>
-        /// The current declaration target that references are being found to.
-        /// </summary>
-        public ASResult CurrentTarget
-        {
-            get { return this.currentTarget; }
-        }
+        public bool IncludeComments { get; set; }
+
+        public bool IncludeStrings { get; set; }
 
         /// <summary>
         /// A new FindAllReferences refactoring command. Outputs found results.
@@ -48,7 +42,6 @@ namespace CodeRefactor.Commands
         /// <param name="output">If true, will send the found results to the trace log and results panel</param>
         public FindAllReferences(Boolean output) : this(RefactoringHelper.GetDefaultRefactorTarget(), output)
         {
-            this.outputResults = output;
         }
 
         /// <summary>
@@ -61,15 +54,16 @@ namespace CodeRefactor.Commands
         }
 
         /// <summary>
-        /// 
+        /// A new FindAllReferences refactoring command.
         /// </summary>
         /// <param name="target">The target declaration to find references to.</param>
         /// <param name="output">If true, will send the found results to the trace log and results panel</param>
+        /// <param name="ignoreDeclarations"></param>
         public FindAllReferences(ASResult target, Boolean output, Boolean ignoreDeclarations)
         {
-            this.currentTarget = target;
-            this.outputResults = output;
-            this.ignoreDeclarationSource = ignoreDeclarations;
+            CurrentTarget = target;
+            OutputResults = output;
+            IgnoreDeclarationSource = ignoreDeclarations;
         }
 
         #region RefactorCommand Implementation
@@ -82,7 +76,7 @@ namespace CodeRefactor.Commands
             UserInterfaceManager.ProgressDialog.Show();
             UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("Info.FindingReferences"));
             UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.SearchingFiles"));
-            RefactoringHelper.FindTargetInFiles(currentTarget, new FRProgressReportHandler(this.RunnerProgress), new FRFinishedHandler(this.FindFinished), true, OnlySourceFiles, true);
+            RefactoringHelper.FindTargetInFiles(CurrentTarget, RunnerProgress, FindFinished, true, OnlySourceFiles, true, IncludeComments, IncludeStrings);
         }
 
         /// <summary>
@@ -90,7 +84,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         public override Boolean IsValid()
         {
-            return this.currentTarget != null;
+            return CurrentTarget != null;
         }
 
         #endregion
@@ -109,14 +103,14 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Invoked when the FRSearch completes its search
         /// </summary>
-        private void FindFinished(FRResults results)
+        protected void FindFinished(FRResults results)
         {
 
             UserInterfaceManager.ProgressDialog.Reset();
             UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.ResolvingReferences"));
             // First filter out any results that don't actually point to our source declaration
-            this.Results = ResolveActualMatches(results, currentTarget);
-            if (this.outputResults) this.ReportResults();
+            this.Results = ResolveActualMatches(results, CurrentTarget);
+            if (OutputResults) this.ReportResults();
             UserInterfaceManager.ProgressDialog.Hide();
             // Select first match
             if (this.Results.Count > 0)
@@ -150,6 +144,7 @@ namespace CodeRefactor.Commands
                 totalMatches += entry.Value.Count;
             }
             Boolean foundDeclarationSource = false;
+            bool optionsEnabled = IncludeComments || IncludeStrings;
             foreach (KeyValuePair<String, List<SearchMatch>> entry in initialResultsList)
             {
                 String currentFileName = entry.Key;
@@ -161,22 +156,32 @@ namespace CodeRefactor.Commands
                     // we have to do it each time as the process of checking the declaration source can change the currently open file!
                     ScintillaControl sci = this.AssociatedDocumentHelper.LoadDocument(currentFileName).SciControl;
                     // if the search result does point to the member source, store it
+                    bool add = false;
                     if (RefactoringHelper.DoesMatchPointToTarget(sci, match, target, this.AssociatedDocumentHelper))
                     {
-                        if (ignoreDeclarationSource && !foundDeclarationSource && RefactoringHelper.IsMatchTheTarget(sci, match, target))
+                        if (IgnoreDeclarationSource && !foundDeclarationSource && RefactoringHelper.IsMatchTheTarget(sci, match, target))
                         {
                             //ignore the declaration source
                             foundDeclarationSource = true;
                         }
                         else
                         {
-                            if (!actualMatches.ContainsKey(currentFileName))
-                            {
-                                actualMatches.Add(currentFileName, new List<SearchMatch>());
-                            }
-                            actualMatches[currentFileName].Add(match);
+                            add = true;
                         }
                     }
+                    else if (optionsEnabled)
+                    {
+                        add = RefactoringHelper.IsInsideCommentOrString(match, sci, IncludeComments, IncludeStrings);
+                    }
+
+                    if (add)
+                    {
+                        if (!actualMatches.ContainsKey(currentFileName))
+                            actualMatches.Add(currentFileName, new List<SearchMatch>());
+
+                        actualMatches[currentFileName].Add(match);
+                    }
+
                     matchesChecked++;
                     UserInterfaceManager.ProgressDialog.UpdateProgress((100 * matchesChecked) / totalMatches);
                 }

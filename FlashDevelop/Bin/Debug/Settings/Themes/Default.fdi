@@ -4,6 +4,9 @@
 
 #ScrollBar.UseGlobally=True
 
+#ProjectManager.TargetBuildSelectorWidth=85
+#ProjectManager.ConfigurationSelectorWidth=120
+
 # FD UI THEME (5.1+)
 
 # System, Professional
@@ -11,9 +14,6 @@
 
 # Flat, Popup, Standard, System
 #ComboBox.FlatStyle=Popup
-
-#ProjectManager.TargetBuildSelectorWidth=85
-#ProjectManager.ConfigurationSelectorWidth=120
 
 ScrollBar.UseCustom=False
 #ScrollBar.HotForeColor=#888888

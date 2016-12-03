@@ -149,7 +149,7 @@ namespace ProjectManager.Actions
             project.TestMovieCommand = "bat\\RunApp.bat";
 
             // CrossOver template related mod
-            if (Win32.isRunningOnWine())
+            if (PlatformHelper.isRunningOnWine())
             {
                 project.TestMovieCommand += " $(TargetBuild)";
             }

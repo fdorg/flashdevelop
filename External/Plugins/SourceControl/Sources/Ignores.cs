@@ -42,7 +42,7 @@ namespace SourceControl.Sources
                     entry = Regex.Escape(entry);
                     if (entry.StartsWith('/')) entry = "^" + entry.Substring(1);
                     entry = entry.Replace("\\*", ".*");
-                    entry = entry.Replace("/", "\\");
+                    entry = entry.Replace("/", "\\\\");
                     Add(new IgnoreEntry("", new Regex(entry)));
                 }
             }

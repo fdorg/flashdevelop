@@ -32,7 +32,6 @@ namespace ASCompletion.Completion
         const string BlankLine = "$(Boundary)\n\n";
         const string NewLine = "$(Boundary)\n";
         static private Regex reModifiers = new Regex("^\\s*(\\$\\(Boundary\\))?([a-z ]+)(function|var|const)", RegexOptions.Compiled);
-        static private Regex reModifier = new Regex("(public |private |protected )", RegexOptions.Compiled);
         static private Regex reSuperCall = new Regex("^super\\s*\\(", RegexOptions.Compiled);
 
         static internal string contextToken;
@@ -139,9 +138,22 @@ namespace ASCompletion.Completion
                     return;
                 }
                 // inside a function
-                else if ((found.member.Flags & (FlagType.Function | FlagType.Getter | FlagType.Setter)) > 0
+                if ((found.member.Flags & (FlagType.Function | FlagType.Getter | FlagType.Setter)) > 0
                     && resolve.Member == null && resolve.Type == null)
                 {
+                    if (IsHaxe)
+                    {
+                        if (contextToken == "get")
+                        {
+                            ShowGetterList(found, options);
+                            return;
+                        }
+                        if (contextToken == "set")
+                        {
+                            ShowSetterList(found, options);
+                            return;
+                        }
+                    }
                     if (contextToken != null)
                     {
                         // "generate event handlers" suggestion
@@ -835,16 +847,28 @@ namespace ASCompletion.Completion
                 string label = TextHelper.GetString("ASCompletion.Label.GenerateGetSet");
                 options.Add(new GeneratorItem(label, GeneratorJobType.GetterSetter, found.member, found.inClass));
             }
-            if (!hasGetter)
-            {
-                string label = TextHelper.GetString("ASCompletion.Label.GenerateGet");
-                options.Add(new GeneratorItem(label, GeneratorJobType.Getter, found.member, found.inClass));
-            }
-            if (!hasSetter)
-            {
-                string label = TextHelper.GetString("ASCompletion.Label.GenerateSet");
-                options.Add(new GeneratorItem(label, GeneratorJobType.Setter, found.member, found.inClass));
-            }
+            ShowGetterList(found, options);
+            ShowSetterList(found, options);
+        }
+
+        static void ShowGetterList(FoundDeclaration found, ICollection<ICompletionListItem> options)
+        {
+            var name = GetPropertyNameFor(found.member);
+            var result = new ASResult();
+            ASComplete.FindMember(name, ASContext.Context.CurrentClass, result, FlagType.Getter, 0);
+            if (!result.IsNull()) return;
+            var label = TextHelper.GetString("ASCompletion.Label.GenerateGet");
+            options.Add(new GeneratorItem(label, GeneratorJobType.Getter, found.member, found.inClass));
+        }
+
+        static void ShowSetterList(FoundDeclaration found, ICollection<ICompletionListItem> options)
+        {
+            var name = GetPropertyNameFor(found.member);
+            var result = new ASResult();
+            ASComplete.FindMember(name, ASContext.Context.CurrentClass, result, FlagType.Setter, 0);
+            if (!result.IsNull()) return;
+            var label = TextHelper.GetString("ASCompletion.Label.GenerateSet");
+            options.Add(new GeneratorItem(label, GeneratorJobType.Setter, found.member, found.inClass));
         }
 
         private static bool GetLangIsValid()
@@ -1282,8 +1306,7 @@ namespace ASCompletion.Completion
             template = TemplateUtils.ReplaceTemplateVariable(template, "Name", varname);
             template = TemplateUtils.ReplaceTemplateVariable(template, "Type", cleanType);
 
-            int indent = sci.GetLineIndentation(lineNum);
-            int pos = sci.PositionFromLine(lineNum) + indent / sci.Indent;
+            var pos = sci.LineIndentPosition(lineNum);
 
             sci.CurrentPos = pos;
             sci.SetSel(pos, pos);
@@ -1306,7 +1329,7 @@ namespace ASCompletion.Completion
                 }
                 List<string> l = new List<string>();
                 l.Add(GetQualifiedType(type, inClassForImport));
-                pos += AddImportsByName(l, sci.LineFromPosition(pos));
+                AddImportsByName(l, sci.LineFromPosition(pos));
             }
         }
 
@@ -1855,7 +1878,7 @@ namespace ASCompletion.Completion
 
             int funcBodyStart = -1;
 
-            int genCount = 0;
+            int genCount = 0, parCount = 0;
             for (int i = posStart; i <= posEnd; i++)
             {
                 char c = (char)sci.CharAt(i);
@@ -1863,7 +1886,7 @@ namespace ASCompletion.Completion
                 if (c == '{')
                 {
                     int style = sci.BaseStyleAt(i);
-                    if (ASComplete.IsCommentStyle(style) || ASComplete.IsLiteralStyle(style) || genCount > 0)
+                    if (ASComplete.IsCommentStyle(style) || ASComplete.IsLiteralStyle(style) || genCount > 0 || parCount > 0)
                         continue;
                     funcBodyStart = i;
                     break;
@@ -1877,8 +1900,20 @@ namespace ASCompletion.Completion
                 else if (c == '>')
                 {
                     int style = sci.BaseStyleAt(i);
-                    if (style == 10)
+                    if (style == 10 && genCount > 0)
                         genCount--;
+                }
+                else if (c == '(')
+                {
+                    int style = sci.BaseStyleAt(i);
+                    if (style == 10)
+                        parCount++;
+                }
+                else if (c == ')')
+                {
+                    int style = sci.BaseStyleAt(i);
+                    if (style == 10)
+                        parCount--;
                 }
             }
 
@@ -3872,7 +3907,7 @@ namespace ASCompletion.Completion
             List<MemberModel> members = new List<MemberModel>();
             curClass.ResolveExtends(); // Resolve inheritance chain
 
-            // explore function or getters or setters
+            // explore getters or setters
             FlagType mask = FlagType.Function | FlagType.Getter | FlagType.Setter;
             ClassModel tmpClass = curClass.Extends;
             Visibility acc = ctx.TypesAffinity(curClass, tmpClass);
@@ -3890,9 +3925,16 @@ namespace ASCompletion.Completion
                 else
                 {
                     foreach (MemberModel member in tmpClass.Members)
+                    {
+                        var parameters = member.Parameters;
                         if ((member.Flags & FlagType.Dynamic) > 0
-                            && (member.Flags & mask) > 0
-                            && (member.Access & acc) > 0) members.Add(member);
+                            && (member.Access & acc) > 0
+                            && ((member.Flags & FlagType.Function) > 0 
+                                || ((member.Flags & mask) > 0 && (!IsHaxe || parameters[0].Name == "get" || parameters[1].Name == "set"))))
+                        {
+                            members.Add(member);
+                        }
+                    }
 
                     tmpClass = tmpClass.Extends;
                     // members visibility
@@ -3915,7 +3957,7 @@ namespace ASCompletion.Completion
             return true;
         }
 
-        static public void GenerateOverride(ScintillaControl Sci, ClassModel ofClass, MemberModel member, int position)
+        public static void GenerateOverride(ScintillaControl Sci, ClassModel ofClass, MemberModel member, int position)
         {
             ContextFeatures features = ASContext.Context.Features;
             List<string> typesUsed = new List<string>();
@@ -3946,11 +3988,9 @@ namespace ASCompletion.Completion
             else if ((member.Access & Visibility.Private) > 0 && features.methodModifierDefault != Visibility.Private) 
                 acc = features.privateKey;
 
-            bool isStatic = (flags & FlagType.Static) > 0;
-            if (isStatic) acc = features.staticKey + " " + acc;
+            if ((flags & FlagType.Static) > 0) acc = features.staticKey + " " + acc;
 
-            if (!isAS2Event && !isObjectMethod)
-                acc = features.overrideKey + " " + acc;
+            if (!isAS2Event && !isObjectMethod) acc = features.overrideKey + " " + acc;
 
             acc = Regex.Replace(acc, "[ ]+", " ").Trim();
 
@@ -3958,21 +3998,16 @@ namespace ASCompletion.Completion
             {
                 string type = member.Type;
                 string name = member.Name;
-                if (member.Parameters != null && member.Parameters.Count == 1)
-                    type = member.Parameters[0].Type;
+                var parameters = member.Parameters;
+                if (parameters != null && parameters.Count == 1) type = parameters[0].Type;
                 type = FormatType(type);
                 if (type == null && !features.hasInference) type = features.objectKey;
-
-                bool genGetter = ofClass.Members.Search(name, FlagType.Getter, 0) != null;
-                bool genSetter = ofClass.Members.Search(name, FlagType.Setter, 0) != null;
-
                 if (IsHaxe)
                 {
                     // property is public but not the methods
                     acc = features.overrideKey;
                 }
-
-                if (genGetter)
+                if (ofClass.Members.Search(name, FlagType.Getter, 0) != null && (!IsHaxe || parameters[0].Name == "get"))
                 {
                     string tpl = TemplateUtils.GetTemplate("OverrideGetter", "Getter");
                     tpl = TemplateUtils.ReplaceTemplateVariable(tpl, "Modifiers", acc);
@@ -3981,7 +4016,7 @@ namespace ASCompletion.Completion
                     tpl = TemplateUtils.ReplaceTemplateVariable(tpl, "Member", "super." + name);
                     decl += tpl;
                 }
-                if (genSetter)
+                if (ofClass.Members.Search(name, FlagType.Setter, 0) != null && (!IsHaxe || parameters[1].Name == "set"))
                 {
                     string tpl = TemplateUtils.GetTemplate("OverrideSetter", "Setter");
                     tpl = TemplateUtils.ReplaceTemplateVariable(tpl, "Modifiers", acc);
@@ -3996,6 +4031,7 @@ namespace ASCompletion.Completion
                     decl += tpl;
                 }
                 decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", "");
+                typesUsed.Add(GetQualifiedType(type, ofClass));
             }
             else
             {
@@ -4022,7 +4058,7 @@ namespace ASCompletion.Completion
                 // fix parameters if needed
                 if (member.Parameters != null)
                     foreach (MemberModel para in member.Parameters)
-                       if (para.Type == "any") para.Type = "*";
+                        if (para.Type == "any") para.Type = "*";
 
                 template = TemplateUtils.ReplaceTemplateVariable(template, "Modifiers", acc);
                 template = TemplateUtils.ReplaceTemplateVariable(template, "Name", member.Name);
@@ -4459,8 +4495,8 @@ namespace ASCompletion.Completion
             sci.BeginUndoAction();
             try
             {
-                if (ASContext.CommonSettings.StartWithModifiers)
-                    src = FixModifiersLocation(src);
+                if (ASContext.CommonSettings.DeclarationModifierOrder.Length > 1)
+                    src = FixModifiersLocation(src, ASContext.CommonSettings.DeclarationModifierOrder);
 
                 int len = SnippetHelper.InsertSnippetText(sci, position + sci.MBSafeTextLength(sci.SelText), src);
                 UpdateLookupPosition(position, len);
@@ -4470,9 +4506,9 @@ namespace ASCompletion.Completion
         }
 
         /// <summary>
-        /// Move "visibility" modifier at the beginning of the line
+        /// Order declaration modifiers
         /// </summary>
-        private static string FixModifiersLocation(string src)
+        private static string FixModifiersLocation(string src, string[] modifierOrder)
         {
             bool needUpdate = false;
             string[] lines = src.Split('\n');
@@ -4481,20 +4517,44 @@ namespace ASCompletion.Completion
                 string line = lines[i];
 
                 Match m = reModifiers.Match(line);
-                if (m.Success)
+                if (!m.Success) continue;
+
+                Group decl = m.Groups[2];
+                string modifiers = decl.Value;
+                string before = "", after = "";
+                bool insertAfter = false;
+
+                for (int j = 0; j < modifierOrder.Length; j++)
                 {
-                    Group decl = m.Groups[2];
-                    Match m2 = reModifier.Match(decl.Value);
-                    if (m2.Success)
+                    string modifier = modifierOrder[j];
+                    if (modifier == GeneralSettings.DECLARATION_MODIFIER_REST) insertAfter = true;
+                    else
                     {
-                        string repl = m2.Value + decl.Value.Remove(m2.Index, m2.Length);
-                        lines[i] = line.Remove(decl.Index, decl.Length).Insert(decl.Index, repl);
-                        needUpdate = true;
+                        modifier = RemoveAndExtractModifier(modifier, ref modifiers);
+                        if (insertAfter) after += modifier;
+                        else before += modifier;
                     }
                 }
+
+                modifiers = before + modifiers + after;
+
+                if (decl.Value != modifiers)
+                {
+                    lines[i] = line.Remove(decl.Index, decl.Length).Insert(decl.Index, modifiers);
+                    needUpdate = true;
+                }
             }
-            if (needUpdate) return String.Join("\n", lines);
-            else return src;
+            return needUpdate ? string.Join("\n", lines) : src;
+        }
+
+        private static string RemoveAndExtractModifier(string modifier, ref string modifiers)
+        {
+            modifier += " ";
+            int index = modifiers.IndexOf(modifier, StringComparison.Ordinal);
+
+            if (index == -1) return null;
+            modifiers = modifiers.Remove(index, modifier.Length);
+            return modifier;
         }
 
         private static void UpdateLookupPosition(int position, int delta)

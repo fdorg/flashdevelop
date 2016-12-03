@@ -16,12 +16,12 @@ using PluginCore.Utilities;
 
 namespace HaXeContext
 {
-    internal delegate void HaxeCompleteResultHandler<T>(HaxeComplete hc, T result, HaxeCompleteStatus status);
+    public delegate void HaxeCompleteResultHandler<T>(HaxeComplete hc, T result, HaxeCompleteStatus status);
 
-    internal class HaxeComplete
+    public class HaxeComplete
     {
         static readonly Regex reArg =
-            new Regex("^(-cp|-resource)\\s*([^\"'].*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            new Regex("^(-cp|-resource|-cmd)\\s*([^\"'].*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         static readonly Regex reMacro =
             new Regex("^(--macro)\\s*([^\"'].*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         static readonly Regex reQuote =
@@ -80,13 +80,17 @@ namespace HaXeContext
 
         private void StartThread<T>(HaxeCompleteResultHandler<T> callback, Func<T> resultFunc)
         {
-            PluginBase.MainForm.CallCommand("Save", null);
-
+            SaveFile();
             ThreadPool.QueueUserWorkItem(_ =>
             {
-                Status = ParseLines(handler.GetCompletion(BuildHxmlArgs()));
+                Status = ParseLines(handler.GetCompletion(BuildHxmlArgs(), GetFileContent()));
                 Notify(callback, resultFunc());
             });
+        }
+
+        protected virtual void SaveFile()
+        {
+            PluginBase.MainForm.CallCommand("Save", null);
         }
 
         void Notify<T>(HaxeCompleteResultHandler<T> callback, T result)
@@ -103,7 +107,7 @@ namespace HaXeContext
 
         /* HAXE COMPILER ARGS */
 
-        string[] BuildHxmlArgs()
+        protected virtual string[] BuildHxmlArgs()
         {
             // check haxe project & context
             if (PluginBase.CurrentProject == null || !(PluginBase.CurrentProject is HaxeProject)
@@ -120,13 +124,16 @@ namespace HaXeContext
             QuotePath(hxmlArgs);
             EscapeMacros(hxmlArgs);
 
-            hxmlArgs.Insert(0, String.Format("--display \"{0}\"@{1}{2}", FileName, pos, GetMode()));
-            hxmlArgs.Insert(1, "-D use_rtti_doc");
-            hxmlArgs.Insert(2, "-D display-details");
-            
-            if (hxproj.TraceEnabled) hxmlArgs.Insert(2, "-debug");
-
+            hxmlArgs.Add(String.Format("--display \"{0}\"@{1}{2}", FileName, pos, GetMode()));
+            hxmlArgs.Add("-D use_rtti_doc");
+            hxmlArgs.Add("-D display-details");
+            if (hxproj.TraceEnabled) hxmlArgs.Add("-debug");
             return hxmlArgs.ToArray();
+        }
+
+        protected virtual string GetFileContent()
+        {
+            return null;
         }
 
         private string GetMode()
@@ -443,7 +450,7 @@ namespace HaXeContext
         }
     }
 
-    enum HaxeCompleteStatus: int
+    public enum HaxeCompleteStatus: int
     {
         NONE = 0,
         FAILED = 1,
@@ -454,20 +461,20 @@ namespace HaXeContext
         USAGE = 6
     }
 
-    enum HaxeCompilerService
+    public enum HaxeCompilerService
     {
         COMPLETION,
         POSITION,
         USAGE
     }
 
-    class HaxeCompleteResult
+    public class HaxeCompleteResult
     {
         public MemberModel Type;
         public MemberList Members;
     }
 
-    class HaxePositionResult
+    public class HaxePositionResult
     {
         public string Path;
         public HaxePositionCompleteRangeType RangeType;
@@ -477,7 +484,7 @@ namespace HaXeContext
         public int CharacterEnd;
     }
 
-    enum HaxePositionCompleteRangeType
+    public enum HaxePositionCompleteRangeType
     {
         CHARACTERS,
         LINES

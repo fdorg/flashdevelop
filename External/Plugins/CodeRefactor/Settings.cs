@@ -7,8 +7,11 @@ namespace CodeRefactor
     [Serializable]
     public class Settings
     {
-        private Boolean separatePackages = false;
-        private Boolean disableMoveRefactoring = false;
+        const bool DEFAULT_USE_INLINE_RENAMING = false;
+
+        private bool separatePackages = false;
+        private bool disableMoveRefactoring = false;
+        bool useInlineRenaming = DEFAULT_USE_INLINE_RENAMING;
 
         [DisplayName("Separate Packages")]
         [LocalizedDescription("CodeRefactor.Description.SeparatePackages"), DefaultValue(false)]
@@ -26,6 +29,12 @@ namespace CodeRefactor
             set { this.disableMoveRefactoring = value; }
         }
 
+        [DisplayName("Use Inline Renaming")]
+        [LocalizedDescription("CodeRefactor.Description.UseInlineRenaming"), DefaultValue(DEFAULT_USE_INLINE_RENAMING)]
+        public bool UseInlineRenaming
+        {
+            get { return useInlineRenaming; }
+            set { useInlineRenaming = value; }
+        }
     }
-
 }

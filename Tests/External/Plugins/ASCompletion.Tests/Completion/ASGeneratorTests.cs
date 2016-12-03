@@ -15,6 +15,7 @@ using ScintillaNet.Enums;
 using System.Text.RegularExpressions;
 using AS3Context;
 using HaXeContext;
+using NSubstitute.Extensions;
 using PluginCore.Helpers;
 
 namespace ASCompletion.Completion
@@ -39,7 +40,7 @@ namespace ASCompletion.Completion
             doc = Substitute.For<ITabbedDocument>();
             mainForm.Settings = settings;
             mainForm.CurrentDocument = doc;
-            mainForm.StandaloneMode = false;
+            mainForm.StandaloneMode = true;
             PluginBase.Initialize(mainForm);
             FlashDevelop.Managers.ScintillaManager.LoadConfiguration();
         }
@@ -89,6 +90,7 @@ namespace ASCompletion.Completion
                         .SetName("WithAnotherMemberInTheSameLine")
                         .Ignore("Having only LineFrom and LineTo for members is not enough to handle these cases. FlashDevelop in general is not too kind when it comes to several members in the same line, but we could change the method to use positions and try to get the proper position before.");
                     yield return new TestCaseData("function test<T:{}>(arg:T):void{\r\n\r\n}", 0, 1, "function test<T:{}>(arg:T):void{\r\n\r\n}", 34).SetName("BracketsInGenericConstraint");
+                    yield return new TestCaseData("function test(arg:{x:Int}):void{\r\n\r\n}", 0, 1, "function test(arg:{x:Int}):void{\r\n\r\n}", 34).SetName("AnonymousStructures");
                 }
             }
 
@@ -548,176 +550,6 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
-            public class GenerateExtractVariable : GenerateJob
-            {
-                public IEnumerable<TestCaseData> GenerateExtractVariableHaxeTestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateExtractVariableGeneric.hx"),
-                                    new MemberModel("main", null, FlagType.Static | FlagType.Function, 0)
-                                    {
-                                        LineFrom = 2,
-                                        LineTo = 4
-                                    },
-                                    "newVar"
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGenerateExtractVariableGeneric.hx"))
-                                .SetName("GenerateExtractVariable");
-
-                        yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeExtractLocalVariable_fromString.hx"),
-                                    new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
-                                    {
-                                        LineFrom = 4,
-                                        LineTo = 7
-                                    },
-                                    "newVar"
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterExtractLocalVariable_fromString.hx"))
-                                .SetName("ExtractLocaleVariable from String");
-
-                        yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeExtractLocalVariable_fromNumber.hx"),
-                                    new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
-                                    {
-                                        LineFrom = 4,
-                                        LineTo = 7
-                                    },
-                                    "newVar"
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterExtractLocalVariable_fromNumber.hx"))
-                                .SetName("ExtractLocaleVariable from Number");
-
-                        yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeExtractLocalVariable_inSinglelineMethod.hx"),
-                                    new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
-                                    {
-                                        LineFrom = 4,
-                                        LineTo = 5
-                                    },
-                                    "newVar"
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterExtractLocalVariable_inSinglelineMethod.hx"))
-                                .SetName("ExtractLocaleVariable in single line method");
-                    }
-                }
-
-                [Test, TestCaseSource("GenerateExtractVariableHaxeTestCases")]
-                public string Haxe(string sourceText, MemberModel currentMember, string newName)
-                {
-                    ASContext.Context.SetHaxeFeatures();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
-                    ASContext.Context.CurrentMember.Returns(currentMember);
-                    sci.Text = sourceText;
-                    sci.ConfigurationLanguage = "haxe";
-                    SnippetHelper.PostProcessSnippets(sci, 0);
-                    ASGenerator.GenerateExtractVariable(sci, newName);
-                    return sci.Text;
-                }
-
-                public IEnumerable<TestCaseData> GenerateExtractVariableAS3TestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeExtractLocalVariable.as"),
-                                    new MemberModel("ExtractLocalVariable", null, FlagType.Constructor | FlagType.Function, 0)
-                                    {
-                                        LineFrom = 4,
-                                        LineTo = 7
-                                    },
-                                    "newVar"
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterExtractLocalVariable.as"))
-                                .SetName("ExtractLocaleVariable");
-
-                        yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeExtractLocalVariable_fromString.as"),
-                                    new MemberModel("ExtractLocalVariable", null, FlagType.Constructor | FlagType.Function, 0)
-                                    {
-                                        LineFrom = 4,
-                                        LineTo = 7
-                                    },
-                                    "newVar"
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterExtractLocalVariable_fromString.as"))
-                                .SetName("ExtractLocaleVariable from String");
-
-                        yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeExtractLocalVariable_fromNumber.as"),
-                                    new MemberModel("ExtractLocalVariable", null, FlagType.Constructor | FlagType.Function, 0)
-                                    {
-                                        LineFrom = 4,
-                                        LineTo = 7
-                                    },
-                                    "newVar"
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterExtractLocalVariable_fromNumber.as"))
-                                .SetName("ExtractLocaleVariable from Number");
-
-                        yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeExtractLocalVariable_forCheckingThePositionOfNewVar.as"),
-                                    new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
-                                    {
-                                        LineFrom = 4,
-                                        LineTo = 10
-                                    },
-                                    "newVar"
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterExtractLocalVariable_forCheckingThePositionOfNewVar.as"))
-                                .SetName("ExtractLocaleVariable with checking the position of a new variable");
-                    }
-                }
-
-                [Test, TestCaseSource("GenerateExtractVariableAS3TestCases")]
-                public string AS3(string sourceText, MemberModel currentMember, string newName)
-                {
-                    ASContext.Context.SetAs3Features();
-                    ASContext.Context.CurrentModel.Returns(new FileModel { Context = ASContext.Context });
-                    ASContext.Context.CurrentMember.Returns(currentMember);
-                    sci.Text = sourceText;
-                    sci.ConfigurationLanguage = "as3";
-                    SnippetHelper.PostProcessSnippets(sci, 0);
-                    ASGenerator.GenerateExtractVariable(sci, newName);
-                    return sci.Text;
-                }
-            }
-
-            [TestFixture]
             public class PromoteLocal : GenerateJob
             {
                 public IEnumerable<TestCaseData> AS3TestCases
@@ -885,7 +717,7 @@ namespace ASCompletion.Completion
                 [TestFixtureSetUp]
                 public void GenerateFunctionSetup()
                 {
-                    ASContext.CommonSettings.StartWithModifiers = true;
+                    ASContext.CommonSettings.DeclarationModifierOrder = new[] {"public", "protected", "internal", "private", "static", "override"};
                 }
 
                 public IEnumerable<TestCaseData> AS3TestCases
@@ -1051,7 +883,7 @@ namespace ASCompletion.Completion
                 [TestFixtureSetUp]
                 public void GenerateFunctionWithExplicitScopeSetup()
                 {
-                    ASContext.CommonSettings.StartWithModifiers = true;
+                    ASContext.CommonSettings.DeclarationModifierOrder = new[] { "public", "protected", "internal", "private", "static", "override" };
                     ASContext.CommonSettings.GenerateScope = true;
                 }
 
@@ -1213,12 +1045,65 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
+            public class AssignStatementToVar : GenerateJob
+            {
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get {
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText("ASCompletion.Test_Files.generated.haxe.BeforeAssignStatementToVar_useSpaces.hx"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(TestFile.ReadAllText("ASCompletion.Test_Files.generated.haxe.AfterAssignStatementToVar_useSpaces.hx"))
+                                .SetName("Assign statement to var. Use spaces instead of tabs.");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText("ASCompletion.Test_Files.generated.haxe.BeforeAssignStatementToVar_useTabs.hx"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(TestFile.ReadAllText("ASCompletion.Test_Files.generated.haxe.AfterAssignStatementToVar_useTabs.hx"))
+                                .SetName("Assign statement to var. Use tabs instead of spaces.");
+                    }
+                }
+
+                [Test, TestCaseSource("HaxeTestCases")]
+                public string Haxe(string sourceText, GeneratorJobType job, bool isUseTabs)
+                {
+                    sci.ConfigurationLanguage = "haxe";
+                    sci.IsUseTabs = isUseTabs;
+                    ASContext.Context.SetHaxeFeatures();
+                    ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
+                    return Generate(sourceText, job, new HaXeContext.Context(new HaXeSettings()));
+                }
+
+                string Generate(string sourceText, GeneratorJobType job, IASContext context)
+                {
+                    sci.Text = sourceText;
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    var currentModel = ASContext.Context.CurrentModel;
+                    new ASFileParser().ParseSrc(currentModel, sci.Text);
+                    var currentClass = currentModel.Classes[0];
+                    ASContext.Context.CurrentClass.Returns(currentClass);
+                    ASContext.Context.CurrentModel.Returns(currentModel);
+                    var currentMember = currentClass.Members[0];
+                    ASContext.Context.CurrentMember.Returns(currentMember);
+                    ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
+                    ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
+                    {
+                        var src = x[0] as string;
+                        return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
+                    });
+                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(_ => new ClassModel {Name = "String", Type = "String", InFile = currentModel});
+                    ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
+                    ASGenerator.GenerateJob(job, currentMember, ASContext.Context.CurrentClass, null, null);
+                    return sci.Text;
+                }
+            }
+
+            [TestFixture]
             public class GenerateVariable : GenerateJob
             {
                 [TestFixtureSetUp]
                 public void GenerateVariableSetup()
                 {
-                    ASContext.CommonSettings.StartWithModifiers = true;
+                    ASContext.CommonSettings.DeclarationModifierOrder = new[] { "public", "protected", "internal", "private", "static", "override" };
                 }
 
                 public IEnumerable<TestCaseData> AS3TestCases
@@ -1405,7 +1290,7 @@ namespace ASCompletion.Completion
                 [TestFixtureSetUp]
                 public void GenerateVariableWithExplicitScopeSetup()
                 {
-                    ASContext.CommonSettings.StartWithModifiers = true;
+                    ASContext.CommonSettings.DeclarationModifierOrder = new[] { "public", "protected", "internal", "private", "static", "override" };
                     ASContext.CommonSettings.GenerateScope = true;
                 }
 
@@ -1851,6 +1736,82 @@ namespace ASCompletion.Completion
                     ASContext.Context.CurrentClass.Returns(currentClass);
                     ASContext.Context.CurrentMember.Returns(currentMember);
                     ASGenerator.GenerateJob(GeneratorJobType.GetterSetter, currentMember, ASContext.Context.CurrentClass, null, null);
+                    return sci.Text;
+                }
+            }
+
+            [TestFixture]
+            public class GenerateOverride : GenerateJob
+            {
+                [TestFixtureSetUp]
+                public void GenerateOverrideSetUp()
+                {
+                    ASContext.Context.Settings.GenerateImports = true;
+                }
+
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverrideGetNull.hx"),
+                                    "Foo",
+                                    "foo")
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterOverrideGetNull.hx"))
+                                .SetName("Override var foo(get, null)");
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverrideNullSet.hx"),
+                                    "Foo",
+                                    "foo")
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterOverrideNullSet.hx"))
+                                .SetName("Override var foo(null, set)");
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverrideGetSet.hx"),
+                                    "Foo",
+                                    "foo")
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterOverrideGetSet.hx"))
+                                .SetName("Override var foo(get, set)");
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverrideIssue793.hx"),
+                                    "Foo",
+                                    "foo"
+                                    )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterOverrideIssue793.hx"))
+                                .SetName("issue #793");
+                    }
+                }
+
+                [Test, TestCaseSource("HaxeTestCases")]
+                public string Haxe(string sourceText, string ofClassName, string memberName)
+                {
+                    sci.ConfigurationLanguage = "haxe";
+                    ASContext.Context.SetHaxeFeatures();
+                    ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
+                    var context = new HaXeContext.Context(new HaXeSettings());
+                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(it => context.ResolveType(it.ArgAt<string>(0), it.ArgAt<FileModel>(1)));
+                    sci.Text = sourceText;
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    var currentModel = ASContext.Context.CurrentModel;
+                    new ASFileParser().ParseSrc(currentModel, sci.Text);
+                    var ofClass = currentModel.Classes.Find(model => model.Name == ofClassName);
+                    var member = ofClass.Members.Search(memberName, FlagType.Getter | FlagType.Setter, 0);
+                    ASGenerator.GenerateOverride(sci, ofClass, member, sci.CurrentPos);
                     return sci.Text;
                 }
             }

@@ -2,6 +2,7 @@
 using ASCompletion.Context;
 using ASCompletion.Model;
 using ASCompletion.Settings;
+using CodeRefactor.Provider;
 using CodeRefactor.TestUtils;
 using FlashDevelop;
 using NSubstitute;
@@ -34,7 +35,7 @@ namespace CodeRefactor.Commands
             mainForm.Settings = settings;
             mainForm.CurrentDocument = doc;
             mainForm.Documents = new[] {doc};
-            mainForm.StandaloneMode = false;
+            mainForm.StandaloneMode = true;
             PluginBase.Initialize(mainForm);
             FlashDevelop.Managers.ScintillaManager.LoadConfiguration();
         }
@@ -85,7 +86,7 @@ namespace CodeRefactor.Commands
             [TestFixture]
             public class ExtractLocalVariable : RefactorCommand
             {
-                public IEnumerable<TestCaseData> GetHaxeTestCases
+                public IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -148,6 +149,7 @@ namespace CodeRefactor.Commands
                                     },
                                     "newVar"
                                 )
+                                .Ignore("Not supported at the moment")
                                 .Returns(
                                     TestFile.ReadAllText(
                                         "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.haxe.AfterExtractLocalVariable_inSinglelineMethod.hx"))
@@ -155,7 +157,7 @@ namespace CodeRefactor.Commands
                     }
                 }
 
-                [Test, TestCaseSource("GetHaxeTestCases")]
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
                 public string Haxe(string sourceText, MemberModel currentMember, string newName)
                 {
                     ASContext.Context.SetHaxeFeatures();
@@ -164,11 +166,11 @@ namespace CodeRefactor.Commands
                     Sci.Text = sourceText;
                     Sci.ConfigurationLanguage = "haxe";
                     SnippetHelper.PostProcessSnippets(Sci, 0);
-                    new ExtractLocalVariableCommand(false, newName).Execute();
+                    CommandFactoryProvider.GetFactoryFromLanguage("haxe").CreateExtractLocalVariableCommand(false, newName).Execute();
                     return Sci.Text;
                 }
 
-                public IEnumerable<TestCaseData> GetHaxeTestCases_withContextualGenerator
+                public IEnumerable<TestCaseData> HaxeTestCases_withContextualGenerator
                 {
                     get
                     {
@@ -208,7 +210,7 @@ namespace CodeRefactor.Commands
                     }
                 }
 
-                [Test, TestCaseSource("GetHaxeTestCases_withContextualGenerator")]
+                [Test, TestCaseSource(nameof(HaxeTestCases_withContextualGenerator))]
                 public string Haxe_withContextualGenerator(string sourceText, MemberModel currentMember, string newName, int contextualGeneratorItem)
                 {
                     ASContext.Context.SetHaxeFeatures();
@@ -217,13 +219,13 @@ namespace CodeRefactor.Commands
                     Sci.Text = sourceText;
                     Sci.ConfigurationLanguage = "haxe";
                     SnippetHelper.PostProcessSnippets(Sci, 0);
-                    var command = new ExtractLocalVariableCommand(false, newName);
+                    var command = (ExtractLocalVariableCommand) CommandFactoryProvider.GetFactoryFromLanguage("haxe").CreateExtractLocalVariableCommand(false, newName);
                     command.Execute();
                     ((CompletionListItem) command.CompletionList[contextualGeneratorItem]).PerformClick();
                     return Sci.Text;
                 }
 
-                public IEnumerable<TestCaseData> GetAS3TestCases
+                public IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -254,6 +256,7 @@ namespace CodeRefactor.Commands
                                     },
                                     "newVar"
                                 )
+                                .Ignore("Not supported at the moment")
                                 .Returns(
                                     TestFile.ReadAllText(
                                         "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.as3.AfterExtractLocalVariable_fromString.as"))
@@ -270,6 +273,7 @@ namespace CodeRefactor.Commands
                                     },
                                     "newVar"
                                 )
+                                .Ignore("Not supported at the moment")
                                 .Returns(
                                     TestFile.ReadAllText(
                                         "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.as3.AfterExtractLocalVariable_fromNumber.as"))
@@ -277,7 +281,7 @@ namespace CodeRefactor.Commands
                     }
                 }
                 
-                [Test, TestCaseSource("GetAS3TestCases")]
+                [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText, MemberModel currentMember, string newName)
                 {
                     ASContext.Context.SetAs3Features();
@@ -286,10 +290,70 @@ namespace CodeRefactor.Commands
                     Sci.Text = sourceText;
                     Sci.ConfigurationLanguage = "as3";
                     SnippetHelper.PostProcessSnippets(Sci, 0);
-                    new ExtractLocalVariableCommand(false, newName).Execute();
+                    CommandFactoryProvider.GetFactoryFromLanguage("haxe").CreateExtractLocalVariableCommand(false, newName).Execute();
                     return Sci.Text;
                 }
                 
+            }
+
+            [TestFixture]
+            public class OrganizeImports : RefactorCommand
+            {
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "CodeRefactor.Test_Files.coderefactor.organizeimports.haxe.BeforeOrganizeImports.hx"),
+                                    "BeforeOrganizeImports.hx"
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "CodeRefactor.Test_Files.coderefactor.organizeimports.haxe.AfterOrganizeImports.hx"))
+                                .SetName("OrganizeImports");
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "CodeRefactor.Test_Files.coderefactor.organizeimports.haxe.BeforeOrganizeImports_withImportsFromSameModule.hx"),
+                                    "Main.hx"
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "CodeRefactor.Test_Files.coderefactor.organizeimports.haxe.AfterOrganizeImports_withImportsFromSameModule.hx"))
+                                .SetName("Issue782. Package is empty.");
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "CodeRefactor.Test_Files.coderefactor.organizeimports.haxe.BeforeOrganizeImports_withImportsFromSameModule2.hx"),
+                                    "Main.hx"
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "CodeRefactor.Test_Files.coderefactor.organizeimports.haxe.AfterOrganizeImports_withImportsFromSameModule2.hx"))
+                                .SetName("Issue782. Package is not empty.");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public string Haxe(string sourceText, string fileName)
+                {
+                    Sci.ConfigurationLanguage = "haxe";
+                    ASContext.Context.SetHaxeFeatures();
+                    ASContext.Context.CurrentModel.Returns(new FileModel
+                    {
+                        haXe = true,
+                        Context = ASContext.Context,
+                        FileName = fileName
+                    });
+                    Sci.Text = sourceText;
+                    SnippetHelper.PostProcessSnippets(Sci, 0);
+                    var currentModel = ASContext.Context.CurrentModel;
+                    new ASFileParser().ParseSrc(currentModel, Sci.Text);
+                    new Commands.OrganizeImports().Execute();
+                    return Sci.Text;
+                }
             }
         }
     }

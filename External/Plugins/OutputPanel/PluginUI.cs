@@ -79,7 +79,6 @@ namespace OutputPanel
             // 
             this.textLog.BackColor = System.Drawing.SystemColors.Window;
             this.textLog.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textLog.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textLog.Location = new System.Drawing.Point(1, 26);
             this.textLog.Name = "textLog";
             this.textLog.ReadOnly = true;
@@ -298,6 +297,17 @@ namespace OutputPanel
                     panel.Show();
                     if (ds.ToString().EndsWithOrdinal("AutoHide")) panel.Activate();
                 }
+            }
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+
+            // We use custom resizing because when the owner DockPanel hides, textLog.Height = 0, and ScrollToCaret() fails
+            if (this.Height != 0)
+            {
+                this.textLog.Size = new Size(this.ClientSize.Width, this.ClientSize.Height - this.toolStrip.Size.Height);
             }
         }
 

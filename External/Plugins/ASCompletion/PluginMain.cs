@@ -753,6 +753,7 @@ namespace ASCompletion
             CompletionList.OnInsert += new InsertedTextHandler(ASComplete.HandleCompletionInsert);
 
             // shortcuts
+            PluginBase.MainForm.IgnoredKeys.Add(Keys.Back);
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Control | Keys.Enter);
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control | Keys.Alt); // complete project types
             PluginBase.MainForm.RegisterShortcutItem("Completion.ShowHelp", Keys.F1);
@@ -908,10 +909,19 @@ namespace ASCompletion
             // set tooltip
             if (!result.IsNull())
             {
-                string text = ASComplete.GetToolTipText(result);
-                if (text == null) return;
-                // show tooltip
-                UITools.Tip.ShowAtMouseLocation(text);
+                if (Control.ModifierKeys == Keys.Control)
+                {
+                    var code = ASComplete.GetCodeTipCode(result);
+                    if (code == null) return;
+                    UITools.CodeTip.Show(sci, position - result.Path.Length, code);
+                }
+                else
+                {
+                    string text = ASComplete.GetToolTipText(result);
+                    if (text == null) return;
+                    // show tooltip
+                    UITools.Tip.ShowAtMouseLocation(text);
+                }
             }
         }
 

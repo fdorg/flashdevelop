@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using CodeRefactor.Commands;
+using CodeRefactor.Provider;
 using PluginCore.Localization;
 using PluginCore.Controls;
 using PluginCore.Managers;
@@ -152,7 +153,7 @@ namespace CodeRefactor.Controls
                 TextHelper.GetStringWithoutMnemonics("Label.TruncateImports"),
                 TextHelper.GetString("Info.ConsistentEOLs"),
             });
-            this.Text = TextHelper.GetString("Title.BatchProcessDialog");
+            this.Text = " " + TextHelper.GetString("Title.BatchProcessDialog");
             this.targetComboBox.SelectedIndex = 0;
             this.operationComboBox.SelectedIndex = 0;
             this.processButton.Focus();
@@ -217,14 +218,14 @@ namespace CodeRefactor.Controls
                 }
                 case 1: // Organize Imports
                 {
-                    OrganizeImports command = new OrganizeImports();
+                    var command = (OrganizeImports) CommandFactoryProvider.GetFactoryFromDocument(document).CreateOrganizeImportsCommand();
                     command.SciControl = document.SciControl;
                     command.Execute();
                     break;
                 }
                 case 2: // Truncate Imports
                 {
-                    OrganizeImports command = new OrganizeImports();
+                    var command = (OrganizeImports) CommandFactoryProvider.GetFactoryFromDocument(document).CreateOrganizeImportsCommand();
                     command.SciControl = document.SciControl;
                     command.TruncateImports = true;
                     command.Execute();

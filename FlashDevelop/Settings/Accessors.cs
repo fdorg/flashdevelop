@@ -197,6 +197,7 @@ namespace FlashDevelop.Settings
         [LocalizedCategory("FlashDevelop.Category.Display")]
         [LocalizedDescription("FlashDevelop.Description.DefaultFont")]
         [DefaultValue(typeof(Font), "Tahoma, 8.25pt")]
+        [RequiresRestart]
         public Font DefaultFont
         {
             get { return this.defaultFont; }
@@ -294,7 +295,11 @@ namespace FlashDevelop.Settings
         public Int32 ScrollWidth
         {
             get { return this.scrollWidth; }
-            set { this.scrollWidth = value; }
+            set
+            {
+                if (value < 0) throw new ArgumentOutOfRangeException();
+                this.scrollWidth = value;
+            }
         }
 
         [DefaultValue(DistroConfig.DISTRIBUTION_EXT)]
@@ -345,7 +350,6 @@ namespace FlashDevelop.Settings
         {
             get
             {
-                // Make sure this is not an invalid value
                 if (this.highlightMatchingWordsDelay <= 0) this.highlightMatchingWordsDelay = 1200;
                 return this.highlightMatchingWordsDelay;
             }
@@ -360,6 +364,7 @@ namespace FlashDevelop.Settings
         [DefaultValue(LocaleVersion.en_US)]
         [LocalizedCategory("FlashDevelop.Category.Locale")]
         [LocalizedDescription("FlashDevelop.Description.LocaleVersion")]
+        [RequiresRestart]
         public LocaleVersion LocaleVersion
         {
             get { return this.localeVersion; }
@@ -567,12 +572,12 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.MaxRecentFiles")]
         public Int32 MaxRecentFiles
         {
-            get { return this.maxRecentFiles; }
-            set
+            get
             {
-                if (value < 0) throw new ArgumentOutOfRangeException();
-                this.maxRecentFiles = value;
+                if (this.maxRecentFiles <= 0) this.maxRecentFiles = 15;
+                return this.maxRecentFiles;
             }
+            set { this.maxRecentFiles = value; }
         }
 
         [DefaultValue(true)]

@@ -95,7 +95,7 @@ namespace System.Windows.Forms
                 {
                     item.Padding = new Padding(2, 1, 2, 1);
                 }
-                else if (renderer is ToolStripSystemRenderer && Win32.IsRunningOnWindows())
+                else if (renderer is ToolStripSystemRenderer && PlatformHelper.IsRunningOnWindows())
                 {
                     item.Padding = new Padding(2, 2, 2, 2);
                 }
@@ -252,7 +252,7 @@ namespace System.Windows.Forms
                     }
                 }
             }
-            else if (Win32.IsRunningOnWindows())
+            else if (PlatformHelper.IsRunningOnWindows())
             {
                 if (e.GripStyle == ToolStripGripStyle.Hidden) return;
                 using (Brush lightBrush = new SolidBrush(this.colorTable.GripLight))

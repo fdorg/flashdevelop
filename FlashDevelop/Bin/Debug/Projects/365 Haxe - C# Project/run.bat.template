@@ -2,9 +2,9 @@
 cd bin/bin
 if "%1"=="debug" (
   :: run debug
-  $(ProjectID)-Debug.exe
+  Main-Debug.exe
 ) else (
   :: run release
-  $(ProjectID).exe
+  Main.exe
 )
 pause
