@@ -1127,15 +1127,14 @@ namespace HaXeContext
                     completionModeHandler = new CompilerCompletionHandler(createHaxeProcess(""));
                     break;
                 case HaxeCompletionModeEnum.CompletionServer:
-                    if (haxeSettings.CompletionServerPort < 1024)
-                        completionModeHandler = new CompilerCompletionHandler(createHaxeProcess(""));
+                    var port = haxeSettings.CompletionServerPort;
+                    if (port < 1024) completionModeHandler = new CompilerCompletionHandler(createHaxeProcess(""));
                     else
                     {
-                        completionModeHandler =
-                            new CompletionServerCompletionHandler(
-                                createHaxeProcess("--wait " + haxeSettings.CompletionServerPort),
-                                haxeSettings.CompletionServerPort);
-                        (completionModeHandler as CompletionServerCompletionHandler).FallbackNeeded += new FallbackNeededHandler(Context_FallbackNeeded);
+                        var sdkVersion = GetCurrentSDKVersion();
+                        var args = haxeSettings.CompletionServerWaitStdio && sdkVersion.IsGreaterThanOrEquals(new SemVer("3.3.0")) ? "--wait stdio" : $"--wait {port}";
+                        completionModeHandler = new CompletionServerCompletionHandler(createHaxeProcess(args), port);
+                        ((CompletionServerCompletionHandler) completionModeHandler).FallbackNeeded += Context_FallbackNeeded;
                     }
                     break;
             }
