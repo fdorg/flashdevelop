@@ -728,6 +728,21 @@ namespace ASCompletion
                 pluginUI.LookupMenuItem = item;
                 item.Enabled = false;
 
+                // goto type declaration
+                image = mainForm.FindImage("99|9|3|-3");
+                item = new ToolStripMenuItem(TextHelper.GetString("Label.GotoTypeDeclaration"), image, GotoTypeDeclaration);
+                PluginBase.MainForm.RegisterShortcutItem("SearchMenu.GotoTypeDeclaration", item);
+                menu.DropDownItems.Add(item);
+                menuItems.Add(item);
+
+                // goto back from type declaration
+                image = mainForm.FindImage("99|1|-3|-3");
+                item = new ToolStripMenuItem(TextHelper.GetString("Label.BackFromTypeDeclaration"), image, BackTypeDeclaration);
+                PluginBase.MainForm.RegisterShortcutItem("SearchMenu.BackFromTypeDeclaration", item);
+                menu.DropDownItems.Add(item);
+                pluginUI.LookupMenuItem = item;
+                item.Enabled = false;
+
                 // editor items
                 ContextMenuStrip emenu = mainForm.EditorMenu;
                 if (emenu != null)
@@ -736,7 +751,13 @@ namespace ASCompletion
                     item = new ToolStripMenuItem(TextHelper.GetString("Label.GotoDeclaration"), image, new EventHandler(GotoDeclaration));
                     PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.GotoDeclaration", item);
                     emenu.Items.Insert(4, item);
-                    emenu.Items.Insert(5, new ToolStripSeparator());
+                    menuItems.Add(item);
+
+                    image = mainForm.FindImage("99|9|3|-3");
+                    item = new ToolStripMenuItem(TextHelper.GetString("Label.GotoTypeDeclaration"), image, GotoTypeDeclaration);
+                    PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.GotoTypeDeclaration", item);
+                    emenu.Items.Insert(5, item);
+                    emenu.Items.Insert(6, new ToolStripSeparator());
                     menuItems.Add(item);
                 }
             }
@@ -865,6 +886,22 @@ namespace ASCompletion
         /// Menu item command: Back From Declaration
         /// </summary>
         public void BackDeclaration(object sender, EventArgs e)
+        {
+            pluginUI.RestoreLastLookupPosition();
+        }
+
+        /// <summary>
+        /// Menu item command: Goto Type Declaration
+        /// </summary>
+        void GotoTypeDeclaration(object sender, EventArgs e)
+        {
+            ASComplete.TypeDeclarationLookup(ASContext.CurSciControl);
+        }
+
+        /// <summary>
+        /// Menu item command: Back From Type Declaration
+        /// </summary>
+        void BackTypeDeclaration(object sender, EventArgs e)
         {
             pluginUI.RestoreLastLookupPosition();
         }

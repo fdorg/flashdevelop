@@ -526,11 +526,33 @@ namespace ASCompletion.Completion
             return true;
         }
 
+        public static bool TypeDeclarationLookup(ScintillaControl sci)
+        {
+            if (sci == null || !ASContext.Context.IsFileValid) return false;
+            var position = sci.WordEndPosition(sci.CurrentPos, true);
+            var result = GetExpressionType(sci, position, false);
+            if (result.IsPackage) return false;
+            var member = result.Member;
+            var type = result.Type;
+            if (member == null || (member.Flags & FlagType.AutomaticVar) > 0 || type == null) return false;
+            if ((member.Flags & FlagType.Function) > 0)
+            {
+                type = ASContext.Context.ResolveType(result.Member.Type, result.InFile);
+                if (type.IsVoid()) return false;
+            }
+            result.Member = null;
+            result.InClass = null;
+            result.InFile = null;
+            var path = type.Name;
+            result.Path = path.Contains(".") ? path.Substring(0, path.IndexOfOrdinal(".")) : path;
+            return OpenDocumentToDeclaration(sci, result);
+        }
+
         static private bool InternalDeclarationLookup(ScintillaControl Sci)
         {
             // get type at cursor position
-            int position = Sci.WordEndPosition(Sci.CurrentPos, true);
-            ASResult result = GetExpressionType(Sci, position, false);
+            var position = Sci.WordEndPosition(Sci.CurrentPos, true);
+            var result = GetExpressionType(Sci, position, false);
 
             // browse to package folder
             if (result.IsPackage && result.InFile != null)
@@ -4557,7 +4579,7 @@ namespace ASCompletion.Completion
         }
 
         #endregion
-
+        
     }
 
     #region completion list

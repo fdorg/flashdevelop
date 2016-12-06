@@ -288,7 +288,7 @@ namespace CodeRefactor
             PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.ViewReferences", this.editorReferencesItem);
             searchMenu.DropDownItems.Add(new ToolStripSeparator());
             searchMenu.DropDownItems.Add(this.viewReferencesItem);
-            editorMenu.Items.Insert(7, this.editorReferencesItem);
+            editorMenu.Items.Insert(8, this.editorReferencesItem);
             RegisterMenuItems();
         }
 
