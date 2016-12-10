@@ -15,7 +15,6 @@ using ScintillaNet.Enums;
 using System.Text.RegularExpressions;
 using AS3Context;
 using HaXeContext;
-using NSubstitute.Extensions;
 using PluginCore.Helpers;
 
 namespace ASCompletion.Completion
@@ -94,7 +93,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            [Test, TestCaseSource("GetBodyStartTestCases")]
+            [Test, TestCaseSource(nameof(GetBodyStartTestCases))]
             public void Common(string text, int lineStart, int lineEnd, string resultText, int bodyStart)
             {
                 var sci = GetBaseScintillaControl();
@@ -323,7 +322,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("FieldFromParameterCommonTestCases")]
+                [Test, TestCaseSource(nameof(FieldFromParameterCommonTestCases))]
                 public string Common(Visibility scope, string sourceText, ClassModel sourceClassModel,
                     int memberPos, int parameterPos)
                 {
@@ -518,7 +517,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("ImplementInterfaceAs3TestCases")]
+                [Test, TestCaseSource(nameof(ImplementInterfaceAs3TestCases))]
                 public string As3(string sourceText, ClassModel sourceModel, ClassModel interfaceToImplement)
                 {
                     ASContext.Context.SetAs3Features();
@@ -533,7 +532,7 @@ namespace ASCompletion.Completion
                     return sci.Text;
                 }
 
-                [Test, TestCaseSource("ImplementInterfaceHaxeTestCases")]
+                [Test, TestCaseSource(nameof(ImplementInterfaceHaxeTestCases))]
                 public string Haxe(string sourceText, ClassModel sourceModel, ClassModel interfaceToImplement)
                 {
                     ASContext.Context.SetHaxeFeatures();
@@ -568,7 +567,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("AS3TestCases")]
+                [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText)
                 {
                     sci.ConfigurationLanguage = "as3";
@@ -594,7 +593,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("HaxeTestCases")]
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
                 public string Haxe(string sourceText)
                 {
                     sci.ConfigurationLanguage = "haxe";
@@ -652,7 +651,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("AS3TestCases")]
+                [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText)
                 {
                     sci.ConfigurationLanguage = "as3";
@@ -678,7 +677,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("HaxeTestCases")]
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
                 public string Haxe(string sourceText)
                 {
                     sci.ConfigurationLanguage = "haxe";
@@ -807,7 +806,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("AS3TestCases")]
+                [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText, GeneratorJobType job)
                 {
                     sci.ConfigurationLanguage = "as3";
@@ -845,7 +844,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("HaxeTestCases")]
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
                 public string Haxe(string sourceText, GeneratorJobType job)
                 {
                     sci.ConfigurationLanguage = "haxe";
@@ -974,7 +973,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("AS3TestCases")]
+                [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText, GeneratorJobType job)
                 {
                     sci.ConfigurationLanguage = "as3";
@@ -1012,7 +1011,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("HaxeTestCases")]
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
                 public string Haxe(string sourceText, GeneratorJobType job)
                 {
                     sci.ConfigurationLanguage = "haxe";
@@ -1063,7 +1062,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("HaxeTestCases")]
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
                 public string Haxe(string sourceText, GeneratorJobType job, bool isUseTabs)
                 {
                     sci.ConfigurationLanguage = "haxe";
@@ -1100,10 +1099,12 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateVariable : GenerateJob
             {
+                internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
+
                 [TestFixtureSetUp]
                 public void GenerateVariableSetup()
                 {
-                    ASContext.CommonSettings.DeclarationModifierOrder = new[] { "public", "protected", "internal", "private", "static", "override" };
+                    ASContext.CommonSettings.DeclarationModifierOrder = DeclarationModifierOrder;
                 }
 
                 public IEnumerable<TestCaseData> AS3TestCases
@@ -1183,16 +1184,8 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("AS3TestCases")]
-                public string AS3(string sourceText, GeneratorJobType job)
-                {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
-                    var context = new AS3Context.Context(new AS3Settings());
-                    context.BuildClassPath();
-                    return Generate(sourceText, job, context);
-                }
+                [Test, TestCaseSource(nameof(AS3TestCases))]
+                public string AS3(string sourceText, GeneratorJobType job) => GenerateAS3(sourceText, job, sci);
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -1208,6 +1201,16 @@ namespace ASCompletion.Completion
                                     TestFile.ReadAllText(
                                         "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateVariable_generateExplicitScopeIsFalse.hx"))
                                 .SetName("Generate private variable");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateStaticVariable.hx"),
+                                GeneratorJobType.Variable
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateStaticVariable.hx"))
+                                .SetName("Generate private static variable");
                         yield return
                             new TestCaseData(
                                 TestFile.ReadAllText(
@@ -1251,16 +1254,28 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("HaxeTestCases")]
-                public string Haxe(string sourceText, GeneratorJobType job)
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public string Haxe(string sourceText, GeneratorJobType job) => GenerateHaxe(sourceText, job, sci);
+
+                internal static string GenerateAS3(string sourceText, GeneratorJobType job, ScintillaControl sci)
+                {
+                    sci.ConfigurationLanguage = "as3";
+                    ASContext.Context.SetAs3Features();
+                    ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
+                    var context = new AS3Context.Context(new AS3Settings());
+                    context.BuildClassPath();
+                    return Generate(sourceText, job, context, sci);
+                }
+                
+                internal static string GenerateHaxe(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "haxe";
                     ASContext.Context.SetHaxeFeatures();
                     ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
-                    return Generate(sourceText, job, new HaXeContext.Context(new HaXeSettings()));
+                    return Generate(sourceText, job, new HaXeContext.Context(new HaXeSettings()), sci);
                 }
 
-                string Generate(string sourceText, GeneratorJobType job, IASContext context)
+                static string Generate(string sourceText, GeneratorJobType job, IASContext context, ScintillaControl sci)
                 {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
@@ -1288,9 +1303,9 @@ namespace ASCompletion.Completion
             public class GenerateVariableWithExplicitScope : GenerateJob
             {
                 [TestFixtureSetUp]
-                public void GenerateVariableWithExplicitScopeSetup()
+                public void GenerateVariableSetup()
                 {
-                    ASContext.CommonSettings.DeclarationModifierOrder = new[] { "public", "protected", "internal", "private", "static", "override" };
+                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateVariable.DeclarationModifierOrder;
                     ASContext.CommonSettings.GenerateScope = true;
                 }
 
@@ -1351,16 +1366,8 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("AS3TestCases")]
-                public string AS3(string sourceText, GeneratorJobType job)
-                {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
-                    var context = new AS3Context.Context(new AS3Settings());
-                    context.BuildClassPath();
-                    return Generate(sourceText, job, context);
-                }
+                [Test, TestCaseSource(nameof(AS3TestCases))]
+                public string AS3(string sourceText, GeneratorJobType job) => GenerateVariable.GenerateAS3(sourceText, job, sci);
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -1419,37 +1426,79 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("HaxeTestCases")]
-                public string Haxe(string sourceText, GeneratorJobType job)
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public string Haxe(string sourceText, GeneratorJobType job) => GenerateVariable.GenerateHaxe(sourceText, job, sci);
+            }
+
+            [TestFixture]
+            public class GenerateVariableWithDefaultModifierDeclaration : GenerateJob
+            {
+                [TestFixtureSetUp]
+                public void GenerateVariableSetup()
                 {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
-                    return Generate(sourceText, job, new HaXeContext.Context(new HaXeSettings()));
+                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateVariable.DeclarationModifierOrder;
+                    ASContext.CommonSettings.GenerateDefaultModifierDeclaration = true;
                 }
 
-                string Generate(string sourceText, GeneratorJobType job, IASContext context)
+                public IEnumerable<TestCaseData> AS3TestCases
                 {
-                    sci.Text = sourceText;
-                    SnippetHelper.PostProcessSnippets(sci, 0);
-                    var currentModel = ASContext.Context.CurrentModel;
-                    new ASFileParser().ParseSrc(currentModel, sci.Text);
-                    var currentClass = currentModel.Classes[0];
-                    ASContext.Context.CurrentClass.Returns(currentClass);
-                    ASContext.Context.CurrentModel.Returns(currentModel);
-                    var currentMember = currentClass.Members[0];
-                    ASContext.Context.CurrentMember.Returns(currentMember);
-                    ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
-                    ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
+                    get
                     {
-                        var src = x[0] as string;
-                        return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
-                    });
-                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
-                    ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
-                    ASGenerator.GenerateJob(job, currentMember, ASContext.Context.CurrentClass, null, null);
-                    return sci.Text;
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable.as"),
+                                    GeneratorJobType.Variable
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePrivateVariable_generateExplicitScopeIsFalse.as"))
+                                .SetName("Generate private variable with default modifier declration");
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.BeforeGenerateStaticVariable_forCurrentType.as"),
+                                    GeneratorJobType.Variable
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePrivateStaticVariabeWithDefaultModifier.as"))
+                                .SetName("Generate private static variable with default modifier declration");
+                    }
                 }
+
+                [Test, TestCaseSource(nameof(AS3TestCases))]
+                public string AS3(string sourceText, GeneratorJobType job) => GenerateVariable.GenerateAS3(sourceText, job, sci);
+
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforeGenerateVariable.hx"),
+                                    GeneratorJobType.Variable
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateVariableWithDefaultModifier.hx"))
+                                .SetName("Generate private variable with default modifier declration");
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforeGenerateStaticVariable.hx"),
+                                    GeneratorJobType.Variable
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateStaticVariableWithDefaultModifier.hx"))
+                                .SetName("Generate private static variable with default modifier declration");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public string Haxe(string sourceText, GeneratorJobType job) => GenerateVariable.GenerateHaxe(sourceText, job, sci);
             }
 
             [TestFixture]
@@ -1482,7 +1531,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("AS3TestCases")]
+                [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText, string[] autoRemove)
                 {
                     sci.ConfigurationLanguage = "as3";
@@ -1518,7 +1567,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("HaxeTestCases")]
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
                 public string Haxe(string sourceText, string[] autoRemove)
                 {
                     sci.ConfigurationLanguage = "haxe";
@@ -1582,7 +1631,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("AS3TestCases")]
+                [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText, string[] autoRemove)
                 {
                     sci.ConfigurationLanguage = "as3";
@@ -1608,7 +1657,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("HaxeTestCases")]
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
                 public string Haxe(string sourceText, string[] autoRemove)
                 {
                     sci.ConfigurationLanguage = "haxe";
@@ -1672,7 +1721,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("HaxeTestCases")]
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
                 public string Haxe(string sourceText)
                 {
                     sci.ConfigurationLanguage = "haxe";
@@ -1721,7 +1770,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("AS3TestCases")]
+                [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText)
                 {
                     sci.ConfigurationLanguage = "as3";
@@ -1797,7 +1846,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource("HaxeTestCases")]
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
                 public string Haxe(string sourceText, string ofClassName, string memberName)
                 {
                     sci.ConfigurationLanguage = "haxe";

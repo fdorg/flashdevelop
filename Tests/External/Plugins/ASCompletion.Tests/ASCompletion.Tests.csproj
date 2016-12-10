@@ -277,6 +277,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateVariableWithDefaultModifier.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateStaticVariableWithDefaultModifier.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateStaticVariable.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePrivateStaticVariabeWithDefaultModifier.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
