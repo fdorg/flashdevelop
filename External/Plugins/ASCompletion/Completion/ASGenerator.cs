@@ -3650,11 +3650,15 @@ namespace ASCompletion.Completion
 
         private static void GenerateGetter(string name, MemberModel member, int position)
         {
-            string acc = IsHaxe ? GetStaticKeyword(member) : GetPublicAccessor(member);
+            var newMember = new MemberModel
+            {
+                Name = name,
+                Type = FormatType(member.Type),
+                Access = IsHaxe ? Visibility.Private : Visibility.Public
+            };
+            if ((member.Flags & FlagType.Static) > 0) newMember.Flags = FlagType.Static;
             string template = TemplateUtils.GetTemplate("Getter");
-            string decl = NewLine + TemplateUtils.ReplaceTemplateVariable(template, "Modifiers", acc);
-            decl = TemplateUtils.ReplaceTemplateVariable(decl, "Name", name);
-            decl = TemplateUtils.ReplaceTemplateVariable(decl, "Type", FormatType(member.Type));
+            string decl = NewLine + TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Member", member.Name);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", NewLine);
             InsertCode(position, decl);
@@ -3662,11 +3666,15 @@ namespace ASCompletion.Completion
 
         private static void GenerateSetter(string name, MemberModel member, int position)
         {
-            string acc = IsHaxe ? GetStaticKeyword(member) : GetPublicAccessor(member);
+            var newMember = new MemberModel
+            {
+                Name = name,
+                Type = FormatType(member.Type),
+                Access = IsHaxe ? Visibility.Private : Visibility.Public
+            };
+            if ((member.Flags & FlagType.Static) > 0) newMember.Flags = FlagType.Static;
             string template = TemplateUtils.GetTemplate("Setter");
-            string decl = NewLine + TemplateUtils.ReplaceTemplateVariable(template, "Modifiers", acc);
-            decl = TemplateUtils.ReplaceTemplateVariable(decl, "Name", name);
-            decl = TemplateUtils.ReplaceTemplateVariable(decl, "Type", FormatType(member.Type));
+            string decl = NewLine + TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Member", member.Name);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Void", ASContext.Context.Features.voidKey ?? "void");
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", NewLine);
@@ -3683,10 +3691,14 @@ namespace ASCompletion.Completion
                 GenerateGetter(name, member, position);
                 return;
             }
-            string acc = IsHaxe ? GetStaticKeyword(member) : GetPublicAccessor(member);
-            string decl = NewLine + TemplateUtils.ReplaceTemplateVariable(template, "Modifiers", acc);
-            decl = TemplateUtils.ReplaceTemplateVariable(decl, "Name", name);
-            decl = TemplateUtils.ReplaceTemplateVariable(decl, "Type", FormatType(member.Type));
+            var newMember = new MemberModel
+            {
+                Name = name,
+                Type = FormatType(member.Type),
+                Access = IsHaxe ? Visibility.Private : Visibility.Public
+            };
+            if ((member.Flags & FlagType.Static) > 0) newMember.Flags = FlagType.Static;
+            string decl = NewLine + TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Member", member.Name);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Void", ASContext.Context.Features.voidKey ?? "void");
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", NewLine);

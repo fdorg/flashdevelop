@@ -1716,6 +1716,8 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateGetterSetter : GenerateJob
             {
+                internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
+
                 public IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
@@ -1805,6 +1807,43 @@ namespace ASCompletion.Completion
                     ASGenerator.GenerateJob(GeneratorJobType.GetterSetter, currentMember, ASContext.Context.CurrentClass, null, null);
                     return sci.Text;
                 }
+            }
+
+            [TestFixture]
+            public class GenerateGetterSetterWithDefaultModifierDeclaration : GenerateJob
+            {
+                [TestFixtureSetUp]
+                public void GenerateEventHandlerSetup()
+                {
+                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateGetterSetter.DeclarationModifierOrder;
+                    ASContext.CommonSettings.GenerateDefaultModifierDeclaration = true;
+                }
+
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforeGenerateGetterSetter.hx"))
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateGetterSetterWithDefaultModifier.hx"))
+                                .SetName("Generate private getter and setter with default modifier declaration");
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforeGeneratePrivateStaticGetterSetter.hx"))
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateStaticGetterSetterWithDefaultModifier.hx"))
+                                .SetName("Generate private static getter and setter with default modifier declaration");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public string Haxe(string sourceText) => GenerateGetterSetter.GenerateHaxe(sourceText, sci);
             }
 
             [TestFixture]

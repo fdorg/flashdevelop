@@ -287,6 +287,9 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateEventHandlerWithDefaultModifier.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGeneratePrivateStaticEventHandler.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateStaticEventHandlerWithDefaultModifier.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateGetterSetterWithDefaultModifier.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGeneratePrivateStaticGetterSetter.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateStaticGetterSetterWithDefaultModifier.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
