@@ -3594,11 +3594,15 @@ namespace ASCompletion.Completion
                     else type = null;
                 }
                 lookupPosition += delta;
-                string accessor = GetPrivateAccessor(afterMethod, inClass);
-                string template = TemplateUtils.GetTemplate("EventHandler");
-                string decl = NewLine + TemplateUtils.ReplaceTemplateVariable(template, "Modifiers", accessor);
-                decl = TemplateUtils.ReplaceTemplateVariable(decl, "Name", name);
-                decl = TemplateUtils.ReplaceTemplateVariable(decl, "Type", type);
+                var newMember = new MemberModel
+                {
+                    Name = name,
+                    Type = type,
+                    Access = GetDefaultVisibility(inClass)
+                };
+                if ((afterMethod.Flags & FlagType.Static) > 0) newMember.Flags = FlagType.Static;
+                var template = TemplateUtils.GetTemplate("EventHandler");
+                var decl = NewLine + TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
                 decl = TemplateUtils.ReplaceTemplateVariable(decl, "Void", ASContext.Context.Features.voidKey);
 
                 string eventName = contextMatch.Groups["event"].Value;

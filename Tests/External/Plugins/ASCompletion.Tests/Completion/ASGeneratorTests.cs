@@ -1515,6 +1515,8 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateEventHandler : GenerateJob
             {
+                internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
+
                 public IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
@@ -1624,7 +1626,7 @@ namespace ASCompletion.Completion
             public class GenerateEventHandlerWithExplicitScope : GenerateJob
             {
                 [TestFixtureSetUp]
-                public void GenerateEventHandlerWithExplicitScopeSetup()
+                public void GenerateEventHandlerSetup()
                 {
                     ASContext.CommonSettings.GenerateScope = true;
                 }
@@ -1655,9 +1657,9 @@ namespace ASCompletion.Completion
                     {
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateEventHandler.hx"),
-                                new[] {"Event.ADDED", "Event.REMOVED"}
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforeGenerateEventHandler.hx"),
+                                    new[] {"Event.ADDED", "Event.REMOVED"}
                                 )
                                 .Returns(
                                     TestFile.ReadAllText(
@@ -1671,49 +1673,49 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
-            public class GenerateGetterSetter : GenerateJob
+            public class GenerateEventHandlerWithDefaultModifierDeclaration : GenerateJob
             {
+                [TestFixtureSetUp]
+                public void GenerateEventHandlerSetup()
+                {
+                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateEventHandler.DeclarationModifierOrder;
+                    ASContext.CommonSettings.GenerateDefaultModifierDeclaration = true;
+                }
+
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateGetterSetter.hx"))
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforeGenerateEventHandler.hx"),
+                                    new[] {"Event.ADDED", "Event.REMOVED"}
+                                )
                                 .Returns(
                                     TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGenerateGetterSetter.hx"))
-                                .SetName("Generate getter and setter");
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateEventHandlerWithDefaultModifier.hx"))
+                                .SetName("Generate private event handler with default modifier declaration");
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateGetterSetter_issue221.hx"))
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforeGeneratePrivateStaticEventHandler.hx"),
+                                    new string[0]
+                                )
                                 .Returns(
                                     TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGenerateGetterSetter_issue221.hx"))
-                                .SetName("issue 221");
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateStaticEventHandlerWithDefaultModifier.hx"))
+                                .SetName("Generate private static event handler with default modifier declaration");
                     }
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText)
-                {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
-                    sci.Text = sourceText;
-                    SnippetHelper.PostProcessSnippets(sci, 0);
-                    var currentModel = ASContext.Context.CurrentModel;
-                    new ASFileParser().ParseSrc(currentModel, sci.Text);
-                    var currentClass = currentModel.Classes[0];
-                    var currentMember = currentClass.Members[0];
-                    ASContext.Context.CurrentClass.Returns(currentClass);
-                    ASContext.Context.CurrentMember.Returns(currentMember);
-                    ASGenerator.GenerateJob(GeneratorJobType.GetterSetter, currentMember, ASContext.Context.CurrentClass, null, null);
-                    return sci.Text;
-                }
+                public string Haxe(string sourceText, string[] autoRemove) => GenerateEventHandler.GenerateHaxe(sourceText, autoRemove, sci);
+            }
 
+            [TestFixture]
+            public class GenerateGetterSetter : GenerateJob
+            {
                 public IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
@@ -1746,11 +1748,52 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText)
+                public string AS3(string sourceText) => GenerateAS3(sourceText, sci);
+
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateGetterSetter.hx"))
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGenerateGetterSetter.hx"))
+                                .SetName("Generate getter and setter");
+                        yield return
+                            new TestCaseData(
+                                TestFile.ReadAllText(
+                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateGetterSetter_issue221.hx"))
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGenerateGetterSetter_issue221.hx"))
+                                .SetName("issue 221");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public string Haxe(string sourceText) => GenerateHaxe(sourceText, sci);
+
+                internal static string GenerateAS3(string sourceText, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "as3";
                     ASContext.Context.SetAs3Features();
                     ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
+                    return Generate(sourceText, sci);
+                }
+
+                internal static string GenerateHaxe(string sourceText, ScintillaControl sci)
+                {
+                    sci.ConfigurationLanguage = "haxe";
+                    ASContext.Context.SetHaxeFeatures();
+                    ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
+                    return Generate(sourceText, sci);
+                }
+
+                static string Generate(string sourceText, ScintillaControl sci)
+                {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
                     var currentModel = ASContext.Context.CurrentModel;
