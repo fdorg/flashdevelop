@@ -281,6 +281,9 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateStaticVariableWithDefaultModifier.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateStaticVariable.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePrivateStaticVariabeWithDefaultModifier.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateFunctionWithDefaultModifier.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateStaticFunctionWithDefaultModifier.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateStaticFunction.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

@@ -713,10 +713,12 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateFunction : GenerateJob
             {
+                internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
+
                 [TestFixtureSetUp]
                 public void GenerateFunctionSetup()
                 {
-                    ASContext.CommonSettings.DeclarationModifierOrder = new[] {"public", "protected", "internal", "private", "static", "override"};
+                    ASContext.CommonSettings.DeclarationModifierOrder = DeclarationModifierOrder;
                 }
 
                 public IEnumerable<TestCaseData> AS3TestCases
@@ -807,14 +809,16 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, GeneratorJobType job)
+                public string AS3(string sourceText, GeneratorJobType job) => GenerateAS3(sourceText, job, sci);
+
+                internal static string GenerateAS3(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "as3";
                     ASContext.Context.SetAs3Features();
                     ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
                     var context = new AS3Context.Context(new AS3Settings());
                     context.BuildClassPath();
-                    return Generate(sourceText, job, context);
+                    return Generate(sourceText, job, context, sci);
                 }
 
                 public IEnumerable<TestCaseData> HaxeTestCases
@@ -845,15 +849,17 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, GeneratorJobType job)
+                public string Haxe(string sourceText, GeneratorJobType job) => GenerateHaxe(sourceText, job, sci);
+
+                internal static string GenerateHaxe(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "haxe";
                     ASContext.Context.SetHaxeFeatures();
                     ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
-                    return Generate(sourceText, job, new HaXeContext.Context(new HaXeSettings()));
+                    return Generate(sourceText, job, new HaXeContext.Context(new HaXeSettings()), sci);
                 }
 
-                string Generate(string sourceText, GeneratorJobType job, IASContext context)
+                static string Generate(string sourceText, GeneratorJobType job, IASContext context, ScintillaControl sci)
                 {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
@@ -880,9 +886,9 @@ namespace ASCompletion.Completion
             public class GenerateFunctionWithExplicitScope : GenerateJob
             {
                 [TestFixtureSetUp]
-                public void GenerateFunctionWithExplicitScopeSetup()
+                public void GenerateFunctionSetup()
                 {
-                    ASContext.CommonSettings.DeclarationModifierOrder = new[] { "public", "protected", "internal", "private", "static", "override" };
+                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateFunction.DeclarationModifierOrder;
                     ASContext.CommonSettings.GenerateScope = true;
                 }
 
@@ -974,15 +980,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, GeneratorJobType job)
-                {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
-                    ASContext.Context.CurrentModel.Returns(new FileModel { Context = ASContext.Context });
-                    var context = new AS3Context.Context(new AS3Settings());
-                    context.BuildClassPath();
-                    return Generate(sourceText, job, context);
-                }
+                public string AS3(string sourceText, GeneratorJobType job) => GenerateFunction.GenerateAS3(sourceText, job, sci);
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -1012,35 +1010,48 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, GeneratorJobType job)
+                public string Haxe(string sourceText, GeneratorJobType job) => GenerateFunction.GenerateHaxe(sourceText, job, sci);
+            }
+
+            [TestFixture]
+            public class GenerateFunctionWithDefaultModifierDeclaration : GenerateJob
+            {
+                [TestFixtureSetUp]
+                public void GenerateFunctionSetup()
                 {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
-                    return Generate(sourceText, job, new HaXeContext.Context(new HaXeSettings()));
+                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateFunction.DeclarationModifierOrder;
+                    ASContext.CommonSettings.GenerateDefaultModifierDeclaration = true;
                 }
 
-                string Generate(string sourceText, GeneratorJobType job, IASContext context)
+                public IEnumerable<TestCaseData> HaxeTestCases
                 {
-                    sci.Text = sourceText;
-                    SnippetHelper.PostProcessSnippets(sci, 0);
-                    var currentModel = ASContext.Context.CurrentModel;
-                    new ASFileParser().ParseSrc(currentModel, sci.Text);
-                    var currentClass = currentModel.Classes[0];
-                    ASContext.Context.CurrentClass.Returns(currentClass);
-                    var currentMember = currentClass.Members[0];
-                    ASContext.Context.CurrentMember.Returns(currentMember);
-                    ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
-                    ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
+                    get
                     {
-                        var src = x[0] as string;
-                        return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
-                    });
-                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
-                    ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
-                    ASGenerator.GenerateJob(job, currentMember, ASContext.Context.CurrentClass, null, null);
-                    return sci.Text;
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforeGenerateFunction.hx"),
+                                    GeneratorJobType.Function
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateFunctionWithDefaultModifier.hx"))
+                                .SetName("Generate private function with default modifier declaration");
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforeGenerateStaticFunction.hx"),
+                                    GeneratorJobType.Function
+                                )
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateStaticFunctionWithDefaultModifier.hx"))
+                                .SetName("Generate private static function with default modifier declaration");
+                    }
                 }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public string Haxe(string sourceText, GeneratorJobType job) => GenerateFunction.GenerateHaxe(sourceText, job, sci);
             }
 
             [TestFixture]
@@ -1532,13 +1543,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, string[] autoRemove)
-                {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
-                    return Generate(sourceText, autoRemove, new AS3Context.Context(new AS3Settings()));
-                }
+                public string AS3(string sourceText, string[] autoRemove) => GenerateAS3(sourceText, autoRemove, sci);
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -1568,15 +1573,25 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, string[] autoRemove)
+                public string Haxe(string sourceText, string[] autoRemove) => GenerateHaxe(sourceText, autoRemove, sci);
+
+                internal static string GenerateAS3(string sourceText, string[] autoRemove, ScintillaControl sci)
+                {
+                    sci.ConfigurationLanguage = "as3";
+                    ASContext.Context.SetAs3Features();
+                    ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
+                    return Generate(sourceText, autoRemove, new AS3Context.Context(new AS3Settings()), sci);
+                }
+
+                internal static string GenerateHaxe(string sourceText, string[] autoRemove, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "haxe";
                     ASContext.Context.SetHaxeFeatures();
                     ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
-                    return Generate(sourceText, autoRemove, new HaXeContext.Context(new HaXeSettings()));
+                    return Generate(sourceText, autoRemove, new HaXeContext.Context(new HaXeSettings()), sci);
                 }
 
-                string Generate(string sourceText, string[] autoRemove, IASContext context)
+                static string Generate(string sourceText, string[] autoRemove, IASContext context, ScintillaControl sci)
                 {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
@@ -1632,13 +1647,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, string[] autoRemove)
-                {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
-                    return Generate(sourceText, autoRemove, new AS3Context.Context(new AS3Settings()));
-                }
+                public string AS3(string sourceText, string[] autoRemove) => GenerateEventHandler.GenerateAS3(sourceText, autoRemove, sci);
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -1658,41 +1667,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, string[] autoRemove)
-                {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
-                    return Generate(sourceText, autoRemove, new HaXeContext.Context(new HaXeSettings()));
-                }
-
-                string Generate(string sourceText, string[] autoRemove, IASContext context)
-                {
-                    sci.Text = sourceText;
-                    SnippetHelper.PostProcessSnippets(sci, 0);
-                    ASContext.CommonSettings.EventListenersAutoRemove = autoRemove;
-                    var currentModel = ASContext.Context.CurrentModel;
-                    new ASFileParser().ParseSrc(currentModel, sci.Text);
-                    var currentClass = currentModel.Classes[0];
-                    ASContext.Context.CurrentClass.Returns(currentClass);
-                    var currentMember = currentClass.Members[0];
-                    ASContext.Context.CurrentMember.Returns(currentMember);
-                    ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
-                    ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
-                    {
-                        var src = x[0] as string;
-                        return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
-                    });
-                    var eventModel = new ClassModel { Name = "Event", Type = "flash.events.Event" };
-                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => eventModel);
-                    ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
-                    var re = string.Format(ASGenerator.patternEvent, ASGenerator.contextToken);
-                    var m = Regex.Match(sci.GetLine(sci.CurrentLine), re, RegexOptions.IgnoreCase);
-                    ASGenerator.contextMatch = m;
-                    ASGenerator.contextParam = ASGenerator.CheckEventType(m.Groups["event"].Value);
-                    ASGenerator.GenerateJob(GeneratorJobType.ComplexEvent, currentMember, ASContext.Context.CurrentClass, null, null);
-                    return sci.Text;
-                }
+                public string Haxe(string sourceText, string[] autoRemove) => GenerateEventHandler.GenerateHaxe(sourceText, autoRemove, sci);
             }
 
             [TestFixture]
