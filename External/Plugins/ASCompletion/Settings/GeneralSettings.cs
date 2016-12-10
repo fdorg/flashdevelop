@@ -365,9 +365,10 @@ namespace ASCompletion.Settings
             set { generateScope = value; }
         }
 
-        [DisplayName("Generate default modifier declaration")]
+        [DisplayName("Generate Default Modifier Declaration")]
         [LocalizedCategory("ASCompletion.Category.Generation"),
-        LocalizedDescription("ASCompletion.Description.GenerateDefaultModifierDeclaration"),
+        //TODO: localize me
+        //LocalizedDescription("ASCompletion.Description.GenerateDefaultModifierDeclaration"),
         DefaultValue(false)]
         public bool GenerateDefaultModifierDeclaration
         {
