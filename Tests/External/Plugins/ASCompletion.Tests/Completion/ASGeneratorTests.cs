@@ -925,6 +925,31 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
+            public class GenerateFunctionWithProtectedDeclaration : GenerateJob
+            {
+                [TestFixtureSetUp]
+                public void GenerateFunctionSetup()
+                {
+                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateFunction.DeclarationModifierOrder;
+                    ASContext.CommonSettings.GenerateProtectedDeclarations = true;
+                }
+
+                public IEnumerable<TestCaseData> AS3TestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(GenerateFunction.ReadAllTextAS3("BeforeGenerateFunction.as"), GeneratorJobType.Function)
+                                .Returns(GenerateFunction.ReadAllTextAS3("AfterGenerateProtectedFunction.as"))
+                                .SetName("Generate private function with protected modifier declration");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(AS3TestCases))]
+                public string AS3(string sourceText, GeneratorJobType job) => GenerateVariable.GenerateAS3(sourceText, job, sci);
+            }
+
+            [TestFixture]
             public class AssignStatementToVar : GenerateJob
             {
                 internal static string ReadAllTextHaxe(string fileName)
@@ -1231,6 +1256,31 @@ namespace ASCompletion.Completion
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
                 public string Haxe(string sourceText, GeneratorJobType job) => GenerateVariable.GenerateHaxe(sourceText, job, sci);
+            }
+
+            [TestFixture]
+            public class GenerateVariableWithProtectedDeclaration : GenerateJob
+            {
+                [TestFixtureSetUp]
+                public void GenerateVariableSetup()
+                {
+                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateVariable.DeclarationModifierOrder;
+                    ASContext.CommonSettings.GenerateProtectedDeclarations = true;
+                }
+
+                public IEnumerable<TestCaseData> AS3TestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(GenerateVariable.ReadAllTextAS3("BeforeGenerateVariable.as"), GeneratorJobType.Variable)
+                                .Returns(GenerateVariable.ReadAllTextAS3("AfterGenerateProtectedVariable.as"))
+                                .SetName("Generate private variable with protected modifier declration");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(AS3TestCases))]
+                public string AS3(string sourceText, GeneratorJobType job) => GenerateVariable.GenerateAS3(sourceText, job, sci);
             }
 
             [TestFixture]
