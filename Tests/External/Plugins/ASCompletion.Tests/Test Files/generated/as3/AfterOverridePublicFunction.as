@@ -1,5 +1,5 @@
 ﻿package {
-	public class Main() {}
+	public class Main {}
 }
 
 class Foo {
