@@ -551,14 +551,22 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class PromoteLocal : GenerateJob
             {
+                internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
+
+                [TestFixtureSetUp]
+                public void PromoteLocalWithSetup()
+                {
+                    ASContext.CommonSettings.DeclarationModifierOrder = PromoteLocal.DeclarationModifierOrder;
+                }
+
                 public IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforePromoteLocal.as")
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.BeforePromoteLocal.as")
                                 )
                                 .Returns(
                                     TestFile.ReadAllText(
@@ -568,14 +576,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText)
-                {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
-                    var context = new AS3Context.Context(new AS3Settings());
-                    return Generate(sourceText, context);
-                }
+                public string AS3(string sourceText) => GenerateAS3(sourceText, sci);
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -594,15 +595,26 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText)
+                public string Haxe(string sourceText) => GenerateHaxe(sourceText, sci);
+
+                internal static string GenerateAS3(string sourceText, ScintillaControl sci)
+                {
+                    sci.ConfigurationLanguage = "as3";
+                    ASContext.Context.SetAs3Features();
+                    ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
+                    var context = new AS3Context.Context(new AS3Settings());
+                    return Generate(sourceText, context, sci);
+                }
+
+                internal static string GenerateHaxe(string sourceText, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "haxe";
                     ASContext.Context.SetHaxeFeatures();
                     ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
-                    return Generate(sourceText, new HaXeContext.Context(new HaXeSettings()));
+                    return Generate(sourceText, new HaXeContext.Context(new HaXeSettings()), sci);
                 }
 
-                string Generate(string sourceText, IASContext context)
+                static string Generate(string sourceText, IASContext context, ScintillaControl sci)
                 {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
@@ -630,8 +642,9 @@ namespace ASCompletion.Completion
             public class PromoteLocalWithExplicitScope : GenerateJob
             {
                 [TestFixtureSetUp]
-                public void PromoteLocalWithExplicitScopeSetup()
+                public void PromoteLocalWithSetup()
                 {
+                    ASContext.CommonSettings.DeclarationModifierOrder = PromoteLocal.DeclarationModifierOrder;
                     ASContext.CommonSettings.GenerateScope = true;
                 }
 
@@ -641,8 +654,8 @@ namespace ASCompletion.Completion
                     {
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforePromoteLocal.as")
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.BeforePromoteLocal.as")
                                 )
                                 .Returns(
                                     TestFile.ReadAllText(
@@ -652,14 +665,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText)
-                {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
-                    var context = new AS3Context.Context(new AS3Settings());
-                    return Generate(sourceText, context);
-                }
+                public string AS3(string sourceText) => PromoteLocal.GenerateAS3(sourceText, sci);
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -667,8 +673,8 @@ namespace ASCompletion.Completion
                     {
                         yield return
                             new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforePromoteLocal.hx")
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforePromoteLocal.hx")
                                 )
                                 .Returns(
                                     TestFile.ReadAllText(
@@ -678,36 +684,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText)
-                {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
-                    ASContext.Context.CurrentModel.Returns(new FileModel { haXe = true, Context = ASContext.Context });
-                    return Generate(sourceText, new HaXeContext.Context(new HaXeSettings()));
-                }
-
-                string Generate(string sourceText, IASContext context)
-                {
-                    sci.Text = sourceText;
-                    SnippetHelper.PostProcessSnippets(sci, 0);
-                    var currentModel = ASContext.Context.CurrentModel;
-                    new ASFileParser().ParseSrc(currentModel, sci.Text);
-                    var currentClass = currentModel.Classes[0];
-                    ASContext.Context.CurrentClass.Returns(currentClass);
-                    ASContext.Context.CurrentMember.Returns(currentClass.Members[0]);
-                    ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
-                    ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
-                    {
-                        var src = x[0] as string;
-                        return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
-                    });
-                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
-                    var expr = ASComplete.GetExpressionType(sci, sci.CurrentPos);
-                    var currentMember = expr.Context.LocalVars[0];
-                    ASGenerator.contextMember = currentMember;
-                    ASGenerator.GenerateJob(GeneratorJobType.PromoteLocal, currentMember, ASContext.Context.CurrentClass, null, null);
-                    return sci.Text;
-                }
+                public string Haxe(string sourceText) => PromoteLocal.GenerateHaxe(sourceText, sci);
             }
 
             [TestFixture]
