@@ -306,6 +306,10 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterOverrideInternalFunction.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeOverrideHasOwnProperty.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterOverrideHasOwnProperty.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeOverridePublicGetSet.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterOverridePublicGetSet.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeOverrideInternalGetSet.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterOverrideInternalGetSet.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

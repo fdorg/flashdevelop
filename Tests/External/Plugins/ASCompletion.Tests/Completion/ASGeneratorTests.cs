@@ -1906,6 +1906,28 @@ namespace ASCompletion.Completion
                                     TestFile.ReadAllText(
                                         "ASCompletion.Test_Files.generated.as3.AfterOverrideHasOwnProperty.as"))
                                 .SetName("Override hasOwnProperty");
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.BeforeOverridePublicGetSet.as"),
+                                    "Foo",
+                                    "foo",
+                                    FlagType.Getter)
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterOverridePublicGetSet.as"))
+                                .SetName("Override public getter and setter");
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.BeforeOverrideInternalGetSet.as"),
+                                    "Foo",
+                                    "foo",
+                                    FlagType.Getter)
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterOverrideInternalGetSet.as"))
+                                .SetName("Override internal getter and setter");
                     }
                 }
 
