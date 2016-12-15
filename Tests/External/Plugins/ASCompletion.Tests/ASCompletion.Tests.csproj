@@ -310,6 +310,7 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterOverridePublicGetSet.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeOverrideInternalGetSet.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterOverrideInternalGetSet.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterPromoteLocalWithDefaultModifier.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

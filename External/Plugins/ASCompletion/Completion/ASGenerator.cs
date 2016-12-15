@@ -3727,13 +3727,6 @@ namespace ASCompletion.Completion
             return ASContext.Context.Features.privateKey ?? "private";
         }
 
-        private static string GetPublicAccessor(MemberModel member)
-        {
-            string acc = GetStaticKeyword(member);
-            if (!string.IsNullOrEmpty(acc)) acc += " ";
-            return acc + ASContext.Context.Features.publicKey ?? "public";
-        }
-
         private static MemberModel GetLatestMemberForFunction(ClassModel inClass, Visibility funcVisi, MemberModel isStatic)
         {
             MemberModel latest = null;

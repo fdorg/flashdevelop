@@ -678,9 +678,44 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
+            public class PromoteLocalWithDefaultModifierDeclaration : GenerateJob
+            {
+                [TestFixtureSetUp]
+                public void PromoteLocalWithSetup()
+                {
+                    ASContext.CommonSettings.DeclarationModifierOrder = PromoteLocal.DeclarationModifierOrder;
+                    ASContext.CommonSettings.GenerateDefaultModifierDeclaration = true;
+                }
+
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(PromoteLocal.ReadAllTextHaxe("BeforePromoteLocal.hx"))
+                                .Returns(PromoteLocal.ReadAllTextHaxe("AfterPromoteLocalWithDefaultModifier.hx"))
+                                .SetName("Promote to private class member with default modifier declaration");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public string Haxe(string sourceText) => PromoteLocal.GenerateHaxe(sourceText, sci);
+            }
+
+            [TestFixture]
             public class GenerateFunction : GenerateJob
             {
                 internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
+
+                internal static string ReadAllTextAS3(string fileName)
+                {
+                    return TestFile.ReadAllText($"ASCompletion.Test_Files.generated.as3.{fileName}");
+                }
+
+                internal static string ReadAllTextHaxe(string fileName)
+                {
+                    return TestFile.ReadAllText($"ASCompletion.Test_Files.generated.haxe.{fileName}");
+                }
 
                 [TestFixtureSetUp]
                 public void GenerateFunctionSetup()
@@ -693,90 +728,60 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction.as"),
-                                GeneratorJobType.Function
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePrivateFunction_generateExplicitScopeIsFalse.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction.as"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextAS3("AfterGeneratePrivateFunction_generateExplicitScopeIsFalse.as"))
                                 .SetName("Generate private function");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction.as"),
-                                GeneratorJobType.FunctionPublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePublicFunction_generateExplicitScopeIsFalse.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction.as"), GeneratorJobType.FunctionPublic)
+                                .Returns(ReadAllTextAS3("AfterGeneratePublicFunction_generateExplicitScopeIsFalse.as"))
                                 .SetName("Generate public function");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction_forSomeObj.as"),
-                                GeneratorJobType.FunctionPublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateFunction_forSomeObj.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction_forSomeObj.as"), GeneratorJobType.FunctionPublic)
+                                .Returns(ReadAllTextAS3("AfterGenerateFunction_forSomeObj.as"))
                                 .SetName("From some.foo|();");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction_forSomeObj2.as"),
-                                GeneratorJobType.FunctionPublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateFunction_forSomeObj2.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction_forSomeObj2.as"), GeneratorJobType.FunctionPublic)
+                                .Returns(ReadAllTextAS3("AfterGenerateFunction_forSomeObj2.as"))
                                 .SetName("From new Some().foo|();");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction_forSomeObj3.as"),
-                                GeneratorJobType.FunctionPublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateFunction_forSomeObj3.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction_forSomeObj3.as"), GeneratorJobType.FunctionPublic)
+                                .Returns(ReadAllTextAS3("AfterGenerateFunction_forSomeObj3.as"))
                                 .SetName("From new Some()\n.foo|();");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateStaticFunction.as"),
-                                GeneratorJobType.FunctionPublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePublicStaticFunction_generateExplicitScopeIsFalse.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateStaticFunction.as"), GeneratorJobType.FunctionPublic)
+                                .Returns(ReadAllTextAS3("AfterGeneratePublicStaticFunction_generateExplicitScopeIsFalse.as"))
                                 .SetName("Generate public static function");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateStaticFunction_forCurrentType.as"),
-                                GeneratorJobType.FunctionPublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePublicStaticFunction_generateExplicitScopeIsTrue.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateStaticFunction_forCurrentType.as"), GeneratorJobType.FunctionPublic)
+                                .Returns(ReadAllTextAS3("AfterGeneratePublicStaticFunction_generateExplicitScopeIsTrue.as"))
                                 .SetName("From CurrentType.foo|");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateStaticFunction_forSomeType.as"),
-                                GeneratorJobType.FunctionPublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePublicStaticFunction_forSomeType.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateStaticFunction_forSomeType.as"), GeneratorJobType.FunctionPublic)
+                                .Returns(ReadAllTextAS3("AfterGeneratePublicStaticFunction_forSomeType.as"))
                                 .SetName("From SomeType.foo|");
                     }
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText, GeneratorJobType job) => GenerateAS3(sourceText, job, sci);
+
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction.hx"), GeneratorJobType.Function )
+                                .Returns(ReadAllTextHaxe("AfterGeneratePrivateFunction_generateExplicitScopeIsFalse.hx"))
+                                .SetName("Generate private function");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction.hx"), GeneratorJobType.FunctionPublic)
+                                .Returns(ReadAllTextHaxe("AfterGeneratePublicFunction_generateExplicitScopeIsFalse.hx"))
+                                .SetName("Generate public function");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public string Haxe(string sourceText, GeneratorJobType job) => GenerateHaxe(sourceText, job, sci);
 
                 internal static string GenerateAS3(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
@@ -787,36 +792,6 @@ namespace ASCompletion.Completion
                     context.BuildClassPath();
                     return Generate(sourceText, job, context, sci);
                 }
-
-                public IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateFunction.hx"),
-                                GeneratorJobType.Function
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateFunction_generateExplicitScopeIsFalse.hx"))
-                                .SetName("Generate private function");
-                        yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateFunction.hx"),
-                                GeneratorJobType.FunctionPublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePublicFunction_generateExplicitScopeIsFalse.hx"))
-                                .SetName("Generate public function");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, GeneratorJobType job) => GenerateHaxe(sourceText, job, sci);
 
                 internal static string GenerateHaxe(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
@@ -864,84 +839,36 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction.as"),
-                                GeneratorJobType.Function
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePrivateFunction_generateExplicitScopeIsTrue.as"))
+                            new TestCaseData(GenerateFunction.ReadAllTextAS3("BeforeGenerateFunction.as"), GeneratorJobType.Function)
+                                .Returns(GenerateFunction.ReadAllTextAS3("AfterGeneratePrivateFunction_generateExplicitScopeIsTrue.as"))
                                 .SetName("Generate private function");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction.as"),
-                                GeneratorJobType.FunctionPublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePublicFunction_generateExplicitScopeIsTrue.as"))
+                            new TestCaseData(GenerateFunction.ReadAllTextAS3("BeforeGenerateFunction.as"), GeneratorJobType.FunctionPublic)
+                                .Returns(GenerateFunction.ReadAllTextAS3("AfterGeneratePublicFunction_generateExplicitScopeIsTrue.as"))
                                 .SetName("Generate public function");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction_forSomeObj.as"),
-                                GeneratorJobType.FunctionPublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateFunction_forSomeObj.as"))
+                            new TestCaseData(GenerateFunction.ReadAllTextAS3("BeforeGenerateFunction_forSomeObj.as"), GeneratorJobType.FunctionPublic)
+                                .Returns(GenerateFunction.ReadAllTextAS3("AfterGenerateFunction_forSomeObj.as"))
                                 .SetName("From some.foo|();");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction_forSomeObj2.as"),
-                                GeneratorJobType.FunctionPublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateFunction_forSomeObj2.as"))
+                            new TestCaseData(GenerateFunction.ReadAllTextAS3("BeforeGenerateFunction_forSomeObj2.as"), GeneratorJobType.FunctionPublic)
+                                .Returns(GenerateFunction.ReadAllTextAS3("AfterGenerateFunction_forSomeObj2.as"))
                                 .SetName("From new Some().foo|();");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateFunction_forSomeObj3.as"),
-                                GeneratorJobType.FunctionPublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateFunction_forSomeObj3.as"))
+                            new TestCaseData(GenerateFunction.ReadAllTextAS3("BeforeGenerateFunction_forSomeObj3.as"), GeneratorJobType.FunctionPublic)
+                                .Returns(GenerateFunction.ReadAllTextAS3("AfterGenerateFunction_forSomeObj3.as"))
                                 .SetName("From new Some()\n.foo|();");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateStaticFunction.as"),
-                                GeneratorJobType.FunctionPublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePublicStaticFunction_generateExplicitScopeIsTrue.as"))
+                            new TestCaseData(GenerateFunction.ReadAllTextAS3("BeforeGenerateStaticFunction.as"), GeneratorJobType.FunctionPublic)
+                                .Returns(GenerateFunction.ReadAllTextAS3("AfterGeneratePublicStaticFunction_generateExplicitScopeIsTrue.as"))
                                 .SetName("Generate public static function");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateStaticFunction_forCurrentType.as"),
-                                GeneratorJobType.FunctionPublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePublicStaticFunction_generateExplicitScopeIsTrue.as"))
+                            new TestCaseData(GenerateFunction.ReadAllTextAS3("BeforeGenerateStaticFunction_forCurrentType.as"), GeneratorJobType.FunctionPublic)
+                                .Returns(GenerateFunction.ReadAllTextAS3("AfterGeneratePublicStaticFunction_generateExplicitScopeIsTrue.as"))
                                 .SetName("From CurrentType.foo|");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateStaticFunction_forSomeType.as"),
-                                GeneratorJobType.FunctionPublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePublicStaticFunction_forSomeType.as"))
+                            new TestCaseData(GenerateFunction.ReadAllTextAS3("BeforeGenerateStaticFunction_forSomeType.as"), GeneratorJobType.FunctionPublic)
+                                .Returns(GenerateFunction.ReadAllTextAS3("AfterGeneratePublicStaticFunction_forSomeType.as"))
                                 .SetName("From SomeType.foo|");
                     }
                 }
@@ -954,24 +881,12 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateFunction.hx"),
-                                GeneratorJobType.Function
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateFunction_generateExplicitScopeIsTrue.hx"))
+                            new TestCaseData(GenerateFunction.ReadAllTextHaxe("BeforeGenerateFunction.hx"), GeneratorJobType.Function)
+                                .Returns(GenerateFunction.ReadAllTextHaxe("AfterGeneratePrivateFunction_generateExplicitScopeIsTrue.hx"))
                                 .SetName("Generate private function");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateFunction.hx"),
-                                GeneratorJobType.FunctionPublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePublicFunction_generateExplicitScopeIsTrue.hx"))
+                            new TestCaseData(GenerateFunction.ReadAllTextHaxe("BeforeGenerateFunction.hx"), GeneratorJobType.FunctionPublic)
+                                .Returns(GenerateFunction.ReadAllTextHaxe("AfterGeneratePublicFunction_generateExplicitScopeIsTrue.hx"))
                                 .SetName("Generate public function");
                     }
                 }
@@ -995,24 +910,12 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.BeforeGenerateFunction.hx"),
-                                    GeneratorJobType.Function
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateFunctionWithDefaultModifier.hx"))
+                            new TestCaseData(GenerateFunction.ReadAllTextHaxe("BeforeGenerateFunction.hx"), GeneratorJobType.Function)
+                                .Returns(GenerateFunction.ReadAllTextHaxe("AfterGeneratePrivateFunctionWithDefaultModifier.hx"))
                                 .SetName("Generate private function with default modifier declaration");
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.BeforeGenerateStaticFunction.hx"),
-                                    GeneratorJobType.Function
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateStaticFunctionWithDefaultModifier.hx"))
+                            new TestCaseData(GenerateFunction.ReadAllTextHaxe("BeforeGenerateStaticFunction.hx"), GeneratorJobType.Function)
+                                .Returns(GenerateFunction.ReadAllTextHaxe("AfterGeneratePrivateStaticFunctionWithDefaultModifier.hx"))
                                 .SetName("Generate private static function with default modifier declaration");
                     }
                 }
@@ -1024,18 +927,21 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class AssignStatementToVar : GenerateJob
             {
+                internal static string ReadAllTextHaxe(string fileName)
+                {
+                    return TestFile.ReadAllText($"ASCompletion.Test_Files.generated.haxe.{fileName}");
+                }
+
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get {
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText("ASCompletion.Test_Files.generated.haxe.BeforeAssignStatementToVar_useSpaces.hx"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(TestFile.ReadAllText("ASCompletion.Test_Files.generated.haxe.AfterAssignStatementToVar_useSpaces.hx"))
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_useSpaces.hx"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_useSpaces.hx"))
                                 .SetName("Assign statement to var. Use spaces instead of tabs.");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText("ASCompletion.Test_Files.generated.haxe.BeforeAssignStatementToVar_useTabs.hx"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(TestFile.ReadAllText("ASCompletion.Test_Files.generated.haxe.AfterAssignStatementToVar_useTabs.hx"))
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_useTabs.hx"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_useTabs.hx"))
                                 .SetName("Assign statement to var. Use tabs instead of spaces.");
                     }
                 }
@@ -1079,6 +985,16 @@ namespace ASCompletion.Completion
             {
                 internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
 
+                internal static string ReadAllTextAS3(string fileName)
+                {
+                    return TestFile.ReadAllText($"ASCompletion.Test_Files.generated.as3.{fileName}");
+                }
+
+                internal static string ReadAllTextHaxe(string fileName)
+                {
+                    return TestFile.ReadAllText($"ASCompletion.Test_Files.generated.haxe.{fileName}");
+                }
+
                 [TestFixtureSetUp]
                 public void GenerateVariableSetup()
                 {
@@ -1090,74 +1006,32 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable.as"),
-                                GeneratorJobType.Variable
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePrivateVariable_generateExplicitScopeIsFalse.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateVariable.as"), GeneratorJobType.Variable)
+                                .Returns(ReadAllTextAS3("AfterGeneratePrivateVariable_generateExplicitScopeIsFalse.as"))
                                 .SetName("Generate private variable");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable.as"),
-                                GeneratorJobType.VariablePublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePublicVariable_generateExplicitScopeIsFalse.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateVariable.as"), GeneratorJobType.VariablePublic)
+                                .Returns(ReadAllTextAS3("AfterGeneratePublicVariable_generateExplicitScopeIsFalse.as"))
                                 .SetName("Generate public variable");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable_forSomeObj.as"),
-                                GeneratorJobType.VariablePublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateVariable_forSomeObj.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateVariable_forSomeObj.as"), GeneratorJobType.VariablePublic)
+                                .Returns(ReadAllTextAS3("AfterGenerateVariable_forSomeObj.as"))
                                 .SetName("From some.foo|");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable_forSomeObj2.as"),
-                                GeneratorJobType.VariablePublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateVariable_forSomeObj2.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateVariable_forSomeObj2.as"), GeneratorJobType.VariablePublic)
+                                .Returns(ReadAllTextAS3("AfterGenerateVariable_forSomeObj2.as"))
                                 .SetName("From new Some().foo|");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable_forSomeObj3.as"),
-                                GeneratorJobType.VariablePublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateVariable_forSomeObj3.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateVariable_forSomeObj3.as"), GeneratorJobType.VariablePublic)
+                                .Returns(ReadAllTextAS3("AfterGenerateVariable_forSomeObj3.as"))
                                 .SetName("From new Some()\n.foo|");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateStaticVariable_forCurrentType.as"),
-                                GeneratorJobType.VariablePublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePublicStaticVariable_forCurrentType.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateStaticVariable_forCurrentType.as"), GeneratorJobType.VariablePublic)
+                                .Returns(ReadAllTextAS3("AfterGeneratePublicStaticVariable_forCurrentType.as"))
                                 .SetName("From CurrentType.foo|");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateStaticVariable_forSomeType.as"),
-                                GeneratorJobType.VariablePublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePublicStaticVariable_forSomeType.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateStaticVariable_forSomeType.as"), GeneratorJobType.VariablePublic)
+                                .Returns(ReadAllTextAS3("AfterGeneratePublicStaticVariable_forSomeType.as"))
                                 .SetName("From SomeType.foo|");
                     }
                 }
@@ -1170,64 +1044,28 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateVariable.hx"),
-                                GeneratorJobType.Variable
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateVariable_generateExplicitScopeIsFalse.hx"))
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable.hx"), GeneratorJobType.Variable)
+                                .Returns(ReadAllTextHaxe("AfterGeneratePrivateVariable_generateExplicitScopeIsFalse.hx"))
                                 .SetName("Generate private variable");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateStaticVariable.hx"),
-                                GeneratorJobType.Variable
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateStaticVariable.hx"))
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateStaticVariable.hx"), GeneratorJobType.Variable)
+                                .Returns(ReadAllTextHaxe("AfterGeneratePrivateStaticVariable.hx"))
                                 .SetName("Generate private static variable");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateVariable.hx"),
-                                GeneratorJobType.VariablePublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePublicVariable_generateExplicitScopeIsFalse.hx"))
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable.hx"), GeneratorJobType.VariablePublic)
+                                .Returns(ReadAllTextHaxe("AfterGeneratePublicVariable_generateExplicitScopeIsFalse.hx"))
                                 .SetName("Generate public variable");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateStaticVariable.hx"),
-                                GeneratorJobType.VariablePublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePublicStaticVariable_generateExplicitScopeIsFalse.hx"))
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateStaticVariable.hx"), GeneratorJobType.VariablePublic)
+                                .Returns(ReadAllTextHaxe("AfterGeneratePublicStaticVariable_generateExplicitScopeIsFalse.hx"))
                                 .SetName("Generate public static variable");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGeneratePublicStaticVariable_forSomeType.hx"),
-                                GeneratorJobType.VariablePublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePublicStaticVariable_forSomeType.hx"))
+                            new TestCaseData(ReadAllTextHaxe("BeforeGeneratePublicStaticVariable_forSomeType.hx"), GeneratorJobType.VariablePublic)
+                                .Returns(ReadAllTextHaxe("AfterGeneratePublicStaticVariable_forSomeType.hx"))
                                 .SetName("From SomeType.foo|");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGeneratePublicStaticVariable_forCurrentType.hx"),
-                                GeneratorJobType.VariablePublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePublicStaticVariable_forCurrentType.hx"))
+                            new TestCaseData(ReadAllTextHaxe("BeforeGeneratePublicStaticVariable_forCurrentType.hx"), GeneratorJobType.VariablePublic)
+                                .Returns(ReadAllTextHaxe("AfterGeneratePublicStaticVariable_forCurrentType.hx"))
                                 .SetName("From CurrentType.foo|");
                     }
                 }
@@ -1292,54 +1130,24 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable.as"),
-                                GeneratorJobType.Variable
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePrivateVariable_generateExplicitScopeIsTrue.as"))
+                            new TestCaseData(GenerateVariable.ReadAllTextAS3("BeforeGenerateVariable.as"), GeneratorJobType.Variable)
+                                .Returns(GenerateVariable.ReadAllTextAS3("AfterGeneratePrivateVariable_generateExplicitScopeIsTrue.as"))
                                 .SetName("Generate private variable");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable.as"),
-                                GeneratorJobType.VariablePublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePublicVariable_generateExplicitScopeIsTrue.as"))
+                            new TestCaseData(GenerateVariable.ReadAllTextAS3("BeforeGenerateVariable.as"), GeneratorJobType.VariablePublic)
+                                .Returns(GenerateVariable.ReadAllTextAS3("AfterGeneratePublicVariable_generateExplicitScopeIsTrue.as"))
                                 .SetName("Generate public variable");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable_forSomeObj.as"),
-                                GeneratorJobType.VariablePublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateVariable_forSomeObj.as"))
+                            new TestCaseData(GenerateVariable.ReadAllTextAS3("BeforeGenerateVariable_forSomeObj.as"), GeneratorJobType.VariablePublic)
+                                .Returns(GenerateVariable.ReadAllTextAS3("AfterGenerateVariable_forSomeObj.as"))
                                 .SetName("From some.foo|");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable_forSomeObj2.as"),
-                                GeneratorJobType.VariablePublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateVariable_forSomeObj2.as"))
+                            new TestCaseData(GenerateVariable.ReadAllTextAS3("BeforeGenerateVariable_forSomeObj2.as"), GeneratorJobType.VariablePublic)
+                                .Returns(GenerateVariable.ReadAllTextAS3("AfterGenerateVariable_forSomeObj2.as"))
                                 .SetName("From new Some().foo|");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable_forSomeObj3.as"),
-                                GeneratorJobType.VariablePublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateVariable_forSomeObj3.as"))
+                            new TestCaseData(GenerateVariable.ReadAllTextAS3("BeforeGenerateVariable_forSomeObj3.as"), GeneratorJobType.VariablePublic)
+                                .Returns(GenerateVariable.ReadAllTextAS3("AfterGenerateVariable_forSomeObj3.as"))
                                 .SetName("From new Some()\n.foo|");
                     }
                 }
@@ -1352,54 +1160,24 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateVariable.hx"),
-                                GeneratorJobType.Variable
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateVariable_generateExplicitScopeIsTrue.hx"))
+                            new TestCaseData(GenerateVariable.ReadAllTextHaxe("BeforeGenerateVariable.hx"), GeneratorJobType.Variable)
+                                .Returns(GenerateVariable.ReadAllTextHaxe("AfterGeneratePrivateVariable_generateExplicitScopeIsTrue.hx"))
                                 .SetName("Generate private variable");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateVariable.hx"),
-                                GeneratorJobType.VariablePublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePublicVariable_generateExplicitScopeIsTrue.hx"))
+                            new TestCaseData(GenerateVariable.ReadAllTextHaxe("BeforeGenerateVariable.hx"), GeneratorJobType.VariablePublic)
+                                .Returns(GenerateVariable.ReadAllTextHaxe("AfterGeneratePublicVariable_generateExplicitScopeIsTrue.hx"))
                                 .SetName("Generate public variable");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateStaticVariable.hx"),
-                                GeneratorJobType.VariablePublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePublicStaticVariable_generateExplicitScopeIsTrue.hx"))
+                            new TestCaseData(GenerateVariable.ReadAllTextHaxe("BeforeGenerateStaticVariable.hx"), GeneratorJobType.VariablePublic)
+                                .Returns(GenerateVariable.ReadAllTextHaxe("AfterGeneratePublicStaticVariable_generateExplicitScopeIsTrue.hx"))
                                 .SetName("Generate public static variable");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGeneratePublicStaticVariable_forSomeType.hx"),
-                                GeneratorJobType.VariablePublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePublicStaticVariable_forSomeType.hx"))
+                            new TestCaseData(GenerateVariable.ReadAllTextHaxe("BeforeGeneratePublicStaticVariable_forSomeType.hx"), GeneratorJobType.VariablePublic)
+                                .Returns(GenerateVariable.ReadAllTextHaxe("AfterGeneratePublicStaticVariable_forSomeType.hx"))
                                 .SetName("From SomeType.foo| variable");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGeneratePublicStaticVariable_forCurrentType.hx"),
-                                GeneratorJobType.VariablePublic
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePublicStaticVariable_forCurrentType.hx"))
+                            new TestCaseData(GenerateVariable.ReadAllTextHaxe("BeforeGeneratePublicStaticVariable_forCurrentType.hx"), GeneratorJobType.VariablePublic)
+                                .Returns(GenerateVariable.ReadAllTextHaxe("AfterGeneratePublicStaticVariable_forCurrentType.hx"))
                                 .SetName("From CurrentType.foo| variable");
                     }
                 }
@@ -1423,24 +1201,12 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.BeforeGenerateVariable.as"),
-                                    GeneratorJobType.Variable
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePrivateVariable_generateExplicitScopeIsFalse.as"))
+                            new TestCaseData(GenerateVariable.ReadAllTextAS3("BeforeGenerateVariable.as"), GeneratorJobType.Variable)
+                                .Returns(GenerateVariable.ReadAllTextAS3("AfterGeneratePrivateVariable_generateExplicitScopeIsFalse.as"))
                                 .SetName("Generate private variable with default modifier declration");
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.BeforeGenerateStaticVariable_forCurrentType.as"),
-                                    GeneratorJobType.Variable
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGeneratePrivateStaticVariabeWithDefaultModifier.as"))
+                            new TestCaseData(GenerateVariable.ReadAllTextAS3("BeforeGenerateStaticVariable_forCurrentType.as"), GeneratorJobType.Variable)
+                                .Returns(GenerateVariable.ReadAllTextAS3("AfterGeneratePrivateStaticVariabeWithDefaultModifier.as"))
                                 .SetName("Generate private static variable with default modifier declration");
                     }
                 }
@@ -1453,24 +1219,12 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.BeforeGenerateVariable.hx"),
-                                    GeneratorJobType.Variable
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateVariableWithDefaultModifier.hx"))
+                            new TestCaseData(GenerateVariable.ReadAllTextHaxe("BeforeGenerateVariable.hx"), GeneratorJobType.Variable)
+                                .Returns(GenerateVariable.ReadAllTextHaxe("AfterGeneratePrivateVariableWithDefaultModifier.hx"))
                                 .SetName("Generate private variable with default modifier declration");
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.BeforeGenerateStaticVariable.hx"),
-                                    GeneratorJobType.Variable
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateStaticVariableWithDefaultModifier.hx"))
+                            new TestCaseData(GenerateVariable.ReadAllTextHaxe("BeforeGenerateStaticVariable.hx"), GeneratorJobType.Variable)
+                                .Returns(GenerateVariable.ReadAllTextHaxe("AfterGeneratePrivateStaticVariableWithDefaultModifier.hx"))
                                 .SetName("Generate private static variable with default modifier declration");
                     }
                 }
@@ -1484,29 +1238,27 @@ namespace ASCompletion.Completion
             {
                 internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
 
+                internal static string ReadAllTextAS3(string fileName)
+                {
+                    return TestFile.ReadAllText($"ASCompletion.Test_Files.generated.as3.{fileName}");
+                }
+
+                internal static string ReadAllTextHaxe(string fileName)
+                {
+                    return TestFile.ReadAllText($"ASCompletion.Test_Files.generated.haxe.{fileName}");
+                }
+
                 public IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateEventHandler.as"),
-                                new string[0]
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateEventHandler_withoutAutoRemove.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateEventHandler.as"), new string[0])
+                                .Returns(ReadAllTextAS3("AfterGenerateEventHandler_withoutAutoRemove.as"))
                                 .SetName("Generate event handler without auto remove");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateEventHandler.as"),
-                                new[] {"Event.ADDED", "Event.REMOVED"}
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateEventHandler_withAutoRemove.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateEventHandler.as"), new[] {"Event.ADDED", "Event.REMOVED"})
+                                .Returns(ReadAllTextAS3("AfterGenerateEventHandler_withAutoRemove.as"))
                                 .SetName("Generate event handler with auto remove");
                     }
                 }
@@ -1519,24 +1271,12 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateEventHandler.hx"),
-                                new string[0]
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGenerateEventHandler_withoutAutoRemove.hx"))
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateEventHandler.hx"), new string[0])
+                                .Returns(ReadAllTextHaxe("AfterGenerateEventHandler_withoutAutoRemove.hx"))
                                 .SetName("Generate event handler without auto remove");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateEventHandler.hx"),
-                                new[] {"Event.ADDED", "Event.REMOVED"}
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGenerateEventHandler_withAutoRemove.hx"))
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateEventHandler.hx"), new[] {"Event.ADDED", "Event.REMOVED"})
+                                .Returns(ReadAllTextHaxe("AfterGenerateEventHandler_withAutoRemove.hx"))
                                 .SetName("Generate event handler with auto remove");
                     }
                 }
@@ -1603,14 +1343,8 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateEventHandler.as"),
-                                new[] {"Event.ADDED", "Event.REMOVED"}
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateEventHandler_withAutoRemove_generateExplicitScopeIsTrue.as"))
+                            new TestCaseData(GenerateEventHandler.ReadAllTextAS3("BeforeGenerateEventHandler.as"), new[] {"Event.ADDED", "Event.REMOVED"})
+                                .Returns(GenerateEventHandler.ReadAllTextAS3("AfterGenerateEventHandler_withAutoRemove_generateExplicitScopeIsTrue.as"))
                                 .SetName("Generate event handler with auto remove");
                     }
                 }
@@ -1623,14 +1357,8 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.BeforeGenerateEventHandler.hx"),
-                                    new[] {"Event.ADDED", "Event.REMOVED"}
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGenerateEventHandler_withAutoRemove_generateExplicitScopeIsTrue.hx"))
+                            new TestCaseData(GenerateEventHandler.ReadAllTextHaxe("BeforeGenerateEventHandler.hx"), new[] {"Event.ADDED", "Event.REMOVED"})
+                                .Returns(GenerateEventHandler.ReadAllTextHaxe("AfterGenerateEventHandler_withAutoRemove_generateExplicitScopeIsTrue.hx"))
                                 .SetName("Generate event handler with auto remove");
                     }
                 }
@@ -1654,24 +1382,12 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.BeforeGenerateEventHandler.hx"),
-                                    new[] {"Event.ADDED", "Event.REMOVED"}
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateEventHandlerWithDefaultModifier.hx"))
+                            new TestCaseData(GenerateEventHandler.ReadAllTextHaxe("BeforeGenerateEventHandler.hx"), new[] {"Event.ADDED", "Event.REMOVED"})
+                                .Returns(GenerateEventHandler.ReadAllTextHaxe("AfterGeneratePrivateEventHandlerWithDefaultModifier.hx"))
                                 .SetName("Generate private event handler with default modifier declaration");
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.BeforeGeneratePrivateStaticEventHandler.hx"),
-                                    new string[0]
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateStaticEventHandlerWithDefaultModifier.hx"))
+                            new TestCaseData(GenerateEventHandler.ReadAllTextHaxe("BeforeGeneratePrivateStaticEventHandler.hx"), new string[0])
+                                .Returns(GenerateEventHandler.ReadAllTextHaxe("AfterGeneratePrivateStaticEventHandlerWithDefaultModifier.hx"))
                                 .SetName("Generate private static event handler with default modifier declaration");
                     }
                 }
@@ -1685,33 +1401,31 @@ namespace ASCompletion.Completion
             {
                 internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
 
+                internal static string ReadAllTextAS3(string fileName)
+                {
+                    return TestFile.ReadAllText($"ASCompletion.Test_Files.generated.as3.{fileName}");
+                }
+
+                internal static string ReadAllTextHaxe(string fileName)
+                {
+                    return TestFile.ReadAllText($"ASCompletion.Test_Files.generated.haxe.{fileName}");
+                }
+
                 public IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateGetterSetter_fromPublicField.as"))
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateGetterSetter_fromPublicField.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateGetterSetter_fromPublicField.as"))
+                                .Returns(ReadAllTextAS3("AfterGenerateGetterSetter_fromPublicField.as"))
                                 .SetName("Generate getter and setter from public field");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateGetterSetter_fromPublicFieldIfNameStartWith_.as"))
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateGetterSetter_fromPublicFieldIfNameStartWith_.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateGetterSetter_fromPublicFieldIfNameStartWith_.as"))
+                                .Returns(ReadAllTextAS3("AfterGenerateGetterSetter_fromPublicFieldIfNameStartWith_.as"))
                                 .SetName("Generate getter and setter from public field if name start with \"_\"");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.as3.BeforeGenerateGetterSetter_fromPrivateField.as"))
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterGenerateGetterSetter_fromPrivateField.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateGetterSetter_fromPrivateField.as"))
+                                .Returns(ReadAllTextAS3("AfterGenerateGetterSetter_fromPrivateField.as"))
                                 .SetName("Generate getter and setter from private field");
                     }
                 }
@@ -1724,20 +1438,12 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateGetterSetter.hx"))
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGenerateGetterSetter.hx"))
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateGetterSetter.hx"))
+                                .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter.hx"))
                                 .SetName("Generate getter and setter");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforeGenerateGetterSetter_issue221.hx"))
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGenerateGetterSetter_issue221.hx"))
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateGetterSetter_issue221.hx"))
+                                .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter_issue221.hx"))
                                 .SetName("issue 221");
                     }
                 }
@@ -1791,20 +1497,12 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.BeforeGenerateGetterSetter.hx"))
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateGetterSetterWithDefaultModifier.hx"))
+                            new TestCaseData(GenerateGetterSetter.ReadAllTextHaxe("BeforeGenerateGetterSetter.hx"))
+                                .Returns(GenerateGetterSetter.ReadAllTextHaxe("AfterGeneratePrivateGetterSetterWithDefaultModifier.hx"))
                                 .SetName("Generate private getter and setter with default modifier declaration");
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.BeforeGeneratePrivateStaticGetterSetter.hx"))
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterGeneratePrivateStaticGetterSetterWithDefaultModifier.hx"))
+                            new TestCaseData(GenerateGetterSetter.ReadAllTextHaxe("BeforeGeneratePrivateStaticGetterSetter.hx"))
+                                .Returns(GenerateGetterSetter.ReadAllTextHaxe("AfterGeneratePrivateStaticGetterSetterWithDefaultModifier.hx"))
                                 .SetName("Generate private static getter and setter with default modifier declaration");
                     }
                 }
@@ -1818,6 +1516,16 @@ namespace ASCompletion.Completion
             {
                 internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
 
+                internal static string ReadAllTextAS3(string fileName)
+                {
+                    return TestFile.ReadAllText($"ASCompletion.Test_Files.generated.as3.{fileName}");
+                }
+
+                internal static string ReadAllTextHaxe(string fileName)
+                {
+                    return TestFile.ReadAllText($"ASCompletion.Test_Files.generated.haxe.{fileName}");
+                }
+
                 [TestFixtureSetUp]
                 public void GenerateOverrideSetUp()
                 {
@@ -1830,70 +1538,28 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.BeforeOverridePublicFunction.as"),
-                                    "Foo",
-                                    "foo",
-                                    FlagType.Function)
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterOverridePublicFunction.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeOverridePublicFunction.as"), "Foo", "foo", FlagType.Function)
+                                .Returns(ReadAllTextAS3("AfterOverridePublicFunction.as"))
                                 .SetName("Override public function");
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.BeforeOverrideProtectedFunction.as"),
-                                    "Foo",
-                                    "foo",
-                                    FlagType.Function)
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterOverrideProtectedFunction.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeOverrideProtectedFunction.as"), "Foo", "foo", FlagType.Function)
+                                .Returns(ReadAllTextAS3("AfterOverrideProtectedFunction.as"))
                                 .SetName("Override proteced function");
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.BeforeOverrideInternalFunction.as"),
-                                    "Foo",
-                                    "foo",
-                                    FlagType.Function)
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterOverrideInternalFunction.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeOverrideInternalFunction.as"), "Foo", "foo", FlagType.Function)
+                                .Returns(ReadAllTextAS3("AfterOverrideInternalFunction.as"))
                                 .SetName("Override internal function");
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.BeforeOverrideHasOwnProperty.as"),
-                                    "Object",
-                                    "hasOwnProperty",
-                                    FlagType.Function)
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterOverrideHasOwnProperty.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeOverrideHasOwnProperty.as"), "Object", "hasOwnProperty", FlagType.Function)
+                                .Returns(ReadAllTextAS3("AfterOverrideHasOwnProperty.as"))
                                 .SetName("Override hasOwnProperty");
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.BeforeOverridePublicGetSet.as"),
-                                    "Foo",
-                                    "foo",
-                                    FlagType.Getter)
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterOverridePublicGetSet.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeOverridePublicGetSet.as"), "Foo", "foo", FlagType.Getter)
+                                .Returns(ReadAllTextAS3("AfterOverridePublicGetSet.as"))
                                 .SetName("Override public getter and setter");
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.BeforeOverrideInternalGetSet.as"),
-                                    "Foo",
-                                    "foo",
-                                    FlagType.Getter)
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterOverrideInternalGetSet.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforeOverrideInternalGetSet.as"), "Foo", "foo", FlagType.Getter)
+                                .Returns(ReadAllTextAS3("AfterOverrideInternalGetSet.as"))
                                 .SetName("Override internal getter and setter");
                     }
                 }
@@ -1909,70 +1575,28 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverrideGetNull.hx"),
-                                    "Foo",
-                                    "foo",
-                                    FlagType.Getter | FlagType.Setter)
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterOverrideGetNull.hx"))
+                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideGetNull.hx"), "Foo", "foo", FlagType.Getter | FlagType.Setter)
+                                .Returns(ReadAllTextHaxe("AfterOverrideGetNull.hx"))
                                 .SetName("Override var foo(get, null)");
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverrideNullSet.hx"),
-                                    "Foo",
-                                    "foo",
-                                    FlagType.Getter | FlagType.Setter)
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterOverrideNullSet.hx"))
+                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideNullSet.hx"), "Foo", "foo", FlagType.Getter | FlagType.Setter)
+                                .Returns(ReadAllTextHaxe("AfterOverrideNullSet.hx"))
                                 .SetName("Override var foo(null, set)");
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverrideGetSet.hx"),
-                                    "Foo",
-                                    "foo",
-                                    FlagType.Getter | FlagType.Setter)
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterOverrideGetSet.hx"))
+                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideGetSet.hx"), "Foo", "foo", FlagType.Getter | FlagType.Setter)
+                                .Returns(ReadAllTextHaxe("AfterOverrideGetSet.hx"))
                                 .SetName("Override var foo(get, set)");
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverrideIssue793.hx"),
-                                    "Foo",
-                                    "foo",
-                                    FlagType.Getter | FlagType.Setter)
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterOverrideIssue793.hx"))
+                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideIssue793.hx"), "Foo", "foo", FlagType.Getter | FlagType.Setter)
+                                .Returns(ReadAllTextHaxe("AfterOverrideIssue793.hx"))
                                 .SetName("issue #793");
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverridePublicFunction.hx"),
-                                    "Foo",
-                                    "foo",
-                                    FlagType.Function)
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterOverridePublicFunction.hx"))
+                            new TestCaseData(ReadAllTextHaxe("BeforeOverridePublicFunction.hx"), "Foo", "foo", FlagType.Function)
+                                .Returns(ReadAllTextHaxe("AfterOverridePublicFunction.hx"))
                                 .SetName("Override public function");
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverridePrivateFunction.hx"),
-                                    "Foo",
-                                    "foo",
-                                    FlagType.Function)
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterOverridePrivateFunction.hx"))
+                            new TestCaseData(ReadAllTextHaxe("BeforeOverridePrivateFunction.hx"), "Foo", "foo", FlagType.Function)
+                                .Returns(ReadAllTextHaxe("AfterOverridePrivateFunction.hx"))
                                 .SetName("Override private function");
                     }
                 }
@@ -2032,48 +1656,20 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverrideGetNull.hx"),
-                                    "Foo",
-                                    "foo",
-                                    FlagType.Getter | FlagType.Setter)
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterOverrideGetNullWithDefaultModifier.hx"))
+                            new TestCaseData(GenerateOverride.ReadAllTextHaxe("BeforeOverrideGetNull.hx"), "Foo", "foo", FlagType.Getter | FlagType.Setter)
+                                .Returns(GenerateOverride.ReadAllTextHaxe("AfterOverrideGetNullWithDefaultModifier.hx"))
                                 .SetName("Override var foo(get, null) with default modifier declaration");
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverrideNullSet.hx"),
-                                    "Foo",
-                                    "foo",
-                                    FlagType.Getter | FlagType.Setter)
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterOverrideNullSetWithDefaultModifier.hx"))
+                            new TestCaseData(GenerateOverride.ReadAllTextHaxe("BeforeOverrideNullSet.hx"), "Foo", "foo", FlagType.Getter | FlagType.Setter)
+                                .Returns(GenerateOverride.ReadAllTextHaxe("AfterOverrideNullSetWithDefaultModifier.hx"))
                                 .SetName("Override var foo(null, set) with default modifier declaration");
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverrideGetSet.hx"),
-                                    "Foo",
-                                    "foo",
-                                    FlagType.Getter | FlagType.Setter)
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterOverrideGetSetWithDefaultModifier.hx"))
+                            new TestCaseData(GenerateOverride.ReadAllTextHaxe("BeforeOverrideGetSet.hx"), "Foo", "foo", FlagType.Getter | FlagType.Setter)
+                                .Returns(GenerateOverride.ReadAllTextHaxe("AfterOverrideGetSetWithDefaultModifier.hx"))
                                 .SetName("Override var foo(get, set) with default modifier declaration");
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverridePrivateFunction.hx"),
-                                    "Foo",
-                                    "foo",
-                                    FlagType.Function)
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterOverridePrivateFunctionWithDefaultModifier.hx"))
+                            new TestCaseData(GenerateOverride.ReadAllTextHaxe("BeforeOverridePrivateFunction.hx"), "Foo", "foo", FlagType.Function)
+                                .Returns(GenerateOverride.ReadAllTextHaxe("AfterOverridePrivateFunctionWithDefaultModifier.hx"))
                                 .SetName("Override private function with default modifier");
                     }
                 }
