@@ -553,6 +553,16 @@ namespace ASCompletion.Completion
             {
                 internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
 
+                internal static string ReadAllTextAS3(string fileName)
+                {
+                    return TestFile.ReadAllText($"ASCompletion.Test_Files.generated.as3.{fileName}");
+                }
+
+                internal static string ReadAllTextHaxe(string fileName)
+                {
+                    return TestFile.ReadAllText($"ASCompletion.Test_Files.generated.haxe.{fileName}");
+                }
+
                 [TestFixtureSetUp]
                 public void PromoteLocalWithSetup()
                 {
@@ -564,13 +574,8 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.BeforePromoteLocal.as")
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterPromoteLocal_generateExplicitScopeIsFalse.as"))
+                            new TestCaseData(ReadAllTextAS3("BeforePromoteLocal.as"))
+                                .Returns(ReadAllTextAS3("AfterPromoteLocal_generateExplicitScopeIsFalse.as"))
                                 .SetName("Promote to class member");
                     }
                 }
@@ -583,13 +588,8 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "ASCompletion.Test_Files.generated.haxe.BeforePromoteLocal.hx")
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterPromoteLocal_generateExplicitScopeIsFalse.hx"))
+                            new TestCaseData(ReadAllTextHaxe("BeforePromoteLocal.hx"))
+                                .Returns(ReadAllTextHaxe("AfterPromoteLocal_generateExplicitScopeIsFalse.hx"))
                                 .SetName("Promote to class member");
                     }
                 }
@@ -653,13 +653,8 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.BeforePromoteLocal.as")
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.as3.AfterPromoteLocal_generateExplicitScopeIsTrue.as"))
+                            new TestCaseData(PromoteLocal.ReadAllTextAS3("BeforePromoteLocal.as"))
+                                .Returns(PromoteLocal.ReadAllTextAS3("AfterPromoteLocal_generateExplicitScopeIsTrue.as"))
                                 .SetName("Promote to class member");
                     }
                 }
@@ -672,13 +667,8 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.BeforePromoteLocal.hx")
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "ASCompletion.Test_Files.generated.haxe.AfterPromoteLocal_generateExplicitScopeIsTrue.hx"))
+                            new TestCaseData(PromoteLocal.ReadAllTextHaxe("BeforePromoteLocal.hx"))
+                                .Returns(PromoteLocal.ReadAllTextHaxe("AfterPromoteLocal_generateExplicitScopeIsTrue.hx"))
                                 .SetName("Promote to class member");
                     }
                 }
