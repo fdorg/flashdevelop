@@ -290,6 +290,22 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateGetterSetterWithDefaultModifier.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGeneratePrivateStaticGetterSetter.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGeneratePrivateStaticGetterSetterWithDefaultModifier.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideGetNullWithDefaultModifier.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideNullSetWithDefaultModifier.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideGetSetWithDefaultModifier.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverridePublicFunction.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverridePublicFunction.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverridePrivateFunction.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverridePrivateFunction.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverridePrivateFunctionWithDefaultModifier.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeOverridePublicFunction.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeOverrideProtectedFunction.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeOverrideInternalFunction.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterOverridePublicFunction.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterOverrideProtectedFunction.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterOverrideInternalFunction.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeOverrideHasOwnProperty.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterOverrideHasOwnProperty.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

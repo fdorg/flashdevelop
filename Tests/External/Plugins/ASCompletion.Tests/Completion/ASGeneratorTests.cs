@@ -1849,10 +1849,70 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateOverride : GenerateJob
             {
+                internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
+
                 [TestFixtureSetUp]
                 public void GenerateOverrideSetUp()
                 {
+                    ASContext.CommonSettings.DeclarationModifierOrder = DeclarationModifierOrder;
                     ASContext.Context.Settings.GenerateImports = true;
+                }
+
+                public IEnumerable<TestCaseData> AS3TestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.BeforeOverridePublicFunction.as"),
+                                    "Foo",
+                                    "foo",
+                                    FlagType.Function)
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterOverridePublicFunction.as"))
+                                .SetName("Override public function");
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.BeforeOverrideProtectedFunction.as"),
+                                    "Foo",
+                                    "foo",
+                                    FlagType.Function)
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterOverrideProtectedFunction.as"))
+                                .SetName("Override proteced function");
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.BeforeOverrideInternalFunction.as"),
+                                    "Foo",
+                                    "foo",
+                                    FlagType.Function)
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterOverrideInternalFunction.as"))
+                                .SetName("Override internal function");
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.BeforeOverrideHasOwnProperty.as"),
+                                    "Object",
+                                    "hasOwnProperty",
+                                    FlagType.Function)
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.as3.AfterOverrideHasOwnProperty.as"))
+                                .SetName("Override hasOwnProperty");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(AS3TestCases))]
+                public string AS3(string source, string ofClassName, string memberName, FlagType memberFlags)
+                {
+                    return GenerateAS3(source, ofClassName, memberName, memberFlags, sci);
                 }
 
                 public IEnumerable<TestCaseData> HaxeTestCases
@@ -1864,7 +1924,8 @@ namespace ASCompletion.Completion
                                     TestFile.ReadAllText(
                                         "ASCompletion.Test_Files.generated.haxe.BeforeOverrideGetNull.hx"),
                                     "Foo",
-                                    "foo")
+                                    "foo",
+                                    FlagType.Getter | FlagType.Setter)
                                 .Returns(
                                     TestFile.ReadAllText(
                                         "ASCompletion.Test_Files.generated.haxe.AfterOverrideGetNull.hx"))
@@ -1874,7 +1935,8 @@ namespace ASCompletion.Completion
                                     TestFile.ReadAllText(
                                         "ASCompletion.Test_Files.generated.haxe.BeforeOverrideNullSet.hx"),
                                     "Foo",
-                                    "foo")
+                                    "foo",
+                                    FlagType.Getter | FlagType.Setter)
                                 .Returns(
                                     TestFile.ReadAllText(
                                         "ASCompletion.Test_Files.generated.haxe.AfterOverrideNullSet.hx"))
@@ -1884,7 +1946,8 @@ namespace ASCompletion.Completion
                                     TestFile.ReadAllText(
                                         "ASCompletion.Test_Files.generated.haxe.BeforeOverrideGetSet.hx"),
                                     "Foo",
-                                    "foo")
+                                    "foo",
+                                    FlagType.Getter | FlagType.Setter)
                                 .Returns(
                                     TestFile.ReadAllText(
                                         "ASCompletion.Test_Files.generated.haxe.AfterOverrideGetSet.hx"))
@@ -1894,31 +1957,142 @@ namespace ASCompletion.Completion
                                     TestFile.ReadAllText(
                                         "ASCompletion.Test_Files.generated.haxe.BeforeOverrideIssue793.hx"),
                                     "Foo",
-                                    "foo"
-                                    )
+                                    "foo",
+                                    FlagType.Getter | FlagType.Setter)
                                 .Returns(
                                     TestFile.ReadAllText(
                                         "ASCompletion.Test_Files.generated.haxe.AfterOverrideIssue793.hx"))
                                 .SetName("issue #793");
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverridePublicFunction.hx"),
+                                    "Foo",
+                                    "foo",
+                                    FlagType.Function)
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterOverridePublicFunction.hx"))
+                                .SetName("Override public function");
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverridePrivateFunction.hx"),
+                                    "Foo",
+                                    "foo",
+                                    FlagType.Function)
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterOverridePrivateFunction.hx"))
+                                .SetName("Override private function");
                     }
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, string ofClassName, string memberName)
+                public string Haxe(string source, string ofClassName, string memberName, FlagType memberFlags)
+                {
+                    return GenerateHaxe(source, ofClassName, memberName, memberFlags, sci);
+                }
+
+                internal static string GenerateAS3(string source, string ofClassName, string memberName, FlagType memberFlags, ScintillaControl sci)
+                {
+                    sci.ConfigurationLanguage = "as3";
+                    ASContext.Context.SetAs3Features();
+                    ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
+                    var context = new AS3Context.Context(new AS3Settings());
+                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(it => context.ResolveType(it.ArgAt<string>(0), it.ArgAt<FileModel>(1)));
+                    return Generate(source, ofClassName, memberName, memberFlags, sci);
+                }
+
+                internal static string GenerateHaxe(string source, string ofClassName, string memberName, FlagType memberFlags, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "haxe";
                     ASContext.Context.SetHaxeFeatures();
                     ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
                     var context = new HaXeContext.Context(new HaXeSettings());
                     ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(it => context.ResolveType(it.ArgAt<string>(0), it.ArgAt<FileModel>(1)));
-                    sci.Text = sourceText;
+                    return Generate(source, ofClassName, memberName, memberFlags, sci);
+                }
+
+                static string Generate(string source, string ofClassName, string memberName, FlagType memberFlags, ScintillaControl sci)
+                {
+                    sci.Text = source;
                     SnippetHelper.PostProcessSnippets(sci, 0);
                     var currentModel = ASContext.Context.CurrentModel;
                     new ASFileParser().ParseSrc(currentModel, sci.Text);
                     var ofClass = currentModel.Classes.Find(model => model.Name == ofClassName);
-                    var member = ofClass.Members.Search(memberName, FlagType.Getter | FlagType.Setter, 0);
+                    var member = ofClass.Members.Search(memberName, memberFlags, 0);
                     ASGenerator.GenerateOverride(sci, ofClass, member, sci.CurrentPos);
                     return sci.Text;
+                }
+            }
+
+            [TestFixture]
+            public class GenerateOverrideWithDefaultModifierDeclaration : GenerateJob
+            {
+                [TestFixtureSetUp]
+                public void GenerateOverrideSetUp()
+                {
+                    ASContext.Context.Settings.GenerateImports = true;
+                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateOverride.DeclarationModifierOrder;
+                    ASContext.CommonSettings.GenerateDefaultModifierDeclaration = true;
+                }
+
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverrideGetNull.hx"),
+                                    "Foo",
+                                    "foo",
+                                    FlagType.Getter | FlagType.Setter)
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterOverrideGetNullWithDefaultModifier.hx"))
+                                .SetName("Override var foo(get, null) with default modifier declaration");
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverrideNullSet.hx"),
+                                    "Foo",
+                                    "foo",
+                                    FlagType.Getter | FlagType.Setter)
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterOverrideNullSetWithDefaultModifier.hx"))
+                                .SetName("Override var foo(null, set) with default modifier declaration");
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverrideGetSet.hx"),
+                                    "Foo",
+                                    "foo",
+                                    FlagType.Getter | FlagType.Setter)
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterOverrideGetSetWithDefaultModifier.hx"))
+                                .SetName("Override var foo(get, set) with default modifier declaration");
+                        yield return
+                            new TestCaseData(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.BeforeOverridePrivateFunction.hx"),
+                                    "Foo",
+                                    "foo",
+                                    FlagType.Function)
+                                .Returns(
+                                    TestFile.ReadAllText(
+                                        "ASCompletion.Test_Files.generated.haxe.AfterOverridePrivateFunctionWithDefaultModifier.hx"))
+                                .SetName("Override private function with default modifier");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public string Haxe(string sourceText, string ofClassName, string memberName, FlagType memberFlags)
+                {
+                    return GenerateOverride.GenerateHaxe(sourceText, ofClassName, memberName, memberFlags, sci);
                 }
             }
         }

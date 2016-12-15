@@ -1016,7 +1016,7 @@ namespace ASCompletion.Completion
                     try
                     {
                         if (!RemoveLocalDeclaration(sci, contextMember)) return;
-
+                        
                         latest = GetLatestMemberForVariable(GeneratorJobType.Variable, inClass, GetDefaultVisibility(inClass), member);
                         if (latest == null) return;
 
@@ -1024,12 +1024,15 @@ namespace ASCompletion.Completion
                         if (position <= 0) return;
                         sci.SetSel(position, position);
 
-                        contextMember.Flags -= FlagType.LocalVar;
-                        if ((member.Flags & FlagType.Static) > 0)
-                            contextMember.Flags |= FlagType.Static;
-                        contextMember.Access = GetDefaultVisibility(inClass);
-                        GenerateVariable(contextMember, position, detach);
+                        var newMember = new MemberModel
+                        {
+                            Name = contextMember.Name,
+                            Type = contextMember.Type,
+                            Access = GetDefaultVisibility(inClass)
+                        };
+                        if ((member.Flags & FlagType.Static) > 0) newMember.Flags |= FlagType.Access;
 
+                        GenerateVariable(newMember, position, detach);
                         sci.SetSel(lookupPosition, lookupPosition);
                     }
                     finally
@@ -3948,9 +3951,7 @@ namespace ASCompletion.Completion
             List<string> typesUsed = new List<string>();
             bool isProxy = (member.Namespace == "flash_proxy");
             if (isProxy) typesUsed.Add("flash.utils.flash_proxy");
-            bool isAS2Event = ASContext.Context.Settings.LanguageId == "AS2" && member.Name.StartsWithOrdinal("on");
-            bool isObjectMethod = ofClass.QualifiedName == "Object";
-
+            
             int line = Sci.LineFromPosition(position);
             string currentText = Sci.GetLine(line);
             int startPos = currentText.Length;
@@ -3962,70 +3963,60 @@ namespace ASCompletion.Completion
             GetStartPos(currentText, ref startPos, features.overrideKey);
             startPos += Sci.PositionFromLine(line);
 
-            FlagType flags = member.Flags;
-            string acc = "";
-            string decl = "";
+            var newMember = new MemberModel
+            {
+                Name = member.Name,
+                Type = member.Type
+            };
             if (features.hasNamespaces && !string.IsNullOrEmpty(member.Namespace) && member.Namespace != "internal")
-                acc = member.Namespace;
-            else if ((member.Access & Visibility.Public) > 0) acc = features.publicKey;
-            else if ((member.Access & Visibility.Internal) > 0) acc = features.internalKey;
-            else if ((member.Access & Visibility.Protected) > 0) acc = features.protectedKey;
-            else if ((member.Access & Visibility.Private) > 0 && features.methodModifierDefault != Visibility.Private) 
-                acc = features.privateKey;
+                newMember.Namespace = member.Namespace;
+            else newMember.Access = member.Access;
 
-            if ((flags & FlagType.Static) > 0) acc = features.staticKey + " " + acc;
+            bool isAS2Event = ASContext.Context.Settings.LanguageId == "AS2" && member.Name.StartsWithOrdinal("on");
+            bool isObjectMethod = ofClass.QualifiedName == "Object";
+            if (!isAS2Event && !isObjectMethod) newMember.Flags |= FlagType.Override;
 
-            if (!isAS2Event && !isObjectMethod) acc = features.overrideKey + " " + acc;
+            string decl = "";
 
-            acc = Regex.Replace(acc, "[ ]+", " ").Trim();
-
+            FlagType flags = member.Flags;
+            if ((flags & FlagType.Static) > 0) newMember.Flags |= FlagType.Static;
             if ((flags & (FlagType.Getter | FlagType.Setter)) > 0)
             {
-                string type = member.Type;
-                string name = member.Name;
+                if (IsHaxe) newMember.Access = Visibility.Private;
+                var type = newMember.Type;
+                var name = newMember.Name;
                 var parameters = member.Parameters;
                 if (parameters != null && parameters.Count == 1) type = parameters[0].Type;
                 type = FormatType(type);
                 if (type == null && !features.hasInference) type = features.objectKey;
-                if (IsHaxe)
-                {
-                    // property is public but not the methods
-                    acc = features.overrideKey;
-                }
+                newMember.Type = type;
                 if (ofClass.Members.Search(name, FlagType.Getter, 0) != null && (!IsHaxe || parameters[0].Name == "get"))
                 {
-                    string tpl = TemplateUtils.GetTemplate("OverrideGetter", "Getter");
-                    tpl = TemplateUtils.ReplaceTemplateVariable(tpl, "Modifiers", acc);
-                    tpl = TemplateUtils.ReplaceTemplateVariable(tpl, "Name", name);
-                    tpl = TemplateUtils.ReplaceTemplateVariable(tpl, "Type", type);
-                    tpl = TemplateUtils.ReplaceTemplateVariable(tpl, "Member", "super." + name);
-                    decl += tpl;
+                    var template = TemplateUtils.GetTemplate("OverrideGetter", "Getter");
+                    template = TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
+                    template = TemplateUtils.ReplaceTemplateVariable(template, "Member", "super." + name);
+                    decl += template;
                 }
                 if (ofClass.Members.Search(name, FlagType.Setter, 0) != null && (!IsHaxe || parameters[1].Name == "set"))
                 {
-                    string tpl = TemplateUtils.GetTemplate("OverrideSetter", "Setter");
-                    tpl = TemplateUtils.ReplaceTemplateVariable(tpl, "Modifiers", acc);
-                    tpl = TemplateUtils.ReplaceTemplateVariable(tpl, "Name", name);
-                    tpl = TemplateUtils.ReplaceTemplateVariable(tpl, "Type", type);
-                    tpl = TemplateUtils.ReplaceTemplateVariable(tpl, "Member", "super." + name);
-                    tpl = TemplateUtils.ReplaceTemplateVariable(tpl, "Void", ASContext.Context.Features.voidKey ?? "void");
+                    var template = TemplateUtils.GetTemplate("OverrideSetter", "Setter");
+                    template = TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
+                    template = TemplateUtils.ReplaceTemplateVariable(template, "Member", "super." + name);
+                    template = TemplateUtils.ReplaceTemplateVariable(template, "Void", ASContext.Context.Features.voidKey ?? "void");
                     if (decl.Length > 0)
                     {
-                        tpl = "\n\n" + tpl.Replace("$(EntryPoint)", "");
+                        template = "\n\n" + template.Replace("$(EntryPoint)", "");
                     }
-                    decl += tpl;
+                    decl += template;
                 }
                 decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", "");
                 typesUsed.Add(GetQualifiedType(type, ofClass));
             }
             else
             {
-                string type = FormatType(member.Type);
-                //if (type == null) type = features.objectKey;
-                
-                decl = acc + features.functionKey + " ";
-                bool noRet = type == null || type.Equals("void", StringComparison.OrdinalIgnoreCase);
-                type = (noRet && type != null) ? ASContext.Context.Features.voidKey : type;
+                var type = FormatType(newMember.Type);
+                var noRet = type == null || type.Equals("void", StringComparison.OrdinalIgnoreCase);
+                type = (noRet && type != null) ? features.voidKey : type;
                 if (!noRet)
                 {
                     string qType = GetQualifiedType(type, ofClass);
@@ -4036,19 +4027,16 @@ namespace ASCompletion.Completion
                         if (!rType.IsVoid()) type = rType.Name;
                     }
                 }
-
-                string action = (isProxy || isAS2Event) ? "" : GetSuperCall(member, typesUsed, ofClass);
-                string template = TemplateUtils.GetTemplate("MethodOverride");
-                
+                newMember.Type = type;
                 // fix parameters if needed
                 if (member.Parameters != null)
                     foreach (MemberModel para in member.Parameters)
                         if (para.Type == "any") para.Type = "*";
 
-                template = TemplateUtils.ReplaceTemplateVariable(template, "Modifiers", acc);
-                template = TemplateUtils.ReplaceTemplateVariable(template, "Name", member.Name);
-                template = TemplateUtils.ReplaceTemplateVariable(template, "Arguments", TemplateUtils.ParametersString(member, true));
-                template = TemplateUtils.ReplaceTemplateVariable(template, "Type", type);
+                newMember.Parameters = member.Parameters;
+                var action = (isProxy || isAS2Event) ? "" : GetSuperCall(member, typesUsed, ofClass);
+                var template = TemplateUtils.GetTemplate("MethodOverride");
+                template = TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
                 template = TemplateUtils.ReplaceTemplateVariable(template, "Method", action);
                 decl = template;
             }

@@ -45,8 +45,11 @@ namespace ASCompletion.Completion
 
         public static string ToDeclarationWithModifiersString(MemberModel m, string template)
         {
-            var accessModifier = GetModifiers(m).Trim();
-            if (accessModifier == "private" && ASContext.Context.Features.methodModifierDefault == Visibility.Private
+            var features = ASContext.Context.Features;
+            var accessModifier = features.hasNamespaces && !string.IsNullOrEmpty(m.Namespace)
+                               ? m.Namespace
+                               : GetModifiers(m).Trim();
+            if (accessModifier == "private" && features.methodModifierDefault == Visibility.Private
                 && !ASContext.CommonSettings.GenerateDefaultModifierDeclaration)
                 accessModifier = null;
 
