@@ -43,7 +43,7 @@
 		<Urls>
 			<Url>http://fpdownload.adobe.com/pub/flex/sdk/builds/flex4.6/flex_sdk_4.6.0.23201B.zip</Url>
 			<Url>http://airdownload.adobe.com/air/win/download/24.0/AdobeAIRSDK.zip</Url>
-			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-22.zip</Url>
+			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-24.zip</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -59,7 +59,7 @@
 		</Bundles>
 		<Urls>
 			<Url>http://airdownload.adobe.com/air/win/download/24.0/AIRSDK_Compiler.zip</Url>
-			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-22.zip</Url>
+			<Url>http://www.flashdevelop.org/appman/frameworks_flexsdk_9-24.zip</Url>
 		</Urls>
 	</Entry>
 	<Entry>
