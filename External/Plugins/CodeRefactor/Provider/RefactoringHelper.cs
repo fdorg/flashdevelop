@@ -317,6 +317,22 @@ namespace CodeRefactor.Provider
             }
         }
 
+        public static FRResults FindTargetInFile(ASResult target, string file) => FindTargetInFile(target, file, null, null, false, false, false);
+
+        public static FRResults FindTargetInFile(ASResult target, string file, FRProgressReportHandler progressReportHandler, FRFinishedHandler findFinishedHandler, bool asynchronous, bool includeComments, bool includeStrings)
+        {
+            if (!IsValidTarget(target)) return null;
+            var mask = Path.GetFileName(file);
+            var path = Path.GetDirectoryName(file);
+            if (mask.Contains("[model]"))
+            {
+                findFinishedHandler?.Invoke(new FRResults());
+                return null;
+            }
+            var config = new FRConfiguration(path, mask, false, GetFRSearch(target.Member != null ? target.Member.Name : target.Type.Name, includeComments, includeStrings));
+            return Search(config, progressReportHandler, findFinishedHandler, asynchronous);
+        }
+
         /// <summary>
         /// Finds the given target in all project files.
         /// If the target is a local variable or function parameter, it will only search the associated file.
@@ -364,41 +380,18 @@ namespace CodeRefactor.Provider
         /// <returns>If "asynchronous" is false, will return the search results, otherwise returns null on bad input or if running in asynchronous mode.</returns>
         public static FRResults FindTargetInFiles(ASResult target, FRProgressReportHandler progressReportHandler, FRFinishedHandler findFinishedHandler, Boolean asynchronous, Boolean onlySourceFiles, Boolean ignoreSdkFiles, bool includeComments, bool includeStrings)
         {
-            Boolean currentFileOnly = false;
-            // checks target is a member
-            if (target == null || ((target.Member == null || String.IsNullOrEmpty(target.Member.Name))
-                && (target.Type == null || !CheckFlag(target.Type.Flags, FlagType.Class) && !target.Type.IsEnum())))
-            {
-                return null;
-            }
+            if (!IsValidTarget(target)) return null;
             // if the target we are trying to rename exists as a local variable or a function parameter we only need to search the current file
-            if (target.Member != null && (
-                target.Member.Access == Visibility.Private
-                || CheckFlag(target.Member.Flags, FlagType.LocalVar)
-                || CheckFlag(target.Member.Flags, FlagType.ParameterVar))
-                )
-            {
-                currentFileOnly = true;
-            }
+            bool currentFileOnly = target.Member != null
+                && (target.Member.Access == Visibility.Private
+                    || CheckFlag(target.Member.Flags, FlagType.LocalVar)
+                    || CheckFlag(target.Member.Flags, FlagType.ParameterVar));
             FRConfiguration config;
             IProject project = PluginBase.CurrentProject;
             String file = PluginBase.MainForm.CurrentDocument.FileName;
             // This is out of the project, just look for this file...
-            if (currentFileOnly || !IsProjectRelatedFile(project, file))
-            {
-                String mask = Path.GetFileName(file);
-                String path = Path.GetDirectoryName(file);
-                if (mask.Contains("[model]"))
-                {
-                    if (findFinishedHandler != null)
-                    {
-                        findFinishedHandler(new FRResults());
-                    }
-                    return null;
-                }
-                config = new FRConfiguration(path, mask, false, GetFRSearch(target.Member != null ? target.Member.Name : target.Type.Name, includeComments, includeStrings));
-            }
-            else if (target.Member != null && !CheckFlag(target.Member.Flags, FlagType.Constructor))
+            if (currentFileOnly || !IsProjectRelatedFile(project, file)) return FindTargetInFile(target, file, progressReportHandler, findFinishedHandler, asynchronous, includeComments, includeStrings);
+            if (target.Member != null && !CheckFlag(target.Member.Flags, FlagType.Constructor))
             {
                 config = new FRConfiguration(GetAllProjectRelatedFiles(project, onlySourceFiles, ignoreSdkFiles), GetFRSearch(target.Member.Name, includeComments, includeStrings));
             }
@@ -407,16 +400,20 @@ namespace CodeRefactor.Provider
                 target.Member = null;
                 config = new FRConfiguration(GetAllProjectRelatedFiles(project, onlySourceFiles, ignoreSdkFiles), GetFRSearch(target.Type.Name, includeComments, includeStrings));
             }
+            return Search(config, progressReportHandler, findFinishedHandler, asynchronous);
+        }
+
+        static bool IsValidTarget(ASResult target)
+        {
+            return target != null && (!string.IsNullOrEmpty(target.Member?.Name) || (target.Type != null && (CheckFlag(target.Type.Flags, FlagType.Class) || target.Type.IsEnum())));
+        }
+
+        static FRResults Search(FRConfiguration config, FRProgressReportHandler progressReportHandler, FRFinishedHandler findFinishedHandler, bool asynchronous)
+        {
             config.CacheDocuments = true;
-            FRRunner runner = new FRRunner();
-            if (progressReportHandler != null)
-            {
-                runner.ProgressReport += progressReportHandler;
-            }
-            if (findFinishedHandler != null)
-            {
-                runner.Finished += findFinishedHandler;
-            }
+            var runner = new FRRunner();
+            if (progressReportHandler != null) runner.ProgressReport += progressReportHandler;
+            if (findFinishedHandler != null) runner.Finished += findFinishedHandler;
             if (asynchronous) runner.SearchAsync(config);
             else return runner.SearchSync(config);
             return null;
