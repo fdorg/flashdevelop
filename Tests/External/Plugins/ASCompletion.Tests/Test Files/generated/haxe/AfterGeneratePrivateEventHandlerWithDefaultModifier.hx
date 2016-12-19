@@ -6,7 +6,7 @@ public class Main extends Sprite {
 		addEventListener(Event.ADDED, handleAdded);
 	}
 	
-	function handleAdded(e:Event):Void {
+	private function handleAdded(e:Event):Void {
 		removeEventListener(Event.ADDED, handleAdded);
 		
 	}

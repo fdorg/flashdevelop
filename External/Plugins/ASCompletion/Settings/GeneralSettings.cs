@@ -319,7 +319,7 @@ namespace ASCompletion.Settings
 
         private bool generateProtectedDeclarations = DEFAULT_GENERATE_PROTECTED;
         private string[] eventListenersAutoRemove;
-        private string[] declarationModifierOrder = null;
+        private string[] declarationModifierOrder;
         private PropertiesGenerationLocations propertiesGenerationLocation;
         private MethodsGenerationLocations methodsGenerationLocation;
         private string prefixFields = DEFAULT_GENERATE_PREFIXFIELDS;
@@ -327,6 +327,7 @@ namespace ASCompletion.Settings
         private Braces[] addClosingBracesOptions;
         private bool generateScope = DEFAULT_GENERATE_SCOPE;
         private HandlerNamingConventions handlerNamingConvention = DEFAULT_HANDLER_CONVENTION;
+        private bool generateDefaultModifierDeclaration;
 
         [DisplayName("Event Listeners Auto Remove")]
         [LocalizedCategory("ASCompletion.Category.Generation"), LocalizedDescription("ASCompletion.Description.EventListenersAutoRemove")]
@@ -362,6 +363,17 @@ namespace ASCompletion.Settings
         {
             get { return generateScope; }
             set { generateScope = value; }
+        }
+
+        [DisplayName("Generate Default Modifier Declaration")]
+        [LocalizedCategory("ASCompletion.Category.Generation"),
+        //TODO: localize me
+        //LocalizedDescription("ASCompletion.Description.GenerateDefaultModifierDeclaration"),
+        DefaultValue(false)]
+        public bool GenerateDefaultModifierDeclaration
+        {
+            get { return generateDefaultModifierDeclaration; }
+            set { generateDefaultModifierDeclaration = value; }
         }
 
         [DisplayName("Properties Generation Location")]
