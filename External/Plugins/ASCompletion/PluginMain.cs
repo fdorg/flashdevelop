@@ -720,14 +720,6 @@ namespace ASCompletion
                 menu.DropDownItems.Add(item);
                 menuItems.Add(item);
 
-                // goto back from declaration
-                image = mainForm.FindImage("99|1|-3|-3");
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.BackFromDeclaration"), image, new EventHandler(BackDeclaration), Keys.Shift | Keys.F4);
-                PluginBase.MainForm.RegisterShortcutItem("SearchMenu.BackFromDeclaration", item);
-                menu.DropDownItems.Add(item);
-                pluginUI.LookupMenuItem = item;
-                item.Enabled = false;
-
                 // goto type declaration
                 image = mainForm.FindImage("99|9|3|-3");
                 item = new ToolStripMenuItem(TextHelper.GetString("Label.GotoTypeDeclaration"), image, GotoTypeDeclaration);
@@ -735,10 +727,10 @@ namespace ASCompletion
                 menu.DropDownItems.Add(item);
                 menuItems.Add(item);
 
-                // goto back from type declaration
+                // goto back from declaration
                 image = mainForm.FindImage("99|1|-3|-3");
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.BackFromTypeDeclaration"), image, BackTypeDeclaration);
-                PluginBase.MainForm.RegisterShortcutItem("SearchMenu.BackFromTypeDeclaration", item);
+                item = new ToolStripMenuItem(TextHelper.GetString("Label.BackFromDeclaration"), image, new EventHandler(BackDeclaration), Keys.Shift | Keys.F4);
+                PluginBase.MainForm.RegisterShortcutItem("SearchMenu.BackFromDeclaration", item);
                 menu.DropDownItems.Add(item);
                 pluginUI.LookupMenuItem = item;
                 item.Enabled = false;
@@ -883,14 +875,6 @@ namespace ASCompletion
         }
 
         /// <summary>
-        /// Menu item command: Back From Declaration
-        /// </summary>
-        public void BackDeclaration(object sender, EventArgs e)
-        {
-            pluginUI.RestoreLastLookupPosition();
-        }
-
-        /// <summary>
         /// Menu item command: Goto Type Declaration
         /// </summary>
         void GotoTypeDeclaration(object sender, EventArgs e)
@@ -899,12 +883,13 @@ namespace ASCompletion
         }
 
         /// <summary>
-        /// Menu item command: Back From Type Declaration
+        /// Menu item command: Back From Declaration or Type Declaration
         /// </summary>
-        void BackTypeDeclaration(object sender, EventArgs e)
+        public void BackDeclaration(object sender, EventArgs e)
         {
             pluginUI.RestoreLastLookupPosition();
         }
+
 
         /// <summary>
         /// Sets the IsEnabled value of all the CommandBarItems

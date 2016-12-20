@@ -6121,10 +6121,6 @@ AND - 모든 조건을 만족할때.</value>
     <value>Defines which method should be used to clean the contents of the output panel.</value>
     <comment>Added after 5.2.0</comment>
   </data>
-  <data name="Label.BackFromTypeDeclaration" xml:space="preserve">
-    <value>Back From Type Declaration</value>
-    <comment>Added after 5.2.1</comment>
-  </data>
   <data name="Label.GotoTypeDeclaration" xml:space="preserve">
     <value>Goto Type Declaration</value>
     <comment>Added after 5.2.1</comment>
