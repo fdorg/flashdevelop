@@ -313,6 +313,29 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterPromoteLocalWithDefaultModifier.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateProtectedVariable.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateProtectedFunction.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionTypeOfFunction.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionTypeOfFunctionParameter.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionTypeOfFunctionWithParameter.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionTypeOfConstructorParameter.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionTypeOfFunctionParameter2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionTypeOfLocalVar.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionTypeOfSetterParameter.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionTypeOfLocalObjectKey.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionTypeOfLocalObjectValue.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionTypeOfConstructor.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionTypeOfVariable.as" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfConstructor.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfConstructorParameter.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfFunction.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfFunctionParameter.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfFunctionParameter2.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfFunctionWithParameter.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfLocalDynamicKey.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfLocalDynamicValue.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfLocalVar.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfPropertySetter.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfPropertyGetter.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfVariable.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
@@ -366,6 +389,7 @@
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

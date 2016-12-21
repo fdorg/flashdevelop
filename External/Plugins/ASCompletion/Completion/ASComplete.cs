@@ -2733,6 +2733,7 @@ namespace ASCompletion.Completion
         private static ASResult EvalVariable(string token, ASExpr local, FileModel inFile, ClassModel inClass)
         {
             ASResult result = new ASResult();
+            if (local.coma == ComaExpression.AnonymousObjectParam) return result;
             IASContext context = ASContext.Context;
             if (!inClass.IsVoid()) inFile = inClass.InFile;
 
@@ -2749,46 +2750,50 @@ namespace ASCompletion.Completion
             }
             if (context.CurrentModel.haXe && !inClass.IsVoid() && token == "new" && local.BeforeBody)
                 return EvalVariable(inClass.Name, local, inFile, inClass);
-            // local vars
-            if (local.LocalVars != null)
+            var contextMember = local.ContextMember;
+            if (contextMember == null || local.coma != ComaExpression.None || !local.BeforeBody || (contextMember.Flags & (FlagType.Getter | FlagType.Setter)) > 0)
             {
-                // Haxe 3 get/set keyword in properties declaration
-                if ((token == "set" || token == "get") && local.ContextFunction == null 
-                    && local.ContextMember != null && local.ContextMember.Parameters != null && local.ContextMember.Parameters.Count == 2)
+                // local vars
+                if (local.LocalVars != null)
                 {
-                    if (token == "get" && local.ContextMember.Parameters[0].Name == "get") return EvalVariable("get_" + local.ContextMember.Name, local, inFile, inClass);
-                    if (token == "set" && local.ContextMember.Parameters[1].Name == "set") return EvalVariable("set_" + local.ContextMember.Name, local, inFile, inClass);
-                }
-
-                foreach (MemberModel var in local.LocalVars)
-                {
-                    if (var.Name == token)
+                    // Haxe 3 get/set keyword in properties declaration
+                    if ((token == "set" || token == "get") && local.ContextFunction == null
+                        && contextMember != null && contextMember.Parameters != null && contextMember.Parameters.Count == 2)
                     {
-                        result.Member = var;
-                        result.InFile = inFile;
-                        result.InClass = inClass;
-                        if (var.Type == null && (var.Flags & FlagType.LocalVar) > 0
-                            && context.Features.hasInference /*&& !context.Features.externalCompletion*/)
-                            InferVariableType(local, var);
+                        if (token == "get" && contextMember.Parameters[0].Name == "get") return EvalVariable("get_" + contextMember.Name, local, inFile, inClass);
+                        if (token == "set" && contextMember.Parameters[1].Name == "set") return EvalVariable("set_" + contextMember.Name, local, inFile, inClass);
+                    }
 
-                        if ((var.Flags & FlagType.Function) > 0)
-                            result.Type = ResolveType("Function", null);
-                        else
-                            result.Type = ResolveType(var.Type, inFile);
+                    foreach (MemberModel var in local.LocalVars)
+                    {
+                        if (var.Name == token)
+                        {
+                            result.Member = var;
+                            result.InFile = inFile;
+                            result.InClass = inClass;
+                            if (var.Type == null && (var.Flags & FlagType.LocalVar) > 0
+                                && context.Features.hasInference /*&& !context.Features.externalCompletion*/)
+                                InferVariableType(local, var);
 
-                        return result;
+                            if ((var.Flags & FlagType.Function) > 0)
+                                result.Type = ResolveType("Function", null);
+                            else
+                                result.Type = ResolveType(var.Type, inFile);
+
+                            return result;
+                        }
                     }
                 }
-            }
-            // method parameters
-            if (local.ContextFunction != null && local.ContextFunction.Parameters != null)
-            {
-                foreach(MemberModel para in local.ContextFunction.Parameters)
-                if (para.Name == token || (para.Name[0] == '?' && para.Name.Substring(1) == token))
+                // method parameters
+                if (local.ContextFunction != null && local.ContextFunction.Parameters != null)
                 {
-                    result.Member = para;
-                    result.Type = ResolveType(para.Type, inFile);
-                    return result;
+                    foreach (MemberModel para in local.ContextFunction.Parameters)
+                        if (para.Name == token || (para.Name[0] == '?' && para.Name.Substring(1) == token))
+                        {
+                            result.Member = para;
+                            result.Type = ResolveType(para.Type, inFile);
+                            return result;
+                        }
                 }
             }
             // class members
