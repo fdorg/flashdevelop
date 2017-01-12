@@ -18,7 +18,7 @@ namespace ProjectManager.Controls
         private List<String> openedFiles;
         private List<String> projectFiles;
         private const String ITEM_SPACER = "-----------------";
-        private System.Windows.Forms.Label infoLabel;
+        //private System.Windows.Forms.Label infoLabel;
         private System.Windows.Forms.TextBox textBox;
         private System.Windows.Forms.ListBox listBox;
         private System.Windows.Forms.CheckBox cbInClasspathsOnly;
@@ -45,7 +45,7 @@ namespace ProjectManager.Controls
         /// </summary>
         private void InitializeComponent()
         {
-            this.infoLabel = new System.Windows.Forms.Label();
+            //this.infoLabel = new System.Windows.Forms.Label();
             this.textBox = new System.Windows.Forms.TextBox();
             this.listBox = new System.Windows.Forms.ListBox();
             this.cbInClasspathsOnly = new System.Windows.Forms.CheckBox();
@@ -55,12 +55,12 @@ namespace ProjectManager.Controls
             // 
             // infoLabel
             // 
-            this.infoLabel.AutoSize = true;
-            this.infoLabel.Location = new System.Drawing.Point(10, 10);
-            this.infoLabel.Name = "infoLabel";
-            this.infoLabel.Size = new System.Drawing.Size(273, 13);
-            this.infoLabel.TabIndex = 0;
-            this.infoLabel.Text = "Search: (UPPERCASE for search by abbreviation)";
+            //this.infoLabel.AutoSize = true;
+            //this.infoLabel.Location = new System.Drawing.Point(10, 10);
+            //this.infoLabel.Name = "infoLabel";
+            //this.infoLabel.Size = new System.Drawing.Size(273, 13);
+            //this.infoLabel.TabIndex = 0;
+            //this.infoLabel.Text = "Search: (UPPERCASE for search by abbreviation)";
             // 
             // textBox
             // 
@@ -127,7 +127,7 @@ namespace ProjectManager.Controls
             this.Controls.Add(this.listBox);
             this.Controls.Add(this.textBox);
             this.Controls.Add(this.refreshButton);
-            this.Controls.Add(this.infoLabel);
+            //this.Controls.Add(this.infoLabel);
             this.Controls.Add(this.checkBox);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -166,7 +166,7 @@ namespace ProjectManager.Controls
         /// </summary>
         private void InitializeLocalization()
         {
-            this.infoLabel.Text = TextHelper.GetString("Label.SearchString");
+            //this.infoLabel.Text = TextHelper.GetString("Label.SearchString");
             this.cbInClasspathsOnly.Text = TextHelper.GetString("Label.InClasspathsOnly");
             this.checkBox.Text = TextHelper.GetString("Label.CodeFilesOnly");
             this.Text = " " + TextHelper.GetString("Title.OpenResource");
@@ -528,7 +528,7 @@ namespace ProjectManager.Controls
         public String value;
     }
 
-    class SearchUtil
+    public class SearchUtil
     {
         public delegate double Comparer(String value1, String value2, String value3);
 
@@ -537,7 +537,7 @@ namespace ProjectManager.Controls
             Int32 i = 0;
             List<SearchResult> matchedItems = new List<SearchResult>();
             String firstChar = searchText.Substring(0, 1);
-            Comparer searchMatch = (firstChar == firstChar.ToUpper()) ? new Comparer(AdvancedSearchMatch) : new Comparer(SimpleSearchMatch);
+            Comparer searchMatch = new Comparer(SimpleSearchMatch);//(firstChar == firstChar.ToUpper()) ? new Comparer(AdvancedSearchMatch) : new Comparer(SimpleSearchMatch);
             foreach (String item in source)
             {
                 SearchResult result = new SearchResult();
@@ -547,7 +547,6 @@ namespace ProjectManager.Controls
                 if (result.score > 0)
                 {
                     matchedItems.Add(result);
-                    if (limit > 0 && i++ > limit) break;
                 }
             }
 
@@ -559,6 +558,7 @@ namespace ProjectManager.Controls
             List<String> results = new List<String>();
             foreach (SearchResult r in matchedItems)
             {
+                if (limit > 0 && i++ >= limit) break;
                 results.Add(r.value);
             }
 
@@ -592,10 +592,12 @@ namespace ProjectManager.Controls
 
         private static double SimpleSearchMatch(String file, String searchText, String pathSeparator)
         {
-            String fileName = Path.GetFileName(file).ToLower();
-            searchText = searchText.ToLower();
+            if (file.StartsWith(searchText, StringComparison.OrdinalIgnoreCase)) //Equality bonus
+            {
+                return (searchText.Length + 0d) / file.Length;
+            }
 
-            return Score(fileName, searchText, pathSeparator[0]);
+            return 0.66 * Score(Path.GetFileName(file), searchText, pathSeparator[0]) + 0.33 * Score(Path.GetDirectoryName(file), searchText, pathSeparator[0]);
         }
 
         /**
@@ -604,6 +606,11 @@ namespace ProjectManager.Controls
         private static double Score(String str, String query, char pathSeparator)
         {
             double score = 0;
+
+            if (str.ToLower().Contains(query.ToLower())) //Contains bonus
+            {
+                score = 1;
+            }
 
             int strIndex = 0;
 
@@ -620,13 +627,18 @@ namespace ProjectManager.Controls
 
                 double charScore = 0.1;
 
-                if (str[index] == query[i])
+                if (str[index] == query[i]) //same case bonus
                 {
                     charScore += 0.1;
                 }
-                else if (index > 0 && str[index - 1] == pathSeparator)
+
+                if (index == 0 || str[index - 1] == pathSeparator) //start of string bonus
                 {
                     charScore += 0.8;
+                }
+                else if (i == index) //equivalent position bonus
+                {
+                    charScore += 0.5;
                 }
 
                 score += charScore;
