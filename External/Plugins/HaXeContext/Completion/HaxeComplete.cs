@@ -465,6 +465,10 @@ namespace HaXeContext
     {
         COMPLETION,
         POSITION,
+
+        /// <summary>
+        /// since Haxe 3.2.0
+        /// </summary>
         USAGE
     }
 
