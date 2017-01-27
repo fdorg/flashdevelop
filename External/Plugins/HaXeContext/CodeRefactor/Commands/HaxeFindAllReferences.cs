@@ -18,8 +18,8 @@ namespace HaXeContext.CodeRefactor.Commands
         protected override void ExecutionImplementation()
         {
             UserInterfaceManager.ProgressDialog.Show();
-            UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("Info.FindingReferences"));
-            UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.SearchingFiles"));
+            UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("CodeRefactor.Info.FindingReferences"));
+            UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("CodeRefactor.Info.SearchingFiles"));
             var context = (HaXeContext.Context) ASContext.Context;
             var hc = context.GetHaxeComplete(ASContext.CurSciControl, CurrentTarget.Context, true, HaxeCompilerService.USAGE);
             hc.GetUsages(OnHaxeCompleteResultHandler);

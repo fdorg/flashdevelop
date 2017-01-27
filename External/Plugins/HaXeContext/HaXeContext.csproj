@@ -104,6 +104,7 @@
     <ProjectReference Include="..\CodeRefactor\CodeRefactor.csproj">
       <Project>{1f6df858-6011-4cac-b33e-7000ee90ffbe}</Project>
       <Name>CodeRefactor</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\ProjectManager\ProjectManager.csproj">
       <Project>{78101C01-E186-4954-B1DD-DEBB7905FAD8}</Project>
@@ -119,7 +120,7 @@
     <Compile Include="Completion\IHaxeCompletionHandler.cs" />
     <Compile Include="Completion\CompilerCompletionHandler.cs" />
     <Compile Include="Completion\CompletionServerCompletionHandler.cs" />
-    <Compile Include="HaxeComplete330.cs" />
+    <Compile Include="Completion\HaxeComplete330.cs" />
     <Compile Include="HaXeSettings.cs" />
     <Compile Include="ExternalToolchain.cs" />
     <Compile Include="PluginMain.cs" />
