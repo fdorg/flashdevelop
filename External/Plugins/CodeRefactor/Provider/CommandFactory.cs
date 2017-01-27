@@ -8,7 +8,7 @@ namespace CodeRefactor.Provider
 {
     using Command = RefactorCommand<IDictionary<string, List<SearchMatch>>>;
 
-    class CommandFactory : ICommandFactory
+    public class CommandFactory : ICommandFactory
     {
         public virtual DelegateMethodsCommand CreateDelegateMethodsCommand(ASResult result, Dictionary<MemberModel, ClassModel> selectedMembers)
         {
@@ -35,26 +35,53 @@ namespace CodeRefactor.Provider
             return new ExtractMethodCommand(newName);
         }
 
+        /// <summary>
+        /// Create a new FindAllReferences refactoring command. Outputs found results.
+        /// Uses the current text location as the declaration target.
+        /// </summary>
         public virtual Command CreateFindAllReferencesCommand()
         {
             return CreateFindAllReferencesCommand(true);
         }
 
+        /// <summary>
+        /// Create a new FindAllReferences refactoring command.
+        /// Uses the current text location as the declaration target.
+        /// </summary>
+        /// <param name="output">If true, will send the found results to the trace log and results panel</param>
         public virtual Command CreateFindAllReferencesCommand(bool output)
         {
             return CreateFindAllReferencesCommand(RefactoringHelper.GetDefaultRefactorTarget(), output);
         }
 
+        /// <summary>
+        /// Create a new FindAllReferences refactoring command.
+        /// </summary>
+        /// <param name="target">The target declaration to find references to.</param>
+        /// <param name="output">If true, will send the found results to the trace log and results panel</param>
         public virtual Command CreateFindAllReferencesCommand(ASResult target, bool output)
         {
             return CreateFindAllReferencesCommand(target, output, false);
         }
 
+        /// <summary>
+        /// Create a new FindAllReferences refactoring command.
+        /// </summary>
+        /// <param name="target">The target declaration to find references to.</param>
+        /// <param name="output">If true, will send the found results to the trace log and results panel</param>
+        /// <param name="ignoreDeclarations"></param>
         public virtual Command CreateFindAllReferencesCommand(ASResult target, bool output, bool ignoreDeclarations)
         {
             return CreateFindAllReferencesCommand(target, output, ignoreDeclarations, true);
         }
 
+        /// <summary>
+        /// Create a new FindAllReferences refactoring command.
+        /// </summary>
+        /// <param name="target">The target declaration to find references to.</param>
+        /// <param name="output">If true, will send the found results to the trace log and results panel</param>
+        /// <param name="ignoreDeclarations"></param>
+        /// <param name="onlySourceFiles"></param>
         public virtual Command CreateFindAllReferencesCommand(ASResult target, bool output, bool ignoreDeclarations, bool onlySourceFiles)
         {
             return new FindAllReferences(target, output, ignoreDeclarations) {OnlySourceFiles = onlySourceFiles};

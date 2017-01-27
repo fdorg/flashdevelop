@@ -464,7 +464,17 @@ namespace HaXeContext
     public enum HaxeCompilerService
     {
         COMPLETION,
+
+        /// <summary>
+        /// Since Haxe 3.2.0
+        /// https://haxe.org/manual/cr-completion-position.html
+        /// </summary>
         POSITION,
+
+        /// <summary>
+        /// Since Haxe 3.2.0
+        /// https://haxe.org/manual/cr-completion-usage.html
+        /// </summary>
         USAGE
     }
 

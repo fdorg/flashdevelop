@@ -8,6 +8,8 @@ using PluginCore.Managers;
 using PluginCore.Utilities;
 using PluginCore;
 using System.Text.RegularExpressions;
+using CodeRefactor.Provider;
+using HaXeContext.CodeRefactor.Provider;
 
 namespace HaXeContext
 {
@@ -150,6 +152,7 @@ namespace HaXeContext
                     contextInstance = new Context(settingObject);
                     // Associate this context with haxe language
                     ASCompletion.Context.ASContext.RegisterLanguage(contextInstance, "haxe");
+                    CommandFactoryProvider.Register("haxe", new HaxeCommandFactory());
                     break;
             }
         }
