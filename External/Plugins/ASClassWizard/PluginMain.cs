@@ -14,6 +14,7 @@ using ASClassWizard.Resources;
 using ASClassWizard.Wizards;
 using ASCompletion.Completion;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ASClassWizard
 {
@@ -307,7 +308,6 @@ namespace ASClassWizard
         {
             Int32 eolMode = (Int32)MainForm.Settings.EOLMode;
             String lineBreak = LineEndDetector.GetNewLineMarker(eolMode);
-            ClassModel cmodel;
             List<String> imports = new List<string>();
             string extends = "";
             string implements = "";
@@ -320,14 +320,13 @@ namespace ASClassWizard
             // resolve imports
             if (lastFileOptions.interfaces != null && lastFileOptions.interfaces.Count > 0)
             {
-                bool isHaxe2 = PluginBase.CurrentSDK != null && PluginBase.CurrentSDK.Name.ToLower().Contains("haxe 2");
-                string[] interfaceParts;
                 string implementContinuation;
                 implements = " implements ";
                 index = 0;
 
                 if (lastFileOptions.Language == "haxe")
                 {
+                    bool isHaxe2 = PluginBase.CurrentSDK != null && PluginBase.CurrentSDK.Name.ToLower().Contains("haxe 2");
                     implementContinuation = isHaxe2 ? ", implements " : " implements ";
                 }
                 else
@@ -337,9 +336,8 @@ namespace ASClassWizard
 
                 foreach (string item in lastFileOptions.interfaces)
                 {
-                    if (item.Split('.').Length > 1) imports.Add(item);
-                    interfaceParts = item.Split('.');
-                    implements += (index > 0 ? implementContinuation : "") + interfaceParts[interfaceParts.Length - 1];
+                    if (item.Contains('.')) imports.Add(item);
+                    implements += (index > 0 ? implementContinuation : "") + item.Split('.').Last();
                     if (lastFileOptions.createInheritedMethods)
                     {
                         processOnSwitch = lastFileFromTemplate; 
@@ -350,14 +348,16 @@ namespace ASClassWizard
             }
             if (lastFileOptions.superClass != "")
             {
-                String super = lastFileOptions.superClass;
-                if (lastFileOptions.superClass.Split('.').Length > 1) imports.Add(super);
-                string[] _extends = super.Split('.');
-                extends = " extends " + _extends[_extends.Length - 1];
+                var superClassFullName = lastFileOptions.superClass;
+                if (superClassFullName.Contains(".")) imports.Add(superClassFullName);
+                var superClassShortName = superClassFullName.Split('.').Last();
+                var fileName = Path.GetFileNameWithoutExtension(lastFileFromTemplate);
+                extends = fileName == superClassShortName ? $" extends {superClassFullName}" : $" extends {superClassShortName}";
                 processContext = ASContext.GetLanguageContext(lastFileOptions.Language);
                 if (lastFileOptions.createConstructor && processContext != null && constructorArgs == null)
                 {
-                    cmodel = processContext.GetModel(super.LastIndexOf('.') < 0 ? "" : super.Substring(0, super.LastIndexOf('.')), _extends[_extends.Length - 1], "");
+                    var lastDotIndex = superClassFullName.LastIndexOf('.');
+                    var cmodel = processContext.GetModel(lastDotIndex < 0 ? "" : superClassFullName.Substring(0, lastDotIndex), superClassShortName, "");
                     if (!cmodel.IsVoid())
                     {
                         foreach (MemberModel member in cmodel.Members)
