@@ -1336,6 +1336,8 @@ namespace ASCompletion.Context
             return null;
         }
 
+        public virtual MemberList ResolveTopLevel(ScintillaControl sci, ASExpr expression, bool autoHide) => null;
+
         /// <summary>
         /// Let contexts handle code completion
         /// </summary>
@@ -1574,6 +1576,7 @@ namespace ASCompletion.Context
             int.TryParse(parts[0], out majorVersion);
             if (parts.Length > 1) int.TryParse(parts[1], out minorVersion);
         }
+
         #endregion
     }
 

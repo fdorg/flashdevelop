@@ -1946,10 +1946,17 @@ namespace ASCompletion.Completion
                 return true;
             }
 
+            items = ASContext.Context.ResolveTopLevel(Sci, expr, autoHide);
+            if (items != null)
+            {
+                DotContextResolved(Sci, expr, items, autoHide);
+                return true;
+            }
+
             // Context
             ASResult result;
             ClassModel tmpClass;
-            bool outOfDate = (expr.Separator == ':') ? ctx.UnsetOutOfDate() : false;
+            bool outOfDate = (expr.Separator == ':') && ctx.UnsetOutOfDate();
             FileModel cFile = ctx.CurrentModel;
             ClassModel cClass = ctx.CurrentClass;
 

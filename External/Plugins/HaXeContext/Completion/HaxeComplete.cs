@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using ASCompletion.Context;
 using PluginCore;
@@ -12,6 +13,7 @@ using System.Xml;
 using ASCompletion.Model;
 using PluginCore.Helpers;
 using System.Windows.Forms;
+using PluginCore.Managers;
 using PluginCore.Utilities;
 
 namespace HaXeContext
@@ -145,6 +147,9 @@ namespace HaXeContext
 
                 case HaxeCompilerService.USAGE:
                     return "@usage";
+
+                case HaxeCompilerService.TOP_LEVEL:
+                    return "@toplevel";
             }
 
             return "";
@@ -268,6 +273,8 @@ namespace HaXeContext
                 case "list":
                     return ProcessList(reader);
 
+                case "il":
+                    return ProcessTopLevel(reader);
             }
             return HaxeCompleteStatus.FAILED;
         }
@@ -309,6 +316,9 @@ namespace HaXeContext
 
                                 case HaxeCompilerService.USAGE:
                                     return HaxeCompleteStatus.USAGE;
+
+                                case HaxeCompilerService.TOP_LEVEL:
+                                    return HaxeCompleteStatus.TOP_LEVEL;
                             }
                             break;
 
@@ -349,6 +359,83 @@ namespace HaXeContext
             return HaxeCompleteStatus.MEMBERS;
         }
 
+        HaxeCompleteStatus ProcessTopLevel(XmlReader reader)
+        {
+            result = new HaxeCompleteResult {Members = new MemberList()};
+            while (reader.Read())
+            {
+                if (reader.NodeType != XmlNodeType.Element) continue;
+                switch (reader.Name)
+                {
+                    case "i":
+                        var k = reader.GetAttribute("k");
+                        string t;
+                        switch (k)
+                        {
+                            case "local":
+                                t = reader.GetAttribute("t").Replace(" ", "");
+                                reader.Read();
+                                result.Members.Add(new MemberModel
+                                {
+                                    Name = reader.Value,
+                                    Flags = FlagType.LocalVar,
+                                    Type = t
+                                });
+                                break;
+                            case "enum":
+                                t = reader.GetAttribute("t").Replace(" ", "");
+                                List<MemberModel> parameters = null;
+                                if (t.Contains("->"))
+                                {
+                                    parameters = new List<MemberModel>();
+                                    var types = t.Split(new[] { "->" }, StringSplitOptions.RemoveEmptyEntries);
+                                    t = types.Last();
+                                    for (var i = 0; i < types.Length - 1; i++)
+                                    {
+                                        var param = types[i].Split(':');
+                                        parameters.Add(new MemberModel
+                                        {
+                                            Name = param[0],
+                                            Type = param[1]
+                                        });
+                                    }
+                                }
+                                reader.Read();
+                                var member = new MemberModel {Name = reader.Value, Type = t};
+                                if (parameters != null)
+                                {
+                                    member.Flags = FlagType.Constructor | FlagType.Function;
+                                    member.Parameters = parameters;
+                                }
+                                else member.Flags = FlagType.Variable;
+                                result.Members.Add(member);
+                                break;
+                            case "type":
+                                var p = reader.GetAttribute("p").Replace(" ", "");
+                                reader.Read();
+                                result.Members.Add(new ClassModel
+                                {
+                                    Name = reader.Value,
+                                    Flags = FlagType.Class,
+                                    Type = p
+                                });
+                                break;
+                            
+                            case "member":
+                                break;
+                            case "static":
+                                break;
+                            case "global":
+                                break;
+
+                        }
+                        break;
+                }
+            }
+            result.Members.Sort();
+            return HaxeCompleteStatus.TOP_LEVEL;
+        }
+
         HaxePositionResult ExtractPos(XmlTextReader reader)
         {
             var result = new HaxePositionResult();
@@ -387,7 +474,7 @@ namespace HaXeContext
             return members.Count > 0 && members[members.Count - 1].FullName == member.FullName;
         } 
 
-        MemberModel ExtractMember(XmlTextReader reader)
+        MemberModel ExtractMember(XmlReader reader)
         {
             var name = reader.GetAttribute("n");
             if (name == null) return null;
@@ -450,7 +537,7 @@ namespace HaXeContext
         }
     }
 
-    public enum HaxeCompleteStatus: int
+    public enum HaxeCompleteStatus
     {
         NONE = 0,
         FAILED = 1,
@@ -458,7 +545,8 @@ namespace HaXeContext
         TYPE = 3,
         MEMBERS = 4,
         POSITION = 5,
-        USAGE = 6
+        USAGE = 6,
+        TOP_LEVEL
     }
 
     public enum HaxeCompilerService
@@ -475,7 +563,13 @@ namespace HaXeContext
         /// Since Haxe 3.2.0
         /// https://haxe.org/manual/cr-completion-usage.html
         /// </summary>
-        USAGE
+        USAGE,
+
+        /// <summary>
+        /// Since Haxe 3.2.0
+        /// https://haxe.org/manual/cr-completion-top-level.html
+        /// </summary>
+        TOP_LEVEL
     }
 
     public class HaxeCompleteResult

@@ -1176,6 +1176,14 @@ namespace HaXeContext
             return proc;
         }
 
+        internal HaxeComplete GetHaxeComplete(ScintillaControl sci, ASExpr expression, bool autoHide, HaxeCompilerService compilerService)
+        {
+            var sdkVersion = GetCurrentSDKVersion();
+            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.CompletionServer && sdkVersion.IsGreaterThanOrEquals(new SemVer("3.3.0")))
+                return new HaxeComplete330(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
+            return new HaxeComplete(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
+        }
+
         /// <summary>
         /// Let contexts handle code completion
         /// </summary>
@@ -1209,14 +1217,6 @@ namespace HaXeContext
             return null; 
         }
 
-        internal HaxeComplete GetHaxeComplete(ScintillaControl sci, ASExpr expression, bool autoHide, HaxeCompilerService compilerService)
-        {
-            var sdkVersion = GetCurrentSDKVersion();
-            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.CompletionServer && sdkVersion.IsGreaterThanOrEquals(new SemVer("3.3.0")))
-                return new HaxeComplete330(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
-            return new HaxeComplete(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
-        }
-
         internal void OnDotCompletionResult(HaxeComplete hc,  HaxeCompleteResult result, HaxeCompleteStatus status)
         {
             resolvingDot = false;
@@ -1236,6 +1236,31 @@ namespace HaXeContext
                     // eg. Int
                     break;
             }
+        }
+
+        public override MemberList ResolveTopLevel(ScintillaControl sci, ASExpr expression, bool autoHide)
+        {
+            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop
+                || PluginBase.MainForm.CurrentDocument.IsUntitled
+                || (autoHide && !hxsettings.DisableCompletionOnDemand))
+                return null;
+            var hc = GetHaxeComplete(sci, expression, autoHide, HaxeCompilerService.TOP_LEVEL);
+            hc.GetList((complete, result, status) =>
+            {
+                switch (status)
+                {
+                    case HaxeCompleteStatus.ERROR:
+                        TraceManager.AddAsync(hc.Errors, -3);
+                        break;
+
+                    case HaxeCompleteStatus.TOP_LEVEL:
+                        if (result.Members != null && result.Members.Count > 0)
+                            ASComplete.DotContextResolved(hc.Sci, hc.Expr, result.Members, hc.AutoHide);
+                        break;
+                }
+            });
+            if (hxsettings.DisableMixedCompletion) return new MemberList();
+            return null;
         }
 
         /// <summary>
