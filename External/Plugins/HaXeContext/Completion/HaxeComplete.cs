@@ -369,65 +369,26 @@ namespace HaXeContext
                 {
                     case "i":
                         var k = reader.GetAttribute("k");
-                        string t;
+                        MemberModel member;
                         switch (k)
                         {
                             case "local":
-                                t = reader.GetAttribute("t").Replace(" ", "");
-                                reader.Read();
-                                result.Members.Add(new MemberModel
-                                {
-                                    Name = reader.Value,
-                                    Flags = FlagType.LocalVar,
-                                    Type = t
-                                });
-                                break;
+                            case "member":
+                            case "static":
                             case "enum":
-                                t = reader.GetAttribute("t").Replace(" ", "");
-                                List<MemberModel> parameters = null;
-                                if (t.Contains("->"))
-                                {
-                                    parameters = new List<MemberModel>();
-                                    var types = t.Split(new[] { "->" }, StringSplitOptions.RemoveEmptyEntries);
-                                    t = types.Last();
-                                    for (var i = 0; i < types.Length - 1; i++)
-                                    {
-                                        var param = types[i].Split(':');
-                                        parameters.Add(new MemberModel
-                                        {
-                                            Name = param[0],
-                                            Type = param[1]
-                                        });
-                                    }
-                                }
+                                var t = reader.GetAttribute("t");
                                 reader.Read();
-                                var member = new MemberModel {Name = reader.Value, Type = t};
-                                if (parameters != null)
-                                {
-                                    member.Flags = FlagType.Constructor | FlagType.Function;
-                                    member.Parameters = parameters;
-                                }
-                                else member.Flags = FlagType.Variable;
+                                member = new MemberModel {Name = reader.Value};
+                                ExtractType(t, member);
                                 result.Members.Add(member);
                                 break;
-                            case "type":
-                                var p = reader.GetAttribute("p").Replace(" ", "");
-                                reader.Read();
-                                result.Members.Add(new ClassModel
-                                {
-                                    Name = reader.Value,
-                                    Flags = FlagType.Class,
-                                    Type = p
-                                });
-                                break;
-                            
-                            case "member":
-                                break;
-                            case "static":
-                                break;
                             case "global":
+                            case "type":
+                                reader.Read();
+                                member = new MemberModel {Name = reader.Value};
+                                ExtractType((string) null, member);
+                                result.Members.Add(member);
                                 break;
-
                         }
                         break;
                 }
@@ -492,16 +453,20 @@ namespace HaXeContext
             return member;
         }
 
-        void ExtractType(XmlTextReader reader, MemberModel member)
+        static void ExtractType(XmlReader reader, MemberModel member)
         {
             var type = ReadValue(reader);
+            ExtractType(type, member);
+        }
 
+        static void ExtractType(string type, MemberModel member)
+        {
             // Package or Class
             if (string.IsNullOrEmpty(type))
             {
                 if (member.Flags != 0) return;
 
-                if (Char.IsLower(member.Name[0]))
+                if (char.IsLower(member.Name[0]))
                     member.Flags = FlagType.Package;
                 else
                     member.Flags = FlagType.Class;
@@ -509,14 +474,14 @@ namespace HaXeContext
             // Function or Variable
             else
             {
-                string[] types = type.Split(new string[] { "->" }, StringSplitOptions.RemoveEmptyEntries);
+                var types = type.Split(new[] {"->"}, StringSplitOptions.RemoveEmptyEntries);
                 if (types.Length > 1)
                 {
                     member.Flags = FlagType.Function;
                     member.Parameters = new List<MemberModel>();
                     for (int i = 0; i < types.Length - 1; i++)
                     {
-                        MemberModel param = new MemberModel(types[i].Trim(), "", FlagType.ParameterVar, Visibility.Public);
+                        var param = new MemberModel(types[i].Trim(), "", FlagType.ParameterVar, Visibility.Public);
                         member.Parameters.Add(param);
                     }
                     member.Type = types[types.Length - 1].Trim();
@@ -529,7 +494,7 @@ namespace HaXeContext
             }
         }
 
-        string ReadValue(XmlTextReader reader)
+        static string ReadValue(XmlReader reader)
         {
             if (reader.IsEmptyElement) return string.Empty;
             reader.Read();

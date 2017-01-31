@@ -1259,8 +1259,7 @@ namespace HaXeContext
                         break;
                 }
             });
-            if (hxsettings.DisableMixedCompletion) return new MemberList();
-            return null;
+            return hxsettings.DisableMixedCompletion ? new MemberList() : null;
         }
 
         /// <summary>
