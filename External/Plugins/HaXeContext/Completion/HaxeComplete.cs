@@ -376,13 +376,14 @@ namespace HaXeContext
                             case "member":
                             case "static":
                             case "enum":
+                            case "global":
                                 var t = reader.GetAttribute("t");
                                 reader.Read();
                                 member = new MemberModel {Name = reader.Value};
                                 ExtractType(t, member);
                                 result.Members.Add(member);
                                 break;
-                            case "global":
+                            case "package":
                             case "type":
                                 reader.Read();
                                 member = new MemberModel {Name = reader.Value};
