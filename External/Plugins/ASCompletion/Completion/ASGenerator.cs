@@ -2318,7 +2318,7 @@ namespace ASCompletion.Completion
             return result;
         }
 
-        private static List<FunctionParameter> ParseFunctionParameters(ScintillaControl sci, int p)
+        internal static List<FunctionParameter> ParseFunctionParameters(ScintillaControl sci, int p)
         {
             List<FunctionParameter> prms = new List<FunctionParameter>();
             StringBuilder sb = new StringBuilder();
@@ -2330,6 +2330,7 @@ namespace ASCompletion.Completion
             bool doBreak = false;
             bool writeParam = false;
             int subClosuresCount = 0;
+            var arrCount = 0;
             ASResult result = null;
             IASContext ctx = ASContext.Context;
             char[] charsToTrim = new char[] { ' ', '\t', '\r', '\n' };
@@ -2364,6 +2365,7 @@ namespace ASCompletion.Completion
                 }
                 else if ((c == '(' || c == '[' || c == '<' || c == '{') && !wasEscapeChar && !isDoubleQuote && !isSingleQuote)
                 {
+                    if (c == '[') arrCount++;
                     if (subClosuresCount == 0)
                     {
                         if (c == '{')
@@ -2383,10 +2385,13 @@ namespace ASCompletion.Completion
                         }
                         else if (c == '(')
                         {
-                            result = ASComplete.GetExpressionType(sci, lastMemberPos + 1);
-                            if (!result.IsNull())
+                            if (!sb.ToString().Contains("<"))
                             {
-                                types.Insert(0, result);
+                                result = ASComplete.GetExpressionType(sci, lastMemberPos + 1);
+                                if (!result.IsNull())
+                                {
+                                    types.Insert(0, result);
+                                }
                             }
                         }
                         else if (c == '<')
@@ -2407,11 +2412,22 @@ namespace ASCompletion.Completion
                 {
                     if (c == ']')
                     {
-                        result = ASComplete.GetExpressionType(sci, p);
-                        if (result.Type != null) result.Member = null;
-                        else result.Type = ctx.ResolveType(ctx.Features.arrayKey, null);
-                        types.Insert(0, result);
-                        writeParam = true;
+                        if (arrCount > 0) arrCount--;
+                        if (arrCount == 0)
+                        {
+                            var cNext = sci.CharAt(p);
+                            if (cNext != '[' && cNext != '.')
+                            {
+                                if (!sb.ToString().Contains("<"))
+                                {
+                                    result = ASComplete.GetExpressionType(sci, p);
+                                    if (result.Type != null) result.Member = null;
+                                    else result.Type = ctx.ResolveType(ctx.Features.arrayKey, null);
+                                    types.Insert(0, result);
+                                }
+                                writeParam = true;
+                            }
+                        }
                     }
                     subClosuresCount--;
                     sb.Append(c);
@@ -2484,7 +2500,14 @@ namespace ASCompletion.Completion
                     string trimmed = sb.ToString().Trim(charsToTrim);
                     if (trimmed.Length > 0)
                     {
-                        result = ASComplete.GetExpressionType(sci, lastMemberPos + 1);
+                        if (trimmed.Contains("<"))
+                        {
+                            trimmed = Regex.Replace(trimmed, @"^new\s", string.Empty);
+                            trimmed = Regex.Replace(trimmed, @">\(.*", ">");
+                            var type = ctx.ResolveType(trimmed, ctx.CurrentModel);
+                            result = new ASResult {Type = type};
+                        }
+                        else result = ASComplete.GetExpressionType(sci, lastMemberPos + 1);
                         if (result != null && !result.IsNull())
                         {
                             if (characterClass.IndexOf(trimmed[trimmed.Length - 1]) > -1)
@@ -3050,7 +3073,7 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        private static StatementReturnType GetStatementReturnType(ScintillaControl sci, ClassModel inClass, string line, int startPos)
+        internal static StatementReturnType GetStatementReturnType(ScintillaControl sci, ClassModel inClass, string line, int startPos)
         {
             Regex target = new Regex(@"[;\s\n\r]*", RegexOptions.RightToLeft);
             Match m = target.Match(line);
@@ -3136,10 +3159,7 @@ namespace ASCompletion.Completion
                     cname = m.Groups[0].Value;
                 else
                     cname = String.Concat(m1, m2);
-
-                if (cname.StartsWith('<'))
-                    cname = "Vector." + cname; // literal vector
-
+                
                 type = ctx.ResolveType(cname, inClass.InFile);
                 if (!type.IsVoid()) resolve = null;
             }
@@ -4652,7 +4672,7 @@ namespace ASCompletion.Completion
         }
     }
 
-    class FunctionParameter
+    internal class FunctionParameter
     {
         public string paramType;
         public string paramQualType;
