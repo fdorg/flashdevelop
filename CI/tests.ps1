@@ -1,11 +1,3 @@
-If ($env:HAXEPATH -eq $null)
-{
-	cinst.exe haxe -y
-	RefreshEnv
-	#mkdir C:\projects\haxelib
-	#haxelib.exe setup C:\projects\haxelib
-}
-
 # Runs the unit tests, and uploads them to the CI server
 
 Param (
@@ -19,6 +11,14 @@ Param (
     $projectVersion,
     $projectBuildNumber
 )
+
+If ($env:HAXEPATH -eq $null)
+{
+	cinst.exe haxe -y
+	RefreshEnv
+	#mkdir C:\projects\haxelib
+	#haxelib.exe setup C:\projects\haxelib
+}
 
 If ((Get-Command "nunit-console-x86.exe" -ErrorAction SilentlyContinue) -ne $null)
 {
