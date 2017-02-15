@@ -2,8 +2,8 @@ If ($env:HAXEPATH -eq $null)
 {
 	cinst.exe haxe -y
 	RefreshEnv
-	mkdir C:\projects\haxelib
-	haxelib.exe setup C:\projects\haxelib
+	#mkdir C:\projects\haxelib
+	#haxelib.exe setup C:\projects\haxelib
 }
 
 # Runs the unit tests, and uploads them to the CI server
