@@ -16,8 +16,6 @@ If ($env:HAXEPATH -eq $null)
 {
 	cinst.exe haxe -y
 	RefreshEnv
-	#mkdir C:\projects\haxelib
-	#haxelib.exe setup C:\projects\haxelib
 }
 
 If ((Get-Command "nunit-console-x86.exe" -ErrorAction SilentlyContinue) -ne $null)
