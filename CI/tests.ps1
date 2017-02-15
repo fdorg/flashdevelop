@@ -1,3 +1,8 @@
+If ($env:HAXEPATH -eq $null)
+{
+	cinst.exe haxe
+}
+
 # Runs the unit tests, and uploads them to the CI server
 
 Param (
