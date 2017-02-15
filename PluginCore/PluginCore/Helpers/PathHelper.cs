@@ -33,7 +33,7 @@ namespace PluginCore.Helpers
         {
             get
             {
-                return Path.GetDirectoryName(Application.ExecutablePath);
+                return Path.GetDirectoryName(GetAssemblyPath(Assembly.GetExecutingAssembly()));
             }
         }
 

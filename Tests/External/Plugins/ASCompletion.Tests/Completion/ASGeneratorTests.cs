@@ -2,6 +2,8 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using ASCompletion.Settings;
@@ -952,21 +954,26 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class AssignStatementToVar : GenerateJob
             {
+                internal static string ReadAllTextAS3(string fileName)
+                {
+                    return TestFile.ReadAllText($"ASCompletion.Test_Files.generated.as3.{fileName}.as");
+                }
+
                 internal static string ReadAllTextHaxe(string fileName)
                 {
-                    return TestFile.ReadAllText($"ASCompletion.Test_Files.generated.haxe.{fileName}");
+                    return TestFile.ReadAllText($"ASCompletion.Test_Files.generated.haxe.{fileName}.hx");
                 }
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get {
                         yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_useSpaces.hx"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_useSpaces.hx"))
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_useSpaces"))
                                 .SetName("Assign statement to var. Use spaces instead of tabs.");
                         yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_useTabs.hx"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_useTabs.hx"))
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_useTabs"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_useTabs"))
                                 .SetName("Assign statement to var. Use tabs instead of spaces.");
                     }
                 }
@@ -981,6 +988,46 @@ namespace ASCompletion.Completion
                     return Generate(sourceText, job, new HaXeContext.Context(new HaXeSettings()));
                 }
 
+                public IEnumerable<TestCaseData> AS3TestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromMultilineArrayInitializer_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromMultilineArrayInitializer_useSpaces"))
+                                .SetName("From multiline array initializer");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromMultilineObjectInitializer_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromMultilineObjectInitializer_useSpaces"))
+                                .SetName("From multiline object initializer");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromMultilineObjectInitializer2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromMultilineObjectInitializer2_useSpaces"))
+                                .SetName("From multiline object initializer 2");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromMethodChaining_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromMethodChaining_useSpaces"))
+                                .SetName("From method chaining");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromMethodChaining2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromMethodChaining2_useSpaces"))
+                                .SetName("From method chaining 2");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(AS3TestCases))]
+                public string AS3(string sourceText, GeneratorJobType job, bool isUseTabs)
+                {
+                    sci.ConfigurationLanguage = "as3";
+                    sci.IsUseTabs = isUseTabs;
+                    ASContext.Context.SetAs3Features();
+                    ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
+                    var context = new AS3Context.Context(new AS3Settings());
+                    BuildClassPath(context);
+                    context.CurrentModel = ASContext.Context.CurrentModel;
+                    return Generate(sourceText, job, context);
+                }
+
                 string Generate(string sourceText, GeneratorJobType job, IASContext context)
                 {
                     sci.Text = sourceText;
@@ -992,13 +1039,18 @@ namespace ASCompletion.Completion
                     ASContext.Context.CurrentModel.Returns(currentModel);
                     var currentMember = currentClass.Members[0];
                     ASContext.Context.CurrentMember.Returns(currentMember);
-                    ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
+                    var visibleExternalElements = context.GetVisibleExternalElements();
+                    ASContext.Context.GetVisibleExternalElements().Returns(x => visibleExternalElements);
                     ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
                     {
                         var src = x[0] as string;
                         return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
                     });
-                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(_ => new ClassModel {Name = "String", Type = "String", InFile = currentModel});
+                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(it =>
+                    {
+                        if (context is HaXeContext.Context) return new ClassModel {Name = "String", Type = "String", InFile = currentModel}; // Hack for Haxe
+                        return context.ResolveType(it.ArgAt<string>(0), it.ArgAt<FileModel>(1));
+                    });
                     ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
                     ASGenerator.GenerateJob(job, currentMember, ASContext.Context.CurrentClass, null, null);
                     return sci.Text;
@@ -1728,6 +1780,29 @@ namespace ASCompletion.Completion
                 public string Haxe(string sourceText, string ofClassName, string memberName, FlagType memberFlags)
                 {
                     return GenerateOverride.GenerateHaxe(sourceText, ofClassName, memberName, memberFlags, sci);
+                }
+            }
+        }
+
+        protected static void BuildClassPath(AS3Context.Context context)
+        {
+            context.BuildClassPath();
+            var intrinsicPath = $"{PathHelper.LibraryDir}{Path.DirectorySeparatorChar}AS3{Path.DirectorySeparatorChar}intrinsic";
+            context.Classpath.AddRange(Directory.GetDirectories(intrinsicPath).Select(it => new PathModel(it, context)));
+            foreach (var it in context.Classpath)
+            {
+                if (it.IsVirtual) context.ExploreVirtualPath(it);
+                else
+                {
+                    var path = it.Path;
+                    foreach (var searchPattern in context.GetExplorerMask())
+                    {
+                        foreach (var fileName in Directory.GetFiles(path, searchPattern, SearchOption.AllDirectories))
+                        {
+                            it.AddFile(ASFileParser.ParseFile(new FileModel(fileName) { Context = context, Version = 3}));
+                        }
+                    }
+                    context.RefreshContextCache(path);
                 }
             }
         }
