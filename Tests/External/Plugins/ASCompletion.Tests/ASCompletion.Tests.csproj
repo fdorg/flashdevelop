@@ -269,7 +269,6 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideGetSet.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_useSpaces.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_useSpaces.hx" />
-    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_useTabs.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_useTabs.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideIssue793.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideIssue793.hx" />
@@ -336,6 +335,17 @@
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfPropertySetter.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfPropertyGetter.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfVariable.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_useTabs.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromMultilineArrayInitializer_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromMultilineArrayInitializer_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromMultilineObjectInitializer_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromMultilineObjectInitializer_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromMultilineObjectInitializer2_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromMultilineObjectInitializer2_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromMethodChaining_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromMethodChaining_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromMethodChaining2_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromMethodChaining2_useSpaces.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

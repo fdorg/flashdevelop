@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using ASCompletion.Context;
@@ -1309,9 +1311,7 @@ namespace ASCompletion.Completion
             template = TemplateUtils.ReplaceTemplateVariable(template, "Name", varname);
             template = TemplateUtils.ReplaceTemplateVariable(template, "Type", cleanType);
 
-            var pos = sci.LineIndentPosition(lineNum);
-
-            sci.CurrentPos = pos;
+            var pos = GetStartOfStatement(sci, sci.CurrentPos, resolve);
             sci.SetSel(pos, pos);
             InsertCode(pos, template, sci);
 
@@ -1932,6 +1932,79 @@ namespace ASCompletion.Completion
             }
 
             return funcBodyStart + 1;
+        }
+
+        public static int GetStartOfStatement(ScintillaControl sci, int statementEnd, ASResult expr)
+        {
+            var line = sci.LineFromPosition(statementEnd);
+            var text = sci.GetLine(line);
+            var match = Regex.Match(text, @"[;\s\n\r]*", RegexOptions.RightToLeft);
+            if (match.Success) statementEnd = sci.PositionFromLine(line) + match.Index;
+            var result = 0;
+            var characters = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
+            var arrCount = 0;
+            var parCount = 0;
+            var genCount = 0;
+            var braCount = 0;
+            var dQuotes = 0;
+            var sQuotes = 0;
+            var hasDot = false;
+            for (var i = statementEnd; i > 0; i--)
+            {
+                if (sci.PositionIsOnComment(i - 1)) continue;
+                var c = (char)sci.CharAt(i - 1);
+                if (c == ']') arrCount++;
+                else if (c == '[' && arrCount > 0) arrCount--;
+                else if (c == ')') parCount++;
+                else if (c == '(' && parCount > 0) parCount--;
+                else if (c == '>') genCount++;
+                else if (c == '<' && genCount > 0) genCount--;
+                else if (c == '}') braCount++;
+                else if (c == '{' && braCount > 0) braCount--;
+                else if (c == '\"' && sQuotes == 0)
+                {
+                    if (i <= 1 || (char)sci.CharAt(i - 2) == '\\') continue;
+                    if (dQuotes == 0) dQuotes++;
+                    else dQuotes--;
+                    if (arrCount == 0 && parCount == 0) hasDot = false;
+                }
+                else if (c == '\'' && dQuotes == 0)
+                {
+                    if (i <= 1 || (char)sci.CharAt(i - 2) == '\\') continue;
+                    if (sQuotes == 0) sQuotes++;
+                    else sQuotes--;
+                    if (arrCount == 0 && parCount == 0) hasDot = false;
+                }
+                else if (arrCount == 0 && parCount == 0 && genCount == 0 && braCount == 0 && dQuotes == 0 && sQuotes == 0 && !characters.Contains(c) && c != '.')
+                {
+                    if (hasDot && c <= ' ' && i > 0)
+                    {
+                        while (i > 0)
+                        {
+                            var nextPos = i - 1;
+                            c = (char) sci.CharAt(nextPos);
+                            if (c > ' ' && !sci.PositionIsOnComment(nextPos)) break;
+                            i = nextPos;
+                        }
+                        i++;
+                    }
+                    else
+                    {
+                        result = i;
+                        break;
+                    }
+                }
+                else if (!hasDot && c == '.') hasDot = true;
+                else if (hasDot && characters.Contains(c))
+                {
+                    var exprType = ASComplete.GetExpressionType(sci, i);
+                    if (!exprType.IsNull()) expr = exprType;
+                    hasDot = false;
+                }
+            }
+            if (expr.Type != null && (expr.Type.Flags & FlagType.Class) > 0 && expr.Context != null && expr.Context.WordBefore == "new")
+                result = sci.WordStartPosition(result - 1, false);
+            return result;
         }
 
         /// <summary>
