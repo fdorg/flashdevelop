@@ -3322,8 +3322,9 @@ namespace ASCompletion.Completion
             char dot = features.dot[features.dot.Length-1];
             while (position > minPos)
             {
+                var curPos = position;
                 position--;
-                var style = sci.BaseStyleAt(position);
+                var style = sci.BaseStyleAt(curPos);
                 if (style == 14) // regex literal
                 {
                     if (hadDot) inRegex = true;
@@ -3332,7 +3333,7 @@ namespace ASCompletion.Completion
                 else if (!IsCommentStyle(style))
                 {
                     var c2 = c;
-                    c = (char)sci.CharAt(position);
+                    c = (char)sci.CharAt(curPos);
                     // end of regex literal
                     if (inRegex)
                     {
@@ -3428,7 +3429,7 @@ namespace ASCompletion.Completion
                     }
                     else if (c == '>' && hasGenerics)
                     {
-                        if (c2 == '.' || c2 == '(')
+                        if (c2 == '.' || c2 == '(' || c2 == '[' || c2 == '>')
                             genCount++;
                         else break;
                     }
@@ -3483,7 +3484,13 @@ namespace ASCompletion.Completion
                     }
                     else if (hasGenerics && (genCount > 0 || c == '<'))
                     {
-                        sb.Insert(0, c);
+                        if (c == '<')
+                        {
+                            sbSub.Insert(0, c);
+                            genCount--;
+                            if (genCount <= 0) break;
+                        }
+                        else sb.Insert(0, c);
                     }
                     else if (c == '{')
                     {

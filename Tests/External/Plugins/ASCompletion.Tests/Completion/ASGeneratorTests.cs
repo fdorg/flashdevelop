@@ -941,6 +941,7 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class AssignStatementToVar : GenerateJob
             {
+
                 public IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
@@ -957,6 +958,26 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromFIeldOfItemOfVector"), GeneratorJobType.AssignStatementToVar, true)
                                 .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromFIeldOfItemOfVector"))
                                 .SetName("from v[0][0].length");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromMultilineArrayInitializer_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromMultilineArrayInitializer_useSpaces"))
+                                .SetName("From multiline array initializer");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromMultilineObjectInitializer_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromMultilineObjectInitializer_useSpaces"))
+                                .SetName("From multiline object initializer");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromMultilineObjectInitializer2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromMultilineObjectInitializer2_useSpaces"))
+                                .SetName("From multiline object initializer 2");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromMethodChaining_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromMethodChaining_useSpaces"))
+                                .SetName("From method chaining");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromMethodChaining2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromMethodChaining2_useSpaces"))
+                                .SetName("From method chaining 2");
                     }
                 }
 
