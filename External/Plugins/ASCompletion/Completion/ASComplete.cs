@@ -3428,7 +3428,7 @@ namespace ASCompletion.Completion
                     }
                     else if (c == '>' && hasGenerics)
                     {
-                        if (c2 == '.' || c2 == '(')
+                        if (c2 == '.' || c2 == '(' || c2 == '[' || c2 == '>')
                             genCount++;
                         else break;
                     }
@@ -3483,7 +3483,18 @@ namespace ASCompletion.Completion
                     }
                     else if (hasGenerics && (genCount > 0 || c == '<'))
                     {
-                        sb.Insert(0, c);
+                        if (c == '<')
+                        {
+                            sbSub.Insert(0, c);
+                            genCount--;
+                            if (genCount <= 0)
+                            {
+                                position--;
+                                expression.Separator = ' ';
+                                break;
+                            }
+                        }
+                        else sb.Insert(0, c);
                     }
                     else if (c == '{')
                     {
