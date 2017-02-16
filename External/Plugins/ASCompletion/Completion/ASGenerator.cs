@@ -3216,7 +3216,8 @@ namespace ASCompletion.Completion
                 pos += startPos;
                 pos -= line.Length - line.TrimEnd().Length + 1;
                 pos = sci.WordEndPosition(pos, true);
-                resolve = ASComplete.GetExpressionType(sci, pos);
+                var c = line.TrimEnd().Last();
+                resolve = ASComplete.GetExpressionType(sci, c == ']' ? pos + 1 : pos);
                 if (resolve.IsNull()) resolve.Type = null;// resolve = null;
                 word = sci.GetWordFromPosition(pos);
             }

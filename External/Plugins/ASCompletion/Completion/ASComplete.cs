@@ -3322,9 +3322,8 @@ namespace ASCompletion.Completion
             char dot = features.dot[features.dot.Length-1];
             while (position > minPos)
             {
-                var curPos = position;
                 position--;
-                var style = sci.BaseStyleAt(curPos);
+                var style = sci.BaseStyleAt(position);
                 if (style == 14) // regex literal
                 {
                     if (hadDot) inRegex = true;
@@ -3333,7 +3332,7 @@ namespace ASCompletion.Completion
                 else if (!IsCommentStyle(style))
                 {
                     var c2 = c;
-                    c = (char)sci.CharAt(curPos);
+                    c = (char)sci.CharAt(position);
                     // end of regex literal
                     if (inRegex)
                     {
@@ -3488,7 +3487,12 @@ namespace ASCompletion.Completion
                         {
                             sbSub.Insert(0, c);
                             genCount--;
-                            if (genCount <= 0) break;
+                            if (genCount <= 0)
+                            {
+                                position--;
+                                expression.Separator = ' ';
+                                break;
+                            }
                         }
                         else sb.Insert(0, c);
                     }
