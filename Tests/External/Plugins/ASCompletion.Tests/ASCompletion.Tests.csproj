@@ -425,6 +425,14 @@
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromNewString2_useSpaces.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromNewBitmapDataWithParams_useSpaces.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromNewBitmapDataWithParams_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromArrayInitializer_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromArrayInitializer_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromArrayInitializer2_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromArrayInitializer2_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromNewBitmapDataWithParams_multiline_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromNewBitmapDataWithParams_multiline_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromFunctionResult_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromFunctionResult_useSpaces.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

@@ -990,6 +990,22 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewBitmapDataWithParams_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
                                 .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewBitmapDataWithParams_useSpaces"))
                                 .SetName("From new BitmapData(rect.width, rect.height)");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewBitmapDataWithParams_multiline_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewBitmapDataWithParams_multiline_useSpaces"))
+                                .SetName("From new BitmapData(rect.width, rect.height). Multiline constructor");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromArrayInitializer_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromArrayInitializer_useSpaces"))
+                                .SetName("from []");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromArrayInitializer2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromArrayInitializer2_useSpaces"))
+                                .SetName("from [rect.width, rect.height]");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromFunctionResult_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromFunctionResult_useSpaces"))
+                                .SetName("from foo()");
                     }
                 }
 
