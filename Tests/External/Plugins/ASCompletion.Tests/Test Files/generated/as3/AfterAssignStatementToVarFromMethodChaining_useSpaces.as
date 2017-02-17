@@ -4,7 +4,7 @@
 			var c:String = ""
 			.charAt(0)
 			.charAt(0).charAt(0)
-        
+			// some comment...
 			.charAt(0);
 		}
 	}

@@ -3528,7 +3528,7 @@ namespace ASCompletion.Completion
                 // string literals only allowed in sub-expressions
                 else
                 {
-                    if (braceCount == 0) // not expected: something's wrong
+                    if (braceCount == 0 && !hadDot) // not expected: something's wrong
                     {
                         expression.Separator = ';';
                         break;
