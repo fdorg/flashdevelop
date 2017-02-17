@@ -3214,7 +3214,7 @@ namespace ASCompletion.Completion
                     cname = String.Concat(m1, m2);
                 
                 type = ctx.ResolveType(cname, inClass.InFile);
-                if (!type.IsVoid()) resolve.Type = type;// resolve = null;
+                if (!type.IsVoid() && resolve != null) resolve.Type = type;// resolve = null;
             }
             else
             {
