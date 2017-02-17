@@ -3164,79 +3164,32 @@ namespace ASCompletion.Completion
             }
 
             line = ReplaceAllStringContents(line);
-
-            ASResult resolve = null;
-            int pos = -1; 
-            string word = null;
-            ClassModel type = null;
-
+            int pos = -1;
             if (line.Last() == ')')
             {
-                if (line.Contains('('))
+                var bracesCount = 1;
+                var position = startPos + line.Length - 1;
+                while (position-- > 0)
                 {
-                    int lastIndex = 0;
-                    int bracesBalance = 0;
-                    while (true)
+                    if (sci.PositionIsOnComment(position)) continue;
+                    var c = (char)sci.CharAt(position);
+                    if (c == ')') bracesCount++;
+                    else if (c == '(')
                     {
-                        int pos1 = line.IndexOf('(', lastIndex);
-                        int pos2 = line.IndexOf(')', lastIndex);
-                        if (pos1 != -1 && pos2 != -1)
-                        {
-                            lastIndex = Math.Min(pos1, pos2);
-                        }
-                        else if (pos1 != -1 || pos2 != -1)
-                        {
-                            lastIndex = Math.Max(pos1, pos2);
-                        }
-                        else
-                        {
-                            break;
-                        }
-                        if (lastIndex == pos1)
-                        {
-                            bracesBalance++;
-                            if (bracesBalance == 1)
-                            {
-                                pos = lastIndex;
-                            }
-                        }
-                        else if (lastIndex == pos2)
-                        {
-                            bracesBalance--;
-                        }
-                        lastIndex++;
-                    }
-                    if (pos != -1)
-                    {
-                        line = line.Substring(0, pos);
-                        pos += startPos;
-                        pos -= line.Length - line.TrimEnd().Length + 1;
-                    }
-                }
-                else
-                {
-                    var bracesCount = 1;
-                    var position = startPos + line.Length - 1;
-                    while (position-- > 0)
-                    {
-                        if (sci.PositionIsOnComment(position)) continue;
-                        var c = (char)sci.CharAt(position);
-                        if (c == ')') bracesCount++;
-                        else if (c == '(')
-                        {
-                            bracesCount--;
-                            if (bracesCount > 0) continue;
-                            pos = position;
-                            var lineFromPosition = sci.LineFromPosition(pos);
-                            startPos = sci.PositionFromLine(lineFromPosition);
-                            line = sci.GetLine(lineFromPosition);
-                            line = line.Substring(0, pos - startPos);
-                            break;
-                        }
+                        bracesCount--;
+                        if (bracesCount > 0) continue;
+                        pos = position;
+                        var lineFromPosition = sci.LineFromPosition(pos);
+                        startPos = sci.PositionFromLine(lineFromPosition);
+                        line = sci.GetLine(lineFromPosition);
+                        line = line.Substring(0, pos - startPos);
+                        break;
                     }
                 }
             }
             else pos = startPos + line.Length - 1;
+            ASResult resolve = null;
+            string word = null;
             if (pos != -1)
             {
                 pos = sci.WordEndPosition(pos, true);
@@ -3248,7 +3201,7 @@ namespace ASCompletion.Completion
 
             IASContext ctx = inClass.InFile.Context;
             m = Regex.Match(line, "new\\s+([\\w\\d.<>,_$-]+)+(<[^]]+>)|(<[^]]+>)", RegexOptions.IgnoreCase);
-
+            ClassModel type = null;
             if (m.Success)
             {
                 string m1 = m.Groups[1].Value;
