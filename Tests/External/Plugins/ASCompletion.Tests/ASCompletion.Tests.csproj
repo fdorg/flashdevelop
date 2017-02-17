@@ -419,6 +419,12 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromMethodChaining_useSpaces.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromMethodChaining2_useSpaces.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromMethodChaining2_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromNewString_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromNewString_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromNewString2_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromNewString2_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromNewBitmapDataWithParams_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromNewBitmapDataWithParams_useSpaces.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

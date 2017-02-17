@@ -1996,7 +1996,7 @@ namespace ASCompletion.Completion
                         break;
                     }
                 }
-                else if (!hasDot && c == '.') hasDot = pc != '<';
+                else if (!hasDot && c == '.') hasDot = pc != '<' && parCount == 0;
                 else if (hasDot && characters.Contains(c))
                 {
                     var exprType = ASComplete.GetExpressionType(sci, i);
