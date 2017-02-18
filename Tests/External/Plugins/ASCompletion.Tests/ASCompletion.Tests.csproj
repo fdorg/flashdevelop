@@ -433,6 +433,8 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromNewBitmapDataWithParams_multiline_useSpaces.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromFunctionResult_useSpaces.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromFunctionResult_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromCallback_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromCallback_useSpaces.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
