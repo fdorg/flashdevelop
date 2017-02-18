@@ -978,6 +978,34 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromMethodChaining2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
                                 .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromMethodChaining2_useSpaces"))
                                 .SetName("From method chaining 2");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewString_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewString_useSpaces"))
+                                .SetName("From new String(\"\")");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewString2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewString2_useSpaces"))
+                                .SetName("From new String(\"\".charAt(0))");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewBitmapDataWithParams_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewBitmapDataWithParams_useSpaces"))
+                                .SetName("From new BitmapData(rect.width, rect.height)");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewBitmapDataWithParams_multiline_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewBitmapDataWithParams_multiline_useSpaces"))
+                                .SetName("From new BitmapData(rect.width, rect.height). Multiline constructor");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromArrayInitializer_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromArrayInitializer_useSpaces"))
+                                .SetName("from []");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromArrayInitializer2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromArrayInitializer2_useSpaces"))
+                                .SetName("from [rect.width, rect.height]");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromFunctionResult_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromFunctionResult_useSpaces"))
+                                .SetName("from foo()");
                     }
                 }
 
@@ -1050,6 +1078,11 @@ namespace ASCompletion.Completion
                         return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
                     });
                     ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(it => context.ResolveType(it.ArgAt<string>(0), it.ArgAt<FileModel>(1)));
+                    ASContext.Context.IsImported(null, Arg.Any<int>()).ReturnsForAnyArgs(it =>
+                    {
+                        var member = it.ArgAt<MemberModel>(0);
+                        return member != null && context.IsImported(member, it.ArgAt<int>(1));
+                    });
                     ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
                     ASGenerator.GenerateJob(job, currentMember, ASContext.Context.CurrentClass, null, null);
                     return sci.Text;
@@ -2131,6 +2164,57 @@ namespace ASCompletion.Completion
                     ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
                     ASGenerator.GenerateJob(GeneratorJobType.ChangeConstructorDecl, currentMember, ASContext.Context.CurrentClass, null, null);
                     return sci.Text;
+                }
+            }
+
+            [TestFixture]
+            public class GetStartOfStatement : GenerateJob
+            {
+                public IEnumerable<TestCaseData> AS3TestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(" new Vector.<int>()$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new <int>[]$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new <Object>[{}]$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new <Vector.<Object>>[new <Object>[{}]]$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new <Object>[{a:[new Number('10.0')]}]$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new Object()$(EntryPoint)")
+                                .Returns(1);
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(AS3TestCases))]
+                public int AS3(string sourceText) => GetStartOfStatementAS3(sourceText, sci);
+
+                internal static int GetStartOfStatementAS3(string sourceText, ScintillaControl sci)
+                {
+                    sci.ConfigurationLanguage = "as3";
+                    ASContext.Context.SetAs3Features();
+                    return Common(sourceText, sci);
+                }
+
+                internal static int Common(string sourceText, ScintillaControl sci)
+                {
+                    var expr = new ASResult
+                    {
+                        Type = new ClassModel {Flags = FlagType.Class},
+                        Context = new ASExpr {WordBefore = "new"}
+                    };
+                    sci.Text = sourceText;
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    return ASGenerator.GetStartOfStatement(sci, sci.CurrentPos, expr);
                 }
             }
 

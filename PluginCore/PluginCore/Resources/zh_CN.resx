@@ -1750,7 +1750,7 @@
     <value>项目没有输出,也没有配置编译命令.</value>
   </data>
   <data name="ProjectManager.Info.NoProjectsOpenLink" xml:space="preserve">
-    <value>|创建新项目|{0}或{0}|打开一个现有的项目|{0}或{0}|导入一个 Flash Builder 项目|</value>
+    <value>|创建新项目|{0}或{0}|打开一个现有的项目|{0}或{0}|导入一个 Flash Builder 项目|{0}or{0}|Import a Haxe hxml project|</value>
   </data>
   <data name="ProjectManager.Info.NoTemplatesFound" xml:space="preserve">
     <value>无法在模板目录中找到模板.你将无法创建新项目.你可以尝试重新安装 FlashDevelop 软件.</value>
@@ -2465,7 +2465,7 @@
     <value>选择导入的项目</value>
   </data>
   <data name="ProjectManager.Info.ImportProjectFilter" xml:space="preserve">
-    <value>Adobe Flash Builder 项目 (.actionScriptProperties)|.actionScriptProperties|打包的 Adobe Flash Builder 项目 (*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl</value>
+    <value>Adobe Flash Builder 项目 (.actionScriptProperties)|.actionScriptProperties|打包的 Adobe Flash Builder 项目 (*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl|Haxe hxml 项目 (*.hxml)|*.hxml</value>
   </data>
   <data name="FlashDevelop.Info.RedirectFilesResults" xml:space="preserve">
     <value>发送结果到结果面板</value>

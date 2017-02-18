@@ -253,6 +253,9 @@ Section "${DIST_NAME}" Main
 
 	; Remove PluginCore from plugins...
 	Delete "$INSTDIR\Plugins\PluginCore.dll"
+
+	; Remove ProjectManager from inst dir...
+	Delete "$INSTDIR\ProjectManager.dll"
 	
 	; Patch CrossOver/Wine files, remove 64bit
 	SetOverwrite on

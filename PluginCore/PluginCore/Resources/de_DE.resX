@@ -1767,7 +1767,7 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
     <value>Dieses Projekt hat keine Ausgabedatei und und keine Pre- oder Post-Build-Befehle definiert.</value>
   </data>
   <data name="ProjectManager.Info.NoProjectsOpenLink" xml:space="preserve">
-    <value>|Erstelle neues Projekt|{0}oder{0}|Öffne existierende Projekt|{0}oder{0}|Importiere Flash Builder Projekt|</value>
+    <value>|Erstelle neues Projekt|{0}oder{0}|Öffne existierende Projekt|{0}oder{0}|Importiere Flash Builder Projekt|{0}or{0}|Import a Haxe hxml project|</value>
   </data>
   <data name="ProjectManager.Info.NoTemplatesFound" xml:space="preserve">
     <value>Keine Vorlagen wurden im Vorlagenverzeichnis gefunden. Sie können keine Projekte erstellen. Sie können dieses Problem beheben, indem Sie FlashDevelop neu installieren.</value>
@@ -2463,7 +2463,7 @@ Bitte bedenken Sie, dass Sie viele Projektoptionen nicht mehr nutzen können, so
     <value>Wählen Sie ein Projekt um es zu importieren</value>
   </data>
   <data name="ProjectManager.Info.ImportProjectFilter" xml:space="preserve">
-    <value>Adobe Flash Builder Projekt (.actionScriptProperties)|.actionScriptProperties|Packaged Adobe Flash Builder Projekt (*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl</value>
+    <value>Adobe Flash Builder Projekt (.actionScriptProperties)|.actionScriptProperties|Packaged Adobe Flash Builder Projekt (*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl|Haxe hxml Projekt (*.hxml)|*.hxml</value>
   </data>
   <data name="FlashDevelop.Info.RedirectFilesResults" xml:space="preserve">
     <value>Suchresultate im Resultatsfenster anzeigen</value>
