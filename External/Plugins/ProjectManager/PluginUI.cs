@@ -71,7 +71,7 @@ namespace ProjectManager
 
             help = new LinkLabel();
             string[] helpParts = String.Format(TextHelper.GetString("Info.NoProjectsOpenLink"), "\n").Split('|');
-            string[] helpActions = { "create", "open", "import", "import" };
+            string[] helpActions = { "create", "open", "import|FlashBuilder", "import|hxml" };
             var helpActionsLength = helpActions.Length;
             int[] linkStart = new int[helpActionsLength];
             int[] linkLength = new int[helpActionsLength];
@@ -181,7 +181,7 @@ namespace ProjectManager
             string action = e.Link.LinkData as string;
             if (action == "create" && NewProject != null) NewProject(sender, e);
             else if (action == "open" && OpenProject != null) OpenProject(sender, e);
-            else if (action == "import" && ImportProject != null) ImportProject(sender, e);
+            else if (action != null && action.StartsWith("import|")) ImportProject?.Invoke(sender, e);
         }
 
         /// <summary>

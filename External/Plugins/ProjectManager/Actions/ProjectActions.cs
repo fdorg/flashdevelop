@@ -92,11 +92,14 @@ namespace ProjectManager.Actions
             }
         }
 
-        public string ImportProject()
+        public string ImportProject() => ImportProject(null);
+
+        internal string ImportProject(string importFrom)
         {
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.Title = TextHelper.GetString("Title.ImportProject");
             dialog.Filter = TextHelper.GetString("Info.ImportProjectFilter");
+            if (importFrom == "hxml") dialog.FilterIndex = 3;
             if (dialog.ShowDialog() == DialogResult.OK && File.Exists(dialog.FileName))
             {
                 string fileName = dialog.FileName;
