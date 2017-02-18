@@ -1752,7 +1752,7 @@
     <value>このプロジェクトはなにも書き出さず、設定されたコマンドも実行しません。</value>
   </data>
   <data name="ProjectManager.Info.NoProjectsOpenLink" xml:space="preserve">
-    <value>|新規プロジェクトを作成|{0}または{0}|既存のプロジェクトを開く|{0}または{0}|Flash Builder プロジェクトをインポート|</value>
+    <value>|新規プロジェクトを作成|{0}または{0}|既存のプロジェクトを開く|{0}または{0}|Flash Builder プロジェクトをインポート|{0}or{0}|Import a Haxe hxml project|</value>
   </data>
   <data name="ProjectManager.Info.NoTemplatesFound" xml:space="preserve">
     <value>テンプレートディレクトリの中にテンプレートが見つかりません。新規プロジェクトが作成できない可能性があります。FlashDevelop を再インストールしてください。</value>
@@ -2465,7 +2465,7 @@ Never - 起動時にスタートページを表示しません。</value>
     <value>プロジェクトに読み込むものを選択</value>
   </data>
   <data name="ProjectManager.Info.ImportProjectFilter" xml:space="preserve">
-    <value>Adobe Flash Builder プロジェクト (.actionScriptProperties)|.actionScriptProperties|Packaged Adobe Flash Builder Project (*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl</value>
+    <value>Adobe Flash Builder プロジェクト (.actionScriptProperties)|.actionScriptProperties|Packaged Adobe Flash Builder Project (*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl|Haxe hxml Project (*.hxml)|*.hxml</value>
   </data>
   <data name="FlashDevelop.Info.RedirectFilesResults" xml:space="preserve">
     <value>結果パネルに表示</value>
