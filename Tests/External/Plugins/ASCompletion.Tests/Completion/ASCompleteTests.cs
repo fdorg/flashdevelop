@@ -427,6 +427,10 @@ namespace ASCompletion.Completion
                             .Returns("new Vector.<String>")
                             .SetName("From new Vector.<String>|");
                     yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpressionOfNewTwoDimensionalVector"))
+                            .Returns("new Vector.<Vector.<String>>")
+                            .SetName("From new Vector.<Vector.<String>>|");
+                    yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfRegex"))
                             .Returns(";g")
                             .SetName("From /regex/g|");
