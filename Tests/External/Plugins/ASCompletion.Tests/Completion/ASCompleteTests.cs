@@ -403,6 +403,10 @@ namespace ASCompletion.Completion
                             .Returns(";.[]")
                             .SetName("From []|");
                     yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpressionOfArrayInitializer.push"))
+                            .Returns(";.[].push")
+                            .SetName("From [].push|");
+                    yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfTwoDimensionalArrayInitializer"))
                             .Returns(";.[]")
                             .SetName("From [[], []]|");
@@ -442,6 +446,10 @@ namespace ASCompletion.Completion
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfBoolean"))
                             .Returns(";true")
                             .SetName("From true|");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpressionOfXML"))
+                            .Returns(" ")
+                            .SetName("<xml><![CDATA[string]]></xml>|");
                 }
             }
 
