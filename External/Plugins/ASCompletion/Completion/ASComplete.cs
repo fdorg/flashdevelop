@@ -3310,7 +3310,8 @@ namespace ASCompletion.Completion
             StringBuilder sbSub = new StringBuilder();
             int subCount = 0;
             char c = ' ';
-            int startPos = position;
+            var startPosition = position;
+            int positionExpression = position;
             int braceCount = 0;
             int sqCount = 0;
             int genCount = 0;
@@ -3428,7 +3429,7 @@ namespace ASCompletion.Completion
                     }
                     else if (c == '>' && hasGenerics)
                     {
-                        if (c2 == '.' || c2 == '(' || c2 == '[' || c2 == '>')
+                        if (c2 == '.' || c2 == '(' || c2 == '[' || c2 == '>' || position + 1 == startPosition)
                             genCount++;
                         else break;
                     }
@@ -3447,6 +3448,12 @@ namespace ASCompletion.Completion
                     if (c <= 32)
                     {
                         if (genCount == 0) hadWS = true;
+                        else if (genCount < 0)
+                        {
+                            sb.Insert(sb.Length, sbSub.ToString().ToCharArray());
+                            expression.Separator = ' ';
+                            break;
+                        }
                     }
                     else if (c == dot)
                     {
@@ -3474,7 +3481,7 @@ namespace ASCompletion.Completion
                         hadDot = false;
                         dotCount = 0;
                         sb.Insert(0, c);
-                        startPos = position;
+                        positionExpression = position;
                     }
                     else if (c == ';')
                     {
@@ -3487,7 +3494,7 @@ namespace ASCompletion.Completion
                         {
                             sbSub.Insert(0, c);
                             genCount--;
-                            if (genCount <= 0)
+                            if (genCount <= 0 && position > minPos && sci.CharAt(position - 1) != '.')
                             {
                                 position--;
                                 expression.Separator = ' ';
@@ -3544,7 +3551,7 @@ namespace ASCompletion.Completion
 
             // result
             expression.Value = sb.ToString();
-            expression.PositionExpression = startPos;
+            expression.PositionExpression = positionExpression;
             LastExpression = expression;
             return expression;
         }

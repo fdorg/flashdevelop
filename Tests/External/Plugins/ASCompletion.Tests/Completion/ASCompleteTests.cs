@@ -424,7 +424,7 @@ namespace ASCompletion.Completion
                             .SetName("From [[1,2,3], [4,5,6][0][2]|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfNewVector"))
-                            .Returns(" ")
+                            .Returns("new Vector.<String>")
                             .SetName("From new Vector.<String>|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfRegex"))
