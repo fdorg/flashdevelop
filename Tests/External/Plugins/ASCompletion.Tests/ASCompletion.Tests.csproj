@@ -433,6 +433,25 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromNewBitmapDataWithParams_multiline_useSpaces.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromFunctionResult_useSpaces.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromFunctionResult_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfNewString.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfString.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfNewString.charCodeAt.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfNewString.charCodeAt0.toString.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfEmptyStringInitializer.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfStringInitializer.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfGlogalFunctionString.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfObjectInitializer.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfArrayInitializer.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfTwoDimensionalVectorInitializer.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfTwoDimensionalArrayInitializer.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfVectorInitializer.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfArrayAccess.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfNewVector.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfRegex.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfDigit.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfBoolean.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfNumber.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfInt.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
