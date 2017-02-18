@@ -4,10 +4,13 @@
 			var c:String = new String("")
             .split("").concat("abc")
             .concat([
-                "a",
+                "a", // commentline
                 "b",
                 "c"
             ])
+			/**
+			 * commentdoc
+			 */
 			.concat(new Array().concat(
 				["a", "b", "c"]
 			))
