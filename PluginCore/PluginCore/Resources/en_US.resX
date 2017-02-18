@@ -1750,7 +1750,7 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
     <value>This project has no output and not build command configured.</value>
   </data>
   <data name="ProjectManager.Info.NoProjectsOpenLink" xml:space="preserve">
-    <value>|Create a new project|{0}or{0}|Open an existing project|{0}or{0}|Import a Flash Builder project|</value>
+    <value>|Create a new project|{0}or{0}|Open an existing project|{0}or{0}|Import a Flash Builder project|{0}or{0}|Import a Haxe hxml project|</value>
   </data>
   <data name="ProjectManager.Info.NoTemplatesFound" xml:space="preserve">
     <value>No templates were found in the templates directory. You will not be able to create new projects. You might try reinstalling FlashDevelop.</value>
@@ -2469,7 +2469,7 @@ Please note that with injection enabled, you will not be able to use many projec
     <value>Select Project To Import</value>
   </data>
   <data name="ProjectManager.Info.ImportProjectFilter" xml:space="preserve">
-    <value>Adobe Flash Builder Project (.actionScriptProperties)|.actionScriptProperties|Packaged Adobe Flash Builder Project (*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl</value>
+    <value>Adobe Flash Builder Project (.actionScriptProperties)|.actionScriptProperties|Packaged Adobe Flash Builder Project (*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl|Haxe hxml Project (*.hxml)|*.hxml</value>
   </data>
   <data name="FlashDevelop.Info.RedirectFilesResults" xml:space="preserve">
     <value>Send results to Results Panel</value>

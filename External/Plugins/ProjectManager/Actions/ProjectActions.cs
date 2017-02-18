@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -16,6 +17,7 @@ using ProjectManager.Controls.TreeView;
 using ProjectManager.Helpers;
 using ProjectManager.Projects;
 using ProjectManager.Projects.AS3;
+using ProjectManager.Projects.Haxe;
 
 namespace ProjectManager.Actions
 {
@@ -90,26 +92,39 @@ namespace ProjectManager.Actions
             }
         }
 
-        public string ImportProject()
+        public string ImportProject() => ImportProject(null);
+
+        internal string ImportProject(string importFrom)
         {
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.Title = TextHelper.GetString("Title.ImportProject");
             dialog.Filter = TextHelper.GetString("Info.ImportProjectFilter");
+            if (importFrom == "hxml") dialog.FilterIndex = 3;
             if (dialog.ShowDialog() == DialogResult.OK && File.Exists(dialog.FileName))
             {
-                string fbProject = dialog.FileName;
+                string fileName = dialog.FileName;
                 string currentDirectory = Directory.GetCurrentDirectory();
 
                 try
                 {
-                    if (FileInspector.IsFlexBuilderPackagedProject(fbProject))
+                    if (FileInspector.IsHxml(Path.GetExtension(fileName).ToLower()))
                     {
-                        fbProject = ExtractPackagedProject(fbProject);
+                        var project = HaxeProject.Load(fileName);
+                        var path = Path.GetDirectoryName(project.ProjectPath);
+                        var name = Path.GetFileNameWithoutExtension(project.OutputPath);
+                        var newPath = Path.Combine(path, $"{name}.hxproj");
+                        PatchProject(project);
+                        PatchHxmlProject(project);
+                        project.SaveAs(newPath);
+                        return newPath;
                     }
-
-                    if (FileInspector.IsFlexBuilderProject(fbProject))
+                    if (FileInspector.IsFlexBuilderPackagedProject(fileName))
                     {
-                        AS3Project imported = AS3Project.Load(fbProject);
+                        fileName = ExtractPackagedProject(fileName);
+                    }
+                    if (FileInspector.IsFlexBuilderProject(fileName))
+                    {
+                        AS3Project imported = AS3Project.Load(fileName);
                         string path = Path.GetDirectoryName(imported.ProjectPath);
                         string name = Path.GetFileNameWithoutExtension(imported.OutputPath);
                         string newPath = Path.Combine(path, name + ".as3proj");
@@ -119,8 +134,7 @@ namespace ProjectManager.Actions
 
                         return newPath;
                     }
-                    else
-                        ErrorManager.ShowInfo(TextHelper.GetString("Info.NotValidFlashBuilderProject"));
+                    ErrorManager.ShowInfo(TextHelper.GetString("Info.NotValidFlashBuilderProject"));
                 }
                 catch (Exception exception)
                 {
@@ -130,6 +144,18 @@ namespace ProjectManager.Actions
                 }
             }
             return null;
+        }
+
+        static void PatchHxmlProject(Project project)
+        {
+            project.OutputPath = Path.GetFileName(project.ProjectPath);
+            project.MovieOptions.Background = string.Empty;
+            project.MovieOptions.BackgroundColor = Color.Empty;
+            project.MovieOptions.Platform = "hxml";
+            project.MovieOptions.Fps = 0;
+            project.MovieOptions.Width = 0;
+            project.MovieOptions.Height = 0;
+            project.MovieOptions.Version = string.Empty;
         }
 
         private void PatchFbProject(AS3Project project)
