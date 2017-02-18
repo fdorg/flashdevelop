@@ -3242,7 +3242,7 @@ namespace ASCompletion.Completion
         /// <param name="sci">Scintilla Control</param>
         /// <param name="position">Cursor position</param>
         /// <returns></returns>
-        private static ASExpr GetExpression(ScintillaControl sci, int position)
+        internal static ASExpr GetExpression(ScintillaControl sci, int position)
         {
             return GetExpression(sci, position, false);
         }

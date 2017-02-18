@@ -81,16 +81,6 @@ namespace ASCompletion.Completion
         // TODO: Add more tests!
         public class GetExpressionType : ASCompleteTests
         {
-            internal static string ReadAllTextAS3(string fileName)
-            {
-                return TestFile.ReadAllText($"ASCompletion.Test_Files.completion.as3.{fileName}");
-            }
-
-            internal static string ReadAllTextHaxe(string fileName)
-            {
-                return TestFile.ReadAllText($"ASCompletion.Test_Files.completion.haxe.{fileName}");
-            }
-
             [Test]
             public void SimpleTest()
             {
@@ -370,6 +360,22 @@ namespace ASCompletion.Completion
         }
 
         [TestFixture]
+        public class GetExpression : ASCompleteTests
+        {
+            public IEnumerable<TestCaseData> AS3TestCases
+            {
+                get { yield return null; }
+            }
+
+            [Test, TestCaseSource(nameof(AS3TestCases))]
+            public string AS3(string sourceText) => AS3Impl(sourceText, sci);
+
+            internal static string AS3Impl(string sourceText, ScintillaControl sci) => Common(sourceText, null, sci);
+
+            internal static string Common(string sourceText, IASContext context, ScintillaControl sci) => null;
+        }
+
+        [TestFixture]
         public class DisambiguateComa : ASCompleteTests
         {
             public IEnumerable<TestCaseData> DisambiguateComaAS3TestCases
@@ -454,5 +460,16 @@ namespace ASCompletion.Completion
                 return coma;
             }
         }
+
+        internal static string ReadAllTextAS3(string fileName)
+        {
+            return TestFile.ReadAllText($"ASCompletion.Test_Files.completion.as3.{fileName}");
+        }
+
+        internal static string ReadAllTextHaxe(string fileName)
+        {
+            return TestFile.ReadAllText($"ASCompletion.Test_Files.completion.haxe.{fileName}");
+        }
+
     }
 }
