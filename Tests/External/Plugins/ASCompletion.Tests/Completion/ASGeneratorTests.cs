@@ -2167,6 +2167,57 @@ namespace ASCompletion.Completion
                 }
             }
 
+            [TestFixture]
+            public class GetStartOfStatement : GenerateJob
+            {
+                public IEnumerable<TestCaseData> AS3TestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(" new Vector.<int>()$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new <int>[]$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new <Object>[{}]$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new <Vector.<Object>>[new <Object>[{}]]$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new <Object>[{a:[new Number('10.0')]}]$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new Object()$(EntryPoint)")
+                                .Returns(1);
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(AS3TestCases))]
+                public int AS3(string sourceText) => GetStartOfStatementAS3(sourceText, sci);
+
+                internal static int GetStartOfStatementAS3(string sourceText, ScintillaControl sci)
+                {
+                    sci.ConfigurationLanguage = "as3";
+                    ASContext.Context.SetAs3Features();
+                    return Common(sourceText, sci);
+                }
+
+                internal static int Common(string sourceText, ScintillaControl sci)
+                {
+                    var expr = new ASResult
+                    {
+                        Type = new ClassModel {Flags = FlagType.Class},
+                        Context = new ASExpr {WordBefore = "new"}
+                    };
+                    sci.Text = sourceText;
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    return ASGenerator.GetStartOfStatement(sci, sci.CurrentPos, expr);
+                }
+            }
+
             protected static void BuildClassPath(AS3Context.Context context)
             {
                 context.BuildClassPath();
