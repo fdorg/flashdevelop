@@ -3205,34 +3205,37 @@ namespace ASCompletion.Completion
                 word = sci.GetWordFromPosition(pos);
             }
             ClassModel type = null;
-            c = (char)sci.CharAt(pos);
-            if (c == '"' || c == '\'')
+            if (resolve?.Type == null || resolve.Type.IsVoid())
             {
-                type = ctx.ResolveType(ctx.Features.stringKey, inClass.InFile);
+                c = (char)sci.CharAt(pos);
+                if (c == '"' || c == '\'')
+                {
+                    type = ctx.ResolveType(ctx.Features.stringKey, inClass.InFile);
+                }
+                else if (c == '}')
+                {
+                    type = ctx.ResolveType(ctx.Features.objectKey, inClass.InFile);
+                }
+                else if (c == '>')
+                {
+                    type = ctx.ResolveType("XML", inClass.InFile);
+                }
+                else if (c == ']')
+                {
+                    resolve = ASComplete.GetExpressionType(sci, pos + 1);
+                    type = resolve.Type ?? ctx.ResolveType(ctx.Features.arrayKey, inClass.InFile);
+                    resolve = null;
+                }
+                else if (word != null && Char.IsDigit(word[0]))
+                {
+                    type = ctx.ResolveType(ctx.Features.numberKey, inClass.InFile);
+                }
+                else if (word == "true" || word == "false")
+                {
+                    type = ctx.ResolveType(ctx.Features.booleanKey, inClass.InFile);
+                }
+                if (type != null && type.IsVoid()) type = null;
             }
-            else if (c == '}')
-            {
-                type = ctx.ResolveType(ctx.Features.objectKey, inClass.InFile);
-            }
-            else if (c == '>')
-            {
-                type = ctx.ResolveType("XML", inClass.InFile);
-            }
-            else if (c == ']')
-            {
-                resolve = ASComplete.GetExpressionType(sci, pos + 1);
-                type = resolve.Type ?? ctx.ResolveType(ctx.Features.arrayKey, inClass.InFile);
-                resolve = null;
-            }
-            else if (word != null && Char.IsDigit(word[0]))
-            {
-                type = ctx.ResolveType(ctx.Features.numberKey, inClass.InFile);
-            }
-            else if (word == "true" || word == "false")
-            {
-                type = ctx.ResolveType(ctx.Features.booleanKey, inClass.InFile);
-            }
-            if (type != null && type.IsVoid()) type = null;
             if (resolve == null) resolve = new ASResult();
             if (resolve.Type == null) resolve.Type = type;
             return new StatementReturnType(resolve, pos, word);

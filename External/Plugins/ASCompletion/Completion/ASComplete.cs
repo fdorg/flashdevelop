@@ -3553,7 +3553,13 @@ namespace ASCompletion.Completion
             }
 
             // result
-            expression.Value = sb.ToString();
+            var value = sb.ToString();
+            if (sci.ConfigurationLanguage == "as3" && value.StartsWith("<"))
+            {
+                value = Regex.Replace(value, @"\[.*", "");
+                value = "Vector." + value;
+            }   
+            expression.Value = value;
             expression.PositionExpression = positionExpression;
             LastExpression = expression;
             return expression;

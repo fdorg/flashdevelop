@@ -412,11 +412,11 @@ namespace ASCompletion.Completion
                             .SetName("From [[], []]|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfVectorInitializer"))
-                            .Returns("new <int>[]")
+                            .Returns("new Vector.<int>")
                             .SetName("From new <int>[]|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfTwoDimensionalVectorInitializer"))
-                            .Returns("new <Vector.<int>>[new <int>[]]")
+                            .Returns("new Vector.<Vector.<int>>")
                             .SetName("From new <Vector.<int>>[new <int>[]]|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfArrayAccess"))
