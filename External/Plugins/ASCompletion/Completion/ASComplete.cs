@@ -3494,7 +3494,9 @@ namespace ASCompletion.Completion
                         {
                             sbSub.Insert(0, c);
                             genCount--;
-                            if (genCount <= 0 && position > minPos && sci.CharAt(position - 1) != '.')
+                            if (genCount <= 0
+                                && sci.ConfigurationLanguage == "as3"
+                                && position > minPos && sci.CharAt(position - 1) != '.')
                             {
                                 position--;
                                 expression.Separator = ' ';
