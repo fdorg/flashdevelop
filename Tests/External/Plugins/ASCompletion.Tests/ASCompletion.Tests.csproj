@@ -459,6 +459,11 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromNewVector.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromCallback_useSpaces.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromCallback_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionOfNewMap.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionOfMapInitializer.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionOfRegex.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromNewMap.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromNewMap.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
