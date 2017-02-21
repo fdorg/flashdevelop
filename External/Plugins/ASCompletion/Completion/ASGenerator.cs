@@ -3164,6 +3164,7 @@ namespace ASCompletion.Completion
             }
 
             line = ReplaceAllStringContents(line);
+            var bracesRemoved = false;
             int pos = -1;
             if (line.Last() == ')')
             {
@@ -3183,11 +3184,13 @@ namespace ASCompletion.Completion
                         startPos = sci.PositionFromLine(lineFromPosition);
                         line = sci.GetLine(lineFromPosition);
                         line = line.Substring(0, pos - startPos);
+                        bracesRemoved = true;
                         break;
                     }
                 }
             }
             else pos = startPos + line.Length - 1;
+            IASContext ctx = inClass.InFile.Context;
             ASResult resolve = null;
             string word = null;
             if (pos != -1)
@@ -3195,11 +3198,11 @@ namespace ASCompletion.Completion
                 pos = sci.WordEndPosition(pos, true);
                 var c = line.TrimEnd().Last();
                 resolve = ASComplete.GetExpressionType(sci, c == ']' ? pos + 1 : pos);
-                if (resolve.IsNull()) resolve.Type = null;// resolve = null;
+                if (resolve.IsNull()) resolve.Type = null;
+                else if (sci.ConfigurationLanguage == "as3" && resolve?.Type.Name == "Function" && !bracesRemoved)
+                    resolve.Member = null;
                 word = sci.GetWordFromPosition(pos);
             }
-
-            IASContext ctx = inClass.InFile.Context;
             m = Regex.Match(line, "new\\s+([\\w\\d.<>,_$-]+)+(<[^]]+>)|(<[^]]+>)", RegexOptions.IgnoreCase);
             ClassModel type = null;
             if (m.Success)
