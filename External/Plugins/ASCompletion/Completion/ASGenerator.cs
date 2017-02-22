@@ -3200,8 +3200,24 @@ namespace ASCompletion.Completion
                 c = line.TrimEnd().Last();
                 resolve = ASComplete.GetExpressionType(sci, c == ']' ? pos + 1 : pos);
                 if (resolve.IsNull()) resolve.Type = null;
-                else if (sci.ConfigurationLanguage == "as3" && resolve.Type.Name == "Function" && !bracesRemoved)
+                else if (resolve.Type.Name == "Function" && !bracesRemoved)
+                {
+                    if (sci.ConfigurationLanguage == "haxe")
+                    {
+                        var parameters = resolve.Member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {ctx.Features.voidKey};
+                        parameters.Add(resolve.Member.Type);
+                        var qualifiedName = string.Empty;
+                        for (var i = 0; i < parameters.Count; i++)
+                        {
+                            if (i > 0) qualifiedName += "->";
+                            var t = parameters[i];
+                            if (t.Contains("->") && !t.StartsWith('(')) t = $"({t})";
+                            qualifiedName += t;
+                        }
+                        resolve.Type.Name = qualifiedName;
+                    }
                     resolve.Member = null;
+                }   
                 word = sci.GetWordFromPosition(pos);
             }
             ClassModel type = null;

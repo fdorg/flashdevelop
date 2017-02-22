@@ -1047,6 +1047,14 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromNewMap"), GeneratorJobType.AssignStatementToVar, true)
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromNewMap"))
                                 .SetName("from new Map<String, Int>()");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromCallback_useSpaces"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromCallback_useSpaces"))
+                                .SetName("from callback");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromCallback2_useSpaces"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromCallback2_useSpaces"))
+                                .SetName("from callback 2");
                     }
                 }
 

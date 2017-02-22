@@ -469,6 +469,10 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromStringInitializer_useSpaces.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromStringInitializer2_useSpaces.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromStringInitializer2_useSpaces.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromCallback_useSpaces.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromCallback_useSpaces.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromCallback2_useSpaces.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromCallback2_useSpaces.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
