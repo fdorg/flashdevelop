@@ -2559,6 +2559,7 @@ namespace ASCompletion.Completion
                 head = new ASResult();
                 head.Type = ASContext.Context.ResolveType(ASContext.Context.Features.stringKey, null);
             }
+            else if (token.Contains("<")) head = new ASResult {Type = ASContext.Context.ResolveType(token, inFile)};
             else head = EvalVariable(token, context, inFile, inClass); // regular eval
 
             // no head, exit
@@ -3496,7 +3497,7 @@ namespace ASCompletion.Completion
                         if (c == '<')
                         {
                             sbSub.Insert(0, c);
-                            if (genCount <= 0
+                            if (genCount < 0
                                 && sci.ConfigurationLanguage == "as3"
                                 && position > minPos && sci.CharAt(position - 1) != '.')
                             {

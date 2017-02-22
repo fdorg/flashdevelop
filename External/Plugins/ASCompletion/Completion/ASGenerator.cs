@@ -3200,7 +3200,7 @@ namespace ASCompletion.Completion
                 c = line.TrimEnd().Last();
                 resolve = ASComplete.GetExpressionType(sci, c == ']' ? pos + 1 : pos);
                 if (resolve.IsNull()) resolve.Type = null;
-                else if (sci.ConfigurationLanguage == "as3" && resolve?.Type.Name == "Function" && !bracesRemoved)
+                else if (sci.ConfigurationLanguage == "as3" && resolve.Type.Name == "Function" && !bracesRemoved)
                     resolve.Member = null;
                 word = sci.GetWordFromPosition(pos);
             }
