@@ -387,6 +387,10 @@ namespace ASCompletion.Completion
                             .Returns("\"")
                             .SetName("From \"\"|");
                     yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpressionOfEmptyStringInitializerSingleQuotes"))
+                            .Returns("\"")
+                            .SetName("From ''|");
+                    yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfStringInitializer"))
                             .Returns("\"")
                             .SetName("From \"string\"|");

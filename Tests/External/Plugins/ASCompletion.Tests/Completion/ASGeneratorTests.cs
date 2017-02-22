@@ -987,6 +987,14 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewString_useSpaces"))
                                 .SetName("From new String(\"\")");
                         yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromStringInitializer_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromStringInitializer_useSpaces"))
+                                .SetName("From \"\"");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromStringInitializer2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromStringInitializer2_useSpaces"))
+                                .SetName("From ''");
+                        yield return
                             new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewString2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
                                 .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewString2_useSpaces"))
                                 .SetName("From new String(\"\".charAt(0))");
