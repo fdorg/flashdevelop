@@ -2415,7 +2415,7 @@ namespace ASCompletion.Completion
         static public void HandleAllClassesCompletion(ScintillaControl Sci, string tail, bool classesOnly, bool showClassVars)
         {
             List<ICompletionListItem> list = GetAllClasses(Sci, classesOnly, showClassVars);
-
+            list.Sort(new CompletionItemCaseSensitiveImportComparer());
             CompletionList.Show(list, false, tail);
         }
 
@@ -3430,7 +3430,10 @@ namespace ASCompletion.Completion
                     else if (c == '>' && hasGenerics)
                     {
                         if (c2 == '.' || c2 == '(' || c2 == '[' || c2 == '>' || position + 1 == startPosition)
+                        {
                             genCount++;
+                            if (sb.Length >= 3 && sb[0] == '.' && sb[1] == '[' && sb[2] == ']') sb.Remove(0, 3);
+                        }
                         else break;
                     }
                     if (braceCount > 0 || sqCount > 0 || genCount > 0) 
@@ -3493,7 +3496,6 @@ namespace ASCompletion.Completion
                         if (c == '<')
                         {
                             sbSub.Insert(0, c);
-                            genCount--;
                             if (genCount <= 0
                                 && sci.ConfigurationLanguage == "as3"
                                 && position > minPos && sci.CharAt(position - 1) != '.')
@@ -3502,6 +3504,7 @@ namespace ASCompletion.Completion
                                 expression.Separator = ' ';
                                 break;
                             }
+                            genCount--;
                         }
                         else sb.Insert(0, c);
                     }
@@ -3552,7 +3555,13 @@ namespace ASCompletion.Completion
             }
 
             // result
-            expression.Value = sb.ToString();
+            var value = sb.ToString();
+            if (sci.ConfigurationLanguage == "as3" && value.StartsWith("<"))
+            {
+                value = Regex.Replace(value, @"\[.*", "");
+                value = "Vector." + value;
+            }   
+            expression.Value = value;
             expression.PositionExpression = positionExpression;
             LastExpression = expression;
             return expression;
@@ -4816,6 +4825,14 @@ namespace ASCompletion.Completion
         public int Compare(ICompletionListItem a, ICompletionListItem b)
         {
             return a.Label.CompareTo(b.Label);
+        }
+    }
+
+    public class CompletionItemCaseSensitiveImportComparer : IComparer<ICompletionListItem>
+    {
+        public int Compare(ICompletionListItem x, ICompletionListItem y)
+        {
+            return CaseSensitiveImportComparer.CompareImports(x.Label, y.Label);
         }
     }
     #endregion

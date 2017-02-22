@@ -223,7 +223,7 @@ namespace ASCompletion.Completion
             {
                 get {
                     yield return
-                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfConstructor.hx"))
+                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfConstructor"))
                             .Returns(new MemberModel
                             {
                                 Flags = FlagType.Access | FlagType.Function | FlagType.Constructor,
@@ -231,7 +231,7 @@ namespace ASCompletion.Completion
                             })
                             .SetName("Get Expression Type of constructor");
                     yield return
-                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfConstructorParameter.hx"))
+                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfConstructorParameter"))
                             .Returns(new MemberModel
                             {
                                 Flags = FlagType.Variable | FlagType.ParameterVar,
@@ -239,7 +239,7 @@ namespace ASCompletion.Completion
                             })
                             .SetName("Get Expression Type of constructor parameter");
                     yield return
-                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfFunction.hx"))
+                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfFunction"))
                             .Returns(new MemberModel
                             {
                                 Flags = FlagType.Access | FlagType.Dynamic | FlagType.Function,
@@ -247,7 +247,7 @@ namespace ASCompletion.Completion
                             })
                             .SetName("Get Expression Type of function");
                     yield return
-                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfFunctionParameter.hx"))
+                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfFunctionParameter"))
                             .Returns(new MemberModel
                             {
                                 Flags = FlagType.Variable | FlagType.ParameterVar,
@@ -255,7 +255,7 @@ namespace ASCompletion.Completion
                             })
                             .SetName("Get Expression Type of function parameter");
                     yield return
-                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfFunctionParameter2.hx"))
+                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfFunctionParameter2"))
                             .Returns(new MemberModel
                             {
                                 Flags = FlagType.Variable | FlagType.ParameterVar,
@@ -263,7 +263,7 @@ namespace ASCompletion.Completion
                             })
                             .SetName("Get Expression Type of function parameter");
                     yield return
-                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfFunctionWithParameter.hx"))
+                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfFunctionWithParameter"))
                             .Returns(new MemberModel
                             {
                                 Flags = FlagType.Access | FlagType.Dynamic | FlagType.Function,
@@ -271,11 +271,11 @@ namespace ASCompletion.Completion
                             })
                             .SetName("Get Expression Type of function with parameter");
                     yield return
-                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfLocalDynamicKey.hx"))
+                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfLocalDynamicKey"))
                             .Returns(null)
                             .SetName("Get Expression Type of local dynamic object key");
                     yield return
-                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfLocalDynamicValue.hx"))
+                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfLocalDynamicValue"))
                             .Returns(new MemberModel
                             {
                                 Flags = FlagType.Access | FlagType.Dynamic | FlagType.Function,
@@ -283,7 +283,7 @@ namespace ASCompletion.Completion
                             })
                             .SetName("Get Expression Type of local dynamic object value");
                     yield return
-                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfLocalVar.hx"))
+                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfLocalVar"))
                             .Returns(new MemberModel
                             {
                                 Flags = FlagType.Dynamic | FlagType.Variable | FlagType.LocalVar,
@@ -291,7 +291,7 @@ namespace ASCompletion.Completion
                             })
                             .SetName("Get Expression Type of local var");
                     yield return
-                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfPropertyGetter.hx"))
+                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfPropertyGetter"))
                             .Returns(new MemberModel
                             {
                                 Flags = FlagType.Dynamic | FlagType.Function,
@@ -299,7 +299,7 @@ namespace ASCompletion.Completion
                             })
                             .SetName("Get Expression Type of property getter");
                     yield return
-                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfPropertySetter.hx"))
+                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfPropertySetter"))
                             .Returns(new MemberModel
                             {
                                 Flags = FlagType.Dynamic | FlagType.Function,
@@ -307,7 +307,7 @@ namespace ASCompletion.Completion
                             })
                             .SetName("Get Expression Type of property setter");
                     yield return
-                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfVariable.hx"))
+                        new TestCaseData(ReadAllTextHaxe("GetExpressionTypeOfVariable"))
                             .Returns(new MemberModel
                             {
                                 Flags = FlagType.Access | FlagType.Dynamic | FlagType.Variable,
@@ -412,12 +412,12 @@ namespace ASCompletion.Completion
                             .SetName("From [[], []]|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfVectorInitializer"))
-                            .Returns("new .[]")
+                            .Returns("new Vector.<int>")
                             .SetName("From new <int>[]|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfTwoDimensionalVectorInitializer"))
-                            .Returns("new .[]")
-                            .SetName("From new <Vector.<int>[new <int>[]]|");
+                            .Returns("new Vector.<Vector.<int>>")
+                            .SetName("From new <Vector.<int>>[new <int>[]]|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfArrayAccess"))
                             .Returns(",.[].[].[]")
@@ -460,11 +460,41 @@ namespace ASCompletion.Completion
             [Test, TestCaseSource(nameof(AS3TestCases))]
             public string AS3(string text) => AS3Impl(text, sci);
 
+            public IEnumerable<TestCaseData> HaxeTestCases
+            {
+                get
+                {
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpressionOfNewMap"))
+                            .Returns("new Map<String, Int>")
+                            .SetName("From new Map<String, Int>|");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpressionOfMapInitializer"))
+                            .Returns(" ")
+                            .SetName("From ['1' => 1, '2' => 2]|");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpressionOfRegex"))
+                            .Returns(";g")
+                            .SetName("~/regex/g|");
+                }
+            }
+
+            [Test, TestCaseSource(nameof(HaxeTestCases))]
+            public string Haxe(string text) => HaxeImpl(text, sci);
+
             internal static string AS3Impl(string text, ScintillaControl sci)
             {
                 sci.ConfigurationLanguage = "as3";
                 ASContext.Context.SetAs3Features();
                 ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context, Version = 3});
+                return Common(text, sci);
+            }
+
+            internal static string HaxeImpl(string text, ScintillaControl sci)
+            {
+                sci.ConfigurationLanguage = "haxe";
+                ASContext.Context.SetHaxeFeatures();
+                ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context, Version = 4, haXe = true});
                 return Common(text, sci);
             }
 
@@ -570,7 +600,7 @@ namespace ASCompletion.Completion
 
         internal static string ReadAllTextHaxe(string fileName)
         {
-            return TestFile.ReadAllText($"ASCompletion.Test_Files.completion.haxe.{fileName}");
+            return TestFile.ReadAllText($"ASCompletion.Test_Files.completion.haxe.{fileName}.hx");
         }
 
     }

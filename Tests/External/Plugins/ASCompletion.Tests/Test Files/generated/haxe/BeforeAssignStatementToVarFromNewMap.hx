@@ -1,6 +1,6 @@
 ﻿package;
 class Main {
 	public function new() {
-		new Map<Int, String>()$(EntryPoint)
+		new Map<String, Int>()$(EntryPoint)
 	}
 }
