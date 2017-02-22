@@ -3559,8 +3559,7 @@ namespace ASCompletion.Completion
             var value = sb.ToString();
             if (sci.ConfigurationLanguage == "as3" && value.StartsWith("<"))
             {
-                value = Regex.Replace(value, @"\[.*", "");
-                value = "Vector." + value;
+                value = Regex.Replace(value, @"\[.*", string.Empty);
             }   
             expression.Value = value;
             expression.PositionExpression = positionExpression;
