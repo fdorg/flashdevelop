@@ -3194,6 +3194,7 @@ namespace ASCompletion.Completion
             IASContext ctx = inClass.InFile.Context;
             ASResult resolve = null;
             string word = null;
+            ClassModel type = null;
             if (pos != -1)
             {
                 pos = sci.WordEndPosition(pos, true);
@@ -3218,10 +3219,15 @@ namespace ASCompletion.Completion
                         resolve.Type.Name = qualifiedName;
                     }
                     resolve.Member = null;
-                }   
+                }
+                else if ((resolve.Type.Flags & FlagType.Class) > 0
+                    && resolve?.Context.WordBefore != "new" && resolve.Member == null)
+                {
+                    type = ctx.ResolveType("Class", inClass.InFile);
+                    resolve = null;
+                }
                 word = sci.GetWordFromPosition(pos);
             }
-            ClassModel type = null;
             if (resolve?.Type == null || resolve.Type.IsVoid())
             {
                 c = (char)sci.CharAt(pos);
