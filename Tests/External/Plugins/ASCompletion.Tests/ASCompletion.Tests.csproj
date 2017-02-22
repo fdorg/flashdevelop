@@ -473,6 +473,14 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromCallback_useSpaces.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromCallback2_useSpaces.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromCallback2_useSpaces.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromCallback3_useSpaces.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromCallback3_useSpaces.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromNewMap2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromNewMap2.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionOfNewMap2.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionOfNewMap3.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromNewMap3.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromNewMap3.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

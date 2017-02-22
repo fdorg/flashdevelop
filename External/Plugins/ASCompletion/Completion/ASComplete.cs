@@ -3430,7 +3430,7 @@ namespace ASCompletion.Completion
                     }
                     else if (c == '>' && hasGenerics)
                     {
-                        if (c2 == '.' || c2 == '(' || c2 == '[' || c2 == '>' || position + 1 == startPosition)
+                        if (c2 == '.' || c2 == ',' || c2 == '(' || c2 == '[' || c2 == '>' || position + 1 == startPosition)
                         {
                             genCount++;
                             if (sb.Length >= 3 && sb[0] == '.' && sb[1] == '[' && sb[2] == ']') sb.Remove(0, 3);

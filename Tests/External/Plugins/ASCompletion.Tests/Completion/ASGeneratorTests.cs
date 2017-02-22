@@ -1048,6 +1048,14 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromNewMap"))
                                 .SetName("from new Map<String, Int>()");
                         yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromNewMap2"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromNewMap2"))
+                                .SetName("from new Map<Map<String, Int>, Int>()");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromNewMap3"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromNewMap3"))
+                                .SetName("from new Map<String, Array<Map<String, Int>>>()");
+                        yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromCallback_useSpaces"), GeneratorJobType.AssignStatementToVar, true)
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromCallback_useSpaces"))
                                 .SetName("from callback");
@@ -1055,6 +1063,10 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromCallback2_useSpaces"), GeneratorJobType.AssignStatementToVar, true)
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromCallback2_useSpaces"))
                                 .SetName("from callback 2");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromCallback3_useSpaces"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromCallback3_useSpaces"))
+                                .SetName("from callback 3");
                     }
                 }
 

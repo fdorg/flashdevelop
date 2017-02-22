@@ -3204,8 +3204,9 @@ namespace ASCompletion.Completion
                 {
                     if (sci.ConfigurationLanguage == "haxe")
                     {
-                        var parameters = resolve.Member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {ctx.Features.voidKey};
-                        parameters.Add(resolve.Member.Type);
+                        var voidKey = ctx.Features.voidKey;
+                        var parameters = resolve.Member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
+                        parameters.Add(resolve.Member.Type ?? voidKey);
                         var qualifiedName = string.Empty;
                         for (var i = 0; i < parameters.Count; i++)
                         {
