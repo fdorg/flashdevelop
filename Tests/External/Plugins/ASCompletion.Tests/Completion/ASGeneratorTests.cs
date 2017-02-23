@@ -2279,6 +2279,18 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(" new Array<{x:Int, y:Int}>()$(EntryPoint)")
                                 .Returns(1);
+                        yield return
+                            new TestCaseData(" new Array<{name:String, params:Array<Dynamic>}>()$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new Array<{name:String, factory:String->Dynamic}>()$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new Array<{name:String, factory:String->Array<String>}>()$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new Array<{name:String, factory:String->{x:Int, y:Int}}>()$(EntryPoint)")
+                                .Returns(1);
                     }
                 }
 
