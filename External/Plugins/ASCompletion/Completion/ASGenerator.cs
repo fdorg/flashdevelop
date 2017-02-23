@@ -1959,7 +1959,10 @@ namespace ASCompletion.Completion
                 else if (c == '[' && arrCount > 0) arrCount--;
                 else if (c == ')') parCount++;
                 else if (c == '(' && parCount > 0) parCount--;
-                else if (c == '>') genCount++;
+                else if (c == '>')
+                {
+                    if (i > 1 && (char)sci.CharAt(i - 2) != '-') genCount++;
+                }
                 else if (c == '<' && genCount > 0) genCount--;
                 else if (c == '}') braCount++;
                 else if (c == '{' && braCount > 0) braCount--;

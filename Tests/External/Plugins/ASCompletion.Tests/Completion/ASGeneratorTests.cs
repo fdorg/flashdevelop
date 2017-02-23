@@ -2263,6 +2263,15 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(" new Map<String, Map<String, Int>>()$(EntryPoint)")
                                 .Returns(1);
+                        yield return
+                            new TestCaseData(" new Map<String, Map<String, Void->Int>>()$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new Map<String, Map<String, String->Int->Void>>()$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new Array<Int->Int->String>()$(EntryPoint)")
+                                .Returns(1);
                     }
                 }
 
