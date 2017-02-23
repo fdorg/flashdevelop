@@ -492,6 +492,14 @@ namespace ASCompletion.Completion
                         new TestCaseData(ReadAllTextHaxe("GetExpressionOfRegex"))
                             .Returns(";g")
                             .SetName("~/regex/g|");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpressionOfNewArray"))
+                            .Returns("new Array<Int>")
+                            .SetName("From new Array<Int>|");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpressionOfNewArray2"))
+                            .Returns("new Array<{x:Int, y:Int}>")
+                            .SetName("From new Array<{x:Int, y:Int}>|");
                 }
             }
 
