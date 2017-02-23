@@ -3433,7 +3433,7 @@ namespace ASCompletion.Completion
                         if (haXe && position - 1 > minPos && (char)sci.CharAt(position - 1) == '-') { }
                         else if (hasGenerics)
                         {
-                            if (c2 == '.' || c2 == ',' || c2 == '(' || c2 == '[' || c2 == '>' || position + 1 == startPosition)
+                            if (c2 == '.' || c2 == ',' || c2 == '(' || c2 == '[' || c2 == '>' || c2 == '}' || position + 1 == startPosition)
                             {
                                 genCount++;
                                 if (sb.Length >= 3 && sb[0] == '.' && sb[1] == '[' && sb[2] == ']') sb.Remove(0, 3);

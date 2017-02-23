@@ -500,6 +500,10 @@ namespace ASCompletion.Completion
                         new TestCaseData(ReadAllTextHaxe("GetExpressionOfNewArray2"))
                             .Returns("new Array<{x:Int, y:Int}>")
                             .SetName("From new Array<{x:Int, y:Int}>|");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpressionOfNewArray3"))
+                            .Returns("new Array<{name:String, params:Array<Dynamic>}>")
+                            .SetName("From new Array<{name:String, params:Array<Dynamic>}>|");
                 }
             }
 
