@@ -3224,7 +3224,7 @@ namespace ASCompletion.Completion
                     resolve.Member = null;
                 }
                 else if ((resolve.Type.Flags & FlagType.Class) > 0
-                    && resolve?.Context.WordBefore != "new" && resolve.Member == null)
+                    && resolve.Context?.WordBefore != "new" && resolve.Member == null)
                 {
                     type = ctx.ResolveType("Class", inClass.InFile);
                     resolve = null;
