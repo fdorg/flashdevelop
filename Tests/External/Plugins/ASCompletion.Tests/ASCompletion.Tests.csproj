@@ -493,6 +493,12 @@
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionOfNewArray.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionOfNewArray2.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionOfNewArray3.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromArray_useSpaces.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromArray_useSpaces.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromArray2_useSpaces.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromArray2_useSpaces.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromArray3_useSpaces.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromArray3_useSpaces.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
