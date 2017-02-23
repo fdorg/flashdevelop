@@ -3520,6 +3520,11 @@ namespace ASCompletion.Completion
                     }
                     else //if (hadWS && !hadDot)
                     {
+                        if (haXe && hadDot && c == '!')
+                        {
+                            sb.Insert(0, ".!");
+                            continue;
+                        }
                         if (c == '\'' || c == '"') expression.Separator = '"';
                         else expression.Separator = ';';
                         break;
