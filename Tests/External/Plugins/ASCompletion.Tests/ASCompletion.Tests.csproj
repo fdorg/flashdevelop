@@ -487,6 +487,9 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromPrivateField.as" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromClass_useSpaces.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromClass_useSpaces.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionOfNewMap4.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromNewMap4.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromNewMap4.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

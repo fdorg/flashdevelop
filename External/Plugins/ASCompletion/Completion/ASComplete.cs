@@ -3428,14 +3428,18 @@ namespace ASCompletion.Completion
                         }
                         braceCount++;
                     }
-                    else if (c == '>' && hasGenerics)
+                    else if (c == '>')
                     {
-                        if (c2 == '.' || c2 == ',' || c2 == '(' || c2 == '[' || c2 == '>' || position + 1 == startPosition)
+                        if (haXe && position - 1 > minPos && (char)sci.CharAt(position - 1) == '-') { }
+                        else if (hasGenerics)
                         {
-                            genCount++;
-                            if (sb.Length >= 3 && sb[0] == '.' && sb[1] == '[' && sb[2] == ']') sb.Remove(0, 3);
+                            if (c2 == '.' || c2 == ',' || c2 == '(' || c2 == '[' || c2 == '>' || position + 1 == startPosition)
+                            {
+                                genCount++;
+                                if (sb.Length >= 3 && sb[0] == '.' && sb[1] == '[' && sb[2] == ']') sb.Remove(0, 3);
+                            }
+                            else break;
                         }
-                        else break;
                     }
                     if (braceCount > 0 || sqCount > 0 || genCount > 0) 
                     {

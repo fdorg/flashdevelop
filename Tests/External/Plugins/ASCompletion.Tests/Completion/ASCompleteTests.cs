@@ -481,6 +481,10 @@ namespace ASCompletion.Completion
                             .Returns("new Map<String, Array<Map<String, Int>>>")
                             .SetName("From new Map<String, Array<Map<String, Int>>>|");
                     yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpressionOfNewMap4"))
+                            .Returns("new Map<String, Array<Int->Int->Int>>")
+                            .SetName("From new Map<String, Array<Int->Int->Int>>|");
+                    yield return
                         new TestCaseData(ReadAllTextHaxe("GetExpressionOfMapInitializer"))
                             .Returns(" ")
                             .SetName("From ['1' => 1, '2' => 2]|");
