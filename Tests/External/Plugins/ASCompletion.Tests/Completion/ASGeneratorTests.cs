@@ -2248,12 +2248,38 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public int AS3(string sourceText) => GetStartOfStatementAS3(sourceText, sci);
+                public int AS3(string sourceText) => AS3Impl(sourceText, sci);
 
-                internal static int GetStartOfStatementAS3(string sourceText, ScintillaControl sci)
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(" new Array<Int>()$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new Map<String, Int>()$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new Map<String, Map<String, Int>>()$(EntryPoint)")
+                                .Returns(1);
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public int Haxe(string sourceText) => HaxeImpl(sourceText, sci);
+
+                internal static int AS3Impl(string sourceText, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "as3";
                     ASContext.Context.SetAs3Features();
+                    return Common(sourceText, sci);
+                }
+
+                internal static int HaxeImpl(string sourceText, ScintillaControl sci)
+                {
+                    sci.ConfigurationLanguage = "haxe";
+                    ASContext.Context.SetHaxeFeatures();
                     return Common(sourceText, sci);
                 }
 
