@@ -426,6 +426,14 @@ namespace ASCompletion.Completion
                                     Value = "1"
                                 }
                             }
+                        },
+                        new MemberModel("testMethodWithTypeParams", "Float", FlagType.Function, Visibility.Public)
+                        {
+                            Template = "<K:IOtherInterface>",
+                            Parameters = new List<MemberModel>
+                            {
+                                new MemberModel("arg", "K", FlagType.Variable, Visibility.Default)
+                            }
                         }
                     });
 
@@ -1696,6 +1704,10 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextHaxe("BeforeOverridePrivateFunction"), "Foo", "foo", FlagType.Function)
                                 .Returns(ReadAllTextHaxe("AfterOverridePrivateFunction"))
                                 .SetName("Override private function");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunctionWithTypeParams"), "Foo", "foo", FlagType.Function)
+                                .Returns(ReadAllTextHaxe("AfterOverrideFunctionWithTypeParams"))
+                                .SetName("Override function with type parameters");
                     }
                 }
 
