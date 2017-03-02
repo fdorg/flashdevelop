@@ -4107,6 +4107,7 @@ namespace ASCompletion.Completion
                         if (!rType.IsVoid()) type = rType.Name;
                     }
                 }
+                newMember.Template = member.Template;
                 newMember.Type = type;
                 // fix parameters if needed
                 if (member.Parameters != null)

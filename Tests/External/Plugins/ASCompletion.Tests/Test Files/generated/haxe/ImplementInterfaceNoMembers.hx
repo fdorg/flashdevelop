@@ -37,4 +37,8 @@ class ImplementTest{
 	function testPrivateMethod(?arg:String, ?arg2:Int = 1):Float {
 		
 	}
+	
+	public function testMethodWithTypeParams<K:IOtherInterface>(arg:K):Float {
+		
+	}
 }

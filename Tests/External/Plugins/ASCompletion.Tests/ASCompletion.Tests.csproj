@@ -499,6 +499,8 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromArray2_useSpaces.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromArray3_useSpaces.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromArray3_useSpaces.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideFunctionWithTypeParams.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideFunctionWithTypeParams.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
