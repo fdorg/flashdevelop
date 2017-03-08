@@ -7123,14 +7123,13 @@ namespace ScintillaNet
         /// </summary>
         public string GetWordLeft(int position, bool skipWS)
         {
-            char c;
             string word = "";
-            string lang = this.ConfigurationLanguage;
-            Language config = ScintillaControl.Configuration.GetLanguage(lang);
+            string lang = ConfigurationLanguage;
+            Language config = Configuration.GetLanguage(lang);
             string characterClass = config.characterclass.Characters;
             while (position >= 0)
             {
-                c = (char)this.CharAt(position);
+                var c = (char)CharAt(position);
                 if (c <= ' ')
                 {
                     if (!skipWS) break;
@@ -7144,6 +7143,32 @@ namespace ScintillaNet
                 position--;
             }
             return word;
+        }
+
+        /// <summary>
+        /// Gets the word to the right of the cursor
+        /// </summary>
+        public string GetWordRight(int position, bool skipWS)
+        {
+            var result = string.Empty;
+            var characterClass = Configuration.GetLanguage(ConfigurationLanguage).characterclass.Characters;
+            var endPosition = TextLength;
+            while (position < endPosition)
+            {
+                var c = (char)CharAt(position);
+                if (c <= ' ')
+                {
+                    if (!skipWS) break;
+                }
+                else if (characterClass.IndexOf(c) < 0) break;
+                else
+                {
+                    result += c;
+                    skipWS = false;
+                }
+                position++;
+            }
+            return result;
         }
 
         #endregion
