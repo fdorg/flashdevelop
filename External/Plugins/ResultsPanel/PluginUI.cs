@@ -48,7 +48,6 @@ namespace ResultsPanel
         private Int32 logCount;
         private Timer autoShow;
         private ImageListManager imageList;
-        private GroupingMethod groupingMethod = GroupingMethod.File;
         private static Dictionary<ColumnHeader, GroupingMethod> groupingMap;
         private static Dictionary<int, String> levelMap;
 
@@ -495,7 +494,7 @@ namespace ResultsPanel
             ColumnHeader h = this.entriesView.Columns[e.Column];
             if (groupingMap.ContainsKey(h))
             {
-                groupingMethod = groupingMap[h];
+                Settings.DefaultGrouping = groupingMap[h];
             }
 
             FilterResults(false);
@@ -795,7 +794,7 @@ namespace ResultsPanel
                     {
                         string groupTitle = TextHelper.GetString("FlashDevelop.Group.Other");
                         string groupId = "";
-                        switch (groupingMethod)
+                        switch (Settings.DefaultGrouping)
                         {
                             case GroupingMethod.File:
                                 String filename = it.SubItems[3].Text;
@@ -1088,12 +1087,12 @@ namespace ResultsPanel
 
     }
 
-    enum GroupingMethod
+    public enum GroupingMethod
     {
-        Type,
         File,
+        Type,
         Description,
-        Path,
+        Path
     }
 
 }
