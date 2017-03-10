@@ -48,7 +48,11 @@ namespace ResultsPanel
         private Int32 logCount;
         private Timer autoShow;
         private ImageListManager imageList;
-         
+        private GroupingMethod groupingMethod = GroupingMethod.File;
+        private static Dictionary<ColumnHeader, GroupingMethod> groupingMap;
+        private static Dictionary<int, String> levelMap;
+
+
         public PluginUI(PluginMain pluginMain)
         {
             this.AutoKeyHandling = true;
@@ -65,6 +69,19 @@ namespace ResultsPanel
             this.InitializeLayout();
             this.ApplySettings();
             ScrollBarEx.Attach(entriesView);
+            groupingMap = new Dictionary<ColumnHeader, GroupingMethod>()
+            {
+                { this.entryFile, GroupingMethod.File },
+                { this.entryDesc, GroupingMethod.Description },
+                { this.entryType, GroupingMethod.Type },
+                { this.entryPath, GroupingMethod.Path }
+            };
+            levelMap = new Dictionary<Int32, String>()
+            {
+                { 0, TextHelper.GetString("Filters.Informations") },
+                { 1, TextHelper.GetString("Filters.Errors") },
+                { 2, TextHelper.GetString("Filters.Warnings") }
+            };
         }
         
         #region Windows Forms Designer Generated Code
@@ -119,6 +136,7 @@ namespace ResultsPanel
             this.entriesView.View = System.Windows.Forms.View.Details;
             this.entriesView.DoubleClick += new System.EventHandler(this.EntriesViewDoubleClick);
             this.entriesView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.EntriesViewKeyDown);
+            this.entriesView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.EntriesViewColumnClick);
             // 
             // entryType
             // 
@@ -468,6 +486,22 @@ namespace ResultsPanel
         }
 
         /// <summary>
+        /// When the user clicks on a column, group using that column
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void EntriesViewColumnClick(Object sender, System.Windows.Forms.ColumnClickEventArgs e)
+        {
+            ColumnHeader h = this.entriesView.Columns[e.Column];
+            if (groupingMap.ContainsKey(h))
+            {
+                groupingMethod = groupingMap[h];
+            }
+
+            FilterResults(false);
+        }
+
+        /// <summary>
         /// Update the buttons when the panel resizes
         /// </summary>
         private void PluginUIResize(object sender, EventArgs e)
@@ -759,8 +793,42 @@ namespace ResultsPanel
                 {
                     if (PluginBase.Settings.UseListViewGrouping)
                     {
-                        String path = Path.Combine(it.SubItems[4].Text, it.SubItems[3].Text);
-                        this.AddToGroup(it, path);
+                        string groupTitle = TextHelper.GetString("FlashDevelop.Group.Other");
+                        string groupId = "";
+                        switch (groupingMethod)
+                        {
+                            case GroupingMethod.File:
+                                String filename = it.SubItems[3].Text;
+                                String fullPath = Path.Combine(it.SubItems[4].Text, filename);
+                                if (File.Exists(fullPath)) groupTitle = filename;
+
+                                groupId = fullPath;
+                                break;
+                            case GroupingMethod.Description:
+                                String desc = it.SubItems[2].Text;
+                                groupId = desc;
+                                //Remove character position and other additional information for better grouping
+                                String[] split = desc.Split(new string[] { " : " }, StringSplitOptions.None);
+                                if (split.Length >= 2)
+                                {
+                                    groupId = split[1];
+                                }
+                                groupTitle = groupId;
+                                break;
+                            case GroupingMethod.Path:
+                                String path = it.SubItems[4].Text;
+                                String dirname = new DirectoryInfo(path).Name;
+
+                                groupId = path;
+                                groupTitle = dirname;
+                                break;
+                            case GroupingMethod.Type:
+                                int type = it.ImageIndex;
+                                groupId = type.ToString();
+                                groupTitle = levelMap[type];
+                                break;
+                        }
+                        this.AddToGroup(it, groupId, groupTitle);
                     }
                     this.entriesView.Items.Add(it);
                 }
@@ -796,16 +864,14 @@ namespace ResultsPanel
         /// <summary>
         /// Adds item to the specified group
         /// </summary>
-        private void AddToGroup(ListViewItem item, String path)
+        private void AddToGroup(ListViewItem item, String id, String title)
         {
-            String gpname;
             Boolean found = false;
             ListViewGroup gp = null;
-            if (File.Exists(path)) gpname = Path.GetFileName(path);
-            else gpname = TextHelper.GetString("FlashDevelop.Group.Other");
+
             foreach (ListViewGroup lvg in this.entriesView.Groups)
             {
-                if (lvg.Tag.ToString() == path)
+                if (lvg.Tag.ToString() == id)
                 {
                     found = true;
                     gp = lvg;
@@ -822,11 +888,11 @@ namespace ResultsPanel
             else
             {
                 gp = new ListViewGroup();
-                gp.Tag = path;
-                gp.Header = gpname;
+                gp.Tag = id;
+                gp.Header = title;
                 this.entriesView.Groups.Add(gp);
                 gp.Items.Add(item);
-            }           
+            }
         }
 
         /// <summary>
@@ -1021,5 +1087,13 @@ namespace ResultsPanel
         #endregion
 
     }
-    
+
+    enum GroupingMethod
+    {
+        Type,
+        File,
+        Description,
+        Path,
+    }
+
 }
