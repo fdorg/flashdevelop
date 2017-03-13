@@ -48,7 +48,11 @@ namespace ResultsPanel
         private Int32 logCount;
         private Timer autoShow;
         private ImageListManager imageList;
+        private SortOrder sortOrder = SortOrder.None;
+        private int lastColumn = -1;
+
         private static Dictionary<ColumnHeader, GroupingMethod> groupingMap;
+        private static Dictionary<GroupingMethod, IComparer<ListViewGroup>> groupingComparer;
         private static Dictionary<int, String> levelMap;
 
 
@@ -80,6 +84,13 @@ namespace ResultsPanel
                 { 0, TextHelper.GetString("Filters.Informations") },
                 { 1, TextHelper.GetString("Filters.Errors") },
                 { 2, TextHelper.GetString("Filters.Warnings") }
+            };
+            groupingComparer = new Dictionary<GroupingMethod, IComparer<ListViewGroup>>()
+            {
+                { GroupingMethod.File, new FileComparer() },
+                { GroupingMethod.Description, new DescriptionComparer() },
+                { GroupingMethod.Path, new PathComparer() },
+                { GroupingMethod.Type, new TypeComparer() },
             };
         }
         
@@ -495,9 +506,48 @@ namespace ResultsPanel
             if (groupingMap.ContainsKey(h))
             {
                 Settings.DefaultGrouping = groupingMap[h];
-            }
 
-            FilterResults(false);
+                FilterResults(false);
+
+                if (lastColumn != e.Column)
+                {
+                    sortOrder = SortOrder.None;
+                }
+
+                //this.entriesView.ListViewItemSorter = groupingComparer[Settings.DefaultGrouping];
+                //this.entriesView.Sorting = this.entriesView.Sorting == SortOrder.Descending ? SortOrder.Ascending : SortOrder.Descending;
+                //this.entriesView.Sort();
+                ListViewGroup[] groups = new ListViewGroup[this.entriesView.Groups.Count];
+                this.entriesView.Groups.CopyTo(groups, 0);
+
+                switch (sortOrder)
+                {
+                    case SortOrder.None:
+                        sortOrder = SortOrder.Ascending;
+                        Array.Sort(groups, groupingComparer[Settings.DefaultGrouping]);
+                        break;
+                    case SortOrder.Ascending:
+                        sortOrder = SortOrder.Descending;
+                        Array.Sort(groups, groupingComparer[Settings.DefaultGrouping]);
+                        Array.Reverse(groups);
+                        break;
+                    case SortOrder.Descending:
+                        sortOrder = SortOrder.None;
+                        break;
+                }
+                
+                foreach (ListViewGroup gp in groups)
+                {
+                    this.entriesView.Groups.Remove(gp);
+                }
+
+                foreach (ListViewGroup gp in groups)
+                {
+                    this.entriesView.Groups.Add(gp);
+                }
+
+                lastColumn = e.Column;
+            }
         }
 
         /// <summary>
@@ -782,6 +832,7 @@ namespace ResultsPanel
             Boolean matchWarnings = this.toolStripButtonWarning.Checked;
             Boolean matchErrors = this.toolStripButtonError.Checked;
             this.entriesView.Items.Clear();
+            this.entriesView.Groups.Clear();
             foreach (ListViewItem it in this.allListViewItems)
             {
                 // Is checked?
@@ -832,6 +883,9 @@ namespace ResultsPanel
                     this.entriesView.Items.Add(it);
                 }
             }
+
+            entriesView.Sort();
+
             if (this.entriesView.Items.Count > 0)
             {
                 if (this.Settings.ScrollToBottom)
