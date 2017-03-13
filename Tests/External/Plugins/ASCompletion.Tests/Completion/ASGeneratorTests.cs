@@ -963,6 +963,10 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromTwoDimensionalVectorInitializer"))
                                 .SetName("from new <Vector.<int>>[new <int>[]]");
                         yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewVector"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewVector"))
+                                .SetName("from new Vector.<Vector.<int>>()");
+                        yield return
                             new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromFIeldOfItemOfVector"), GeneratorJobType.AssignStatementToVar, true)
                                 .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromFIeldOfItemOfVector"))
                                 .SetName("from v[0][0].length");
@@ -991,6 +995,14 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewString_useSpaces"))
                                 .SetName("From new String(\"\")");
                         yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromStringInitializer_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromStringInitializer_useSpaces"))
+                                .SetName("From \"\"");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromStringInitializer2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromStringInitializer2_useSpaces"))
+                                .SetName("From ''");
+                        yield return
                             new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewString2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
                                 .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewString2_useSpaces"))
                                 .SetName("From new String(\"\".charAt(0))");
@@ -1018,11 +1030,19 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromCallback_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
                                 .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromCallback_useSpaces"))
                                 .SetName("from callback");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromClass_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromClass_useSpaces"))
+                                .SetName("from Class");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromPrivateField"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromPrivateField"))
+                                .SetName("from private field");
                     }
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, GeneratorJobType job, bool isUseTabs) => GenerateAS3(sourceText, job, isUseTabs, sci);
+                public string AS3(string sourceText, GeneratorJobType job, bool isUseTabs) => AS3Impl(sourceText, job, isUseTabs, sci);
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -1039,13 +1059,57 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromFieldOfItemOfArray"), GeneratorJobType.AssignStatementToVar, true)
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromFieldOfItemOfArray"))
                                 .SetName("from a[0][0].length");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromNewMap"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromNewMap"))
+                                .SetName("from new Map<String, Int>()");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromNewMap2"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromNewMap2"))
+                                .SetName("from new Map<Map<String, Int>, Int>()");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromNewMap3"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromNewMap3"))
+                                .SetName("from new Map<String, Array<Map<String, Int>>>()");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromNewMap4"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromNewMap4"))
+                                .SetName("from new Map<String, Array<Map<String, Int->Int->Int>>>()");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromCallback_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromCallback_useSpaces"))
+                                .SetName("from callback");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromCallback2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromCallback2_useSpaces"))
+                                .SetName("from callback 2");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromCallback3_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromCallback3_useSpaces"))
+                                .SetName("from callback 3");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromCallback3_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromCallback3_useSpaces"))
+                                .SetName("from Class");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromArray_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromArray_useSpaces"))
+                                .SetName("from new Array<Int>()");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromArray2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromArray2_useSpaces"))
+                                .SetName("from new Array<Int->Int>()");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromArray3_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromArray3_useSpaces"))
+                                .SetName("from new Array<{name:String, factory:String->{x:Int, y:Int}}>()");
                     }
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, GeneratorJobType job, bool isUseTabs) => GenerateHaxe(sourceText, job, isUseTabs, sci);
+                public string Haxe(string sourceText, GeneratorJobType job, bool isUseTabs) => HaxeImpl(sourceText, job, isUseTabs, sci);
 
-                internal static string GenerateAS3(string sourceText, GeneratorJobType job, bool isUseTabs, ScintillaControl sci)
+                internal static string AS3Impl(string sourceText, GeneratorJobType job, bool isUseTabs, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "as3";
                     sci.IsUseTabs = isUseTabs;
@@ -1055,10 +1119,10 @@ namespace ASCompletion.Completion
                     var context = new AS3Context.Context(new AS3Settings());
                     BuildClassPath(context);
                     context.CurrentModel = currentModel;
-                    return Generate(sourceText, job, context, sci);
+                    return Common(sourceText, job, context, sci);
                 }
 
-                internal static string GenerateHaxe(string sourceText, GeneratorJobType job, bool isUseTabs, ScintillaControl sci)
+                internal static string HaxeImpl(string sourceText, GeneratorJobType job, bool isUseTabs, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "haxe";
                     sci.IsUseTabs = isUseTabs;
@@ -1068,10 +1132,10 @@ namespace ASCompletion.Completion
                     var context = new HaXeContext.Context(new HaXeSettings());
                     BuildClassPath(context);
                     context.CurrentModel = currentModel;
-                    return Generate(sourceText, job, context, sci);
+                    return Common(sourceText, job, context, sci);
                 }
 
-                internal static string Generate(string sourceText, GeneratorJobType job, IASContext context, ScintillaControl sci)
+                internal static string Common(string sourceText, GeneratorJobType job, IASContext context, ScintillaControl sci)
                 {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
@@ -2212,12 +2276,62 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public int AS3(string sourceText) => GetStartOfStatementAS3(sourceText, sci);
+                public int AS3(string sourceText) => AS3Impl(sourceText, sci);
 
-                internal static int GetStartOfStatementAS3(string sourceText, ScintillaControl sci)
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(" new Array<Int>()$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new Map<String, Int>()$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new Map<String, Map<String, Int>>()$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new Map<String, Map<String, Void->Int>>()$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new Map<String, Map<String, String->Int->Void>>()$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new Array<Int->Int->String>()$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new Array<{x:Int, y:Int}>()$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new Array<{name:String, params:Array<Dynamic>}>()$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new Array<{name:String, factory:String->Dynamic}>()$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new Array<{name:String, factory:String->Array<String>}>()$(EntryPoint)")
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new Array<{name:String, factory:String->{x:Int, y:Int}}>()$(EntryPoint)")
+                                .Returns(1);
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public int Haxe(string sourceText) => HaxeImpl(sourceText, sci);
+
+                internal static int AS3Impl(string sourceText, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "as3";
                     ASContext.Context.SetAs3Features();
+                    return Common(sourceText, sci);
+                }
+
+                internal static int HaxeImpl(string sourceText, ScintillaControl sci)
+                {
+                    sci.ConfigurationLanguage = "haxe";
+                    ASContext.Context.SetHaxeFeatures();
                     return Common(sourceText, sci);
                 }
 

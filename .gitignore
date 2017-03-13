@@ -25,5 +25,5 @@ PluginCore/Bin
 /FlashDevelop/Bin/Debug/Tools/fdbuild/fdbuild.exe
 FlashDevelop/Bin/Debug/Settings/Themes/CURRENT
 packages/
-FlashDevelop/Bin/Debug/NSubstitute.xml
-FlashDevelop/Bin/Debug/nunit.framework.xml
+NSubstitute.xml
+nunit.framework.xml

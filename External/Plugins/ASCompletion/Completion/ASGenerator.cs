@@ -1959,7 +1959,10 @@ namespace ASCompletion.Completion
                 else if (c == '[' && arrCount > 0) arrCount--;
                 else if (c == ')') parCount++;
                 else if (c == '(' && parCount > 0) parCount--;
-                else if (c == '>') genCount++;
+                else if (c == '>')
+                {
+                    if (i > 1 && (char)sci.CharAt(i - 2) != '-') genCount++;
+                }
                 else if (c == '<' && genCount > 0) genCount--;
                 else if (c == '}') braCount++;
                 else if (c == '{' && braCount > 0) braCount--;
@@ -3166,6 +3169,7 @@ namespace ASCompletion.Completion
             line = ReplaceAllStringContents(line);
             var bracesRemoved = false;
             int pos = -1;
+            char c;
             if (line.Last() == ')')
             {
                 var bracesCount = 1;
@@ -3173,7 +3177,7 @@ namespace ASCompletion.Completion
                 while (position-- > 0)
                 {
                     if (sci.PositionIsOnComment(position)) continue;
-                    var c = (char)sci.CharAt(position);
+                    c = (char)sci.CharAt(position);
                     if (c == ')') bracesCount++;
                     else if (c == '(')
                     {
@@ -3193,35 +3197,43 @@ namespace ASCompletion.Completion
             IASContext ctx = inClass.InFile.Context;
             ASResult resolve = null;
             string word = null;
+            ClassModel type = null;
             if (pos != -1)
             {
                 pos = sci.WordEndPosition(pos, true);
-                var c = line.TrimEnd().Last();
+                c = line.TrimEnd().Last();
                 resolve = ASComplete.GetExpressionType(sci, c == ']' ? pos + 1 : pos);
                 if (resolve.IsNull()) resolve.Type = null;
-                else if (sci.ConfigurationLanguage == "as3" && resolve?.Type.Name == "Function" && !bracesRemoved)
+                else if (resolve.Type.Name == "Function" && !bracesRemoved)
+                {
+                    if (sci.ConfigurationLanguage == "haxe")
+                    {
+                        var voidKey = ctx.Features.voidKey;
+                        var parameters = resolve.Member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
+                        parameters.Add(resolve.Member.Type ?? voidKey);
+                        var qualifiedName = string.Empty;
+                        for (var i = 0; i < parameters.Count; i++)
+                        {
+                            if (i > 0) qualifiedName += "->";
+                            var t = parameters[i];
+                            if (t.Contains("->") && !t.StartsWith('(')) t = $"({t})";
+                            qualifiedName += t;
+                        }
+                        resolve.Type.Name = qualifiedName;
+                    }
                     resolve.Member = null;
+                }
+                else if ((resolve.Type.Flags & FlagType.Class) > 0
+                    && resolve.Context?.WordBefore != "new" && resolve.Member == null)
+                {
+                    type = ctx.ResolveType("Class", inClass.InFile);
+                    resolve = null;
+                }
                 word = sci.GetWordFromPosition(pos);
             }
-            m = Regex.Match(line, "new\\s+([\\w\\d.<>,_$-]+)+(<[^]]+>)|(<[^]]+>)", RegexOptions.IgnoreCase);
-            ClassModel type = null;
-            if (m.Success)
+            if (resolve?.Type == null || resolve.Type.IsVoid())
             {
-                string m1 = m.Groups[1].Value;
-                string m2 = m.Groups[2].Value;
-
-                string cname;
-                if (string.IsNullOrEmpty(m1) && string.IsNullOrEmpty(m2))
-                    cname = m.Groups[0].Value;
-                else
-                    cname = String.Concat(m1, m2);
-                
-                type = ctx.ResolveType(cname, inClass.InFile);
-                if (!type.IsVoid() && resolve != null) resolve.Type = type;// resolve = null;
-            }
-            else
-            {
-                char c = (char)sci.CharAt(pos);
+                c = (char)sci.CharAt(pos);
                 if (c == '"' || c == '\'')
                 {
                     type = ctx.ResolveType(ctx.Features.stringKey, inClass.InFile);
@@ -3237,8 +3249,7 @@ namespace ASCompletion.Completion
                 else if (c == ']')
                 {
                     resolve = ASComplete.GetExpressionType(sci, pos + 1);
-                    if (resolve.Type != null) type = resolve.Type;
-                    else type = ctx.ResolveType(ctx.Features.arrayKey, inClass.InFile);
+                    type = resolve.Type ?? ctx.ResolveType(ctx.Features.arrayKey, inClass.InFile);
                     resolve = null;
                 }
                 else if (word != null && Char.IsDigit(word[0]))

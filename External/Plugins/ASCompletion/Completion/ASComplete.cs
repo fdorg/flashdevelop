@@ -2559,6 +2559,7 @@ namespace ASCompletion.Completion
                 head = new ASResult();
                 head.Type = ASContext.Context.ResolveType(ASContext.Context.Features.stringKey, null);
             }
+            else if (token.Contains("<")) head = new ASResult {Type = ASContext.Context.ResolveType(token, inFile)};
             else head = EvalVariable(token, context, inFile, inClass); // regular eval
 
             // no head, exit
@@ -3242,7 +3243,7 @@ namespace ASCompletion.Completion
         /// <param name="sci">Scintilla Control</param>
         /// <param name="position">Cursor position</param>
         /// <returns></returns>
-        private static ASExpr GetExpression(ScintillaControl sci, int position)
+        internal static ASExpr GetExpression(ScintillaControl sci, int position)
         {
             return GetExpression(sci, position, false);
         }
@@ -3310,7 +3311,8 @@ namespace ASCompletion.Completion
             StringBuilder sbSub = new StringBuilder();
             int subCount = 0;
             char c = ' ';
-            int startPos = position;
+            var startPosition = position;
+            int positionExpression = position;
             int braceCount = 0;
             int sqCount = 0;
             int genCount = 0;
@@ -3426,11 +3428,18 @@ namespace ASCompletion.Completion
                         }
                         braceCount++;
                     }
-                    else if (c == '>' && hasGenerics)
+                    else if (c == '>')
                     {
-                        if (c2 == '.' || c2 == '(' || c2 == '[' || c2 == '>')
-                            genCount++;
-                        else break;
+                        if (haXe && position - 1 > minPos && (char)sci.CharAt(position - 1) == '-') { }
+                        else if (hasGenerics)
+                        {
+                            if (c2 == '.' || c2 == ',' || c2 == '(' || c2 == '[' || c2 == '>' || c2 == '}' || position + 1 == startPosition)
+                            {
+                                genCount++;
+                                if (sb.Length >= 3 && sb[0] == '.' && sb[1] == '[' && sb[2] == ']') sb.Remove(0, 3);
+                            }
+                            else break;
+                        }
                     }
                     if (braceCount > 0 || sqCount > 0 || genCount > 0) 
                     {
@@ -3447,6 +3456,12 @@ namespace ASCompletion.Completion
                     if (c <= 32)
                     {
                         if (genCount == 0) hadWS = true;
+                        else if (genCount < 0)
+                        {
+                            sb.Insert(sb.Length, sbSub.ToString().ToCharArray());
+                            expression.Separator = ' ';
+                            break;
+                        }
                     }
                     else if (c == dot)
                     {
@@ -3474,7 +3489,7 @@ namespace ASCompletion.Completion
                         hadDot = false;
                         dotCount = 0;
                         sb.Insert(0, c);
-                        startPos = position;
+                        positionExpression = position;
                     }
                     else if (c == ';')
                     {
@@ -3486,13 +3501,15 @@ namespace ASCompletion.Completion
                         if (c == '<')
                         {
                             sbSub.Insert(0, c);
-                            genCount--;
-                            if (genCount <= 0)
+                            if (genCount < 0
+                                && sci.ConfigurationLanguage == "as3"
+                                && position > minPos && sci.CharAt(position - 1) != '.')
                             {
                                 position--;
                                 expression.Separator = ' ';
                                 break;
                             }
+                            genCount--;
                         }
                         else sb.Insert(0, c);
                     }
@@ -3548,8 +3565,13 @@ namespace ASCompletion.Completion
             }
 
             // result
-            expression.Value = sb.ToString();
-            expression.PositionExpression = startPos;
+            var value = sb.ToString();
+            if (sci.ConfigurationLanguage == "as3" && value.StartsWith("<"))
+            {
+                value = Regex.Replace(value, @"\[.*", string.Empty);
+            }   
+            expression.Value = value;
+            expression.PositionExpression = positionExpression;
             LastExpression = expression;
             return expression;
         }
