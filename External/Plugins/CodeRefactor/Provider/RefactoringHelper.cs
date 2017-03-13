@@ -367,15 +367,14 @@ namespace CodeRefactor.Provider
         {
             if (target == null) return null;
             var member = target.Member;
-            if ((member == null || string.IsNullOrEmpty(member.Name)) && (target.Type == null || !CheckFlag(target.Type.Flags, FlagType.Class) && !target.Type.IsEnum()))
+            var type = target.Type;
+            if ((member == null || string.IsNullOrEmpty(member.Name)) && (type == null || !CheckFlag(type.Flags, FlagType.Class) && !type.IsEnum()))
             {
                 return null;
             }
             // if the target we are trying to rename exists as a local variable or a function parameter we only need to search the current file
-            var currentFileOnly = member != null
-                && (member.Access == Visibility.Private
-                    || CheckFlag(member.Flags, FlagType.LocalVar)
-                    || CheckFlag(member.Flags, FlagType.ParameterVar));
+            var currentFileOnly = member != null && (member.Access == Visibility.Private || (member.Flags & FlagType.LocalVar | FlagType.ParameterVar) > 0)
+                               || type != null && type.Access == Visibility.Private;
             FRConfiguration config;
             IProject project = PluginBase.CurrentProject;
             String file = PluginBase.MainForm.CurrentDocument.FileName;
@@ -392,7 +391,7 @@ namespace CodeRefactor.Provider
                     }
                     return null;
                 }
-                config = new FRConfiguration(path, mask, false, GetFRSearch(member != null ? member.Name : target.Type.Name, includeComments, includeStrings));
+                config = new FRConfiguration(path, mask, false, GetFRSearch(member != null ? member.Name : type.Name, includeComments, includeStrings));
             }
             else if (member != null && !CheckFlag(member.Flags, FlagType.Constructor))
             {
@@ -401,7 +400,7 @@ namespace CodeRefactor.Provider
             else
             {
                 target.Member = null;
-                config = new FRConfiguration(GetAllProjectRelatedFiles(project, onlySourceFiles, ignoreSdkFiles), GetFRSearch(target.Type.Name, includeComments, includeStrings));
+                config = new FRConfiguration(GetAllProjectRelatedFiles(project, onlySourceFiles, ignoreSdkFiles), GetFRSearch(type.Name, includeComments, includeStrings));
             }
             config.CacheDocuments = true;
             FRRunner runner = new FRRunner();
