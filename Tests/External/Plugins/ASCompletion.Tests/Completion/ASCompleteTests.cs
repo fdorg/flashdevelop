@@ -215,7 +215,7 @@ namespace ASCompletion.Completion
             }
 
             [Test, TestCaseSource(nameof(AS3TestCases))]
-            public MemberModel AS3(string sourceText) => GetExprTypeAS3(sourceText, sci);
+            public MemberModel AS3(string sourceText) => AS3Impl(sourceText, sci);
 
             public IEnumerable<TestCaseData> HaxeTestCases
             {
@@ -316,23 +316,23 @@ namespace ASCompletion.Completion
             }
 
             [Test, TestCaseSource(nameof(HaxeTestCases))]
-            public MemberModel Haxe(string sourceText) => GetExprTypeHaxe(sourceText, sci);
+            public MemberModel Haxe(string sourceText) => HaxeImpl(sourceText, sci);
 
-            internal static MemberModel GetExprTypeAS3(string sourceText, ScintillaControl sci)
+            internal static MemberModel AS3Impl(string sourceText, ScintillaControl sci)
             {
                 sci.ConfigurationLanguage = "as3";
                 ASContext.Context.SetAs3Features();
-                return GetExprType(sourceText, sci);
+                return Common(sourceText, sci);
             }
 
-            internal static MemberModel GetExprTypeHaxe(string sourceText, ScintillaControl sci)
+            internal static MemberModel HaxeImpl(string sourceText, ScintillaControl sci)
             {
                 sci.ConfigurationLanguage = "haxe";
                 ASContext.Context.SetHaxeFeatures();
-                return GetExprType(sourceText, sci);
+                return Common(sourceText, sci);
             }
 
-            internal static MemberModel GetExprType(string sourceText, ScintillaControl sci)
+            internal static MemberModel Common(string sourceText, ScintillaControl sci)
             {
                 sci.Text = sourceText;
                 SnippetHelper.PostProcessSnippets(sci, 0);

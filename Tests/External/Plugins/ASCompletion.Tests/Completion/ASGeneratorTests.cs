@@ -570,7 +570,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText) => GenerateAS3(sourceText, sci);
+                public string AS3(string sourceText) => AS3Impl(sourceText, sci);
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -584,23 +584,23 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText) => GenerateHaxe(sourceText, sci);
+                public string Haxe(string sourceText) => HaxeImpl(sourceText, sci);
 
-                internal static string GenerateAS3(string sourceText, ScintillaControl sci)
+                internal static string AS3Impl(string sourceText, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "as3";
                     ASContext.Context.SetAs3Features();
-                    return Generate(sourceText, sci);
+                    return Common(sourceText, sci);
                 }
 
-                internal static string GenerateHaxe(string sourceText, ScintillaControl sci)
+                internal static string HaxeImpl(string sourceText, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "haxe";
                     ASContext.Context.SetHaxeFeatures();
-                    return Generate(sourceText, sci);
+                    return Common(sourceText, sci);
                 }
 
-                static string Generate(string sourceText, ScintillaControl sci)
+                static string Common(string sourceText, ScintillaControl sci)
                 {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
@@ -639,7 +639,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText) => PromoteLocal.GenerateAS3(sourceText, sci);
+                public string AS3(string sourceText) => PromoteLocal.AS3Impl(sourceText, sci);
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -653,7 +653,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText) => PromoteLocal.GenerateHaxe(sourceText, sci);
+                public string Haxe(string sourceText) => PromoteLocal.HaxeImpl(sourceText, sci);
             }
 
             [TestFixture]
@@ -678,7 +678,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText) => PromoteLocal.GenerateHaxe(sourceText, sci);
+                public string Haxe(string sourceText) => PromoteLocal.HaxeImpl(sourceText, sci);
             }
 
             [TestFixture]
@@ -747,7 +747,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, GeneratorJobType job) => GenerateAS3(sourceText, job, sci);
+                public string AS3(string sourceText, GeneratorJobType job) => AS3Impl(sourceText, job, sci);
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -765,23 +765,23 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, GeneratorJobType job) => GenerateHaxe(sourceText, job, sci);
+                public string Haxe(string sourceText, GeneratorJobType job) => HaxeImpl(sourceText, job, sci);
 
-                internal static string GenerateAS3(string sourceText, GeneratorJobType job, ScintillaControl sci)
+                internal static string AS3Impl(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "as3";
                     ASContext.Context.SetAs3Features();
-                    return Generate(sourceText, job, sci);
+                    return Common(sourceText, job, sci);
                 }
 
-                internal static string GenerateHaxe(string sourceText, GeneratorJobType job, ScintillaControl sci)
+                internal static string HaxeImpl(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "haxe";
                     ASContext.Context.SetHaxeFeatures();
-                    return Generate(sourceText, job, sci);
+                    return Common(sourceText, job, sci);
                 }
 
-                static string Generate(string sourceText, GeneratorJobType job, ScintillaControl sci)
+                static string Common(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
@@ -847,7 +847,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, GeneratorJobType job) => GenerateFunction.GenerateAS3(sourceText, job, sci);
+                public string AS3(string sourceText, GeneratorJobType job) => GenerateFunction.AS3Impl(sourceText, job, sci);
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -865,7 +865,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, GeneratorJobType job) => GenerateFunction.GenerateHaxe(sourceText, job, sci);
+                public string Haxe(string sourceText, GeneratorJobType job) => GenerateFunction.HaxeImpl(sourceText, job, sci);
             }
 
             [TestFixture]
@@ -894,7 +894,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, GeneratorJobType job) => GenerateFunction.GenerateHaxe(sourceText, job, sci);
+                public string Haxe(string sourceText, GeneratorJobType job) => GenerateFunction.HaxeImpl(sourceText, job, sci);
             }
 
             [TestFixture]
@@ -919,7 +919,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, GeneratorJobType job) => GenerateVariable.GenerateAS3(sourceText, job, sci);
+                public string AS3(string sourceText, GeneratorJobType job) => GenerateVariable.AS3Impl(sourceText, job, sci);
             }
 
             [TestFixture]
@@ -1173,7 +1173,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, GeneratorJobType job) => GenerateAS3(sourceText, job, sci);
+                public string AS3(string sourceText, GeneratorJobType job) => AS3Impl(sourceText, job, sci);
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -1207,23 +1207,23 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, GeneratorJobType job) => GenerateHaxe(sourceText, job, sci);
+                public string Haxe(string sourceText, GeneratorJobType job) => HaxeImpl(sourceText, job, sci);
 
-                internal static string GenerateAS3(string sourceText, GeneratorJobType job, ScintillaControl sci)
+                internal static string AS3Impl(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "as3";
                     ASContext.Context.SetAs3Features();
-                    return Generate(sourceText, job, sci);
+                    return Common(sourceText, job, sci);
                 }
                 
-                internal static string GenerateHaxe(string sourceText, GeneratorJobType job, ScintillaControl sci)
+                internal static string HaxeImpl(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "haxe";
                     ASContext.Context.SetHaxeFeatures();
-                    return Generate(sourceText, job, sci);
+                    return Common(sourceText, job, sci);
                 }
 
-                static string Generate(string sourceText, GeneratorJobType job, ScintillaControl sci)
+                static string Common(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
@@ -1278,7 +1278,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, GeneratorJobType job) => GenerateVariable.GenerateAS3(sourceText, job, sci);
+                public string AS3(string sourceText, GeneratorJobType job) => GenerateVariable.AS3Impl(sourceText, job, sci);
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -1308,7 +1308,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, GeneratorJobType job) => GenerateVariable.GenerateHaxe(sourceText, job, sci);
+                public string Haxe(string sourceText, GeneratorJobType job) => GenerateVariable.HaxeImpl(sourceText, job, sci);
             }
 
             [TestFixture]
@@ -1337,7 +1337,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, GeneratorJobType job) => GenerateVariable.GenerateAS3(sourceText, job, sci);
+                public string AS3(string sourceText, GeneratorJobType job) => GenerateVariable.AS3Impl(sourceText, job, sci);
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -1355,7 +1355,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, GeneratorJobType job) => GenerateVariable.GenerateHaxe(sourceText, job, sci);
+                public string Haxe(string sourceText, GeneratorJobType job) => GenerateVariable.HaxeImpl(sourceText, job, sci);
             }
 
             [TestFixture]
@@ -1380,7 +1380,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, GeneratorJobType job) => GenerateVariable.GenerateAS3(sourceText, job, sci);
+                public string AS3(string sourceText, GeneratorJobType job) => GenerateVariable.AS3Impl(sourceText, job, sci);
             }
 
             [TestFixture]
@@ -1404,7 +1404,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, string[] autoRemove) => GenerateAS3(sourceText, autoRemove, sci);
+                public string AS3(string sourceText, string[] autoRemove) => AS3Impl(sourceText, autoRemove, sci);
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -1422,23 +1422,23 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, string[] autoRemove) => GenerateHaxe(sourceText, autoRemove, sci);
+                public string Haxe(string sourceText, string[] autoRemove) => HaxeImpl(sourceText, autoRemove, sci);
 
-                internal static string GenerateAS3(string sourceText, string[] autoRemove, ScintillaControl sci)
+                internal static string AS3Impl(string sourceText, string[] autoRemove, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "as3";
                     ASContext.Context.SetAs3Features();
-                    return Generate(sourceText, autoRemove, sci);
+                    return Common(sourceText, autoRemove, sci);
                 }
 
-                internal static string GenerateHaxe(string sourceText, string[] autoRemove, ScintillaControl sci)
+                internal static string HaxeImpl(string sourceText, string[] autoRemove, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "haxe";
                     ASContext.Context.SetHaxeFeatures();
-                    return Generate(sourceText, autoRemove, sci);
+                    return Common(sourceText, autoRemove, sci);
                 }
 
-                static string Generate(string sourceText, string[] autoRemove, ScintillaControl sci)
+                static string Common(string sourceText, string[] autoRemove, ScintillaControl sci)
                 {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
@@ -1482,7 +1482,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, string[] autoRemove) => GenerateEventHandler.GenerateAS3(sourceText, autoRemove, sci);
+                public string AS3(string sourceText, string[] autoRemove) => GenerateEventHandler.AS3Impl(sourceText, autoRemove, sci);
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -1496,7 +1496,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, string[] autoRemove) => GenerateEventHandler.GenerateHaxe(sourceText, autoRemove, sci);
+                public string Haxe(string sourceText, string[] autoRemove) => GenerateEventHandler.HaxeImpl(sourceText, autoRemove, sci);
             }
 
             [TestFixture]
@@ -1525,7 +1525,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, string[] autoRemove) => GenerateEventHandler.GenerateHaxe(sourceText, autoRemove, sci);
+                public string Haxe(string sourceText, string[] autoRemove) => GenerateEventHandler.HaxeImpl(sourceText, autoRemove, sci);
             }
 
             [TestFixture]
@@ -1553,7 +1553,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText) => GenerateAS3(sourceText, sci);
+                public string AS3(string sourceText) => AS3Impl(sourceText, sci);
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -1571,23 +1571,23 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText) => GenerateHaxe(sourceText, sci);
+                public string Haxe(string sourceText) => HaxeImpl(sourceText, sci);
 
-                internal static string GenerateAS3(string sourceText, ScintillaControl sci)
+                internal static string AS3Impl(string sourceText, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "as3";
                     ASContext.Context.SetAs3Features();
-                    return Generate(sourceText, sci);
+                    return Common(sourceText, sci);
                 }
 
-                internal static string GenerateHaxe(string sourceText, ScintillaControl sci)
+                internal static string HaxeImpl(string sourceText, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "haxe";
                     ASContext.Context.SetHaxeFeatures();
-                    return Generate(sourceText, sci);
+                    return Common(sourceText, sci);
                 }
 
-                static string Generate(string sourceText, ScintillaControl sci)
+                static string Common(string sourceText, ScintillaControl sci)
                 {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
@@ -1628,7 +1628,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText) => GenerateGetterSetter.GenerateHaxe(sourceText, sci);
+                public string Haxe(string sourceText) => GenerateGetterSetter.HaxeImpl(sourceText, sci);
             }
 
             [TestFixture]
@@ -1675,9 +1675,9 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string source, string ofClassName, string memberName, FlagType memberFlags)
+                public string AS3(string sourceText, string ofClassName, string memberName, FlagType memberFlags)
                 {
-                    return GenerateAS3(source, ofClassName, memberName, memberFlags, sci);
+                    return AS3Impl(sourceText, ofClassName, memberName, memberFlags, sci);
                 }
 
                 public IEnumerable<TestCaseData> HaxeTestCases
@@ -1716,28 +1716,28 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string source, string ofClassName, string memberName, FlagType memberFlags)
+                public string Haxe(string sourceText, string ofClassName, string memberName, FlagType memberFlags)
                 {
-                    return GenerateHaxe(source, ofClassName, memberName, memberFlags, sci);
+                    return HaxeImpl(sourceText, ofClassName, memberName, memberFlags, sci);
                 }
 
-                internal static string GenerateAS3(string source, string ofClassName, string memberName, FlagType memberFlags, ScintillaControl sci)
+                internal static string AS3Impl(string sourceText, string ofClassName, string memberName, FlagType memberFlags, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "as3";
                     ASContext.Context.SetAs3Features();
-                    return Generate(source, ofClassName, memberName, memberFlags, sci);
+                    return Common(sourceText, ofClassName, memberName, memberFlags, sci);
                 }
 
-                internal static string GenerateHaxe(string source, string ofClassName, string memberName, FlagType memberFlags, ScintillaControl sci)
+                internal static string HaxeImpl(string sourceText, string ofClassName, string memberName, FlagType memberFlags, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "haxe";
                     ASContext.Context.SetHaxeFeatures();
-                    return Generate(source, ofClassName, memberName, memberFlags, sci);
+                    return Common(sourceText, ofClassName, memberName, memberFlags, sci);
                 }
 
-                static string Generate(string source, string ofClassName, string memberName, FlagType memberFlags, ScintillaControl sci)
+                static string Common(string sourceText, string ofClassName, string memberName, FlagType memberFlags, ScintillaControl sci)
                 {
-                    sci.Text = source;
+                    sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
                     var currentModel = ASContext.Context.CurrentModel;
                     new ASFileParser().ParseSrc(currentModel, sci.Text);
@@ -1785,7 +1785,7 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
                 public string Haxe(string sourceText, string ofClassName, string memberName, FlagType memberFlags)
                 {
-                    return GenerateOverride.GenerateHaxe(sourceText, ofClassName, memberName, memberFlags, sci);
+                    return GenerateOverride.HaxeImpl(sourceText, ofClassName, memberName, memberFlags, sci);
                 }
             }
 
@@ -1848,16 +1848,16 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public ClassModel AS3(string sourceText) => GetStatementReturnTypeAS3(sourceText, sci);
+                public ClassModel AS3(string sourceText) => AS3Impl(sourceText, sci);
 
-                public static ClassModel GetStatementReturnTypeAS3(string sourceText, ScintillaControl sci)
+                public static ClassModel AS3Impl(string sourceText, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "as3";
                     ASContext.Context.SetAs3Features();
-                    return DoGetStatementReturnType(sourceText, sci);
+                    return Common(sourceText, sci);
                 }
 
-                public static ClassModel DoGetStatementReturnType(string sourceText, ScintillaControl sci)
+                public static ClassModel Common(string sourceText, ScintillaControl sci)
                 {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
@@ -1975,26 +1975,26 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public List<MemberModel> AS3(string sourceText) => ParseFunctionParametersAS3(sourceText, sci);
+                public List<MemberModel> AS3(string sourceText) => AS3Impl(sourceText, sci);
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public List<MemberModel> Haxe(string sourceText) => ParseFunctionParametersHaxe(sourceText, sci);
+                public List<MemberModel> Haxe(string sourceText) => HaxeImpl(sourceText, sci);
 
-                internal static List<MemberModel> ParseFunctionParametersAS3(string sourceText, ScintillaControl sci)
+                internal static List<MemberModel> AS3Impl(string sourceText, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "as3";
                     ASContext.Context.SetAs3Features();
-                    return DoParseFunctionParameters(sourceText, sci);
+                    return Common(sourceText, sci);
                 }
 
-                internal static List<MemberModel> ParseFunctionParametersHaxe(string sourceText, ScintillaControl sci)
+                internal static List<MemberModel> HaxeImpl(string sourceText, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "haxe";
                     ASContext.Context.SetHaxeFeatures();
-                    return DoParseFunctionParameters(sourceText, sci);
+                    return Common(sourceText, sci);
                 }
 
-                internal static List<MemberModel> DoParseFunctionParameters(string sourceText, ScintillaControl sci)
+                internal static List<MemberModel> Common(string sourceText, ScintillaControl sci)
                 {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
@@ -2060,7 +2060,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText) => GenerateAS3(sourceText, sci);
+                public string AS3(string sourceText) => AS3Impl(sourceText, sci);
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -2090,16 +2090,16 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string fileName) => GenerateHaxe(fileName, sci);
+                public string Haxe(string fileName) => HaxeImpl(fileName, sci);
 
-                internal string GenerateAS3(string sourceText, ScintillaControl sci)
+                internal string AS3Impl(string sourceText, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "as3";
                     ASContext.Context.SetAs3Features();
-                    return Generate(sourceText, sci);
+                    return Common(sourceText, sci);
                 }
 
-                internal string GenerateHaxe(string fileName, ScintillaControl sci)
+                internal string HaxeImpl(string fileName, ScintillaControl sci)
                 {
                     var sourceText = ReadAllTextHaxe(fileName);
                     sci.ConfigurationLanguage = "haxe";
@@ -2107,10 +2107,10 @@ namespace ASCompletion.Completion
                     fileName = GetFullPathHaxe(fileName);
                     ASContext.Context.CurrentModel.FileName = fileName;
                     PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
-                    return Generate(sourceText, sci);
+                    return Common(sourceText, sci);
                 }
 
-                internal string Generate(string sourceText, ScintillaControl sci)
+                internal string Common(string sourceText, ScintillaControl sci)
                 {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
