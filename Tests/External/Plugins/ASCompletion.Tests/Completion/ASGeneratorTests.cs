@@ -136,7 +136,6 @@ namespace ASCompletion.Completion
                 public void ShowEventsListSetup()
                 {
                     ASContext.Context.SetAs3Features();
-                    ASContext.Context.CurrentModel.Returns(new FileModel());
                     dataEventModel = CreateDataEventModel();
                     found = new FoundDeclaration
                     {
@@ -523,7 +522,6 @@ namespace ASCompletion.Completion
                 public string As3(string sourceText, ClassModel sourceModel, ClassModel interfaceToImplement)
                 {
                     ASContext.Context.SetAs3Features();
-                    ASContext.Context.CurrentModel.Returns(new FileModel());
                     ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceToImplement);
 
                     sci.Text = sourceText;
@@ -538,7 +536,6 @@ namespace ASCompletion.Completion
                 public string Haxe(string sourceText, ClassModel sourceModel, ClassModel interfaceToImplement)
                 {
                     ASContext.Context.SetHaxeFeatures();
-                    ASContext.Context.CurrentModel.Returns(new FileModel { haXe = true });
                     ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceToImplement);
 
                     sci.Text = sourceText;
@@ -593,20 +590,17 @@ namespace ASCompletion.Completion
                 {
                     sci.ConfigurationLanguage = "as3";
                     ASContext.Context.SetAs3Features();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
-                    var context = new AS3Context.Context(new AS3Settings());
-                    return Generate(sourceText, context, sci);
+                    return Generate(sourceText, sci);
                 }
 
                 internal static string GenerateHaxe(string sourceText, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "haxe";
                     ASContext.Context.SetHaxeFeatures();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
-                    return Generate(sourceText, new HaXeContext.Context(new HaXeSettings()), sci);
+                    return Generate(sourceText, sci);
                 }
 
-                static string Generate(string sourceText, IASContext context, ScintillaControl sci)
+                static string Generate(string sourceText, ScintillaControl sci)
                 {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
@@ -615,13 +609,6 @@ namespace ASCompletion.Completion
                     var currentClass = currentModel.Classes[0];
                     ASContext.Context.CurrentClass.Returns(currentClass);
                     ASContext.Context.CurrentMember.Returns(currentClass.Members[0]);
-                    ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
-                    ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
-                    {
-                        var src = x[0] as string;
-                        return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
-                    });
-                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
                     var expr = ASComplete.GetExpressionType(sci, sci.CurrentPos);
                     var currentMember = expr.Context.LocalVars[0];
                     ASGenerator.contextMember = currentMember;
@@ -784,21 +771,17 @@ namespace ASCompletion.Completion
                 {
                     sci.ConfigurationLanguage = "as3";
                     ASContext.Context.SetAs3Features();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
-                    var context = new AS3Context.Context(new AS3Settings());
-                    BuildClassPath(context);
-                    return Generate(sourceText, job, context, sci);
+                    return Generate(sourceText, job, sci);
                 }
 
                 internal static string GenerateHaxe(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "haxe";
                     ASContext.Context.SetHaxeFeatures();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
-                    return Generate(sourceText, job, new HaXeContext.Context(new HaXeSettings()), sci);
+                    return Generate(sourceText, job, sci);
                 }
 
-                static string Generate(string sourceText, GeneratorJobType job, IASContext context, ScintillaControl sci)
+                static string Generate(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
@@ -808,13 +791,6 @@ namespace ASCompletion.Completion
                     ASContext.Context.CurrentClass.Returns(currentClass);
                     var currentMember = currentClass.Members[0];
                     ASContext.Context.CurrentMember.Returns(currentMember);
-                    ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
-                    ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
-                    {
-                        var src = x[0] as string;
-                        return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
-                    });
-                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
                     ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
                     ASGenerator.GenerateJob(job, currentMember, ASContext.Context.CurrentClass, null, null);
                     return sci.Text;
@@ -1114,11 +1090,9 @@ namespace ASCompletion.Completion
                     sci.ConfigurationLanguage = "as3";
                     sci.IsUseTabs = isUseTabs;
                     ASContext.Context.SetAs3Features();
-                    var currentModel = new FileModel {Context = ASContext.Context, Version = 3};
-                    ASContext.Context.CurrentModel.Returns(currentModel);
                     var context = new AS3Context.Context(new AS3Settings());
                     BuildClassPath(context);
-                    context.CurrentModel = currentModel;
+                    context.CurrentModel = ASContext.Context.CurrentModel;
                     return Common(sourceText, job, context, sci);
                 }
 
@@ -1127,11 +1101,9 @@ namespace ASCompletion.Completion
                     sci.ConfigurationLanguage = "haxe";
                     sci.IsUseTabs = isUseTabs;
                     ASContext.Context.SetHaxeFeatures();
-                    var currentModel = new FileModel {haXe = true, Context = ASContext.Context, Version = 4};
-                    ASContext.Context.CurrentModel.Returns(currentModel);
                     var context = new HaXeContext.Context(new HaXeSettings());
                     BuildClassPath(context);
-                    context.CurrentModel = currentModel;
+                    context.CurrentModel = ASContext.Context.CurrentModel;
                     return Common(sourceText, job, context, sci);
                 }
 
@@ -1147,18 +1119,7 @@ namespace ASCompletion.Completion
                     var currentMember = currentClass.Members[0];
                     ASContext.Context.CurrentMember.Returns(currentMember);
                     var visibleExternalElements = context.GetVisibleExternalElements();
-                    ASContext.Context.GetVisibleExternalElements().Returns(visibleExternalElements);
-                    ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
-                    {
-                        var src = x[0] as string;
-                        return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
-                    });
-                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(it => context.ResolveType(it.ArgAt<string>(0), it.ArgAt<FileModel>(1)));
-                    ASContext.Context.IsImported(null, Arg.Any<int>()).ReturnsForAnyArgs(it =>
-                    {
-                        var member = it.ArgAt<MemberModel>(0);
-                        return member != null && context.IsImported(member, it.ArgAt<int>(1));
-                    });
+                    ASContext.Context.GetVisibleExternalElements().Returns(x => visibleExternalElements);
                     ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
                     ASGenerator.GenerateJob(job, currentMember, ASContext.Context.CurrentClass, null, null);
                     return sci.Text;
@@ -1252,21 +1213,17 @@ namespace ASCompletion.Completion
                 {
                     sci.ConfigurationLanguage = "as3";
                     ASContext.Context.SetAs3Features();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
-                    var context = new AS3Context.Context(new AS3Settings());
-                    context.BuildClassPath();
-                    return Generate(sourceText, job, context, sci);
+                    return Generate(sourceText, job, sci);
                 }
                 
                 internal static string GenerateHaxe(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "haxe";
                     ASContext.Context.SetHaxeFeatures();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
-                    return Generate(sourceText, job, new HaXeContext.Context(new HaXeSettings()), sci);
+                    return Generate(sourceText, job, sci);
                 }
 
-                static string Generate(string sourceText, GeneratorJobType job, IASContext context, ScintillaControl sci)
+                static string Generate(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
@@ -1277,13 +1234,6 @@ namespace ASCompletion.Completion
                     ASContext.Context.CurrentModel.Returns(currentModel);
                     var currentMember = currentClass.Members[0];
                     ASContext.Context.CurrentMember.Returns(currentMember);
-                    ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
-                    ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
-                    {
-                        var src = x[0] as string;
-                        return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
-                    });
-                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
                     ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
                     ASGenerator.GenerateJob(job, currentMember, ASContext.Context.CurrentClass, null, null);
                     return sci.Text;
@@ -1478,19 +1428,17 @@ namespace ASCompletion.Completion
                 {
                     sci.ConfigurationLanguage = "as3";
                     ASContext.Context.SetAs3Features();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
-                    return Generate(sourceText, autoRemove, new AS3Context.Context(new AS3Settings()), sci);
+                    return Generate(sourceText, autoRemove, sci);
                 }
 
                 internal static string GenerateHaxe(string sourceText, string[] autoRemove, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "haxe";
                     ASContext.Context.SetHaxeFeatures();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
-                    return Generate(sourceText, autoRemove, new HaXeContext.Context(new HaXeSettings()), sci);
+                    return Generate(sourceText, autoRemove, sci);
                 }
 
-                static string Generate(string sourceText, string[] autoRemove, IASContext context, ScintillaControl sci)
+                static string Generate(string sourceText, string[] autoRemove, ScintillaControl sci)
                 {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
@@ -1501,12 +1449,6 @@ namespace ASCompletion.Completion
                     ASContext.Context.CurrentClass.Returns(currentClass);
                     var currentMember = currentClass.Members[0];
                     ASContext.Context.CurrentMember.Returns(currentMember);
-                    ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
-                    ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
-                    {
-                        var src = x[0] as string;
-                        return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
-                    });
                     var eventModel = new ClassModel {Name = "Event", Type = "flash.events.Event"};
                     ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => eventModel);
                     ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
@@ -1635,7 +1577,6 @@ namespace ASCompletion.Completion
                 {
                     sci.ConfigurationLanguage = "as3";
                     ASContext.Context.SetAs3Features();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
                     return Generate(sourceText, sci);
                 }
 
@@ -1643,7 +1584,6 @@ namespace ASCompletion.Completion
                 {
                     sci.ConfigurationLanguage = "haxe";
                     ASContext.Context.SetHaxeFeatures();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
                     return Generate(sourceText, sci);
                 }
 
@@ -1785,9 +1725,6 @@ namespace ASCompletion.Completion
                 {
                     sci.ConfigurationLanguage = "as3";
                     ASContext.Context.SetAs3Features();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
-                    var context = new AS3Context.Context(new AS3Settings());
-                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(it => context.ResolveType(it.ArgAt<string>(0), it.ArgAt<FileModel>(1)));
                     return Generate(source, ofClassName, memberName, memberFlags, sci);
                 }
 
@@ -1795,9 +1732,6 @@ namespace ASCompletion.Completion
                 {
                     sci.ConfigurationLanguage = "haxe";
                     ASContext.Context.SetHaxeFeatures();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
-                    var context = new HaXeContext.Context(new HaXeSettings());
-                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(it => context.ResolveType(it.ArgAt<string>(0), it.ArgAt<FileModel>(1)));
                     return Generate(source, ofClassName, memberName, memberFlags, sci);
                 }
 
@@ -1920,15 +1854,10 @@ namespace ASCompletion.Completion
                 {
                     sci.ConfigurationLanguage = "as3";
                     ASContext.Context.SetAs3Features();
-                    var currentModel = new FileModel {Context = ASContext.Context, Version = 3};
-                    ASContext.Context.CurrentModel.Returns(currentModel);
-                    var context = new AS3Context.Context(new AS3Settings());
-                    BuildClassPath(context);
-                    context.CurrentModel = currentModel;
-                    return DoGetStatementReturnType(sourceText, context, sci);
+                    return DoGetStatementReturnType(sourceText, sci);
                 }
 
-                public static ClassModel DoGetStatementReturnType(string sourceText, IASContext context, ScintillaControl sci)
+                public static ClassModel DoGetStatementReturnType(string sourceText, ScintillaControl sci)
                 {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
@@ -1937,14 +1866,6 @@ namespace ASCompletion.Completion
                     var currentClass = currentModel.Classes[0];
                     ASContext.Context.CurrentClass.Returns(currentClass);
                     ASContext.Context.CurrentMember.Returns(currentClass.Members[0]);
-                    ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(it =>
-                    {
-                        var src = it[0] as string;
-                        return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
-                    });
-                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(it => context.ResolveType(it.ArgAt<string>(0), it.ArgAt<FileModel>(1)));
-                    var visibleExternalElements = context.GetVisibleExternalElements();
-                    ASContext.Context.GetVisibleExternalElements().Returns(visibleExternalElements);
                     var currentLine = sci.CurrentLine;
                     var returnType = ASGenerator.GetStatementReturnType(sci, ASContext.Context.CurrentClass, sci.GetLine(currentLine), sci.PositionFromLine(currentLine));
                     var result = returnType.resolve.Type;
@@ -2063,27 +1984,17 @@ namespace ASCompletion.Completion
                 {
                     sci.ConfigurationLanguage = "as3";
                     ASContext.Context.SetAs3Features();
-                    var currentModel = new FileModel {Context = ASContext.Context, Version = 3};
-                    ASContext.Context.CurrentModel.Returns(currentModel);
-                    var context = new AS3Context.Context(new AS3Settings());
-                    BuildClassPath(context);
-                    context.CurrentModel = currentModel;
-                    return DoParseFunctionParameters(sourceText, context, sci);
+                    return DoParseFunctionParameters(sourceText, sci);
                 }
 
                 internal static List<MemberModel> ParseFunctionParametersHaxe(string sourceText, ScintillaControl sci)
                 {
                     sci.ConfigurationLanguage = "haxe";
                     ASContext.Context.SetHaxeFeatures();
-                    var currentModel = new FileModel {Context = ASContext.Context, haXe = true, Version = 4};
-                    ASContext.Context.CurrentModel.Returns(currentModel);
-                    var context = new HaXeContext.Context(new HaXeSettings());
-                    BuildClassPath(context);
-                    context.CurrentModel = currentModel;
-                    return DoParseFunctionParameters(sourceText, context, sci);
+                    return DoParseFunctionParameters(sourceText, sci);
                 }
 
-                internal static List<MemberModel> DoParseFunctionParameters(string sourceText, IASContext context, ScintillaControl sci)
+                internal static List<MemberModel> DoParseFunctionParameters(string sourceText, ScintillaControl sci)
                 {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
@@ -2093,14 +2004,6 @@ namespace ASCompletion.Completion
                     ASContext.Context.CurrentClass.Returns(currentClass);
                     var currentMember = currentClass.Members[0];
                     ASContext.Context.CurrentMember.Returns(currentMember);
-                    ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(it =>
-                    {
-                        var src = it[0] as string;
-                        return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
-                    });
-                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(it => context.ResolveType(it.ArgAt<string>(0), it.ArgAt<FileModel>(1)));
-                    var visibleExternalElements = context.GetVisibleExternalElements();
-                    ASContext.Context.GetVisibleExternalElements().Returns(visibleExternalElements);
                     var result = ASGenerator.ParseFunctionParameters(sci, sci.CurrentPos).Select(it => it.result.Type ?? it.result.Member).ToList();
                     return result;
                 }
@@ -2193,12 +2096,7 @@ namespace ASCompletion.Completion
                 {
                     sci.ConfigurationLanguage = "as3";
                     ASContext.Context.SetAs3Features();
-                    var currentModel = new FileModel {Context = ASContext.Context, Version = 3};
-                    ASContext.Context.CurrentModel.Returns(currentModel);
-                    var context = new AS3Context.Context(new AS3Settings());
-                    BuildClassPath(context);
-                    context.CurrentModel = currentModel;
-                    return Generate(sourceText, context, sci);
+                    return Generate(sourceText, sci);
                 }
 
                 internal string GenerateHaxe(string fileName, ScintillaControl sci)
@@ -2207,22 +2105,12 @@ namespace ASCompletion.Completion
                     sci.ConfigurationLanguage = "haxe";
                     ASContext.Context.SetHaxeFeatures();
                     fileName = GetFullPathHaxe(fileName);
-                    var currentModel = new FileModel
-                    {
-                        Context = ASContext.Context,
-                        Version = 4,
-                        haXe = true,
-                        FileName = fileName
-                    };
-                    ASContext.Context.CurrentModel.Returns(currentModel);
+                    ASContext.Context.CurrentModel.FileName = fileName;
                     PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
-                    var context = new HaXeContext.Context(new HaXeSettings());
-                    BuildClassPath(context);
-                    context.CurrentModel = currentModel;
-                    return Generate(sourceText, context, sci);
+                    return Generate(sourceText, sci);
                 }
 
-                internal string Generate(string sourceText, IASContext context, ScintillaControl sci)
+                internal string Generate(string sourceText, ScintillaControl sci)
                 {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
@@ -2233,14 +2121,6 @@ namespace ASCompletion.Completion
                     ASContext.Context.CurrentModel.Returns(currentModel);
                     var currentMember = currentClass.Members[0];
                     ASContext.Context.CurrentMember.Returns(currentMember);
-                    var visibleExternalElements = context.GetVisibleExternalElements();
-                    ASContext.Context.GetVisibleExternalElements().Returns(visibleExternalElements);
-                    ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
-                    {
-                        var src = x[0] as string;
-                        return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
-                    });
-                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
                     ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
                     ASGenerator.GenerateJob(GeneratorJobType.ChangeConstructorDecl, currentMember, ASContext.Context.CurrentClass, null, null);
                     return sci.Text;

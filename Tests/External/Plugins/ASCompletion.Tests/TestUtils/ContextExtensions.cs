@@ -21,11 +21,16 @@ namespace ASCompletion.TestUtils
             context.Features.Returns(asContext.Features);
             context.CurrentModel.Returns(currentModel);
             var visibleExternalElements = asContext.GetVisibleExternalElements();
-            context.GetVisibleExternalElements().Returns(x => visibleExternalElements);
+            context.GetVisibleExternalElements().Returns(visibleExternalElements);
             context.GetCodeModel(null).ReturnsForAnyArgs(x =>
             {
                 var src = x[0] as string;
                 return string.IsNullOrEmpty(src) ? null : asContext.GetCodeModel(src);
+            });
+            context.IsImported(null, Arg.Any<int>()).ReturnsForAnyArgs(it =>
+            {
+                var member = it.ArgAt<MemberModel>(0);
+                return member != null && asContext.IsImported(member, it.ArgAt<int>(1));
             });
             context.ResolveType(null, null).ReturnsForAnyArgs(x => asContext.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
         }
@@ -55,18 +60,23 @@ namespace ASCompletion.TestUtils
 
         public static void SetHaxeFeatures(this IASContext context)
         {
-            var currentModel = new FileModel { Context = context, Version = 4, haXe = true };
+            var currentModel = new FileModel {Context = context, Version = 4, haXe = true};
             var haxeContext = new HaXeContext.Context(new HaXeContext.HaXeSettings());
             BuildClassPath(haxeContext);
             haxeContext.CurrentModel = currentModel;
             context.Features.Returns(haxeContext.Features);
             context.CurrentModel.Returns(currentModel);
             var visibleExternalElements = haxeContext.GetVisibleExternalElements();
-            context.GetVisibleExternalElements().Returns(x => visibleExternalElements);
+            context.GetVisibleExternalElements().Returns(visibleExternalElements);
             context.GetCodeModel(null).ReturnsForAnyArgs(x =>
             {
                 var src = x[0] as string;
                 return string.IsNullOrEmpty(src) ? null : haxeContext.GetCodeModel(src);
+            });
+            context.IsImported(null, Arg.Any<int>()).ReturnsForAnyArgs(it =>
+            {
+                var member = it.ArgAt<MemberModel>(0);
+                return member != null && haxeContext.IsImported(member, it.ArgAt<int>(1));
             });
             context.ResolveType(null, null).ReturnsForAnyArgs(x => haxeContext.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
         }
