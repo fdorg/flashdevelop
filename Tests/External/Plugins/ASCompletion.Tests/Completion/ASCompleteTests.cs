@@ -86,9 +86,7 @@ namespace ASCompletion.Completion
             {
                 //TODO: Improve this test with more checks!
                 ASContext.Context.CurrentLine = 9;
-                var asContext = new AS3Context.Context(new AS3Settings());
-                ASContext.Context.Features.Returns(asContext.Features);
-                ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x => asContext.GetCodeModel(x.ArgAt<string>(0)));
+                ASContext.Context.SetAs3Features();
 
                 // Maybe we want to get the filemodel from ASFileParser even if we won't get a controlled environment?
                 var member = new MemberModel("test1", "void", FlagType.Function, Visibility.Public)
@@ -324,19 +322,17 @@ namespace ASCompletion.Completion
             {
                 sci.ConfigurationLanguage = "as3";
                 ASContext.Context.SetAs3Features();
-                ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
-                return GetExprType(sourceText, new AS3Context.Context(new AS3Settings()), sci);
+                return GetExprType(sourceText, sci);
             }
 
             internal static MemberModel GetExprTypeHaxe(string sourceText, ScintillaControl sci)
             {
                 sci.ConfigurationLanguage = "haxe";
-                ASContext.Context.SetAs3Features();
-                ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
-                return GetExprType(sourceText, new HaXeContext.Context(new HaXeSettings()), sci);
+                ASContext.Context.SetHaxeFeatures();
+                return GetExprType(sourceText, sci);
             }
 
-            internal static MemberModel GetExprType(string sourceText, IASContext context, ScintillaControl sci)
+            internal static MemberModel GetExprType(string sourceText, ScintillaControl sci)
             {
                 sci.Text = sourceText;
                 SnippetHelper.PostProcessSnippets(sci, 0);
@@ -346,13 +342,6 @@ namespace ASCompletion.Completion
                 ASContext.Context.CurrentClass.Returns(currentClass);
                 var currentMember = currentClass.Members[0];
                 ASContext.Context.CurrentMember.Returns(currentMember);
-                ASContext.Context.GetVisibleExternalElements().Returns(x => context.GetVisibleExternalElements());
-                ASContext.Context.GetCodeModel(null).ReturnsForAnyArgs(x =>
-                {
-                    var src = x[0] as string;
-                    return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
-                });
-                ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
                 var position = sci.WordEndPosition(sci.CurrentPos, true);
                 var result = ASComplete.GetExpressionType(sci, position).Member;
                 return result;
@@ -514,7 +503,6 @@ namespace ASCompletion.Completion
             {
                 sci.ConfigurationLanguage = "as3";
                 ASContext.Context.SetAs3Features();
-                ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context, Version = 3});
                 return Common(text, sci);
             }
 
@@ -522,7 +510,6 @@ namespace ASCompletion.Completion
             {
                 sci.ConfigurationLanguage = "haxe";
                 ASContext.Context.SetHaxeFeatures();
-                ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context, Version = 4, haXe = true});
                 return Common(text, sci);
             }
 
@@ -597,7 +584,6 @@ namespace ASCompletion.Completion
             {
                 ASContext.Context = new AS3Context.Context(new AS3Settings());
 
-                var sci = GetBaseScintillaControl();
                 sci.Text = text;
                 sci.ConfigurationLanguage = "as3";
 
@@ -611,7 +597,6 @@ namespace ASCompletion.Completion
             {
                 ASContext.Context = new HaXeContext.Context(new HaXeSettings());
 
-                var sci = GetBaseScintillaControl();
                 sci.Text = text;
                 sci.ConfigurationLanguage = "haxe";
 
