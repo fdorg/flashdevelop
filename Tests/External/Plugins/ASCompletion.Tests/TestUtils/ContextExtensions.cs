@@ -35,29 +35,6 @@ namespace ASCompletion.TestUtils
             context.ResolveType(null, null).ReturnsForAnyArgs(x => asContext.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
         }
 
-        static void BuildClassPath(AS3Context.Context context)
-        {
-            context.BuildClassPath();
-            var intrinsicPath = $"{PathHelper.LibraryDir}{Path.DirectorySeparatorChar}AS3{Path.DirectorySeparatorChar}intrinsic";
-            context.Classpath.AddRange(Directory.GetDirectories(intrinsicPath).Select(it => new PathModel(it, context)));
-            foreach (var it in context.Classpath)
-            {
-                if (it.IsVirtual) context.ExploreVirtualPath(it);
-                else
-                {
-                    var path = it.Path;
-                    foreach (var searchPattern in context.GetExplorerMask())
-                    {
-                        foreach (var fileName in Directory.GetFiles(path, searchPattern, SearchOption.AllDirectories))
-                        {
-                            it.AddFile(ASFileParser.ParseFile(new FileModel(fileName) {Context = context, Version = 3}));
-                        }
-                    }
-                    context.RefreshContextCache(path);
-                }
-            }
-        }
-
         public static void SetHaxeFeatures(this IASContext context)
         {
             var currentModel = new FileModel {Context = context, Version = 4, haXe = true};
@@ -79,6 +56,35 @@ namespace ASCompletion.TestUtils
                 return member != null && haxeContext.IsImported(member, it.ArgAt<int>(1));
             });
             context.ResolveType(null, null).ReturnsForAnyArgs(x => haxeContext.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
+        }
+
+        public static void BuildClassPath(this IASContext context)
+        {
+            if (context is AS3Context.Context) BuildClassPath((AS3Context.Context) context);
+            else if (context is HaXeContext.Context) BuildClassPath((HaXeContext.Context) context);
+        }
+
+        static void BuildClassPath(AS3Context.Context context)
+        {
+            context.BuildClassPath();
+            var intrinsicPath = $"{PathHelper.LibraryDir}{Path.DirectorySeparatorChar}AS3{Path.DirectorySeparatorChar}intrinsic";
+            context.Classpath.AddRange(Directory.GetDirectories(intrinsicPath).Select(it => new PathModel(it, context)));
+            foreach (var it in context.Classpath)
+            {
+                if (it.IsVirtual) context.ExploreVirtualPath(it);
+                else
+                {
+                    var path = it.Path;
+                    foreach (var searchPattern in context.GetExplorerMask())
+                    {
+                        foreach (var fileName in Directory.GetFiles(path, searchPattern, SearchOption.AllDirectories))
+                        {
+                            it.AddFile(ASFileParser.ParseFile(new FileModel(fileName) {Context = context, Version = 3}));
+                        }
+                    }
+                    context.RefreshContextCache(path);
+                }
+            }
         }
 
         static void BuildClassPath(HaXeContext.Context context)

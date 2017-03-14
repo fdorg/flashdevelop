@@ -2,7 +2,6 @@
 
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using ASCompletion.Context;
 using ASCompletion.Model;
@@ -18,8 +17,6 @@ using System.Text.RegularExpressions;
 using AS3Context;
 using HaXeContext;
 using PluginCore.Helpers;
-using System;
-using ProjectManager.Projects.Haxe;
 
 namespace ASCompletion.Completion
 {
@@ -1091,7 +1088,7 @@ namespace ASCompletion.Completion
                     sci.IsUseTabs = isUseTabs;
                     ASContext.Context.SetAs3Features();
                     var context = new AS3Context.Context(new AS3Settings());
-                    BuildClassPath(context);
+                    ((IASContext) context).BuildClassPath();
                     context.CurrentModel = ASContext.Context.CurrentModel;
                     return Common(sourceText, job, context, sci);
                 }
@@ -1102,7 +1099,7 @@ namespace ASCompletion.Completion
                     sci.IsUseTabs = isUseTabs;
                     ASContext.Context.SetHaxeFeatures();
                     var context = new HaXeContext.Context(new HaXeSettings());
-                    BuildClassPath(context);
+                    ((IASContext)context).BuildClassPath();
                     context.CurrentModel = ASContext.Context.CurrentModel;
                     return Common(sourceText, job, context, sci);
                 }
@@ -2225,49 +2222,6 @@ namespace ASCompletion.Completion
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
                     return ASGenerator.GetStartOfStatement(sci, sci.CurrentPos, expr);
-                }
-            }
-
-            protected static void BuildClassPath(AS3Context.Context context)
-            {
-                context.BuildClassPath();
-                var intrinsicPath = $"{PathHelper.LibraryDir}{Path.DirectorySeparatorChar}AS3{Path.DirectorySeparatorChar}intrinsic";
-                context.Classpath.AddRange(Directory.GetDirectories(intrinsicPath).Select(it => new PathModel(it, context)));
-                foreach (var it in context.Classpath)
-                {
-                    if (it.IsVirtual) context.ExploreVirtualPath(it);
-                    else
-                    {
-                        var path = it.Path;
-                        foreach (var searchPattern in context.GetExplorerMask())
-                        {
-                            foreach (var fileName in Directory.GetFiles(path, searchPattern, SearchOption.AllDirectories))
-                            {
-                                it.AddFile(ASFileParser.ParseFile(new FileModel(fileName) {Context = context, Version = 3}));
-                            }
-                        }
-                        context.RefreshContextCache(path);
-                    }
-                }
-            }
-
-            protected static void BuildClassPath(HaXeContext.Context context)
-            {
-                var platformsFile = Path.Combine("Settings", "Platforms");
-                PlatformData.Load(Path.Combine(PathHelper.AppDir, platformsFile));
-                PluginBase.CurrentProject = new HaxeProject("haxe") {CurrentSDK = Environment.GetEnvironmentVariable("HAXEPATH")};
-                context.BuildClassPath();
-                foreach (var it in context.Classpath)
-                {
-                    var path = it.Path;
-                    foreach (var searchPattern in context.GetExplorerMask())
-                    {
-                        foreach (var fileName in Directory.GetFiles(path, searchPattern, SearchOption.AllDirectories))
-                        {
-                            it.AddFile(ASFileParser.ParseFile(new FileModel(fileName) {Context = context, haXe = true, Version = 4}));
-                        }
-                    }
-                    context.RefreshContextCache(path);
                 }
             }
         }
