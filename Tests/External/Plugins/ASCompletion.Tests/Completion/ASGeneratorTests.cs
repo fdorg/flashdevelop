@@ -1099,7 +1099,7 @@ namespace ASCompletion.Completion
                     sci.IsUseTabs = isUseTabs;
                     ASContext.Context.SetHaxeFeatures();
                     var context = new HaXeContext.Context(new HaXeSettings());
-                    ((IASContext)context).BuildClassPath();
+                    ((IASContext) context).BuildClassPath();
                     context.CurrentModel = ASContext.Context.CurrentModel;
                     return Common(sourceText, job, context, sci);
                 }
@@ -1116,7 +1116,7 @@ namespace ASCompletion.Completion
                     var currentMember = currentClass.Members[0];
                     ASContext.Context.CurrentMember.Returns(currentMember);
                     var visibleExternalElements = context.GetVisibleExternalElements();
-                    ASContext.Context.GetVisibleExternalElements().Returns(x => visibleExternalElements);
+                    ASContext.Context.GetVisibleExternalElements().Returns(visibleExternalElements);
                     ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
                     ASGenerator.GenerateJob(job, currentMember, ASContext.Context.CurrentClass, null, null);
                     return sci.Text;
