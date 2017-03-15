@@ -2285,9 +2285,66 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText) => AS3Impl(sourceText);
 
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return new TestCaseData("import").Returns("importValue");
+                        yield return new TestCaseData("new").Returns("newValue");
+                        yield return new TestCaseData("extends").Returns("extendsValue");
+                        yield return new TestCaseData("implements").Returns("implementsValue");
+                        yield return new TestCaseData("using").Returns("usingValue");
+                        yield return new TestCaseData("var").Returns("varValue");
+                        yield return new TestCaseData("function").Returns("functionValue");
+                        yield return new TestCaseData("cast").Returns("castValue");
+                        yield return new TestCaseData("return").Returns("returnValue");
+                        yield return new TestCaseData("break").Returns("breakValue");
+                        yield return new TestCaseData("continue").Returns("continueValue");
+                        yield return new TestCaseData("if").Returns("ifValue");
+                        yield return new TestCaseData("else").Returns("elseValue");
+                        yield return new TestCaseData("for").Returns("forValue");
+                        yield return new TestCaseData("in").Returns("inValue");
+                        yield return new TestCaseData("while").Returns("whileValue");
+                        yield return new TestCaseData("do").Returns("doValue");
+                        yield return new TestCaseData("switch").Returns("switchValue");
+                        yield return new TestCaseData("case").Returns("caseValue");
+                        yield return new TestCaseData("default").Returns("defaultValue");
+                        yield return new TestCaseData("untyped").Returns("untypedValue");
+                        yield return new TestCaseData("null").Returns("nullValue");
+                        yield return new TestCaseData("true").Returns("trueValue");
+                        yield return new TestCaseData("false").Returns("falseValue");
+                        yield return new TestCaseData("try").Returns("tryValue");
+                        yield return new TestCaseData("catch").Returns("catchValue");
+                        yield return new TestCaseData("throw").Returns("throwValue");
+                        yield return new TestCaseData("trace").Returns("traceValue");
+                        yield return new TestCaseData("macro").Returns("macroValue");
+                        yield return new TestCaseData("dynamic").Returns("dynamicValue");
+                        yield return new TestCaseData("private").Returns("privateValue");
+                        yield return new TestCaseData("public").Returns("publicValue");
+                        yield return new TestCaseData("inline").Returns("inlineValue");
+                        yield return new TestCaseData("extern").Returns("externValue");
+                        yield return new TestCaseData("static").Returns("staticValue");
+                        yield return new TestCaseData("override").Returns("overrideValue");
+                        yield return new TestCaseData("class").Returns("classValue");
+                        yield return new TestCaseData("interface").Returns("interfaceValue");
+                        yield return new TestCaseData("typedef").Returns("typedefValue");
+                        yield return new TestCaseData("enum").Returns("enumValue");
+                        yield return new TestCaseData("abstract").Returns("abstractValue");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public string Haxe(string sourceText) => HaxeImpl(sourceText);
+
                 internal static string AS3Impl(string sourceText)
                 {
                     ASContext.Context.SetAs3Features();
+                    return Common(sourceText);
+                }
+
+                internal static string HaxeImpl(string sourceText)
+                {
+                    ASContext.Context.SetHaxeFeatures();
                     return Common(sourceText);
                 }
 
