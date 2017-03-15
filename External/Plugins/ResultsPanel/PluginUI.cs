@@ -26,7 +26,7 @@ namespace ResultsPanel
         public ToolStripMenuItem nextEntryContextMenuItem;
         public ToolStripMenuItem previousEntryContextMenuItem;
 
-        private ListViewEx entriesView;
+        private ResultsListView entriesView;
         private ColumnHeader entryFile;
         private ColumnHeader entryDesc;
         private ColumnHeader entryLine;
@@ -103,7 +103,7 @@ namespace ResultsPanel
         /// </summary>
         private void InitializeComponent() 
         {
-            this.entriesView = new System.Windows.Forms.ListViewEx();
+            this.entriesView = new ResultsListView();
             this.entryType = new System.Windows.Forms.ColumnHeader();
             this.entryLine = new System.Windows.Forms.ColumnHeader();
             this.entryDesc = new System.Windows.Forms.ColumnHeader();
@@ -281,13 +281,15 @@ namespace ResultsPanel
             imageList.ColorDepth = ColorDepth.Depth32Bit;
             imageList.TransparentColor = Color.Transparent;
             imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            imageList.Initialize(ImageList_Populate);
+
             this.toolStripFilters.ImageList = imageList;
             this.entriesView.SmallImageList = imageList;
             this.clearFilterButton.Image = PluginBase.MainForm.FindImage("153");
             this.toolStripButtonInfo.Image = PluginBase.MainForm.FindImage("131");
             this.toolStripButtonError.Image = PluginBase.MainForm.FindImage("197");
             this.toolStripButtonWarning.Image = PluginBase.MainForm.FindImage("196");
+
+            imageList.Initialize(ImageList_Populate);
         }
 
         private void ImageList_Populate(object sender, EventArgs e)
@@ -295,6 +297,8 @@ namespace ResultsPanel
             imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("131")); // info
             imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("197")); // error
             imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("196")); // warning
+
+            this.entriesView.AddArrowImages();
         }
 
         /// <summary>
@@ -517,34 +521,20 @@ namespace ResultsPanel
                 //this.entriesView.ListViewItemSorter = groupingComparer[Settings.DefaultGrouping];
                 //this.entriesView.Sorting = this.entriesView.Sorting == SortOrder.Descending ? SortOrder.Ascending : SortOrder.Descending;
                 //this.entriesView.Sort();
-                ListViewGroup[] groups = new ListViewGroup[this.entriesView.Groups.Count];
-                this.entriesView.Groups.CopyTo(groups, 0);
-
                 switch (sortOrder)
                 {
                     case SortOrder.None:
                         sortOrder = SortOrder.Ascending;
-                        Array.Sort(groups, groupingComparer[Settings.DefaultGrouping]);
                         break;
                     case SortOrder.Ascending:
                         sortOrder = SortOrder.Descending;
-                        Array.Sort(groups, groupingComparer[Settings.DefaultGrouping]);
-                        Array.Reverse(groups);
                         break;
                     case SortOrder.Descending:
                         sortOrder = SortOrder.None;
                         break;
                 }
-                
-                foreach (ListViewGroup gp in groups)
-                {
-                    this.entriesView.Groups.Remove(gp);
-                }
 
-                foreach (ListViewGroup gp in groups)
-                {
-                    this.entriesView.Groups.Add(gp);
-                }
+                this.entriesView.SortGroups(h, sortOrder, groupingComparer[Settings.DefaultGrouping]);
 
                 lastColumn = e.Column;
             }

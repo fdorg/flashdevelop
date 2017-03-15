@@ -74,6 +74,9 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ResultComparer.cs" />
+    <Compile Include="ResultsListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>
