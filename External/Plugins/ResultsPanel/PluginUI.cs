@@ -517,10 +517,7 @@ namespace ResultsPanel
                 {
                     sortOrder = SortOrder.None;
                 }
-
-                //this.entriesView.ListViewItemSorter = groupingComparer[Settings.DefaultGrouping];
-                //this.entriesView.Sorting = this.entriesView.Sorting == SortOrder.Descending ? SortOrder.Ascending : SortOrder.Descending;
-                //this.entriesView.Sort();
+				
                 switch (sortOrder)
                 {
                     case SortOrder.None:
@@ -533,7 +530,6 @@ namespace ResultsPanel
                         sortOrder = SortOrder.None;
                         break;
                 }
-
                 this.entriesView.SortGroups(h, sortOrder, groupingComparer[Settings.DefaultGrouping]);
 
                 lastColumn = e.Column;
