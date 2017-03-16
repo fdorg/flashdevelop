@@ -1011,6 +1011,10 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromPrivateField"), GeneratorJobType.AssignStatementToVar, true)
                                 .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromPrivateField"))
                                 .SetName("from private field");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewVar"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewVar"))
+                                .SetName("from new Var()");
                     }
                 }
 
@@ -1076,6 +1080,10 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromArray3_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromArray3_useSpaces"))
                                 .SetName("from new Array<{name:String, factory:String->{x:Int, y:Int}}>()");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromDynamic_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromDynamic_useSpaces"))
+                                .SetName("from {}");
                     }
                 }
 
@@ -2052,7 +2060,7 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(ReadAllTextAS3("BeforeChangeConstructorDeclaration_Function"))
                                 .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_Function"))
-                                .SetName("new Foo(function():void {}) -> function Foo(function:Function)");
+                                .SetName("new Foo(function():void {}) -> function Foo(functionValue:Function)");
                     }
                 }
 
@@ -2083,6 +2091,10 @@ namespace ASCompletion.Completion
                             new TestCaseData("BeforeChangeConstructorDeclaration_ItemOfTwoDimensionalArrayInitializer")
                                 .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_ItemOfTwoDimensionalArrayInitializer"))
                                 .SetName("new Foo(strings[0][0]) -> function new(string:String)");
+                        yield return
+                            new TestCaseData("BeforeChangeConstructorDeclaration_Dynamic")
+                                .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_Dynamic"))
+                                .SetName("new Foo({}) -> function new(dynamicValue:Dynamic)");
                     }
                 }
 

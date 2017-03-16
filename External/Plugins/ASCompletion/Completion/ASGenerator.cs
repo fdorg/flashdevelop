@@ -1303,7 +1303,7 @@ namespace ASCompletion.Completion
 
             if (varname != null && varname == word)
                 varname = varname.Length == 1 ? varname + "1" : varname[0] + "";
-
+            varname = AvoidKeyword(varname);
             string cleanType = null;
             if (type != null) cleanType = FormatType(GetShortType(type));
             
@@ -1336,7 +1336,7 @@ namespace ASCompletion.Completion
             }
         }
 
-        internal static string AvoidKeyword(string word)
+        public static string AvoidKeyword(string word)
         {
             var features = ASContext.Context.Features;
             return features.accessKeywords.Contains(word)
@@ -1618,7 +1618,7 @@ namespace ASCompletion.Completion
                         {
                             app++;
                         }
-                        newParameters.Add(new MemberModel(p.paramName, p.paramType, FlagType.ParameterVar, 0));
+                        newParameters.Add(new MemberModel(AvoidKeyword(p.paramName), p.paramType, FlagType.ParameterVar, 0));
                     }
                 }
                 memberModel.Parameters = newParameters;
