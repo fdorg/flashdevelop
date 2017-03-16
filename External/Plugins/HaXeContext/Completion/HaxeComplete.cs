@@ -369,7 +369,6 @@ namespace HaXeContext
                 {
                     case "i":
                         var k = reader.GetAttribute("k");
-                        MemberModel member;
                         switch (k)
                         {
                             case "local":
@@ -377,17 +376,12 @@ namespace HaXeContext
                             case "static":
                             case "enum":
                             case "global":
-                                var t = reader.GetAttribute("t");
-                                reader.Read();
-                                member = new MemberModel {Name = reader.Value};
-                                ExtractType(t, member);
-                                result.Members.Add(member);
-                                break;
                             case "package":
                             case "type":
+                                string t = k == "global" ? reader.GetAttribute("t") : null;
                                 reader.Read();
-                                member = new MemberModel {Name = reader.Value};
-                                ExtractType((string) null, member);
+                                var member = new MemberModel {Name = reader.Value};
+                                ExtractType(t, member);
                                 result.Members.Add(member);
                                 break;
                         }
