@@ -112,7 +112,7 @@ namespace AS3Context
                 "null", "true", "false", "try", "catch", "finally", "throw", "use", "namespace"
             };
             features.accessKeywords = new string[] { 
-                "extern", "dynamic", "final", "public", "private", "protected", "internal", "static", "override"
+                "native", "dynamic", "final", "public", "private", "protected", "internal", "static", "override"
             };
             features.declKeywords = new string[] { "var", "function", "const", "namespace", "get", "set" };
             features.typesKeywords = new string[] { "import", "class", "interface" };
