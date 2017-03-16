@@ -511,8 +511,6 @@ namespace ResultsPanel
             {
                 Settings.DefaultGrouping = groupingMap[h];
 
-                FilterResults(false);
-
                 if (lastColumn != e.Column)
                 {
                     sortOrder = SortOrder.None;
@@ -530,9 +528,10 @@ namespace ResultsPanel
                         sortOrder = SortOrder.None;
                         break;
                 }
-                this.entriesView.SortGroups(h, sortOrder, groupingComparer[Settings.DefaultGrouping]);
 
                 lastColumn = e.Column;
+                this.FilterResults(false);
+                //this.entriesView.SortGroups(h, sortOrder, groupingComparer[Settings.DefaultGrouping]);
             }
         }
 
@@ -870,7 +869,11 @@ namespace ResultsPanel
                 }
             }
 
-            entriesView.Sort();
+            if (lastColumn != -1)
+            {
+                this.entriesView.SortGroups(this.entriesView.Columns[lastColumn], sortOrder, groupingComparer[Settings.DefaultGrouping]);
+                this.entriesView.Refresh();
+            }
 
             if (this.entriesView.Items.Count > 0)
             {
