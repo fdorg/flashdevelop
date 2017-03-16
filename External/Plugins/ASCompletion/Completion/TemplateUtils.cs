@@ -75,7 +75,7 @@ namespace ASCompletion.Completion
         {
             // Insert Name
             if (m.Name != null)
-                template = ReplaceTemplateVariable(template, "Name", m.Name);
+                template = ReplaceTemplateVariable(template, "Name", m.FullName);
             else
                 template = ReplaceTemplateVariable(template, "Name", null);
 

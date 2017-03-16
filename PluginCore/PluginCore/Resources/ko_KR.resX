@@ -1750,7 +1750,7 @@
     <value>이 프로젝트는 출력이없고 구성에 빌드 명령도 없습니다.</value>
   </data>
   <data name="ProjectManager.Info.NoProjectsOpenLink" xml:space="preserve">
-    <value>|새 프로젝트 만들기|{0}또는{0}|기존 프로젝트 열기|{0}또는{0}|Flash Builder 프로젝트 불러오기|</value>
+    <value>|새 프로젝트 만들기|{0}또는{0}|기존 프로젝트 열기|{0}또는{0}|Flash Builder 프로젝트 불러오기|{0}or{0}|Import a Haxe hxml project|</value>
   </data>
   <data name="ProjectManager.Info.NoTemplatesFound" xml:space="preserve">
     <value>탬플릿 이렉토리에서 탬플릿을 찾을 수 없습니다. 새로운 프로젝트를 만들 수 없습니다. FlashDevelop를 다시 설치하는것을 권장합니다.</value>
@@ -2469,7 +2469,7 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <value>불러올 프로젝트를 선택</value>
   </data>
   <data name="ProjectManager.Info.ImportProjectFilter" xml:space="preserve">
-    <value>Adobe Flash Builder 프로젝트 (.actionScriptProperties)|.actionScriptProperties|패키지된 Adobe Flash Builder 프로젝트(*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl</value>
+    <value>Adobe Flash Builder 프로젝트 (.actionScriptProperties)|.actionScriptProperties|패키지된 Adobe Flash Builder 프로젝트(*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl|Haxe hxml 프로젝트(*.hxml)|*.hxml</value>
   </data>
   <data name="FlashDevelop.Info.RedirectFilesResults" xml:space="preserve">
     <value>결과 패널에 결과를 보내기</value>

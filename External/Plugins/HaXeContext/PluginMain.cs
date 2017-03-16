@@ -8,8 +8,12 @@ using PluginCore.Managers;
 using PluginCore.Utilities;
 using PluginCore;
 using System.Text.RegularExpressions;
+using AS3Context;
+using ASCompletion.Completion;
+using ASCompletion.Model;
 using CodeRefactor.Provider;
 using HaXeContext.CodeRefactor.Provider;
+using SwfOp;
 
 namespace HaXeContext
 {
@@ -145,6 +149,10 @@ namespace HaXeContext
                     {
                         contextInstance.SetHaxeEnvironment(de.Data as string);
                     }
+                    else if (de.Action == "ProjectManager.OpenVirtualFile")
+                    {
+                        e.Handled = OpenVirtualFileModel((string) de.Data);
+                    }
                     break;
 
                 case EventType.UIStarted:
@@ -261,6 +269,28 @@ namespace HaXeContext
         private void SaveSettings()
         {
             ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
+        }
+
+        bool OpenVirtualFileModel(string virtualPath)
+        {
+            var p = virtualPath.IndexOfOrdinal("::");
+            if (p < 0) return false;
+            var container = virtualPath.Substring(0, p);
+            if (!File.Exists(container)) return false;
+            var ext = Path.GetExtension(container).ToLower();
+            if (ext == ".swf" || ext == ".swc")
+            {
+                var fileName = Path.Combine(container, virtualPath.Substring(p + 2).Replace('.', Path.DirectorySeparatorChar));
+                var path = new PathModel(container, contextInstance);
+                var parser = new ContentParser(path.Path);
+                parser.Run();
+                AbcConverter.Convert(parser, path, contextInstance);
+                if (!path.HasFile(fileName)) return false;
+                var model = path.GetFile(fileName);
+                ASComplete.OpenVirtualFile(model);
+                return true;
+            }
+            return false;
         }
 
         #endregion

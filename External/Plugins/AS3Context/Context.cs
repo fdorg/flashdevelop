@@ -878,8 +878,14 @@ namespace AS3Context
         public override ClassModel ResolveType(string cname, FileModel inFile)
         {
             // handle generic types
-            if (cname != null && cname.IndexOf('<') > 0)
+            if (cname != null && cname.IndexOf('<') >= 0)
             {
+                if (cname.StartsWith('<'))
+                {
+                    //transform <T>[] to Vector.<T>
+                    cname = Regex.Replace(cname, @">\[.*", ">");
+                    cname = "Vector." + cname;
+                }
                 Match genType = re_genericType.Match(cname);
                 if (genType.Success)
                     return ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile);
