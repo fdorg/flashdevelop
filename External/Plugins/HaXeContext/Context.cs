@@ -41,8 +41,6 @@ namespace HaXeContext
         private HaXeSettings hxsettings;
         private Dictionary<string, List<string>> haxelibsCache;
         private string HaxeTarget;
-        private bool hasAIRSupport;
-        private bool hasMobileSupport;
         private bool resolvingDot;
         private bool resolvingFunction;
         HaxeCompletionCache hxCompletionCache;
@@ -299,7 +297,6 @@ namespace HaXeContext
 
             // NOTE: version > 10 for non-Flash platforms
             string lang = GetHaxeTarget(platform);
-            hasAIRSupport = hasMobileSupport = false;
             features.Directives = new List<string>();
 
             if (lang == null)
@@ -322,8 +319,6 @@ namespace HaXeContext
             else if (lang == "swf")
             {
                 lang = "flash";
-                hasAIRSupport = platform.StartsWithOrdinal("AIR");
-                hasMobileSupport = platform == "AIR Mobile";
             }
             features.Directives.Add(lang);
             HaxeTarget = lang;
@@ -1213,8 +1208,7 @@ namespace HaXeContext
                 resolvingDot = true;
             }
 
-            if (hxsettings.DisableMixedCompletion) return new MemberList();
-            return null; 
+            return hxsettings.DisableMixedCompletion ? new MemberList() : null;
         }
 
         internal void OnDotCompletionResult(HaxeComplete hc,  HaxeCompleteResult result, HaxeCompleteStatus status)
@@ -1236,30 +1230,6 @@ namespace HaXeContext
                     // eg. Int
                     break;
             }
-        }
-
-        public override MemberList ResolveTopLevel(ScintillaControl sci, ASExpr expression, bool autoHide)
-        {
-            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop
-                || PluginBase.MainForm.CurrentDocument.IsUntitled
-                || (autoHide && !hxsettings.DisableCompletionOnDemand))
-                return null;
-            var hc = GetHaxeComplete(sci, expression, autoHide, HaxeCompilerService.TOP_LEVEL);
-            hc.GetList((complete, result, status) =>
-            {
-                switch (status)
-                {
-                    case HaxeCompleteStatus.ERROR:
-                        TraceManager.AddAsync(hc.Errors, -3);
-                        break;
-
-                    case HaxeCompleteStatus.TOP_LEVEL:
-                        if (result.Members != null && result.Members.Count > 0)
-                            ASComplete.DotContextResolved(hc.Sci, hc.Expr, result.Members, hc.AutoHide);
-                        break;
-                }
-            });
-            return hxsettings.DisableMixedCompletion ? new MemberList() : null;
         }
 
         /// <summary>

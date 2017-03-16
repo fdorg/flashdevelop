@@ -292,15 +292,6 @@ namespace ASCompletion.Context
         MemberList ResolveDotContext(ScintillaControl sci, ASExpr expression, bool autoHide);
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sci">Scintilla control</param>
-        /// <param name="expression">Completion context</param>
-        /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
-        /// <returns></returns>
-        MemberList ResolveTopLevel(ScintillaControl sci, ASExpr expression, bool autoHide);
-
-        /// <summary>
         /// Let contexts resolve function at give position
         /// </summary>
         /// <param name="sci">Scintilla control</param>
