@@ -143,7 +143,7 @@ namespace ResultsPanel
 
         private void DrawColumnText(IDeviceContext device, Rectangle bounds, String text, Font font, Color foreColor)
         {
-            Int32 textHeight = TextRenderer.MeasureText("HeightTest", font).Height + 1;
+            int textHeight = TextRenderer.MeasureText("HeightTest", font).Height + 1;
             Rectangle textRect = new Rectangle(bounds.X + 3, bounds.Y + (bounds.Height / 2) - (textHeight / 2), bounds.Width, bounds.Height);
             TextRenderer.DrawText(device, text, font, textRect.Location, foreColor);
         }

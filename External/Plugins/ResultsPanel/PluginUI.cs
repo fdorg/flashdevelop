@@ -79,7 +79,7 @@ namespace ResultsPanel
                 { this.entryType, GroupingMethod.Type },
                 { this.entryPath, GroupingMethod.Path }
             };
-            levelMap = new Dictionary<Int32, String>()
+            levelMap = new Dictionary<int, String>()
             {
                 { 0, TextHelper.GetString("Filters.Informations") },
                 { 1, TextHelper.GetString("Filters.Errors") },
