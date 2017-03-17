@@ -124,7 +124,7 @@ namespace PluginCore.Bridge
             if (fullPath.Length < 3) return;
             string folder = Path.GetDirectoryName(fullPath);
             string name = Path.GetFileName(fullPath);
-            if (Changed != null) Changed(this, new FileSystemEventArgs(WatcherChangeTypes.Changed, folder, name));
+            Changed?.Invoke(this, new FileSystemEventArgs(WatcherChangeTypes.Changed, folder, name));
         }
 
         #endregion
@@ -156,22 +156,22 @@ namespace PluginCore.Bridge
         private void watcher_Created(object sender, FileSystemEventArgs e)
         {
             if (reIgnore.IsMatch(e.FullPath)) return;
-            if (Created != null) Created(this, e);
+            Created?.Invoke(this, e);
         }
         private void watcher_Changed(object sender, FileSystemEventArgs e)
         {
             if (reIgnore.IsMatch(e.FullPath)) return;
-            if (Changed != null) Changed(this, e);
+            Changed?.Invoke(this, e);
         }
         private void watcher_Deleted(object sender, FileSystemEventArgs e)
         {
             if (reIgnore.IsMatch(e.FullPath)) return;
-            if (Deleted != null) Deleted(this, e);
+            Deleted?.Invoke(this, e);
         }
         private void watcher_Renamed(object sender, RenamedEventArgs e)
         {
             if (reIgnore.IsMatch(e.FullPath)) return;
-            if (Renamed != null) Renamed(this, e);
+            Renamed?.Invoke(this, e);
         }
 
         #endregion

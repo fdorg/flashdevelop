@@ -102,7 +102,7 @@ namespace PluginCore.Controls
                 this.HelpButton = true;
                 this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.SmartFormHelpButtonClick);
             }
-            if (this.ApplyProps != null) this.ApplyProps(this);
+            ApplyProps?.Invoke(this);
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace PluginCore.Controls
         /// </summary>
         private void SmartFormClosed(Object sender, FormClosedEventArgs e)
         {
-            if (this.SaveProps != null) this.SaveProps(this);
+            SaveProps?.Invoke(this);
             if (!String.IsNullOrEmpty(this.formGuid) && !this.Size.IsEmpty)
             {
                 this.formProps.WindowSize = this.Size;
@@ -131,10 +131,9 @@ namespace PluginCore.Controls
         /// </summary>
         public String GetPropValue(String key)
         {
-            Argument argument;
             for (var i = 0; i < this.formProps.ExtraProps.Count; i++)
             {
-                argument = this.formProps.ExtraProps[i];
+                var argument = this.formProps.ExtraProps[i];
                 if (argument.Key == key) return argument.Value;
             }
             return null;

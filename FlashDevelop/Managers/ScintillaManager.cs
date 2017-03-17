@@ -85,7 +85,7 @@ namespace FlashDevelop.Managers
             String[] configFiles = Directory.GetFiles(Path.Combine(PathHelper.SettingDir, "Languages"), "*.xml");
             sciConfig = (Scintilla)sciConfigUtil.LoadConfiguration(configFiles);
             ScintillaControl.Configuration = sciConfig;
-            if (ConfigurationLoaded != null) ConfigurationLoaded();
+            ConfigurationLoaded?.Invoke();
         }
 
         /// <summary>

@@ -848,7 +848,7 @@ namespace FlashDevelop.Controls
 
             protected void OnPressEscapeKey()
             {
-                if (OnKeyEscape != null) OnKeyEscape();
+                OnKeyEscape?.Invoke();
             }
         }
 
