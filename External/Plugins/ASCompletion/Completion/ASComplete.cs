@@ -3498,7 +3498,7 @@ namespace ASCompletion.Completion
                         expression.Separator = ';';
                         break;
                     }
-                    else if (hasGenerics && (genCount > 0 || c == '<'))
+                    else if (hasGenerics && c == '<')
                     {
                         if (c == '<')
                         {

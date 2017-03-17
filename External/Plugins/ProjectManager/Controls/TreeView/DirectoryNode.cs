@@ -246,7 +246,7 @@ namespace ProjectManager.Controls.TreeView
                 GenericNode node = Tree.NodeMap[file];
 
                 // ensure this file is in the right spot
-                if (mapping != null && mapping.ContainsKey(file) && Tree.NodeMap.ContainsKey(mapping[file]))
+                if (mapping.ContainsKey(file) && Tree.NodeMap.ContainsKey(mapping[file]))
                     EnsureParentedBy(node, Tree.NodeMap[mapping[file]]);
                 else
                     EnsureParentedBy(node, this);

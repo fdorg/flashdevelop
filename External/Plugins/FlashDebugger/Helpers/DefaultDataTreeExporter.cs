@@ -173,7 +173,7 @@ namespace FlashDebugger.Helpers
                         // skip [static] and "length" properties
                         if (parent.ClassPath == "Array")
                         {
-                            if (child.Text == "[static]" || child.Text == "length")
+                            if (child.Text == "length")
                             {
                                 return false;
                             }

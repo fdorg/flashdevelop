@@ -532,7 +532,7 @@ namespace ASCompletion
                                         break;
 
                                     case "ASCompletion.ContextualGenerator":
-                                        if (ASContext.HasContext && ASContext.Context.IsFileValid)
+                                        if (ASContext.HasContext)
                                         {
                                             var options = new List<ICompletionListItem>();
                                             ASGenerator.ContextualGenerator(ASContext.CurSciControl, options);
