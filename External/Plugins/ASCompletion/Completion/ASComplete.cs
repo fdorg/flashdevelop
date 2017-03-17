@@ -4448,8 +4448,7 @@ namespace ASCompletion.Completion
                 if (expr.WordBefore == features.importKey || expr.WordBefore == features.importKeyAlt
                     /*|| (!features.HasTypePreKey(expr.WordBefore) && expr.WordBefore != "case" && expr.WordBefore != "return")*/)
                 {
-                    if (expr.WordBefore == features.importKey || expr.WordBefore == features.importKeyAlt)
-                        ASContext.Context.RefreshContextCache(expr.Value);
+                    ASContext.Context.RefreshContextCache(expr.Value);
                     return true;
                 }
             }

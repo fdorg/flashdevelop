@@ -2550,7 +2550,7 @@ namespace ASCompletion.Completion
                 }
                 else if (c == ',' && subClosuresCount == 0)
                 {
-                    if (!isSingleQuote && !isDoubleQuote && subClosuresCount == 0)
+                    if (!isSingleQuote && !isDoubleQuote)
                     {
                         writeParam = true;
                     }
