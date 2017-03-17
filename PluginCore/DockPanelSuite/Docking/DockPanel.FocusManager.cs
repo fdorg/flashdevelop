@@ -54,7 +54,8 @@ namespace WeifenLuo.WinFormsUI.Docking
                 public event HookEventHandler HookInvoked;
                 protected void OnHookInvoked(HookEventArgs e)
                 {
-                    HookInvoked?.Invoke(this, e);
+                    if (HookInvoked != null)
+                        HookInvoked(this, e);
                 }
 
                 public LocalWindowsHook(Win32.HookType hook)
