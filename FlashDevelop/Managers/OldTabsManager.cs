@@ -37,7 +37,7 @@ namespace FlashDevelop.Managers
             while (OldTabs.Count > 10)
             {
                 Int32 last = OldTabs.Count - 1;
-                if (last >= 0) OldTabs.RemoveAt(last);
+                OldTabs.RemoveAt(last);
             }
         }
 

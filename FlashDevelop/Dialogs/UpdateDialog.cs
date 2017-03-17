@@ -214,7 +214,7 @@ namespace FlashDevelop.Dialogs
                 this.infoLabel.Text = formatted;
                 if (silentCheck) this.ShowDialog();
             }
-            else if (!this.updateInfo.NeedsUpdate)
+            else
             {
                 String info = TextHelper.GetString("Info.NoUpdateAvailable");
                 this.infoLabel.Text = info;
