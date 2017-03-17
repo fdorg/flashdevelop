@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using ASCompletion.Context;
 using PluginCore;
@@ -14,6 +15,7 @@ using System.Xml;
 using ASCompletion.Model;
 using PluginCore.Helpers;
 using System.Windows.Forms;
+using PluginCore.Managers;
 using PluginCore.Utilities;
 
 namespace HaXeContext
@@ -147,6 +149,9 @@ namespace HaXeContext
 
                 case HaxeCompilerService.USAGE:
                     return "@usage";
+
+                case HaxeCompilerService.TOP_LEVEL:
+                    return "@toplevel";
             }
 
             return "";
@@ -270,6 +275,8 @@ namespace HaXeContext
                 case "list":
                     return ProcessList(reader);
 
+                case "il":
+                    return ProcessTopLevel(reader);
             }
             return HaxeCompleteStatus.FAILED;
         }
@@ -311,6 +318,9 @@ namespace HaXeContext
 
                                 case HaxeCompilerService.USAGE:
                                     return HaxeCompleteStatus.USAGE;
+
+                                case HaxeCompilerService.TOP_LEVEL:
+                                    return HaxeCompleteStatus.TOP_LEVEL;
                             }
                             break;
 
@@ -351,6 +361,39 @@ namespace HaXeContext
             return HaxeCompleteStatus.MEMBERS;
         }
 
+        HaxeCompleteStatus ProcessTopLevel(XmlReader reader)
+        {
+            result = new HaxeCompleteResult {Members = new MemberList()};
+            while (reader.Read())
+            {
+                if (reader.NodeType != XmlNodeType.Element) continue;
+                switch (reader.Name)
+                {
+                    case "i":
+                        var k = reader.GetAttribute("k");
+                        switch (k)
+                        {
+                            case "local":
+                            case "member":
+                            case "static":
+                            case "enum":
+                            case "global":
+                            case "package":
+                            case "type":
+                                string t = k == "global" ? reader.GetAttribute("t") : null;
+                                reader.Read();
+                                var member = new MemberModel {Name = reader.Value};
+                                ExtractType(t, member);
+                                result.Members.Add(member);
+                                break;
+                        }
+                        break;
+                }
+            }
+            result.Members.Sort();
+            return HaxeCompleteStatus.TOP_LEVEL;
+        }
+
         HaxePositionResult ExtractPos(XmlTextReader reader)
         {
             var result = new HaxePositionResult();
@@ -389,7 +432,7 @@ namespace HaXeContext
             return members.Count > 0 && members[members.Count - 1].FullName == member.FullName;
         } 
 
-        MemberModel ExtractMember(XmlTextReader reader)
+        MemberModel ExtractMember(XmlReader reader)
         {
             var name = reader.GetAttribute("n");
             if (name == null) return null;
@@ -407,16 +450,20 @@ namespace HaXeContext
             return member;
         }
 
-        void ExtractType(XmlTextReader reader, MemberModel member)
+        static void ExtractType(XmlReader reader, MemberModel member)
         {
             var type = ReadValue(reader);
+            ExtractType(type, member);
+        }
 
+        static void ExtractType(string type, MemberModel member)
+        {
             // Package or Class
             if (string.IsNullOrEmpty(type))
             {
                 if (member.Flags != 0) return;
 
-                if (Char.IsLower(member.Name[0]))
+                if (char.IsLower(member.Name[0]))
                     member.Flags = FlagType.Package;
                 else
                     member.Flags = FlagType.Class;
@@ -424,14 +471,14 @@ namespace HaXeContext
             // Function or Variable
             else
             {
-                string[] types = type.Split(new string[] { "->" }, StringSplitOptions.RemoveEmptyEntries);
+                var types = type.Split(new[] {"->"}, StringSplitOptions.RemoveEmptyEntries);
                 if (types.Length > 1)
                 {
                     member.Flags = FlagType.Function;
                     member.Parameters = new List<MemberModel>();
                     for (int i = 0; i < types.Length - 1; i++)
                     {
-                        MemberModel param = new MemberModel(types[i].Trim(), "", FlagType.ParameterVar, Visibility.Public);
+                        var param = new MemberModel(types[i].Trim(), "", FlagType.ParameterVar, Visibility.Public);
                         member.Parameters.Add(param);
                     }
                     member.Type = types[types.Length - 1].Trim();
@@ -444,7 +491,7 @@ namespace HaXeContext
             }
         }
 
-        string ReadValue(XmlTextReader reader)
+        static string ReadValue(XmlReader reader)
         {
             if (reader.IsEmptyElement) return string.Empty;
             reader.Read();
@@ -452,7 +499,7 @@ namespace HaXeContext
         }
     }
 
-    public enum HaxeCompleteStatus: int
+    public enum HaxeCompleteStatus
     {
         NONE = 0,
         FAILED = 1,
@@ -460,7 +507,8 @@ namespace HaXeContext
         TYPE = 3,
         MEMBERS = 4,
         POSITION = 5,
-        USAGE = 6
+        USAGE = 6,
+        TOP_LEVEL
     }
 
     public enum HaxeCompilerService
@@ -477,7 +525,13 @@ namespace HaXeContext
         /// Since Haxe 3.2.0
         /// https://haxe.org/manual/cr-completion-usage.html
         /// </summary>
-        USAGE
+        USAGE,
+
+        /// <summary>
+        /// Since Haxe 3.2.0
+        /// https://haxe.org/manual/cr-completion-top-level.html
+        /// </summary>
+        TOP_LEVEL
     }
 
     public class HaxeCompleteResult
