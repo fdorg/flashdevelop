@@ -1078,10 +1078,7 @@ namespace PluginCore.Controls
         protected virtual void OnScroll(ScrollEventArgs e)
         {
             // if event handler is attached - raise scroll event
-            if (this.Scroll != null)
-            {
-                this.Scroll(this, e);
-            }
+            Scroll?.Invoke(this, e);
         }
 
         /// <summary>
@@ -2144,9 +2141,9 @@ namespace PluginCore.Controls
             listView.Parent.Controls.Add(vScrollBar);
             vScrollBar.Scroll += OnScrollBarScroll;
             hScrollBar.Scroll += OnScrollBarScroll;
-            vScrollBar.VisibleChanged += delegate { OnListViewResize(null, null); };
-            hScrollBar.VisibleChanged += delegate { OnListViewResize(null, null); };
-            listView.Paint += delegate { UpdateScrollState(); };
+            vScrollBar.VisibleChanged += OnListViewResize;
+            hScrollBar.VisibleChanged += OnListViewResize;
+            listView.Paint += OnListViewOnPaint;
             listView.Resize += OnListViewResize;
         }
 
@@ -2159,9 +2156,9 @@ namespace PluginCore.Controls
             listView.Parent.Controls.Remove(vScrollBar);
             vScrollBar.Scroll -= OnScrollBarScroll;
             hScrollBar.Scroll -= OnScrollBarScroll;
-            vScrollBar.VisibleChanged -= delegate { OnListViewResize(null, null); };
-            hScrollBar.VisibleChanged -= delegate { OnListViewResize(null, null); };
-            listView.Paint -= delegate { UpdateScrollState(); };
+            vScrollBar.VisibleChanged -= OnListViewResize;
+            hScrollBar.VisibleChanged -= OnListViewResize;
+            listView.Paint -= OnListViewOnPaint;
             listView.Resize -= OnListViewResize;
         }
 
@@ -2268,6 +2265,8 @@ namespace PluginCore.Controls
                 Win32.SendMessage(listView.Handle, (Int32)Win32.LVM_SCROLL, (IntPtr)hScroll, IntPtr.Zero);
             }
         }
+
+        void OnListViewOnPaint(object sender, PaintEventArgs e) => UpdateScrollState();
 
         /// <summary>
         /// Dispose the controls
