@@ -1256,7 +1256,7 @@ namespace ASCompletion.Model
                                     }
                                 }
                             }
-                            else if (inGeneric && (c1 == ',' || c1 == '.' || c1 == '-' || c1 == '>' || c1 == ':' || c1 == '(' || c1 == ')' || c1 == '{' || c1 == '}' || c1 == ';'))
+                            else if (inGeneric && (c1 == ',' || c1 == '-' || c1 == '>' || c1 == ':' || c1 == '(' || c1 == ')' || c1 == '{' || c1 == '}' || c1 == ';'))
                             {
                                 hadWS = false;
                                 hadDot = false;
@@ -1759,7 +1759,7 @@ namespace ASCompletion.Model
                 }
                 else if (inString == 1 && c == '"') inString = 0;
                 else if (inString == 2 && c == '\'') inString = 0;
-                else if (inString > 0 && (c == 10 || c == 13)) inString = 0;
+                else if (c == 10 || c == 13) inString = 0;
                 i++;
             }
 
