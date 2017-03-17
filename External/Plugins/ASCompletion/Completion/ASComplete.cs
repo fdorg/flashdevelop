@@ -1949,7 +1949,7 @@ namespace ASCompletion.Completion
             // Context
             ASResult result;
             ClassModel tmpClass;
-            bool outOfDate = (expr.Separator == ':') ? ctx.UnsetOutOfDate() : false;
+            bool outOfDate = (expr.Separator == ':') && ctx.UnsetOutOfDate();
             FileModel cFile = ctx.CurrentModel;
             ClassModel cClass = ctx.CurrentClass;
 

@@ -41,8 +41,6 @@ namespace HaXeContext
         private HaXeSettings hxsettings;
         private Dictionary<string, List<string>> haxelibsCache;
         private string HaxeTarget;
-        private bool hasAIRSupport;
-        private bool hasMobileSupport;
         private bool resolvingDot;
         private bool resolvingFunction;
         HaxeCompletionCache hxCompletionCache;
@@ -299,7 +297,6 @@ namespace HaXeContext
 
             // NOTE: version > 10 for non-Flash platforms
             string lang = GetHaxeTarget(platform);
-            hasAIRSupport = hasMobileSupport = false;
             features.Directives = new List<string>();
 
             if (lang == null)
@@ -322,8 +319,6 @@ namespace HaXeContext
             else if (lang == "swf")
             {
                 lang = "flash";
-                hasAIRSupport = platform.StartsWithOrdinal("AIR");
-                hasMobileSupport = platform == "AIR Mobile";
             }
             features.Directives.Add(lang);
             HaxeTarget = lang;
@@ -1176,6 +1171,14 @@ namespace HaXeContext
             return proc;
         }
 
+        internal HaxeComplete GetHaxeComplete(ScintillaControl sci, ASExpr expression, bool autoHide, HaxeCompilerService compilerService)
+        {
+            var sdkVersion = GetCurrentSDKVersion();
+            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.CompletionServer && sdkVersion.IsGreaterThanOrEquals(new SemVer("3.3.0")))
+                return new HaxeComplete330(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
+            return new HaxeComplete(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
+        }
+
         /// <summary>
         /// Let contexts handle code completion
         /// </summary>
@@ -1205,16 +1208,7 @@ namespace HaXeContext
                 resolvingDot = true;
             }
 
-            if (hxsettings.DisableMixedCompletion) return new MemberList();
-            return null; 
-        }
-
-        internal HaxeComplete GetHaxeComplete(ScintillaControl sci, ASExpr expression, bool autoHide, HaxeCompilerService compilerService)
-        {
-            var sdkVersion = GetCurrentSDKVersion();
-            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.CompletionServer && sdkVersion.IsGreaterThanOrEquals(new SemVer("3.3.0")))
-                return new HaxeComplete330(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
-            return new HaxeComplete(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
+            return hxsettings.DisableMixedCompletion ? new MemberList() : null;
         }
 
         internal void OnDotCompletionResult(HaxeComplete hc,  HaxeCompleteResult result, HaxeCompleteStatus status)
