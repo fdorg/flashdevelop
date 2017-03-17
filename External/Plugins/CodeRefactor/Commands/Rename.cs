@@ -103,7 +103,7 @@ namespace CodeRefactor.Commands
                     if (aPath.IsValid && !aPath.Updating)
                     {
                         string path = Path.Combine(aPath.Path, package);
-                        if (aPath.IsValid && Directory.Exists(path))
+                        if (Directory.Exists(path))
                         {
                             TargetName = Path.GetFileName(path);
                             renamePackagePath = path;

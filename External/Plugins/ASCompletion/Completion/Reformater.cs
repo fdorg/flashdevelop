@@ -282,7 +282,7 @@ namespace ASCompletion.Completion
                 // adding whitespace
                 if (c != ' ' && c != '\t')
                 {
-                    if (needSpace && c != '\r' && c != '\n')
+                    if (needSpace && c != '\n')
                     {
                         if (c2 != ' ') sb.Append(' ');
                         needSpace = false;
