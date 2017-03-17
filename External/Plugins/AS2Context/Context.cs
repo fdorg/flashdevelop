@@ -988,7 +988,7 @@ namespace AS2Context
                 if (lazyMode || settings.LazyClasspathExploration || aPath.IsTemporaryPath)
                 {
                     string path = Path.Combine(aPath.Path, packagePath);
-                    if (aPath.IsValid && Directory.Exists(path))
+                    if (Directory.Exists(path))
                     {
                         try
                         {
