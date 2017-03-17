@@ -200,19 +200,22 @@ namespace WeifenLuo.WinFormsUI.Docking
             protected virtual void OnHandleAssigned(EventArgs e)
             {
                 // Raise the HandleAssigned event.
-                HandleAssigned?.Invoke(this, e);
+                if (HandleAssigned != null)
+                    HandleAssigned(this, e);
             }
 
             protected virtual void OnMdiChildActivate(EventArgs e)
             {
                 // Raise the MdiChildActivate event
-                MdiChildActivate?.Invoke(this, e);
+                if (MdiChildActivate != null)
+                    MdiChildActivate(this, e);
             }
 
             protected virtual void OnLayout(LayoutEventArgs e)
             {
                 // Raise the Layout event
-                Layout?.Invoke(this, e);
+                if (Layout != null)
+                    Layout(this, e);
             }
 
             public event PaintEventHandler Paint;
@@ -220,7 +223,8 @@ namespace WeifenLuo.WinFormsUI.Docking
             protected virtual void OnPaint(PaintEventArgs e)
             {
                 // Raise the Paint event.
-                Paint?.Invoke(this, e);
+                if (Paint != null)
+                    Paint(this, e);
             }
 
             protected override void WndProc(ref Message m)
@@ -230,8 +234,8 @@ namespace WeifenLuo.WinFormsUI.Docking
                     case (int)Win32.Msgs.WM_NCCALCSIZE:
                         // If AutoScroll is set to false, hide the scrollbars when the control
                         // calculates its non-client area.
-                        if (!AutoScroll) 
-                        { 
+                        if (!AutoScroll)
+                        {
                             if (NativeMethods.ShouldUseWin32()) NativeMethods.ShowScrollBar(m.HWnd, (int)Win32.ScrollBars.SB_BOTH, 0 /*false*/);
                         }
                         break;
