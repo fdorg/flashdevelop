@@ -246,7 +246,7 @@ namespace LayoutManager
                 this.menuDeleteButton.Enabled = false;
                 this.menuLoadButton.Enabled = false;
             }
-            else if (this.layoutsListView.SelectedItems.Count > 0)
+            else
             {
                 if (this.GetSelectedItem().ImageIndex != 1)
                 {

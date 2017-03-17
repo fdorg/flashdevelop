@@ -494,12 +494,12 @@ namespace AS3Context
                             return true;
                         case ASMetaKind.Style:
                             string inherit;
-                            if (meta.Params != null && meta.Params.TryGetValue("inherit", out inherit) && inherit == "no" && tagClass != tmpClass)
+                            if (meta.Params.TryGetValue("inherit", out inherit) && inherit == "no" && tagClass != tmpClass)
                                 continue;
-                            if (meta.Params != null) meta.Params.TryGetValue("type", out type);
+                            meta.Params.TryGetValue("type", out type);
                             break;
                         case ASMetaKind.Effect:
-                            if (meta.Params != null) type = meta.Params["event"];
+                            type = meta.Params["event"];
                             break;
                         case ASMetaKind.Exclude:
                             break;
@@ -508,7 +508,7 @@ namespace AS3Context
                             FileModel incModel = ParseInclude(model.InFile, meta);
                             return GetAutoCompletionValuesFromMetaData(incModel.GetPublicClass(), attribute, tagClass, tmpClass, out result);
                     }
-                    if (meta.Params != null && meta.Params.ContainsKey("enumeration"))
+                    if (meta.Params.ContainsKey("enumeration"))
                     {
                         var retVal = new List<ICompletionListItem>();
                         foreach (string value in meta.Params["enumeration"].Split(','))

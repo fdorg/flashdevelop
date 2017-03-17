@@ -550,8 +550,6 @@ namespace ASCompletion.Model
 
             // state
             int len = ba.Length;
-            if (len < 0)
-                return;
             int i = 0;
             line = 0;
             char c1;

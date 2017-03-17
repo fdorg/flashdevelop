@@ -683,47 +683,44 @@ namespace ResultsPanel
                         }
                         else if (!File.Exists(filename)) continue;
                         FileInfo fileInfo = new FileInfo(filename);
-                        if (fileInfo != null)
+                        description = match.Groups["description"].Value.Trim();
+                        state = (inExec) ? -3 : entry.State;
+                        // automatic state from message
+                        // ie. "2:message" -> state = 2
+                        if (state == 1 && description.Length > 2)
                         {
-                            description = match.Groups["description"].Value.Trim();
-                            state = (inExec) ? -3 : entry.State;
-                            // automatic state from message
-                            // ie. "2:message" -> state = 2
-                            if (state == 1 && description.Length > 2)
+                            if (description[1] == ':' && Char.IsDigit(description[0]))
                             {
-                                if (description[1] == ':' && Char.IsDigit(description[0]))
+                                if (int.TryParse(description[0].ToString(), out state))
                                 {
-                                    if (int.TryParse(description[0].ToString(), out state))
-                                    {
-                                        description = description.Substring(2);
-                                    }
+                                    description = description.Substring(2);
                                 }
                             }
-                            if (state > 2) icon = 1;
-                            else if (state == 2) icon = 2;
-                            else if (state == -3) icon = (description.IndexOfOrdinal("Warning") >= 0) ? 2 : 1;
-                            else if (description.StartsWith("error", StringComparison.OrdinalIgnoreCase)) icon = 1;
-                            else icon = 0;
-                            ListViewItem item = new ListViewItem("", icon);
-                            item.Tag = match; // Save for later...
-                            String matchLine = match.Groups["line"].Value;
-                            if (matchLine.IndexOf(',') > 0)
-                            {
-                                Match split = Regex.Match(matchLine, "([0-9]+),\\s*([0-9]+)");
-                                if (!split.Success) continue; // invalid line
-                                matchLine = split.Groups[1].Value;
-                                description = "col: " + split.Groups[2].Value + " " + description;
-                            }
-                            item.SubItems.Add(matchLine);
-                            item.SubItems.Add(description);
-                            item.SubItems.Add(fileInfo.Name);
-                            item.SubItems.Add(fileInfo.Directory.ToString());
-                            if (newResult < 0) newResult = this.entriesView.Items.Count;
-                            if (icon == 0) this.messageCount++;
-                            else if (icon == 1) this.errorCount++;
-                            else if (icon == 2) this.warningCount++;
-                            allListViewItems.Add(item);
                         }
+                        if (state > 2) icon = 1;
+                        else if (state == 2) icon = 2;
+                        else if (state == -3) icon = (description.IndexOfOrdinal("Warning") >= 0) ? 2 : 1;
+                        else if (description.StartsWith("error", StringComparison.OrdinalIgnoreCase)) icon = 1;
+                        else icon = 0;
+                        ListViewItem item = new ListViewItem("", icon);
+                        item.Tag = match; // Save for later...
+                        String matchLine = match.Groups["line"].Value;
+                        if (matchLine.IndexOf(',') > 0)
+                        {
+                            Match split = Regex.Match(matchLine, "([0-9]+),\\s*([0-9]+)");
+                            if (!split.Success) continue; // invalid line
+                            matchLine = split.Groups[1].Value;
+                            description = "col: " + split.Groups[2].Value + " " + description;
+                        }
+                        item.SubItems.Add(matchLine);
+                        item.SubItems.Add(description);
+                        item.SubItems.Add(fileInfo.Name);
+                        item.SubItems.Add(fileInfo.Directory.ToString());
+                        if (newResult < 0) newResult = this.entriesView.Items.Count;
+                        if (icon == 0) this.messageCount++;
+                        else if (icon == 1) this.errorCount++;
+                        else if (icon == 2) this.warningCount++;
+                        allListViewItems.Add(item);
                     }
                 }
             }
