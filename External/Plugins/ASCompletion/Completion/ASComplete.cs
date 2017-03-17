@@ -3500,20 +3500,16 @@ namespace ASCompletion.Completion
                     }
                     else if (hasGenerics && c == '<')
                     {
-                        if (c == '<')
+                        sbSub.Insert(0, c);
+                        if (genCount < 0
+                            && sci.ConfigurationLanguage == "as3"
+                            && position > minPos && sci.CharAt(position - 1) != '.')
                         {
-                            sbSub.Insert(0, c);
-                            if (genCount < 0
-                                && sci.ConfigurationLanguage == "as3"
-                                && position > minPos && sci.CharAt(position - 1) != '.')
-                            {
-                                position--;
-                                expression.Separator = ' ';
-                                break;
-                            }
-                            genCount--;
+                            position--;
+                            expression.Separator = ' ';
+                            break;
                         }
-                        else sb.Insert(0, c);
+                        genCount--;
                     }
                     else if (c == '{')
                     {
