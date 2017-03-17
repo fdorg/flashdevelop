@@ -109,6 +109,8 @@ namespace WeifenLuo.WinFormsUI.Docking
                     checkBoxDockRight.Checked = true;
                 if ((dockAreas & DockAreas.DockTop) != 0)
                     checkBoxDockTop.Checked = true;
+                if ((dockAreas & DockAreas.DockTop) != 0)
+                    checkBoxDockTop.Checked = true;
                 if ((dockAreas & DockAreas.DockBottom) != 0)
                     checkBoxDockBottom.Checked = true;
                 if ((dockAreas & DockAreas.Document) != 0)
