@@ -3456,7 +3456,7 @@ namespace ASCompletion.Completion
                     if (c <= 32)
                     {
                         if (genCount == 0) hadWS = true;
-                        else if (genCount < 0)
+                        else
                         {
                             sb.Insert(sb.Length, sbSub.ToString().ToCharArray());
                             expression.Separator = ' ';
@@ -4446,8 +4446,7 @@ namespace ASCompletion.Completion
                 if (expr.WordBefore == features.importKey || expr.WordBefore == features.importKeyAlt
                     /*|| (!features.HasTypePreKey(expr.WordBefore) && expr.WordBefore != "case" && expr.WordBefore != "return")*/)
                 {
-                    if (expr.WordBefore == features.importKey || expr.WordBefore == features.importKeyAlt)
-                        ASContext.Context.RefreshContextCache(expr.Value);
+                    ASContext.Context.RefreshContextCache(expr.Value);
                     return true;
                 }
             }

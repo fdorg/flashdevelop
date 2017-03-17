@@ -2770,18 +2770,15 @@ namespace CodeFormatter.Handlers
                     String newIndentString=generateIndent(currentIndent);
                     int firstNonWS=0;
                     String originalString = mOutputBuffer.ToString().Substring(lastCR + 1);
-                    for (int i=0;i<originalString.Length;i++)
+                    for (int i = 0; i < originalString.Length; i++)
                     {
                         if (!Char.IsWhiteSpace(originalString[i]))
                         {
-                            firstNonWS=i;
+                            firstNonWS = i;
                             break;
                         }
                     }
-                    if (firstNonWS>=0)
-                    {
-                        mOutputBuffer.Remove(lastCR+1, lastCR+1+firstNonWS);
-                    }
+                    mOutputBuffer.Remove(lastCR+1, lastCR+1+firstNonWS);
                     mOutputBuffer.Insert(lastCR+1, newIndentString);
                 }
             }

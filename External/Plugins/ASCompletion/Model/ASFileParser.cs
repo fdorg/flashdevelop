@@ -548,8 +548,6 @@ namespace ASCompletion.Model
 
             // state
             int len = ba.Length;
-            if (len < 0)
-                return;
             int i = 0;
             line = 0;
             char c1;
@@ -1418,7 +1416,7 @@ namespace ASCompletion.Model
                             // outside of a method, the '}' ends the current class
                             else if (curClass != null)
                             {
-                                if (curClass != null) curClass.LineTo = line;
+                                curClass.LineTo = line;
                                 curClass = null;
                                 inEnum = false;
                                 inTypedef = false;
