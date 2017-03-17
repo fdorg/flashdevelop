@@ -125,7 +125,7 @@ namespace StartPage
                     {
                         case ProjectManagerEvents.Project :
                             // Close pluginPanel if the user has the setting checked and a project is opened
-                            if (de.Data != null & this.startPage != null)
+                            if (de.Data != null && this.startPage != null)
                             {
                                 if (this.settingObject.CloseOnProjectOpen) this.startPage.Close();
                                 // The project manager does not update recent projects until after
