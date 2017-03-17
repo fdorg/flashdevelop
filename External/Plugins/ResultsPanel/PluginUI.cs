@@ -48,10 +48,11 @@ namespace ResultsPanel
         private Int32 logCount;
         private Timer autoShow;
         private ImageListManager imageList;
-        private SortOrder sortOrder = SortOrder.None;
+        private SortOrder sortOrder = SortOrder.Ascending;
         private int lastColumn = -1;
 
         private static Dictionary<ColumnHeader, GroupingMethod> groupingMap;
+        private static Dictionary<GroupingMethod, ColumnHeader> reverseGroupingMap;
         private static Dictionary<GroupingMethod, IComparer<ListViewGroup>> groupingComparer;
         private static Dictionary<int, String> levelMap;
 
@@ -92,6 +93,13 @@ namespace ResultsPanel
                 { GroupingMethod.Path, new PathComparer() },
                 { GroupingMethod.Type, new TypeComparer() },
             };
+
+            reverseGroupingMap = new Dictionary<GroupingMethod, ColumnHeader>();
+            foreach (ColumnHeader h in groupingMap.Keys)
+            {
+                GroupingMethod m = groupingMap[h];
+                reverseGroupingMap[m] = h;
+            }
         }
         
         #region Windows Forms Designer Generated Code
@@ -869,9 +877,20 @@ namespace ResultsPanel
                 }
             }
 
+            if (sortOrder == SortOrder.None)
+            {
+                this.entriesView.ShowGroups = false;
+            }
+            else
+            {
+                lastColumn = reverseGroupingMap[Settings.DefaultGrouping].Index;
+                this.entriesView.ShowGroups = true;
+            }
+
             if (lastColumn != -1)
             {
                 this.entriesView.SortGroups(this.entriesView.Columns[lastColumn], sortOrder, groupingComparer[Settings.DefaultGrouping]);
+                
                 this.entriesView.Refresh();
             }
 
