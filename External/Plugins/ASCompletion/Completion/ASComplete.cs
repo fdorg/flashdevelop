@@ -3456,7 +3456,7 @@ namespace ASCompletion.Completion
                     if (c <= 32)
                     {
                         if (genCount == 0) hadWS = true;
-                        else if (genCount < 0)
+                        else
                         {
                             sb.Insert(sb.Length, sbSub.ToString().ToCharArray());
                             expression.Separator = ' ';
