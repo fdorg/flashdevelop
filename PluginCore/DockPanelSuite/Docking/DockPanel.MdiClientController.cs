@@ -38,7 +38,8 @@ namespace WeifenLuo.WinFormsUI.Docking
                         if (Site != null && Site.Container != null)
                             Site.Container.Remove(this);
 
-                        Disposed?.Invoke(this, EventArgs.Empty);
+                        if (Disposed != null)
+                            Disposed(this, EventArgs.Empty);
                     }
                 }
             }
