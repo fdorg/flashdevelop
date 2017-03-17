@@ -52,7 +52,7 @@ namespace PluginCore.Bridge
         {
             if (remoteClient == null || !remoteClient.Connected)
                 remoteClient = new BridgeClient();
-            if (remoteClient != null && remoteClient.Connected)
+            if (remoteClient.Connected)
             {
                 PluginBase.MainForm.StatusStrip.Items[0].Text = "  Opening document in host system...";
                 remoteClient.Send("open:" + shared);
