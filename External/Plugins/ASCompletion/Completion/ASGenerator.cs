@@ -1336,6 +1336,18 @@ namespace ASCompletion.Completion
             }
         }
 
+        internal static string AvoidKeyword(string word)
+        {
+            var features = ASContext.Context.Features;
+            return features.accessKeywords.Contains(word)
+                   || features.codeKeywords.Contains(word)
+                   || features.declKeywords.Contains(word)
+                   || features.typesKeywords.Contains(word)
+                   || features.typesPreKeys.Contains(word)
+                ? $"{word}Value"
+                : word;
+        }
+
         private static void EventMetatag(ClassModel inClass, ScintillaControl sci, MemberModel member)
         {
             ASResult resolve = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
