@@ -1011,6 +1011,10 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromPrivateField"), GeneratorJobType.AssignStatementToVar, true)
                                 .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromPrivateField"))
                                 .SetName("from private field");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewVar"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewVar"))
+                                .SetName("from new Var()");
                     }
                 }
 
@@ -1076,6 +1080,10 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromArray3_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromArray3_useSpaces"))
                                 .SetName("from new Array<{name:String, factory:String->{x:Int, y:Int}}>()");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromDynamic_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromDynamic_useSpaces"))
+                                .SetName("from {}");
                     }
                 }
 
@@ -2052,7 +2060,7 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(ReadAllTextAS3("BeforeChangeConstructorDeclaration_Function"))
                                 .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_Function"))
-                                .SetName("new Foo(function():void {}) -> function Foo(function:Function)");
+                                .SetName("new Foo(function():void {}) -> function Foo(functionValue:Function)");
                     }
                 }
 
@@ -2083,6 +2091,10 @@ namespace ASCompletion.Completion
                             new TestCaseData("BeforeChangeConstructorDeclaration_ItemOfTwoDimensionalArrayInitializer")
                                 .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_ItemOfTwoDimensionalArrayInitializer"))
                                 .SetName("new Foo(strings[0][0]) -> function new(string:String)");
+                        yield return
+                            new TestCaseData("BeforeChangeConstructorDeclaration_Dynamic")
+                                .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_Dynamic"))
+                                .SetName("new Foo({}) -> function new(dynamicValue:Dynamic)");
                     }
                 }
 
@@ -2223,6 +2235,132 @@ namespace ASCompletion.Completion
                     SnippetHelper.PostProcessSnippets(sci, 0);
                     return ASGenerator.GetStartOfStatement(sci, sci.CurrentPos, expr);
                 }
+            }
+
+            [TestFixture]
+            public class AvoidKeywordTests : GenerateJob
+            {
+                public IEnumerable<TestCaseData> AS3TestCases
+                {
+                    get
+                    {
+                        yield return new TestCaseData("import").Returns("importValue");
+                        yield return new TestCaseData("new").Returns("newValue");
+                        yield return new TestCaseData("typeof").Returns("typeofValue");
+                        yield return new TestCaseData("is").Returns("isValue");
+                        yield return new TestCaseData("as").Returns("asValue");
+                        yield return new TestCaseData("extends").Returns("extendsValue");
+                        yield return new TestCaseData("implements").Returns("implementsValue");
+                        yield return new TestCaseData("var").Returns("varValue");
+                        yield return new TestCaseData("function").Returns("functionValue");
+                        yield return new TestCaseData("const").Returns("constValue");
+                        yield return new TestCaseData("delete").Returns("deleteValue");
+                        yield return new TestCaseData("return").Returns("returnValue");
+                        yield return new TestCaseData("break").Returns("breakValue");
+                        yield return new TestCaseData("continue").Returns("continueValue");
+                        yield return new TestCaseData("if").Returns("ifValue");
+                        yield return new TestCaseData("else").Returns("elseValue");
+                        yield return new TestCaseData("for").Returns("forValue");
+                        yield return new TestCaseData("each").Returns("eachValue");
+                        yield return new TestCaseData("in").Returns("inValue");
+                        yield return new TestCaseData("while").Returns("whileValue");
+                        yield return new TestCaseData("do").Returns("doValue");
+                        yield return new TestCaseData("switch").Returns("switchValue");
+                        yield return new TestCaseData("case").Returns("caseValue");
+                        yield return new TestCaseData("default").Returns("defaultValue");
+                        yield return new TestCaseData("with").Returns("withValue");
+                        yield return new TestCaseData("null").Returns("nullValue");
+                        yield return new TestCaseData("true").Returns("trueValue");
+                        yield return new TestCaseData("false").Returns("falseValue");
+                        yield return new TestCaseData("try").Returns("tryValue");
+                        yield return new TestCaseData("catch").Returns("catchValue");
+                        yield return new TestCaseData("finally").Returns("finallyValue");
+                        yield return new TestCaseData("throw").Returns("throwValue");
+                        yield return new TestCaseData("use").Returns("useValue");
+                        yield return new TestCaseData("namespace").Returns("namespaceValue");
+                        yield return new TestCaseData("native").Returns("nativeValue");
+                        yield return new TestCaseData("dynamic").Returns("dynamicValue");
+                        yield return new TestCaseData("final").Returns("finalValue");
+                        yield return new TestCaseData("private").Returns("privateValue");
+                        yield return new TestCaseData("public").Returns("publicValue");
+                        yield return new TestCaseData("protected").Returns("protectedValue");
+                        yield return new TestCaseData("internal").Returns("internalValue");
+                        yield return new TestCaseData("static").Returns("staticValue");
+                        yield return new TestCaseData("override").Returns("overrideValue");
+                        yield return new TestCaseData("get").Returns("getValue");
+                        yield return new TestCaseData("set").Returns("setValue");
+                        yield return new TestCaseData("class").Returns("classValue");
+                        yield return new TestCaseData("interface").Returns("interfaceValue");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(AS3TestCases))]
+                public string AS3(string sourceText) => AS3Impl(sourceText);
+
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return new TestCaseData("import").Returns("importValue");
+                        yield return new TestCaseData("new").Returns("newValue");
+                        yield return new TestCaseData("extends").Returns("extendsValue");
+                        yield return new TestCaseData("implements").Returns("implementsValue");
+                        yield return new TestCaseData("using").Returns("usingValue");
+                        yield return new TestCaseData("var").Returns("varValue");
+                        yield return new TestCaseData("function").Returns("functionValue");
+                        yield return new TestCaseData("cast").Returns("castValue");
+                        yield return new TestCaseData("return").Returns("returnValue");
+                        yield return new TestCaseData("break").Returns("breakValue");
+                        yield return new TestCaseData("continue").Returns("continueValue");
+                        yield return new TestCaseData("if").Returns("ifValue");
+                        yield return new TestCaseData("else").Returns("elseValue");
+                        yield return new TestCaseData("for").Returns("forValue");
+                        yield return new TestCaseData("in").Returns("inValue");
+                        yield return new TestCaseData("while").Returns("whileValue");
+                        yield return new TestCaseData("do").Returns("doValue");
+                        yield return new TestCaseData("switch").Returns("switchValue");
+                        yield return new TestCaseData("case").Returns("caseValue");
+                        yield return new TestCaseData("default").Returns("defaultValue");
+                        yield return new TestCaseData("untyped").Returns("untypedValue");
+                        yield return new TestCaseData("null").Returns("nullValue");
+                        yield return new TestCaseData("true").Returns("trueValue");
+                        yield return new TestCaseData("false").Returns("falseValue");
+                        yield return new TestCaseData("try").Returns("tryValue");
+                        yield return new TestCaseData("catch").Returns("catchValue");
+                        yield return new TestCaseData("throw").Returns("throwValue");
+                        yield return new TestCaseData("trace").Returns("traceValue");
+                        yield return new TestCaseData("macro").Returns("macroValue");
+                        yield return new TestCaseData("dynamic").Returns("dynamicValue");
+                        yield return new TestCaseData("private").Returns("privateValue");
+                        yield return new TestCaseData("public").Returns("publicValue");
+                        yield return new TestCaseData("inline").Returns("inlineValue");
+                        yield return new TestCaseData("extern").Returns("externValue");
+                        yield return new TestCaseData("static").Returns("staticValue");
+                        yield return new TestCaseData("override").Returns("overrideValue");
+                        yield return new TestCaseData("class").Returns("classValue");
+                        yield return new TestCaseData("interface").Returns("interfaceValue");
+                        yield return new TestCaseData("typedef").Returns("typedefValue");
+                        yield return new TestCaseData("enum").Returns("enumValue");
+                        yield return new TestCaseData("abstract").Returns("abstractValue");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public string Haxe(string sourceText) => HaxeImpl(sourceText);
+
+                internal static string AS3Impl(string sourceText)
+                {
+                    ASContext.Context.SetAs3Features();
+                    return Common(sourceText);
+                }
+
+                internal static string HaxeImpl(string sourceText)
+                {
+                    ASContext.Context.SetHaxeFeatures();
+                    return Common(sourceText);
+                }
+
+                internal static string Common(string sourceText) => ASGenerator.AvoidKeyword(sourceText);
             }
         }
 
