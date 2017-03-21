@@ -10,7 +10,7 @@ namespace ResultsPanel
     [StructLayout(LayoutKind.Sequential)]
     public struct LVCOLUMN
     {
-        public Int32 mask;
+        public int mask;
         public Int32 cx;
         public IntPtr pszText;
         public IntPtr hbm;
