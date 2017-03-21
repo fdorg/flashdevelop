@@ -374,9 +374,8 @@ namespace CodeRefactor.Provider
                 return null;
             }
             // if the target we are trying to rename exists as a local variable or a function parameter we only need to search the current file
-            var isHaxe = target.InFile.haXe;
-            var currentFileOnly = member != null && (member.Access == Visibility.Private && !isHaxe || (member.Flags & (FlagType.LocalVar | FlagType.ParameterVar)) > 0)
-                               || member == null && (type.Access == Visibility.Private && !isHaxe || new SemVer(PluginBase.CurrentSDK.Version).IsOlderThan(new SemVer("4.0.0")));
+            var currentFileOnly = member != null && (member.Access == Visibility.Private && !member.InFile.haXe || (member.Flags & (FlagType.LocalVar | FlagType.ParameterVar)) > 0)
+                               || member == null && (type.Access == Visibility.Private && !type.InFile.haXe || new SemVer(PluginBase.CurrentSDK.Version).IsOlderThan(new SemVer("4.0.0")));
             FRConfiguration config;
             IProject project = PluginBase.CurrentProject;
             String file = PluginBase.MainForm.CurrentDocument.FileName;
