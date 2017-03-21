@@ -548,8 +548,6 @@ namespace ASCompletion.Model
 
             // state
             int len = ba.Length;
-            if (len < 0)
-                return;
             int i = 0;
             line = 0;
             char c1;
@@ -1418,7 +1416,7 @@ namespace ASCompletion.Model
                             // outside of a method, the '}' ends the current class
                             else if (curClass != null)
                             {
-                                if (curClass != null) curClass.LineTo = line;
+                                curClass.LineTo = line;
                                 curClass = null;
                                 inEnum = false;
                                 inTypedef = false;
@@ -1849,7 +1847,7 @@ namespace ASCompletion.Model
             model.FullPackage = model.Module == "" ? model.Package
                 : (model.Package == "" ? model.Module : model.Package + '.' + model.Module);
             if (model.FileName.Length == 0 || model.FileName.EndsWithOrdinal("_cache")) return;
-            if (model.PrivateSectionIndex == 0) model.PrivateSectionIndex = line;
+            if (model.PrivateSectionIndex == 0) model.PrivateSectionIndex = line + 1;
             if (version == 2)
             {
                 string className = model.GetPublicClass().Name;

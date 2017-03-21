@@ -75,10 +75,8 @@
   -->
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\ExtractLocalVariableCommand.cs" />
@@ -136,18 +134,10 @@
       <Name>PluginCore</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\AS2Context\AS2Context.csproj">
-      <Project>{74AD0487-CEF9-43FE-9283-BC6F79539ADE}</Project>
-      <Name>AS2Context</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ASCompletion\ASCompletion.csproj">
       <Project>{4EBF2653-9654-4E40-880E-0046B3D6210E}</Project>
       <Name>ASCompletion</Name>
       <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\HaXeContext\HaXeContext.csproj">
-      <Project>{5b4e9515-994a-4da7-9916-cda8fd874701}</Project>
-      <Name>HaXeContext</Name>
     </ProjectReference>
     <ProjectReference Include="..\ProjectManager\ProjectManager.csproj">
       <Project>{78101C01-E186-4954-B1DD-DEBB7905FAD8}</Project>

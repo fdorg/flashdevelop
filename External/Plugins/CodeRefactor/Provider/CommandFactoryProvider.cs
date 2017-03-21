@@ -20,6 +20,7 @@ namespace CodeRefactor.Provider
 
         public static void Register(string language, ICommandFactory factory)
         {
+            if (ContainsLanguage(language)) LanguageToFactory.Remove(language);
             LanguageToFactory.Add(language, factory);
         }
 

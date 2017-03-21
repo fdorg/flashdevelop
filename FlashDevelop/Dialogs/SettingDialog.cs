@@ -606,6 +606,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void DialogClosed(Object sender, FormClosedEventArgs e)
         {
+            Cursor.Current = Cursors.WaitCursor;  // Enough for our sync code
             if (sdkContext != null) sdkContext.Dispose();
             Globals.MainForm.ApplyAllSettings();
             Globals.MainForm.SaveSettings();

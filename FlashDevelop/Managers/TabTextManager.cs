@@ -115,7 +115,7 @@ namespace FlashDevelop.Managers
                     }
                     if (!hasMatch) break;
                     hadMatch = false;
-                    if (!hasMatch) hadDiff = true;
+                    hadDiff = true;
                 }
                 else if (hadDiff) break;
                 else hadMatch = true;

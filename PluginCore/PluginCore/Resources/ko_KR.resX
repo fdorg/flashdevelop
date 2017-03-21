@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!--
-    Microsoft ResX Schema
-
+  <!-- 
+    Microsoft ResX Schema 
+    
     Version 2.0
-
-    The primary goals of this format is to allow a simple XML format
-    that is mostly human readable. The generation and parsing of the
-    various data types are done through the TypeConverter classes
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
     associated with the data types.
-
+    
     Example:
-
+    
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-
-    There are any number of "resheader" rows that contain simple
+                
+    There are any number of "resheader" rows that contain simple 
     name/value pairs.
-
-    Each data row contains a name, and value. The row also contains a
-    type or mimetype. Type corresponds to a .NET class that support
-    text/value conversion through the TypeConverter architecture.
-    Classes that don't support this are serialized and stored with the
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
     mimetype set.
-
-    The mimetype is used for serialized objects, and tells the
-    ResXResourceReader how to depersist the object. This is currently not
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
     extensible. For a given mimetype the value must be set accordingly:
-
-    Note - application/x-microsoft.net.object.binary.base64 is the format
-    that the ResXResourceWriter will generate, however the reader can
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
     read any of the formats listed below.
-
+    
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-
+    
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with
+    value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array
+    value   : The object must be serialized into a byte array 
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -1750,7 +1750,7 @@
     <value>이 프로젝트는 출력이없고 구성에 빌드 명령도 없습니다.</value>
   </data>
   <data name="ProjectManager.Info.NoProjectsOpenLink" xml:space="preserve">
-    <value>|새 프로젝트 만들기|{0}또는{0}|기존 프로젝트 열기|{0}또는{0}|Flash Builder 프로젝트 불러오기|</value>
+    <value>|새 프로젝트 만들기|{0}또는{0}|기존 프로젝트 열기|{0}또는{0}|Flash Builder 프로젝트 불러오기|{0}or{0}|Import a Haxe hxml project|</value>
   </data>
   <data name="ProjectManager.Info.NoTemplatesFound" xml:space="preserve">
     <value>탬플릿 이렉토리에서 탬플릿을 찾을 수 없습니다. 새로운 프로젝트를 만들 수 없습니다. FlashDevelop를 다시 설치하는것을 권장합니다.</value>
@@ -2469,7 +2469,7 @@ Never - 시작 페이지는 프로그램 시작시 열리지 않습니다.</valu
     <value>불러올 프로젝트를 선택</value>
   </data>
   <data name="ProjectManager.Info.ImportProjectFilter" xml:space="preserve">
-    <value>Adobe Flash Builder 프로젝트 (.actionScriptProperties)|.actionScriptProperties|패키지된 Adobe Flash Builder 프로젝트(*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl</value>
+    <value>Adobe Flash Builder 프로젝트 (.actionScriptProperties)|.actionScriptProperties|패키지된 Adobe Flash Builder 프로젝트(*.zip;*.fxp;*.fxpl)|*.zip;*.fxp;*.fxpl|Haxe hxml 프로젝트(*.hxml)|*.hxml</value>
   </data>
   <data name="FlashDevelop.Info.RedirectFilesResults" xml:space="preserve">
     <value>결과 패널에 결과를 보내기</value>
@@ -6120,5 +6120,9 @@ AND - 모든 조건을 만족할때.</value>
   <data name="OutputPanel.Description.ClearMode" xml:space="preserve">
     <value>Defines which method should be used to clean the contents of the output panel.</value>
     <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="Label.GotoTypeDeclaration" xml:space="preserve">
+    <value>Goto Type Declaration</value>
+    <comment>Added after 5.2.1</comment>
   </data>
 </root>

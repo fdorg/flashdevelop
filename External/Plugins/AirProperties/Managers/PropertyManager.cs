@@ -20,7 +20,7 @@ namespace AirProperties
         private static AirVersion _version;
         private static Boolean _unsupportedVersion;
         private const String _BaseAirNamespace = "http://ns.adobe.com/air/application/";
-        private const String _MaxSupportedVersion = "22.0";
+        private const String _MaxSupportedVersion = "25.0";
 
         public enum AirVersion
         {
@@ -37,23 +37,25 @@ namespace AirProperties
             V32 = 11,   // Version 3.2
             V33 = 12,   // Version 3.3
             V34 = 13,   // Version 3.4
-            V35 = 14,    // Version 3.5
-            V36 = 15,    // Version 3.6
-            V37 = 16,    // Version 3.7
-            V38 = 17,    // Version 3.8
-            V39 = 18,    // Version 3.9
-            V40 = 19,    // Version 4.0
-            V130 = 20,    // Version 13.0
-            V140 = 21,    // Version 14.0
-            V150 = 22,    // Version 15.0
-            V160 = 23,    // Version 16.0
-            V170 = 24,    // Version 17.0
-            V180 = 25,    // Version 18.0
-            V190 = 26,    // Version 19.0
-            V200 = 27,    // Version 20.0
-            V210 = 28,    // Version 21.0
-            V220 = 29,    // Version 22.0
-            V230 = 34     // Version 23.0
+            V35 = 14,   // Version 3.5
+            V36 = 15,   // Version 3.6
+            V37 = 16,   // Version 3.7
+            V38 = 17,   // Version 3.8
+            V39 = 18,   // Version 3.9
+            V40 = 19,   // Version 4.0
+            V130 = 20,  // Version 13.0
+            V140 = 21,  // Version 14.0
+            V150 = 22,  // Version 15.0
+            V160 = 23,  // Version 16.0
+            V170 = 24,  // Version 17.0
+            V180 = 25,  // Version 18.0
+            V190 = 26,  // Version 19.0
+            V200 = 27,  // Version 20.0
+            V210 = 28,  // Version 21.0
+            V220 = 29,  // Version 22.0
+            V230 = 34,  // Version 23.0
+            V240 = 35,  // Version 24.0
+            V250 = 36   // Version 25.0
         }
 
         public static Exception LastException
@@ -137,11 +139,13 @@ namespace AirProperties
                     else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "21.0")) _version = AirVersion.V210;
                     else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "22.0")) _version = AirVersion.V220;
                     else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "23.0")) _version = AirVersion.V230;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "24.0")) _version = AirVersion.V240;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "25.0")) _version = AirVersion.V250;
                     else
                     {
                         // Is a valid AIR descriptor, but version not supported so default to max supported version
                         _unsupportedVersion = true;
-                        _version = AirVersion.V230;
+                        _version = AirVersion.V250;
                     }
                 }
                 _namespaceManager = new XmlNamespaceManager(_descriptorFile.NameTable);
