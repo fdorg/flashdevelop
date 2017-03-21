@@ -4,6 +4,7 @@ using PluginCore.Managers;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -41,16 +42,10 @@ namespace ResultsPanel
 
         public void AddArrowImages()
         {
-            Bitmap upArrow = new Bitmap(16, 16);
-            Graphics g = Graphics.FromImage(upArrow);
-            DrawArrow(g, new Rectangle(0, 0, 16, 16), SortOrder.Ascending);
-            g.Dispose();
-            this.SmallImageList.Images.Add(upArrow);
+            Image upArrow = PluginBase.MainForm.GetAutoAdjustedImage(PluginBase.MainForm.FindImage16("495"));
+            Image downArrow = PluginBase.MainForm.GetAutoAdjustedImage(PluginBase.MainForm.FindImage16("493"));
 
-            Bitmap downArrow = new Bitmap(16, 16);
-            g = Graphics.FromImage(downArrow);
-            DrawArrow(g, new Rectangle(0, 0, 16, 16), SortOrder.Descending);
-            g.Dispose();
+            this.SmallImageList.Images.Add(upArrow);
             this.SmallImageList.Images.Add(downArrow);
 
             upArrowIndex = this.SmallImageList.Images.Count - 2;
@@ -61,6 +56,8 @@ namespace ResultsPanel
         {
             sortedColumn = column;
             sortOrder = order;
+
+            SetArrow(column, order);
 
             ListViewGroup[] groups = new ListViewGroup[this.Groups.Count];
             this.Groups.CopyTo(groups, 0);
@@ -96,27 +93,65 @@ namespace ResultsPanel
             Color back = PluginBase.MainForm.GetThemeColor("ColumnHeader.BackColor");
             Color text = PluginBase.MainForm.GetThemeColor("ColumnHeader.TextColor");
             Color border = PluginBase.MainForm.GetThemeColor("ColumnHeader.BorderColor");
+            
             if (UseTheme && back != Color.Empty && border != Color.Empty && text != Color.Empty)
             {
                 base.OnDrawColumnHeader(sender, e);
                 if (isSorted)
                 {
-                    DrawArrow(e.Graphics, new Rectangle(e.Bounds.Location, new Size(e.Bounds.Width, 8)));
+                    Image arrow = null;
+                    switch (sortOrder)
+                    {
+                        case SortOrder.Ascending:
+                            arrow = this.SmallImageList.Images[upArrowIndex];
+                            break;
+                        case SortOrder.Descending:
+                            arrow = this.SmallImageList.Images[downArrowIndex];
+                            break;
+                    }
+
+                    int x = e.Bounds.Location.X + (e.Bounds.Width - 16) / 2;
+                    e.Graphics.DrawImage(arrow, x, e.Bounds.Y - 5);
                 }
             }
             else
             {
                 e.DrawDefault = true;
-                if (isSorted)
+                //use imageindex if win32 is not available
+                if (!Win32.ShouldUseWin32())
                 {
-                    e.Header.ImageIndex = sortOrder == SortOrder.Ascending ? upArrowIndex : downArrowIndex;
+                    if (isSorted)
+                    {
+                        e.Header.ImageIndex = sortOrder == SortOrder.Ascending ? upArrowIndex : downArrowIndex;
+                    }
+                    else if (e.Header.ImageIndex != -1)
+                    {
+                        e.Header.ImageIndex = -1;
+                        e.Header.TextAlign = HorizontalAlignment.Left; //set alignment to remove the previously drawn icon
+                    }
                 }
-                else if (e.Header.ImageIndex != -1)
-                {
-                    e.Header.ImageIndex = -1;
-                    e.Header.TextAlign = HorizontalAlignment.Left; //set alignment to remove the previously drawn icon
-                }
+
             }
+        }
+
+        private void SetArrow(ColumnHeader column, SortOrder order)
+        {
+            if (Win32.ShouldUseWin32())
+            {
+                ArrowHelper.SetSortIcon(this, column.Index, order);
+                return;
+            }
+
+            switch (order)
+            {
+                case SortOrder.Ascending:
+                    column.ImageIndex = upArrowIndex;
+                    break;
+                case SortOrder.Descending:
+                    column.ImageIndex = downArrowIndex;
+                    break;
+            }
+            
         }
 
         private void DrawArrow(IDeviceContext device, Rectangle bounds, SortOrder order = SortOrder.None)

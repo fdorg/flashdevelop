@@ -890,8 +890,6 @@ namespace ResultsPanel
             if (lastColumn != -1)
             {
                 this.entriesView.SortGroups(this.entriesView.Columns[lastColumn], sortOrder, groupingComparer[Settings.DefaultGrouping]);
-                
-                this.entriesView.Refresh();
             }
 
             if (this.entriesView.Items.Count > 0)
