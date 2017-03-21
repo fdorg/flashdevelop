@@ -123,12 +123,14 @@ namespace ResultsPanel
                     if (isSorted)
                     {
                         e.Header.ImageIndex = sortOrder == SortOrder.Ascending ? upArrowIndex : downArrowIndex;
+                        e.Header.TextAlign = HorizontalAlignment.Left; //set alignment to remove the previously drawn icon
                     }
                     else if (e.Header.ImageIndex != -1)
                     {
                         e.Header.ImageIndex = -1;
                         e.Header.TextAlign = HorizontalAlignment.Left; //set alignment to remove the previously drawn icon
                     }
+                    //this.Refresh();
                 }
 
             }
