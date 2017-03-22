@@ -1173,7 +1173,7 @@ namespace ASCompletion.Model
                     Context.ASContext.Context = context;
                     var model = context.GetCodeModel(File.ReadAllText(resourceFile.DestinationFile));
 
-                    Assert.AreEqual(3, model.Members.Count);
+                    Assert.AreEqual(5, model.Members.Count);
 
                     var member = model.Members[1];
                     Assert.AreEqual("functionType", member.Name);
@@ -1188,6 +1188,20 @@ namespace ASCompletion.Model
                     Assert.AreEqual(3, member.LineTo);
                     Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
                     Assert.AreEqual("Int->Int->Int", member.Type);
+
+                    member = model.Members[3];
+                    Assert.AreEqual("functionType3", member.Name);
+                    Assert.AreEqual(4, member.LineFrom);
+                    Assert.AreEqual(4, member.LineTo);
+                    Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
+                    Assert.AreEqual("(Int->String)->Void", member.Type);
+
+                    member = model.Members[4];
+                    Assert.AreEqual("functionType4", member.Name);
+                    Assert.AreEqual(5, member.LineFrom);
+                    Assert.AreEqual(5, member.LineTo);
+                    Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
+                    Assert.AreEqual("{Int->String}->Void", member.Type);
                 }
             }
 
@@ -1894,6 +1908,8 @@ namespace ASCompletion.Model
                     Assert.AreEqual("dummy", memberModel.MetaDatas[0].Name);
                 }
             }
+
+
         }
     }
 }
