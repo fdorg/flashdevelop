@@ -597,7 +597,7 @@
 		<Checksum>2632B57F753DD691FF4271384EF81B2E</Checksum>
 		<Desc>Adds Yeoman generators to the project add menu</Desc>
 		<Group>Plugins</Group>
-		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&t=12936</Info>
+		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=12936</Info>
 		<Urls>
 			<Url>https://github.com/DoclerLabs/hexDevelop/releases/download/v0.4/Yeoman.fdz</Url>
 		</Urls>
@@ -610,7 +610,7 @@
 		<Checksum>177EEA7D8E6EBE62A4ED29547E351111</Checksum>
 		<Desc>Adds .editorconfig support</Desc>
 		<Group>Plugins</Group>
-		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&t=12935</Info>
+		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=12935</Info>
 		<Urls>
 			<Url>https://github.com/DoclerLabs/hexDevelop/releases/download/v0.4/EditorConfig.fdz</Url>
 		</Urls>
