@@ -18,7 +18,7 @@ namespace ResultsPanel
         public int fmt;
     }
 
-    class ArrowHelper
+    static class ArrowHelper
     {
         const int HDI_FORMAT = 0x0004;
 
@@ -39,7 +39,7 @@ namespace ResultsPanel
         [DllImport("user32.dll", EntryPoint = "SendMessage")]
         private static extern IntPtr SendMessageLVCOLUMN(IntPtr hWnd, int Msg, IntPtr wParam, ref LVCOLUMN lPLVCOLUMN);
 
-        public static void SetSortIcon(ListView listView, int columnIndex, SortOrder order)
+        public static void SetSortIcon(this ListView listView, int columnIndex, SortOrder order)
         {
             IntPtr columnHeader = SendMessage(listView.Handle, LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
 

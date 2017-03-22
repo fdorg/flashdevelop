@@ -51,10 +51,27 @@ namespace ResultsPanel
         private SortOrder sortOrder = SortOrder.Ascending;
         private int lastColumn = -1;
 
-        private static Dictionary<ColumnHeader, GroupingMethod> groupingMap;
-        private static Dictionary<GroupingMethod, ColumnHeader> reverseGroupingMap;
+        private Dictionary<ColumnHeader, GroupingMethod> groupingMap;
+        private Dictionary<GroupingMethod, ColumnHeader> reverseGroupingMap;
         private static Dictionary<GroupingMethod, IComparer<ListViewGroup>> groupingComparer;
         private static Dictionary<int, String> levelMap;
+
+        static PluginUI()
+        {
+            levelMap = new Dictionary<int, String>()
+            {
+                { 0, TextHelper.GetString("Filters.Informations") },
+                { 1, TextHelper.GetString("Filters.Errors") },
+                { 2, TextHelper.GetString("Filters.Warnings") }
+            };
+            groupingComparer = new Dictionary<GroupingMethod, IComparer<ListViewGroup>>()
+            {
+                { GroupingMethod.File, new FileComparer() },
+                { GroupingMethod.Description, new DescriptionComparer() },
+                { GroupingMethod.Path, new PathComparer() },
+                { GroupingMethod.Type, new TypeComparer() },
+            };
+        }
 
 
         public PluginUI(PluginMain pluginMain)
@@ -73,6 +90,7 @@ namespace ResultsPanel
             this.InitializeLayout();
             this.ApplySettings();
             ScrollBarEx.Attach(entriesView);
+
             groupingMap = new Dictionary<ColumnHeader, GroupingMethod>()
             {
                 { this.entryFile, GroupingMethod.File },
@@ -80,20 +98,6 @@ namespace ResultsPanel
                 { this.entryType, GroupingMethod.Type },
                 { this.entryPath, GroupingMethod.Path }
             };
-            levelMap = new Dictionary<int, String>()
-            {
-                { 0, TextHelper.GetString("Filters.Informations") },
-                { 1, TextHelper.GetString("Filters.Errors") },
-                { 2, TextHelper.GetString("Filters.Warnings") }
-            };
-            groupingComparer = new Dictionary<GroupingMethod, IComparer<ListViewGroup>>()
-            {
-                { GroupingMethod.File, new FileComparer() },
-                { GroupingMethod.Description, new DescriptionComparer() },
-                { GroupingMethod.Path, new PathComparer() },
-                { GroupingMethod.Type, new TypeComparer() },
-            };
-
             reverseGroupingMap = new Dictionary<GroupingMethod, ColumnHeader>();
             foreach (ColumnHeader h in groupingMap.Keys)
             {

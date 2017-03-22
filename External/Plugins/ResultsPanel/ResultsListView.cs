@@ -132,7 +132,6 @@ namespace ResultsPanel
                     }
                     //this.Refresh();
                 }
-
             }
         }
 
@@ -140,7 +139,7 @@ namespace ResultsPanel
         {
             if (Win32.ShouldUseWin32())
             {
-                ArrowHelper.SetSortIcon(this, column.Index, order);
+                this.SetSortIcon(column.Index, order);
                 return;
             }
 
