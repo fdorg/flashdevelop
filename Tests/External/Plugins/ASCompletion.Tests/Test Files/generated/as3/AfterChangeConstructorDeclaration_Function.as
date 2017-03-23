@@ -7,7 +7,7 @@
 }
 
 class Some {
-	public function Some(function:Function) {
+	public function Some(functionValue:Function) {
 		
 	}
 }
