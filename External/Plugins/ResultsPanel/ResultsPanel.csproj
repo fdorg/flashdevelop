@@ -68,15 +68,13 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ListViewEx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PluginMain.cs" />
     <Compile Include="PluginUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ResultComparer.cs" />
-    <Compile Include="ResultsListView.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="ArrowHelper.cs" />
   </ItemGroup>
