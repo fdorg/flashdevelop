@@ -28,7 +28,7 @@ namespace ResultsPanel
         public ToolStripMenuItem nextEntryContextMenuItem;
         public ToolStripMenuItem previousEntryContextMenuItem;
 
-        private ListViewEx entriesView;
+        private ResultsListView entriesView;
         private ColumnHeader entryFile;
         private ColumnHeader entryDesc;
         private ColumnHeader entryLine;
@@ -50,7 +50,32 @@ namespace ResultsPanel
         private Int32 logCount;
         private Timer autoShow;
         private ImageListManager imageList;
-         
+        private SortOrder sortOrder = SortOrder.Ascending;
+        private int lastColumn = -1;
+
+        private Dictionary<ColumnHeader, GroupingMethod> groupingMap;
+        private Dictionary<GroupingMethod, ColumnHeader> reverseGroupingMap;
+        private static Dictionary<GroupingMethod, IComparer<ListViewGroup>> groupingComparer;
+        private static Dictionary<int, String> levelMap;
+
+        static PluginUI()
+        {
+            levelMap = new Dictionary<int, String>()
+            {
+                { 0, TextHelper.GetString("Filters.Informations") },
+                { 1, TextHelper.GetString("Filters.Errors") },
+                { 2, TextHelper.GetString("Filters.Warnings") }
+            };
+            groupingComparer = new Dictionary<GroupingMethod, IComparer<ListViewGroup>>()
+            {
+                { GroupingMethod.File, new FileComparer() },
+                { GroupingMethod.Description, new DescriptionComparer() },
+                { GroupingMethod.Path, new PathComparer() },
+                { GroupingMethod.Type, new TypeComparer() },
+            };
+        }
+
+
         public PluginUI(PluginMain pluginMain)
         {
             this.AutoKeyHandling = true;
@@ -67,6 +92,20 @@ namespace ResultsPanel
             this.InitializeLayout();
             this.ApplySettings();
             ScrollBarEx.Attach(entriesView);
+
+            groupingMap = new Dictionary<ColumnHeader, GroupingMethod>()
+            {
+                { this.entryFile, GroupingMethod.File },
+                { this.entryDesc, GroupingMethod.Description },
+                { this.entryType, GroupingMethod.Type },
+                { this.entryPath, GroupingMethod.Path }
+            };
+            reverseGroupingMap = new Dictionary<GroupingMethod, ColumnHeader>();
+            foreach (ColumnHeader h in groupingMap.Keys)
+            {
+                GroupingMethod m = groupingMap[h];
+                reverseGroupingMap[m] = h;
+            }
         }
         
         #region Windows Forms Designer Generated Code
@@ -78,7 +117,7 @@ namespace ResultsPanel
         /// </summary>
         private void InitializeComponent() 
         {
-            this.entriesView = new System.Windows.Forms.ListViewEx();
+            this.entriesView = new ResultsListView();
             this.entryType = new System.Windows.Forms.ColumnHeader();
             this.entryLine = new System.Windows.Forms.ColumnHeader();
             this.entryDesc = new System.Windows.Forms.ColumnHeader();
@@ -121,6 +160,7 @@ namespace ResultsPanel
             this.entriesView.View = System.Windows.Forms.View.Details;
             this.entriesView.DoubleClick += new System.EventHandler(this.EntriesViewDoubleClick);
             this.entriesView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.EntriesViewKeyDown);
+            this.entriesView.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.EntriesViewColumnClick);
             // 
             // entryType
             // 
@@ -255,13 +295,15 @@ namespace ResultsPanel
             imageList.ColorDepth = ColorDepth.Depth32Bit;
             imageList.TransparentColor = Color.Transparent;
             imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            imageList.Initialize(ImageList_Populate);
+
             this.toolStripFilters.ImageList = imageList;
             this.entriesView.SmallImageList = imageList;
             this.clearFilterButton.Image = PluginBase.MainForm.FindImage("153");
             this.toolStripButtonInfo.Image = PluginBase.MainForm.FindImage("131");
             this.toolStripButtonError.Image = PluginBase.MainForm.FindImage("197");
             this.toolStripButtonWarning.Image = PluginBase.MainForm.FindImage("196");
+
+            imageList.Initialize(ImageList_Populate);
         }
 
         private void ImageList_Populate(object sender, EventArgs e)
@@ -269,6 +311,8 @@ namespace ResultsPanel
             imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("131")); // info
             imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("197")); // error
             imageList.Images.Add(PluginBase.MainForm.FindImageAndSetAdjust("196")); // warning
+
+            this.entriesView.AddArrowImages();
         }
 
         /// <summary>
@@ -466,6 +510,42 @@ namespace ResultsPanel
             {
                 this.EntriesViewDoubleClick(null, null);
                 e.Handled = true;
+            }
+        }
+
+        /// <summary>
+        /// When the user clicks on a column, group using that column
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void EntriesViewColumnClick(Object sender, System.Windows.Forms.ColumnClickEventArgs e)
+        {
+            ColumnHeader h = this.entriesView.Columns[e.Column];
+            if (groupingMap.ContainsKey(h))
+            {
+                Settings.DefaultGrouping = groupingMap[h];
+
+                if (lastColumn != e.Column)
+                {
+                    sortOrder = SortOrder.None;
+                }
+				
+                switch (sortOrder)
+                {
+                    case SortOrder.None:
+                        sortOrder = SortOrder.Ascending;
+                        break;
+                    case SortOrder.Ascending:
+                        sortOrder = SortOrder.Descending;
+                        break;
+                    case SortOrder.Descending:
+                        sortOrder = SortOrder.None;
+                        break;
+                }
+
+                lastColumn = e.Column;
+                this.FilterResults(false);
+                //this.entriesView.SortGroups(h, sortOrder, groupingComparer[Settings.DefaultGrouping]);
             }
         }
 
@@ -748,6 +828,7 @@ namespace ResultsPanel
             Boolean matchWarnings = this.toolStripButtonWarning.Checked;
             Boolean matchErrors = this.toolStripButtonError.Checked;
             this.entriesView.Items.Clear();
+            this.entriesView.Groups.Clear();
             foreach (ListViewItem it in this.allListViewItems)
             {
                 // Is checked?
@@ -758,12 +839,62 @@ namespace ResultsPanel
                 {
                     if (PluginBase.Settings.UseListViewGrouping)
                     {
-                        String path = Path.Combine(it.SubItems[4].Text, it.SubItems[3].Text);
-                        this.AddToGroup(it, path);
+                        string groupTitle = TextHelper.GetString("FlashDevelop.Group.Other");
+                        string groupId = "";
+                        switch (Settings.DefaultGrouping)
+                        {
+                            case GroupingMethod.File:
+                                String filename = it.SubItems[3].Text;
+                                String fullPath = Path.Combine(it.SubItems[4].Text, filename);
+                                if (File.Exists(fullPath)) groupTitle = filename;
+
+                                groupId = fullPath;
+                                break;
+                            case GroupingMethod.Description:
+                                String desc = it.SubItems[2].Text;
+                                groupId = desc;
+                                //Remove character position and other additional information for better grouping
+                                String[] split = desc.Split(new string[] { " : " }, StringSplitOptions.None);
+                                if (split.Length >= 2)
+                                {
+                                    groupId = split[1];
+                                }
+                                groupTitle = groupId;
+                                break;
+                            case GroupingMethod.Path:
+                                String path = it.SubItems[4].Text;
+                                String dirname = new DirectoryInfo(path).Name;
+
+                                groupId = path;
+                                groupTitle = dirname;
+                                break;
+                            case GroupingMethod.Type:
+                                int type = it.ImageIndex;
+                                groupId = type.ToString();
+                                groupTitle = levelMap[type];
+                                break;
+                        }
+                        this.AddToGroup(it, groupId, groupTitle);
                     }
                     this.entriesView.Items.Add(it);
                 }
             }
+
+            if (sortOrder == SortOrder.None)
+            {
+                this.entriesView.ShowGroups = false;
+            }
+            else
+            {
+                lastColumn = reverseGroupingMap[Settings.DefaultGrouping].Index;
+                this.entriesView.ShowGroups = true;
+            }
+
+            if (lastColumn != -1)
+            {
+                this.entriesView.SortGroups(this.entriesView.Columns[lastColumn], sortOrder, groupingComparer[Settings.DefaultGrouping]);
+            }
+
             if (this.entriesView.Items.Count > 0)
             {
                 if (this.Settings.ScrollToBottom)
@@ -795,16 +926,14 @@ namespace ResultsPanel
         /// <summary>
         /// Adds item to the specified group
         /// </summary>
-        private void AddToGroup(ListViewItem item, String path)
+        private void AddToGroup(ListViewItem item, String id, String title)
         {
-            String gpname;
             Boolean found = false;
             ListViewGroup gp = null;
-            if (File.Exists(path)) gpname = Path.GetFileName(path);
-            else gpname = TextHelper.GetString("FlashDevelop.Group.Other");
+
             foreach (ListViewGroup lvg in this.entriesView.Groups)
             {
-                if (lvg.Tag.ToString() == path)
+                if (lvg.Tag.ToString() == id)
                 {
                     found = true;
                     gp = lvg;
@@ -821,11 +950,11 @@ namespace ResultsPanel
             else
             {
                 gp = new ListViewGroup();
-                gp.Tag = path;
-                gp.Header = gpname;
+                gp.Tag = id;
+                gp.Header = title;
                 this.entriesView.Groups.Add(gp);
                 gp.Items.Add(item);
-            }           
+            }
         }
 
         /// <summary>
@@ -1020,5 +1149,13 @@ namespace ResultsPanel
         #endregion
 
     }
-    
+
+    public enum GroupingMethod
+    {
+        File,
+        Type,
+        Description,
+        Path
+    }
+
 }

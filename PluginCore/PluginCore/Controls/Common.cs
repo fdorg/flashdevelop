@@ -254,7 +254,7 @@ namespace System.Windows.Forms
             e.DrawDefault = true;
         }
 
-        private void OnDrawColumnHeader(Object sender, DrawListViewColumnHeaderEventArgs e)
+        protected virtual void OnDrawColumnHeader(Object sender, DrawListViewColumnHeaderEventArgs e)
         {
             Color back = PluginBase.MainForm.GetThemeColor("ColumnHeader.BackColor");
             Color text = PluginBase.MainForm.GetThemeColor("ColumnHeader.TextColor");
