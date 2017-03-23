@@ -24,6 +24,7 @@ namespace CodeFormatter
         private String pluginAuth = "FlashDevelop Team";
         private ToolStripMenuItem contextMenuItem;
         private ToolStripMenuItem mainMenuItem;
+        private ToolStripMenuItem settingsMenuItem;
         private String settingFilename;
         private Settings settingObject;
 
@@ -179,10 +180,19 @@ namespace CodeFormatter
             String label = TextHelper.GetString("Label.CodeFormatter");
             this.mainMenuItem = new ToolStripMenuItem(label, null, new EventHandler(this.Format), Keys.Control | Keys.Shift | Keys.D2);
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.CodeFormatter", this.mainMenuItem);
+
+            String settingsLabel = "Haxe Formatter Settings";
+            settingsMenuItem = new ToolStripMenuItem(settingsLabel, null, (s, e) => {
+                TraceManager.Add("test");
+                new Dialogs.HaxeAStyleDialog().ShowDialog();
+            }, Keys.Control | Keys.Shift | Keys.D4);
+
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.Test", settingsMenuItem);
         }
         private void AttachMainMenuItem(ToolStripMenuItem mainMenu)
         {
             mainMenu.DropDownItems.Insert(7, this.mainMenuItem);
+            mainMenu.DropDownItems.Insert(7, this.settingsMenuItem);
         }
 
         /// <summary>
