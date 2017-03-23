@@ -12,7 +12,7 @@ using System.Windows.Forms.VisualStyles;
 
 namespace ResultsPanel
 {
-    class ResultsListView : ListViewEx
+    class ListViewEx : System.Windows.Forms.ListViewEx
     {
         private ColumnHeader sortedColumn;
         private SortOrder sortOrder = SortOrder.None;
@@ -36,7 +36,7 @@ namespace ResultsPanel
             }
         }
 
-        public ResultsListView() : base()
+        public ListViewEx() : base()
         {
         }
 
