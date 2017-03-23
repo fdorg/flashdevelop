@@ -8,6 +8,7 @@ namespace ResultsPanel
     public class Settings
     {
         private Boolean scrollToBottom = false;
+        private GroupingMethod defaultGroup = GroupingMethod.File;
 
         [DisplayName("Scroll To Bottom")]
         [LocalizedDescription("ResultsPanel.Description.ScrollToBottom"), DefaultValue(false)]
@@ -17,6 +18,13 @@ namespace ResultsPanel
             set { scrollToBottom = value; }
         }
 
+        [DisplayName("Default Grouping")]
+        [LocalizedDescription("ResultsPanel.Description.DefaultGrouping"), DefaultValue(GroupingMethod.File)]
+        public GroupingMethod DefaultGrouping
+        {
+            get { return defaultGroup; }
+            set { defaultGroup = value; }
+        }
     }
 
 }

@@ -73,7 +73,12 @@
     <Compile Include="PluginUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="ResultComparer.cs" />
+    <Compile Include="ResultsListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Settings.cs" />
+    <Compile Include="ArrowHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\PluginCore\PluginCore.csproj">
