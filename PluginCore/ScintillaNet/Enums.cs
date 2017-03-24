@@ -261,7 +261,9 @@ namespace ScintillaNet.Enums
     public enum CursorShape
     {    
         Normal = -1,
-        Wait = 4
+        Arrow = 2,
+        Wait = 4,
+        ReverseArror = 7
     }
     
     public enum CaretPolicy
