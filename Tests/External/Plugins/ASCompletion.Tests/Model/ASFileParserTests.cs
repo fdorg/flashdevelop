@@ -1212,6 +1212,10 @@ namespace ASCompletion.Model
                         .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "{c:Int->String}->Void"));
                     yield return new TestCaseData("var functionType:{c:(Int->String)->String}->Void;")
                         .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "{c:(Int->String)->String}->Void"));
+                    yield return new TestCaseData("var functionType:String->{c:Int->Array<String>};")
+                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "String->{c:Int->Array<String>}"));
+                    yield return new TestCaseData("var functionType:String->{c:Int->Array<{x:Int, y:Int}>};")
+                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "String->{c:Int->Array<{x:Int, y:Int}>}"));
                 }
             }
 
