@@ -1,105 +1,102 @@
-﻿using CodeFormatter.Properties;
-using FlashDevelop.Managers;
-using PluginCore.Helpers;
-using PluginCore.Utilities;
+﻿using CodeFormatter.Preferences;
+using CodeFormatter.Utilities;
+using PluginCore;
 using ScintillaNet;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
 
 namespace CodeFormatter.Dialogs
 {
     public partial class HaxeAStyleDialog : Form
     {
-        private string configFile;
+        private ScintillaControl txtExample;
 
-        private static Dictionary<string, int> bracketStyles = new Dictionary<string, int>
+        /// <summary>
+        /// Contains a mapping of bracket styles with the corresponding option for AStyle
+        /// </summary>
+        private static Dictionary<string, string> bracketStyles = new Dictionary<string, string>
         {
-            { "Allman", 1 },
-            { "Java", 2 },
-            { "Kernighan & Ritchie", 3 },
-            { "Stroustrup", 4 },
-            { "Whitesmith", 5 },
-            { "VTK", 15 },
-            { "Banner", 6 },
-            { "GNU", 7 },
-            { "Linux", 8 },
-            { "Horstmann", 9 },
-            { "One True Brace", 10 },
-            { "Google", 14 },
-            //{ "Mozilla", 16 }, //not supported by old version of AStyle
-            { "Pico", 11 },
-            { "Lisp", 12 },
+            { "Allman", "allman" },
+            { "Java", "java" },
+            { "Kernighan & Ritchie", "kr" },
+            { "Stroustrup", "stroustrup" },
+            { "Whitesmith", "whitesmith" },
+            { "VTK", "vtk" },
+            { "Banner", "banner" },
+            { "GNU", "gnu" },
+            { "Linux", "linux" },
+            { "Horstmann", "horstmann" },
+            { "One True Brace", "otbs" },
+            { "Google", "google" },
+            //{ "Mozilla", "mozilla" }, //not supported by old version of AStyle
+            { "Pico", "pico" },
+            { "Lisp", "lisp" },
         };
+        /// <summary>
+        /// Contains an inverted version of <see cref="bracketStyles"/>
+        /// </summary>
+        private static Dictionary<string, string> reverseBracketStyle = new Dictionary<string, string>();
 
         private Dictionary<CheckBox, string> mapping = new Dictionary<CheckBox, string>();
         private Dictionary<string, CheckBox> reverseMapping = new Dictionary<string, CheckBox>();
 
+        static HaxeAStyleDialog()
+        {
+            foreach (string name in bracketStyles.Keys)
+            {
+                reverseBracketStyle[bracketStyles[name]] = name;
+            }
+        }
+
         public HaxeAStyleDialog()
         {
             InitializeComponent();
+            this.Font = PluginBase.Settings.DefaultFont;
 
-            String dataDir = Path.Combine(PathHelper.DataDir, "CodeFormatter");
-            if (!Directory.Exists(dataDir)) Directory.CreateDirectory(dataDir);
-            configFile = Path.Combine(dataDir, "HaxeAStyleConfig.fdb");
-            
+            //Create Scintilla
+            txtExample = new ScintillaControl();
+            txtExample.Dock = DockStyle.Fill;
+            txtExample.ConfigurationLanguage = "haxe";
+            txtExample.ViewWhitespace = ScintillaNet.Enums.WhiteSpace.VisibleAlways;
+
+            this.pnlSci.Controls.Add(txtExample);
 
             checkForceTabs.DataBindings.Add("Enabled", checkTabs, "Checked");
             checkPadAll.DataBindings.Add("Enabled", checkPadBlocks, "Checked");
 
             checkOneLineBrackets.DataBindings.Add("Enabled", checkAddBrackets, "Checked");
-            //TODO: cross enable / disable these:
-            //checkFillEmptyLines.DataBindings.Add("Enabled", checkDeleteEmptyLines, "Checked");
-            //checkDeleteEmptyLines.DataBindings.Add("Enabled", checkFillEmptyLines, "Checked");
-            //and these:
-            //checkAddBrackets;
-            //checkRemoveBrackets;
 
             foreach (TabPage page in this.tabControl.TabPages)
             {
                 MapCheckBoxes(page);
             }
 
-            //txtExample.Text = Encoding.UTF8.GetString(Resources.CodeExample);
             cbBracketStyle.DataSource = bracketStyles.Keys.ToArray();
 
+            LoadSettings();
+
+            ValidateControls();
             ReformatExample();
         }
 
-        /// <summary>
-        /// Saves the style settings in the config file
-        /// </summary>
         private void SaveSettings()
         {
-            string[] options = GetOptions();
-
-            ObjectSerializer.Serialize(this.configFile, options);
+            HaxeAStyleHelper.SaveOptions(GetOptions());
         }
 
         private void LoadSettings()
         {
-            string[] options = new string[0];
-            if (!File.Exists(this.configFile))
-            {
-                this.SaveSettings();
-            }
-            else
-            {
-                Object obj = ObjectSerializer.Deserialize(this.configFile, options);
-                options = (string[])obj;
-            }
-
-            //TODO: load
-            //if (options.Contains(""))
+            SetOptions(HaxeAStyleHelper.LoadOptions());
         }
 
+        /// <summary>
+        /// Fills <see cref="mapping"/> and <see cref="reverseMapping"/>.
+        /// It checks the given <paramref name="page"/> for checkboxes that have a Tag.
+        /// The tab is assumed to be the flag that should be set.
+        /// Checkboxes without Tag are ignored by this method and have to be handled manually.
+        /// </summary>
         private void MapCheckBoxes(TabPage page)
         {
             foreach (Control c in page.Controls)
@@ -107,71 +104,157 @@ namespace CodeFormatter.Dialogs
                 CheckBox check = c as CheckBox;
                 if (check != null && check.Tag != null)
                 {
+                    //Tag is used to assign simple flags to the corresponding control
+                    ///More complex options are handled in SetOptions and GetOptions<see cref=""/>
                     mapping.Add(check, (string)check.Tag);
                     reverseMapping.Add((string)check.Tag, check);
                 }
             }
         }
 
-        private void AddBasicTabOptions(List<string> options, TabPage page)
+        /// <summary>
+        /// Helper method used by <see cref="GetOptions"/> to automatically read values of simple flags from the
+        /// respective checkboxes into the given <paramref name="options"/>.
+        /// </summary>
+        /// <param name="page">The TabPage to set options for</param>
+        private void GetBasicTabOptions(List<HaxeAStyleOption> options, TabPage page)
         {
             foreach (Control c in page.Controls)
             {
                 CheckBox check = c as CheckBox;
                 if (check != null && IsChecked(check) && mapping.ContainsKey(check))
                 {
-                    options.Add(mapping[check]);
+                    options.Add(new HaxeAStyleOption(mapping[check]));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Helper method used by <see cref="SetOptions"/> to automatically set simple flag checkboxes.
+        /// </summary>
+        /// <param name="page">The TabPage to search through</param>
+        private void SetBasicTabOptions(HaxeAStyleOptions options, TabPage page)
+        {
+            foreach (Control c in page.Controls)
+            {
+                CheckBox check = c as CheckBox;
+
+                bool hasOption = check != null && mapping.ContainsKey(check) && options.Exists(mapping[check]);
+
+                if (hasOption)
+                {
+                    check.Checked = true;
                 }
             }
         }
 
         private void check_Click(object sender, EventArgs e)
         {
+            ValidateControls(sender);
+
             ReformatExample();
         }
 
-        private string[] GetOptions()
+        /// <summary>
+        /// Helper method to fill this dialog from the given <paramref name="options"/>.
+        /// </summary>
+        private void SetOptions(HaxeAStyleOptions options)
         {
-            List<string> options = new List<string>();
+            if (options.Count == 0)
+            {
+                return;
+            }
 
-            options.Add("--mode=cs");
+            //set default switches
+            foreach (TabPage page in this.tabControl.TabPages)
+            {
+                SetBasicTabOptions(options, page);
+            }
 
+            //Brackets
+            cbBracketStyle.SelectedItem = reverseBracketStyle[(string)options.Find("--style").Value];
+
+            checkOneLineBrackets.Checked = options.Exists("--add-one-line-brackets");
+            checkAddBrackets.Checked = checkOneLineBrackets.Checked || options.Exists("--add-brackets");
+
+            //Padding
+            HaxeAStyleOption breakBlocks = options.Find("--break-blocks");
+
+            if (breakBlocks != null)
+            {
+                checkPadBlocks.Checked = true;
+                checkPadAll.Checked = "all".Equals(breakBlocks.Value);
+            }
+
+            //Tabs / Indentation
+            HaxeAStyleOption forceTabs = options.Find("--indent=force-tab");
+            HaxeAStyleOption useTabs = options.Find("--indent=tab");
+            HaxeAStyleOption useSpaces = options.Find("--indent=spaces");
+
+            if (forceTabs != null)
+            {
+                checkTabs.Checked = true;
+                checkForceTabs.Checked = true;
+                numIndentWidth.Value = Convert.ToDecimal(forceTabs.Value);
+            }
+            else if (useTabs != null)
+            {
+                checkTabs.Checked = true;
+                numIndentWidth.Value = Convert.ToDecimal(useTabs.Value);
+            }
+            else
+            {
+                checkTabs.Checked = false;
+                numIndentWidth.Value = Convert.ToDecimal(useSpaces.Value);
+            }
+        }
+
+        /// <summary>
+        /// Helper method to create <see cref="HaxeAStyleOptions" /> from the currently selected
+        /// options.
+        /// </summary>
+        /// <returns>An object of type <see cref="HaxeAStyleOptions" />, which is a list of <see cref="HaxeAStyleOption"/></returns>
+        private HaxeAStyleOptions GetOptions()
+        {
+            HaxeAStyleOptions options = new HaxeAStyleOptions();
+
+            HaxeAStyleHelper.AddDefaultOptions(options);
 
             //handling default switches
             foreach (TabPage page in this.tabControl.TabPages)
             {
-                AddBasicTabOptions(options, page);
+                GetBasicTabOptions(options, page);
             }
 
-            //special switches
+            //special options
 
             //Tabs / Indentation
             if (IsChecked(checkForceTabs))
             {
-                options.Add("--indent=force-tab=" + numIndentWidth.Value);
+                options.Add(new HaxeAStyleOption("--indent=force-tab", numIndentWidth.Value));
             }
             else if (IsChecked(checkTabs))
             {
-                options.Add("--indent=tab=" + numIndentWidth.Value);
+                options.Add(new HaxeAStyleOption("--indent=tab", numIndentWidth.Value));
             }
             else
             {
-                options.Add("--indent=spaces=" + numIndentWidth.Value);
+                options.Add(new HaxeAStyleOption("--indent=spaces", numIndentWidth.Value));
             }
 
             //Brackets
-            options.Add("-A" + bracketStyles[(string)cbBracketStyle.SelectedItem]);
+            options.Add(new HaxeAStyleOption("--style", bracketStyles[(string)cbBracketStyle.SelectedItem]));
             
             
             if (IsChecked(checkAddBrackets))
             {
                 if (IsChecked(checkOneLineBrackets))
                 {
-                    options.Add("--add-one-line-brackets");
+                    options.Add(new HaxeAStyleOption("--add-one-line-brackets"));
                 }
                 else
                 {
-                    options.Add("--add-brackets");
+                    options.Add(new HaxeAStyleOption("--add-brackets"));
                 }
             }
 
@@ -180,31 +263,104 @@ namespace CodeFormatter.Dialogs
             {
                 if (IsChecked(checkPadAll))
                 {
-                    options.Add("--break-blocks=all");
+                    options.Add(new HaxeAStyleOption("--break-blocks", "all"));
                 }
                 else
                 {
-                    options.Add("--break-blocks");
+                    options.Add(new HaxeAStyleOption("--break-blocks"));
                 }
             }
             //options.Add("--indent-continuation=" + numIndentContinuation.Value); //not supported by old version of AStyle
 
-
-            return options.ToArray();
+            return options;
         }
 
+        /// <summary>
+        /// Helper method to apply the selected AStyle settings to the text
+        /// </summary>
         private void ReformatExample()
         {
-            txtExample.SelectionTabs = new int[] { 15, 30, 45, 60, 75 };
+            txtExample.IsReadOnly = false;
             txtExample.Text = PluginCore.PluginBase.MainForm.CurrentDocument.SciControl.Text;
+            txtExample.TabWidth = (int)numIndentWidth.Value;
 
             AStyleInterface astyle = new AStyleInterface();
-            txtExample.Text = astyle.FormatSource(txtExample.Text, String.Join(" ", GetOptions()));
+            string[] options = GetOptions().ToStringArray();
+
+            txtExample.IsFocus = true;
+            int pos = txtExample.CurrentPos;
+            txtExample.Text = astyle.FormatSource(txtExample.Text, String.Join(" ", options));
+            txtExample.CurrentPos = pos;
+            txtExample.ScrollCaret();
+            txtExample.IsReadOnly = true;
         }
 
+        /// <summary>
+        /// Helper method to determine if <paramref name="chk"/> is enabled and checked.
+        /// </summary>
         private bool IsChecked(CheckBox chk)
         {
             return chk.Checked && chk.Enabled;
+        }
+
+        /// <summary>
+        /// Checks for incompatible selections and fixes them.
+        /// For example, it makes no sense to delete and fill empty lines at the same time.
+        /// </summary>
+        /// <param name="sender">An optional argument to determin what control triggers the validation. Needed for some checks</param>
+        private void ValidateControls(object sender = null)
+        {
+            //Bracket style
+            string style = bracketStyles[(string)cbBracketStyle.SelectedValue];
+            switch (style)
+            {
+                case "java":
+                case "kr":
+                case "stroustrup":
+                case "linux":
+                case "otbs":
+                    checkBreakClosing.Enabled = true;
+                    break;
+                default: //style enables this by default
+                    checkBreakClosing.Enabled = false;
+                    break;
+            }
+            switch (style)
+            {
+                case "java":
+                case "stroustrup":
+                case "banner":
+                case "google":
+                case "lisp": //style enables this by default
+                    checkAttachClasses.Enabled = false;
+                    break;
+                default:
+                    checkAttachClasses.Enabled = true;
+                    break;
+            }
+            checkRemoveBrackets.Enabled = style != "otbs";
+
+            //Checkboxes
+            checkKeepOneLineBlocks.Enabled = !checkOneLineBrackets.Checked;
+            //These exclude each other:
+            if (sender == checkFillEmptyLines && checkFillEmptyLines.Checked)
+            {
+                checkDeleteEmptyLines.Checked = false;
+            }
+            else if (checkDeleteEmptyLines.Checked)
+            {
+                checkFillEmptyLines.Checked = false;
+            }
+
+            if (sender == checkAddBrackets && checkAddBrackets.Checked)
+            {
+                checkRemoveBrackets.Checked = false;
+            }
+            else if (checkRemoveBrackets.Checked)
+            {
+                checkAddBrackets.Checked = false;
+            }
+            //
         }
 
         private void numIndentWidth_ValueChanged(object sender, EventArgs e)
@@ -212,33 +368,22 @@ namespace CodeFormatter.Dialogs
             ReformatExample();
         }
 
-        private void checkOneLineBrackets_CheckedChanged(object sender, EventArgs e)
-        {
-            if (checkOneLineBrackets.Checked)
-            {
-                checkKeepOneLineBlocks.Enabled = false;
-            }
-        }
-
         private void cbBracketStyle_SelectionChangeCommitted(object sender, EventArgs e)
         {
-            int style = bracketStyles[(string)cbBracketStyle.SelectedValue];
-
-            switch (style)
-            {
-                case 2:
-                case 3:
-                case 4:
-                case 8:
-                case 10:
-                    checkBreakClosing.Enabled = true;
-                    break;
-                default: //style enables this by default
-                    checkBreakClosing.Enabled = false;
-                    break;
-            }
+            ValidateControls();
 
             ReformatExample();
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            SaveSettings();
+            this.Close();
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

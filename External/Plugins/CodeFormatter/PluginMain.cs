@@ -12,6 +12,7 @@ using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 using ScintillaNet;
+using CodeFormatter.Dialogs;
 
 namespace CodeFormatter
 {
@@ -181,18 +182,14 @@ namespace CodeFormatter
             this.mainMenuItem = new ToolStripMenuItem(label, null, new EventHandler(this.Format), Keys.Control | Keys.Shift | Keys.D2);
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.CodeFormatter", this.mainMenuItem);
 
-            String settingsLabel = "Haxe Formatter Settings";
-            settingsMenuItem = new ToolStripMenuItem(settingsLabel, null, (s, e) => {
-                TraceManager.Add("test");
-                new Dialogs.HaxeAStyleDialog().ShowDialog();
-            }, Keys.Control | Keys.Shift | Keys.D4);
-
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.Test", settingsMenuItem);
+            String settingsLabel = "Haxe Formatter Settings"; //TODO: use TextHelper
+            this.settingsMenuItem = new ToolStripMenuItem(settingsLabel, null, new EventHandler(this.ShowSettings), Keys.Control | Keys.Shift | Keys.D3);
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.Test", this.settingsMenuItem);
         }
         private void AttachMainMenuItem(ToolStripMenuItem mainMenu)
         {
             mainMenu.DropDownItems.Insert(7, this.mainMenuItem);
-            mainMenu.DropDownItems.Insert(7, this.settingsMenuItem);
+            mainMenu.DropDownItems.Insert(8, this.settingsMenuItem);
         }
 
         /// <summary>
@@ -244,7 +241,15 @@ namespace CodeFormatter
         private const int TYPE_XML = 2;
         private const int TYPE_CPP = 3;
         private const int TYPE_UNKNOWN = 4;
-        
+
+        /// <summary>
+        /// Opens the Haxe AStyle settings dialog.
+        /// </summary>
+        public void ShowSettings(Object sender, EventArgs e)
+        {
+            new HaxeAStyleDialog().ShowDialog();
+        }
+
         /// <summary>
         /// Formats the current document
         /// </summary>
@@ -302,7 +307,15 @@ namespace CodeFormatter
 
                         case TYPE_CPP:
                             AStyleInterface asi = new AStyleInterface();
-                            String optionData = this.GetOptionData(doc.SciControl.ConfigurationLanguage.ToLower());
+                            String optionData;
+                            if (doc.SciControl.ConfigurationLanguage == "haxe")
+                            {
+                                optionData = HaxeAStyleHelper.GetAStyleArguments();
+                            }
+                            else
+                            {
+                                optionData = this.GetOptionData(doc.SciControl.ConfigurationLanguage.ToLower());
+                            }
                             String resultData = asi.FormatSource(source, optionData);
                             if (String.IsNullOrEmpty(resultData))
                             {
@@ -312,10 +325,11 @@ namespace CodeFormatter
                             else
                             {
                                 // Remove all empty lines if not specified for astyle
-                                if (!optionData.Contains("--delete-empty-lines"))
-                                {
-                                    resultData = Regex.Replace(resultData, @"^\s+$[\r\n]*", Environment.NewLine, RegexOptions.Multiline);
-                                }
+                                // Why? Commented out for now, as it conflicts with HaxeAStyleDialog
+                                //if (!optionData.Contains("--delete-empty-lines"))
+                                //{
+                                //    resultData = Regex.Replace(resultData, @"^\s+$[\r\n]*", Environment.NewLine, RegexOptions.Multiline);
+                                //}
                                 doc.SciControl.Text = resultData;
                                 doc.SciControl.ConvertEOLs(doc.SciControl.EOLMode);
                             }

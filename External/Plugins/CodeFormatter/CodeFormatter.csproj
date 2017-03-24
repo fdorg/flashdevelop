@@ -90,18 +90,15 @@
     <Compile Include="Dialogs\HaxeAStyleDialog.Designer.cs">
       <DependentUpon>HaxeAStyleDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Preferences\HaxeAStyleOption.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="InfoCollector\Utilities.cs" />
     <Compile Include="Handlers\AS3_exLexer.cs" />
     <Compile Include="Handlers\AS3_exParser.cs" />
     <Compile Include="Handlers\MXMLLexer.cs" />
     <Compile Include="PluginMain.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Settings.cs" />
+    <Compile Include="Utilities\HaxeAStyleHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\FlashDevelop\FlashDevelop.csproj">
@@ -171,13 +168,6 @@
     <EmbeddedResource Include="Dialogs\HaxeAStyleDialog.resx">
       <DependentUpon>HaxeAStyleDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <None Include="Resources\CodeExample.hx" />
-  </ItemGroup>
 </Project>
