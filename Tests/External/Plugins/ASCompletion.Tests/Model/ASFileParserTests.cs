@@ -1198,12 +1198,20 @@ namespace ASCompletion.Model
             {
                 get
                 {
+                    yield return new TestCaseData("var functionType:String->Void;")
+                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "String->Void"));
                     yield return new TestCaseData("var functionType:(Int->String)->Void;")
                         .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "(Int->String)->Void"));
+                    yield return new TestCaseData("var functionType:String->(Int->String);")
+                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "String->(Int->String)"));
+                    yield return new TestCaseData("var functionType:String->(Int->String)->Void;")
+                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "String->(Int->String)->Void"));
                     yield return new TestCaseData("var functionType:String->{c:Int->String};")
                         .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "String->{c:Int->String}"));
                     yield return new TestCaseData("var functionType:{c:Int->String}->Void;")
                         .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "{c:Int->String}->Void"));
+                    yield return new TestCaseData("var functionType:{c:(Int->String)->String}->Void;")
+                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "{c:(Int->String)->String}->Void"));
                 }
             }
 

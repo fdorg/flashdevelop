@@ -1112,18 +1112,32 @@ namespace ASCompletion.Model
                     else if (inType)
                     {
                         foundColon = false;
-                        if (haXe)
+                        if (haXe && c1 == '>' && ba[i - 2] == '-' && inAnonType)
                         {
-                            if (param.EndsWith('}') || param.Contains(">"))
-                            {
-                                param = ASFileParserRegexes.Spaces.Replace(param, "");
-                                param = param.Replace(",", ", ");
-                                //param = param.Replace("->", " -> ");
-                            }
+                            valueBuffer[valueLength++] = '-';
+                            valueBuffer[valueLength++] = '>';
+                            for (var j = 0; j < valueBuffer.Length; j++)
+                                buffer[j] = valueBuffer[j];
+                            length = valueLength;
+                            hadValue = false;
+                            inValue = false;
+                            continue;
                         }
-                        curMember.Type = param;
-                        length = 0;
-                        inType = false;
+                        else
+                        {
+                            if (haXe)
+                            {
+                                if (param.EndsWith('}') || param.Contains(">"))
+                                {
+                                    param = ASFileParserRegexes.Spaces.Replace(param, "");
+                                    param = param.Replace(",", ", ");
+                                    //param = param.Replace("->", " -> ");
+                                }
+                            }
+                            curMember.Type = param;
+                            length = 0;
+                            inType = false;
+                        }
                     }
                     // AS3 const or method parameter's default value 
                     else if (version > 2 && (curMember.Flags & FlagType.Variable) > 0)
