@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using ASCompletion.TestUtils;
 using NSubstitute;
@@ -7,6 +8,8 @@ using NUnit.Framework;
 
 namespace ASCompletion.Model
 {
+    using MemberWithType = KeyValuePair<MemberModel, string>;
+
     class ASFileParserTests
     {
         [TestFixture]
@@ -1173,7 +1176,7 @@ namespace ASCompletion.Model
                     Context.ASContext.Context = context;
                     var model = context.GetCodeModel(File.ReadAllText(resourceFile.DestinationFile));
 
-                    Assert.AreEqual(5, model.Members.Count);
+                    Assert.AreEqual(3, model.Members.Count);
 
                     var member = model.Members[1];
                     Assert.AreEqual("functionType", member.Name);
@@ -1188,21 +1191,33 @@ namespace ASCompletion.Model
                     Assert.AreEqual(3, member.LineTo);
                     Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
                     Assert.AreEqual("Int->Int->Int", member.Type);
-
-                    member = model.Members[3];
-                    Assert.AreEqual("functionType3", member.Name);
-                    Assert.AreEqual(4, member.LineFrom);
-                    Assert.AreEqual(4, member.LineTo);
-                    Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
-                    Assert.AreEqual("(Int->String)->Void", member.Type);
-
-                    member = model.Members[4];
-                    Assert.AreEqual("functionType4", member.Name);
-                    Assert.AreEqual(5, member.LineFrom);
-                    Assert.AreEqual(5, member.LineTo);
-                    Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
-                    Assert.AreEqual("{Int->String}->Void", member.Type);
                 }
+            }
+
+            static IEnumerable<TestCaseData> FunctionTypesTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("var functionType:(Int->String)->Void;")
+                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "(Int->String)->Void"));
+                    yield return new TestCaseData("var functionType:String->{c:Int->String};")
+                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "String->{c:Int->String}"));
+                    yield return new TestCaseData("var functionType:{c:Int->String}->Void;")
+                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "{c:Int->String}->Void"));
+                }
+            }
+
+            [Test, TestCaseSource(nameof(FunctionTypesTestCases))]
+            public MemberWithType ParseFunctionTypes(string sourceText)
+            {
+                var plugin = Substitute.For<PluginMain>();
+                plugin.MenuItems.Returns(new List<ToolStripItem>());
+                var context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                Context.ASContext.GlobalInit(plugin);
+                Context.ASContext.Context = context;
+                var model = context.GetCodeModel(sourceText);
+                var member = model.Members.Items.First();
+                return new MemberWithType(member, member.Type);
             }
 
             [Test]
@@ -1544,7 +1559,7 @@ namespace ASCompletion.Model
                 }
             }
 
-            [Test(Description="Issue 1075")]
+            [Test(Description = "Issue 1075")]
             public void ParseFile_MethodAfterGenericReturn()
             {
                 using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.MethodAfterGenericReturnTest.hx"))
@@ -1908,8 +1923,6 @@ namespace ASCompletion.Model
                     Assert.AreEqual("dummy", memberModel.MetaDatas[0].Name);
                 }
             }
-
-
         }
     }
 }
