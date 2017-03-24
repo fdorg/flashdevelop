@@ -1114,30 +1114,26 @@ namespace ASCompletion.Model
                         foundColon = false;
                         if (haXe && c1 == '>' && ba[i - 2] == '-' && inAnonType)
                         {
-                            valueBuffer[valueLength++] = '-';
-                            valueBuffer[valueLength++] = '>';
-                            for (var j = 0; j < valueBuffer.Length; j++)
-                                buffer[j] = valueBuffer[j];
-                            length = valueLength;
+                            length = 0;
+                            valueLength = 0;
                             hadValue = false;
                             inValue = false;
+                            curMember.Type = ASFileParserRegexes.Spaces.Replace(param, "").Replace(",", ", ");
+                            i -= 2;
                             continue;
                         }
-                        else
+                        if (haXe)
                         {
-                            if (haXe)
+                            if (param.EndsWith('}') || param.Contains(">"))
                             {
-                                if (param.EndsWith('}') || param.Contains(">"))
-                                {
-                                    param = ASFileParserRegexes.Spaces.Replace(param, "");
-                                    param = param.Replace(",", ", ");
-                                    //param = param.Replace("->", " -> ");
-                                }
+                                param = ASFileParserRegexes.Spaces.Replace(param, "");
+                                param = param.Replace(",", ", ");
+                                //param = param.Replace("->", " -> ");
                             }
-                            curMember.Type = param;
-                            length = 0;
-                            inType = false;
                         }
+                        curMember.Type = param;
+                        length = 0;
+                        inType = false;
                     }
                     // AS3 const or method parameter's default value 
                     else if (version > 2 && (curMember.Flags & FlagType.Variable) > 0)
@@ -1306,7 +1302,20 @@ namespace ASCompletion.Model
                                 paramParCount++;
                                 addChar = true;
                             }
-                            else
+                            else if (c1 == '{' && haXe && length > 1 && buffer[length - 2] == '-' && buffer[length - 1] == '>')
+                            {
+                                paramBraceCount++;
+                                inAnonType = true;
+                                addChar = true;
+                            }
+                            else if (c1 == '}' && haXe && inAnonType)
+                            {
+                                paramBraceCount--;
+                                if (paramBraceCount == 0) inAnonType = false;
+                                addChar = true;
+                            }
+                            else if (haXe && inAnonType && paramBraceCount > 0) addChar = true;
+                            else if (paramBraceCount == 0)
                             {
                                 evalToken = 2;
                                 shortcut = false;
@@ -1652,7 +1661,7 @@ namespace ASCompletion.Model
                         {
                             if (ba[i] == '>' && curMember.Type != null)
                             {
-                                curMember.Type += " ->";
+                                curMember.Type += "->";
                                 foundColon = true;
                             }
                         }
@@ -2222,7 +2231,7 @@ namespace ASCompletion.Model
             if (foundColon && curMember != null)
             {
                 foundColon = false;
-                if (haXe && curMember.Type != null) curMember.Type += " " + curToken.Text;
+                if (haXe && curMember.Type != null) curMember.Type += curToken.Text;
                 else curMember.Type = curToken.Text;
                 curMember.LineTo = curToken.Line;
                 // Typed Arrays
