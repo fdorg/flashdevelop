@@ -166,7 +166,7 @@ namespace CodeRefactor.Commands
                     Sci.Text = sourceText;
                     Sci.ConfigurationLanguage = "haxe";
                     SnippetHelper.PostProcessSnippets(Sci, 0);
-                    CommandFactoryProvider.GetFactoryFromLanguage("haxe").CreateExtractLocalVariableCommand(false, newName).Execute();
+                    CommandFactoryProvider.GetFactory("haxe").CreateExtractLocalVariableCommand(false, newName).Execute();
                     return Sci.Text;
                 }
 
@@ -219,7 +219,7 @@ namespace CodeRefactor.Commands
                     Sci.Text = sourceText;
                     Sci.ConfigurationLanguage = "haxe";
                     SnippetHelper.PostProcessSnippets(Sci, 0);
-                    var command = (ExtractLocalVariableCommand) CommandFactoryProvider.GetFactoryFromLanguage("haxe").CreateExtractLocalVariableCommand(false, newName);
+                    var command = (ExtractLocalVariableCommand) CommandFactoryProvider.GetFactory("haxe").CreateExtractLocalVariableCommand(false, newName);
                     command.Execute();
                     ((CompletionListItem) command.CompletionList[contextualGeneratorItem]).PerformClick();
                     return Sci.Text;
@@ -290,7 +290,7 @@ namespace CodeRefactor.Commands
                     Sci.Text = sourceText;
                     Sci.ConfigurationLanguage = "as3";
                     SnippetHelper.PostProcessSnippets(Sci, 0);
-                    CommandFactoryProvider.GetFactoryFromLanguage("haxe").CreateExtractLocalVariableCommand(false, newName).Execute();
+                    CommandFactoryProvider.GetFactory("haxe").CreateExtractLocalVariableCommand(false, newName).Execute();
                     return Sci.Text;
                 }
                 
