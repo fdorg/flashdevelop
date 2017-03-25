@@ -581,7 +581,7 @@ namespace HaXeContext
         #region SDK
         private InstalledSDK GetCurrentSDK()
         {
-            return hxsettings.InstalledSDKs.FirstOrDefault(sdk => sdk.Path == currentSDK);
+            return hxsettings.InstalledSDKs?.FirstOrDefault(sdk => sdk.Path == currentSDK);
         }
 
         public SemVer GetCurrentSDKVersion()
