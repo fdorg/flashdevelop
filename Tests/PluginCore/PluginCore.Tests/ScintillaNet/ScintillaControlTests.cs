@@ -84,9 +84,9 @@ namespace PluginCore.ScintillaNet
             }
 
             [Test, TestCaseSource(nameof(AS3TestCases))]
-            public string AS3(string sourceText, bool skipWS) => ImplAS3(sci, sourceText, skipWS);
+            public string AS3(string sourceText, bool skipWS) => AS3Impl(sci, sourceText, skipWS);
 
-            static string ImplAS3(ScintillaControl sci, string sourceText, bool skipWS)
+            static string AS3Impl(ScintillaControl sci, string sourceText, bool skipWS)
             {
                 sci.ConfigurationLanguage = "as3";
                 return Common(sci, sourceText, skipWS);
@@ -123,9 +123,9 @@ namespace PluginCore.ScintillaNet
             }
 
             [Test, TestCaseSource(nameof(AS3TestCases))]
-            public string AS3(string sourceText, bool skipWS) => ImplAS3(sci, sourceText, skipWS);
+            public string AS3(string sourceText, bool skipWS) => AS3Impl(sci, sourceText, skipWS);
 
-            static string ImplAS3(ScintillaControl sci, string sourceText, bool skipWS)
+            static string AS3Impl(ScintillaControl sci, string sourceText, bool skipWS)
             {
                 sci.ConfigurationLanguage = "as3";
                 return Common(sci, sourceText, skipWS);

@@ -1303,7 +1303,7 @@ namespace ASCompletion.Completion
 
             if (varname != null && varname == word)
                 varname = varname.Length == 1 ? varname + "1" : varname[0] + "";
-
+            varname = AvoidKeyword(varname);
             string cleanType = null;
             if (type != null) cleanType = FormatType(GetShortType(type));
             
@@ -1334,6 +1334,18 @@ namespace ASCompletion.Completion
                 l.Add(GetQualifiedType(type, inClassForImport));
                 AddImportsByName(l, sci.LineFromPosition(pos));
             }
+        }
+
+        public static string AvoidKeyword(string word)
+        {
+            var features = ASContext.Context.Features;
+            return features.accessKeywords.Contains(word)
+                   || features.codeKeywords.Contains(word)
+                   || features.declKeywords.Contains(word)
+                   || features.typesKeywords.Contains(word)
+                   || features.typesPreKeys.Contains(word)
+                ? $"{word}Value"
+                : word;
         }
 
         private static void EventMetatag(ClassModel inClass, ScintillaControl sci, MemberModel member)
@@ -1606,7 +1618,7 @@ namespace ASCompletion.Completion
                         {
                             app++;
                         }
-                        newParameters.Add(new MemberModel(p.paramName, p.paramType, FlagType.ParameterVar, 0));
+                        newParameters.Add(new MemberModel(AvoidKeyword(p.paramName), p.paramType, FlagType.ParameterVar, 0));
                     }
                 }
                 memberModel.Parameters = newParameters;
@@ -2548,7 +2560,7 @@ namespace ASCompletion.Completion
                 }
                 else if (c == ',' && subClosuresCount == 0)
                 {
-                    if (!isSingleQuote && !isDoubleQuote && subClosuresCount == 0)
+                    if (!isSingleQuote && !isDoubleQuote)
                     {
                         writeParam = true;
                     }

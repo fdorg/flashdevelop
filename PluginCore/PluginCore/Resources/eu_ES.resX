@@ -6103,4 +6103,8 @@ AND - All conditions are met.</value>
     <value>Goto Type Declaration</value>
     <comment>Added after 5.2.1</comment>
   </data>
+  <data name="ResultsPanel.Description.DefaultGrouping" xml:space="preserve">
+    <value>The default column to group results by.</value>
+	<comment>Added after 5.2.1</comment>
+  </data>
 </root>

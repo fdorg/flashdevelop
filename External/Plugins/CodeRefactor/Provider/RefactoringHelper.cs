@@ -9,6 +9,7 @@ using PluginCore;
 using PluginCore.FRService;
 using PluginCore.Helpers;
 using PluginCore.Managers;
+using PluginCore.Utilities;
 using ProjectManager.Projects;
 using ScintillaNet;
 
@@ -368,13 +369,13 @@ namespace CodeRefactor.Provider
             if (target == null) return null;
             var member = target.Member;
             var type = target.Type;
-            if ((member == null || string.IsNullOrEmpty(member.Name)) && (type == null || !CheckFlag(type.Flags, FlagType.Class) && !type.IsEnum()))
+            if ((member == null || string.IsNullOrEmpty(member.Name)) && (type == null || (type.Flags & (FlagType.Class | FlagType.Enum)) == 0))
             {
                 return null;
             }
             // if the target we are trying to rename exists as a local variable or a function parameter we only need to search the current file
-            var currentFileOnly = member != null && (member.Access == Visibility.Private || (member.Flags & FlagType.LocalVar | FlagType.ParameterVar) > 0)
-                               || member == null && type.Access == Visibility.Private;
+            var currentFileOnly = member != null && (member.Access == Visibility.Private && !target.InFile.haXe || (member.Flags & (FlagType.LocalVar | FlagType.ParameterVar)) > 0)
+                               || member == null && (type.Access == Visibility.Private && !type.InFile.haXe || new SemVer(PluginBase.CurrentSDK.Version).IsOlderThan(new SemVer("4.0.0")));
             FRConfiguration config;
             IProject project = PluginBase.CurrentProject;
             String file = PluginBase.MainForm.CurrentDocument.FileName;
