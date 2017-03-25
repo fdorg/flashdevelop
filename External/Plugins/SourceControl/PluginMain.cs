@@ -12,6 +12,7 @@ using ProjectManager;
 using ProjectManager.Actions;
 using ProjectManager.Projects;
 using SourceControl.Actions;
+using SourceControl.Helpers;
 
 namespace SourceControl
 {
@@ -84,9 +85,9 @@ namespace SourceControl
         {
             get { return settingObject; }
         }
-        
+
         #endregion
-        
+
         #region Required Methods
         
         /// <summary>
@@ -282,6 +283,9 @@ namespace SourceControl
                         e.Handled = true;
                     }
                     break;
+                case EventType.ApplyTheme:
+                    AnnotatedDocument.ApplyTheme();
+                    break;
             }
         }
         
@@ -313,7 +317,7 @@ namespace SourceControl
         /// </summary> 
         public void AddEventHandlers()
         {
-            EventManager.AddEventHandler(this, EventType.UIStarted | EventType.Command | EventType.FileModifyRO | EventType.FileOpen | EventType.FileReload | EventType.FileNew | EventType.FileTemplate);
+            EventManager.AddEventHandler(this, EventType.UIStarted | EventType.Command | EventType.FileModifyRO | EventType.FileOpen | EventType.FileReload | EventType.FileNew | EventType.FileTemplate | EventType.ApplyTheme);
         }
 
         /// <summary>

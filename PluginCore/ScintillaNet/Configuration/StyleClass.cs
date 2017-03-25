@@ -161,7 +161,7 @@ namespace ScintillaNet.Configuration
                 if (size != null) return ResolveNumber(size);
                 StyleClass p = ParentClass;
                 if (p != null) return p.FontSize;
-                return Int32.Parse("9f", NumberStyles.Float);
+                return 9;
             }
         }
 
@@ -172,7 +172,7 @@ namespace ScintillaNet.Configuration
                 if (back != null) return ResolveColor(back);
                 StyleClass p = ParentClass;
                 if (p != null) return p.BackgroundColor;
-                return 0;
+                return 0x000000;
             }
         }
 
@@ -183,7 +183,7 @@ namespace ScintillaNet.Configuration
                 if (fore != null) return ResolveColor(fore);
                 StyleClass p = ParentClass;
                 if (p  != null) return p.ForegroundColor;
-                return 0;
+                return 0x000000;
             }
         }
 

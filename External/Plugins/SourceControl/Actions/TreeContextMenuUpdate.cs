@@ -50,6 +50,8 @@ namespace SourceControl.Actions
                 int minLen = items.Count;
 
                 // specific
+                if (state.Files == 1 && state.Total == 1) items.Add(menuItems.Annotate);
+
                 if (state.Files == 2 && state.Total == 2) items.Add(menuItems.Diff);
                 if (state.Conflict == 1 && state.Total == 1) items.Add(menuItems.EditConflict);
 

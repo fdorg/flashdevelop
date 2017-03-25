@@ -19,6 +19,7 @@ namespace SourceControl.Sources.Mercurial
         ToolStripItem push;
         ToolStripItem showLog;
         ToolStripItem midSeparator;
+        ToolStripItem annotate;
         ToolStripItem diffChange;
         ToolStripItem add;
         ToolStripItem ignore;
@@ -34,6 +35,7 @@ namespace SourceControl.Sources.Mercurial
         public ToolStripItem Push { get { return push; } }
         public ToolStripItem ShowLog { get { return showLog; } }
         public ToolStripItem MidSeparator { get { return midSeparator; } }
+        public ToolStripItem Annotate { get { return annotate; } }
         public ToolStripItem Diff { get { return null; } }
         public ToolStripItem DiffChange { get { return diffChange; } }
         public ToolStripItem Add { get { return add; } }
@@ -52,6 +54,7 @@ namespace SourceControl.Sources.Mercurial
             push = new ToolStripMenuItem(TextHelper.GetString("Label.Push"), PluginBase.MainForm.FindImage("159|9|-3|3"), Push_Click);
             showLog = new ToolStripMenuItem(TextHelper.GetString("Label.ShowLog"), PluginBase.MainForm.FindImage("95"), ShowLog_Click);
             midSeparator = new ToolStripSeparator();
+            annotate = new ToolStripMenuItem("Annotate", PluginBase.MainForm.FindImage("45")) { Enabled = false };
             diffChange = new ToolStripMenuItem(TextHelper.GetString("Label.DiffWithPrevious"), PluginBase.MainForm.FindImage("251"), DiffChange_Click);
             add = new ToolStripMenuItem(TextHelper.GetString("Label.Add"), PluginBase.MainForm.FindImage("33"), Add_Click);
             ignore = new ToolStripMenuItem(TextHelper.GetString("Label.AddToIgnoreList"), PluginBase.MainForm.FindImage("166"), Ignore_Click);

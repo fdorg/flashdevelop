@@ -18,22 +18,22 @@ namespace ScintillaNet.Configuration
         [XmlAttribute()]
         public string name;
         
-        [XmlElement(ElementName="line-comment")]
+        [XmlElement("line-comment")]
         public string linecomment;
         
-        [XmlElement(ElementName="comment-start")]
+        [XmlElement("comment-start")]
         public string commentstart;
         
-        [XmlElement(ElementName="comment-end")]
+        [XmlElement("comment-end")]
         public string commentend;
         
-        [XmlElement(ElementName="file-extensions")]
+        [XmlElement("file-extensions")]
         public string fileextensions;
         
-        [XmlElement(ElementName="character-class")]
+        [XmlElement("character-class")]
         public CharacterClass characterclass;
 
-        [XmlElement(ElementName="editor-style")]
+        [XmlElement("editor-style")]
         public EditorStyle editorstyle;
 
         [XmlArray("use-keywords")]

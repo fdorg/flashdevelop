@@ -11,7 +11,7 @@ namespace SourceControl.Sources.Git
         static private string resolvedCmd;
         static private string qualifiedCmd;
 
-        static public void Execute(string command, string path)
+        public static void Execute(string command, string path)
         {
             string args = String.Format("/command:{0} /path:\"{1}\"", command, path);
             ProcessStartInfo info = new ProcessStartInfo(GetTortoiseProc(), args);
@@ -19,12 +19,18 @@ namespace SourceControl.Sources.Git
             Process.Start(info);
         }
 
-        static public void Execute(string command, string path1, string path2)
+        public static void Execute(string command, string path1, string path2)
         {
             string args = String.Format("/command:{0} /path:\"{1}\" /path2:\"{2}\"", command, path1, path2);
             ProcessStartInfo info = new ProcessStartInfo(GetTortoiseProc(), args);
             info.UseShellExecute = true;
             Process.Start(info);
+        }
+
+        public static void ExecuteCustom(string command, string arguments)
+        {
+            string args = "/command:" + command + " " + arguments;
+            Process.Start(new ProcessStartInfo(GetTortoiseProc(), args) { UseShellExecute = true });
         }
 
         static private string GetTortoiseProc()
