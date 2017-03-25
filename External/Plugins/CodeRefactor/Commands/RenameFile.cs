@@ -39,7 +39,7 @@ namespace CodeRefactor.Commands
                 var target = RefactoringHelper.GetRefactorTargetFromFile(oldPath, AssociatedDocumentHelper);
                 if (target != null)
                 {
-                    var command = CommandFactoryProvider.GetFactory(target).CreateRenameCommand(target, true, newFileName);
+                    var command = CommandFactoryProvider.GetFactory(target).CreateRenameCommandAndExecute(target, true, newFileName);
                     command.RegisterDocumentHelper(AssociatedDocumentHelper);
                     return;
                 }

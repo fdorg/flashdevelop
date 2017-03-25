@@ -456,12 +456,10 @@ namespace CodeRefactor
         /// </summary>
         private void RenameClicked(Object sender, EventArgs e)
         {
+            if (InlineRename.InProgress) return;
             try
             {
-                if (!InlineRename.InProgress)
-                {
-                    new Rename(true, settingObject.UseInlineRenaming);
-                }
+                CommandFactoryProvider.GetFactoryForCurrentDocument().CreateRenameCommandAndExecute(true, settingObject.UseInlineRenaming);
             }
             catch (Exception ex)
             {
