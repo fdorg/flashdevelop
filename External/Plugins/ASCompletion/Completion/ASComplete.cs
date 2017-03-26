@@ -3258,6 +3258,7 @@ namespace ASCompletion.Completion
         private static ASExpr GetExpression(ScintillaControl sci, int position, bool ignoreWhiteSpace)
         {
             bool haXe = ASContext.Context.CurrentModel.haXe;
+            var haxe33OrNewer = haXe && new SemVer(PluginBase.CurrentSDK.Version).IsGreaterThanOrEquals(new SemVer("3.3.0"));
             ASExpr expression = new ASExpr();
             expression.Position = position;
             expression.Separator = ' ';
@@ -3537,7 +3538,7 @@ namespace ASCompletion.Completion
                     }
                     else //if (hadWS && !hadDot)
                     {
-                        if (haXe && hadDot && c == '!')
+                        if (haxe33OrNewer && hadDot && c == '!')
                         {
                             sb.Insert(0, ".!");
                             continue;
