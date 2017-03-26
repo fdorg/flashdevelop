@@ -328,7 +328,8 @@ namespace HaXeContext
             //
             classPath = new List<PathModel>();
             // haXe std
-            string hxPath = PluginBase.CurrentProject is HaxeProject
+            HaxeProject proj = PluginBase.CurrentProject as HaxeProject;
+            string hxPath = proj != null
                     ? PluginBase.CurrentProject.CurrentSDK
                     : PathHelper.ResolvePath(hxsettings.GetDefaultSDK().Path);
             if (hxPath != null)
@@ -343,6 +344,11 @@ namespace HaXeContext
                 string haxeCP = Path.Combine(hxPath, "std");
                 if (Directory.Exists(haxeCP))
                 {
+                    if (proj != null)
+                    {
+                        proj.StdPaths.Clear();
+                        proj.StdPaths.Add(haxeCP);
+                    }
                     if (Directory.Exists(Path.Combine(haxeCP, "flash9")))
                     {
                         FLASH_NEW = "flash9";
@@ -383,7 +389,6 @@ namespace HaXeContext
                 string extraCP = Path.Combine(hxPath, "extralibs");
                 if (Directory.Exists(extraCP)) AddPath(extraCP);
             }
-            HaxeProject proj = PluginBase.CurrentProject as HaxeProject;
 
             // swf-libs
             if (HaxeTarget == "flash" && majorVersion >= 9 && proj != null)
