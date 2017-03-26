@@ -330,7 +330,7 @@ namespace HaXeContext
             // haXe std
             HaxeProject proj = PluginBase.CurrentProject as HaxeProject;
             string hxPath = proj != null
-                    ? PluginBase.CurrentProject.CurrentSDK
+                    ? proj.CurrentSDK
                     : PathHelper.ResolvePath(hxsettings.GetDefaultSDK().Path);
             if (hxPath != null)
             {
