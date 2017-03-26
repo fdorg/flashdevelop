@@ -1112,18 +1112,18 @@ namespace ASCompletion.Model
                     else if (inType)
                     {
                         foundColon = false;
-                        if (haXe && c1 == '>' && ba[i - 2] == '-' && inAnonType)
-                        {
-                            length = 0;
-                            valueLength = 0;
-                            hadValue = false;
-                            inValue = false;
-                            curMember.Type = ASFileParserRegexes.Spaces.Replace(param, "").Replace(",", ", ");
-                            i -= 2;
-                            continue;
-                        }
                         if (haXe)
                         {
+                            if (c1 == '>' && ba[i - 2] == '-' && inAnonType)
+                            {
+                                length = 0;
+                                valueLength = 0;
+                                hadValue = false;
+                                inValue = false;
+                                curMember.Type = ASFileParserRegexes.Spaces.Replace(param, "").Replace(",", ", ");
+                                i -= 2;
+                                continue;
+                            }
                             if (param.EndsWith('}') || param.Contains(">"))
                             {
                                 param = ASFileParserRegexes.Spaces.Replace(param, "");
