@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -3496,22 +3497,18 @@ namespace ASCompletion.Completion
                         expression.Separator = ';';
                         break;
                     }
-                    else if (hasGenerics && (genCount > 0 || c == '<'))
+                    else if (hasGenerics && c == '<')
                     {
-                        if (c == '<')
+                        sbSub.Insert(0, c);
+                        if (genCount < 0
+                            && sci.ConfigurationLanguage == "as3"
+                            && position > minPos && sci.CharAt(position - 1) != '.')
                         {
-                            sbSub.Insert(0, c);
-                            if (genCount < 0
-                                && sci.ConfigurationLanguage == "as3"
-                                && position > minPos && sci.CharAt(position - 1) != '.')
-                            {
-                                position--;
-                                expression.Separator = ' ';
-                                break;
-                            }
-                            genCount--;
+                            position--;
+                            expression.Separator = ' ';
+                            break;
                         }
-                        else sb.Insert(0, c);
+                        genCount--;
                     }
                     else if (c == '{')
                     {
@@ -3537,9 +3534,9 @@ namespace ASCompletion.Completion
                     }
                     else //if (hadWS && !hadDot)
                     {
-                        if (haXe && hadDot && c == '!')
+                        if (hadDot && features.SpecialPostfixOperators.Contains(c))
                         {
-                            sb.Insert(0, ".!");
+                            sb.Insert(0, $".{c}");
                             continue;
                         }
                         if (c == '\'' || c == '"') expression.Separator = '"';
