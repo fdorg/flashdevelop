@@ -2903,14 +2903,6 @@ namespace ASCompletion.Completion
                             startPosition = i;
                         }
                     }
-                    /*
-                    var types = s.Split(new[] {"->"}, StringSplitOptions.RemoveEmptyEntries);
-                    for (var i = 0; i < types.Length - 1; i++)
-                    {
-                        var type = types[i].Trim();
-                        functionParameters.Add(new FunctionParameter("parameter" + i, type, type, callerExpr));
-                    }
-                    */
                     newMemberType = s.Substring(endPosition);
                 }
             }
