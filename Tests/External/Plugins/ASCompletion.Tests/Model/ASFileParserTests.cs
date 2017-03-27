@@ -1232,7 +1232,7 @@ namespace ASCompletion.Model
                 return new MemberWithType(member, member.Type);
             }
 
-            private static IEnumerable<TestCaseData> ParseFunctionParametersTestCases
+            static IEnumerable<TestCaseData> ParseFunctionParametersTestCases
             {
                 get
                 {
