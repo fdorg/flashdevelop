@@ -353,7 +353,7 @@
 	<Entry>
 		<Id>flixeltmpl</Id>
 		<Name>HaxeFlixel Template</Name>
-		<Version>2.2.0</Version>
+		<Version>2.3.0</Version>
 		<Build>1</Build>
 		<Desc>Adds the default HaxeFlixel template</Desc>
 		<Group>Templates</Group>
@@ -362,7 +362,7 @@
 		</Bundles>
 		<Info>http://haxeflixel.com/</Info>
 		<Urls>
-			<Url>https://raw.github.com/HaxeFlixel/flixel-templates/5abfebd34c6dbdd2d7d7140bd1f3f63d4572359c/pregenerated/FlxProject.fdz</Url>
+			<Url>https://raw.github.com/HaxeFlixel/flixel-templates/2.3.0/pregenerated/FlxProject.fdz</Url>
 		</Urls>
 	</Entry>
 	<Entry>
