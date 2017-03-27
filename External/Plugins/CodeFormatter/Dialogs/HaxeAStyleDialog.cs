@@ -148,13 +148,6 @@ namespace CodeFormatter.Dialogs
             }
         }
 
-        private void check_Click(object sender, EventArgs e)
-        {
-            ValidateControls(sender);
-
-            ReformatExample();
-        }
-
         /// <summary>
         /// Helper method to fill this dialog from the given <paramref name="options"/>.
         /// </summary>
@@ -361,6 +354,13 @@ namespace CodeFormatter.Dialogs
                 checkAddBrackets.Checked = false;
             }
             //
+        }
+
+        private void check_Click(object sender, EventArgs e)
+        {
+            ValidateControls(sender);
+
+            ReformatExample();
         }
 
         private void numIndentWidth_ValueChanged(object sender, EventArgs e)
