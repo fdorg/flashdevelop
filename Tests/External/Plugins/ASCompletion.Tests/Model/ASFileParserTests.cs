@@ -1238,6 +1238,8 @@ namespace ASCompletion.Model
                 {
                     yield return new TestCaseData("function foo(p:String->Int) {}")
                         .Returns(new[] {"String->Int"});
+                    yield return new TestCaseData("function foo(p:String->Int, p1:Int->String->Void) {}")
+                        .Returns(new[] {"String->Int", "Int->String->Void"});
                     yield return new TestCaseData("function foo(p:String->Int->Void, p2:Int, p3:Int->Array<String>) {}")
                         .Returns(new[] {"String->Int->Void", "Int", "Int->Array<String>"});
                     yield return new TestCaseData("function foo(p:String->{x:Int, y:Int}->Void) {}")
@@ -1245,7 +1247,7 @@ namespace ASCompletion.Model
                     yield return new TestCaseData("function foo ( p : String -> { x : Int, y : Int } -> Void ) {}")
                         .Returns(new[] {"String->{x:Int, y:Int}->Void"});
                     yield return new TestCaseData("function foo(p:String->{p:{x:Int, y:Int}}->Void) {}")
-                        .Returns(new[] { "String->{p:{x:Int, y:Int}}->Void" });
+                        .Returns(new[] {"String->{p:{x:Int, y:Int}}->Void"});
                     yield return new TestCaseData("function foo(p:String->{p1:{x:Int, y:Int}, p2:{x:Int, y:Int}}->Void) {}")
                         .Returns(new[] {"String->{p1:{x:Int, y:Int}, p2:{x:Int, y:Int}}->Void"});
                     yield return new TestCaseData("function foo(p:String->{a:Array<{x:Int, y:Int}>}->Void) {}")
