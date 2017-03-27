@@ -104,6 +104,7 @@ namespace ASCompletion.Completion
         public Dictionary<string, string> metadata = new Dictionary<string,string>();
 
         public MemberModel functionArguments;
+        public char[] SpecialPostfixOperators = {};
 
         /// <summary>
         /// Tells if a word is a keyword which precedes a type (like 'new')

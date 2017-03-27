@@ -31,31 +31,30 @@ namespace CodeRefactor.Provider
             return LanguageToFactory.ContainsKey(language);
         }
 
-        public static ICommandFactory GetFactoryFromCurrentDocument()
+        public static ICommandFactory GetFactoryForCurrentDocument()
         {
             var document = PluginBase.MainForm.CurrentDocument;
             if (document == null || !document.IsEditable) return null;
-            return GetFactoryFromDocument(document);
+            return GetFactory(document);
         }
 
-        public static ICommandFactory GetFactoryFromDocument(ITabbedDocument document)
+        public static ICommandFactory GetFactory(ITabbedDocument document)
         {
-            var language = document.SciControl.ConfigurationLanguage;
-            return GetFactoryFromLanguage(language);
+            return GetFactory(document.SciControl.ConfigurationLanguage);
         }
 
-        public static ICommandFactory GetFactoryFromTarget(ASResult target)
+        public static ICommandFactory GetFactory(ASResult target)
         {
-            return GetFactoryFromFile(target.InFile ?? target.Type.InFile);
+            return GetFactory(target.InFile ?? target.Type.InFile);
         }
 
-        public static ICommandFactory GetFactoryFromFile(FileModel file)
+        public static ICommandFactory GetFactory(FileModel file)
         {
             var language = PluginBase.MainForm.SciConfig.GetLanguageFromFile(file.FileName);
-            return GetFactoryFromLanguage(language);
+            return GetFactory(language);
         }
 
-        public static ICommandFactory GetFactoryFromLanguage(string language)
+        public static ICommandFactory GetFactory(string language)
         {
             return LanguageToFactory[language];
         }

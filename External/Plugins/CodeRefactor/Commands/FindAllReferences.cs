@@ -107,7 +107,6 @@ namespace CodeRefactor.Commands
         /// </summary>
         protected void FindFinished(FRResults results)
         {
-
             UserInterfaceManager.ProgressDialog.Reset();
             UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.ResolvingReferences"));
             // First filter out any results that don't actually point to our source declaration

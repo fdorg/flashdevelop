@@ -458,12 +458,10 @@ namespace CodeRefactor
         /// </summary>
         private void RenameClicked(Object sender, EventArgs e)
         {
+            if (InlineRename.InProgress) return;
             try
             {
-                if (!InlineRename.InProgress)
-                {
-                    new Rename(true, settingObject.UseInlineRenaming);
-                }
+                CommandFactoryProvider.GetFactoryForCurrentDocument().CreateRenameCommandAndExecute(true, settingObject.UseInlineRenaming);
             }
             catch (Exception ex)
             {
@@ -498,7 +496,7 @@ namespace CodeRefactor
         {
             try
             {
-                var command = CommandFactoryProvider.GetFactoryFromCurrentDocument().CreateRenameFileCommand(oldPath, newPath);
+                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateRenameFileCommand(oldPath, newPath);
                 command.Execute();
             }
             catch (Exception ex)
@@ -515,7 +513,7 @@ namespace CodeRefactor
             try
             {
                 var snippet = (sender as ToolStripItem).Text;
-                var command = CommandFactoryProvider.GetFactoryFromCurrentDocument().CreateSurroundWithCommand(snippet);
+                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateSurroundWithCommand(snippet);
                 command.Execute();
             }
             catch (Exception ex)
@@ -531,7 +529,7 @@ namespace CodeRefactor
         {
             try
             {
-                var command = CommandFactoryProvider.GetFactoryFromCurrentDocument().CreateFindAllReferencesCommand(true);
+                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateFindAllReferencesCommand(true);
                 command.Execute();
             }
             catch (Exception ex)
@@ -547,7 +545,7 @@ namespace CodeRefactor
         {
             try
             {
-                var command = (OrganizeImports)CommandFactoryProvider.GetFactoryFromCurrentDocument().CreateOrganizeImportsCommand();
+                var command = (OrganizeImports)CommandFactoryProvider.GetFactoryForCurrentDocument().CreateOrganizeImportsCommand();
                 command.SeparatePackages = this.settingObject.SeparatePackages;
                 command.Execute();
             }
@@ -564,7 +562,7 @@ namespace CodeRefactor
         {
             try
             {
-                var command = (OrganizeImports)CommandFactoryProvider.GetFactoryFromCurrentDocument().CreateOrganizeImportsCommand();
+                var command = (OrganizeImports)CommandFactoryProvider.GetFactoryForCurrentDocument().CreateOrganizeImportsCommand();
                 command.SeparatePackages = this.settingObject.SeparatePackages;
                 command.TruncateImports = true;
                 command.Execute();
@@ -612,7 +610,7 @@ namespace CodeRefactor
                 var dialog = new DelegateMethodsDialog();
                 dialog.FillData(members, result.Type);
                 if (dialog.ShowDialog() != DialogResult.OK || dialog.checkedMembers.Count <= 0) return;
-                var command = CommandFactoryProvider.GetFactoryFromCurrentDocument().CreateDelegateMethodsCommand(result, dialog.checkedMembers);
+                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateDelegateMethodsCommand(result, dialog.checkedMembers);
                 command.Execute();
             }
             catch (Exception ex)
@@ -638,7 +636,7 @@ namespace CodeRefactor
                 {
                     newName = askName.Line.Trim();
                 }
-                var command = CommandFactoryProvider.GetFactoryFromCurrentDocument().CreateExtractMethodCommand(newName);
+                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateExtractMethodCommand(newName);
                 command.Execute();
             }
             catch (Exception ex)
@@ -654,7 +652,7 @@ namespace CodeRefactor
         {
             try
             {
-                var command = CommandFactoryProvider.GetFactoryFromCurrentDocument().CreateExtractLocalVariableCommand();
+                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateExtractLocalVariableCommand();
                 command.Execute();
             }
             catch (Exception ex)

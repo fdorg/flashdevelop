@@ -19,8 +19,6 @@ namespace CodeRefactor.Commands
 
         public RenameFile(String oldPath, String newPath) : this(oldPath, newPath, true)
         {
-            this.oldPath = oldPath;
-            this.newPath = newPath;
         }
 
         public RenameFile(String oldPath, String newPath, Boolean outputResults)
@@ -43,9 +41,8 @@ namespace CodeRefactor.Commands
                 var target = RefactoringHelper.GetRefactorTargetFromFile(oldPath, AssociatedDocumentHelper);
                 if (target != null)
                 {
-                    var command = CommandFactoryProvider.GetFactoryFromTarget(target).CreateRenameCommand(target, true, newFileName);
+                    var command = CommandFactoryProvider.GetFactory(target).CreateRenameCommandAndExecute(target, true, newFileName);
                     command.RegisterDocumentHelper(AssociatedDocumentHelper);
-                    command.Execute();
                     return;
                 }
             }

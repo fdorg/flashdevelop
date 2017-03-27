@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -3535,9 +3536,9 @@ namespace ASCompletion.Completion
                     }
                     else //if (hadWS && !hadDot)
                     {
-                        if (haXe && hadDot && c == '!')
+                        if (hadDot && features.SpecialPostfixOperators.Contains(c))
                         {
-                            sb.Insert(0, ".!");
+                            sb.Insert(0, $".{c}");
                             continue;
                         }
                         if (c == '\'' || c == '"') expression.Separator = '"';

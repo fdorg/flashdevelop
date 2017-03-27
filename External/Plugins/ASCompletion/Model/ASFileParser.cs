@@ -1116,6 +1116,16 @@ namespace ASCompletion.Model
                         foundColon = false;
                         if (haXe)
                         {
+                            if (c1 == '>' && ba[i - 2] == '-' && inAnonType)
+                            {
+                                length = 0;
+                                valueLength = 0;
+                                hadValue = false;
+                                inValue = false;
+                                curMember.Type = ASFileParserRegexes.Spaces.Replace(param, "").Replace(",", ", ");
+                                i -= 2;
+                                continue;
+                            }
                             if (param.EndsWith('}') || param.Contains(">"))
                             {
                                 param = ASFileParserRegexes.Spaces.Replace(param, "");
@@ -1294,7 +1304,20 @@ namespace ASCompletion.Model
                                 paramParCount++;
                                 addChar = true;
                             }
-                            else
+                            else if (c1 == '{' && haXe && length > 1 && buffer[length - 2] == '-' && buffer[length - 1] == '>')
+                            {
+                                paramBraceCount++;
+                                inAnonType = true;
+                                addChar = true;
+                            }
+                            else if (c1 == '}' && haXe && inAnonType)
+                            {
+                                paramBraceCount--;
+                                if (paramBraceCount == 0) inAnonType = false;
+                                addChar = true;
+                            }
+                            else if (haXe && inAnonType && paramBraceCount > 0) addChar = true;
+                            else if (paramBraceCount == 0)
                             {
                                 evalToken = 2;
                                 shortcut = false;
@@ -1640,7 +1663,7 @@ namespace ASCompletion.Model
                         {
                             if (ba[i] == '>' && curMember.Type != null)
                             {
-                                curMember.Type += " ->";
+                                curMember.Type += "->";
                                 foundColon = true;
                             }
                         }
@@ -2210,7 +2233,7 @@ namespace ASCompletion.Model
             if (foundColon && curMember != null)
             {
                 foundColon = false;
-                if (haXe && curMember.Type != null) curMember.Type += " " + curToken.Text;
+                if (haXe && curMember.Type != null) curMember.Type += curToken.Text;
                 else curMember.Type = curToken.Text;
                 curMember.LineTo = curToken.Line;
                 // Typed Arrays
