@@ -751,13 +751,25 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction"), GeneratorJobType.Function )
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextHaxe("AfterGeneratePrivateFunction_generateExplicitScopeIsFalse"))
                                 .SetName("Generate private function");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction"), GeneratorJobType.FunctionPublic)
                                 .Returns(ReadAllTextHaxe("AfterGeneratePublicFunction_generateExplicitScopeIsFalse"))
                                 .SetName("Generate public function");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_2"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_2"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_3"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_3"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                     }
                 }
 
