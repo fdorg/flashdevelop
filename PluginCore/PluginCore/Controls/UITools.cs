@@ -398,12 +398,11 @@ namespace PluginCore.Controls
                 ignoreKeys = false;
                 if (!ke.Handled && PluginBase.MainForm.CurrentDocument.IsEditable)
                 {
-                    PluginBase.MainForm.CurrentDocument.SciControl.BeginUndoAction();
+                    var sciControl = PluginBase.MainForm.CurrentDocument.SciControl;
+                    sciControl.BeginUndoAction();
                     try
                     {
-                        var sciControl = PluginBase.MainForm.CurrentDocument.SciControl;
                         sciControl.LineEnd();
-                        sciControl.SetSel(sciControl.CurrentPos, sciControl.CurrentPos);
                         sciControl.ReplaceSel(sciControl.NewLineMarker);
                         var line = sciControl.CurrentLine;
                         var indentSize = sciControl.GetLineIndentation(line - 1);
@@ -413,7 +412,7 @@ namespace PluginCore.Controls
                     }
                     finally
                     {
-                        PluginBase.MainForm.CurrentDocument.SciControl.EndUndoAction();
+                        sciControl.EndUndoAction();
                     }
                 }
                 return true;
