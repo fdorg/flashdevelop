@@ -401,8 +401,15 @@ namespace PluginCore.Controls
                     PluginBase.MainForm.CurrentDocument.SciControl.BeginUndoAction();
                     try
                     {
-                        PluginBase.MainForm.CurrentDocument.SciControl.LineEnd();
-                        PluginBase.MainForm.CurrentDocument.SciControl.NewLine();
+                        var sciControl = PluginBase.MainForm.CurrentDocument.SciControl;
+                        sciControl.LineEnd();
+                        sciControl.SetSel(sciControl.CurrentPos, sciControl.CurrentPos);
+                        sciControl.ReplaceSel(sciControl.NewLineMarker);
+                        var line = sciControl.CurrentLine;
+                        var indentSize = sciControl.GetLineIndentation(line - 1);
+                        sciControl.SetLineIndentation(line, indentSize);
+                        var pos = sciControl.CurrentPos + indentSize;
+                        sciControl.SetSel(pos, pos);
                     }
                     finally
                     {
