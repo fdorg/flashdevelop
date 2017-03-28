@@ -1232,7 +1232,7 @@ namespace ASCompletion.Model
                 return new MemberWithType(member, member.Type);
             }
 
-            static IEnumerable<TestCaseData> ParseFunctionParametersTestCases
+            private static IEnumerable<TestCaseData> ParseFunctionParametersTestCases
             {
                 get
                 {
@@ -1260,6 +1260,20 @@ namespace ASCompletion.Model
                         .Returns(new[] {"Map<String, {x:Int, y:Int}>"});
                     yield return new TestCaseData("function foo(p:Map<{x:Int, y:Int}, String>) {}")
                         .Returns(new[] {"Map<{x:Int, y:Int}, String>"});
+                    yield return new TestCaseData("function foo ( p : Map <{ x : Int , y : Int } , String> ) {}")
+                        .Returns(new[] {"Map<{x:Int, y:Int}, String>"});
+                    yield return new TestCaseData("function foo(p:Map< {x:Int, y:Int}, String > ) {}")
+                        .Returns(new[] {"Map<{x:Int, y:Int}, String>"});
+                    yield return new TestCaseData("function foo ( p : Map < { x : Int , y : Int } , String > ) {}")
+                        .Returns(new[] {"Map<{x:Int, y:Int}, String>"});
+                    yield return new TestCaseData("function foo ( p : Map < { c : Int -> { x : Int , y : Int } } , String > ) {}")
+                        .Returns(new[] {"Map<{c:Int->{x:Int, y:Int}}, String>"});
+                    yield return new TestCaseData("function foo(p:Map<{c:Int->{x:Int,y:Int}},String>) {}")
+                        .Returns(new[] {"Map<{c:Int->{x:Int, y:Int}}, String>"});
+                    yield return new TestCaseData("function foo(p:Map<{c:Int->Point/*{x:Int,y:Int}*/},String>) {}")
+                        .Returns(new[] {"Map<{c:Int->Point}, String>"});
+                    yield return new TestCaseData("function foo(p:Map<{c:Int->/*{x:Int,y:Int}*/Point},String>) {}")
+                        .Returns(new[] {"Map<{c:Int->Point}, String>"});
                 }
             }
 
