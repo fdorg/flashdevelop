@@ -111,6 +111,7 @@ namespace PluginCore.Controls
             //
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control); // complete member
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control | Keys.Shift); // complete method
+            PluginBase.MainForm.IgnoredKeys.Add(Keys.Shift | Keys.Enter); // Start new line
             PluginBase.MainForm.DockPanel.ActivePaneChanged += new EventHandler(DockPanel_ActivePaneChanged);
             EventManager.AddEventHandler(this, eventMask);
         }
@@ -388,7 +389,28 @@ namespace PluginCore.Controls
                 }
                 return true;
             }
-
+            // Start new line
+            if (key == (Keys.Shift | Keys.Enter))
+            {
+                ignoreKeys = true;
+                var ke = new KeyEvent(EventType.Keys, key);
+                EventManager.DispatchEvent(this, ke);
+                ignoreKeys = false;
+                if (!ke.Handled && PluginBase.MainForm.CurrentDocument.IsEditable)
+                {
+                    PluginBase.MainForm.CurrentDocument.SciControl.BeginUndoAction();
+                    try
+                    {
+                        PluginBase.MainForm.CurrentDocument.SciControl.LineEnd();
+                        PluginBase.MainForm.CurrentDocument.SciControl.NewLine();
+                    }
+                    finally
+                    {
+                        PluginBase.MainForm.CurrentDocument.SciControl.EndUndoAction();
+                    }
+                }
+                return true;
+            }
             // toggle "long-description" for the hover tooltip
             if (key == Keys.F1 && Tip.Visible && !CompletionList.Active)
             {
