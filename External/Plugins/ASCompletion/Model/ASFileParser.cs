@@ -1192,7 +1192,7 @@ namespace ASCompletion.Model
                     }
 
                     // should we evaluate the token?
-                    if (hadWS && !hadDot && !inGeneric && length > 0)
+                    if (hadWS && !hadDot && !inGeneric && length > 0 && paramBraceCount == 0)
                     {
                         evalToken = 1;
                     }
@@ -1302,7 +1302,7 @@ namespace ASCompletion.Model
                                 paramParCount++;
                                 addChar = true;
                             }
-                            else if (c1 == '{' && haXe && length > 1 && buffer[length - 2] == '-' && buffer[length - 1] == '>')
+                            else if (c1 == '{' && haXe && length > 1 && ((buffer[length - 2] == '-' && buffer[length - 1] == '>') || buffer[length - 1] == ':'))
                             {
                                 paramBraceCount++;
                                 inAnonType = true;
@@ -2233,6 +2233,7 @@ namespace ASCompletion.Model
                 foundColon = false;
                 if (haXe && curMember.Type != null) curMember.Type += curToken.Text;
                 else curMember.Type = curToken.Text;
+                curMember.Type = ASFileParserRegexes.Spaces.Replace(curMember.Type, string.Empty).Replace(",", ", ");
                 curMember.LineTo = curToken.Line;
                 // Typed Arrays
 
@@ -2507,7 +2508,8 @@ namespace ASCompletion.Model
                         if (haXe && curMember != null && curMember.Type != null
                             && curMember.Type.EndsWithOrdinal("->"))
                         {
-                            curMember.Type += " " + token;
+                            curMember.Type += token;
+                            curMember.Type = ASFileParserRegexes.Spaces.Replace(curMember.Type, string.Empty).Replace(",", ", ");
                             return false;
                         }
                         else
