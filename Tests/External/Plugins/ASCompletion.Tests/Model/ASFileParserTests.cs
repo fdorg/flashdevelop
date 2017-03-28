@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using ASCompletion.TestUtils;
 using NSubstitute;
@@ -7,6 +8,8 @@ using NUnit.Framework;
 
 namespace ASCompletion.Model
 {
+    using MemberWithType = KeyValuePair<MemberModel, string>;
+
     class ASFileParserTests
     {
         [TestFixture]
@@ -1191,6 +1194,78 @@ namespace ASCompletion.Model
                 }
             }
 
+            static IEnumerable<TestCaseData> FunctionTypesTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("var functionType:String->Void;")
+                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "String->Void"));
+                    yield return new TestCaseData("var functionType:(Int->String)->Void;")
+                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "(Int->String)->Void"));
+                    yield return new TestCaseData("var functionType:String->(Int->String);")
+                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "String->(Int->String)"));
+                    yield return new TestCaseData("var functionType:String->(Int->String)->Void;")
+                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "String->(Int->String)->Void"));
+                    yield return new TestCaseData("var functionType:String->{c:Int->String};")
+                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "String->{c:Int->String}"));
+                    yield return new TestCaseData("var functionType:{c:Int->String}->Void;")
+                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "{c:Int->String}->Void"));
+                    yield return new TestCaseData("var functionType:{c:(Int->String)->String}->Void;")
+                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "{c:(Int->String)->String}->Void"));
+                    yield return new TestCaseData("var functionType:String->{c:Int->Array<String>};")
+                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "String->{c:Int->Array<String>}"));
+                    yield return new TestCaseData("var functionType:String->{c:Int->Array<{x:Int, y:Int}>};")
+                        .Returns(new MemberWithType(new MemberModel {Name = "functionType", Flags = FlagType.Dynamic | FlagType.Variable}, "String->{c:Int->Array<{x:Int, y:Int}>}"));
+                }
+            }
+
+            [Test, TestCaseSource(nameof(FunctionTypesTestCases))]
+            public MemberWithType ParseFunctionTypes(string sourceText)
+            {
+                var plugin = Substitute.For<PluginMain>();
+                plugin.MenuItems.Returns(new List<ToolStripItem>());
+                var context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                Context.ASContext.GlobalInit(plugin);
+                Context.ASContext.Context = context;
+                var model = context.GetCodeModel(sourceText);
+                var member = model.Members.Items.First();
+                return new MemberWithType(member, member.Type);
+            }
+
+            private static IEnumerable<TestCaseData> ParseFunctionParametersTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("function foo(p:String->Int) {}")
+                        .Returns(new[] {"String->Int"});
+                    yield return new TestCaseData("function foo(p:String->Int->Void, p2:Int, p3:Int->Array<String>) {}")
+                        .Returns(new[] {"String->Int->Void", "Int", "Int->Array<String>"});
+                    yield return new TestCaseData("function foo(p:String->{x:Int, y:Int}->Void) {}")
+                        .Returns(new[] {"String->{x:Int, y:Int}->Void"});
+                    yield return new TestCaseData("function foo ( p : String -> { x : Int, y : Int } -> Void ) {}")
+                        .Returns(new[] {"String->{x:Int, y:Int}->Void"});
+                    yield return new TestCaseData("function foo(p:String->{p:{x:Int, y:Int}}->Void) {}")
+                        .Returns(new[] { "String->{p:{x:Int, y:Int}}->Void" });
+                    yield return new TestCaseData("function foo(p:String->{p1:{x:Int, y:Int}, p2:{x:Int, y:Int}}->Void) {}")
+                        .Returns(new[] {"String->{p1:{x:Int, y:Int}, p2:{x:Int, y:Int}}->Void"});
+                    yield return new TestCaseData("function foo(p:String->{a:Array<{x:Int, y:Int}>}->Void) {}")
+                        .Returns(new[] {"String->{a:Array<{x:Int, y:Int}>}->Void"});
+                }
+            }
+
+            [Test, TestCaseSource(nameof(ParseFunctionParametersTestCases))]
+            public IEnumerable<string> ParseFunctionParameters(string sourceText)
+            {
+                var plugin = Substitute.For<PluginMain>();
+                plugin.MenuItems.Returns(new List<ToolStripItem>());
+                var context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                Context.ASContext.GlobalInit(plugin);
+                Context.ASContext.Context = context;
+                var model = context.GetCodeModel(sourceText);
+                var member = model.Members.Items.First();
+                return member.Parameters.Select(it => it.Type);
+            }
+
             [Test]
             public void ParseFile_FunctionTypesWithSubTypes()
             {
@@ -1530,7 +1605,7 @@ namespace ASCompletion.Model
                 }
             }
 
-            [Test(Description="Issue 1075")]
+            [Test(Description = "Issue 1075")]
             public void ParseFile_MethodAfterGenericReturn()
             {
                 using (var resourceFile = new TestFile("ASCompletion.Test_Files.parser.haxe.MethodAfterGenericReturnTest.hx"))

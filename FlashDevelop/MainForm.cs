@@ -589,7 +589,7 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Opens the specified file and creates a editable document
+        /// Opens the specified file and creates an editable document
         /// </summary>
         public DockContent OpenEditableDocument(String org, Encoding encoding, Boolean restorePosition)
         {

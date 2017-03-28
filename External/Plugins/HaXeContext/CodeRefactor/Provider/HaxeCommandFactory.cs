@@ -15,9 +15,9 @@ namespace HaXeContext.CodeRefactor.Provider
     {
         public override Command CreateFindAllReferencesCommand(ASResult target, bool output, bool ignoreDeclarations, bool onlySourceFiles)
         {
-            if (target.Member != null && (target.Member.Flags & FlagType.LocalVar) != 0)
+            if (target.Member != null && (target.Member.Flags & (FlagType.LocalVar | FlagType.ParameterVar)) != 0)
             {
-                var context = (HaXeContext.Context) ASContext.GetLanguageContext("haxe");
+                var context = (Context) ASContext.GetLanguageContext("haxe");
                 if (((HaXeSettings) context.Settings).CompletionMode != HaxeCompletionModeEnum.FlashDevelop
                     && context.GetCurrentSDKVersion().IsGreaterThanOrEquals(new SemVer("3.2.0")))
                 {

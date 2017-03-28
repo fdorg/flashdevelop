@@ -589,6 +589,32 @@
 			<Url>https://github.com/wise0704/SwcBuild/releases/download/v1.5.0/swcbuild.fdz</Url>
 		</Urls>
 	</Entry>
+	<Entry>
+		<Id>yeomantemplates</Id>
+		<Name>Yeoman</Name>
+		<Version>0.4</Version>
+		<Build>1</Build>
+		<Checksum>2632B57F753DD691FF4271384EF81B2E</Checksum>
+		<Desc>Adds Yeoman generators to the project add menu</Desc>
+		<Group>Plugins</Group>
+		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=12936</Info>
+		<Urls>
+			<Url>https://github.com/DoclerLabs/hexDevelop/releases/download/v0.4/Yeoman.fdz</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>editorconfig</Id>
+		<Name>EditorConfig</Name>
+		<Version>0.5</Version>
+		<Build>1</Build>
+		<Checksum>F32758B7412C420A840077AF8D92BAA8</Checksum>
+		<Desc>Adds .editorconfig support</Desc>
+		<Group>Plugins</Group>
+		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=12935</Info>
+		<Urls>
+			<Url>https://github.com/DoclerLabs/hexDevelop/releases/download/v0.5/EditorConfig.fdz</Url>
+		</Urls>
+	</Entry>
 	FD5-->
 	<!--Haxelib
 	<Entry>
