@@ -965,7 +965,7 @@ namespace ASCompletion.Model
 
 
                 /* PARSE DECLARATION VALUES/TYPES */
-
+                
                 if (inValue)
                 {
                     bool stopParser = false;
@@ -982,7 +982,7 @@ namespace ASCompletion.Model
                     }
                     else if (c1 == '{')
                     {
-                        if (!inType || valueLength == 0 || valueBuffer[valueLength - 1] == '<' || paramBraceCount > 0)
+                        if (!inType || valueLength == 0 || valueBuffer[valueLength - 1] == '<' || paramBraceCount > 0 || paramTempCount > 0)
                         {
                             paramBraceCount++;
                             stopParser = true;
@@ -1077,8 +1077,8 @@ namespace ASCompletion.Model
                             if (valueLength < VALUE_BUFFER) valueBuffer[valueLength++] = c1;
                             continue;
                         }
-                        if (stopParser || paramBraceCount > 0 || paramSqCount > 0) continue;
-                        else if (valueError && c1 == ')') inValue = false;
+                        if (stopParser || paramBraceCount > 0 || paramSqCount > 0 || paramParCount > 0 || paramTempCount > 0) continue;
+                        if (valueError && c1 == ')') inValue = false;
                         else if (inType && inGeneric && (c1 == '<' || c1 == '.')) continue;
                         else if (inAnonType) continue;
                         else if (c1 != '_') hadWS = true;
@@ -1232,7 +1232,7 @@ namespace ASCompletion.Model
                             else if (c1 == '<' && features.hasGenerics)
                             {
                                 if (!inValue && i > 2 && length > 1 && i < len - 3
-                                    && char.IsLetterOrDigit(ba[i - 3]) && (char.IsLetter(ba[i]) || (haXe && ba[i] == '{'))
+                                    && char.IsLetterOrDigit(ba[i - 3]) && (char.IsLetter(ba[i]) || (haXe && (ba[i] == '{' || ba[i] == '(' || ba[i] <= ' ')))
                                     && (char.IsLetter(buffer[0]) || buffer[0] == '_' || inType && buffer[0] == '('))
                                 {
                                     if (curMember == null)
@@ -1284,7 +1284,7 @@ namespace ASCompletion.Model
                                     }
                                 }
                             }
-                            else if (c1 == ')' && haXe && inType)
+                            else if (haXe && inType && c1 == ')')
                             {
                                 if (paramParCount > 0)
                                 {
@@ -1299,24 +1299,34 @@ namespace ASCompletion.Model
                                     evalToken = 1;
                                 }
                             }
-                            else if (c1 == '(' && haXe && inType)
+                            else if (haXe && inType && c1 == '(')
                             {
                                 paramParCount++;
                                 addChar = true;
                             }
-                            else if (c1 == '{' && haXe && length > 1 && ((buffer[length - 2] == '-' && buffer[length - 1] == '>') || buffer[length - 1] == ':'))
+                            else if (haXe && c1 == '{' && length > 1
+                                    && (buffer[length - 2] == '-' && buffer[length - 1] == '>'
+                                        || buffer[length - 1] == ':'
+                                        || buffer[length - 1] == '('
+                                        || buffer[length - 1] == '?'))
                             {
                                 paramBraceCount++;
                                 inAnonType = true;
                                 addChar = true;
                             }
-                            else if (c1 == '}' && haXe && inAnonType)
+                            else if (haXe && inAnonType && c1 == '}')
                             {
                                 paramBraceCount--;
                                 if (paramBraceCount == 0) inAnonType = false;
                                 addChar = true;
                             }
                             else if (haXe && inAnonType && paramBraceCount > 0) addChar = true;
+                            else if (haXe && c1 == '?')
+                            {
+                                hadWS = false;
+                                evalToken = 0;
+                                addChar = true;
+                            }
                             else if (paramBraceCount == 0)
                             {
                                 evalToken = 2;
