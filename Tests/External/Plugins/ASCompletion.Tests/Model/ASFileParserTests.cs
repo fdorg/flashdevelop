@@ -1278,6 +1278,10 @@ namespace ASCompletion.Model
                         .Returns(new[] {"Map<{c:Int->Point}, String>"});
                     yield return new TestCaseData("function foo(p:Map<{c:Int->/*{x:Int,y:Int}*/Point},String>) {}")
                         .Returns(new[] {"Map<{c:Int->Point}, String>"});
+                    yield return new TestCaseData("function foo(p:Map<Int, Array<Map<Int, String>>>) {}")
+                        .Returns(new[] {"Map<Int, Array<Map<Int, String>>>"});
+                    yield return new TestCaseData("function foo(p:{}) {}")
+                        .Returns(new[] {"{}"});
                 }
             }
 
