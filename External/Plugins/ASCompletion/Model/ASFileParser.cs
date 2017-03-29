@@ -1312,12 +1312,6 @@ namespace ASCompletion.Model
                                 inAnonType = true;
                                 addChar = true;
                             }
-                            else if (haXe && c1 == '?')
-                            {
-                                hadWS = false;
-                                evalToken = 0;
-                                addChar = true;
-                            }
                             else if (haXe && inAnonType && c1 == '}')
                             {
                                 paramBraceCount--;
@@ -1325,6 +1319,12 @@ namespace ASCompletion.Model
                                 addChar = true;
                             }
                             else if (haXe && inAnonType && paramBraceCount > 0) addChar = true;
+                            else if (haXe && c1 == '?')
+                            {
+                                hadWS = false;
+                                evalToken = 0;
+                                addChar = true;
+                            }
                             else if (paramBraceCount == 0)
                             {
                                 evalToken = 2;
