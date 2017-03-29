@@ -1256,6 +1256,10 @@ namespace ASCompletion.Model
                         .Returns(new[] {"(String->{a:Array<{x:Int, y:Int}>})->Void"});
                     yield return new TestCaseData("function foo(p:String->({a:Array<{x:Int, y:Int}>}->Void)) {}")
                         .Returns(new[] {"String->({a:Array<{x:Int, y:Int}>}->Void)"});
+                    yield return new TestCaseData("function foo(p:Array<(Int->Void)->Int->Void>) {}")
+                        .Returns(new[] {"Array<(Int->Void)->Int->Void>"});
+                    yield return new TestCaseData("function foo(p : Array < ( Int -> Void ) -> Int -> Void > ) {}")
+                        .Returns(new[] {"Array<(Int->Void)->Int->Void>"});
                     yield return new TestCaseData("function foo(p:Map<String, {x:Int, y:Int}>) {}")
                         .Returns(new[] {"Map<String, {x:Int, y:Int}>"});
                     yield return new TestCaseData("function foo(p:Map<{x:Int, y:Int}, String>) {}")
@@ -1274,6 +1278,10 @@ namespace ASCompletion.Model
                         .Returns(new[] {"Map<{c:Int->Point}, String>"});
                     yield return new TestCaseData("function foo(p:Map<{c:Int->/*{x:Int,y:Int}*/Point},String>) {}")
                         .Returns(new[] {"Map<{c:Int->Point}, String>"});
+                    yield return new TestCaseData("function foo(p:Map<Int, Array<Map<Int, String>>>) {}")
+                        .Returns(new[] {"Map<Int, Array<Map<Int, String>>>"});
+                    yield return new TestCaseData("function foo(p:{}) {}")
+                        .Returns(new[] {"{}"});
                 }
             }
 
