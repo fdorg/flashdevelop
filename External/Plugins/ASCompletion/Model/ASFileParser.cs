@@ -963,7 +963,7 @@ namespace ASCompletion.Model
 
 
                 /* PARSE DECLARATION VALUES/TYPES */
-
+                
                 if (inValue)
                 {
                     bool stopParser = false;
@@ -1302,7 +1302,11 @@ namespace ASCompletion.Model
                                 paramParCount++;
                                 addChar = true;
                             }
-                            else if (haXe && c1 == '{' && length > 1 && ((buffer[length - 2] == '-' && buffer[length - 1] == '>') || buffer[length - 1] == ':' || buffer[length - 1] == '('))
+                            else if (haXe && c1 == '{' && length > 1
+                                    && (buffer[length - 2] == '-' && buffer[length - 1] == '>'
+                                        || buffer[length - 1] == ':'
+                                        || buffer[length - 1] == '('
+                                        || buffer[length - 1] == '?'))
                             {
                                 paramBraceCount++;
                                 inAnonType = true;
@@ -1315,6 +1319,12 @@ namespace ASCompletion.Model
                                 addChar = true;
                             }
                             else if (haXe && inAnonType && paramBraceCount > 0) addChar = true;
+                            else if (haXe && c1 == '?')
+                            {
+                                hadWS = false;
+                                evalToken = 0;
+                                addChar = true;
+                            }
                             else if (paramBraceCount == 0)
                             {
                                 evalToken = 2;

@@ -1282,6 +1282,14 @@ namespace ASCompletion.Model
                         .Returns(new[] {"Map<Int, Array<Map<Int, String>>>"});
                     yield return new TestCaseData("function foo(p:{}) {}")
                         .Returns(new[] {"{}"});
+                    yield return new TestCaseData("function foo(p:String->?{x:Int, y:Int}->Void) {}")
+                        .Returns(new[] {"String->?{x:Int, y:Int}->Void"});
+                    yield return new TestCaseData("function foo(p:?String->?{x:Int, y:Int}->Void) {}")
+                        .Returns(new[] {"?String->?{x:Int, y:Int}->Void"});
+                    yield return new TestCaseData("function foo(p:?String->?{?x:Int, ?y:Int}->Void) {}")
+                        .Returns(new[] {"?String->?{?x:Int, ?y:Int}->Void"});
+                    yield return new TestCaseData("function foo ( p : ?String -> ?{ ?x : Int , ?y : Int} -> Void ) {}")
+                        .Returns(new[] {"?String->?{?x:Int, ?y:Int}->Void"});
                 }
             }
 
