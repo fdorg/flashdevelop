@@ -1232,7 +1232,7 @@ namespace ASCompletion.Model
                 return new MemberWithType(member, member.Type);
             }
 
-            private static IEnumerable<TestCaseData> ParseFunctionParametersTestCases
+            static IEnumerable<TestCaseData> ParseFunctionParametersTestCases
             {
                 get
                 {
@@ -1290,6 +1290,12 @@ namespace ASCompletion.Model
                         .Returns(new[] {"?String->?{?x:Int, ?y:Int}->Void"});
                     yield return new TestCaseData("function foo ( p : ?String -> ?{ ?x : Int , ?y : Int} -> Void ) {}")
                         .Returns(new[] {"?String->?{?x:Int, ?y:Int}->Void"});
+                    yield return new TestCaseData("function foo(p:Array<?(Int->Void)->Int->Void>) {}")
+                        .Returns(new[] {"Array<?(Int->Void)->Int->Void>"});
+                    yield return new TestCaseData("function foo(p:Array<?(?Int->Void)->?Int->Void>) {}")
+                        .Returns(new[] {"Array<?(?Int->Void)->?Int->Void>"});
+                    yield return new TestCaseData("function foo ( p : Array < ? ( ?Int -> Void ) -> ?Int -> Void > ) {}")
+                        .Returns(new[] {"Array<?(?Int->Void)->?Int->Void>"});
                 }
             }
 
