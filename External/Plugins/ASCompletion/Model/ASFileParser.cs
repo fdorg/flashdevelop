@@ -700,7 +700,7 @@ namespace ASCompletion.Model
                             }
                         }
                         // end of string?
-                        else if (isInString)
+                        else
                         {
                             if (c1 == 10 || c1 == 13) { if (!haXe) inString = 0; }
                             else if ((c1 == '"' && inString == 1) || (c1 == '\'' && inString == 2))
