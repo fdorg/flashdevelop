@@ -1230,7 +1230,7 @@ namespace ASCompletion.Model
                             else if (c1 == '<' && features.hasGenerics)
                             {
                                 if (!inValue && i > 2 && length > 1 && i < len - 3
-                                    && char.IsLetterOrDigit(ba[i - 3]) && (char.IsLetter(ba[i]) || (haXe && (ba[i] == '{' || ba[i] == '(' || ba[i] <= ' ')))
+                                    && char.IsLetterOrDigit(ba[i - 3]) && (char.IsLetter(ba[i]) || (haXe && (ba[i] == '{' || ba[i] == '(' || ba[i] <= ' ' || ba[i] == '?')))
                                     && (char.IsLetter(buffer[0]) || buffer[0] == '_' || inType && buffer[0] == '('))
                                 {
                                     if (curMember == null)
