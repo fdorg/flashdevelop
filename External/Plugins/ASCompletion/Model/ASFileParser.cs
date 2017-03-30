@@ -1556,7 +1556,7 @@ namespace ASCompletion.Model
                             }
 
                             // an Enum value with parameters
-                            else if (inEnum && curToken != null)
+                            else if (inEnum)
                             {
                                 context = FlagType.Variable;
                                 inParams = true;
@@ -1569,7 +1569,7 @@ namespace ASCompletion.Model
                             }
 
                             // a TypeDef method with parameters
-                            else if (inTypedef && curToken != null)
+                            else if (inTypedef)
                             {
                                 context = FlagType.Variable;
                                 inParams = true;
