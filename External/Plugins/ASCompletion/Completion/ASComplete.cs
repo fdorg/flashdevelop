@@ -417,7 +417,7 @@ namespace ASCompletion.Completion
                 sci.AddText(1, c.ToString());
                 
                 // not inside a string literal
-                if (!IsStringStyle(styleBefore) && !IsCharStyle(styleBefore) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
+                if (!IsStringStyle(styleAfter) && !IsCharStyle(styleAfter) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
                 {
                     foreach (var braces in ASContext.CommonSettings.AddClosingBracesOptions)
                     {
