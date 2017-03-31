@@ -136,7 +136,7 @@ namespace LintingHelper.Managers
 
             foreach (var result in results)
             {
-                TraceManager.Add(result.Line + ":" + result.FirstChar + "-" + result.Length + ":" + result.Description);
+                //TraceManager.Add(result.Line + ":" + result.FirstChar + "-" + result.Length + ":" + result.Description);
                 var doc = DocumentManager.FindDocument(result.File);
                 if (doc != null)
                 {
@@ -165,7 +165,7 @@ namespace LintingHelper.Managers
                             color = 0x00008000;
                             break;
                     }
-                    //doc.SciControl.CallTipShow(start, "Test");
+
                     var text = doc.SciControl.GetTextRange(start, start + len);
                     doc.SciControl.AddHighlight((int)ScintillaNet.Enums.IndicatorStyle.Squiggle, color, start, len);
                 }
