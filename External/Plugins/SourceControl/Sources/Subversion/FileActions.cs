@@ -29,7 +29,10 @@
             return true;
         }
 
-        public bool FileNew(string path) { return false; }
+        public bool FileNew(string path)
+        {
+            return false;
+        }
         public bool FileOpen(string path) { return false; }
         public bool FileReload(string path) { return false; }
         public bool FileModifyRO(string path) { return false; }

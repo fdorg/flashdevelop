@@ -6,8 +6,12 @@ namespace SourceControl.Sources.Git
 {
     class DeleteCommand : BaseCommand
     {
+        private string[] paths;
+
         public DeleteCommand(string[] paths)
         {
+            this.paths = paths;
+
             string args = "rm -f";
             int count = 0;
             foreach (string path in paths)

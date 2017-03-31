@@ -183,7 +183,32 @@ namespace SourceControl.Actions
                 if (MessageBox.Show(msg, title, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK) return true;
             }
 
-            return result.Manager.FileActions.FileDelete(paths, confirm);
+            if (hasModification.Count > 0 || svnRemove.Count > 0) //there are versioned files
+            {
+                switch (PluginMain.SCSettings.ShouldDelete)
+                {
+                    case RememberValue.Yes:
+                        //TODO: there should probably still be a message wether you really want to delete the files.
+                        return result.Manager.FileActions.FileDelete(paths, confirm);
+                    case RememberValue.Ask:
+                        using (var dialog = new Dialogs.SourceControlDialog("Remove files from version control?",
+                            "Would you like to remove the files from version control?"))
+                        {
+                            dialog.ShowDialog();
+                            if (dialog.Remember)
+                            {
+                                PluginMain.SCSettings.ShouldDelete = dialog.DialogResult == DialogResult.Yes ? RememberValue.Yes : RememberValue.No;
+                            }
+                            if (dialog.DialogResult == DialogResult.Yes)
+                            {
+                                return result.Manager.FileActions.FileDelete(paths, confirm);
+                            }
+                        }
+                        break;
+                }
+            }
+
+            return false;
         }
 
         private static string GetSomeFiles(List<string> list)
@@ -261,7 +286,28 @@ namespace SourceControl.Actions
             if (result == null || result.Status == VCItemStatus.Unknown)
                 return false;
 
-            return result.Manager.FileActions.FileNew(path);
+            switch (PluginMain.SCSettings.ShouldDelete)
+            {
+                case RememberValue.Yes:
+                    return result.Manager.FileActions.FileNew(path);
+                case RememberValue.Ask:
+                    using (var dialog = new Dialogs.SourceControlDialog("Add new file to version control?",
+                        "Would you like to add the new file to version control?"))
+                    {
+                        dialog.ShowDialog();
+                        if (dialog.Remember)
+                        {
+                            PluginMain.SCSettings.ShouldAdd = dialog.DialogResult == DialogResult.Yes ? RememberValue.Yes : RememberValue.No;
+                        }
+                        if (dialog.DialogResult == DialogResult.Yes)
+                        {
+                            return result.Manager.FileActions.FileNew(path);
+                        }
+                    }
+                    break;
+            }
+
+            return false;
         }
 
         internal static bool HandleFileOpen(string path)

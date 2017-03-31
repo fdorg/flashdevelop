@@ -18,6 +18,9 @@ namespace SourceControl
         private Boolean enableSVN;
         private Boolean enableGIT;
         private Boolean enableHG;
+        private RememberValue shouldDelete = RememberValue.Ask;
+        private RememberValue shouldAdd = RememberValue.Ask;
+
 
         [DefaultValue(false)]
         [DisplayName("Enable SVN")]
@@ -115,6 +118,30 @@ namespace SourceControl
             set { this.tortoiseHGProcPath = value; }
         }
 
+        [DefaultValue(RememberValue.Ask)]
+        [DisplayName("Delete files from source control")]
+        [LocalizedDescription("SourceControl.Description.AskForDelete")]
+        public RememberValue ShouldDelete
+        {
+            get { return this.shouldDelete; }
+            set { this.shouldDelete = value; }
+        }
+
+        [DefaultValue(RememberValue.Ask)]
+        [DisplayName("Add files to source control")]
+        [LocalizedDescription("SourceControl.Description.ShouldAdd")]
+        public RememberValue ShouldAdd
+        {
+            get { return this.shouldAdd; }
+            set { this.shouldAdd = value; }
+        }
+    }
+
+    public enum RememberValue
+    {
+        Yes,
+        No,
+        Ask
     }
 
 }
