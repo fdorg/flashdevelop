@@ -5,8 +5,10 @@ using System.Text;
 
 namespace LintingHelper
 {
+    public delegate void LintCallback(List<LintingResult> results);
+
     public interface ILintProvider
     {
-        List<LintingResult> DoLint(string[] files);
+        void DoLintAsync(string[] files, LintCallback callback);
     }
 }

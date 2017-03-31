@@ -65,12 +65,14 @@ namespace LintingHelper.Managers
         public static void LintFiles(string[] files, string language)
         {
             language = language.ToLower();
-            //PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults"); //TODO: fix this
+            //PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults"); //TODO: add stuff to output / results panel
             foreach (var linter in GetLinters(language))
             {
-                var results = linter.DoLint(files);
-                
-                ApplyLint(results);
+                ApplyLint(files, null); //removes cache
+                linter.DoLintAsync(files, (results) =>
+                {
+                    ApplyLint(files, results);
+                });
             }
         }
 
@@ -115,9 +117,15 @@ namespace LintingHelper.Managers
         /// Applies the results to all open files
         /// </summary>
         /// <param name="results"></param>
-        static void ApplyLint(List<LintingResult> results)
+        static void ApplyLint(string[] files, List<LintingResult> results)
         {
-            Cache.Clear(PluginBase.MainForm.Documents.Select(d => d.FileName));
+            Cache.Clear(PluginBase.MainForm.Documents.Select( (d) => d.FileName ));
+
+            foreach (var file in files)
+            {
+                Cache.RemoveDocument(file);
+                DocumentManager.FindDocument(file)?.SciControl.RemoveHighlights();
+            }
 
             if (results == null)
             {
@@ -128,31 +136,39 @@ namespace LintingHelper.Managers
 
             foreach (var result in results)
             {
-                TraceManager.Add(result.Line + ":" + result.Description);
+                TraceManager.Add(result.Line + ":" + result.FirstChar + "-" + result.Length + ":" + result.Description);
                 var doc = DocumentManager.FindDocument(result.File);
-                var start = doc.SciControl.PositionFromLine(result.Line-1);
-                var len = doc.SciControl.LineLength(result.Line-1);
-                start += result.FirstChar;
-                if (result.Length > 0)
+                if (doc != null)
                 {
-                    len = result.Length;
-                }
+                    var start = doc.SciControl.PositionFromLine(result.Line - 1);
+                    var len = doc.SciControl.LineLength(result.Line - 1);
+                    start += result.FirstChar;
+                    if (result.Length > 0)
+                    {
+                        len = result.Length;
+                    }
+                    else
+                    {
+                        len -= result.FirstChar;
+                    }
 
-                var color = 0;
-                switch (result.Severity)
-                {
-                    case LintingSeverity.Error:
-                        color = 0x00000080;
-                        break;
-                    case LintingSeverity.Warning:
-                        color = 0x00008080;
-                        break;
-                    case LintingSeverity.Info:
-                        color = 0x00008000;
-                        break;
+                    var color = 0;
+                    switch (result.Severity)
+                    {
+                        case LintingSeverity.Error:
+                            color = 0x00000080;
+                            break;
+                        case LintingSeverity.Warning:
+                            color = 0x00008080;
+                            break;
+                        case LintingSeverity.Info:
+                            color = 0x00008000;
+                            break;
+                    }
+                    //doc.SciControl.CallTipShow(start, "Test");
+                    var text = doc.SciControl.GetTextRange(start, start + len);
+                    doc.SciControl.AddHighlight((int)ScintillaNet.Enums.IndicatorStyle.Squiggle, color, start, len);
                 }
-                //doc.SciControl.CallTipShow(start, "Test");
-                doc.SciControl.AddHighlight((int)ScintillaNet.Enums.IndicatorStyle.Squiggle, color, start, len);
             }
         }
     }

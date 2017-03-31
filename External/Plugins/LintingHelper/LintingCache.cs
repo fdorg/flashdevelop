@@ -23,13 +23,24 @@ namespace LintingHelper
             {
                 var list = results[document.FileName];
                 var line = document.SciControl.LineFromPosition(position);
-                var linePos = document.SciControl.PositionFromLine(line);
-                var posInLine = position - linePos;
 
                 var localResults = new List<LintingResult>();
                 foreach (var result in list)
                 {
-                    if (result.Line == line + 1 && result.FirstChar <= posInLine && (result.FirstChar + result.Length >= posInLine || result.Length < 0))
+                    var start = document.SciControl.PositionFromLine(result.Line - 1);
+                    var len = document.SciControl.LineLength(result.Line - 1);
+                    start += result.FirstChar;
+                    if (result.Length > 0)
+                    {
+                        len = result.Length;
+                    }
+                    else
+                    {
+                        len -= result.FirstChar;
+                    }
+                    var end = start + len;
+                    
+                    if (start <= position && (end >= position || result.Length < 0 && result.Line == line + 1))
                     {
                         //suitable result
                         localResults.Add(result);
@@ -77,6 +88,7 @@ namespace LintingHelper
         /// <summary>
         /// Removes documents that are not opened anymore
         /// </summary>
+        /// <param name="documents">The documents that are currently opened</param>
         public void Clear(IEnumerable<string> documents)
         {
             var copy = new List<string>(results.Keys);
