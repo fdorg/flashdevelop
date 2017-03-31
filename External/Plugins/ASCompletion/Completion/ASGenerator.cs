@@ -2848,22 +2848,28 @@ namespace ASCompletion.Completion
             {
                 ASResult callerExpr = null;
                 MemberModel caller = null;
+                var parCount = 0;
                 var parameterIndex = 0;
                 var pos = wordStartPos;
                 while (pos-- > 0)
                 {
                     var c = sci.CharAt(pos);
-                    if (c == ',') parameterIndex++;
+                    if (c == ',' && parCount == 0) parameterIndex++;
+                    else if (c == ')') parCount++;
                     else if (c == '(')
                     {
-                        callerExpr = ASComplete.GetExpressionType(sci, pos);
-                        if (callerExpr != null) caller = callerExpr.Member;
-                        break;
+                        if (parCount == 0)
+                        {
+                            callerExpr = ASComplete.GetExpressionType(sci, pos);
+                            if (callerExpr != null) caller = callerExpr.Member;
+                            break;
+                        }
+                        parCount--;
                     }
                 }
                 if (caller?.Parameters != null && caller.Parameters.Count > 0)
                 {
-                    var parCount = 0;
+                    parCount = 0;
                     var braCount = 0;
                     var genCount = 0;
                     var s = caller.Parameters[parameterIndex].Type;
