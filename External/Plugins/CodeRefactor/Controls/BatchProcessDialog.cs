@@ -7,6 +7,7 @@ using CodeRefactor.Provider;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore;
+using CodeRefactor.Managers;
 
 namespace CodeRefactor.Controls
 {
@@ -18,6 +19,8 @@ namespace CodeRefactor.Controls
         private System.Windows.Forms.ComboBox targetComboBox;
         private System.Windows.Forms.Button processButton;
         private System.Windows.Forms.Button cancelButton;
+
+        private IList<IBatchProcessor> customProcessors;
 
         public BatchProcessDialog()
         {
@@ -153,6 +156,13 @@ namespace CodeRefactor.Controls
             this.targetComboBox.SelectedIndex = 0;
             this.operationComboBox.SelectedIndex = 0;
             this.processButton.Focus();
+
+            //Add processors from BatchProcessManager
+            customProcessors = Managers.BatchProcessManager.GetAvailableProcessors();
+            foreach (var proc in customProcessors)
+            {
+                this.operationComboBox.Items.Add(proc.Text);
+            }
         }
 
         /// <summary>
@@ -232,6 +242,10 @@ namespace CodeRefactor.Controls
                     document.SciControl.ConvertEOLs(document.SciControl.EOLMode);
                     break;
                 }
+                default: // Custom BatchProcessor
+                    var i = this.operationComboBox.SelectedIndex - 4;
+                    customProcessors[i].Process(document);
+                    break;
             }
         }
 
