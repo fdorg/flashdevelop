@@ -2851,18 +2851,27 @@ namespace ASCompletion.Completion
                 var parCount = 0;
                 var arrCount = 0;
                 var braCount = 0;
+                var genCount = 0;
+                var dquCount = 0;
+                var quoCount = 0;
                 var parameterIndex = 0;
                 var pos = wordStartPos;
                 while (pos-- > 0)
                 {
                     var c = sci.CharAt(pos);
-                    if (c == ',' && parCount == 0 && arrCount == 0 && braCount == 0) parameterIndex++;
+                    if (c == ',' && parCount == 0 && arrCount == 0 && braCount == 0 && genCount == 0 && dquCount == 0 && quoCount == 0) parameterIndex++;
                     else if (c == ']') arrCount++;
                     else if (c == '[') arrCount--;
                     else if (c == '}') braCount++;
                     else if (c == '{') braCount--;
+                    else if (c == '>') genCount++;
+                    else if (c == '<') genCount--;
                     else if (c == ')') parCount++;
-                    else if (c == '(')
+                    else if (dquCount == 0 && c == '"' && sci.CharAt(pos - 1) != '\\') dquCount++;
+                    else if (dquCount > 0 && c == '"' && sci.CharAt(pos - 1) != '\\') dquCount--;
+                    else if (quoCount == 0 && c == '\'' && sci.CharAt(pos - 1) != '\\') quoCount++;
+                    else if (quoCount > 0 && c == '\'' && sci.CharAt(pos - 1) != '\\') quoCount--;
+                    else if (c == '(' && dquCount == 0 && quoCount == 0)
                     {
                         if (parCount == 0)
                         {
@@ -2877,7 +2886,7 @@ namespace ASCompletion.Completion
                 {
                     parCount = 0;
                     braCount = 0;
-                    var genCount = 0;
+                    genCount = 0;
                     var s = caller.Parameters[parameterIndex].Type;
                     var startPosition = 0;
                     var arrowLength = "->".Length;

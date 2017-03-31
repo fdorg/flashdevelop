@@ -523,6 +523,14 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_7.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_8.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_8.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_9.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_9.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_10.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_10.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_11.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_11.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_12.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_12.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

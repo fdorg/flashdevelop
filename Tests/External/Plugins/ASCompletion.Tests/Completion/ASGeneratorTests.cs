@@ -790,6 +790,22 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_8"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_8"))
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_9"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_9"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_10"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_10"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_11"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_11"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_12"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_12"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                     }
                 }
 
