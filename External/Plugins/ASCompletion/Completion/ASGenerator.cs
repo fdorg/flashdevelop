@@ -2861,45 +2861,63 @@ namespace ASCompletion.Completion
                         break;
                     }
                 }
-                if (caller != null && caller.Parameters != null && caller.Parameters.Count > 0)
+                if (caller?.Parameters != null && caller.Parameters.Count > 0)
                 {
                     var parCount = 0;
                     var braCount = 0;
+                    var genCount = 0;
                     var s = caller.Parameters[parameterIndex].Type;
                     var startPosition = 0;
-                    var endPosition = s.LastIndexOf("->") + "->".Length;
+                    var arrowLength = "->".Length;
+                    var endPosition = s.LastIndexOf("->") + arrowLength;
                     for (var i = 0; i < endPosition; i++)
                     {
                         string type = null;
                         var c = s[i];
                         if (c == '(') parCount++;
-                        else if (c == '{') braCount++;
                         else if (c == ')')
                         {
                             parCount--;
-                            if (parCount == 0 && braCount == 0)
+                            if (parCount == 0 && braCount == 0 && genCount == 0)
                             {
                                 i++;
                                 type = s.Substring(startPosition, i - startPosition);
                             }
                         }
+                        else if (c == '{') braCount++;
                         else if (c == '}')
                         {
                             braCount--;
-                            if (braCount == 0 && parCount == 0)
+                            if (parCount == 0 && braCount == 0 && genCount == 0)
                             {
                                 i++;
                                 type = s.Substring(startPosition, i - startPosition);
                             }
                         }
-                        else if (parCount == 0 && braCount == 0 && c == '-' && s[i + 1] == '>')
+                        else if (c == '<') genCount++;
+                        else if (c == '>' && s[i - 1] != '-')
+                        {
+                            genCount--;
+                            if (parCount == 0 && braCount == 0 && genCount == 0)
+                            {
+                                i++;
+                                type = s.Substring(startPosition, i - startPosition);
+                            }
+                        }
+                        else if (parCount == 0 && braCount == 0 && genCount == 0 && c == '-' && s[i + 1] == '>')
                         {
                             type = s.Substring(startPosition, i - startPosition);
-                            i += 2;
+                            i += arrowLength;
                         }
                         if (type != null)
                         {
-                            functionParameters.Add(new FunctionParameter($"parameter{functionParameters.Count}", type, type, callerExpr));
+                            var parameter = $"parameter{functionParameters.Count}";
+                            if (type.StartsWith('?'))
+                            {
+                                parameter = $"?{parameter}";
+                                type = type.TrimStart('?');
+                            }
+                            functionParameters.Add(new FunctionParameter(parameter, type, type, callerExpr));
                             startPosition = i;
                         }
                     }
