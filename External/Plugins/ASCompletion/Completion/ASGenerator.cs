@@ -2850,14 +2850,17 @@ namespace ASCompletion.Completion
                 MemberModel caller = null;
                 var parCount = 0;
                 var arrCount = 0;
+                var braCount = 0;
                 var parameterIndex = 0;
                 var pos = wordStartPos;
                 while (pos-- > 0)
                 {
                     var c = sci.CharAt(pos);
-                    if (c == ',' && parCount == 0 && arrCount == 0) parameterIndex++;
+                    if (c == ',' && parCount == 0 && arrCount == 0 && braCount == 0) parameterIndex++;
                     else if (c == ']') arrCount++;
                     else if (c == '[') arrCount--;
+                    else if (c == '}') braCount++;
+                    else if (c == '{') braCount--;
                     else if (c == ')') parCount++;
                     else if (c == '(')
                     {
@@ -2873,7 +2876,7 @@ namespace ASCompletion.Completion
                 if (caller?.Parameters != null && caller.Parameters.Count > 0)
                 {
                     parCount = 0;
-                    var braCount = 0;
+                    braCount = 0;
                     var genCount = 0;
                     var s = caller.Parameters[parameterIndex].Type;
                     var startPosition = 0;
