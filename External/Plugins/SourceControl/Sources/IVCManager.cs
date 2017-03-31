@@ -70,6 +70,7 @@ namespace SourceControl.Sources
         ToolStripItem Push { get; }
         ToolStripItem ShowLog { get; }
         ToolStripItem MidSeparator { get; }
+        ToolStripItem Annotate { get; }
         ToolStripItem Diff { get; }
         ToolStripItem DiffChange { get; }
         ToolStripItem Add { get; }

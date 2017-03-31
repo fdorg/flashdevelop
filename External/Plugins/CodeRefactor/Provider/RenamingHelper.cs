@@ -37,19 +37,22 @@ namespace CodeRefactor.Provider
             };
 
             var target = rename.Target;
-            bool outputResults = rename.OutputResults;
-            if (HasGetterSetter(target))
+            var outputResults = rename.OutputResults;
+            if (!target.IsPackage)
             {
-                string oldName = rename.OldName;
-                string newName = rename.NewName;
-                var list = target.Member.Parameters;
-                if (list[0].Name == ParamGetter) startState.Commands[1] = RenameMember(target, PrefixGetter + oldName, PrefixGetter + newName, outputResults);
-                if (list[1].Name == ParamSetter) startState.Commands[2] = RenameMember(target, PrefixSetter + oldName, PrefixSetter + newName, outputResults);
-            }
-            else if ((RefactoringHelper.GetRefactoringTarget(target).Flags & (FlagType.Constructor | FlagType.Class)) > 0)
-            {
-                var ext = Path.GetExtension(startState.FileName);
-                startState.FileName = startState.FileName.Replace(rename.OldName + ext, rename.NewName + ext);
+                if (HasGetterSetter(target))
+                {
+                    string oldName = rename.OldName;
+                    string newName = rename.NewName;
+                    var list = target.Member.Parameters;
+                    if (list[0].Name == ParamGetter) startState.Commands[1] = RenameMember(target, PrefixGetter + oldName, PrefixGetter + newName, outputResults);
+                    if (list[1].Name == ParamSetter) startState.Commands[2] = RenameMember(target, PrefixSetter + oldName, PrefixSetter + newName, outputResults);
+                }
+                else if ((RefactoringHelper.GetRefactoringTarget(target).Flags & (FlagType.Constructor | FlagType.Class)) > 0)
+                {
+                    var ext = Path.GetExtension(startState.FileName);
+                    startState.FileName = startState.FileName.Replace(rename.OldName + ext, rename.NewName + ext);
+                }
             }
 
             if (outputResults) PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");

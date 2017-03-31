@@ -698,7 +698,7 @@ namespace ASCompletion.Model
                             }
                         }
                         // end of string?
-                        else if (isInString)
+                        else
                         {
                             if (c1 == 10 || c1 == 13) { if (!haXe) inString = 0; }
                             else if ((c1 == '"' && inString == 1) || (c1 == '\'' && inString == 2))
@@ -963,7 +963,7 @@ namespace ASCompletion.Model
 
 
                 /* PARSE DECLARATION VALUES/TYPES */
-
+                
                 if (inValue)
                 {
                     bool stopParser = false;
@@ -980,7 +980,7 @@ namespace ASCompletion.Model
                     }
                     else if (c1 == '{')
                     {
-                        if (!inType || valueLength == 0 || valueBuffer[valueLength - 1] == '<' || paramBraceCount > 0)
+                        if (!inType || valueLength == 0 || valueBuffer[valueLength - 1] == '<' || paramBraceCount > 0 || paramTempCount > 0)
                         {
                             paramBraceCount++;
                             stopParser = true;
@@ -1075,8 +1075,8 @@ namespace ASCompletion.Model
                             if (valueLength < VALUE_BUFFER) valueBuffer[valueLength++] = c1;
                             continue;
                         }
-                        if (stopParser || paramBraceCount > 0 || paramSqCount > 0) continue;
-                        else if (valueError && c1 == ')') inValue = false;
+                        if (stopParser || paramBraceCount > 0 || paramSqCount > 0 || paramParCount > 0 || paramTempCount > 0) continue;
+                        if (valueError && c1 == ')') inValue = false;
                         else if (inType && inGeneric && (c1 == '<' || c1 == '.')) continue;
                         else if (inAnonType) continue;
                         else if (c1 != '_') hadWS = true;
@@ -1114,6 +1114,16 @@ namespace ASCompletion.Model
                         foundColon = false;
                         if (haXe)
                         {
+                            if (c1 == '>' && ba[i - 2] == '-' && inAnonType)
+                            {
+                                length = 0;
+                                valueLength = 0;
+                                hadValue = false;
+                                inValue = false;
+                                curMember.Type = ASFileParserRegexes.Spaces.Replace(param, "").Replace(",", ", ");
+                                i -= 2;
+                                continue;
+                            }
                             if (param.EndsWith('}') || param.Contains(">"))
                             {
                                 param = ASFileParserRegexes.Spaces.Replace(param, "");
@@ -1182,7 +1192,7 @@ namespace ASCompletion.Model
                     }
 
                     // should we evaluate the token?
-                    if (hadWS && !hadDot && !inGeneric && length > 0)
+                    if (hadWS && !hadDot && !inGeneric && length > 0 && paramBraceCount == 0)
                     {
                         evalToken = 1;
                     }
@@ -1220,7 +1230,7 @@ namespace ASCompletion.Model
                             else if (c1 == '<' && features.hasGenerics)
                             {
                                 if (!inValue && i > 2 && length > 1 && i < len - 3
-                                    && char.IsLetterOrDigit(ba[i - 3]) && (char.IsLetter(ba[i]) || (haXe && ba[i] == '{'))
+                                    && char.IsLetterOrDigit(ba[i - 3]) && (char.IsLetter(ba[i]) || (haXe && (ba[i] == '{' || ba[i] == '(' || ba[i] <= ' ' || ba[i] == '?')))
                                     && (char.IsLetter(buffer[0]) || buffer[0] == '_' || inType && buffer[0] == '('))
                                 {
                                     if (curMember == null)
@@ -1272,7 +1282,7 @@ namespace ASCompletion.Model
                                     }
                                 }
                             }
-                            else if (c1 == ')' && haXe && inType)
+                            else if (haXe && inType && c1 == ')')
                             {
                                 if (paramParCount > 0)
                                 {
@@ -1287,12 +1297,35 @@ namespace ASCompletion.Model
                                     evalToken = 1;
                                 }
                             }
-                            else if (c1 == '(' && haXe && inType)
+                            else if (haXe && inType && c1 == '(')
                             {
                                 paramParCount++;
                                 addChar = true;
                             }
-                            else
+                            else if (haXe && c1 == '{' && length > 1
+                                    && (buffer[length - 2] == '-' && buffer[length - 1] == '>'
+                                        || buffer[length - 1] == ':'
+                                        || buffer[length - 1] == '('
+                                        || buffer[length - 1] == '?'))
+                            {
+                                paramBraceCount++;
+                                inAnonType = true;
+                                addChar = true;
+                            }
+                            else if (haXe && inAnonType && c1 == '}')
+                            {
+                                paramBraceCount--;
+                                if (paramBraceCount == 0) inAnonType = false;
+                                addChar = true;
+                            }
+                            else if (haXe && inAnonType && paramBraceCount > 0) addChar = true;
+                            else if (haXe && c1 == '?')
+                            {
+                                hadWS = false;
+                                evalToken = 0;
+                                addChar = true;
+                            }
+                            else if (paramBraceCount == 0)
                             {
                                 evalToken = 2;
                                 shortcut = false;
@@ -1521,7 +1554,7 @@ namespace ASCompletion.Model
                             }
 
                             // an Enum value with parameters
-                            else if (inEnum && curToken != null)
+                            else if (inEnum)
                             {
                                 context = FlagType.Variable;
                                 inParams = true;
@@ -1534,7 +1567,7 @@ namespace ASCompletion.Model
                             }
 
                             // a TypeDef method with parameters
-                            else if (inTypedef && curToken != null)
+                            else if (inTypedef)
                             {
                                 context = FlagType.Variable;
                                 inParams = true;
@@ -1638,7 +1671,7 @@ namespace ASCompletion.Model
                         {
                             if (ba[i] == '>' && curMember.Type != null)
                             {
-                                curMember.Type += " ->";
+                                curMember.Type += "->";
                                 foundColon = true;
                             }
                         }
@@ -2208,8 +2241,9 @@ namespace ASCompletion.Model
             if (foundColon && curMember != null)
             {
                 foundColon = false;
-                if (haXe && curMember.Type != null) curMember.Type += " " + curToken.Text;
+                if (haXe && curMember.Type != null) curMember.Type += curToken.Text;
                 else curMember.Type = curToken.Text;
+                curMember.Type = ASFileParserRegexes.Spaces.Replace(curMember.Type, string.Empty).Replace(",", ", ");
                 curMember.LineTo = curToken.Line;
                 // Typed Arrays
 
@@ -2484,7 +2518,8 @@ namespace ASCompletion.Model
                         if (haXe && curMember != null && curMember.Type != null
                             && curMember.Type.EndsWithOrdinal("->"))
                         {
-                            curMember.Type += " " + token;
+                            curMember.Type += token;
+                            curMember.Type = ASFileParserRegexes.Spaces.Replace(curMember.Type, string.Empty).Replace(",", ", ");
                             return false;
                         }
                         else

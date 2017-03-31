@@ -228,7 +228,7 @@ namespace HaXeContext
         /// </summary>
         public void SetHaxeEnvironment(string sdkPath)
         {
-            sdkPath = sdkPath.TrimEnd(new char[] { '/', '\\' });
+            sdkPath = sdkPath.TrimEnd('/', '\\');
             if (currentEnv == sdkPath) return;
             Environment.SetEnvironmentVariable("HAXEPATH", sdkPath);
 
@@ -241,13 +241,15 @@ namespace HaXeContext
             if (currentEnv != null) path = path.Replace(currentEnv + ";", ";");
             if (neko != null) path = Regex.Replace(path, ";[^;]+neko[/\\\\]*;", ";", RegexOptions.IgnoreCase);
             path = Regex.Replace(path, ";[^;]+haxe[/\\\\]*;", ";", RegexOptions.IgnoreCase);
-            path = path.TrimStart(new char[] { ';' });
+            path = path.TrimStart(';');
             path = sdkPath + ";" + path;
-            if (neko != null) path = neko.TrimEnd(new char[] { '/', '\\' }) + ";" + path;
+            if (neko != null) path = neko.TrimEnd('/', '\\') + ";" + path;
             Environment.SetEnvironmentVariable("PATH", path);
             currentEnv = sdkPath;
 
             LoadMetadata();
+            if (GetCurrentSDKVersion().IsGreaterThanOrEquals(new SemVer("3.3.0"))) features.SpecialPostfixOperators = new[] {'!'};
+            else features.SpecialPostfixOperators = new char[0];
         }
 
         public void LoadMetadata()
@@ -579,7 +581,7 @@ namespace HaXeContext
         #region SDK
         private InstalledSDK GetCurrentSDK()
         {
-            return hxsettings.InstalledSDKs.FirstOrDefault(sdk => sdk.Path == currentSDK);
+            return hxsettings.InstalledSDKs?.FirstOrDefault(sdk => sdk.Path == currentSDK);
         }
 
         public SemVer GetCurrentSDKVersion()

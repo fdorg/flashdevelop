@@ -26,7 +26,7 @@ namespace ResultsPanel
         public ToolStripMenuItem nextEntryContextMenuItem;
         public ToolStripMenuItem previousEntryContextMenuItem;
 
-        private ResultsListView entriesView;
+        private ListViewEx entriesView;
         private ColumnHeader entryFile;
         private ColumnHeader entryDesc;
         private ColumnHeader entryLine;
@@ -115,7 +115,7 @@ namespace ResultsPanel
         /// </summary>
         private void InitializeComponent() 
         {
-            this.entriesView = new ResultsListView();
+            this.entriesView = new ListViewEx();
             this.entryType = new System.Windows.Forms.ColumnHeader();
             this.entryLine = new System.Windows.Forms.ColumnHeader();
             this.entryDesc = new System.Windows.Forms.ColumnHeader();

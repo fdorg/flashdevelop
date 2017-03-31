@@ -81,10 +81,13 @@
   <ItemGroup>
     <Compile Include="Actions\ProjectWatcher.cs" />
     <Compile Include="Actions\TreeContextMenuUpdate.cs" />
+    <Compile Include="Helpers\AnnotatedDocument.cs" />
+    <Compile Include="Helpers\Commit.cs" />
     <Compile Include="Managers\FSWatchers.cs" />
     <Compile Include="Managers\OverlayManager.cs" />
     <Compile Include="Managers\VCManager.cs" />
     <Compile Include="Sources\Git\BaseCommand.cs" />
+    <Compile Include="Sources\Git\BlameCommand.cs" />
     <Compile Include="Sources\Git\CommitCommand.cs" />
     <Compile Include="Sources\Git\ResetCommand.cs" />
     <Compile Include="Sources\Git\DeleteCommand.cs" />
