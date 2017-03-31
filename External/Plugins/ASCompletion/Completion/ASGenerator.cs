@@ -2849,12 +2849,15 @@ namespace ASCompletion.Completion
                 ASResult callerExpr = null;
                 MemberModel caller = null;
                 var parCount = 0;
+                var arrCount = 0;
                 var parameterIndex = 0;
                 var pos = wordStartPos;
                 while (pos-- > 0)
                 {
                     var c = sci.CharAt(pos);
-                    if (c == ',' && parCount == 0) parameterIndex++;
+                    if (c == ',' && parCount == 0 && arrCount == 0) parameterIndex++;
+                    else if (c == ']') arrCount++;
+                    else if (c == '[') arrCount--;
                     else if (c == ')') parCount++;
                     else if (c == '(')
                     {
