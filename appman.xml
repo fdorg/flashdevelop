@@ -353,7 +353,7 @@
 	<Entry>
 		<Id>flixeltmpl</Id>
 		<Name>HaxeFlixel Template</Name>
-		<Version>2.2.0</Version>
+		<Version>2.3.0</Version>
 		<Build>1</Build>
 		<Desc>Adds the default HaxeFlixel template</Desc>
 		<Group>Templates</Group>
@@ -362,7 +362,7 @@
 		</Bundles>
 		<Info>http://haxeflixel.com/</Info>
 		<Urls>
-			<Url>https://raw.github.com/HaxeFlixel/flixel-templates/5abfebd34c6dbdd2d7d7140bd1f3f63d4572359c/pregenerated/FlxProject.fdz</Url>
+			<Url>https://raw.github.com/HaxeFlixel/flixel-templates/2.3.0/pregenerated/FlxProject.fdz</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -605,14 +605,14 @@
 	<Entry>
 		<Id>editorconfig</Id>
 		<Name>EditorConfig</Name>
-		<Version>0.4</Version>
+		<Version>0.5</Version>
 		<Build>1</Build>
-		<Checksum>177EEA7D8E6EBE62A4ED29547E351111</Checksum>
+		<Checksum>F32758B7412C420A840077AF8D92BAA8</Checksum>
 		<Desc>Adds .editorconfig support</Desc>
 		<Group>Plugins</Group>
 		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=12935</Info>
 		<Urls>
-			<Url>https://github.com/DoclerLabs/hexDevelop/releases/download/v0.4/EditorConfig.fdz</Url>
+			<Url>https://github.com/DoclerLabs/hexDevelop/releases/download/v0.5/EditorConfig.fdz</Url>
 		</Urls>
 	</Entry>
 	FD5-->

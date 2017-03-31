@@ -1,14 +1,10 @@
 ﻿using System;
 using System.IO;
-using System.Text;
-using System.Drawing;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Windows.Forms;
 using CodeRefactor.Commands;
 using CodeRefactor.Provider;
 using PluginCore.Localization;
-using PluginCore.Controls;
 using PluginCore.Managers;
 using PluginCore;
 
@@ -218,14 +214,14 @@ namespace CodeRefactor.Controls
                 }
                 case 1: // Organize Imports
                 {
-                    var command = (OrganizeImports) CommandFactoryProvider.GetFactoryFromDocument(document).CreateOrganizeImportsCommand();
+                    var command = (OrganizeImports) CommandFactoryProvider.GetFactory(document).CreateOrganizeImportsCommand();
                     command.SciControl = document.SciControl;
                     command.Execute();
                     break;
                 }
                 case 2: // Truncate Imports
                 {
-                    var command = (OrganizeImports) CommandFactoryProvider.GetFactoryFromDocument(document).CreateOrganizeImportsCommand();
+                    var command = (OrganizeImports) CommandFactoryProvider.GetFactory(document).CreateOrganizeImportsCommand();
                     command.SciControl = document.SciControl;
                     command.TruncateImports = true;
                     command.Execute();
