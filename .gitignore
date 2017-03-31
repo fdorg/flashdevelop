@@ -27,3 +27,5 @@ FlashDevelop/Bin/Debug/Settings/Themes/CURRENT
 packages/
 NSubstitute.xml
 nunit.framework.xml
+**/NSubstitute.dll
+**/nunit.framework.dll
