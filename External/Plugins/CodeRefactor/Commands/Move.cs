@@ -37,7 +37,6 @@ namespace CodeRefactor.Commands
     class Move : RefactorCommand<IDictionary<string, List<SearchMatch>>>
     {
         public Dictionary<string, string> OldPathToNewPath;
-        public bool OutputResults;
         private readonly bool renaming;
         private readonly bool updatePackages;
         private List<MoveTargetHelper> targets;
@@ -51,7 +50,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// A new Move refactoring command.
         /// </summary>
-        public Move(Dictionary<string, string>oldPathToNewPath) : this(oldPathToNewPath, true)
+        public Move(Dictionary<string, string> oldPathToNewPath) : this(oldPathToNewPath, true)
         {
         }
 

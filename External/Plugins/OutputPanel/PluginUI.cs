@@ -16,7 +16,7 @@ namespace OutputPanel
     public class PluginUI : DockPanelControl
     {
         private Int32 logCount;
-        private RichTextBox textLog;
+        private RichTextBoxEx textLog;
         private PluginMain pluginMain;
         private String searchInvitation;
         private System.Timers.Timer scrollTimer;
@@ -58,7 +58,7 @@ namespace OutputPanel
         private void InitializeComponent()
         {
             this.scrollTimer = new System.Timers.Timer();
-            this.textLog = new System.Windows.Forms.RichTextBoxEx();
+            this.textLog = new OutputPanel.PluginUI.RichTextBoxEx();
             this.toolStrip = new PluginCore.Controls.ToolStripEx();
             this.toggleButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -70,7 +70,6 @@ namespace OutputPanel
             // 
             // scrollTimer
             // 
-            this.scrollTimer.Enabled = true;
             this.scrollTimer.Interval = 50;
             this.scrollTimer.SynchronizingObject = this;
             this.scrollTimer.Elapsed += new System.Timers.ElapsedEventHandler(this.ScrollTimerElapsed);
@@ -79,7 +78,6 @@ namespace OutputPanel
             // 
             this.textLog.BackColor = System.Drawing.SystemColors.Window;
             this.textLog.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textLog.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textLog.Location = new System.Drawing.Point(1, 26);
             this.textLog.Name = "textLog";
             this.textLog.ReadOnly = true;
@@ -301,6 +299,29 @@ namespace OutputPanel
             }
         }
 
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+
+            // We use custom resizing because when the owner DockPanel hides, textLog.Height = 0, and ScrollToCaret() fails
+            if (this.Height != 0)
+            {
+                this.textLog.Size = new Size(this.ClientSize.Width, this.ClientSize.Height - this.toolStrip.Size.Height);
+                
+                // Recreate handle and restore scrollbars position, built-in behavior is flawed (eg.: go to bottom of scroll and resize)
+                if (Win32.ShouldUseWin32())
+                {
+                    int vPos = Win32.GetScrollPos(textLog.Handle, Win32.SB_VERT);
+                    int hPos = Win32.GetScrollPos(textLog.Handle, Win32.SB_HORZ);
+                    textLog.Recreate();
+                    int wParam = Win32.SB_THUMBPOSITION | vPos << 16;
+                    Win32.SendMessage(textLog.Handle, Win32.WM_VSCROLL, (IntPtr)wParam, IntPtr.Zero);
+                    wParam = Win32.SB_THUMBPOSITION | hPos << 16;
+                    Win32.SendMessage(textLog.Handle, Win32.WM_HSCROLL, (IntPtr)wParam, IntPtr.Zero);
+                }
+            }
+        }
+
         /// <summary>
         /// Handles the shortcut
         /// </summary>
@@ -308,7 +329,8 @@ namespace OutputPanel
         {
             if (ContainsFocus)
             {
-                switch (keys) {
+                switch (keys)
+                {
                     case Keys.F3:
                         this.FindNextMatch(true);
                         return true;
@@ -353,7 +375,6 @@ namespace OutputPanel
             int oldSelectionStart = this.textLog.SelectionStart;
             int oldSelectionLength = this.textLog.SelectionLength;
             List<HighlightMarker> markers = this.pluginMain.PluginSettings.HighlightMarkers;
-            int visibPos = this.textLog.GetCharIndexFromPosition(Point.Empty);
             Boolean fastMode = (newCount - this.logCount) > 1000;
             StringBuilder newText = new StringBuilder();
             for (Int32 i = this.logCount; i < newCount; i++)
@@ -435,7 +456,6 @@ namespace OutputPanel
             }
             if (oldSelectionLength != 0) this.textLog.Select(oldSelectionStart, oldSelectionLength);
             else if (scrolling) this.textLog.Select(this.textLog.TextLength, 0);
-            else this.textLog.Select(visibPos, 0);
             this.logCount = newCount;
             this.scrollTimer.Enabled = true;
             this.TypingTimerTick(null, null);
@@ -451,10 +471,11 @@ namespace OutputPanel
             {
                 this.DisplayOutput();
             }
-            try 
+
+            try
             {
                 this.textLog.Select(this.textLog.TextLength, 0);
-                this.textLog.ScrollToCaret(); 
+                this.textLog.ScrollToCaret();
             }
             catch { /* WineMod: not supported */ }
         }
@@ -644,6 +665,13 @@ namespace OutputPanel
 
         #endregion
 
+        private class RichTextBoxEx : RichTextBox
+        {
+            public void Recreate()
+            {
+                this.RecreateHandle();
+            }
+        }
     }
 
 }

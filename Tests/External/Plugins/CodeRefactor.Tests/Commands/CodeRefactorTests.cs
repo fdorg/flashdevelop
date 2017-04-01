@@ -2,6 +2,7 @@
 using ASCompletion.Context;
 using ASCompletion.Model;
 using ASCompletion.Settings;
+using CodeRefactor.Provider;
 using CodeRefactor.TestUtils;
 using FlashDevelop;
 using NSubstitute;
@@ -16,9 +17,9 @@ namespace CodeRefactor.Commands
     [TestFixture]
     class CodeRefactorTests
     {
-        private MainForm mainForm;
-        private ISettings settings;
-        private ITabbedDocument doc;
+        MainForm mainForm;
+        ISettings settings;
+        ITabbedDocument doc;
 
         [TestFixtureSetUp]
         public void FixtureSetUp()
@@ -34,7 +35,7 @@ namespace CodeRefactor.Commands
             mainForm.Settings = settings;
             mainForm.CurrentDocument = doc;
             mainForm.Documents = new[] {doc};
-            mainForm.StandaloneMode = false;
+            mainForm.StandaloneMode = true;
             PluginBase.Initialize(mainForm);
             FlashDevelop.Managers.ScintillaManager.LoadConfiguration();
         }
@@ -48,7 +49,7 @@ namespace CodeRefactor.Commands
             mainForm = null;
         }
 
-        private ScintillaControl GetBaseScintillaControl()
+        ScintillaControl GetBaseScintillaControl()
         {
             return new ScintillaControl
             {
@@ -64,7 +65,7 @@ namespace CodeRefactor.Commands
         }
 
         [TestFixture]
-        public class RefactorCommand : CodeRefactorTests
+        public class RefactorCommandTests : CodeRefactorTests
         {
             protected ScintillaControl Sci;
 
@@ -83,16 +84,18 @@ namespace CodeRefactor.Commands
             }
 
             [TestFixture]
-            public class ExtractLocalVariable : RefactorCommand
+            public class ExtractLocalVariable : RefactorCommandTests
             {
-                public IEnumerable<TestCaseData> GetHaxeTestCases
+                internal static string ReadAllTextAS3(string fileName) => TestFile.ReadAllText($"{nameof(CodeRefactor)}.Test_Files.coderefactor.extractlocalvariable.as3.{fileName}.as");
+
+                internal static string ReadAllTextHaxe(string fileName) => TestFile.ReadAllText($"{nameof(CodeRefactor)}.Test_Files.coderefactor.extractlocalvariable.haxe.{fileName}.hx");
+
+                public IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.haxe.BeforeExtractLocalVariable_fromGeneric.hx"),
+                            new TestCaseData(ReadAllTextHaxe("BeforeExtractLocalVariable_fromGeneric"),
                                     new MemberModel("main", null, FlagType.Static | FlagType.Function, 0)
                                     {
                                         LineFrom = 2,
@@ -100,15 +103,11 @@ namespace CodeRefactor.Commands
                                     },
                                     "newVar"
                                 )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.haxe.AfterExtractLocalVariable_fromGeneric.hx"))
+                                .Returns(ReadAllTextHaxe("AfterExtractLocalVariable_fromGeneric"))
                                 .SetName("ExtractLocaleVariable from Generic");
 
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.haxe.BeforeExtractLocalVariable_fromString.hx"),
+                            new TestCaseData(ReadAllTextHaxe("BeforeExtractLocalVariable_fromString"),
                                     new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
                                     {
                                         LineFrom = 4,
@@ -116,15 +115,11 @@ namespace CodeRefactor.Commands
                                     },
                                     "newVar"
                                 )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.haxe.AfterExtractLocalVariable_fromString.hx"))
+                                .Returns(ReadAllTextHaxe("AfterExtractLocalVariable_fromString"))
                                 .SetName("ExtractLocaleVariable from String");
 
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.haxe.BeforeExtractLocalVariable_fromNumber.hx"),
+                            new TestCaseData(ReadAllTextHaxe("BeforeExtractLocalVariable_fromNumber"),
                                     new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
                                     {
                                         LineFrom = 4,
@@ -132,15 +127,11 @@ namespace CodeRefactor.Commands
                                     },
                                     "newVar"
                                 )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.haxe.AfterExtractLocalVariable_fromNumber.hx"))
+                                .Returns(ReadAllTextHaxe("AfterExtractLocalVariable_fromNumber"))
                                 .SetName("ExtractLocaleVariable from Number");
 
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.haxe.BeforeExtractLocalVariable_inSinglelineMethod.hx"),
+                            new TestCaseData(ReadAllTextHaxe("BeforeExtractLocalVariable_inSinglelineMethod"),
                                     new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
                                     {
                                         LineFrom = 4,
@@ -148,34 +139,95 @@ namespace CodeRefactor.Commands
                                     },
                                     "newVar"
                                 )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.haxe.AfterExtractLocalVariable_inSinglelineMethod.hx"))
+                                .Ignore("Not supported at the moment")
+                                .Returns(ReadAllTextHaxe("AfterExtractLocalVariable_inSinglelineMethod"))
                                 .SetName("ExtractLocaleVariable in single line method");
                     }
                 }
 
-                [Test, TestCaseSource("GetHaxeTestCases")]
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
                 public string Haxe(string sourceText, MemberModel currentMember, string newName)
                 {
                     ASContext.Context.SetHaxeFeatures();
                     ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
-                    ASContext.Context.CurrentMember.Returns(currentMember);
-                    Sci.Text = sourceText;
                     Sci.ConfigurationLanguage = "haxe";
-                    SnippetHelper.PostProcessSnippets(Sci, 0);
-                    new ExtractLocalVariableCommand(false, newName).Execute();
-                    return Sci.Text;
+                    return Common(sourceText, currentMember, newName, Sci);
                 }
 
-                public IEnumerable<TestCaseData> GetHaxeTestCases_withContextualGenerator
+                public IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.haxe.BeforeExtractLocalVariable_withContextualGenerator.hx"),
+                            new TestCaseData(ReadAllTextAS3("BeforeExtractLocalVariable"),
+                                    new MemberModel("ExtractLocalVariable", null, FlagType.Constructor | FlagType.Function, 0)
+                                    {
+                                        LineFrom = 4,
+                                        LineTo = 7
+                                    },
+                                    "newVar"
+                                )
+                                .Returns(ReadAllTextAS3("AfterExtractLocalVariable"))
+                                .SetName("ExtractLocaleVariable");
+
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeExtractLocalVariable_fromString"),
+                                    new MemberModel("ExtractLocalVariable", null, FlagType.Constructor | FlagType.Function, 0)
+                                    {
+                                        LineFrom = 4,
+                                        LineTo = 7
+                                    },
+                                    "newVar"
+                                )
+                                .Ignore("Not supported at the moment")
+                                .Returns(ReadAllTextAS3("AfterExtractLocalVariable_fromString"))
+                                .SetName("ExtractLocaleVariable from String");
+
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeExtractLocalVariable_fromNumber"),
+                                    new MemberModel("ExtractLocalVariable", null, FlagType.Constructor | FlagType.Function, 0)
+                                    {
+                                        LineFrom = 4,
+                                        LineTo = 7
+                                    },
+                                    "newVar"
+                                )
+                                .Ignore("Not supported at the moment")
+                                .Returns(ReadAllTextAS3("AfterExtractLocalVariable_fromNumber"))
+                                .SetName("ExtractLocaleVariable from Number");
+                    }
+                }
+                
+                [Test, TestCaseSource(nameof(AS3TestCases))]
+                public string AS3(string sourceText, MemberModel currentMember, string newName)
+                {
+                    ASContext.Context.SetAs3Features();
+                    ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
+                    Sci.ConfigurationLanguage = "as3";
+                    return Common(sourceText, currentMember, newName, Sci);
+                }
+
+                static string Common(string sourceText, MemberModel currentMember, string newName, ScintillaControl sci)
+                {
+                    sci.Text = sourceText;
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    ASContext.Context.CurrentMember.Returns(currentMember);
+                    CommandFactoryProvider.GetFactoryFromLanguage(sci.ConfigurationLanguage)
+                        .CreateExtractLocalVariableCommand(false, newName)
+                        .Execute();
+                    return sci.Text;
+                }
+            }
+
+            [TestFixture]
+            public class ExtractLocalVariableWithContextualGenertator : RefactorCommandTests
+            {
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(ExtractLocalVariable.ReadAllTextHaxe("BeforeExtractLocalVariable_withContextualGenerator"),
                                     new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
                                     {
                                         LineFrom = 4,
@@ -184,15 +236,11 @@ namespace CodeRefactor.Commands
                                     "newVar",
                                     0
                                 )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.haxe.AfterExtractLocalVariable_ReplaceAllOccurrences.hx"))
+                                .Returns(ExtractLocalVariable.ReadAllTextHaxe("AfterExtractLocalVariable_ReplaceAllOccurrences"))
                                 .SetName("ExtractLocaleVariable replace all occurrences");
 
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.haxe.BeforeExtractLocalVariable_withContextualGenerator.hx"),
+                            new TestCaseData(ExtractLocalVariable.ReadAllTextHaxe("BeforeExtractLocalVariable_withContextualGenerator"),
                                     new MemberModel("extractLocalVariable", null, FlagType.Function, Visibility.Public)
                                     {
                                         LineFrom = 4,
@@ -201,95 +249,69 @@ namespace CodeRefactor.Commands
                                     "newVar",
                                     1
                                 )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.haxe.AfterExtractLocalVariable_ReplaceInitialOccurrence.hx"))
+                                .Returns(ExtractLocalVariable.ReadAllTextHaxe("AfterExtractLocalVariable_ReplaceInitialOccurrence"))
                                 .SetName("ExtractLocaleVariable replace initial occurrence");
                     }
                 }
 
-                [Test, TestCaseSource("GetHaxeTestCases_withContextualGenerator")]
-                public string Haxe_withContextualGenerator(string sourceText, MemberModel currentMember, string newName, int contextualGeneratorItem)
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public string Haxe(string sourceText, MemberModel currentMember, string newName, int contextualGeneratorItem)
                 {
                     ASContext.Context.SetHaxeFeatures();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {haXe = true, Context = ASContext.Context});
+                    ASContext.Context.CurrentModel.Returns(new FileModel { haXe = true, Context = ASContext.Context });
                     ASContext.Context.CurrentMember.Returns(currentMember);
                     Sci.Text = sourceText;
                     Sci.ConfigurationLanguage = "haxe";
                     SnippetHelper.PostProcessSnippets(Sci, 0);
-                    var command = new ExtractLocalVariableCommand(false, newName);
+                    var command = (ExtractLocalVariableCommand)CommandFactoryProvider.GetFactoryFromLanguage("haxe").CreateExtractLocalVariableCommand(false, newName);
                     command.Execute();
-                    ((CompletionListItem) command.CompletionList[contextualGeneratorItem]).PerformClick();
+                    ((CompletionListItem)command.CompletionList[contextualGeneratorItem]).PerformClick();
                     return Sci.Text;
                 }
+            }
 
-                public IEnumerable<TestCaseData> GetAS3TestCases
+            [TestFixture]
+            public class OrganizeImports : RefactorCommandTests
+            {
+                protected static string ReadAllTextHaxe(string fileName) => TestFile.ReadAllText($"{nameof(CodeRefactor)}.Test_Files.coderefactor.organizeimports.haxe.{fileName}.hx");
+
+                public IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.as3.BeforeExtractLocalVariable.as"),
-                                    new MemberModel("ExtractLocalVariable", null, FlagType.Constructor | FlagType.Function, 0)
-                                    {
-                                        LineFrom = 4,
-                                        LineTo = 7
-                                    },
-                                    "newVar"
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.as3.AfterExtractLocalVariable.as"))
-                                .SetName("ExtractLocaleVariable");
-
+                            new TestCaseData(ReadAllTextHaxe("BeforeOrganizeImports"), "BeforeOrganizeImports.hx")
+                                .Returns(ReadAllTextHaxe("AfterOrganizeImports"))
+                                .SetName("OrganizeImports");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.as3.BeforeExtractLocalVariable_fromString.as"),
-                                    new MemberModel("ExtractLocalVariable", null, FlagType.Constructor | FlagType.Function, 0)
-                                    {
-                                        LineFrom = 4,
-                                        LineTo = 7
-                                    },
-                                    "newVar"
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.as3.AfterExtractLocalVariable_fromString.as"))
-                                .SetName("ExtractLocaleVariable from String");
-
+                            new TestCaseData(ReadAllTextHaxe("BeforeOrganizeImports_withImportsFromSameModule"), "Main.hx")
+                                .Returns(ReadAllTextHaxe("AfterOrganizeImports_withImportsFromSameModule"))
+                                .SetName("Issue782. Package is empty.");
                         yield return
-                            new TestCaseData(
-                                TestFile.ReadAllText(
-                                    "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.as3.BeforeExtractLocalVariable_fromNumber.as"),
-                                    new MemberModel("ExtractLocalVariable", null, FlagType.Constructor | FlagType.Function, 0)
-                                    {
-                                        LineFrom = 4,
-                                        LineTo = 7
-                                    },
-                                    "newVar"
-                                )
-                                .Returns(
-                                    TestFile.ReadAllText(
-                                        "CodeRefactor.Test_Files.coderefactor.extractlocalvariable.as3.AfterExtractLocalVariable_fromNumber.as"))
-                                .SetName("ExtractLocaleVariable from Number");
+                            new TestCaseData(ReadAllTextHaxe("BeforeOrganizeImports_withImportsFromSameModule2"), "Main.hx")
+                                .Returns(ReadAllTextHaxe("AfterOrganizeImports_withImportsFromSameModule2"))
+                                .SetName("Issue782. Package is not empty.");
                     }
                 }
-                
-                [Test, TestCaseSource("GetAS3TestCases")]
-                public string AS3(string sourceText, MemberModel currentMember, string newName)
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public string Haxe(string sourceText, string fileName)
                 {
-                    ASContext.Context.SetAs3Features();
-                    ASContext.Context.CurrentModel.Returns(new FileModel {Context = ASContext.Context});
-                    ASContext.Context.CurrentMember.Returns(currentMember);
+                    Sci.ConfigurationLanguage = "haxe";
+                    ASContext.Context.SetHaxeFeatures();
+                    ASContext.Context.CurrentModel.Returns(new FileModel
+                    {
+                        haXe = true,
+                        Context = ASContext.Context,
+                        FileName = fileName
+                    });
                     Sci.Text = sourceText;
-                    Sci.ConfigurationLanguage = "as3";
                     SnippetHelper.PostProcessSnippets(Sci, 0);
-                    new ExtractLocalVariableCommand(false, newName).Execute();
+                    var currentModel = ASContext.Context.CurrentModel;
+                    new ASFileParser().ParseSrc(currentModel, Sci.Text);
+                    new Commands.OrganizeImports().Execute();
                     return Sci.Text;
                 }
-                
             }
         }
     }

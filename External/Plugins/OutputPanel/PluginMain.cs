@@ -117,7 +117,10 @@ namespace OutputPanel
             switch (e.Type)
             {
                 case EventType.ProcessStart:
-                    this.pluginUI.ClearOutput(null, null);
+                    if (this.settingObject.ClearMode == ClearModeAction.OnEveryProcess)
+                    {
+                        this.pluginUI.ClearOutput(null, null);
+                    }
                     break;
 
                 case EventType.ProcessEnd:
@@ -145,6 +148,14 @@ namespace OutputPanel
 
                 case EventType.UIStarted:
                     this.pluginUI.UpdateAfterTheme();
+                    break;
+
+                case EventType.Command:
+                    var dataEvent = e as DataEvent;
+                    if (dataEvent.Action == "ProjectManager.BuildingProject" && this.settingObject.ClearMode == ClearModeAction.OnBuildStart)
+                    {
+                        this.pluginUI.ClearOutput(null, null);
+                    }
                     break;
             }
         }
@@ -192,7 +203,8 @@ namespace OutputPanel
         /// </summary>
         public void AddEventHandlers()
         {
-            EventType eventMask = EventType.ProcessStart | EventType.ProcessEnd | EventType.Trace | EventType.ApplySettings | EventType.Keys | EventType.UIStarted;
+            EventType eventMask = EventType.ProcessStart | EventType.ProcessEnd | EventType.Trace | EventType.ApplySettings | EventType.Keys | EventType.UIStarted
+                | EventType.Command;
             EventManager.AddEventHandler(this, eventMask);
         }
 

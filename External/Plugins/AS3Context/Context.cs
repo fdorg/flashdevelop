@@ -112,7 +112,7 @@ namespace AS3Context
                 "null", "true", "false", "try", "catch", "finally", "throw", "use", "namespace"
             };
             features.accessKeywords = new string[] { 
-                "extern", "dynamic", "final", "public", "private", "protected", "internal", "static", "override"
+                "native", "dynamic", "final", "public", "private", "protected", "internal", "static", "override"
             };
             features.declKeywords = new string[] { "var", "function", "const", "namespace", "get", "set" };
             features.typesKeywords = new string[] { "import", "class", "interface" };
@@ -747,7 +747,7 @@ namespace AS3Context
             ClassModel aClass;
             MemberModel item;
             // public & internal classes
-            string package = CurrentModel.Package;
+            string package = CurrentModel?.Package;
             foreach (PathModel aPath in classPath) if (aPath.IsValid && !aPath.Updating)
             {
                 aPath.ForeachFile((aFile) =>
@@ -878,8 +878,14 @@ namespace AS3Context
         public override ClassModel ResolveType(string cname, FileModel inFile)
         {
             // handle generic types
-            if (cname != null && cname.IndexOf('<') > 0)
+            if (cname != null && cname.IndexOf('<') >= 0)
             {
+                if (cname.StartsWith('<'))
+                {
+                    //transform <T>[] to Vector.<T>
+                    cname = Regex.Replace(cname, @">\[.*", ">");
+                    cname = "Vector." + cname;
+                }
                 Match genType = re_genericType.Match(cname);
                 if (genType.Success)
                     return ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile);

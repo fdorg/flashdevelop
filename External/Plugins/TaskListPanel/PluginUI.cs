@@ -174,6 +174,7 @@ namespace TaskListPanel
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {this.toolStripLabel});
             this.statusStrip.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.statusStrip.Renderer = new DockPanelStripRenderer(false);
+            this.statusStrip.SizingGrip = false;
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(278, 22);
             this.statusStrip.TabIndex = 0;

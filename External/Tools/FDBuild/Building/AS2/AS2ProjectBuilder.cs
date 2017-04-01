@@ -5,6 +5,7 @@ using System.Diagnostics;
 using ProjectManager.Projects;
 using ProjectManager.Projects.AS2;
 using FDBuild.Building;
+using PluginCore.Helpers;
 
 namespace ProjectManager.Building.AS2
 {
@@ -21,19 +22,22 @@ namespace ProjectManager.Building.AS2
                 if (CompilerPath != null)
                 {
                     if (File.Exists(CompilerPath)) return CompilerPath;
-                    if (File.Exists(Path.Combine(CompilerPath, "mtasc.exe")))
+                    if (PlatformHelper.IsRunningOnWindows() && File.Exists(Path.Combine(CompilerPath, "mtasc.exe")))
                         return Path.Combine(CompilerPath, "mtasc.exe");
+                    else if (!PlatformHelper.IsRunningOnWindows() && File.Exists(Path.Combine(CompilerPath, "mtasc")))
+                        return Path.Combine(CompilerPath, "mtasc");
                 }
 
                 // assume that mtasc.exe is probably in a directory alongside fdbuild
                 string upDirectory = Path.GetDirectoryName(FDBuildDirectory);
                 string mtascDir = Path.Combine(upDirectory, "mtasc");
-                string mtascPath = Path.Combine(mtascDir, "mtasc.exe");
-                
-                if (File.Exists(mtascPath))
-                    return mtascPath;
-                else
-                    return "mtasc.exe"; // hope you have it in your environment path!
+                if (PlatformHelper.IsRunningOnWindows() && File.Exists(Path.Combine(mtascDir, "mtasc.exe")))
+                    return Path.Combine(mtascDir, "mtasc.exe");
+                else if (!PlatformHelper.IsRunningOnWindows() && File.Exists(Path.Combine(mtascDir, "mtasc")))
+                    return Path.Combine(mtascDir, "mtasc");
+
+                // hope you have it in your environment path!  
+                return "mtasc";      
             }
         }
         #endregion

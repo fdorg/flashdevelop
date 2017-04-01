@@ -11,7 +11,7 @@ namespace CodeRefactor.Provider
     {
         private static readonly List<QueueItem> queue = new List<QueueItem>();
         private static readonly Dictionary<string, List<SearchMatch>> results = new Dictionary<string, List<SearchMatch>>();
-        private static Move currentCommand;
+        private static RefactorCommand<IDictionary<string, List<SearchMatch>>> currentCommand;
 
         public static void AddToQueue(Dictionary<string, string> oldPathToNewPath)
         {
@@ -40,7 +40,7 @@ namespace CodeRefactor.Provider
             {
                 QueueItem item = queue[0];
                 queue.Remove(item);
-                currentCommand = new Move(item.OldPathToNewPath, item.OutputResults, item.Renaming, item.UpdatePackages);
+                currentCommand = CommandFactoryProvider.DefaultFactory.CreateMoveCommand(item.OldPathToNewPath, item.OutputResults, item.Renaming, item.UpdatePackages);
                 currentCommand.OnRefactorComplete += OnRefactorComplete;
                 currentCommand.Execute();
             }

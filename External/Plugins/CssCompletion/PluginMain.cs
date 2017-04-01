@@ -125,7 +125,7 @@ namespace CssCompletion
             {
                 case EventType.Keys:
                 {
-                        if (this.IsSupported(document) && (e as KeyEvent).Keys == (Keys.Control | Keys.Space))
+                    if (this.IsSupported(document) && (e as KeyEvent).Keys == (Keys.Control | Keys.Space))
                     {
                         if (completion != null)
                         {
@@ -148,7 +148,7 @@ namespace CssCompletion
                         if (features != null && features.Syntax != null)
                         {
                             ScintillaControl sci = document.SciControl;
-                            sci.SetProperty(features.Syntax, features != null ? "1" : "0");
+                            sci.SetProperty(features.Syntax, "1");
                             sci.Colourise(0, -1);
                         }
                     }
@@ -161,7 +161,7 @@ namespace CssCompletion
                 }
                 case EventType.FileSave:
                 {
-                    if (document != null && document.IsEditable && this.IsSupported(document))
+                    if (document.IsEditable && this.IsSupported(document))
                     {
                         updateFile = document.FileName;
                         updateFeatures = features;

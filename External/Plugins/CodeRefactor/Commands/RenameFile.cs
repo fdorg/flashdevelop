@@ -14,19 +14,16 @@ namespace CodeRefactor.Commands
     {
         private string oldPath;
         private string newPath;
-        private readonly bool outputResults;
 
         public RenameFile(String oldPath, String newPath) : this(oldPath, newPath, true)
         {
-            this.oldPath = oldPath;
-            this.newPath = newPath;
         }
 
         public RenameFile(String oldPath, String newPath, Boolean outputResults)
         {
             this.oldPath = oldPath;
             this.newPath = newPath;
-            this.outputResults = outputResults;
+            OutputResults = outputResults;
         }
 
         #region RefactorCommand Implementation
@@ -42,9 +39,8 @@ namespace CodeRefactor.Commands
                 var target = RefactoringHelper.GetRefactorTargetFromFile(oldPath, AssociatedDocumentHelper);
                 if (target != null)
                 {
-                    Rename command = new Rename(target, true, newFileName);
+                    var command = CommandFactoryProvider.GetFactory(target).CreateRenameCommandAndExecute(target, true, newFileName);
                     command.RegisterDocumentHelper(AssociatedDocumentHelper);
-                    command.Execute();
                     return;
                 }
             }

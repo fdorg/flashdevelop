@@ -5,43 +5,18 @@ using System.Text;
 using System.Windows.Forms;
 using Microsoft.Win32;
 
+using PluginCore.Helpers;
+
 namespace PluginCore
 {
     public class Win32
     {
-        // INIT
-        private static Boolean shouldUseWin32 = Type.GetType("Mono.Runtime") == null;
-
         /// <summary>
         /// Checks if Win32 functionality should be used
         /// </summary>
         public static Boolean ShouldUseWin32()
         {
-            return shouldUseWin32;
-        }
-
-        /// <summary>
-        /// Checks if we are running on Windows
-        /// </summary>
-        public static Boolean IsRunningOnWindows()
-        {
-            return shouldUseWin32;
-        }
-
-        /// <summary>
-        ///  Checks if we are running on Wine
-        /// </summary>
-        public static Boolean isRunningOnWine()
-        {
-            return Registry.LocalMachine.OpenSubKey(@"Software\Wine\") != null;
-        }
-
-        /// <summary>
-        /// Checks if we are running on Mono
-        /// </summary>
-        public static Boolean IsRunningOnMono()
-        {
-            return !shouldUseWin32;
+            return PlatformHelper.IsRunningOnWindows();
         }
 
         #region Enums

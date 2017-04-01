@@ -146,7 +146,7 @@ namespace FlashDevelop
         private Boolean closingAll = false;
         private Boolean lockStatusLabel = false;
         private ShortcutKeys currentKeys;
-        
+
         /* Singleton */
         public static Boolean Silent;
         public static Boolean IsFirst;
@@ -528,7 +528,7 @@ namespace FlashDevelop
         {
             get { return Environment.OSVersion.Version; }
         }
-        
+
         #endregion
 
         #region Component Creation
@@ -602,7 +602,7 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Opens the specified file and creates a editable document
+        /// Opens the specified file and creates an editable document
         /// </summary>
         public DockContent OpenEditableDocument(String org, Encoding encoding, Boolean restorePosition)
         {
@@ -994,7 +994,7 @@ namespace FlashDevelop
             // toolStripPanel
             //
             this.toolStripPanel.Dock = DockStyle.Top;
-            if (Win32.IsRunningOnMono())
+            if (PlatformHelper.IsRunningOnMono())
             {
                 this.toolStripPanel.Controls.Add(this.menuStrip);
                 this.toolStripPanel.Controls.Add(this.toolStrip);
@@ -2184,7 +2184,7 @@ namespace FlashDevelop
         {
             ShortcutManager.IgnoredKeys.Clear();
         }
-        
+
         /// <summary>
         /// [Deprecated] Registers a new menu item with the shortcut manager
         /// </summary>
@@ -2201,7 +2201,7 @@ namespace FlashDevelop
         {
             ShortcutManager.RegisterItem(id, keys, supportsExtended);
         }
-        
+
         /// <summary>
         /// Registers a new menu item with the shortcut manager
         /// </summary>
@@ -2209,7 +2209,7 @@ namespace FlashDevelop
         {
             ShortcutManager.RegisterItem(id, item);
         }
-        
+
         /// <summary>
         /// Registers a new secondary menu item with the shortcut manager
         /// </summary>
@@ -3219,7 +3219,11 @@ namespace FlashDevelop
         public void FindAndReplace(Object sender, System.EventArgs e)
         {
             if (!this.frInDocDialog.Visible) this.frInDocDialog.Show();
-            else this.frInDocDialog.Activate();
+            else
+            {
+                this.frInDocDialog.InitializeFindText();
+                this.frInDocDialog.Activate();
+            }
         }
 
         /// <summary>
@@ -3243,7 +3247,11 @@ namespace FlashDevelop
         public void FindAndReplaceInFiles(Object sender, System.EventArgs e)
         {
             if (!this.frInFilesDialog.Visible) this.frInFilesDialog.Show();
-            else this.frInFilesDialog.Activate();
+            else
+            {
+                this.frInFilesDialog.UpdateFindText();
+                this.frInFilesDialog.Activate();
+            }
         }
 
         /// <summary>

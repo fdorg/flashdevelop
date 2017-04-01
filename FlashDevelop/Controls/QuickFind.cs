@@ -639,7 +639,7 @@ namespace FlashDevelop.Controls
                     {
                         item.Padding = new Padding(2, 1, 2, 1);
                     }
-                    else if (renderer is ToolStripSystemRenderer && Win32.IsRunningOnWindows())
+                    else if (renderer is ToolStripSystemRenderer && PlatformHelper.IsRunningOnWindows())
                     {
                         item.Padding = new Padding(2, 2, 2, 2);
                     }
@@ -846,7 +846,7 @@ namespace FlashDevelop.Controls
 
             protected void OnPressEscapeKey()
             {
-                if (OnKeyEscape != null) OnKeyEscape();
+                OnKeyEscape?.Invoke();
             }
         }
 

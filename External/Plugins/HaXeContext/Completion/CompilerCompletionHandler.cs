@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace HaXeContext
 {
-    class CompilerCompletionHandler : IHaxeCompletionHandler
+    public class CompilerCompletionHandler : IHaxeCompletionHandler
     {
         private Process haxeProcess;
 
@@ -14,6 +14,10 @@ namespace HaXeContext
         }
 
         public string GetCompletion(string[] args)
+        {
+            return GetCompletion(args, null);
+        }
+        public string GetCompletion(string[] args, string fileContent)
         {
             if (args == null || haxeProcess == null)
                 return string.Empty;
@@ -33,7 +37,6 @@ namespace HaXeContext
 
         public void Stop()
         {
-            
         }
     }
 }

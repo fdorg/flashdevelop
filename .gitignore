@@ -26,3 +26,7 @@ PluginCore/Bin
 /FlashDevelop/Bin/Debug/Settings/Themes/CURRENT
 /FlashDevelop/Bin/Debug/Settings/Shortcuts/CURRENT
 packages/
+NSubstitute.xml
+nunit.framework.xml
+**/NSubstitute.dll
+**/nunit.framework.dll

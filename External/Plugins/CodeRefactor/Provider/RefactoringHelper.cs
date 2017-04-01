@@ -9,6 +9,7 @@ using PluginCore;
 using PluginCore.FRService;
 using PluginCore.Helpers;
 using PluginCore.Managers;
+using PluginCore.Utilities;
 using ProjectManager.Projects;
 using ScintillaNet;
 
@@ -63,7 +64,7 @@ namespace CodeRefactor.Provider
             ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
             if (document == null || !document.IsEditable) return false;
             string lang = document.SciControl.ConfigurationLanguage;
-            return lang == "as2" || lang == "as3" || lang == "haxe" || lang == "loom"; // TODO: look for /Snippets/Generators
+            return CommandFactoryProvider.ContainsLanguage(lang);
         }
 
         /// <summary>
@@ -71,8 +72,7 @@ namespace CodeRefactor.Provider
         /// </summary>
         public static Boolean ModelFileExists(FileModel model)
         {
-            if (model != null && File.Exists(model.FileName)) return true;
-            else return false;
+            return model != null && File.Exists(model.FileName);
         }
 
         /// <summary>
@@ -85,8 +85,7 @@ namespace CodeRefactor.Provider
         public static Boolean IsUnderSDKPath(String file)
         {
             InstalledSDK sdk = PluginBase.CurrentSDK;
-            if (sdk != null && !String.IsNullOrEmpty(sdk.Path) && file.StartsWithOrdinal(sdk.Path)) return true;
-            return false;
+            return sdk != null && !String.IsNullOrEmpty(sdk.Path) && file.StartsWithOrdinal(sdk.Path);
         }
 
         /// <summary>
@@ -102,13 +101,18 @@ namespace CodeRefactor.Provider
             return ASComplete.GetExpressionType(sci, position);
         }
 
+        public static MemberModel GetRefactoringTarget(ASResult target)
+        {
+            var type = target.Type;
+            var member = target.Member;
+            if (type.IsEnum() || !type.IsVoid() && target.IsStatic && (member == null || (member.Flags & FlagType.Constructor) > 0))
+                return type;
+            return member;
+        }
+
         public static string GetRefactorTargetName(ASResult target)
         {
-            ClassModel type = target.Type;
-            MemberModel member = target.Member;
-            if (type.IsEnum() || !type.IsVoid() && target.IsStatic && (member == null || (member.Flags & FlagType.Constructor) > 0))
-                return type.Name;
-            return member.Name;
+            return GetRefactoringTarget(target).Name;
         }
 
         /// <summary>
@@ -304,7 +308,8 @@ namespace CodeRefactor.Provider
                 return resultInFile.BasePath == targetInFile.BasePath
                     && resultInFile.FileName == targetInFile.FileName
                     && result.Member.LineFrom == target.Member.LineFrom
-                    && result.Member.Name == target.Member.Name;
+                    && result.Member.Name == target.Member.Name
+                    && result.Member.Flags == target.Member.Flags;
             }
             else // type
             {
@@ -361,25 +366,16 @@ namespace CodeRefactor.Provider
         /// <returns>If "asynchronous" is false, will return the search results, otherwise returns null on bad input or if running in asynchronous mode.</returns>
         public static FRResults FindTargetInFiles(ASResult target, FRProgressReportHandler progressReportHandler, FRFinishedHandler findFinishedHandler, Boolean asynchronous, Boolean onlySourceFiles, Boolean ignoreSdkFiles, bool includeComments, bool includeStrings)
         {
-            Boolean currentFileOnly = false;
-            // checks target is a member
-            if (target == null || ((target.Member == null || String.IsNullOrEmpty(target.Member.Name))
-                && (target.Type == null || !CheckFlag(target.Type.Flags, FlagType.Class) && !target.Type.IsEnum())))
+            if (target == null) return null;
+            var member = target.Member;
+            var type = target.Type;
+            if ((member == null || string.IsNullOrEmpty(member.Name)) && (type == null || (type.Flags & (FlagType.Class | FlagType.Enum)) == 0))
             {
                 return null;
             }
-            else
-            {
-                // if the target we are trying to rename exists as a local variable or a function parameter we only need to search the current file
-                if (target.Member != null && (
-                        target.Member.Access == Visibility.Private
-                        || CheckFlag(target.Member.Flags, FlagType.LocalVar)
-                        || CheckFlag(target.Member.Flags, FlagType.ParameterVar))
-                    )
-                {
-                    currentFileOnly = true;
-                }
-            }
+            // if the target we are trying to rename exists as a local variable or a function parameter we only need to search the current file
+            var currentFileOnly = member != null && (member.Access == Visibility.Private && !target.InFile.haXe || (member.Flags & (FlagType.LocalVar | FlagType.ParameterVar)) > 0)
+                               || member == null && (type.Access == Visibility.Private && !type.InFile.haXe || new SemVer(PluginBase.CurrentSDK.Version).IsOlderThan(new SemVer("4.0.0")));
             FRConfiguration config;
             IProject project = PluginBase.CurrentProject;
             String file = PluginBase.MainForm.CurrentDocument.FileName;
@@ -396,16 +392,16 @@ namespace CodeRefactor.Provider
                     }
                     return null;
                 }
-                config = new FRConfiguration(path, mask, false, GetFRSearch(target.Member != null ? target.Member.Name : target.Type.Name, includeComments, includeStrings));
+                config = new FRConfiguration(path, mask, false, GetFRSearch(member != null ? member.Name : type.Name, includeComments, includeStrings));
             }
-            else if (target.Member != null && !CheckFlag(target.Member.Flags, FlagType.Constructor))
+            else if (member != null && !CheckFlag(member.Flags, FlagType.Constructor))
             {
-                config = new FRConfiguration(GetAllProjectRelatedFiles(project, onlySourceFiles, ignoreSdkFiles), GetFRSearch(target.Member.Name, includeComments, includeStrings));
+                config = new FRConfiguration(GetAllProjectRelatedFiles(project, onlySourceFiles, ignoreSdkFiles), GetFRSearch(member.Name, includeComments, includeStrings));
             }
             else
             {
                 target.Member = null;
-                config = new FRConfiguration(GetAllProjectRelatedFiles(project, onlySourceFiles, ignoreSdkFiles), GetFRSearch(target.Type.Name, includeComments, includeStrings));
+                config = new FRConfiguration(GetAllProjectRelatedFiles(project, onlySourceFiles, ignoreSdkFiles), GetFRSearch(type.Name, includeComments, includeStrings));
             }
             config.CacheDocuments = true;
             FRRunner runner = new FRRunner();

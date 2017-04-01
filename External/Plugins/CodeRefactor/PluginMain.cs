@@ -20,6 +20,7 @@ using ProjectManager;
 using ProjectManager.Actions;
 using ProjectManager.Controls.TreeView;
 using ProjectManager.Helpers;
+using CodeRefactor.Managers;
 
 namespace CodeRefactor
 {
@@ -250,6 +251,11 @@ namespace CodeRefactor
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
             this.pluginDesc = TextHelper.GetString("Info.Description");
+
+            BatchProcessManager.AddBatchProcessor(new BatchProcessors.FormatCodeProcessor());
+            BatchProcessManager.AddBatchProcessor(new BatchProcessors.OrganizeImportsProcessor());
+            BatchProcessManager.AddBatchProcessor(new BatchProcessors.TruncateImportsProcessor());
+            BatchProcessManager.AddBatchProcessor(new BatchProcessors.ConsistentEOLProcessor());
         }
 
         /// <summary>
@@ -289,7 +295,7 @@ namespace CodeRefactor
             PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.ViewReferences", this.editorReferencesItem);
             searchMenu.DropDownItems.Add(new ToolStripSeparator());
             searchMenu.DropDownItems.Add(this.viewReferencesItem);
-            editorMenu.Items.Insert(7, this.editorReferencesItem);
+            editorMenu.Items.Insert(8, this.editorReferencesItem);
             RegisterMenuItems();
         }
 
@@ -457,12 +463,10 @@ namespace CodeRefactor
         /// </summary>
         private void RenameClicked(Object sender, EventArgs e)
         {
+            if (InlineRename.InProgress) return;
             try
             {
-                if (!InlineRename.InProgress)
-                {
-                    new Rename(true, settingObject.UseInlineRenaming);
-                }
+                CommandFactoryProvider.GetFactoryForCurrentDocument().CreateRenameCommandAndExecute(true, settingObject.UseInlineRenaming);
             }
             catch (Exception ex)
             {
@@ -497,7 +501,7 @@ namespace CodeRefactor
         {
             try
             {
-                RenameFile command = new RenameFile(oldPath, newPath);
+                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateRenameFileCommand(oldPath, newPath);
                 command.Execute();
             }
             catch (Exception ex)
@@ -513,7 +517,8 @@ namespace CodeRefactor
         {
             try
             {
-                SurroundWithCommand command = new SurroundWithCommand((sender as ToolStripItem).Text);
+                var snippet = (sender as ToolStripItem).Text;
+                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateSurroundWithCommand(snippet);
                 command.Execute();
             }
             catch (Exception ex)
@@ -529,7 +534,7 @@ namespace CodeRefactor
         {
             try
             {
-                FindAllReferences command = new FindAllReferences(true);
+                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateFindAllReferencesCommand(true);
                 command.Execute();
             }
             catch (Exception ex)
@@ -545,7 +550,7 @@ namespace CodeRefactor
         {
             try
             {
-                OrganizeImports command = new OrganizeImports();
+                var command = (OrganizeImports)CommandFactoryProvider.GetFactoryForCurrentDocument().CreateOrganizeImportsCommand();
                 command.SeparatePackages = this.settingObject.SeparatePackages;
                 command.Execute();
             }
@@ -562,7 +567,7 @@ namespace CodeRefactor
         {
             try
             {
-                OrganizeImports command = new OrganizeImports();
+                var command = (OrganizeImports)CommandFactoryProvider.GetFactoryForCurrentDocument().CreateOrganizeImportsCommand();
                 command.SeparatePackages = this.settingObject.SeparatePackages;
                 command.TruncateImports = true;
                 command.Execute();
@@ -607,14 +612,11 @@ namespace CodeRefactor
                     }
                     cm = cm.Extends;
                 }
-                DelegateMethodsDialog dd = new DelegateMethodsDialog();
-                dd.FillData(members, result.Type);
-                DialogResult choice = dd.ShowDialog();
-                if (choice == DialogResult.OK && dd.checkedMembers.Count > 0)
-                {
-                    DelegateMethodsCommand command = new DelegateMethodsCommand(result, dd.checkedMembers);
-                    command.Execute();
-                }
+                var dialog = new DelegateMethodsDialog();
+                dialog.FillData(members, result.Type);
+                if (dialog.ShowDialog() != DialogResult.OK || dialog.checkedMembers.Count <= 0) return;
+                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateDelegateMethodsCommand(result, dialog.checkedMembers);
+                command.Execute();
             }
             catch (Exception ex)
             {
@@ -629,20 +631,18 @@ namespace CodeRefactor
         {
             try
             {
-                String suggestion = "newMethod";
+                String newName = "newMethod";
                 String label = TextHelper.GetString("Label.NewName");
                 String title = TextHelper.GetString("Title.ExtractMethodDialog");
-                LineEntryDialog askName = new LineEntryDialog(title, label, suggestion);
-                DialogResult choice = askName.ShowDialog();
-                if (choice == DialogResult.OK && askName.Line.Trim().Length > 0 && askName.Line.Trim() != suggestion)
+                LineEntryDialog askName = new LineEntryDialog(title, label, newName);
+                var result = askName.ShowDialog();
+                if (result != DialogResult.OK) return;
+                if (askName.Line.Trim().Length > 0 && askName.Line.Trim() != newName)
                 {
-                    suggestion = askName.Line.Trim();
+                    newName = askName.Line.Trim();
                 }
-                if (choice == DialogResult.OK)
-                {
-                    ExtractMethodCommand command = new ExtractMethodCommand(suggestion);
-                    command.Execute();
-                }
+                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateExtractMethodCommand(newName);
+                command.Execute();
             }
             catch (Exception ex)
             {
@@ -657,7 +657,7 @@ namespace CodeRefactor
         {
             try
             {
-                var command = new ExtractLocalVariableCommand();
+                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateExtractLocalVariableCommand();
                 command.Execute();
             }
             catch (Exception ex)
@@ -671,8 +671,8 @@ namespace CodeRefactor
         /// </summary>
         private void BatchMenuItemClicked(Object sender, EventArgs e)
         {
-            BatchProcessDialog bpd = new BatchProcessDialog();
-            bpd.ShowDialog();
+            BatchProcessDialog dialog = new BatchProcessDialog();
+            dialog.ShowDialog();
         }
 
         /// <summary>
@@ -708,8 +708,7 @@ namespace CodeRefactor
 
         void OnAddRefactorOptions(List<ICompletionListItem> list)
         {
-            if (list == null)
-                return;
+            if (list == null) return;
 
             RefactorItem.AddItemToList(refactorMainMenu.RenameMenuItem, list);
             RefactorItem.AddItemToList(refactorMainMenu.ExtractMethodMenuItem, list);
@@ -717,15 +716,13 @@ namespace CodeRefactor
             RefactorItem.AddItemToList(refactorMainMenu.DelegateMenuItem, list);
 
             var features = ASContext.Context.Features;
-
-            if (!features.hasImports)
-                return;
+            if (!features.hasImports) return;
 
             var sci = ASContext.CurSciControl;
-            string line = sci.GetLine(sci.CurrentLine).TrimStart();
+            var line = sci.GetLine(sci.CurrentLine).TrimStart();
 
-            if (line.StartsWith(features.importKey, StringComparison.Ordinal)
-                || !string.IsNullOrEmpty(features.importKeyAlt) && line.StartsWith(features.importKeyAlt, StringComparison.Ordinal))
+            if (line.StartsWithOrdinal(features.importKey)
+                || !string.IsNullOrEmpty(features.importKeyAlt) && line.StartsWithOrdinal(features.importKeyAlt))
             {
                 RefactorItem.AddItemToList(refactorMainMenu.OrganizeMenuItem, list);
 

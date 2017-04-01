@@ -42,7 +42,7 @@ namespace FlashDevelop.Dialogs
             this.Font = Globals.Settings.DefaultFont;
             this.FormGuid = "48a75ac0-479a-49b9-8ec0-5db7c8d36388";
             this.InitializeComponent();
-            this.InitializeGraphics();
+            this.InitializeGraphics(); 
             this.InitializeItemGroups();
             this.InitializeContextMenu();
             this.PopulatePluginList(itemName, filter);
@@ -358,7 +358,7 @@ namespace FlashDevelop.Dialogs
             itemFilter = itemName;
             this.SelectCorrectItem(itemName);
         }
-
+        
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             string shortcutId;
@@ -377,7 +377,7 @@ namespace FlashDevelop.Dialogs
             }
             return false;
         }
-
+        
         /// <summary>
         /// Selects the correct setting item
         /// </summary>
@@ -446,7 +446,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void FilterPropertySheet()
         {
-            if (Win32.IsRunningOnMono()) return;
+            if (PlatformHelper.IsRunningOnMono()) return;
             Object settingsObj = this.itemPropertyGrid.SelectedObject;
             String text = this.filterText.Text;
             if (settingsObj != null)
@@ -626,6 +626,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void DialogClosed(Object sender, FormClosedEventArgs e)
         {
+            Cursor.Current = Cursors.WaitCursor;  // Enough for our sync code
             if (sdkContext != null) sdkContext.Dispose();
             Globals.MainForm.ApplyAllSettings();
             Globals.MainForm.SaveSettings();

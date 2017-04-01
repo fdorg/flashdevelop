@@ -10,7 +10,7 @@
 ;--------------------------------
 
 ; Define version info
-!define VERSION "5.2.0"
+!define VERSION "5.2.1"
 
 ; Installer details
 VIAddVersionKey "CompanyName" "${DIST_COMP}"
@@ -253,6 +253,9 @@ Section "${DIST_NAME}" Main
 
 	; Remove PluginCore from plugins...
 	Delete "$INSTDIR\Plugins\PluginCore.dll"
+
+	; Remove ProjectManager from inst dir...
+	Delete "$INSTDIR\ProjectManager.dll"
 	
 	; Patch CrossOver/Wine files, remove 64bit
 	SetOverwrite on

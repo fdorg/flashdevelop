@@ -350,7 +350,6 @@ namespace FlashDevelop.Settings
         {
             get
             {
-                // Make sure this is not an invalid value
                 if (this.highlightMatchingWordsDelay <= 0) this.highlightMatchingWordsDelay = 1200;
                 return this.highlightMatchingWordsDelay;
             }
@@ -573,12 +572,12 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.MaxRecentFiles")]
         public Int32 MaxRecentFiles
         {
-            get { return this.maxRecentFiles; }
-            set
+            get
             {
-                if (value < 0) throw new ArgumentOutOfRangeException();
-                this.maxRecentFiles = value;
+                if (this.maxRecentFiles <= 0) this.maxRecentFiles = 15;
+                return this.maxRecentFiles;
             }
+            set { this.maxRecentFiles = value; }
         }
 
         [DefaultValue(true)]
@@ -671,7 +670,6 @@ namespace FlashDevelop.Settings
             set { this.disableTabDifferentiation = value; }
         }
 
-
         [DefaultValue(false)]
         [DisplayName("Disable Extended Shortcut Keys")]
         [LocalizedCategory("FlashDevelop.Category.Features")]
@@ -681,6 +679,7 @@ namespace FlashDevelop.Settings
             get { return this.disableExtendedShortcutKeys; }
             set { this.disableExtendedShortcutKeys = value; }
         }
+
         #endregion
 
         #region Formatting

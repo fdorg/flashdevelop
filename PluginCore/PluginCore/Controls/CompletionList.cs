@@ -214,9 +214,7 @@ namespace PluginCore.Controls
         /// </summary>
         static public void SelectItem(String name)
         {
-            int p = name.IndexOf('<');
-            if (p > 1) name = name.Substring(0, p) + "<T>";
-            string pname = (name.IndexOf('.') < 0) ? "." + name : null;
+            string pname = name.IndexOf('.') < 0 ? "." + name : null;
             ICompletionListItem found = null;
             foreach (ICompletionListItem item in completionList.Items)
             {
@@ -260,7 +258,7 @@ namespace PluginCore.Controls
                 needResize = false;
                 Graphics g = cl.CreateGraphics();
                 SizeF size = g.MeasureString(widestLabel, cl.Font);
-                cl.Width = (int)Math.Min(Math.Max(size.Width + 40, 100), 400) + ScaleHelper.Scale(10);
+                cl.Width = (int)Math.Min(Math.Max(size.Width + 40, 100), ScaleHelper.Scale(400)) + ScaleHelper.Scale(10);
             }
             int newHeight = Math.Min(cl.Items.Count, 10) * cl.ItemHeight + 4;
             if (newHeight != cl.Height) cl.Height = newHeight;
@@ -887,16 +885,15 @@ namespace PluginCore.Controls
             switch (key)
             {
                 case Keys.Back:
-                    if (!UITools.CallTip.CallTipActive) sci.DeleteBack();
-                    if (word.Length > MinWordLength)
+                    if (word.Length >= MinWordLength)
                     {
-                        word = word.Substring(0, word.Length-1);
-                        currentPos = sci.CurrentPos;
+                        word = word.Substring(0, word.Length - 1);
+                        currentPos = sci.CurrentPos - 1;
                         lastIndex = 0;
                         FindWordStartingWith(word);
                     }
                     else CompletionList.Hide((char)8);
-                    return true;
+                    return false;
                     
                 case Keys.Enter:
                     if (noAutoInsert || !ReplaceText(sci, '\n'))
