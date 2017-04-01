@@ -290,7 +290,9 @@ namespace CodeRefactor
             ToolStripMenuItem searchMenu = PluginBase.MainForm.FindMenuItem("SearchMenu") as ToolStripMenuItem;
             this.viewReferencesItem = new ToolStripMenuItem(TextHelper.GetString("Label.FindAllReferences"), null, this.FindAllReferencesClicked);
             this.editorReferencesItem = new ToolStripMenuItem(TextHelper.GetString("Label.FindAllReferences"), null, this.FindAllReferencesClicked);
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.SurroundWith", this.refactorMainMenu.SurroundMenu);
             PluginBase.MainForm.RegisterShortcutItem("SearchMenu.ViewReferences", this.viewReferencesItem);
+            PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.SurroundWith", this.surroundContextMenu);
             PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.ViewReferences", this.editorReferencesItem);
             searchMenu.DropDownItems.Add(new ToolStripSeparator());
             searchMenu.DropDownItems.Add(this.viewReferencesItem);
@@ -434,26 +436,12 @@ namespace CodeRefactor
             if (document != null && document.IsEditable && RefactoringHelper.GetLanguageIsValid())
             {
                 this.surroundContextMenu.GenerateSnippets(document.SciControl);
-                foreach (ToolStripMenuItem item in this.surroundContextMenu.DropDownItems)
-                {
-                    item.Click += this.SurroundWithClicked;
-                }
-                foreach (ToolStripMenuItem item in this.refactorMainMenu.SurroundMenu.DropDownItems)
-                {
-                    item.Click -= this.SurroundWithClicked;
-                }
                 this.refactorMainMenu.SurroundMenu.GenerateSnippets(document.SciControl);
-                foreach (ToolStripMenuItem item in this.refactorMainMenu.SurroundMenu.DropDownItems)
-                {
-                    item.Click += this.SurroundWithClicked;
-                }
             }
             else
             {
-                this.surroundContextMenu.DropDownItems.Clear();
-                this.refactorMainMenu.SurroundMenu.DropDownItems.Clear();
-                this.refactorMainMenu.SurroundMenu.DropDownItems.Add("");
-                this.surroundContextMenu.DropDownItems.Add("");
+                this.surroundContextMenu.Clear();
+                this.refactorMainMenu.SurroundMenu.Clear();
             }
         }
 
@@ -501,23 +489,6 @@ namespace CodeRefactor
             try
             {
                 var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateRenameFileCommand(oldPath, newPath);
-                command.Execute();
-            }
-            catch (Exception ex)
-            {
-                ErrorManager.ShowError(ex);
-            }
-        }
-
-        /// <summary>
-        /// Invoked when the user selects the "Surround with Try/catch block" command
-        /// </summary>
-        private void SurroundWithClicked(Object sender, EventArgs e)
-        {
-            try
-            {
-                var snippet = (sender as ToolStripItem).Text;
-                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateSurroundWithCommand(snippet);
                 command.Execute();
             }
             catch (Exception ex)

@@ -95,6 +95,11 @@ namespace PluginCore
         #endregion
     }
 
+    public interface ICompletionListSpecialItem : ICompletionListItem
+    {
+
+    }
+
     public interface IMainForm : IContainerControl, IWin32Window
     {
         #region IMainForm Methods
