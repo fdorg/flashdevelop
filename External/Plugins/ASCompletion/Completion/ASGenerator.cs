@@ -3189,31 +3189,33 @@ namespace ASCompletion.Completion
                 pos = sci.WordEndPosition(pos, true);
                 c = line.TrimEnd().Last();
                 resolve = ASComplete.GetExpressionType(sci, c == ']' ? pos + 1 : pos);
-                if (resolve.IsNull()) resolve.Type = null;
-                else if (resolve.Type.Name == "Function" && !bracesRemoved)
+                if (resolve.Type != null && !resolve.IsPackage)
                 {
-                    if (sci.ConfigurationLanguage == "haxe")
+                    if (resolve.Type.Name == "Function" && !bracesRemoved)
                     {
-                        var voidKey = ctx.Features.voidKey;
-                        var parameters = resolve.Member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
-                        parameters.Add(resolve.Member.Type ?? voidKey);
-                        var qualifiedName = string.Empty;
-                        for (var i = 0; i < parameters.Count; i++)
+                        if (sci.ConfigurationLanguage == "haxe")
                         {
-                            if (i > 0) qualifiedName += "->";
-                            var t = parameters[i];
-                            if (t.Contains("->") && !t.StartsWith('(')) t = $"({t})";
-                            qualifiedName += t;
+                            var voidKey = ctx.Features.voidKey;
+                            var parameters = resolve.Member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
+                            parameters.Add(resolve.Member.Type ?? voidKey);
+                            var qualifiedName = string.Empty;
+                            for (var i = 0; i < parameters.Count; i++)
+                            {
+                                if (i > 0) qualifiedName += "->";
+                                var t = parameters[i];
+                                if (t.Contains("->") && !t.StartsWith('(')) t = $"({t})";
+                                qualifiedName += t;
+                            }
+                            resolve.Type.Name = qualifiedName;
                         }
-                        resolve.Type.Name = qualifiedName;
+                        resolve.Member = null;
                     }
-                    resolve.Member = null;
-                }
-                else if ((resolve.Type.Flags & FlagType.Class) > 0
-                    && resolve.Context?.WordBefore != "new" && resolve.Member == null)
-                {
-                    type = ctx.ResolveType("Class", inClass.InFile);
-                    resolve = null;
+                    else if ((resolve.Type.Flags & FlagType.Class) > 0
+                             && resolve.Context?.WordBefore != "new" && resolve.Member == null)
+                    {
+                        type = ctx.ResolveType("Class", inClass.InFile);
+                        resolve = null;
+                    }
                 }
                 word = sci.GetWordFromPosition(pos);
             }
