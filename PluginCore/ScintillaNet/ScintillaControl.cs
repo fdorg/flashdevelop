@@ -997,7 +997,7 @@ namespace ScintillaNet
         {
             get
             {
-                return SPerform(2027, 0, 0);
+                return SPerform(2027, 0, 0) - 1; //ignore the terminating null character
             }
         }
 
@@ -3190,10 +3190,9 @@ namespace ScintillaNet
         /// </summary>
         unsafe public string GetCurLine(int length)
         {
-            int sz = SPerform(2027, length, 0);
-            byte[] buffer = new byte[sz + 1];
+            byte[] buffer = new byte[length + 1];
             fixed (byte* b = buffer) SPerform(2027, length + 1, (uint)b);
-            return Encoding.GetEncoding(this.CodePage).GetString(buffer, 0, sz - 1);
+            return Encoding.GetEncoding(this.CodePage).GetString(buffer, 0, length);
         }
 
         /// <summary>
