@@ -834,7 +834,7 @@ namespace ASCompletion.Completion
                     new ASFileParser().ParseSrc(currentModel, sci.Text);
                     var currentClass = currentModel.Classes[0];
                     ASContext.Context.CurrentClass.Returns(currentClass);
-                    var currentMember = currentClass.Members[0];
+                    var currentMember = currentClass.Members.Items.FirstOrDefault();
                     ASContext.Context.CurrentMember.Returns(currentMember);
                     ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
                     ASGenerator.GenerateJob(job, currentMember, ASContext.Context.CurrentClass, null, null);
@@ -859,11 +859,11 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextAS3("AfterGeneratePrivateFunction_generateExplicitScopeIsTrue"))
-                                .SetName("Generate private function");
+                                .SetName("Generate private function from member scope");
                         yield return
                             new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction"), GeneratorJobType.FunctionPublic)
                                 .Returns(ReadAllTextAS3("AfterGeneratePublicFunction_generateExplicitScopeIsTrue"))
-                                .SetName("Generate public function");
+                                .SetName("Generate public function from member scope");
                         yield return
                             new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction_forSomeObj"), GeneratorJobType.FunctionPublic)
                                 .Returns(ReadAllTextAS3("AfterGenerateFunction_forSomeObj"))
@@ -888,6 +888,10 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextAS3("BeforeGenerateStaticFunction_forSomeType"), GeneratorJobType.FunctionPublic)
                                 .Returns(ReadAllTextAS3("AfterGeneratePublicStaticFunction_forSomeType"))
                                 .SetName("From SomeType.foo|");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction2"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextAS3("AfterGeneratePrivateFunction2_generateExplicitScopeIsTrue"))
+                                .SetName("Generate private function from class scope");
                     }
                 }
 
@@ -1285,7 +1289,7 @@ namespace ASCompletion.Completion
                     var currentClass = currentModel.Classes[0];
                     ASContext.Context.CurrentClass.Returns(currentClass);
                     ASContext.Context.CurrentModel.Returns(currentModel);
-                    var currentMember = currentClass.Members[0];
+                    var currentMember = currentClass.Members.Items.FirstOrDefault();
                     ASContext.Context.CurrentMember.Returns(currentMember);
                     ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
                     ASGenerator.GenerateJob(job, currentMember, ASContext.Context.CurrentClass, null, null);
@@ -1310,11 +1314,11 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(ReadAllTextAS3("BeforeGenerateVariable"), GeneratorJobType.Variable)
                                 .Returns(ReadAllTextAS3("AfterGeneratePrivateVariable_generateExplicitScopeIsTrue"))
-                                .SetName("Generate private variable");
+                                .SetName("Generate private variable from member scope");
                         yield return
                             new TestCaseData(ReadAllTextAS3("BeforeGenerateVariable"), GeneratorJobType.VariablePublic)
                                 .Returns(ReadAllTextAS3("AfterGeneratePublicVariable_generateExplicitScopeIsTrue"))
-                                .SetName("Generate public variable");
+                                .SetName("Generate public variable from member scope");
                         yield return
                             new TestCaseData(ReadAllTextAS3("BeforeGenerateVariable_forSomeObj"), GeneratorJobType.VariablePublic)
                                 .Returns(ReadAllTextAS3("AfterGenerateVariable_forSomeObj"))
@@ -1327,6 +1331,10 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextAS3("BeforeGenerateVariable_forSomeObj3"), GeneratorJobType.VariablePublic)
                                 .Returns(ReadAllTextAS3("AfterGenerateVariable_forSomeObj3"))
                                 .SetName("From new Some()\n.foo|");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateVariable2"), GeneratorJobType.Variable)
+                                .Returns(ReadAllTextAS3("AfterGeneratePrivateVariable2_generateExplicitScopeIsTrue"))
+                                .SetName("Generate private variable from class scope");
                     }
                 }
 
