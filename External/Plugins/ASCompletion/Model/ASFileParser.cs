@@ -2376,7 +2376,7 @@ namespace ASCompletion.Model
                             curClass.Type = qtype.Type;
                             curClass.Template = qtype.Template;
                             curClass.Name = qtype.Name;
-                            curClass.Constructor = (haXe) ? "new" : token;
+                            curClass.Constructor = string.IsNullOrEmpty(features.ConstructorKey) ? token : features.ConstructorKey;
                             curClass.Flags = curModifiers;
                             curClass.Access = (curAccess == 0) ? features.classModifierDefault : curAccess;
                             curClass.Namespace = curNamespace;

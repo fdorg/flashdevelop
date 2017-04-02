@@ -1559,7 +1559,7 @@ namespace ASCompletion.Completion
             }
 
             if (funcResult.Member == null) return;
-            if (IsHaxe) funcResult.Member.Name = "new";
+            if (!string.IsNullOrEmpty(ASContext.Context.Features.ConstructorKey)) funcResult.Member.Name = ASContext.Context.Features.ConstructorKey;
 
             ChangeDecl(sci, funcResult.Member, functionParameters);
         }
