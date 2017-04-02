@@ -629,8 +629,7 @@ namespace ASCompletion.Model
                             var aFile = newFiles[key];
                             if (File.Exists(aFile.FileName))
                             {
-                                var info = new FileInfo(aFile.FileName);
-                                if (info.LastWriteTime != aFile.LastWriteTime) aFile.OutOfDate = true;
+                                if (File.GetLastWriteTime(aFile.FileName) != aFile.LastWriteTime) aFile.OutOfDate = true;
 
                                 aFile.Context = Owner;
                                 files[key] = aFile;

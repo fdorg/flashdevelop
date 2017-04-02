@@ -160,7 +160,7 @@ namespace CodeRefactor.Commands
                     bool add = false;
                     if (RefactoringHelper.DoesMatchPointToTarget(sci, match, target, this.AssociatedDocumentHelper))
                     {
-                        if (IgnoreDeclarationSource && !foundDeclarationSource && RefactoringHelper.IsMatchTheTarget(sci, match, target))
+                        if (IgnoreDeclarationSource && !foundDeclarationSource && RefactoringHelper.IsMatchTheTarget(sci, match, target, AssociatedDocumentHelper))
                         {
                             //ignore the declaration source
                             foundDeclarationSource = true;

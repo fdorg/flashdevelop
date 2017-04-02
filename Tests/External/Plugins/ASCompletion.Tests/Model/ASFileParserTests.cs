@@ -2017,6 +2017,30 @@ namespace ASCompletion.Model
                     Assert.AreEqual("dummy", memberModel.MetaDatas[0].Name);
                 }
             }
+
+            static IEnumerable<TestCaseData> ParseClassTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("class Foo {}").Returns(new ClassModel {Name = "Foo", InFile = FileModel.Ignore });
+                    yield return new TestCaseData("class Foo<T> {}").Returns(new ClassModel {Name = "Foo", InFile = FileModel.Ignore });
+                    yield return new TestCaseData("private class Database_r<T> {}").Returns(new ClassModel {Name = "Database_r", InFile = FileModel.Ignore});
+                    yield return new TestCaseData("private class Database_<T> {}").Returns(new ClassModel {Name = "Database_", InFile = FileModel.Ignore});
+                }
+            }
+
+            [Test, TestCaseSource(nameof(ParseClassTestCases))]
+            public ClassModel ParseClass(string sourceText)
+            {
+                var plugin = Substitute.For<PluginMain>();
+                plugin.MenuItems.Returns(new List<ToolStripItem>());
+                var context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                Context.ASContext.GlobalInit(plugin);
+                Context.ASContext.Context = context;
+                var model = context.GetCodeModel(sourceText);
+                var result = model.Classes.First();
+                return result;
+            }
         }
     }
 }

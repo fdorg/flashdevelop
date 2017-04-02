@@ -194,6 +194,9 @@ namespace CodeRefactor.Provider
             }
         }
 
+        internal bool ContainsOpenedDocument(string filenName) => filesOpenedDocumentReferences.ContainsKey(filenName);
+
+        internal ITabbedDocument GetOpenedDocument(string fileName) => filesOpenedDocumentReferences[fileName];
     }
 
 }

@@ -21,6 +21,7 @@ using ProjectManager;
 using ProjectManager.Actions;
 using ProjectManager.Controls.TreeView;
 using ProjectManager.Helpers;
+using CodeRefactor.Managers;
 
 namespace CodeRefactor
 {
@@ -251,6 +252,11 @@ namespace CodeRefactor
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
             this.pluginDesc = TextHelper.GetString("Info.Description");
+
+            BatchProcessManager.AddBatchProcessor(new BatchProcessors.FormatCodeProcessor());
+            BatchProcessManager.AddBatchProcessor(new BatchProcessors.OrganizeImportsProcessor());
+            BatchProcessManager.AddBatchProcessor(new BatchProcessors.TruncateImportsProcessor());
+            BatchProcessManager.AddBatchProcessor(new BatchProcessors.ConsistentEOLProcessor());
         }
 
         /// <summary>

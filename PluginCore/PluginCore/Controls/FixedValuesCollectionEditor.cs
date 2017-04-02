@@ -24,6 +24,8 @@ namespace PluginCore.Controls
         Label lblUsed;
         ListView availableItems;
         ListView usedItems;
+        ColumnHeader availableItemsHeader;
+        ColumnHeader usedItemsHeader;
         Button btnAdd;
         Button btnRemove;
         Button btnUp;
@@ -55,20 +57,18 @@ namespace PluginCore.Controls
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ColumnHeader availableItemsHeader;
-            System.Windows.Forms.ColumnHeader usedItemsHeader;
             this.lblAvailable = new System.Windows.Forms.Label();
             this.lblUsed = new System.Windows.Forms.Label();
             this.availableItems = new System.Windows.Forms.ListView();
             this.usedItems = new System.Windows.Forms.ListView();
+            this.availableItemsHeader = ((System.Windows.Forms.ColumnHeader) (new System.Windows.Forms.ColumnHeader()));
+            this.usedItemsHeader = ((System.Windows.Forms.ColumnHeader) (new System.Windows.Forms.ColumnHeader()));
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnRemove = new System.Windows.Forms.Button();
             this.btnUp = new System.Windows.Forms.Button();
             this.btnDown = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
-            availableItemsHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            usedItemsHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
             // 
             // availableItemsHeader
@@ -317,7 +317,9 @@ namespace PluginCore.Controls
                 availableItems.Items.Remove(item);
                 usedItems.Items.Add(item);
             }
-            
+
+            availableItemsHeader.Width = -1;
+            usedItemsHeader.Width = -1;
             availableItems.EndUpdate();
             usedItems.EndUpdate();
             usedItems.Select();
@@ -340,6 +342,8 @@ namespace PluginCore.Controls
                 availableItems.Items.Add(item);
             }
 
+            availableItemsHeader.Width = -1;
+            usedItemsHeader.Width = -1;
             availableItems.EndUpdate();
             usedItems.EndUpdate();
             availableItems.Select();
