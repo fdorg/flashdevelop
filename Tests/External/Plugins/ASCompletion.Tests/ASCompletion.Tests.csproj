@@ -507,6 +507,10 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterChangeConstructorDeclaration_Dynamic.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromDynamic_useSpaces.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromDynamic_useSpaces.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVariable2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePrivateVariable2_generateExplicitScopeIsTrue.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePrivateFunction2_generateExplicitScopeIsTrue.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using ASCompletion.Context;
@@ -2201,24 +2200,10 @@ namespace ASCompletion.Completion
         private static void GenerateVariableJob(GeneratorJobType job, ScintillaControl sci, MemberModel member, bool detach, ClassModel inClass)
         {
             var position = 0;
-            bool isOtherClass = false;
             Visibility visibility = job.Equals(GeneratorJobType.Variable) ? GetDefaultVisibility(inClass) : Visibility.Public;
-            FlagType kind = job.Equals(GeneratorJobType.Constant) ? FlagType.Constant : FlagType.Variable;
             // evaluate, if the variable (or constant) should be generated in other class
             ASResult varResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
-            var memberIsStatic = member != null && (member.Flags & FlagType.Static) > 0;
-            var dot = ASContext.Context.Features.dot;
-            if (ASContext.CommonSettings.GenerateScope && !varResult.Context.Value.Contains(dot))
-            {
-                position = sci.CurrentPos;
-                var start = sci.WordStartPosition(position, true);
-                var length = sci.MBSafeTextLength(contextToken);
-                sci.SetSel(start, start + length);
-                var scope = memberIsStatic ? inClass.QualifiedName : "this";
-                var text = scope + dot + contextToken;
-                sci.ReplaceSel(text);
-                UpdateLookupPosition(position, text.Length - length);
-            }
+            if (member != null && ASContext.CommonSettings.GenerateScope && !varResult.Context.Value.Contains(ASContext.Context.Features.dot)) AddExplicitScopeReference(sci, inClass, member);
             int contextOwnerPos = GetContextOwnerEndPos(sci, sci.WordStartPosition(sci.CurrentPos, true));
             MemberModel isStatic = new MemberModel();
             if (contextOwnerPos != -1)
@@ -2231,7 +2216,7 @@ namespace ASCompletion.Completion
                     isStatic.Flags |= FlagType.Static;
                 }
             }
-            else if (memberIsStatic)
+            else if (member != null && (member.Flags & FlagType.Static) > 0)
             {
                 isStatic.Flags |= FlagType.Static;
             }
@@ -2263,7 +2248,7 @@ namespace ASCompletion.Completion
                     }
                 }
             }
-
+            bool isOtherClass = false;
             if (varResult.RelClass != null && !varResult.RelClass.IsVoid() && !varResult.RelClass.Equals(inClass))
             {
                 AddLookupPosition();
@@ -2359,6 +2344,7 @@ namespace ASCompletion.Completion
                     sci.SetSel(position, position);
                 }
             }
+            FlagType kind = job.Equals(GeneratorJobType.Constant) ? FlagType.Constant : FlagType.Variable;
             MemberModel newMember = NewMember(contextToken, isStatic, kind, visibility);
             if (returnTypeStr != null)
             {
@@ -2718,25 +2704,12 @@ namespace ASCompletion.Completion
         private static void GenerateFunctionJob(GeneratorJobType job, ScintillaControl sci, MemberModel member, bool detach, ClassModel inClass)
         {
             var position = 0;
-            bool isOtherClass = false;
             Visibility visibility = job.Equals(GeneratorJobType.FunctionPublic) ? Visibility.Public : GetDefaultVisibility(inClass);
             int wordPos = sci.WordEndPosition(sci.CurrentPos, true);
             List<FunctionParameter> functionParameters = ParseFunctionParameters(sci, wordPos);
             // evaluate, if the function should be generated in other class
             ASResult funcResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
-            var memberIsStatic = member != null && (member.Flags & FlagType.Static) > 0;
-            var dot = ASContext.Context.Features.dot;
-            if (ASContext.CommonSettings.GenerateScope && !funcResult.Context.Value.Contains(dot))
-            {
-                position = sci.CurrentPos;
-                var start = sci.WordStartPosition(position, true);
-                var length = sci.MBSafeTextLength(contextToken);
-                sci.SetSel(start, start + length);
-                var scope = memberIsStatic ? inClass.QualifiedName : "this";
-                var text = scope + dot + contextToken;
-                sci.ReplaceSel(text);
-                UpdateLookupPosition(position, text.Length - length);
-            }
+            if (member != null && ASContext.CommonSettings.GenerateScope && !funcResult.Context.Value.Contains(ASContext.Context.Features.dot)) AddExplicitScopeReference(sci, inClass, member);
             int contextOwnerPos = GetContextOwnerEndPos(sci, sci.WordStartPosition(sci.CurrentPos, true));
             MemberModel isStatic = new MemberModel();
             if (contextOwnerPos != -1)
@@ -2749,10 +2722,11 @@ namespace ASCompletion.Completion
                     isStatic.Flags |= FlagType.Static;
                 }
             }
-            else if (memberIsStatic)
+            else if (member != null && (member.Flags & FlagType.Static) > 0)
             {
                 isStatic.Flags |= FlagType.Static;
             }
+            bool isOtherClass = false;
             if (funcResult.RelClass != null && !funcResult.RelClass.IsVoid() && !funcResult.RelClass.Equals(inClass))
             {
                 AddLookupPosition();
@@ -3964,6 +3938,18 @@ namespace ASCompletion.Completion
             if (isFlagMatchStrict || isVisibilityMatchStrict)
                 fallback = null;
             return latest ?? fallback;
+        }
+
+        static void AddExplicitScopeReference(ScintillaControl sci, ClassModel inClass, MemberModel inMember)
+        {
+            var position = sci.CurrentPos;
+            var start = sci.WordStartPosition(position, true);
+            var length = sci.MBSafeTextLength(contextToken);
+            sci.SetSel(start, start + length);
+            var scope = (inMember.Flags & FlagType.Static) != 0 ? inClass.QualifiedName : "this";
+            var text = $"{scope}{ASContext.Context.Features.dot}{contextToken}";
+            sci.ReplaceSel(text);
+            UpdateLookupPosition(position, text.Length - length);
         }
         #endregion
 
