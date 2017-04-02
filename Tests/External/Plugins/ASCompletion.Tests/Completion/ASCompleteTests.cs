@@ -700,6 +700,19 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("'-'").  Returns("").SetName(prefix + "Delete ' to delete '");
                     yield return new TestCaseData("<->").  Returns("").SetName(prefix + "Delete < to delete >");
                     #endregion
+
+                    #region Test Around Strings
+                    yield return new TestCaseData("\"\"(+").     Returns("\"\"()").   SetName(prefix + "Open ( after 'String' before 'Default'");
+                    yield return new TestCaseData("\"\"(+\"\""). Returns("\"\"(\"\"").SetName(prefix + "Open ( after 'String' before 'String'");
+                    yield return new TestCaseData("\"\")+)").    Returns("\"\")").    SetName(prefix + "Close ) after 'String' to overwrite )");
+                    yield return new TestCaseData("\"\")+)\"\"").Returns("\"\")\"\"").SetName(prefix + "Close ) after 'String' before 'String' to overwrite )");
+                    yield return new TestCaseData("\"\"(-)").    Returns("\"\"").     SetName(prefix + "Delete ( after 'String' to delete )");
+                    yield return new TestCaseData("\"\"(-)\"\"").Returns("\"\"\"\""). SetName(prefix + "Delete ( after 'String' before 'String' to delete )");
+
+                    yield return new TestCaseData("\"(+\""). Returns("\"(\""). SetName(prefix + "Open ( inside a string");
+                    yield return new TestCaseData("\")+)\"").Returns("\"))\"").SetName(prefix + "Close ) inside a string");
+                    yield return new TestCaseData("\"(-)\"").Returns("\")\""). SetName(prefix + "Delete ( inside a string");
+                    #endregion
                 }
             }
 
@@ -731,6 +744,7 @@ namespace ASCompletion.Completion
                 }
                 sci.SetSel(cursor, cursor + 1);
                 sci.ReplaceSel("");
+                sci.Colourise(0, -1);
                 int c = addedChar ? sci.CharAt(cursor - 1) : sci.CurrentChar;
                 ASComplete.HandleAddClosingBraces(sci, (char) c, addedChar);
                 if (!addedChar)
