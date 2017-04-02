@@ -713,13 +713,16 @@ namespace ASCompletion.Completion
             }
         }
 
-        static public void LocateMember(string keyword, string name, int line)
+        public static void LocateMember(string keyword, string name, int line)
         {
+            LocateMember(PluginBase.MainForm.CurrentDocument.SciControl, keyword, name, line);
+        }
+
+        public static void LocateMember(ScintillaControl sci, string keyword, string name, int line)
+        {
+            if (sci == null || line <= 0) return;
             try
             {
-                ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-                if (sci == null || line <= 0) return;
-
                 bool found = false;
                 string pattern = String.Format("{0}\\s*(?<name>{1})[^A-z0-9]", (keyword ?? ""), name.Replace(".", "\\s*.\\s*"));
                 Regex re = new Regex(pattern);

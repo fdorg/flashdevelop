@@ -701,32 +701,46 @@ namespace AS2Context
                 // qualified path
                 if (pkg == package && aFile.Classes.Count > 0)
                 {
-                    foreach (ClassModel aClass in aFile.Classes)
+                    var count = aFile.Classes.Count;
+                    for (var i = 0; i < count; i++)
+                    {
+                        var aClass = aFile.Classes[i];
                         if (aClass.Name == cname && (pkg == "" || aFile.Module == "" || aFile.Module == aClass.Name))
                         {
                             found = aClass;
                             return false;
                         }
+                    }
                 }
                 else if (testModule && aFile.FullPackage == package && aFile.Classes.Count > 0)
                 {
-                    foreach (ClassModel aClass in aFile.Classes)
+                    var count = aFile.Classes.Count;
+                    for (var i = 0; i < count; i++)
+                    {
+                        var aClass = aFile.Classes[i];
                         if (aClass.Name == cname)
                         {
                             found = aClass;
                             return false;
                         }
+                    }
                 }
                 // in the same (or parent) package
                 else if (testSamePackage)
                 {
                     if (inPackage == pkg || (matchParentPackage && pkg.Length < pLen && inPackage.StartsWithOrdinal(pkg + ".")))
-                        foreach (ClassModel aClass in aFile.Classes)
+                    {
+                        var count = aFile.Classes.Count;
+                        for (var i = 0; i < count; i++)
+                        {
+                            var aClass = aFile.Classes[i];
                             if (aClass.Name == cname /*&& (aFile.Module == "" || aFile.Module == aClass.Name)*/)
                             {
                                 found = aClass;
                                 return false;
                             }
+                        }
+                    }
                 }
                 return true;
             });
@@ -1014,15 +1028,19 @@ namespace AS2Context
                         string package = model.Package;
                         if (package == name)
                         {
-                            foreach (ClassModel type in model.Classes)
+                            var count = model.Classes.Count;
+                            for (var i = 0; i < count; i++)
                             {
+                                var type = model.Classes[i];
                                 if (type.IndexType != null) continue;
-                                MemberModel item = type.ToMemberModel();
                                 if (type.Access != Visibility.Private)
-                                    pModel.Imports.Add(item);
+                                    pModel.Imports.Add(type.ToMemberModel());
                             }
-                            foreach (MemberModel member in model.Members)
-                                pModel.Members.Add(member.Clone() as MemberModel);
+                            count = model.Members.Count;
+                            for (var i = 0; i < count; i++)
+                            {
+                                pModel.Members.Add(model.Members[i].Clone() as MemberModel);
+                            }
                         }
                         else if (package != prevPackage
                                 && (package.Length > name.Length && package.StartsWithOrdinal(packagePrefix))) // imports
