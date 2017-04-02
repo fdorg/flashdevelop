@@ -334,10 +334,14 @@ namespace ASCompletion.Model
         /// <returns>First match</returns>
         public MemberModel Search(string name, FlagType mask, Visibility acc)
         {
-            foreach (MemberModel m in items)
-                if (((m.Flags & mask) == mask) 
+            var count = items.Count;
+            for (var i = 0; i < count; i++)
+            {
+                var m = items[i];
+                if (((m.Flags & mask) == mask)
                     && (acc == 0 || (m.Access & acc) > 0)
                     && m.Name == name) return m;
+            }
             return null;
         }
 
