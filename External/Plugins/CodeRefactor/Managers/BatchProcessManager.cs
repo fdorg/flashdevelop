@@ -17,6 +17,14 @@ namespace CodeRefactor.Managers
         {
             processors.Add(processor);
         }
+
+        /// <summary>
+        /// Removes <param name="processor" /> from the list of possible operations in BatchProcessDialog
+        /// </summary>
+        public static void RemoveBatchProcessor(IBatchProcessor processor)
+        {
+            processors.Remove(processor);
+        }
         
         /// <summary>
         /// Returns a list of available batch processors
