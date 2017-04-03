@@ -2841,10 +2841,10 @@ namespace ASCompletion.Completion
                 else if (c == '{') braCount--;
                 else if (c == '>') genCount++;
                 else if (c == '<') genCount--;
-                else if (dquCount == 0 && c == '"' && sci.CharAt(pos - 1) != '\\') dquCount++;
-                else if (dquCount > 0 && c == '"' && sci.CharAt(pos - 1) != '\\') dquCount--;
-                else if (quoCount == 0 && c == '\'' && sci.CharAt(pos - 1) != '\\') quoCount++;
-                else if (quoCount > 0 && c == '\'' && sci.CharAt(pos - 1) != '\\') quoCount--;
+                else if (dquCount == 0 && c == '"' && (sci.CharAt(pos - 1) != '\\' || ASComplete.IsEscapedCharacter(sci, pos - 1))) dquCount++;
+                else if (dquCount > 0 && c == '"' && (sci.CharAt(pos - 1) != '\\' || ASComplete.IsEscapedCharacter(sci, pos - 1))) dquCount--;
+                else if (quoCount == 0 && c == '\'' && (sci.CharAt(pos - 1) != '\\' || ASComplete.IsEscapedCharacter(sci, pos - 1))) quoCount++;
+                else if (quoCount > 0 && c == '\'' && (sci.CharAt(pos - 1) != '\\' || ASComplete.IsEscapedCharacter(sci, pos - 1))) quoCount--;
                 else if (c == ')') parCount++;
                 else if (c == '(' && dquCount == 0 && quoCount == 0)
                 {
