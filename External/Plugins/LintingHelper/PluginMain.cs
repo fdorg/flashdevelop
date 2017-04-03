@@ -19,7 +19,7 @@ namespace LintingHelper
         private string pluginDesc = "Plugin that adds a generic interface for linting / code analysis.";
         private string pluginAuth = "Christoph Otter";
         private List<string> fileCache = new List<string>();
-        //TODO: add settings to determine when linting should be triggered
+
         private Settings settingObject;
         private string settingFilename;
 

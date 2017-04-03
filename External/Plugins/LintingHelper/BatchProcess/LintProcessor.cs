@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using PluginCore;
 using LintingHelper.Managers;
+using PluginCore.Localization;
 
 namespace LintingHelper.BatchProcess
 {
@@ -22,7 +23,7 @@ namespace LintingHelper.BatchProcess
         {
             get
             {
-                return "Analyze Code"; //TODO: localize
+                return TextHelper.GetString("Label.RunLinters");
             }
         }
 
@@ -32,7 +33,7 @@ namespace LintingHelper.BatchProcess
 
         public void Process(ITabbedDocument document)
         {
-            Managers.LintingManager.LintDocument(document);
+            LintingManager.LintDocument(document);
         }
     }
 }
