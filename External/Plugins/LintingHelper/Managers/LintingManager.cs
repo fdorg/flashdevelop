@@ -25,8 +25,10 @@ namespace LintingHelper.Managers
 
             var list = DictionaryHelper.GetOrCreate(linters, language);
 
-            //TODO: maybe check whether it already is in there
-            list.Add(provider);
+            if (!list.Contains(provider))
+            {
+                list.Add(provider);
+            }
         }
 
         /// <summary>
@@ -77,7 +79,7 @@ namespace LintingHelper.Managers
         public static void LintFiles(string[] files, string language)
         {
             language = language.ToLower();
-            //PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults"); //TODO: add stuff to output / results panel
+
             foreach (var linter in GetLinters(language))
             {
                 ApplyLint(files, null); //removes cache
@@ -133,6 +135,8 @@ namespace LintingHelper.Managers
         {
             Cache.Clear(PluginBase.MainForm.Documents.Select( (d) => d.FileName ));
 
+            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
+
             foreach (var file in files)
             {
                 Cache.RemoveDocument(file);
@@ -148,7 +152,15 @@ namespace LintingHelper.Managers
 
             foreach (var result in results)
             {
-                //TraceManager.Add(result.Line + ":" + result.FirstChar + "-" + result.Length + ":" + result.Description);
+                var line = result.File + ":" + result.Line + ": " + result.Severity.ToString() + ": " + result.Description;
+
+                int state = 0;
+                if (result.Severity == LintingSeverity.Warning)
+                {
+                    state = -3;
+                }
+                TraceManager.Add(new TraceItem(line, state));
+                
                 var doc = DocumentManager.FindDocument(result.File);
                 if (doc != null)
                 {
@@ -177,8 +189,6 @@ namespace LintingHelper.Managers
                             color = 0x00008000;
                             break;
                     }
-
-                    var text = doc.SciControl.GetTextRange(start, start + len);
                     doc.SciControl.AddHighlight((int)ScintillaNet.Enums.IndicatorStyle.Squiggle, color, start, len);
                 }
             }
