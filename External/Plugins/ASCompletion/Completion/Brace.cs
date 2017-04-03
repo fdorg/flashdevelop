@@ -217,7 +217,7 @@ namespace ASCompletion.Completion
                 {
                     match &= StringCheck(beforeChars, charAfter, notBeforeChars);
                 }
-                if (logic1 == Logic.Or)
+                if (logic3 == Logic.Or)
                 {
                     match |= ArrayCheck(beforeStyles, styleAfter, notBeforeStyles);
                 }

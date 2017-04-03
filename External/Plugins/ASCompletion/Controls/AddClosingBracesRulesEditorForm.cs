@@ -576,15 +576,17 @@ namespace ASCompletion.Controls
 
         private void BtnAdd_Click(object sender, EventArgs e)
         {
-            listBox.Items.Insert(listBox.SelectedIndex + 1, new BraceInEdit());
-            listBox.SelectedIndex++;
+            int selectedIndex = listBox.SelectedIndex;
+            listBox.Items.Insert(++selectedIndex, new BraceInEdit());
+            listBox.SelectedIndex = selectedIndex;
             listBox.Select();
         }
 
         private void BtnRemove_Click(object sender, EventArgs e)
         {
-            listBox.SelectedIndex--;
-            listBox.Items.RemoveAt(listBox.SelectedIndex + 1);
+            int selectedIndex = listBox.SelectedIndex;
+            listBox.Items.RemoveAt(selectedIndex--);
+            listBox.SelectedIndex = selectedIndex;
             listBox.Select();
         }
 

@@ -343,7 +343,7 @@ namespace ASCompletion.Settings
         private MethodsGenerationLocations methodsGenerationLocation;
         private string prefixFields = DEFAULT_GENERATE_PREFIXFIELDS;
         private bool addClosingBraces = DEFAULT_GENERATE_ADDCLOSINGBRACES;
-        private Brace[] addClosingBracesOptions;
+        private Brace[] addClosingBracesRules;
         private bool generateScope = DEFAULT_GENERATE_SCOPE;
         private HandlerNamingConventions handlerNamingConvention = DEFAULT_HANDLER_CONVENTION;
         private bool generateDefaultModifierDeclaration;
@@ -425,10 +425,10 @@ namespace ASCompletion.Settings
         [DisplayName("Add Closing Braces Rules")]
         [LocalizedCategory("ASCompletion.Category.Generation"), LocalizedDescription("ASCompletion.Description.AddClosingBracesOptions")]
         [Editor(typeof(AddClosingBracesRulesEditor), typeof(UITypeEditor))]
-        public Brace[] AddClosingBracesOptions
+        public Brace[] AddClosingBracesRules
         {
-            get { return addClosingBracesOptions ?? DEFAULT_ADD_CLOSING_BRACES_RULES; }
-            set { addClosingBracesOptions = value.Length == 0 ? null : value; }
+            get { return addClosingBracesRules ?? DEFAULT_ADD_CLOSING_BRACES_RULES; }
+            set { addClosingBracesRules = value.Length == 0 ? null : value; }
         }
 
         [DisplayName("Prefix Fields When Generating From Params")]

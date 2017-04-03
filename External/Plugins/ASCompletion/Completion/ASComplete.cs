@@ -419,11 +419,11 @@ namespace ASCompletion.Completion
                 // not inside a string literal
                 if (!IsStringStyle(styleBefore) && !IsCharStyle(styleBefore) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
                 {
-                    foreach (var braces in ASContext.CommonSettings.AddClosingBracesOptions)
+                    foreach (var brace in ASContext.CommonSettings.AddClosingBracesRules)
                     {
                         // Handle opening first for braces that have equal opening & closing chars
-                        if (HandleAddOpeningBrace(sci, c, braces, styleAfter, styleBefore)
-                            || HandleAddClosingBrace(sci, c, braces))
+                        if (HandleAddOpeningBrace(sci, c, brace, styleAfter, styleBefore)
+                            || HandleAddClosingBrace(sci, c, brace))
                         {
                             added = true;
                             break;
@@ -434,9 +434,9 @@ namespace ASCompletion.Completion
                 {
                     if (!IsEscapedCharacter(sci, sci.CurrentPos - 1))
                     {
-                        foreach (var braces in ASContext.CommonSettings.AddClosingBracesOptions)
+                        foreach (var brace in ASContext.CommonSettings.AddClosingBracesRules)
                         {
-                            if (HandleAddClosingBrace(sci, c, braces))
+                            if (HandleAddClosingBrace(sci, c, brace))
                             {
                                 added = true;
                                 break;
@@ -456,9 +456,12 @@ namespace ASCompletion.Completion
                 // not inside a string literal
                 if (!IsStringStyle(style) && !IsCharStyle(style) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
                 {
-                    foreach (var braces in ASContext.CommonSettings.AddClosingBracesOptions)
+                    foreach (var brace in ASContext.CommonSettings.AddClosingBracesRules)
                     {
-                        if (HandleRemoveBrace(sci, c, braces)) break;
+                        if (HandleRemoveBrace(sci, c, brace))
+                        {
+                            break;
+                        }
                     }
                 }
             }
@@ -474,8 +477,8 @@ namespace ASCompletion.Completion
                 if (braces.ShouldAutoClose(charBefore, styleBefore, charAfter, styleAfter))
                 {
                     sci.InsertText(-1, braces.Close.ToString());
+                    return true;
                 }
-                return true;
             }
 
             return false;
