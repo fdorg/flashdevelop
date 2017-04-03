@@ -2857,65 +2857,69 @@ namespace ASCompletion.Completion
                 }
                 if (caller?.Parameters != null && caller.Parameters.Count > 0)
                 {
-                    parCount = 0;
-                    braCount = 0;
-                    genCount = 0;
-                    var s = caller.Parameters[parameterIndex].Type;
-                    var startPosition = 0;
-                    var arrowLength = "->".Length;
-                    var endPosition = s.LastIndexOf("->") + arrowLength;
-                    for (var i = 0; i < endPosition; i++)
+                    var parameterType = caller.Parameters[parameterIndex].Type;
+                    if ((char) sci.CharAt(wordPos) == '(') newMemberType = parameterType;
+                    else
                     {
-                        string type = null;
-                        var c = s[i];
-                        if (c == '(') parCount++;
-                        else if (c == ')')
+                        parCount = 0;
+                        braCount = 0;
+                        genCount = 0;
+                        var startPosition = 0;
+                        var arrowLength = "->".Length;
+                        var endPosition = parameterType.LastIndexOf("->") + arrowLength;
+                        for (var i = 0; i < endPosition; i++)
                         {
-                            parCount--;
-                            if (parCount == 0 && braCount == 0 && genCount == 0)
+                            string type = null;
+                            var c = parameterType[i];
+                            if (c == '(') parCount++;
+                            else if (c == ')')
                             {
-                                i++;
-                                type = s.Substring(startPosition, i - startPosition);
+                                parCount--;
+                                if (parCount == 0 && braCount == 0 && genCount == 0)
+                                {
+                                    i++;
+                                    type = parameterType.Substring(startPosition, i - startPosition);
+                                }
+                            }
+                            else if (c == '{') braCount++;
+                            else if (c == '}')
+                            {
+                                braCount--;
+                                if (parCount == 0 && braCount == 0 && genCount == 0)
+                                {
+                                    i++;
+                                    type = parameterType.Substring(startPosition, i - startPosition);
+                                }
+                            }
+                            else if (c == '<') genCount++;
+                            else if (c == '>' && parameterType[i - 1] != '-')
+                            {
+                                genCount--;
+                                if (parCount == 0 && braCount == 0 && genCount == 0)
+                                {
+                                    i++;
+                                    type = parameterType.Substring(startPosition, i - startPosition);
+                                }
+                            }
+                            else if (parCount == 0 && braCount == 0 && genCount == 0 && c == '-' && parameterType[i + 1] == '>')
+                            {
+                                type = parameterType.Substring(startPosition, i - startPosition);
+                                i += arrowLength;
+                            }
+                            if (type != null)
+                            {
+                                var parameter = $"parameter{functionParameters.Count}";
+                                if (type.StartsWith('?'))
+                                {
+                                    parameter = $"?{parameter}";
+                                    type = type.TrimStart('?');
+                                }
+                                functionParameters.Add(new FunctionParameter(parameter, type, type, callerExpr));
+                                startPosition = i;
                             }
                         }
-                        else if (c == '{') braCount++;
-                        else if (c == '}')
-                        {
-                            braCount--;
-                            if (parCount == 0 && braCount == 0 && genCount == 0)
-                            {
-                                i++;
-                                type = s.Substring(startPosition, i - startPosition);
-                            }
-                        }
-                        else if (c == '<') genCount++;
-                        else if (c == '>' && s[i - 1] != '-')
-                        {
-                            genCount--;
-                            if (parCount == 0 && braCount == 0 && genCount == 0)
-                            {
-                                i++;
-                                type = s.Substring(startPosition, i - startPosition);
-                            }
-                        }
-                        else if (parCount == 0 && braCount == 0 && genCount == 0 && c == '-' && s[i + 1] == '>')
-                        {
-                            type = s.Substring(startPosition, i - startPosition);
-                            i += arrowLength;
-                        }
-                        if (type != null)
-                        {
-                            var parameter = $"parameter{functionParameters.Count}";
-                            if (type.StartsWith('?'))
-                            {
-                                parameter = $"?{parameter}";
-                                type = type.TrimStart('?');
-                            }
-                            functionParameters.Add(new FunctionParameter(parameter, type, type, callerExpr));
-                            startPosition = i;
-                        }
+                        newMemberType = parameterType.Substring(endPosition);
                     }
-                    newMemberType = s.Substring(endPosition);
                 }
             }
 
