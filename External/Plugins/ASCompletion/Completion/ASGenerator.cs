@@ -2827,10 +2827,14 @@ namespace ASCompletion.Completion
             var quoCount = 0;
             var parameterIndex = 0;
             var pos = wordStartPos;
-            while (pos-- > 0)
+            var endPos = member != null ? sci.PositionFromLine(member.LineFrom) : 0;
+            while (pos-- > endPos)
             {
-                var c = sci.CharAt(pos);
+                if (sci.PositionIsOnComment(pos)) continue;
+                var c = (char)sci.CharAt(pos);
+                if (c <= ' ') continue;
                 if (c == ',' && parCount == 0 && arrCount == 0 && braCount == 0 && genCount == 0 && dquCount == 0 && quoCount == 0) parameterIndex++;
+                else if (c == ';' && parCount == 0 && arrCount == 0 && braCount == 0 && genCount == 0 && dquCount == 0 && quoCount == 0) break;
                 else if (c == ']') arrCount++;
                 else if (c == '[') arrCount--;
                 else if (c == '}') braCount++;
