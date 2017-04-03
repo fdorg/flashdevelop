@@ -36,10 +36,22 @@ namespace LintingHelper.Managers
         /// <param name="provider"></param>
         public static void UnregisterLinter(string language, ILintProvider provider)
         {
+            language = language.ToLower();
+
             if (linters.ContainsKey(language))
             {
                 linters[language].Remove(provider);
             }
+        }
+
+        /// <summary>
+        /// Checks whether there is at least one linter for the given <paramref name="language"/>.
+        /// </summary>
+        public static bool HasLanguage(string language)
+        {
+            language = language.ToLower();
+
+            return linters.ContainsKey(language) && linters[language].Count > 0;
         }
 
         /// <summary>

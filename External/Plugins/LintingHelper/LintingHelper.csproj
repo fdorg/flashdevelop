@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BatchProcess\LintProcessor.cs" />
     <Compile Include="Helpers\DictionaryHelper.cs" />
     <Compile Include="LintingCache.cs" />
     <Compile Include="LintingResult.cs" />
@@ -47,11 +48,16 @@
     <Compile Include="PluginMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ILintProvider.cs" />
+    <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\PluginCore\PluginCore.csproj">
       <Project>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</Project>
       <Name>PluginCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CodeRefactor\CodeRefactor.csproj">
+      <Project>{1F6DF858-6011-4CAC-B33E-7000EE90FFBE}</Project>
+      <Name>CodeRefactor</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
