@@ -46,11 +46,18 @@ namespace CodeRefactor.Managers
 
     public interface IBatchProcessor
     {
+        /// <summary>
+        /// The text to display in BatchProcessDialog combobox.
+        /// </summary>
         string Text
         {
             get;
         }
 
+        /// <summary>
+        /// Whether this processor is currently usable,
+        /// If this is false, the processor will not be shown in BatchProcessDialog
+        /// </summary>
         bool IsAvailable
         {
             get;
