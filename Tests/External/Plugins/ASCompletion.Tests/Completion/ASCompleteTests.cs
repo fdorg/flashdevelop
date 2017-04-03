@@ -675,10 +675,10 @@ namespace ASCompletion.Completion
 
                     yield return new TestCaseData("<+").     Returns("<").     SetName(prefix + "Open < after 'Default' before 'Default'");
                     yield return new TestCaseData(".<+").    Returns(".<>").   SetName(prefix + "Open < after 'Operator' before 'Default'");
-                    yield return new TestCaseData("void<+"). Returns("void<>").SetName(prefix + "Open < after 'Type' before 'Default'");
+                    yield return new TestCaseData("Void<+"). Returns("Void<>").SetName(prefix + "Open < after 'Type' before 'Default'");
                     yield return new TestCaseData(".<+<").   Returns(".<<").   SetName(prefix + "Open < after 'Operator' before <");
                     yield return new TestCaseData(".<+a").   Returns(".<a").   SetName(prefix + "Open < after 'Operator' before 'Identifier'");
-                    yield return new TestCaseData(".<+void").Returns(".<void").SetName(prefix + "Open < after 'Operator' before 'Type'");
+                    yield return new TestCaseData(".<+Void").Returns(".<Void").SetName(prefix + "Open < after 'Operator' before 'Type'");
                     #endregion
 
                     #region Test Close
@@ -719,17 +719,23 @@ namespace ASCompletion.Completion
             [Test, TestCaseSource(nameof(TestCases))]
             public string AS3(string text)
             {
-                sci.ConfigurationLanguage = "as3";
-                ASContext.Context.SetAs3Features();
-                return Common(text, sci);
+                if (sci.ConfigurationLanguage != "as3")
+                {
+                    sci.ConfigurationLanguage = "as3";
+                    ASContext.Context.SetAs3Features();
+                }
+                return Common(text.Replace('V', 'v'), sci).Replace('v', 'V'); //Replace "Void" with "void" for type checking
             }
 
             [Test, TestCaseSource(nameof(TestCases))]
             public string Haxe(string text)
             {
-                sci.ConfigurationLanguage = "haxe";
-                ASContext.Context.SetHaxeFeatures();
-                return Common(text.Replace('v', 'V'), sci).Replace('V', 'v'); //Replace "void" with "Void" for type checking
+                if (sci.ConfigurationLanguage != "haxe")
+                {
+                    sci.ConfigurationLanguage = "haxe";
+                    ASContext.Context.SetHaxeFeatures();
+                }
+                return Common(text, sci);
             }
 
             private static string Common(string text, ScintillaControl sci)
@@ -741,6 +747,7 @@ namespace ASCompletion.Completion
                 if (!addedChar)
                 {
                     cursor = text.IndexOf('-'); // Char before is about to be deleted
+                    Assert.GreaterOrEqual(cursor, 0, "Missing a cursor character: either + or -");
                 }
                 sci.SetSel(cursor, cursor + 1);
                 sci.ReplaceSel("");
