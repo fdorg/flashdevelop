@@ -18,12 +18,12 @@ namespace LintingHelper
         private string pluginHelp = "www.flashdevelop.org/community/";
         private string pluginDesc = "Plugin that adds a generic interface for linting / code analysis.";
         private string pluginAuth = "Christoph Otter";
-        private List<string> fileCache = new List<string>();
-
         private Settings settingObject;
         private string settingFilename;
 
         internal static RichToolTip Tip;
+        private List<string> fileCache = new List<string>();
+        private IProject lastProject;
 
         public int Api
         {
@@ -180,10 +180,12 @@ namespace LintingHelper
                     DataEvent de = e as DataEvent;
                     if (de == null) return;
 
-                    if (this.settingObject.LintOnProjectLoad && de.Action == "ProjectManager.Project")
+                    var project = de.Data as IProject;
+
+                    if (this.settingObject.LintOnProjectLoad && project != lastProject && de.Action == "ProjectManager.Project")
                     {
-                        var project = de.Data as IProject;
                         Managers.LintingManager.LintFiles(GetProjectFiles(project).ToArray());
+                        lastProject = project;
                     }
                     break;
             }
