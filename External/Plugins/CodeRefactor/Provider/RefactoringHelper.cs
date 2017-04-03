@@ -165,7 +165,7 @@ namespace CodeRefactor.Provider
         /// Checks if a given search match actually points to the given target source
         /// </summary>
         /// <returns>True if the SearchMatch does point to the target source.</returns>
-        public static ASResult DeclarationLookupResult(ScintillaControl Sci, int position)
+        public static ASResult DeclarationLookupResult(ScintillaControl Sci, int position, DocumentHelper associatedDocumentHelper)
         {
             if (!ASContext.Context.IsFileValid || (Sci == null)) return null;
             // get type at cursor position
@@ -175,7 +175,7 @@ namespace CodeRefactor.Provider
             if (!result.IsNull())
             {
                 if (result.Member != null && (result.Member.Flags & FlagType.AutomaticVar) > 0) return null;
-                FileModel model = result.InFile ?? ((result.Member != null && result.Member.InFile != null) ? result.Member.InFile : null) ?? ((result.Type != null) ? result.Type.InFile : null);
+                FileModel model = result.InFile ?? result.Member?.InFile ?? result.Type?.InFile;
                 if (model == null || model.FileName == "") return null;
                 ClassModel inClass = result.InClass ?? result.Type;
                 // for Back command
@@ -187,7 +187,8 @@ namespace CodeRefactor.Provider
                 {
                     if (model.FileName.Length > 0 && File.Exists(model.FileName))
                     {
-                        ASContext.MainForm.OpenEditableDocument(model.FileName, false);
+                        if (!associatedDocumentHelper.ContainsOpenedDocument(model.FileName)) associatedDocumentHelper.LoadDocument(model.FileName);
+                        Sci = associatedDocumentHelper.GetOpenedDocument(model.FileName).SciControl;
                     }
                     else
                     {
@@ -203,11 +204,11 @@ namespace CodeRefactor.Provider
                         {
                             result.Member = result.InFile.Members.Search(result.Member.Name, 0, 0);
                         }
+                        Sci = ASContext.CurSciControl;
                     }
                 }
-                if ((inClass == null || inClass.IsVoid()) && result.Member == null) return null;
-                Sci = ASContext.CurSciControl;
                 if (Sci == null) return null;
+                if ((inClass == null || inClass.IsVoid()) && result.Member == null) return null;
                 int line = 0;
                 string name = null;
                 bool isClass = false;
@@ -237,8 +238,8 @@ namespace CodeRefactor.Provider
                 }
                 if (line > 0) // select
                 {
-                    if (isClass) ASComplete.LocateMember("(class|interface)", name, line);
-                    else ASComplete.LocateMember("(function|var|const|get|set|property|[,(])", name, line);
+                    if (isClass) ASComplete.LocateMember(Sci, "(class|interface)", name, line);
+                    else ASComplete.LocateMember(Sci, "(function|var|const|get|set|property|[,(])", name, line);
                 }
                 return result;
             }
@@ -256,7 +257,7 @@ namespace CodeRefactor.Provider
         /// <summary>
         /// Checks if the given match actually is the declaration.
         /// </summary>
-        public static bool IsMatchTheTarget(ScintillaControl Sci, SearchMatch match, ASResult target)
+        public static bool IsMatchTheTarget(ScintillaControl Sci, SearchMatch match, ASResult target, DocumentHelper associatedDocumentHelper)
         {
             if (Sci == null || target == null || target.InFile == null || target.Member == null)
             {
@@ -264,7 +265,7 @@ namespace CodeRefactor.Provider
             }
             String originalFile = Sci.FileName;
             // get type at match position
-            ASResult declaration = DeclarationLookupResult(Sci, Sci.MBSafePosition(match.Index) + Sci.MBSafeTextLength(match.Value));
+            ASResult declaration = DeclarationLookupResult(Sci, Sci.MBSafePosition(match.Index) + Sci.MBSafeTextLength(match.Value), associatedDocumentHelper);
             return (declaration.InFile != null && originalFile == declaration.InFile.FileName) && (Sci.CurrentPos == (Sci.MBSafePosition(match.Index) + Sci.MBSafeTextLength(match.Value)));
         }
 
@@ -290,7 +291,7 @@ namespace CodeRefactor.Provider
             // get type at match position
             if (match.Index < Sci.Text.Length) // TODO: find out rare cases of incorrect index reported
             {
-                result = DeclarationLookupResult(Sci, Sci.MBSafePosition(match.Index) + Sci.MBSafeTextLength(match.Value));
+                result = DeclarationLookupResult(Sci, Sci.MBSafePosition(match.Index) + Sci.MBSafeTextLength(match.Value), associatedDocumentHelper);
                 if (associatedDocumentHelper != null)
                 {
                     // because the declaration lookup opens a document, we should register it with the document helper to be closed later

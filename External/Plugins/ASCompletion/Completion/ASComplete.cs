@@ -715,13 +715,16 @@ namespace ASCompletion.Completion
             }
         }
 
-        static public void LocateMember(string keyword, string name, int line)
+        public static void LocateMember(string keyword, string name, int line)
         {
+            LocateMember(PluginBase.MainForm.CurrentDocument.SciControl, keyword, name, line);
+        }
+
+        public static void LocateMember(ScintillaControl sci, string keyword, string name, int line)
+        {
+            if (sci == null || line <= 0) return;
             try
             {
-                ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-                if (sci == null || line <= 0) return;
-
                 bool found = false;
                 string pattern = String.Format("{0}\\s*(?<name>{1})[^A-z0-9]", (keyword ?? ""), name.Replace(".", "\\s*.\\s*"));
                 Regex re = new Regex(pattern);
@@ -2752,7 +2755,7 @@ namespace ASCompletion.Completion
                     result.Type = ResolveType("Function", null);
                 return result;
             }
-            if (context.CurrentModel.haXe && !inClass.IsVoid() && token == "new" && local.BeforeBody)
+            if (!inClass.IsVoid() && !string.IsNullOrEmpty(context.Features.ConstructorKey) && token == context.Features.ConstructorKey && local.BeforeBody)
                 return EvalVariable(inClass.Name, local, inFile, inClass);
             var contextMember = local.ContextMember;
             if (contextMember == null || local.coma != ComaExpression.None || !local.BeforeBody || (contextMember.Flags & (FlagType.Getter | FlagType.Setter)) > 0)
