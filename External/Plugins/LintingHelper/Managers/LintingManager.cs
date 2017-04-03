@@ -8,7 +8,7 @@ using System.Text;
 
 namespace LintingHelper.Managers
 {
-    public class LintingManager
+    public static class LintingManager
     {
         static Dictionary<string, List<ILintProvider>> linters = new Dictionary<string, List<ILintProvider>>();
 
