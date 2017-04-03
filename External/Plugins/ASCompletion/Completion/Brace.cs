@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 
 namespace ASCompletion.Completion
 {
@@ -68,42 +69,45 @@ namespace ASCompletion.Completion
         /// </summary>
         public override string ToString()
         {
-            return open + " " + name +" " + close;
+            return open + " " + name + " " + close;
         }
 
         [Serializable]
         public sealed class Rule
         {
-            bool notAfterChars;
-            string afterChars;
-            Logic logic1;
-            bool notAfterStyles;
-            Style[] afterStyles;
-            Logic logic2;
-            bool notBeforeChars;
-            string beforeChars;
-            Logic logic3;
-            bool notBeforeStyles;
-            Style[] beforeStyles;
+            private bool notAfterChars;
+            private Regex afterChars;
+            private bool notAfterStyles;
+            private Style[] afterStyles;
+            private bool notBeforeChars;
+            private Regex beforeChars;
+            private bool notBeforeStyles;
+            private Style[] beforeStyles;
+            private Logic logic;
 
             public Rule()
-                :this(null, null, null, null, null, null, null, null, null, null, null)
             {
-
+                notAfterChars   = false;
+                afterChars      = null;
+                notAfterStyles  = false;
+                afterStyles     = null;
+                notBeforeChars  = false;
+                beforeChars     = null;
+                notBeforeStyles = false;
+                BeforeStyles    = null;
+                logic           = 0;
             }
 
-            public Rule(bool? notAfterChars, string afterChars, Logic? logic1, bool? notAfterStyles, Style[] afterStyles, Logic? logic2, bool? notBeforeChars, string beforeChars, Logic? logic3, bool? notBeforeStyles, Style[] beforeStyles)
+            public Rule(bool? notAfterChars, string afterChars, bool? notAfterStyles, Style[] afterStyles, bool? notBeforeChars, string beforeChars, bool? notBeforeStyles, Style[] beforeStyles, Logic? logic)
             {
-                NotAfterChars   = notAfterChars ?? false;
+                Logic = logic ?? 0;
+                NotAfterChars   = notAfterChars ?? this.logic != 0;
                 AfterChars      = afterChars;
-                Logic1          = logic1 ?? Logic.Or;
-                NotAfterStyles  = notAfterStyles ?? false;
+                NotAfterStyles  = notAfterStyles ?? this.logic != 0;
                 AfterStyles     = afterStyles;
-                Logic2          = logic2 ?? Logic.Or;
-                NotBeforeChars  = notBeforeChars ?? false;
+                NotBeforeChars  = notBeforeChars ?? this.logic != 0;
                 BeforeChars     = beforeChars;
-                Logic3          = logic3 ?? Logic.Or;
-                NotBeforeStyles = notBeforeStyles ?? false;
+                NotBeforeStyles = notBeforeStyles ?? this.logic != 0;
                 BeforeStyles    = beforeStyles;
             }
 
@@ -115,14 +119,8 @@ namespace ASCompletion.Completion
 
             public string AfterChars
             {
-                get { return Escape(afterChars); }
-                set { afterChars = Unescape(value ?? ""); }
-            }
-
-            public Logic Logic1
-            {
-                get { return logic1; }
-                set { logic1 = value; }
+                get { return FromRegex(afterChars); }
+                set { afterChars = ToRegex(value); }
             }
 
             public bool NotAfterStyles
@@ -133,16 +131,10 @@ namespace ASCompletion.Completion
 
             public Style[] AfterStyles
             {
-                get { return afterStyles; }
-                set { afterStyles = value ?? new Style[0]; }
+                get { return afterStyles ?? new Style[0]; }
+                set { afterStyles = value == null || value.Length == 0 ? null : value; }
             }
-
-            public Logic Logic2
-            {
-                get { return logic2; }
-                set { logic2 = value; }
-            }
-
+            
             public bool NotBeforeChars
             {
                 get { return notBeforeChars; }
@@ -151,16 +143,10 @@ namespace ASCompletion.Completion
 
             public string BeforeChars
             {
-                get { return Escape(beforeChars); }
-                set { beforeChars = Unescape(value ?? ""); }
+                get { return FromRegex(beforeChars); }
+                set { beforeChars = ToRegex(value); }
             }
-
-            public Logic Logic3
-            {
-                get { return logic3; }
-                set { logic3 = value; }
-            }
-
+            
             public bool NotBeforeStyles
             {
                 get { return notBeforeStyles; }
@@ -169,63 +155,95 @@ namespace ASCompletion.Completion
 
             public Style[] BeforeStyles
             {
-                get { return beforeStyles; }
-                set { beforeStyles = value ?? new Style[0]; }
+                get { return beforeStyles ?? new Style[0]; }
+                set { beforeStyles = value == null || value.Length == 0 ? null : value; }
+            }
+
+            public Logic Logic
+            {
+                get { return logic; }
+                set { logic = value; }
+            }
+
+            private static Regex ToRegex(string value)
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    return null;
+                }
+                return new Regex("[" + Escape(value) + "]", RegexOptions.Compiled | RegexOptions.Singleline);
+            }
+
+            private static string FromRegex(Regex value)
+            {
+                if (value == null)
+                {
+                    return string.Empty;
+                }
+                string str = value.ToString();
+                return Unescape(str.Substring(1, str.Length - 2));
             }
 
             private static string Escape(string value)
             {
-                return value.Replace("\\", @"\\").Replace("\t", @"\t").Replace("\r", @"\r").Replace("\n", @"\n");
+                return value.Replace("(", @"\(").Replace(")", @"\)").Replace("[", @"\[").Replace("]", @"\]").Replace("{", @"\{").Replace("}", @"\}");
             }
 
             private static string Unescape(string value)
             {
-                return value.Replace(@"\\", "\\").Replace(@"\t", "\t").Replace(@"\r", "\r").Replace(@"\n", "\n");
+                return value.Replace(@"\(", "(").Replace(@"\)", ")").Replace(@"\[", "[").Replace(@"\]", "]").Replace(@"\{", "{").Replace(@"\}", "}");
             }
 
-            private static bool StringCheck(string str, char c, bool exclude)
+            private static bool RegexCheck(Regex regex, char c, bool exclude)
             {
-                return (str.IndexOf(c) == -1) == exclude;
+                if (regex == null)
+                {
+                    return exclude;
+                }
+                return regex.IsMatch(c.ToString()) ^ exclude;
             }
 
-            private static bool ArrayCheck(Style[] arr, byte s, bool exclude)
+            private static bool ArrayCheck(Style[] array, byte s, bool exclude)
             {
-                return (Array.IndexOf(arr, (Style) s) == -1) == exclude;
+                if (array == null)
+                {
+                    return exclude;
+                }
+                return Array.IndexOf(array, (Style) s) >= 0 ^ exclude;
             }
 
             public Rule Clone()
             {
-                return new Rule(notAfterChars, afterChars, logic1, notAfterStyles, afterStyles, logic2, notBeforeChars, beforeChars, logic3, notBeforeStyles, beforeStyles);
+                return new Rule()
+                {
+                    notAfterChars = notAfterChars,
+                    afterChars = afterChars,
+                    notAfterStyles = notAfterStyles,
+                    afterStyles = afterStyles,
+                    notBeforeChars = notBeforeChars,
+                    beforeChars = beforeChars,
+                    notBeforeStyles = notBeforeStyles,
+                    beforeStyles = beforeStyles,
+                    logic = logic
+                };
             }
 
             public bool Matches(char charBefore, byte styleBefore, char charAfter, byte styleAfter)
             {
-                bool match = StringCheck(afterChars, charBefore, notAfterChars);
-                if (logic1 == Logic.Or)
+                if (logic == Logic.Or)
                 {
-                    match |= ArrayCheck(afterStyles, styleBefore, notAfterStyles);
+                    return RegexCheck(afterChars, charBefore, notAfterChars)
+                        || ArrayCheck(afterStyles, styleBefore, notAfterStyles)
+                        || RegexCheck(beforeChars, charAfter, notBeforeChars)
+                        || ArrayCheck(beforeStyles, styleAfter, notBeforeStyles);
                 }
-                else
+                else /*if (logic == Logic.And)*/
                 {
-                    match &= ArrayCheck(afterStyles, styleBefore, notAfterStyles);
+                    return RegexCheck(afterChars, charBefore, notAfterChars)
+                        && ArrayCheck(afterStyles, styleBefore, notAfterStyles)
+                        && RegexCheck(beforeChars, charAfter, notBeforeChars)
+                        && ArrayCheck(beforeStyles, styleAfter, notBeforeStyles);
                 }
-                if (logic2 == Logic.Or)
-                {
-                    match |= StringCheck(beforeChars, charAfter, notBeforeChars);
-                }
-                else
-                {
-                    match &= StringCheck(beforeChars, charAfter, notBeforeChars);
-                }
-                if (logic3 == Logic.Or)
-                {
-                    match |= ArrayCheck(beforeStyles, styleAfter, notBeforeStyles);
-                }
-                else
-                {
-                    match &= ArrayCheck(beforeStyles, styleAfter, notBeforeStyles);
-                }
-                return match;
             }
         }
 

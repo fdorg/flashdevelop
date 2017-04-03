@@ -311,28 +311,28 @@ namespace ASCompletion.Settings
         {
             new Brace("Parentheses", '(', ')', new[]
             {
-                new Brace.Rule(null, null, null, null, null, null, false, ")]}>", Brace.Logic.Or, false, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute })
+                new Brace.Rule(null, null, null, null, false, ")]}>", false, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Brace.Logic.Or)
             }),
             new Brace("Braces", '{', '}', new[]
             {
-                new Brace.Rule(null, null, null, null, null, null, false, ")]}>", Brace.Logic.Or, false, new[] { Style.Default })
+                new Brace.Rule(null, null, null, null, false, ")]}>", false, new[] { Style.Default }, Brace.Logic.Or)
             }),
             new Brace("Brackets", '[', ']', new[]
             {
-                new Brace.Rule(null, null, null, null, null, null, false, ")]}>", Brace.Logic.Or, false, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute })
+                new Brace.Rule(null, null, null, null, false, ")]}>", false, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Brace.Logic.Or)
             }),
             new Brace("Angle brackets", '<', '>', new[]
             {
-                new Brace.Rule(null, null, null,            false, new[] { Style.Type },     Brace.Logic.And, true, "<", Brace.Logic.And, true, new[] { Style.Identifier, Style.Type }),
-                new Brace.Rule(false, ".", Brace.Logic.And, false, new[] { Style.Operator }, Brace.Logic.And, true, "<", Brace.Logic.And, true, new[] { Style.Identifier, Style.Type })
+                new Brace.Rule(null, null, false, new[] { Style.Type },     true, "<", true, new[] { Style.Identifier, Style.Type }, Brace.Logic.And),
+                new Brace.Rule(false, ".", false, new[] { Style.Operator }, true, "<", true, new[] { Style.Identifier, Style.Type }, Brace.Logic.And)
             }),
             new Brace("Double quotes", '"', '"', new[]
             {
-                new Brace.Rule(null, null, null, null, null, null, null, null, null, false, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.String, Style.Character, Style.Operator, Style.Preprocessor, Style.Attribute })
+                new Brace.Rule(null, null, null, null, null, null, false, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.String, Style.Character, Style.Operator, Style.Preprocessor, Style.Attribute }, null)
             }),
             new Brace("Single quotes", '\'', '\'', new[]
             {
-                new Brace.Rule(null, null, null, null, null, null, null, null, null, false, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.String, Style.Character, Style.Operator, Style.Preprocessor, Style.Attribute })
+                new Brace.Rule(null, null, null, null, null, null, false, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.String, Style.Character, Style.Operator, Style.Preprocessor, Style.Attribute }, null)
             })
         };
 

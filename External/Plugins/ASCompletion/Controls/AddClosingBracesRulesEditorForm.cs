@@ -20,13 +20,13 @@ namespace ASCompletion.Controls
         private TextBox txtCloseChar;
         private DataGridView rulesGridView;
         private DataGridViewCheckBoxColumn not1;
-        private DataGridViewTextBoxColumn afterChars;
+        private DataGridViewRegexColumn afterChars;
         private DataGridViewButtonColumn logic1;
         private DataGridViewCheckBoxColumn not2;
         private DataGridViewStylesColumn afterStyles;
         private DataGridViewButtonColumn logic2;
         private DataGridViewCheckBoxColumn not3;
-        private DataGridViewTextBoxColumn beforeChars;
+        private DataGridViewRegexColumn beforeChars;
         private DataGridViewButtonColumn logic3;
         private DataGridViewCheckBoxColumn not4;
         private DataGridViewStylesColumn beforeStyles;
@@ -47,8 +47,8 @@ namespace ASCompletion.Controls
             InitializeComponent();
             InitializeGraphics();
             InitializeFonts();
-            InitializeListBox(value);
             InitializeGridView();
+            InitializeListBox(value);
             ValidateControlStates();
             this.value = value;
         }
@@ -66,13 +66,13 @@ namespace ASCompletion.Controls
             txtCloseChar = new TextBox();
             rulesGridView = new DataGridView();
             not1 = new DataGridViewCheckBoxColumn();
-            afterChars = new DataGridViewTextBoxColumn();
+            afterChars = new DataGridViewRegexColumn();
             logic1 = new DataGridViewButtonColumn();
             not2 = new DataGridViewCheckBoxColumn();
             afterStyles = new DataGridViewStylesColumn();
             logic2 = new DataGridViewButtonColumn();
             not3 = new DataGridViewCheckBoxColumn();
-            beforeChars = new DataGridViewTextBoxColumn();
+            beforeChars = new DataGridViewRegexColumn();
             logic3 = new DataGridViewButtonColumn();
             not4 = new DataGridViewCheckBoxColumn();
             beforeStyles = new DataGridViewStylesColumn();
@@ -182,6 +182,7 @@ namespace ASCompletion.Controls
             rulesGridView.Size = new Size(760, 265);
             rulesGridView.TabIndex = 4;
             rulesGridView.CellContentClick += RulesGridView_CellContentClick;
+            rulesGridView.CellEndEdit += RulesGridView_CellEndEdit;
             rulesGridView.CellValueChanged += RulesGridView_CellValueChanged;
             // 
             // not1
@@ -193,7 +194,7 @@ namespace ASCompletion.Controls
             // 
             // afterChars
             // 
-            afterChars.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            afterChars.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             afterChars.HeaderText = "After";
             afterChars.Name = "afterChars";
             afterChars.SortMode = DataGridViewColumnSortMode.NotSortable;
@@ -395,17 +396,6 @@ namespace ASCompletion.Controls
             txtCloseChar.Font = PluginBase.Settings.ConsoleFont;
         }
 
-        private void InitializeListBox(Brace[] value)
-        {
-            listBox.GetType().GetProperty(nameof(DoubleBuffered), BindingFlags.NonPublic | BindingFlags.Instance).SetValue(listBox, true, null);
-            listBox.BeginUpdate();
-            foreach (var brace in value)
-            {
-                listBox.Items.Add(new BraceInEdit(brace));
-            }
-            listBox.EndUpdate();
-        }
-
         private void InitializeGridView()
         {
             rulesGridView.GetType().GetProperty(nameof(DoubleBuffered), BindingFlags.NonPublic | BindingFlags.Instance).SetValue(rulesGridView, true, null);
@@ -430,9 +420,20 @@ namespace ASCompletion.Controls
             logic1.ValueType = typeof(Brace.Logic);
             logic2.ValueType = typeof(Brace.Logic);
             logic3.ValueType = typeof(Brace.Logic);
-
+            
             afterStyles.ValueType = typeof(Style[]);
             beforeStyles.ValueType = typeof(Style[]);
+        }
+
+        private void InitializeListBox(Brace[] value)
+        {
+            listBox.GetType().GetProperty(nameof(DoubleBuffered), BindingFlags.NonPublic | BindingFlags.Instance).SetValue(listBox, true, null);
+            listBox.BeginUpdate();
+            foreach (var brace in value)
+            {
+                listBox.Items.Add(new BraceInEdit(brace));
+            }
+            listBox.EndUpdate();
         }
 
         private void ValidateControlStates()
@@ -442,11 +443,13 @@ namespace ASCompletion.Controls
 
         #endregion
 
+        #region Utilities
+
         public Brace[] Value
         {
             get { return value; }
         }
-        
+
         private void ShowRules()
         {
             txtName.Text = inEdit.Name;
@@ -458,15 +461,17 @@ namespace ASCompletion.Controls
             {
                 rulesGridView.Rows.Add(CreateRow(rule));
             }
+
+            rulesGridView.ClearSelection();
         }
 
         private object[] CreateRow(Brace.Rule rule)
         {
             return new object[]
             {
-                rule.NotAfterChars, rule.AfterChars, rule.Logic1,
-                rule.NotAfterStyles, rule.AfterStyles, rule.Logic2,
-                rule.NotBeforeChars, rule.BeforeChars, rule.Logic3,
+                rule.NotAfterChars, rule.AfterChars, rule.Logic,
+                rule.NotAfterStyles, rule.AfterStyles, rule.Logic,
+                rule.NotBeforeChars, rule.BeforeChars, rule.Logic,
                 rule.NotBeforeStyles, rule.BeforeStyles
             };
         }
@@ -481,6 +486,8 @@ namespace ASCompletion.Controls
             listBox.DisplayMember = "Invalidate";
             listBox.DisplayMember = "";
         }
+
+        #endregion
 
         #region Event Handlers
 
@@ -595,6 +602,9 @@ namespace ASCompletion.Controls
             var newRule = new Brace.Rule();
             inEdit.Rules.Add(newRule);
             rulesGridView.Rows.Add(CreateRow(newRule));
+            rulesGridView.ClearSelection();
+            rulesGridView.Rows[rulesGridView.Rows.Count - 1].Selected = true;
+            rulesGridView.Select();
         }
 
         private void BtnOk_Click(object sender, EventArgs e)
@@ -617,27 +627,19 @@ namespace ASCompletion.Controls
         {
 
         }
-
+        
         private void RulesGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex == -1)
             {
                 return;
             }
-            else if (e.ColumnIndex == logic1.Index)
+            if (e.ColumnIndex == logic1.Index || e.ColumnIndex == logic2.Index || e.ColumnIndex == logic3.Index)
             {
-                inEdit.Rules[e.RowIndex].Logic1 ^= Brace.Logic.And;
-                rulesGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = inEdit.Rules[e.RowIndex].Logic1;
-            }
-            else if (e.ColumnIndex == logic2.Index)
-            {
-                inEdit.Rules[e.RowIndex].Logic2 ^= Brace.Logic.And;
-                rulesGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = inEdit.Rules[e.RowIndex].Logic2;
-            }
-            else if (e.ColumnIndex == logic3.Index)
-            {
-                inEdit.Rules[e.RowIndex].Logic3 ^= Brace.Logic.And;
-                rulesGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = inEdit.Rules[e.RowIndex].Logic3;
+                inEdit.Rules[e.RowIndex].Logic ^= Brace.Logic.And;
+                rulesGridView.Rows[e.RowIndex].Cells[logic1.Index].Value = inEdit.Rules[e.RowIndex].Logic;
+                rulesGridView.Rows[e.RowIndex].Cells[logic2.Index].Value = inEdit.Rules[e.RowIndex].Logic;
+                rulesGridView.Rows[e.RowIndex].Cells[logic3.Index].Value = inEdit.Rules[e.RowIndex].Logic;
             }
             else if (e.ColumnIndex == afterStyles.Index)
             {
@@ -654,6 +656,33 @@ namespace ASCompletion.Controls
                 inEdit.Rules.RemoveAt(e.RowIndex);
                 rulesGridView.Rows.RemoveAt(e.RowIndex);
             }
+
+            rulesGridView.ClearSelection();
+        }
+
+        private void RulesGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex == -1)
+            {
+                return;
+            }
+            try
+            {
+                if (e.ColumnIndex == afterChars.Index)
+                {
+                    inEdit.Rules[e.RowIndex].AfterChars = (string) rulesGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+                }
+                else if (e.ColumnIndex == beforeChars.Index)
+                {
+                    inEdit.Rules[e.RowIndex].BeforeChars = (string) rulesGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+                }
+            }
+            catch (ArgumentException ex)
+            {
+                MessageBox.Show(this, ex.Message, nameof(ArgumentException), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            rulesGridView.ClearSelection();
         }
 
         private void RulesGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
@@ -662,7 +691,7 @@ namespace ASCompletion.Controls
             {
                 return;
             }
-            else if (e.ColumnIndex == not1.Index)
+            if (e.ColumnIndex == not1.Index)
             {
                 inEdit.Rules[e.RowIndex].NotAfterChars = (bool) rulesGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
             }
@@ -678,14 +707,8 @@ namespace ASCompletion.Controls
             {
                 inEdit.Rules[e.RowIndex].NotBeforeStyles = (bool) rulesGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
             }
-            else if (e.ColumnIndex == afterChars.Index)
-            {
-                inEdit.Rules[e.RowIndex].AfterChars = (string) rulesGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
-            }
-            else if (e.ColumnIndex == beforeChars.Index)
-            {
-                inEdit.Rules[e.RowIndex].BeforeChars = (string) rulesGridView.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
-            }
+
+            rulesGridView.ClearSelection();
         }
 
         #endregion
@@ -739,6 +762,8 @@ namespace ASCompletion.Controls
 
         #endregion
 
+        #region BraceInEdit class
+
         private sealed class BraceInEdit
         {
             public string Name;
@@ -772,11 +797,41 @@ namespace ASCompletion.Controls
             }
         }
 
+        #endregion
+
+        #region Custom Columns
+
+        private sealed class DataGridViewRegexColumn : DataGridViewColumn
+        {
+            public DataGridViewRegexColumn() : base(new DataGridViewRegexCell())
+            {
+
+            }
+        }
+
         private sealed class DataGridViewStylesColumn : DataGridViewColumn
         {
             public DataGridViewStylesColumn() : base(new DataGridViewStylesCell())
             {
-                
+
+            }
+        }
+
+        #endregion
+
+        #region Custom Cells
+
+        private sealed class DataGridViewRegexCell : DataGridViewTextBoxCell
+        {
+            protected override object GetFormattedValue(object value, int rowIndex, ref DataGridViewCellStyle cellStyle, TypeConverter valueTypeConverter, TypeConverter formattedValueTypeConverter, DataGridViewDataErrorContexts context)
+            {
+                if (string.IsNullOrEmpty(value as string) && !IsInEditMode)
+                {
+                    cellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    cellStyle.ForeColor = Color.Gray;
+                    return "none";
+                }
+                return value;
             }
         }
 
@@ -790,17 +845,19 @@ namespace ASCompletion.Controls
 
             protected override bool SetValue(int rowIndex, object value)
             {
-                if (value == null || ((Style[]) value).Length == 0)
-                {
-                    ToolTipText = "{ }";
-                }
-                else
+                if (value != null && ((Style[]) value).Length > 0)
                 {
                     string[] styles = Array.ConvertAll((Style[]) value, (style) => style.ToString());
                     ToolTipText = "{ " + string.Join(", ", styles) + " }";
                 }
+                else
+                {
+                    ToolTipText = "{ }";
+                }
                 return base.SetValue(rowIndex, value);
             }
         }
+
+        #endregion
     }
 }
