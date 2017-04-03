@@ -138,6 +138,7 @@ namespace HaXeContext
             features.inlineKey = "inline";
             features.hiddenPackagePrefix = '_';
             features.stringInterpolationQuotes = "'";
+            features.ConstructorKey = "new";
 
             /* INITIALIZATION */
 

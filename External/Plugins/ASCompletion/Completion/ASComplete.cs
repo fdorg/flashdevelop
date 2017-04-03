@@ -2755,7 +2755,7 @@ namespace ASCompletion.Completion
                     result.Type = ResolveType("Function", null);
                 return result;
             }
-            if (context.CurrentModel.haXe && !inClass.IsVoid() && token == "new" && local.BeforeBody)
+            if (!inClass.IsVoid() && !string.IsNullOrEmpty(context.Features.ConstructorKey) && token == context.Features.ConstructorKey && local.BeforeBody)
                 return EvalVariable(inClass.Name, local, inFile, inClass);
             var contextMember = local.ContextMember;
             if (contextMember == null || local.coma != ComaExpression.None || !local.BeforeBody || (contextMember.Flags & (FlagType.Getter | FlagType.Setter)) > 0)
