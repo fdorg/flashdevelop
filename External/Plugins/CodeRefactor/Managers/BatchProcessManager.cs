@@ -6,7 +6,7 @@ using System.Text;
 
 namespace CodeRefactor.Managers
 {
-    public class BatchProcessManager
+    public static class BatchProcessManager
     {
         private static List<IBatchProcessor> processors = new List<IBatchProcessor>();
 
