@@ -2817,109 +2817,106 @@ namespace ASCompletion.Completion
                 sci.SetSel(position, position);
             }
             string newMemberType = null;
-            if (functionParameters.Count == 0)
+            ASResult callerExpr = null;
+            MemberModel caller = null;
+            var parCount = 0;
+            var arrCount = 0;
+            var braCount = 0;
+            var genCount = 0;
+            var dquCount = 0;
+            var quoCount = 0;
+            var parameterIndex = 0;
+            var pos = wordStartPos;
+            while (pos-- > 0)
             {
-                ASResult callerExpr = null;
-                MemberModel caller = null;
-                var parCount = 0;
-                var arrCount = 0;
-                var braCount = 0;
-                var genCount = 0;
-                var dquCount = 0;
-                var quoCount = 0;
-                var parameterIndex = 0;
-                var pos = wordStartPos;
-                while (pos-- > 0)
+                var c = sci.CharAt(pos);
+                if (c == ',' && parCount == 0 && arrCount == 0 && braCount == 0 && genCount == 0 && dquCount == 0 && quoCount == 0) parameterIndex++;
+                else if (c == ']') arrCount++;
+                else if (c == '[') arrCount--;
+                else if (c == '}') braCount++;
+                else if (c == '{') braCount--;
+                else if (c == '>') genCount++;
+                else if (c == '<') genCount--;
+                else if (dquCount == 0 && c == '"' && sci.CharAt(pos - 1) != '\\') dquCount++;
+                else if (dquCount > 0 && c == '"' && sci.CharAt(pos - 1) != '\\') dquCount--;
+                else if (quoCount == 0 && c == '\'' && sci.CharAt(pos - 1) != '\\') quoCount++;
+                else if (quoCount > 0 && c == '\'' && sci.CharAt(pos - 1) != '\\') quoCount--;
+                else if (c == ')') parCount++;
+                else if (c == '(' && dquCount == 0 && quoCount == 0)
                 {
-                    var c = sci.CharAt(pos);
-                    if (c == ',' && parCount == 0 && arrCount == 0 && braCount == 0 && genCount == 0 && dquCount == 0 && quoCount == 0) parameterIndex++;
-                    else if (c == ']') arrCount++;
-                    else if (c == '[') arrCount--;
-                    else if (c == '}') braCount++;
-                    else if (c == '{') braCount--;
-                    else if (c == '>') genCount++;
-                    else if (c == '<') genCount--;
-                    else if (dquCount == 0 && c == '"' && sci.CharAt(pos - 1) != '\\') dquCount++;
-                    else if (dquCount > 0 && c == '"' && sci.CharAt(pos - 1) != '\\') dquCount--;
-                    else if (quoCount == 0 && c == '\'' && sci.CharAt(pos - 1) != '\\') quoCount++;
-                    else if (quoCount > 0 && c == '\'' && sci.CharAt(pos - 1) != '\\') quoCount--;
-                    else if (c == ')') parCount++;
-                    else if (c == '(' && dquCount == 0 && quoCount == 0)
+                    if (parCount == 0)
                     {
-                        if (parCount == 0)
-                        {
-                            callerExpr = ASComplete.GetExpressionType(sci, pos);
-                            if (callerExpr != null) caller = callerExpr.Member;
-                            break;
-                        }
-                        parCount--;
+                        callerExpr = ASComplete.GetExpressionType(sci, pos);
+                        if (callerExpr != null) caller = callerExpr.Member;
+                        break;
                     }
+                    parCount--;
                 }
-                if (caller?.Parameters != null && caller.Parameters.Count > 0)
+            }
+            if (caller?.Parameters != null && caller.Parameters.Count > 0)
+            {
+                var parameterType = caller.Parameters[parameterIndex].Type;
+                if ((char) sci.CharAt(wordPos) == '(') newMemberType = parameterType;
+                else
                 {
-                    var parameterType = caller.Parameters[parameterIndex].Type;
-                    if ((char) sci.CharAt(wordPos) == '(') newMemberType = parameterType;
-                    else
+                    parCount = 0;
+                    braCount = 0;
+                    genCount = 0;
+                    var startPosition = 0;
+                    var arrowLength = "->".Length;
+                    var endPosition = parameterType.LastIndexOf("->") + arrowLength;
+                    for (var i = 0; i < endPosition; i++)
                     {
-                        parCount = 0;
-                        braCount = 0;
-                        genCount = 0;
-                        var startPosition = 0;
-                        var arrowLength = "->".Length;
-                        var endPosition = parameterType.LastIndexOf("->") + arrowLength;
-                        for (var i = 0; i < endPosition; i++)
+                        string type = null;
+                        var c = parameterType[i];
+                        if (c == '(') parCount++;
+                        else if (c == ')')
                         {
-                            string type = null;
-                            var c = parameterType[i];
-                            if (c == '(') parCount++;
-                            else if (c == ')')
+                            parCount--;
+                            if (parCount == 0 && braCount == 0 && genCount == 0)
                             {
-                                parCount--;
-                                if (parCount == 0 && braCount == 0 && genCount == 0)
-                                {
-                                    i++;
-                                    type = parameterType.Substring(startPosition, i - startPosition);
-                                }
-                            }
-                            else if (c == '{') braCount++;
-                            else if (c == '}')
-                            {
-                                braCount--;
-                                if (parCount == 0 && braCount == 0 && genCount == 0)
-                                {
-                                    i++;
-                                    type = parameterType.Substring(startPosition, i - startPosition);
-                                }
-                            }
-                            else if (c == '<') genCount++;
-                            else if (c == '>' && parameterType[i - 1] != '-')
-                            {
-                                genCount--;
-                                if (parCount == 0 && braCount == 0 && genCount == 0)
-                                {
-                                    i++;
-                                    type = parameterType.Substring(startPosition, i - startPosition);
-                                }
-                            }
-                            else if (parCount == 0 && braCount == 0 && genCount == 0 && c == '-' && parameterType[i + 1] == '>')
-                            {
+                                i++;
                                 type = parameterType.Substring(startPosition, i - startPosition);
-                                i += arrowLength;
-                            }
-                            if (type != null)
-                            {
-                                var parameter = $"parameter{functionParameters.Count}";
-                                if (type.StartsWith('?'))
-                                {
-                                    parameter = $"?{parameter}";
-                                    type = type.TrimStart('?');
-                                }
-                                functionParameters.Add(new FunctionParameter(parameter, type, type, callerExpr));
-                                startPosition = i;
                             }
                         }
-                        newMemberType = parameterType.Substring(endPosition);
+                        else if (c == '{') braCount++;
+                        else if (c == '}')
+                        {
+                            braCount--;
+                            if (parCount == 0 && braCount == 0 && genCount == 0)
+                            {
+                                i++;
+                                type = parameterType.Substring(startPosition, i - startPosition);
+                            }
+                        }
+                        else if (c == '<') genCount++;
+                        else if (c == '>' && parameterType[i - 1] != '-')
+                        {
+                            genCount--;
+                            if (parCount == 0 && braCount == 0 && genCount == 0)
+                            {
+                                i++;
+                                type = parameterType.Substring(startPosition, i - startPosition);
+                            }
+                        }
+                        else if (parCount == 0 && braCount == 0 && genCount == 0 && c == '-' && parameterType[i + 1] == '>')
+                        {
+                            type = parameterType.Substring(startPosition, i - startPosition);
+                            i += arrowLength;
+                        }
+                        if (type != null)
+                        {
+                            var parameter = $"parameter{functionParameters.Count}";
+                            if (type.StartsWith('?'))
+                            {
+                                parameter = $"?{parameter}";
+                                type = type.TrimStart('?');
+                            }
+                            functionParameters.Add(new FunctionParameter(parameter, type, type, callerExpr));
+                            startPosition = i;
+                        }
                     }
+                    newMemberType = parameterType.Substring(endPosition);
                 }
             }
 
