@@ -885,9 +885,10 @@ namespace PluginCore.Controls
             switch (key)
             {
                 case Keys.Back:
-                    if (word.Length >= MinWordLength)
+                    var wordLength = word.Length;
+                    if (wordLength > 0 && wordLength >= MinWordLength)
                     {
-                        word = word.Substring(0, word.Length - 1);
+                        word = word.Substring(0, wordLength - 1);
                         currentPos = sci.CurrentPos - 1;
                         lastIndex = 0;
                         FindWordStartingWith(word);
