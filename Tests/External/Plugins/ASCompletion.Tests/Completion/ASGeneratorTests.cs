@@ -740,6 +740,10 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextAS3("AfterGeneratePrivateFunction_MultidimensionalVector_issue1436"))
                                 .SetName("From foo(vector[0][0][0][0])")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1436");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction_103"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextAS3("AfterGenerateFunction_103"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                     }
                 }
 
@@ -805,6 +809,22 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_12"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_12"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_13"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_13"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_14"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_14"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_15"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_15"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_16"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_16"))
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                     }
                 }

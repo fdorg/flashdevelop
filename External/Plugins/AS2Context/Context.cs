@@ -569,7 +569,7 @@ namespace AS2Context
 
             ClassModel indexClass = ResolveType(indexType, inFile);
 
-            if (baseType == "Object" || baseType == "Dynamic")
+            if (baseType == inFile.Context.Features.dynamicKey)
             {
                 if (!indexClass.IsVoid()) return indexClass;
                 return MakeCustomObjectClass(originalClass, indexType);
