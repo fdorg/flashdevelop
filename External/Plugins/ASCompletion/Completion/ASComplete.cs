@@ -1735,7 +1735,7 @@ namespace ASCompletion.Completion
                             position--;
                             continue;
                         }
-                        if (dquCount > 0 && c == '"' && Sci.CharAt(position - 1) != '\\') dquCount--;
+                        if (c == '"' && Sci.CharAt(position - 1) != '\\') dquCount--;
                     }
                     else if (squCount > 0)
                     {
@@ -1744,7 +1744,7 @@ namespace ASCompletion.Completion
                             position--;
                             continue;
                         }
-                        if (squCount > 0 && c == '\'' && Sci.CharAt(position - 1) != '\\') squCount--;
+                        if (c == '\'' && Sci.CharAt(position - 1) != '\\') squCount--;
                     }
                     else if (c == ';' && braCount == 0)
                     {
