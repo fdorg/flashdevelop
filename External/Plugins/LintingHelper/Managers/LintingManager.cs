@@ -1,11 +1,8 @@
 ﻿using LintingHelper.Helpers;
 using PluginCore;
 using PluginCore.Managers;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace LintingHelper.Managers
 {
@@ -30,6 +27,8 @@ namespace LintingHelper.Managers
             {
                 list.Add(provider);
             }
+
+            EventManager.DispatchEvent(provider, new DataEvent(EventType.Command, "LintingManager.LinterRegistered", language));
         }
 
         /// <summary>
@@ -45,6 +44,8 @@ namespace LintingHelper.Managers
             {
                 linters[language].Remove(provider);
             }
+
+            EventManager.DispatchEvent(provider, new DataEvent(EventType.Command, "LintingManager.LinterUnregistered", language));
         }
 
         /// <summary>
@@ -87,6 +88,7 @@ namespace LintingHelper.Managers
                 linter.LintAsync(files, (results) =>
                 {
                     ApplyLint(files, results);
+                    EventManager.DispatchEvent(linter, new DataEvent(EventType.Command, "LintingManager.FilesLinted", files));
                 });
             }
         }
