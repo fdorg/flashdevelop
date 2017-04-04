@@ -1,4 +1,5 @@
 ﻿using PluginCore;
+using PluginCore.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace CodeRefactor.Managers
         public static void AddBatchProcessor(IBatchProcessor processor)
         {
             processors.Add(processor);
+
+            EventManager.DispatchEvent(null, new DataEvent(EventType.Command, "CodeRefactor.BatchProcessorAdded", processor));
         }
 
         /// <summary>
@@ -24,6 +27,8 @@ namespace CodeRefactor.Managers
         public static void RemoveBatchProcessor(IBatchProcessor processor)
         {
             processors.Remove(processor);
+
+            EventManager.DispatchEvent(null, new DataEvent(EventType.Command, "CodeRefactor.BatchProcessorRemoved", processor));
         }
         
         /// <summary>
