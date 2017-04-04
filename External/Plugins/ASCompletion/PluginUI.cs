@@ -759,9 +759,7 @@ namespace ASCompletion
             //if ((aClass.Flags & FlagType.TypeDef) > 0 && aClass.Members.Count == 0)
             //    folder.Text = "Defines"; // TODO need a better word I guess
 
-            while (!string.IsNullOrEmpty(aClass.ExtendsType) 
-                && aClass.ExtendsType != "Object" 
-                && (!aClass.InFile.haXe || aClass.ExtendsType != "Dynamic"))
+            while (!string.IsNullOrEmpty(aClass.ExtendsType) && aClass.ExtendsType != aClass.InFile.Context.Features.dynamicKey)
             {
                 string extends = aClass.ExtendsType;
                 aClass = aClass.Extends;

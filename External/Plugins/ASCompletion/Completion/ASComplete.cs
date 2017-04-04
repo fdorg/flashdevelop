@@ -4120,7 +4120,7 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        static bool IsEscapedCharacter(ScintillaControl sci, int position)
+        internal static bool IsEscapedCharacter(ScintillaControl sci, int position)
         {
             bool escaped = false;
 
