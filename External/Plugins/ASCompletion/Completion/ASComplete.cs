@@ -1699,12 +1699,15 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Locate beginning of function call parameters and return index of current parameter
         /// </summary>
-        private static int FindParameterIndex(ScintillaControl Sci, ref int position)
+        internal static int FindParameterIndex(ScintillaControl Sci, ref int position)
         {
             int parCount = 0;
             int braCount = 0;
             int comaCount = 0;
             int arrCount = 0;
+            var genCount = 0;
+            var dquCount = 0;
+            var squCount = 0;
             while (position >= 0)
             {
                 var style = Sci.BaseStyleAt(position);
@@ -1720,24 +1723,46 @@ namespace ASCompletion.Completion
                 if ((!IsLiteralStyle(style) && IsTextStyleEx(style)) || IsInterpolationExpr(Sci, position))
                 {
                     var c = (char)Sci.CharAt(position);
-                    if (c == ';')
+                    if (c <= ' ')
+                    {
+                        position--;
+                        continue;
+                    }
+                    if (dquCount > 0)
+                    {
+                        if (c != '"' || Sci.CharAt(position - 1) == '\\')
+                        {
+                            position--;
+                            continue;
+                        }
+                        if (dquCount > 0 && c == '"' && Sci.CharAt(position - 1) != '\\') dquCount--;
+                    }
+                    else if (squCount > 0)
+                    {
+                        if (c != '\'' || Sci.CharAt(position - 1) == '\\')
+                        {
+                            position--;
+                            continue;
+                        }
+                        if (squCount > 0 && c == '\'' && Sci.CharAt(position - 1) != '\\') squCount--;
+                    }
+                    else if (c == ';' && braCount == 0)
                     {
                         position = -1;
                         break;
                     }
                     // skip {} () [] blocks
-                    if (((braCount > 0) && (c != '{' && c != '}'))
-                        || ((parCount > 0) && (c != '(' && c != ')'))
-                        || ((arrCount > 0) && (c != '[' && c != ']')))
+                    else if ((braCount > 0 && c != '{' && c != '}')
+                            || (parCount > 0 && c != '(' && c != ')')
+                            || (arrCount > 0 && c != '[' && c != ']'))
                     {
                         position--;
                         continue;
                     }
                     // new block
-                    if (c == '}') braCount++;
+                    else if (c == '}') braCount++;
                     else if (c == ']') arrCount++;
                     else if (c == ')') parCount++;
-
                     // block closed
                     else if (c == '{')
                     {
@@ -1755,9 +1780,12 @@ namespace ASCompletion.Completion
                             // function start found
                             break;
                     }
-
+                    else if (c == '>') genCount++;
+                    else if (c == '<') genCount--;
+                    else if (c == '"' && (Sci.CharAt(position - 1) != '\\' || IsEscapedCharacter(Sci, position - 1))) dquCount++;
+                    else if (c == '\'' && (Sci.CharAt(position - 1) != '\\' || IsEscapedCharacter(Sci, position - 1))) squCount++;
                     // new parameter reached
-                    else if ((c == ',') && (parCount == 0))
+                    else if (c == ',' && parCount == 0 && genCount == 0)
                         comaCount++;
                 }
                 position--;
@@ -4118,7 +4146,7 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        internal static bool IsEscapedCharacter(ScintillaControl sci, int position)
+        static bool IsEscapedCharacter(ScintillaControl sci, int position)
         {
             bool escaped = false;
 
