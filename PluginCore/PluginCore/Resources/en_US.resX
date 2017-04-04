@@ -6133,10 +6133,6 @@ AND - All conditions are met.</value>
     <value>Runs the available linters when a file is opened.</value>
 	<comment>Added after 5.2.1</comment>
   </data>
-  <data name="LintingHelper.Description.LintOnProjectLoad" xml:space="preserve">
-    <value>Runs the available linters on all files when a project is opened.</value>
-	<comment>Added after 5.2.1</comment>
-  </data>
   <data name="LintingHelper.Label.RunLinters" xml:space="preserve">
     <value>Run Linters</value>
 	<comment>Added after 5.2.1</comment>

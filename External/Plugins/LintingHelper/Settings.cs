@@ -12,7 +12,6 @@ namespace LintingHelper
     {
         private bool lintOnSave = true;
         private bool lintOnOpen = true;
-        private bool lintOnProject = false;
 
         [DisplayName("Lint after saving a file")]
         [LocalizedDescription("LintingHelper.Description.LintOnSave"), DefaultValue(true)]
@@ -28,14 +27,6 @@ namespace LintingHelper
         {
             get { return this.lintOnOpen; }
             set { this.lintOnOpen = value; }
-        }
-
-        [DisplayName("Lint after opening a project")]
-        [LocalizedDescription("LintingHelper.Description.LintOnProjectLoad"), DefaultValue(false)]
-        public bool LintOnProjectLoad
-        {
-            get { return this.lintOnProject; }
-            set { this.lintOnProject = value; }
         }
     }
 }

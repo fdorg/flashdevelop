@@ -17,7 +17,7 @@ namespace LintingHelper
         private string pluginGuid = "279C4926-5AC6-49E1-A0AC-66B7275C13DB";
         private string pluginHelp = "www.flashdevelop.org/community/";
         private string pluginDesc = "Plugin that adds a generic interface for linting / code analysis.";
-        private string pluginAuth = "Christoph Otter";
+        private string pluginAuth = "FlashDevelop Team";
         private Settings settingObject;
         private string settingFilename;
 
@@ -97,7 +97,7 @@ namespace LintingHelper
         private void AddEventHandlers()
         {
             BatchProcessManager.AddBatchProcessor(new BatchProcess.LintProcessor());
-            EventManager.AddEventHandler(this, EventType.FileOpen | EventType.FileSave | EventType.Command);
+            EventManager.AddEventHandler(this, EventType.FileOpen | EventType.FileSave);
 
             UITools.Manager.OnMouseHover += Scintilla_OnMouseHover;
             UITools.Manager.OnMouseHoverEnd += Scintilla_OnMouseHoverEnd;
@@ -174,18 +174,6 @@ namespace LintingHelper
                     if (this.settingObject.LintOnSave)
                     {
                         Managers.LintingManager.LintFiles(new string[] { fileSave.Value });
-                    }
-                    break;
-                case EventType.Command:
-                    DataEvent de = e as DataEvent;
-                    if (de == null) return;
-
-                    var project = de.Data as IProject;
-
-                    if (this.settingObject.LintOnProjectLoad && project != lastProject && de.Action == "ProjectManager.Project")
-                    {
-                        Managers.LintingManager.LintFiles(GetProjectFiles(project).ToArray());
-                        lastProject = project;
                     }
                     break;
             }

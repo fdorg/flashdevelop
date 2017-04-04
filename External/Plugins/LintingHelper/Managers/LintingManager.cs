@@ -3,6 +3,7 @@ using PluginCore;
 using PluginCore.Managers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -83,7 +84,7 @@ namespace LintingHelper.Managers
             foreach (var linter in GetLinters(language))
             {
                 ApplyLint(files, null); //removes cache
-                linter.DoLintAsync(files, (results) =>
+                linter.LintAsync(files, (results) =>
                 {
                     ApplyLint(files, results);
                 });
