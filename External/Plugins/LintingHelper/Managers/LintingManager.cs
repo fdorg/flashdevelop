@@ -63,14 +63,7 @@ namespace LintingHelper.Managers
         /// </summary>
         public static List<ILintProvider> GetLinters(string language)
         {
-            if (linters.ContainsKey(language))
-            {
-                return linters[language];
-            }
-            else
-            {
-                return linters[language] = new List<ILintProvider>();
-            }
+            return linters.GetOrCreate(language);
         }
 
         /// <summary>
