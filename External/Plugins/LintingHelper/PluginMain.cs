@@ -23,7 +23,6 @@ namespace LintingHelper
 
         internal static RichToolTip Tip;
         private List<string> fileCache = new List<string>();
-        private IProject lastProject;
 
         public int Api
         {
