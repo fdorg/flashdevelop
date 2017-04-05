@@ -21,7 +21,7 @@ namespace LintingHelper.Managers
         {
             language = language.ToLower();
 
-            var list = DictionaryHelper.GetOrCreate(linters, language);
+            var list = linters.GetOrCreate(language);
 
             if (!list.Contains(provider))
             {
@@ -103,7 +103,7 @@ namespace LintingHelper.Managers
             foreach (var file in files)
             {
                 var lang = PluginBase.MainForm.SciConfig.GetLanguageFromFile(file).ToLower();
-                var list = DictionaryHelper.GetOrCreate(filesByLang, lang);
+                var list = filesByLang.GetOrCreate(lang);
 
                 list.Add(file);
             }

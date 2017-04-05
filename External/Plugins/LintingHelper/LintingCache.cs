@@ -69,7 +69,7 @@ namespace LintingHelper
 
         public void AddResult(string document, LintingResult result)
         {
-            var list = DictionaryHelper.GetOrCreate(results, document);
+            var list = results.GetOrCreate(document);
             list.Add(result);
         }
 
