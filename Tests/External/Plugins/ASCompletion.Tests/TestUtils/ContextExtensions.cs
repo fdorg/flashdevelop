@@ -4,6 +4,7 @@ using System.Linq;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using NSubstitute;
+using NUnit.Framework;
 using PluginCore;
 using PluginCore.Helpers;
 using ProjectManager.Projects.Haxe;
@@ -37,6 +38,7 @@ namespace ASCompletion.TestUtils
 
         public static void SetHaxeFeatures(this IASContext context)
         {
+            if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("HAXEPATH"))) Assert.Ignore("Unable to find HAXEPATH.");
             var currentModel = new FileModel {Context = context, Version = 4, haXe = true};
             var haxeContext = new HaXeContext.Context(new HaXeContext.HaXeSettings());
             BuildClassPath(haxeContext);
