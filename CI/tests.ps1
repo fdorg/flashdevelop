@@ -14,7 +14,8 @@ Param (
 
 If ($env:HAXEPATH -eq $null)
 {
-	cinst.exe haxe -y
+	cinst.exe haxe -y --install-directory="C:\HaxeToolkit"
+	$env:HAXEPATH = "C:\HaxeToolkit\haxe\"
 	RefreshEnv
 }
 
