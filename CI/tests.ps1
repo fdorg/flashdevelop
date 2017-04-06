@@ -15,8 +15,8 @@ Param (
 If ($env:HAXEPATH -eq $null)
 {
 	cinst.exe haxe -y
-	$env:HAXEPATH = "C:\ProgramData\chocolatey\bin\"
 	RefreshEnv
+	Write-Output $env:HAXEPATH
 }
 
 If ((Get-Command "nunit-console-x86.exe" -ErrorAction SilentlyContinue) -ne $null)
