@@ -19,17 +19,13 @@
         {
             // ignore the pre-release denotation if present
             int hyphenIndex = version.IndexOf('-');
-            if (hyphenIndex >= 0)
-                version = version.Substring(0, hyphenIndex);
+            if (hyphenIndex >= 0) version = version.Substring(0, hyphenIndex);
 
             string[] numbers = version.Split('.');
 
-            if (numbers.Length >= 1)
-                int.TryParse(numbers[0], out Major);
-            if (numbers.Length >= 2)
-                int.TryParse(numbers[1], out Minor);
-            if (numbers.Length >= 3)
-                int.TryParse(numbers[2], out Patch);
+            if (numbers.Length >= 1) int.TryParse(numbers[0], out Major);
+            if (numbers.Length >= 2) int.TryParse(numbers[1], out Minor);
+            if (numbers.Length >= 3) int.TryParse(numbers[2], out Patch);
         }
 
         public override string ToString()
@@ -39,13 +35,26 @@
 
         public bool IsOlderThan(SemVer semVer)
         {
-            if (semVer.Major > Major)
-                return true;
-            if (semVer.Major == Major && semVer.Minor > Minor)
-                return true;
-            if (semVer.Major == Major && semVer.Minor == Minor && semVer.Patch > Patch)
-                return true;
-            return false;
+            return (semVer.Major > Major)
+                   || (semVer.Major == Major && semVer.Minor > Minor)
+                   || (semVer.Major == Major && semVer.Minor == Minor && semVer.Patch > Patch);
+        }
+
+        public bool Equals(SemVer semVer)
+        {
+            return semVer.Major == Major && semVer.Minor == Minor && semVer.Patch == Patch;
+        }
+
+        public bool IsGreaterThan(SemVer semVer)
+        {
+            return (semVer.Major < Major)
+                   || (semVer.Major == Major && semVer.Minor < Minor)
+                   || (semVer.Major == Major && semVer.Minor == Minor && semVer.Patch < Patch);
+        }
+
+        public bool IsGreaterThanOrEquals(SemVer semVer)
+        {
+            return Equals(semVer) || IsGreaterThan(semVer);
         }
     }
 }

@@ -417,6 +417,7 @@ namespace AirProperties
                     new PropertyManager.AndroidPermission("android.permission.WRITE_SOCIAL_STREAM", "Allows an application to write (but not read) the user's social stream data."),
                     new PropertyManager.AndroidPermission("android.permission.WRITE_SYNC_SETTINGS", "Allows applications to write the sync settings"),
                     new PropertyManager.AndroidPermission("android.permission.WRITE_USER_DICTIONARY", "Allows an application to write to the user dictionary."),
+                    new PropertyManager.AndroidPermission("android.permission.MODIFY_AUDIO_SETTINGS", "Allows an application to use Microphone."),
                 };
         }
 
@@ -1313,7 +1314,7 @@ namespace AirProperties
 
         private void FilliPhoneAdditionsFields()
         {
-            WizardHelper.SetControlValue(iPhoneAdditions.ValueOrNull("UIBackgroundModes") as string,
+            WizardHelper.SetControlValue(iPhoneAdditions.ValueOrNull("UIBackgroundModes") as IEnumerable, 
                                          IPhoneBGModesCombo);
             WizardHelper.SetControlValue(iPhoneAdditions.ValueOrNull("UIDeviceFamily") as IEnumerable,
                                          IPhoneDeviceCombo);

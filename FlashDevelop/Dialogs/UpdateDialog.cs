@@ -179,7 +179,7 @@ namespace FlashDevelop.Dialogs
                 String version = reader.ReadLine(); // Read version
                 String download = reader.ReadLine(); // Read download
                 String product = Application.ProductName; // Internal version
-                Int32 lenght = DistroConfig.DISTRIBUTION_NAME.Length - 1;
+                Int32 lenght = DistroConfig.DISTRIBUTION_NAME.Length + 1;
                 String current = product.Substring(lenght, product.IndexOfOrdinal(" for") - lenght);
                 stream.Close(); response.Close(); // Close all resources
                 e.Result = new UpdateInfo(current, version, download);
@@ -212,7 +212,7 @@ namespace FlashDevelop.Dialogs
                 this.infoLabel.Text = formatted;
                 if (silentCheck) this.ShowDialog();
             }
-            else if (!this.updateInfo.NeedsUpdate)
+            else
             {
                 String info = TextHelper.GetString("Info.NoUpdateAvailable");
                 this.infoLabel.Text = info;

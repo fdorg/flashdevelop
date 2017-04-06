@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("CodeRefactor.Tests")]
-[assembly: AssemblyDescription("DistroConfig.DISTRIBUTION_COMPANY")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("DistroConfig.DISTRIBUTION_COMPANY")]
 [assembly: AssemblyProduct("CodeRefactor.Tests")]
 [assembly: AssemblyCopyright("DistroConfig.DISTRIBUTION_COPYRIGHT")]
 [assembly: AssemblyTrademark("")]

@@ -83,7 +83,7 @@ namespace FlashDevelop.Managers
             String[] configFiles = Directory.GetFiles(Path.Combine(PathHelper.SettingDir, "Languages"), "*.xml");
             sciConfig = (Scintilla)sciConfigUtil.LoadConfiguration(configFiles);
             ScintillaControl.Configuration = sciConfig;
-            if (ConfigurationLoaded != null) ConfigurationLoaded();
+            ConfigurationLoaded?.Invoke();
         }
 
         /// <summary>
@@ -309,6 +309,7 @@ namespace FlashDevelop.Managers
                     sci.SetXCaretPolicy((Int32)CaretPolicy.Even, 0);
                     sci.SetYCaretPolicy((Int32)CaretPolicy.Even, 0);
                 }
+                sci.SetVisiblePolicy((Int32)(CaretPolicy.Strict | CaretPolicy.Even), 0);
                 /**
                 * Adjust the print margin
                 */

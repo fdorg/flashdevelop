@@ -5,6 +5,7 @@ using System.IO;
 using System.Windows.Forms;
 using ProjectManager.Projects;
 using ProjectManager.Helpers;
+using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore;
@@ -280,7 +281,7 @@ namespace ProjectManager.Controls
             projectListView.TileSize = PluginCore.Helpers.ScaleHelper.Scale(new Size(170, 22));
             projectListView.ShowGroups = PluginBase.Settings.UseListViewGrouping;
 
-            if (Win32.isRunningOnWine())
+            if (PlatformHelper.isRunningOnWine())
             {
                 projectListView.View = View.SmallIcon;
                 projectListView.GridLines = !projectListView.ShowGroups;

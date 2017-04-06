@@ -1,7 +1,10 @@
 @echo off
-if %1 == debug (
-	bin\Main-debug.exe
+cd bin
+if "%1"=="debug" (
+  :: run debug
+  Main-Debug.exe
 ) else (
-	bin\Main.exe
+  :: run release
+  Main.exe
 )
 pause

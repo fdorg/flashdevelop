@@ -4,7 +4,7 @@ using PluginCore;
 
 namespace CodeRefactor.Provider
 {
-    internal static class UserInterfaceManager
+    public static class UserInterfaceManager
     {
         private static ProgressDialog progressDialog;
 
@@ -19,7 +19,7 @@ namespace CodeRefactor.Provider
         /// <summary>
         /// 
         /// </summary>
-        internal static ProgressDialog ProgressDialog
+        public static ProgressDialog ProgressDialog
         {
             get
             {

@@ -301,10 +301,10 @@ namespace CodeFormatter
                             }
                             else
                             {
-                                // Remove all empty lines if specified
-                                if (optionData.Contains("--delete-empty-lines"))
+                                // Remove all empty lines if not specified for astyle
+                                if (!optionData.Contains("--delete-empty-lines"))
                                 {
-                                    resultData = Regex.Replace(resultData, @"(\r?\n){3,}", "$1");
+                                    resultData = Regex.Replace(resultData, @"^\s+$[\r\n]*", Environment.NewLine, RegexOptions.Multiline);
                                 }
                                 doc.SciControl.Text = resultData;
                                 doc.SciControl.ConvertEOLs(doc.SciControl.EOLMode);

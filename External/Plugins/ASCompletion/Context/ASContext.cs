@@ -1189,7 +1189,6 @@ namespace ASCompletion.Context
         /// <summary>
         /// Return imported classes list (not null)
         /// </summary>
-        /// <param name="package">Package to explore</param>
         /// <param name="inFile">Current file</param>
         public virtual MemberList ResolveImports(FileModel inFile)
         {
@@ -1574,6 +1573,7 @@ namespace ASCompletion.Context
             int.TryParse(parts[0], out majorVersion);
             if (parts.Length > 1) int.TryParse(parts[1], out minorVersion);
         }
+
         #endregion
     }
 

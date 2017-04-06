@@ -720,6 +720,13 @@ namespace ASCompletion
                 menu.DropDownItems.Add(item);
                 menuItems.Add(item);
 
+                // goto type declaration
+                image = mainForm.FindImage("99|9|3|-3");
+                item = new ToolStripMenuItem(TextHelper.GetString("Label.GotoTypeDeclaration"), image, GotoTypeDeclaration);
+                PluginBase.MainForm.RegisterShortcutItem("SearchMenu.GotoTypeDeclaration", item);
+                menu.DropDownItems.Add(item);
+                menuItems.Add(item);
+
                 // goto back from declaration
                 image = mainForm.FindImage("99|1|-3|-3");
                 item = new ToolStripMenuItem(TextHelper.GetString("Label.BackFromDeclaration"), image, new EventHandler(BackDeclaration), Keys.Shift | Keys.F4);
@@ -736,7 +743,13 @@ namespace ASCompletion
                     item = new ToolStripMenuItem(TextHelper.GetString("Label.GotoDeclaration"), image, new EventHandler(GotoDeclaration));
                     PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.GotoDeclaration", item);
                     emenu.Items.Insert(4, item);
-                    emenu.Items.Insert(5, new ToolStripSeparator());
+                    menuItems.Add(item);
+
+                    image = mainForm.FindImage("99|9|3|-3");
+                    item = new ToolStripMenuItem(TextHelper.GetString("Label.GotoTypeDeclaration"), image, GotoTypeDeclaration);
+                    PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.GotoTypeDeclaration", item);
+                    emenu.Items.Insert(5, item);
+                    emenu.Items.Insert(6, new ToolStripSeparator());
                     menuItems.Add(item);
                 }
             }
@@ -753,6 +766,7 @@ namespace ASCompletion
             CompletionList.OnInsert += new InsertedTextHandler(ASComplete.HandleCompletionInsert);
 
             // shortcuts
+            PluginBase.MainForm.IgnoredKeys.Add(Keys.Back);
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Control | Keys.Enter);
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control | Keys.Alt); // complete project types
             PluginBase.MainForm.RegisterShortcutItem("Completion.ShowHelp", Keys.F1);
@@ -861,12 +875,21 @@ namespace ASCompletion
         }
 
         /// <summary>
-        /// Menu item command: Back From Declaration
+        /// Menu item command: Goto Type Declaration
+        /// </summary>
+        void GotoTypeDeclaration(object sender, EventArgs e)
+        {
+            ASComplete.TypeDeclarationLookup(ASContext.CurSciControl);
+        }
+
+        /// <summary>
+        /// Menu item command: Back From Declaration or Type Declaration
         /// </summary>
         public void BackDeclaration(object sender, EventArgs e)
         {
             pluginUI.RestoreLastLookupPosition();
         }
+
 
         /// <summary>
         /// Sets the IsEnabled value of all the CommandBarItems
@@ -908,10 +931,19 @@ namespace ASCompletion
             // set tooltip
             if (!result.IsNull())
             {
-                string text = ASComplete.GetToolTipText(result);
-                if (text == null) return;
-                // show tooltip
-                UITools.Tip.ShowAtMouseLocation(text);
+                if (Control.ModifierKeys == Keys.Control)
+                {
+                    var code = ASComplete.GetCodeTipCode(result);
+                    if (code == null) return;
+                    UITools.CodeTip.Show(sci, position - result.Path.Length, code);
+                }
+                else
+                {
+                    string text = ASComplete.GetToolTipText(result);
+                    if (text == null) return;
+                    // show tooltip
+                    UITools.Tip.ShowAtMouseLocation(text);
+                }
             }
         }
 

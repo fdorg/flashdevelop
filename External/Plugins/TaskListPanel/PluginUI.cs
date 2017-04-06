@@ -174,6 +174,7 @@ namespace TaskListPanel
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {this.toolStripLabel});
             this.statusStrip.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.statusStrip.Renderer = new DockPanelStripRenderer(false);
+            this.statusStrip.SizingGrip = false;
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(278, 22);
             this.statusStrip.TabIndex = 0;
@@ -698,7 +699,7 @@ namespace TaskListPanel
             {
                 position = sci.MBSafePosition(position); // scintilla indexes are in 8bits
                 Int32 line = sci.LineFromPosition(position);
-                sci.EnsureVisible(line);
+                sci.EnsureVisibleEnforcePolicy(line);
                 sci.GotoPos(position);
                 sci.SetSel(position, sci.LineEndPosition(line));
                 sci.Focus();
