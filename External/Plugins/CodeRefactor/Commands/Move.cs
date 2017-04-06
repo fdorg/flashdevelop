@@ -464,8 +464,7 @@ namespace CodeRefactor.Commands
                 string newPath = item.Value;
                 if (File.Exists(oldPath))
                 {
-                    newPath = Path.Combine(newPath, Path.GetFileName(oldPath));
-                    newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
+                    newPath = Path.Combine(Path.GetDirectoryName(oldPath), Path.Combine(newPath, Path.GetFileName(oldPath)));
                     RefactoringHelper.Move(oldPath, newPath, true);
                 }
                 else if (Directory.Exists(oldPath))
@@ -474,10 +473,9 @@ namespace CodeRefactor.Commands
 
                     // Look for document class changes
                     // Do not use RefactoringHelper to avoid possible dialogs that we don't want
-                    Project project = (Project)PluginBase.CurrentProject;
+                    var project = (Project) PluginBase.CurrentProject;
                     string newDocumentClass = null;
-                    string searchPattern = project.DefaultSearchFilter;
-                    foreach (string pattern in searchPattern.Split(';'))
+                    foreach (string pattern in project.DefaultSearchFilter.Split(';'))
                     {
                         foreach (string file in Directory.GetFiles(oldPath, pattern, SearchOption.AllDirectories))
                         {
@@ -493,7 +491,7 @@ namespace CodeRefactor.Commands
                     // Check if this is a name casing change
                     if (oldPath.Equals(newPath, StringComparison.OrdinalIgnoreCase))
                     {
-                        String tmpPath = oldPath + "$renaming$";
+                        string tmpPath = oldPath + "$renaming$";
                         Directory.Move(oldPath, tmpPath);
                         Directory.Move(tmpPath, newPath);
                         DocumentManager.MoveDocuments(oldPath, newPath);

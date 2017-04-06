@@ -445,7 +445,6 @@ namespace ProjectManager.Actions
 
                 if (isDirectory)
                 {
-                    // this is required for renaming directories, don't ask me why
                     if (oldPath.EndsWith('\\')) oldPath = oldPath.Substring(0, oldPath.Length - 1);
                     if (newPath.EndsWith('\\')) newPath = newPath.Substring(0, newPath.Length - 1);
                     if (oldPath.Equals(newPath, StringComparison.OrdinalIgnoreCase))
