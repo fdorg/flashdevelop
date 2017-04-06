@@ -1713,6 +1713,24 @@ namespace FlashDevelop
             }
         }
 
+        public void OnFileSave(ITabbedDocument document, string oldFile, string reason)
+        {
+            if (oldFile != null)
+            {
+                String args = document.FileName + ";" + oldFile;
+                TextEvent rename = new TextEvent(EventType.FileRename, args);
+                EventManager.DispatchEvent(this, rename);
+                TextEvent open = new TextEvent(EventType.FileOpen, document.FileName);
+                EventManager.DispatchEvent(this, open);
+            }
+            this.OnUpdateMainFormDialogTitle();
+            if (document.IsEditable) document.SciControl.MarkerDeleteAll(2);
+            TextDataEvent save = new TextDataEvent(EventType.FileSave, document.FileName, reason);
+            EventManager.DispatchEvent(this, save);
+            ButtonManager.UpdateFlaggedButtons();
+            TabTextManager.UpdateTabTexts();
+        }
+
         /// <summary>
         /// Notifies the plugins for the FileSave event
         /// </summary>
@@ -2601,6 +2619,9 @@ namespace FlashDevelop
         {
             try
             {
+                var button = (ToolStripItem)sender;
+                var reason = ((ItemData)button.Tag).Tag as string;
+                
                 if (this.CurrentDocument.IsUntitled)
                 {
                     this.saveFileDialog.FileName = this.CurrentDocument.FileName;
@@ -2617,7 +2638,7 @@ namespace FlashDevelop
                 }
                 else if (this.CurrentDocument.IsModified)
                 {
-                    this.CurrentDocument.Save();
+                    this.CurrentDocument.Save(this.CurrentDocument.FileName, reason);
                 }
             }
             catch (Exception ex)
