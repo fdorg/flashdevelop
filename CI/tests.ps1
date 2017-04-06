@@ -16,6 +16,7 @@ If ($env:HAXEPATH -eq $null)
 {
 	cinst.exe haxe -y
 	RefreshEnv
+	Write-Output "haxepath: " + [System.IO.Directory]::GetFiles("c:\ProgramData\chocolatey\lib\haxe\")
 	Write-Output $env:HAXEPATH
 }
 
