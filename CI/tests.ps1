@@ -15,9 +15,8 @@ Param (
 If ($env:HAXEPATH -eq $null)
 {
 	cinst.exe haxe -y
+	$env:HAXEPATH = "c:\ProgramData\chocolatey\lib\haxe\"
 	RefreshEnv
-	Write-Output "haxepath: " + [System.IO.Directory]::GetFiles("c:\ProgramData\chocolatey\lib\haxe\")
-	Write-Output $env:HAXEPATH
 }
 
 If ((Get-Command "nunit-console-x86.exe" -ErrorAction SilentlyContinue) -ne $null)
