@@ -14,8 +14,8 @@ Param (
 
 If ($env:HAXEPATH -eq $null)
 {
-	cinst.exe haxe -y --install-directory="C:\HaxeToolkit"
-	$env:HAXEPATH = "C:\HaxeToolkit\haxe\"
+	cinst.exe haxe -y
+	$env:HAXEPATH = "C:\ProgramData\chocolatey\bin\"
 	RefreshEnv
 }
 
