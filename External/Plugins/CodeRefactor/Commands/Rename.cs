@@ -323,20 +323,9 @@ namespace CodeRefactor.Commands
                 reopen = true;
             }
 
-            // name casing changed
-            if (oldFileName.Equals(newFileName, StringComparison.OrdinalIgnoreCase))
-            {
-                string tmpPath = oldFileName + "$renaming$";
-                File.Move(oldFileName, tmpPath);
-                File.Move(tmpPath, newFileName);
-                DocumentManager.MoveDocuments(oldFileName, newFileName);
-            }
-            else
-            {
-                FileHelper.ForceMove(oldFileName, newFileName);
-                DocumentManager.MoveDocuments(oldFileName, newFileName);
-            }
-
+            FileHelper.MoveFile(oldFileName, newFileName, true);
+            DocumentManager.MoveDocuments(oldFileName, newFileName);
+            
             var project = (Project) PluginBase.CurrentProject;
             if (project.IsDocumentClass(oldFileName))
             {

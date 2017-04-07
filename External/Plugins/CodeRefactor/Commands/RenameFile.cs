@@ -47,18 +47,8 @@ namespace CodeRefactor.Commands
 
             newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
 
-            // refactor failed or was refused
-            if (oldPath.Equals(newPath, StringComparison.OrdinalIgnoreCase))
+            if (FileHelper.MoveFile(oldPath, newPath))
             {
-                // name casing changed
-                String tmpPath = oldPath + "$renaming$";
-                File.Move(oldPath, tmpPath);
-                File.Move(tmpPath, newPath);
-                DocumentManager.MoveDocuments(oldPath, newPath);
-            }
-            else if (FileHelper.ConfirmOverwrite(newPath))
-            {
-                FileHelper.ForceMove(oldPath, newPath);
                 DocumentManager.MoveDocuments(oldPath, newPath);
             }
         }

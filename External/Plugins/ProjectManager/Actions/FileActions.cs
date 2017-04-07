@@ -451,35 +451,11 @@ namespace ProjectManager.Actions
 
                 if (isDirectory)
                 {
-                    if (oldPath.EndsWith('\\')) oldPath = oldPath.Substring(0, oldPath.Length - 1);
-                    if (newPath.EndsWith('\\')) newPath = newPath.Substring(0, newPath.Length - 1);
-                    if (oldPath.Equals(newPath, StringComparison.OrdinalIgnoreCase))
-                    {
-                        // name casing changed
-                        string tmpPath = newPath + "$renaming$";
-                        Directory.Move(oldPath, tmpPath);
-                        Directory.Move(tmpPath, newPath);
-                    }
-                    else if (FileHelper.ConfirmOverwrite(newPath))
-                    {
-                        FileHelper.ForceMoveDirectory(oldPath, newPath);
-                    }
-                    else return false;
+                    if (!FileHelper.MoveDirectory(oldPath, newPath)) return false;
                 }
                 else
                 {
-                    if (oldPath.Equals(newPath, StringComparison.OrdinalIgnoreCase))
-                    {
-                        // name casing changed
-                        string tmpPath = newPath + "$renaming$";
-                        File.Move(oldPath, tmpPath);
-                        File.Move(tmpPath, newPath);
-                    }
-                    else if (FileHelper.ConfirmOverwrite(newPath))
-                    {
-                        FileHelper.ForceMove(oldPath, newPath);
-                    }
-                    else return false;
+                    if (!FileHelper.MoveFile(oldPath, newPath)) return false;
                 }
                 OnFileMoved(oldPath, newPath);
             }
