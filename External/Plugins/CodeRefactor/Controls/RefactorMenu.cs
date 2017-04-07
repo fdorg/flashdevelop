@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using ASCompletion;
 using ASCompletion.Context;
@@ -28,9 +29,9 @@ namespace CodeRefactor.Controls
             this.DropDownItems.Add(this.CodeGeneratorMenuItem);
             this.DropDownItems.Add(new ToolStripSeparator());
             this.OrganizeMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.OrganizeImports"), null) as ToolStripMenuItem;
-            this.OrganizeMenuItem.Image = ASContext.Panel.GetIcon(PluginUI.ICON_PACKAGE);
+            this.OrganizeMenuItem.Image = Overlay(ASContext.Panel.GetIcon(PluginUI.ICON_PACKAGE), "-1|22|4|4");
             this.TruncateMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.TruncateImports"), null) as ToolStripMenuItem;
-            this.TruncateMenuItem.Image = ASContext.Panel.GetIcon(PluginUI.ICON_PACKAGE);
+            this.TruncateMenuItem.Image = Overlay(ASContext.Panel.GetIcon(PluginUI.ICON_PACKAGE), "-1|18|4|4");
             this.DropDownItems.Add(new ToolStripSeparator());
             this.BatchMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.BatchProcess"), null) as ToolStripMenuItem;
         }
@@ -85,6 +86,15 @@ namespace CodeRefactor.Controls
         /// </summary>
         public ToolStripMenuItem CodeGeneratorMenuItem { get; }
 
+        private static Image Overlay(Image source, string overlayData)
+        {
+            var image = new Bitmap(source);
+            using (var graphics = Graphics.FromImage(image))
+            {
+                graphics.DrawImage(PluginBase.MainForm.FindImage16(overlayData), 0, 0);
+            }
+            return PluginBase.MainForm.GetAutoAdjustedImage(image);
+        }
     }
 
 }
