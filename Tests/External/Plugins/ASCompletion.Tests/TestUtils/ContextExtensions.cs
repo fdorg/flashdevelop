@@ -4,7 +4,6 @@ using System.Linq;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using NSubstitute;
-using NUnit.Framework;
 using PluginCore;
 using PluginCore.Helpers;
 using ProjectManager.Projects.Haxe;
