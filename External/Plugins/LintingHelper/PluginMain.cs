@@ -116,7 +116,8 @@ namespace LintingHelper
 
                 foreach (var result in results)
                 {
-                    desc += "\r\n" + result.Description;
+                    if (!string.IsNullOrEmpty(result.Description))
+                        desc += "\r\n" + result.Description;
                 }
 
                 if (desc != string.Empty)
