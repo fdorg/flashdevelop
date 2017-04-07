@@ -38,7 +38,6 @@ namespace ASCompletion.TestUtils
 
         public static void SetHaxeFeatures(this IASContext context)
         {
-            if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("HAXEPATH"))) Assert.Ignore("Unable to find HAXEPATH.");
             var currentModel = new FileModel {Context = context, Version = 4, haXe = true};
             var haxeContext = new HaXeContext.Context(new HaXeContext.HaXeSettings());
             BuildClassPath(haxeContext);
