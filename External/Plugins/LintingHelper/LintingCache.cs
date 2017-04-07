@@ -70,13 +70,10 @@ namespace LintingHelper
         public void AddResult(string document, LintingResult result)
         {
             var list = results.GetOrCreate(document);
-            list.Add(result);
+            if (list.Find(result.Equals) == null)
+                list.Add(result);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="document"></param>
         public void RemoveDocument(string document)
         {
             if (results.ContainsKey(document))
@@ -89,7 +86,7 @@ namespace LintingHelper
         /// Removes documents that are not opened anymore
         /// </summary>
         /// <param name="documents">The documents that are currently opened</param>
-        public void Clear(IEnumerable<string> documents)
+        public void RemoveAllExcept(IEnumerable<string> documents)
         {
             var copy = new List<string>(results.Keys);
             foreach (var doc in copy)

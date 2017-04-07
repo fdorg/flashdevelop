@@ -96,7 +96,7 @@ namespace LintingHelper
         private void AddEventHandlers()
         {
             BatchProcessManager.AddBatchProcessor(new BatchProcess.LintProcessor());
-            EventManager.AddEventHandler(this, EventType.FileOpen | EventType.FileSave);
+            EventManager.AddEventHandler(this, EventType.FileOpen | EventType.FileSave | EventType.FileModify);
 
             UITools.Manager.OnMouseHover += Scintilla_OnMouseHover;
             UITools.Manager.OnMouseHoverEnd += Scintilla_OnMouseHoverEnd;
@@ -163,18 +163,22 @@ namespace LintingHelper
             switch(e.Type)
             {
                 case EventType.FileOpen:
-                    TextEvent fileOpen = (TextEvent)e;
+                    var fileOpen = (TextEvent) e;
                     if (this.settingObject.LintOnOpen)
                     {
                         Managers.LintingManager.LintFiles(new string[] { fileOpen.Value });
                     }
                     break;
                 case EventType.FileSave:
-                    TextEvent fileSave = (TextEvent)e;
+                    var fileSave = (TextEvent) e;
                     if (this.settingObject.LintOnSave)
                     {
                         Managers.LintingManager.LintFiles(new string[] { fileSave.Value });
                     }
+                    break;
+                case EventType.FileModify:
+                    var file = ((TextEvent)e).Value;
+                    Managers.LintingManager.UnLintDocument(DocumentManager.FindDocument(file));
                     break;
             }
         }

@@ -77,7 +77,11 @@ namespace LintingHelper.Managers
 
             foreach (var linter in GetLinters(language))
             {
-                ApplyLint(files, null); //removes cache
+                //remove cache
+                foreach (var file in files)
+                {
+                    UnLintDocument(DocumentManager.FindDocument(file));
+                }
                 linter.LintAsync(files, (results) =>
                 {
                     ApplyLint(files, results);
@@ -123,26 +127,27 @@ namespace LintingHelper.Managers
             LintDocument(PluginBase.MainForm.CurrentDocument);
         }
 
+        public static void UnLintDocument(ITabbedDocument doc)
+        {
+            Cache.RemoveDocument(doc.FileName);
+            doc.SciControl.RemoveHighlights();
+        }
+
         /// <summary>
         /// Applies the results to all open files
         /// </summary>
         /// <param name="results"></param>
         static void ApplyLint(string[] files, List<LintingResult> results)
         {
-            Cache.Clear(PluginBase.MainForm.Documents.Select( (d) => d.FileName ));
+            //Cache.RemoveAllExcept(PluginBase.MainForm.Documents.Select( d => d.FileName ));
+            if (results == null)
+                return;
+
+            var fileList = new List<string>(files);
+            fileList.AddRange(PluginBase.MainForm.Documents.Select(d => d.FileName));
+            Cache.RemoveAllExcept(fileList);
 
             PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
-
-            foreach (var file in files)
-            {
-                Cache.RemoveDocument(file);
-                DocumentManager.FindDocument(file)?.SciControl.RemoveHighlights();
-            }
-
-            if (results == null)
-            {
-                return;
-            }
 
             Cache.AddResults(results);
 
