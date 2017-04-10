@@ -19,9 +19,9 @@ namespace LintingHelper
 
         public List<LintingResult> GetResultsFromPosition(ITabbedDocument document, int position)
         {
-            if (results.ContainsKey(document.FileName))
+            List<LintingResult> list;
+            if (results.TryGetValue(document.FileName, out list))
             {
-                var list = results[document.FileName];
                 var line = document.SciControl.LineFromPosition(position);
 
                 var localResults = new List<LintingResult>();
@@ -67,7 +67,7 @@ namespace LintingHelper
             }
         }
 
-        public void AddResult(string document, LintingResult result)
+        private void AddResult(string document, LintingResult result)
         {
             var list = results.GetOrCreate(document);
             if (list.Find(result.Equals) == null)

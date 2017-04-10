@@ -148,7 +148,7 @@ namespace LintingHelper
             if (!File.Exists(this.settingFilename)) this.SaveSettings();
             else
             {
-                Object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
+                object obj = ObjectSerializer.Deserialize(this.settingFilename, this.settingObject);
                 this.settingObject = (Settings)obj;
             }
         }
@@ -181,21 +181,6 @@ namespace LintingHelper
                     Managers.LintingManager.UnLintDocument(DocumentManager.FindDocument(file));
                     break;
             }
-        }
-
-        private List<string> GetProjectFiles(IProject project)
-        {
-            List<String> files = new List<String>();
-            String[] filters = project.DefaultSearchFilter.Split(';');
-            foreach (String path in project.SourcePaths)
-            {
-                foreach (String filter in filters)
-                {
-                    files.AddRange(Directory.GetFiles(project.GetAbsolutePath(path), filter, SearchOption.AllDirectories));
-                }
-            }
-
-            return files;
         }
     }
 }
