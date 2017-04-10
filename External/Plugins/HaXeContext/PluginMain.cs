@@ -13,6 +13,8 @@ using ASCompletion.Completion;
 using ASCompletion.Model;
 using CodeRefactor.Provider;
 using HaXeContext.CodeRefactor.Provider;
+using HaXeContext.Linters;
+using LintingHelper.Managers;
 using SwfOp;
 
 namespace HaXeContext
@@ -99,6 +101,8 @@ namespace HaXeContext
             this.InitBasics();
             this.LoadSettings();
             this.AddEventHandlers();
+
+            LintingManager.RegisterLinter("haxe", new DiagnosticsLinter());
         }
 
         /// <summary>

@@ -106,6 +106,10 @@
       <Name>CodeRefactor</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\LintingHelper\LintingHelper.csproj">
+      <Project>{8B5A1C53-AF20-4379-A8D1-31822ACC6AD8}</Project>
+      <Name>LintingHelper</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ProjectManager\ProjectManager.csproj">
       <Project>{78101C01-E186-4954-B1DD-DEBB7905FAD8}</Project>
       <Name>ProjectManager</Name>
@@ -123,6 +127,7 @@
     <Compile Include="Completion\HaxeComplete330.cs" />
     <Compile Include="HaXeSettings.cs" />
     <Compile Include="ExternalToolchain.cs" />
+    <Compile Include="Linters\DiagnosticsLinter.cs" />
     <Compile Include="PluginMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
