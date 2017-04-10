@@ -2201,6 +2201,7 @@ namespace ASCompletion.Completion
 
         private static void GenerateVariableJob(GeneratorJobType job, ScintillaControl sci, MemberModel member, bool detach, ClassModel inClass)
         {
+            var wordStartPos = sci.WordStartPosition(sci.CurrentPos, true);
             var position = 0;
             Visibility visibility = job.Equals(GeneratorJobType.Variable) ? GetDefaultVisibility(inClass) : Visibility.Public;
             // evaluate, if the variable (or constant) should be generated in other class
@@ -2348,13 +2349,17 @@ namespace ASCompletion.Completion
             }
             FlagType kind = job.Equals(GeneratorJobType.Constant) ? FlagType.Constant : FlagType.Variable;
             MemberModel newMember = NewMember(contextToken, isStatic, kind, visibility);
-            if (returnTypeStr != null)
+            if (returnTypeStr != null) newMember.Type = returnTypeStr;
+            else if (eventValue != null) newMember.Type = eventValue;
+            else
             {
-                newMember.Type = returnTypeStr;
-            }
-            else if (eventValue != null)
-            {
-                newMember.Type = eventValue;
+                var pos = wordStartPos;
+                var index = ASComplete.FindParameterIndex(sci, ref pos);
+                if (pos != -1)
+                {
+                    var expr = ASComplete.GetExpressionType(sci, pos);
+                    if (expr?.Member?.Parameters?.Count > 0) newMember.Type = expr.Member.Parameters[index].Type;
+                }
             }
             GenerateVariable(newMember, position, detach);
         }
@@ -2818,43 +2823,12 @@ namespace ASCompletion.Completion
             string newMemberType = null;
             ASResult callerExpr = null;
             MemberModel caller = null;
-            var parCount = 0;
-            var arrCount = 0;
-            var braCount = 0;
-            var genCount = 0;
-            var dquCount = 0;
-            var quoCount = 0;
-            var parameterIndex = 0;
             var pos = wordStartPos;
-            var endPos = member != null ? sci.PositionFromLine(member.LineFrom) : 0;
-            while (pos-- > endPos)
+            var parameterIndex = ASComplete.FindParameterIndex(sci, ref pos);
+            if (pos != -1)
             {
-                if (sci.PositionIsOnComment(pos)) continue;
-                var c = (char)sci.CharAt(pos);
-                if (c <= ' ') continue;
-                if (c == ',' && parCount == 0 && arrCount == 0 && braCount == 0 && genCount == 0 && dquCount == 0 && quoCount == 0) parameterIndex++;
-                else if (c == ';' && parCount == 0 && arrCount == 0 && braCount == 0 && genCount == 0 && dquCount == 0 && quoCount == 0) break;
-                else if (c == ']') arrCount++;
-                else if (c == '[') arrCount--;
-                else if (c == '}') braCount++;
-                else if (c == '{') braCount--;
-                else if (c == '>') genCount++;
-                else if (c == '<') genCount--;
-                else if (dquCount == 0 && c == '"' && (sci.CharAt(pos - 1) != '\\' || ASComplete.IsEscapedCharacter(sci, pos - 1))) dquCount++;
-                else if (dquCount > 0 && c == '"' && (sci.CharAt(pos - 1) != '\\' || ASComplete.IsEscapedCharacter(sci, pos - 1))) dquCount--;
-                else if (quoCount == 0 && c == '\'' && (sci.CharAt(pos - 1) != '\\' || ASComplete.IsEscapedCharacter(sci, pos - 1))) quoCount++;
-                else if (quoCount > 0 && c == '\'' && (sci.CharAt(pos - 1) != '\\' || ASComplete.IsEscapedCharacter(sci, pos - 1))) quoCount--;
-                else if (c == ')') parCount++;
-                else if (c == '(' && dquCount == 0 && quoCount == 0)
-                {
-                    if (parCount == 0)
-                    {
-                        callerExpr = ASComplete.GetExpressionType(sci, pos);
-                        if (callerExpr != null) caller = callerExpr.Member;
-                        break;
-                    }
-                    parCount--;
-                }
+                callerExpr = ASComplete.GetExpressionType(sci, pos);
+                if (callerExpr != null) caller = callerExpr.Member;
             }
             if (caller?.Parameters != null && caller.Parameters.Count > 0)
             {
@@ -2862,9 +2836,9 @@ namespace ASCompletion.Completion
                 if ((char) sci.CharAt(wordPos) == '(') newMemberType = parameterType;
                 else
                 {
-                    parCount = 0;
-                    braCount = 0;
-                    genCount = 0;
+                    var parCount = 0;
+                    var braCount = 0;
+                    var genCount = 0;
                     var startPosition = 0;
                     var arrowLength = "->".Length;
                     var endPosition = parameterType.LastIndexOf("->") + arrowLength;
