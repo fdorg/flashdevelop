@@ -988,7 +988,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, GeneratorJobType job) => GenerateVariable.AS3Impl(sourceText, job, sci);
+                public string AS3(string sourceText, GeneratorJobType job) => GenerateFunction.AS3Impl(sourceText, job, sci);
             }
 
             [TestFixture]
