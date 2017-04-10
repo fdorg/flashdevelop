@@ -1,3 +1,5 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -140,7 +142,7 @@ namespace CssCompletion
                 case EventType.SyntaxChange:
                 case EventType.ApplySettings:
                 {
-                    if (document.IsEditable && this.IsSupported(document))
+                    if (this.IsSupported(document))
                     {
                         string ext = Path.GetExtension(document.FileName).ToLower();
                         features = enabledLanguages.ContainsKey(ext) ? enabledLanguages[ext] : null;
@@ -162,7 +164,7 @@ namespace CssCompletion
                 }
                 case EventType.FileSave:
                 {
-                    if (document.IsEditable && this.IsSupported(document))
+                    if (this.IsSupported(document))
                     {
                         updateFile = document.FileName;
                         updateFeatures = features;

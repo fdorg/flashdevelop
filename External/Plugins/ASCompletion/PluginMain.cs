@@ -1,3 +1,5 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -530,7 +532,7 @@ namespace ASCompletion
                                         break;
 
                                     case "ASCompletion.ContextualGenerator":
-                                        if (ASContext.HasContext && ASContext.Context.IsFileValid)
+                                        if (ASContext.HasContext)
                                         {
                                             var options = new List<ICompletionListItem>();
                                             ASGenerator.ContextualGenerator(ASContext.CurSciControl, options);

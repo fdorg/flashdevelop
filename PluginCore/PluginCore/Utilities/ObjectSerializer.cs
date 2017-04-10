@@ -1,3 +1,5 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 using System;
 using System.IO;
 using System.Drawing;
@@ -112,7 +114,7 @@ namespace PluginCore.Utilities
             {
                 return Activator.CreateInstance(type);
             }
-            else if (info.Exists && info.Length == 0)
+            else if (info.Length == 0)
             {
                 info.Delete();
                 return Activator.CreateInstance(type);

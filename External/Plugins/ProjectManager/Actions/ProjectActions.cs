@@ -1,3 +1,5 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -474,16 +476,8 @@ namespace ProjectManager.Actions
             string export = (node != null && node is ExportNode) ? (node as ExportNode).Export : null;
             string textToInsert = project.GetInsertFileText(mainForm.CurrentDocument.FileName, path, export, nodeType);
             if (textToInsert == null) return;
-            if (mainForm.CurrentDocument.IsEditable)
-            {
-                mainForm.CurrentDocument.SciControl.AddText(textToInsert.Length, textToInsert);
-                mainForm.CurrentDocument.Activate();
-            }
-            else
-            {
-                string msg = TextHelper.GetString("Info.EmbedNeedsOpenDocument");
-                ErrorManager.ShowInfo(msg);
-            }
+            mainForm.CurrentDocument.SciControl.AddText(textToInsert.Length, textToInsert);
+            mainForm.CurrentDocument.Activate();
         }
 
         public void ToggleLibraryAsset(Project project, string[] paths)

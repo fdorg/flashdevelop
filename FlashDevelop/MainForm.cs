@@ -1,3 +1,5 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 
 #region Imports
 
@@ -1416,7 +1418,7 @@ namespace FlashDevelop
                             e.Cancel = true;
                         }
                     }
-                    else if (document.IsModified) document.Save();
+                    else document.Save();
                 }
                 else if (result == DialogResult.Cancel)
                 {

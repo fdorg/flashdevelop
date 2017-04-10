@@ -1,3 +1,5 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 using System;
 using System.IO;
 using System.Collections;
@@ -362,7 +364,7 @@ namespace ProjectManager.Controls.TreeView
             {
                 DirectoryNode node = projectTree.SelectedNode as DirectoryNode;
                 if (node.InsideClasspath == node) menu.Add(RemoveSourcePath, 2, true);
-                else if (node != null && (node.InsideClasspath == null || node.InsideClasspath is ProjectNode))
+                else if (node.InsideClasspath == null || node.InsideClasspath is ProjectNode)
                 {
                     menu.Add(AddSourcePath, 2, false);
                 }

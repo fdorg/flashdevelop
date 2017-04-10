@@ -1,3 +1,5 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -38,8 +40,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                         if (Site != null && Site.Container != null)
                             Site.Container.Remove(this);
 
-                        if (Disposed != null)
-                            Disposed(this, EventArgs.Empty);
+                        Disposed?.Invoke(this, EventArgs.Empty);
                     }
                 }
             }
@@ -200,22 +201,19 @@ namespace WeifenLuo.WinFormsUI.Docking
             protected virtual void OnHandleAssigned(EventArgs e)
             {
                 // Raise the HandleAssigned event.
-                if (HandleAssigned != null)
-                    HandleAssigned(this, e);
+                HandleAssigned?.Invoke(this, e);
             }
 
             protected virtual void OnMdiChildActivate(EventArgs e)
             {
                 // Raise the MdiChildActivate event
-                if (MdiChildActivate != null)
-                    MdiChildActivate(this, e);
+                MdiChildActivate?.Invoke(this, e);
             }
 
             protected virtual void OnLayout(LayoutEventArgs e)
             {
                 // Raise the Layout event
-                if (Layout != null)
-                    Layout(this, e);
+                Layout?.Invoke(this, e);
             }
 
             public event PaintEventHandler Paint;
@@ -223,8 +221,7 @@ namespace WeifenLuo.WinFormsUI.Docking
             protected virtual void OnPaint(PaintEventArgs e)
             {
                 // Raise the Paint event.
-                if (Paint != null)
-                    Paint(this, e);
+                Paint?.Invoke(this, e);
             }
 
             protected override void WndProc(ref Message m)

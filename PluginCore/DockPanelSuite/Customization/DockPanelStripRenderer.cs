@@ -1,3 +1,5 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using PluginCore;
@@ -532,7 +534,7 @@ namespace System.Windows.Forms
             if (renderer is ToolStripProfessionalRenderer)
             {
                 // Do not render set blank image if its a checked. Workaround for incorrect menu width.
-                if (e.Item is ToolStripMenuItem && e.Item != null && ((ToolStripMenuItem)e.Item).Checked) return;
+                if (e.Item is ToolStripMenuItem && ((ToolStripMenuItem)e.Item).Checked) return;
             }
             renderer.DrawItemImage(e);
         }

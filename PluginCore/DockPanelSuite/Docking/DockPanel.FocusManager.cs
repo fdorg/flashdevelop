@@ -1,3 +1,5 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -54,8 +56,7 @@ namespace WeifenLuo.WinFormsUI.Docking
                 public event HookEventHandler HookInvoked;
                 protected void OnHookInvoked(HookEventArgs e)
                 {
-                    if (HookInvoked != null)
-                        HookInvoked(this, e);
+                    HookInvoked?.Invoke(this, e);
                 }
 
                 public LocalWindowsHook(Win32.HookType hook)

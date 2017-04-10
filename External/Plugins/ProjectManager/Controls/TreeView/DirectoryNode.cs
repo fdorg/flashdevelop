@@ -1,3 +1,5 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 using System;
 using System.Collections;
 using System.Drawing;
@@ -244,7 +246,7 @@ namespace ProjectManager.Controls.TreeView
                 GenericNode node = Tree.NodeMap[file];
 
                 // ensure this file is in the right spot
-                if (mapping != null && mapping.ContainsKey(file) && Tree.NodeMap.ContainsKey(mapping[file]))
+                if (mapping.ContainsKey(file) && Tree.NodeMap.ContainsKey(mapping[file]))
                     EnsureParentedBy(node, Tree.NodeMap[mapping[file]]);
                 else
                     EnsureParentedBy(node, this);

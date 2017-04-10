@@ -1,3 +1,5 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -107,8 +109,6 @@ namespace WeifenLuo.WinFormsUI.Docking
                     checkBoxDockLeft.Checked = true;
                 if ((dockAreas & DockAreas.DockRight) != 0)
                     checkBoxDockRight.Checked = true;
-                if ((dockAreas & DockAreas.DockTop) != 0)
-                    checkBoxDockTop.Checked = true;
                 if ((dockAreas & DockAreas.DockTop) != 0)
                     checkBoxDockTop.Checked = true;
                 if ((dockAreas & DockAreas.DockBottom) != 0)

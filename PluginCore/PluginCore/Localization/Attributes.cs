@@ -1,3 +1,5 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 using System;
 using System.ComponentModel;
 
@@ -34,9 +36,7 @@ namespace PluginCore.Localization
             {
                 if (!initialized)
                 {
-                    String key = base.Description;
-                    DescriptionValue = TextHelper.GetString(key);
-                    if (DescriptionValue == null) DescriptionValue = String.Empty;
+                    DescriptionValue = TextHelper.GetString(base.Description) ?? String.Empty;
                     initialized = true;
                 }
                 return DescriptionValue;
