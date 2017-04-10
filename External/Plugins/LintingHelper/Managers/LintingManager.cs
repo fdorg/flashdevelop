@@ -84,7 +84,7 @@ namespace LintingHelper.Managers
                 }
                 linter.LintAsync(files, (results) =>
                 {
-                    ApplyLint(files, results);
+                    ApplyLint(files, language, results);
                     EventManager.DispatchEvent(linter, new DataEvent(EventType.Command, "LintingManager.FilesLinted", files));
                 });
             }
@@ -137,7 +137,7 @@ namespace LintingHelper.Managers
         /// Applies the results to all open files
         /// </summary>
         /// <param name="results"></param>
-        static void ApplyLint(string[] files, List<LintingResult> results)
+        static void ApplyLint(string[] files, string language, List<LintingResult> results)
         {
             //Cache.RemoveAllExcept(PluginBase.MainForm.Documents.Select( d => d.FileName ));
             if (results == null)
@@ -178,16 +178,17 @@ namespace LintingHelper.Managers
                     }
 
                     var color = 0;
+                    var lang = PluginBase.MainForm.SciConfig.GetLanguage(language);
                     switch (result.Severity)
                     {
                         case LintingSeverity.Error:
-                            color = 0x00000080;
+                            color = lang.editorstyle.ErrorLineBack;
                             break;
                         case LintingSeverity.Warning:
-                            color = 0x00008080;
+                            color = lang.editorstyle.DebugLineBack;
                             break;
                         case LintingSeverity.Info:
-                            color = 0x00008000;
+                            color = lang.editorstyle.HighlightWordBackColor;
                             break;
                     }
                     doc.SciControl.AddHighlight((int)ScintillaNet.Enums.IndicatorStyle.Squiggle, color, start, len);
