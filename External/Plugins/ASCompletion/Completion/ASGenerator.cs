@@ -2202,6 +2202,7 @@ namespace ASCompletion.Completion
 
         private static void GenerateVariableJob(GeneratorJobType job, ScintillaControl sci, MemberModel member, bool detach, ClassModel inClass)
         {
+            var wordStartPos = sci.WordStartPosition(sci.CurrentPos, true);
             var position = 0;
             Visibility visibility = job.Equals(GeneratorJobType.Variable) ? GetDefaultVisibility(inClass) : Visibility.Public;
             // evaluate, if the variable (or constant) should be generated in other class
@@ -2349,13 +2350,17 @@ namespace ASCompletion.Completion
             }
             FlagType kind = job.Equals(GeneratorJobType.Constant) ? FlagType.Constant : FlagType.Variable;
             MemberModel newMember = NewMember(contextToken, isStatic, kind, visibility);
-            if (returnTypeStr != null)
+            if (returnTypeStr != null) newMember.Type = returnTypeStr;
+            else if (eventValue != null) newMember.Type = eventValue;
+            else
             {
-                newMember.Type = returnTypeStr;
-            }
-            else if (eventValue != null)
-            {
-                newMember.Type = eventValue;
+                var pos = wordStartPos;
+                var index = ASComplete.FindParameterIndex(sci, ref pos);
+                if (pos != -1)
+                {
+                    var expr = ASComplete.GetExpressionType(sci, pos);
+                    if (expr?.Member?.Parameters?.Count > 0) newMember.Type = expr.Member.Parameters[index].Type;
+                }
             }
             GenerateVariable(newMember, position, detach);
         }
