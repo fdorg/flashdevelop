@@ -34,9 +34,7 @@ namespace PluginCore.Localization
             {
                 if (!initialized)
                 {
-                    String key = base.Description;
-                    DescriptionValue = TextHelper.GetString(key);
-                    if (DescriptionValue == null) DescriptionValue = String.Empty;
+                    DescriptionValue = TextHelper.GetString(base.Description) ?? String.Empty;
                     initialized = true;
                 }
                 return DescriptionValue;
