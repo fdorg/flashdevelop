@@ -480,30 +480,27 @@ namespace FlashDevelop.Dialogs
             {
                 return true;
             }
-
-            foreach (object attribute in property.GetCustomAttributes(true))
+            foreach (DisplayNameAttribute attribute in property.GetCustomAttributes(typeof(DisplayNameAttribute), true))
             {
-                string value;
-                switch (attribute)
-                {
-                    case DisplayNameAttribute displayNameAttribute:
-                        value = displayNameAttribute.DisplayName;
-                        break;
-                    case CategoryAttribute categoryAttribute:
-                        value = categoryAttribute.Category;
-                        break;
-                    case DescriptionAttribute descriptionAttribute:
-                        value = descriptionAttribute.Description;
-                        break;
-                    default:
-                        continue;
-                }
-                if (value.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                if (attribute.DisplayName.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) >= 0)
                 {
                     return true;
                 }
             }
-
+            foreach (CategoryAttribute attribute in property.GetCustomAttributes(typeof(CategoryAttribute), true))
+            {
+                if (attribute.Category.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                {
+                    return true;
+                }
+            }
+            foreach (DescriptionAttribute attribute in property.GetCustomAttributes(typeof(DescriptionAttribute), true))
+            {
+                if (attribute.Description.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                {
+                    return true;
+                }
+            }
             return false;
         }
 
