@@ -6110,4 +6110,16 @@ AND - All conditions are met.</value>
     <value>Die Standard-Spalte nach der Resultate gruppiert werden.</value>
 	<comment>Added after 5.2.1</comment>
   </data>
+  <data name="LintingHelper.Description.LintOnSave" xml:space="preserve">
+    <value>Startet die verfügbaren Linter, wenn eine Datei gespeichert wird.</value>
+	<comment>Added after 5.2.1</comment>
+  </data>
+  <data name="LintingHelper.Description.LintOnOpen" xml:space="preserve">
+    <value>Startet die verfügbaren Linter, wenn eine Datei geöffnet wird.</value>
+	<comment>Added after 5.2.1</comment>
+  </data>
+  <data name="LintingHelper.Label.RunLinters" xml:space="preserve">
+    <value>Linter starten</value>
+	<comment>Added after 5.2.1</comment>
+  </data>
 </root>
