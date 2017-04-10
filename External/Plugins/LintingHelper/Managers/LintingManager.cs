@@ -147,7 +147,10 @@ namespace LintingHelper.Managers
             fileList.AddRange(PluginBase.MainForm.Documents.Select(d => d.FileName));
             Cache.RemoveAllExcept(fileList);
 
-            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
+            PluginBase.RunAsync(() =>
+            {
+                PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
+            });
 
             Cache.AddResults(results);
 
