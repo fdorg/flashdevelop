@@ -740,6 +740,10 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextAS3("AfterGeneratePrivateFunction_MultidimensionalVector_issue1436"))
                                 .SetName("From foo(vector[0][0][0][0])")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1436");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction_103"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextAS3("AfterGenerateFunction_103"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                     }
                 }
 
@@ -805,6 +809,22 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_12"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_12"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_13"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_13"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_14"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_14"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_15"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_15"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_16"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_16"))
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                     }
                 }
@@ -968,7 +988,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, GeneratorJobType job) => GenerateVariable.AS3Impl(sourceText, job, sci);
+                public string AS3(string sourceText, GeneratorJobType job) => GenerateFunction.AS3Impl(sourceText, job, sci);
             }
 
             [TestFixture]
@@ -1226,6 +1246,14 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextAS3("BeforeGenerateStaticVariable_forSomeType"), GeneratorJobType.VariablePublic)
                                 .Returns(ReadAllTextAS3("AfterGeneratePublicStaticVariable_forSomeType"))
                                 .SetName("From SomeType.foo|");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateVariable_issue1460_1"), GeneratorJobType.Variable)
+                                .Returns(ReadAllTextAS3("AfterGeneratePrivateVariable_issue1460_1"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateVariable_issue1460_2"), GeneratorJobType.Variable)
+                                .Returns(ReadAllTextAS3("AfterGeneratePrivateVariable_issue1460_2"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
                     }
                 }
 
@@ -1260,6 +1288,18 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextHaxe("BeforeGeneratePublicStaticVariable_forCurrentType"), GeneratorJobType.VariablePublic)
                                 .Returns(ReadAllTextHaxe("AfterGeneratePublicStaticVariable_forCurrentType"))
                                 .SetName("From CurrentType.foo|");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable_issue1460_1"), GeneratorJobType.Variable)
+                                .Returns(ReadAllTextHaxe("AfterGenerateVariable_issue1460_1"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable_issue1460_2"), GeneratorJobType.Variable)
+                                .Returns(ReadAllTextHaxe("AfterGenerateVariable_issue1460_2"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable_issue1460_3"), GeneratorJobType.Variable)
+                                .Returns(ReadAllTextHaxe("AfterGenerateVariable_issue1460_3"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
                     }
                 }
 
@@ -1280,7 +1320,7 @@ namespace ASCompletion.Completion
                     return Common(sourceText, job, sci);
                 }
 
-                static string Common(string sourceText, GeneratorJobType job, ScintillaControl sci)
+                internal static string Common(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);

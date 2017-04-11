@@ -78,6 +78,7 @@ namespace PluginCore
         void Reload(Boolean showQuestion);
         void Revert(Boolean showQuestion);
         void Save(String file);
+        void Save(string file, string reason);
         void Save();
 
         #endregion
