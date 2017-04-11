@@ -1714,9 +1714,9 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Notifies the plugins for the FileSave event
+        /// Notifies the plugins for the FileSave event and includes the given reason for the save.
         /// </summary>
-        public void OnFileSave(ITabbedDocument document, String oldFile)
+        public void OnFileSave(ITabbedDocument document, string oldFile, string reason)
         {
             if (oldFile != null)
             {
@@ -1728,10 +1728,18 @@ namespace FlashDevelop
             }
             this.OnUpdateMainFormDialogTitle();
             if (document.IsEditable) document.SciControl.MarkerDeleteAll(2);
-            TextEvent save = new TextEvent(EventType.FileSave, document.FileName);
+            TextDataEvent save = new TextDataEvent(EventType.FileSave, document.FileName, reason);
             EventManager.DispatchEvent(this, save);
             ButtonManager.UpdateFlaggedButtons();
             TabTextManager.UpdateTabTexts();
+        }
+
+        /// <summary>
+        /// Notifies the plugins for the FileSave event
+        /// </summary>
+        public void OnFileSave(ITabbedDocument document, String oldFile)
+        {
+            OnFileSave(document, oldFile, null);
         }
 
         #endregion
@@ -2601,6 +2609,9 @@ namespace FlashDevelop
         {
             try
             {
+                var button = (ToolStripItem)sender;
+                var reason = ((ItemData)button.Tag).Tag as string;
+                
                 if (this.CurrentDocument.IsUntitled)
                 {
                     this.saveFileDialog.FileName = this.CurrentDocument.FileName;
@@ -2617,7 +2628,7 @@ namespace FlashDevelop
                 }
                 else if (this.CurrentDocument.IsModified)
                 {
-                    this.CurrentDocument.Save();
+                    this.CurrentDocument.Save(this.CurrentDocument.FileName, reason);
                 }
             }
             catch (Exception ex)
