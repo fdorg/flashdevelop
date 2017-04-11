@@ -86,7 +86,6 @@ namespace HaXeContext
         public void GetDiagnostics(HaxeCompleteResultHandler<List<HaxeDiagnosticsResult>> callback)
         {
             StartThread(callback, () => diagnosticsResults);
-            //TODO: callback
         }
 
         private void StartThread<T>(HaxeCompleteResultHandler<T> callback, Func<T> resultFunc)
@@ -166,7 +165,7 @@ namespace HaXeContext
             return "";
         }
 
-        private static void RemoveComments(List<string> hxmlArgs)
+        private void RemoveComments(List<string> hxmlArgs)
         {
             for (int i = 0; i < hxmlArgs.Count; i++)
             {
@@ -179,7 +178,7 @@ namespace HaXeContext
             }
         }
 
-        private static void EscapeMacros(List<string> hxmlArgs)
+        private void EscapeMacros(List<string> hxmlArgs)
         {
             for (int i = 0; i < hxmlArgs.Count; i++)
             {
@@ -193,12 +192,12 @@ namespace HaXeContext
             }
         }
 
-        private static string EscapeQuotes(string expr)
+        private string EscapeQuotes(string expr)
         {
             return reQuote.Replace(expr, "$1\\\"");
         }
 
-        static void QuotePath(List<string> hxmlArgs)
+        void QuotePath(List<string> hxmlArgs)
         {
             for (int i = 0; i < hxmlArgs.Count; i++)
             {
