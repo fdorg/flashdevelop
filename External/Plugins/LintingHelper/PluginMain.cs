@@ -170,11 +170,13 @@ namespace LintingHelper
                     }
                     break;
                 case EventType.FileSave:
-                    var fileSave = (TextEvent) e;
-                    if (this.settingObject.LintOnSave)
+                    var reason = (e as TextDataEvent)?.Data as string;
+                    if (reason != "HaxeComplete" && this.settingObject.LintOnSave)
                     {
+                        var fileSave = (TextEvent) e;
                         Managers.LintingManager.LintFiles(new string[] { fileSave.Value });
                     }
+                    
                     break;
                 case EventType.FileModify:
                     var file = ((TextEvent)e).Value;
