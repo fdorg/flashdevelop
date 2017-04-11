@@ -7,6 +7,7 @@ using PluginCore.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 
 namespace LintingHelper
@@ -104,27 +105,25 @@ namespace LintingHelper
 
         private void Scintilla_OnMouseHover(ScintillaNet.ScintillaControl sender, int position)
         {
-            if (!UITools.Tip.Visible) //do not show when documentation tip is shown already
+            var results = Managers.LintingManager.Cache.GetResultsFromPosition(DocumentManager.FindDocument(sender), position);
+            if (results == null)
+                return;
+
+            var desc = "";
+
+            foreach (var result in results)
             {
-                var results = Managers.LintingManager.Cache.GetResultsFromPosition(DocumentManager.FindDocument(sender), position);
-                if (results == null)
-                {
-                    return;
-                }
+                if (!string.IsNullOrEmpty(result.Description))
+                    desc += "\r\n" + result.Description;
+            }
 
-                var desc = "";
+            if (desc != string.Empty)
+            {
+                desc = desc.Remove(0, 2); //remove \r\n
+                Tip.ShowAtMouseLocation(desc);
 
-                foreach (var result in results)
-                {
-                    if (!string.IsNullOrEmpty(result.Description))
-                        desc += "\r\n" + result.Description;
-                }
-
-                if (desc != string.Empty)
-                {
-                    desc = desc.Remove(0, 2); //remove \r\n
-                    Tip.ShowAtMouseLocation(desc);
-                }
+                //move simpleTip up to not overlap linting tip
+                UITools.Tip.Location = new Point(UITools.Tip.Location.X, UITools.Tip.Location.Y - Tip.Size.Height);
             }
         }
 
