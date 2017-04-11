@@ -1713,6 +1713,9 @@ namespace FlashDevelop
             }
         }
 
+        /// <summary>
+        /// Notifies the plugins for the FileSave event and includes the given reason for the save.
+        /// </summary>
         public void OnFileSave(ITabbedDocument document, string oldFile, string reason)
         {
             if (oldFile != null)
@@ -1736,20 +1739,7 @@ namespace FlashDevelop
         /// </summary>
         public void OnFileSave(ITabbedDocument document, String oldFile)
         {
-            if (oldFile != null)
-            {
-                String args = document.FileName + ";" + oldFile;
-                TextEvent rename = new TextEvent(EventType.FileRename, args);
-                EventManager.DispatchEvent(this, rename);
-                TextEvent open = new TextEvent(EventType.FileOpen, document.FileName);
-                EventManager.DispatchEvent(this, open);
-            }
-            this.OnUpdateMainFormDialogTitle();
-            if (document.IsEditable) document.SciControl.MarkerDeleteAll(2);
-            TextEvent save = new TextEvent(EventType.FileSave, document.FileName);
-            EventManager.DispatchEvent(this, save);
-            ButtonManager.UpdateFlaggedButtons();
-            TabTextManager.UpdateTabTexts();
+            OnFileSave(document, oldFile, null);
         }
 
         #endregion
