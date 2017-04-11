@@ -386,7 +386,9 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Saves an editable document
         /// </summary>
-        public void Save(String file)
+        /// <param name="file"></param>
+        /// <param name="reason">is passed on when raising the FileSave event</param>
+        public void Save(string file, string reason)
         {
             if (!this.IsEditable) return;
             if (!this.IsUntitled && FileHelper.FileIsReadOnly(this.FileName))
@@ -427,11 +429,18 @@ namespace FlashDevelop.Docking
                 if (otherFile)
                 {
                     ScintillaManager.UpdateControlSyntax(this.SciControl);
-                    Globals.MainForm.OnFileSave(this, oldFile);
+                    Globals.MainForm.OnFileSave(this, oldFile, reason);
                 }
-                else Globals.MainForm.OnFileSave(this, null);
+                else Globals.MainForm.OnFileSave(this, null, reason);
             }
             this.RefreshTexts();
+        }
+        /// <summary>
+        /// Saves an editable document
+        /// </summary>
+        public void Save(String file)
+        {
+            this.Save(file, null);
         }
         public void Save()
         {

@@ -94,7 +94,7 @@ namespace HaXeContext
 
         protected virtual void SaveFile()
         {
-            PluginBase.MainForm.CallCommand("Save", null);
+            PluginBase.MainForm.CallCommand("Save", "HaxeComplete");
         }
 
         void Notify<T>(HaxeCompleteResultHandler<T> callback, T result)
