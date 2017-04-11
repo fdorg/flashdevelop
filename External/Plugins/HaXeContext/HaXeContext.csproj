@@ -107,7 +107,7 @@
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\LintingHelper\LintingHelper.csproj">
-      <Project>{8B5A1C53-AF20-4379-A8D1-31822ACC6AD8}</Project>
+      <Project>{8b5a1c53-af20-4379-a8d1-31822acc6ad8}</Project>
       <Name>LintingHelper</Name>
     </ProjectReference>
     <ProjectReference Include="..\ProjectManager\ProjectManager.csproj">

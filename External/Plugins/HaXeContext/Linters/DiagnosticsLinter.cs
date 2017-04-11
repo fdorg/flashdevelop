@@ -25,11 +25,11 @@ namespace HaXeContext.Linters
             foreach (var file in files)
             {
                 var document = DocumentManager.FindDocument(file) ?? PluginBase.MainForm.OpenEditableDocument(file) as ITabbedDocument;
-
-                var context = ASContext.Context as Context;
+                var context = ASContext.GetLanguageContext("haxe") as Context;
 
                 if (document == null || context == null) continue;
 
+                //stub expression is needed for position
                 var exprStub = new ASExpr();
                 exprStub.Position = 0;
 
