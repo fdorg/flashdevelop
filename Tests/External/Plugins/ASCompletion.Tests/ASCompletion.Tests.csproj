@@ -535,6 +535,26 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePrivateVariable2_generateExplicitScopeIsTrue.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction2.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePrivateFunction2_generateExplicitScopeIsTrue.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_13.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_13.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_103.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_103.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_14.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_14.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_15.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_15.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_16.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_16.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVariable_1460_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePrivateVariable_1460_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateVariable_1460_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePrivateVariable_1460_2.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateVariable_issue1460_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateVariable_issue1460_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateVariable_issue1460_2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateVariable_issue1460_2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateVariable_issue1460_3.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateVariable_issue1460_3.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
