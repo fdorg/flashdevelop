@@ -120,9 +120,8 @@ namespace HaXeContext
 
         protected virtual string[] BuildHxmlArgs()
         {
-            // check haxe project & context
-            if (PluginBase.CurrentProject == null || !(PluginBase.CurrentProject is HaxeProject)
-                || !(ASContext.Context is Context))
+            // check haxe project
+            if (PluginBase.CurrentProject == null || !(PluginBase.CurrentProject is HaxeProject))
                 return null;
 
             var hxproj = (PluginBase.CurrentProject as HaxeProject);
