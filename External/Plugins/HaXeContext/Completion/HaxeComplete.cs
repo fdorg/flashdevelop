@@ -300,7 +300,9 @@ namespace HaXeContext
                         Range = new HaxePositionResult
                         {
                             Path = path,
-                            RangeType = HaxePositionCompleteRangeType.LINES,
+                            //RangeType = HaxePositionCompleteRangeType.LINES, //RangeType is a mix of lines and characters
+                            CharacterStart = (int) start["character"],
+                            CharacterEnd = (int)end["character"],
                             LineStart = (int)start["line"],
                             LineEnd = (int)end["line"]
                         },
