@@ -6129,4 +6129,16 @@ AND - 모든 조건을 만족할때.</value>
     <value>The default column to group results by.</value>
 	<comment>Added after 5.2.1</comment>
   </data>
+  <data name="LintingHelper.Description.LintOnSave" xml:space="preserve">
+    <value>Runs the available linters when a file is saved.</value>
+	<comment>Added after 5.2.1</comment>
+  </data>
+  <data name="LintingHelper.Description.LintOnOpen" xml:space="preserve">
+    <value>Runs the available linters when a file is opened.</value>
+	<comment>Added after 5.2.1</comment>
+  </data>
+  <data name="LintingHelper.Label.RunLinters" xml:space="preserve">
+    <value>Run Linters</value>
+	<comment>Added after 5.2.1</comment>
+  </data>
 </root>
