@@ -193,7 +193,11 @@ namespace LintingHelper.Managers
                             color = lang.editorstyle.HighlightWordBackColor;
                             break;
                     }
-                    doc.SciControl.AddHighlight((int)ScintillaNet.Enums.IndicatorStyle.Squiggle, color, start, len);
+
+                    PluginBase.RunAsync(() =>
+                    {
+                        doc.SciControl.AddHighlight((int)ScintillaNet.Enums.IndicatorStyle.Squiggle, color, start, len);
+                    });
                 }
             }
         }
