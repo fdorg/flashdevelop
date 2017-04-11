@@ -6,6 +6,7 @@ using System.Text;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using PluginCore;
+using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 
@@ -65,10 +66,10 @@ namespace HaXeContext.Linters
                             switch (res.Kind)
                             {
                                 case HaxeDiagnosticsKind.UNUSEDIMPORT:
-                                    result.Description = "Unused import";
+                                    result.Description = TextHelper.GetString("HaXeContext.Info.UnusedImport");
                                     break;
                                 case HaxeDiagnosticsKind.UNUSEDVAR:
-                                    result.Description = "Unused variable";
+                                    result.Description = TextHelper.GetString("HaXeContext.Info.UnusedVariable");
                                     break;
                             }
 

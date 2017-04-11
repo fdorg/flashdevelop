@@ -6122,4 +6122,12 @@ AND - All conditions are met.</value>
     <value>Linter starten</value>
 	<comment>Added after 5.2.1</comment>
   </data>
+  <data name="HaXeContext.Info.UnusedImport" xml:space="preserve">
+    <value>Ungenutzter Import</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="HaXeContext.Info.UnusedVariable" xml:space="preserve">
+    <value>Ungenutzte Variable</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
 </root>

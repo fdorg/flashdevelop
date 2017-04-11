@@ -6141,4 +6141,12 @@ AND - 모든 조건을 만족할때.</value>
     <value>Run Linters</value>
 	<comment>Added after 5.2.1</comment>
   </data>
+  <data name="HaXeContext.Info.UnusedImport" xml:space="preserve">
+    <value>Unused import</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="HaXeContext.Info.UnusedVariable" xml:space="preserve">
+    <value>Unused variable</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
 </root>
