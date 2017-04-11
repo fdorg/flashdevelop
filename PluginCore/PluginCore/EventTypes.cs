@@ -168,4 +168,14 @@ namespace PluginCore
 
     }
 
+    public class TextDataEvent : TextEvent
+    {
+        public object Data { get; }
+
+        public TextDataEvent(EventType type, string text, object data) : base(type, text)
+        {
+            Data = data;
+        }
+    }
+
 }

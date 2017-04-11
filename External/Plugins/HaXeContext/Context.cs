@@ -136,6 +136,7 @@ namespace HaXeContext
             features.inlineKey = "inline";
             features.hiddenPackagePrefix = '_';
             features.stringInterpolationQuotes = "'";
+            features.ConstructorKey = "new";
 
             /* INITIALIZATION */
 
@@ -980,7 +981,7 @@ namespace HaXeContext
             ClassModel aClass = ResolveType(baseType, inFile);
             if (aClass.IsVoid()) return aClass;
 
-            if (aClass.QualifiedName == "Dynamic")
+            if (aClass.QualifiedName == features.dynamicKey)
             {
                 ClassModel indexClass = ResolveType(indexType, inFile);
                 //if (!indexClass.IsVoid()) return indexClass;

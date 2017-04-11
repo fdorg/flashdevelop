@@ -6188,4 +6188,16 @@ AND - All conditions are met.</value>
     <value>Disable extended shortcut keys. Extended shortcut keys allow two key combinations to be input as one shortcut.</value>
     <comment>Added after 5.2.0</comment>
   </data>
+  <data name="LintingHelper.Description.LintOnSave" xml:space="preserve">
+    <value>Runs the available linters when a file is saved.</value>
+	<comment>Added after 5.2.1</comment>
+  </data>
+  <data name="LintingHelper.Description.LintOnOpen" xml:space="preserve">
+    <value>Runs the available linters when a file is opened.</value>
+	<comment>Added after 5.2.1</comment>
+  </data>
+  <data name="LintingHelper.Label.RunLinters" xml:space="preserve">
+    <value>Run Linters</value>
+	<comment>Added after 5.2.1</comment>
+  </data>
 </root>

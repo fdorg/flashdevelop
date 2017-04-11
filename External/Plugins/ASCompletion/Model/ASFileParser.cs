@@ -423,13 +423,12 @@ namespace ASCompletion.Model
 
         static public FileModel ParseFile(FileModel fileModel)
         {
-            string src = "";
             // parse file
             if (fileModel.FileName.Length > 0)
             {
                 if (File.Exists(fileModel.FileName))
                 {
-                    src = FileHelper.ReadFile(fileModel.FileName);
+                    var src = FileHelper.ReadFile(fileModel.FileName);
                     ASFileParser parser = new ASFileParser();
                     fileModel.LastWriteTime = File.GetLastWriteTime(fileModel.FileName);
                     parser.ParseSrc(fileModel, src);
@@ -526,8 +525,7 @@ namespace ASCompletion.Model
             model = fileModel;
             model.OutOfDate = false;
             if (model.Context != null) features = model.Context.Features;
-            if (features != null && features.hasModules)
-                model.Module = Path.GetFileNameWithoutExtension(model.FileName);
+            if (features.hasModules) model.Module = Path.GetFileNameWithoutExtension(model.FileName);
 
             // pre-filtering
             if (allowBaReExtract && model.HasFiltering && model.Context != null)
@@ -550,10 +548,7 @@ namespace ASCompletion.Model
             int len = ba.Length;
             int i = 0;
             line = 0;
-            char c1;
-            char c2;
             int matching = 0;
-            bool isInString = false;
             int inString = 0;
             int braceCount = 0;
             bool inCode = true;
@@ -568,7 +563,7 @@ namespace ASCompletion.Model
             tryPackage = true;
             hasPackageSection = false;
             haXe = model.haXe;
-            TypeCommentUtils.ObjectType = haXe ? "Dynamic" : "Object";
+            TypeCommentUtils.ObjectType = features.dynamicKey;
             version = (haXe) ? 4 : 1;
             curToken = new Token();
             prevToken = new Token();
@@ -616,11 +611,12 @@ namespace ASCompletion.Model
 
             while (i < len)
             {
-                c1 = ba[i++];
-                isInString = (inString > 0);
+                var c1 = ba[i++];
+                var isInString = (inString > 0);
 
                 /* MATCH COMMENTS / STRING LITERALS */
 
+                char c2;
                 switch (matching)
                 {
                     // look for comment block/line and preprocessor commands
@@ -782,25 +778,7 @@ namespace ASCompletion.Model
                     case 3:
                         if (c1 == 10 || c1 == 13 || (inlineDirective && c1 <= 32))
                         {
-                            if (commentLength > 0)
-                            {
-                                string directive = new string(commentBuffer, 0, commentLength);
-                                if (directive.StartsWithOrdinal("if"))
-                                {
-                                    inCode = true;
-                                }
-                                else if (directive.StartsWithOrdinal("else"))
-                                {
-                                    inCode = true;
-                                }
-                                else if (directive.StartsWithOrdinal("end"))
-                                {
-                                    inCode = true; // directive end
-                                    matching = 0;
-                                }
-                                else inCode = true;
-                            }
-                            else inCode = true;
+                            inCode = true;
                             commentLength = 0;
                             matching = 0;
                         }
@@ -2376,7 +2354,7 @@ namespace ASCompletion.Model
                             curClass.Type = qtype.Type;
                             curClass.Template = qtype.Template;
                             curClass.Name = qtype.Name;
-                            curClass.Constructor = (haXe) ? "new" : token;
+                            curClass.Constructor = string.IsNullOrEmpty(features.ConstructorKey) ? token : features.ConstructorKey;
                             curClass.Flags = curModifiers;
                             curClass.Access = (curAccess == 0) ? features.classModifierDefault : curAccess;
                             curClass.Namespace = curNamespace;

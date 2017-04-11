@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.ComponentModel;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
@@ -343,7 +344,7 @@ namespace FlashDevelop.Dialogs
                 }
                 if (this.filterText.Text.Length > 0)
                 {
-                    if (this.CheckIfExist(plugin.Instance, this.filterText.Text) || item.Text.ToLower().Contains(this.filterText.Text.ToLower()))
+                    if (this.CheckIfExist(plugin.Instance, this.filterText.Text))
                     {
                         this.itemListView.Items.Add(item);
                         this.pluginsGroup.Items.Add(item);
@@ -447,20 +448,18 @@ namespace FlashDevelop.Dialogs
         private void FilterPropertySheet()
         {
             if (PlatformHelper.IsRunningOnMono()) return;
-            Object settingsObj = this.itemPropertyGrid.SelectedObject;
-            String text = this.filterText.Text;
+            object settingsObj = this.itemPropertyGrid.SelectedObject;
+            string text = this.filterText.Text;
             if (settingsObj != null)
             {
-                Int32 i = 0;
-                String[] browsables = { "" };
-                PropertyInfo[] props = settingsObj.GetType().GetProperties();
-                foreach (PropertyInfo prop in props)
+                int i = 0;
+                string[] browsables = { "" };
+                foreach (PropertyInfo prop in settingsObj.GetType().GetProperties())
                 {
                     if (PropertyMatches(prop, text))
                     {
                         Array.Resize(ref browsables, i + 1);
-                        browsables.SetValue(prop.Name, i);
-                        i++;
+                        browsables[i++] = prop.Name;
                     }
                 }
                 this.itemPropertyGrid.BrowsableProperties = browsables;
@@ -474,28 +473,55 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private Boolean CheckIfExist(IPlugin plugin, String text)
         {
-            Boolean ok = false;
-            Object settingsObj = plugin.Settings;
+            if (plugin.Name.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) >= 0)
+            {
+                return true;
+            }
+            object settingsObj = plugin.Settings;
             if (settingsObj != null)
             {
-                PropertyInfo[] props = settingsObj.GetType().GetProperties();
-                foreach (PropertyInfo prop in props)
+                foreach (PropertyInfo prop in settingsObj.GetType().GetProperties())
                 {
-                    if (PropertyMatches(prop, text)) ok = true;
+                    if (PropertyMatches(prop, text))
+                    {
+                        return true;
+                    }
                 }
             }
-            return ok;
+            return false;
         }
 
         /// <summary>
         /// Checks if the property matches in any property infos
         /// </summary>
-        private Boolean PropertyMatches(PropertyInfo prop, String text)
+        private Boolean PropertyMatches(PropertyInfo property, String text)
         {
-            LocalizedDescriptionAttribute lda = null;
-            var atts = prop.GetCustomAttributes(typeof(LocalizedDescriptionAttribute), true);
-            if (atts.Length > 0) lda = atts[0] as LocalizedDescriptionAttribute;
-            return prop.Name.ToLower().Contains(text.ToLower()) || lda != null && lda.Description.ToLower().Contains(text.ToLower());
+            if (property.Name.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) >= 0)
+            {
+                return true;
+            }
+            foreach (DisplayNameAttribute attribute in property.GetCustomAttributes(typeof(DisplayNameAttribute), true))
+            {
+                if (attribute.DisplayName.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                {
+                    return true;
+                }
+            }
+            foreach (CategoryAttribute attribute in property.GetCustomAttributes(typeof(CategoryAttribute), true))
+            {
+                if (attribute.Category.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                {
+                    return true;
+                }
+            }
+            foreach (DescriptionAttribute attribute in property.GetCustomAttributes(typeof(DescriptionAttribute), true))
+            {
+                if (attribute.Description.IndexOf(text, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         /// <summary>

@@ -6149,4 +6149,16 @@ AND - 모든 조건을 만족할때.</value>
     <value>확장 된 단축키를 사용하지 않도록 설정합니다. 확장 된 단축키를 사용하면 두 개의 키 조합을 하나의 단축키로 입력 할 수 있습니다.</value>
     <comment>Added after 5.2.0</comment>
   </data>
+  <data name="LintingHelper.Description.LintOnSave" xml:space="preserve">
+    <value>Runs the available linters when a file is saved.</value>
+	<comment>Added after 5.2.1</comment>
+  </data>
+  <data name="LintingHelper.Description.LintOnOpen" xml:space="preserve">
+    <value>Runs the available linters when a file is opened.</value>
+	<comment>Added after 5.2.1</comment>
+  </data>
+  <data name="LintingHelper.Label.RunLinters" xml:space="preserve">
+    <value>Run Linters</value>
+	<comment>Added after 5.2.1</comment>
+  </data>
 </root>
