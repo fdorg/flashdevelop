@@ -120,7 +120,7 @@ namespace HaXeContext
         protected virtual string[] BuildHxmlArgs()
         {
             // check haxe project
-            if (PluginBase.CurrentProject == null || !(PluginBase.CurrentProject is HaxeProject))
+            if (!(PluginBase.CurrentProject is HaxeProject))
                 return null;
 
             var hxproj = (PluginBase.CurrentProject as HaxeProject);
@@ -585,8 +585,7 @@ namespace HaXeContext
         TOP_LEVEL,
 
         /// <summary>
-        /// Since Haxe 3.?.?
-        /// no manual available
+        /// Since Haxe 3.3.0-rc1
         /// </summary>
         DIAGNOSTICS
     }
