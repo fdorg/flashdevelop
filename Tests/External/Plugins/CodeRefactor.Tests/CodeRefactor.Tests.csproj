@@ -159,6 +159,11 @@
     </None>
     <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\Constructor.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\LocalVar.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\PrivateVar.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\PublicVar.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\LocalFunction.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\Type.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\PrivateTypedef.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

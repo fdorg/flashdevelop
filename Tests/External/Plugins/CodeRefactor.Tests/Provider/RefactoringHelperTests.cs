@@ -6,70 +6,144 @@ using ASCompletion.TestUtils;
 using CodeRefactor.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
+using PluginCore;
 using PluginCore.Helpers;
 
 namespace CodeRefactor.Provider
 {
-    class GetDefaultRefactorTargetTests : CodeRefactorTests
+    [TestFixture]
+    class RefactoringHelperTests : CodeRefactorTests
     {
         internal static string GetFullPathHaxe(string fileName) => $"{nameof(CodeRefactor)}.Test_Files.coderefactor.findallreferences.haxe.{fileName}.hx";
 
         internal static string ReadAllTextHaxe(string fileName) => TestFile.ReadAllText(GetFullPathHaxe(fileName));
 
-        IEnumerable<TestCaseData> HaxeTestCases
+        [TestFixture]
+        class GetDefaultRefactorTargetTests : RefactoringHelperTests
         {
-            get
+            static IEnumerable<TestCaseData> HaxeTestCases
             {
+                get
+                {
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("Constructor"))
+                            .Returns(new Result(
+                                new MemberModel
+                                {
+                                    Name = "Main",
+                                    Flags = FlagType.Access | FlagType.Function | FlagType.Constructor
+                                },
+                                new ClassModel {Name = "Main", InFile = FileModel.Ignore})
+                            );
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("ParameterVar"))
+                            .Returns(new Result(
+                                new MemberModel
+                                {
+                                    Name = "args",
+                                    Type = "Array<Dynamic>",
+                                    Flags = FlagType.Variable | FlagType.ParameterVar
+                                },
+                                new ClassModel {Name = "Array<Dynamic>", InFile = FileModel.Ignore})
+                            );
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("LocalVar"))
+                            .Returns(new Result(
+                                new MemberModel
+                                {
+                                    Name = "a",
+                                    Type = "Array<Dynamic>",
+                                    Flags = FlagType.Inferred | FlagType.Dynamic | FlagType.Variable | FlagType.LocalVar
+                                },
+                                new ClassModel {Name = "Array<Dynamic>", InFile = FileModel.Ignore})
+                            );
+                }
+            }
 
-                yield return
-                    new TestCaseData(ReadAllTextHaxe("Constructor"))
-                        .Returns(new Result(
-                            new MemberModel
-                            {
-                                Name = "Main",
-                                Flags = FlagType.Access | FlagType.Function | FlagType.Constructor
-                            },
-                            new ClassModel { Name = "Main", InFile = FileModel.Ignore })
-                        );
-                yield return
-                    new TestCaseData(ReadAllTextHaxe("ParameterVar"))
-                        .Returns(new Result(
-                            new MemberModel
-                            {
-                                Name = "args",
-                                Type = "Array<Dynamic>",
-                                Flags = FlagType.Variable | FlagType.ParameterVar
-                            },
-                            new ClassModel {Name = "Array<Dynamic>", InFile = FileModel.Ignore})
-                        );
-                yield return
-                    new TestCaseData(ReadAllTextHaxe("LocalVar"))
-                        .Returns(new Result(
-                            new MemberModel
-                            {
-                                Name = "a",
-                                Type = "Array<Dynamic>",
-                                Flags = FlagType.Inferred | FlagType.Dynamic | FlagType.Variable | FlagType.LocalVar
-                            },
-                            new ClassModel {Name = "Array<Dynamic>", InFile = FileModel.Ignore})
-                        );
+            [Test, TestCaseSource(nameof(HaxeTestCases))]
+            public Result Haxe(string sourceText)
+            {
+                ASContext.Context.SetHaxeFeatures();
+                Sci.ConfigurationLanguage = "haxe";
+                Sci.Text = sourceText;
+                SnippetHelper.PostProcessSnippets(Sci, 0);
+                var currentModel = ASContext.Context.CurrentModel;
+                new ASFileParser().ParseSrc(currentModel, Sci.Text);
+                var currentClass = currentModel.Classes.FirstOrDefault() ?? ClassModel.VoidClass;
+                ASContext.Context.CurrentClass.Returns(currentClass);
+                ASContext.Context.CurrentMember.Returns(currentClass.Members.Items.FirstOrDefault());
+                var target = RefactoringHelper.GetDefaultRefactorTarget();
+                return new Result(target.IsPackage, target.Member, target.Type);
             }
         }
 
-        [Test, TestCaseSource(nameof(HaxeTestCases))]
-        public Result Haxe(string sourceText)
+        [TestFixture]
+        class IsPrivateTargetTests : RefactoringHelperTests
         {
-            ASContext.Context.SetHaxeFeatures();
-            Sci.ConfigurationLanguage = "haxe";
-            Sci.Text = sourceText;
-            SnippetHelper.PostProcessSnippets(Sci, 0);
-            var currentModel = ASContext.Context.CurrentModel;
-            new ASFileParser().ParseSrc(currentModel, Sci.Text);
-            var currentClass = currentModel.Classes.FirstOrDefault() ?? ClassModel.VoidClass;
-            ASContext.Context.CurrentClass.Returns(currentClass);
-            ASContext.Context.CurrentMember.Returns(currentClass.Members.Items.FirstOrDefault());
-            var target = RefactoringHelper.GetDefaultRefactorTarget();
-            return new Result(target.IsPackage, target.Member, target.Type);
+            static IEnumerable<TestCaseData> HaxeTestCases
+            {
+                get
+                {
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("Constructor"), "3.4.2")
+                            .Returns(false)
+                            .SetName("Public constructor");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("PrivateVar"), "3.4.2")
+                            .Returns(false)
+                            .SetName("Private var");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("PublicVar"), "3.4.2")
+                            .Returns(false)
+                            .SetName("Public var");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("Type"), "3.4.2")
+                            .Returns(false)
+                            .SetName("Type");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("ParameterVar"), "3.4.2")
+                            .Returns(true)
+                            .SetName("Parameter of function");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("LocalVar"), "3.4.2")
+                            .Returns(true)
+                            .SetName("Local variable");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("LocalFunction"), "3.4.2")
+                            .Returns(true)
+                            .SetName("Local function");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("PrivateTypedef"), "3.4.2")
+                            .Returns(true)
+                            .SetName("Private typedef. SDK 3.4.2");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("PrivateTypedef"), "4.0.0")
+                            .Returns(false)
+                            .SetName("Private typedef. SDK 4.0.0");
+                }
+            }
+
+            [Test, TestCaseSource(nameof(HaxeTestCases))]
+            public bool Haxe(string sourceText, string sdkVersion = "0.0.0")
+            {
+                PluginBase.CurrentSDK = new InstalledSDK {Version = sdkVersion};
+                ASContext.Context.SetHaxeFeatures();
+                Sci.ConfigurationLanguage = "haxe";
+                return Common(sourceText);
+            }
+
+            bool Common(string sourceText)
+            {
+                Sci.Text = sourceText;
+                SnippetHelper.PostProcessSnippets(Sci, 0);
+                var currentModel = ASContext.Context.CurrentModel;
+                new ASFileParser().ParseSrc(currentModel, Sci.Text);
+                var currentClass = currentModel.Classes.FirstOrDefault() ?? ClassModel.VoidClass;
+                ASContext.Context.CurrentClass.Returns(currentClass);
+                ASContext.Context.CurrentMember.Returns(currentClass.Members.Items.FirstOrDefault());
+                var target = RefactoringHelper.GetDefaultRefactorTarget();
+                return RefactoringHelper.IsPrivateTarget(target);
+            }
         }
     }
 
