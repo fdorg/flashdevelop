@@ -179,24 +179,28 @@ namespace LintingHelper.Managers
                         len -= result.FirstChar;
                     }
 
-                    var color = 0;
+                    var id = 0;
+                    int color = 0;
                     var lang = PluginBase.MainForm.SciConfig.GetLanguage(language);
                     switch (result.Severity)
                     {
                         case LintingSeverity.Error:
                             color = lang.editorstyle.ErrorLineBack;
+                            id = 3;
                             break;
                         case LintingSeverity.Warning:
                             color = lang.editorstyle.DebugLineBack;
+                            id = 4;
                             break;
                         case LintingSeverity.Info:
                             color = lang.editorstyle.HighlightWordBackColor;
+                            id = 5;
                             break;
                     }
 
                     PluginBase.RunAsync(() =>
                     {
-                        doc.SciControl.AddHighlight((int)ScintillaNet.Enums.IndicatorStyle.Squiggle, color, start, len);
+                        doc.SciControl.AddHighlight(id, (int)ScintillaNet.Enums.IndicatorStyle.Squiggle, color, start, len);
                     });
                 }
             }
