@@ -25,6 +25,8 @@ namespace ResultsPanel
         private PluginUI pluginUI;
         internal Image pluginImage;
 
+        private ResultsPanelHelper panelHelper;
+
         // Shortcut management
         public const Keys CopyEntryKeys = Keys.Control | Keys.C;
         public const Keys IgnoreEntryKeys = Keys.Delete;
@@ -127,7 +129,7 @@ namespace ResultsPanel
                         if (evnt.Data == null)
                             this.pluginUI.ClearOutput();
                         else
-                            ResultsPanelManager.Clear(evnt.Data as string);
+                            panelHelper.Clear(evnt.Data as string);
                     }
                     else if (evnt.Action == "ResultsPanel.ShowResults")
                     {
@@ -140,7 +142,7 @@ namespace ResultsPanel
                         }
                         else
                         {
-                            ResultsPanelManager.ShowResults(evnt.Data as string);
+                            panelHelper.ShowResults(evnt.Data as string);
                         }
                         
                     }
@@ -159,7 +161,7 @@ namespace ResultsPanel
                     break;
 
                 case EventType.Trace:
-                    ResultsPanelManager.OnTrace();
+                    panelHelper.OnTrace();
                     this.pluginUI.AddLogEntries();
                     break;
 
@@ -268,7 +270,7 @@ namespace ResultsPanel
             this.pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
             this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockBottomAutoHide);
 
-            ResultsPanelManager.Init(this);
+            panelHelper = new ResultsPanelHelper(this);
         }
         
         /// <summary>

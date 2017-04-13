@@ -6,19 +6,19 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResultsPanel.Managers
 {
-    static class ResultsPanelManager
+    class ResultsPanelHelper
     {
-        private static readonly Dictionary<string, PluginUI> pluginUis = new Dictionary<string, PluginUI>();
+        readonly Dictionary<string, PluginUI> pluginUis = new Dictionary<string, PluginUI>();
 
-        private static PluginMain main;
-        private const string MANAGER_GUID = "C32104FA-0E7D-4463-A705-8B1C2580B53A";
+        PluginMain main;
+        const string MANAGER_GUID = "C32104FA-0E7D-4463-A705-8B1C2580B53A";
 
-        internal static void Init(PluginMain m)
+        public ResultsPanelHelper(PluginMain m)
         {
             main = m;
         }
 
-        internal static void Clear(string group)
+        public void Clear(string group)
         {
             if (group == null) return;
 
@@ -29,7 +29,7 @@ namespace ResultsPanel.Managers
             }
         }
 
-        internal static void ShowResults(string group)
+        public void ShowResults(string group)
         {
             PluginUI ui;
             if (!pluginUis.TryGetValue(group, out ui))
@@ -38,17 +38,19 @@ namespace ResultsPanel.Managers
             ui.DisplayOutput();
         }
 
-        internal static void OnTrace()
+        public void OnTrace()
         {
             var traces = TraceManager.TraceLog;
             foreach (var trace in traces)
             {
-                if (trace.Group == null) return; //null is handled by default panel
+                if (trace.Group == null) continue; //null is handled by default panel
 
-                PluginUI ui;
-                if (!pluginUis.TryGetValue(trace.Group, out ui))
-                    ui = AddResultsPanel(trace.Group);
+                if (!pluginUis.ContainsKey(trace.Group))
+                    AddResultsPanel(trace.Group);
+            }
 
+            foreach (var ui in pluginUis.Values)
+            {
                 ui.AddLogEntries();
             }
         }
@@ -56,9 +58,8 @@ namespace ResultsPanel.Managers
         /// <summary>
         /// Creates a new results panel.
         /// </summary>
-        /// <param name="title">The title of the panel</param>
         /// <param name="group">The group of the results panel</param>
-        private static PluginUI AddResultsPanel(string group)
+        PluginUI AddResultsPanel(string group)
         {
             var ui = new PluginUI(main, group);
             ui.Text = TraceManager.GetTraceGroup(group)?.Title ?? TextHelper.GetString("Title.PluginPanel");
