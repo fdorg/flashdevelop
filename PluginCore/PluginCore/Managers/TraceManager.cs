@@ -41,6 +41,17 @@ namespace PluginCore.Managers
         }
 
         /// <summary>
+        /// Adds a new entry to the log.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="state"></param>
+        /// <param name="group">Used to group the items</param>
+        public static void Add(string message, int state, string group)
+        {
+            Add(new TraceItem(message, state, group));
+        }
+
+        /// <summary>
         /// Adds a new entry to the log in an unsafe threading context
         /// </summary>
         public static void AddAsync(String message)
@@ -142,6 +153,13 @@ namespace PluginCore.Managers
         private Int32 state = 0;
         private DateTime timestamp;
         private String message;
+
+        public string Group { get; }
+
+        public TraceItem(string message, int state, string group) : this(message, state)
+        {
+            Group = group;
+        }
 
         public TraceItem(String message, Int32 state)
         {

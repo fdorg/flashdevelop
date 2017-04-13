@@ -708,7 +708,11 @@ namespace FlashDevelop.Dialogs
                     {
                         foreach (SearchMatch match in entry.Value)
                         {
-                            TraceManager.Add(entry.Key + ":" + match.Line + ": chars " + match.Column + "-" + (match.Column + match.Length) + " : " + match.LineText.Trim(), (Int32)TraceType.Info);
+                            var message = entry.Key + ":" + match.Line + ": chars " + match.Column + "-" +
+                                          (match.Column + match.Length) + " : " + match.LineText.Trim();
+                            
+                            TraceManager.Add(message, (int)TraceType.Info, "Find in Files");
+                            //TraceManager.Add(entry.Key + ":" + match.Line + ": chars " + match.Column + "-" + (match.Column + match.Length) + " : " + match.LineText.Trim(), (Int32)TraceType.Info);
                         }
                     }
                     Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");

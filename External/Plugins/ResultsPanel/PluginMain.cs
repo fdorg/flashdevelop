@@ -7,6 +7,7 @@ using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
+using ResultsPanel.Managers;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResultsPanel
@@ -22,7 +23,7 @@ namespace ResultsPanel
         private Settings settingObject;
         private String settingFilename;
         private PluginUI pluginUI;
-        private Image pluginImage;
+        internal Image pluginImage;
 
         // Shortcut management
         public const Keys CopyEntryKeys = Keys.Control | Keys.C;
@@ -145,6 +146,7 @@ namespace ResultsPanel
                     break;
 
                 case EventType.Trace:
+                    ResultsPanelManager.OnTrace();
                     this.pluginUI.AddLogEntries();
                     break;
 
@@ -252,6 +254,8 @@ namespace ResultsPanel
             this.pluginUI = new PluginUI(this);
             this.pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
             this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockBottomAutoHide);
+
+            ResultsPanelManager.Init(this);
         }
         
         /// <summary>
