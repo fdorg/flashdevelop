@@ -22,7 +22,7 @@ namespace LintingHelper
         /// </summary>
         public List<LintingResult> GetAllResults()
         {
-            return new List<LintingResult>(results.Values.SelectMany(i => i));
+            return results.Values.SelectMany(i => i).ToList();
         }
 
         public List<LintingResult> GetResultsFromPosition(ITabbedDocument document, int position)
