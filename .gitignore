@@ -31,3 +31,4 @@ Thumbs.db
 **/NSubstitute.xml
 **/nunit.framework.dll
 **/nunit.framework.xml
+.vs/
