@@ -123,13 +123,26 @@ namespace ResultsPanel
                     if (evnt.Action == "ResultsPanel.ClearResults")
                     {
                         e.Handled = true;
-                        this.pluginUI.ClearOutput();
+
+                        if (evnt.Data == null)
+                            this.pluginUI.ClearOutput();
+                        else
+                            ResultsPanelManager.Clear(evnt.Data as string);
                     }
                     else if (evnt.Action == "ResultsPanel.ShowResults")
                     {
                         e.Handled = true;
-                        this.pluginUI.AddLogEntries();
-                        this.pluginUI.DisplayOutput();
+
+                        if (evnt.Data == null)
+                        {
+                            this.pluginUI.AddLogEntries();
+                            this.pluginUI.DisplayOutput();
+                        }
+                        else
+                        {
+                            ResultsPanelManager.ShowResults(evnt.Data as string);
+                        }
+                        
                     }
                     break;
 

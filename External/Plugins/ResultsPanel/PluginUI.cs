@@ -87,7 +87,7 @@ namespace ResultsPanel
             this.autoShow = new Timer();
             this.autoShow.Interval = 300;
             this.autoShow.Tick += this.AutoShowPanel;
-            this.logCount = TraceManager.TraceLog.Count;
+            //this.logCount = TraceManager.TraceLog.Count;
             this.ignoredEntries = new Dictionary<String, Boolean>();
             this.InitializeComponent();
             this.InitializeContextMenu();

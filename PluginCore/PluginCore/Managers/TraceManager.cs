@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Timers;
 using System.Windows.Forms;
 using Timer = System.Timers.Timer;
@@ -12,12 +13,14 @@ namespace PluginCore.Managers
         private static Int32 MAX_QUEUE = 1000;
         private static List<TraceItem> traceLog;
         private static List<TraceItem> asyncQueue;
+        private static Dictionary<string, TraceGroup> traceGroups;
         private static Timer asyncTimer;
 
         static TraceManager()
         {
             traceLog = new List<TraceItem>();
             asyncQueue = new List<TraceItem>();
+            traceGroups = new Dictionary<string, TraceGroup>();
             asyncTimer = new Timer();
             asyncTimer.Interval = 200;
             asyncTimer.AutoReset = false;
@@ -98,6 +101,19 @@ namespace PluginCore.Managers
             Add(new TraceItem(message, state));
         }
 
+        public static void RegisterTraceGroup(string group, string title, Image icon)
+        {
+            traceGroups.Add(group, new TraceGroup(group, title, icon));
+        }
+
+        public static TraceGroup GetTraceGroup(string group)
+        {
+            if (group == null) return null;
+
+            TraceGroup value;
+            return traceGroups.TryGetValue(group, out value) ? value : null;
+        }
+
         /// <summary>
         /// After a delay, synchronizes the traces
         /// </summary>
@@ -146,6 +162,20 @@ namespace PluginCore.Managers
             get { return traceLog.AsReadOnly(); }
         }
 
+    }
+
+    public class TraceGroup
+    {
+        public string Id { get; }
+        public string Title { get; set; }
+        public Image Icon { get; set; }
+
+        public TraceGroup(string id, string title, Image icon)
+        {
+            Id = id;
+            Title = title;
+            Icon = icon;
+        }
     }
 
     public class TraceItem

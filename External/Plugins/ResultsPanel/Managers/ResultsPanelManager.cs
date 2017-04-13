@@ -18,21 +18,38 @@ namespace ResultsPanel.Managers
             main = m;
         }
 
+        internal static void Clear(string group)
+        {
+            if (group == null) return;
+
+            PluginUI ui;
+            if (pluginUis.TryGetValue(group, out ui))
+            {
+                ui.ClearOutput();
+            }
+        }
+
+        internal static void ShowResults(string group)
+        {
+            PluginUI ui;
+            if (!pluginUis.TryGetValue(group, out ui))
+                ui = AddResultsPanel(group);
+
+            ui.DisplayOutput();
+        }
+
         internal static void OnTrace()
         {
             var traces = TraceManager.TraceLog;
             foreach (var trace in traces)
             {
+                if (trace.Group == null) return; //null is handled by default panel
+
                 PluginUI ui;
                 if (!pluginUis.TryGetValue(trace.Group, out ui))
-                    ui = AddResultsPanel(TextHelper.GetString("Title.PluginPanel"), trace.Group);
+                    ui = AddResultsPanel(trace.Group);
 
                 ui.AddLogEntries();
-            }
-
-            foreach (var ui in pluginUis.Values)
-            {
-                ui.DisplayOutput();
             }
         }
 
@@ -41,10 +58,10 @@ namespace ResultsPanel.Managers
         /// </summary>
         /// <param name="title">The title of the panel</param>
         /// <param name="group">The group of the results panel</param>
-        private static PluginUI AddResultsPanel(string title, string group)
+        private static PluginUI AddResultsPanel(string group)
         {
             var ui = new PluginUI(main, group);
-            ui.Text = title;
+            ui.Text = TraceManager.GetTraceGroup(group)?.Title ?? TextHelper.GetString("Title.PluginPanel");
             PluginBase.MainForm.CreateDockablePanel(ui, MANAGER_GUID, main.pluginImage, DockState.DockBottomAutoHide);
             pluginUis.Add(group, ui);
 
