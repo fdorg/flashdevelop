@@ -12,7 +12,6 @@ namespace ResultsPanel.Managers
         readonly List<DockContent> pluginPanels = new List<DockContent>();
 
         readonly PluginMain main;
-        const string ManagerGuid = "C32104FA-0E7D-4463-A705-8B1C2580B53A";
 
         public ResultsPanelHelper(PluginMain m)
         {
@@ -73,7 +72,7 @@ namespace ResultsPanel.Managers
             var ui = new PluginUI(main, group);
             ui.Text = TraceManager.GetTraceGroup(group)?.Title ?? TextHelper.GetString("Title.PluginPanel");
 
-            pluginPanels.Add(PluginBase.MainForm.CreateDockablePanel(ui, ManagerGuid, main.pluginImage, DockState.DockBottomAutoHide));
+            pluginPanels.Add(PluginBase.MainForm.CreateDockablePanel(ui, "", main.pluginImage, DockState.DockBottomAutoHide));
             pluginUis.Add(group, ui);
 
             return ui;
