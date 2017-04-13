@@ -4,6 +4,7 @@ using System.IO;
 using ASCompletion.Completion;
 using CodeRefactor.Provider;
 using PluginCore;
+using PluginCore.Controls;
 using PluginCore.FRService;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -107,9 +108,11 @@ namespace CodeRefactor.Commands
         {
             UserInterfaceManager.ProgressDialog.Reset();
             UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.ResolvingReferences"));
+            MessageBar.Locked = true;
             // First filter out any results that don't actually point to our source declaration
             this.Results = ResolveActualMatches(results, CurrentTarget);
             if (OutputResults) this.ReportResults();
+            MessageBar.Locked = false;
             UserInterfaceManager.ProgressDialog.Hide();
             // Select first match
             if (this.Results.Count > 0)
