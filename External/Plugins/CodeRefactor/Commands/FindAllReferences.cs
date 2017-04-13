@@ -31,7 +31,7 @@ namespace CodeRefactor.Commands
 
         static FindAllReferences()
         {
-            TraceManager.RegisterTraceGroup(TraceGroup, "References", null); //TODO: localize
+            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetString("CodeRefactor.Label.FindAllReferencesResult"), null);
         }
 
         /// <summary>

@@ -101,6 +101,12 @@ namespace PluginCore.Managers
             Add(new TraceItem(message, state));
         }
 
+        /// <summary>
+        /// Associates a title and an icon with a trace group
+        /// </summary>
+        /// <param name="group">The id used to determine the group traces</param>
+        /// <param name="title">The title of the group</param>
+        /// <param name="icon">An icon for the group. If this is null, the default icon is used</param>
         public static void RegisterTraceGroup(string group, string title, Image icon)
         {
             traceGroups.Add(group, new TraceGroup(group, title, icon));
