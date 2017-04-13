@@ -25,3 +25,4 @@ PluginCore/Bin
 /FlashDevelop/Bin/Debug/Tools/fdbuild/fdbuild.exe
 FlashDevelop/Bin/Debug/Settings/Themes/CURRENT
 packages/
+.vs/
