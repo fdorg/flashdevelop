@@ -69,10 +69,12 @@ namespace ResultsPanel.Managers
         /// <param name="group">The group of the results panel</param>
         PluginUI AddResultsPanel(string group)
         {
-            var ui = new PluginUI(main, group);
-            ui.Text = TraceManager.GetTraceGroup(group)?.Title ?? TextHelper.GetString("Title.PluginPanel");
+            var traceGroup = TraceManager.GetTraceGroup(group);
 
-            pluginPanels.Add(PluginBase.MainForm.CreateDockablePanel(ui, "", main.pluginImage, DockState.DockBottomAutoHide));
+            var ui = new PluginUI(main, group);
+            ui.Text = traceGroup?.Title ?? TextHelper.GetString("Title.PluginPanel");
+
+            pluginPanels.Add(PluginBase.MainForm.CreateDockablePanel(ui, "", traceGroup?.Icon ?? main.pluginImage, DockState.DockBottomAutoHide));
             pluginUis.Add(group, ui);
 
             return ui;

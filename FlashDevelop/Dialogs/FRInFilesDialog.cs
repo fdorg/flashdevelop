@@ -59,7 +59,7 @@ namespace FlashDevelop.Dialogs
 
         static FRInFilesDialog()
         {
-            TraceManager.RegisterTraceGroup(TraceGroup, "Find in Files", null); //TODO: localize
+            TraceManager.RegisterTraceGroup(TraceGroup, "Find in Files", Globals.MainForm.FindImage("209")); //TODO: localize
         }
 
         public FRInFilesDialog()
