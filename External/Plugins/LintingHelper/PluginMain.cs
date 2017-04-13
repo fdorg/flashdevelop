@@ -162,6 +162,7 @@ namespace LintingHelper
             switch(e.Type)
             {
                 case EventType.FileOpen:
+                    if (MessageBar.Locked) return;
                     var fileOpen = (TextEvent) e;
                     if (this.settingObject.LintOnOpen)
                     {
@@ -169,13 +170,13 @@ namespace LintingHelper
                     }
                     break;
                 case EventType.FileSave:
+                    if (MessageBar.Locked) return;
                     var reason = (e as TextDataEvent)?.Data as string;
                     if (reason != "HaxeComplete" && this.settingObject.LintOnSave)
                     {
                         var fileSave = (TextEvent) e;
                         Managers.LintingManager.LintFiles(new string[] { fileSave.Value });
                     }
-                    
                     break;
                 case EventType.FileModify:
                     var file = ((TextEvent)e).Value;
