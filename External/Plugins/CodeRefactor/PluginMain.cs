@@ -40,8 +40,15 @@ namespace CodeRefactor
         private String settingFilename;
         TreeView projectTreeView;
 
+        public const string TRACE_GROUP = "CodeRefactor";
+
+        static PluginMain()
+        {
+            TraceManager.RegisterTraceGroup(TRACE_GROUP, TextHelper.GetStringWithoutMnemonics("CodeRefactor.Label.Refactor"), null);
+        }
+
         #region Required Properties
-        
+
         /// <summary>
         /// Api level of the plugin
         /// </summary>

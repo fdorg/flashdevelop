@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using FlashDevelop.Managers;
 using PluginCore.Localization;
 using FlashDevelop.Utilities;
 using PluginCore.Utilities;
@@ -53,6 +54,13 @@ namespace FlashDevelop.Dialogs
         private System.Windows.Forms.Button findButton;
         private PluginCore.FRService.FRRunner runner;
         private PluginCore.IProject lastProject;
+
+        private const string TRACE_GROUP = "FindInFiles";
+
+        static FRInFilesDialog()
+        {
+            TraceManager.RegisterTraceGroup(TRACE_GROUP, "Find in Files", null); //TODO: localize
+        }
 
         public FRInFilesDialog()
         {
@@ -703,7 +711,8 @@ namespace FlashDevelop.Dialogs
                 } 
                 else 
                 {
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
+                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + TRACE_GROUP);
+
                     foreach (KeyValuePair<String, List<SearchMatch>> entry in results)
                     {
                         foreach (SearchMatch match in entry.Value)
@@ -711,11 +720,11 @@ namespace FlashDevelop.Dialogs
                             var message = entry.Key + ":" + match.Line + ": chars " + match.Column + "-" +
                                           (match.Column + match.Length) + " : " + match.LineText.Trim();
                             
-                            TraceManager.Add(message, (int)TraceType.Info, "Find in Files");
-                            //TraceManager.Add(entry.Key + ":" + match.Line + ": chars " + match.Column + "-" + (match.Column + match.Length) + " : " + match.LineText.Trim(), (Int32)TraceType.Info);
+                            TraceManager.Add(message, (int)TraceType.Info, TRACE_GROUP);
                         }
                     }
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
+
+                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + TRACE_GROUP);
                     this.Hide();
                 }
             }
@@ -769,15 +778,20 @@ namespace FlashDevelop.Dialogs
                 } 
                 else 
                 {
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
+                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + TRACE_GROUP);
+
                     foreach (KeyValuePair<String, List<SearchMatch>> entry in results)
                     {
                         foreach (SearchMatch match in entry.Value)
                         {
-                            TraceManager.Add(entry.Key + ":" + match.Line + ": chars " + match.Column + "-" + (match.Column + match.Length) + " : " + match.Value, (Int32)TraceType.Info);
+                            var message = entry.Key + ":" + match.Line + ": chars " + match.Column + "-" +
+                                          (match.Column + match.Length) + " : " + match.Value;
+
+                            TraceManager.Add(message, (Int32)TraceType.Info, TRACE_GROUP);
                         }
                     }
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
+                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + TRACE_GROUP);
+
                     this.Hide();
                 }
             }

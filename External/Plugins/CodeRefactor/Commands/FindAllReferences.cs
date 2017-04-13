@@ -16,6 +16,8 @@ namespace CodeRefactor.Commands
     /// </summary>
     public class FindAllReferences : RefactorCommand<IDictionary<String, List<SearchMatch>>>
     {
+        private const string TRACE_GROUP = "CodeRefactor.FindAllReferences";
+
         protected bool IgnoreDeclarationSource { get; private set; }
 
         /// <summary>
@@ -26,6 +28,11 @@ namespace CodeRefactor.Commands
         public bool IncludeComments { get; set; }
 
         public bool IncludeStrings { get; set; }
+
+        static FindAllReferences()
+        {
+            TraceManager.RegisterTraceGroup(TRACE_GROUP, "References", null); //TODO: localize
+        }
 
         /// <summary>
         /// A new FindAllReferences refactoring command. Outputs found results.
@@ -194,16 +201,18 @@ namespace CodeRefactor.Commands
         /// </summary>
         private void ReportResults()
         {
-            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
+            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + TRACE_GROUP);
             foreach (KeyValuePair<String, List<SearchMatch>> entry in this.Results)
             {
                 // Outputs the lines as they change
                 foreach (SearchMatch match in entry.Value)
                 {
-                    TraceManager.Add(entry.Key + ":" + match.Line + ": chars " + match.Column + "-" + (match.Column + match.Length) + " : " + match.LineText.Trim(), (Int32)TraceType.Info);
+                    var message = entry.Key + ":" + match.Line + ": chars " + match.Column + "-" +
+                                  (match.Column + match.Length) + " : " + match.LineText.Trim();
+                    TraceManager.Add(message, (Int32)TraceType.Info, TRACE_GROUP);
                 }
             }
-            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
+            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + TRACE_GROUP);
         }
 
         #endregion
