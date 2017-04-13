@@ -9,9 +9,10 @@ namespace ResultsPanel.Managers
     class ResultsPanelHelper
     {
         readonly Dictionary<string, PluginUI> pluginUis = new Dictionary<string, PluginUI>();
+        readonly List<DockContent> pluginPanels = new List<DockContent>();
 
         readonly PluginMain main;
-        const string MANAGER_GUID = "C32104FA-0E7D-4463-A705-8B1C2580B53A";
+        const string ManagerGuid = "C32104FA-0E7D-4463-A705-8B1C2580B53A";
 
         public ResultsPanelHelper(PluginMain m)
         {
@@ -24,9 +25,17 @@ namespace ResultsPanel.Managers
 
             PluginUI ui;
             if (pluginUis.TryGetValue(group, out ui))
-            {
                 ui.ClearOutput();
-            }
+        }
+
+        /// <summary>
+        /// Removes all results panels that are managed by this helper, so they are not saved in the layout file.
+        /// This should be called when FlashDevelop is closing.
+        /// </summary>
+        public void RemoveResultsPanels()
+        {
+            foreach (var panel in pluginPanels)
+                panel.Close();
         }
 
         public void ShowResults(string group)
@@ -63,7 +72,8 @@ namespace ResultsPanel.Managers
         {
             var ui = new PluginUI(main, group);
             ui.Text = TraceManager.GetTraceGroup(group)?.Title ?? TextHelper.GetString("Title.PluginPanel");
-            PluginBase.MainForm.CreateDockablePanel(ui, MANAGER_GUID, main.pluginImage, DockState.DockBottomAutoHide);
+
+            pluginPanels.Add(PluginBase.MainForm.CreateDockablePanel(ui, ManagerGuid, main.pluginImage, DockState.DockBottomAutoHide));
             pluginUis.Add(group, ui);
 
             return ui;

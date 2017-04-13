@@ -129,7 +129,7 @@ namespace ResultsPanel
                         if (evnt.Data == null)
                             this.pluginUI.ClearOutput();
                         else
-                            panelHelper.Clear(evnt.Data as string);
+                            this.panelHelper.Clear(evnt.Data as string);
                     }
                     else if (evnt.Action == "ResultsPanel.ShowResults")
                     {
@@ -142,7 +142,7 @@ namespace ResultsPanel
                         }
                         else
                         {
-                            panelHelper.ShowResults(evnt.Data as string);
+                            this.panelHelper.ShowResults(evnt.Data as string);
                         }
                         
                     }
@@ -161,7 +161,7 @@ namespace ResultsPanel
                     break;
 
                 case EventType.Trace:
-                    panelHelper.OnTrace();
+                    this.panelHelper.OnTrace();
                     this.pluginUI.AddLogEntries();
                     break;
 
@@ -169,7 +169,9 @@ namespace ResultsPanel
                     TextEvent fileOpen = (TextEvent)e;
                     this.pluginUI.AddSquiggles(fileOpen.Value);
                     break;
-
+                case EventType.UIClosing:
+                    this.panelHelper.RemoveResultsPanels();
+                    break;
                 case EventType.Keys:
                     KeyEvent ke = (KeyEvent)e;
                     switch (PluginBase.MainForm.GetShortcutItemId(ke.Value))
@@ -241,7 +243,8 @@ namespace ResultsPanel
         /// </summary> 
         public void AddEventHandlers()
         {
-            EventType eventMask = EventType.ProcessEnd | EventType.ProcessStart | EventType.FileOpen | EventType.Command | EventType.Trace | EventType.Keys | EventType.Shortcut | EventType.ApplySettings;
+            EventType eventMask = EventType.ProcessEnd | EventType.ProcessStart | EventType.FileOpen | EventType.Command
+                | EventType.Trace | EventType.Keys | EventType.Shortcut | EventType.ApplySettings | EventType.UIClosing;
             EventManager.AddEventHandler(this, eventMask);
         }
 
@@ -270,7 +273,7 @@ namespace ResultsPanel
             this.pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
             this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockBottomAutoHide);
 
-            panelHelper = new ResultsPanelHelper(this);
+            this.panelHelper = new ResultsPanelHelper(this);
         }
         
         /// <summary>

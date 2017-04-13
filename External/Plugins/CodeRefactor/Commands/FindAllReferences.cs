@@ -16,7 +16,7 @@ namespace CodeRefactor.Commands
     /// </summary>
     public class FindAllReferences : RefactorCommand<IDictionary<String, List<SearchMatch>>>
     {
-        private const string TRACE_GROUP = "CodeRefactor.FindAllReferences";
+        private const string TraceGroup = "CodeRefactor.FindAllReferences";
 
         protected bool IgnoreDeclarationSource { get; private set; }
 
@@ -31,7 +31,7 @@ namespace CodeRefactor.Commands
 
         static FindAllReferences()
         {
-            TraceManager.RegisterTraceGroup(TRACE_GROUP, "References", null); //TODO: localize
+            TraceManager.RegisterTraceGroup(TraceGroup, "References", null); //TODO: localize
         }
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         private void ReportResults()
         {
-            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + TRACE_GROUP);
+            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + TraceGroup);
             foreach (KeyValuePair<String, List<SearchMatch>> entry in this.Results)
             {
                 // Outputs the lines as they change
@@ -209,10 +209,10 @@ namespace CodeRefactor.Commands
                 {
                     var message = entry.Key + ":" + match.Line + ": chars " + match.Column + "-" +
                                   (match.Column + match.Length) + " : " + match.LineText.Trim();
-                    TraceManager.Add(message, (Int32)TraceType.Info, TRACE_GROUP);
+                    TraceManager.Add(message, (Int32)TraceType.Info, TraceGroup);
                 }
             }
-            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + TRACE_GROUP);
+            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + TraceGroup);
         }
 
         #endregion
