@@ -3,7 +3,7 @@
 	<Entry>
 		<Id>haxe3setup</Id>
 		<Name>Haxe + Neko</Name>
-		<Version>3.4.0</Version>
+		<Version>3.4.2</Version>
 		<Build>1</Build>
 		<Desc>Haxe 3 and Neko virtual machine installer</Desc>
 		<Group>Compilers</Group>
@@ -13,7 +13,7 @@
 		<Type>Executable</Type>
 		<Info>http://www.haxe.org</Info>
 		<Urls>
-			<Url>http://haxe.org/website-content/downloads/3.4.0/downloads/haxe-3.4.0-win.exe</Url>
+			<Url>http://haxe.org/website-content/downloads/3.4.2/downloads/haxe-3.4.2-win.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
