@@ -156,7 +156,7 @@ namespace HaXeContext
                     {
                         contextInstance.SetHaxeEnvironment(de.Data as string);
                     }
-                    else if (de.Action == "ProjectManager.OpenVirtualFile")
+                    else if (action == "ProjectManager.OpenVirtualFile")
                     {
                         e.Handled = OpenVirtualFileModel((string) de.Data);
                     }
