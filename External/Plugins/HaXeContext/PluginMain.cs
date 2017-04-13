@@ -176,7 +176,9 @@ namespace HaXeContext
                     for (var i = 0; i < length; i++)
                     {
                         var item = TraceManager.TraceLog[logCount + i];
-                        var patterns = new [] {"(Library )([A-Za-z_.0-9]+)( is not installed)",
+                        var patterns = new []
+                        {
+                            "(Library )([A-Za-z_.0-9]+)( is not installed)",
                             "(Could not find haxelib \")([A-Za-z_.0-9]+)(\", does it need to be installed?)"//openfl project
                         };
                         foreach (var pattern in patterns)
