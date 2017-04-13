@@ -4,8 +4,6 @@ using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Managers;
 using PluginCore.Utilities;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -21,9 +19,7 @@ namespace LintingHelper
         private string pluginAuth = "FlashDevelop Team";
         private Settings settingObject;
         private string settingFilename;
-
         internal static RichToolTip Tip;
-        private List<string> fileCache = new List<string>();
 
         public int Api
         {
@@ -136,9 +132,9 @@ namespace LintingHelper
         {
             Tip = new RichToolTip(PluginBase.MainForm);
 
-            string dataPath = Path.Combine(PathHelper.DataDir, "LintingHelper");
+            string dataPath = Path.Combine(PathHelper.DataDir, nameof(LintingHelper));
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
+            this.settingFilename = Path.Combine(dataPath, $"{nameof(Settings)}.fdb");
         }
 
         private void LoadSettings()
