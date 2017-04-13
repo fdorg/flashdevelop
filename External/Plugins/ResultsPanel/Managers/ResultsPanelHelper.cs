@@ -10,7 +10,7 @@ namespace ResultsPanel.Managers
     {
         readonly Dictionary<string, PluginUI> pluginUis = new Dictionary<string, PluginUI>();
 
-        PluginMain main;
+        readonly PluginMain main;
         const string MANAGER_GUID = "C32104FA-0E7D-4463-A705-8B1C2580B53A";
 
         public ResultsPanelHelper(PluginMain m)
