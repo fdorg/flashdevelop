@@ -61,7 +61,9 @@ namespace CodeRefactor.Controls
             get
             {
                 string projectDir = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
-                return Path.Combine(projectDir, tree.SelectedItem.ToString());
+                if (tree.SelectedItem != null) return Path.Combine(projectDir, tree.SelectedItem.ToString());
+
+                return null;
             }
         }
 
@@ -173,6 +175,11 @@ namespace CodeRefactor.Controls
                     base.OnKeyDown(e);
                     break;
             }
+        }
+
+        private void OnTreeSelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.processButton.Enabled = true;
         }
     }
 }
