@@ -197,6 +197,7 @@ namespace HaXeContext
         const bool DEFAULT_DISABLEMIXEDCOMPLETION = false;
         const bool DEFAULT_DISABLECOMPLETIONONDEMAND = true;
         const bool DEFAULT_EXPORTHXML = false;
+        const bool DEFAULT_ENABLECOMPILERSERVICES = true;
 
         private int completionServerPort = DEFAULT_COMPLETION_SERVER_PORT;
         private int flashVersion = 10;
@@ -276,6 +277,12 @@ namespace HaXeContext
             get { return exportHXML; }
             set { HaxeProject.saveHXML = exportHXML = value; }
         }
+
+        [DisplayName("Enable Compiler Services")]
+        [LocalizedCategory("ASCompletion.Category.Language"),
+         LocalizedDescription("HaXeContext.Description.EnableCompilerServices"),
+         DefaultValue(DEFAULT_ENABLECOMPILERSERVICES)]
+        public bool EnableCompilerServices { get; set; } = DEFAULT_ENABLECOMPILERSERVICES;
 
         #endregion
 

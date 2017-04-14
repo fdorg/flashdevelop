@@ -18,8 +18,9 @@ namespace HaXeContext.CodeRefactor.Provider
             if (target.Member != null && (target.Member.Flags & (FlagType.LocalVar | FlagType.ParameterVar)) != 0)
             {
                 var context = (Context) ASContext.GetLanguageContext("haxe");
-                if (((HaXeSettings) context.Settings).CompletionMode != HaxeCompletionModeEnum.FlashDevelop
-                    && context.GetCurrentSDKVersion().IsGreaterThanOrEquals(new SemVer("3.2.0")))
+                var settings = (HaXeSettings) context.Settings;
+                if (settings.CompletionMode != HaxeCompletionModeEnum.FlashDevelop
+                    && context.GetCurrentSDKVersion().IsGreaterThanOrEquals(new SemVer("3.2.0")) && settings.EnableCompilerServices)
                 {
                     return new Commands.HaxeFindAllReferences(target, output, ignoreDeclarations)
                     {
