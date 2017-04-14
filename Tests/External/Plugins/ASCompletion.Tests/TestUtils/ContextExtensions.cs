@@ -33,7 +33,6 @@ namespace ASCompletion.TestUtils
                 return member != null && asContext.IsImported(member, it.ArgAt<int>(1));
             });
             context.ResolveType(null, null).ReturnsForAnyArgs(x => asContext.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
-            context.GetDeclarationAtLine(Arg.Any<int>()).ReturnsForAnyArgs(it => asContext.GetDeclarationAtLine(it.ArgAt<int>(0)));
         }
 
         public static void SetHaxeFeatures(this IASContext context)
@@ -57,7 +56,6 @@ namespace ASCompletion.TestUtils
                 return member != null && haxeContext.IsImported(member, it.ArgAt<int>(1));
             });
             context.ResolveType(null, null).ReturnsForAnyArgs(x => haxeContext.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
-            context.GetDeclarationAtLine(Arg.Any<int>()).ReturnsForAnyArgs(it => haxeContext.GetDeclarationAtLine(it.ArgAt<int>(0)));
         }
 
         public static void BuildClassPath(this IASContext context)
