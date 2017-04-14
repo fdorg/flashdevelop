@@ -120,16 +120,13 @@ namespace CodeRefactor.Controls
                     return score > 0 && score < 6;
                 });
             }
-            if (classpaths.Count > 0) tree.Items.AddRange(classpaths.ToArray());
-            if (tree.Items.Count > 0)
+            if (classpaths.Count > 0)
             {
+                tree.Items.AddRange(classpaths.ToArray());
                 tree.SelectedIndex = 0;
-                this.processButton.Enabled = true;
+                processButton.Enabled = true;
             }
-            else
-            {
-                this.processButton.Enabled = false;
-            }
+            else processButton.Enabled = false;
         }
 
         void OnShowExternalClasspathsCheckStateChanged(object sender, EventArgs e)
