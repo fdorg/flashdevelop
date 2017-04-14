@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
-using ASCompletion.Context;
 using PluginCore;
 using ProjectManager.Projects.Haxe;
 using ScintillaNet;
@@ -13,9 +11,7 @@ using System.Xml;
 using ASCompletion.Model;
 using PluginCore.Helpers;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 using LitJson;
-using PluginCore.Managers;
 using PluginCore.Utilities;
 
 namespace HaXeContext

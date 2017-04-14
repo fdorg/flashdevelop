@@ -189,9 +189,8 @@ namespace HaXeContext
                     }
                     logCount = TraceManager.TraceLog.Count;
                     if (libs.Count == 0) return;
-                    var label = "Error";
-                    var text = $"Libraries {string.Join(", ", libs.ToArray())} is not installed\nDo you want to install their using haxelib?";
-                    var result = MessageBox.Show(PluginBase.MainForm, text, label, MessageBoxButtons.OKCancel);
+                    var text = TextHelper.GetString("Info.MissingLib");
+                    var result = MessageBox.Show(PluginBase.MainForm, text, string.Empty, MessageBoxButtons.OKCancel);
                     if (result == DialogResult.OK) contextInstance.Install(libs);
                     break;
             }
