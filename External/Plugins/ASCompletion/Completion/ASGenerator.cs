@@ -251,7 +251,9 @@ namespace ASCompletion.Completion
                 if (resolve.Member != null
                     && resolve.Member.Name == found.member.Name
                     && line == found.member.LineFrom
-                    && (found.member.Flags & (FlagType.Function | FlagType.Getter | FlagType.Setter)) > 0
+                    && ((found.member.Flags & FlagType.Function) > 0
+                        || (found.member.Flags & FlagType.Getter) > 0
+                        || (found.member.Flags & FlagType.Setter) > 0)
                     && found.inClass != ClassModel.VoidClass
                     && found.inClass.Implements != null
                     && found.inClass.Implements.Count > 0)
