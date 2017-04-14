@@ -6138,4 +6138,8 @@ AND - All conditions are met.</value>
     <value>Suchen und Ersetzen</value>
     <comment>Added after 5.2.1</comment>
   </data>
+  <data name="LintingManager.Label.LintingResults" xml:space="preserve">
+    <value>Linter</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
 </root>
