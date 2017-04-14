@@ -4,9 +4,8 @@ using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Managers;
 using PluginCore.Utilities;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 
 namespace LintingHelper
@@ -20,9 +19,7 @@ namespace LintingHelper
         private string pluginAuth = "FlashDevelop Team";
         private Settings settingObject;
         private string settingFilename;
-
         internal static RichToolTip Tip;
-        private List<string> fileCache = new List<string>();
 
         public int Api
         {
@@ -104,27 +101,25 @@ namespace LintingHelper
 
         private void Scintilla_OnMouseHover(ScintillaNet.ScintillaControl sender, int position)
         {
-            if (!UITools.Tip.Visible) //do not show when documentation tip is shown already
+            var results = Managers.LintingManager.Cache.GetResultsFromPosition(DocumentManager.FindDocument(sender), position);
+            if (results == null)
+                return;
+
+            var desc = "";
+
+            foreach (var result in results)
             {
-                var results = Managers.LintingManager.Cache.GetResultsFromPosition(DocumentManager.FindDocument(sender), position);
-                if (results == null)
-                {
-                    return;
-                }
+                if (!string.IsNullOrEmpty(result.Description))
+                    desc += "\r\n" + result.Description;
+            }
 
-                var desc = "";
+            if (desc != string.Empty)
+            {
+                desc = desc.Remove(0, 2); //remove \r\n
+                Tip.ShowAtMouseLocation(desc);
 
-                foreach (var result in results)
-                {
-                    if (!string.IsNullOrEmpty(result.Description))
-                        desc += "\r\n" + result.Description;
-                }
-
-                if (desc != string.Empty)
-                {
-                    desc = desc.Remove(0, 2); //remove \r\n
-                    Tip.ShowAtMouseLocation(desc);
-                }
+                //move simpleTip up to not overlap linting tip
+                UITools.Tip.Location = new Point(UITools.Tip.Location.X, UITools.Tip.Location.Y - Tip.Size.Height);
             }
         }
 
@@ -137,9 +132,9 @@ namespace LintingHelper
         {
             Tip = new RichToolTip(PluginBase.MainForm);
 
-            string dataPath = Path.Combine(PathHelper.DataDir, "LintingHelper");
+            string dataPath = Path.Combine(PathHelper.DataDir, nameof(LintingHelper));
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
+            this.settingFilename = Path.Combine(dataPath, $"{nameof(Settings)}.fdb");
         }
 
         private void LoadSettings()
@@ -163,6 +158,7 @@ namespace LintingHelper
             switch(e.Type)
             {
                 case EventType.FileOpen:
+                    if (MessageBar.Locked) return;
                     var fileOpen = (TextEvent) e;
                     if (this.settingObject.LintOnOpen)
                     {
@@ -170,13 +166,13 @@ namespace LintingHelper
                     }
                     break;
                 case EventType.FileSave:
+                    if (MessageBar.Locked) return;
                     var reason = (e as TextDataEvent)?.Data as string;
                     if (reason != "HaxeComplete" && this.settingObject.LintOnSave)
                     {
                         var fileSave = (TextEvent) e;
                         Managers.LintingManager.LintFiles(new string[] { fileSave.Value });
                     }
-                    
                     break;
                 case EventType.FileModify:
                     var file = ((TextEvent)e).Value;

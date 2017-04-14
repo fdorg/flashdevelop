@@ -17,6 +17,14 @@ namespace LintingHelper
             results = new Dictionary<string, List<LintingResult>>();
         }
 
+        /// <summary>
+        /// Returns all cached results of all files that are still in the cache
+        /// </summary>
+        public List<LintingResult> GetAllResults()
+        {
+            return results.Values.SelectMany(i => i).ToList();
+        }
+
         public List<LintingResult> GetResultsFromPosition(ITabbedDocument document, int position)
         {
             List<LintingResult> list;
