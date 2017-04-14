@@ -6161,4 +6161,8 @@ AND - 모든 조건을 만족할때.</value>
     <value>Linters</value>
     <comment>Added after 5.2.1</comment>
   </data>
+  <data name="HaXeContext.Info.MissingLib" xml:space="preserve">
+    <value>Missing libraries detected. Would you like to try to install them through the package manager?</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
 </root>
