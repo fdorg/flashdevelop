@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Drawing.Design;
 using PluginCore.Localization;
 using ProjectManager.Projects.Haxe;
 using PluginCore;
@@ -197,7 +198,7 @@ namespace HaXeContext
         const bool DEFAULT_DISABLEMIXEDCOMPLETION = false;
         const bool DEFAULT_DISABLECOMPLETIONONDEMAND = true;
         const bool DEFAULT_EXPORTHXML = false;
-        const bool DEFAULT_ENABLECOMPILERSERVICES = true;
+        const CompletionFeatures DEFAULT_ENABLEDCOMPILERSERVICES = CompletionFeatures.Diagnostics | CompletionFeatures.DisplayStdIn | CompletionFeatures.Usage;
 
         private int completionServerPort = DEFAULT_COMPLETION_SERVER_PORT;
         private int flashVersion = 10;
@@ -278,11 +279,13 @@ namespace HaXeContext
             set { HaxeProject.saveHXML = exportHXML = value; }
         }
 
-        [DisplayName("Enable Compiler Services")]
+        [DisplayName("Enabled Compiler Services")]
         [LocalizedCategory("ASCompletion.Category.Language"),
-         LocalizedDescription("HaXeContext.Description.EnableCompilerServices"),
-         DefaultValue(DEFAULT_ENABLECOMPILERSERVICES)]
-        public bool EnableCompilerServices { get; set; } = DEFAULT_ENABLECOMPILERSERVICES;
+         LocalizedDescription("HaXeContext.Description.EnabledCompilerServices"),
+         DefaultValue(DEFAULT_ENABLEDCOMPILERSERVICES)]
+        [Editor(typeof(Helpers.FlagEnumEditor),
+            typeof(UITypeEditor))]
+        public CompletionFeatures EnabledFeatures { get; set; } = DEFAULT_ENABLEDCOMPILERSERVICES;
 
         #endregion
 
@@ -311,5 +314,13 @@ namespace HaXeContext
         FlashDevelop,
         Compiler,
         CompletionServer
+    }
+
+    [Flags]
+    public enum CompletionFeatures
+    {
+        Diagnostics = 1,
+        Usage = 2,
+        DisplayStdIn = 4
     }
 }

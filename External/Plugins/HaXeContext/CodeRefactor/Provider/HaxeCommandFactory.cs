@@ -20,7 +20,7 @@ namespace HaXeContext.CodeRefactor.Provider
                 var context = (Context) ASContext.GetLanguageContext("haxe");
                 var settings = (HaXeSettings) context.Settings;
                 if (settings.CompletionMode != HaxeCompletionModeEnum.FlashDevelop
-                    && context.GetCurrentSDKVersion().IsGreaterThanOrEquals(new SemVer("3.2.0")) && settings.EnableCompilerServices)
+                    && context.GetCurrentSDKVersion().IsGreaterThanOrEquals(new SemVer("3.2.0")) && (settings.EnabledFeatures & CompletionFeatures.Usage) == CompletionFeatures.Usage)
                 {
                     return new Commands.HaxeFindAllReferences(target, output, ignoreDeclarations)
                     {
