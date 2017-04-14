@@ -4,7 +4,7 @@ using PluginCore.Localization;
 using PluginCore.Managers;
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace ResultsPanel.Managers
+namespace ResultsPanel.Helpers
 {
     class ResultsPanelHelper
     {

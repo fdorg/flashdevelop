@@ -7,7 +7,7 @@ using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
-using ResultsPanel.Managers;
+using ResultsPanel.Helpers;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResultsPanel
