@@ -385,7 +385,7 @@ namespace ASCompletion.Controls
             colDelete.Image = PluginBase.MainForm.FindImage16("153", false);
             btnUp.Image = PluginBase.MainForm.FindImage16("74", false);
             btnDown.Image = PluginBase.MainForm.FindImage16("60", false);
-            btnAddRule.Image = PluginBase.MainForm.FindImage16("33", false); // Seriously no plus icon?
+            btnAddRule.Image = PluginBase.MainForm.FindImage16("550", false);
         }
 
         private void InitializeFonts()
