@@ -406,19 +406,37 @@ namespace ASCompletion.Completion
             
             if (addedChar)
             {
-                bool added = false;
+                if (c == '"' && IsEscapedCharacter(sci, sci.CurrentPos - 1) && IsStringStyle(sci.BaseStyleAt(sci.CurrentPos - 1)) ||
+                    c == '\'' && IsEscapedCharacter(sci, sci.CurrentPos - 1) && IsCharStyle(sci.BaseStyleAt(sci.CurrentPos - 1)))
+                {
+                    return;
+                }
+
+                bool undo = false;
+                byte styleBefore;
+                byte styleAfter;
+
                 sci.BeginUndoAction();
 
-                // Get the before & after style values unaffected by the entered char
-                sci.DeleteBack();
-                sci.Colourise(0, -1);
-                byte styleBefore = (byte) sci.BaseStyleAt(sci.CurrentPos - 1);
-                byte styleAfter = (byte) sci.BaseStyleAt(sci.CurrentPos);
-                sci.AddText(1, c.ToString());
-                
+                if (c == '"' || c == '\'')
+                {
+                    // Get the before & after style values unaffected by the entered char
+                    sci.DeleteBack();
+                    sci.Colourise(0, -1);
+                    styleBefore = (byte) sci.BaseStyleAt(sci.CurrentPos - 1);
+                    styleAfter = (byte) sci.BaseStyleAt(sci.CurrentPos);
+                    sci.AddText(1, c.ToString());
+                    undo = true;
+                }
+                else
+                {
+                    styleBefore = (byte) sci.BaseStyleAt(sci.CurrentPos - 2);
+                    styleAfter = (byte) sci.BaseStyleAt(sci.CurrentPos);
+                }
+
                 // not inside a string literal
-                if (!(IsStringStyle(styleBefore) && IsStringStyle(styleAfter)) &&
-                    !(IsCharStyle(styleBefore) && IsCharStyle(styleAfter)) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
+                if (!(IsStringStyle(styleBefore) && IsStringStyle(styleAfter)) && !(IsCharStyle(styleBefore) && IsCharStyle(styleAfter))
+                    || IsInterpolationExpr(sci, sci.CurrentPos - 2))
                 {
                     foreach (var brace in ASContext.CommonSettings.AddClosingBracesRules)
                     {
@@ -426,28 +444,25 @@ namespace ASCompletion.Completion
                         if (HandleAddOpeningBrace(sci, c, brace, styleAfter, styleBefore)
                             || HandleAddClosingBrace(sci, c, brace))
                         {
-                            added = true;
+                            undo = false;
                             break;
                         }
                     }
                 }
                 else if (c == '"' && IsStringStyle(styleAfter) || c == '\'' && IsCharStyle(styleAfter))
                 {
-                    if (!IsEscapedCharacter(sci, sci.CurrentPos - 1))
+                    foreach (var brace in ASContext.CommonSettings.AddClosingBracesRules)
                     {
-                        foreach (var brace in ASContext.CommonSettings.AddClosingBracesRules)
+                        if (HandleAddClosingBrace(sci, c, brace))
                         {
-                            if (HandleAddClosingBrace(sci, c, brace))
-                            {
-                                added = true;
-                                break;
-                            }
+                            undo = false;
+                            break;
                         }
                     }
                 }
 
                 sci.EndUndoAction();
-                if (!added) sci.Undo();
+                if (undo) sci.Undo();
             }
             else
             {
@@ -455,8 +470,9 @@ namespace ASCompletion.Completion
                 int styleAfter = sci.BaseStyleAt(sci.CurrentPos);
 
                 // not inside a string literal
-                if (!(IsStringStyle(styleBefore) && IsStringStyle(styleAfter)) &&
-                    !(IsCharStyle(styleBefore) && IsCharStyle(styleAfter)) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
+                if (!(IsStringStyle(styleBefore) && IsStringStyle(styleAfter)) && !(IsCharStyle(styleBefore) && IsCharStyle(styleAfter))
+                    || IsInterpolationExpr(sci, sci.CurrentPos - 2)
+                    || c == '"' && IsStringStyle(styleAfter) || c == '\'' && IsCharStyle(styleAfter))
                 {
                     foreach (var brace in ASContext.CommonSettings.AddClosingBracesRules)
                     {
