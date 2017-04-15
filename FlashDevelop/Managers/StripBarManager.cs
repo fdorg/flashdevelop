@@ -174,7 +174,7 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static ToolStripItem GetButtonItem(XmlNode node)
         {
-            var button = new ToolStripButton();
+            ToolStripButton button = new ToolStripButton();
             String name = XmlHelper.GetAttribute(node, "name");
             String image = XmlHelper.GetAttribute(node, "image");
             String label = XmlHelper.GetAttribute(node, "label");
