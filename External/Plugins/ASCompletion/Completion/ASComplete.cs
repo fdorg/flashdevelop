@@ -412,12 +412,13 @@ namespace ASCompletion.Completion
                 // Get the before & after style values unaffected by the entered char
                 sci.DeleteBack();
                 sci.Colourise(0, -1);
-                byte styleAfter = (byte) sci.BaseStyleAt(sci.CurrentPos);
                 byte styleBefore = (byte) sci.BaseStyleAt(sci.CurrentPos - 1);
+                byte styleAfter = (byte) sci.BaseStyleAt(sci.CurrentPos);
                 sci.AddText(1, c.ToString());
                 
                 // not inside a string literal
-                if (!IsStringStyle(styleBefore) && !IsCharStyle(styleBefore) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
+                if (!(IsStringStyle(styleBefore) && IsStringStyle(styleAfter)) &&
+                    !(IsCharStyle(styleBefore) && IsCharStyle(styleAfter)) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
                 {
                     foreach (var brace in ASContext.CommonSettings.AddClosingBracesRules)
                     {
@@ -450,11 +451,12 @@ namespace ASCompletion.Completion
             }
             else
             {
-                // get the style of the char before deleted char
-                int style = sci.BaseStyleAt(sci.CurrentPos - 2);
+                int styleBefore = sci.BaseStyleAt(sci.CurrentPos - 2);
+                int styleAfter = sci.BaseStyleAt(sci.CurrentPos);
 
                 // not inside a string literal
-                if (!IsStringStyle(style) && !IsCharStyle(style) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
+                if (!(IsStringStyle(styleBefore) && IsStringStyle(styleAfter)) &&
+                    !(IsCharStyle(styleBefore) && IsCharStyle(styleAfter)) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
                 {
                     foreach (var brace in ASContext.CommonSettings.AddClosingBracesRules)
                     {
@@ -716,13 +718,16 @@ namespace ASCompletion.Completion
             }
         }
 
-        static public void LocateMember(string keyword, string name, int line)
+        public static void LocateMember(string keyword, string name, int line)
         {
+            LocateMember(PluginBase.MainForm.CurrentDocument.SciControl, keyword, name, line);
+        }
+
+        public static void LocateMember(ScintillaControl sci, string keyword, string name, int line)
+        {
+            if (sci == null || line <= 0) return;
             try
             {
-                ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-                if (sci == null || line <= 0) return;
-
                 bool found = false;
                 string pattern = String.Format("{0}\\s*(?<name>{1})[^A-z0-9]", (keyword ?? ""), name.Replace(".", "\\s*.\\s*"));
                 Regex re = new Regex(pattern);
@@ -1699,12 +1704,15 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Locate beginning of function call parameters and return index of current parameter
         /// </summary>
-        private static int FindParameterIndex(ScintillaControl Sci, ref int position)
+        internal static int FindParameterIndex(ScintillaControl Sci, ref int position)
         {
             int parCount = 0;
             int braCount = 0;
             int comaCount = 0;
             int arrCount = 0;
+            var genCount = 0;
+            var dquCount = 0;
+            var squCount = 0;
             while (position >= 0)
             {
                 var style = Sci.BaseStyleAt(position);
@@ -1720,24 +1728,46 @@ namespace ASCompletion.Completion
                 if ((!IsLiteralStyle(style) && IsTextStyleEx(style)) || IsInterpolationExpr(Sci, position))
                 {
                     var c = (char)Sci.CharAt(position);
-                    if (c == ';')
+                    if (c <= ' ')
+                    {
+                        position--;
+                        continue;
+                    }
+                    if (dquCount > 0)
+                    {
+                        if (c != '"' || Sci.CharAt(position - 1) == '\\')
+                        {
+                            position--;
+                            continue;
+                        }
+                        if (c == '"' && Sci.CharAt(position - 1) != '\\') dquCount--;
+                    }
+                    else if (squCount > 0)
+                    {
+                        if (c != '\'' || Sci.CharAt(position - 1) == '\\')
+                        {
+                            position--;
+                            continue;
+                        }
+                        if (c == '\'' && Sci.CharAt(position - 1) != '\\') squCount--;
+                    }
+                    else if (c == ';' && braCount == 0)
                     {
                         position = -1;
                         break;
                     }
                     // skip {} () [] blocks
-                    if (((braCount > 0) && (c != '{' && c != '}'))
-                        || ((parCount > 0) && (c != '(' && c != ')'))
-                        || ((arrCount > 0) && (c != '[' && c != ']')))
+                    else if ((braCount > 0 && c != '{' && c != '}')
+                            || (parCount > 0 && c != '(' && c != ')')
+                            || (arrCount > 0 && c != '[' && c != ']'))
                     {
                         position--;
                         continue;
                     }
                     // new block
-                    if (c == '}') braCount++;
+                    else if (c == '}') braCount++;
                     else if (c == ']') arrCount++;
                     else if (c == ')') parCount++;
-
                     // block closed
                     else if (c == '{')
                     {
@@ -1755,9 +1785,12 @@ namespace ASCompletion.Completion
                             // function start found
                             break;
                     }
-
+                    else if (c == '>') genCount++;
+                    else if (c == '<') genCount--;
+                    else if (c == '"' && (Sci.CharAt(position - 1) != '\\' || IsEscapedCharacter(Sci, position - 1))) dquCount++;
+                    else if (c == '\'' && (Sci.CharAt(position - 1) != '\\' || IsEscapedCharacter(Sci, position - 1))) squCount++;
                     // new parameter reached
-                    else if ((c == ',') && (parCount == 0))
+                    else if (c == ',' && parCount == 0 && genCount == 0)
                         comaCount++;
                 }
                 position--;
@@ -2753,7 +2786,7 @@ namespace ASCompletion.Completion
                     result.Type = ResolveType("Function", null);
                 return result;
             }
-            if (context.CurrentModel.haXe && !inClass.IsVoid() && token == "new" && local.BeforeBody)
+            if (!inClass.IsVoid() && !string.IsNullOrEmpty(context.Features.ConstructorKey) && token == context.Features.ConstructorKey && local.BeforeBody)
                 return EvalVariable(inClass.Name, local, inFile, inClass);
             var contextMember = local.ContextMember;
             if (contextMember == null || local.coma != ComaExpression.None || !local.BeforeBody || (contextMember.Flags & (FlagType.Getter | FlagType.Setter)) > 0)

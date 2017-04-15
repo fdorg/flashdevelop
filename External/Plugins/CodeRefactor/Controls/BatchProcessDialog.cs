@@ -7,6 +7,7 @@ using CodeRefactor.Provider;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore;
+using CodeRefactor.Managers;
 
 namespace CodeRefactor.Controls
 {
@@ -142,13 +143,14 @@ namespace CodeRefactor.Controls
                 TextHelper.GetString("Info.OpenFiles"),
                 TextHelper.GetString("Info.ProjectSources")
             });
-            this.operationComboBox.Items.AddRange(new Object[] 
+
+            //Add processors from BatchProcessManager
+            var customProcessors = BatchProcessManager.GetAvailableProcessors();
+            foreach (var proc in customProcessors)
             {
-                TextHelper.GetString("Info.FormatCode"),
-                TextHelper.GetStringWithoutMnemonics("Label.OrganizeImports"),
-                TextHelper.GetStringWithoutMnemonics("Label.TruncateImports"),
-                TextHelper.GetString("Info.ConsistentEOLs"),
-            });
+                this.operationComboBox.Items.Add(new BatchProcessorItem(proc));
+            }
+
             this.Text = " " + TextHelper.GetString("Title.BatchProcessDialog");
             this.targetComboBox.SelectedIndex = 0;
             this.operationComboBox.SelectedIndex = 0;
@@ -204,35 +206,8 @@ namespace CodeRefactor.Controls
         /// </summary>
         private void DoProcess(ITabbedDocument document)
         {
-            switch (this.operationComboBox.SelectedIndex)
-            {
-                case 0: // Format Code
-                {
-                    DataEvent de = new DataEvent(EventType.Command, "CodeFormatter.FormatDocument", document);
-                    EventManager.DispatchEvent(this, de);
-                    break;
-                }
-                case 1: // Organize Imports
-                {
-                    var command = (OrganizeImports) CommandFactoryProvider.GetFactory(document).CreateOrganizeImportsCommand();
-                    command.SciControl = document.SciControl;
-                    command.Execute();
-                    break;
-                }
-                case 2: // Truncate Imports
-                {
-                    var command = (OrganizeImports) CommandFactoryProvider.GetFactory(document).CreateOrganizeImportsCommand();
-                    command.SciControl = document.SciControl;
-                    command.TruncateImports = true;
-                    command.Execute();
-                    break;
-                }
-                case 3: // Consistent EOLs
-                {
-                    document.SciControl.ConvertEOLs(document.SciControl.EOLMode);
-                    break;
-                }
-            }
+            BatchProcessorItem item = (BatchProcessorItem)this.operationComboBox.SelectedItem;
+            item.Processor.Process(document);
         }
 
         /// <summary>

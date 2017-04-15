@@ -136,6 +136,7 @@ namespace HaXeContext
             features.inlineKey = "inline";
             features.hiddenPackagePrefix = '_';
             features.stringInterpolationQuotes = "'";
+            features.ConstructorKey = "new";
 
             /* INITIALIZATION */
 
@@ -980,7 +981,7 @@ namespace HaXeContext
             ClassModel aClass = ResolveType(baseType, inFile);
             if (aClass.IsVoid()) return aClass;
 
-            if (aClass.QualifiedName == "Dynamic")
+            if (aClass.QualifiedName == features.dynamicKey)
             {
                 ClassModel indexClass = ResolveType(indexType, inFile);
                 //if (!indexClass.IsVoid()) return indexClass;
@@ -1667,8 +1668,26 @@ namespace HaXeContext
             RunCMD(command);
             return true;
         }
+
         #endregion
 
+        #region haxelib
+
+        internal void InstallHaxelib(Dictionary<string, string> nameToVersion)
+        {
+            var haxePath = PathHelper.ResolvePath(GetCompilerPath());
+            if (!Directory.Exists(haxePath) && !File.Exists(haxePath))
+            {
+                ErrorManager.ShowInfo(TextHelper.GetString("Info.InvalidHaXePath"));
+                return;
+            }
+            if (Path.GetExtension(haxePath) == string.Empty) haxePath = Path.Combine(haxePath, "haxelib.exe");
+            nameToVersion.Select(it => $"{haxePath};install {it.Key} {it.Value}")
+                     .ToList()
+                     .ForEach(it => MainForm.CallCommand("RunProcessCaptured", it));
+        }
+
+        #endregion
     }
 
     class HaxeCompletionCache: CompletionCache

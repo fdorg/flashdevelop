@@ -3,7 +3,7 @@
 	<Entry>
 		<Id>haxe3setup</Id>
 		<Name>Haxe + Neko</Name>
-		<Version>3.4.0</Version>
+		<Version>3.4.2</Version>
 		<Build>1</Build>
 		<Desc>Haxe 3 and Neko virtual machine installer</Desc>
 		<Group>Compilers</Group>
@@ -13,7 +13,7 @@
 		<Type>Executable</Type>
 		<Info>http://www.haxe.org</Info>
 		<Urls>
-			<Url>http://haxe.org/website-content/downloads/3.4.0/downloads/haxe-3.4.0-win.exe</Url>
+			<Url>http://haxe.org/website-content/downloads/3.4.2/downloads/haxe-3.4.2-win.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -579,14 +579,14 @@
 	<Entry>
 		<Id>swcbuild</Id>
 		<Name>SwcBuild</Name>
-		<Version>1.5.0</Version>
-		<Build>36162</Build>
-		<Checksum>F42A2992F97EE8D5D706453DFAAF054F</Checksum>
+		<Version>1.5.1</Version>
+		<Build>4881</Build>
+		<Checksum>4FE338FD1DADCA975E7197A2F7DE60E8</Checksum>
 		<Desc>ActionScript Component Compiler Tool for FlashDevelop Projects</Desc>
 		<Group>Extensions</Group>
 		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=12458</Info>
 		<Urls>
-			<Url>https://github.com/wise0704/SwcBuild/releases/download/v1.5.0/swcbuild.fdz</Url>
+			<Url>https://github.com/wise0704/SwcBuild/releases/download/v1.5.1/swcbuild.fdz</Url>
 		</Urls>
 	</Entry>
 	<Entry>

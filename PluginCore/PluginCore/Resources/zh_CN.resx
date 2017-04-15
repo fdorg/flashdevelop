@@ -6120,4 +6120,28 @@ AND - All conditions are met.</value>
     <value>The default column to group results by.</value>
 	<comment>Added after 5.2.1</comment>
   </data>
+  <data name="LintingHelper.Description.LintOnSave" xml:space="preserve">
+    <value>Runs the available linters when a file is saved.</value>
+	<comment>Added after 5.2.1</comment>
+  </data>
+  <data name="LintingHelper.Description.LintOnOpen" xml:space="preserve">
+    <value>Runs the available linters when a file is opened.</value>
+	<comment>Added after 5.2.1</comment>
+  </data>
+  <data name="LintingHelper.Label.RunLinters" xml:space="preserve">
+    <value>Run Linters</value>
+	<comment>Added after 5.2.1</comment>
+  </data>
+  <data name="HaXeContext.Info.UnusedImport" xml:space="preserve">
+    <value>Unused import</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="HaXeContext.Info.UnusedVariable" xml:space="preserve">
+    <value>Unused variable</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="HaXeContext.Info.MissingLib" xml:space="preserve">
+    <value>Missing libraries detected. Would you like to try to install them through the package manager?</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
 </root>

@@ -606,6 +606,256 @@ namespace ASCompletion.Completion
             }
         }
 
+        [TestFixture]
+        public class AddClosingBraces : ASCompleteTests
+        {
+            private const string prefix = "AddClosingBraces: ";
+
+            [TestFixtureSetUp]
+            public void AddClosingBracesSetUp()
+            {
+                ASContext.CommonSettings.AddClosingBraces = true;
+            }
+            
+            public IEnumerable<TestCaseData> OpenBraceTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("(+").       Returns("()").        SetName(prefix + "Open ( after 'Default' before 'Default'");
+                    yield return new TestCaseData("(+/* */").  Returns("()/* */").   SetName(prefix + "Open ( after 'Default' before 'Comment'");
+                    yield return new TestCaseData("(+//").     Returns("()//").      SetName(prefix + "Open ( after 'Default' before 'CommentLine'");
+                    yield return new TestCaseData("(+/** */"). Returns("()/** */").  SetName(prefix + "Open ( after 'Default' before 'CommentDoc'");
+                    yield return new TestCaseData("(+///").    Returns("()///").     SetName(prefix + "Open ( after 'Default' before 'CommentLineDoc'");
+                    yield return new TestCaseData("(+]").      Returns("()]").       SetName(prefix + "Open ( after 'Default' before ]");
+                    yield return new TestCaseData("(+}").      Returns("()}").       SetName(prefix + "Open ( after 'Default' before }");
+                    yield return new TestCaseData("(+>").      Returns("()>").       SetName(prefix + "Open ( after 'Default' before >");
+                    yield return new TestCaseData("(+)").      Returns("()").        SetName(prefix + "Open ( after 'Default' before )");
+                    yield return new TestCaseData("(+a").      Returns("(a").        SetName(prefix + "Open ( after 'Default' before 'Identifier'");
+
+                    yield return new TestCaseData("[+").       Returns("[]").        SetName(prefix + "Open [ after 'Default' before 'Default'");
+                    yield return new TestCaseData("[+/* */").  Returns("[]/* */").   SetName(prefix + "Open [ after 'Default' before 'Comment'");
+                    yield return new TestCaseData("[+//").     Returns("[]//").      SetName(prefix + "Open [ after 'Default' before 'CommentLine'");
+                    yield return new TestCaseData("[+/** */"). Returns("[]/** */").  SetName(prefix + "Open [ after 'Default' before 'CommentDoc'");
+                    yield return new TestCaseData("[+///").    Returns("[]///").     SetName(prefix + "Open [ after 'Default' before 'CommentLineDoc'");
+                    yield return new TestCaseData("[+)").      Returns("[])").       SetName(prefix + "Open [ after 'Default' before )");
+                    yield return new TestCaseData("[+}").      Returns("[]}").       SetName(prefix + "Open [ after 'Default' before }");
+                    yield return new TestCaseData("[+>").      Returns("[]>").       SetName(prefix + "Open [ after 'Default' before >");
+                    yield return new TestCaseData("[+]").      Returns("[]").        SetName(prefix + "Open [ after 'Default' before ]");
+                    yield return new TestCaseData("[+a").      Returns("[a").        SetName(prefix + "Open [ after 'Default' before 'Identifier'");
+
+                    yield return new TestCaseData("{+").       Returns("{}").        SetName(prefix + "Open { after 'Default' before 'Default'");
+                    yield return new TestCaseData("{+)").      Returns("{})").       SetName(prefix + "Open { after 'Default' before )");
+                    yield return new TestCaseData("{+]").      Returns("{}]").       SetName(prefix + "Open { after 'Default' before ]");
+                    yield return new TestCaseData("{+>").      Returns("{}>").       SetName(prefix + "Open { after 'Default' before >");
+                    yield return new TestCaseData("{+}").      Returns("{}").        SetName(prefix + "Open { after 'Default' before }");
+                    yield return new TestCaseData("{+a").      Returns("{a").        SetName(prefix + "Open { after 'Default' before 'Identifier'");
+
+                    yield return new TestCaseData("\"+").      Returns("\"\"").      SetName(prefix + "Open \" after 'Default' before 'Default'");
+                    yield return new TestCaseData("\"+/* */"). Returns("\"\"/* */"). SetName(prefix + "Open \" after 'Default' before 'Comment'");
+                    yield return new TestCaseData("\"+//").    Returns("\"\"//").    SetName(prefix + "Open \" after 'Default' before 'CommentLine'");
+                    yield return new TestCaseData("\"+/** */").Returns("\"\"/** */").SetName(prefix + "Open \" after 'Default' before 'CommentDoc'");
+                    yield return new TestCaseData("\"+///").   Returns("\"\"///").   SetName(prefix + "Open \" after 'Default' before 'CommentLineDoc'");
+                    yield return new TestCaseData("\"+\"\"").  Returns("\"\"\"\"").  SetName(prefix + "Open \" after 'Default' before 'String'");
+                    yield return new TestCaseData("\"+''").    Returns("\"\"''").    SetName(prefix + "Open \" after 'Default' before 'Char'");
+                    yield return new TestCaseData("\"+#a").    Returns("\"\"#a").    SetName(prefix + "Open \" after 'Default' before 'Preprocessor'");
+                    yield return new TestCaseData("\"+.").     Returns("\"\".").     SetName(prefix + "Open \" after 'Default' before 'Operator'");
+                    yield return new TestCaseData("\"+a").     Returns("\"a").       SetName(prefix + "Open \" after 'Default' before 'Identifier'");
+
+                    yield return new TestCaseData("'+").       Returns("''").        SetName(prefix + "Open ' after 'Default' before 'Default'");
+                    yield return new TestCaseData("'+/* */").  Returns("''/* */").   SetName(prefix + "Open ' after 'Default' before 'Comment'");
+                    yield return new TestCaseData("'+//").     Returns("''//").      SetName(prefix + "Open ' after 'Default' before 'CommentLine'");
+                    yield return new TestCaseData("'+/** */"). Returns("''/** */").  SetName(prefix + "Open ' after 'Default' before 'CommentDoc'");
+                    yield return new TestCaseData("'+///").    Returns("''///").     SetName(prefix + "Open ' after 'Default' before 'CommentLineDoc'");
+                    yield return new TestCaseData("'+\"\"").   Returns("''\"\"").    SetName(prefix + "Open ' after 'Default' before 'String'");
+                    yield return new TestCaseData("'+''").     Returns("''''").      SetName(prefix + "Open ' after 'Default' before 'Char'");
+                    yield return new TestCaseData("'+#a").     Returns("''#a").      SetName(prefix + "Open ' after 'Default' before 'Preprocessor'");
+                    yield return new TestCaseData("'+.").      Returns("''.").       SetName(prefix + "Open ' after 'Default' before 'Operator'");
+                    yield return new TestCaseData("'+a").      Returns("'a").        SetName(prefix + "Open ' after 'Default' before 'Identifier'");
+
+                    yield return new TestCaseData("<+").       Returns("<").         SetName(prefix + "Open < after 'Default' before 'Default'");
+                    yield return new TestCaseData(".<+").      Returns(".<>").       SetName(prefix + "Open < after 'Operator' before 'Default'");
+                    yield return new TestCaseData("Void<+").   Returns("Void<>").    SetName(prefix + "Open < after 'Type' before 'Default'");
+                    yield return new TestCaseData(".<+<").     Returns(".<<").       SetName(prefix + "Open < after 'Operator' before <");
+                    yield return new TestCaseData(".<+a").     Returns(".<a").       SetName(prefix + "Open < after 'Operator' before 'Identifier'");
+                    yield return new TestCaseData(".<+Void").  Returns(".<Void").    SetName(prefix + "Open < after 'Operator' before 'Type'");
+                }
+            }
+
+            public IEnumerable<TestCaseData> CloseBraceTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("()+)").     Returns("()").      SetName(prefix + "Close ) to overwrite )");
+                    yield return new TestCaseData("[]+]").     Returns("[]").      SetName(prefix + "Close ] to overwrite ]");
+                    yield return new TestCaseData("{}+}").     Returns("{}").      SetName(prefix + "Close } to overwrite }");
+                    yield return new TestCaseData("\"\"+\"").  Returns("\"\"").    SetName(prefix + "Close \" to overwrite \"");
+                    yield return new TestCaseData("\"\\\"+\"").Returns("\"\\\"\"").SetName(prefix + "Close \" escaped should not overwrite \"");
+                    yield return new TestCaseData("''+'").     Returns("''").      SetName(prefix + "Close ' to overwrite '");
+                    yield return new TestCaseData("'\\'+'").   Returns("'\\''").   SetName(prefix + "Close ' escaped should not overwrite '");
+                    yield return new TestCaseData("<>+>").     Returns("<>").      SetName(prefix + "Close > to overwrite >");
+                }
+            }
+
+            public IEnumerable<TestCaseData> DeleteBraceTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("(-)").  Returns("").SetName(prefix + "Delete ( to delete )");
+                    yield return new TestCaseData("[-]").  Returns("").SetName(prefix + "Delete [ to delete ]");
+                    yield return new TestCaseData("{-}").  Returns("").SetName(prefix + "Delete { to delete }");
+                    yield return new TestCaseData("\"-\"").Returns("").SetName(prefix + "Delete \" to delete \"");
+                    yield return new TestCaseData("'-'").  Returns("").SetName(prefix + "Delete ' to delete '");
+                    yield return new TestCaseData("<->").  Returns("").SetName(prefix + "Delete < to delete >");
+                }
+            }
+
+            public IEnumerable<TestCaseData> AroundStringsTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("\"\"(+").     Returns("\"\"()").   SetName(prefix + "Open ( after 'String' before 'Default'");
+                    yield return new TestCaseData("\"\"(+\"\""). Returns("\"\"(\"\"").SetName(prefix + "Open ( after 'String' before 'String'");
+                    yield return new TestCaseData("\"\")+)").    Returns("\"\")").    SetName(prefix + "Close ) after 'String' to overwrite )");
+                    yield return new TestCaseData("\"\")+)\"\"").Returns("\"\")\"\"").SetName(prefix + "Close ) after 'String' before 'String' to overwrite )");
+                    yield return new TestCaseData("\"\"(-)").    Returns("\"\"").     SetName(prefix + "Delete ( after 'String' to delete )");
+                    yield return new TestCaseData("\"\"(-)\"\"").Returns("\"\"\"\""). SetName(prefix + "Delete ( after 'String' before 'String' to delete )");
+
+                    yield return new TestCaseData("\"(+\"").     Returns("\"(\"").    SetName(prefix + "Open ( inside a string");
+                    yield return new TestCaseData("\")+)\"").    Returns("\"))\"").   SetName(prefix + "Close ) inside a string");
+                    yield return new TestCaseData("\"(-)\"").    Returns("\")\"").    SetName(prefix + "Delete ( inside a string");
+                }
+            }
+
+            [Test]
+            [TestCaseSource(nameof(OpenBraceTestCases)), TestCaseSource(nameof(CloseBraceTestCases)),
+                TestCaseSource(nameof(DeleteBraceTestCases)), TestCaseSource(nameof(AroundStringsTestCases))]
+            public string AS3(string text)
+            {
+                if (sci.ConfigurationLanguage != "as3")
+                {
+                    sci.ConfigurationLanguage = "as3";
+                    ASContext.Context.SetAs3Features();
+                }
+                return Common(text.Replace('V', 'v'), sci).Replace('v', 'V'); //Replace "Void" with "void" for type checking
+            }
+
+            [Test]
+            [TestCaseSource(nameof(OpenBraceTestCases)), TestCaseSource(nameof(CloseBraceTestCases)),
+                TestCaseSource(nameof(DeleteBraceTestCases)), TestCaseSource(nameof(AroundStringsTestCases))]
+            public string Haxe(string text)
+            {
+                if (sci.ConfigurationLanguage != "haxe")
+                {
+                    sci.ConfigurationLanguage = "haxe";
+                    ASContext.Context.SetHaxeFeatures();
+                }
+                return Common(text, sci);
+            }
+
+            private static string Common(string text, ScintillaControl sci)
+            {
+                text = "\n" + text + "\n"; // Surround with new line characters to enable colourisation
+                int cursor = text.IndexOf('+'); // Char before is added
+                bool addedChar = cursor >= 0;
+                if (!addedChar)
+                {
+                    cursor = text.IndexOf('-'); // Char before is about to be deleted
+                    Assert.GreaterOrEqual(cursor, 0, "Missing a cursor character: either + or -");
+                }
+                sci.SetText(text);
+                sci.SetSel(cursor, cursor + 1);
+                sci.ReplaceSel("");
+                sci.Colourise(0, -1);
+                int c = addedChar ? sci.CharAt(sci.CurrentPos - 1) : sci.CurrentChar;
+                ASComplete.HandleAddClosingBraces(sci, (char) c, addedChar);
+                if (!addedChar)
+                {
+                    sci.DeleteBack(); // Backspace is handled after HandleAddClosingBraces(), so mimic that behaviour
+                }
+                return sci.GetCurLine(sci.CurLineSize - 1); // Ignore the last new line character
+            }
+        }
+
+        [TestFixture]
+        public class FindParameterIndexTests : ASCompleteTests
+        {
+            public IEnumerable<TestCaseData> HaxeTestCases
+            {
+                get
+                {
+                    yield return
+                        new TestCaseData("foo($(EntryPoint));function foo();")
+                            .Returns(0);
+                    yield return
+                        new TestCaseData("foo(1, $(EntryPoint));function foo(x:Int, y:Int);")
+                            .Returns(1);
+                    yield return
+                        new TestCaseData("foo([1,2,3,4,5], $(EntryPoint));function foo(x:Array<Int>, y:Int);")
+                            .Returns(1);
+                    yield return
+                        new TestCaseData("foo(new Array<Int>(), $(EntryPoint));function foo(x:Array<Int>, y:Int);")
+                            .Returns(1);
+                    yield return
+                        new TestCaseData("foo(new Map<Int, String>(), $(EntryPoint));function foo(x:Map<Int, String>, y:Int);")
+                            .Returns(1);
+                    yield return
+                        new TestCaseData("foo({x:Int, y:Int}, $(EntryPoint));function foo(x:{x:Int, y:Int}, y:Int);")
+                            .Returns(1);
+                    yield return
+                        new TestCaseData("foo(',,,,', $(EntryPoint));function foo(s:String, y:Int);")
+                            .Returns(1);
+                    yield return
+                        new TestCaseData("foo(\",,,,\", $(EntryPoint));function foo(s:String, y:Int);")
+                            .Returns(1);
+                    yield return
+                        new TestCaseData("foo(\"\\ \", $(EntryPoint));function foo(s:String, y:Int);")
+                            .Returns(1);
+                    yield return
+                        new TestCaseData("foo(0, ';', $(EntryPoint));function foo(i:Int, s:String, y:Int);")
+                            .Returns(2);
+                    yield return
+                        new TestCaseData("foo(0, '}}}', $(EntryPoint));function foo(i:Int, s:String, y:Int);")
+                            .Returns(2);
+                    yield return
+                        new TestCaseData("foo(0, '<<>>><{}>}->({[]})>><<,,;>><<', $(EntryPoint));function foo(i:Int, s:String, y:Int);")
+                            .Returns(2);
+                    yield return
+                        new TestCaseData("foo(0, '(', $(EntryPoint));function foo(i:Int, s:String, y:Int);")
+                            .Returns(2);
+                    yield return
+                        new TestCaseData("foo(0, ')', $(EntryPoint));function foo(i:Int, s:String, y:Int);")
+                            .Returns(2);
+                    yield return
+                        new TestCaseData("foo(0, {c:Array(<Int>->Map<String, Int>)->Void}, $(EntryPoint));function foo(i:Int, s:Dynamic, y:Int);")
+                            .Returns(2);
+                    yield return
+                        new TestCaseData("foo(0, function(i:Int, s:String) {return Std.string(i) + ', ' + s;}, $(EntryPoint));function foo(i:Int, s:Dynamic, y:Int);")
+                            .Returns(2);
+                    yield return
+                        new TestCaseData("foo(0, function() {var i = 1, j = 2; return i + j;}, $(EntryPoint));function foo(i:Int, s:Dynamic, y:Int);")
+                            .Returns(2);
+                }
+            }
+
+            [Test, TestCaseSource(nameof(HaxeTestCases))]
+            public int Haxe(string text) => HaxeImpl(text, sci);
+
+            internal static int HaxeImpl(string text, ScintillaControl sci)
+            {
+                sci.ConfigurationLanguage = "haxe";
+                ASContext.Context.SetHaxeFeatures();
+                return Common(text, sci);
+            }
+
+            internal static int Common(string text, ScintillaControl sci)
+            {
+                sci.Text = text;
+                SnippetHelper.PostProcessSnippets(sci, 0);
+                var pos = sci.CurrentPos - 1;
+                return ASComplete.FindParameterIndex(sci, ref pos);
+            }
+        }
+
         internal static string ReadAllTextAS3(string fileName)
         {
             return TestFile.ReadAllText($"ASCompletion.Test_Files.completion.as3.{fileName}.as");
@@ -615,6 +865,5 @@ namespace ASCompletion.Completion
         {
             return TestFile.ReadAllText($"ASCompletion.Test_Files.completion.haxe.{fileName}.hx");
         }
-
     }
 }
