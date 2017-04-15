@@ -400,7 +400,7 @@
     <Compile Include="Win32.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="FlexSDK\FlashDbg\FlashDbg.resX">
+    <EmbeddedResource Include="FlexSDK\FlashDbg\FlashDbg.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resource.resx">

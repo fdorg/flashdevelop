@@ -1798,6 +1798,14 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterOverrideGetSet"))
                                 .SetName("Override var foo(get, set)");
                         yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideGetSet_2"), "Foo", "foo", FlagType.Getter | FlagType.Setter)
+                                .Returns(ReadAllTextHaxe("AfterOverrideGetSet_2"))
+                                .SetName("Override var foo(get, set). If the getter is already overridden.");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideGetSet_3"), "Foo", "foo", FlagType.Getter | FlagType.Setter)
+                                .Returns(ReadAllTextHaxe("AfterOverrideGetSet_3"))
+                                .SetName("Override var foo(get, set). If the setter is already overridden.");
+                        yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeOverrideIssue793"), "Foo", "foo", FlagType.Getter | FlagType.Setter)
                                 .Returns(ReadAllTextHaxe("AfterOverrideIssue793"))
                                 .SetName("issue #793");
@@ -1842,6 +1850,9 @@ namespace ASCompletion.Completion
                     SnippetHelper.PostProcessSnippets(sci, 0);
                     var currentModel = ASContext.Context.CurrentModel;
                     new ASFileParser().ParseSrc(currentModel, sci.Text);
+                    var currentLine = sci.CurrentLine;
+                    var currentClass = currentModel.Classes.Find(it => currentLine >= it.LineFrom && currentLine < it.LineTo);
+                    ASContext.Context.CurrentClass.Returns(currentClass);
                     var ofClass = currentModel.Classes.Find(model => model.Name == ofClassName);
                     var member = ofClass.Members.Search(memberName, memberFlags, 0);
                     ASGenerator.GenerateOverride(sci, ofClass, member, sci.CurrentPos);
