@@ -98,7 +98,7 @@ namespace PluginCore.Helpers
         {
             if (destinationType == null)
             {
-                throw new ArgumentNullException("destinationType");
+                throw new ArgumentNullException(nameof(destinationType));
             }
             if (value is ShortcutKeys)
             {
@@ -138,21 +138,24 @@ namespace PluginCore.Helpers
         #endregion
 
         #region Public Methods
-        
+
         /// <summary>
         /// Converts a <see cref="string"/> to <see cref="ShortcutKeys"/>.
         /// </summary>
         /// <param name="value">A <see cref="string"/> to convert.</param>
         public new static ShortcutKeys ConvertFromString(string value)
         {
-            if (value == null) throw new ArgumentNullException("value");
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
             if (keys == null)
             {
                 Initialize();
             }
             return ConvertFromStringInternal(value);
         }
-        
+
         /// <summary>
         /// Converts a <see cref="ShortcutKeys"/> value to <see cref="string"/>.
         /// </summary>
@@ -181,6 +184,28 @@ namespace PluginCore.Helpers
                 Initialize();
             }
             return ConvertToStringInternal(keys);
+        }
+
+        /// <summary>
+        /// Converts a <see cref="string"/> to <see cref="ShortcutKeys"/>. A return value indicates whether the conversion succeeded.
+        /// </summary>
+        /// <param name="value">A <see cref="string"/> to convert.</param>
+        /// <param name="result">
+        /// When this method returns, contains the <see cref="ShortcutKeys"/> value equivalent of the value represented in the specified string, if the conversion succeeded, or <see cref="ShortcutKeys.None"/> if the conversion failed.
+        /// The conversion fails if the specified string is <see langword="null"/> or <see cref="string.Empty"/>, or is not of the correct format.
+        /// This parameter is passed uninitialized; any value originally supplied in result will be overwritten.</param>
+        public static bool TryConvertFromString(string value, out ShortcutKeys result)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                result = ShortcutKeys.None;
+                return false;
+            }
+            if (keys == null)
+            {
+                Initialize();
+            }
+            return TryConvertFromStringInternal(value, out result);
         }
 
         #endregion
@@ -262,11 +287,20 @@ namespace PluginCore.Helpers
                     case '+':
                         if (i < 4 || string.CompareOrdinal(value, i - 4, "Num +", 0, 4) != 0)
                         {
-                            if (extended) second |= GetKey(value.Substring(index, i - index));
-                            else first |= GetKey(value.Substring(index, i - index));
+                            if (extended)
+                            {
+                                second |= GetKey(value.Substring(index, i - index));
+                            }
+                            else
+                            {
+                                first |= GetKey(value.Substring(index, i - index));
+                            }
                             do
                             {
-                                if (++i == length) throw new FormatException("Missing part after '+'");
+                                if (++i == length)
+                                {
+                                    throw new FormatException($"Missing part after '{value[i]}'");
+                                }
                             }
                             while (char.IsWhiteSpace(value[i]));
                             index = i--;
@@ -275,11 +309,20 @@ namespace PluginCore.Helpers
                     case ',':
                         if (index != i)
                         {
-                            if (extended) throw new FormatException("ShortcutKeys cannot have more than two parts.");
-                            else first |= GetKey(value.Substring(index, i - index));
+                            if (extended)
+                            {
+                                throw new FormatException($"{nameof(ShortcutKeys)} cannot have more than two parts.");
+                            }
+                            else
+                            {
+                                first |= GetKey(value.Substring(index, i - index));
+                            }
                             do
                             {
-                                if (++i == length) throw new FormatException("Missing part after ','");
+                                if (++i == length)
+                                {
+                                    throw new FormatException($"Missing part after '{value[i]}'");
+                                }
                             }
                             while (char.IsWhiteSpace(value[i]));
                             index = i--;
@@ -289,8 +332,14 @@ namespace PluginCore.Helpers
                 }
             }
 
-            if (extended) second |= GetKey(value.Substring(index, length - index));
-            else first |= GetKey(value.Substring(index, length - index));
+            if (extended)
+            {
+                second |= GetKey(value.Substring(index, length - index));
+            }
+            else
+            {
+                first |= GetKey(value.Substring(index, length - index));
+            }
 
             return new ShortcutKeys(first, second);
         }
@@ -331,16 +380,150 @@ namespace PluginCore.Helpers
             return GetName(keys);
         }
 
+        private static bool TryConvertFromStringInternal(string value, out ShortcutKeys shortcutKeys)
+        {
+            int index = 0;
+            bool extended = false;
+            var first = Keys.None;
+            var second = Keys.None;
+            var result = Keys.None;
+            int length = value.Length;
+
+            for (int i = 0; i < length; i++)
+            {
+                switch (value[i])
+                {
+                    case '+':
+                        if (i < 4 || string.CompareOrdinal(value, i - 4, "Num +", 0, 4 /*5*/) != 0)
+                        {
+                            if (extended)
+                            {
+                                if (!TryGetKey(value.Substring(index, i - index), out result))
+                                {
+                                    shortcutKeys = ShortcutKeys.None;
+                                    return false;
+                                }
+                                second |= result;
+                            }
+                            else
+                            {
+                                if (!TryGetKey(value.Substring(index, i - index), out result))
+                                {
+                                    shortcutKeys = ShortcutKeys.None;
+                                    return false;
+                                }
+                                first |= result;
+                            }
+                            do
+                            {
+                                if (++i == length)
+                                {
+                                    shortcutKeys = ShortcutKeys.None;
+                                    return false;
+                                }
+                            }
+                            while (char.IsWhiteSpace(value[i]));
+                            index = i--;
+                        }
+                        break;
+                    case ',':
+                        if (index != i)
+                        {
+                            if (extended)
+                            {
+                                shortcutKeys = ShortcutKeys.None;
+                                return false;
+                            }
+                            else
+                            {
+                                if (!TryGetKey(value.Substring(index, i - index), out result))
+                                {
+                                    shortcutKeys = ShortcutKeys.None;
+                                    return false;
+                                }
+                                first |= result;
+                            }
+                            do
+                            {
+                                if (++i == length)
+                                {
+                                    shortcutKeys = ShortcutKeys.None;
+                                    return false;
+                                }
+                            }
+                            while (char.IsWhiteSpace(value[i]));
+                            index = i--;
+                            extended = true;
+                        }
+                        break;
+                }
+            }
+
+            if (!TryGetKey(value.Substring(index, length - index), out result))
+            {
+                shortcutKeys = ShortcutKeys.None;
+                return false;
+            }
+
+            if (extended)
+            {
+                second |= result;
+            }
+            else
+            {
+                first |= result;
+            }
+
+            if (first == 0 && second != 0)
+            {
+                shortcutKeys = ShortcutKeys.None;
+                return false;
+            }
+
+            shortcutKeys = new ShortcutKeys(first, second);
+            return true;
+        }
+
         private static Keys GetKey(string name)
         {
             Keys key;
-            return keys.TryGetValue(name.Trim(), out key) ? key : (Keys) Enum.Parse(typeof(Keys), name);
+            if (keys.TryGetValue(name.Trim(), out key))
+            {
+                return key;
+            }
+
+            try
+            {
+                return (Keys) Enum.Parse(typeof(Keys), name);
+            }
+            catch (Exception e)
+            {
+                throw new FormatException($"'{name}' is not a named constant defined for {nameof(ShortcutKeys)}.", e);
+            }
         }
 
         private static string GetName(Keys keys)
         {
             string name;
             return names.TryGetValue(keys, out name) ? name : keys.ToString();
+        }
+
+        private static bool TryGetKey(string name, out Keys result)
+        {
+            if (keys.TryGetValue(name.Trim(), out result))
+            {
+                return true;
+            }
+
+            try
+            {
+                result = (Keys) Enum.Parse(typeof(Keys), name);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         #endregion

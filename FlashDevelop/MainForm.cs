@@ -212,7 +212,7 @@ namespace FlashDevelop
         public string StatusLabelText
         {
             get { return this.StatusLabel.Text; }
-            set { if (!lockStatusLabel) StatusLabel.Text = value; }
+            set { if (!lockStatusLabel) StatusLabel.Text = value ?? " "; }
         }
 
         /// <summary>
@@ -1651,7 +1651,7 @@ namespace FlashDevelop
             /**
              * Update the current keys
              */
-            currentKeys = ShortcutKeysManager.UpdateShortcutKeys(currentKeys, keyData);
+            ShortcutKeysManager.UpdateShortcutKeys(ref currentKeys, keyData);
 
             /**
              * Process shortcut
@@ -2146,8 +2146,7 @@ namespace FlashDevelop
         /// </summary>
         public ShortcutKeys GetShortcutKeys(String id)
         {
-            ShortcutItem item = ShortcutManager.GetRegisteredItem(id);
-            return item == null ? ShortcutKeys.None : item.Custom;
+            return ShortcutManager.GetRegisteredItem(id)?.Custom ?? ShortcutKeys.None;
         }
 
         /// <summary>
@@ -2155,8 +2154,7 @@ namespace FlashDevelop
         /// </summary>
         public String GetShortcutId(ShortcutKeys keys)
         {
-            ShortcutItem item = ShortcutManager.GetRegisteredItem(keys);
-            return item == null ? string.Empty : item.Id;
+            return ShortcutManager.GetRegisteredItem(keys)?.Id ?? string.Empty;
         }
 
         /// <summary>
@@ -2264,7 +2262,7 @@ namespace FlashDevelop
             }
             else
             {
-                previousKeys = ShortcutKeysManager.UpdateShortcutKeys(previousKeys, input);
+                ShortcutKeysManager.UpdateShortcutKeys(ref previousKeys, input);
             }
             shortcutId = GetShortcutId(previousKeys);
             if (shortcutId.Length == 0)

@@ -37,39 +37,26 @@ namespace PluginCore.Managers
         #endregion
 
         #region Methods
-
+        
         /// <summary>
-        /// Returns an updated <see cref="ShortcutKeys"/> value with the specified input <see cref="Keys"/> value.
-        /// </summary>
-        /// <param name="currentShortcutKeys">The <see cref="ShortcutKeys"/> value to update.</param>
-        /// <param name="input">The <see cref="Keys"/> value to update with.</param>
-        public static ShortcutKeys UpdateShortcutKeys(ShortcutKeys currentShortcutKeys, Keys input)
-        {
-            if (currentShortcutKeys.IsSimple &&
-                IsValidExtendedShortcutFirst(currentShortcutKeys.First) &&
-                IsValidExtendedShortcutSecond(input))
-            {
-                return new ShortcutKeys(currentShortcutKeys.First, input);
-            }
-            return input;
-        }
-
-        /// <summary>
-        /// Updates the <see cref="ShortcutKeys"/> value with the specified input <see cref="Keys"/> value.
+        /// Updates the <see cref="ShortcutKeys"/> value with the specified input <see cref="Keys"/> value,
+        /// and returns whether the updated <paramref name="shortcutKeys"/> is extended.
         /// </summary>
         /// <param name="shortcutKeys">The reference to the <see cref="ShortcutKeys"/> value to update.</param>
         /// <param name="input">The <see cref="Keys"/> value to update with.</param>
-        public static void UpdateShortcutKeys(ref ShortcutKeys shortcutKeys, Keys input)
+        public static bool UpdateShortcutKeys(ref ShortcutKeys shortcutKeys, Keys input)
         {
             if (shortcutKeys.IsSimple &&
                 IsValidExtendedShortcutFirst(shortcutKeys.First) &&
                 IsValidExtendedShortcutSecond(input))
             {
                 shortcutKeys = new ShortcutKeys(shortcutKeys.First, input);
+                return true;
             }
             else
             {
                 shortcutKeys = input;
+                return false;
             }
         }
 
@@ -128,8 +115,7 @@ namespace PluginCore.Managers
             {
                 case Keys.None:
                 case Keys.Shift:
-                    if (Keys.F1 <= keyCode && keyCode <= Keys.F24) return true;
-                    return false;
+                    return Keys.F1 <= keyCode && keyCode <= Keys.F24;
             }
             return true;
         }
@@ -157,8 +143,7 @@ namespace PluginCore.Managers
             {
                 case Keys.None:
                 case Keys.Shift:
-                    if (Keys.F1 <= keyCode && keyCode <= Keys.F24) return true;
-                    return false;
+                    return Keys.F1 <= keyCode && keyCode <= Keys.F24;
             }
             return true;
         }
@@ -220,15 +205,15 @@ namespace PluginCore.Managers
             byte[] keyStates = new byte[256];
             if ((keyData & Keys.Shift) == Keys.Shift)
             {
-                keyStates[(int) Keys.ShiftKey] = 0xFF;
+                keyStates[(int) Keys.ShiftKey] = byte.MaxValue;
             }
             if ((keyData & Keys.Control) == Keys.Control)
             {
-                keyStates[(int) Keys.ControlKey] = 0xFF;
+                keyStates[(int) Keys.ControlKey] = byte.MaxValue;
             }
             if ((keyData & Keys.Alt) == Keys.Alt)
             {
-                keyStates[(int) Keys.Menu] = 0xFF;
+                keyStates[(int) Keys.Menu] = byte.MaxValue;
             }
             return ToUnicode((uint) keyData, 0, keyStates, new char[1], 1, 0) != 0;
         }

@@ -46,7 +46,7 @@ namespace ASCompletion.Completion
         #endregion
 
         #region fields
-        static public Keys HelpKeys = Keys.F1;
+        static public ShortcutKeys HelpKeys = Keys.F1;
 
         //stores the currently used class namespace and name
         static private String currentClassHash = null;

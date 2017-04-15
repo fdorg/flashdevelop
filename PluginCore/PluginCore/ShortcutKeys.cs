@@ -36,7 +36,11 @@ namespace PluginCore
         /// <param name="second">The <see cref="Keys"/> value of the second part of the shortcut keys combination.</param>
         public ShortcutKeys(Keys first, Keys second)
         {
-            if (first == 0 && second != 0) throw new ArgumentException("Parameter second must be Keys.None if first is Keys.None.", "second");
+            if (first == 0 && second != 0)
+            {
+                throw new ArgumentException($"Parameter '{nameof(second)}' must be {nameof(Keys)}.{nameof(Keys.None)} if '{nameof(first)}' is {nameof(Keys)}.{nameof(Keys.None)}.", nameof(second));
+            }
+
             m_first = first;
             m_second = second;
         }
@@ -110,6 +114,19 @@ namespace PluginCore
             return ShortcutKeysConverter.ConvertFromString(s);
         }
 
+        /// <summary>
+        /// Converts the string representation of <see cref="ShortcutKeys"/> into its equivalent. A return value indicates whether the conversion succeeded.
+        /// </summary>
+        /// <param name="s">A string representation of <see cref="ShortcutKeys"/> to convert.</param>
+        /// <param name="result">
+        /// When this method returns, contains the <see cref="ShortcutKeys"/> value equivalent of the value represented in the specified string, if the conversion succeeded, or <see cref="None"/> if the conversion failed.
+        /// The conversion fails if the specified string is <see langword="null"/> or <see cref="string.Empty"/>, or is not of the correct format.
+        /// This parameter is passed uninitialized; any value originally supplied in result will be overwritten.</param>
+        public static bool TryParse(string s, out ShortcutKeys result)
+        {
+            return ShortcutKeysConverter.TryConvertFromString(s, out result);
+        }
+
         #endregion
 
         #region Properties
@@ -173,7 +190,7 @@ namespace PluginCore
         /// <param name="obj">The <see cref="object"/> to compare with the current <see cref="object"/>.</param>
         public override bool Equals(object obj)
         {
-            return obj is ShortcutKeys && this == (ShortcutKeys) obj;
+            return obj is ShortcutKeys && this == (ShortcutKeys) obj || obj is Keys && this == (Keys) obj;
         }
 
         /// <summary>

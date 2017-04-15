@@ -135,8 +135,8 @@ namespace FlashDevelop.Managers
                 string[] ids = ((ItemData) item.Tag).Id.Split(';');
                 if (ids.Length == 2)
                 {
-                    string temp = string.IsNullOrEmpty(ids[1]) ? StripBarManager.GetMenuItemId(item) : ids[1];
-                    if (temp == id) return item;
+                    string itemId = string.IsNullOrEmpty(ids[1]) ? StripBarManager.GetMenuItemId(item) : ids[1];
+                    if (itemId == id) return item;
                 }
             }
             return null;
@@ -181,7 +181,7 @@ namespace FlashDevelop.Managers
                 {
                     item.ItemEx.ShortcutKeys = item.Custom;
                 }
-                if (item.Item != null)
+                /*else*/ if (item.Item != null)
                 {
                     item.Item.ShortcutKeys = (Keys) item.Custom;
                 }
@@ -220,7 +220,7 @@ namespace FlashDevelop.Managers
                             casted.ShortcutKeyDisplayString = view ? keys.ToString() : null;
                         }
                     }
-                    if (item is ToolStripMenuItem)
+                    /*else*/ if (item is ToolStripMenuItem)
                     {
                         var casted = item as ToolStripMenuItem;
                         if (casted.ShortcutKeys == Keys.None)

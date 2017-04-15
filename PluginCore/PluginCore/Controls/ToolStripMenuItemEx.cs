@@ -102,7 +102,7 @@ namespace PluginCore.Controls
             {
                 if (!value.IsNone && !ShortcutKeysManager.IsValidShortcut(value))
                 {
-                    throw new ArgumentException("Passed value is not a valid shortcut.", "value");
+                    throw new ArgumentException("Passed value is not a valid shortcut.", nameof(value));
                 }
                 if (shortcutKeys != value)
                 {
