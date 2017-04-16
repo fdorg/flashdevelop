@@ -26,7 +26,6 @@ namespace SetVersion
                 return;
             }
             var head = File.ReadAllText(Path.Combine(git, "HEAD")).Trim();
-            Console.WriteLine(head);
             var headRef = Regex.Match(head, "ref: refs/heads/(.*)");
             if (!headRef.Success)
             {
