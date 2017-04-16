@@ -26,6 +26,7 @@ namespace SetVersion
                 return;
             }
             var head = File.ReadAllText(Path.Combine(git, "HEAD")).Trim();
+            Console.WriteLine(head);
             var headRef = Regex.Match(head, "ref: refs/heads/(.*)");
             if (!headRef.Success)
             {
@@ -38,7 +39,7 @@ namespace SetVersion
                 return;
             }
             branch = headRef.Groups[1].Value;
-            var refPath = Path.Combine(Path.Combine(git, "refs\\heads"), branch);
+            var refPath = Path.Combine(Path.Combine(git, "refs" + Path.DirectorySeparatorChar + "heads"), branch);
             if (!File.Exists(refPath))
             {
                 Console.WriteLine("SetVersion: Can not read ref commit hash.");
