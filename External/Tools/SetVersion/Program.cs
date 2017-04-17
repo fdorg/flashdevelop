@@ -38,7 +38,7 @@ namespace SetVersion
                 return;
             }
             branch = headRef.Groups[1].Value;
-            var refPath = Path.Combine(Path.Combine(git, "refs\\heads"), branch);
+            var refPath = Path.Combine(Path.Combine(git, Path.Combine("refs", "heads")), branch);
             if (!File.Exists(refPath))
             {
                 Console.WriteLine("SetVersion: Can not read ref commit hash.");
