@@ -75,7 +75,7 @@ namespace ASCompletion.Completion
                     return false;
                 // code auto
                 int eolMode = Sci.EOLMode;
-                if (((Value == 10) && (eolMode != 1)) || ((Value == 13) && (eolMode == 1)))
+                if (((Value == '\n') && (eolMode != 1)) || ((Value == '\r') && (eolMode == 1)))
                 {
                     if (ASContext.HasContext && ASContext.Context.IsFileValid) HandleStructureCompletion(Sci);
                     return false;
@@ -84,26 +84,36 @@ namespace ASCompletion.Completion
                 int position = Sci.CurrentPos;
                 if (position < 2) return false;
 
-                char prevValue = (char)Sci.CharAt(position - 2);
+                char prevValue = (char) Sci.CharAt(position - 2);
                 bool skipQuoteCheck = false;
 
                 Sci.Colourise(0, -1);
                 int style = Sci.BaseStyleAt(position - 1);
 
-                // string interpolation
-                if (features.hasStringInterpolation && !IsCommentStyle(style) &&
-                    features.stringInterpolationQuotes.IndexOf(Sci.GetStringType(position)) >= 0)
+                if (features.hasStringInterpolation && (IsStringStyle(style) || IsCharStyle(style)))
                 {
-                    if (Value == '$')
-                        return HandleInterpolationCompletion(Sci, autoHide, false);
-                    else if (prevValue == '$' && Value == '{')
+                    char stringTypeChar = Sci.GetStringType(position - 2); // start from -2 in case the inserted char is ' or "
+
+                    // string interpolation
+                    if (features.stringInterpolationQuotes.IndexOf(stringTypeChar) >= 0 &&
+                        IsMatchingQuote(stringTypeChar, Sci.BaseStyleAt(position - 2)))
                     {
-                        return HandleInterpolationCompletion(Sci, autoHide, true);
+                        if (Value == '$' && !IsEscapedCharacter(Sci, position - 1, '$'))
+                        {
+                            return HandleInterpolationCompletion(Sci, autoHide, false);
+                        }
+                        else if (Value == '{' && prevValue == '$' && !IsEscapedCharacter(Sci, position - 2, '$'))
+                        {
+                            if (autoHide) HandleAddClosingBraces(Sci, (char) Value, true);
+                            return HandleInterpolationCompletion(Sci, autoHide, true);
+                        }
+                        else if (IsInterpolationExpr(Sci, position - 2))
+                        {
+                            skipQuoteCheck = true; // continue on with regular completion
+                        }
                     }
-                    else if (IsInterpolationExpr(Sci, position))
-                        skipQuoteCheck = true; // continue on with regular completion
                 }
-                
+
                 if (!skipQuoteCheck)
                 {
                     // ignore text in comments & quoted text
@@ -111,18 +121,20 @@ namespace ASCompletion.Completion
                     {
                         // documentation completion
                         if (ASContext.CommonSettings.SmartTipsEnabled && IsCommentStyle(style))
+                        {
                             return ASDocumentation.OnChar(Sci, Value, position, style);
+                        }
                         else if (autoHide)
                         {
                             // close quotes
-                            HandleAddClosingBraces(Sci, (char)Value, true);
+                            HandleAddClosingBraces(Sci, (char) Value, true);
                             return false;
                         }
                     }
                 }
 
                 // close brace/parens
-                if (autoHide) HandleAddClosingBraces(Sci, (char)Value, true);
+                if (autoHide) HandleAddClosingBraces(Sci, (char) Value, true);
 
                 // stop here if the class is not valid
                 if (!ASContext.HasContext || !ASContext.Context.IsFileValid) return false;
@@ -402,16 +414,14 @@ namespace ASCompletion.Completion
 
         public static void HandleAddClosingBraces(ScintillaControl sci, char c, bool addedChar)
         {
-            if (!ASContext.CommonSettings.AddClosingBraces) return;
-            
+            if (!ASContext.CommonSettings.AddClosingBraces ||
+                IsMatchingQuote(c, sci.BaseStyleAt(sci.CurrentPos - 2)) && IsEscapedCharacter(sci, sci.CurrentPos - 1))
+            {
+                return;
+            }
+
             if (addedChar)
             {
-                if (c == '"' && IsEscapedCharacter(sci, sci.CurrentPos - 1) && IsStringStyle(sci.BaseStyleAt(sci.CurrentPos - 1)) ||
-                    c == '\'' && IsEscapedCharacter(sci, sci.CurrentPos - 1) && IsCharStyle(sci.BaseStyleAt(sci.CurrentPos - 1)))
-                {
-                    return;
-                }
-
                 bool undo = false;
                 byte styleBefore;
                 byte styleAfter;
@@ -436,7 +446,7 @@ namespace ASCompletion.Completion
 
                 // not inside a string literal
                 if (!(IsStringStyle(styleBefore) && IsStringStyle(styleAfter)) && !(IsCharStyle(styleBefore) && IsCharStyle(styleAfter))
-                    || IsInterpolationExpr(sci, sci.CurrentPos - 2))
+                    || IsInterpolationExpr(sci, sci.CurrentPos - 1))
                 {
                     foreach (var brace in ASContext.CommonSettings.AddClosingBracesRules)
                     {
@@ -449,7 +459,7 @@ namespace ASCompletion.Completion
                         }
                     }
                 }
-                else if (c == '"' && IsStringStyle(styleAfter) || c == '\'' && IsCharStyle(styleAfter))
+                else if (IsMatchingQuote(c, styleAfter))
                 {
                     foreach (var brace in ASContext.CommonSettings.AddClosingBracesRules)
                     {
@@ -473,7 +483,7 @@ namespace ASCompletion.Completion
                 // not inside a string literal
                 if (!(IsStringStyle(styleBefore) && IsStringStyle(styleAfter)) && !(IsCharStyle(styleBefore) && IsCharStyle(styleAfter))
                     || IsInterpolationExpr(sci, sci.CurrentPos - 1)
-                    || c == '"' && IsStringStyle(styleAfter) || c == '\'' && IsCharStyle(styleAfter))
+                    || IsMatchingQuote(open, styleAfter))
                 {
                     int closePos = sci.CurrentPos;
 
@@ -494,7 +504,7 @@ namespace ASCompletion.Completion
             }
         }
 
-        static bool HandleAddOpeningBrace(ScintillaControl sci, char c, Brace braces, byte styleAfter, byte styleBefore)
+        private static bool HandleAddOpeningBrace(ScintillaControl sci, char c, Brace braces, byte styleAfter, byte styleBefore)
         {
             if (c == braces.Open)
             {
@@ -511,7 +521,7 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        static bool HandleAddClosingBrace(ScintillaControl sci, char c, Brace braces)
+        private static bool HandleAddClosingBrace(ScintillaControl sci, char c, Brace braces)
         {
             if (c == braces.Close && c == sci.CurrentChar)
             {
@@ -521,7 +531,7 @@ namespace ASCompletion.Completion
 
             return false;
         }
-
+        
         private static bool HandleRemoveBrace(ScintillaControl sci, char open, char close, int closePosition, Brace braces)
         {
             if (open == braces.Open && close == braces.Close)
@@ -4154,40 +4164,49 @@ namespace ASCompletion.Completion
         /// </summary>
         private static bool IsInterpolationExpr(ScintillaControl sci, int position)
         {
-            ContextFeatures features = ASContext.Context.Features;
-            if (!features.hasStringInterpolation ||
-                features.stringInterpolationQuotes.IndexOf(sci.GetStringType(position)) < 0)
-                return false;
-
-            char prev = ' ';
-            char c = ' ';
-            char next = (char)sci.CharAt(position);
-            for (int i = position; i > 0; i--)
+            if (ASContext.Context.Features.hasStringInterpolation)
             {
-                prev = c;
-                c = next;
-                next = (char)sci.CharAt(i);
+                char stringChar = sci.GetStringType(position - 1);
+                if (ASContext.Context.Features.stringInterpolationQuotes.IndexOf(stringChar) >= 0)
+                {
+                    char next;
+                    char current = (char) sci.CharAt(position);
 
-                if (c == '\'')
-                    if (next != '\\')
-                        return false;
-                if (c == '$' && prev == '{')
-                    return true;
+                    for (int i = position - 1; i >= 0; i--)
+                    {
+                        next = current;
+                        current = (char) sci.CharAt(i);
+
+                        if (current == stringChar)
+                        {
+                            if (!IsEscapedCharacter(sci, i)) break;
+                        }
+                        else if (current == '$')
+                        {
+                            if (next == '{' && !IsEscapedCharacter(sci, i, '$')) return true;
+                        }
+                    }
+                }
             }
             return false;
         }
 
-        static bool IsEscapedCharacter(ScintillaControl sci, int position)
+        private static bool IsEscapedCharacter(ScintillaControl sci, int position, char escapeChar = '\\')
         {
             bool escaped = false;
 
             for (int i = position - 1; i >= 0; i--)
             {
-                if (sci.CharAt(i) != '\\') break;
+                if (sci.CharAt(i) != escapeChar) break;
                 escaped = !escaped;
             }
 
             return escaped;
+        }
+
+        private static bool IsMatchingQuote(char quote, int style)
+        {
+            return quote == '"' && IsStringStyle(style) || quote == '\'' && IsCharStyle(style);
         }
 
         /// <summary>
