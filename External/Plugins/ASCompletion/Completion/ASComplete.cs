@@ -466,17 +466,26 @@ namespace ASCompletion.Completion
             }
             else
             {
+                char open = (char) sci.CharAt(sci.CurrentPos - 1);
                 int styleBefore = sci.BaseStyleAt(sci.CurrentPos - 2);
                 int styleAfter = sci.BaseStyleAt(sci.CurrentPos);
 
                 // not inside a string literal
                 if (!(IsStringStyle(styleBefore) && IsStringStyle(styleAfter)) && !(IsCharStyle(styleBefore) && IsCharStyle(styleAfter))
-                    || IsInterpolationExpr(sci, sci.CurrentPos - 2)
+                    || IsInterpolationExpr(sci, sci.CurrentPos - 1)
                     || c == '"' && IsStringStyle(styleAfter) || c == '\'' && IsCharStyle(styleAfter))
                 {
+                    int closePos = sci.CurrentPos;
+
+                    while (char.IsWhiteSpace(c))
+                    {
+                        closePos++;
+                        c = (char) sci.CharAt(closePos);
+                    }
+
                     foreach (var brace in ASContext.CommonSettings.AddClosingBracesRules)
                     {
-                        if (HandleRemoveBrace(sci, c, brace))
+                        if (HandleRemoveBrace(sci, open, c, closePos, brace))
                         {
                             break;
                         }
@@ -513,11 +522,12 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        static bool HandleRemoveBrace(ScintillaControl sci, char c, Brace braces)
+        private static bool HandleRemoveBrace(ScintillaControl sci, char open, char close, int closePosition, Brace braces)
         {
-            if (c == braces.Close && sci.CharAt(sci.CurrentPos - 1) == braces.Open)
+            if (open == braces.Open && close == braces.Close)
             {
-                sci.DeleteForward();
+                sci.SelectionEnd = closePosition + 1;
+                sci.DeleteBack();
                 return true;
             }
 

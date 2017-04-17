@@ -730,9 +730,23 @@ namespace ASCompletion.Completion
                 }
             }
 
+            public IEnumerable<TestCaseData> DeleteWhitespaceTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("(-  )").  Returns("").SetName(prefix + "Delete ( to delete ) and the whitespace in between");
+                    yield return new TestCaseData("[-\t]").  Returns("").SetName(prefix + "Delete [ to delete ] and the whitespace in between");
+                    yield return new TestCaseData("{-\n}").  Returns("").SetName(prefix + "Delete { to delete } and the whitespace in between");
+                    yield return new TestCaseData("\"-  \"").Returns("").SetName(prefix + "Delete \" to delete \" and the whitespace in between");
+                    yield return new TestCaseData("'-  '").  Returns("").SetName(prefix + "Delete ' to delete ' and the whitespace in between");
+                    yield return new TestCaseData("<-  >").  Returns("").SetName(prefix + "Delete < to delete > and the whitespace in between");
+                }
+            }
+
             [Test]
             [TestCaseSource(nameof(OpenBraceTestCases)), TestCaseSource(nameof(CloseBraceTestCases)),
-                TestCaseSource(nameof(DeleteBraceTestCases)), TestCaseSource(nameof(AroundStringsTestCases))]
+                TestCaseSource(nameof(DeleteBraceTestCases)), TestCaseSource(nameof(AroundStringsTestCases)),
+                TestCaseSource(nameof(DeleteWhitespaceTestCases))]
             public string AS3(string text)
             {
                 if (sci.ConfigurationLanguage != "as3")
@@ -745,7 +759,8 @@ namespace ASCompletion.Completion
 
             [Test]
             [TestCaseSource(nameof(OpenBraceTestCases)), TestCaseSource(nameof(CloseBraceTestCases)),
-                TestCaseSource(nameof(DeleteBraceTestCases)), TestCaseSource(nameof(AroundStringsTestCases))]
+                TestCaseSource(nameof(DeleteBraceTestCases)), TestCaseSource(nameof(AroundStringsTestCases)),
+                TestCaseSource(nameof(DeleteWhitespaceTestCases))]
             public string Haxe(string text)
             {
                 if (sci.ConfigurationLanguage != "haxe")
