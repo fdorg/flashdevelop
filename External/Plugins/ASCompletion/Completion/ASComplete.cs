@@ -414,14 +414,15 @@ namespace ASCompletion.Completion
 
         public static void HandleAddClosingBraces(ScintillaControl sci, char c, bool addedChar)
         {
-            if (!ASContext.CommonSettings.AddClosingBraces ||
-                IsMatchingQuote(c, sci.BaseStyleAt(sci.CurrentPos - 2)) && IsEscapedCharacter(sci, sci.CurrentPos - 1))
-            {
-                return;
-            }
+            if (!ASContext.CommonSettings.AddClosingBraces) return;
 
             if (addedChar)
             {
+                if (IsMatchingQuote(c, sci.BaseStyleAt(sci.CurrentPos - 2)) && IsEscapedCharacter(sci, sci.CurrentPos - 1))
+                {
+                    return;
+                }
+
                 bool undo = false;
                 byte styleBefore;
                 byte styleAfter;
@@ -477,6 +478,12 @@ namespace ASCompletion.Completion
             else
             {
                 char open = (char) sci.CharAt(sci.CurrentPos - 1);
+
+                if (IsMatchingQuote(open, sci.BaseStyleAt(sci.CurrentPos - 2)) && IsEscapedCharacter(sci, sci.CurrentPos - 1))
+                {
+                    return;
+                }
+
                 int styleBefore = sci.BaseStyleAt(sci.CurrentPos - 2);
                 int styleAfter = sci.BaseStyleAt(sci.CurrentPos);
 
