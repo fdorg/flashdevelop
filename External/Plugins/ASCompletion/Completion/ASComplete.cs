@@ -4185,6 +4185,12 @@ namespace ASCompletion.Completion
                         {
                             if (next == '{' && !IsEscapedCharacter(sci, i, '$')) return true;
                         }
+                        else if (current == '}')
+                        {
+                            i = sci.BraceMatch(i);
+                            current = (char) sci.CharAt(i);
+                            if (i > 0 && current == '{' && sci.CharAt(i - 1) == '$') break;
+                        }
                     }
                 }
             }
