@@ -10,6 +10,13 @@ namespace LintingHelper.Managers
     {
         static Dictionary<string, List<ILintProvider>> linters = new Dictionary<string, List<ILintProvider>>();
 
+        private static Dictionary<LintingSeverity, int> severityMap = new Dictionary<LintingSeverity, int>
+        {
+            {LintingSeverity.Info, (int) TraceType.Info},
+            {LintingSeverity.Error, (int) TraceType.Error},
+            {LintingSeverity.Warning, (int) TraceType.Warning}
+        };
+
         internal static LintingCache Cache = new LintingCache();
 
         /// <summary>
@@ -136,10 +143,8 @@ namespace LintingHelper.Managers
         /// <summary>
         /// Applies the results to all open files
         /// </summary>
-        /// <param name="results"></param>
         static void ApplyLint(string[] files, string language, List<LintingResult> results)
         {
-            //Cache.RemoveAllExcept(PluginBase.MainForm.Documents.Select( d => d.FileName ));
             if (results == null)
                 return;
 
@@ -154,17 +159,11 @@ namespace LintingHelper.Managers
 
             Cache.AddResults(results);
 
-            foreach (var result in results)
+            
+            foreach (var result in Cache.GetAllResults())
             {
-                var line = result.File + ":" + result.Line + ": " + result.Severity.ToString() + ": " + result.Description;
+                TraceResult(result);
 
-                int state = 0;
-                if (result.Severity == LintingSeverity.Warning)
-                {
-                    state = -3;
-                }
-                TraceManager.Add(new TraceItem(line, state));
-                
                 var doc = DocumentManager.FindDocument(result.File);
                 if (doc != null)
                 {
@@ -180,23 +179,38 @@ namespace LintingHelper.Managers
                         len -= result.FirstChar;
                     }
 
-                    var color = 0;
+                    var id = 0;
+                    int color = 0;
                     var lang = PluginBase.MainForm.SciConfig.GetLanguage(language);
                     switch (result.Severity)
                     {
                         case LintingSeverity.Error:
                             color = lang.editorstyle.ErrorLineBack;
+                            id = 3;
                             break;
                         case LintingSeverity.Warning:
                             color = lang.editorstyle.DebugLineBack;
+                            id = 4;
                             break;
                         case LintingSeverity.Info:
                             color = lang.editorstyle.HighlightWordBackColor;
+                            id = 5;
                             break;
                     }
-                    doc.SciControl.AddHighlight((int)ScintillaNet.Enums.IndicatorStyle.Squiggle, color, start, len);
+
+                    PluginBase.RunAsync(() =>
+                    {
+                        doc.SciControl.AddHighlight(id, (int)ScintillaNet.Enums.IndicatorStyle.Squiggle, color, start, len);
+                    });
                 }
             }
+        }
+
+        static void TraceResult(LintingResult result)
+        {
+            var line = result.File + ":" + result.Line + ": " + result.Severity.ToString() + ": " + result.Description;
+
+            TraceManager.Add(line, severityMap[result.Severity]);
         }
     }
 }

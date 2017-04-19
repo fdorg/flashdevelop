@@ -374,25 +374,19 @@ namespace CodeRefactor.Provider
             {
                 return null;
             }
-            // if the target we are trying to rename exists as a local variable or a function parameter we only need to search the current file
-            var currentFileOnly = (member != null && member.Access == Visibility.Private && (!target.InFile.haXe || (member.Flags & (FlagType.LocalVar | FlagType.ParameterVar)) > 0))
-                               || (member == null && type.Access == Visibility.Private && (!type.InFile.haXe || new SemVer(PluginBase.CurrentSDK.Version).IsOlderThan(new SemVer("4.0.0"))));
             FRConfiguration config;
             IProject project = PluginBase.CurrentProject;
             String file = PluginBase.MainForm.CurrentDocument.FileName;
             // This is out of the project, just look for this file...
-            if (currentFileOnly || !IsProjectRelatedFile(project, file))
+            if (IsPrivateTarget(target) || !IsProjectRelatedFile(project, file))
             {
                 String mask = Path.GetFileName(file);
-                String path = Path.GetDirectoryName(file);
                 if (mask.Contains("[model]"))
                 {
-                    if (findFinishedHandler != null)
-                    {
-                        findFinishedHandler(new FRResults());
-                    }
+                    findFinishedHandler?.Invoke(new FRResults());
                     return null;
                 }
+                String path = Path.GetDirectoryName(file);
                 config = new FRConfiguration(path, mask, false, GetFRSearch(member != null ? member.Name : type.Name, includeComments, includeStrings));
             }
             else if (member != null && !CheckFlag(member.Flags, FlagType.Constructor))
@@ -699,6 +693,19 @@ namespace CodeRefactor.Provider
                 default:
                     return false;
             }
+        }
+
+        internal static bool IsPrivateTarget(ASResult target)
+        {
+            if (target.IsPackage) return false;
+            var member = target.Member;
+            if (member != null)
+            {
+                return (member.Access == Visibility.Private && !target.InFile.haXe)
+                    || ((member.Flags & FlagType.LocalVar) > 0 || (member.Flags & FlagType.ParameterVar) > 0);
+            }
+            var type = target.Type;
+            return type != null && type.Access == Visibility.Private && (!type.InFile.haXe || new SemVer(PluginBase.CurrentSDK.Version).IsOlderThan(new SemVer("4.0.0")));
         }
     }
 

@@ -61,7 +61,9 @@ namespace CodeRefactor.Controls
             get
             {
                 string projectDir = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
-                return Path.Combine(projectDir, tree.SelectedItem.ToString());
+                if (tree.SelectedItem != null) return Path.Combine(projectDir, tree.SelectedItem.ToString());
+
+                return null;
             }
         }
 
@@ -118,8 +120,13 @@ namespace CodeRefactor.Controls
                     return score > 0 && score < 6;
                 });
             }
-            if (classpaths.Count > 0) tree.Items.AddRange(classpaths.ToArray());
-            if (tree.Items.Count > 0) tree.SelectedIndex = 0;
+            if (classpaths.Count > 0)
+            {
+                tree.Items.AddRange(classpaths.ToArray());
+                tree.SelectedIndex = 0;
+                processButton.Enabled = true;
+            }
+            else processButton.Enabled = false;
         }
 
         void OnShowExternalClasspathsCheckStateChanged(object sender, EventArgs e)
