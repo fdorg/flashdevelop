@@ -61,7 +61,7 @@ namespace CodeRefactor.Controls
             this.tree.Name = "tree";
             this.tree.Size = new System.Drawing.Size(360, 108);
             this.tree.TabIndex = 2;
-            this.tree.MouseDoubleClick += new MouseEventHandler(OnTreeMouseDoubleClick);
+            this.tree.MouseDoubleClick += new MouseEventHandler(this.OnTreeMouseDoubleClick);
             // 
             // cancelButton
             // 
@@ -78,6 +78,7 @@ namespace CodeRefactor.Controls
             // 
             this.processButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.processButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.processButton.Enabled = false;
             this.processButton.Location = new System.Drawing.Point(216, 226);
             this.processButton.Name = "processButton";
             this.processButton.Size = new System.Drawing.Size(75, 23);

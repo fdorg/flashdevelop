@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using ScintillaNet.Configuration;
+using ScintillaNet.Lexers;
 using PluginCore.FRService;
 using PluginCore.Utilities;
 using PluginCore.Managers;
@@ -5904,14 +5905,11 @@ namespace ScintillaNet
                         this.BeginUndoAction();
                         try
                         {
-                            int position = CurrentPos;
-                            int curLine = LineFromPosition(position);
-                            int previousIndent = GetLineIndentation(curLine - 1);
-                            int match = SafeBraceMatch(position - 1);
-                            if (match != -1)
+                            int position = CurrentPos - 1;
+                            int match = SafeBraceMatch(position); //SafeBraceMatch() calls Colourise(0, -1)
+                            if (match != -1 && !PositionIsInString(position))
                             {
-                                previousIndent = GetLineIndentation(LineFromPosition(match));
-                                IndentLine(curLine, previousIndent);
+                                IndentLine(LineFromPosition(position), GetLineIndentation(LineFromPosition(match)));
                             }
                         }
                         finally
@@ -6308,6 +6306,49 @@ namespace ScintillaNet
                 style == 9);
             }
             return false;
+        }
+
+        /// <summary>
+        /// Checks that if the specified position is in string.
+        /// You may need to manually update coloring: <see cref="Colourise(int, int)"/>.
+        /// </summary>
+        public bool PositionIsInString(int position)
+        {
+            return PositionIsInString(position, Lexer);
+        }
+
+        /// <summary>
+        /// Checks that if the specified position is in string.
+        /// You may need to manually update coloring: <see cref="Colourise(int, int)"/>.
+        /// </summary>
+        private bool PositionIsInString(int position, int lexer)
+        {
+            int style = BaseStyleAt(position);
+            
+            switch ((Enums.Lexer) lexer)
+            {
+                case Enums.Lexer.CPP:
+                case Enums.Lexer.BULLANT:
+                case Enums.Lexer.HTML:
+                case Enums.Lexer.XML:
+                case Enums.Lexer.PERL:
+                case Enums.Lexer.RUBY:
+                case Enums.Lexer.LUA:
+                case Enums.Lexer.SQL:
+                case Enums.Lexer.GAP:
+                case Enums.Lexer.R:
+                    return style == (int) CPP.STRING || style == (int) CPP.CHARACTER;
+                case Enums.Lexer.SMALLTALK:
+                    return style == (int) SMALLTALK.STRING;
+                case Enums.Lexer.PLM:
+                    return style == (int) PLM.STRING;
+                case Enums.Lexer.MAGIK:
+                case Enums.Lexer.POWERSHELL:
+                    return style == (int) MAGIK.STRING || style == (int) MAGIK.CHARACTER;
+                // TODO: and more...
+                default:
+                    return false;
+            }
         }
 
         /// <summary>

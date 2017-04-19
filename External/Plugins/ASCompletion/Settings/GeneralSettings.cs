@@ -311,11 +311,11 @@ namespace ASCompletion.Settings
 
         static Braces[] DEFAULT_ADD_CLOSING_BRACES_OPTIONS =
         {
-            new Braces('(',  ')',  null, null, null, null, ")]}>", Mode.Inclusive, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Mode.Inclusive, Logic.OR),
-            new Braces('[',  ']',  null, null, null, null, ")]}>", Mode.Inclusive, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Mode.Inclusive, Logic.OR),
-            new Braces('{',  '}',  null, null, null, null, ")]}>", Mode.Inclusive, new[] { Style.Default }, Mode.Inclusive, Logic.OR),
-            new Braces('"',  '"',  null, null, null, null, null,   null,           new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.String, Style.Character, Style.Operator, Style.Preprocessor, Style.Attribute }, Mode.Inclusive, null),
-            new Braces('\'', '\'', null, null, null, null, null,   null,           new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.String, Style.Character, Style.Operator, Style.Preprocessor, Style.Attribute }, Mode.Inclusive, null),
+            new Braces('(',  ')',  null, null, null, null, "]}>", Mode.Inclusive, new[] { Style.Default, Style.Comment, Style.CommentDoc, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Mode.Inclusive, Logic.OR),
+            new Braces('[',  ']',  null, null, null, null, ")}>", Mode.Inclusive, new[] { Style.Default, Style.Comment, Style.CommentDoc, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Mode.Inclusive, Logic.OR),
+            new Braces('{',  '}',  null, null, null, null, ")]>", Mode.Inclusive, new[] { Style.Default }, Mode.Inclusive, Logic.OR),
+            new Braces('"',  '"',  null, null, null, null, null,   null,           new[] { Style.Default, Style.Comment, Style.CommentDoc, Style.CommentLine, Style.CommentLineDoc, Style.String, Style.Character, Style.Preprocessor, Style.Operator, Style.Attribute }, Mode.Inclusive, null),
+            new Braces('\'', '\'', null, null, null, null, null,   null,           new[] { Style.Default, Style.Comment, Style.CommentDoc, Style.CommentLine, Style.CommentLineDoc, Style.String, Style.Character, Style.Preprocessor, Style.Operator, Style.Attribute }, Mode.Inclusive, null),
             new Braces('<',  '>',  null, null, new[] { Style.Operator, Style.Type }, Mode.Inclusive, "<", Mode.Exclusive, new[] { Style.Identifier, Style.Type }, Mode.Exclusive, Logic.AND),
         };
 

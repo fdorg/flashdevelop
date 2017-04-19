@@ -414,12 +414,13 @@ namespace ASCompletion.Completion
                 // Get the before & after style values unaffected by the entered char
                 sci.DeleteBack();
                 sci.Colourise(0, -1);
-                byte styleAfter = (byte) sci.BaseStyleAt(sci.CurrentPos);
                 byte styleBefore = (byte) sci.BaseStyleAt(sci.CurrentPos - 1);
+                byte styleAfter = (byte) sci.BaseStyleAt(sci.CurrentPos);
                 sci.AddText(1, c.ToString());
                 
                 // not inside a string literal
-                if (!IsStringStyle(styleBefore) && !IsCharStyle(styleBefore) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
+                if (!(IsStringStyle(styleBefore) && IsStringStyle(styleAfter)) &&
+                    !(IsCharStyle(styleBefore) && IsCharStyle(styleAfter)) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
                 {
                     foreach (var braces in ASContext.CommonSettings.AddClosingBracesOptions)
                     {
@@ -452,11 +453,12 @@ namespace ASCompletion.Completion
             }
             else
             {
-                // get the style of the char before deleted char
-                int style = sci.BaseStyleAt(sci.CurrentPos - 2);
+                int styleBefore = sci.BaseStyleAt(sci.CurrentPos - 2);
+                int styleAfter = sci.BaseStyleAt(sci.CurrentPos);
 
                 // not inside a string literal
-                if (!IsStringStyle(style) && !IsCharStyle(style) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
+                if (!(IsStringStyle(styleBefore) && IsStringStyle(styleAfter)) &&
+                    !(IsCharStyle(styleBefore) && IsCharStyle(styleAfter)) || IsInterpolationExpr(sci, sci.CurrentPos - 2))
                 {
                     foreach (var braces in ASContext.CommonSettings.AddClosingBracesOptions)
                     {

@@ -59,6 +59,7 @@ namespace ASCompletion.TestUtils
                 return member != null && haxeContext.IsImported(member, it.ArgAt<int>(1));
             });
             context.ResolveType(null, null).ReturnsForAnyArgs(x => haxeContext.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
+            context.IsFileValid.Returns(haxeContext.IsFileValid);
         }
 
         public static void BuildClassPath(this IASContext context)

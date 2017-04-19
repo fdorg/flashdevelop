@@ -3,9 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
-using ASCompletion.Context;
 using PluginCore;
 using ProjectManager.Projects.Haxe;
 using ScintillaNet;
@@ -15,7 +13,7 @@ using System.Xml;
 using ASCompletion.Model;
 using PluginCore.Helpers;
 using System.Windows.Forms;
-using PluginCore.Managers;
+using LitJson;
 using PluginCore.Utilities;
 
 namespace HaXeContext
@@ -47,6 +45,7 @@ namespace HaXeContext
         public string Errors;
         private HaxeCompleteResult result;
         private List<HaxePositionResult> positionResults;
+        private List<HaxeDiagnosticsResult> diagnosticsResults;
 
         readonly IHaxeCompletionHandler handler;
         readonly string FileName;
@@ -82,6 +81,11 @@ namespace HaXeContext
             StartThread(callback, () => positionResults);
         }
 
+        public void GetDiagnostics(HaxeCompleteResultHandler<List<HaxeDiagnosticsResult>> callback)
+        {
+            StartThread(callback, () => diagnosticsResults);
+        }
+
         private void StartThread<T>(HaxeCompleteResultHandler<T> callback, Func<T> resultFunc)
         {
             SaveFile();
@@ -113,9 +117,8 @@ namespace HaXeContext
 
         protected virtual string[] BuildHxmlArgs()
         {
-            // check haxe project & context
-            if (PluginBase.CurrentProject == null || !(PluginBase.CurrentProject is HaxeProject)
-                || !(ASContext.Context is Context))
+            // check haxe project
+            if (!(PluginBase.CurrentProject is HaxeProject))
                 return null;
 
             var hxproj = (PluginBase.CurrentProject as HaxeProject);
@@ -152,6 +155,9 @@ namespace HaXeContext
 
                 case HaxeCompilerService.TOP_LEVEL:
                     return "@toplevel";
+
+                case HaxeCompilerService.DIAGNOSTICS:
+                    return "@diagnostics";
             }
 
             return "";
@@ -228,6 +234,9 @@ namespace HaXeContext
                     // necessary to get results with older versions due to a compiler bug
                     if (haxeVersion.IsOlderThan(new SemVer("3.3.0"))) pos++;
                     break;
+                case HaxeCompilerService.DIAGNOSTICS:
+                    pos = 0;
+                    break;
             }
             
             // account for BOM characters
@@ -239,20 +248,26 @@ namespace HaXeContext
 
         HaxeCompleteStatus ParseLines(string lines)
         {
-            if (!lines.StartsWith('<'))
+            try
             {
-                Errors = lines.Trim();
-                return HaxeCompleteStatus.ERROR;
-            }
-
-            try 
-            {
-                using (TextReader stream = new StringReader(lines))
+                switch (CompilerService)
                 {
-                    using (XmlTextReader reader = new XmlTextReader(stream))
-                    {
-                        return ProcessResponse(reader);
-                    }
+                    case HaxeCompilerService.DIAGNOSTICS:
+                        return ProcessResponse(JsonMapper.ToObject(lines));
+                    default:
+                        if (!lines.StartsWith('<'))
+                        {
+                            Errors = lines.Trim();
+                            return HaxeCompleteStatus.ERROR;
+                        }
+
+                        using (TextReader stream = new StringReader(lines))
+                        {
+                            using (XmlTextReader reader = new XmlTextReader(stream))
+                            {
+                                return ProcessResponse(reader);
+                            }
+                        }
                 }
             }
             catch (Exception ex)
@@ -260,6 +275,41 @@ namespace HaXeContext
                 Errors = "Error parsing Haxe compiler output: " + ex.Message;
                 return HaxeCompleteStatus.ERROR;
             }
+        }
+
+        HaxeCompleteStatus ProcessResponse(JsonData json)
+        {
+            diagnosticsResults = new List<HaxeDiagnosticsResult>();
+
+            foreach (JsonData file in json)
+            {
+                var path = (string)file["file"];
+                var diagnostics = file["diagnostics"];
+
+                foreach (JsonData diag in diagnostics)
+                {
+                    var range = diag["range"];
+                    var start = range["start"];
+                    var end = range["end"];
+
+                    diagnosticsResults.Add(new HaxeDiagnosticsResult
+                    {
+                        Kind = (HaxeDiagnosticsKind)(int)diag["kind"],
+                        Range = new HaxePositionResult
+                        {
+                            Path = path,
+                            //RangeType = HaxePositionCompleteRangeType.LINES, //RangeType is a mix of lines and characters
+                            CharacterStart = (int) start["character"],
+                            CharacterEnd = (int)end["character"],
+                            LineStart = (int)start["line"],
+                            LineEnd = (int)end["line"]
+                        },
+                        Severity = (HaxeDiagnosticsSeverity)(int)diag["severity"]
+                    });
+                }
+            }
+            
+            return HaxeCompleteStatus.DIAGNOSTICS;
         }
 
         HaxeCompleteStatus ProcessResponse(XmlTextReader reader)
@@ -508,6 +558,7 @@ namespace HaXeContext
         MEMBERS = 4,
         POSITION = 5,
         USAGE = 6,
+        DIAGNOSTICS = 7,
         TOP_LEVEL
     }
 
@@ -531,7 +582,20 @@ namespace HaXeContext
         /// Since Haxe 3.2.0
         /// https://haxe.org/manual/cr-completion-top-level.html
         /// </summary>
-        TOP_LEVEL
+        TOP_LEVEL,
+
+        /// <summary>
+        /// Since Haxe 3.3.0-rc1
+        /// </summary>
+        DIAGNOSTICS
+    }
+
+    public class HaxeDiagnosticsResult
+    {
+        public HaxeDiagnosticsKind Kind;
+        public HaxeDiagnosticsSeverity Severity;
+        public HaxePositionResult Range;
+        //no "args" for now
     }
 
     public class HaxeCompleteResult
@@ -554,5 +618,18 @@ namespace HaXeContext
     {
         CHARACTERS,
         LINES
+    }
+
+    public enum HaxeDiagnosticsKind
+    {
+        UNUSEDIMPORT = 0,
+        UNUSEDVAR = 3
+    }
+
+    public enum HaxeDiagnosticsSeverity
+    {
+        INFO = 0,
+        ERROR = 1,
+        WARNING = 2
     }
 }
