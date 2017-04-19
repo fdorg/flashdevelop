@@ -2712,7 +2712,6 @@ namespace ASCompletion.Completion
 
         private static void GenerateFunctionJob(GeneratorJobType job, ScintillaControl sci, MemberModel member, bool detach, ClassModel inClass)
         {
-            var position = 0;
             Visibility visibility = job.Equals(GeneratorJobType.FunctionPublic) ? Visibility.Public : GetDefaultVisibility(inClass);
             var wordStartPos = sci.WordStartPosition(sci.CurrentPos, true);
             int wordPos = sci.WordEndPosition(sci.CurrentPos, true);
@@ -2776,6 +2775,7 @@ namespace ASCompletion.Completion
             {
                 blockTmpl = TemplateUtils.GetBoundary("PrivateMethods");
             }
+            var position = 0;
             var latest = TemplateUtils.GetTemplateBlockMember(sci, blockTmpl);
             if (latest == null || (!isOtherClass && member == null))
             {
@@ -2882,17 +2882,16 @@ namespace ASCompletion.Completion
                             type = parameterType.Substring(startPosition, i - startPosition);
                             i += arrowLength;
                         }
-                        if (type != null)
+                        if (type == null) continue;
+                        if (functionParameters.Count == 0 && type == ASContext.Context.Features.voidKey) break;
+                        var parameter = $"parameter{functionParameters.Count}";
+                        if (type.StartsWith('?'))
                         {
-                            var parameter = $"parameter{functionParameters.Count}";
-                            if (type.StartsWith('?'))
-                            {
-                                parameter = $"?{parameter}";
-                                type = type.TrimStart('?');
-                            }
-                            functionParameters.Add(new FunctionParameter(parameter, type, type, callerExpr));
-                            startPosition = i;
+                            parameter = $"?{parameter}";
+                            type = type.TrimStart('?');
                         }
+                        functionParameters.Add(new FunctionParameter(parameter, type, type, callerExpr));
+                        startPosition = i;
                     }
                     newMemberType = parameterType.Substring(endPosition);
                 }
@@ -2917,13 +2916,8 @@ namespace ASCompletion.Completion
                 else
                     sci.SetSel(position, position);
             }
-            var parameters = new List<MemberModel>();
-            foreach (var parameter in functionParameters)
-            {
-                parameters.Add(new MemberModel(parameter.paramName, parameter.paramType, FlagType.ParameterVar, 0));
-            }
             var newMember = NewMember(contextToken, isStatic, FlagType.Function, visibility);
-            newMember.Parameters = parameters;
+            newMember.Parameters = functionParameters.Select(parameter => new MemberModel(parameter.paramName, parameter.paramType, FlagType.ParameterVar, 0)).ToList();
             if (newMemberType != null) newMember.Type = newMemberType;
             GenerateFunction(newMember, position, detach, inClass);
         }
