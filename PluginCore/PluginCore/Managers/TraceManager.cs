@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Timers;
 using System.Windows.Forms;
 using Timer = System.Timers.Timer;
@@ -12,12 +13,14 @@ namespace PluginCore.Managers
         private static Int32 MAX_QUEUE = 1000;
         private static List<TraceItem> traceLog;
         private static List<TraceItem> asyncQueue;
+        private static Dictionary<string, TraceGroup> traceGroups;
         private static Timer asyncTimer;
 
         static TraceManager()
         {
             traceLog = new List<TraceItem>();
             asyncQueue = new List<TraceItem>();
+            traceGroups = new Dictionary<string, TraceGroup>();
             asyncTimer = new Timer();
             asyncTimer.Interval = 200;
             asyncTimer.AutoReset = false;
@@ -38,6 +41,17 @@ namespace PluginCore.Managers
         public static void Add(String message, Int32 state)
         {
             Add(new TraceItem(message, state));
+        }
+
+        /// <summary>
+        /// Adds a new entry to the log.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="state"></param>
+        /// <param name="group">Used to group the items</param>
+        public static void Add(string message, int state, string group)
+        {
+            Add(new TraceItem(message, state, group));
         }
 
         /// <summary>
@@ -85,6 +99,25 @@ namespace PluginCore.Managers
                 return;
             }
             Add(new TraceItem(message, state));
+        }
+
+        /// <summary>
+        /// Associates a title and an icon with a trace group
+        /// </summary>
+        /// <param name="group">The id used to determine the group traces</param>
+        /// <param name="title">The title of the group</param>
+        /// <param name="icon">An icon for the group. If this is null, the default icon is used</param>
+        public static void RegisterTraceGroup(string group, string title, Image icon)
+        {
+            traceGroups.Add(group, new TraceGroup(group, title, icon));
+        }
+
+        public static TraceGroup GetTraceGroup(string group)
+        {
+            if (group == null) return null;
+
+            TraceGroup value;
+            return traceGroups.TryGetValue(group, out value) ? value : null;
         }
 
         /// <summary>
@@ -137,11 +170,32 @@ namespace PluginCore.Managers
 
     }
 
+    public class TraceGroup
+    {
+        public string Id { get; }
+        public string Title { get; set; }
+        public Image Icon { get; set; }
+
+        public TraceGroup(string id, string title, Image icon)
+        {
+            Id = id;
+            Title = title;
+            Icon = icon;
+        }
+    }
+
     public class TraceItem
     {
         private Int32 state = 0;
         private DateTime timestamp;
         private String message;
+
+        public string Group { get; }
+
+        public TraceItem(string message, int state, string group) : this(message, state)
+        {
+            Group = group;
+        }
 
         public TraceItem(String message, Int32 state)
         {
