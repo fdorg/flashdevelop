@@ -626,10 +626,10 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("(+//").     Returns("()//").      SetName(prefix + "Open ( after 'Default' before 'CommentLine'");
                     yield return new TestCaseData("(+/** */"). Returns("()/** */").  SetName(prefix + "Open ( after 'Default' before 'CommentDoc'");
                     yield return new TestCaseData("(+///").    Returns("()///").     SetName(prefix + "Open ( after 'Default' before 'CommentLineDoc'");
-                    yield return new TestCaseData("(+]").      Returns("()]").       SetName(prefix + "Open ( after 'Default' before ]");
+                    yield return new TestCaseData("(+)").      Returns("())").       SetName(prefix + "Open ( after 'Default' before )");
                     yield return new TestCaseData("(+}").      Returns("()}").       SetName(prefix + "Open ( after 'Default' before }");
+                    yield return new TestCaseData("(+]").      Returns("()]").       SetName(prefix + "Open ( after 'Default' before ]");
                     yield return new TestCaseData("(+>").      Returns("()>").       SetName(prefix + "Open ( after 'Default' before >");
-                    yield return new TestCaseData("(+)").      Returns("()").        SetName(prefix + "Open ( after 'Default' before )");
                     yield return new TestCaseData("(+a").      Returns("(a").        SetName(prefix + "Open ( after 'Default' before 'Identifier'");
 
                     yield return new TestCaseData("[+").       Returns("[]").        SetName(prefix + "Open [ after 'Default' before 'Default'");
@@ -639,15 +639,15 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("[+///").    Returns("[]///").     SetName(prefix + "Open [ after 'Default' before 'CommentLineDoc'");
                     yield return new TestCaseData("[+)").      Returns("[])").       SetName(prefix + "Open [ after 'Default' before )");
                     yield return new TestCaseData("[+}").      Returns("[]}").       SetName(prefix + "Open [ after 'Default' before }");
+                    yield return new TestCaseData("[+]").      Returns("[]]").       SetName(prefix + "Open [ after 'Default' before ]");
                     yield return new TestCaseData("[+>").      Returns("[]>").       SetName(prefix + "Open [ after 'Default' before >");
-                    yield return new TestCaseData("[+]").      Returns("[]").        SetName(prefix + "Open [ after 'Default' before ]");
                     yield return new TestCaseData("[+a").      Returns("[a").        SetName(prefix + "Open [ after 'Default' before 'Identifier'");
 
                     yield return new TestCaseData("{+").       Returns("{}").        SetName(prefix + "Open { after 'Default' before 'Default'");
                     yield return new TestCaseData("{+)").      Returns("{})").       SetName(prefix + "Open { after 'Default' before )");
+                    yield return new TestCaseData("{+}").      Returns("{}}").       SetName(prefix + "Open { after 'Default' before }");
                     yield return new TestCaseData("{+]").      Returns("{}]").       SetName(prefix + "Open { after 'Default' before ]");
                     yield return new TestCaseData("{+>").      Returns("{}>").       SetName(prefix + "Open { after 'Default' before >");
-                    yield return new TestCaseData("{+}").      Returns("{}").        SetName(prefix + "Open { after 'Default' before }");
                     yield return new TestCaseData("{+a").      Returns("{a").        SetName(prefix + "Open { after 'Default' before 'Identifier'");
 
                     yield return new TestCaseData("\"+").      Returns("\"\"").      SetName(prefix + "Open \" after 'Default' before 'Default'");
@@ -720,15 +720,56 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("\"\"(-)").    Returns("\"\"").     SetName(prefix + "Delete ( after 'String' to delete )");
                     yield return new TestCaseData("\"\"(-)\"\"").Returns("\"\"\"\""). SetName(prefix + "Delete ( after 'String' before 'String' to delete )");
 
+                    yield return new TestCaseData("\"\"\"+").    Returns("\"\"\"\""). SetName(prefix + "Open \" after 'String' before 'Default'");
+                    yield return new TestCaseData("\"\"\"\"+\"").Returns("\"\"\"\""). SetName(prefix + "Close \" after 'String' to overwrite \"");
+                    yield return new TestCaseData("\"\"\"-\"").  Returns("\"\"").     SetName(prefix + "Delete \" after 'String' to delete \"");
+
                     yield return new TestCaseData("\"(+\"").     Returns("\"(\"").    SetName(prefix + "Open ( inside a string");
                     yield return new TestCaseData("\")+)\"").    Returns("\"))\"").   SetName(prefix + "Close ) inside a string");
                     yield return new TestCaseData("\"(-)\"").    Returns("\")\"").    SetName(prefix + "Delete ( inside a string");
                 }
             }
 
+            public IEnumerable<TestCaseData> DeleteWhitespaceTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("(-  )").  Returns("").SetName(prefix + "Delete ( to delete ) and the whitespace in between");
+                    yield return new TestCaseData("[-\t]").  Returns("").SetName(prefix + "Delete [ to delete ] and the whitespace in between");
+                    yield return new TestCaseData("{-\n}").  Returns("").SetName(prefix + "Delete { to delete } and the whitespace in between");
+                    yield return new TestCaseData("\"-  \"").Returns("").SetName(prefix + "Delete \" to delete \" and the whitespace in between");
+                    yield return new TestCaseData("'-  '").  Returns("").SetName(prefix + "Delete ' to delete ' and the whitespace in between");
+                    yield return new TestCaseData("<-  >").  Returns("").SetName(prefix + "Delete < to delete > and the whitespace in between");
+                }
+            }
+
+            public IEnumerable<TestCaseData> InsideInterpolationTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("'${+'").     Returns("'${}'").    SetName(prefix + "Open interpolation {");
+                    yield return new TestCaseData("'${-}'").    Returns("'$'").      SetName(prefix + "Delete interpolation { to delete }");
+
+                    yield return new TestCaseData("'${(+}'").   Returns("'${()}'").  SetName(prefix + "Open ( inside string interpolation");
+                    yield return new TestCaseData("'${{+}'").   Returns("'${{}}'").  SetName(prefix + "Open { inside string interpolation");
+                    yield return new TestCaseData("'${[+}'").   Returns("'${[]}'").  SetName(prefix + "Open [ inside string interpolation");
+                    yield return new TestCaseData("'${\"+}'").  Returns("'${\"\"}'").SetName(prefix + "Open \" inside string interpolation");
+                    yield return new TestCaseData("'${'+}'").   Returns("'${''}'").  SetName(prefix + "Open ' inside string interpolation");
+
+                    yield return new TestCaseData("'${(-)}'").  Returns("'${}'").    SetName(prefix + "Delete ( to delete ) inside string interpolation");
+                    yield return new TestCaseData("'${{-}}'").  Returns("'${}'").    SetName(prefix + "Delete { to delete } inside string interpolation");
+                    yield return new TestCaseData("'${[-]}'").  Returns("'${}'").    SetName(prefix + "Delete [ to delete ] inside string interpolation");
+                    yield return new TestCaseData("'${\"-\"}'").Returns("'${}'").    SetName(prefix + "Delete \" to delete \" inside string interpolation");
+                    yield return new TestCaseData("'${'-'}'").  Returns("'${}'").    SetName(prefix + "Delete ' to delete ' inside string interpolation");
+
+                    yield return new TestCaseData("''(+''").    Returns("''(''").    SetName(prefix + "Open ( after 'Character' before 'Character'");
+                }
+            }
+
             [Test]
             [TestCaseSource(nameof(OpenBraceTestCases)), TestCaseSource(nameof(CloseBraceTestCases)),
-                TestCaseSource(nameof(DeleteBraceTestCases)), TestCaseSource(nameof(AroundStringsTestCases))]
+                TestCaseSource(nameof(DeleteBraceTestCases)), TestCaseSource(nameof(AroundStringsTestCases)),
+                TestCaseSource(nameof(DeleteWhitespaceTestCases))]
             public string AS3(string text)
             {
                 if (sci.ConfigurationLanguage != "as3")
@@ -741,7 +782,8 @@ namespace ASCompletion.Completion
 
             [Test]
             [TestCaseSource(nameof(OpenBraceTestCases)), TestCaseSource(nameof(CloseBraceTestCases)),
-                TestCaseSource(nameof(DeleteBraceTestCases)), TestCaseSource(nameof(AroundStringsTestCases))]
+                TestCaseSource(nameof(DeleteBraceTestCases)), TestCaseSource(nameof(AroundStringsTestCases)),
+                TestCaseSource(nameof(DeleteWhitespaceTestCases)), TestCaseSource(nameof(InsideInterpolationTestCases))]
             public string Haxe(string text)
             {
                 if (sci.ConfigurationLanguage != "haxe")

@@ -5926,22 +5926,33 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// Detects the string-literal quote style
+        /// Detects the string-literal quote style. Returns space if undefined.
         /// </summary>
         /// <param name="position">lookup position</param>
         /// <returns>' or " or Space if undefined</returns>
         public char GetStringType(int position)
         {
-            char next = (char)CharAt(position);
-            char c;
+            char current;
+            char previous = (char) CharAt(position);
             for (int i = position; i > 0; i--)
             {
-                c = next;
-                next = (char)CharAt(i - 1);
+                current = previous;
+                previous = (char) CharAt(i - 1);
 
-                if (next == '\\' && (c == '\'' || c == '"')) i--;
-                if (c == '\'') return '\'';
-                else if (c == '"') return '"';
+                if (current == '\'' || current == '"')
+                {
+                    bool escaped = false;
+                    while (previous == '\\')
+                    {
+                        i--;
+                        previous = (char) CharAt(i - 1);
+                        escaped = !escaped;
+                    }
+                    if (!escaped)
+                    {
+                        return current;
+                    }
+                }
             }
             return ' ';
         }
