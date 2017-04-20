@@ -1,11 +1,13 @@
 ﻿using LintingHelper;
 using System.Collections.Generic;
+using System.IO;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
+using ScintillaNet;
 
 namespace HaXeContext.Linters
 {
@@ -28,12 +30,20 @@ namespace HaXeContext.Linters
             if (completionMode == HaxeCompletionModeEnum.FlashDevelop || haxeVersion.IsOlderThan(new SemVer("3.3.0"))) return;
             foreach (var file in files)
             {
-                var document = DocumentManager.FindDocument(file) ?? PluginBase.MainForm.OpenEditableDocument(file) as ITabbedDocument;
-                if (document == null) continue;
-                var hc = context.GetHaxeComplete(document.SciControl, new ASExpr {Position = 0}, true, HaxeCompilerService.DIAGNOSTICS);
+                var sci = DocumentManager.FindDocument(file)?.SciControl;
+                if (!File.Exists(file)) continue;
+                if (sci == null)
+                {
+                    sci = new ScintillaControl
+                    {
+                        Text = File.ReadAllText(file),
+                        ConfigurationLanguage = "haxe"
+                    };
+                }
+
+                var hc = context.GetHaxeComplete(sci, new ASExpr {Position = 0}, true, HaxeCompilerService.DIAGNOSTICS);
                 hc.GetDiagnostics((complete, results, status) =>
                 {
-                    var sci = document.SciControl;
                     if (results == null || sci == null)
                     {
                         callback(null);

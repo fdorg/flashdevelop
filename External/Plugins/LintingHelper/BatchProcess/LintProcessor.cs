@@ -33,7 +33,9 @@ namespace LintingHelper.BatchProcess
 
         public void Process(ITabbedDocument document)
         {
-            LintingManager.LintDocument(document);
+            //Linting is triggered on FileOpen. Since the batch processing dialog opens the files anyways,
+            //no linting is required here
+            //LintingManager.LintDocument(document);
         }
     }
 }

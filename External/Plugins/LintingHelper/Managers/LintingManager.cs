@@ -145,7 +145,7 @@ namespace LintingHelper.Managers
         /// </summary>
         static void ApplyLint(string[] files, string language, List<LintingResult> results)
         {
-            if (results == null)
+            if (results == null || results.Count == 0)
                 return;
 
             var fileList = new List<string>(files);
@@ -159,8 +159,8 @@ namespace LintingHelper.Managers
 
             Cache.AddResults(results);
 
-            
-            foreach (var result in Cache.GetAllResults())
+            var cachedResults = Cache.GetAllResults();
+            foreach (var result in cachedResults)
             {
                 TraceResult(result);
 
@@ -210,7 +210,7 @@ namespace LintingHelper.Managers
         {
             var line = result.File + ":" + result.Line + ": " + result.Severity.ToString() + ": " + result.Description;
 
-            TraceManager.Add(line, severityMap[result.Severity]);
+            TraceManager.AddAsync(line, severityMap[result.Severity]);
         }
     }
 }
