@@ -735,7 +735,7 @@ namespace ASCompletion.Completion
                 get
                 {
                     yield return new TestCaseData(")+ )").  Returns(" )"). SetName(prefix + "Close ) to overwrite ) after whitespace");
-                    yield return new TestCaseData("}+\n}"). Returns("\n}").SetName(prefix + "Close } to overwrite } after whitespace");
+                    yield return new TestCaseData("}+\t}"). Returns("\t}").SetName(prefix + "Close } to overwrite } after whitespace");
                     yield return new TestCaseData("]+\t]"). Returns("\t]").SetName(prefix + "Close ] to overwrite ] after whitespace");
 
                     yield return new TestCaseData("(- )").  Returns("").   SetName(prefix + "Delete ( to delete ) and the whitespace in between");
