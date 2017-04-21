@@ -12,6 +12,7 @@ namespace ASCompletion.Completion
         private string name;
         private char open;
         private char close;
+        private bool addSpace;
         private bool ignoreWhitespace;
         private Rule[] rules;
 
@@ -33,6 +34,12 @@ namespace ASCompletion.Completion
             set { close = value; }
         }
 
+        public bool AddSpace
+        {
+            get { return addSpace; }
+            set { addSpace = value; }
+        }
+
         public bool IgnoreWhitespace
         {
             get { return ignoreWhitespace; }
@@ -48,11 +55,12 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Creates an instance of <see cref="Brace"/>.
         /// </summary>
-        public Brace(string name, char open, char close, bool ignoreWhitespace, Rule[] rules)
+        public Brace(string name, char open, char close, bool addSpace, bool ignoreWhitespace, Rule[] rules)
         {
             Name = name;
             Open = open;
             Close = close;
+            AddSpace = addSpace;
             IgnoreWhitespace = ignoreWhitespace;
             Rules = rules;
         }

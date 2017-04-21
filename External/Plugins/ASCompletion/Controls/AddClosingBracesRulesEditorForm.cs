@@ -18,6 +18,7 @@ namespace ASCompletion.Controls
         private TextBox txtName;
         private TextBox txtOpenChar;
         private TextBox txtCloseChar;
+        private CheckBox cbxAddSpace;
         private CheckBox cbxIgnoreWhitespace;
         private DataGridView rulesGridView;
         private DataGridViewCheckBoxColumn not1;
@@ -66,6 +67,7 @@ namespace ASCompletion.Controls
             txtOpenChar = new TextBox();
             var lblCloseChar = new Label();
             txtCloseChar = new TextBox();
+            cbxAddSpace = new CheckBox();
             cbxIgnoreWhitespace = new CheckBox();
             rulesGridView = new DataGridView();
             not1 = new DataGridViewCheckBoxColumn();
@@ -154,6 +156,18 @@ namespace ASCompletion.Controls
             txtCloseChar.TextAlign = HorizontalAlignment.Center;
             txtCloseChar.TextChanged += TxtCloseChar_TextChanged;
             // 
+            // cbxAddSpace
+            // 
+            cbxAddSpace.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            cbxAddSpace.AutoSize = true;
+            cbxAddSpace.Location = new Point(717, 12);
+            cbxAddSpace.Name = "cbxAddSpace";
+            cbxAddSpace.Size = new Size(99, 21);
+            cbxAddSpace.TabIndex = 4;
+            cbxAddSpace.Text = "Add Space";
+            cbxAddSpace.TextAlign = ContentAlignment.MiddleRight;
+            cbxAddSpace.CheckedChanged += CbxAddSpace_CheckedChanged;
+            // 
             // cbxIgnoreWhitespace
             // 
             cbxIgnoreWhitespace.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -161,7 +175,7 @@ namespace ASCompletion.Controls
             cbxIgnoreWhitespace.Location = new Point(822, 12);
             cbxIgnoreWhitespace.Name = "cbxIgnoreWhitespace";
             cbxIgnoreWhitespace.Size = new Size(148, 21);
-            cbxIgnoreWhitespace.TabIndex = 12;
+            cbxIgnoreWhitespace.TabIndex = 5;
             cbxIgnoreWhitespace.Text = "Ignore Whitespace";
             cbxIgnoreWhitespace.TextAlign = ContentAlignment.MiddleRight;
             cbxIgnoreWhitespace.CheckedChanged += CbxIgnoreWhitespace_CheckedChanged;
@@ -195,7 +209,7 @@ namespace ASCompletion.Controls
             rulesGridView.RowTemplate.Height = 24;
             rulesGridView.ScrollBars = ScrollBars.Vertical;
             rulesGridView.Size = new Size(760, 265);
-            rulesGridView.TabIndex = 4;
+            rulesGridView.TabIndex = 6;
             rulesGridView.CellContentClick += RulesGridView_CellContentClick;
             rulesGridView.CellEndEdit += RulesGridView_CellEndEdit;
             rulesGridView.CellValueChanged += RulesGridView_CellValueChanged;
@@ -289,7 +303,7 @@ namespace ASCompletion.Controls
             btnUp.Location = new Point(174, 42);
             btnUp.Name = "btnUp";
             btnUp.Size = new Size(30, 30);
-            btnUp.TabIndex = 5;
+            btnUp.TabIndex = 7;
             btnUp.UseVisualStyleBackColor = true;
             btnUp.Click += BtnUp_Click;
             // 
@@ -298,7 +312,7 @@ namespace ASCompletion.Controls
             btnDown.Location = new Point(174, 78);
             btnDown.Name = "btnDown";
             btnDown.Size = new Size(30, 30);
-            btnDown.TabIndex = 6;
+            btnDown.TabIndex = 8;
             btnDown.UseVisualStyleBackColor = true;
             btnDown.Click += BtnDown_Click;
             // 
@@ -308,7 +322,7 @@ namespace ASCompletion.Controls
             btnAdd.Location = new Point(12, 261);
             btnAdd.Name = "btnAdd";
             btnAdd.Size = new Size(75, 30);
-            btnAdd.TabIndex = 7;
+            btnAdd.TabIndex = 9;
             btnAdd.Text = "Add";
             btnAdd.UseVisualStyleBackColor = true;
             btnAdd.Click += BtnAdd_Click;
@@ -319,7 +333,7 @@ namespace ASCompletion.Controls
             btnRemove.Location = new Point(93, 261);
             btnRemove.Name = "btnRemove";
             btnRemove.Size = new Size(75, 30);
-            btnRemove.TabIndex = 8;
+            btnRemove.TabIndex = 10;
             btnRemove.Text = "Remove";
             btnRemove.UseVisualStyleBackColor = true;
             btnRemove.Click += BtnRemove_Click;
@@ -330,7 +344,7 @@ namespace ASCompletion.Controls
             btnAddRule.Location = new Point(210, 311);
             btnAddRule.Name = "btnAddRule";
             btnAddRule.Size = new Size(30, 30);
-            btnAddRule.TabIndex = 9;
+            btnAddRule.TabIndex = 11;
             btnAddRule.Text = "";
             btnAddRule.UseVisualStyleBackColor = true;
             btnAddRule.Click += BtnAddRule_Click;
@@ -342,7 +356,7 @@ namespace ASCompletion.Controls
             btnOk.Location = new Point(724, 311);
             btnOk.Name = "btnOk";
             btnOk.Size = new Size(120, 30);
-            btnOk.TabIndex = 10;
+            btnOk.TabIndex = 12;
             btnOk.Text = "OK";
             btnOk.UseVisualStyleBackColor = true;
             btnOk.Click += BtnOk_Click;
@@ -354,7 +368,7 @@ namespace ASCompletion.Controls
             btnCancel.Location = new Point(850, 311);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(120, 30);
-            btnCancel.TabIndex = 11;
+            btnCancel.TabIndex = 13;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
             btnCancel.Click += BtnCancel_Click;
@@ -375,6 +389,7 @@ namespace ASCompletion.Controls
             Controls.Add(btnUp);
             Controls.Add(rulesGridView);
             Controls.Add(cbxIgnoreWhitespace);
+            Controls.Add(cbxAddSpace);
             Controls.Add(txtCloseChar);
             Controls.Add(lblCloseChar);
             Controls.Add(txtOpenChar);
@@ -475,6 +490,7 @@ namespace ASCompletion.Controls
             txtName.TextChanged -= TxtName_TextChanged;
             txtOpenChar.TextChanged -= TxtOpenChar_TextChanged;
             txtCloseChar.TextChanged -= TxtCloseChar_TextChanged;
+            cbxAddSpace.CheckedChanged -= CbxAddSpace_CheckedChanged;
             cbxIgnoreWhitespace.CheckedChanged -= CbxIgnoreWhitespace_CheckedChanged;
 
             if (inEdit == null)
@@ -482,6 +498,7 @@ namespace ASCompletion.Controls
                 txtName.Text = "";
                 txtOpenChar.Text = "";
                 txtCloseChar.Text = "";
+                cbxAddSpace.Checked = false;
                 cbxIgnoreWhitespace.Checked = false;
 
                 rulesGridView.Rows.Clear();
@@ -491,6 +508,7 @@ namespace ASCompletion.Controls
                 txtName.Text = inEdit.Name;
                 txtOpenChar.Text = inEdit.Open == '\0' ? "" : inEdit.Open.ToString();
                 txtCloseChar.Text = inEdit.Close == '\0' ? "" : inEdit.Close.ToString();
+                cbxAddSpace.Checked = inEdit.AddSpace;
                 cbxIgnoreWhitespace.Checked = inEdit.IgnoreWhitespace;
 
                 rulesGridView.Rows.Clear();
@@ -505,6 +523,7 @@ namespace ASCompletion.Controls
             txtName.TextChanged += TxtName_TextChanged;
             txtOpenChar.TextChanged += TxtOpenChar_TextChanged;
             txtCloseChar.TextChanged += TxtCloseChar_TextChanged;
+            cbxAddSpace.CheckedChanged += CbxAddSpace_CheckedChanged;
             cbxIgnoreWhitespace.CheckedChanged += CbxIgnoreWhitespace_CheckedChanged;
         }
 
@@ -541,6 +560,7 @@ namespace ASCompletion.Controls
                 txtName.Enabled = false;
                 txtOpenChar.Enabled = false;
                 txtCloseChar.Enabled = false;
+                cbxAddSpace.Enabled = false;
                 cbxIgnoreWhitespace.Enabled = false;
                 btnUp.Enabled = false;
                 btnDown.Enabled = false;
@@ -553,6 +573,7 @@ namespace ASCompletion.Controls
                 txtName.Enabled = true;
                 txtOpenChar.Enabled = true;
                 txtCloseChar.Enabled = true;
+                cbxAddSpace.Enabled = true;
                 cbxIgnoreWhitespace.Enabled = true;
                 btnUp.Enabled = listBox.SelectedIndex > 0;
                 btnDown.Enabled = listBox.SelectedIndex < listBox.Items.Count - 1;
@@ -597,6 +618,11 @@ namespace ASCompletion.Controls
             InvalidateListBox();
         }
 
+        private void CbxAddSpace_CheckedChanged(object sender, EventArgs e)
+        {
+            inEdit.AddSpace = cbxAddSpace.Checked;
+        }
+
         private void CbxIgnoreWhitespace_CheckedChanged(object sender, EventArgs e)
         {
             inEdit.IgnoreWhitespace = cbxIgnoreWhitespace.Checked;
@@ -635,7 +661,7 @@ namespace ASCompletion.Controls
         private void BtnRemove_Click(object sender, EventArgs e)
         {
             int selectedIndex = listBox.SelectedIndex;
-            listBox.SelectedIndex = selectedIndex - 1;
+            listBox.SelectedIndex = selectedIndex == 0 && listBox.Items.Count > 1 ? 1 : selectedIndex - 1;
             listBox.Items.RemoveAt(selectedIndex);
             listBox.Select();
         }
@@ -812,6 +838,7 @@ namespace ASCompletion.Controls
             public string Name;
             public char Open;
             public char Close;
+            public bool AddSpace;
             public bool IgnoreWhitespace;
             public List<Brace.Rule> Rules;
 
@@ -820,6 +847,7 @@ namespace ASCompletion.Controls
                 Name = "";
                 Open = '\0';
                 Close = '\0';
+                AddSpace = false;
                 IgnoreWhitespace = false;
                 Rules = new List<Brace.Rule>();
             }
@@ -829,6 +857,7 @@ namespace ASCompletion.Controls
                 Name = value.Name;
                 Open = value.Open;
                 Close = value.Close;
+                AddSpace = value.AddSpace;
                 IgnoreWhitespace = value.IgnoreWhitespace;
                 Rules = new List<Brace.Rule>(value.Rules.Length);
                 foreach (var rule in value.Rules)
@@ -839,7 +868,7 @@ namespace ASCompletion.Controls
 
             public Brace ToBrace()
             {
-                return new Brace(Name, Open, Close, IgnoreWhitespace, Rules.ToArray());
+                return new Brace(Name, Open, Close, AddSpace, IgnoreWhitespace, Rules.ToArray());
             }
 
             public override string ToString()

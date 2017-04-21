@@ -539,6 +539,10 @@ namespace ASCompletion.Completion
                 if (brace.ShouldOpen(charBefore, styleBefore, charAfter, styleAfter))
                 {
                     sci.InsertText(-1, brace.Close.ToString());
+                    if (brace.AddSpace)
+                    {
+                        sci.AddText(1, " ");
+                    }
                     return true;
                 }
             }

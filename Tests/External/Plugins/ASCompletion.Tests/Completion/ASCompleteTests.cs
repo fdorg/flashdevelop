@@ -632,11 +632,11 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("(+>").      Returns("()>").       SetName(prefix + "Open ( after 'Default' before >");
                     yield return new TestCaseData("(+a").      Returns("(a").        SetName(prefix + "Open ( after 'Default' before 'Identifier'");
 
-                    yield return new TestCaseData("{+").       Returns("{}").        SetName(prefix + "Open { after 'Default' before 'Default'");
-                    yield return new TestCaseData("{+)").      Returns("{})").       SetName(prefix + "Open { after 'Default' before )");
-                    yield return new TestCaseData("{+}").      Returns("{}}").       SetName(prefix + "Open { after 'Default' before }");
-                    yield return new TestCaseData("{+]").      Returns("{}]").       SetName(prefix + "Open { after 'Default' before ]");
-                    yield return new TestCaseData("{+>").      Returns("{}>").       SetName(prefix + "Open { after 'Default' before >");
+                    yield return new TestCaseData("{+").       Returns("{ }").       SetName(prefix + "Open { after 'Default' before 'Default'");
+                    yield return new TestCaseData("{+)").      Returns("{ })").      SetName(prefix + "Open { after 'Default' before )");
+                    yield return new TestCaseData("{+}").      Returns("{ }}").      SetName(prefix + "Open { after 'Default' before }");
+                    yield return new TestCaseData("{+]").      Returns("{ }]").      SetName(prefix + "Open { after 'Default' before ]");
+                    yield return new TestCaseData("{+>").      Returns("{ }>").      SetName(prefix + "Open { after 'Default' before >");
                     yield return new TestCaseData("{+a").      Returns("{a").        SetName(prefix + "Open { after 'Default' before 'Identifier'");
 
                     yield return new TestCaseData("[+").       Returns("[]").        SetName(prefix + "Open [ after 'Default' before 'Default'");
@@ -755,7 +755,7 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("'${-}'").    Returns("'$'").      SetName(prefix + "Delete interpolation { to delete }");
 
                     yield return new TestCaseData("'${(+}'").   Returns("'${()}'").  SetName(prefix + "Open ( inside string interpolation");
-                    yield return new TestCaseData("'${{+}'").   Returns("'${{}}'").  SetName(prefix + "Open { inside string interpolation");
+                    yield return new TestCaseData("'${{+}'").   Returns("'${{ }}'"). SetName(prefix + "Open { inside string interpolation");
                     yield return new TestCaseData("'${[+}'").   Returns("'${[]}'").  SetName(prefix + "Open [ inside string interpolation");
                     yield return new TestCaseData("'${\"+}'").  Returns("'${\"\"}'").SetName(prefix + "Open \" inside string interpolation");
                     yield return new TestCaseData("'${'+}'").   Returns("'${''}'").  SetName(prefix + "Open ' inside string interpolation");
