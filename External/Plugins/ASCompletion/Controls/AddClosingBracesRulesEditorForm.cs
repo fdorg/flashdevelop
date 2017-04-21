@@ -39,7 +39,7 @@ namespace ASCompletion.Controls
         private Button btnOk;
         private Button btnCancel;
 
-        private Brace[] value;
+        private Brace[] braces;
         private BraceInEdit inEdit;
 
         public AddClosingBracesRulesEditorForm(Brace[] value)
@@ -50,7 +50,8 @@ namespace ASCompletion.Controls
             InitializeGridView();
             InitializeListBox(value);
             ValidateControlStates();
-            this.value = value;
+
+            braces = value;
         }
 
         #region Windows Form Designer generated code
@@ -420,7 +421,7 @@ namespace ASCompletion.Controls
             logic1.ValueType = typeof(Brace.Logic);
             logic2.ValueType = typeof(Brace.Logic);
             logic3.ValueType = typeof(Brace.Logic);
-            
+
             afterStyles.ValueType = typeof(Style[]);
             beforeStyles.ValueType = typeof(Style[]);
         }
@@ -447,22 +448,41 @@ namespace ASCompletion.Controls
 
         public Brace[] Value
         {
-            get { return value; }
+            get { return braces; }
         }
 
         private void ShowRules()
         {
-            txtName.Text = inEdit.Name;
-            txtOpenChar.Text = inEdit.Open == '\0' ? "" : inEdit.Open.ToString();
-            txtCloseChar.Text = inEdit.Close == '\0' ? "" : inEdit.Close.ToString();
+            txtName.TextChanged -= TxtName_TextChanged;
+            txtOpenChar.TextChanged -= TxtOpenChar_TextChanged;
+            txtCloseChar.TextChanged -= TxtCloseChar_TextChanged;
 
-            rulesGridView.Rows.Clear();
-            foreach (var rule in inEdit.Rules)
+            if (inEdit == null)
             {
-                rulesGridView.Rows.Add(CreateRow(rule));
+                txtName.Text = "";
+                txtOpenChar.Text = "";
+                txtCloseChar.Text = "";
+
+                rulesGridView.Rows.Clear();
+            }
+            else
+            {
+                txtName.Text = inEdit.Name;
+                txtOpenChar.Text = inEdit.Open == '\0' ? "" : inEdit.Open.ToString();
+                txtCloseChar.Text = inEdit.Close == '\0' ? "" : inEdit.Close.ToString();
+
+                rulesGridView.Rows.Clear();
+                foreach (var rule in inEdit.Rules)
+                {
+                    rulesGridView.Rows.Add(CreateRow(rule));
+                }
+
+                rulesGridView.ClearSelection();
             }
 
-            rulesGridView.ClearSelection();
+            txtName.TextChanged += TxtName_TextChanged;
+            txtOpenChar.TextChanged += TxtOpenChar_TextChanged;
+            txtCloseChar.TextChanged += TxtCloseChar_TextChanged;
         }
 
         private object[] CreateRow(Brace.Rule rule)
@@ -493,24 +513,16 @@ namespace ASCompletion.Controls
 
         private void ListBox_SelectedValueChanged(object sender, EventArgs e)
         {
-            inEdit = null;
-
-            if (listBox.SelectedItem == null)
+            if (listBox.SelectedIndex == -1)
             {
-                if (listBox.Items.Count == 0)
-                {
-                    txtName.Enabled = false;
-                    txtOpenChar.Enabled = false;
-                    txtCloseChar.Enabled = false;
-                    btnUp.Enabled = false;
-                    btnDown.Enabled = false;
-                    btnRemove.Enabled = false;
-                    rulesGridView.Enabled = false;
-                }
-                else
-                {
-                    listBox.SelectedIndex = 0;
-                }
+                txtName.Enabled = false;
+                txtOpenChar.Enabled = false;
+                txtCloseChar.Enabled = false;
+                btnUp.Enabled = false;
+                btnDown.Enabled = false;
+                btnRemove.Enabled = false;
+                btnAddRule.Enabled = false;
+                rulesGridView.Enabled = false;
             }
             else
             {
@@ -520,11 +532,12 @@ namespace ASCompletion.Controls
                 btnUp.Enabled = listBox.SelectedIndex > 0;
                 btnDown.Enabled = listBox.SelectedIndex < listBox.Items.Count - 1;
                 btnRemove.Enabled = true;
+                btnAddRule.Enabled = true;
                 rulesGridView.Enabled = true;
-
-                inEdit = (BraceInEdit) listBox.SelectedItem;
-                ShowRules();
             }
+
+            inEdit = (BraceInEdit) listBox.SelectedItem;
+            ShowRules();
         }
 
         private void TxtName_TextChanged(object sender, EventArgs e)
@@ -561,22 +574,22 @@ namespace ASCompletion.Controls
 
         private void BtnUp_Click(object sender, EventArgs e)
         {
-            int index = listBox.SelectedIndex;
-            object itemAbove = listBox.Items[index - 1];
-            listBox.Items.RemoveAt(index - 1);
-            listBox.Items.Insert(index, itemAbove);
-            btnUp.Enabled = index - 1 > 0;
+            int index = listBox.SelectedIndex - 1;
+            object itemAbove = listBox.Items[index];
+            listBox.Items.RemoveAt(index);
+            listBox.Items.Insert(index + 1, itemAbove);
+            btnUp.Enabled = index > 0;
             btnDown.Enabled = true;
             txtName.Select();
         }
 
         private void BtnDown_Click(object sender, EventArgs e)
         {
-            int index = listBox.SelectedIndex;
-            object itemBelow = listBox.Items[index + 1];
-            listBox.Items.RemoveAt(index + 1);
-            listBox.Items.Insert(index, itemBelow);
-            btnDown.Enabled = index + 1 < listBox.Items.Count - 1;
+            int index = listBox.SelectedIndex + 1;
+            object itemBelow = listBox.Items[index];
+            listBox.Items.RemoveAt(index );
+            listBox.Items.Insert(index - 1, itemBelow);
+            btnDown.Enabled = index < listBox.Items.Count - 1;
             btnUp.Enabled = true;
             txtName.Select();
         }
@@ -584,16 +597,16 @@ namespace ASCompletion.Controls
         private void BtnAdd_Click(object sender, EventArgs e)
         {
             int selectedIndex = listBox.SelectedIndex;
-            listBox.Items.Insert(++selectedIndex, new BraceInEdit());
-            listBox.SelectedIndex = selectedIndex;
+            listBox.Items.Insert(selectedIndex + 1, new BraceInEdit());
+            listBox.SelectedIndex = selectedIndex + 1;
             listBox.Select();
         }
 
         private void BtnRemove_Click(object sender, EventArgs e)
         {
             int selectedIndex = listBox.SelectedIndex;
-            listBox.Items.RemoveAt(selectedIndex--);
-            listBox.SelectedIndex = selectedIndex;
+            listBox.SelectedIndex = selectedIndex - 1;
+            listBox.Items.RemoveAt(selectedIndex);
             listBox.Select();
         }
 
@@ -610,24 +623,24 @@ namespace ASCompletion.Controls
         private void BtnOk_Click(object sender, EventArgs e)
         {
             int count = 0;
-            value = new Brace[listBox.Items.Count];
+            braces = new Brace[listBox.Items.Count];
 
             foreach (BraceInEdit braceInEdit in listBox.Items)
             {
                 if (braceInEdit.Open != '\0' && braceInEdit.Close != '\0' && braceInEdit.Rules.Count > 0)
                 {
-                    value[count++] = new Brace(braceInEdit.Name, braceInEdit.Open, braceInEdit.Close, braceInEdit.Rules.ToArray());
+                    braces[count++] = new Brace(braceInEdit.Name, braceInEdit.Open, braceInEdit.Close, braceInEdit.Rules.ToArray());
                 }
             }
 
-            Array.Resize(ref value, count);
+            Array.Resize(ref braces, count);
         }
 
         private void BtnCancel_Click(object sender, EventArgs e)
         {
 
         }
-        
+
         private void RulesGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex == -1)
