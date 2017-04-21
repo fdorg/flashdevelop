@@ -309,36 +309,36 @@ namespace ASCompletion.Settings
 
         static Brace[] DEFAULT_ADD_CLOSING_BRACES_RULES =
         {
-            new Brace("Parentheses", '(', ')', new[]
+            new Brace("Parentheses", '(', ')', true, new[]
             {
                 new Brace.Rule(null, null, null, null, false, ")}]>", false, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentDoc, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Brace.Logic.Or),
                 new Brace.Rule(null, null, false, new[] { Style.Character }, true, "'", false, new[] { Style.Character }, Brace.Logic.And)
             }),
-            new Brace("Braces", '{', '}', new[]
+            new Brace("Braces", '{', '}', true, new[]
             {
                 new Brace.Rule(null, null, null, null, false, ")}]>", false, new[] { Style.Default }, Brace.Logic.Or),
                 new Brace.Rule(false, "$", false, new[] { Style.Character }, null, null, false, new[] { Style.Character }, Brace.Logic.And),
                 new Brace.Rule(null, null, false, new[] { Style.Character }, true, "'", false, new[] { Style.Character }, Brace.Logic.And)
             }),
-            new Brace("Brackets", '[', ']', new[]
+            new Brace("Brackets", '[', ']', true, new[]
             {
                 new Brace.Rule(null, null, null, null, false, ")}]>", false, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentDoc, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Brace.Logic.Or),
                 new Brace.Rule(null, null, false, new[] { Style.Character }, true, "'", false, new[] { Style.Character }, Brace.Logic.And)
             }),
-            new Brace("Generic", '<', '>', new[]
+            new Brace("Generic", '<', '>', false, new[]
             {
                 new Brace.Rule(null, null, false, new[] { Style.Type }, true, "<", true, new[] { Style.Identifier, Style.Type }, Brace.Logic.And)
             }),
-            new Brace("AS3 Vector", '<', '>', new[]
+            new Brace("AS3 Vector", '<', '>', false, new[]
             {
                 new Brace.Rule(false, ".", false, new[] { Style.Operator }, true, "<", true, new[] { Style.Identifier, Style.Type }, Brace.Logic.And)
             }),
-            new Brace("String", '"', '"', new[]
+            new Brace("String", '"', '"', false, new[]
             {
                 new Brace.Rule(null, null, null, null, null, null, false, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentDoc, Style.CommentLineDoc, Style.String, Style.Character, Style.Preprocessor, Style.Operator, Style.Attribute }, null),
                 new Brace.Rule(null, null, false, new[] { Style.Character }, true, "'", false, new[] { Style.Character }, Brace.Logic.And)
             }),
-            new Brace("Character", '\'', '\'', new[]
+            new Brace("Character", '\'', '\'', false, new[]
             {
                 new Brace.Rule(null, null, null, null, null, null, false, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentDoc, Style.CommentLineDoc, Style.String, Style.Character, Style.Preprocessor, Style.Operator, Style.Attribute }, null),
                 new Brace.Rule(null, null, false, new[] { Style.Character }, true, "'", false, new[] { Style.Character }, Brace.Logic.And)

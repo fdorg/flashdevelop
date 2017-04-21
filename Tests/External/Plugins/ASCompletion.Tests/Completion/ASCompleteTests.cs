@@ -632,6 +632,13 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("(+>").      Returns("()>").       SetName(prefix + "Open ( after 'Default' before >");
                     yield return new TestCaseData("(+a").      Returns("(a").        SetName(prefix + "Open ( after 'Default' before 'Identifier'");
 
+                    yield return new TestCaseData("{+").       Returns("{}").        SetName(prefix + "Open { after 'Default' before 'Default'");
+                    yield return new TestCaseData("{+)").      Returns("{})").       SetName(prefix + "Open { after 'Default' before )");
+                    yield return new TestCaseData("{+}").      Returns("{}}").       SetName(prefix + "Open { after 'Default' before }");
+                    yield return new TestCaseData("{+]").      Returns("{}]").       SetName(prefix + "Open { after 'Default' before ]");
+                    yield return new TestCaseData("{+>").      Returns("{}>").       SetName(prefix + "Open { after 'Default' before >");
+                    yield return new TestCaseData("{+a").      Returns("{a").        SetName(prefix + "Open { after 'Default' before 'Identifier'");
+
                     yield return new TestCaseData("[+").       Returns("[]").        SetName(prefix + "Open [ after 'Default' before 'Default'");
                     yield return new TestCaseData("[+/* */").  Returns("[]/* */").   SetName(prefix + "Open [ after 'Default' before 'Comment'");
                     yield return new TestCaseData("[+//").     Returns("[]//").      SetName(prefix + "Open [ after 'Default' before 'CommentLine'");
@@ -642,13 +649,6 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("[+]").      Returns("[]]").       SetName(prefix + "Open [ after 'Default' before ]");
                     yield return new TestCaseData("[+>").      Returns("[]>").       SetName(prefix + "Open [ after 'Default' before >");
                     yield return new TestCaseData("[+a").      Returns("[a").        SetName(prefix + "Open [ after 'Default' before 'Identifier'");
-
-                    yield return new TestCaseData("{+").       Returns("{}").        SetName(prefix + "Open { after 'Default' before 'Default'");
-                    yield return new TestCaseData("{+)").      Returns("{})").       SetName(prefix + "Open { after 'Default' before )");
-                    yield return new TestCaseData("{+}").      Returns("{}}").       SetName(prefix + "Open { after 'Default' before }");
-                    yield return new TestCaseData("{+]").      Returns("{}]").       SetName(prefix + "Open { after 'Default' before ]");
-                    yield return new TestCaseData("{+>").      Returns("{}>").       SetName(prefix + "Open { after 'Default' before >");
-                    yield return new TestCaseData("{+a").      Returns("{a").        SetName(prefix + "Open { after 'Default' before 'Identifier'");
 
                     yield return new TestCaseData("\"+").      Returns("\"\"").      SetName(prefix + "Open \" after 'Default' before 'Default'");
                     yield return new TestCaseData("\"+/* */"). Returns("\"\"/* */"). SetName(prefix + "Open \" after 'Default' before 'Comment'");
@@ -686,8 +686,8 @@ namespace ASCompletion.Completion
                 get
                 {
                     yield return new TestCaseData("()+)").     Returns("()").      SetName(prefix + "Close ) to overwrite )");
-                    yield return new TestCaseData("[]+]").     Returns("[]").      SetName(prefix + "Close ] to overwrite ]");
                     yield return new TestCaseData("{}+}").     Returns("{}").      SetName(prefix + "Close } to overwrite }");
+                    yield return new TestCaseData("[]+]").     Returns("[]").      SetName(prefix + "Close ] to overwrite ]");
                     yield return new TestCaseData("\"\"+\"").  Returns("\"\"").    SetName(prefix + "Close \" to overwrite \"");
                     yield return new TestCaseData("\"\\\"+\"").Returns("\"\\\"\"").SetName(prefix + "Close \" escaped should not overwrite \"");
                     yield return new TestCaseData("''+'").     Returns("''").      SetName(prefix + "Close ' to overwrite '");
@@ -701,8 +701,8 @@ namespace ASCompletion.Completion
                 get
                 {
                     yield return new TestCaseData("(-)").  Returns("").SetName(prefix + "Delete ( to delete )");
-                    yield return new TestCaseData("[-]").  Returns("").SetName(prefix + "Delete [ to delete ]");
                     yield return new TestCaseData("{-}").  Returns("").SetName(prefix + "Delete { to delete }");
+                    yield return new TestCaseData("[-]").  Returns("").SetName(prefix + "Delete [ to delete ]");
                     yield return new TestCaseData("\"-\"").Returns("").SetName(prefix + "Delete \" to delete \"");
                     yield return new TestCaseData("'-'").  Returns("").SetName(prefix + "Delete ' to delete '");
                     yield return new TestCaseData("<->").  Returns("").SetName(prefix + "Delete < to delete >");
@@ -734,12 +734,16 @@ namespace ASCompletion.Completion
             {
                 get
                 {
-                    yield return new TestCaseData("(-  )").  Returns("").SetName(prefix + "Delete ( to delete ) and the whitespace in between");
-                    yield return new TestCaseData("[-\t]").  Returns("").SetName(prefix + "Delete [ to delete ] and the whitespace in between");
-                    yield return new TestCaseData("{-\n}").  Returns("").SetName(prefix + "Delete { to delete } and the whitespace in between");
-                    yield return new TestCaseData("\"-  \"").Returns("").SetName(prefix + "Delete \" to delete \" and the whitespace in between");
-                    yield return new TestCaseData("'-  '").  Returns("").SetName(prefix + "Delete ' to delete ' and the whitespace in between");
-                    yield return new TestCaseData("<-  >").  Returns("").SetName(prefix + "Delete < to delete > and the whitespace in between");
+                    yield return new TestCaseData(")+ )").  Returns(" )"). SetName(prefix + "Close ) to overwrite ) after whitespace");
+                    yield return new TestCaseData("}+\n}"). Returns("\n}").SetName(prefix + "Close } to overwrite } after whitespace");
+                    yield return new TestCaseData("]+\t]"). Returns("\t]").SetName(prefix + "Close ] to overwrite ] after whitespace");
+
+                    yield return new TestCaseData("(- )").  Returns("").   SetName(prefix + "Delete ( to delete ) and the whitespace in between");
+                    yield return new TestCaseData("{-\n}"). Returns("").   SetName(prefix + "Delete { to delete } and the whitespace in between");
+                    yield return new TestCaseData("[-\t]"). Returns("").   SetName(prefix + "Delete [ to delete ] and the whitespace in between");
+                    yield return new TestCaseData("\"- \"").Returns(" \"").SetName(prefix + "Delete \" without deleting \" and the whitespace in between");
+                    yield return new TestCaseData("'- '").  Returns(" '"). SetName(prefix + "Delete ' without deleting ' and the whitespace in between");
+                    yield return new TestCaseData("<- >").  Returns(" >"). SetName(prefix + "Delete < without deleting > and the whitespace in between");
                 }
             }
 
@@ -814,7 +818,7 @@ namespace ASCompletion.Completion
                 {
                     sci.DeleteBack(); // Backspace is handled after HandleAddClosingBraces(), so mimic that behaviour
                 }
-                return sci.GetCurLine(sci.CurLineSize - 1); // Ignore the last new line character
+                return sci.GetTextRange(1, sci.TextLength - 1); // Ignore the surrounding new line characters
             }
         }
 
