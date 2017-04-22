@@ -920,10 +920,13 @@ namespace ASCompletion.Completion
                 }
                 else if (result.Type != null || result.Member != null)
                 {
-                    ClassModel oClass = result.InClass != null ? result.InClass : result.Type;
+                    ClassModel oClass = result.InClass ?? result.Type;
 
-                    if (oClass.IsVoid() && (result.Member.Flags & FlagType.Function) == 0 && (result.Member.Flags & FlagType.Namespace) == 0)
+                    if (oClass.IsVoid() && (result.Member == null || (result.Member.Flags & FlagType.Function) == 0 && (result.Member.Flags & FlagType.Namespace) == 0))
+                    {
+                        NotifyContextChanged();
                         return;
+                    }
 
                     // type details
                     FileModel file;
