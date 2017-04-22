@@ -56,6 +56,8 @@ namespace ResultsPanel
         private static Dictionary<GroupingMethod, IComparer<ListViewGroup>> groupingComparer;
         private static Dictionary<int, String> levelMap;
 
+        public string Group { get; set; }
+
         static PluginUI()
         {
             levelMap = new Dictionary<int, String>()
@@ -73,6 +75,10 @@ namespace ResultsPanel
             };
         }
 
+        public PluginUI(PluginMain pluginMain, string group) : this(pluginMain)
+        {
+            this.Group = group;
+        }
 
         public PluginUI(PluginMain pluginMain)
         {
@@ -81,7 +87,7 @@ namespace ResultsPanel
             this.autoShow = new Timer();
             this.autoShow.Interval = 300;
             this.autoShow.Tick += this.AutoShowPanel;
-            this.logCount = TraceManager.TraceLog.Count;
+            //this.logCount = TraceManager.TraceLog.Count;
             this.ignoredEntries = new Dictionary<String, Boolean>();
             this.InitializeComponent();
             this.InitializeContextMenu();
@@ -737,6 +743,10 @@ namespace ResultsPanel
             for (Int32 i = this.logCount; i < (limitMode ? this.logCount + 1000 : count); i++)
             {
                 entry = TraceManager.TraceLog[i];
+                if (entry.Group != this.Group)
+                {
+                    continue;
+                }
                 if (entry.Message != null && entry.Message.Length > 7 && entry.Message.IndexOf(':') > 0)
                 {
                     fileTest = entry.Message.TrimStart();

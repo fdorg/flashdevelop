@@ -1668,8 +1668,26 @@ namespace HaXeContext
             RunCMD(command);
             return true;
         }
+
         #endregion
 
+        #region haxelib
+
+        internal void InstallHaxelib(Dictionary<string, string> nameToVersion)
+        {
+            var haxePath = PathHelper.ResolvePath(GetCompilerPath());
+            if (!Directory.Exists(haxePath) && !File.Exists(haxePath))
+            {
+                ErrorManager.ShowInfo(TextHelper.GetString("Info.InvalidHaXePath"));
+                return;
+            }
+            if (Path.GetExtension(haxePath) == string.Empty) haxePath = Path.Combine(haxePath, "haxelib.exe");
+            nameToVersion.Select(it => $"{haxePath};install {it.Key} {it.Value}")
+                     .ToList()
+                     .ForEach(it => MainForm.CallCommand("RunProcessCaptured", it));
+        }
+
+        #endregion
     }
 
     class HaxeCompletionCache: CompletionCache

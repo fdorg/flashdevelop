@@ -8,6 +8,7 @@ using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
+using ResultsPanel.Helpers;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResultsPanel
@@ -23,7 +24,9 @@ namespace ResultsPanel
         private Settings settingObject;
         private String settingFilename;
         private PluginUI pluginUI;
-        private Image pluginImage;
+        internal Image pluginImage;
+
+        private ResultsPanelHelper panelHelper;
 
         // Shortcut management
         public const Keys CopyEntryKeys = Keys.Control | Keys.C;
@@ -123,13 +126,26 @@ namespace ResultsPanel
                     if (evnt.Action == "ResultsPanel.ClearResults")
                     {
                         e.Handled = true;
-                        this.pluginUI.ClearOutput();
+
+                        if (evnt.Data == null)
+                            this.pluginUI.ClearOutput();
+                        else
+                            this.panelHelper.Clear(evnt.Data as string);
                     }
                     else if (evnt.Action == "ResultsPanel.ShowResults")
                     {
                         e.Handled = true;
-                        this.pluginUI.AddLogEntries();
-                        this.pluginUI.DisplayOutput();
+
+                        if (evnt.Data == null)
+                        {
+                            this.pluginUI.AddLogEntries();
+                            this.pluginUI.DisplayOutput();
+                        }
+                        else
+                        {
+                            this.panelHelper.ShowResults(evnt.Data as string);
+                        }
+                        
                     }
                     break;
 
@@ -146,6 +162,7 @@ namespace ResultsPanel
                     break;
 
                 case EventType.Trace:
+                    this.panelHelper.OnTrace();
                     this.pluginUI.AddLogEntries();
                     break;
 
@@ -153,7 +170,9 @@ namespace ResultsPanel
                     TextEvent fileOpen = (TextEvent)e;
                     this.pluginUI.AddSquiggles(fileOpen.Value);
                     break;
-
+                case EventType.UIClosing:
+                    this.panelHelper.RemoveResultsPanels();
+                    break;
                 case EventType.Keys:
                     KeyEvent ke = (KeyEvent)e;
                     switch (ke.Command)
@@ -225,7 +244,8 @@ namespace ResultsPanel
         /// </summary> 
         public void AddEventHandlers()
         {
-            EventType eventMask = EventType.ProcessEnd | EventType.ProcessStart | EventType.FileOpen | EventType.Command | EventType.Trace | EventType.Keys | EventType.Shortcut | EventType.ApplySettings;
+            EventType eventMask = EventType.ProcessEnd | EventType.ProcessStart | EventType.FileOpen | EventType.Command
+                | EventType.Trace | EventType.Keys | EventType.Shortcut | EventType.ApplySettings | EventType.UIClosing;
             EventManager.AddEventHandler(this, eventMask);
         }
 
@@ -253,6 +273,8 @@ namespace ResultsPanel
             this.pluginUI = new PluginUI(this);
             this.pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
             this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockBottomAutoHide);
+
+            this.panelHelper = new ResultsPanelHelper(this);
         }
         
         /// <summary>

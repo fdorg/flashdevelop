@@ -307,14 +307,42 @@ namespace ASCompletion.Settings
               "//e.target:Event.COMPLETE", "//e.target:Event.INIT"
         };
 
-        static Braces[] DEFAULT_ADD_CLOSING_BRACES_OPTIONS =
+        static Brace[] DEFAULT_ADD_CLOSING_BRACES_RULES =
         {
-            new Braces('(',  ')',  null, null, null, null, ")]}>", Mode.Inclusive, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Mode.Inclusive, Logic.OR),
-            new Braces('[',  ']',  null, null, null, null, ")]}>", Mode.Inclusive, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Mode.Inclusive, Logic.OR),
-            new Braces('{',  '}',  null, null, null, null, ")]}>", Mode.Inclusive, new[] { Style.Default }, Mode.Inclusive, Logic.OR),
-            new Braces('"',  '"',  null, null, null, null, null,   null,           new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.String, Style.Character, Style.Operator, Style.Preprocessor, Style.Attribute }, Mode.Inclusive, null),
-            new Braces('\'', '\'', null, null, null, null, null,   null,           new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.String, Style.Character, Style.Operator, Style.Preprocessor, Style.Attribute }, Mode.Inclusive, null),
-            new Braces('<',  '>',  null, null, new[] { Style.Operator, Style.Type }, Mode.Inclusive, "<", Mode.Exclusive, new[] { Style.Identifier, Style.Type }, Mode.Exclusive, Logic.AND),
+            new Brace("Parentheses", '(', ')', new[]
+            {
+                new Brace.Rule(null, null, null, null, false, ")}]>", false, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentDoc, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Brace.Logic.Or),
+                new Brace.Rule(null, null, false, new[] { Style.Character }, true, "'", false, new[] { Style.Character }, Brace.Logic.And)
+            }),
+            new Brace("Braces", '{', '}', new[]
+            {
+                new Brace.Rule(null, null, null, null, false, ")}]>", false, new[] { Style.Default }, Brace.Logic.Or),
+                new Brace.Rule(false, "$", false, new[] { Style.Character }, null, null, false, new[] { Style.Character }, Brace.Logic.And),
+                new Brace.Rule(null, null, false, new[] { Style.Character }, true, "'", false, new[] { Style.Character }, Brace.Logic.And)
+            }),
+            new Brace("Brackets", '[', ']', new[]
+            {
+                new Brace.Rule(null, null, null, null, false, ")}]>", false, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentDoc, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Brace.Logic.Or),
+                new Brace.Rule(null, null, false, new[] { Style.Character }, true, "'", false, new[] { Style.Character }, Brace.Logic.And)
+            }),
+            new Brace("Generic", '<', '>', new[]
+            {
+                new Brace.Rule(null, null, false, new[] { Style.Type }, true, "<", true, new[] { Style.Identifier, Style.Type }, Brace.Logic.And)
+            }),
+            new Brace("AS3 Vector", '<', '>', new[]
+            {
+                new Brace.Rule(false, ".", false, new[] { Style.Operator }, true, "<", true, new[] { Style.Identifier, Style.Type }, Brace.Logic.And)
+            }),
+            new Brace("String", '"', '"', new[]
+            {
+                new Brace.Rule(null, null, null, null, null, null, false, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentDoc, Style.CommentLineDoc, Style.String, Style.Character, Style.Preprocessor, Style.Operator, Style.Attribute }, null),
+                new Brace.Rule(null, null, false, new[] { Style.Character }, true, "'", false, new[] { Style.Character }, Brace.Logic.And)
+            }),
+            new Brace("Character", '\'', '\'', new[]
+            {
+                new Brace.Rule(null, null, null, null, null, null, false, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentDoc, Style.CommentLineDoc, Style.String, Style.Character, Style.Preprocessor, Style.Operator, Style.Attribute }, null),
+                new Brace.Rule(null, null, false, new[] { Style.Character }, true, "'", false, new[] { Style.Character }, Brace.Logic.And)
+            })
         };
 
         private bool generateProtectedDeclarations = DEFAULT_GENERATE_PROTECTED;
@@ -324,7 +352,7 @@ namespace ASCompletion.Settings
         private MethodsGenerationLocations methodsGenerationLocation;
         private string prefixFields = DEFAULT_GENERATE_PREFIXFIELDS;
         private bool addClosingBraces = DEFAULT_GENERATE_ADDCLOSINGBRACES;
-        private Braces[] addClosingBracesOptions;
+        private Brace[] addClosingBracesRules;
         private bool generateScope = DEFAULT_GENERATE_SCOPE;
         private HandlerNamingConventions handlerNamingConvention = DEFAULT_HANDLER_CONVENTION;
         private bool generateDefaultModifierDeclaration;
@@ -403,13 +431,13 @@ namespace ASCompletion.Settings
             set { addClosingBraces = value; }
         }
 
-        [DisplayName("Add Closing Braces Options")]
+        [DisplayName("Add Closing Braces Rules")]
         [LocalizedCategory("ASCompletion.Category.Generation"), LocalizedDescription("ASCompletion.Description.AddClosingBracesOptions")]
-        [Editor(typeof(DescriptiveCollectionEditor<Braces>), typeof(UITypeEditor))]
-        public Braces[] AddClosingBracesOptions
+        [Editor(typeof(AddClosingBracesRulesEditor), typeof(UITypeEditor))]
+        public Brace[] AddClosingBracesRules
         {
-            get { return addClosingBracesOptions ?? DEFAULT_ADD_CLOSING_BRACES_OPTIONS; }
-            set { addClosingBracesOptions = value; }
+            get { return addClosingBracesRules ?? DEFAULT_ADD_CLOSING_BRACES_RULES; }
+            set { addClosingBracesRules = value.Length == 0 ? null : value; }
         }
 
         [DisplayName("Prefix Fields When Generating From Params")]

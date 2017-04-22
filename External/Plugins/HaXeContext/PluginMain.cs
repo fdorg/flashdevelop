@@ -8,6 +8,7 @@ using PluginCore.Managers;
 using PluginCore.Utilities;
 using PluginCore;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using AS3Context;
 using ASCompletion.Completion;
 using ASCompletion.Model;
@@ -29,6 +30,7 @@ namespace HaXeContext
         private HaXeSettings settingObject;
         private Context contextInstance;
         private String settingFilename;
+        private int logCount;
 
         #region Required Properties
         
@@ -127,36 +129,38 @@ namespace HaXeContext
                 case EventType.Command:
                     DataEvent de = e as DataEvent;
                     if (de == null) return;
-                    if (de.Action == "ProjectManager.RunCustomCommand")
+                    var action = de.Action;
+                    if (action == "ProjectManager.RunCustomCommand")
                     {
                         if (ExternalToolchain.HandleProject(PluginBase.CurrentProject))
                             e.Handled = ExternalToolchain.Run(de.Data as string);
                     }
-                    else if (de.Action == "ProjectManager.BuildingProject" || de.Action == "ProjectManager.TestingProject")
+                    else if (action == "ProjectManager.BuildingProject" || action == "ProjectManager.TestingProject")
                     {
                         var completionHandler = contextInstance.completionModeHandler as CompletionServerCompletionHandler;
                         if (completionHandler != null && !completionHandler.IsRunning())
                             completionHandler.StartServer();
                     }
-                    else if (de.Action == "ProjectManager.CleanProject")
+                    else if (action == "ProjectManager.CleanProject")
                     {
                         var project = de.Data as IProject;
                         if (ExternalToolchain.HandleProject(project))
                             e.Handled = ExternalToolchain.Clean(project);
                     }
-                    else if (de.Action == "ProjectManager.Project")
+                    else if (action == "ProjectManager.Project")
                     {
                         var project = de.Data as IProject;
                         ExternalToolchain.Monitor(project);
                     }
-                    else if (de.Action == "Context.SetHaxeEnvironment")
+                    else if (action == "Context.SetHaxeEnvironment")
                     {
                         contextInstance.SetHaxeEnvironment(de.Data as string);
                     }
-                    else if (de.Action == "ProjectManager.OpenVirtualFile")
+                    else if (action == "ProjectManager.OpenVirtualFile")
                     {
                         e.Handled = OpenVirtualFileModel((string) de.Data);
                     }
+                    else if (action == "ResultsPanel.ClearResults") logCount = 0;
                     break;
 
                 case EventType.UIStarted:
@@ -165,6 +169,29 @@ namespace HaXeContext
                     // Associate this context with haxe language
                     ASCompletion.Context.ASContext.RegisterLanguage(contextInstance, "haxe");
                     CommandFactoryProvider.Register("haxe", new HaxeCommandFactory());
+                    break;
+                case EventType.Trace:
+                    var nameToVersion = new Dictionary<string, string>();
+                    var length = TraceManager.TraceLog.Count - logCount;
+                    for (var i = 0; i < length; i++)
+                    {
+                        var item = TraceManager.TraceLog[logCount + i];
+                        var patterns = new []
+                        {
+                            "Library \\s*(?<name>[^ ]+)\\s*?(\\s*version (?<version>[^ ]+))?",
+                            "Could not find haxelib\\s*(?<name>\"[^ ]+\")?(\\s*version \"(?<version>[^ ]+)\")?"//openfl project
+                        };
+                        foreach (var pattern in patterns)
+                        {
+                            var m = Regex.Match(item.Message, pattern);
+                            if (m.Success) nameToVersion[m.Groups["name"].Value] = m.Groups["version"].Value;
+                        }
+                    }
+                    logCount = TraceManager.TraceLog.Count;
+                    if (nameToVersion.Count == 0) return;
+                    var text = TextHelper.GetString("Info.MissingLib");
+                    var result = MessageBox.Show(PluginBase.MainForm, text, string.Empty, MessageBoxButtons.OKCancel);
+                    if (result == DialogResult.OK) contextInstance.InstallHaxelib(nameToVersion);
                     break;
             }
         }
@@ -178,7 +205,7 @@ namespace HaXeContext
         /// </summary>
         public void InitBasics()
         {
-            String dataPath = Path.Combine(PathHelper.DataDir, "HaXeContext");
+            String dataPath = Path.Combine(PathHelper.DataDir, nameof(HaXeContext));
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
             this.pluginDesc = TextHelper.GetString("Info.Description");
@@ -189,6 +216,7 @@ namespace HaXeContext
         /// </summary>
         public void AddEventHandlers()
         {
+            EventManager.AddEventHandler(this, EventType.Trace, HandlingPriority.High);
             EventManager.AddEventHandler(this, EventType.UIStarted | EventType.Command);
         }
 
@@ -213,14 +241,12 @@ namespace HaXeContext
         {
             if (settingObject.InstalledSDKs == null || settingObject.InstalledSDKs.Length == 0 || PluginBase.MainForm.RefreshConfig)
             {
-                string externalSDK;
-                InstalledSDK sdk;
                 List<InstalledSDK> sdks = new List<InstalledSDK>();
-                externalSDK = Environment.ExpandEnvironmentVariables("%HAXEPATH%");
+                var externalSDK = Environment.ExpandEnvironmentVariables("%HAXEPATH%");
                 if (!String.IsNullOrEmpty(externalSDK) && Directory.Exists(PathHelper.ResolvePath(externalSDK)))
                 {
                     InstalledSDKContext.Current = this;
-                    sdk = new InstalledSDK(this);
+                    var sdk = new InstalledSDK(this);
                     sdk.Path = externalSDK;
                     sdks.Add(sdk);
                 }
