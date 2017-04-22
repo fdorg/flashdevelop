@@ -449,11 +449,20 @@ namespace ASCompletion.Completion
                 if (!(IsStringStyle(styleBefore) && IsStringStyle(styleAfter)) && !(IsCharStyle(styleBefore) && IsCharStyle(styleAfter))
                     || IsInterpolationExpr(sci, sci.CurrentPos - 1))
                 {
+                    char nextChar = sci.CurrentChar;
+                    int nextPos = sci.CurrentPos;
+
+                    while (nextChar == ' ' || nextChar == '\t') // Don't skip new line characters
+                    {
+                        nextPos++;
+                        nextChar = (char) sci.CharAt(nextPos);
+                    }
+
                     foreach (var brace in ASContext.CommonSettings.AddClosingBracesRules)
                     {
                         // Handle opening first for braces that have equal opening & closing chars
-                        if (HandleAddOpeningBrace(sci, c, brace, styleAfter, styleBefore)
-                            || HandleAddClosingBrace(sci, c, brace))
+                        if (HandleBraceOpen(sci, brace, c, styleAfter, styleBefore)
+                            || HandleBraceClose(sci, brace, c, nextChar, nextPos))
                         {
                             undo = false;
                             break;
@@ -462,9 +471,18 @@ namespace ASCompletion.Completion
                 }
                 else if (IsMatchingQuote(c, styleAfter))
                 {
+                    char nextChar = sci.CurrentChar;
+                    int nextPos = sci.CurrentPos;
+
+                    while (nextChar == ' ' || nextChar == '\t') // Don't skip new line characters
+                    {
+                        nextPos++;
+                        nextChar = (char) sci.CharAt(nextPos);
+                    }
+
                     foreach (var brace in ASContext.CommonSettings.AddClosingBracesRules)
                     {
-                        if (HandleAddClosingBrace(sci, c, brace))
+                        if (HandleBraceClose(sci, brace, c, nextChar, nextPos))
                         {
                             undo = false;
                             break;
@@ -502,7 +520,7 @@ namespace ASCompletion.Completion
 
                     foreach (var brace in ASContext.CommonSettings.AddClosingBracesRules)
                     {
-                        if (HandleRemoveBrace(sci, open, c, closePos, brace))
+                        if (HandleBraceRemove(sci, brace, open, c, closePos))
                         {
                             break;
                         }
@@ -511,16 +529,20 @@ namespace ASCompletion.Completion
             }
         }
 
-        private static bool HandleAddOpeningBrace(ScintillaControl sci, char c, Brace braces, byte styleAfter, byte styleBefore)
+        private static bool HandleBraceOpen(ScintillaControl sci, Brace brace, char open, byte styleAfter, byte styleBefore)
         {
-            if (c == braces.Open)
+            if (open == brace.Open)
             {
                 char charAfter = (char) sci.CharAt(sci.CurrentPos);
                 char charBefore = (char) sci.CharAt(sci.CurrentPos - 2);
 
-                if (braces.ShouldAutoClose(charBefore, styleBefore, charAfter, styleAfter))
+                if (brace.ShouldOpen(charBefore, styleBefore, charAfter, styleAfter))
                 {
-                    sci.InsertText(-1, braces.Close.ToString());
+                    sci.InsertText(-1, brace.Close.ToString());
+                    if (brace.AddSpace)
+                    {
+                        sci.AddText(1, " ");
+                    }
                     return true;
                 }
             }
@@ -528,24 +550,32 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        private static bool HandleAddClosingBrace(ScintillaControl sci, char c, Brace braces)
+        private static bool HandleBraceClose(ScintillaControl sci, Brace brace, char close, char next, int nextPosition)
         {
-            if (c == braces.Close && c == sci.CurrentChar)
+            if (close == brace.Close && next == brace.Close)
             {
-                sci.DeleteForward();
-                return true;
+                if (brace.ShouldClose(sci.CurrentPos, nextPosition))
+                {
+                    sci.DeleteBack();
+                    sci.AnchorPosition = nextPosition;
+                    sci.CurrentPos = nextPosition;
+                    return true;
+                }
             }
 
             return false;
         }
         
-        private static bool HandleRemoveBrace(ScintillaControl sci, char open, char close, int closePosition, Brace braces)
+        private static bool HandleBraceRemove(ScintillaControl sci, Brace brace, char open, char close, int closePosition)
         {
-            if (open == braces.Open && close == braces.Close)
+            if (open == brace.Open && close == brace.Close)
             {
-                sci.SelectionEnd = closePosition + 1;
-                sci.DeleteBack();
-                return true;
+                if (brace.ShouldRemove(sci.CurrentPos, closePosition))
+                {
+                    sci.SelectionEnd = closePosition + 1;
+                    sci.DeleteBack();
+                    return true;
+                }
             }
 
             return false;
