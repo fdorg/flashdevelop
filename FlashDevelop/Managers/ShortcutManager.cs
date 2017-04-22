@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using FlashDevelop.Helpers;
@@ -79,8 +80,20 @@ namespace FlashDevelop.Managers
 
         /// <summary>
         /// Registers a shortcut item.
+        /// <para/>
+        /// [deprecated] Use the <see cref="RegisterItem(string, ToolStripMenuItemEx)"/> method instead.
         /// </summary>
+        [Obsolete("This method has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static void RegisterItem(string key, ToolStripMenuItem item)
+        {
+            registeredItems.Add(/*key, */new ShortcutItem(key, item));
+        }
+
+        /// <summary>
+        /// Registers a shortcut item.
+        /// </summary>
+        public static void RegisterItem(string key, ToolStripMenuItemEx item)
         {
             registeredItems.Add(/*key, */new ShortcutItem(key, item));
         }
@@ -387,8 +400,10 @@ namespace FlashDevelop.Managers
         internal bool SupportsExtended;
         internal ShortcutKeys Default;
         internal ShortcutKeys Custom;
-        internal ToolStripMenuItem Item;
         internal ToolStripMenuItemEx ItemEx;
+
+        [Obsolete("Type is ToolStripMenuItemEx")]
+        internal ToolStripMenuItem Item;
 
         internal ShortcutItem(string id, ShortcutKeys keys, bool supportsExtended)
         {
@@ -397,6 +412,11 @@ namespace FlashDevelop.Managers
             SupportsExtended = supportsExtended;
         }
 
+        /// <summary>
+        /// [deprecated] Use the <see cref="ShortcutItem(string, ToolStripMenuItemEx)"/> constructor instead.
+        /// </summary>
+        [Obsolete("This constructor has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         internal ShortcutItem(string id, ToolStripMenuItem item)
         {
             Id = id;
@@ -404,6 +424,15 @@ namespace FlashDevelop.Managers
             ItemEx = item as ToolStripMenuItemEx;
             SupportsExtended = ItemEx != null;
             Default = Custom = SupportsExtended ? ItemEx.ShortcutKeys : (ShortcutKeys) Item.ShortcutKeys;
+        }
+
+        internal ShortcutItem(string id, ToolStripMenuItemEx item)
+        {
+            Id = id;
+            Item = item;
+            ItemEx = item;
+            SupportsExtended = true;
+            Default = Custom = ItemEx.ShortcutKeys;
         }
 
         public override string ToString()

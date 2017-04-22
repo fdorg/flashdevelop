@@ -37,7 +37,7 @@ namespace PluginCore.Managers
         #endregion
 
         #region Methods
-        
+
         /// <summary>
         /// Updates the <see cref="ShortcutKeys"/> value with the specified input <see cref="Keys"/> value,
         /// and returns whether the updated <paramref name="shortcutKeys"/> is extended.

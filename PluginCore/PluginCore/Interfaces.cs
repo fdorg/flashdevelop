@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using PluginCore.Controls;
 using PluginCore.Localization;
 using ScintillaNet;
 using ScintillaNet.Configuration;
@@ -157,8 +159,12 @@ namespace PluginCore
         /// </summary>
         void ClearIgnoredKeys();
         /// <summary>
-        /// [Deprecated] Registers a new menu item with the shortcut manager.
+        /// Registers a new menu item with the shortcut manager.
+        /// <para/>
+        /// [deprecated] Use the <see cref="RegisterShortcutItem(string, ShortcutKeys, bool)"/> method instead.
         /// </summary>
+        [Obsolete("This method has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         void RegisterShortcutItem(String id, Keys keys);
         /// <summary>
         /// Registers a new menu item with the shortcut manager.
@@ -166,8 +172,16 @@ namespace PluginCore
         void RegisterShortcutItem(String id, ShortcutKeys keys, bool supportsExtended = true);
         /// <summary>
         /// Registers a new menu item with the shortcut manager.
+        /// <para/>
+        /// [deprecated] Use the <see cref="RegisterShortcutItem(string, ToolStripMenuItemEx)"/> method instead.
         /// </summary>
+        [Obsolete("This method has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         void RegisterShortcutItem(String id, ToolStripMenuItem item);
+        /// <summary>
+        /// Registers a new menu item with the shortcut manager.
+        /// </summary>
+        void RegisterShortcutItem(String id, ToolStripMenuItemEx item);
         /// <summary>
         /// Registers a new secondary menu item with the shortcut manager.
         /// </summary>
@@ -230,12 +244,20 @@ namespace PluginCore
         /// </summary>
         String ProcessArgString(String args);
         /// <summary>
-        /// [Deprecated] Gets the specified item's shortcut keys.
+        /// Gets the specified item's shortcut keys.
+        /// <para/>
+        /// [deprecated] Use the <see cref="GetShortcutKeys(string)"/> method instead.
         /// </summary>
+        [Obsolete("This method has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         Keys GetShortcutItemKeys(String id);
         /// <summary>
-        /// [Deprecated] Gets the specified item's id.
+        /// Gets the specified item's id.
+        /// <para/>
+        /// [deprecated] Use the <see cref="GetShortcutId(ShortcutKeys)"/> method instead.
         /// </summary>
+        [Obsolete("This method has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         String GetShortcutItemId(Keys keys);
         /// <summary>
         /// Gets the specified item's shortcut keys.
@@ -461,12 +483,13 @@ namespace PluginCore
         /// </summary>
         Boolean RefreshConfig { get; }
         /// <summary>
-        /// [Deprecated] Gets the ignored keys.
+        /// Gets the ignored keys.
         /// <para/>
-        /// This method is deprecated and is preserved only for backward-compatibility purposes,
-        /// and will always return an empty <see cref="List{T}"/>.
-        /// Instead, use <see cref="AddIgnoredKeys"/>.
+        /// [deprecated] This property always returns an empty <see cref="List{T}"/>.
+        /// Use the <see cref="AddIgnoredKeys"/> method instead.
         /// </summary>
+        [Obsolete("This property has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         List<Keys> IgnoredKeys { get; }
         /// <summary>
         /// Gets the version of the application.

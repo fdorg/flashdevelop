@@ -257,10 +257,10 @@ namespace ResultsPanel
             String title = TextHelper.GetString("Label.ViewMenuItem");
             ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
             ToolStripMenuItemEx viewItem = new ToolStripMenuItemEx(title, this.pluginImage, new EventHandler(this.OpenPanel));
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowNextResult", this.pluginUI.nextEntryContextMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowPrevResult", this.pluginUI.previousEntryContextMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearResults", this.pluginUI.clearEntriesContextMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearIgnoredEntries", this.pluginUI.clearIgnoredEntriesContextMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowNextResult", (ToolStripMenuItemEx) this.pluginUI.nextEntryContextMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowPrevResult", (ToolStripMenuItemEx) this.pluginUI.previousEntryContextMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearResults", (ToolStripMenuItemEx) this.pluginUI.clearEntriesContextMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearIgnoredEntries", (ToolStripMenuItemEx) this.pluginUI.clearIgnoredEntriesContextMenuItem);
             PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowResults", viewItem);
             viewMenu.DropDownItems.Add(viewItem);
         }

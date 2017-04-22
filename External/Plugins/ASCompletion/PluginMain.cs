@@ -515,17 +515,17 @@ namespace ASCompletion
 
                                     // alternative to default shortcuts
                                     case "ASCompletion.CtrlSpace":
-                                        ASComplete.OnShortcut(Keys.Control | Keys.Space, ASContext.CurSciControl);
+                                        ASComplete.OnShortcut((ShortcutKeys) (Keys.Control | Keys.Space), ASContext.CurSciControl);
                                         e.Handled = true;
                                         break;
 
                                     case "ASCompletion.CtrlShiftSpace":
-                                        ASComplete.OnShortcut(Keys.Control | Keys.Shift | Keys.Space, ASContext.CurSciControl);
+                                        ASComplete.OnShortcut((ShortcutKeys) (Keys.Control | Keys.Shift | Keys.Space), ASContext.CurSciControl);
                                         e.Handled = true;
                                         break;
 
                                     case "ASCompletion.CtrlAltSpace":
-                                        ASComplete.OnShortcut(Keys.Control | Keys.Alt | Keys.Space, ASContext.CurSciControl);
+                                        ASComplete.OnShortcut((ShortcutKeys) (Keys.Control | Keys.Alt | Keys.Space), ASContext.CurSciControl);
                                         e.Handled = true;
                                         break;
 

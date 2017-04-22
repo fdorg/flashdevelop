@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using FlashDevelop.Utilities;
 using PluginCore;
+using PluginCore.Controls;
 using ScintillaNet.Configuration;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -305,6 +306,11 @@ namespace FlashDevelop
         }
 
         public string GetShortcutId(ShortcutKeys keys)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RegisterShortcutItem(string id, ToolStripMenuItemEx item)
         {
             throw new NotImplementedException();
         }

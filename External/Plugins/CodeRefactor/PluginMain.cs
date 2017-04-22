@@ -311,15 +311,15 @@ namespace CodeRefactor
         /// </summary>
         private void RegisterMenuItems()
         {
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.Rename", this.refactorMainMenu.RenameMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.Move", this.refactorMainMenu.MoveMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.ExtractMethod", this.refactorMainMenu.ExtractMethodMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.ExtractLocalVariable", this.refactorMainMenu.ExtractLocalVariableMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.GenerateDelegateMethods", this.refactorMainMenu.DelegateMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.OrganizeImports", this.refactorMainMenu.OrganizeMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.TruncateImports", this.refactorMainMenu.TruncateMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.CodeGenerator", this.refactorMainMenu.CodeGeneratorMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.BatchProcess", this.refactorMainMenu.BatchMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.Rename", (ToolStripMenuItemEx) this.refactorMainMenu.RenameMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.Move", (ToolStripMenuItemEx) this.refactorMainMenu.MoveMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.ExtractMethod", (ToolStripMenuItemEx) this.refactorMainMenu.ExtractMethodMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.ExtractLocalVariable", (ToolStripMenuItemEx) this.refactorMainMenu.ExtractLocalVariableMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.GenerateDelegateMethods", (ToolStripMenuItemEx) this.refactorMainMenu.DelegateMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.OrganizeImports", (ToolStripMenuItemEx) this.refactorMainMenu.OrganizeMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.TruncateImports", (ToolStripMenuItemEx) this.refactorMainMenu.TruncateMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.CodeGenerator", (ToolStripMenuItemEx) this.refactorMainMenu.CodeGeneratorMenuItem);
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.BatchProcess", (ToolStripMenuItemEx) this.refactorMainMenu.BatchMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.Rename", this.refactorContextMenu.RenameMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.Move", this.refactorContextMenu.MoveMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.ExtractMethod", this.refactorContextMenu.ExtractMethodMenuItem);

@@ -5,6 +5,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -241,8 +242,12 @@ namespace ASCompletion.Completion
         }
 
         /// <summary>
-        /// [Deprecated] Handle shortcuts.
+        /// Handle shortcuts.
+        /// <para/>
+        /// [deprecated] Use the <see cref="OnShortcut(ShortcutKeys, ScintillaControl)"/> method instead.
         /// </summary>
+        [Obsolete("This method has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static bool OnShortcut(Keys keys, ScintillaControl sci)
         {
             return OnShortcut((ShortcutKeys) keys, sci);

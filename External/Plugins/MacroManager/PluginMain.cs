@@ -379,37 +379,29 @@ namespace MacroManager
             this.autoRun = false;
         }
         /// <summary>
-        /// [Deprecated]
+        /// [deprecated] Use the <see cref="Macro(string, string[], string, ShortcutKeys)"/> constructor instead.
         /// </summary>
+        [Obsolete("This constructor has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public Macro(String label, String[] entries, String image, Keys shortcut)
+            : this(label, entries, image, (ShortcutKeys) shortcut)
         {
-            this.label = label;
-            this.image = image;
-            this.entries = entries;
-            this.shortcut = (ShortcutKeys) shortcut;
-            this.showInToolbar = false;
-            this.autoRun = false;
+
         }
         public Macro(String label, String[] entries, String image, ShortcutKeys shortcut)
+            : this(label, entries, image, shortcut, false, false)
         {
-            this.label = label;
-            this.image = image;
-            this.entries = entries;
-            this.shortcut = shortcut;
-            this.showInToolbar = false;
-            this.autoRun = false;
+            
         }
         /// <summary>
-        /// [Deprecated]
+        /// [deprecated] Use the <see cref="Macro(string, string[], string, ShortcutKeys, bool, bool) "/> constructor instead.
         /// </summary>
+        [Obsolete("This constructor has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public Macro(String label, String[] entries, String image, Keys shortcut, Boolean autoRun, Boolean showInToolbar)
+            : this(label, entries, image, (ShortcutKeys) shortcut, autoRun, showInToolbar)
         {
-            this.label = label;
-            this.image = image;
-            this.entries = entries;
-            this.shortcut = (Keys) shortcut;
-            this.showInToolbar = showInToolbar;
-            this.autoRun = autoRun;
+
         }
         public Macro(String label, String[] entries, String image, ShortcutKeys shortcut, Boolean autoRun, Boolean showInToolbar) 
         {
@@ -492,13 +484,15 @@ namespace MacroManager
         }
 
         /// <summary>
-        /// [Deprecated]
+        /// [deprecated] Use the <see cref="ShortcutKeys"/> property instead.
         /// </summary>
         [Browsable(false)]
+        [Obsolete("This property has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public Keys Shortcut
         {
-            get { return (Keys) this.shortcut; }
-            set { this.shortcut = (ShortcutKeys) value; }
+            get { return this.ShortcutKeys; }
+            set { this.ShortcutKeys = value; }
         }
 
         /// <summary>

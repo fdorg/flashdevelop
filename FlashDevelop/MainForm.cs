@@ -256,8 +256,13 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// [Deprecated] Gets the IgnoredKeys
+        /// Gets the ignored keys.
+        /// <para/>
+        /// [deprecated] This property always returns an empty <see cref="List{T}"/>.
+        /// Use the <see cref="AddIgnoredKeys"/> property instead.
         /// </summary>
+        [Obsolete("This property has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public List<Keys> IgnoredKeys
         {
             get { return new List<Keys>(); }
@@ -2126,16 +2131,24 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// [Deprecated] Gets the specified item's shortcut keys.
+        /// Gets the specified item's shortcut keys.
+        /// <para/>
+        /// [deprecated] Use the <see cref="GetShortcutKeys(string)"/> method instead.
         /// </summary>
+        [Obsolete("This method has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public Keys GetShortcutItemKeys(String id)
         {
             return GetShortcutKeys(id);
         }
 
         /// <summary>
-        /// [Deprecated] Gets the specified item's id.
+        /// Gets the specified item's id.
+        /// <para/>
+        /// [deprecated] Use the <see cref="GetShortcutId(ShortcutKeys)"/> method instead.
         /// </summary>
+        [Obsolete("This method has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public String GetShortcutItemId(Keys keys)
         {
             return GetShortcutId(keys);
@@ -2192,13 +2205,16 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// [Deprecated] Registers a new menu item with the shortcut manager
+        /// Registers a new menu item with the shortcut manager.
+        /// <para/>
+        /// [deprecated] Use the <see cref="RegisterShortcutItem(string, ShortcutKeys, bool)"/> method instead.
         /// </summary>
+        [Obsolete("This method has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public void RegisterShortcutItem(String id, Keys keys)
         {
             RegisterShortcutItem(id, keys, false);
         }
-
 
         /// <summary>
         /// Registers a new menu item with the shortcut manager
@@ -2209,9 +2225,21 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Registers a new menu item with the shortcut manager
+        /// Registers a new menu item with the shortcut manager.
+        /// <para/>
+        /// [deprecated] Use the <see cref="RegisterShortcutItem(string, ToolStripMenuItemEx)"/> method instead.
         /// </summary>
+        [Obsolete("This method has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public void RegisterShortcutItem(String id, ToolStripMenuItem item)
+        {
+            ShortcutManager.RegisterItem(id, item);
+        }
+
+        /// <summary>
+        /// Registers a new menu item with the shortcut manager.
+        /// </summary>
+        public void RegisterShortcutItem(String id, ToolStripMenuItemEx item)
         {
             ShortcutManager.RegisterItem(id, item);
         }

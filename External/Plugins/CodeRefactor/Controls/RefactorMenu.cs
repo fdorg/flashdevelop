@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using ASCompletion;
@@ -53,46 +54,55 @@ namespace CodeRefactor.Controls
         /// <summary>
         /// Accessor to the BatchMenuItem
         /// </summary>
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem BatchMenuItem { get; }
 
         /// <summary>
         /// Accessor to the RenameMenuItem
         /// </summary>
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem RenameMenuItem { get; }
 
         /// <summary>
         /// Accessor to the MoveMenuItem
         /// </summary>
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem MoveMenuItem { get; }
 
         /// <summary>
         /// Accessor to the TruncateMenuItem
         /// </summary>
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem TruncateMenuItem { get; }
 
         /// <summary>
         /// Accessor to the OrganizeMenuItem
         /// </summary>
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem OrganizeMenuItem { get; }
 
         /// <summary>
         /// Accessor to the ExtractMethodMenuItem
         /// </summary>
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem ExtractMethodMenuItem { get; }
 
         /// <summary>
         /// Accessor to the DelegateMenuItem
         /// </summary>
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem DelegateMenuItem { get; }
 
         /// <summary>
         /// Accessor to the ExtractLocalVariableMenuItem
         /// </summary>
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem ExtractLocalVariableMenuItem { get; }
 
         /// <summary>
         /// Accessor to the CodeGeneratorMenuItem
         /// </summary>
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem CodeGeneratorMenuItem { get; }
 
         private static Image Overlay(Image source, string overlayData)

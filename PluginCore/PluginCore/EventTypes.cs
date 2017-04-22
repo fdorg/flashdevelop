@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace PluginCore
@@ -78,11 +79,12 @@ namespace PluginCore
         private Boolean processKey;
 
         /// <summary>
-        /// [Deprecated] Gets the <see cref="System.Windows.Forms.Keys"/> value associated with this <see cref="KeyEvent"/>.
+        /// Gets the <see cref="System.Windows.Forms.Keys"/> value associated with this <see cref="KeyEvent"/>.
         /// <para/>
-        /// This property is deprecated and is preserved only for backward-compatibility purposes.
-        /// Use <see cref="Keys"/> property instead.
+        /// [deprecated] Use the <see cref="Keys"/> property instead.
         /// </summary>
+        [Obsolete("This property has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public Keys Value
         {
             get { return this.value; }
@@ -118,8 +120,12 @@ namespace PluginCore
         }
 
         /// <summary>
-        /// [Deprecated] Initializes a new instance of the <see cref="KeyEvent"/> class.
+        /// Initializes a new instance of the <see cref="KeyEvent"/> class.
+        /// <para/>
+        /// [deprecated] Use the <see cref="KeyEvent(EventType, ShortcutKeys)"/> constructor instead.
         /// </summary>
+        [Obsolete("This constructor has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public KeyEvent(EventType type, Keys value) : this(type, (ShortcutKeys) value) { }
 
         /// <summary>

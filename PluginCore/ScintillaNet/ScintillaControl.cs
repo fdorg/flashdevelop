@@ -5293,8 +5293,10 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// [Deprecated]
+        /// [deprecated] Use the <see cref="UpdateShortcut(string, ShortcutKeys)"/> method instead.
         /// </summary>
+        [Obsolete("This method has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static void UpdateShortcut(String id, Keys shortcut)
         {
             UpdateShortcut(id, (ShortcutKeys) shortcut);

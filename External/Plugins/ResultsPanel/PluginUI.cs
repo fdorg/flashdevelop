@@ -19,11 +19,17 @@ namespace ResultsPanel
 {
     public class PluginUI : DockPanelControl
     {
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem clearEntriesContextMenuItem;
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem copyEntryContextMenuItem;
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem ignoreEntryContextMenuItem;
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem clearIgnoredEntriesContextMenuItem;
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem nextEntryContextMenuItem;
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem previousEntryContextMenuItem;
 
         private ListViewEx entriesView;
