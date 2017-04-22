@@ -238,8 +238,7 @@ namespace ASCompletion.Completion
                 }
 
                 // "Generate fields from parameters" suggestion
-                if (found.member != null
-                    && (found.member.Flags & FlagType.Function) > 0
+                if ((found.member.Flags & FlagType.Function) > 0
                     && found.member.Parameters != null && (found.member.Parameters.Count > 0)
                     && resolve.Member != null && (resolve.Member.Flags & FlagType.ParameterVar) > 0)
                 {
@@ -252,9 +251,9 @@ namespace ASCompletion.Completion
                 if (resolve.Member != null
                     && resolve.Member.Name == found.member.Name
                     && line == found.member.LineFrom
-                    && ((found.member.Flags & FlagType.Function) > 0 
-                            || (found.member.Flags & FlagType.Getter) > 0
-                            || (found.member.Flags & FlagType.Setter) > 0)
+                    && ((found.member.Flags & FlagType.Function) > 0
+                        || (found.member.Flags & FlagType.Getter) > 0
+                        || (found.member.Flags & FlagType.Setter) > 0)
                     && found.inClass != ClassModel.VoidClass
                     && found.inClass.Implements != null
                     && found.inClass.Implements.Count > 0)
@@ -1149,7 +1148,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        ChangeConstructorDecl(sci, member, inClass);
+                        ChangeConstructorDecl(sci, inClass);
                     }
                     finally
                     {
@@ -1516,14 +1515,14 @@ namespace ASCompletion.Completion
             ChangeDecl(sci, funcResult.Member, functionParameters);
         }
 
-        private static void ChangeConstructorDecl(ScintillaControl sci, MemberModel member, ClassModel inClass)
+        private static void ChangeConstructorDecl(ScintillaControl sci, ClassModel inClass)
         {
             int wordPos = sci.WordEndPosition(sci.CurrentPos, true);
             List<FunctionParameter> functionParameters = ParseFunctionParameters(sci, wordPos);
             ASResult funcResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
 
             if (funcResult == null || funcResult.Type == null) return;
-            if (funcResult.Type != null && !funcResult.Type.Equals(inClass))
+            if (!funcResult.Type.Equals(inClass))
             {
                 AddLookupPosition();
                 lookupPosition = -1;
@@ -1993,7 +1992,7 @@ namespace ASCompletion.Completion
                 }
                 else if (arrCount == 0 && parCount == 0 && genCount == 0 && braCount == 0 && dQuotes == 0 && sQuotes == 0 && !characters.Contains(c) && c != '.')
                 {
-                    if (hasDot && c <= ' ' && i > 0)
+                    if (hasDot && c <= ' ')
                     {
                         while (i > 0)
                         {
