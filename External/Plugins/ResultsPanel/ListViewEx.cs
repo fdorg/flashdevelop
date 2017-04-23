@@ -42,12 +42,6 @@ namespace ResultsPanel
 
         public void AddArrowImages()
         {
-            Image upArrow = PluginBase.MainForm.GetAutoAdjustedImage(PluginBase.MainForm.FindImage16("495"));
-            Image downArrow = PluginBase.MainForm.GetAutoAdjustedImage(PluginBase.MainForm.FindImage16("493"));
-
-            this.SmallImageList.Images.Add(upArrow);
-            this.SmallImageList.Images.Add(downArrow);
-
             upArrowIndex = this.SmallImageList.Images.Count - 2;
             downArrowIndex = upArrowIndex + 1;
         }

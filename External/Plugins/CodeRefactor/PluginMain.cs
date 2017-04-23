@@ -41,12 +41,7 @@ namespace CodeRefactor
         TreeView projectTreeView;
 
         public const string TraceGroup = "CodeRefactor";
-
-        static PluginMain()
-        {
-            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetStringWithoutMnemonics("CodeRefactor.Label.Refactor"), null);
-        }
-
+        
         #region Required Properties
 
         /// <summary>
@@ -262,6 +257,9 @@ namespace CodeRefactor
             BatchProcessManager.AddBatchProcessor(new BatchProcessors.OrganizeImportsProcessor());
             BatchProcessManager.AddBatchProcessor(new BatchProcessors.TruncateImportsProcessor());
             BatchProcessManager.AddBatchProcessor(new BatchProcessors.ConsistentEOLProcessor());
+
+            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetStringWithoutMnemonics("Label.Refactor"), null);
+            TraceManager.RegisterTraceGroup(FindAllReferences.TraceGroup, TextHelper.GetString("Label.FindAllReferencesResult"), null);
         }
 
         /// <summary>

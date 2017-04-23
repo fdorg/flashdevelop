@@ -24,7 +24,7 @@ namespace PluginCore.Managers
             asyncTimer = new Timer();
             asyncTimer.Interval = 200;
             asyncTimer.AutoReset = false;
-            asyncTimer.Elapsed += new ElapsedEventHandler(asyncTimerElapsed);
+            asyncTimer.Elapsed += new ElapsedEventHandler(AsyncTimer_Elapsed);
         }
 
         /// <summary>
@@ -46,12 +46,10 @@ namespace PluginCore.Managers
         /// <summary>
         /// Adds a new entry to the log.
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="state"></param>
-        /// <param name="group">Used to group the items</param>
-        public static void Add(string message, int state, string group)
+        /// <param name="groupId">The id of the trace group to output to.</param>
+        public static void Add(string message, int state, string groupId)
         {
-            Add(new TraceItem(message, state, group));
+            Add(new TraceItem(message, state, groupId));
         }
 
         /// <summary>
@@ -102,28 +100,32 @@ namespace PluginCore.Managers
         }
 
         /// <summary>
-        /// Associates a title and an icon with a trace group
+        /// Registers a trace group with a title and an icon.
         /// </summary>
-        /// <param name="group">The id used to determine the group traces</param>
-        /// <param name="title">The title of the group</param>
-        /// <param name="icon">An icon for the group. If this is null, the default icon is used</param>
-        public static void RegisterTraceGroup(string group, string title, Image icon)
+        /// <param name="groupId">The id used to determine the trace group.</param>
+        /// <param name="title">The title to be displayed in the panel.</param>
+        /// <param name="icon">The icon to be displayed in the panel. If this is <see langword="null"/>, the default icon is used.</param>
+        public static void RegisterTraceGroup(string groupId, string title, Image icon = null)
         {
-            traceGroups.Add(group, new TraceGroup(group, title, icon));
+            if (groupId == null) throw new ArgumentNullException(nameof(groupId));
+            traceGroups.Add(groupId, new TraceGroup(groupId, title, icon));
         }
 
-        public static TraceGroup GetTraceGroup(string group)
+        /// <summary>
+        /// Returns the <see cref="TraceGroup"/> with the specified group id, or <see langword="null"/>.
+        /// </summary>
+        /// <param name="groupId">The id of the trace group.</param>
+        public static TraceGroup GetTraceGroup(string groupId)
         {
-            if (group == null) return null;
-
+            if (groupId == null) throw new ArgumentNullException(nameof(groupId));
             TraceGroup value;
-            return traceGroups.TryGetValue(group, out value) ? value : null;
+            return traceGroups.TryGetValue(groupId, out value) ? value : null;
         }
 
         /// <summary>
         /// After a delay, synchronizes the traces
         /// </summary>
-        private static void asyncTimerElapsed(Object sender, ElapsedEventArgs e)
+        private static void AsyncTimer_Elapsed(Object sender, ElapsedEventArgs e)
         {
             lock (asyncQueue)
             {
@@ -173,8 +175,8 @@ namespace PluginCore.Managers
     public class TraceGroup
     {
         public string Id { get; }
-        public string Title { get; set; }
-        public Image Icon { get; set; }
+        public string Title { get; }
+        public Image Icon { get; }
 
         public TraceGroup(string id, string title, Image icon)
         {

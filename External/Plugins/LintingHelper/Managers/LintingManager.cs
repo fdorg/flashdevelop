@@ -9,7 +9,7 @@ namespace LintingHelper.Managers
 {
     public static class LintingManager
     {
-        const string TraceGroup = "LintingManager";
+        internal const string TraceGroup = "LintingManager";
 
         static readonly Dictionary<string, List<ILintProvider>> linters = new Dictionary<string, List<ILintProvider>>();
 
@@ -19,12 +19,7 @@ namespace LintingHelper.Managers
             {LintingSeverity.Error, (int) TraceType.Error},
             {LintingSeverity.Warning, (int) TraceType.Warning}
         };
-
-        static LintingManager()
-        {
-            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetStringWithoutMnemonics("LintingManager.Label.LintingResults"), null);
-        }
-
+        
         internal static LintingCache Cache = new LintingCache();
 
         /// <summary>

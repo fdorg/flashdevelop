@@ -19,17 +19,12 @@ namespace ResultsPanel
         private String pluginHelp = "www.flashdevelop.org/community/";
         private String pluginDesc = "Adds a results panel for console info to FlashDevelop";
         private String pluginAuth = "FlashDevelop Team";
-        private DockContent pluginPanel;
+        //private DockContent pluginPanel;
         private Settings settingObject;
         private String settingFilename;
-        private PluginUI pluginUI;
+        internal PluginUI pluginUI;
         internal Image pluginImage;
-
-        private ResultsPanelHelper panelHelper;
-
-        // Shortcut management
-        public const Keys CopyEntryKeys = Keys.Control | Keys.C;
-        public const Keys IgnoreEntryKeys = Keys.Delete;
+        internal PanelContextMenu contextMenuStrip;
 
         #region Required Properties
 
@@ -101,8 +96,8 @@ namespace ResultsPanel
             this.InitBasics();
             this.LoadSettings();
             this.AddEventHandlers();
-            this.CreatePluginPanel();
             this.CreateMenuItem();
+            this.CreatePluginPanel();
         }
 
         /// <summary>
@@ -121,35 +116,23 @@ namespace ResultsPanel
             switch (e.Type)
             {
                 case EventType.Command:
-                    DataEvent evnt = (DataEvent)e;
-                    if (evnt.Action == "ResultsPanel.ClearResults")
+                    var de = (DataEvent) e;
+                    switch (de.Action)
                     {
-                        e.Handled = true;
+                        case "ResultsPanel.ClearResults":
+                            de.Handled = true;
+                            ResultsPanelHelper.ClearResults((string) de.Data);
+                            break;
 
-                        if (evnt.Data == null)
-                            this.pluginUI.ClearOutput();
-                        else
-                            this.panelHelper.Clear(evnt.Data as string);
-                    }
-                    else if (evnt.Action == "ResultsPanel.ShowResults")
-                    {
-                        e.Handled = true;
-
-                        if (evnt.Data == null)
-                        {
-                            this.pluginUI.AddLogEntries();
-                            this.pluginUI.DisplayOutput();
-                        }
-                        else
-                        {
-                            this.panelHelper.ShowResults(evnt.Data as string);
-                        }
-                        
+                        case "ResultsPanel.ShowResults":
+                            e.Handled = true;
+                            ResultsPanelHelper.ShowResults((string) de.Data);
+                            break;
                     }
                     break;
 
                 case EventType.ApplySettings:
-                    this.pluginUI.ApplySettings();
+                    ResultsPanelHelper.ApplySettings();
                     break;
 
                 case EventType.ProcessStart:
@@ -161,38 +144,38 @@ namespace ResultsPanel
                     break;
 
                 case EventType.Trace:
-                    this.panelHelper.OnTrace();
-                    this.pluginUI.AddLogEntries();
+                    ResultsPanelHelper.OnTrace();
                     break;
 
                 case EventType.FileOpen:
-                    TextEvent fileOpen = (TextEvent)e;
-                    this.pluginUI.AddSquiggles(fileOpen.Value);
+                    ResultsPanelHelper.OnFileOpen((TextEvent) e);
                     break;
+
                 case EventType.UIClosing:
-                    this.panelHelper.RemoveResultsPanels();
+                    ResultsPanelHelper.RemoveResultsPanels();
                     break;
+
                 case EventType.Keys:
-                    KeyEvent ke = (KeyEvent)e;
+                    KeyEvent ke = (KeyEvent) e;
                     switch (PluginBase.MainForm.GetShortcutItemId(ke.Value))
                     {
                         case null:
                             break;
                         case "ResultsPanel.ShowNextResult":
-                            ke.Handled = pluginUI.NextEntry();
+                            ke.Handled = ResultsPanelHelper.ActiveUI.NextEntry();
                             break;
                         case "ResultsPanel.ShowPrevResult":
-                            ke.Handled = pluginUI.PreviousEntry();
+                            ke.Handled = ResultsPanelHelper.ActiveUI.PreviousEntry();
                             break;
                         case "ResultsPanel.ClearResults":
-                            ke.Handled = pluginUI.ClearOutput();
+                            ke.Handled = ResultsPanelHelper.ActiveUI.ClearOutput();
                             break;
                         case "ResultsPanel.ClearIgnoredEntries":
-                            ke.Handled = pluginUI.ClearIgnoredEntries();
+                            ke.Handled = ResultsPanelHelper.ActiveUI.ClearIgnoredEntries();
                             break;
                         default:
-                            if (ke.Value == CopyEntryKeys) ke.Handled = pluginUI.CopyTextShortcut();
-                            else if (ke.Value == IgnoreEntryKeys) ke.Handled = pluginUI.IgnoreEntryShortcut();
+                            if (ke.Value == PanelContextMenu.CopyEntryKeys) ke.Handled = ResultsPanelHelper.ActiveUI.CopyTextShortcut();
+                            else if (ke.Value == PanelContextMenu.IgnoreEntryKeys) ke.Handled = ResultsPanelHelper.ActiveUI.IgnoreEntryShortcut();
                             break;
                     }
                     
@@ -253,15 +236,16 @@ namespace ResultsPanel
         /// </summary>
         public void CreateMenuItem()
         {
-            String title = TextHelper.GetString("Label.ViewMenuItem");
             ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
-            ToolStripMenuItem viewItem = new ToolStripMenuItem(title, this.pluginImage, new EventHandler(this.OpenPanel));
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowNextResult", this.pluginUI.nextEntryContextMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowPrevResult", this.pluginUI.previousEntryContextMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearResults", this.pluginUI.clearEntriesContextMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearIgnoredEntries", this.pluginUI.clearIgnoredEntriesContextMenuItem);
-            PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowResults", viewItem);
+            ToolStripMenuItem viewItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), this.pluginImage, new EventHandler(this.OpenPanel));
             viewMenu.DropDownItems.Add(viewItem);
+
+            this.contextMenuStrip = new PanelContextMenu();
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowNextResult", this.contextMenuStrip.NextEntry);
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowPrevResult", this.contextMenuStrip.PreviousEntry);
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearResults", this.contextMenuStrip.ClearEntries);
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearIgnoredEntries", this.contextMenuStrip.ClearIgnoredEntries);
+            PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowResults", viewItem);
         }
 
         /// <summary>
@@ -271,9 +255,9 @@ namespace ResultsPanel
         {
             this.pluginUI = new PluginUI(this);
             this.pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
-            this.pluginPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockBottomAutoHide);
+            this.pluginUI.ParentPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockBottomAutoHide);
 
-            this.panelHelper = new ResultsPanelHelper(this);
+            ResultsPanelHelper.Initialize(this, this.pluginUI);
         }
         
         /// <summary>
@@ -281,7 +265,7 @@ namespace ResultsPanel
         /// </summary>
         public void OpenPanel(Object sender, EventArgs e)
         {
-            this.pluginPanel.Show();
+            ResultsPanelHelper.ActiveUI.ParentPanel.Show();
         }
 
         #endregion

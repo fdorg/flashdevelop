@@ -72,6 +72,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Helpers\ResultsPanelHelper.cs" />
+    <Compile Include="PanelContextMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PluginMain.cs" />
     <Compile Include="PluginUI.cs">

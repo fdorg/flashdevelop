@@ -155,7 +155,6 @@ namespace CodeRefactor.Commands
         void ReportResults()
         {
             var newNameLength = newName.Length;
-            
             PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + PluginMain.TraceGroup);
             foreach (var entry in Results)
             {
