@@ -182,6 +182,10 @@ namespace PluginCore
         /// </summary>
         DockContent CreateDockablePanel(Control form, String guid, Image image, DockState defaultDockState);
         /// <summary>
+        /// Creates a dynamic persist panel for plugins.
+        /// </summary>
+        DockContent CreateDynamicPersistDockablePanel(Control ctrl, String guid, String id, Image image, DockState defaultDockState);
+        /// <summary>
         /// Calls a normal <see cref="IMainForm"/> method.
         /// </summary>
         Boolean CallCommand(String command, String arguments);

@@ -589,6 +589,27 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Creates a dynamic persist panel for plugins.
+        /// </summary>
+        public DockContent CreateDynamicPersistDockablePanel(Control ctrl, String guid, String id, Image image, DockState defaultDockState)
+        {
+            try
+            {
+                var dockablePanel = new DockablePanel(ctrl, guid + ":" + id);
+                dockablePanel.Image = image;
+                dockablePanel.DockState = defaultDockState;
+                LayoutManager.SetContentLayout(dockablePanel, dockablePanel.GetPersistString());
+                LayoutManager.PluginPanels.Add(dockablePanel);
+                return dockablePanel;
+            }
+            catch (Exception e)
+            {
+                ErrorManager.ShowError(e);
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Opens the specified file and creates an editable document
         /// </summary>
         public DockContent OpenEditableDocument(String org, Encoding encoding, Boolean restorePosition)

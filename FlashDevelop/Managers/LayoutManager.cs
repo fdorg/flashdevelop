@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using FlashDevelop.Docking;
 using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Managers;
@@ -11,30 +12,34 @@ namespace FlashDevelop.Managers
     class LayoutManager
     {
         public static List<DockContent> PluginPanels;
-        public static DeserializeDockContent ContentDeserializer;
-        public static List<String> RestoredPlugins;
+        private static DeserializeDockContent contentDeserializer;
+        private static HashSet<string> savedPersistStrings;
+        private static List<DockContent> dynamicContentTemplates;
  
         static LayoutManager()
         {
             PluginPanels = new List<DockContent>();
-            ContentDeserializer = new DeserializeDockContent(GetContentFromPersistString);
-            RestoredPlugins = new List<String>();
+            contentDeserializer = new DeserializeDockContent(GetContentFromPersistString);
+            savedPersistStrings = new HashSet<string>();
+            dynamicContentTemplates = new List<DockContent>();
         }
 
         /// <summary>
         /// Builds the look of the layout systems
         /// </summary>
-        public static void BuildLayoutSystems(String file)
+        public static void BuildLayoutSystems(string file)
         {
             try
             {
                 FileHelper.EnsureUpdatedFile(file);
-                DockPanel dockPanel = Globals.MainForm.DockPanel;
+                var dockPanel = Globals.MainForm.DockPanel;
                 if (File.Exists(file))
                 {
                     CloseDocumentContents();
                     ClosePluginPanelContents();
-                    dockPanel.LoadFromXml(file, ContentDeserializer);
+                    CloseDynamicContentTemplates();
+                    dockPanel.LoadFromXml(file, contentDeserializer);
+                    RestoreDynamicContentTemplates();
                     RestoreUnrestoredPlugins();
                     ShowDocumentContents();
                 }
@@ -48,27 +53,79 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Retrieves the content by persist string
         /// </summary>
-        public static DockContent GetContentFromPersistString(String persistString)
+        private static DockContent GetContentFromPersistString(String persistString)
         {
-            for (Int32 i = 0; i < PluginPanels.Count; i++)
+            for (int i = 0; i < PluginPanels.Count; i++)
             {
-                DockContent pluginPanel = PluginPanels[i];
+                var pluginPanel = PluginPanels[i];
                 if (pluginPanel.GetPersistString() == persistString)
                 {
-                    RestoredPlugins.Add(pluginPanel.GetPersistString());
+                    savedPersistStrings.Add(persistString);
                     return pluginPanel;
                 }
             }
-            return null;
+            if (persistString == typeof(TabbedDocument).ToString())
+            {
+                return null;
+            }
+            if (savedPersistStrings.Contains(persistString))
+            {
+                for (int i = 0; i < dynamicContentTemplates.Count; i++)
+                {
+                    var template = dynamicContentTemplates[i];
+                    if (template.GetPersistString() == persistString)
+                    {
+                        // Choose the first template content layout
+                        // During layout reload, template may already exist, in which case DockPanel == null from CloseDynamicContentTemplates()
+                        return template.DockPanel == null ? template : null;
+                    }
+                }
+            }
+            var newTemplate = new DockablePanel.Template(persistString);
+            dynamicContentTemplates.Add(newTemplate);
+            savedPersistStrings.Add(persistString);
+            return newTemplate;
         }
 
+        internal static void SetContentLayout(DockablePanel dockablePanel, string persistString)
+        {
+            for (int i = 0; i < PluginPanels.Count; i++)
+            {
+                var pluginPanel = PluginPanels[i];
+                if (pluginPanel.GetPersistString() == persistString)
+                {
+                    dockablePanel.DockPanel = pluginPanel.DockPanel;
+                    dockablePanel.AutoHidePortion = pluginPanel.AutoHidePortion;
+                    dockablePanel.IsFloat = pluginPanel.IsFloat;
+                    dockablePanel.Pane = pluginPanel.Pane;
+                    break;
+                }
+            }
+            for (int i = 0; i < dynamicContentTemplates.Count; i++)
+            {
+                var template = dynamicContentTemplates[i];
+                if (template.GetPersistString() == dockablePanel.GetPersistString())
+                {
+                    dockablePanel.DockPanel = template.DockPanel;
+                    dockablePanel.AutoHidePortion = template.AutoHidePortion;
+                    dockablePanel.IsFloat = template.IsFloat;
+                    dockablePanel.Pane = template.Pane;
+
+                    // No need for a template if a new window exists.
+                    dynamicContentTemplates.RemoveAt(i);
+                    template.Close();
+                    break;
+                }
+            }
+        }
+        
         /// <summary>
         /// Shows the document contents for xml restoring
         /// </summary>
-        public static void ShowDocumentContents()
+        private static void ShowDocumentContents()
         {
-            DockPanel dockPanel = Globals.MainForm.DockPanel;
-            IDockContent[] documents = dockPanel.GetDocuments();
+            var dockPanel = Globals.MainForm.DockPanel;
+            var documents = dockPanel.GetDocuments();
             foreach (DockContent document in documents)
             {
                 document.Show(dockPanel);
@@ -78,10 +135,10 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Closes the document contents for xml restoring
         /// </summary>
-        public static void CloseDocumentContents()
+        private static void CloseDocumentContents()
         {
-            DockPanel dockPanel = Globals.MainForm.DockPanel;
-            IDockContent[] documents = dockPanel.GetDocuments();
+            var dockPanel = Globals.MainForm.DockPanel;
+            var documents = dockPanel.GetDocuments();
             foreach (DockContent document in documents)
             {
                 document.DockPanel = null;
@@ -91,9 +148,9 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Closes the plugin panel contents for xml restoring
         /// </summary>
-        public static void ClosePluginPanelContents()
+        private static void ClosePluginPanelContents()
         {
-            foreach (DockContent pluginPanel in PluginPanels)
+            foreach (var pluginPanel in PluginPanels)
             {
                 if (pluginPanel.DockState != DockState.Document)
                 {
@@ -106,15 +163,32 @@ namespace FlashDevelop.Managers
         /// Restore the plugins that have not been restored yet.
         /// These plugins may have been added later to the plugins dir.
         /// </summary>
-        public static void RestoreUnrestoredPlugins()
+        private static void RestoreUnrestoredPlugins()
         {
-            DockPanel dockPanel = Globals.MainForm.DockPanel;
-            foreach (DockContent pluginPanel in PluginPanels)
+            var dockPanel = Globals.MainForm.DockPanel;
+            foreach (var pluginPanel in PluginPanels)
             {
-                if (!RestoredPlugins.Contains(pluginPanel.GetPersistString()))
+                if (!savedPersistStrings.Contains(pluginPanel.GetPersistString()))
                 {
                     pluginPanel.Show(dockPanel, DockState.Float);
                 }
+            }
+        }
+
+        private static void CloseDynamicContentTemplates()
+        {
+            foreach (var template in dynamicContentTemplates)
+            {
+                template.DockPanel = null;
+            }
+        }
+
+        private static void RestoreDynamicContentTemplates()
+        {
+            foreach (var template in dynamicContentTemplates)
+            {
+                // Keep templates hidden
+                template.Hide();
             }
         }
 

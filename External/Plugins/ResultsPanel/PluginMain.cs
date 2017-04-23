@@ -150,11 +150,7 @@ namespace ResultsPanel
                 case EventType.FileOpen:
                     ResultsPanelHelper.OnFileOpen((TextEvent) e);
                     break;
-
-                case EventType.UIClosing:
-                    ResultsPanelHelper.RemoveResultsPanels();
-                    break;
-
+                    
                 case EventType.Keys:
                     KeyEvent ke = (KeyEvent) e;
                     switch (PluginBase.MainForm.GetShortcutItemId(ke.Value))
@@ -227,7 +223,7 @@ namespace ResultsPanel
         public void AddEventHandlers()
         {
             EventType eventMask = EventType.ProcessEnd | EventType.ProcessStart | EventType.FileOpen | EventType.Command
-                | EventType.Trace | EventType.Keys | EventType.Shortcut | EventType.ApplySettings | EventType.UIClosing;
+                | EventType.Trace | EventType.Keys | EventType.Shortcut | EventType.ApplySettings;
             EventManager.AddEventHandler(this, eventMask);
         }
 

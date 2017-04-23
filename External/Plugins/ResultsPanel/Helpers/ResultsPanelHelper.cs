@@ -12,7 +12,6 @@ namespace ResultsPanel.Helpers
         private static PluginMain main;
         private static PluginUI mainUI;
         private static Dictionary<string, PluginUI> pluginUIs;
-        private static bool closing = false;
 
         internal static PluginUI ActiveUI { get; set; }
 
@@ -94,7 +93,6 @@ namespace ResultsPanel.Helpers
         /// </summary>
         internal static void RemoveResultsPanels()
         {
-            closing = true;
             foreach (var pluginUI in pluginUIs.Values)
             {
                 pluginUI.ParentPanel.Close();
@@ -111,22 +109,19 @@ namespace ResultsPanel.Helpers
             var traceGroup = TraceManager.GetTraceGroup(groupId); // Group must exist
             var ui = new PluginUI(main, groupId);
             ui.Text = traceGroup.Title ?? TextHelper.GetString("Title.PluginPanel");
-            ui.ParentPanel = PluginBase.MainForm.CreateDockablePanel(ui, "", traceGroup.Icon ?? main.pluginImage, DockState.DockBottomAutoHide);
-            ui.ParentPanel.HideOnClose = false;
+            ui.ParentPanel = PluginBase.MainForm.CreateDynamicPersistDockablePanel(ui, main.Guid, groupId, traceGroup.Icon ?? main.pluginImage, DockState.DockBottomAutoHide);
+            ui.ParentPanel.Tag = ui;
+            ui.ParentPanel.DockStateChanged += ParentPanel_DockStateChanged;
             pluginUIs.Add(groupId, ui);
             return ui;
         }
-        
-        internal static void RemoveResultsPanel(string groupId)
+
+        private static void ParentPanel_DockStateChanged(object sender, EventArgs e)
         {
-            if (closing) return;
-            if (groupId != null)
+            var ui = (PluginUI) ((DockContent) sender).Tag;
+            if (ui.ParentPanel.IsHidden)
             {
-                pluginUIs.Remove(groupId);
-                if (ActiveUI.GroupId == groupId)
-                {
-                    ActiveUI = mainUI;
-                }
+                ui.OnPanelHidden();
             }
         }
     }

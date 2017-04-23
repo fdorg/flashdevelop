@@ -143,9 +143,6 @@ namespace ResultsPanel
                 components?.Dispose();
             }
 
-            ClearSquiggles();
-            ResultsPanelHelper.RemoveResultsPanel(GroupId);
-
             base.Dispose(disposing);
         }
 
@@ -635,6 +632,18 @@ namespace ResultsPanel
             this.autoShow.Start();
         }
 
+        /// <summary>
+        /// Panel is hidden.
+        /// </summary>
+        public void OnPanelHidden()
+        {
+            ClearOutput();
+            if (ResultsPanelHelper.ActiveUI == this)
+            {
+                ResultsPanelHelper.ActiveUI = pluginMain.pluginUI;
+            }
+        }
+
         #endregion
 
         #region Event Handlers
@@ -788,12 +797,11 @@ namespace ResultsPanel
             this.autoShow.Stop();
             if (this.entriesView.Items.Count > 0)
             {
-                DockContent panel = this.Parent as DockContent;
-                DockState ds = panel.VisibleState;
-                if (!panel.Visible || ds.ToString().EndsWithOrdinal("AutoHide"))
+                bool autoHide = ParentPanel.VisibleState.ToString().EndsWithOrdinal("AutoHide");
+                if (!ParentPanel.Visible || autoHide)
                 {
-                    panel.Show();
-                    if (ds.ToString().EndsWithOrdinal("AutoHide")) panel.Activate();
+                    ParentPanel.Show();
+                    if (autoHide) ParentPanel.Activate();
                 }
             }
         }
