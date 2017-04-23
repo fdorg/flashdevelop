@@ -101,17 +101,20 @@ namespace ResultsPanel
             }
         }
 
-        public PluginUI(PluginMain pluginMain, string group) : this(pluginMain)
+        public PluginUI(PluginMain pluginMain, string groupData, string groupId) : this(pluginMain)
         {
-            GroupId = group;
+            GroupData = groupData;
+            GroupId = groupId;
         }
 
         #endregion
 
         #region Properties
 
-        public string GroupId { get; }
+        public string GroupData { get; }
 
+        public string GroupId { get; }
+        
         public DockContent ParentPanel { get; set; }
 
         /// <summary>
@@ -541,7 +544,7 @@ namespace ResultsPanel
             for (int i = this.logCount; i < limit; i++)
             {
                 entry = TraceManager.TraceLog[i];
-                if (entry.Group != this.GroupId)
+                if (entry.GroupData != this.GroupData)
                 {
                     continue;
                 }
@@ -810,14 +813,14 @@ namespace ResultsPanel
         {
             if (ResultsPanelHelper.ActiveUI != this)
             {
-                if (ResultsPanelHelper.ActiveUI.GroupId != null)
+                if (ResultsPanelHelper.ActiveUI.GroupData != null)
                 {
                     ResultsPanelHelper.ActiveUI.ClearSquiggles();
                     pluginMain.pluginUI.ClearSquiggles();
                     pluginMain.pluginUI.AddSquiggles();
                 }
                 ResultsPanelHelper.ActiveUI = this;
-                if (GroupId != null)
+                if (GroupData != null)
                 {
                     AddSquiggles();
                 }
@@ -1086,7 +1089,7 @@ namespace ResultsPanel
         private void RefreshSquiggles()
         {
             pluginMain.pluginUI.ClearSquiggles();
-            if (GroupId != null)
+            if (GroupData != null)
             {
                 ClearSquiggles();
                 AddSquiggles();

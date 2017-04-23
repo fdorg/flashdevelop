@@ -18,6 +18,7 @@ namespace CodeRefactor.Commands
     public class FindAllReferences : RefactorCommand<IDictionary<String, List<SearchMatch>>>
     {
         internal const string TraceGroup = "CodeRefactor.FindAllReferences";
+        private static int TraceGroupIndex = 0;
 
         protected bool IgnoreDeclarationSource { get; private set; }
 
@@ -199,17 +200,18 @@ namespace CodeRefactor.Commands
         /// </summary>
         private void ReportResults()
         {
-            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + TraceGroup);
+            string groupData = TraceManager.CreateGroupData(TraceGroup, CurrentTarget.Member == null ? CurrentTarget.Type.Name : CurrentTarget.Member.Name, TraceGroupIndex++.ToString());
+            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
             foreach (KeyValuePair<String, List<SearchMatch>> entry in this.Results)
             {
                 // Outputs the lines as they change
                 foreach (SearchMatch match in entry.Value)
                 {
                     string message = $"{entry.Key}:{match.Line}: chars {match.Column}-{match.Column + match.Length} : {match.LineText.Trim()}";
-                    TraceManager.Add(message, (int) TraceType.Info, TraceGroup);
+                    TraceManager.Add(message, (int) TraceType.Info, groupData);
                 }
             }
-            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + TraceGroup);
+            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
         }
 
         #endregion

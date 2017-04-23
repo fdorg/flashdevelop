@@ -11,7 +11,8 @@ namespace ResultsPanel.Helpers
     {
         private static PluginMain main;
         private static PluginUI mainUI;
-        private static Dictionary<string, PluginUI> pluginUIs;
+        private static Dictionary<string, List<PluginUI>> multipleUIs; // { groupId, List<PluginUI> }
+        private static Dictionary<string, PluginUI> pluginUIs; // { groupData, PluginUI }
 
         internal static PluginUI ActiveUI { get; set; }
 
@@ -19,33 +20,34 @@ namespace ResultsPanel.Helpers
         {
             main = pluginMain;
             mainUI = pluginUI;
+            multipleUIs = new Dictionary<string, List<PluginUI>>();
             pluginUIs = new Dictionary<string, PluginUI>();
             ActiveUI = mainUI;
         }
 
-        internal static void ClearResults(string groupId)
+        internal static void ClearResults(string groupData)
         {
-            if (groupId == null)
+            if (groupData == null)
             {
                 mainUI.ClearOutput();
             }
             else
             {
                 PluginUI ui;
-                if (pluginUIs.TryGetValue(groupId, out ui)) ui.ClearOutput();
+                if (pluginUIs.TryGetValue(groupData, out ui)) ui.ClearOutput();
             }
         }
 
-        internal static void ShowResults(string groupId)
+        internal static void ShowResults(string groupData)
         {
             PluginUI ui;
-            if (groupId == null)
+            if (groupData == null)
             {
                 ui = mainUI;
             }
-            if (!pluginUIs.TryGetValue(groupId, out ui))
+            if (!pluginUIs.TryGetValue(groupData, out ui))
             {
-                ui = AddResultsPanel(groupId);
+                ui = AddResultsPanel(groupData);
             }
 
             ui.AddLogEntries();
@@ -65,9 +67,9 @@ namespace ResultsPanel.Helpers
         {
             foreach (var trace in TraceManager.TraceLog)
             {
-                if (trace.Group != null && !pluginUIs.ContainsKey(trace.Group))
+                if (trace.GroupData != null && !pluginUIs.ContainsKey(trace.GroupData))
                 {
-                    AddResultsPanel(trace.Group);
+                    AddResultsPanel(trace.GroupData);
                 }
             }
 
@@ -103,16 +105,42 @@ namespace ResultsPanel.Helpers
         /// <summary>
         /// Creates a new results panel.
         /// </summary>
-        /// <param name="groupId">The trace group of the results panel.</param>
-        private static PluginUI AddResultsPanel(string groupId)
+        /// <param name="groupData">
+        /// The trace group of the results panel.
+        /// <para/>
+        /// Format: <c>GroupID:arg1,arg2,...</c>
+        /// </param>
+        private static PluginUI AddResultsPanel(string groupData)
         {
+            string groupId;
+            string[] args;
+            TraceManager.ParseGroupData(groupData, out groupId, out args);
+
             var traceGroup = TraceManager.GetTraceGroup(groupId); // Group must exist
-            var ui = new PluginUI(main, groupId);
-            ui.Text = traceGroup.Title ?? TextHelper.GetString("Title.PluginPanel");
+            var ui = new PluginUI(main, groupData, groupId);
+            ui.Text = string.Format(traceGroup.Title ?? TextHelper.GetString("Title.PluginPanel"), args);
             ui.ParentPanel = PluginBase.MainForm.CreateDynamicPersistDockablePanel(ui, main.Guid, groupId, traceGroup.Icon ?? main.pluginImage, DockState.DockBottomAutoHide);
             ui.ParentPanel.Tag = ui;
             ui.ParentPanel.DockStateChanged += ParentPanel_DockStateChanged;
-            pluginUIs.Add(groupId, ui);
+            pluginUIs.Add(groupData, ui);
+
+            if (args.Length > 0) // Multiple instances for one group id
+            {
+                if (!multipleUIs.ContainsKey(groupId))
+                {
+                    multipleUIs.Add(groupId, new List<PluginUI>() { ui });
+                }
+                else
+                {
+                    var list = multipleUIs[groupId];
+                    if (list.Count == 1 && list[0].ParentPanel.IsHidden)
+                    {
+                        list[0].ParentPanel.Close();
+                        list.Clear();
+                    }
+                    list.Add(ui);
+                }
+            }
             return ui;
         }
 
@@ -122,6 +150,14 @@ namespace ResultsPanel.Helpers
             if (ui.ParentPanel.IsHidden)
             {
                 ui.OnPanelHidden();
+                ui.ParentPanel.DockStateChanged -= ParentPanel_DockStateChanged;
+
+                List<PluginUI> list;
+                if (multipleUIs.TryGetValue(ui.GroupId, out list) && list.Count > 1)
+                {
+                    ui.ParentPanel.Close();
+                    list.Remove(ui);
+                }
             }
         }
     }

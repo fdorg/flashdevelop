@@ -6131,7 +6131,7 @@ AND - All conditions are met.</value>
     <comment>Added after 5.2.1</comment>
   </data>
   <data name="CodeRefactor.Label.FindAllReferencesResult" xml:space="preserve">
-    <value>Referenzen</value>
+    <value>'{0}' Referenzen</value>
     <comment>Added after 5.2.1</comment>
   </data>
   <data name="FlashDevelop.Label.FindAndReplaceResults" xml:space="preserve">

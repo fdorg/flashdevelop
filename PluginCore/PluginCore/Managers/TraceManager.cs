@@ -46,10 +46,10 @@ namespace PluginCore.Managers
         /// <summary>
         /// Adds a new entry to the log.
         /// </summary>
-        /// <param name="groupId">The id of the trace group to output to.</param>
-        public static void Add(string message, int state, string groupId)
+        /// <param name="groupData">The id of the trace group to output to, with optional arguments.</param>
+        public static void Add(string message, int state, string groupData)
         {
-            Add(new TraceItem(message, state, groupId));
+            Add(new TraceItem(message, state, groupData));
         }
 
         /// <summary>
@@ -123,6 +123,38 @@ namespace PluginCore.Managers
         }
 
         /// <summary>
+        /// Creates a string for group data: <paramref name="groupId"/>:arg1,arg2,<paramref name="args"/>
+        /// </summary>
+        public static string CreateGroupData(string groupId, params string[] args)
+        {
+            if (args == null || args.Length == 0)
+            {
+                return groupId;
+            }
+            return groupId + ":" + string.Join(",", args);
+        }
+
+        /// <summary>
+        /// Parses group data into group id and args. Returns <see langword="true"/> if args are present; <see langword="false"/> otherwise.
+        /// </summary>
+        public static bool ParseGroupData(string groupData, out string groupId, out string[] args)
+        {
+            string[] data = groupData.Split(new[] { ':' }, 2);
+            if (data.Length > 1)
+            {
+                groupId = data[0];
+                args = data[1].Split(',');
+                return true;
+            }
+            else
+            {
+                groupId = groupData;
+                args = new string[0];
+                return false;
+            }
+        }
+
+        /// <summary>
         /// After a delay, synchronizes the traces
         /// </summary>
         private static void AsyncTimer_Elapsed(Object sender, ElapsedEventArgs e)
@@ -192,11 +224,11 @@ namespace PluginCore.Managers
         private DateTime timestamp;
         private String message;
 
-        public string Group { get; }
+        public string GroupData { get; }
 
-        public TraceItem(string message, int state, string group) : this(message, state)
+        public TraceItem(string message, int state, string groupData) : this(message, state)
         {
-            Group = group;
+            GroupData = groupData;
         }
 
         public TraceItem(String message, Int32 state)

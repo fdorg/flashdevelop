@@ -32,10 +32,7 @@ namespace ResultsPanel
     {
         public int Compare(ListViewGroup x, ListViewGroup y)
         {
-            String f0 = x.Header;
-            String f1 = y.Header;
-
-            return f0.CompareTo(f1);
+            return x.Header.CompareTo(y.Header);
         }
     }
 
@@ -43,10 +40,7 @@ namespace ResultsPanel
     {
         public int Compare(ListViewGroup x, ListViewGroup y)
         {
-            String d0 = x.Name.ToString();
-            String d1 = y.Name.ToString();
-
-            return d0.CompareTo(d1);
+            return x.Name.CompareTo(y.Name);
         }
     }
 
@@ -54,10 +48,7 @@ namespace ResultsPanel
     {
         public int Compare(ListViewGroup x, ListViewGroup y)
         {
-            String d0 = x.Name.ToString();
-            String d1 = y.Name.ToString();
-
-            return d0.CompareTo(d1);
+            return x.Name.CompareTo(y.Name);
         }
     }
 }
