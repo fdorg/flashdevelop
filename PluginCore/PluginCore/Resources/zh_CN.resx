@@ -6118,19 +6118,19 @@ AND - All conditions are met.</value>
   </data>
   <data name="ResultsPanel.Description.DefaultGrouping" xml:space="preserve">
     <value>The default column to group results by.</value>
-	<comment>Added after 5.2.1</comment>
+    <comment>Added after 5.2.1</comment>
   </data>
   <data name="LintingHelper.Description.LintOnSave" xml:space="preserve">
     <value>Runs the available linters when a file is saved.</value>
-	<comment>Added after 5.2.1</comment>
+    <comment>Added after 5.2.1</comment>
   </data>
   <data name="LintingHelper.Description.LintOnOpen" xml:space="preserve">
     <value>Runs the available linters when a file is opened.</value>
-	<comment>Added after 5.2.1</comment>
+    <comment>Added after 5.2.1</comment>
   </data>
   <data name="LintingHelper.Label.RunLinters" xml:space="preserve">
     <value>Run Linters</value>
-	<comment>Added after 5.2.1</comment>
+    <comment>Added after 5.2.1</comment>
   </data>
   <data name="HaXeContext.Info.UnusedImport" xml:space="preserve">
     <value>Unused import</value>
@@ -6148,7 +6148,7 @@ AND - All conditions are met.</value>
     <value>Find and Replace</value>
     <comment>Added after 5.2.1</comment>
   </data>
-  <data name="LintingManager.Label.LintingResults" xml:space="preserve">
+  <data name="LintingHelper.Label.LintingResults" xml:space="preserve">
     <value>Linters</value>
     <comment>Added after 5.2.1</comment>
   </data>

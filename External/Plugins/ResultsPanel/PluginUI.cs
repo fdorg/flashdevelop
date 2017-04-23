@@ -103,14 +103,14 @@ namespace ResultsPanel
 
         public PluginUI(PluginMain pluginMain, string group) : this(pluginMain)
         {
-            Group = group;
+            GroupId = group;
         }
 
         #endregion
 
         #region Properties
 
-        public string Group { get; set; }
+        public string GroupId { get; }
 
         public DockContent ParentPanel { get; set; }
 
@@ -142,6 +142,9 @@ namespace ResultsPanel
             {
                 components?.Dispose();
             }
+
+            ClearSquiggles();
+            ResultsPanelHelper.RemoveResultsPanel(GroupId);
 
             base.Dispose(disposing);
         }
@@ -541,7 +544,7 @@ namespace ResultsPanel
             for (int i = this.logCount; i < limit; i++)
             {
                 entry = TraceManager.TraceLog[i];
-                if (entry.Group != this.Group)
+                if (entry.Group != this.GroupId)
                 {
                     continue;
                 }
@@ -794,28 +797,26 @@ namespace ResultsPanel
                 }
             }
         }
-
+        
         protected override void OnEnter(EventArgs e)
         {
-            ResultsPanelHelper.ActiveUI = this;
-            if (Group != null)
+            if (ResultsPanelHelper.ActiveUI != this)
             {
-                AddSquiggles();
+                if (ResultsPanelHelper.ActiveUI.GroupId != null)
+                {
+                    ResultsPanelHelper.ActiveUI.ClearSquiggles();
+                    pluginMain.pluginUI.ClearSquiggles();
+                    pluginMain.pluginUI.AddSquiggles();
+                }
+                ResultsPanelHelper.ActiveUI = this;
+                if (GroupId != null)
+                {
+                    AddSquiggles();
+                }
             }
             base.OnEnter(e);
         }
-
-        protected override void OnLeave(EventArgs e)
-        {
-            if (Group != null)
-            {
-                pluginMain.pluginUI.ClearSquiggles();
-                ClearSquiggles();
-                pluginMain.pluginUI.AddSquiggles();
-            }
-            base.OnLeave(e);
-        }
-
+        
         #endregion
 
         #region Utility Methods
@@ -1073,11 +1074,11 @@ namespace ResultsPanel
                 }
             }
         }
-
+        
         private void RefreshSquiggles()
         {
             pluginMain.pluginUI.ClearSquiggles();
-            if (Group != null)
+            if (GroupId != null)
             {
                 ClearSquiggles();
                 AddSquiggles();

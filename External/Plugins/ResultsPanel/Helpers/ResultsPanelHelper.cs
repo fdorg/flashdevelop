@@ -12,6 +12,7 @@ namespace ResultsPanel.Helpers
         private static PluginMain main;
         private static PluginUI mainUI;
         private static Dictionary<string, PluginUI> pluginUIs;
+        private static bool closing = false;
 
         internal static PluginUI ActiveUI { get; set; }
 
@@ -93,10 +94,12 @@ namespace ResultsPanel.Helpers
         /// </summary>
         internal static void RemoveResultsPanels()
         {
+            closing = true;
             foreach (var pluginUI in pluginUIs.Values)
             {
                 pluginUI.ParentPanel.Close();
             }
+            ActiveUI = mainUI;
         }
         
         /// <summary>
@@ -109,8 +112,22 @@ namespace ResultsPanel.Helpers
             var ui = new PluginUI(main, groupId);
             ui.Text = traceGroup.Title ?? TextHelper.GetString("Title.PluginPanel");
             ui.ParentPanel = PluginBase.MainForm.CreateDockablePanel(ui, "", traceGroup.Icon ?? main.pluginImage, DockState.DockBottomAutoHide);
+            ui.ParentPanel.HideOnClose = false;
             pluginUIs.Add(groupId, ui);
             return ui;
+        }
+        
+        internal static void RemoveResultsPanel(string groupId)
+        {
+            if (closing) return;
+            if (groupId != null)
+            {
+                pluginUIs.Remove(groupId);
+                if (ActiveUI.GroupId == groupId)
+                {
+                    ActiveUI = mainUI;
+                }
+            }
         }
     }
 }

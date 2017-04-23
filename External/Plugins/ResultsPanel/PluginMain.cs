@@ -254,10 +254,9 @@ namespace ResultsPanel
         public void CreatePluginPanel()
         {
             this.pluginUI = new PluginUI(this);
+            ResultsPanelHelper.Initialize(this, this.pluginUI);
             this.pluginUI.Text = TextHelper.GetString("Title.PluginPanel");
             this.pluginUI.ParentPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockBottomAutoHide);
-
-            ResultsPanelHelper.Initialize(this, this.pluginUI);
         }
         
         /// <summary>

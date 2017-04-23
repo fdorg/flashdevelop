@@ -12,8 +12,8 @@ namespace ResultsPanel
     {
         public int Compare(ListViewGroup x, ListViewGroup y)
         {
-            int i0 = Convert.ToInt32(x.Tag);
-            int i1 = Convert.ToInt32(y.Tag);
+            int i0 = Convert.ToInt32(x.Name);
+            int i1 = Convert.ToInt32(y.Name);
 
             if (i0 == i1)
             {
@@ -43,8 +43,8 @@ namespace ResultsPanel
     {
         public int Compare(ListViewGroup x, ListViewGroup y)
         {
-            String d0 = x.Tag.ToString();
-            String d1 = y.Tag.ToString();
+            String d0 = x.Name.ToString();
+            String d1 = y.Name.ToString();
 
             return d0.CompareTo(d1);
         }
@@ -54,8 +54,8 @@ namespace ResultsPanel
     {
         public int Compare(ListViewGroup x, ListViewGroup y)
         {
-            String d0 = x.Tag.ToString();
-            String d1 = y.Tag.ToString();
+            String d0 = x.Name.ToString();
+            String d1 = y.Name.ToString();
 
             return d0.CompareTo(d1);
         }
