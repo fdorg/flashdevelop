@@ -11,7 +11,9 @@ namespace PluginCore.ScintillaNet
     [TestFixture]
     internal class ScintillaControlTests
     {
+#pragma warning disable CS0436 // Type conflicts with imported type
         MainForm mainForm;
+#pragma warning restore CS0436 // Type conflicts with imported type
         ISettings settings;
         ITabbedDocument doc;
         ScintillaControl sci;
@@ -26,7 +28,9 @@ namespace PluginCore.ScintillaNet
             settings.TabIndents = true;
             settings.TabWidth = 4;
             doc = Substitute.For<ITabbedDocument>();
+#pragma warning disable CS0436 // Type conflicts with imported type
             mainForm = new MainForm
+#pragma warning restore CS0436 // Type conflicts with imported type
             {
                 Settings = settings,
                 CurrentDocument = doc,
