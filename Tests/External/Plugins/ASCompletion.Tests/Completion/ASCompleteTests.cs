@@ -78,6 +78,24 @@ namespace ASCompletion.Completion
             };
         }
 
+        private static void SetAs3Features(ScintillaControl sci)
+        {
+            if (sci.ConfigurationLanguage != "as3")
+            {
+                sci.ConfigurationLanguage = "as3";
+                ASContext.Context.SetAs3Features();
+            }
+        }
+
+        private static void SetHaxeFeatures(ScintillaControl sci)
+        {
+            if (sci.ConfigurationLanguage != "haxe")
+            {
+                sci.ConfigurationLanguage = "haxe";
+                ASContext.Context.SetHaxeFeatures();
+            }
+        }
+
         // TODO: Add more tests!
         public class GetExpressionType : ASCompleteTests
         {
@@ -320,15 +338,13 @@ namespace ASCompletion.Completion
 
             internal static MemberModel AS3Impl(string sourceText, ScintillaControl sci)
             {
-                sci.ConfigurationLanguage = "as3";
-                ASContext.Context.SetAs3Features();
+                SetAs3Features(sci);
                 return Common(sourceText, sci);
             }
 
             internal static MemberModel HaxeImpl(string sourceText, ScintillaControl sci)
             {
-                sci.ConfigurationLanguage = "haxe";
-                ASContext.Context.SetHaxeFeatures();
+                SetHaxeFeatures(sci);
                 return Common(sourceText, sci);
             }
 
@@ -501,15 +517,13 @@ namespace ASCompletion.Completion
 
             internal static string AS3Impl(string text, ScintillaControl sci)
             {
-                sci.ConfigurationLanguage = "as3";
-                ASContext.Context.SetAs3Features();
+                SetAs3Features(sci);
                 return Common(text, sci);
             }
 
             internal static string HaxeImpl(string text, ScintillaControl sci)
             {
-                sci.ConfigurationLanguage = "haxe";
-                ASContext.Context.SetHaxeFeatures();
+                SetHaxeFeatures(sci);
                 return Common(text, sci);
             }
 
@@ -776,11 +790,7 @@ namespace ASCompletion.Completion
                 TestCaseSource(nameof(DeleteWhitespaceTestCases))]
             public string AS3(string text)
             {
-                if (sci.ConfigurationLanguage != "as3")
-                {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
-                }
+                SetAs3Features(sci);
                 return Common(text.Replace('V', 'v'), sci).Replace('v', 'V'); //Replace "Void" with "void" for type checking
             }
 
@@ -790,11 +800,7 @@ namespace ASCompletion.Completion
                 TestCaseSource(nameof(DeleteWhitespaceTestCases)), TestCaseSource(nameof(InsideInterpolationTestCases))]
             public string Haxe(string text)
             {
-                if (sci.ConfigurationLanguage != "haxe")
-                {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
-                }
+                SetHaxeFeatures(sci);
                 return Common(text, sci);
             }
 
@@ -888,8 +894,7 @@ namespace ASCompletion.Completion
 
             internal static int HaxeImpl(string text, ScintillaControl sci)
             {
-                sci.ConfigurationLanguage = "haxe";
-                ASContext.Context.SetHaxeFeatures();
+                SetHaxeFeatures(sci);
                 return Common(text, sci);
             }
 
