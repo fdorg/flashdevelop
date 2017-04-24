@@ -23,14 +23,18 @@ namespace ASCompletion.Completion
     [TestFixture]
     public class ASGeneratorTests
     {
+#pragma warning disable CS0436 // Type conflicts with imported type
         private MainForm mainForm;
+#pragma warning restore CS0436 // Type conflicts with imported type
         private ISettings settings;
         private ITabbedDocument doc;
 
         [TestFixtureSetUp]
         public void FixtureSetUp()
         {
+#pragma warning disable CS0436 // Type conflicts with imported type
             mainForm = new MainForm();
+#pragma warning restore CS0436 // Type conflicts with imported type
             settings = Substitute.For<ISettings>();
             settings.UseTabs = true;
             settings.IndentSize = 4;
