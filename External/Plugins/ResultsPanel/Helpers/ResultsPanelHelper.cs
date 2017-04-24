@@ -23,6 +23,9 @@ namespace ResultsPanel.Helpers
             multipleUIs = new Dictionary<string, List<PluginUI>>();
             pluginUIs = new Dictionary<string, PluginUI>();
             ActiveUI = mainUI;
+
+            mainUI.ParentPanel.Tag = mainUI;
+            mainUI.ParentPanel.IsActivatedChanged += ParentPanel_IsActivatedChanged;
         }
 
         internal static void ClearResults(string groupData)
@@ -122,6 +125,7 @@ namespace ResultsPanel.Helpers
             ui.ParentPanel = PluginBase.MainForm.CreateDynamicPersistDockablePanel(ui, main.Guid, groupId, traceGroup.Icon ?? main.pluginImage, DockState.DockBottomAutoHide);
             ui.ParentPanel.Tag = ui;
             ui.ParentPanel.DockStateChanged += ParentPanel_DockStateChanged;
+            ui.ParentPanel.IsActivatedChanged += ParentPanel_IsActivatedChanged;
             pluginUIs.Add(groupData, ui);
 
             if (args.Length > 0) // Multiple instances for one group id
@@ -151,6 +155,7 @@ namespace ResultsPanel.Helpers
             {
                 ui.OnPanelHidden();
                 ui.ParentPanel.DockStateChanged -= ParentPanel_DockStateChanged;
+                ui.ParentPanel.IsActivatedChanged -= ParentPanel_IsActivatedChanged;
 
                 List<PluginUI> list;
                 if (multipleUIs.TryGetValue(ui.GroupId, out list) && list.Count > 1)
@@ -158,6 +163,15 @@ namespace ResultsPanel.Helpers
                     ui.ParentPanel.Close();
                     list.Remove(ui);
                 }
+            }
+        }
+
+        private static void ParentPanel_IsActivatedChanged(object sender, EventArgs e)
+        {
+            var ui = (PluginUI) ((DockContent) sender).Tag;
+            if (ui.ParentPanel.IsActivated)
+            {
+                ui.OnPanelActivated();
             }
         }
     }

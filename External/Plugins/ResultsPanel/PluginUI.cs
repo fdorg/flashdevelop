@@ -647,6 +647,27 @@ namespace ResultsPanel
             }
         }
 
+        /// <summary>
+        /// Panel is activated.
+        /// </summary>
+        public void OnPanelActivated()
+        {
+            if (ResultsPanelHelper.ActiveUI != this)
+            {
+                if (ResultsPanelHelper.ActiveUI.GroupData != null)
+                {
+                    ResultsPanelHelper.ActiveUI.ClearSquiggles();
+                    pluginMain.pluginUI.ClearSquiggles();
+                    pluginMain.pluginUI.AddSquiggles();
+                }
+                ResultsPanelHelper.ActiveUI = this;
+                if (GroupData != null)
+                {
+                    AddSquiggles();
+                }
+            }
+        }
+
         #endregion
 
         #region Event Handlers
@@ -800,32 +821,14 @@ namespace ResultsPanel
             this.autoShow.Stop();
             if (this.entriesView.Items.Count > 0)
             {
-                bool autoHide = ParentPanel.VisibleState.ToString().EndsWithOrdinal("AutoHide");
-                if (!ParentPanel.Visible || autoHide)
-                {
-                    ParentPanel.Show();
-                    if (autoHide) ParentPanel.Activate();
-                }
+                ParentPanel.Activate();
+                //bool autoHide = ParentPanel.VisibleState.ToString().EndsWithOrdinal("AutoHide");
+                //if (!ParentPanel.Visible || autoHide)
+                //{
+                //    ParentPanel.Show();
+                //    if (autoHide) ParentPanel.Activate();
+                //}
             }
-        }
-        
-        protected override void OnEnter(EventArgs e)
-        {
-            if (ResultsPanelHelper.ActiveUI != this)
-            {
-                if (ResultsPanelHelper.ActiveUI.GroupData != null)
-                {
-                    ResultsPanelHelper.ActiveUI.ClearSquiggles();
-                    pluginMain.pluginUI.ClearSquiggles();
-                    pluginMain.pluginUI.AddSquiggles();
-                }
-                ResultsPanelHelper.ActiveUI = this;
-                if (GroupData != null)
-                {
-                    AddSquiggles();
-                }
-            }
-            base.OnEnter(e);
         }
         
         #endregion
