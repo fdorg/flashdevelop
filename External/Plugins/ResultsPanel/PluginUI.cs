@@ -821,7 +821,7 @@ namespace ResultsPanel
             this.autoShow.Stop();
             if (this.entriesView.Items.Count > 0)
             {
-                ParentPanel.Activate();
+                ParentPanel.Show();
                 //bool autoHide = ParentPanel.VisibleState.ToString().EndsWithOrdinal("AutoHide");
                 //if (!ParentPanel.Visible || autoHide)
                 //{
