@@ -41,7 +41,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets a collection of all shortcut keys.
         /// </summary>
-        public static HashSet<ShortcutKeys> AllShortcuts
+        internal static HashSet<ShortcutKeys> AllShortcuts
         {
             get { return allShortcuts; }
         }
@@ -57,7 +57,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets a list of ignored keys.
         /// </summary>
-        public static List<ShortcutKeys> IgnoredKeys
+        internal static List<ShortcutKeys> IgnoredKeys
         {
             get { return ignoredKeys; }
         }
@@ -65,7 +65,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets a collection of all registered shortcut items.
         /// </summary>
-        public static ICollection<ShortcutItem> RegisteredItems
+        internal static ICollection<ShortcutItem> RegisteredItems
         {
             get { return registeredItems/*.Values*/; }
         }
@@ -73,7 +73,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Registers a shortcut item.
         /// </summary>
-        public static void RegisterItem(string key, ShortcutKeys keys, bool supportsExtended)
+        internal static void RegisterItem(string key, ShortcutKeys keys, bool supportsExtended)
         {
             registeredItems.Add(/*key, */new ShortcutItem(key, keys, supportsExtended));
         }
@@ -85,15 +85,22 @@ namespace FlashDevelop.Managers
         /// </summary>
         [Obsolete("This method has been deprecated.", true)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static void RegisterItem(string key, ToolStripMenuItem item)
+        internal static void RegisterItem(string key, ToolStripMenuItem item)
         {
-            registeredItems.Add(/*key, */new ShortcutItem(key, item));
+            if (item is ToolStripMenuItemEx)
+            {
+                registeredItems.Add(/*key, */new ShortcutItem(key, (ToolStripMenuItemEx) item));
+            }
+            else
+            {
+                registeredItems.Add(/*key, */new ShortcutItem(key, item));
+            }
         }
 
         /// <summary>
         /// Registers a shortcut item.
         /// </summary>
-        public static void RegisterItem(string key, ToolStripMenuItemEx item)
+        internal static void RegisterItem(string key, ToolStripMenuItemEx item)
         {
             registeredItems.Add(/*key, */new ShortcutItem(key, item));
         }
@@ -101,7 +108,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Registers a secondary item.
         /// </summary>
-        public static void RegisterSecondaryItem(ToolStripItem item)
+        internal static void RegisterSecondaryItem(ToolStripItem item)
         {
             secondaryItems.Add(item);
         }
@@ -109,7 +116,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Registers a secondary item.
         /// </summary>
-        public static void RegisterSecondaryItem(string id, ToolStripItem item)
+        internal static void RegisterSecondaryItem(string id, ToolStripItem item)
         {
             item.Tag = new ItemData("none;" + id, null, null);
             secondaryItems.Add(item);
@@ -118,13 +125,16 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets the specified registered shortcut item.
         /// </summary>
-        public static ShortcutItem GetRegisteredItem(string id)
+        internal static ShortcutItem GetRegisteredItem(string id)
         {
             //ShortcutItem item;
-            //return RegisteredItems.TryGetValue(id, out item) ? item : null;
+            //return registeredItems.TryGetValue(id, out item) ? item : null;
             foreach (var item in registeredItems)
             {
-                if (item.Id == id) return item;
+                if (item.Id == id)
+                {
+                    return item;
+                }
             }
             return null;
         }
@@ -132,7 +142,7 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets the specified registered shortcut item.
         /// </summary>
-        public static ShortcutItem GetRegisteredItem(ShortcutKeys keys)
+        internal static ShortcutItem GetRegisteredItem(ShortcutKeys keys)
         {
             ShortcutItem item;
             return !keys.IsNone && cachedItems.TryGetValue(keys, out item) ? item : null;
@@ -141,24 +151,30 @@ namespace FlashDevelop.Managers
         /// <summary>
         /// Gets the specified registered shortcut item.
         /// </summary>
-        public static ToolStripItem GetSecondaryItem(string id)
+        internal static ToolStripItem GetSecondaryItem(string id)
         {
             foreach (var item in secondaryItems)
             {
-                string[] ids = ((ItemData) item.Tag).Id.Split(';');
-                if (ids.Length == 2)
+                if (item != null && item.Tag is ItemData)
                 {
-                    string itemId = string.IsNullOrEmpty(ids[1]) ? StripBarManager.GetMenuItemId(item) : ids[1];
-                    if (itemId == id) return item;
+                    string[] ids = ((ItemData) item.Tag).Id.Split(';');
+                    if (ids.Length == 2)
+                    {
+                        string itemId = string.IsNullOrEmpty(ids[1]) ? StripBarManager.GetMenuItemId(item) : ids[1];
+                        if (itemId == id)
+                        {
+                            return item;
+                        }
+                    }
                 }
             }
             return null;
         }
-
+        
         /// <summary>
-        /// Updates the list of all shortcuts.
+        /// Applies all shortcuts to the items.
         /// </summary>
-        public static void UpdateAllShortcuts()
+        internal static void ApplyAllShortcuts()
         {
             allShortcuts.Clear();
             altFirstKeys.Clear();
@@ -175,35 +191,27 @@ namespace FlashDevelop.Managers
                         altFirstKeys.Add(keys.First);
                     }
                 }
+
+                if (item.ItemEx != null)
+                {
+                    item.ItemEx.ShortcutKeys = keys;
+                }
+                else if (item.Item != null)
+                {
+                    item.Item.ShortcutKeys = (Keys) keys;
+                }
+                else if (item.Default != keys)
+                {
+                    if (!ScintillaControl.UpdateShortcut(item.Id, keys))
+                    {
+                        var de = new DataEvent(EventType.Shortcut, item.Id, keys);
+                        EventManager.DispatchEvent(Globals.MainForm, de);
+                    }
+                }
             }
             foreach (var item in ignoredKeys)
             {
                 allShortcuts.Add(item);
-            }
-        }
-
-        /// <summary>
-        /// Applies all shortcuts to the items.
-        /// </summary>
-        public static void ApplyAllShortcuts()
-        {
-            UpdateAllShortcuts();
-            foreach (var item in registeredItems/*.Values*/)
-            {
-                if (item.ItemEx != null)
-                {
-                    item.ItemEx.ShortcutKeys = item.Custom;
-                }
-                /*else*/ if (item.Item != null)
-                {
-                    item.Item.ShortcutKeys = (Keys) item.Custom;
-                }
-                else if (item.Default != item.Custom)
-                {
-                    ScintillaControl.UpdateShortcut(item.Id, item.Custom);
-                    var de = new DataEvent(EventType.Shortcut, item.Id, item.Custom);
-                    EventManager.DispatchEvent(Globals.MainForm, de);
-                }
             }
             foreach (var button in secondaryItems)
             {
@@ -216,37 +224,43 @@ namespace FlashDevelop.Managers
         /// </summary>
         public static void ApplySecondaryShortcut(ToolStripItem item)
         {
-            bool view = Globals.Settings.ViewShortcuts;
-            if (item != null && item.Tag != null)
+            bool viewShortcuts = Globals.Settings.ViewShortcuts;
+            if (item != null && item.Tag is ItemData)
             {
                 string[] ids = ((ItemData) item.Tag).Id.Split(';');
-                if (ids.Length != 2) return; // No work for us here...
-                string id = string.IsNullOrEmpty(ids[1]) ? StripBarManager.GetMenuItemId(item) : ids[1];
-                var keys = Globals.MainForm.GetShortcutKeys(id);
-                if (!keys.IsNone)
+                if (ids.Length == 2)
                 {
+                    string itemId = string.IsNullOrEmpty(ids[1]) ? StripBarManager.GetMenuItemId(item) : ids[1];
+                    var keys = Globals.MainForm.GetShortcutKeys(itemId);
+                    bool showShortcuts = viewShortcuts && !keys.IsNone;
                     if (item is ToolStripMenuItemEx)
                     {
                         var casted = item as ToolStripMenuItemEx;
                         if (casted.ShortcutKeys.IsNone)
                         {
-                            casted.ShortcutKeyDisplayString = view ? keys.ToString() : null;
+                            casted.ShortcutKeyDisplayString = showShortcuts ? keys.ToString() : null;
                         }
                     }
-                    /*else*/ if (item is ToolStripMenuItem)
+                    else if (item is ToolStripMenuItem)
                     {
                         var casted = item as ToolStripMenuItem;
                         if (casted.ShortcutKeys == Keys.None)
                         {
-                            casted.ShortcutKeyDisplayString = view ? keys.ToString() : null;
+                            casted.ShortcutKeyDisplayString = showShortcuts ? keys.ToString() : null;
                         }
                     }
                     else
                     {
-                        int end = item.ToolTipText.LastIndexOfOrdinal(" (");
-                        string keytext = view ? " (" + keys + ")" : string.Empty;
-                        if (end != -1) item.ToolTipText = item.ToolTipText.Substring(0, end) + keytext;
-                        else item.ToolTipText += keytext;
+                        string shortcutText = showShortcuts ? " (" + keys + ")" : null;
+                        int shortcutTextIndex = item.ToolTipText.LastIndexOfOrdinal(" (");
+                        if (shortcutTextIndex >= 0)
+                        {
+                            item.ToolTipText = item.ToolTipText.Substring(0, shortcutTextIndex) + shortcutText;
+                        }
+                        else
+                        {
+                            item.ToolTipText += shortcutText;
+                        }
                     }
                 }
             }
@@ -396,18 +410,18 @@ namespace FlashDevelop.Managers
 
     internal class ShortcutItem
     {
-        internal string Id;
-        internal bool SupportsExtended;
-        internal ShortcutKeys Default;
+        internal readonly string Id;
+        internal readonly bool SupportsExtended;
+        internal readonly ToolStripMenuItem Item;
+        internal readonly ToolStripMenuItemEx ItemEx;
+        internal readonly ShortcutKeys Default;
         internal ShortcutKeys Custom;
-        internal ToolStripMenuItemEx ItemEx;
-
-        [Obsolete("Type is ToolStripMenuItemEx")]
-        internal ToolStripMenuItem Item;
 
         internal ShortcutItem(string id, ShortcutKeys keys, bool supportsExtended)
         {
             Id = id;
+            Item = null;
+            ItemEx = null;
             Default = Custom = keys;
             SupportsExtended = supportsExtended;
         }
@@ -421,9 +435,9 @@ namespace FlashDevelop.Managers
         {
             Id = id;
             Item = item;
-            ItemEx = item as ToolStripMenuItemEx;
-            SupportsExtended = ItemEx != null;
-            Default = Custom = SupportsExtended ? ItemEx.ShortcutKeys : (ShortcutKeys) Item.ShortcutKeys;
+            ItemEx = null;
+            Default = Custom = (ShortcutKeys) Item.ShortcutKeys;
+            SupportsExtended = false;
         }
 
         internal ShortcutItem(string id, ToolStripMenuItemEx item)
@@ -431,8 +445,8 @@ namespace FlashDevelop.Managers
             Id = id;
             Item = item;
             ItemEx = item;
-            SupportsExtended = true;
             Default = Custom = ItemEx.ShortcutKeys;
+            SupportsExtended = true;
         }
 
         public override string ToString()

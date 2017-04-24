@@ -202,16 +202,28 @@ namespace PluginCore.Managers
         /// <param name="keyData">The virtual key code to be translated.</param>
         public static bool IsCharacterKeys(Keys keyData)
         {
+            return IsCharacterKeys(keyData, (keyData & Keys.Shift) == Keys.Shift, (keyData & Keys.Control) == Keys.Control, (keyData & Keys.Alt) == Keys.Alt);
+        }
+
+        /// <summary>
+        /// Retrieves a value indicating whether the specified virtual key code and keyboard state has a corresponding Unicode character or characters.
+        /// </summary>
+        /// <param name="keyData">The virtual key code to be translated.</param>
+        /// <param name="shift">Whether <see cref="Keys.Shift"/> is pressed.</param>
+        /// <param name="control">Whether <see cref="Keys.Control"/> is pressed.</param>
+        /// <param name="alt">Whether <see cref="Keys.Alt"/> is pressed.</param>
+        public static bool IsCharacterKeys(Keys keyData, bool shift, bool control, bool alt)
+        {
             byte[] keyStates = new byte[256];
-            if ((keyData & Keys.Shift) == Keys.Shift)
+            if (shift)
             {
                 keyStates[(int) Keys.ShiftKey] = byte.MaxValue;
             }
-            if ((keyData & Keys.Control) == Keys.Control)
+            if (control)
             {
                 keyStates[(int) Keys.ControlKey] = byte.MaxValue;
             }
-            if ((keyData & Keys.Alt) == Keys.Alt)
+            if (alt)
             {
                 keyStates[(int) Keys.Menu] = byte.MaxValue;
             }
@@ -232,7 +244,7 @@ namespace PluginCore.Managers
             return false;
         }
 
-        internal static bool ProcessShortcut(ref Message m, ShortcutKeys shortcut)
+        private static bool ProcessShortcut(ref Message m, ShortcutKeys shortcut)
         {
             if (!IsThreadUsingToolStrips())
             {
@@ -339,12 +351,12 @@ namespace PluginCore.Managers
             return handled;
         }
 
-        internal static bool IsThreadUsingToolStrips()
+        private static bool IsThreadUsingToolStrips()
         {
             return ToolStrips != null && toolStrips.Count > 0;
         }
 
-        internal static void PruneToolStripList()
+        private static void PruneToolStripList()
         {
             if (IsThreadUsingToolStrips())
             {

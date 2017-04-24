@@ -33,7 +33,6 @@ namespace ScintillaNet
         private bool useHighlightGuides = true;
         private System.Timers.Timer highlightDelay;
         private static Scintilla sciConfiguration = null;
-        private static Dictionary<String, ShortcutOverride> shortcutOverrides = new Dictionary<String, ShortcutOverride>();
         private Enums.IndentView indentView = Enums.IndentView.Real;
         private Enums.SmartIndent smartIndent = Enums.SmartIndent.CPP;
         //private Hashtable ignoredKeys = new Hashtable();
@@ -5272,24 +5271,19 @@ namespace ScintillaNet
 
         #region Scintilla Shortcuts
 
+        private static ShortcutKeys ShortcutKey_ResetZoom = Keys.Control | Keys.NumPad0;
+        private static ShortcutKeys ShortcutKey_ZoomIn = Keys.Control | Keys.Add;
+        private static ShortcutKeys ShortcutKey_ZoomOut = Keys.Control | Keys.Subtract;
+
         /// <summary>
         /// Initializes the user customizable shortcut overrides
         /// </summary>
         public static void InitShortcuts()
         {
             // reference: http://www.scintilla.org/SciTEDoc.html "Keyboard commands"
-            AddShortcut("ResetZoom", Keys.Control | Keys.NumPad0, sci => sci.ResetZoom());
-            AddShortcut("ZoomOut", Keys.Control | Keys.Subtract, sci => sci.ZoomOut());
-            AddShortcut("ZoomIn", Keys.Control | Keys.Add, sci => sci.ZoomIn());
-        }
-
-        /// <summary>
-        /// Adds a new shortcut override
-        /// </summary>
-        private static void AddShortcut(String displayName, ShortcutKeys keys, Action<ScintillaControl> action)
-        {
-            shortcutOverrides.Add("Scintilla." + displayName, new ShortcutOverride(keys, action));
-            PluginBase.MainForm.RegisterShortcutItem("Scintilla." + displayName, keys);
+            PluginBase.MainForm.RegisterShortcutItem("Scintilla.ResetZoom", ShortcutKey_ResetZoom);
+            PluginBase.MainForm.RegisterShortcutItem("Scintilla.ZoomIn", ShortcutKey_ZoomIn);
+            PluginBase.MainForm.RegisterShortcutItem("Scintilla.ZoomOut", ShortcutKey_ZoomOut);
         }
 
         /// <summary>
@@ -5297,7 +5291,7 @@ namespace ScintillaNet
         /// </summary>
         [Obsolete("This method has been deprecated.", true)]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static void UpdateShortcut(String id, Keys shortcut)
+        public static void UpdateShortcut(string id, Keys shortcut)
         {
             UpdateShortcut(id, (ShortcutKeys) shortcut);
         }
@@ -5305,43 +5299,42 @@ namespace ScintillaNet
         /// <summary>
         /// Updates the shortcut if it changes or needs updating
         /// </summary>
-        public static void UpdateShortcut(String id, ShortcutKeys shortcut)
+        public static bool UpdateShortcut(string id, ShortcutKeys shortcut)
         {
-            if (id.StartsWithOrdinal("Scintilla.")) shortcutOverrides[id].keys = shortcut;
+            switch (id)
+            {
+                case "Scintilla.ResetZoom":
+                    ShortcutKey_ResetZoom = shortcut;
+                    return true;
+                case "Scintilla.ZoomIn":
+                    ShortcutKey_ZoomIn = shortcut;
+                    return true;
+                case "Scintilla.ZoomOut":
+                    ShortcutKey_ZoomOut = shortcut;
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         /// <summary>
         /// Execute the shortcut override using reflection
         /// </summary>
-        public Boolean ExecuteShortcut(ShortcutKeys keys)
+        public bool ExecuteShortcut(string action)
         {
-            try
+            switch (action)
             {
-                foreach (ShortcutOverride shortcut in shortcutOverrides.Values)
-                {
-                    if (keys == shortcut.keys)
-                    {
-                        shortcut.action(this);
-                        return true;
-                    }
-                }
-                return false;
-            }
-            catch (Exception) { return false; }
-        }
-
-        /// <summary>
-        /// Shortcut override object
-        /// </summary>
-        private class ShortcutOverride
-        {
-            public ShortcutKeys keys;
-            public Action<ScintillaControl> action;
-
-            public ShortcutOverride(ShortcutKeys keys, Action<ScintillaControl> action)
-            {
-                this.keys = keys;
-                this.action = action;
+                case "Scintilla.ResetZoom":
+                    ResetZoom();
+                    return true;
+                case "Scintilla.ZoomIn":
+                    ZoomIn();
+                    return true;
+                case "Scintilla.ZoomOut":
+                    ZoomOut();
+                    return true;
+                default:
+                    return false;
             }
         }
 

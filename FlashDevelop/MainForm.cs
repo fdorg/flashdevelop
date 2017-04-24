@@ -212,7 +212,7 @@ namespace FlashDevelop
         public string StatusLabelText
         {
             get { return this.StatusLabel.Text; }
-            set { if (!lockStatusLabel) StatusLabel.Text = value ?? " "; }
+            set { if (!lockStatusLabel) StatusLabel.Text = string.IsNullOrEmpty(value) ? " " : value; }
         }
 
         /// <summary>
@@ -259,7 +259,7 @@ namespace FlashDevelop
         /// Gets the ignored keys.
         /// <para/>
         /// [deprecated] This property always returns an empty <see cref="List{T}"/>.
-        /// Use the <see cref="AddIgnoredKeys"/> property instead.
+        /// Use the <see cref="AddIgnoredKeys"/> method instead.
         /// </summary>
         [Obsolete("This property has been deprecated.", true)]
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -1731,51 +1731,26 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Gets the type of the undefined key input.
-        /// <para/>0 - Input is a valid first key for an extended shortcut.
-        /// <para/>1 - Input is not a valid first key for an extended shortcut.
-        /// <para/>2 - Extended shortcut is disabled.
-        /// <para/>3 - Input is a mnemonic shortcut and is handled.
-        /// <para/>4 - Input is not a valid shortcut.
-        /// <para/>5 - Input is a character input with AltGr.
+        /// Notify plugins and scintilla, and check for tabbing process.
         /// </summary>
-        private int GetUndefinedShortcutType(Keys keyData, bool suppressMnemonic = false)
-        {
-            switch (keyData & Keys.Modifiers)
-            {
-                case Keys.None:
-                case Keys.Shift:
-                    var keyCode = keyData & Keys.KeyCode;
-                    if (Keys.F1 <= keyCode && keyCode <= Keys.F24)
-                    {
-                        return 1;
-                    }
-                    return 4;
-                case Keys.Alt:
-                    if (!ShortcutManager.AltFirstKeys.Contains(keyData) && !suppressMnemonic && ProcessMnemonic((char) keyData))
-                    {
-                        return 3;
-                    }
-                    break;
-                case Keys.Control | Keys.Alt:
-                case Keys.Control | Keys.Alt | Keys.Shift:
-                    if (ShortcutKeysManager.IsCharacterKeys(keyData))
-                    {
-                        return 5;
-                    }
-                    break;
-            }
-            return appSettings.DisableExtendedShortcutKeys ? 2 : 0;
-        }
-
         private bool ProcessCmdKeyImpl(ref Message msg, Keys keyData)
         {
+            string command = GetShortcutId(currentKeys);
+
             /**
              * Notify plugins.
              */
-            var ke = new KeyEvent(EventType.Keys, currentKeys, GetShortcutId(currentKeys));
+            var ke = new KeyEvent(EventType.Keys, currentKeys, command);
             EventManager.DispatchEvent(this, ke);
             if (ke.Handled)
+            {
+                return true;
+            }
+
+            /**
+             * Handle ScintillaControl shortcuts
+             */
+            if (Globals.SciControl != null && Globals.SciControl.IsFocus && Globals.SciControl.ExecuteShortcut(command))
             {
                 return true;
             }
@@ -1805,37 +1780,25 @@ namespace FlashDevelop
             //}
 
             /**
-             * Handle ScintillaControl shortcuts
-             */
-            if (Globals.SciControl != null)
-            {
-                if (Globals.SciControl.IsFocus && Globals.SciControl.ExecuteShortcut(currentKeys))
-                {
-                    return true;
-                }
-            }
-
-            /**
              * Process special key combinations and allow "chaining" of 
              * Ctrl-Tab commands if you keep holding control down.
              */
             if ((keyData & Keys.Control) != 0)
             {
-                bool sequentialTabbing = appSettings.SequentialTabbing;
-                if (keyData == (Keys.Control | Keys.Next) || keyData == (Keys.Control | Keys.Tab))
+                if (keyData == (Keys.Control | Keys.PageDown) || keyData == (Keys.Control | Keys.Tab))
                 {
                     TabbingManager.TabTimer.Enabled = true;
-                    if (keyData == (Keys.Control | Keys.Next) || sequentialTabbing)
+                    if (keyData == (Keys.Control | Keys.PageDown) || appSettings.SequentialTabbing)
                     {
                         TabbingManager.NavigateTabsSequentially(1);
                     }
                     else TabbingManager.NavigateTabHistory(1);
                     return true;
                 }
-                if (keyData == (Keys.Control | Keys.Prior) || keyData == (Keys.Control | Keys.Shift | Keys.Tab))
+                else if (keyData == (Keys.Control | Keys.PageUp) || keyData == (Keys.Control | Keys.Shift | Keys.Tab))
                 {
                     TabbingManager.TabTimer.Enabled = true;
-                    if (keyData == (Keys.Control | Keys.Prior) || sequentialTabbing)
+                    if (keyData == (Keys.Control | Keys.PageUp) || appSettings.SequentialTabbing)
                     {
                         TabbingManager.NavigateTabsSequentially(-1);
                     }
@@ -1845,6 +1808,49 @@ namespace FlashDevelop
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Gets the type of the undefined key input.
+        /// <para/>0 - Input is a valid first key for an extended shortcut.
+        /// <para/>1 - Input is not a valid first key for an extended shortcut.
+        /// <para/>2 - Extended shortcut is disabled.
+        /// <para/>3 - Input is a mnemonic shortcut and is handled.
+        /// <para/>4 - Input is not a valid shortcut.
+        /// <para/>5 - Input is a character input with AltGr.
+        /// </summary>
+        private int GetUndefinedShortcutType(Keys keyData, bool suppressMnemonic = false)
+        {
+            switch (keyData & Keys.Modifiers)
+            {
+                case Keys.None:
+                case Keys.Shift:
+                    var keyCode = keyData & Keys.KeyCode;
+                    if (Keys.F1 <= keyCode && keyCode <= Keys.F24)
+                    {
+                        return 1;
+                    }
+                    return 4;
+                case Keys.Alt:
+                    if (!ShortcutManager.AltFirstKeys.Contains(keyData) && !suppressMnemonic && ProcessMnemonic((char) keyData))
+                    {
+                        return 3;
+                    }
+                    break;
+                case Keys.Control | Keys.Alt:
+                    if (ShortcutKeysManager.IsCharacterKeys(keyData, false, true, true))
+                    {
+                        return 5;
+                    }
+                    break;
+                case Keys.Control | Keys.Alt | Keys.Shift:
+                    if (ShortcutKeysManager.IsCharacterKeys(keyData, true, true, true))
+                    {
+                        return 5;
+                    }
+                    break;
+            }
+            return appSettings.DisableExtendedShortcutKeys ? 2 : 0;
         }
 
         /// <summary>
@@ -2139,7 +2145,7 @@ namespace FlashDevelop
         [EditorBrowsable(EditorBrowsableState.Never)]
         public Keys GetShortcutItemKeys(String id)
         {
-            return GetShortcutKeys(id);
+            return (Keys) GetShortcutKeys(id);
         }
 
         /// <summary>
@@ -2151,7 +2157,7 @@ namespace FlashDevelop
         [EditorBrowsable(EditorBrowsableState.Never)]
         public String GetShortcutItemId(Keys keys)
         {
-            return GetShortcutId(keys);
+            return GetShortcutId((ShortcutKeys) keys);
         }
 
         /// <summary>
@@ -2213,7 +2219,7 @@ namespace FlashDevelop
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void RegisterShortcutItem(String id, Keys keys)
         {
-            RegisterShortcutItem(id, keys, false);
+            RegisterShortcutItem(id, (ShortcutKeys) keys, false);
         }
 
         /// <summary>
