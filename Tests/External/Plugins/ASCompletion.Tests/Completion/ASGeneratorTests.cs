@@ -73,6 +73,24 @@ namespace ASCompletion.Completion
             };
         }
 
+        private static void SetAs3Features(ScintillaControl sci)
+        {
+            if (sci.ConfigurationLanguage != "as3")
+            {
+                sci.ConfigurationLanguage = "as3";
+                ASContext.Context.SetAs3Features();
+            }
+        }
+
+        private static void SetHaxeFeatures(ScintillaControl sci)
+        {
+            if (sci.ConfigurationLanguage != "haxe")
+            {
+                sci.ConfigurationLanguage = "haxe";
+                ASContext.Context.SetHaxeFeatures();
+            }
+        }
+
         public class GetBodyStart : ASGeneratorTests
         {
             public IEnumerable<TestCaseData> GetBodyStartTestCases
@@ -320,13 +338,12 @@ namespace ASCompletion.Completion
                 public string Common(Visibility scope, string sourceText, ClassModel sourceClassModel,
                     int memberPos, int parameterPos)
                 {
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
 
                     var table = new Hashtable();
                     table["scope"] = scope;
 
                     sci.Text = sourceText;
-                    sci.ConfigurationLanguage = "as3";
 
                     var inClass = sourceClassModel;
                     var sourceMember = sourceClassModel.Members[memberPos];
@@ -522,11 +539,10 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(ImplementInterfaceAs3TestCases))]
                 public string As3(string sourceText, ClassModel sourceModel, ClassModel interfaceToImplement)
                 {
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceToImplement);
 
                     sci.Text = sourceText;
-                    sci.ConfigurationLanguage = "as3";
 
                     ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, sourceModel, null, null);
 
@@ -536,11 +552,10 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(ImplementInterfaceHaxeTestCases))]
                 public string Haxe(string sourceText, ClassModel sourceModel, ClassModel interfaceToImplement)
                 {
-                    ASContext.Context.SetHaxeFeatures();
+                    SetHaxeFeatures(sci);
                     ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceToImplement);
 
                     sci.Text = sourceText;
-                    sci.ConfigurationLanguage = "haxe";
 
                     ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, sourceModel, null, null);
 
@@ -589,15 +604,13 @@ namespace ASCompletion.Completion
 
                 internal static string AS3Impl(string sourceText, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     return Common(sourceText, sci);
                 }
 
                 internal static string HaxeImpl(string sourceText, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
+                    SetHaxeFeatures(sci);
                     return Common(sourceText, sci);
                 }
 
@@ -838,15 +851,13 @@ namespace ASCompletion.Completion
 
                 internal static string AS3Impl(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     return Common(sourceText, job, sci);
                 }
 
                 internal static string HaxeImpl(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
+                    SetHaxeFeatures(sci);
                     return Common(sourceText, job, sci);
                 }
 
@@ -1312,15 +1323,13 @@ namespace ASCompletion.Completion
 
                 internal static string AS3Impl(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     return Common(sourceText, job, sci);
                 }
                 
                 internal static string HaxeImpl(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
+                    SetHaxeFeatures(sci);
                     return Common(sourceText, job, sci);
                 }
 
@@ -1531,15 +1540,13 @@ namespace ASCompletion.Completion
 
                 internal static string AS3Impl(string sourceText, string[] autoRemove, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     return Common(sourceText, autoRemove, sci);
                 }
 
                 internal static string HaxeImpl(string sourceText, string[] autoRemove, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
+                    SetHaxeFeatures(sci);
                     return Common(sourceText, autoRemove, sci);
                 }
 
@@ -1680,15 +1687,13 @@ namespace ASCompletion.Completion
 
                 internal static string AS3Impl(string sourceText, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     return Common(sourceText, sci);
                 }
 
                 internal static string HaxeImpl(string sourceText, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
+                    SetHaxeFeatures(sci);
                     return Common(sourceText, sci);
                 }
 
@@ -1836,15 +1841,13 @@ namespace ASCompletion.Completion
 
                 internal static string AS3Impl(string sourceText, string ofClassName, string memberName, FlagType memberFlags, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     return Common(sourceText, ofClassName, memberName, memberFlags, sci);
                 }
 
                 internal static string HaxeImpl(string sourceText, string ofClassName, string memberName, FlagType memberFlags, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
+                    SetHaxeFeatures(sci);
                     return Common(sourceText, ofClassName, memberName, memberFlags, sci);
                 }
 
@@ -1968,8 +1971,7 @@ namespace ASCompletion.Completion
 
                 public static ClassModel AS3Impl(string sourceText, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     return Common(sourceText, sci);
                 }
 
@@ -2098,15 +2100,13 @@ namespace ASCompletion.Completion
 
                 internal static List<MemberModel> AS3Impl(string sourceText, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     return Common(sourceText, sci);
                 }
 
                 internal static List<MemberModel> HaxeImpl(string sourceText, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
+                    SetHaxeFeatures(sci);
                     return Common(sourceText, sci);
                 }
 
@@ -2214,16 +2214,14 @@ namespace ASCompletion.Completion
 
                 internal string AS3Impl(string sourceText, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     return Common(sourceText, sci);
                 }
 
                 internal string HaxeImpl(string fileName, ScintillaControl sci)
                 {
+                    SetHaxeFeatures(sci);
                     var sourceText = ReadAllTextHaxe(fileName);
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
                     fileName = GetFullPathHaxe(fileName);
                     ASContext.Context.CurrentModel.FileName = fileName;
                     PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
@@ -2323,15 +2321,13 @@ namespace ASCompletion.Completion
 
                 internal static int AS3Impl(string sourceText, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     return Common(sourceText, sci);
                 }
 
                 internal static int HaxeImpl(string sourceText, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
+                    SetHaxeFeatures(sci);
                     return Common(sourceText, sci);
                 }
 
@@ -2406,7 +2402,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText) => AS3Impl(sourceText);
+                public string AS3(string sourceText) => AS3Impl(sourceText, sci);
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -2457,17 +2453,17 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText) => HaxeImpl(sourceText);
+                public string Haxe(string sourceText) => HaxeImpl(sourceText, sci);
 
-                internal static string AS3Impl(string sourceText)
+                internal static string AS3Impl(string sourceText, ScintillaControl sci)
                 {
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     return Common(sourceText);
                 }
 
-                internal static string HaxeImpl(string sourceText)
+                internal static string HaxeImpl(string sourceText, ScintillaControl sci)
                 {
-                    ASContext.Context.SetHaxeFeatures();
+                    SetHaxeFeatures(sci);
                     return Common(sourceText);
                 }
 
