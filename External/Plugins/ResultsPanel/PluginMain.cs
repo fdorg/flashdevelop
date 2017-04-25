@@ -132,6 +132,7 @@ namespace ResultsPanel
                     break;
 
                 case EventType.ApplySettings:
+                case EventType.ApplyTheme:
                     ResultsPanelHelper.ApplySettings();
                     break;
 
@@ -223,7 +224,7 @@ namespace ResultsPanel
         public void AddEventHandlers()
         {
             EventType eventMask = EventType.ProcessEnd | EventType.ProcessStart | EventType.FileOpen | EventType.Command
-                | EventType.Trace | EventType.Keys | EventType.Shortcut | EventType.ApplySettings;
+                | EventType.Trace | EventType.Keys | EventType.Shortcut | EventType.ApplySettings | EventType.ApplyTheme;
             EventManager.AddEventHandler(this, eventMask);
         }
 

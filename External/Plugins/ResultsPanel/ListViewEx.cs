@@ -1,88 +1,71 @@
 ﻿using PluginCore;
-using PluginCore.Helpers;
-using PluginCore.Managers;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 
 namespace ResultsPanel
 {
-    class ListViewEx : System.Windows.Forms.ListViewEx
+    internal class ListViewEx : System.Windows.Forms.ListViewEx
     {
-        private ColumnHeader sortedColumn;
-        private SortOrder sortOrder = SortOrder.None;
-
         private int upArrowIndex;
         private int downArrowIndex;
 
-        public ColumnHeader SortedColumn
+        internal ColumnHeader SortedColumn
         {
-            get
-            {
-                return sortedColumn;
-            }
+            get;
+            private set;
         }
 
-        public SortOrder SortOrder
+        internal SortOrder SortOrder
         {
-            get
-            {
-                return sortOrder;
-            }
+            get;
+            private set;
         }
 
-        public ListViewEx() : base()
+        internal ListViewEx()
         {
+            SortedColumn = null;
+            SortOrder = SortOrder.None;
         }
 
-        public void AddArrowImages()
+        internal void AddArrowImages()
         {
-            upArrowIndex = this.SmallImageList.Images.Count - 2;
+            upArrowIndex = SmallImageList.Images.Count - 2;
             downArrowIndex = upArrowIndex + 1;
         }
-
-        public void SortGroups(ColumnHeader column, SortOrder order, IComparer<ListViewGroup> comparer)
+        
+        internal void SortGroups(ColumnHeader columnHeader, SortOrder sortOrder, Comparison<ListViewGroup> comparison)
         {
-            sortedColumn = column;
-            sortOrder = order;
+            SetArrow(columnHeader, sortOrder);
 
-            SetArrow(column, order);
+            SortedColumn = columnHeader;
+            SortOrder = sortOrder;
 
-            ListViewGroup[] groups = new ListViewGroup[this.Groups.Count];
-            this.Groups.CopyTo(groups, 0);
+            var groups = new ListViewGroup[Groups.Count];
+            Groups.CopyTo(groups, 0);
 
-            switch (order)
+            switch (sortOrder)
             {
                 case SortOrder.None:
                     break;
                 case SortOrder.Ascending:
-                    Array.Sort(groups, comparer);
+                    Array.Sort(groups, comparison);
                     break;
                 case SortOrder.Descending:
-                    Array.Sort(groups, comparer);
+                    Array.Sort(groups, comparison);
                     Array.Reverse(groups);
                     break;
             }
 
-            foreach (ListViewGroup gp in groups)
-            {
-                this.Groups.Remove(gp);
-            }
-
-            foreach (ListViewGroup gp in groups)
-            {
-                this.Groups.Add(gp);
-            }
+            Groups.Clear();
+            Groups.AddRange(groups);
         }
 
-        override protected void OnDrawColumnHeader(Object sender, DrawListViewColumnHeaderEventArgs e)
+        protected override void OnDrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
         {
-            bool isSorted = sortedColumn != null && e.ColumnIndex == sortedColumn.Index && sortOrder != SortOrder.None;
+            bool isSorted = SortedColumn != null && e.ColumnIndex == SortedColumn.Index && SortOrder != SortOrder.None;
 
             Color back = PluginBase.MainForm.GetThemeColor("ColumnHeader.BackColor");
             Color text = PluginBase.MainForm.GetThemeColor("ColumnHeader.TextColor");
@@ -94,7 +77,7 @@ namespace ResultsPanel
                 if (isSorted)
                 {
                     Image arrow = null;
-                    switch (sortOrder)
+                    switch (SortOrder)
                     {
                         case SortOrder.Ascending:
                             arrow = this.SmallImageList.Images[upArrowIndex];
@@ -116,7 +99,7 @@ namespace ResultsPanel
                 {
                     if (isSorted)
                     {
-                        e.Header.ImageIndex = sortOrder == SortOrder.Ascending ? upArrowIndex : downArrowIndex;
+                        e.Header.ImageIndex = SortOrder == SortOrder.Ascending ? upArrowIndex : downArrowIndex;
                         e.Header.TextAlign = HorizontalAlignment.Left; //set alignment to remove the previously drawn icon
                     }
                     else if (e.Header.ImageIndex != -1)
@@ -137,8 +120,16 @@ namespace ResultsPanel
                 return;
             }
 
+            if (SortedColumn != null)
+            {
+                SortedColumn.ImageIndex = -1;
+            }
+
             switch (order)
             {
+                case SortOrder.None:
+                    column.ImageIndex = -1;
+                    break;
                 case SortOrder.Ascending:
                     column.ImageIndex = upArrowIndex;
                     break;
@@ -146,14 +137,13 @@ namespace ResultsPanel
                     column.ImageIndex = downArrowIndex;
                     break;
             }
-            
         }
 
-        private void DrawArrow(IDeviceContext device, Rectangle bounds, SortOrder order = SortOrder.None)
+        private void DrawArrow(IDeviceContext device, Rectangle bounds, SortOrder order = System.Windows.Forms.SortOrder.None)
         {
             if (order == SortOrder.None)
             {
-                order = sortOrder;
+                order = SortOrder;
             }
             
             VisualStyleElement arrow = null;
