@@ -6150,4 +6150,8 @@ AND - All conditions are met.</value>
     <value>Keep Results</value>
     <comment>Added after 5.2.0</comment>
   </data>
+  <data name="ResultsPanel.Description.HighlightOnlyActivePanelEntries" xml:space="preserve">
+    <value>Highlight only the entries in the active panel and the main panel.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
 </root>

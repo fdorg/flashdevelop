@@ -126,7 +126,7 @@ namespace ResultsPanel
         /// <summary>
         /// Accessor for settings
         /// </summary>
-        private Settings Settings
+        internal Settings Settings
         {
             get { return (Settings) this.pluginMain.Settings; }
         }
@@ -668,9 +668,24 @@ namespace ResultsPanel
         /// </summary>
         public void OnPanelHidden()
         {
-            if (ResultsPanelHelper.ActiveUI == this)
+            if (Settings.HighlightOnlyActivePanelEntries)
             {
-                pluginMain.pluginUI.OnPanelActivated();
+                if (ResultsPanelHelper.ActiveUI == this)
+                {
+                    pluginMain.pluginUI.OnPanelActivated();
+                }
+            }
+            else
+            {
+                ClearSquiggles();
+                pluginMain.pluginUI.AddSquiggles();
+                foreach (var pluginUI in ResultsPanelHelper.PluginUIs)
+                {
+                    if (pluginUI != this)
+                    {
+                        pluginUI.AddSquiggles();
+                    }
+                }
             }
         }
 
@@ -679,19 +694,26 @@ namespace ResultsPanel
         /// </summary>
         public void OnPanelActivated()
         {
-            if (ResultsPanelHelper.ActiveUI != this)
+            if (Settings.HighlightOnlyActivePanelEntries)
             {
-                if (ResultsPanelHelper.ActiveUI.GroupData != null)
+                if (ResultsPanelHelper.ActiveUI != this)
                 {
-                    ResultsPanelHelper.ActiveUI.ClearSquiggles();
-                    pluginMain.pluginUI.ClearSquiggles();
-                    pluginMain.pluginUI.AddSquiggles();
-                }
+                    if (ResultsPanelHelper.ActiveUI.GroupData != null)
+                    {
+                        ResultsPanelHelper.ActiveUI.ClearSquiggles();
+                        pluginMain.pluginUI.ClearSquiggles();
+                        pluginMain.pluginUI.AddSquiggles();
+                    }
+                    ResultsPanelHelper.ActiveUI = this;
+                    if (GroupData != null)
+                    {
+                        AddSquiggles();
+                    }
+                } 
+            }
+            else
+            {
                 ResultsPanelHelper.ActiveUI = this;
-                if (GroupData != null)
-                {
-                    AddSquiggles();
-                }
             }
         }
 

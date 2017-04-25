@@ -9,6 +9,7 @@ namespace ResultsPanel
     {
         private Boolean scrollToBottom = false;
         private GroupingMethod defaultGroup = GroupingMethod.File;
+        private Boolean highlightOnlyActivePanelEntries = false;
 
         [DisplayName("Scroll To Bottom")]
         [LocalizedDescription("ResultsPanel.Description.ScrollToBottom"), DefaultValue(false)]
@@ -24,6 +25,14 @@ namespace ResultsPanel
         {
             get { return defaultGroup; }
             set { defaultGroup = value; }
+        }
+
+        [DisplayName("Highlight Only Active Panel Entries")]
+        [LocalizedDescription("ResultsPanel.Description.HighlightOnlyActivePanelEntries"), DefaultValue(true)]
+        public bool HighlightOnlyActivePanelEntries
+        {
+            get { return highlightOnlyActivePanelEntries; }
+            set { highlightOnlyActivePanelEntries = value; }
         }
     }
 

@@ -15,6 +15,11 @@ namespace ResultsPanel.Helpers
 
         internal static PluginUI ActiveUI { get; set; }
 
+        internal static IList<PluginUI> PluginUIs
+        {
+            get { return pluginUIs; }
+        }
+
         internal static void Initialize(PluginMain pluginMain, PluginUI pluginUI)
         {
             main = pluginMain;
@@ -118,9 +123,20 @@ namespace ResultsPanel.Helpers
         internal static void OnFileOpen(TextEvent e)
         {
             mainUI.AddSquiggles(e.Value);
-            if (ActiveUI.GroupId != null)
+
+            if (mainUI.Settings.HighlightOnlyActivePanelEntries)
             {
-                ActiveUI.AddSquiggles(e.Value);
+                if (ActiveUI.GroupId != null)
+                {
+                    ActiveUI.AddSquiggles(e.Value);
+                }
+            }
+            else
+            {
+                foreach (var pluginUI in pluginUIs)
+                {
+                    pluginUI.AddSquiggles(e.Value);
+                }
             }
         }
         
