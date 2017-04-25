@@ -261,7 +261,7 @@ namespace ResultsPanel
         /// </summary>
         public void OpenPanel(Object sender, EventArgs e)
         {
-            ResultsPanelHelper.ActiveUI.ParentPanel.Show();
+            this.pluginUI.ParentPanel.Show();
         }
 
         #endregion
