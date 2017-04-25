@@ -445,6 +445,8 @@ namespace ResultsPanel
             {
                 FilterResults();
             }
+
+            ClearSquiggles();
         }
         
         /// <summary>
@@ -1046,7 +1048,7 @@ namespace ResultsPanel
         /// <summary>
         /// Add all squiggles
         /// </summary>
-        private void AddSquiggles()
+        public void AddSquiggles()
         {
             foreach (ListViewItem item in entriesView.Items)
             {

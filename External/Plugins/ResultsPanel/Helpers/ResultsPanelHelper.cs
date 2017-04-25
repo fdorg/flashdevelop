@@ -103,6 +103,22 @@ namespace ResultsPanel.Helpers
             {
                 pluginUI.ApplySettings();
             }
+            
+            mainUI.AddSquiggles();
+            if (mainUI.Settings.HighlightOnlyActivePanelEntries)
+            {
+                if (ActiveUI.GroupId != null)
+                {
+                    ActiveUI.AddSquiggles();
+                }
+            }
+            else
+            {
+                foreach (var pluginUI in pluginUIs)
+                {
+                    pluginUI.AddSquiggles();
+                }
+            }
         }
 
         /// <summary>
