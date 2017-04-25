@@ -4088,16 +4088,15 @@ namespace FlashDevelop
         /// <summary>
         /// Calls a custom plugin command
         /// </summary>
-        public void PluginCommand(Object sender, System.EventArgs e)
+        public void PluginCommand(object sender, EventArgs e)
         {
             try
             {
-                ToolStripItem button = (ToolStripItem)sender;
-                String[] args = ((ItemData)button.Tag).Tag.Split(';');
-                String action = args[0]; // Action of the command
-                String data = (args.Length > 1) ? args[1] : null;
-                DataEvent de = new DataEvent(EventType.Command, action, data);
-                EventManager.DispatchEvent(this, de);
+                var item = (ToolStripItem) sender;
+                string[] args = ((ItemData) item.Tag).Tag.Split(new[] { ';' }, 2);
+                string action = args[0]; // Action of the command
+                string data = args.Length > 1 ? args[1] : null;
+                EventManager.DispatchEvent(this, new DataEvent(EventType.Command, action, data));
             }
             catch (Exception ex)
             {
@@ -4108,18 +4107,15 @@ namespace FlashDevelop
         /// <summary>
         /// Calls a normal MainForm method
         /// </summary>
-        public Boolean CallCommand(String name, String tag)
+        public Boolean CallCommand(String command, String args)
         {
             try
             {
-                Type mfType = this.GetType();
-                System.Reflection.MethodInfo method = mfType.GetMethod(name);
+                var method = this.GetType().GetMethod(command);
                 if (method == null) throw new MethodAccessException();
-                ToolStripMenuItem button = new ToolStripMenuItem();
-                button.Tag = new ItemData(null, tag, null); // Tag is used for args
-                Object[] parameters = new Object[2];
-                parameters[0] = button; parameters[1] = null;
-                method.Invoke(this, parameters);
+                var item = new ToolStripMenuItem();
+                item.Tag = new ItemData(null, args, null); // Tag is used for args
+                method.Invoke(this, new[] { item, null });
                 return true;
             }
             catch (Exception ex)

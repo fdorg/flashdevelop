@@ -113,6 +113,8 @@ namespace CodeRefactor
             this.InitBasics();
             this.LoadSettings();
             this.CreateMenuItems();
+            this.RegisterMenuItems();
+            this.RegisterTraceGroups();
         }
 
         /// <summary>
@@ -257,9 +259,6 @@ namespace CodeRefactor
             BatchProcessManager.AddBatchProcessor(new BatchProcessors.OrganizeImportsProcessor());
             BatchProcessManager.AddBatchProcessor(new BatchProcessors.TruncateImportsProcessor());
             BatchProcessManager.AddBatchProcessor(new BatchProcessors.ConsistentEOLProcessor());
-
-            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetStringWithoutMnemonics("Label.Refactor"), null);
-            TraceManager.RegisterTraceGroup(FindAllReferences.TraceGroup, TextHelper.GetString("Label.FindAllReferencesResult"), null);
         }
 
         /// <summary>
@@ -300,7 +299,6 @@ namespace CodeRefactor
             searchMenu.DropDownItems.Add(new ToolStripSeparator());
             searchMenu.DropDownItems.Add(this.viewReferencesItem);
             editorMenu.Items.Insert(8, this.editorReferencesItem);
-            RegisterMenuItems();
         }
 
         /// <summary>
@@ -326,6 +324,12 @@ namespace CodeRefactor
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.TruncateImports", this.refactorContextMenu.TruncateMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.CodeGenerator", this.refactorContextMenu.CodeGeneratorMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.BatchProcess", this.refactorContextMenu.BatchMenuItem);
+        }
+
+        private void RegisterTraceGroups()
+        {
+            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetStringWithoutMnemonics("Label.Refactor"));
+            TraceManager.RegisterTraceGroup(FindAllReferences.TraceGroup, TextHelper.GetString("Label.FindAllReferencesResult"), true);
         }
 
         /// <summary>

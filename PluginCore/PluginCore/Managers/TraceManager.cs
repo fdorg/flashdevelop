@@ -15,6 +15,7 @@ namespace PluginCore.Managers
         private static List<TraceItem> asyncQueue;
         private static Dictionary<string, TraceGroup> traceGroups;
         private static Timer asyncTimer;
+        private static int uniqueToken;
 
         static TraceManager()
         {
@@ -25,6 +26,7 @@ namespace PluginCore.Managers
             asyncTimer.Interval = 200;
             asyncTimer.AutoReset = false;
             asyncTimer.Elapsed += new ElapsedEventHandler(AsyncTimer_Elapsed);
+            uniqueToken = 0;
         }
 
         /// <summary>
@@ -104,11 +106,12 @@ namespace PluginCore.Managers
         /// </summary>
         /// <param name="groupId">The id used to determine the trace group.</param>
         /// <param name="title">The title to be displayed in the panel.</param>
+        /// <param name="allowMultiplePanels">Whether to let users lock certain panels to create multiple panels.</param>
         /// <param name="icon">The icon to be displayed in the panel. If this is <see langword="null"/>, the default icon is used.</param>
-        public static void RegisterTraceGroup(string groupId, string title, Image icon = null)
+        public static void RegisterTraceGroup(string groupId, string title, bool allowMultiplePanels = false, Image icon = null)
         {
             if (groupId == null) throw new ArgumentNullException(nameof(groupId));
-            traceGroups.Add(groupId, new TraceGroup(groupId, title, icon));
+            traceGroups.Add(groupId, new TraceGroup(groupId, title, allowMultiplePanels, icon));
         }
 
         /// <summary>
@@ -123,7 +126,9 @@ namespace PluginCore.Managers
         }
 
         /// <summary>
-        /// Creates a string for group data: <paramref name="groupId"/>:arg1,arg2,<paramref name="args"/>
+        /// Creates a string for group data.
+        /// <para/>
+        /// <paramref name="groupId"/>:arg1,arg2,<paramref name="args"/>
         /// </summary>
         public static string CreateGroupData(string groupId, params string[] args)
         {
@@ -132,6 +137,20 @@ namespace PluginCore.Managers
                 return groupId;
             }
             return groupId + ":" + string.Join(",", args);
+        }
+
+        /// <summary>
+        /// Creates a string for group data with a unique id argument at the end. Used for groups with <see cref="TraceGroup.AllowMultiplePanels"/> set to <see langword="true"/>.
+        /// <para/>
+        /// <paramref name="groupId"/>:arg1,arg2,<paramref name="args"/>,uniqueId
+        /// </summary>
+        public static string CreateGroupDataUnique(string groupId, params string[] args)
+        {
+            if (args == null || args.Length == 0)
+            {
+                return CreateGroupData(groupId, uniqueToken++.ToString());
+            }
+            return CreateGroupData(groupId, args) + "," + uniqueToken++;
         }
 
         /// <summary>
@@ -167,13 +186,12 @@ namespace PluginCore.Managers
                     synchronizing = true;
                     try
                     {
-                        (PluginBase.MainForm as Form).BeginInvoke((MethodInvoker)delegate { ProcessQueue(); });
+                        (PluginBase.MainForm as Form).BeginInvoke((MethodInvoker) ProcessQueue);
                     }
                     catch (Exception)
                     {
                         synchronizing = false;
                     }
-
                 }
             }
         }
@@ -208,60 +226,65 @@ namespace PluginCore.Managers
     {
         public string Id { get; }
         public string Title { get; }
+        public bool AllowMultiplePanels { get; }
         public Image Icon { get; }
 
-        public TraceGroup(string id, string title, Image icon)
+        public TraceGroup(string id, string title, bool allowMultiplePanels, Image icon)
         {
             Id = id;
             Title = title;
+            AllowMultiplePanels = allowMultiplePanels;
             Icon = icon;
         }
     }
 
     public class TraceItem
     {
-        private Int32 state = 0;
-        private DateTime timestamp;
-        private String message;
 
-        public string GroupData { get; }
-
-        public TraceItem(string message, int state, string groupData) : this(message, state)
+        public TraceItem(string message, int state) : this(message, state, null)
         {
+
+        }
+
+        public TraceItem(string message, int state, string groupData)
+        {
+            Timestamp = DateTime.Now;
+            Message = message;
+            State = state;
             GroupData = groupData;
         }
 
-        public TraceItem(String message, Int32 state)
-        {
-            this.timestamp = DateTime.Now;
-            this.message = message;
-            this.state = state;
-        }
-
         /// <summary>
-        /// Gets the state (TraceType enum)
+        /// Gets the state (<see cref="TraceType"/> enum).
         /// </summary>
-        public Int32 State
+        public int State
         {
-            get { return this.state; }
+            get;
         }
 
         /// <summary>
-        /// Gets the logged trace message
+        /// Gets the logged trace message.
         /// </summary>
-        public String Message
+        public string Message
         {
-            get { return this.message; }
+            get;
         }
 
         /// <summary>
-        /// Gets the timestamp of the trace
+        /// Gets the timestamp of the trace.
         /// </summary>
         public DateTime Timestamp
         {
-            get { return this.timestamp; }
+            get;
         }
 
+        /// <summary>
+        /// Gets the group data.
+        /// </summary>
+        public string GroupData
+        {
+            get;
+        }
     }
 
 }

@@ -30,8 +30,9 @@ namespace ResultsPanel
         private List<ListViewItem> allListViewItems = new List<ListViewItem>();
         private ToolStripButton toolStripButtonError;
         private ToolStripButton toolStripButtonWarning;
-        private ToolStripSpringTextBox toolStripTextBoxFilter;
         private ToolStripButton toolStripButtonInfo;
+        private ToolStripButton toolStripButtonLock;
+        private ToolStripSpringTextBox toolStripTextBoxFilter;
         private ToolStripLabel toolStripLabelFilter;
         private ToolStripButton clearFilterButton;
         private ToolStrip toolStripFilters;
@@ -101,19 +102,31 @@ namespace ResultsPanel
             }
         }
 
-        public PluginUI(PluginMain pluginMain, string groupData, string groupId) : this(pluginMain)
+        public PluginUI(PluginMain pluginMain, string groupData, string groupId, bool allowMultiplePanels) : this(pluginMain)
         {
             GroupData = groupData;
             GroupId = groupId;
+
+            if (allowMultiplePanels)
+            {
+                this.toolStripButtonLock.Checked = true; // Keep results by default
+                this.toolStripFilters.Items.Insert(6, this.toolStripButtonLock);
+                this.toolStripFilters.Items.Insert(7, new ToolStripSeparator());
+            }
         }
 
         #endregion
 
         #region Properties
 
-        public string GroupData { get; }
+        public string GroupData { get; internal set; }
 
         public string GroupId { get; }
+
+        public bool Locked
+        {
+            get { return this.toolStripButtonLock.Checked; }
+        }
         
         public DockContent ParentPanel { get; set; }
 
@@ -172,6 +185,7 @@ namespace ResultsPanel
             this.toolStripButtonError = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonWarning = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonInfo = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonLock = new System.Windows.Forms.ToolStripButton();
             this.toolStripTextBoxFilter = new System.Windows.Forms.ToolStripSpringTextBox();
             this.toolStripLabelFilter = new System.Windows.Forms.ToolStripLabel();
             this.autoShow = new System.Windows.Forms.Timer(this.components);
@@ -291,6 +305,17 @@ namespace ResultsPanel
             this.toolStripButtonInfo.Text = "Information";
             this.toolStripButtonInfo.CheckedChanged += new System.EventHandler(this.ToolStripButton_CheckedChanged);
             // 
+            // toolStripButtonLock
+            // 
+            this.toolStripButtonLock.Checked = false;
+            this.toolStripButtonLock.CheckOnClick = true;
+            this.toolStripButtonLock.Margin = new System.Windows.Forms.Padding(1, 1, 0, 1);
+            this.toolStripButtonLock.CheckState = System.Windows.Forms.CheckState.Unchecked;
+            this.toolStripButtonLock.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonLock.Name = "toolStripButtonLock";
+            this.toolStripButtonLock.Size = new System.Drawing.Size(74, 22);
+            this.toolStripButtonLock.Text = "Keep Results";
+            // 
             // toolStripTextBoxFilter
             //
             this.toolStripTextBoxFilter.Name = "toolStripTextBoxFilter";
@@ -357,6 +382,7 @@ namespace ResultsPanel
             this.toolStripButtonInfo.Image = PluginBase.MainForm.FindImage("131");
             this.toolStripButtonError.Image = PluginBase.MainForm.FindImage("197");
             this.toolStripButtonWarning.Image = PluginBase.MainForm.FindImage("196");
+            this.toolStripButtonLock.Image = PluginBase.MainForm.FindImage("246");
             this.entriesView.AddArrowImages();
         }
 
@@ -956,14 +982,19 @@ namespace ResultsPanel
         /// </summary>
         private void UpdateButtons()
         {
-            this.toolStripButtonError.Text = errorCount.ToString();
-            this.toolStripButtonWarning.Text = warningCount.ToString();
-            this.toolStripButtonInfo.Text = messageCount.ToString();
             if (this.Width >= 800)
             {
-                this.toolStripButtonError.Text += " " + TextHelper.GetString("Filters.Errors");
-                this.toolStripButtonWarning.Text += " " + TextHelper.GetString("Filters.Warnings");
-                this.toolStripButtonInfo.Text += " " + TextHelper.GetString("Filters.Informations");
+                this.toolStripButtonError.Text = errorCount + " " + TextHelper.GetString("Filters.Errors");
+                this.toolStripButtonWarning.Text = warningCount + " " + TextHelper.GetString("Filters.Warnings");
+                this.toolStripButtonInfo.Text = messageCount + " " + TextHelper.GetString("Filters.Informations");
+                if (this.toolStripButtonLock.Visible) this.toolStripButtonLock.Text = "Keep Results";
+            }
+            else
+            {
+                this.toolStripButtonError.Text = errorCount.ToString();
+                this.toolStripButtonWarning.Text = warningCount.ToString();
+                this.toolStripButtonInfo.Text = messageCount.ToString();
+                if (this.toolStripButtonLock.Visible) this.toolStripButtonLock.Text = "";
             }
         }
 

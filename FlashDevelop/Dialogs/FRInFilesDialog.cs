@@ -67,7 +67,7 @@ namespace FlashDevelop.Dialogs
             this.InitializeGraphics();
             this.UpdateSettings();
 
-            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetString("FlashDevelop.Label.FindAndReplaceResults"), Globals.MainForm.FindImage("209"));
+            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetString("FlashDevelop.Label.FindAndReplaceResults"), true, Globals.MainForm.FindImage("209"));
         }
 
         #region Windows Form Designer Generated Code
@@ -708,16 +708,17 @@ namespace FlashDevelop.Dialogs
                 } 
                 else 
                 {
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + TraceGroup);
+                    string groupData = TraceManager.CreateGroupDataUnique(TraceGroup);
+                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
                     foreach (KeyValuePair<String, List<SearchMatch>> entry in results)
                     {
                         foreach (SearchMatch match in entry.Value)
                         {
                             string message = $"{entry.Key}:{match.Line}: chars {match.Column}-{match.Column + match.Length} : {match.LineText.Trim()}";
-                            TraceManager.Add(message, (int)TraceType.Info, TraceGroup);
+                            TraceManager.Add(message, (int)TraceType.Info, groupData);
                         }
                     }
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + TraceGroup);
+                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
                     this.Hide();
                 }
             }
@@ -769,18 +770,19 @@ namespace FlashDevelop.Dialogs
                     String formatted = String.Format(message, matchCount, fileCount);
                     this.infoLabel.Text = formatted;
                 } 
-                else 
+                else
                 {
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + TraceGroup);
+                    string groupData = TraceManager.CreateGroupDataUnique(TraceGroup);
+                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
                     foreach (KeyValuePair<String, List<SearchMatch>> entry in results)
                     {
                         foreach (SearchMatch match in entry.Value)
                         {
                             string message = $"{entry.Key}:{match.Line}: chars {match.Column}-{match.Column + match.Length} : {match.Value}";
-                            TraceManager.Add(message, (Int32)TraceType.Info, TraceGroup);
+                            TraceManager.Add(message, (Int32)TraceType.Info, groupData);
                         }
                     }
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + TraceGroup);
+                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
                     this.Hide();
                 }
             }
