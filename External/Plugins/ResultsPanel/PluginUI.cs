@@ -398,6 +398,7 @@ namespace ResultsPanel
             this.toolStripButtonError.Text = "0 " + TextHelper.GetString("Filters.Errors");
             this.toolStripButtonWarning.Text = "0 " + TextHelper.GetString("Filters.Warnings");
             this.toolStripButtonInfo.Text = "0 " + TextHelper.GetString("Filters.Informations");
+            this.toolStripButtonLock.Text = TextHelper.GetString("Label.KeepResults");
             this.toolStripLabelFilter.Text = TextHelper.GetString("Filters.Filter");
         }
 
@@ -987,14 +988,14 @@ namespace ResultsPanel
                 this.toolStripButtonError.Text = errorCount + " " + TextHelper.GetString("Filters.Errors");
                 this.toolStripButtonWarning.Text = warningCount + " " + TextHelper.GetString("Filters.Warnings");
                 this.toolStripButtonInfo.Text = messageCount + " " + TextHelper.GetString("Filters.Informations");
-                if (this.toolStripButtonLock.Visible) this.toolStripButtonLock.Text = "Keep Results";
+                this.toolStripButtonLock.Text = TextHelper.GetString("Label.KeepResults");
             }
             else
             {
                 this.toolStripButtonError.Text = errorCount.ToString();
                 this.toolStripButtonWarning.Text = warningCount.ToString();
                 this.toolStripButtonInfo.Text = messageCount.ToString();
-                if (this.toolStripButtonLock.Visible) this.toolStripButtonLock.Text = "";
+                this.toolStripButtonLock.Text = "";
             }
         }
 
