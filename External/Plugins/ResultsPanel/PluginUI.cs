@@ -691,7 +691,7 @@ namespace ResultsPanel
                 pluginMain.pluginUI.AddSquiggles();
                 foreach (var pluginUI in ResultsPanelHelper.PluginUIs)
                 {
-                    if (pluginUI != this)
+                    if (pluginUI != this && !pluginUI.ParentPanel.IsHidden)
                     {
                         pluginUI.AddSquiggles();
                     }
