@@ -640,10 +640,9 @@ namespace ResultsPanel
         /// </summary>
         public void OnPanelHidden()
         {
-            ClearOutput();
             if (ResultsPanelHelper.ActiveUI == this)
             {
-                ResultsPanelHelper.ActiveUI = pluginMain.pluginUI;
+                pluginMain.pluginUI.OnPanelActivated();
             }
         }
 
@@ -821,13 +820,12 @@ namespace ResultsPanel
             this.autoShow.Stop();
             if (this.entriesView.Items.Count > 0)
             {
-                ParentPanel.Show();
-                //bool autoHide = ParentPanel.VisibleState.ToString().EndsWithOrdinal("AutoHide");
-                //if (!ParentPanel.Visible || autoHide)
-                //{
-                //    ParentPanel.Show();
-                //    if (autoHide) ParentPanel.Activate();
-                //}
+                bool autoHide = ParentPanel.VisibleState.ToString().EndsWithOrdinal("AutoHide");
+                if (!ParentPanel.Visible || autoHide)
+                {
+                    ParentPanel.Show();
+                    if (autoHide) ParentPanel.Activate();
+                }
             }
         }
         

@@ -35,6 +35,7 @@ namespace FlashDevelop.Managers
                 var dockPanel = Globals.MainForm.DockPanel;
                 if (File.Exists(file))
                 {
+                    savedPersistStrings.Clear();
                     CloseDocumentContents();
                     ClosePluginPanelContents();
                     CloseDynamicContentTemplates();
@@ -60,25 +61,30 @@ namespace FlashDevelop.Managers
                 var pluginPanel = PluginPanels[i];
                 if (pluginPanel.GetPersistString() == persistString)
                 {
-                    savedPersistStrings.Add(persistString);
-                    return pluginPanel;
+                    if (pluginPanel.DockPanel == null) // Duplicate persistString
+                    {
+                        savedPersistStrings.Add(persistString);
+                        return pluginPanel;
+                    }
                 }
             }
             if (persistString == typeof(TabbedDocument).ToString())
             {
                 return null;
             }
-            if (savedPersistStrings.Contains(persistString))
+            for (int i = 0; i < dynamicContentTemplates.Count; i++)
             {
-                for (int i = 0; i < dynamicContentTemplates.Count; i++)
+                var template = dynamicContentTemplates[i];
+                if (template.GetPersistString() == persistString)
                 {
-                    var template = dynamicContentTemplates[i];
-                    if (template.GetPersistString() == persistString)
+                    // Choose the first template content layout
+                    // During layout reload, template may already exist, in which case DockPanel == null from CloseDynamicContentTemplates()
+                    if (template.DockPanel == null)
                     {
-                        // Choose the first template content layout
-                        // During layout reload, template may already exist, in which case DockPanel == null from CloseDynamicContentTemplates()
-                        return template.DockPanel == null ? template : null;
+                        savedPersistStrings.Add(persistString);
+                        return template;
                     }
+                    return null;
                 }
             }
             var newTemplate = new DockablePanel.Template(persistString);
@@ -92,7 +98,11 @@ namespace FlashDevelop.Managers
             for (int i = 0; i < PluginPanels.Count; i++)
             {
                 var pluginPanel = PluginPanels[i];
-                if (pluginPanel.GetPersistString() == persistString)
+                if (pluginPanel.DockPanel == null)
+                {
+                    PluginPanels.RemoveAt(i--);
+                }
+                else if (pluginPanel.GetPersistString() == persistString)
                 {
                     dockablePanel.DockPanel = pluginPanel.DockPanel;
                     dockablePanel.AutoHidePortion = pluginPanel.AutoHidePortion;
@@ -150,9 +160,14 @@ namespace FlashDevelop.Managers
         /// </summary>
         private static void ClosePluginPanelContents()
         {
-            foreach (var pluginPanel in PluginPanels)
+            for (int i = PluginPanels.Count - 1; i >= 0; i--)
             {
-                if (pluginPanel.DockState != DockState.Document)
+                var pluginPanel = PluginPanels[i];
+                if (pluginPanel.DockPanel == null)
+                {
+                    PluginPanels.RemoveAt(i);
+                }
+                else if (pluginPanel.DockState != DockState.Document)
                 {
                     pluginPanel.DockPanel = null;
                 }
@@ -185,10 +200,17 @@ namespace FlashDevelop.Managers
 
         private static void RestoreDynamicContentTemplates()
         {
-            foreach (var template in dynamicContentTemplates)
+            for (int i = dynamicContentTemplates.Count - 1; i >= 0; i--)
             {
-                // Keep templates hidden
-                template.Hide();
+                var template = dynamicContentTemplates[i];
+                if (template.DockPanel == null)
+                {
+                    dynamicContentTemplates.RemoveAt(i);
+                }
+                else
+                {
+                    template.Hide();
+                }
             }
         }
 

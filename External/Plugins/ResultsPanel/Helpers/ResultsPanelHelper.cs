@@ -130,19 +130,19 @@ namespace ResultsPanel.Helpers
 
             if (args.Length > 0) // Multiple instances for one group id
             {
-                if (!multipleUIs.ContainsKey(groupId))
+                List<PluginUI> list;
+                if (multipleUIs.TryGetValue(groupId, out list))
                 {
-                    multipleUIs.Add(groupId, new List<PluginUI>() { ui });
-                }
-                else
-                {
-                    var list = multipleUIs[groupId];
                     if (list.Count == 1 && list[0].ParentPanel.IsHidden)
                     {
                         list[0].ParentPanel.Close();
                         list.Clear();
                     }
                     list.Add(ui);
+                }
+                else
+                {
+                    multipleUIs.Add(groupId, new List<PluginUI>() { ui });
                 }
             }
             return ui;
@@ -153,16 +153,20 @@ namespace ResultsPanel.Helpers
             var ui = (PluginUI) ((DockContent) sender).Tag;
             if (ui.ParentPanel.IsHidden)
             {
-                ui.OnPanelHidden();
-                ui.ParentPanel.DockStateChanged -= ParentPanel_DockStateChanged;
                 ui.ParentPanel.IsActivatedChanged -= ParentPanel_IsActivatedChanged;
+                ui.OnPanelHidden();
 
                 List<PluginUI> list;
                 if (multipleUIs.TryGetValue(ui.GroupId, out list) && list.Count > 1)
                 {
+                    ui.ParentPanel.DockStateChanged -= ParentPanel_DockStateChanged;
                     ui.ParentPanel.Close();
                     list.Remove(ui);
                 }
+            }
+            else
+            {
+                ui.ParentPanel.IsActivatedChanged += ParentPanel_IsActivatedChanged;
             }
         }
 
