@@ -106,12 +106,13 @@ namespace PluginCore.Managers
         /// </summary>
         /// <param name="groupId">The id used to determine the trace group.</param>
         /// <param name="title">The title to be displayed in the panel.</param>
+        /// <param name="showFilterButtons">Whether to show info, warning and error filter buttons.</param>
         /// <param name="allowMultiplePanels">Whether to let users lock certain panels to create multiple panels.</param>
         /// <param name="icon">The icon to be displayed in the panel. If this is <see langword="null"/>, the default icon is used.</param>
-        public static void RegisterTraceGroup(string groupId, string title, bool allowMultiplePanels = false, Image icon = null)
+        public static void RegisterTraceGroup(string groupId, string title, bool showFilterButtons = true, bool allowMultiplePanels = false, Image icon = null)
         {
             if (groupId == null) throw new ArgumentNullException(nameof(groupId));
-            traceGroups.Add(groupId, new TraceGroup(groupId, title, allowMultiplePanels, icon));
+            traceGroups.Add(groupId, new TraceGroup(groupId, title, showFilterButtons, allowMultiplePanels, icon));
         }
 
         /// <summary>
@@ -226,13 +227,15 @@ namespace PluginCore.Managers
     {
         public string Id { get; }
         public string Title { get; }
+        public bool ShowFilterButtons { get; }
         public bool AllowMultiplePanels { get; }
         public Image Icon { get; }
 
-        public TraceGroup(string id, string title, bool allowMultiplePanels, Image icon)
+        public TraceGroup(string id, string title, bool showFilterButtons, bool allowMultiplePanels, Image icon)
         {
             Id = id;
             Title = title;
+            ShowFilterButtons = showFilterButtons;
             AllowMultiplePanels = allowMultiplePanels;
             Icon = icon;
         }

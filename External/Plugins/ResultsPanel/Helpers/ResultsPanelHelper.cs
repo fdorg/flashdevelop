@@ -151,7 +151,7 @@ namespace ResultsPanel.Helpers
         private static PluginUI AddResultsPanel(string groupData, string groupId, string[] args)
         {
             var traceGroup = TraceManager.GetTraceGroup(groupId); // Group must exist
-            var ui = new PluginUI(main, groupData, groupId, traceGroup.AllowMultiplePanels);
+            var ui = new PluginUI(main, groupData, groupId, traceGroup.ShowFilterButtons, traceGroup.AllowMultiplePanels);
             ui.Text = string.Format(traceGroup.Title ?? TextHelper.GetString("Title.PluginPanel"), args);
             ui.ParentPanel = PluginBase.MainForm.CreateDynamicPersistDockablePanel(ui, main.Guid, groupId, traceGroup.Icon ?? main.pluginImage, DockState.DockBottomAutoHide);
             ui.ParentPanel.Tag = ui;

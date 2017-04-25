@@ -45,6 +45,7 @@ namespace ResultsPanel
         private SortOrder sortOrder = SortOrder.Ascending;
         private int lastColumn = -1;
         private GroupingMethod groupingMethod;
+        private int buttonsWidth;
         private Container components;
 
         private static ImageListManager imageList;
@@ -66,7 +67,12 @@ namespace ResultsPanel
             groupingComparison = (x, y) => string.CompareOrdinal(x.Name, y.Name);
         }
 
-        public PluginUI(PluginMain pluginMain)
+        public PluginUI(PluginMain pluginMain) : this(pluginMain, null, null, true, false)
+        {
+
+        }
+
+        public PluginUI(PluginMain pluginMain, string groupData, string groupId, bool showFilterButtons, bool allowMultiplePanels)
         {
             this.AutoKeyHandling = true;
             this.pluginMain = pluginMain;
@@ -92,20 +98,30 @@ namespace ResultsPanel
                 [(GroupingMethod) this.entryType.Tag] = this.entryType,
                 [(GroupingMethod) this.entryPath.Tag] = this.entryPath
             };
-            ApplySettings(false);
-        }
 
-        public PluginUI(PluginMain pluginMain, string groupData, string groupId, bool allowMultiplePanels) : this(pluginMain)
-        {
             GroupData = groupData;
             GroupId = groupId;
 
+            buttonsWidth = 0;
             if (allowMultiplePanels)
             {
+                buttonsWidth = 200;
                 this.toolStripButtonLock.Checked = true; // Keep results by default
-                this.toolStripFilters.Items.Insert(6, this.toolStripButtonLock);
-                this.toolStripFilters.Items.Insert(7, new ToolStripSeparator());
+                this.toolStripFilters.Items.Insert(0, new ToolStripSeparator());
+                this.toolStripFilters.Items.Insert(0, this.toolStripButtonLock);
             }
+            if (showFilterButtons)
+            {
+                buttonsWidth = 800;
+                this.toolStripFilters.Items.Insert(0, new ToolStripSeparator());
+                this.toolStripFilters.Items.Insert(0, this.toolStripButtonError);
+                this.toolStripFilters.Items.Insert(0, new ToolStripSeparator());
+                this.toolStripFilters.Items.Insert(0, this.toolStripButtonWarning);
+                this.toolStripFilters.Items.Insert(0, new ToolStripSeparator());
+                this.toolStripFilters.Items.Insert(0, this.toolStripButtonInfo);
+            }
+
+            ApplySettings(false);
         }
 
         #endregion
@@ -247,12 +263,6 @@ namespace ResultsPanel
             this.toolStripFilters.Padding = new System.Windows.Forms.Padding(1, 1, 2, 2);
             this.toolStripFilters.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStripFilters.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButtonError,
-            new ToolStripSeparator(),
-            this.toolStripButtonWarning,
-            new ToolStripSeparator(),
-            this.toolStripButtonInfo,
-            new ToolStripSeparator(),
             this.toolStripLabelFilter,
             this.toolStripTextBoxFilter, 
             this.clearFilterButton});
@@ -995,7 +1005,8 @@ namespace ResultsPanel
         /// </summary>
         private void UpdateButtons()
         {
-            if (this.Width >= 800)
+            if (this.buttonsWidth == 0) return;
+            if (this.Width >= this.buttonsWidth)
             {
                 this.toolStripButtonError.Text = errorCount + " " + TextHelper.GetString("Filters.Errors");
                 this.toolStripButtonWarning.Text = warningCount + " " + TextHelper.GetString("Filters.Warnings");
