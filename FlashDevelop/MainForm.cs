@@ -948,6 +948,7 @@ namespace FlashDevelop
                 LayoutManager.BuildLayoutSystems(FileNameHelper.LayoutData);
                 ShortcutManager.LoadCustomShortcuts();
                 ArgumentDialog.LoadCustomArguments();
+                ClipboardManager.Initialize(this);
                 PluginCore.Controls.UITools.Init();
             }
             catch (Exception ex)
@@ -1263,6 +1264,7 @@ namespace FlashDevelop
                 SessionManager.SaveSession(file, session);
                 ShortcutManager.SaveCustomShortcuts();
                 ArgumentDialog.SaveCustomArguments();
+                ClipboardManager.Dispose();
                 PluginServices.DisposePlugins();
                 this.KillProcess();
                 this.SaveAllSettings();
@@ -1740,6 +1742,15 @@ namespace FlashDevelop
         public void OnFileSave(ITabbedDocument document, String oldFile)
         {
             OnFileSave(document, oldFile, null);
+        }
+
+        /// <summary>
+        /// Handles clipboard updates.
+        /// </summary>
+        protected override void WndProc(ref Message m)
+        {
+            ClipboardManager.HandleWndProc(ref m);
+            base.WndProc(ref m);
         }
 
         #endregion
