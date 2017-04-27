@@ -6108,19 +6108,19 @@ AND - All conditions are met.</value>
   </data>
   <data name="ResultsPanel.Description.DefaultGrouping" xml:space="preserve">
     <value>Die Standard-Spalte nach der Resultate gruppiert werden.</value>
-	<comment>Added after 5.2.1</comment>
+    <comment>Added after 5.2.1</comment>
   </data>
   <data name="LintingHelper.Description.LintOnSave" xml:space="preserve">
     <value>Startet die verfügbaren Linter, wenn eine Datei gespeichert wird.</value>
-	<comment>Added after 5.2.1</comment>
+    <comment>Added after 5.2.1</comment>
   </data>
   <data name="LintingHelper.Description.LintOnOpen" xml:space="preserve">
     <value>Startet die verfügbaren Linter, wenn eine Datei geöffnet wird.</value>
-	<comment>Added after 5.2.1</comment>
+    <comment>Added after 5.2.1</comment>
   </data>
   <data name="LintingHelper.Label.RunLinters" xml:space="preserve">
     <value>Linter starten</value>
-	<comment>Added after 5.2.1</comment>
+    <comment>Added after 5.2.1</comment>
   </data>
   <data name="HaXeContext.Info.UnusedImport" xml:space="preserve">
     <value>Ungenutzter Import</value>
@@ -6145,5 +6145,9 @@ AND - All conditions are met.</value>
   <data name="HaXeContext.Info.MissingLib" xml:space="preserve">
     <value>Missing libraries detected. Would you like to try to install them through the package manager?</value>
     <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="FlashDevelop.Label.Clear" xml:space="preserve">
+    <value>&amp;Clear</value>
+    <comment>Added after 5.2.0</comment>
   </data>
 </root>
