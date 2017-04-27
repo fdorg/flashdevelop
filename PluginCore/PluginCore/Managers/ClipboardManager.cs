@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 using PluginCore.Collections;
 
@@ -23,38 +24,55 @@ namespace PluginCore.Managers
         }
 
         /// <summary>
-        /// Initializes <see cref="ClipboardManager"/> with a <see cref="IMainForm"/> window.
+        /// Initializes <see cref="ClipboardManager"/> and places the <see cref="IMainForm"/> window in the system-maintained clipboard format listener list.
         /// </summary>
         /// <param name="window">A <see cref="T:FlashDevelop.MainForm"/> object.</param>
+        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="ArgumentException"/>
+        /// <exception cref="InvalidOperationException"/>
+        /// <exception cref="NotSupportedException"/>
         public static void Initialize(IMainForm window)
         {
             if (window == null)
             {
                 throw new ArgumentNullException(nameof(window));
             }
-
-            if (window.GetType().ToString() == "FlashDevelop.MainForm")
+            else if (window.GetType().ToString() != "FlashDevelop.MainForm")
             {
-                hwnd = window.Handle;
-                if (!UnsafeNativeMethods.AddClipboardFormatListener(hwnd))
-                {
-                    hwnd = IntPtr.Zero;
-                    throw new Win32Exception(Marshal.GetLastWin32Error());
-                }
-
-                history = new FixedSizeQueue<ClipboardTextData>(PluginBase.Settings.ClipboardHistorySize);
-                history.Enqueue(new ClipboardTextData(Clipboard.GetDataObject()));
+                throw new ArgumentException("Specified " + nameof(IMainForm) + " is not an instance of the FlashDevelop.MainForm class", nameof(window));
             }
+            else if (history != null)
+            {
+                throw new InvalidOperationException(nameof(ClipboardManager) + " is already initialized.");
+            }
+
+            hwnd = window.Handle;
+            if (!UnsafeNativeMethods.AddClipboardFormatListener(hwnd))
+            {
+                hwnd = IntPtr.Zero;
+                var ex = new Win32Exception(Marshal.GetLastWin32Error());
+                throw new NotSupportedException(ex.Message, ex);
+            }
+
+            history = new FixedSizeQueue<ClipboardTextData>(PluginBase.Settings.ClipboardHistorySize);
+            history.Enqueue(new ClipboardTextData(Clipboard.GetDataObject()));
         }
 
         /// <summary>
-        /// Removes the clipboard listener.
+        /// Disposes <see cref="ClipboardManager"/> and removes the <see cref="IMainForm"/> window from the system-maintained clipboard format listener list.
         /// </summary>
+        /// <exception cref="InvalidOperationException"/>
+        /// <exception cref="NotSupportedException"/>
         public static void Dispose()
         {
-            if (!UnsafeNativeMethods.RemoveClipboardFormatListener(hwnd))
+            if (history == null)
             {
-                throw new Win32Exception(Marshal.GetLastWin32Error());
+                throw new InvalidOperationException(nameof(ClipboardManager) + " is either not initialized or already disposed.");
+            }
+            else if (!UnsafeNativeMethods.RemoveClipboardFormatListener(hwnd))
+            {
+                var ex = new Win32Exception(Marshal.GetLastWin32Error());
+                throw new NotSupportedException(ex.Message, ex);
             }
 
             hwnd = IntPtr.Zero;
@@ -66,6 +84,8 @@ namespace PluginCore.Managers
         /// Returns <see langword="true"/> if new clipboard data is added; <see langword="false"/> otherwise.
         /// </summary>
         /// <param name="m">A <see cref="Message"/> object.</param>
+        /// <exception cref="InvalidOperationException"/>
+        /// <exception cref="ThreadStateException"/>
         public static bool HandleWndProc(ref Message m)
         {
             if (m.Msg == UnsafeNativeMethods.WM_CLIPBOARDUPDATE)
@@ -76,8 +96,12 @@ namespace PluginCore.Managers
                     history.Enqueue(new ClipboardTextData(dataObject));
                     return true;
                 }
+                catch (NullReferenceException ex)
+                {
+                    throw new InvalidOperationException(nameof(ClipboardManager) + " is either not initialized or disposed.", ex);
+                }
                 catch (ExternalException) { }
-                //catch (System.Threading.ThreadStateException) { }
+                //catch (ThreadStateException) { }
             }
 
             return false;
@@ -122,7 +146,7 @@ namespace PluginCore.Managers
     }
 
     /// <summary>
-    /// Represents text data from clipboard data.
+    /// Represents text data from the clipboard.
     /// </summary>
     public sealed class ClipboardTextData
     {

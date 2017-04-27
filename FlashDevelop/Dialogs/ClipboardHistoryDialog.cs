@@ -27,6 +27,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public ClipboardHistoryDialog()
         {
+            //FormGuid = "8c53f118-99ac-4287-b772-1424c1e2580a";
             InitializeComponent();
             InitializeFont();
             InitializeLocalization();
