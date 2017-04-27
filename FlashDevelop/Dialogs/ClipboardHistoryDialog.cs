@@ -305,7 +305,7 @@ namespace FlashDevelop.Dialogs
 
         private void UpdateButtons()
         {
-            btnPaste.Enabled = selectedData != null && (selectedData.Format == DataFormats.Text || selectedData.Format == DataFormats.Rtf);
+            btnPaste.Enabled = selectedData != null && selectedData.IsTextFormat;
         }
 
         #endregion

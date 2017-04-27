@@ -121,6 +121,46 @@ namespace PluginCore.Managers
 
         internal ClipboardTextData(IDataObject dataObject)
         {
+            Initialize(dataObject);
+        }
+
+        /// <summary>
+        /// Gets the format of the <see cref="ClipboardTextData"/>.
+        /// </summary>
+        public string Format
+        {
+            get { return format; }
+        }
+
+        /// <summary>
+        /// Gets whether the format of the <see cref="ClipboardTextData"/> is <see cref="DataFormats.Text"/> or <see cref="DataFormats.Rtf"/>. 
+        /// </summary>
+        public bool IsTextFormat
+        {
+            get
+            {
+                return format == DataFormats.Text || format == DataFormats.Rtf;
+            }
+        }
+
+        /// <summary>
+        /// Gets the <see cref="DataFormats.Rtf"/> value of the <see cref="ClipboardTextData"/>. Returns <see langword="null"/> if <see cref="Format"/> is not <see cref="DataFormats.Rtf"/>.
+        /// </summary>
+        public string Rtf
+        {
+            get { return rtf; }
+        }
+
+        /// <summary>
+        /// Gets the <see cref="DataFormats.Text"/> value of the <see cref="ClipboardTextData"/>, or semicolon-separated list of present formats.
+        /// </summary>
+        public string Text
+        {
+            get { return text; }
+        }
+
+        private void Initialize(IDataObject dataObject)
+        {
             if (dataObject.GetDataPresent(DataFormats.Rtf))
             {
                 format = DataFormats.Rtf;
@@ -135,42 +175,26 @@ namespace PluginCore.Managers
             }
             else
             {
-                string[] formats = dataObject.GetFormats();
-                if (formats.Length > 0)
+                if (dataObject.GetDataPresent(DataFormats.FileDrop))
                 {
-                    format = formats[0];
-                    text = string.Join(";", formats);
+                    format = DataFormats.FileDrop;
+                }
+                else if (dataObject.GetDataPresent(DataFormats.Bitmap))
+                {
+                    format = DataFormats.Bitmap;
+                }
+                else if (dataObject.GetDataPresent(DataFormats.WaveAudio))
+                {
+                    format = DataFormats.WaveAudio;
                 }
                 else
                 {
-                    format = "";
-                    text = null;
+                    string[] formats = dataObject.GetFormats();
+                    format = formats.Length > 0 ? formats[0] : "";
                 }
+                rtf = null;
+                text = string.Join(";", dataObject.GetFormats());
             }
-        }
-
-        /// <summary>
-        /// Gets the format of the text data. Text formats are <see cref="DataFormats.Text"/> and <see cref="DataFormats.Rtf"/>.
-        /// </summary>
-        public string Format
-        {
-            get { return format; }
-        }
-
-        /// <summary>
-        /// Gets the <see cref="DataFormats.Rtf"/> value of the <see cref="ClipboardTextData"/>.
-        /// </summary>
-        public string Rtf
-        {
-            get { return rtf; }
-        }
-
-        /// <summary>
-        /// Gets the <see cref="DataFormats.Text"/> value of the <see cref="ClipboardTextData"/>.
-        /// </summary>
-        public string Text
-        {
-            get { return text; }
         }
     }
 }
