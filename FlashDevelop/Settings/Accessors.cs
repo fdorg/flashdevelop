@@ -356,6 +356,20 @@ namespace FlashDevelop.Settings
             set { this.highlightMatchingWordsDelay = value; }
         }
 
+        [DefaultValue(50)]
+        [DisplayName("Clipboard History Size")]
+        [LocalizedCategory("FlashDevelop.Category.Editor")]
+        [LocalizedDescription("FlashDevelop.Description.ClipboardHistorySize")]
+        public Int32 ClipboardHistorySize
+        {
+            get { return this.clipboardHistorySize; }
+            set
+            {
+                if (value <= 0) throw new ArgumentOutOfRangeException(nameof(value));
+                this.clipboardHistorySize = value;
+            }
+        }
+
         #endregion
 
         #region Locale

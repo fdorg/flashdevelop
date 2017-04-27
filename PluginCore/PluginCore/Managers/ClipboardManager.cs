@@ -42,7 +42,7 @@ namespace PluginCore.Managers
                     throw new Win32Exception(Marshal.GetLastWin32Error());
                 }
 
-                history = new FixedSizeQueue<ClipboardTextData>(50); // TODO: Add a setting for the history size
+                history = new FixedSizeQueue<ClipboardTextData>(PluginBase.Settings.ClipboardHistorySize);
                 history.Enqueue(new ClipboardTextData(Clipboard.GetDataObject()));
             }
         }
@@ -81,6 +81,17 @@ namespace PluginCore.Managers
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Apply the modified settings.
+        /// </summary>
+        public static void ApplySettings()
+        {
+            if (history != null)
+            {
+                history.Capacity = PluginBase.Settings.ClipboardHistorySize;
+            }
         }
         
         private static class UnsafeNativeMethods

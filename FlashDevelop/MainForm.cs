@@ -2202,6 +2202,7 @@ namespace FlashDevelop
             this.toolStrip.Visible = this.isFullScreen ? false : this.appSettings.ViewToolBar;
             ButtonManager.UpdateFlaggedButtons();
             TabTextManager.UpdateTabTexts();
+            ClipboardManager.ApplySettings();
         }
 
         /// <summary>
