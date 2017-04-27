@@ -2711,7 +2711,6 @@ namespace ASCompletion.Completion
 
         private static void GenerateFunctionJob(GeneratorJobType job, ScintillaControl sci, MemberModel member, bool detach, ClassModel inClass)
         {
-            var position = 0;
             Visibility visibility = job.Equals(GeneratorJobType.FunctionPublic) ? Visibility.Public : GetDefaultVisibility(inClass);
             var wordStartPos = sci.WordStartPosition(sci.CurrentPos, true);
             int wordPos = sci.WordEndPosition(sci.CurrentPos, true);
@@ -2775,6 +2774,7 @@ namespace ASCompletion.Completion
             {
                 blockTmpl = TemplateUtils.GetBoundary("PrivateMethods");
             }
+            var position = 0;
             var latest = TemplateUtils.GetTemplateBlockMember(sci, blockTmpl);
             if (latest == null || (!isOtherClass && member == null))
             {
@@ -2840,9 +2840,7 @@ namespace ASCompletion.Completion
                     var braCount = 0;
                     var genCount = 0;
                     var startPosition = 0;
-                    var arrowLength = "->".Length;
-                    var endPosition = parameterType.LastIndexOf("->") + arrowLength;
-                    for (var i = 0; i < endPosition; i++)
+                    for (var i = 0; i < parameterType.Length; i++)
                     {
                         string type = null;
                         var c = parameterType[i];
@@ -2852,8 +2850,8 @@ namespace ASCompletion.Completion
                             parCount--;
                             if (parCount == 0 && braCount == 0 && genCount == 0)
                             {
-                                i++;
-                                type = parameterType.Substring(startPosition, i - startPosition);
+                                type = parameterType.Substring(startPosition, (i + 1) - startPosition);
+                                startPosition = i + 1;
                             }
                         }
                         else if (c == '{') braCount++;
@@ -2862,8 +2860,8 @@ namespace ASCompletion.Completion
                             braCount--;
                             if (parCount == 0 && braCount == 0 && genCount == 0)
                             {
-                                i++;
-                                type = parameterType.Substring(startPosition, i - startPosition);
+                                type = parameterType.Substring(startPosition, (i + 1) - startPosition);
+                                startPosition = i + 1;
                             }
                         }
                         else if (c == '<') genCount++;
@@ -2872,57 +2870,45 @@ namespace ASCompletion.Completion
                             genCount--;
                             if (parCount == 0 && braCount == 0 && genCount == 0)
                             {
-                                i++;
-                                type = parameterType.Substring(startPosition, i - startPosition);
+                                type = parameterType.Substring(startPosition, (i + 1) - startPosition);
+                                startPosition = i + 1;
                             }
                         }
                         else if (parCount == 0 && braCount == 0 && genCount == 0 && c == '-' && parameterType[i + 1] == '>')
                         {
-                            type = parameterType.Substring(startPosition, i - startPosition);
-                            i += arrowLength;
+                            if (i > startPosition) type = parameterType.Substring(startPosition, i - startPosition);
+                            startPosition = i + 2;
+                            i++;
                         }
-                        if (type != null)
+                        if (type == null)
                         {
-                            var parameter = $"parameter{functionParameters.Count}";
-                            if (type.StartsWith('?'))
-                            {
-                                parameter = $"?{parameter}";
-                                type = type.TrimStart('?');
-                            }
-                            functionParameters.Add(new FunctionParameter(parameter, type, type, callerExpr));
-                            startPosition = i;
+                            if (i == parameterType.Length - 1 && i > startPosition) newMemberType = parameterType.Substring(startPosition);
+                            continue;
                         }
+                        var parameter = $"parameter{functionParameters.Count}";
+                        if (type.StartsWith('?'))
+                        {
+                            parameter = $"?{parameter}";
+                            type = type.TrimStart('?');
+                        }
+                        if (i == parameterType.Length - 1) newMemberType = type;
+                        else functionParameters.Add(new FunctionParameter(parameter, type, type, callerExpr));
                     }
-                    newMemberType = parameterType.Substring(endPosition);
+                    if (functionParameters.Count == 1 && functionParameters[0].paramType == ASContext.Context.Features.voidKey) functionParameters.Clear();
                 }
             }
 
             // add imports to function argument types
             if (functionParameters.Count > 0)
             {
-                var typesUsed = new List<string>();
-                foreach (var parameter in functionParameters)
-                {
-                    try
-                    {
-                        typesUsed.Add(parameter.paramQualType);
-                    }
-                    catch (Exception) { }
-                }
+                var typesUsed = functionParameters.Select(parameter => parameter.paramQualType).ToList();
                 int o = AddImportsByName(typesUsed, sci.LineFromPosition(position));
                 position += o;
-                if (latest == null)
-                    sci.SetSel(position, sci.WordEndPosition(position, true));
-                else
-                    sci.SetSel(position, position);
-            }
-            var parameters = new List<MemberModel>();
-            foreach (var parameter in functionParameters)
-            {
-                parameters.Add(new MemberModel(parameter.paramName, parameter.paramType, FlagType.ParameterVar, 0));
+                if (latest == null) sci.SetSel(position, sci.WordEndPosition(position, true));
+                else sci.SetSel(position, position);
             }
             var newMember = NewMember(contextToken, isStatic, FlagType.Function, visibility);
-            newMember.Parameters = parameters;
+            newMember.Parameters = functionParameters.Select(parameter => new MemberModel(parameter.paramName, parameter.paramType, FlagType.ParameterVar, 0)).ToList();
             if (newMemberType != null) newMember.Type = newMemberType;
             GenerateFunction(newMember, position, detach, inClass);
         }
