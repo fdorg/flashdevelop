@@ -2532,6 +2532,18 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Paste text using <see cref="ClipboardHistoryDialog"/>.
+        /// </summary>
+        public void PasteHistory(object sender, EventArgs e)
+        {
+            ClipboardTextData data;
+            if (ClipboardHistoryDialog.Show(out data))
+            {
+                Globals.SciControl.ReplaceSel(data.Text);
+            }
+        }
+
+        /// <summary>
         /// Pastes lines at the correct indent level
         /// </summary>
         public void SmartPaste(Object sender, System.EventArgs e)
