@@ -201,11 +201,7 @@ namespace FlashDevelop.Dialogs
             }
             listBox.EndUpdate();
 
-            if (listBox.Items.Count > 0)
-            {
-                btnClear.Enabled = true;
-                listBox.SelectedIndex = 0;
-            }
+            btnClear.Enabled = listBox.Items.Count > 0;
         }
 
         #endregion
@@ -242,6 +238,7 @@ namespace FlashDevelop.Dialogs
             {
                 current = new ClipboardHistoryDialog();
                 Globals.MainForm.ThemeControls(current);
+                current.SelectFirstItem();
                 var dialogResult = current.ShowDialog(Globals.MainForm);
                 data = current.SelectedData;
                 return dialogResult == DialogResult.OK;
@@ -264,6 +261,14 @@ namespace FlashDevelop.Dialogs
             }
         }
 
+        private void SelectFirstItem()
+        {
+            if (listBox.Items.Count > 0)
+            {
+                listBox.SelectedIndex = 0;
+            }
+        }
+
         private void AddNewClipboardData()
         {
             listBox.BeginUpdate();
@@ -274,7 +279,7 @@ namespace FlashDevelop.Dialogs
             listBox.Items.Insert(0, ClipboardManager.History.PeekEnd());
             listBox.EndUpdate();
 
-            btnClear.Enabled = true;
+            btnClear.Enabled = listBox.Items.Count > 0;
         }
 
         private void ShowContent()
