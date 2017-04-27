@@ -116,7 +116,10 @@ namespace ResultsPanel.Helpers
             {
                 foreach (var pluginUI in pluginUIs)
                 {
-                    pluginUI.AddSquiggles();
+                    if (!pluginUI.ParentPanel.IsHidden)
+                    {
+                        pluginUI.AddSquiggles();
+                    }
                 }
             }
         }
