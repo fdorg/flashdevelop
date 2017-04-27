@@ -11,6 +11,8 @@ namespace FlashDevelop.Dialogs
     /// </summary>
     public class ClipboardHistoryDialog : Form
     {
+        private static ClipboardHistoryDialog current;
+
         private SplitContainer splitContainer;
         private ListBox listBox;
         private Button btnPaste;
@@ -193,7 +195,6 @@ namespace FlashDevelop.Dialogs
         private void InitializeListBox()
         {
             listBox.BeginUpdate();
-            listBox.Items.Clear();
             foreach (var data in ClipboardManager.History)
             {
                 listBox.Items.Insert(0, data);
@@ -210,16 +211,18 @@ namespace FlashDevelop.Dialogs
         #endregion
 
         #region Events
-        
+
         private void ListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             selectedData = (ClipboardTextData) listBox.SelectedItem;
             ShowContent();
             UpdateButtons();
         }
-        
+
         private void BtnClear_Click(object sender, EventArgs e)
         {
+            listBox.SelectedIndex = -1;
+
             ClipboardManager.History.Clear();
             listBox.Items.Clear();
             btnClear.Enabled = false;
@@ -235,15 +238,45 @@ namespace FlashDevelop.Dialogs
         /// <param name="data">User selected <see cref="ClipboardTextData"/>.</param>
         public static bool Show(out ClipboardTextData data)
         {
-            using (var clipboardHistoryDialog = new ClipboardHistoryDialog())
+            try
             {
-                Globals.MainForm.ThemeControls(clipboardHistoryDialog);
-                var dialogResult = clipboardHistoryDialog.ShowDialog(Globals.MainForm);
-                data = clipboardHistoryDialog.SelectedData;
+                current = new ClipboardHistoryDialog();
+                Globals.MainForm.ThemeControls(current);
+                var dialogResult = current.ShowDialog(Globals.MainForm);
+                data = current.SelectedData;
                 return dialogResult == DialogResult.OK;
             }
+            finally
+            {
+                current?.Dispose();
+                current = null;
+            }
         }
-        
+
+        /// <summary>
+        /// Updates the clipboard history list by adding the new clipboard data to the list.
+        /// </summary>
+        public static void UpdateHistory()
+        {
+            if (current != null)
+            {
+                current.AddNewClipboardData();
+            }
+        }
+
+        private void AddNewClipboardData()
+        {
+            listBox.BeginUpdate();
+            if (listBox.Items.Count == ClipboardManager.History.Count)
+            {
+                listBox.Items.RemoveAt(listBox.Items.Count - 1);
+            }
+            listBox.Items.Insert(0, ClipboardManager.History.PeekEnd());
+            listBox.EndUpdate();
+
+            btnClear.Enabled = true;
+        }
+
         private void ShowContent()
         {
             richTextBox.Clear();

@@ -1749,7 +1749,10 @@ namespace FlashDevelop
         /// </summary>
         protected override void WndProc(ref Message m)
         {
-            ClipboardManager.HandleWndProc(ref m);
+            if (ClipboardManager.HandleWndProc(ref m))
+            {
+                ClipboardHistoryDialog.UpdateHistory();
+            }
             base.WndProc(ref m);
         }
 
