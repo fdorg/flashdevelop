@@ -6173,4 +6173,8 @@ AND - 모든 조건을 만족할때.</value>
     <value>Paste History</value>
     <comment>Added after 5.2.0</comment>
   </data>
+  <data name="FlashDevelop.Description.ClipboardHistorySize" xml:space="preserve">
+    <value>The number of items to store in the clipboard history. Minimun value is 1.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
 </root>
