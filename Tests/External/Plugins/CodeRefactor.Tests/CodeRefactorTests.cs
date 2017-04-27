@@ -13,7 +13,9 @@ namespace CodeRefactor
     [TestFixture]
     public class CodeRefactorTests
     {
+#pragma warning disable CS0436 // Type conflicts with imported type
         protected MainForm MainForm;
+#pragma warning restore CS0436 // Type conflicts with imported type
         protected ISettings Settings;
         protected ITabbedDocument Doc;
         protected ScintillaControl Sci;
@@ -21,7 +23,9 @@ namespace CodeRefactor
         [TestFixtureSetUp]
         public void FixtureSetUp()
         {
+#pragma warning disable CS0436 // Type conflicts with imported type
             MainForm = new MainForm();
+#pragma warning restore CS0436 // Type conflicts with imported type
             Settings = Substitute.For<ISettings>();
             Settings.UseTabs = true;
             Settings.IndentSize = 4;

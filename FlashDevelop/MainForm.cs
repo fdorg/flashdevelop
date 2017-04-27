@@ -1416,7 +1416,7 @@ namespace FlashDevelop
                             e.Cancel = true;
                         }
                     }
-                    else if (document.IsModified) document.Save();
+                    else document.Save();
                 }
                 else if (result == DialogResult.Cancel)
                 {
