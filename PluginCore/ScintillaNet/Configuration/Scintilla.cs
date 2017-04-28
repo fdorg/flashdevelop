@@ -191,7 +191,7 @@ namespace ScintillaNet.Configuration
 
         public Language GetLanguage(string languageName)
         {
-            return GetLanguages().Find(language => language.name == languageName);
+            return Array.Find(AllLanguages, language => language.name == languageName);
         }
 
         public List<Language> GetLanguages()
