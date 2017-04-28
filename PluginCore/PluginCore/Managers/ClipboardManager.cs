@@ -55,7 +55,12 @@ namespace PluginCore.Managers
             }
 
             history = new FixedSizeQueue<ClipboardTextData>(PluginBase.Settings.ClipboardHistorySize);
-            history.Enqueue(new ClipboardTextData(Clipboard.GetDataObject()));
+
+            var dataObject = Clipboard.GetDataObject();
+            if (ClipboardTextData.IsTextFormat(dataObject))
+            {
+                history.Enqueue(new ClipboardTextData(dataObject));
+            }
         }
 
         /// <summary>
@@ -93,8 +98,11 @@ namespace PluginCore.Managers
                 try
                 {
                     var dataObject = Clipboard.GetDataObject();
-                    history.Enqueue(new ClipboardTextData(dataObject));
-                    return true;
+                    if (ClipboardTextData.IsTextFormat(dataObject))
+                    {
+                        history.Enqueue(new ClipboardTextData(dataObject));
+                        return true;
+                    }
                 }
                 catch (NullReferenceException ex)
                 {
@@ -154,8 +162,19 @@ namespace PluginCore.Managers
         private string rtf;
         private string text;
 
-        internal ClipboardTextData(IDataObject dataObject)
+        /// <summary>
+        /// Creates a new instance of <see cref="ClipboardTextData"/> with the specified <see cref="IDataObject"/>.
+        /// </summary>
+        /// <param name="dataObject">An <see cref="IDataObject"/> containing clipboard text data.</param>
+        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="ArgumentException"/>
+        public ClipboardTextData(IDataObject dataObject)
         {
+            if (dataObject == null)
+            {
+                throw new ArgumentNullException(nameof(dataObject));
+            }
+
             Initialize(dataObject);
         }
 
@@ -166,20 +185,9 @@ namespace PluginCore.Managers
         {
             get { return format; }
         }
-
+        
         /// <summary>
-        /// Gets whether the format of the <see cref="ClipboardTextData"/> is <see cref="DataFormats.Text"/> or <see cref="DataFormats.Rtf"/>. 
-        /// </summary>
-        public bool IsTextFormat
-        {
-            get
-            {
-                return format == DataFormats.Text || format == DataFormats.Rtf;
-            }
-        }
-
-        /// <summary>
-        /// Gets the <see cref="DataFormats.Rtf"/> value of the <see cref="ClipboardTextData"/>. Returns <see langword="null"/> if <see cref="Format"/> is not <see cref="DataFormats.Rtf"/>.
+        /// Gets the <see cref="DataFormats.Rtf"/> value of the <see cref="ClipboardTextData"/>, or <see langword="null"/> if <see cref="Format"/> is not <see cref="DataFormats.Rtf"/>.
         /// </summary>
         public string Rtf
         {
@@ -187,11 +195,31 @@ namespace PluginCore.Managers
         }
 
         /// <summary>
-        /// Gets the <see cref="DataFormats.Text"/> value of the <see cref="ClipboardTextData"/>, or semicolon-separated list of present formats.
+        /// Gets the <see cref="DataFormats.Text"/> value of the <see cref="ClipboardTextData"/>.
         /// </summary>
         public string Text
         {
             get { return text; }
+        }
+
+        /// <summary>
+        /// Determines whether data stored in the <see cref="IDataObject"/> is associated with a text format.
+        /// </summary>
+        public static bool IsTextFormat(IDataObject dataObject)
+        {
+            if (dataObject == null)
+            {
+                return false;
+            }
+
+            return dataObject.GetDataPresent(DataFormats.Text)/*
+                || dataObject.GetDataPresent(DataFormats.UnicodeText)
+                || dataObject.GetDataPresent(DataFormats.OemText)
+                || dataObject.GetDataPresent(DataFormats.Locale)
+                || dataObject.GetDataPresent(DataFormats.Html)
+                || dataObject.GetDataPresent(DataFormats.Rtf)
+                || dataObject.GetDataPresent(DataFormats.CommaSeparatedValue)
+                || dataObject.GetDataPresent(DataFormats.StringFormat)*/;
         }
 
         private void Initialize(IDataObject dataObject)
@@ -210,25 +238,7 @@ namespace PluginCore.Managers
             }
             else
             {
-                if (dataObject.GetDataPresent(DataFormats.FileDrop))
-                {
-                    format = DataFormats.FileDrop;
-                }
-                else if (dataObject.GetDataPresent(DataFormats.Bitmap))
-                {
-                    format = DataFormats.Bitmap;
-                }
-                else if (dataObject.GetDataPresent(DataFormats.WaveAudio))
-                {
-                    format = DataFormats.WaveAudio;
-                }
-                else
-                {
-                    string[] formats = dataObject.GetFormats();
-                    format = formats.Length > 0 ? formats[0] : "";
-                }
-                rtf = null;
-                text = string.Join(";", dataObject.GetFormats());
+                throw new ArgumentException("Specified " + nameof(IDataObject) + " does not contain any text data.");
             }
         }
     }

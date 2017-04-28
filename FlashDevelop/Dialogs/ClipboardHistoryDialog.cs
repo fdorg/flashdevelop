@@ -297,16 +297,12 @@ namespace FlashDevelop.Dialogs
                 {
                     richTextBox.Rtf = selectedData.Rtf;
                 }
-                else
-                {
-                    richTextBox.Text = selectedData.Text.Replace(';', '\n');
-                }
             }
         }
 
         private void UpdateButtons()
         {
-            btnPaste.Enabled = selectedData != null && selectedData.IsTextFormat;
+            btnPaste.Enabled = selectedData != null;
         }
 
         #endregion
