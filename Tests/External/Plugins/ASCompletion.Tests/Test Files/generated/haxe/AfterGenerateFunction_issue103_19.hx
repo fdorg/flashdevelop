@@ -4,7 +4,7 @@ public class Main {
 		foo(test);
 	}
 	
-	function test():(Void->Void) {
+	function test():Void->Void {
 		
 	}
 	

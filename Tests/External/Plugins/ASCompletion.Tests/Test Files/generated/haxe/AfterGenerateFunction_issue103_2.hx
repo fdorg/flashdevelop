@@ -4,7 +4,7 @@ public class Main {
 		foo(test);
 	}
 	
-	function test(parameter0:(Int->String)):Void {
+	function test(parameter0:Int->String):Void {
 		
 	}
 	
