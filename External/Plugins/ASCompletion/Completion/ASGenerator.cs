@@ -2832,6 +2832,8 @@ namespace ASCompletion.Completion
             }
             if (caller?.Parameters != null && caller.Parameters.Count > 0)
             {
+                Func<string, string> cleanType = null;
+                cleanType = s => s.StartsWith("(") && s.EndsWith(')') ? cleanType(s.Trim('(', ')')) : s;
                 var parameterType = caller.Parameters[parameterIndex].Type;
                 if ((char) sci.CharAt(wordPos) == '(') newMemberType = parameterType;
                 else
@@ -2840,7 +2842,8 @@ namespace ASCompletion.Completion
                     var braCount = 0;
                     var genCount = 0;
                     var startPosition = 0;
-                    for (var i = 0; i < parameterType.Length; i++)
+                    var typeLength = parameterType.Length;
+                    for (var i = 0; i < typeLength; i++)
                     {
                         string type = null;
                         var c = parameterType[i];
@@ -2882,22 +2885,23 @@ namespace ASCompletion.Completion
                         }
                         if (type == null)
                         {
-                            if (i == parameterType.Length - 1 && i > startPosition) newMemberType = parameterType.Substring(startPosition);
+                            if (i == typeLength - 1 && i > startPosition) newMemberType = parameterType.Substring(startPosition);
                             continue;
                         }
+                        type = cleanType(type);
                         var parameter = $"parameter{functionParameters.Count}";
                         if (type.StartsWith('?'))
                         {
                             parameter = $"?{parameter}";
                             type = type.TrimStart('?');
                         }
-                        if (i == parameterType.Length - 1) newMemberType = type;
+                        if (i == typeLength - 1) newMemberType = type;
                         else functionParameters.Add(new FunctionParameter(parameter, type, type, callerExpr));
                     }
                     if (functionParameters.Count == 1 && functionParameters[0].paramType == ASContext.Context.Features.voidKey) functionParameters.Clear();
                 }
+                newMemberType = cleanType(newMemberType);
             }
-
             // add imports to function argument types
             if (functionParameters.Count > 0)
             {
