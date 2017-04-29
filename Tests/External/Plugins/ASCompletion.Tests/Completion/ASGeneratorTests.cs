@@ -1212,6 +1212,10 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromDynamic_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromDynamic_useSpaces"))
                                 .SetName("from {}");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromCastExp"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromCastExp"))
+                                .SetName("cast(d, String)");
                     }
                 }
 
