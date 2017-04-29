@@ -6145,6 +6145,18 @@ AND - All conditions are met.</value>
     <value>Unused variable</value>
     <comment>Added after 5.2.1</comment>
   </data>
+  <data name="CodeRefactor.Label.FindAllReferencesResult" xml:space="preserve">
+    <value>References</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="FlashDevelop.Label.FindAndReplaceResults" xml:space="preserve">
+    <value>Find and Replace</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="LintingManager.Label.LintingResults" xml:space="preserve">
+    <value>Linters</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
   <data name="HaXeContext.Info.MissingLib" xml:space="preserve">
     <value>Missing libraries detected. Would you like to try to install them through the package manager?</value>
     <comment>after 5.2.1</comment>

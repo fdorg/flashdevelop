@@ -308,7 +308,8 @@ namespace OutputPanel
             // We use custom resizing because when the owner DockPanel hides, textLog.Height = 0, and ScrollToCaret() fails
             if (this.Height != 0)
             {
-                this.textLog.Size = new Size(this.ClientSize.Width, this.ClientSize.Height - this.toolStrip.Size.Height);
+                var bounds = Rectangle.FromLTRB(Padding.Left, toolStrip.Bottom, ClientSize.Width - Padding.Right, ClientSize.Height - Padding.Bottom);
+                textLog.SetBounds(bounds.X, bounds.Y, bounds.Width, bounds.Height);
                 
                 // Recreate handle and restore scrollbars position, built-in behavior is flawed (eg.: go to bottom of scroll and resize)
                 if (Win32.ShouldUseWin32())

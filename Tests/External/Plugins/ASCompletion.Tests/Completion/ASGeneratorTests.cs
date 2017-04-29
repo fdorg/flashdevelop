@@ -25,14 +25,18 @@ namespace ASCompletion.Completion
     [TestFixture]
     public class ASGeneratorTests
     {
+#pragma warning disable CS0436 // Type conflicts with imported type
         private MainForm mainForm;
+#pragma warning restore CS0436 // Type conflicts with imported type
         private ISettings settings;
         private ITabbedDocument doc;
 
         [TestFixtureSetUp]
         public void FixtureSetUp()
         {
+#pragma warning disable CS0436 // Type conflicts with imported type
             mainForm = new MainForm();
+#pragma warning restore CS0436 // Type conflicts with imported type
             settings = Substitute.For<ISettings>();
             settings.UseTabs = true;
             settings.IndentSize = 4;
@@ -69,6 +73,24 @@ namespace ASCompletion.Completion
                 IsUseTabs = settings.UseTabs,
                 TabWidth = settings.TabWidth
             };
+        }
+
+        private static void SetAs3Features(ScintillaControl sci)
+        {
+            if (sci.ConfigurationLanguage != "as3")
+            {
+                sci.ConfigurationLanguage = "as3";
+                ASContext.Context.SetAs3Features();
+            }
+        }
+
+        private static void SetHaxeFeatures(ScintillaControl sci)
+        {
+            if (sci.ConfigurationLanguage != "haxe")
+            {
+                sci.ConfigurationLanguage = "haxe";
+                ASContext.Context.SetHaxeFeatures();
+            }
         }
 
         public class GetBodyStart : ASGeneratorTests
@@ -318,13 +340,12 @@ namespace ASCompletion.Completion
                 public string Common(Visibility scope, string sourceText, ClassModel sourceClassModel,
                     int memberPos, int parameterPos)
                 {
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
 
                     var table = new Hashtable();
                     table["scope"] = scope;
 
                     sci.Text = sourceText;
-                    sci.ConfigurationLanguage = "as3";
 
                     var inClass = sourceClassModel;
                     var sourceMember = sourceClassModel.Members[memberPos];
@@ -520,11 +541,10 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(ImplementInterfaceAs3TestCases))]
                 public string As3(string sourceText, ClassModel sourceModel, ClassModel interfaceToImplement)
                 {
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceToImplement);
 
                     sci.Text = sourceText;
-                    sci.ConfigurationLanguage = "as3";
 
                     ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, sourceModel, null, null);
 
@@ -534,11 +554,10 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(ImplementInterfaceHaxeTestCases))]
                 public string Haxe(string sourceText, ClassModel sourceModel, ClassModel interfaceToImplement)
                 {
-                    ASContext.Context.SetHaxeFeatures();
+                    SetHaxeFeatures(sci);
                     ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceToImplement);
 
                     sci.Text = sourceText;
-                    sci.ConfigurationLanguage = "haxe";
 
                     ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, sourceModel, null, null);
 
@@ -587,15 +606,13 @@ namespace ASCompletion.Completion
 
                 internal static string AS3Impl(string sourceText, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     return Common(sourceText, sci);
                 }
 
                 internal static string HaxeImpl(string sourceText, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
+                    SetHaxeFeatures(sci);
                     return Common(sourceText, sci);
                 }
 
@@ -767,66 +784,107 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103"))
+                                .SetName("Issue103. Case 1")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_2"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_2"))
+                                .SetName("Issue103. Case 2")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_3"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_3"))
+                                .SetName("Issue103. Case 3")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_4"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_4"))
+                                .SetName("Issue103. Case 4")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_5"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_5"))
+                                .SetName("Issue103. Case 5")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_6"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_6"))
+                                .SetName("Issue103. Case 6")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_7"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_7"))
+                                .SetName("Issue103. Case 7")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_8"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_8"))
+                                .SetName("Issue103. Case 8")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_9"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_9"))
+                                .SetName("Issue103. Case 9")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_10"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_10"))
+                                .SetName("Issue103. Case 10")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_11"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_11"))
+                                .SetName("Issue103. Case 11")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_12"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_12"))
+                                .SetName("Issue103. Case 12")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_13"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_13"))
+                                .SetName("Issue103. Case 13")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_14"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_14"))
+                                .SetName("Issue103. Case 14")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_15"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_15"))
+                                .SetName("Issue103. Case 15")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_16"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_16"))
+                                .SetName("Issue103. Case 16")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_17"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_17"))
+                                .SetName("Issue103. Case 17")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_18"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_18"))
+                                .SetName("Issue103. Case 18")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_19"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_19"))
+                                .SetName("Issue103. Case 19")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_20"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_20"))
+                                .SetName("Issue103. Case 20")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_21"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_21"))
+                                .SetName("Issue103. Case 21")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                     }
                 }
@@ -836,15 +894,13 @@ namespace ASCompletion.Completion
 
                 internal static string AS3Impl(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     return Common(sourceText, job, sci);
                 }
 
                 internal static string HaxeImpl(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
+                    SetHaxeFeatures(sci);
                     return Common(sourceText, job, sci);
                 }
 
@@ -1310,15 +1366,13 @@ namespace ASCompletion.Completion
 
                 internal static string AS3Impl(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     return Common(sourceText, job, sci);
                 }
                 
                 internal static string HaxeImpl(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
+                    SetHaxeFeatures(sci);
                     return Common(sourceText, job, sci);
                 }
 
@@ -1529,15 +1583,13 @@ namespace ASCompletion.Completion
 
                 internal static string AS3Impl(string sourceText, string[] autoRemove, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     return Common(sourceText, autoRemove, sci);
                 }
 
                 internal static string HaxeImpl(string sourceText, string[] autoRemove, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
+                    SetHaxeFeatures(sci);
                     return Common(sourceText, autoRemove, sci);
                 }
 
@@ -1678,15 +1730,13 @@ namespace ASCompletion.Completion
 
                 internal static string AS3Impl(string sourceText, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     return Common(sourceText, sci);
                 }
 
                 internal static string HaxeImpl(string sourceText, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
+                    SetHaxeFeatures(sci);
                     return Common(sourceText, sci);
                 }
 
@@ -1834,15 +1884,13 @@ namespace ASCompletion.Completion
 
                 internal static string AS3Impl(string sourceText, string ofClassName, string memberName, FlagType memberFlags, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     return Common(sourceText, ofClassName, memberName, memberFlags, sci);
                 }
 
                 internal static string HaxeImpl(string sourceText, string ofClassName, string memberName, FlagType memberFlags, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
+                    SetHaxeFeatures(sci);
                     return Common(sourceText, ofClassName, memberName, memberFlags, sci);
                 }
 
@@ -1966,8 +2014,7 @@ namespace ASCompletion.Completion
 
                 public static ClassModel AS3Impl(string sourceText, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     return Common(sourceText, sci);
                 }
 
@@ -2096,15 +2143,13 @@ namespace ASCompletion.Completion
 
                 internal static List<MemberModel> AS3Impl(string sourceText, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     return Common(sourceText, sci);
                 }
 
                 internal static List<MemberModel> HaxeImpl(string sourceText, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
+                    SetHaxeFeatures(sci);
                     return Common(sourceText, sci);
                 }
 
@@ -2212,16 +2257,14 @@ namespace ASCompletion.Completion
 
                 internal string AS3Impl(string sourceText, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     return Common(sourceText, sci);
                 }
 
                 internal string HaxeImpl(string fileName, ScintillaControl sci)
                 {
+                    SetHaxeFeatures(sci);
                     var sourceText = ReadAllTextHaxe(fileName);
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
                     fileName = GetFullPathHaxe(fileName);
                     ASContext.Context.CurrentModel.FileName = fileName;
                     PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
@@ -2321,15 +2364,13 @@ namespace ASCompletion.Completion
 
                 internal static int AS3Impl(string sourceText, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     return Common(sourceText, sci);
                 }
 
                 internal static int HaxeImpl(string sourceText, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
+                    SetHaxeFeatures(sci);
                     return Common(sourceText, sci);
                 }
 
@@ -2404,7 +2445,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText) => AS3Impl(sourceText);
+                public string AS3(string sourceText) => AS3Impl(sourceText, sci);
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -2455,17 +2496,17 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText) => HaxeImpl(sourceText);
+                public string Haxe(string sourceText) => HaxeImpl(sourceText, sci);
 
-                internal static string AS3Impl(string sourceText)
+                internal static string AS3Impl(string sourceText, ScintillaControl sci)
                 {
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     return Common(sourceText);
                 }
 
-                internal static string HaxeImpl(string sourceText)
+                internal static string HaxeImpl(string sourceText, ScintillaControl sci)
                 {
-                    ASContext.Context.SetHaxeFeatures();
+                    SetHaxeFeatures(sci);
                     return Common(sourceText);
                 }
 

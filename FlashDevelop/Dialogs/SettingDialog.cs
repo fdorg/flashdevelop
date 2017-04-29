@@ -78,7 +78,7 @@ namespace FlashDevelop.Dialogs
             //
             // columnHeader
             //
-            this.columnHeader.Width = 159;
+            this.columnHeader.Width = -1;
             // 
             // itemListView
             //
