@@ -198,6 +198,7 @@ namespace HaXeContext
         const bool DEFAULT_DISABLECOMPLETIONONDEMAND = true;
         const bool DEFAULT_EXPORTHXML = false;
         const bool DEFAULT_DISABLE_LIB_INSTALLATION = true;
+        const bool DEFAULT_ENABLE_COMPILER_FOR_FIND_ALL_REFERENCES = true;
 
         private int completionServerPort = DEFAULT_COMPLETION_SERVER_PORT;
         private int flashVersion = 10;
@@ -207,6 +208,7 @@ namespace HaXeContext
         private bool exportHXML = DEFAULT_EXPORTHXML;
         private HaxeCompletionModeEnum _completionMode = DEFAULT_HAXECOMPLETIONMODE;
         bool disableLibInstallation = DEFAULT_DISABLE_LIB_INSTALLATION;
+        bool enableCompilerForFindAllReferences = DEFAULT_ENABLE_COMPILER_FOR_FIND_ALL_REFERENCES;
 
         [DisplayName("Default Flash Version")]
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("HaXeContext.Description.DefaultFlashVersion"), DefaultValue(DEFAULT_FLASHVERSION)]
@@ -285,6 +287,15 @@ namespace HaXeContext
         {
             get { return disableLibInstallation; }
             set { disableLibInstallation = value; }
+        }
+
+        [DisplayName("Enable Compiler Services For Find All References")]
+        [Category("Code Refactor")]
+        [DefaultValue(DEFAULT_ENABLE_COMPILER_FOR_FIND_ALL_REFERENCES)]
+        public bool EnableCompilerForFindAllReferences
+        {
+            get { return enableCompilerForFindAllReferences; }
+            set { enableCompilerForFindAllReferences = value; }
         }
 
         #endregion
