@@ -5831,28 +5831,45 @@ namespace ScintillaNet
                             int curLine = CurrentLine;
                             int tempLine = curLine;
                             int previousIndent;
-                            string tempText;
+                            string tempText3; //line text without newline
+                            string tempText2; //line text trim end
+                            string tempText; //line text without comment and trim end
                             do
                             {
                                 --tempLine;
-                                previousIndent = GetLineIndentation(tempLine);
-                                tempText = GetLine(tempLine).TrimEnd();
+                                tempText3 = GetLine(tempLine);
+                                tempText3 = tempText3.Substring(0, tempText3.Length - 1); //remove newline
+                                tempText2 = tempText3.TrimEnd();
+                                tempText = tempText2;
                                 if (tempText.Length == 0) previousIndent = -1;
+                                else previousIndent = GetLineIndentation(tempLine);
                             }
                             while ((tempLine > 0) && (previousIndent < 0));
-                            if (tempText.IndexOfOrdinal("//") > 0) // remove comment at end of line
+                            int commentIndex = tempText.IndexOfOrdinal("//");
+                            if (commentIndex > 0) // remove comment at end of line
                             {
-                                int slashes = this.MBSafeTextLength(tempText.Substring(0, tempText.IndexOfOrdinal("//") + 1));
+                                int slashes = this.MBSafeTextLength(tempText.Substring(0, commentIndex + 1));
                                 if (this.PositionIsOnComment(PositionFromLine(tempLine) + slashes))
-                                    tempText = tempText.Substring(0, tempText.IndexOfOrdinal("//")).Trim();
+                                    tempText = tempText.Substring(0, commentIndex).TrimEnd();
                             }
                             if (tempText.EndsWith('{'))
                             {
-                                int bracePos = CurrentPos - 1;
-                                while (bracePos > 0 && CharAt(bracePos) != '{') bracePos--;
+                                int bracePos = CurrentPos - 2 - (tempText3.Length - tempText.Length); //CurrentPos - 1 is always ch (newline)
                                 int style = BaseStyleAt(bracePos);
                                 if (bracePos >= 0 && CharAt(bracePos) == '{' && (style == 10/*CPP*/ || style == 5/*CSS*/))
+                                {
                                     previousIndent += TabWidth;
+                                    if (tempText.Length == tempText2.Length) //Doesn't end with comment
+                                    {
+                                        if (tempText3.Length > tempText.Length) //Ends with whitespace after {
+                                        {
+                                            AnchorPosition = bracePos + 1;
+                                            CurrentPos--; //before ch (newline)
+                                            DeleteBack();
+                                            CurrentPos = bracePos + 2; //same as CurrentPos++ (after ch)
+                                        }
+                                    }
+                                }
                             }
                             // TODO: Should this test a config variable for indenting after case : statements?
                             if (Lexer == 3 && tempText.EndsWith(':') && !tempText.EndsWithOrdinal("::") && !this.PositionIsOnComment(PositionFromLine(tempLine)))
@@ -5926,22 +5943,33 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// Detects the string-literal quote style
+        /// Detects the string-literal quote style. Returns space if undefined.
         /// </summary>
         /// <param name="position">lookup position</param>
         /// <returns>' or " or Space if undefined</returns>
         public char GetStringType(int position)
         {
-            char next = (char)CharAt(position);
-            char c;
+            char current;
+            char previous = (char) CharAt(position);
             for (int i = position; i > 0; i--)
             {
-                c = next;
-                next = (char)CharAt(i - 1);
+                current = previous;
+                previous = (char) CharAt(i - 1);
 
-                if (next == '\\' && (c == '\'' || c == '"')) i--;
-                if (c == '\'') return '\'';
-                else if (c == '"') return '"';
+                if (current == '\'' || current == '"')
+                {
+                    bool escaped = false;
+                    while (previous == '\\')
+                    {
+                        i--;
+                        previous = (char) CharAt(i - 1);
+                        escaped = !escaped;
+                    }
+                    if (!escaped)
+                    {
+                        return current;
+                    }
+                }
             }
             return ' ';
         }
