@@ -171,6 +171,7 @@ namespace HaXeContext
                     CommandFactoryProvider.Register("haxe", new HaxeCommandFactory());
                     break;
                 case EventType.Trace:
+                    if (settingObject.DisableLibInstallation) return;
                     var nameToVersion = new Dictionary<string, string>();
                     var length = TraceManager.TraceLog.Count - logCount;
                     for (var i = 0; i < length; i++)

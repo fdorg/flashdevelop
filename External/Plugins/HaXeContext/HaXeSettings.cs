@@ -185,7 +185,7 @@ namespace HaXeContext
 
         #endregion
 
-        #region haXe specific members
+        #region Haxe specific members
 
         [field: NonSerialized]
         public event CompletionModeChangedEventHandler CompletionModeChanged;
@@ -197,6 +197,7 @@ namespace HaXeContext
         const bool DEFAULT_DISABLEMIXEDCOMPLETION = false;
         const bool DEFAULT_DISABLECOMPLETIONONDEMAND = true;
         const bool DEFAULT_EXPORTHXML = false;
+        const bool DEFAULT_DISABLE_LIB_INSTALLATION = true;
 
         private int completionServerPort = DEFAULT_COMPLETION_SERVER_PORT;
         private int flashVersion = 10;
@@ -205,6 +206,7 @@ namespace HaXeContext
         private bool disableCompletionOnDemand = DEFAULT_DISABLECOMPLETIONONDEMAND;
         private bool exportHXML = DEFAULT_EXPORTHXML;
         private HaxeCompletionModeEnum _completionMode = DEFAULT_HAXECOMPLETIONMODE;
+        bool disableLibInstallation = DEFAULT_DISABLE_LIB_INSTALLATION;
 
         [DisplayName("Default Flash Version")]
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("HaXeContext.Description.DefaultFlashVersion"), DefaultValue(DEFAULT_FLASHVERSION)]
@@ -277,19 +279,21 @@ namespace HaXeContext
             set { HaxeProject.saveHXML = exportHXML = value; }
         }
 
+        [DisplayName("Disable Automatic Libraries Installation")]
+        [DefaultValue(DEFAULT_DISABLE_LIB_INSTALLATION)]
+        public bool DisableLibInstallation
+        {
+            get { return disableLibInstallation; }
+            set { disableLibInstallation = value; }
+        }
+
         #endregion
 
         [Browsable(false)]
-        private void FireChanged()
-        {
-            if (OnClasspathChanged != null) OnClasspathChanged();
-        }
+        void FireChanged() => OnClasspathChanged?.Invoke();
 
         [Browsable(false)]
-        private void FireCompletionMode()
-        {
-            if (CompletionModeChanged != null) CompletionModeChanged();
-        }
+        void FireCompletionMode() => CompletionModeChanged?.Invoke();
 
         [Browsable(false)]
         public void Init()
