@@ -1,3 +1,5 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -251,9 +253,9 @@ namespace ASCompletion.Completion
                 if (resolve.Member != null
                     && resolve.Member.Name == found.member.Name
                     && line == found.member.LineFrom
-                    && ((found.member.Flags & FlagType.Function) > 0
-                        || (found.member.Flags & FlagType.Getter) > 0
-                        || (found.member.Flags & FlagType.Setter) > 0)
+                    && ((found.member.Flags & FlagType.Function) > 0 
+                            || (found.member.Flags & FlagType.Getter) > 0
+                            || (found.member.Flags & FlagType.Setter) > 0)
                     && found.inClass != ClassModel.VoidClass
                     && found.inClass.Implements != null
                     && found.inClass.Implements.Count > 0)
@@ -4844,3 +4846,7 @@ namespace ASCompletion.Completion
     #endregion
 }
 
+
+                    && ((found.member.Flags & FlagType.Function) > 0
+                        || (found.member.Flags & FlagType.Getter) > 0
+                        || (found.member.Flags & FlagType.Setter) > 0)

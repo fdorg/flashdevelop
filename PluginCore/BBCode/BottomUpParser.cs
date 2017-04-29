@@ -1,3 +1,5 @@
+// This is an open source non-commercial project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 using System;
 using System.Collections.Generic;
 
@@ -67,22 +69,18 @@ namespace PluginCore.BBCode
         private IndexTree _buildTree(List<IPairTagMatch> openers)
         {
             uint inputL = (uint)input.Length;
-            Boolean closerOutOfBounds;
-            int closerStartAt;
             Dictionary<int, IPairTagMatch> closerIndices = new Dictionary<int, IPairTagMatch>();
-            IPairTagMatch mOp;
-            IPairTagMatch mCl;
             IndexTree rootTree = new IndexTree(0, (int)inputL, 0, 0, null, null);
             int i = openers.Count;
             while (i-- > 0)
             {
-                mOp = openers[i];
-                closerStartAt = (int)(mOp.tagIndex + mOp.tagLength);
-                closerOutOfBounds = false;
+                var mOp = openers[i];
+                var closerStartAt = (int)(mOp.tagIndex + mOp.tagLength);
+                var closerOutOfBounds = false;
 
                 while (true)
                 {
-                    mCl = pairTagMatcher.searchCloserFor(mOp, (uint)closerStartAt);
+                    var mCl = pairTagMatcher.searchCloserFor(mOp, (uint)closerStartAt);
                     if (mCl == null)
                     {
                         mCl = new VoidCloserTagMatch((int)inputL);
@@ -104,10 +102,8 @@ namespace PluginCore.BBCode
                         break;
                     }
 
-                    if (closerOutOfBounds)
-                        break;
-                    else if (mCl != null)
-                        closerStartAt = mCl.tagIndex + 1;
+                    if (closerOutOfBounds) break;
+                    closerStartAt = mCl.tagIndex + 1;
                 }
             }
             return rootTree;
