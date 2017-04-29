@@ -725,14 +725,17 @@ namespace ScintillaNet
                     }
                     catch (Exception ex)
                     {
+                        String info;
                         if (lexerType == null)
                         {
-                            ErrorManager.ShowWarning($"Lexer '{lang.lexer.name}' ({lang.lexer.key}) unknown.", ex);
+                            info = String.Format("Lexer '{0}' ({1}) unknown.", lang.lexer.name, lang.lexer.key);
+                            ErrorManager.ShowWarning(info, ex);
                             break;
                         }
                         else
                         {
-                            ErrorManager.ShowWarning($"Style '{usestyle.name}' in syntax file is not used by lexer '{lexerType.Name}'.", ex);
+                            info = String.Format("Style '{0}' in syntax file is not used by lexer '{1}'.", usestyle.name, lexerType.Name);
+                            ErrorManager.ShowWarning(info, ex);
                         }
                     }
                 }
@@ -3529,12 +3532,12 @@ namespace ScintillaNet
             get
             {
                 int sz = SPerform(2161, 0, 0);
-                byte[] buffer = new byte[sz];
+                byte[] buffer = new byte[sz + 1];
                 fixed (byte* b = buffer)
                 {
-                    SPerform(2161, sz, (uint) b);
+                    SPerform(2161, sz + 1, (uint)b);
                 }
-                return Encoding.GetEncoding(CodePage).GetString(buffer, 0, sz - 1);
+                return Encoding.GetEncoding(this.CodePage).GetString(buffer, 0, sz - 1);
             }
         }
 
@@ -3688,8 +3691,8 @@ namespace ScintillaNet
         /// </summary>
         public void CopyRTF()
         {
-            var language = Configuration.GetLanguage(configLanguage);
-            string conversion = RTF.GetConversion(language, this, SelectionStart, SelectionEnd);
+            Language language = ScintillaControl.Configuration.GetLanguage(this.configLanguage);
+            String conversion = RTF.GetConversion(language, this, this.SelectionStart, this.SelectionEnd);
             Clipboard.SetText(conversion, TextDataFormat.Rtf);
         }
 
@@ -7240,7 +7243,7 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// Copy the selection, if selection empty copy the line with the caret
+        /// Cut the selection, if selection empty cut the line with the caret
         /// </summary>
         public void CopyAllowLineEx()
         {
