@@ -1172,7 +1172,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        AssignStatementToVar(inClass, sci, member);
+                        AssignStatementToVar(inClass, sci);
                     }
                     finally
                     {
@@ -1259,7 +1259,7 @@ namespace ASCompletion.Completion
             }
         }
 
-        private static void AssignStatementToVar(ClassModel inClass, ScintillaControl sci, MemberModel member)
+        static void AssignStatementToVar(ClassModel inClass, ScintillaControl sci)
         {
             int lineNum = sci.CurrentLine;
             string line = sci.GetLine(lineNum);
@@ -3213,20 +3213,13 @@ namespace ASCompletion.Completion
         {
             Regex target = new Regex(@"[;\s\n\r]*", RegexOptions.RightToLeft);
             Match m = target.Match(line);
-            if (!m.Success)
-            {
-                return null;
-            }
+            if (!m.Success) return null;
             line = line.Substring(0, m.Index);
-
-            if (line.Length == 0)
-            {
-                return null;
-            }
-
+            if (line.Length == 0) return null;
+            var haxe = sci.ConfigurationLanguage == "haxe";
             line = ReplaceAllStringContents(line);
             var bracesRemoved = false;
-            int pos = -1;
+            var pos = -1;
             char c;
             if (line.Last() == ')')
             {
@@ -3241,6 +3234,11 @@ namespace ASCompletion.Completion
                     {
                         bracesCount--;
                         if (bracesCount > 0) continue;
+                        if (haxe && sci.GetWordLeft(position - 1, false) == "cast")
+                        {
+                            pos = startPos + line.Length;
+                            break;
+                        }
                         pos = position;
                         var lineFromPosition = sci.LineFromPosition(pos);
                         startPos = sci.PositionFromLine(lineFromPosition);
@@ -3252,7 +3250,8 @@ namespace ASCompletion.Completion
                 }
             }
             else pos = startPos + line.Length - 1;
-            IASContext ctx = inClass.InFile.Context;
+            var ctx = inClass.InFile.Context;
+            var features = ctx.Features;
             ASResult resolve = null;
             string word = null;
             ClassModel type = null;
@@ -3260,14 +3259,14 @@ namespace ASCompletion.Completion
             {
                 pos = sci.WordEndPosition(pos, true);
                 c = line.TrimEnd().Last();
-                resolve = ASComplete.GetExpressionType(sci, c == ']' ? pos + 1 : pos);
-                if (resolve.Type != null && !resolve.IsPackage)
+                resolve = ASComplete.GetExpressionType(sci, c == ']' ? pos + 1 : pos, true, true);
+                if ((resolve.Path == null || !resolve.Path.StartsWith("#")) && resolve.Type != null && !resolve.IsPackage)
                 {
                     if (resolve.Type.Name == "Function" && !bracesRemoved)
                     {
-                        if (sci.ConfigurationLanguage == "haxe")
+                        if (haxe)
                         {
-                            var voidKey = ctx.Features.voidKey;
+                            var voidKey = features.voidKey;
                             var parameters = resolve.Member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
                             parameters.Add(resolve.Member.Type ?? voidKey);
                             var qualifiedName = string.Empty;
@@ -3294,32 +3293,17 @@ namespace ASCompletion.Completion
             if (resolve?.Type == null || resolve.Type.IsVoid())
             {
                 c = (char)sci.CharAt(pos);
-                if (c == '"' || c == '\'')
-                {
-                    type = ctx.ResolveType(ctx.Features.stringKey, inClass.InFile);
-                }
-                else if (c == '}')
-                {
-                    type = ctx.ResolveType(ctx.Features.objectKey, inClass.InFile);
-                }
-                else if (c == '>')
-                {
-                    type = ctx.ResolveType("XML", inClass.InFile);
-                }
+                if (c == '"' || c == '\'') type = ctx.ResolveType(features.stringKey, inClass.InFile);
+                else if (c == '}') type = ctx.ResolveType(features.objectKey, inClass.InFile);
+                else if (c == '>') type = ctx.ResolveType("XML", inClass.InFile);
                 else if (c == ']')
                 {
                     resolve = ASComplete.GetExpressionType(sci, pos + 1);
-                    type = resolve.Type ?? ctx.ResolveType(ctx.Features.arrayKey, inClass.InFile);
+                    type = resolve.Type ?? ctx.ResolveType(features.arrayKey, inClass.InFile);
                     resolve = null;
                 }
-                else if (word != null && Char.IsDigit(word[0]))
-                {
-                    type = ctx.ResolveType(ctx.Features.numberKey, inClass.InFile);
-                }
-                else if (word == "true" || word == "false")
-                {
-                    type = ctx.ResolveType(ctx.Features.booleanKey, inClass.InFile);
-                }
+                else if (word != null && Char.IsDigit(word[0])) type = ctx.ResolveType(features.numberKey, inClass.InFile);
+                else if (word == "true" || word == "false") type = ctx.ResolveType(features.booleanKey, inClass.InFile);
                 if (type != null && type.IsVoid()) type = null;
             }
             if (resolve == null) resolve = new ASResult();
