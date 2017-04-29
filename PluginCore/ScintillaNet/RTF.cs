@@ -188,6 +188,8 @@ namespace ScintillaNet
                 char c = chars[i];
                 switch (c)
                 {
+                    case '\0':
+                        break; // ignore NULL characters as they will cause the clipboard to truncate the string
                     case '{':
                         body.Append(@"\{");
                         break;
