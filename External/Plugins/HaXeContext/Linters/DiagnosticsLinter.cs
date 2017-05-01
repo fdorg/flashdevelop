@@ -28,8 +28,11 @@ namespace HaXeContext.Linters
             var completionMode = ((HaXeSettings) context.Settings).CompletionMode;
             var haxeVersion = context.GetCurrentSDKVersion();
             if (completionMode == HaxeCompletionModeEnum.FlashDevelop || haxeVersion.IsOlderThan(new SemVer("3.3.0"))) return;
-            foreach (var file in files)
+
+            var list = new List<LintingResult>();
+            for (var i = 0; i < files.Length; i++)
             {
+                var file = files[i];
                 var sci = DocumentManager.FindDocument(file)?.SciControl;
                 if (!File.Exists(file)) continue;
                 if (sci == null)
@@ -37,46 +40,48 @@ namespace HaXeContext.Linters
                     sci = new ScintillaControl
                     {
                         Text = File.ReadAllText(file),
+                        FileName = file,
                         ConfigurationLanguage = "haxe"
                     };
                 }
 
                 var hc = context.GetHaxeComplete(sci, new ASExpr {Position = 0}, true, HaxeCompilerService.DIAGNOSTICS);
+                var i1 = i;
+                
                 hc.GetDiagnostics((complete, results, status) =>
                 {
-                    if (results == null || sci == null)
+                    if (results != null && sci != null)
                     {
-                        callback(null);
-                        return;
-                    }
-                    var list = new List<LintingResult>();
-                    foreach (var res in results)
-                    {
-                        var line = res.Range.LineStart + 1;
-                        var firstChar = sci.PositionFromLine(line) + res.Range.CharacterStart;
-                        var lastChar = sci.PositionFromLine(res.Range.LineEnd + 1) + res.Range.CharacterEnd;
-                        var result = new LintingResult
+                        foreach (var res in results)
                         {
-                            File = res.Range.Path,
-                            FirstChar = res.Range.CharacterStart,
-                            Length = lastChar - firstChar,
-                            Line = line,
-                            Severity = DiagnosticsSeverityToLintingSeverity[res.Severity]
-                        };
+                            var line = res.Range.LineStart + 1;
+                            var firstChar = sci.PositionFromLine(line) + res.Range.CharacterStart;
+                            var lastChar = sci.PositionFromLine(res.Range.LineEnd + 1) + res.Range.CharacterEnd;
+                            var result = new LintingResult
+                            {
+                                File = res.Range.Path,
+                                FirstChar = res.Range.CharacterStart,
+                                Length = lastChar - firstChar,
+                                Line = line,
+                                Severity = DiagnosticsSeverityToLintingSeverity[res.Severity]
+                            };
 
-                        switch (res.Kind)
-                        {
-                            case HaxeDiagnosticsKind.UNUSEDIMPORT:
-                                result.Description = TextHelper.GetString("HaXeContext.Info.UnusedImport");
-                                break;
-                            case HaxeDiagnosticsKind.UNUSEDVAR:
-                                result.Description = TextHelper.GetString("HaXeContext.Info.UnusedVariable");
-                                break;
+                            switch (res.Kind)
+                            {
+                                case HaxeDiagnosticsKind.UNUSEDIMPORT:
+                                    result.Description = TextHelper.GetString("HaXeContext.Info.UnusedImport");
+                                    break;
+                                case HaxeDiagnosticsKind.UNUSEDVAR:
+                                    result.Description = TextHelper.GetString("HaXeContext.Info.UnusedVariable");
+                                    break;
+                            }
+
+                            list.Add(result);
                         }
-
-                        list.Add(result);
                     }
-                    callback(list);
+
+                    if (i1 == files.Length - 1)
+                        callback(list);
                 });
             }
         }

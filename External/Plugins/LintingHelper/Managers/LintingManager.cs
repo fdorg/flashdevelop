@@ -87,7 +87,7 @@ namespace LintingHelper.Managers
                 //remove cache
                 foreach (var file in files)
                 {
-                    UnLintDocument(DocumentManager.FindDocument(file));
+                    UnLintFile(file);
                 }
                 linter.LintAsync(files, (results) =>
                 {
@@ -132,6 +132,13 @@ namespace LintingHelper.Managers
         public static void LintCurrentDocument()
         {
             LintDocument(PluginBase.MainForm.CurrentDocument);
+        }
+
+        public static void UnLintFile(string file)
+        {
+            var doc = DocumentManager.FindDocument(file);
+            Cache.RemoveDocument(file);
+            doc?.SciControl.RemoveHighlights();
         }
 
         public static void UnLintDocument(ITabbedDocument doc)

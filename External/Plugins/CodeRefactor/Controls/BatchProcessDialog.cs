@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using CodeRefactor.Commands;
 using CodeRefactor.Provider;
@@ -166,10 +167,12 @@ namespace CodeRefactor.Controls
             {
                 case 0: // Open Files
                 {
-                    foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
+                    var files = new List<string>();
+                    foreach (var document in PluginBase.MainForm.Documents)
                     {
-                        if (document.IsEditable && !document.IsUntitled) this.DoProcess(document);
+                        if (document.IsEditable && !document.IsUntitled) files.Add(document.FileName);
                     }
+                    this.DoProcess(files.ToArray());
                     break;
                 }
                 case 1: // Project Sources
@@ -186,14 +189,8 @@ namespace CodeRefactor.Controls
                                 files.AddRange(Directory.GetFiles(project.GetAbsolutePath(path), filter, SearchOption.AllDirectories));
                             }
                         }
-                        foreach (String file in files)
-                        {
-                            if (File.Exists(file))
-                            {
-                                ITabbedDocument document = PluginBase.MainForm.OpenEditableDocument(file) as ITabbedDocument;
-                                this.DoProcess(document);
-                            }
-                        }
+                        files = files.FindAll(File.Exists);
+                        this.DoProcess(files.ToArray());
                     }
                     break;
                 }
@@ -204,10 +201,10 @@ namespace CodeRefactor.Controls
         /// <summary>
         /// Processes the specified document
         /// </summary>
-        private void DoProcess(ITabbedDocument document)
+        private void DoProcess(string[] files)
         {
-            BatchProcessorItem item = (BatchProcessorItem)this.operationComboBox.SelectedItem;
-            item.Processor.Process(document);
+            var item = (BatchProcessorItem)this.operationComboBox.SelectedItem;
+            item.Processor.Process(files);
         }
 
         /// <summary>
