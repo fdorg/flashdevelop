@@ -18,9 +18,7 @@ namespace FlashDevelop.Dialogs
         private Button btnPaste;
         private Button btnCancel;
         private Button btnClear;
-        private RichTextBox richTextBox;
-
-        private ClipboardTextData selectedData;
+        private RichTextBox preview;
 
         /// <summary>
         /// Creates a new instance of <see cref="ClipboardHistoryDialog"/>.
@@ -45,7 +43,7 @@ namespace FlashDevelop.Dialogs
             splitContainer = new SplitContainer();
             btnClear = new Button();
             listBox = new ListBox();
-            richTextBox = new RichTextBox();
+            preview = new RichTextBox();
             btnCancel = new Button();
             btnPaste = new Button();
             splitContainer.Panel1.SuspendLayout();
@@ -73,14 +71,14 @@ namespace FlashDevelop.Dialogs
             // 
             // splitContainer.Panel2
             // 
-            splitContainer.Panel2.Controls.Add(richTextBox);
+            splitContainer.Panel2.Controls.Add(preview);
             splitContainer.Panel2.Controls.Add(btnCancel);
             splitContainer.Panel2.Controls.Add(btnPaste);
             // 
             // listBox
             // 
             listBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            listBox.DisplayMember = "Format";
+            listBox.DisplayMember = "DisplayString";
             listBox.IntegralHeight = false;
             listBox.ItemHeight = 20;
             listBox.Location = new Point(12, 12);
@@ -127,18 +125,19 @@ namespace FlashDevelop.Dialogs
             btnClear.UseVisualStyleBackColor = true;
             btnClear.Click += BtnClear_Click;
             // 
-            // richTextBox
+            // preview
             // 
-            richTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            richTextBox.BackColor = SystemColors.Window;
-            richTextBox.Location = new Point(12, 3);
-            richTextBox.Name = "richTextBox";
-            richTextBox.ReadOnly = true;
-            richTextBox.ShortcutsEnabled = false;
-            richTextBox.Size = new Size(458, 227);
-            richTextBox.TabIndex = 2;
-            richTextBox.Text = "";
-            richTextBox.WordWrap = false;
+            preview.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            preview.BackColor = SystemColors.Window;
+            preview.DetectUrls = false;
+            preview.Location = new Point(12, 3);
+            preview.Name = "preview";
+            preview.ReadOnly = true;
+            preview.ShortcutsEnabled = false;
+            preview.Size = new Size(458, 227);
+            preview.TabIndex = 2;
+            preview.Text = "";
+            preview.WordWrap = false;
             // 
             // ClipboardHistoryDialog
             // 
@@ -148,7 +147,7 @@ namespace FlashDevelop.Dialogs
             CancelButton = btnCancel;
             ClientSize = new Size(482, 453);
             Controls.Add(splitContainer);
-            FormBorderStyle = FormBorderStyle.SizableToolWindow;
+            FormBorderStyle = FormBorderStyle.Sizable;
             MaximizeBox = false;
             MinimizeBox = false;
             MinimumSize = new Size(300, 400);
@@ -173,7 +172,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public ClipboardTextData SelectedData
         {
-            get { return selectedData; }
+            get { return ((ListBoxItem) listBox.SelectedItem)?.Data; }
         }
 
         #endregion
@@ -184,6 +183,7 @@ namespace FlashDevelop.Dialogs
         {
             Font = Globals.Settings.DefaultFont;
             listBox.ItemHeight = Font.Height;
+            preview.Font = Globals.Settings.ConsoleFont;
         }
 
         private void InitializeLocalization()
@@ -198,11 +198,15 @@ namespace FlashDevelop.Dialogs
             listBox.BeginUpdate();
             foreach (var data in ClipboardManager.History)
             {
-                listBox.Items.Insert(0, data);
+                listBox.Items.Insert(0, new ListBoxItem(data));
             }
             listBox.EndUpdate();
 
-            btnClear.Enabled = listBox.Items.Count > 0;
+            if (listBox.Items.Count > 0)
+            {
+                listBox.SelectedIndex = 0;
+                btnClear.Enabled = true;
+            }
         }
 
         #endregion
@@ -211,9 +215,9 @@ namespace FlashDevelop.Dialogs
 
         private void ListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            selectedData = (ClipboardTextData) listBox.SelectedItem;
-            ShowContent();
-            UpdateButtons();
+            var selectedItem = (ListBoxItem) listBox.SelectedItem;
+            preview.Text = selectedItem?.Data.Text;
+            btnPaste.Enabled = selectedItem != null;
         }
 
         private void BtnClear_Click(object sender, EventArgs e)
@@ -239,7 +243,6 @@ namespace FlashDevelop.Dialogs
             {
                 current = new ClipboardHistoryDialog();
                 Globals.MainForm.ThemeControls(current);
-                current.SelectFirstItem();
                 var dialogResult = current.ShowDialog(Globals.MainForm);
                 data = current.SelectedData;
                 return dialogResult == DialogResult.OK;
@@ -261,48 +264,35 @@ namespace FlashDevelop.Dialogs
                 current.AddNewClipboardData();
             }
         }
-
-        private void SelectFirstItem()
-        {
-            if (listBox.Items.Count > 0)
-            {
-                listBox.SelectedIndex = 0;
-            }
-        }
-
+        
         private void AddNewClipboardData()
         {
             listBox.BeginUpdate();
-            if (listBox.Items.Count == ClipboardManager.History.Count)
+            while (listBox.Items.Count >= ClipboardManager.History.Count)
             {
                 listBox.Items.RemoveAt(listBox.Items.Count - 1);
             }
-            listBox.Items.Insert(0, ClipboardManager.History.PeekEnd());
+            listBox.Items.Insert(0, new ListBoxItem(ClipboardManager.History.PeekEnd()));
             listBox.EndUpdate();
 
             btnClear.Enabled = listBox.Items.Count > 0;
         }
 
-        private void ShowContent()
-        {
-            richTextBox.Clear();
+        #endregion
 
-            if (selectedData != null)
+        #region ListBoxItem class
+
+        private class ListBoxItem
+        {
+            public ClipboardTextData Data { get; }
+
+            public string DisplayString { get; }
+
+            public ListBoxItem(ClipboardTextData data)
             {
-                if (selectedData.Format == DataFormats.Text)
-                {
-                    richTextBox.Text = selectedData.Text;
-                }
-                else if (selectedData.Format == DataFormats.Rtf)
-                {
-                    richTextBox.Rtf = selectedData.Rtf;
-                }
+                Data = data;
+                DisplayString = data.Text.TrimStart();
             }
-        }
-
-        private void UpdateButtons()
-        {
-            btnPaste.Enabled = selectedData != null;
         }
 
         #endregion
