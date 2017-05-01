@@ -6161,4 +6161,8 @@ AND - All conditions are met.</value>
     <value>Missing libraries detected. Would you like to try to install them through the package manager?</value>
     <comment>after 5.2.1</comment>
   </data>
+  <data name="HaXeContext.Description.UseGenericsShortNotation" xml:space="preserve">
+    <value>Use short notation for generics instantiation whenever possible (ie. var arr:Array&lt;String&gt; = new Array())</value>
+    <comment>after 5.2.1</comment>
+  </data>
 </root>
