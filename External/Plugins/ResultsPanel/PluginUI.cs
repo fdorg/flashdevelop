@@ -72,7 +72,7 @@ namespace ResultsPanel
 
         }
 
-        public PluginUI(PluginMain pluginMain, string groupData, string groupId, bool showFilterButtons, bool allowMultiplePanels)
+        internal PluginUI(PluginMain pluginMain, string groupData, string groupId, bool showFilterButtons, bool allowMultiplePanels)
         {
             this.AutoKeyHandling = true;
             this.pluginMain = pluginMain;
@@ -106,7 +106,7 @@ namespace ResultsPanel
             if (allowMultiplePanels)
             {
                 buttonsWidth = 200;
-                this.toolStripButtonLock.Checked = true; // Keep results by default
+                this.toolStripButtonLock.Checked = this.Settings.KeepResultsByDefault;
                 this.toolStripFilters.Items.Insert(0, new ToolStripSeparator());
                 this.toolStripFilters.Items.Insert(0, this.toolStripButtonLock);
             }
@@ -128,15 +128,27 @@ namespace ResultsPanel
 
         #region Properties
 
+        /// <summary>
+        /// Gets the trace group id and arguments associated with this panel.
+        /// </summary>
         public string GroupData { get; internal set; }
 
+        /// <summary>
+        /// Gets the trace group id associated with this panel.
+        /// </summary>
         public string GroupId { get; }
 
+        /// <summary>
+        /// Gets whether the Keep Results button is toggled.
+        /// </summary>
         public bool Locked
         {
             get { return this.toolStripButtonLock.Checked; }
         }
         
+        /// <summary>
+        /// Gets the parent <see cref="DockContent"/>.
+        /// </summary>
         public DockContent ParentPanel { get; set; }
 
         /// <summary>
