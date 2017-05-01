@@ -344,7 +344,6 @@
     <Compile Include="PluginCore\Localization\Attributes.cs" />
     <Compile Include="PluginCore\Localization\LocaleVersion.cs" />
     <Compile Include="PluginCore\Localization\TextHelper.cs" />
-    <Compile Include="PluginCore\Managers\ClipboardManager.cs" />
     <Compile Include="PluginCore\Managers\DocumentManager.cs" />
     <Compile Include="PluginCore\Bridge\BridgeManager.cs" />
     <Compile Include="PluginCore\Bridge\BridgeClient.cs" />

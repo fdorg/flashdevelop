@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using FlashDevelop.Managers;
 using PluginCore.Localization;
-using PluginCore.Managers;
 
 namespace FlashDevelop.Dialogs
 {
