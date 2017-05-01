@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
@@ -388,8 +389,9 @@ namespace ProjectManager.Projects.Haxe
         private void ParseHxmlEntries(string[] lines, List<string> defs, List<string> cps, List<string> libs, List<string> add, ref string target, ref string haxeTarget, ref string output)
         {
             Regex reHxOp = new Regex("^-([a-z0-9-]+)\\s*(.*)", RegexOptions.IgnoreCase);
-            foreach (string line in lines)
+            for (var i = 0; i < lines.Length; i++)
             {
+                string line = lines[i];
                 if (line == null) break;
                 string trimmedLine = line.Trim();
                 Match m = reHxOp.Match(trimmedLine);
@@ -397,7 +399,21 @@ namespace ProjectManager.Projects.Haxe
                 {
                     string op = m.Groups[1].Value;
                     if (op == "-next")
-                        break; // ignore the rest
+                    {
+                        lines = lines.Skip(i + 1).Where(it =>
+                        {
+                            var match = reHxOp.Match(it);
+                            if (match.Success)
+                            {
+                                var v = match.Groups[1].Value;
+                                return v == "lib" || v == "cp";
+                            }
+                            trimmedLine = it.Trim();
+                            return !trimmedLine.StartsWith("#") && trimmedLine.EndsWith(".hxml", StringComparison.OrdinalIgnoreCase);
+                        }).ToArray();
+                        ParseHxmlEntries(lines, defs, cps, libs, add, ref target, ref haxeTarget, ref output);
+                        break;
+                    }
 
                     string value = m.Groups[2].Value.Trim();
                     switch (op)
