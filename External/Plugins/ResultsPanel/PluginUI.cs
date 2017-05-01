@@ -47,25 +47,11 @@ namespace ResultsPanel
         private GroupingMethod groupingMethod;
         private int buttonsWidth;
         private Container components;
+        private Dictionary<GroupingMethod, ColumnHeader> groupingMap;
 
         private static ImageListManager imageList;
-         
-        private Dictionary<GroupingMethod, ColumnHeader> groupingMap;
-        private static Comparison<ListViewGroup> groupingComparison;
-        private static Dictionary<int, String> levelMap;
 
         #region Constructors
-
-        static PluginUI()
-        {
-            levelMap = new Dictionary<int, String>()
-            {
-                { 0, TextHelper.GetString("Filters.Informations") },
-                { 1, TextHelper.GetString("Filters.Errors") },
-                { 2, TextHelper.GetString("Filters.Warnings") }
-            };
-            groupingComparison = (x, y) => string.CompareOrdinal(x.Name, y.Name);
-        }
 
         public PluginUI(PluginMain pluginMain) : this(pluginMain, null, null, true, false)
         {
@@ -145,7 +131,7 @@ namespace ResultsPanel
         {
             get { return this.toolStripButtonLock.Checked; }
         }
-        
+
         /// <summary>
         /// Gets the parent <see cref="DockContent"/>.
         /// </summary>
@@ -172,7 +158,7 @@ namespace ResultsPanel
         #endregion
 
         #region Dispose
-        
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -192,7 +178,7 @@ namespace ResultsPanel
         /// Do not change the method contents inside the source code editor. The Forms designer might
         /// not be able to load this method if it was changed manually.
         /// </summary>
-        private void InitializeComponent() 
+        private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
             this.entriesView = new ListViewEx();
@@ -276,7 +262,7 @@ namespace ResultsPanel
             this.toolStripFilters.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStripFilters.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripLabelFilter,
-            this.toolStripTextBoxFilter, 
+            this.toolStripTextBoxFilter,
             this.clearFilterButton});
             this.toolStripFilters.Name = "toolStripFilters";
             this.toolStripFilters.Location = new System.Drawing.Point(1, 0);
@@ -460,7 +446,7 @@ namespace ResultsPanel
 
             ClearSquiggles();
         }
-        
+
         /// <summary>
         /// Copies the selected items or all items to clipboard.
         /// </summary>
@@ -733,7 +719,7 @@ namespace ResultsPanel
                     {
                         AddSquiggles();
                     }
-                } 
+                }
             }
             else
             {
@@ -901,7 +887,7 @@ namespace ResultsPanel
                 }
             }
         }
-        
+
         #endregion
 
         #region Utility Methods
@@ -954,8 +940,8 @@ namespace ResultsPanel
                     // Contains filter?
                     && (string.IsNullOrEmpty(filterText) || ((Match) item.Tag).Value.IndexOf(filterText, StringComparison.CurrentCultureIgnoreCase) >= 0))
                 {
-                    string groupTitle = TextHelper.GetString("FlashDevelop.Group.Other");
                     string groupId = "";
+                    string groupTitle = TextHelper.GetString("FlashDevelop.Group.Other");
                     switch (groupingMethod)
                     {
                         case GroupingMethod.File:
@@ -986,7 +972,18 @@ namespace ResultsPanel
                         case GroupingMethod.Type:
                             int type = item.ImageIndex;
                             groupId = type.ToString();
-                            groupTitle = levelMap[type];
+                            switch (type)
+                            {
+                                case 0:
+                                    groupTitle = TextHelper.GetString("Filters.Informations");
+                                    break;
+                                case 1:
+                                    groupTitle = TextHelper.GetString("Filters.Errors");
+                                    break;
+                                case 2:
+                                    groupTitle = TextHelper.GetString("Filters.Warnings");
+                                    break;
+                            }
                             break;
                     }
                     this.AddToGroup(item, groupId, groupTitle);
@@ -999,7 +996,7 @@ namespace ResultsPanel
                 this.entriesView.ShowGroups = this.sortOrder != SortOrder.None;
             }
 
-            this.entriesView.SortGroups(this.entriesView.Columns[lastColumn], this.sortOrder, groupingComparison);
+            this.entriesView.SortGroups(this.entriesView.Columns[lastColumn], this.sortOrder, (x, y) => string.CompareOrdinal(x.Name, y.Name));
 
             if (this.entriesView.Items.Count > 0)
             {
@@ -1010,10 +1007,10 @@ namespace ResultsPanel
                 }
                 else this.entriesView.EnsureVisible(0);
             }
-            
+
             this.entriesView.EndUpdate();
         }
-        
+
         /// <summary>
         /// Updates the filter buttons
         /// </summary>
@@ -1056,7 +1053,7 @@ namespace ResultsPanel
             group.Items.Add(item);
             entriesView.Groups.Add(group);
         }
-        
+
         /// <summary>
         /// Add all squiggles
         /// </summary>
@@ -1081,7 +1078,7 @@ namespace ResultsPanel
                 }
             }
         }
-        
+
         /// <summary>
         /// Squiggle one result
         /// </summary>
@@ -1155,18 +1152,44 @@ namespace ResultsPanel
                 }
             }
         }
-        
+
+        /// <summary>
+        /// Clear and add all squiggles.
+        /// </summary>
         private void RefreshSquiggles()
         {
             pluginMain.pluginUI.ClearSquiggles();
             if (GroupData != null)
             {
-                ClearSquiggles();
-                AddSquiggles();
+                if (Settings.HighlightOnlyActivePanelEntries)
+                {
+                    ClearSquiggles();
+                    AddSquiggles();
+                }
+                else
+                {
+                    foreach (var pluginUI in ResultsPanelHelper.PluginUIs)
+                    {
+                        if (!pluginUI.ParentPanel.IsHidden)
+                        {
+                            pluginUI.ClearSquiggles();
+                        }
+                    }
+                    foreach (var pluginUI in ResultsPanelHelper.PluginUIs)
+                    {
+                        if (!pluginUI.ParentPanel.IsHidden)
+                        {
+                            pluginUI.AddSquiggles();
+                        }
+                    }
+                }
             }
             pluginMain.pluginUI.AddSquiggles();
         }
 
+        /// <summary>
+        /// Get file name from a list view item
+        /// </summary>
         private static string GetFileName(ListViewItem item)
         {
             return (item.SubItems[4].Text + "\\" + item.SubItems[3].Text).Replace('/', '\\');

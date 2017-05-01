@@ -1,6 +1,5 @@
 ﻿using PluginCore;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
@@ -35,7 +34,7 @@ namespace ResultsPanel
             upArrowIndex = SmallImageList.Images.Count - 2;
             downArrowIndex = upArrowIndex + 1;
         }
-        
+
         internal void SortGroups(ColumnHeader columnHeader, SortOrder sortOrder, Comparison<ListViewGroup> comparison)
         {
             SetArrow(columnHeader, sortOrder);
@@ -70,7 +69,7 @@ namespace ResultsPanel
             Color back = PluginBase.MainForm.GetThemeColor("ColumnHeader.BackColor");
             Color text = PluginBase.MainForm.GetThemeColor("ColumnHeader.TextColor");
             Color border = PluginBase.MainForm.GetThemeColor("ColumnHeader.BorderColor");
-            
+
             if (UseTheme && back != Color.Empty && border != Color.Empty && text != Color.Empty)
             {
                 base.OnDrawColumnHeader(sender, e);
@@ -145,7 +144,7 @@ namespace ResultsPanel
             {
                 order = SortOrder;
             }
-            
+
             VisualStyleElement arrow = null;
             switch (order)
             {
