@@ -78,13 +78,15 @@ namespace FlashDevelop.Dialogs
             // listBox
             // 
             listBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            listBox.DisplayMember = "DisplayString";
+            listBox.DisplayMember = "Text";
             listBox.IntegralHeight = false;
             listBox.ItemHeight = 20;
             listBox.Location = new Point(12, 12);
             listBox.Name = "listBox";
             listBox.Size = new Size(458, 120);
             listBox.TabIndex = 0;
+            listBox.DrawMode = DrawMode.OwnerDrawFixed;
+            listBox.DrawItem += ListBox_DrawItem;
             listBox.SelectedIndexChanged += ListBox_SelectedIndexChanged;
             // 
             // btnPaste
@@ -172,7 +174,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public ClipboardTextData SelectedData
         {
-            get { return ((ListBoxItem) listBox.SelectedItem)?.Data; }
+            get { return (ClipboardTextData) listBox.SelectedItem; }
         }
 
         #endregion
@@ -198,7 +200,7 @@ namespace FlashDevelop.Dialogs
             listBox.BeginUpdate();
             foreach (var data in ClipboardManager.History)
             {
-                listBox.Items.Insert(0, new ListBoxItem(data));
+                listBox.Items.Insert(0, data);
             }
             listBox.EndUpdate();
 
@@ -213,10 +215,23 @@ namespace FlashDevelop.Dialogs
 
         #region Events
 
+        private void ListBox_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            e.DrawBackground();
+
+            string text = (e.Index + 1) + "    " + listBox.GetItemText(listBox.Items[e.Index]).TrimStart();
+            var brush = new SolidBrush(e.ForeColor);
+            var stringFormat = new StringFormat()
+            {
+                Trimming = StringTrimming.EllipsisCharacter
+            };
+            e.Graphics.DrawString(text, e.Font, brush, e.Bounds, stringFormat);
+        }
+
         private void ListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var selectedItem = (ListBoxItem) listBox.SelectedItem;
-            preview.Text = selectedItem?.Data.Text;
+            var selectedItem = (ClipboardTextData) listBox.SelectedItem;
+            preview.Text = selectedItem?.Text;
             btnPaste.Enabled = selectedItem != null;
         }
 
@@ -272,27 +287,10 @@ namespace FlashDevelop.Dialogs
             {
                 listBox.Items.RemoveAt(listBox.Items.Count - 1);
             }
-            listBox.Items.Insert(0, new ListBoxItem(ClipboardManager.History.PeekEnd()));
+            listBox.Items.Insert(0, ClipboardManager.History.PeekEnd());
             listBox.EndUpdate();
 
             btnClear.Enabled = listBox.Items.Count > 0;
-        }
-
-        #endregion
-
-        #region ListBoxItem class
-
-        private class ListBoxItem
-        {
-            public ClipboardTextData Data { get; }
-
-            public string DisplayString { get; }
-
-            public ListBoxItem(ClipboardTextData data)
-            {
-                Data = data;
-                DisplayString = data.Text.TrimStart();
-            }
         }
 
         #endregion
