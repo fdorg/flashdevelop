@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using PluginCore;
 using PluginCore.Collections;
 
 namespace FlashDevelop.Managers
@@ -41,21 +42,29 @@ namespace FlashDevelop.Managers
                 throw new InvalidOperationException(nameof(ClipboardManager) + " is already initialized.");
             }
 
-            hwnd = window.Handle;
-            if (!UnsafeNativeMethods.AddClipboardFormatListener(hwnd))
+            if (Win32.ShouldUseWin32())
             {
-                hwnd = IntPtr.Zero;
-                var ex = new Win32Exception(Marshal.GetLastWin32Error());
-                throw new NotSupportedException(ex.Message, ex);
+                hwnd = window.Handle;
+                if (!UnsafeNativeMethods.AddClipboardFormatListener(hwnd))
+                {
+                    hwnd = IntPtr.Zero;
+                    var ex = new Win32Exception(Marshal.GetLastWin32Error());
+                    throw new NotSupportedException(ex.Message, ex);
+                }
             }
 
             history = new FixedSizeQueue<ClipboardTextData>(Globals.Settings.ClipboardHistorySize);
 
-            var dataObject = Clipboard.GetDataObject();
-            if (ClipboardTextData.IsTextFormat(dataObject))
+            try
             {
-                history.Enqueue(new ClipboardTextData(dataObject));
+                var dataObject = Clipboard.GetDataObject();
+                if (ClipboardTextData.IsTextFormat(dataObject))
+                {
+                    history.Enqueue(new ClipboardTextData(dataObject));
+                }
             }
+            catch (ExternalException) { }
+            catch (ThreadStateException) { }
         }
 
         /// <summary>
@@ -69,10 +78,13 @@ namespace FlashDevelop.Managers
             {
                 throw new InvalidOperationException(nameof(ClipboardManager) + " is either not initialized or already disposed.");
             }
-            else if (!UnsafeNativeMethods.RemoveClipboardFormatListener(hwnd))
+            else if (Win32.ShouldUseWin32())
             {
-                var ex = new Win32Exception(Marshal.GetLastWin32Error());
-                throw new NotSupportedException(ex.Message, ex);
+                if (!UnsafeNativeMethods.RemoveClipboardFormatListener(hwnd))
+                {
+                    var ex = new Win32Exception(Marshal.GetLastWin32Error());
+                    throw new NotSupportedException(ex.Message, ex);
+                }
             }
 
             hwnd = IntPtr.Zero;
