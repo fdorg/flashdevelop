@@ -47,12 +47,25 @@ namespace System.Windows.Forms
         {
             if (this.AutoKeyHandling && this.ContainsFocus)
             {
-                if (keyData == Keys.Escape)
+                if (keyData == Keys.Escape && this.Parent is DockContent)
                 {
-                    ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-                    if (doc != null && doc.IsEditable) 
+                    var parent = (DockContent) this.Parent;
+
+                    if (IsAutoHidden(parent))
                     {
-                        doc.SciControl.Focus();
+                        PluginBase.MainForm.DockPanel.ActiveAutoHideContent = null;
+                        return true;
+                    }
+                    else if (parent.IsFloat)
+                    {
+                        if (parent.HideOnClose)
+                        {
+                            parent.Hide();
+                        }
+                        else
+                        {
+                            parent.Close();
+                        }
                         return true;
                     }
                 }
