@@ -2366,8 +2366,16 @@ namespace ASCompletion.Completion
 
                 if (newItem != null)
                 {
-                    int itemIndex = list.FindIndex(item => string.Compare(item.Label, newItemType, StringComparison.OrdinalIgnoreCase) >= 0);
-                    itemIndex = itemIndex > 0 ? itemIndex - 1 : 0;
+                    int itemIndex = list.FindIndex(item => string.Compare(item.Label, newItem.Label, StringComparison.OrdinalIgnoreCase) >= 0);
+
+                    int genericStart = newItemType.IndexOfOrdinal("<");
+                    if (genericStart > -1 && ASContext.Context.Features.HasGenericsShortNotation)
+                    {
+                        newItemType = newItemType.Substring(0, genericStart);
+                        itemIndex = itemIndex > 0 ? itemIndex : 0;
+                    }
+                    else itemIndex = itemIndex > 0 ? itemIndex - 1 : 0;
+
                     list.Insert(itemIndex, newItem);
                 }
 
