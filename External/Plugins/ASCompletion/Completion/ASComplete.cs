@@ -2366,8 +2366,16 @@ namespace ASCompletion.Completion
 
                 if (newItem != null)
                 {
-                    int itemIndex = list.FindIndex(item => string.Compare(item.Label, newItemType, StringComparison.OrdinalIgnoreCase) >= 0);
-                    itemIndex = itemIndex > 0 ? itemIndex - 1 : 0;
+                    int itemIndex = list.FindIndex(item => string.Compare(item.Label, newItem.Label, StringComparison.OrdinalIgnoreCase) >= 0);
+
+                    int genericStart = newItemType.IndexOfOrdinal("<");
+                    if (genericStart > -1 && ASContext.Context.Features.HasGenericsShortNotation)
+                    {
+                        newItemType = newItemType.Substring(0, genericStart);
+                        itemIndex = itemIndex > 0 ? itemIndex : 0;
+                    }
+                    else itemIndex = itemIndex > 0 ? itemIndex - 1 : 0;
+
                     list.Insert(itemIndex, newItem);
                 }
 
@@ -3492,14 +3500,12 @@ namespace ASCompletion.Completion
                         braceCount--;
                         if (braceCount == 0 && sqCount == 0)
                         {
+                            sbSub.Insert(0, c);
                             int testPos = position - 1;
                             string testWord = GetWordLeft(sci, ref testPos);
-
-                            sbSub.Insert(0, c);
-                            if (haXe && testWord == "cast") expression.SubExpressions.Add("cast");
+                            if (haXe && testWord == "cast") expression.SubExpressions.Add(testWord);
                             expression.SubExpressions.Add(sbSub.ToString());
                             sb.Insert(0, ".#" + (subCount++) + "~"); // method call or sub expression
-
                             if (testWord == "return" || testWord == "case" || testWord == "default" || (haXe && testWord == "cast"))
                             {
                                 // AS3, AS2, Loom ex: return (a as B).<complete>
@@ -3508,9 +3514,9 @@ namespace ASCompletion.Completion
                                 expression.WordBefore = testWord;
                                 break;
                             }
-                            else continue;
+                            continue;
                         }
-                        else if (braceCount < 0)
+                        if (braceCount < 0)
                         {
                             expression.Separator = ';';
                             int testPos = position - 1;
@@ -3668,10 +3674,7 @@ namespace ASCompletion.Completion
             }
 
             // check if there is a particular keyword
-            if (expression.Separator == ' ') 
-            {
-                expression.WordBefore = GetWordLeft(sci, ref position);
-            }
+            if (expression.Separator == ' ') expression.WordBefore = GetWordLeft(sci, ref position);
 
             // result
             var value = sb.ToString();
@@ -3989,12 +3992,11 @@ namespace ASCompletion.Completion
             return word;
         }
 
-        public static ASResult GetExpressionType(ScintillaControl sci, int position)
-        {
-            return GetExpressionType(sci, position, true);
-        }
+        public static ASResult GetExpressionType(ScintillaControl sci, int position) => GetExpressionType(sci, position, true);
 
-        public static ASResult GetExpressionType(ScintillaControl sci, int position, bool filterVisibility)
+        public static ASResult GetExpressionType(ScintillaControl sci, int position, bool filterVisibility) => GetExpressionType(sci, position, true, false);
+
+        public static ASResult GetExpressionType(ScintillaControl sci, int position, bool filterVisibility, bool ignoreWhiteSpace)
         {
             // context
             int line = sci.LineFromPosition(position);
@@ -4002,7 +4004,7 @@ namespace ASCompletion.Completion
                 ASContext.Context.UpdateContext(line);
             try
             {
-                ASExpr expr = GetExpression(sci, position);
+                ASExpr expr = GetExpression(sci, position, ignoreWhiteSpace);
                 expr.LocalVars = ParseLocalVars(expr);
                 if (string.IsNullOrEmpty(expr.Value))
                 {
