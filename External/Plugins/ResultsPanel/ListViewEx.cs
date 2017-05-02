@@ -42,24 +42,53 @@ namespace ResultsPanel
             SortedColumn = columnHeader;
             SortOrder = sortOrder;
 
-            var groups = new ListViewGroup[Groups.Count];
-            Groups.CopyTo(groups, 0);
-
-            switch (sortOrder)
+            if (sortOrder != SortOrder.None)
             {
-                case SortOrder.None:
-                    break;
-                case SortOrder.Ascending:
-                    Array.Sort(groups, comparison);
-                    break;
-                case SortOrder.Descending:
-                    Array.Sort(groups, comparison);
-                    Array.Reverse(groups);
-                    break;
-            }
+                var groups = new ListViewGroup[Groups.Count];
+                Groups.CopyTo(groups, 0);
 
-            Groups.Clear();
-            Groups.AddRange(groups);
+                switch (sortOrder)
+                {
+                    case SortOrder.Ascending:
+                        Array.Sort(groups, comparison);
+                        break;
+                    case SortOrder.Descending:
+                        Array.Sort(groups, comparison);
+                        Array.Reverse(groups);
+                        break;
+                }
+
+                Groups.Clear();
+                Groups.AddRange(groups);
+            }
+        }
+
+        internal void SortItems(ColumnHeader columnHeader, SortOrder sortOrder, Comparison<ListViewItem> comparison)
+        {
+            SetArrow(columnHeader, sortOrder);
+
+            SortedColumn = columnHeader;
+            SortOrder = sortOrder;
+
+            if (sortOrder != SortOrder.None)
+            {
+                var items = new ListViewItem[Items.Count];
+                Items.CopyTo(items, 0);
+
+                switch (sortOrder)
+                {
+                    case SortOrder.Ascending:
+                        Array.Sort(items, comparison);
+                        break;
+                    case SortOrder.Descending:
+                        Array.Sort(items, comparison);
+                        Array.Reverse(items);
+                        break;
+                }
+
+                Items.Clear();
+                Items.AddRange(items);
+            }
         }
 
         protected override void OnDrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)

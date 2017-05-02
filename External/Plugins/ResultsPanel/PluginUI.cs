@@ -27,7 +27,7 @@ namespace ResultsPanel
         private ColumnHeader entryPath;
         private ColumnHeader entryType;
         private IDictionary<String, Boolean> ignoredEntries;
-        private List<ListViewItem> allListViewItems = new List<ListViewItem>();
+        private List<ListViewItem> allListViewItems;
         private ToolStripButton toolStripButtonError;
         private ToolStripButton toolStripButtonWarning;
         private ToolStripButton toolStripButtonInfo;
@@ -36,18 +36,17 @@ namespace ResultsPanel
         private ToolStripLabel toolStripLabelFilter;
         private ToolStripButton clearFilterButton;
         private ToolStrip toolStripFilters;
-        private Int32 errorCount = 0;
-        private Int32 warningCount = 0;
-        private Int32 messageCount = 0;
+        private Int32 errorCount;
+        private Int32 warningCount;
+        private Int32 messageCount;
         private PluginMain pluginMain;
         private Int32 logCount;
         private Timer autoShow;
-        private SortOrder sortOrder = SortOrder.Ascending;
-        private int lastColumn = -1;
+        private SortOrder sortOrder;
+        private int lastColumn;
         private GroupingMethod groupingMethod;
         private int buttonsWidth;
         private Container components;
-        private Dictionary<GroupingMethod, ColumnHeader> groupingMap;
 
         private static ImageListManager imageList;
 
@@ -64,7 +63,13 @@ namespace ResultsPanel
             this.pluginMain = pluginMain;
             //this.logCount = TraceManager.TraceLog.Count;
             this.logCount = 0;
+            this.allListViewItems = new List<ListViewItem>();
             this.ignoredEntries = new Dictionary<String, Boolean>();
+            this.errorCount = 0;
+            this.warningCount = 0;
+            this.messageCount = 0;
+            this.sortOrder = SortOrder.Ascending;
+            this.lastColumn = -1;
             this.InitializeComponent();
             this.InitializeContextMenu();
             this.InitializeGraphics();
@@ -76,15 +81,8 @@ namespace ResultsPanel
             this.entryDesc.Tag = GroupingMethod.Description;
             this.entryType.Tag = GroupingMethod.Type;
             this.entryPath.Tag = GroupingMethod.Path;
-
-            groupingMap = new Dictionary<GroupingMethod, ColumnHeader>()
-            {
-                [(GroupingMethod) this.entryFile.Tag] = this.entryFile,
-                [(GroupingMethod) this.entryDesc.Tag] = this.entryDesc,
-                [(GroupingMethod) this.entryType.Tag] = this.entryType,
-                [(GroupingMethod) this.entryPath.Tag] = this.entryPath
-            };
-
+            this.entryLine.Tag = GroupingMethod.Line;
+            
             GroupData = groupData;
             GroupId = groupId;
 
@@ -437,7 +435,28 @@ namespace ResultsPanel
             entriesView.GridLines = !useGrouping;
 
             groupingMethod = Settings.DefaultGrouping;
-            lastColumn = groupingMap[groupingMethod].Index;
+
+            switch (groupingMethod)
+            {
+                case GroupingMethod.File:
+                    lastColumn = entryFile.Index;
+                    break;
+                case GroupingMethod.Type:
+                    lastColumn = entryType.Index;
+                    break;
+                case GroupingMethod.Description:
+                    lastColumn = entryDesc.Index;
+                    break;
+                case GroupingMethod.Path:
+                    lastColumn = entryPath.Index;
+                    break;
+                case GroupingMethod.Line:
+                    lastColumn = entryLine.Index;
+                    break;
+                default:
+                    lastColumn = -1;
+                    break;
+            }
 
             if (invalidate)
             {
@@ -772,25 +791,27 @@ namespace ResultsPanel
             {
                 this.groupingMethod = (GroupingMethod) header.Tag;
 
-                if (this.lastColumn != e.Column)
+                if (this.lastColumn == e.Column)
                 {
-                    this.sortOrder = SortOrder.None;
+                    switch (this.sortOrder)
+                    {
+                        case SortOrder.None:
+                            this.sortOrder = SortOrder.Ascending;
+                            break;
+                        case SortOrder.Ascending:
+                            this.sortOrder = SortOrder.Descending;
+                            break;
+                        case SortOrder.Descending:
+                            this.sortOrder = SortOrder.None;
+                            break;
+                    }
+                }
+                else
+                {
+                    this.lastColumn = e.Column;
+                    this.sortOrder = SortOrder.Ascending;
                 }
 
-                switch (this.sortOrder)
-                {
-                    case SortOrder.None:
-                        this.sortOrder = SortOrder.Ascending;
-                        break;
-                    case SortOrder.Ascending:
-                        this.sortOrder = SortOrder.Descending;
-                        break;
-                    case SortOrder.Descending:
-                        this.sortOrder = SortOrder.None;
-                        break;
-                }
-
-                this.lastColumn = header.Index;
                 this.FilterResults();
             }
         }
@@ -821,10 +842,10 @@ namespace ResultsPanel
                 if (!PluginBase.MainForm.CurrentDocument.IsEditable) return;
                 Int32 line = Convert.ToInt32(item.SubItems[1].Text) - 1;
                 String description = item.SubItems[2].Text;
-                Match mcaret = this.errorCharacters.Match(description);
-                Match mcaret2 = this.errorCharacter.Match(description);
-                Match mcaret3 = this.errorCharacters2.Match(description);
-                Match mcaret4 = this.lookupRange.Match(description);
+                Match mcaret = errorCharacters.Match(description);
+                Match mcaret2 = errorCharacter.Match(description);
+                Match mcaret3 = errorCharacters2.Match(description);
+                Match mcaret4 = lookupRange.Match(description);
                 if (mcaret.Success)
                 {
                     Int32 start = Convert.ToInt32(mcaret.Groups["start"].Value);
@@ -925,6 +946,7 @@ namespace ResultsPanel
         /// </summary>
         private void FilterResults()
         {
+            string defaultGroupTitle = TextHelper.GetString("FlashDevelop.Group.Other");
             string filterText = this.toolStripTextBoxFilter.Text;
             bool matchInfo = this.toolStripButtonInfo.Checked;
             bool matchWarnings = this.toolStripButtonWarning.Checked;
@@ -941,7 +963,7 @@ namespace ResultsPanel
                     && (string.IsNullOrEmpty(filterText) || ((Match) item.Tag).Value.IndexOf(filterText, StringComparison.CurrentCultureIgnoreCase) >= 0))
                 {
                     string groupId = "";
-                    string groupTitle = TextHelper.GetString("FlashDevelop.Group.Other");
+                    string groupTitle = defaultGroupTitle;
                     switch (groupingMethod)
                     {
                         case GroupingMethod.File:
@@ -985,6 +1007,11 @@ namespace ResultsPanel
                                     break;
                             }
                             break;
+
+                        case GroupingMethod.Line:
+                            groupId = item.SubItems[1].Text;
+                            GroupData = groupId;
+                            break;
                     }
                     this.AddToGroup(item, groupId, groupTitle);
                     this.entriesView.Items.Add(item);
@@ -993,10 +1020,18 @@ namespace ResultsPanel
 
             if (!this.entriesView.GridLines) // if (PluginBase.Settings.UseListViewGrouping)
             {
-                this.entriesView.ShowGroups = this.sortOrder != SortOrder.None;
+                this.entriesView.ShowGroups = this.sortOrder != SortOrder.None
+                    && this.groupingMethod != GroupingMethod.Description && this.groupingMethod != GroupingMethod.Line; // Do not group by description or line
             }
 
-            this.entriesView.SortGroups(this.entriesView.Columns[lastColumn], this.sortOrder, (x, y) => string.CompareOrdinal(x.Name, y.Name));
+            if (this.entriesView.ShowGroups)
+            {
+                this.entriesView.SortGroups(this.entriesView.Columns[lastColumn], this.sortOrder, (x, y) => string.CompareOrdinal(x.Name, y.Name));
+            }
+            else
+            {
+                this.entriesView.SortItems(this.entriesView.Columns[lastColumn], this.sortOrder, (x, y) => string.CompareOrdinal(x.Group.Name, y.Group.Name));
+            }
 
             if (this.entriesView.Items.Count > 0)
             {
@@ -1036,11 +1071,11 @@ namespace ResultsPanel
         /// <summary>
         /// Adds item to the specified group
         /// </summary>
-        private void AddToGroup(ListViewItem item, string groupId, string title)
+        private void AddToGroup(ListViewItem item, string name, string header)
         {
             foreach (ListViewGroup lvg in entriesView.Groups)
             {
-                if (lvg.Name == groupId)
+                if (lvg.Name == name)
                 {
                     if (!lvg.Items.Contains(item))
                     {
@@ -1049,7 +1084,7 @@ namespace ResultsPanel
                     return;
                 }
             }
-            var group = new ListViewGroup(groupId, title);
+            var group = new ListViewGroup(name, header);
             group.Items.Add(item);
             entriesView.Groups.Add(group);
         }
@@ -1202,13 +1237,13 @@ namespace ResultsPanel
         /**
         * Finds if a string contains invalid characters for a path
         */
-        private Regex badCharacters = new Regex("[" + Regex.Escape(new String(Path.GetInvalidPathChars())) + "]", RegexOptions.Compiled);
+        private static Regex badCharacters = new Regex("[" + Regex.Escape(new String(Path.GetInvalidPathChars())) + "]", RegexOptions.Compiled);
 
         /**
         * Match standard file entry -- filename:line:description
         * i.e. C:/path/to/src/com/Class.as:15: description
         */
-        private Regex fileEntry = new Regex("^(?<filename>([_A-Za-z]:)?[^:*?]+):(?<line>[0-9]+):(?<description>.*)$", RegexOptions.Compiled);
+        private static Regex fileEntry = new Regex("^(?<filename>([_A-Za-z]:)?[^:*?]+):(?<line>[0-9]+):(?<description>.*)$", RegexOptions.Compiled);
 
         /**
         * Match MXMLC style errors
@@ -1216,19 +1251,19 @@ namespace ResultsPanel
         * Match TypeScript style errors
         * i.e. C:\path\to\src\Class.as(9,20): description
         */
-        private Regex fileEntry2 = new Regex(@"^(?<filename>[^(]*)\((?<line>[0-9,]+)\).?:(?<description>.*)$", RegexOptions.Compiled);
+        private static Regex fileEntry2 = new Regex(@"^(?<filename>[^(]*)\((?<line>[0-9,]+)\).?:(?<description>.*)$", RegexOptions.Compiled);
 
         /**
         * Match find in files style ranges
         */
-        private Regex lookupRange = new Regex("lookup range[\\s]+[^0-9]*(?<start>[0-9]+)-(?<end>[0-9]+)", RegexOptions.Compiled);
+        private static Regex lookupRange = new Regex("lookup range[\\s]+[^0-9]*(?<start>[0-9]+)-(?<end>[0-9]+)", RegexOptions.Compiled);
 
         /**
         * Extract error caret position
         */
-        private Regex errorCharacter = new Regex("(character|char)[\\s]+[^0-9]*(?<start>[0-9]+)", RegexOptions.Compiled);
-        private Regex errorCharacters = new Regex("(characters|chars)[\\s]+[^0-9]*(?<start>[0-9]+)-(?<end>[0-9]+)", RegexOptions.Compiled);
-        private Regex errorCharacters2 = new Regex(@"col: (?<start>[0-9]+)\s*", RegexOptions.Compiled);
+        private static Regex errorCharacter = new Regex("(character|char)[\\s]+[^0-9]*(?<start>[0-9]+)", RegexOptions.Compiled);
+        private static Regex errorCharacters = new Regex("(characters|chars)[\\s]+[^0-9]*(?<start>[0-9]+)-(?<end>[0-9]+)", RegexOptions.Compiled);
+        private static Regex errorCharacters2 = new Regex(@"col: (?<start>[0-9]+)\s*", RegexOptions.Compiled);
 
         #endregion
 
@@ -1283,6 +1318,7 @@ namespace ResultsPanel
         File,
         Type,
         Description,
-        Path
+        Path,
+        Line
     }
 }
