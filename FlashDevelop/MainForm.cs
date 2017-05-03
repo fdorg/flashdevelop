@@ -948,6 +948,7 @@ namespace FlashDevelop
                 LayoutManager.BuildLayoutSystems(FileNameHelper.LayoutData);
                 ShortcutManager.LoadCustomShortcuts();
                 ArgumentDialog.LoadCustomArguments();
+                ClipboardManager.Initialize(this);
                 PluginCore.Controls.UITools.Init();
             }
             catch (Exception ex)
@@ -1263,6 +1264,7 @@ namespace FlashDevelop
                 SessionManager.SaveSession(file, session);
                 ShortcutManager.SaveCustomShortcuts();
                 ArgumentDialog.SaveCustomArguments();
+                ClipboardManager.Dispose();
                 PluginServices.DisposePlugins();
                 this.KillProcess();
                 this.SaveAllSettings();
@@ -1742,6 +1744,18 @@ namespace FlashDevelop
             OnFileSave(document, oldFile, null);
         }
 
+        /// <summary>
+        /// Handles clipboard updates.
+        /// </summary>
+        protected override void WndProc(ref Message m)
+        {
+            if (ClipboardManager.HandleWndProc(ref m))
+            {
+                ClipboardHistoryDialog.UpdateHistory();
+            }
+            base.WndProc(ref m);
+        }
+
         #endregion
 
         #region General Methods
@@ -2188,6 +2202,7 @@ namespace FlashDevelop
             this.toolStrip.Visible = this.isFullScreen ? false : this.appSettings.ViewToolBar;
             ButtonManager.UpdateFlaggedButtons();
             TabTextManager.UpdateTabTexts();
+            ClipboardManager.ApplySettings();
         }
 
         /// <summary>
@@ -2518,6 +2533,18 @@ namespace FlashDevelop
         {
             this.appSettings.PreviousDocuments.Clear();
             ButtonManager.PopulateReopenMenu();
+        }
+
+        /// <summary>
+        /// Paste text using <see cref="ClipboardHistoryDialog"/>.
+        /// </summary>
+        public void PasteHistory(object sender, EventArgs e)
+        {
+            ClipboardTextData data;
+            if (ClipboardHistoryDialog.Show(out data))
+            {
+                Globals.SciControl.ReplaceSel(data.Text);
+            }
         }
 
         /// <summary>
