@@ -102,8 +102,10 @@ namespace ResultsPanel.Helpers
             foreach (var pluginUI in pluginUIs)
             {
                 pluginUI.ApplySettings();
+                pluginUI.ClearSquiggles();
             }
-            
+
+            mainUI.ClearSquiggles();
             mainUI.AddSquiggles();
             if (mainUI.Settings.HighlightOnlyActivePanelEntries)
             {
