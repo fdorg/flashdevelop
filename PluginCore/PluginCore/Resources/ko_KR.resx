@@ -6169,6 +6169,18 @@ AND - 모든 조건을 만족할때.</value>
     <value>Use short notation for generics instantiation whenever possible (ie. var arr:Array&lt;String&gt; = new Array())</value>
     <comment>after 5.2.1</comment>
   </data>
+  <data name="FlashDevelop.Label.Clear" xml:space="preserve">
+    <value>&amp;Clear</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="FlashDevelop.Label.PasteHistory" xml:space="preserve">
+    <value>Paste History</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="FlashDevelop.Description.ClipboardHistorySize" xml:space="preserve">
+    <value>The number of items to store in the clipboard history. Minimum value is 1.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
   <data name="ResultsPanel.Label.KeepResults" xml:space="preserve">
     <value>Keep Results</value>
     <comment>Added after 5.2.0</comment>

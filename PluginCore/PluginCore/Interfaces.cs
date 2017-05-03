@@ -556,6 +556,7 @@ namespace PluginCore
         Boolean SaveUnicodeWithBOM { get; set; }
         Boolean KeepCaretCentered { get; set; }
         String InsertionTriggers { get; set; }
+        Int32 ClipboardHistorySize { get; set; }
 
         #endregion
     }
