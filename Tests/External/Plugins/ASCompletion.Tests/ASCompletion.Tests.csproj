@@ -573,6 +573,10 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromCastExp.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromUnsafeCastExpr.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromUnsafeCastExpr.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromCastExp2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromCastExp2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromCastExp3.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromCastExp3.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

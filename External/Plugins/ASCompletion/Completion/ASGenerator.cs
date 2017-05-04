@@ -2017,8 +2017,10 @@ namespace ASCompletion.Completion
                     hasDot = false;
                 }
             }
-            if (expr.Type != null && (expr.Type.Flags & FlagType.Class) > 0 && expr.Context != null && expr.Context.WordBefore == "new")
+            if (expr.Type != null && (expr.Type.Flags & FlagType.Class) > 0 && expr.Context?.WordBefore == "new")
                 result = sci.WordStartPosition(result - 1, false);
+            else if(IsHaxe && expr.Context?.WordBefore == "cast" && (char)sci.CharAt(result) == '(')
+                result = sci.WordStartPosition(result - 1, true);
             return result;
         }
 
@@ -3234,7 +3236,7 @@ namespace ASCompletion.Completion
                     {
                         bracesCount--;
                         if (bracesCount > 0) continue;
-                        if (haxe && sci.GetWordLeft(position - 1, false) == "cast")
+                        if (haxe && sci.GetWordLeft(position - 1, true) == "cast")
                         {
                             pos = startPos + line.Length;
                             break;
