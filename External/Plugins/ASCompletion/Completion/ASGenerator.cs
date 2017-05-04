@@ -3239,11 +3239,17 @@ namespace ASCompletion.Completion
                             pos = startPos + line.Length;
                             break;
                         }
-                        pos = position;
-                        var lineFromPosition = sci.LineFromPosition(pos);
+                        var lineFromPosition = sci.LineFromPosition(position);
                         startPos = sci.PositionFromLine(lineFromPosition);
-                        line = sci.GetLine(lineFromPosition);
-                        line = line.Substring(0, pos - startPos);
+                        var tmpLine = sci.GetLine(lineFromPosition);
+                        tmpLine = tmpLine.Substring(0, position - startPos);
+                        if (string.IsNullOrEmpty(tmpLine.TrimStart()))
+                        {
+                            pos = startPos + line.Length;
+                            break;
+                        }
+                        line = tmpLine;
+                        pos = position;
                         bracesRemoved = true;
                         break;
                     }
