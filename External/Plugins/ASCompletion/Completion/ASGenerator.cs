@@ -1810,7 +1810,7 @@ namespace ASCompletion.Completion
             else if (inClass.InFile.haXe && paramName.StartsWithOrdinal("?"))
             {
                 paramName = paramName.Remove(0, 1);
-                if (!paramType.StartsWith("Null<")) paramType = $"Null<{paramType}>";
+                if (!string.IsNullOrEmpty(paramType) && !paramType.StartsWith("Null<")) paramType = $"Null<{paramType}>";
             }
             string varName = paramName;
             string scopedVarName = varName;

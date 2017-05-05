@@ -364,6 +364,9 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFieldFromOptionalParameter"), GeneratorJobType.FieldFromParameter, Visibility.Private)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFieldFromOptionalParameter"));
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFieldFromOptionalUntypedParameter"), GeneratorJobType.FieldFromParameter, Visibility.Private)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFieldFromOptionalUntypedParameter"));
                     }
                 }
 
