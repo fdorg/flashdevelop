@@ -258,7 +258,8 @@ namespace ASCompletion.Completion
                                             new MemberModel {Name = "arg", LineFrom = 2, LineTo = 2}
                                         }
                                     }
-                                }
+                                },
+                                InFile = FileModel.Ignore
                             }, 0, 0)
                             .Returns(ReadAllTextAS3("FieldFromParameterEmptyBody"))
                             .SetName("PublicScopeWithEmptyBody");
@@ -281,7 +282,8 @@ namespace ASCompletion.Completion
                                             new MemberModel {Name = "arg", LineFrom = 2, LineTo = 2}
                                         }
                                     }
-                                }
+                                },
+                                InFile = FileModel.Ignore
                             }, 0, 0)
                             .Returns(ReadAllTextAS3("FieldFromParameterWithSuperConstructor"))
                             .SetName("PublicScopeWithSuperConstructor");
@@ -304,7 +306,8 @@ namespace ASCompletion.Completion
                                             new MemberModel {Name = "arg", LineFrom = 2, LineTo = 2}
                                         }
                                     }
-                                }
+                                },
+                                InFile = FileModel.Ignore
                             }, 0, 0)
                             .Returns(ReadAllTextAS3("FieldFromParameterWithSuperConstructorMultiLine"))
                             .SetName("PublicScopeWithSuperConstructorMultiLine");
@@ -327,7 +330,8 @@ namespace ASCompletion.Completion
                                             new MemberModel {Name = "arg", LineFrom = 2, LineTo = 2}
                                         }
                                     }
-                                }
+                                },
+                                InFile = FileModel.Ignore
                             }, 0, 0)
                             .Returns(ReadAllTextAS3("FieldFromParameterWithWrongSuperConstructor"))
                             .SetName("PublicScopeWithWrongSuperConstructor");
