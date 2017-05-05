@@ -1414,9 +1414,6 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable_issue1460_3"), GeneratorJobType.Variable)
                                 .Returns(ReadAllTextHaxe("AfterGenerateVariable_issue1460_3"))
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariableFromParameter"), GeneratorJobType.FieldFromParameter)
-                                .Returns(ReadAllTextHaxe("AfterGenerateVariableFromParameter"));
                     }
                 }
 
