@@ -583,6 +583,8 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFieldFromOptionalParameter.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFieldFromOptionalUntypedParameter.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFieldFromOptionalUntypedParameter.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFieldFromOptionalParameter2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFieldFromOptionalParameter2.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
