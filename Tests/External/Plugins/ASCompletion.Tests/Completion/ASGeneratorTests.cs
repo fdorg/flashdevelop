@@ -258,7 +258,8 @@ namespace ASCompletion.Completion
                                             new MemberModel {Name = "arg", LineFrom = 2, LineTo = 2}
                                         }
                                     }
-                                }
+                                },
+                                InFile = FileModel.Ignore
                             }, 0, 0)
                             .Returns(ReadAllTextAS3("FieldFromParameterEmptyBody"))
                             .SetName("PublicScopeWithEmptyBody");
@@ -281,7 +282,8 @@ namespace ASCompletion.Completion
                                             new MemberModel {Name = "arg", LineFrom = 2, LineTo = 2}
                                         }
                                     }
-                                }
+                                },
+                                InFile = FileModel.Ignore
                             }, 0, 0)
                             .Returns(ReadAllTextAS3("FieldFromParameterWithSuperConstructor"))
                             .SetName("PublicScopeWithSuperConstructor");
@@ -304,7 +306,8 @@ namespace ASCompletion.Completion
                                             new MemberModel {Name = "arg", LineFrom = 2, LineTo = 2}
                                         }
                                     }
-                                }
+                                },
+                                InFile = FileModel.Ignore
                             }, 0, 0)
                             .Returns(ReadAllTextAS3("FieldFromParameterWithSuperConstructorMultiLine"))
                             .SetName("PublicScopeWithSuperConstructorMultiLine");
@@ -327,7 +330,8 @@ namespace ASCompletion.Completion
                                             new MemberModel {Name = "arg", LineFrom = 2, LineTo = 2}
                                         }
                                     }
-                                }
+                                },
+                                InFile = FileModel.Ignore
                             }, 0, 0)
                             .Returns(ReadAllTextAS3("FieldFromParameterWithWrongSuperConstructor"))
                             .SetName("PublicScopeWithWrongSuperConstructor");
@@ -351,6 +355,51 @@ namespace ASCompletion.Completion
                     ASGenerator.SetJobContext(null, null, sourceMember.Parameters[parameterPos], null);
                     ASGenerator.GenerateJob(GeneratorJobType.FieldFromParameter, sourceMember, inClass, null, table);
 
+                    return sci.Text;
+                }
+
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFieldFromParameter"), GeneratorJobType.FieldFromParameter, Visibility.Private)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFieldFromParameter"));
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFieldFromOptionalParameter"), GeneratorJobType.FieldFromParameter, Visibility.Private)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFieldFromOptionalParameter"));
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFieldFromOptionalUntypedParameter"), GeneratorJobType.FieldFromParameter, Visibility.Private)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFieldFromOptionalUntypedParameter"));
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFieldFromOptionalParameter2"), GeneratorJobType.FieldFromParameter, Visibility.Private)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFieldFromOptionalParameter2"));
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public string Haxe(string sourceText, GeneratorJobType job, Visibility scope) => HaxeImpl(sourceText, job, scope, sci);
+
+                internal static string HaxeImpl(string sourceText, GeneratorJobType job, Visibility scope, ScintillaControl sci)
+                {
+                    SetHaxeFeatures(sci);
+                    return Common(sourceText, job, scope, sci);
+                }
+
+                internal static string Common(string sourceText, GeneratorJobType job, Visibility scope, ScintillaControl sci)
+                {
+                    sci.Text = sourceText;
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    var currentModel = ASContext.Context.CurrentModel;
+                    new ASFileParser().ParseSrc(currentModel, sci.Text);
+                    var currentClass = currentModel.Classes[0];
+                    ASContext.Context.CurrentClass.Returns(currentClass);
+                    ASContext.Context.CurrentModel.Returns(currentModel);
+                    var currentMember = currentClass.Members.Items.First();
+                    ASContext.Context.CurrentMember.Returns(currentMember);
+                    ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
+                    ASGenerator.SetJobContext(null, null, currentMember.Parameters[0], null);
+                    ASGenerator.GenerateJob(job, currentMember, ASContext.Context.CurrentClass, null, new Hashtable {["scope"] = scope});
                     return sci.Text;
                 }
             }

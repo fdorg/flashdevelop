@@ -1801,10 +1801,16 @@ namespace ASCompletion.Completion
 
             bool isVararg = false;
             string paramName = contextMember.Name;
+            var paramType = contextMember.Type;
             if (paramName.StartsWithOrdinal("..."))
             {
-                paramName = paramName.TrimStart(new char[] { ' ', '.' });
+                paramName = paramName.TrimStart(' ', '.');
                 isVararg = true;
+            }
+            else if (inClass.InFile.haXe && paramName.StartsWithOrdinal("?"))
+            {
+                paramName = paramName.Remove(0, 1);
+                if (!string.IsNullOrEmpty(paramType) && !paramType.StartsWith("Null<")) paramType = $"Null<{paramType}>";
             }
             string varName = paramName;
             string scopedVarName = varName;
@@ -1818,7 +1824,7 @@ namespace ASCompletion.Completion
             }
             else
             {
-                if (ASContext.CommonSettings.PrefixFields.Length > 0 && !paramName.StartsWithOrdinal(ASContext.CommonSettings.PrefixFields))
+                if (ASContext.CommonSettings.PrefixFields.Length > 0 && !varName.StartsWithOrdinal(ASContext.CommonSettings.PrefixFields))
                 {
                     scopedVarName = varName = ASContext.CommonSettings.PrefixFields + varName;
                 }
@@ -1858,7 +1864,7 @@ namespace ASCompletion.Completion
 
             MemberModel mem = NewMember(varName, member, FlagType.Variable, scope);
             if (isVararg) mem.Type = "Array";
-            else mem.Type = contextMember.Type;
+            else mem.Type = paramType;
 
             GenerateVariable(mem, position, true);
             ASContext.Panel.RestoreLastLookupPosition();
