@@ -2172,7 +2172,7 @@ namespace ASCompletion.Completion
                 else
                     list.Add(new MemberItem(member));
             }
-            EventManager.DispatchEvent(null, new DataEvent(EventType.Command, "ASCompletion.CompletionList.AddItems", list));
+            EventManager.DispatchEvent(null, new DataEvent(EventType.Command, "ASCompletion.DotCompletion.AddItems", list));
             CompletionList.Show(list, autoHide, tail);
 
             // smart focus token
@@ -2259,7 +2259,7 @@ namespace ASCompletion.Completion
                     return;
                 list.Add(new MemberItem(member));
             }
-            EventManager.DispatchEvent(null, new DataEvent(EventType.Command, "ASCompletion.CompletionList.AddItems", list));
+            EventManager.DispatchEvent(null, new DataEvent(EventType.Command, "ASCompletion.DotCompletion.AddItems", list));
             CompletionList.Show(list, autoHide, word);
 
             if (reSelect != null) CompletionList.SelectItem(reSelect);
