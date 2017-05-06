@@ -409,7 +409,7 @@ namespace ASCompletion.Completion
                             .SetName("From String(\"string\")|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfObjectInitializer"))
-                            .Returns(";")
+                            .Returns(";{}")
                             .SetName("From {}|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfArrayInitializer"))

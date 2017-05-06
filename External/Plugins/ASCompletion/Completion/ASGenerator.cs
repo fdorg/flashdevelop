@@ -3273,7 +3273,7 @@ namespace ASCompletion.Completion
             {
                 pos = sci.WordEndPosition(pos, true);
                 c = line.TrimEnd().Last();
-                resolve = ASComplete.GetExpressionType(sci, c == ']' ? pos + 1 : pos, true, true);
+                resolve = ASComplete.GetExpressionType(sci, "]}".Contains(c) ? pos + 1 : pos, true, true);
                 if ((resolve.Path == null || !resolve.Path.StartsWith("#")) && resolve.Type != null && !resolve.IsPackage)
                 {
                     if (resolve.Type.Name == "Function" && !bracesRemoved)
@@ -3295,7 +3295,7 @@ namespace ASCompletion.Completion
                         }
                         resolve.Member = null;
                     }
-                    else if ((resolve.Type.Flags & FlagType.Class) > 0
+                    else if (resolve.Context.Value != "{}" && (resolve.Type.Flags & FlagType.Class) > 0
                              && resolve.Context?.WordBefore != "new" && resolve.Member == null)
                     {
                         type = ctx.ResolveType("Class", inClass.InFile);
@@ -3308,7 +3308,6 @@ namespace ASCompletion.Completion
             {
                 c = (char)sci.CharAt(pos);
                 if (c == '"' || c == '\'') type = ctx.ResolveType(features.stringKey, inClass.InFile);
-                else if (c == '}') type = ctx.ResolveType(features.objectKey, inClass.InFile);
                 else if (c == '>') type = ctx.ResolveType("XML", inClass.InFile);
                 else if (c == ']')
                 {

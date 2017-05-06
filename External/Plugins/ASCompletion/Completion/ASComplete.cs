@@ -2681,6 +2681,7 @@ namespace ASCompletion.Completion
                 head.Type = ASContext.Context.ResolveType(ASContext.Context.Features.stringKey, null);
             }
             else if (token.Contains("<")) head = new ASResult {Type = ASContext.Context.ResolveType(token, inFile)};
+            else if (token == "{}") head = new ASResult {Type = ASContext.Context.ResolveType(ASContext.Context.Features.objectKey, inFile)};
             else head = EvalVariable(token, context, inFile, inClass); // regular eval
 
             // no head, exit
@@ -3434,9 +3435,10 @@ namespace ASCompletion.Completion
             char c = ' ';
             var startPosition = position;
             int positionExpression = position;
-            int braceCount = 0;
-            int sqCount = 0;
+            int arrCount = 0;
+            int parCount = 0;
             int genCount = 0;
+            var braCount = 0;
             bool hasGenerics = features.hasGenerics;
             bool hadWS = false;
             bool hadDot = ignoreWhiteSpace;
@@ -3465,26 +3467,22 @@ namespace ASCompletion.Completion
                         sb.Insert(0, "RegExp.#" + (subCount++) + "~");
                     }
                     // array access
+                    else if (c == ']') arrCount++;
                     if (c == '[')
                     {
-                        sqCount--;
-                        if (sqCount == 0)
+                        arrCount--;
+                        if (arrCount == 0 && braCount == 0)
                         {
                             if (sbSub.Length > 0) sbSub.Insert(0, '[');
-                            if (braceCount == 0) sb.Insert(0, ".[]");
+                            if (parCount == 0) sb.Insert(0, ".[]");
                             continue;
                         }
-                        if (sqCount < 0)
+                        if (arrCount < 0)
                         {
                             expression.Separator = ';';
                             break;
                         }
                     }
-                    else if (c == ']')
-                    {
-                        sqCount++;
-                    }
-                    //
                     else if (c == '<' && hasGenerics)
                     {
                         genCount--;
@@ -3497,8 +3495,8 @@ namespace ASCompletion.Completion
                     // ignore sub-expressions (method calls' parameters)
                     else if (c == '(')
                     {
-                        braceCount--;
-                        if (braceCount == 0 && sqCount == 0)
+                        parCount--;
+                        if (parCount == 0 && arrCount == 0)
                         {
                             sbSub.Insert(0, c);
                             int testPos = position - 1;
@@ -3506,7 +3504,8 @@ namespace ASCompletion.Completion
                             if (haXe && testWord == "cast") expression.SubExpressions.Add(testWord);
                             expression.SubExpressions.Add(sbSub.ToString());
                             sb.Insert(0, ".#" + (subCount++) + "~"); // method call or sub expression
-                            if (testWord == "return" || testWord == "case" || testWord == "default" || (haXe && testWord == "cast"))
+                            if (testWord == "return" || testWord == "case" || testWord == "default" ||
+                                (haXe && testWord == "cast"))
                             {
                                 // AS3, AS2, Loom ex: return (a as B).<complete>
                                 // Haxe ex: return cast(a, B).<complete>
@@ -3516,7 +3515,7 @@ namespace ASCompletion.Completion
                             }
                             continue;
                         }
-                        if (braceCount < 0)
+                        if (parCount < 0)
                         {
                             expression.Separator = ';';
                             int testPos = position - 1;
@@ -3540,16 +3539,18 @@ namespace ASCompletion.Completion
                             expression.Separator = ';';
                             break;
                         }
-                        if (braceCount == 0) // start sub-expression
+                        if (parCount == 0) // start sub-expression
                         {
                             if (expression.SubExpressions == null) expression.SubExpressions = new List<string>();
                             sbSub = new StringBuilder();
                         }
-                        braceCount++;
+                        parCount++;
                     }
                     else if (c == '>')
                     {
-                        if (haXe && position - 1 > minPos && (char)sci.CharAt(position - 1) == '-') { }
+                        if (haXe && position - 1 > minPos && (char) sci.CharAt(position - 1) == '-')
+                        {
+                        }
                         else if (hasGenerics)
                         {
                             if (c2 == '.' || c2 == ',' || c2 == '(' || c2 == '[' || c2 == '>' || c2 == '}' || position + 1 == startPosition)
@@ -3560,7 +3561,21 @@ namespace ASCompletion.Completion
                             else break;
                         }
                     }
-                    if (braceCount > 0 || sqCount > 0 || genCount > 0) 
+                    else if (genCount == 0 && arrCount == 0)
+                    {
+                        if (c == '}') braCount++;
+                        else if (c == '{' && braCount > 0)
+                        {
+                            braCount--;
+                            if (braCount == 0)
+                            {
+                                sb.Insert(0, "{}");
+                                expression.Separator = ';';
+                                continue;
+                            }
+                        }
+                    }
+                    if (parCount > 0 || arrCount > 0 || genCount > 0 || braCount > 0) 
                     {
                         if (c == ';') // not expected: something's wrong
                         {
@@ -3665,7 +3680,7 @@ namespace ASCompletion.Completion
                 // string literals only allowed in sub-expressions
                 else
                 {
-                    if (braceCount == 0 && !hadDot) // not expected: something's wrong
+                    if (parCount == 0 && !hadDot) // not expected: something's wrong
                     {
                         expression.Separator = ';';
                         break;
