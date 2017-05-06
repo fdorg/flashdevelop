@@ -3295,8 +3295,9 @@ namespace ASCompletion.Completion
                         }
                         resolve.Member = null;
                     }
-                    else if (resolve.Context.Value != "{}" && (resolve.Type.Flags & FlagType.Class) > 0
-                             && resolve.Context?.WordBefore != "new" && resolve.Member == null)
+                    else if (!"{}|true|false".Contains(resolve.Context?.Value ?? string.Empty)
+                            && (resolve.Type.Flags & FlagType.Class) > 0
+                            && resolve.Context?.WordBefore != "new" && resolve.Member == null)
                     {
                         type = ctx.ResolveType("Class", inClass.InFile);
                         resolve = null;
@@ -3316,7 +3317,6 @@ namespace ASCompletion.Completion
                     resolve = null;
                 }
                 else if (word != null && Char.IsDigit(word[0])) type = ctx.ResolveType(features.numberKey, inClass.InFile);
-                else if (word == "true" || word == "false") type = ctx.ResolveType(features.booleanKey, inClass.InFile);
                 if (type != null && type.IsVoid()) type = null;
             }
             if (resolve == null) resolve = new ASResult();

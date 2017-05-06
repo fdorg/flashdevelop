@@ -2682,6 +2682,7 @@ namespace ASCompletion.Completion
             }
             else if (token.Contains("<")) head = new ASResult {Type = ASContext.Context.ResolveType(token, inFile)};
             else if (token == "{}") head = new ASResult {Type = ASContext.Context.ResolveType(ASContext.Context.Features.objectKey, inFile)};
+            else if (token == "true" || token == "false") head = new ASResult {Type = ASContext.Context.ResolveType(ASContext.Context.Features.booleanKey, inFile)};
             else head = EvalVariable(token, context, inFile, inClass); // regular eval
 
             // no head, exit

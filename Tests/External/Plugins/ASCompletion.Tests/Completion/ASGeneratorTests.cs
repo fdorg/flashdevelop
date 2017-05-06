@@ -1196,6 +1196,10 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromUnsafeCastExpr"), GeneratorJobType.AssignStatementToVar, true)
                                 .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromUnsafeCastExpr"))
                                 .SetName("from (new type() as String)");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromTrue"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromTrue"))
+                                .SetName("from true");
                     }
                 }
 
