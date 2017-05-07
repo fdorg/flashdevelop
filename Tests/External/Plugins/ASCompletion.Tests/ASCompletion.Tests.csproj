@@ -589,6 +589,12 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromTrue.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromXML.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromXML.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromArrayAccess.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromArrayAccess.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromArrayAccess.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromArrayAccess.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromArrayAccess2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromArrayAccess2.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

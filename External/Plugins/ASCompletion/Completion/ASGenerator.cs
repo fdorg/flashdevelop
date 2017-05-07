@@ -3274,7 +3274,7 @@ namespace ASCompletion.Completion
                 pos = sci.WordEndPosition(pos, true);
                 c = line.TrimEnd().Last();
                 resolve = ASComplete.GetExpressionType(sci, "]}\"'".Contains(c) || (c == '>' && !bracesRemoved) ? pos + 1 : pos, true, true);
-                if ((resolve.Path == null || !resolve.Path.StartsWith("#")) && resolve.Type != null && !resolve.IsPackage)
+                if (resolve.Type != null && !resolve.IsPackage)
                 {
                     if (resolve.Type.Name == "Function" && !bracesRemoved)
                     {
@@ -3295,6 +3295,8 @@ namespace ASCompletion.Completion
                         }
                         resolve.Member = null;
                     }
+                    else if (!string.IsNullOrEmpty(resolve.Path) && resolve.Path.EndsWith(".[]"))
+                        resolve.Member = null;
                 }
                 word = sci.GetWordFromPosition(pos);
             }
