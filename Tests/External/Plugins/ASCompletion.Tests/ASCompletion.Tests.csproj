@@ -587,6 +587,8 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFieldFromOptionalParameter2.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromTrue.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromTrue.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromXML.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromXML.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

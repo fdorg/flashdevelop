@@ -1200,6 +1200,10 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromTrue"), GeneratorJobType.AssignStatementToVar, true)
                                 .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromTrue"))
                                 .SetName("from true");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromXML"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromXML"))
+                                .SetName("from <xml/>");
                     }
                 }
 
