@@ -362,7 +362,11 @@ namespace FlashDevelop.Settings
         [LocalizedDescription("FlashDevelop.Description.ClipboardHistorySize")]
         public Int32 ClipboardHistorySize
         {
-            get { return this.clipboardHistorySize; }
+            get
+            {
+                if (this.clipboardHistorySize <= 0) this.clipboardHistorySize = 50; // value was lost in the settings file, and was set via serialization.
+                return this.clipboardHistorySize;
+            }
             set
             {
                 if (value <= 0) throw new ArgumentOutOfRangeException(nameof(value));
