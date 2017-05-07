@@ -6150,14 +6150,14 @@ AND - 모든 조건을 만족할때.</value>
     <comment>Added after 5.2.1</comment>
   </data>
   <data name="CodeRefactor.Label.FindAllReferencesResult" xml:space="preserve">
-    <value>References</value>
+    <value>'{0}' References</value>
     <comment>Added after 5.2.1</comment>
   </data>
   <data name="FlashDevelop.Label.FindAndReplaceResults" xml:space="preserve">
     <value>Find and Replace</value>
     <comment>Added after 5.2.1</comment>
   </data>
-  <data name="LintingManager.Label.LintingResults" xml:space="preserve">
+  <data name="LintingHelper.Label.LintingResults" xml:space="preserve">
     <value>Linters</value>
     <comment>Added after 5.2.1</comment>
   </data>
@@ -6179,6 +6179,14 @@ AND - 모든 조건을 만족할때.</value>
   </data>
   <data name="FlashDevelop.Description.ClipboardHistorySize" xml:space="preserve">
     <value>The number of items to store in the clipboard history. Minimum value is 1.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ResultsPanel.Label.KeepResults" xml:space="preserve">
+    <value>Keep Results</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ResultsPanel.Description.HighlightOnlyActivePanelEntries" xml:space="preserve">
+    <value>Highlight only the entries in the active panel and the main panel.</value>
     <comment>Added after 5.2.0</comment>
   </data>
 </root>
