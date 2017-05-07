@@ -2615,11 +2615,11 @@ namespace ASCompletion.Completion
         /// <returns>Class/member struct</returns>
         private static ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility)
         {
-            ASResult notFound = new ASResult();
-            notFound.Context = context;
+            ASResult notFound = new ASResult {Context = context};
             if (string.IsNullOrEmpty(expression)) return notFound;
 
-            ContextFeatures features = ASContext.Context.Features;
+            var ctx = ASContext.Context;
+            var features = ctx.Features;
             if (expression.StartsWithOrdinal(features.dot))
             {
                 if (expression.StartsWithOrdinal(features.dot + "#")) expression = expression.Substring(1);
@@ -2634,14 +2634,20 @@ namespace ASCompletion.Completion
             if (token.Length == 0) return notFound;
             if (asFunction && tokens.Length == 1) token += "(";
 
-            ASResult head;
+            ASResult head = null;
+            if (token.StartsWith('"')) head = new ASResult {Type = ctx.ResolveType(features.stringKey, null)};
+            else if (token == "{}") head = new ASResult {Type = ctx.ResolveType(features.objectKey, inFile)};
+            else if (token == "true" || token == "false") head = new ASResult {Type = ctx.ResolveType(features.booleanKey, inFile)};
+            else if (features.hasE4X && token == "</>") head = new ASResult {Type = ctx.ResolveType("XML", inFile)};
+            else if (char.IsDigit(token, 0)) head = new ASResult {Type = ctx.ResolveType(features.numberKey, inClass.InFile)};
+            if (head?.Type != null) return EvalTail(context, inFile, head, tokens, complete, filterVisibility) ?? notFound;
             if (token.StartsWith('#'))
             {
                 Match mSub = re_sub.Match(token);
                 if (mSub.Success)
                 {
                     bool haxeCast = false;
-                    if (ASContext.Context.CurrentModel.haXe && context.SubExpressions.Contains("cast"))
+                    if (ctx.CurrentModel.haXe && context.SubExpressions.Contains("cast"))
                     {
                         haxeCast = true;
                         context.SubExpressions.Remove("cast");
@@ -2667,7 +2673,7 @@ namespace ASCompletion.Completion
                     // eval sub expression
                     head = EvalExpression(subExpr, subContext, inFile, inClass, true, false);
                     if (head.Member != null)
-                        head.Type = ASContext.Context.ResolveType(head.Member.Type, head.Type.InFile);
+                        head.Type = ctx.ResolveType(head.Member.Type, head.Type.InFile);
                 }
                 else
                 {
@@ -2675,14 +2681,7 @@ namespace ASCompletion.Completion
                     head = EvalVariable(token, context, inFile, inClass);
                 }
             }
-            else if (token == "\"") // literal string
-            {
-                head = new ASResult();
-                head.Type = ASContext.Context.ResolveType(ASContext.Context.Features.stringKey, null);
-            }
-            else if (token.Contains("<")) head = new ASResult {Type = ASContext.Context.ResolveType(token, inFile)};
-            else if (token == "{}") head = new ASResult {Type = ASContext.Context.ResolveType(ASContext.Context.Features.objectKey, inFile)};
-            else if (token == "true" || token == "false") head = new ASResult {Type = ASContext.Context.ResolveType(ASContext.Context.Features.booleanKey, inFile)};
+            else if (token.Contains("<")) head = new ASResult {Type = ctx.ResolveType(token, inFile)};
             else head = EvalVariable(token, context, inFile, inClass); // regular eval
 
             // no head, exit
@@ -2701,7 +2700,7 @@ namespace ASCompletion.Completion
             // if failed, try as qualified class name
             if ((result == null || result.IsNull()) && tokens.Length > 1) 
             {
-                ClassModel qualif = ASContext.Context.ResolveType(expression, null);
+                ClassModel qualif = ctx.ResolveType(expression, null);
                 if (!qualif.IsVoid())
                 {
                     result = new ASResult();
@@ -2710,6 +2709,13 @@ namespace ASCompletion.Completion
                     result.InFile = qualif.InFile;
                     result.Type = qualif;
                 }
+            }
+            else if (result != null
+                    && result.Member == null && (result.Type?.Flags & FlagType.Class) != 0 && context.WordBefore != "new"
+                    && !string.IsNullOrEmpty(result.Path))
+            {
+                var characters = ScintillaControl.Configuration.GetLanguage(ctx.Settings.LanguageId.ToLower()).characterclass.Characters;
+                if (result.Path.All(c => characters.Contains(c))) result = new ASResult {Type = ctx.ResolveType("Class", inFile)};
             }
             return result ?? notFound;
         }
@@ -3440,6 +3446,8 @@ namespace ASCompletion.Completion
             int parCount = 0;
             int genCount = 0;
             var braCount = 0;
+            var dQuotes = 0;
+            var sQuotes = 0;
             bool hasGenerics = features.hasGenerics;
             bool hadWS = false;
             bool hadDot = ignoreWhiteSpace;
@@ -3575,8 +3583,40 @@ namespace ASCompletion.Completion
                                 continue;
                             }
                         }
+                        else if (c == '\"' && sQuotes == 0)
+                        {
+                            if (position == 0 || (char)sci.CharAt(position - 1) == '\\') continue;
+                            if (dQuotes == 0) dQuotes++;
+                            else
+                            {
+                                dQuotes--;
+                                if (sQuotes == 0 && dQuotes == 0)
+                                {
+                                    sb.Insert(0, "\"\"");
+                                    expression.Separator = ';';
+                                    continue;
+                                }
+                            }
+                            if (arrCount == 0 && parCount == 0) hadDot = false;
+                        }
+                        else if (c == '\'' && dQuotes == 0)
+                        {
+                            if (position == 0 || (char)sci.CharAt(position - 1) == '\\') continue;
+                            if (sQuotes == 0) sQuotes++;
+                            else
+                            {
+                                sQuotes--;
+                                if (sQuotes == 0 && dQuotes == 0)
+                                {
+                                    sb.Insert(0, "\"\"");
+                                    expression.Separator = ';';
+                                    continue;
+                                }
+                            }
+                            if (arrCount == 0 && parCount == 0) hadDot = false;
+                        }
                     }
-                    if (parCount > 0 || arrCount > 0 || genCount > 0 || braCount > 0) 
+                    if (parCount > 0 || arrCount > 0 || genCount > 0 || braCount > 0 || dQuotes > 0 || sQuotes > 0) 
                     {
                         if (c == ';') // not expected: something's wrong
                         {
@@ -3694,10 +3734,16 @@ namespace ASCompletion.Completion
 
             // result
             var value = sb.ToString();
-            if (sci.ConfigurationLanguage == "as3" && value.StartsWith("<"))
+            if (value.StartsWith('<'))
             {
-                value = Regex.Replace(value, @"\[.*", string.Empty);
-            }   
+                if (sci.ConfigurationLanguage == "as3" && expression.WordBefore == "new")
+                    value = Regex.Replace(value, @"\[.*", string.Empty);
+                else if (features.hasE4X && value.EndsWith('>'))
+                {
+                    expression.Separator = ';';
+                    value = "</>";
+                }
+            } 
             expression.Value = value;
             expression.PositionExpression = positionExpression;
             LastExpression = expression;

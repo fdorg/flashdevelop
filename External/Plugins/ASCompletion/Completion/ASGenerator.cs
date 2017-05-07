@@ -3273,7 +3273,7 @@ namespace ASCompletion.Completion
             {
                 pos = sci.WordEndPosition(pos, true);
                 c = line.TrimEnd().Last();
-                resolve = ASComplete.GetExpressionType(sci, "]}".Contains(c) ? pos + 1 : pos, true, true);
+                resolve = ASComplete.GetExpressionType(sci, "]}\"'".Contains(c) || (c == '>' && !bracesRemoved) ? pos + 1 : pos, true, true);
                 if ((resolve.Path == null || !resolve.Path.StartsWith("#")) && resolve.Type != null && !resolve.IsPackage)
                 {
                     if (resolve.Type.Name == "Function" && !bracesRemoved)
@@ -3295,28 +3295,18 @@ namespace ASCompletion.Completion
                         }
                         resolve.Member = null;
                     }
-                    else if (!"{}|true|false".Contains(resolve.Context?.Value ?? string.Empty)
-                            && (resolve.Type.Flags & FlagType.Class) > 0
-                            && resolve.Context?.WordBefore != "new" && resolve.Member == null)
-                    {
-                        type = ctx.ResolveType("Class", inClass.InFile);
-                        resolve = null;
-                    }
                 }
                 word = sci.GetWordFromPosition(pos);
             }
             if (resolve?.Type == null || resolve.Type.IsVoid())
             {
                 c = (char)sci.CharAt(pos);
-                if (c == '"' || c == '\'') type = ctx.ResolveType(features.stringKey, inClass.InFile);
-                else if (c == '>') type = ctx.ResolveType("XML", inClass.InFile);
-                else if (c == ']')
+                if (c == ']')
                 {
                     resolve = ASComplete.GetExpressionType(sci, pos + 1);
                     type = resolve.Type ?? ctx.ResolveType(features.arrayKey, inClass.InFile);
                     resolve = null;
                 }
-                else if (word != null && Char.IsDigit(word[0])) type = ctx.ResolveType(features.numberKey, inClass.InFile);
                 if (type != null && type.IsVoid()) type = null;
             }
             if (resolve == null) resolve = new ASResult();

@@ -393,15 +393,15 @@ namespace ASCompletion.Completion
                             .SetName("From new String().charCodeAt(0).toString|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfEmptyStringInitializer"))
-                            .Returns("\"")
+                            .Returns(";\"\"")
                             .SetName("From \"\"|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfEmptyStringInitializerSingleQuotes"))
-                            .Returns("\"")
+                            .Returns(";\"\"")
                             .SetName("From ''|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfStringInitializer"))
-                            .Returns("\"")
+                            .Returns(";\"\"")
                             .SetName("From \"string\"|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfGlogalFunctionString"))
@@ -465,8 +465,8 @@ namespace ASCompletion.Completion
                             .SetName("From true|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfXML"))
-                            .Returns(" ")
-                            .SetName("<xml><![CDATA[string]]></xml>|");
+                            .Returns(";</>")
+                            .SetName("<xml/>|");
                 }
             }
 
