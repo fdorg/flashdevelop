@@ -3513,8 +3513,7 @@ namespace ASCompletion.Completion
                             if (haXe && testWord == "cast") expression.SubExpressions.Add(testWord);
                             expression.SubExpressions.Add(sbSub.ToString());
                             sb.Insert(0, ".#" + (subCount++) + "~"); // method call or sub expression
-                            if (testWord == "return" || testWord == "case" || testWord == "default" ||
-                                (haXe && testWord == "cast"))
+                            if (testWord == "return" || testWord == "case" || testWord == "default" || (haXe && testWord == "cast"))
                             {
                                 // AS3, AS2, Loom ex: return (a as B).<complete>
                                 // Haxe ex: return cast(a, B).<complete>
