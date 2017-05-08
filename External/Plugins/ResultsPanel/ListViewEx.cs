@@ -1,6 +1,5 @@
 ﻿using PluginCore;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
@@ -35,7 +34,7 @@ namespace ResultsPanel
             upArrowIndex = SmallImageList.Images.Count - 2;
             downArrowIndex = upArrowIndex + 1;
         }
-        
+
         internal void SortGroups(ColumnHeader columnHeader, SortOrder sortOrder, Comparison<ListViewGroup> comparison)
         {
             SetArrow(columnHeader, sortOrder);
@@ -43,24 +42,53 @@ namespace ResultsPanel
             SortedColumn = columnHeader;
             SortOrder = sortOrder;
 
-            var groups = new ListViewGroup[Groups.Count];
-            Groups.CopyTo(groups, 0);
-
-            switch (sortOrder)
+            if (sortOrder != SortOrder.None)
             {
-                case SortOrder.None:
-                    break;
-                case SortOrder.Ascending:
-                    Array.Sort(groups, comparison);
-                    break;
-                case SortOrder.Descending:
-                    Array.Sort(groups, comparison);
-                    Array.Reverse(groups);
-                    break;
-            }
+                var groups = new ListViewGroup[Groups.Count];
+                Groups.CopyTo(groups, 0);
 
-            Groups.Clear();
-            Groups.AddRange(groups);
+                switch (sortOrder)
+                {
+                    case SortOrder.Ascending:
+                        Array.Sort(groups, comparison);
+                        break;
+                    case SortOrder.Descending:
+                        Array.Sort(groups, comparison);
+                        Array.Reverse(groups);
+                        break;
+                }
+
+                Groups.Clear();
+                Groups.AddRange(groups);
+            }
+        }
+
+        internal void SortItems(ColumnHeader columnHeader, SortOrder sortOrder, Comparison<ListViewItem> comparison)
+        {
+            SetArrow(columnHeader, sortOrder);
+
+            SortedColumn = columnHeader;
+            SortOrder = sortOrder;
+
+            if (sortOrder != SortOrder.None)
+            {
+                var items = new ListViewItem[Items.Count];
+                Items.CopyTo(items, 0);
+
+                switch (sortOrder)
+                {
+                    case SortOrder.Ascending:
+                        Array.Sort(items, comparison);
+                        break;
+                    case SortOrder.Descending:
+                        Array.Sort(items, comparison);
+                        Array.Reverse(items);
+                        break;
+                }
+
+                Items.Clear();
+                Items.AddRange(items);
+            }
         }
 
         protected override void OnDrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
@@ -70,7 +98,7 @@ namespace ResultsPanel
             Color back = PluginBase.MainForm.GetThemeColor("ColumnHeader.BackColor");
             Color text = PluginBase.MainForm.GetThemeColor("ColumnHeader.TextColor");
             Color border = PluginBase.MainForm.GetThemeColor("ColumnHeader.BorderColor");
-            
+
             if (UseTheme && back != Color.Empty && border != Color.Empty && text != Color.Empty)
             {
                 base.OnDrawColumnHeader(sender, e);
@@ -145,7 +173,7 @@ namespace ResultsPanel
             {
                 order = SortOrder;
             }
-            
+
             VisualStyleElement arrow = null;
             switch (order)
             {
