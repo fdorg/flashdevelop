@@ -19,12 +19,14 @@ namespace ResultsPanel
         private String pluginHelp = "www.flashdevelop.org/community/";
         private String pluginDesc = "Adds a results panel for console info to FlashDevelop";
         private String pluginAuth = "FlashDevelop Team";
-        //private DockContent pluginPanel;
         private Settings settingObject;
         private String settingFilename;
         internal PluginUI pluginUI;
         internal Image pluginImage;
         internal PanelContextMenu contextMenuStrip;
+        private ToolStripMenuItem viewItem;
+        private ToolStripMenuItem viewItemMainPanel;
+        private ToolStripSeparator viewItemSeparator;
 
         #region Required Properties
 
@@ -83,11 +85,11 @@ namespace ResultsPanel
         {
             get { return this.settingObject; }
         }
-        
+
         #endregion
-        
+
         #region Required Methods
-        
+
         /// <summary>
         /// Initializes the plugin
         /// </summary>
@@ -96,8 +98,8 @@ namespace ResultsPanel
             this.InitBasics();
             this.LoadSettings();
             this.AddEventHandlers();
-            this.CreateMenuItem();
             this.CreatePluginPanel();
+            this.CreateMenuItem();
         }
 
         /// <summary>
@@ -107,7 +109,7 @@ namespace ResultsPanel
         {
             this.SaveSettings();
         }
-        
+
         /// <summary>
         /// Handles the incoming events
         /// </summary>
@@ -151,7 +153,7 @@ namespace ResultsPanel
                 case EventType.FileOpen:
                     ResultsPanelHelper.OnFileOpen((TextEvent) e);
                     break;
-                    
+
                 case EventType.Keys:
                     KeyEvent ke = (KeyEvent) e;
                     switch (PluginBase.MainForm.GetShortcutItemId(ke.Value))
@@ -175,11 +177,11 @@ namespace ResultsPanel
                             else if (ke.Value == PanelContextMenu.IgnoreEntryKeys) ke.Handled = ResultsPanelHelper.ActiveUI.IgnoreEntryShortcut();
                             break;
                     }
-                    
+
                     break;
             }
         }
-        
+
         #endregion
 
         #region Custom Methods
@@ -229,23 +231,6 @@ namespace ResultsPanel
         }
 
         /// <summary>
-        /// Creates a menu item for the plugin
-        /// </summary>
-        public void CreateMenuItem()
-        {
-            ToolStripMenuItem viewMenu = (ToolStripMenuItem)PluginBase.MainForm.FindMenuItem("ViewMenu");
-            ToolStripMenuItem viewItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), this.pluginImage, new EventHandler(this.OpenPanel));
-            viewMenu.DropDownItems.Add(viewItem);
-
-            this.contextMenuStrip = new PanelContextMenu();
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowNextResult", this.contextMenuStrip.NextEntry);
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowPrevResult", this.contextMenuStrip.PreviousEntry);
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearResults", this.contextMenuStrip.ClearEntries);
-            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearIgnoredEntries", this.contextMenuStrip.ClearIgnoredEntries);
-            PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowResults", viewItem);
-        }
-
-        /// <summary>
         /// Creates a plugin panel for the plugin
         /// </summary>
         public void CreatePluginPanel()
@@ -255,17 +240,70 @@ namespace ResultsPanel
             this.pluginUI.ParentPanel = PluginBase.MainForm.CreateDockablePanel(this.pluginUI, this.pluginGuid, this.pluginImage, DockState.DockBottomAutoHide);
             ResultsPanelHelper.Initialize(this, this.pluginUI);
         }
-        
+
         /// <summary>
-        /// Opens the plugin panel if closed
+        /// Creates a menu item for the plugin
         /// </summary>
-        public void OpenPanel(Object sender, EventArgs e)
+        public void CreateMenuItem()
         {
-            this.pluginUI.ParentPanel.Show();
+            viewItemMainPanel = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), pluginImage) { Tag = pluginUI.GroupData };
+            viewItemSeparator = new ToolStripSeparator();
+
+            viewItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), pluginImage);
+            viewItem.DropDownItems.Add(viewItemMainPanel);
+            viewItem.DropDownOpening += ViewItem_DropDownOpening;
+            viewItem.DropDownItemClicked += ViewItem_DropDownItemClicked;
+
+            var viewMenu = (ToolStripMenuItem) PluginBase.MainForm.FindMenuItem("ViewMenu");
+            viewMenu.DropDownItems.Add(viewItem);
+
+            this.contextMenuStrip = new PanelContextMenu();
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowNextResult", this.contextMenuStrip.NextEntry);
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ShowPrevResult", this.contextMenuStrip.PreviousEntry);
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearResults", this.contextMenuStrip.ClearEntries);
+            PluginBase.MainForm.RegisterShortcutItem("ResultsPanel.ClearIgnoredEntries", this.contextMenuStrip.ClearIgnoredEntries);
+            PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowResults", viewItemMainPanel);
+        }
+
+        private void ViewItem_DropDownOpening(object sender, EventArgs e)
+        {
+            viewItem.DropDownItems.Clear();
+            viewItem.DropDownItems.Add(viewItemMainPanel);
+
+            if (ResultsPanelHelper.PluginUIs.Count > 0)
+            {
+                viewItem.DropDownItems.Add(viewItemSeparator);
+                foreach (var ui in ResultsPanelHelper.PluginUIs)
+                {
+                    viewItem.DropDownItems.Add(new ToolStripMenuItem(ui.Text) { Tag = ui.GroupData });
+                }
+            }
+        }
+
+        private void ViewItem_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (e.ClickedItem is ToolStripMenuItem)
+            {
+                string groupData = (string) e.ClickedItem.Tag;
+
+                if (groupData == null)
+                {
+                    pluginUI.ParentPanel.Show();
+                }
+                else
+                {
+                    foreach (var ui in ResultsPanelHelper.PluginUIs)
+                    {
+                        if (ui.GroupData == groupData)
+                        {
+                            ui.ParentPanel.Show();
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         #endregion
-
     }
-    
 }

@@ -6189,4 +6189,8 @@ AND - 모든 조건을 만족할때.</value>
     <value>Highlight only the entries in the active panel and the main panel.</value>
     <comment>Added after 5.2.0</comment>
   </data>
+  <data name="ResultsPanel.Description.KeepResultsByDefault" xml:space="preserve">
+    <value>Keep result panels locked by default.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
 </root>
