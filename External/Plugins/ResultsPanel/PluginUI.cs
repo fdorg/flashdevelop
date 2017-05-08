@@ -69,19 +69,12 @@ namespace ResultsPanel
             this.warningCount = 0;
             this.messageCount = 0;
             this.sortOrder = SortOrder.Ascending;
-            this.lastColumn = -1;
             this.InitializeComponent();
             this.InitializeContextMenu();
             this.InitializeGraphics();
             this.InitializeTexts();
             this.InitializeLayout();
             ScrollBarEx.Attach(entriesView);
-
-            this.entryFile.Tag = GroupingMethod.File;
-            this.entryDesc.Tag = GroupingMethod.Description;
-            this.entryType.Tag = GroupingMethod.Type;
-            this.entryPath.Tag = GroupingMethod.Path;
-            this.entryLine.Tag = GroupingMethod.Line;
 
             GroupData = groupData;
             GroupId = groupId;
@@ -105,6 +98,20 @@ namespace ResultsPanel
                 this.toolStripFilters.Items.Insert(0, this.toolStripButtonInfo);
             }
 
+            this.entryFile.Tag = GroupingMethod.File;
+            this.entryType.Tag = GroupingMethod.Type;
+            this.entryDesc.Tag = GroupingMethod.Description;
+            this.entryPath.Tag = GroupingMethod.Path;
+            this.entryLine.Tag = GroupingMethod.Line;
+            this.groupingMethod = Settings.DefaultGrouping;
+            this.lastColumn = new Dictionary<GroupingMethod, ColumnHeader>()
+            {
+                [(GroupingMethod) this.entryFile.Tag] = this.entryFile,
+                [(GroupingMethod) this.entryType.Tag] = this.entryType,
+                [(GroupingMethod) this.entryDesc.Tag] = this.entryDesc,
+                [(GroupingMethod) this.entryPath.Tag] = this.entryPath,
+                [(GroupingMethod) this.entryLine.Tag] = this.entryLine
+            }[this.groupingMethod].Index;
             ApplySettings(false);
         }
 
@@ -208,9 +215,10 @@ namespace ResultsPanel
             this.entryPath});
             this.entriesView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.entriesView.FullRowSelect = true;
-            this.entriesView.GridLines = true;
+            this.entriesView.GridLines = false;
             this.entriesView.Location = new System.Drawing.Point(0, 28);
             this.entriesView.Name = "entriesView";
+            this.entriesView.ShowGroups = true;
             this.entriesView.ShowItemToolTips = true;
             this.entriesView.Size = new System.Drawing.Size(710, 218);
             this.entriesView.TabIndex = 1;
@@ -436,7 +444,7 @@ namespace ResultsPanel
             {
                 invalidate = false;
             }
-            
+
             if (invalidate)
             {
                 FilterResults();
