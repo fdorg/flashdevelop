@@ -29,7 +29,7 @@ namespace ResultsPanel
         }
 
         [DisplayName("Highlight Only Active Panel Entries")]
-        [LocalizedDescription("ResultsPanel.Description.HighlightOnlyActivePanelEntries"), DefaultValue(true)]
+        [LocalizedDescription("ResultsPanel.Description.HighlightOnlyActivePanelEntries"), DefaultValue(false)]
         public bool HighlightOnlyActivePanelEntries
         {
             get { return highlightOnlyActivePanelEntries; }

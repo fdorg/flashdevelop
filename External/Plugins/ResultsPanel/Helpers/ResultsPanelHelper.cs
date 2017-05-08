@@ -160,7 +160,7 @@ namespace ResultsPanel.Helpers
                 }
             }
         }
-        
+
         /// <summary>
         /// Creates a new results panel.
         /// </summary>
@@ -205,7 +205,7 @@ namespace ResultsPanel.Helpers
                 var traceGroup = TraceManager.GetTraceGroup(groupId);
                 ui.GroupData = groupData;
                 ui.Text = string.Format(traceGroup.Title ?? TextHelper.GetString("Title.PluginPanel"), args);
-                ui.ParentPanel.Text = ui.Text; 
+                ui.ParentPanel.Text = ui.Text;
             }
         }
 
