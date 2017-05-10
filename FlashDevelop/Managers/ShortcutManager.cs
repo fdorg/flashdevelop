@@ -18,8 +18,8 @@ namespace FlashDevelop.Managers
     internal static class ShortcutManager
     {
         private const string VersionKey = "version";
-        private const int CurrentShortcutFileVersion = 1;
-        private const int ExtendedShortcutMinimumFileVersion = 1;
+        private static readonly int CurrentShortcutFileVersion = 1;
+        private static readonly int ExtendedShortcutMinimumFileVersion = 1;
 
         private static readonly HashSet<ShortcutKeys> allShortcuts;
         private static readonly HashSet<Keys> altFirstKeys;
@@ -213,9 +213,9 @@ namespace FlashDevelop.Managers
             {
                 allShortcuts.Add(item);
             }
-            foreach (var button in secondaryItems)
+            foreach (var item in secondaryItems)
             {
-                ApplySecondaryShortcut(button);
+                ApplySecondaryShortcut(item);
             }
         }
 

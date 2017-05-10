@@ -95,7 +95,7 @@ namespace PluginCore.Managers
         /// <param name="keys">The shortcut key to test for validity.</param>
         public static bool IsValidSimpleShortcut(Keys keys)
         {
-            if (keys == 0)
+            if (keys == Keys.None)
             {
                 return false;
             }
@@ -126,7 +126,7 @@ namespace PluginCore.Managers
         /// <param name="keys">The shortcut key to test for validity.</param>
         public static bool IsValidSimpleShortcutExclInsertDelete(Keys keys)
         {
-            if (keys == 0)
+            if (keys == Keys.None)
             {
                 return false;
             }
@@ -154,7 +154,7 @@ namespace PluginCore.Managers
         /// <param name="first">The shortcut key to test for validity.</param>
         public static bool IsValidExtendedShortcutFirst(Keys first)
         {
-            if (first == 0)
+            if (first == Keys.None)
             {
                 return false;
             }
@@ -181,7 +181,7 @@ namespace PluginCore.Managers
         /// <param name="second">The shortcut key to test for validity.</param>
         public static bool IsValidExtendedShortcutSecond(Keys second)
         {
-            if (second == 0)
+            if (second == Keys.None)
             {
                 return false;
             }
@@ -251,90 +251,103 @@ namespace PluginCore.Managers
                 return false;
             }
 
-            var control = Control.FromChildHandle(m.HWnd);
-            var parent = control;
-            if (parent == null)
+            var activeControl = Control.FromChildHandle(m.HWnd);
+            var activeControlInChain = activeControl;
+
+            if (activeControlInChain != null)
             {
-                return false;
-            }
-            do
-            {
-                if (parent.ContextMenuStrip != null)
+                do
                 {
-                    var parent_ContextMenuStrip_Shortcuts = parent.ContextMenuStrip.Shortcuts();
-                    if (parent_ContextMenuStrip_Shortcuts.Contains(shortcut))
+                    if (activeControlInChain.ContextMenuStrip != null)
                     {
-                        var item = parent_ContextMenuStrip_Shortcuts[shortcut] as ToolStripMenuItemEx;
-                        if (item != null && item.ProcessCmdKeyInternal(ref m, shortcut))
+                        var activeControlInChain_ContextMenuStrip_Shortcuts = activeControlInChain.ContextMenuStrip.Shortcuts();
+                        if (activeControlInChain_ContextMenuStrip_Shortcuts.ContainsKey(shortcut))
                         {
-                            return true;
+                            var item = activeControlInChain_ContextMenuStrip_Shortcuts[shortcut] as ToolStripMenuItemEx;
+                            if (item != null && item.ProcessCmdKeyInternal(ref m, shortcut))
+                            {
+                                return true;
+                            }
                         }
                     }
+                    activeControlInChain = activeControlInChain.Parent;
                 }
-                parent = parent.Parent;
-            }
-            while (parent != null);
+                while (activeControlInChain != null);
 
-            bool handled = false;
-            bool prune = false;
-            int count = toolStrips.Count;
-            for (int i = 0; i < count; i++)
-            {
-                var strip = toolStrips[i] as ToolStrip;
-                bool flag = false;
-                bool isAssignedToDropDownItem = false;
-                if (strip == null)
+                if (activeControlInChain != null)
                 {
-                    prune = true;
-                    continue;
+                    activeControl = activeControlInChain;
                 }
-                if (strip != control.ContextMenuStrip)
+
+                bool handled = false;
+                bool needsPrune = false;
+
+                for (int i = 0, count = toolStrips.Count; i < count; i++)
                 {
-                    var strip_Shortcuts = strip.Shortcuts();
-                    if (strip_Shortcuts.Contains(shortcut))
+                    var toolStrip = toolStrips[i] as ToolStrip;
+                    bool isAssociatedContextMenu = false;
+                    bool isDoublyAssignedContextMenuStrip = false;
+
+                    if (toolStrip == null)
                     {
-                        if (strip.IsDropDown)
+                        needsPrune = true;
+                        continue;
+                    }
+                    if (toolStrip == activeControl.ContextMenuStrip)
+                    {
+                        continue;
+                    }
+                    var toolStrip_Shortcuts = toolStrip.Shortcuts();
+                    if (toolStrip_Shortcuts.ContainsKey(shortcut))
+                    {
+                        if (toolStrip.IsDropDown)
                         {
-                            var down = strip as ToolStripDropDown;
-                            var firstDropDown = down.GetFirstDropDown() as ContextMenuStrip;
-                            if (firstDropDown != null)
+                            var dropDown = toolStrip as ToolStripDropDown;
+                            var toplevelContextMenu = dropDown.GetFirstDropDown() as ContextMenuStrip;
+
+                            if (toplevelContextMenu != null)
                             {
-                                isAssignedToDropDownItem = firstDropDown.IsAssignedToDropDownItem();
-                                if (!isAssignedToDropDownItem)
+                                isDoublyAssignedContextMenuStrip = toplevelContextMenu.IsAssignedToDropDownItem();
+                                if (!isDoublyAssignedContextMenuStrip)
                                 {
-                                    if (firstDropDown != control.ContextMenuStrip)
+                                    if (toplevelContextMenu != activeControl.ContextMenuStrip)
                                     {
                                         continue;
                                     }
-                                    flag = true;
+                                    isAssociatedContextMenu = true;
                                 }
                             }
                         }
-                        if (!flag)
+
+                        bool rootWindowsMatch = false;
+
+                        if (!isAssociatedContextMenu)
                         {
-                            var toplevelOwnerToolStrip = strip.GetToplevelOwnerToolStrip();
-                            if (toplevelOwnerToolStrip != null)
+                            var topMostToolStrip = toolStrip.GetToplevelOwnerToolStrip();
+                            if (topMostToolStrip != null)
                             {
-                                var rootHWnd = WindowsFormsUtils_GetRootHWnd(toplevelOwnerToolStrip);
-                                var controlRef = WindowsFormsUtils_GetRootHWnd(control);
-                                flag = rootHWnd.Handle == controlRef.Handle;
-                                if (flag)
+                                var rootWindowOfToolStrip = WindowsFormsUtils_GetRootHWnd(topMostToolStrip);
+                                var rootWindowOfControl = WindowsFormsUtils_GetRootHWnd(activeControl);
+                                rootWindowsMatch = rootWindowOfToolStrip.Handle == rootWindowOfControl.Handle;
+
+                                if (rootWindowsMatch)
                                 {
-                                    var form = Control.FromHandle(controlRef.Handle) as Form;
-                                    if (form != null && form.IsMdiContainer)
+                                    var mainForm = Control.FromHandle(rootWindowOfControl.Handle) as Form;
+                                    if (mainForm != null && mainForm.IsMdiContainer)
                                     {
-                                        var form2 = toplevelOwnerToolStrip.FindForm();
-                                        if (form2 != form && form2 != null)
+                                        var toolStripForm = topMostToolStrip.FindForm();
+                                        if (toolStripForm != mainForm && toolStripForm != null)
                                         {
-                                            flag = form2 == form.ActiveMdiChild;
+                                            rootWindowsMatch = toolStripForm == mainForm.ActiveMdiChild;
                                         }
                                     }
                                 }
                             }
                         }
-                        if (flag || isAssignedToDropDownItem)
+
+                        if (isAssociatedContextMenu || rootWindowsMatch || isDoublyAssignedContextMenuStrip)
                         {
-                            var item = strip_Shortcuts[shortcut] as ToolStripMenuItemEx;
+                            var item = toolStrip_Shortcuts[shortcut] as ToolStripMenuItemEx;
                             if (item != null && item.ProcessCmdKeyInternal(ref m, shortcut))
                             {
                                 handled = true;
@@ -343,12 +356,14 @@ namespace PluginCore.Managers
                         }
                     }
                 }
+                if (needsPrune)
+                {
+                    PruneToolStripList();
+                }
+                return handled;
             }
-            if (prune)
-            {
-                PruneToolStripList();
-            }
-            return handled;
+
+            return false;
         }
 
         private static bool IsThreadUsingToolStrips()
@@ -478,8 +493,8 @@ namespace PluginCore.Managers
 
         // Reflection: System.Windows.Forms.UnsafeNativeMethods.GetAncestor(HandleRef, Int32)
         // Cache: N/A
-        [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "GetAncestor", ExactSpelling = true)]
-        internal static extern IntPtr UnsafeNativeMethods_GetAncestor(HandleRef hWnd, int flags);
+        [DllImport("user32.dll", EntryPoint = "GetAncestor", ExactSpelling = true)]
+        internal static extern IntPtr UnsafeNativeMethods_GetAncestor([In] HandleRef hwnd, [In] uint flags);
 
         // Reflection: System.Windows.Forms.WindowsFormsUtils.GetRootHWnd(Control), [inline] System.Windows.Forms.WindowsFormsUtils.GetRootHWnd(HandleRef)
         // Cache: N/A
@@ -490,8 +505,8 @@ namespace PluginCore.Managers
 
         // Reflection: N/A
         // Cache: N/A
-        [DllImport("user32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
-        internal static extern int ToUnicode(uint wVirtKey, uint wScanCode, byte[] lpKeyState, [Out, MarshalAs(UnmanagedType.LPArray)] char[] pwszBuff, int cchBuff, uint wFlags);
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        internal static extern int ToUnicode([In] uint wVirtKey, [In] uint wScanCode, [In, Optional] byte[] lpKeyState, [Out, MarshalAs(UnmanagedType.LPArray)] char[] pwszBuff, [In] int cchBuff, [In] uint wFlags);
 
         #endregion
     }

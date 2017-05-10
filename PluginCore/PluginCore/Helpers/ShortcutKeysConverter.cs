@@ -259,8 +259,7 @@ namespace PluginCore.Helpers
             Add(Keys.OemOpenBrackets, "["); // Keys.Oem4
             Add(Keys.OemPipe, "\\"); // Keys.Oem5
             Add(Keys.OemCloseBrackets, "]"); // Keys.Oem6
-            Add(Keys.OemQuotes, "\""); // Keys.Oem7
-            Add(Keys.OemBackslash, "\\"); // Keys.Oem102
+            Add(Keys.OemQuotes, "'"); // Keys.Oem7
             Add(Keys.Shift, "Shift");
             Add(Keys.Control, "Ctrl");
             Add(Keys.Alt, "Alt");
@@ -268,8 +267,8 @@ namespace PluginCore.Helpers
 
         private static void Add(Keys key, string name)
         {
-            names[key] = name;
-            keys[name] = key;
+            names.Add(key, name);
+            keys.Add(name, key);
         }
 
         private static ShortcutKeys ConvertFromStringInternal(string value)

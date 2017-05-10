@@ -120,9 +120,9 @@ namespace PluginCore.Controls
                             Owner_Shortcuts[key] = this;
                         }
                     }
+                    shortcutKeys = value;
                     this.Properties_SetInteger(PropShortcutKeys, (int) (Keys) value);
                     ShortcutKeyDisplayString = value.IsNone ? null : value.ToString();
-                    shortcutKeys = value;
                 }
             }
         }
