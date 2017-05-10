@@ -12,6 +12,8 @@ namespace ASCompletion.Completion
         private string name;
         private char open;
         private char close;
+        private bool addSpace;
+        private bool ignoreWhitespace;
         private Rule[] rules;
 
         public string Name
@@ -32,6 +34,18 @@ namespace ASCompletion.Completion
             set { close = value; }
         }
 
+        public bool AddSpace
+        {
+            get { return addSpace; }
+            set { addSpace = value; }
+        }
+
+        public bool IgnoreWhitespace
+        {
+            get { return ignoreWhitespace; }
+            set { ignoreWhitespace = value; }
+        }
+
         public Rule[] Rules
         {
             get { return rules; }
@@ -41,18 +55,20 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Creates an instance of <see cref="Brace"/>.
         /// </summary>
-        public Brace(string name, char open, char close, Rule[] rules)
+        public Brace(string name, char open, char close, bool addSpace, bool ignoreWhitespace, Rule[] rules)
         {
             Name = name;
             Open = open;
             Close = close;
+            AddSpace = addSpace;
+            IgnoreWhitespace = ignoreWhitespace;
             Rules = rules;
         }
         
         /// <summary>
-        /// Returns whether this brace should close for the specified condition.
+        /// Returns whether this brace should open with the matching close brace automatically inserted.
         /// </summary>
-        public bool ShouldAutoClose(char charBefore, byte styleBefore, char charAfter, byte styleAfter)
+        public bool ShouldOpen(char charBefore, byte styleBefore, char charAfter, byte styleAfter)
         {
             for (int i = 0; i < rules.Length; i++)
             {
@@ -62,6 +78,22 @@ namespace ASCompletion.Completion
                 }
             }
             return false;
+        }
+
+        /// <summary>
+        /// Returns whether this brace should close with the matching close brace overwritten.
+        /// </summary>
+        public bool ShouldClose(int currentPosition, int nextPosition)
+        {
+            return ignoreWhitespace || currentPosition == nextPosition;
+        }
+
+        /// <summary>
+        /// Returns whether this brace should remove the matching close brace.
+        /// </summary>
+        public bool ShouldRemove(int currentPosition, int nextPosition)
+        {
+            return ignoreWhitespace || currentPosition == nextPosition;
         }
 
         /// <summary>

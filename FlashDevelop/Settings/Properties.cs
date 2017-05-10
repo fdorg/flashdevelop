@@ -99,6 +99,7 @@ namespace FlashDevelop.Settings
         private Boolean uiWrapList = false;
         private Boolean uiDisableSmartMatch = false;
         private String uiInsertionTriggers = "";
+        private Int32 clipboardHistorySize = 50;
     }
 
 }

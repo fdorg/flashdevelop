@@ -171,19 +171,20 @@ namespace HaXeContext
                     CommandFactoryProvider.Register("haxe", new HaxeCommandFactory());
                     break;
                 case EventType.Trace:
-                    var nameToVersion = new Dictionary<string, string>();
-                    var length = TraceManager.TraceLog.Count - logCount;
-                    for (var i = 0; i < length; i++)
+                    if (settingObject.DisableLibInstallation) return;
+                    var patterns = new[]
                     {
-                        var item = TraceManager.TraceLog[logCount + i];
-                        var patterns = new []
-                        {
-                            "Library \\s*(?<name>[^ ]+)\\s*?(\\s*version (?<version>[^ ]+))?",
-                            "Could not find haxelib\\s*(?<name>\"[^ ]+\")?(\\s*version \"(?<version>[^ ]+)\")?"//openfl project
-                        };
+                        "Library \\s*(?<name>[^ ]+)\\s*?(\\s*version (?<version>[^ ]+))?",
+                        "Could not find haxelib\\s*(?<name>\"[^ ]+\")?(\\s*version \"(?<version>[^ ]+)\")?"//openfl project
+                    };
+                    var nameToVersion = new Dictionary<string, string>();
+                    for (var i = logCount; i < TraceManager.TraceLog.Count; i++)
+                    {
+                        var message = TraceManager.TraceLog[i].Message?.Trim();
+                        if (string.IsNullOrEmpty(message)) continue;
                         foreach (var pattern in patterns)
                         {
-                            var m = Regex.Match(item.Message, pattern);
+                            var m = Regex.Match(message, pattern);
                             if (m.Success) nameToVersion[m.Groups["name"].Value] = m.Groups["version"].Value;
                         }
                     }

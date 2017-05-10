@@ -20,7 +20,9 @@ namespace ASCompletion.Completion
     [TestFixture]
     public class ASCompleteTests
     {
+#pragma warning disable CS0436 // Type conflicts with imported type
         private MainForm mainForm;
+#pragma warning restore CS0436 // Type conflicts with imported type
         private ISettings settings;
         private ITabbedDocument doc;
         protected ScintillaControl sci;
@@ -28,7 +30,9 @@ namespace ASCompletion.Completion
         [TestFixtureSetUp]
         public void FixtureSetUp()
         {
+#pragma warning disable CS0436 // Type conflicts with imported type
             mainForm = new MainForm();
+#pragma warning restore CS0436 // Type conflicts with imported type
             settings = Substitute.For<ISettings>();
             settings.UseTabs = true;
             settings.IndentSize = 4;
@@ -76,6 +80,24 @@ namespace ASCompletion.Completion
                 IsUseTabs = settings.UseTabs,
                 TabWidth = settings.TabWidth
             };
+        }
+
+        private static void SetAs3Features(ScintillaControl sci)
+        {
+            if (sci.ConfigurationLanguage != "as3")
+            {
+                sci.ConfigurationLanguage = "as3";
+                ASContext.Context.SetAs3Features();
+            }
+        }
+
+        private static void SetHaxeFeatures(ScintillaControl sci)
+        {
+            if (sci.ConfigurationLanguage != "haxe")
+            {
+                sci.ConfigurationLanguage = "haxe";
+                ASContext.Context.SetHaxeFeatures();
+            }
         }
 
         // TODO: Add more tests!
@@ -320,15 +342,13 @@ namespace ASCompletion.Completion
 
             internal static MemberModel AS3Impl(string sourceText, ScintillaControl sci)
             {
-                sci.ConfigurationLanguage = "as3";
-                ASContext.Context.SetAs3Features();
+                SetAs3Features(sci);
                 return Common(sourceText, sci);
             }
 
             internal static MemberModel HaxeImpl(string sourceText, ScintillaControl sci)
             {
-                sci.ConfigurationLanguage = "haxe";
-                ASContext.Context.SetHaxeFeatures();
+                SetHaxeFeatures(sci);
                 return Common(sourceText, sci);
             }
 
@@ -501,15 +521,13 @@ namespace ASCompletion.Completion
 
             internal static string AS3Impl(string text, ScintillaControl sci)
             {
-                sci.ConfigurationLanguage = "as3";
-                ASContext.Context.SetAs3Features();
+                SetAs3Features(sci);
                 return Common(text, sci);
             }
 
             internal static string HaxeImpl(string text, ScintillaControl sci)
             {
-                sci.ConfigurationLanguage = "haxe";
-                ASContext.Context.SetHaxeFeatures();
+                SetHaxeFeatures(sci);
                 return Common(text, sci);
             }
 
@@ -632,6 +650,13 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("(+>").      Returns("()>").       SetName(prefix + "Open ( after 'Default' before >");
                     yield return new TestCaseData("(+a").      Returns("(a").        SetName(prefix + "Open ( after 'Default' before 'Identifier'");
 
+                    yield return new TestCaseData("{+").       Returns("{ }").       SetName(prefix + "Open { after 'Default' before 'Default'");
+                    yield return new TestCaseData("{+)").      Returns("{ })").      SetName(prefix + "Open { after 'Default' before )");
+                    yield return new TestCaseData("{+}").      Returns("{ }}").      SetName(prefix + "Open { after 'Default' before }");
+                    yield return new TestCaseData("{+]").      Returns("{ }]").      SetName(prefix + "Open { after 'Default' before ]");
+                    yield return new TestCaseData("{+>").      Returns("{ }>").      SetName(prefix + "Open { after 'Default' before >");
+                    yield return new TestCaseData("{+a").      Returns("{a").        SetName(prefix + "Open { after 'Default' before 'Identifier'");
+
                     yield return new TestCaseData("[+").       Returns("[]").        SetName(prefix + "Open [ after 'Default' before 'Default'");
                     yield return new TestCaseData("[+/* */").  Returns("[]/* */").   SetName(prefix + "Open [ after 'Default' before 'Comment'");
                     yield return new TestCaseData("[+//").     Returns("[]//").      SetName(prefix + "Open [ after 'Default' before 'CommentLine'");
@@ -642,13 +667,6 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("[+]").      Returns("[]]").       SetName(prefix + "Open [ after 'Default' before ]");
                     yield return new TestCaseData("[+>").      Returns("[]>").       SetName(prefix + "Open [ after 'Default' before >");
                     yield return new TestCaseData("[+a").      Returns("[a").        SetName(prefix + "Open [ after 'Default' before 'Identifier'");
-
-                    yield return new TestCaseData("{+").       Returns("{}").        SetName(prefix + "Open { after 'Default' before 'Default'");
-                    yield return new TestCaseData("{+)").      Returns("{})").       SetName(prefix + "Open { after 'Default' before )");
-                    yield return new TestCaseData("{+}").      Returns("{}}").       SetName(prefix + "Open { after 'Default' before }");
-                    yield return new TestCaseData("{+]").      Returns("{}]").       SetName(prefix + "Open { after 'Default' before ]");
-                    yield return new TestCaseData("{+>").      Returns("{}>").       SetName(prefix + "Open { after 'Default' before >");
-                    yield return new TestCaseData("{+a").      Returns("{a").        SetName(prefix + "Open { after 'Default' before 'Identifier'");
 
                     yield return new TestCaseData("\"+").      Returns("\"\"").      SetName(prefix + "Open \" after 'Default' before 'Default'");
                     yield return new TestCaseData("\"+/* */"). Returns("\"\"/* */"). SetName(prefix + "Open \" after 'Default' before 'Comment'");
@@ -686,8 +704,8 @@ namespace ASCompletion.Completion
                 get
                 {
                     yield return new TestCaseData("()+)").     Returns("()").      SetName(prefix + "Close ) to overwrite )");
-                    yield return new TestCaseData("[]+]").     Returns("[]").      SetName(prefix + "Close ] to overwrite ]");
                     yield return new TestCaseData("{}+}").     Returns("{}").      SetName(prefix + "Close } to overwrite }");
+                    yield return new TestCaseData("[]+]").     Returns("[]").      SetName(prefix + "Close ] to overwrite ]");
                     yield return new TestCaseData("\"\"+\"").  Returns("\"\"").    SetName(prefix + "Close \" to overwrite \"");
                     yield return new TestCaseData("\"\\\"+\"").Returns("\"\\\"\"").SetName(prefix + "Close \" escaped should not overwrite \"");
                     yield return new TestCaseData("''+'").     Returns("''").      SetName(prefix + "Close ' to overwrite '");
@@ -701,8 +719,8 @@ namespace ASCompletion.Completion
                 get
                 {
                     yield return new TestCaseData("(-)").  Returns("").SetName(prefix + "Delete ( to delete )");
-                    yield return new TestCaseData("[-]").  Returns("").SetName(prefix + "Delete [ to delete ]");
                     yield return new TestCaseData("{-}").  Returns("").SetName(prefix + "Delete { to delete }");
+                    yield return new TestCaseData("[-]").  Returns("").SetName(prefix + "Delete [ to delete ]");
                     yield return new TestCaseData("\"-\"").Returns("").SetName(prefix + "Delete \" to delete \"");
                     yield return new TestCaseData("'-'").  Returns("").SetName(prefix + "Delete ' to delete '");
                     yield return new TestCaseData("<->").  Returns("").SetName(prefix + "Delete < to delete >");
@@ -734,12 +752,16 @@ namespace ASCompletion.Completion
             {
                 get
                 {
-                    yield return new TestCaseData("(-  )").  Returns("").SetName(prefix + "Delete ( to delete ) and the whitespace in between");
-                    yield return new TestCaseData("[-\t]").  Returns("").SetName(prefix + "Delete [ to delete ] and the whitespace in between");
-                    yield return new TestCaseData("{-\n}").  Returns("").SetName(prefix + "Delete { to delete } and the whitespace in between");
-                    yield return new TestCaseData("\"-  \"").Returns("").SetName(prefix + "Delete \" to delete \" and the whitespace in between");
-                    yield return new TestCaseData("'-  '").  Returns("").SetName(prefix + "Delete ' to delete ' and the whitespace in between");
-                    yield return new TestCaseData("<-  >").  Returns("").SetName(prefix + "Delete < to delete > and the whitespace in between");
+                    yield return new TestCaseData(")+ )").  Returns(" )"). SetName(prefix + "Close ) to overwrite ) after whitespace");
+                    yield return new TestCaseData("}+\t}"). Returns("\t}").SetName(prefix + "Close } to overwrite } after whitespace");
+                    yield return new TestCaseData("]+\t]"). Returns("\t]").SetName(prefix + "Close ] to overwrite ] after whitespace");
+
+                    yield return new TestCaseData("(- )").  Returns("").   SetName(prefix + "Delete ( to delete ) and the whitespace in between");
+                    yield return new TestCaseData("{-\n}"). Returns("").   SetName(prefix + "Delete { to delete } and the whitespace in between");
+                    yield return new TestCaseData("[-\t]"). Returns("").   SetName(prefix + "Delete [ to delete ] and the whitespace in between");
+                    yield return new TestCaseData("\"- \"").Returns(" \"").SetName(prefix + "Delete \" without deleting \" and the whitespace in between");
+                    yield return new TestCaseData("'- '").  Returns(" '"). SetName(prefix + "Delete ' without deleting ' and the whitespace in between");
+                    yield return new TestCaseData("<- >").  Returns(" >"). SetName(prefix + "Delete < without deleting > and the whitespace in between");
                 }
             }
 
@@ -751,7 +773,7 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("'${-}'").    Returns("'$'").      SetName(prefix + "Delete interpolation { to delete }");
 
                     yield return new TestCaseData("'${(+}'").   Returns("'${()}'").  SetName(prefix + "Open ( inside string interpolation");
-                    yield return new TestCaseData("'${{+}'").   Returns("'${{}}'").  SetName(prefix + "Open { inside string interpolation");
+                    yield return new TestCaseData("'${{+}'").   Returns("'${{ }}'"). SetName(prefix + "Open { inside string interpolation");
                     yield return new TestCaseData("'${[+}'").   Returns("'${[]}'").  SetName(prefix + "Open [ inside string interpolation");
                     yield return new TestCaseData("'${\"+}'").  Returns("'${\"\"}'").SetName(prefix + "Open \" inside string interpolation");
                     yield return new TestCaseData("'${'+}'").   Returns("'${''}'").  SetName(prefix + "Open ' inside string interpolation");
@@ -772,11 +794,7 @@ namespace ASCompletion.Completion
                 TestCaseSource(nameof(DeleteWhitespaceTestCases))]
             public string AS3(string text)
             {
-                if (sci.ConfigurationLanguage != "as3")
-                {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
-                }
+                SetAs3Features(sci);
                 return Common(text.Replace('V', 'v'), sci).Replace('v', 'V'); //Replace "Void" with "void" for type checking
             }
 
@@ -786,11 +804,7 @@ namespace ASCompletion.Completion
                 TestCaseSource(nameof(DeleteWhitespaceTestCases)), TestCaseSource(nameof(InsideInterpolationTestCases))]
             public string Haxe(string text)
             {
-                if (sci.ConfigurationLanguage != "haxe")
-                {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
-                }
+                SetHaxeFeatures(sci);
                 return Common(text, sci);
             }
 
@@ -814,7 +828,7 @@ namespace ASCompletion.Completion
                 {
                     sci.DeleteBack(); // Backspace is handled after HandleAddClosingBraces(), so mimic that behaviour
                 }
-                return sci.GetCurLine(sci.CurLineSize - 1); // Ignore the last new line character
+                return sci.GetTextRange(1, sci.TextLength - 1); // Ignore the surrounding new line characters
             }
         }
 
@@ -884,8 +898,7 @@ namespace ASCompletion.Completion
 
             internal static int HaxeImpl(string text, ScintillaControl sci)
             {
-                sci.ConfigurationLanguage = "haxe";
-                ASContext.Context.SetHaxeFeatures();
+                SetHaxeFeatures(sci);
                 return Common(text, sci);
             }
 

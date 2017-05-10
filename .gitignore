@@ -20,6 +20,7 @@ Thumbs.db
 /FlashDevelop/Bin/Debug/Settings/Shortcuts/CURRENT
 /FlashDevelop/Bin/Debug/Settings/Themes/CURRENT
 /FlashDevelop/Bin/Debug/Tools/fdbuild/fdbuild.exe
+/FlashDevelop/Bin/Debug/*.Tests.dll
 /FlashDevelop/Bin/Debug/Exceptions.log
 /FlashDevelop/Bin/Debug/FlashDevelop.*
 /FlashDevelop/Bin/Debug/FlashDevelop64.*

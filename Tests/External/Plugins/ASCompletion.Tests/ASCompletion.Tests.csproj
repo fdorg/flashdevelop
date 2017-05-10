@@ -559,6 +559,32 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideGetSet_2.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideGetSet_3.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideGetSet_3.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_17.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_17.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_18.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_18.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_19.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_19.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_20.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_20.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_21.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_21.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromCastExp.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromCastExp.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVarFromUnsafeCastExpr.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVarFromUnsafeCastExpr.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromCastExp2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromCastExp2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVarFromCastExp3.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVarFromCastExp3.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFieldFromParameter.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFieldFromParameter.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFieldFromOptionalParameter.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFieldFromOptionalParameter.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFieldFromOptionalUntypedParameter.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFieldFromOptionalUntypedParameter.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFieldFromOptionalParameter2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFieldFromOptionalParameter2.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

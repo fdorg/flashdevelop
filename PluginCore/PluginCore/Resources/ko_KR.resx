@@ -6127,27 +6127,7 @@ AND - 모든 조건을 만족할때.</value>
   </data>
   <data name="ResultsPanel.Description.DefaultGrouping" xml:space="preserve">
     <value>The default column to group results by.</value>
-    <comment>Added after 5.2.0</comment>
-  </data>
-  <data name="FlashDevelop.Info.PressNewShortcut" xml:space="preserve">
-    <value>새 단축키를 누르세요:</value>
-    <comment>Added after 5.2.0</comment>
-  </data>
-  <data name="FlashDevelop.Info.ShortcutUndefined" xml:space="preserve">
-    <value>단축키 조합 ({0})이 정의되어 있지 않습니다.</value>
-    <comment>Added after 5.2.0</comment>
-  </data>
-  <data name="FlashDevelop.Info.ShortcutWaiting" xml:space="preserve">
-    <value>({0}) 키를 눌렀습니다. 두번째 키 입력을 기다리는 중...</value>
-    <comment>Added after 5.2.0</comment>
-  </data>
-  <data name="FlashDevelop.Label.Reset" xml:space="preserve">
-    <value>초기화 (&amp;R)</value>
-    <comment>Added after 5.2.0</comment>
-  </data>
-  <data name="FlashDevelop.Description.DisableExtendedShortcutKeys" xml:space="preserve">
-    <value>확장 된 단축키를 사용하지 않도록 설정합니다. 확장 된 단축키를 사용하면 두 개의 키 조합을 하나의 단축키로 입력 할 수 있습니다.</value>
-    <comment>Added after 5.2.0</comment>
+    <comment>Added after 5.2.1</comment>
   </data>
   <data name="LintingHelper.Description.LintOnSave" xml:space="preserve">
     <value>Runs the available linters when a file is saved.</value>
@@ -6170,19 +6150,67 @@ AND - 모든 조건을 만족할때.</value>
     <comment>Added after 5.2.1</comment>
   </data>
   <data name="CodeRefactor.Label.FindAllReferencesResult" xml:space="preserve">
-    <value>References</value>
+    <value>'{0}' References</value>
     <comment>Added after 5.2.1</comment>
   </data>
   <data name="FlashDevelop.Label.FindAndReplaceResults" xml:space="preserve">
     <value>Find and Replace</value>
     <comment>Added after 5.2.1</comment>
   </data>
-  <data name="LintingManager.Label.LintingResults" xml:space="preserve">
+  <data name="LintingHelper.Label.LintingResults" xml:space="preserve">
     <value>Linters</value>
     <comment>Added after 5.2.1</comment>
   </data>
   <data name="HaXeContext.Info.MissingLib" xml:space="preserve">
     <value>Missing libraries detected. Would you like to try to install them through the package manager?</value>
     <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="HaXeContext.Description.UseGenericsShortNotation" xml:space="preserve">
+    <value>Use short notation for generics instantiation whenever possible (ie. var arr:Array&lt;String&gt; = new Array())</value>
+    <comment>after 5.2.1</comment>
+  </data>
+  <data name="FlashDevelop.Label.Clear" xml:space="preserve">
+    <value>&amp;Clear</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="FlashDevelop.Label.PasteHistory" xml:space="preserve">
+    <value>Paste History</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="FlashDevelop.Description.ClipboardHistorySize" xml:space="preserve">
+    <value>The number of items to store in the clipboard history. Minimum value is 1.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ResultsPanel.Label.KeepResults" xml:space="preserve">
+    <value>Keep Results</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ResultsPanel.Description.HighlightOnlyActivePanelEntries" xml:space="preserve">
+    <value>Highlight only the entries in the active panel and the main panel.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ResultsPanel.Description.KeepResultsByDefault" xml:space="preserve">
+    <value>Keep result panels locked by default.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="FlashDevelop.Info.PressNewShortcut" xml:space="preserve">
+    <value>새 단축키를 누르세요:</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="FlashDevelop.Info.ShortcutUndefined" xml:space="preserve">
+    <value>단축키 조합 ({0})이 정의되어 있지 않습니다.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="FlashDevelop.Info.ShortcutWaiting" xml:space="preserve">
+    <value>({0}) 키를 눌렀습니다. 두번째 키 입력을 기다리는 중...</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="FlashDevelop.Label.Reset" xml:space="preserve">
+    <value>초기화 (&amp;R)</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="FlashDevelop.Description.DisableExtendedShortcutKeys" xml:space="preserve">
+    <value>확장 된 단축키를 사용하지 않도록 설정합니다. 확장 된 단축키를 사용하면 두 개의 키 조합을 하나의 단축키로 입력 할 수 있습니다.</value>
+    <comment>Added after 5.2.0</comment>
   </data>
 </root>

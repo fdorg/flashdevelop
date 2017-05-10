@@ -7,6 +7,8 @@ using PluginCore.Utilities;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using LintingHelper.Managers;
+using PluginCore.Localization;
 
 namespace LintingHelper
 {
@@ -135,6 +137,8 @@ namespace LintingHelper
             string dataPath = Path.Combine(PathHelper.DataDir, nameof(LintingHelper));
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             this.settingFilename = Path.Combine(dataPath, $"{nameof(Settings)}.fdb");
+
+            TraceManager.RegisterTraceGroup(LintingManager.TraceGroup, TextHelper.GetStringWithoutMnemonics("Label.LintingResults"));
         }
 
         private void LoadSettings()

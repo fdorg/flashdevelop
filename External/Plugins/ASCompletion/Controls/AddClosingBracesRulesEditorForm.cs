@@ -18,6 +18,8 @@ namespace ASCompletion.Controls
         private TextBox txtName;
         private TextBox txtOpenChar;
         private TextBox txtCloseChar;
+        private CheckBox cbxAddSpace;
+        private CheckBox cbxIgnoreWhitespace;
         private DataGridView rulesGridView;
         private DataGridViewCheckBoxColumn not1;
         private DataGridViewRegexColumn afterChars;
@@ -65,6 +67,8 @@ namespace ASCompletion.Controls
             txtOpenChar = new TextBox();
             var lblCloseChar = new Label();
             txtCloseChar = new TextBox();
+            cbxAddSpace = new CheckBox();
+            cbxIgnoreWhitespace = new CheckBox();
             rulesGridView = new DataGridView();
             not1 = new DataGridViewCheckBoxColumn();
             afterChars = new DataGridViewRegexColumn();
@@ -92,44 +96,44 @@ namespace ASCompletion.Controls
             // 
             listBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             listBox.IntegralHeight = false;
-            listBox.ItemHeight = 16;
+            listBox.ItemHeight = 20;
             listBox.Location = new Point(12, 12);
             listBox.Name = "listBox";
-            listBox.Size = new Size(156, 243);
+            listBox.Size = new Size(156, 250);
             listBox.TabIndex = 0;
             listBox.SelectedValueChanged += ListBox_SelectedValueChanged;
             // 
             // lblName
             // 
             lblName.AutoSize = true;
-            lblName.Location = new Point(207, 15);
+            lblName.Location = new Point(206, 15);
             lblName.Name = "lblName";
-            lblName.Size = new Size(53, 17);
-            lblName.Text = "Name: ";
+            lblName.Size = new Size(52, 20);
+            lblName.Text = "Name:";
             // 
             // txtName
             // 
-            txtName.Location = new Point(266, 12);
+            txtName.Location = new Point(264, 12);
             txtName.MaxLength = 32;
             txtName.Name = "txtName";
-            txtName.Size = new Size(200, 22);
+            txtName.Size = new Size(156, 27);
             txtName.TabIndex = 1;
             txtName.TextChanged += TxtName_TextChanged;
             // 
             // lblOpenChar
             // 
             lblOpenChar.AutoSize = true;
-            lblOpenChar.Location = new Point(472, 15);
+            lblOpenChar.Location = new Point(426, 15);
             lblOpenChar.Name = "lblOpenChar";
-            lblOpenChar.Size = new Size(51, 17);
-            lblOpenChar.Text = "Open: ";
+            lblOpenChar.Size = new Size(48, 20);
+            lblOpenChar.Text = "Open:";
             // 
             // txtOpenChar
             // 
-            txtOpenChar.Location = new Point(529, 12);
+            txtOpenChar.Location = new Point(480, 12);
             txtOpenChar.MaxLength = 1;
             txtOpenChar.Name = "txtOpenChar";
-            txtOpenChar.Size = new Size(30, 22);
+            txtOpenChar.Size = new Size(30, 27);
             txtOpenChar.TabIndex = 2;
             txtOpenChar.TextAlign = HorizontalAlignment.Center;
             txtOpenChar.TextChanged += TxtOpenChar_TextChanged;
@@ -137,20 +141,44 @@ namespace ASCompletion.Controls
             // lblCloseChar
             // 
             lblCloseChar.AutoSize = true;
-            lblCloseChar.Location = new Point(565, 15);
+            lblCloseChar.Location = new Point(516, 15);
             lblCloseChar.Name = "lblCloseChar";
-            lblCloseChar.Size = new Size(51, 17);
-            lblCloseChar.Text = "Close: ";
+            lblCloseChar.Size = new Size(48, 20);
+            lblCloseChar.Text = "Close:";
             // 
             // txtCloseChar
             // 
-            txtCloseChar.Location = new Point(622, 12);
+            txtCloseChar.Location = new Point(570, 12);
             txtCloseChar.MaxLength = 1;
             txtCloseChar.Name = "txtCloseChar";
-            txtCloseChar.Size = new Size(30, 22);
+            txtCloseChar.Size = new Size(30, 27);
             txtCloseChar.TabIndex = 3;
             txtCloseChar.TextAlign = HorizontalAlignment.Center;
             txtCloseChar.TextChanged += TxtCloseChar_TextChanged;
+            // 
+            // cbxAddSpace
+            // 
+            cbxAddSpace.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            cbxAddSpace.AutoSize = true;
+            cbxAddSpace.Location = new Point(706, 12);
+            cbxAddSpace.Name = "cbxAddSpace";
+            cbxAddSpace.Size = new Size(103, 24);
+            cbxAddSpace.TabIndex = 4;
+            cbxAddSpace.Text = "Add Space";
+            cbxAddSpace.TextAlign = ContentAlignment.MiddleRight;
+            cbxAddSpace.CheckedChanged += CbxAddSpace_CheckedChanged;
+            // 
+            // cbxIgnoreWhitespace
+            // 
+            cbxIgnoreWhitespace.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            cbxIgnoreWhitespace.AutoSize = true;
+            cbxIgnoreWhitespace.Location = new Point(815, 12);
+            cbxIgnoreWhitespace.Name = "cbxIgnoreWhitespace";
+            cbxIgnoreWhitespace.Size = new Size(155, 24);
+            cbxIgnoreWhitespace.TabIndex = 5;
+            cbxIgnoreWhitespace.Text = "Ignore Whitespace";
+            cbxIgnoreWhitespace.TextAlign = ContentAlignment.MiddleRight;
+            cbxIgnoreWhitespace.CheckedChanged += CbxIgnoreWhitespace_CheckedChanged;
             // 
             // rulesGridView
             // 
@@ -176,12 +204,12 @@ namespace ASCompletion.Controls
                 beforeStyles,
                 colDelete
             });
-            rulesGridView.Location = new Point(210, 40);
+            rulesGridView.Location = new Point(210, 45);
             rulesGridView.Name = "rulesGridView";
             rulesGridView.RowTemplate.Height = 24;
             rulesGridView.ScrollBars = ScrollBars.Vertical;
-            rulesGridView.Size = new Size(760, 265);
-            rulesGridView.TabIndex = 4;
+            rulesGridView.Size = new Size(760, 260);
+            rulesGridView.TabIndex = 6;
             rulesGridView.CellContentClick += RulesGridView_CellContentClick;
             rulesGridView.CellEndEdit += RulesGridView_CellEndEdit;
             rulesGridView.CellValueChanged += RulesGridView_CellValueChanged;
@@ -204,6 +232,7 @@ namespace ASCompletion.Controls
             // 
             logic1.AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader;
             logic1.HeaderText = "";
+            logic1.MinimumWidth = 40;
             logic1.Name = "logic1";
             logic1.SortMode = DataGridViewColumnSortMode.NotSortable;
             // 
@@ -225,6 +254,7 @@ namespace ASCompletion.Controls
             // 
             logic2.AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader;
             logic2.HeaderText = "";
+            logic2.MinimumWidth = 40;
             logic2.Name = "logic2";
             logic2.SortMode = DataGridViewColumnSortMode.NotSortable;
             // 
@@ -246,6 +276,7 @@ namespace ASCompletion.Controls
             // 
             logic3.AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader;
             logic3.HeaderText = "";
+            logic3.MinimumWidth = 40;
             logic3.Name = "logic3";
             logic3.SortMode = DataGridViewColumnSortMode.NotSortable;
             // 
@@ -267,34 +298,35 @@ namespace ASCompletion.Controls
             // 
             colDelete.AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader;
             colDelete.HeaderText = "";
+            colDelete.MinimumWidth = 21;
             colDelete.Name = "colDelete";
             colDelete.SortMode = DataGridViewColumnSortMode.NotSortable;
             // 
             // btnUp
             // 
-            btnUp.Location = new Point(174, 42);
+            btnUp.Location = new Point(174, 50);
             btnUp.Name = "btnUp";
             btnUp.Size = new Size(30, 30);
-            btnUp.TabIndex = 5;
+            btnUp.TabIndex = 7;
             btnUp.UseVisualStyleBackColor = true;
             btnUp.Click += BtnUp_Click;
             // 
             // btnDown
             // 
-            btnDown.Location = new Point(174, 78);
+            btnDown.Location = new Point(174, 84);
             btnDown.Name = "btnDown";
             btnDown.Size = new Size(30, 30);
-            btnDown.TabIndex = 6;
+            btnDown.TabIndex = 8;
             btnDown.UseVisualStyleBackColor = true;
             btnDown.Click += BtnDown_Click;
             // 
             // btnAdd
             // 
             btnAdd.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            btnAdd.Location = new Point(12, 261);
+            btnAdd.Location = new Point(12, 268);
             btnAdd.Name = "btnAdd";
             btnAdd.Size = new Size(75, 30);
-            btnAdd.TabIndex = 7;
+            btnAdd.TabIndex = 9;
             btnAdd.Text = "Add";
             btnAdd.UseVisualStyleBackColor = true;
             btnAdd.Click += BtnAdd_Click;
@@ -302,10 +334,10 @@ namespace ASCompletion.Controls
             // btnRemove
             // 
             btnRemove.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            btnRemove.Location = new Point(93, 261);
+            btnRemove.Location = new Point(93, 268);
             btnRemove.Name = "btnRemove";
             btnRemove.Size = new Size(75, 30);
-            btnRemove.TabIndex = 8;
+            btnRemove.TabIndex = 10;
             btnRemove.Text = "Remove";
             btnRemove.UseVisualStyleBackColor = true;
             btnRemove.Click += BtnRemove_Click;
@@ -316,7 +348,7 @@ namespace ASCompletion.Controls
             btnAddRule.Location = new Point(210, 311);
             btnAddRule.Name = "btnAddRule";
             btnAddRule.Size = new Size(30, 30);
-            btnAddRule.TabIndex = 9;
+            btnAddRule.TabIndex = 11;
             btnAddRule.Text = "";
             btnAddRule.UseVisualStyleBackColor = true;
             btnAddRule.Click += BtnAddRule_Click;
@@ -328,7 +360,7 @@ namespace ASCompletion.Controls
             btnOk.Location = new Point(724, 311);
             btnOk.Name = "btnOk";
             btnOk.Size = new Size(120, 30);
-            btnOk.TabIndex = 10;
+            btnOk.TabIndex = 12;
             btnOk.Text = "OK";
             btnOk.UseVisualStyleBackColor = true;
             btnOk.Click += BtnOk_Click;
@@ -340,15 +372,15 @@ namespace ASCompletion.Controls
             btnCancel.Location = new Point(850, 311);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(120, 30);
-            btnCancel.TabIndex = 11;
+            btnCancel.TabIndex = 13;
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
             btnCancel.Click += BtnCancel_Click;
             // 
-            // AddClosingBracesRulesEditor
+            // AddClosingBracesRulesEditorForm
             // 
             AcceptButton = btnOk;
-            AutoScaleDimensions = new SizeF(8F, 16F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             CancelButton = btnCancel;
             ClientSize = new Size(982, 353);
@@ -360,6 +392,8 @@ namespace ASCompletion.Controls
             Controls.Add(btnDown);
             Controls.Add(btnUp);
             Controls.Add(rulesGridView);
+            Controls.Add(cbxIgnoreWhitespace);
+            Controls.Add(cbxAddSpace);
             Controls.Add(txtCloseChar);
             Controls.Add(lblCloseChar);
             Controls.Add(txtOpenChar);
@@ -369,12 +403,13 @@ namespace ASCompletion.Controls
             Controls.Add(listBox);
             FormBorderStyle = FormBorderStyle.SizableToolWindow;
             MinimumSize = new Size(900, 300);
-            Name = "AddClosingBracesRulesEditor";
+            Name = "AddClosingBracesRulesEditorForm";
             ShowInTaskbar = false;
             StartPosition = FormStartPosition.CenterParent;
             Text = "AddClosingBracesRulesEditor";
             ((ISupportInitialize) (rulesGridView)).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -391,6 +426,8 @@ namespace ASCompletion.Controls
 
         private void InitializeFonts()
         {
+            Font = PluginBase.Settings.DefaultFont;
+
             afterChars.DefaultCellStyle.Font = PluginBase.Settings.ConsoleFont;
             beforeChars.DefaultCellStyle.Font = PluginBase.Settings.ConsoleFont;
             txtOpenChar.Font = PluginBase.Settings.ConsoleFont;
@@ -451,17 +488,21 @@ namespace ASCompletion.Controls
             get { return braces; }
         }
 
-        private void ShowRules()
+        private void ShowBraceProperties()
         {
             txtName.TextChanged -= TxtName_TextChanged;
             txtOpenChar.TextChanged -= TxtOpenChar_TextChanged;
             txtCloseChar.TextChanged -= TxtCloseChar_TextChanged;
+            cbxAddSpace.CheckedChanged -= CbxAddSpace_CheckedChanged;
+            cbxIgnoreWhitespace.CheckedChanged -= CbxIgnoreWhitespace_CheckedChanged;
 
             if (inEdit == null)
             {
                 txtName.Text = "";
                 txtOpenChar.Text = "";
                 txtCloseChar.Text = "";
+                cbxAddSpace.Checked = false;
+                cbxIgnoreWhitespace.Checked = false;
 
                 rulesGridView.Rows.Clear();
             }
@@ -470,6 +511,8 @@ namespace ASCompletion.Controls
                 txtName.Text = inEdit.Name;
                 txtOpenChar.Text = inEdit.Open == '\0' ? "" : inEdit.Open.ToString();
                 txtCloseChar.Text = inEdit.Close == '\0' ? "" : inEdit.Close.ToString();
+                cbxAddSpace.Checked = inEdit.AddSpace;
+                cbxIgnoreWhitespace.Checked = inEdit.IgnoreWhitespace;
 
                 rulesGridView.Rows.Clear();
                 foreach (var rule in inEdit.Rules)
@@ -483,6 +526,8 @@ namespace ASCompletion.Controls
             txtName.TextChanged += TxtName_TextChanged;
             txtOpenChar.TextChanged += TxtOpenChar_TextChanged;
             txtCloseChar.TextChanged += TxtCloseChar_TextChanged;
+            cbxAddSpace.CheckedChanged += CbxAddSpace_CheckedChanged;
+            cbxIgnoreWhitespace.CheckedChanged += CbxIgnoreWhitespace_CheckedChanged;
         }
 
         private object[] CreateRow(Brace.Rule rule)
@@ -518,6 +563,8 @@ namespace ASCompletion.Controls
                 txtName.Enabled = false;
                 txtOpenChar.Enabled = false;
                 txtCloseChar.Enabled = false;
+                cbxAddSpace.Enabled = false;
+                cbxIgnoreWhitespace.Enabled = false;
                 btnUp.Enabled = false;
                 btnDown.Enabled = false;
                 btnRemove.Enabled = false;
@@ -529,6 +576,8 @@ namespace ASCompletion.Controls
                 txtName.Enabled = true;
                 txtOpenChar.Enabled = true;
                 txtCloseChar.Enabled = true;
+                cbxAddSpace.Enabled = true;
+                cbxIgnoreWhitespace.Enabled = true;
                 btnUp.Enabled = listBox.SelectedIndex > 0;
                 btnDown.Enabled = listBox.SelectedIndex < listBox.Items.Count - 1;
                 btnRemove.Enabled = true;
@@ -537,7 +586,7 @@ namespace ASCompletion.Controls
             }
 
             inEdit = (BraceInEdit) listBox.SelectedItem;
-            ShowRules();
+            ShowBraceProperties();
         }
 
         private void TxtName_TextChanged(object sender, EventArgs e)
@@ -572,6 +621,16 @@ namespace ASCompletion.Controls
             InvalidateListBox();
         }
 
+        private void CbxAddSpace_CheckedChanged(object sender, EventArgs e)
+        {
+            inEdit.AddSpace = cbxAddSpace.Checked;
+        }
+
+        private void CbxIgnoreWhitespace_CheckedChanged(object sender, EventArgs e)
+        {
+            inEdit.IgnoreWhitespace = cbxIgnoreWhitespace.Checked;
+        }
+
         private void BtnUp_Click(object sender, EventArgs e)
         {
             int index = listBox.SelectedIndex - 1;
@@ -587,7 +646,7 @@ namespace ASCompletion.Controls
         {
             int index = listBox.SelectedIndex + 1;
             object itemBelow = listBox.Items[index];
-            listBox.Items.RemoveAt(index );
+            listBox.Items.RemoveAt(index);
             listBox.Items.Insert(index - 1, itemBelow);
             btnDown.Enabled = index < listBox.Items.Count - 1;
             btnUp.Enabled = true;
@@ -605,7 +664,7 @@ namespace ASCompletion.Controls
         private void BtnRemove_Click(object sender, EventArgs e)
         {
             int selectedIndex = listBox.SelectedIndex;
-            listBox.SelectedIndex = selectedIndex - 1;
+            listBox.SelectedIndex = selectedIndex == 0 && listBox.Items.Count > 1 ? 1 : selectedIndex - 1;
             listBox.Items.RemoveAt(selectedIndex);
             listBox.Select();
         }
@@ -629,7 +688,7 @@ namespace ASCompletion.Controls
             {
                 if (braceInEdit.Open != '\0' && braceInEdit.Close != '\0' && braceInEdit.Rules.Count > 0)
                 {
-                    braces[count++] = new Brace(braceInEdit.Name, braceInEdit.Open, braceInEdit.Close, braceInEdit.Rules.ToArray());
+                    braces[count++] = braceInEdit.ToBrace();
                 }
             }
 
@@ -782,6 +841,8 @@ namespace ASCompletion.Controls
             public string Name;
             public char Open;
             public char Close;
+            public bool AddSpace;
+            public bool IgnoreWhitespace;
             public List<Brace.Rule> Rules;
 
             public BraceInEdit()
@@ -789,6 +850,8 @@ namespace ASCompletion.Controls
                 Name = "";
                 Open = '\0';
                 Close = '\0';
+                AddSpace = false;
+                IgnoreWhitespace = false;
                 Rules = new List<Brace.Rule>();
             }
 
@@ -797,11 +860,18 @@ namespace ASCompletion.Controls
                 Name = value.Name;
                 Open = value.Open;
                 Close = value.Close;
+                AddSpace = value.AddSpace;
+                IgnoreWhitespace = value.IgnoreWhitespace;
                 Rules = new List<Brace.Rule>(value.Rules.Length);
                 foreach (var rule in value.Rules)
                 {
                     Rules.Add(rule.Clone());
                 }
+            }
+
+            public Brace ToBrace()
+            {
+                return new Brace(Name, Open, Close, AddSpace, IgnoreWhitespace, Rules.ToArray());
             }
 
             public override string ToString()

@@ -3687,13 +3687,42 @@ namespace ScintillaNet
         }
 
         /// <summary>
+        /// Cut the selection to the clipboard as RTF.
+        /// </summary>
+        public void CutRTF()
+        {
+            if (SelTextSize > 0)
+            {
+                CopyRTF();
+                Clear();
+            }
+        }
+
+        /// <summary>
         /// Copy the selection to the clipboard as RTF.
         /// </summary>
         public void CopyRTF()
         {
-            Language language = ScintillaControl.Configuration.GetLanguage(this.configLanguage);
-            String conversion = RTF.GetConversion(language, this, this.SelectionStart, this.SelectionEnd);
-            Clipboard.SetText(conversion, TextDataFormat.Rtf);
+            int start = SelectionStart;
+            int end = SelectionEnd;
+
+            if (start < end)
+            {
+                CopyRTF(start, end);
+            }
+        }
+
+        /// <summary>
+        /// Copy the text in range to the clipboard as RTF.
+        /// </summary>
+        public void CopyRTF(int start, int end)
+        {
+            var dataObject = new DataObject();
+            var language = Configuration.GetLanguage(configLanguage);
+            string rtfText = RTF.GetConversion(language, this, start, end);
+            dataObject.SetText(GetTextRange(start, end));
+            dataObject.SetText(rtfText, TextDataFormat.Rtf);
+            Clipboard.SetDataObject(dataObject);
         }
 
         /// <summary>
@@ -5824,28 +5853,45 @@ namespace ScintillaNet
                             int curLine = CurrentLine;
                             int tempLine = curLine;
                             int previousIndent;
-                            string tempText;
+                            string tempText3; //line text without newline
+                            string tempText2; //line text trim end
+                            string tempText; //line text without comment and trim end
                             do
                             {
                                 --tempLine;
-                                previousIndent = GetLineIndentation(tempLine);
-                                tempText = GetLine(tempLine).TrimEnd();
+                                tempText3 = GetLine(tempLine);
+                                tempText3 = tempText3.Substring(0, tempText3.Length - 1); //remove newline
+                                tempText2 = tempText3.TrimEnd();
+                                tempText = tempText2;
                                 if (tempText.Length == 0) previousIndent = -1;
+                                else previousIndent = GetLineIndentation(tempLine);
                             }
                             while ((tempLine > 0) && (previousIndent < 0));
-                            if (tempText.IndexOfOrdinal("//") > 0) // remove comment at end of line
+                            int commentIndex = tempText.IndexOfOrdinal("//");
+                            if (commentIndex > 0) // remove comment at end of line
                             {
-                                int slashes = this.MBSafeTextLength(tempText.Substring(0, tempText.IndexOfOrdinal("//") + 1));
+                                int slashes = this.MBSafeTextLength(tempText.Substring(0, commentIndex + 1));
                                 if (this.PositionIsOnComment(PositionFromLine(tempLine) + slashes))
-                                    tempText = tempText.Substring(0, tempText.IndexOfOrdinal("//")).Trim();
+                                    tempText = tempText.Substring(0, commentIndex).TrimEnd();
                             }
                             if (tempText.EndsWith('{'))
                             {
-                                int bracePos = CurrentPos - 1;
-                                while (bracePos > 0 && CharAt(bracePos) != '{') bracePos--;
+                                int bracePos = CurrentPos - 2 - (tempText3.Length - tempText.Length); //CurrentPos - 1 is always ch (newline)
                                 int style = BaseStyleAt(bracePos);
                                 if (bracePos >= 0 && CharAt(bracePos) == '{' && (style == 10/*CPP*/ || style == 5/*CSS*/))
+                                {
                                     previousIndent += TabWidth;
+                                    if (tempText.Length == tempText2.Length) //Doesn't end with comment
+                                    {
+                                        if (tempText3.Length > tempText.Length) //Ends with whitespace after {
+                                        {
+                                            AnchorPosition = bracePos + 1;
+                                            CurrentPos--; //before ch (newline)
+                                            DeleteBack();
+                                            CurrentPos = bracePos + 2; //same as CurrentPos++ (after ch)
+                                        }
+                                    }
+                                }
                             }
                             // TODO: Should this test a config variable for indenting after case : statements?
                             if (Lexer == 3 && tempText.EndsWith(':') && !tempText.EndsWithOrdinal("::") && !this.PositionIsOnComment(PositionFromLine(tempLine)))
@@ -7211,7 +7257,7 @@ namespace ScintillaNet
         /// </summary>
         public void CutAllowLineEx()
         {
-            if (this.SelTextSize == 0 && this.GetLine(this.CurrentLine).Trim() != "")
+            if (this.SelTextSize == 0 && this.GetLine(this.CurrentLine).Trim().Length > 0)
             {
                 this.LineCut();
             }
@@ -7219,15 +7265,87 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// Cut the selection, if selection empty cut the line with the caret
+        /// Copy the selection, if selection empty copy the line with the caret
         /// </summary>
         public void CopyAllowLineEx()
         {
-            if (this.SelTextSize == 0 && this.GetLine(this.CurrentLine).Trim() != "")
+            if (this.SelTextSize == 0 && this.GetLine(this.CurrentLine).Trim().Length > 0)
             {
                 this.CopyAllowLine();
             }
             else this.Copy();
+        }
+
+        /// <summary>
+        /// Cut the selection in RTF. If selection is empty, cut the line containing the caret.
+        /// </summary>
+        public void CutRTFAllowLine()
+        {
+            if (this.SelTextSize == 0)
+            {
+                int line = this.CurrentLine;
+                this.AnchorPosition = this.PositionFromLine(line);
+                this.CurrentPos = this.PositionFromLine(line + 1);
+            }
+
+            this.CutRTF();
+        }
+
+        /// <summary>
+        /// Copy the selection in RTF. If selection is empty, copy the line containing the caret.
+        /// </summary>
+        public void CopyRTFAllowLine()
+        {
+            int start = this.SelectionStart;
+            int end = this.SelectionEnd;
+
+            if (start == end)
+            {
+                int line = this.CurrentLine;
+                start = this.PositionFromLine(line);
+                end = this.PositionFromLine(line + 1);
+            }
+
+            if (start < end)
+            {
+                this.CopyRTF(start, end);
+            }
+        }
+
+        /// <summary>
+        /// Cut the selection in RTF. If selection is empty and the current line is not empty, cut the line containing the caret.
+        /// </summary>
+        public void CutRTFAllowLineEx()
+        {
+            if (this.SelTextSize == 0 && this.GetLine(this.CurrentLine).Trim().Length > 0)
+            {
+                int line = this.CurrentLine;
+                this.AnchorPosition = this.PositionFromLine(line);
+                this.CurrentPos = this.PositionFromLine(line + 1);
+            }
+
+            this.CutRTF();
+        }
+
+        /// <summary>
+        /// Copy the selection in RTF. If selection is empty and the current line is not empty, copy the line containing the caret.
+        /// </summary>
+        public void CopyRTFAllowLineEx()
+        {
+            int start = this.SelectionStart;
+            int end = this.SelectionEnd;
+
+            if (start == end && this.GetLine(this.CurrentLine).Trim().Length > 0)
+            {
+                int line = this.CurrentLine;
+                start = this.PositionFromLine(line);
+                end = this.PositionFromLine(line + 1);
+            }
+
+            if (start < end)
+            {
+                this.CopyRTF(start, end);
+            }
         }
 
         /// <summary>

@@ -375,7 +375,7 @@ namespace ASCompletion.Context
             }
             else shouldIgnore = true;
 
-            FileModel.Ignore.FileName = filename ?? "";
+            FileModel.Ignore.FileName = filename;
             // find the doc context(s)
             if (!shouldIgnore)
             {

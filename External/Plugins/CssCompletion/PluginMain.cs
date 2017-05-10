@@ -139,7 +139,7 @@ namespace CssCompletion
                 case EventType.SyntaxChange:
                 case EventType.ApplySettings:
                 {
-                    if (document.IsEditable && this.IsSupported(document))
+                    if (this.IsSupported(document))
                     {
                         string ext = Path.GetExtension(document.FileName).ToLower();
                         features = enabledLanguages.ContainsKey(ext) ? enabledLanguages[ext] : null;
@@ -161,7 +161,7 @@ namespace CssCompletion
                 }
                 case EventType.FileSave:
                 {
-                    if (document.IsEditable && this.IsSupported(document))
+                    if (this.IsSupported(document))
                     {
                         updateFile = document.FileName;
                         updateFeatures = features;

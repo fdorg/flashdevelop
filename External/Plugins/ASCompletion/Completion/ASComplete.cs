@@ -456,11 +456,20 @@ namespace ASCompletion.Completion
                 if (!(IsStringStyle(styleBefore) && IsStringStyle(styleAfter)) && !(IsCharStyle(styleBefore) && IsCharStyle(styleAfter))
                     || IsInterpolationExpr(sci, sci.CurrentPos - 1))
                 {
+                    char nextChar = sci.CurrentChar;
+                    int nextPos = sci.CurrentPos;
+
+                    while (nextChar == ' ' || nextChar == '\t') // Don't skip new line characters
+                    {
+                        nextPos++;
+                        nextChar = (char) sci.CharAt(nextPos);
+                    }
+
                     foreach (var brace in ASContext.CommonSettings.AddClosingBracesRules)
                     {
                         // Handle opening first for braces that have equal opening & closing chars
-                        if (HandleAddOpeningBrace(sci, c, brace, styleAfter, styleBefore)
-                            || HandleAddClosingBrace(sci, c, brace))
+                        if (HandleBraceOpen(sci, brace, c, styleAfter, styleBefore)
+                            || HandleBraceClose(sci, brace, c, nextChar, nextPos))
                         {
                             undo = false;
                             break;
@@ -469,9 +478,18 @@ namespace ASCompletion.Completion
                 }
                 else if (IsMatchingQuote(c, styleAfter))
                 {
+                    char nextChar = sci.CurrentChar;
+                    int nextPos = sci.CurrentPos;
+
+                    while (nextChar == ' ' || nextChar == '\t') // Don't skip new line characters
+                    {
+                        nextPos++;
+                        nextChar = (char) sci.CharAt(nextPos);
+                    }
+
                     foreach (var brace in ASContext.CommonSettings.AddClosingBracesRules)
                     {
-                        if (HandleAddClosingBrace(sci, c, brace))
+                        if (HandleBraceClose(sci, brace, c, nextChar, nextPos))
                         {
                             undo = false;
                             break;
@@ -509,7 +527,7 @@ namespace ASCompletion.Completion
 
                     foreach (var brace in ASContext.CommonSettings.AddClosingBracesRules)
                     {
-                        if (HandleRemoveBrace(sci, open, c, closePos, brace))
+                        if (HandleBraceRemove(sci, brace, open, c, closePos))
                         {
                             break;
                         }
@@ -518,16 +536,20 @@ namespace ASCompletion.Completion
             }
         }
 
-        private static bool HandleAddOpeningBrace(ScintillaControl sci, char c, Brace braces, byte styleAfter, byte styleBefore)
+        private static bool HandleBraceOpen(ScintillaControl sci, Brace brace, char open, byte styleAfter, byte styleBefore)
         {
-            if (c == braces.Open)
+            if (open == brace.Open)
             {
                 char charAfter = (char) sci.CharAt(sci.CurrentPos);
                 char charBefore = (char) sci.CharAt(sci.CurrentPos - 2);
 
-                if (braces.ShouldAutoClose(charBefore, styleBefore, charAfter, styleAfter))
+                if (brace.ShouldOpen(charBefore, styleBefore, charAfter, styleAfter))
                 {
-                    sci.InsertText(-1, braces.Close.ToString());
+                    sci.InsertText(-1, brace.Close.ToString());
+                    if (brace.AddSpace)
+                    {
+                        sci.AddText(1, " ");
+                    }
                     return true;
                 }
             }
@@ -535,24 +557,32 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        private static bool HandleAddClosingBrace(ScintillaControl sci, char c, Brace braces)
+        private static bool HandleBraceClose(ScintillaControl sci, Brace brace, char close, char next, int nextPosition)
         {
-            if (c == braces.Close && c == sci.CurrentChar)
+            if (close == brace.Close && next == brace.Close)
             {
-                sci.DeleteForward();
-                return true;
+                if (brace.ShouldClose(sci.CurrentPos, nextPosition))
+                {
+                    sci.DeleteBack();
+                    sci.AnchorPosition = nextPosition;
+                    sci.CurrentPos = nextPosition;
+                    return true;
+                }
             }
 
             return false;
         }
         
-        private static bool HandleRemoveBrace(ScintillaControl sci, char open, char close, int closePosition, Brace braces)
+        private static bool HandleBraceRemove(ScintillaControl sci, Brace brace, char open, char close, int closePosition)
         {
-            if (open == braces.Open && close == braces.Close)
+            if (open == brace.Open && close == brace.Close)
             {
-                sci.SelectionEnd = closePosition + 1;
-                sci.DeleteBack();
-                return true;
+                if (brace.ShouldRemove(sci.CurrentPos, closePosition))
+                {
+                    sci.SelectionEnd = closePosition + 1;
+                    sci.DeleteBack();
+                    return true;
+                }
             }
 
             return false;
@@ -897,10 +927,13 @@ namespace ASCompletion.Completion
                 }
                 else if (result.Type != null || result.Member != null)
                 {
-                    ClassModel oClass = result.InClass != null ? result.InClass : result.Type;
+                    ClassModel oClass = result.InClass ?? result.Type;
 
-                    if (oClass.IsVoid() && (result.Member.Flags & FlagType.Function) == 0 && (result.Member.Flags & FlagType.Namespace) == 0)
+                    if (oClass.IsVoid() && (result.Member == null || (result.Member.Flags & FlagType.Function) == 0 && (result.Member.Flags & FlagType.Namespace) == 0))
+                    {
+                        NotifyContextChanged();
                         return;
+                    }
 
                     // type details
                     FileModel file;
@@ -2340,8 +2373,16 @@ namespace ASCompletion.Completion
 
                 if (newItem != null)
                 {
-                    int itemIndex = list.FindIndex(item => string.Compare(item.Label, newItemType, StringComparison.OrdinalIgnoreCase) >= 0);
-                    itemIndex = itemIndex > 0 ? itemIndex - 1 : 0;
+                    int itemIndex = list.FindIndex(item => string.Compare(item.Label, newItem.Label, StringComparison.OrdinalIgnoreCase) >= 0);
+
+                    int genericStart = newItemType.IndexOfOrdinal("<");
+                    if (genericStart > -1 && ASContext.Context.Features.HasGenericsShortNotation)
+                    {
+                        newItemType = newItemType.Substring(0, genericStart);
+                        itemIndex = itemIndex > 0 ? itemIndex : 0;
+                    }
+                    else itemIndex = itemIndex > 0 ? itemIndex - 1 : 0;
+
                     list.Insert(itemIndex, newItem);
                 }
 
@@ -3466,14 +3507,12 @@ namespace ASCompletion.Completion
                         braceCount--;
                         if (braceCount == 0 && sqCount == 0)
                         {
+                            sbSub.Insert(0, c);
                             int testPos = position - 1;
                             string testWord = GetWordLeft(sci, ref testPos);
-
-                            sbSub.Insert(0, c);
-                            if (haXe && testWord == "cast") expression.SubExpressions.Add("cast");
+                            if (haXe && testWord == "cast") expression.SubExpressions.Add(testWord);
                             expression.SubExpressions.Add(sbSub.ToString());
                             sb.Insert(0, ".#" + (subCount++) + "~"); // method call or sub expression
-
                             if (testWord == "return" || testWord == "case" || testWord == "default" || (haXe && testWord == "cast"))
                             {
                                 // AS3, AS2, Loom ex: return (a as B).<complete>
@@ -3482,9 +3521,9 @@ namespace ASCompletion.Completion
                                 expression.WordBefore = testWord;
                                 break;
                             }
-                            else continue;
+                            continue;
                         }
-                        else if (braceCount < 0)
+                        if (braceCount < 0)
                         {
                             expression.Separator = ';';
                             int testPos = position - 1;
@@ -3642,10 +3681,7 @@ namespace ASCompletion.Completion
             }
 
             // check if there is a particular keyword
-            if (expression.Separator == ' ') 
-            {
-                expression.WordBefore = GetWordLeft(sci, ref position);
-            }
+            if (expression.Separator == ' ') expression.WordBefore = GetWordLeft(sci, ref position);
 
             // result
             var value = sb.ToString();
@@ -3963,12 +3999,11 @@ namespace ASCompletion.Completion
             return word;
         }
 
-        public static ASResult GetExpressionType(ScintillaControl sci, int position)
-        {
-            return GetExpressionType(sci, position, true);
-        }
+        public static ASResult GetExpressionType(ScintillaControl sci, int position) => GetExpressionType(sci, position, true);
 
-        public static ASResult GetExpressionType(ScintillaControl sci, int position, bool filterVisibility)
+        public static ASResult GetExpressionType(ScintillaControl sci, int position, bool filterVisibility) => GetExpressionType(sci, position, true, false);
+
+        public static ASResult GetExpressionType(ScintillaControl sci, int position, bool filterVisibility, bool ignoreWhiteSpace)
         {
             // context
             int line = sci.LineFromPosition(position);
@@ -3976,7 +4011,7 @@ namespace ASCompletion.Completion
                 ASContext.Context.UpdateContext(line);
             try
             {
-                ASExpr expr = GetExpression(sci, position);
+                ASExpr expr = GetExpression(sci, position, ignoreWhiteSpace);
                 expr.LocalVars = ParseLocalVars(expr);
                 if (string.IsNullOrEmpty(expr.Value))
                 {
