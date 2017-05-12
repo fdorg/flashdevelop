@@ -630,6 +630,7 @@ namespace HaXeContext
     public enum HaxeDiagnosticsKind
     {
         UNUSEDIMPORT = 0,
+        UNUSEDCASE = 2,
         UNUSEDVAR = 3
         //there seem to be more kinds, but they are not documented.
     }

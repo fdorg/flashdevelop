@@ -76,6 +76,9 @@ namespace HaXeContext.Linters
                                 case HaxeDiagnosticsKind.UNUSEDVAR:
                                     result.Description = TextHelper.GetString("HaXeContext.Info.UnusedVariable");
                                     break;
+                                case HaxeDiagnosticsKind.UNUSEDCASE:
+                                    result.Description = TextHelper.GetString("HaXeContext.Info.UnusedCase");
+                                    break;
                                 default: //this is not redundant, as there are more dianostics kinds than the above ones.
                                     continue;
                             }

@@ -6193,4 +6193,8 @@ AND - 모든 조건을 만족할때.</value>
     <value>Keep result panels locked by default.</value>
     <comment>Added after 5.2.0</comment>
   </data>
+  <data name="HaXeContext.Info.UnusedCase" xml:space="preserve">
+    <value>Unreachable case</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
 </root>
