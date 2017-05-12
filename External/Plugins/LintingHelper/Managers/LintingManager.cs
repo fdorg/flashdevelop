@@ -3,20 +3,23 @@ using PluginCore;
 using PluginCore.Managers;
 using System.Collections.Generic;
 using System.Linq;
+using PluginCore.Localization;
 
 namespace LintingHelper.Managers
 {
     public static class LintingManager
     {
-        static Dictionary<string, List<ILintProvider>> linters = new Dictionary<string, List<ILintProvider>>();
+        internal const string TraceGroup = "LintingManager";
 
-        private static Dictionary<LintingSeverity, int> severityMap = new Dictionary<LintingSeverity, int>
+        static readonly Dictionary<string, List<ILintProvider>> linters = new Dictionary<string, List<ILintProvider>>();
+
+        static readonly Dictionary<LintingSeverity, int> severityMap = new Dictionary<LintingSeverity, int>
         {
             {LintingSeverity.Info, (int) TraceType.Info},
             {LintingSeverity.Error, (int) TraceType.Error},
             {LintingSeverity.Warning, (int) TraceType.Warning}
         };
-
+        
         internal static LintingCache Cache = new LintingCache();
 
         /// <summary>
@@ -161,7 +164,7 @@ namespace LintingHelper.Managers
 
             PluginBase.RunAsync(() =>
             {
-                PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
+                PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + TraceGroup);
             });
 
             Cache.AddResults(results);
@@ -211,13 +214,18 @@ namespace LintingHelper.Managers
                     });
                 }
             }
+
+            PluginBase.RunAsync(() =>
+            {
+                PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + TraceGroup);
+            });
         }
 
         static void TraceResult(LintingResult result)
         {
             var line = result.File + ":" + result.Line + ": " + result.Severity.ToString() + ": " + result.Description;
 
-            TraceManager.AddAsync(line, severityMap[result.Severity]);
+            TraceManager.Add(line, severityMap[result.Severity], TraceGroup);
         }
     }
 }

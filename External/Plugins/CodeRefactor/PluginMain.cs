@@ -40,8 +40,10 @@ namespace CodeRefactor
         private String settingFilename;
         TreeView projectTreeView;
 
-        #region Required Properties
+        public const string TraceGroup = "CodeRefactor";
         
+        #region Required Properties
+
         /// <summary>
         /// Api level of the plugin
         /// </summary>
@@ -111,6 +113,8 @@ namespace CodeRefactor
             this.InitBasics();
             this.LoadSettings();
             this.CreateMenuItems();
+            this.RegisterMenuItems();
+            this.RegisterTraceGroups();
         }
 
         /// <summary>
@@ -295,7 +299,6 @@ namespace CodeRefactor
             searchMenu.DropDownItems.Add(new ToolStripSeparator());
             searchMenu.DropDownItems.Add(this.viewReferencesItem);
             editorMenu.Items.Insert(8, this.editorReferencesItem);
-            RegisterMenuItems();
         }
 
         /// <summary>
@@ -321,6 +324,12 @@ namespace CodeRefactor
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.TruncateImports", this.refactorContextMenu.TruncateMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.CodeGenerator", this.refactorContextMenu.CodeGeneratorMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.BatchProcess", this.refactorContextMenu.BatchMenuItem);
+        }
+
+        private void RegisterTraceGroups()
+        {
+            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetStringWithoutMnemonics("Label.Refactor"), false);
+            TraceManager.RegisterTraceGroup(FindAllReferences.TraceGroup, TextHelper.GetString("Label.FindAllReferencesResult"), false, true);
         }
 
         /// <summary>

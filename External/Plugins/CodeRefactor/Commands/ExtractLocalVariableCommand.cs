@@ -155,7 +155,7 @@ namespace CodeRefactor.Commands
         void ReportResults()
         {
             var newNameLength = newName.Length;
-            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
+            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + PluginMain.TraceGroup);
             foreach (var entry in Results)
             {
                 var lineOffsets = new Dictionary<int, int>();
@@ -179,11 +179,11 @@ namespace CodeRefactor.Commands
                     var renamedLine = lineChanges[lineSetsToReport.Key].Trim();
                     foreach (var lineToReport in lineSetsToReport.Value)
                     {
-                        TraceManager.Add(string.Format(lineToReport, renamedLine), (int) TraceType.Info);
+                        TraceManager.Add(string.Format(lineToReport, renamedLine), (int) TraceType.Info, PluginMain.TraceGroup);
                     }
                 }
             }
-            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
+            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + PluginMain.TraceGroup);
         }
 
         void OnItemClick(object sender, EventArgs e)

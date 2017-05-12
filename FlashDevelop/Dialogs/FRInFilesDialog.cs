@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using FlashDevelop.Managers;
 using PluginCore.Localization;
 using FlashDevelop.Utilities;
 using PluginCore.Utilities;
@@ -54,6 +55,8 @@ namespace FlashDevelop.Dialogs
         private PluginCore.FRService.FRRunner runner;
         private PluginCore.IProject lastProject;
 
+        private const string TraceGroup = "FindInFiles";
+        
         public FRInFilesDialog()
         {
             this.Owner = Globals.MainForm;
@@ -63,6 +66,8 @@ namespace FlashDevelop.Dialogs
             this.ApplyLocalizedTexts();
             this.InitializeGraphics();
             this.UpdateSettings();
+
+            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetString("FlashDevelop.Label.FindAndReplaceResults"), false, true, Globals.MainForm.FindImage("209"));
         }
 
         #region Windows Form Designer Generated Code
@@ -703,15 +708,17 @@ namespace FlashDevelop.Dialogs
                 } 
                 else 
                 {
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
+                    string groupData = TraceManager.CreateGroupDataUnique(TraceGroup);
+                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
                     foreach (KeyValuePair<String, List<SearchMatch>> entry in results)
                     {
                         foreach (SearchMatch match in entry.Value)
                         {
-                            TraceManager.Add(entry.Key + ":" + match.Line + ": chars " + match.Column + "-" + (match.Column + match.Length) + " : " + match.LineText.Trim(), (Int32)TraceType.Info);
+                            string message = $"{entry.Key}:{match.Line}: chars {match.Column}-{match.Column + match.Length} : {match.LineText.Trim()}";
+                            TraceManager.Add(message, (int)TraceType.Info, groupData);
                         }
                     }
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
+                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
                     this.Hide();
                 }
             }
@@ -763,17 +770,19 @@ namespace FlashDevelop.Dialogs
                     String formatted = String.Format(message, matchCount, fileCount);
                     this.infoLabel.Text = formatted;
                 } 
-                else 
+                else
                 {
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
+                    string groupData = TraceManager.CreateGroupDataUnique(TraceGroup);
+                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
                     foreach (KeyValuePair<String, List<SearchMatch>> entry in results)
                     {
                         foreach (SearchMatch match in entry.Value)
                         {
-                            TraceManager.Add(entry.Key + ":" + match.Line + ": chars " + match.Column + "-" + (match.Column + match.Length) + " : " + match.Value, (Int32)TraceType.Info);
+                            string message = $"{entry.Key}:{match.Line}: chars {match.Column}-{match.Column + match.Length} : {match.Value}";
+                            TraceManager.Add(message, (Int32)TraceType.Info, groupData);
                         }
                     }
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
+                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
                     this.Hide();
                 }
             }

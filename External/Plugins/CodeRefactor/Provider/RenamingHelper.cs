@@ -55,7 +55,7 @@ namespace CodeRefactor.Provider
                 }
             }
 
-            if (outputResults) PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
+            if (outputResults) PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + PluginMain.TraceGroup);
 
             ExecuteFirst();
         }
