@@ -246,13 +246,22 @@ namespace HaXeContext
 
         HaxeCompleteStatus ParseLines(string lines)
         {
-            try
+            switch (CompilerService)
             {
-                switch (CompilerService)
-                {
-                    case HaxeCompilerService.DIAGNOSTICS:
+                case HaxeCompilerService.DIAGNOSTICS:
+                    try
+                    {
                         return ProcessResponse(JsonMapper.ToObject(lines));
-                    default:
+                    }
+                    catch
+                    {
+                        Errors = lines;
+                        return HaxeCompleteStatus.ERROR;
+                    }
+                    break;
+                default:
+                    try
+                    {
                         if (!lines.StartsWith('<'))
                         {
                             Errors = lines.Trim();
@@ -266,12 +275,12 @@ namespace HaXeContext
                                 return ProcessResponse(reader);
                             }
                         }
-                }
-            }
-            catch (Exception ex)
-            {
-                Errors = "Error parsing Haxe compiler output: " + ex.Message;
-                return HaxeCompleteStatus.ERROR;
+                    }
+                    catch (Exception ex)
+                    {
+                        Errors = "Error parsing Haxe compiler output: " + ex.Message;
+                        return HaxeCompleteStatus.ERROR;
+                    }
             }
         }
 
@@ -622,6 +631,7 @@ namespace HaXeContext
     {
         UNUSEDIMPORT = 0,
         UNUSEDVAR = 3
+        //there seem to be more kinds, but they are not documented.
     }
 
     public enum HaxeDiagnosticsSeverity

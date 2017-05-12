@@ -1,6 +1,8 @@
 ﻿using LintingHelper;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using PluginCore;
@@ -50,7 +52,7 @@ namespace HaXeContext.Linters
                 
                 hc.GetDiagnostics((complete, results, status) =>
                 {
-                    if (results != null && sci != null)
+                    if (status == HaxeCompleteStatus.DIAGNOSTICS && results != null && sci != null)
                     {
                         foreach (var res in results)
                         {
@@ -74,10 +76,22 @@ namespace HaXeContext.Linters
                                 case HaxeDiagnosticsKind.UNUSEDVAR:
                                     result.Description = TextHelper.GetString("HaXeContext.Info.UnusedVariable");
                                     break;
+                                default: //this is not redundant, as there are more dianostics kinds than the above ones.
+                                    continue;
                             }
 
                             list.Add(result);
                         }
+                    }
+                    else if (status == HaxeCompleteStatus.ERROR)
+                    {
+                        PluginBase.RunAsync(() =>
+                        {
+                            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
+                            TraceManager.Add(hc.Errors, (int)TraceType.Error);
+                        });
+                        callback(list);
+                        return;
                     }
 
                     if (i1 == files.Length - 1)
