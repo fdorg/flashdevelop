@@ -70,16 +70,18 @@ namespace HaXeContext.Linters
 
                             switch (res.Kind)
                             {
-                                case HaxeDiagnosticsKind.UNUSEDIMPORT:
+                                case HaxeDiagnosticsKind.UnusedImport:
                                     result.Description = TextHelper.GetString("HaXeContext.Info.UnusedImport");
                                     break;
-                                case HaxeDiagnosticsKind.UNUSEDVAR:
-                                    result.Description = TextHelper.GetString("HaXeContext.Info.UnusedVariable");
+                                case HaxeDiagnosticsKind.UnresolvedIdentifier:
                                     break;
-                                case HaxeDiagnosticsKind.UNUSEDCASE:
+                                case HaxeDiagnosticsKind.CompilerError:
                                     result.Description = TextHelper.GetString("HaXeContext.Info.UnusedCase");
                                     break;
-                                default: //this is not redundant, as there are more dianostics kinds than the above ones.
+                                case HaxeDiagnosticsKind.RemovableCode:
+                                    result.Description = TextHelper.GetString("HaXeContext.Info.UnusedVariable");
+                                    break;
+                                default: //in case new kinds are added in new compiler versions
                                     continue;
                             }
 

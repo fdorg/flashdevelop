@@ -155,7 +155,7 @@ namespace LintingHelper.Managers
         /// </summary>
         static void ApplyLint(string[] files, string language, List<LintingResult> results)
         {
-            if (results == null || results.Count == 0)
+            if (results == null)
                 return;
 
             var fileList = new List<string>(files);

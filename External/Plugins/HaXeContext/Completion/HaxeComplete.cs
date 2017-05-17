@@ -629,9 +629,10 @@ namespace HaXeContext
 
     public enum HaxeDiagnosticsKind
     {
-        UNUSEDIMPORT = 0,
-        UNUSEDCASE = 2,
-        UNUSEDVAR = 3
+        UnusedImport = 0,
+        UnresolvedIdentifier = 1,
+        CompilerError = 2,
+        RemovableCode = 3
         //there seem to be more kinds, but they are not documented.
     }
 
