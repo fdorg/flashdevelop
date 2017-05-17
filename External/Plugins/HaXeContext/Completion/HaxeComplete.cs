@@ -296,27 +296,56 @@ namespace HaXeContext
                 foreach (JsonData diag in diagnostics)
                 {
                     var range = diag["range"];
-                    var start = range["start"];
-                    var end = range["end"];
+                    var args = diag["args"];
 
-                    diagnosticsResults.Add(new HaxeDiagnosticsResult
+                    var result = new HaxeDiagnosticsResult
                     {
-                        Kind = (HaxeDiagnosticsKind)(int)diag["kind"],
-                        Range = new HaxePositionResult
+                        Kind = (HaxeDiagnosticsKind) (int) diag["kind"],
+                        Range = ParseRange(range, path),
+                        Severity = (HaxeDiagnosticsSeverity) (int) diag["severity"]
+                    };
+                    if (args != null)
+                    {
+                        if (args.IsString)
                         {
-                            Path = path,
-                            //RangeType = HaxePositionCompleteRangeType.LINES, //RangeType is a mix of lines and characters
-                            CharacterStart = (int) start["character"],
-                            CharacterEnd = (int)end["character"],
-                            LineStart = (int)start["line"],
-                            LineEnd = (int)end["line"]
-                        },
-                        Severity = (HaxeDiagnosticsSeverity)(int)diag["severity"]
-                    });
+                            result.Args = new HaxeDiagnosticsArgs
+                            {
+                                Description = (string) args
+                            };
+                        }
+                        else if (args.IsObject)
+                        {
+                            result.Args = new HaxeDiagnosticsArgs
+                            {
+                                Description = (string) args["description"],
+                                Range = ParseRange(args["range"], path)
+                            };
+                        }
+                    }
+                    
+
+                    diagnosticsResults.Add(result);
+
                 }
             }
             
             return HaxeCompleteStatus.DIAGNOSTICS;
+        }
+
+        HaxePositionResult ParseRange(JsonData range, string path)
+        {
+            var start = range["start"];
+            var end = range["end"];
+
+            return new HaxePositionResult
+            {
+                Path = path,
+                //RangeType = HaxePositionCompleteRangeType.LINES, //RangeType is a mix of lines and characters
+                CharacterStart = (int) start["character"],
+                CharacterEnd = (int) end["character"],
+                LineStart = (int) start["line"],
+                LineEnd = (int) end["line"]
+            };
         }
 
         HaxeCompleteStatus ProcessResponse(XmlTextReader reader)
@@ -602,7 +631,15 @@ namespace HaXeContext
         public HaxeDiagnosticsKind Kind;
         public HaxeDiagnosticsSeverity Severity;
         public HaxePositionResult Range;
+
+        public HaxeDiagnosticsArgs Args;
         //no "args" for now
+    }
+
+    public class HaxeDiagnosticsArgs
+    {
+        public string Description;
+        public HaxePositionResult Range;
     }
 
     public class HaxeCompleteResult
