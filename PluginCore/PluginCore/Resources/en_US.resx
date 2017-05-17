@@ -6141,8 +6141,8 @@ AND - All conditions are met.</value>
     <value>Unused import</value>
     <comment>Added after 5.2.1</comment>
   </data>
-  <data name="HaXeContext.Info.UnusedVariable" xml:space="preserve">
-    <value>Unused variable</value>
+  <data name="HaXeContext.Info.UnresolvedIdentifier" xml:space="preserve">
+    <value>Unresolved identifier</value>
     <comment>Added after 5.2.1</comment>
   </data>
   <data name="CodeRefactor.Label.FindAllReferencesResult" xml:space="preserve">
@@ -6187,10 +6187,6 @@ AND - All conditions are met.</value>
   </data>
   <data name="ResultsPanel.Description.KeepResultsByDefault" xml:space="preserve">
     <value>Keep result panels locked by default.</value>
-    <comment>Added after 5.2.0</comment>
-  </data>
-  <data name="HaXeContext.Info.UnusedCase" xml:space="preserve">
-    <value>Unreachable case</value>
     <comment>Added after 5.2.0</comment>
   </data>
 </root>
