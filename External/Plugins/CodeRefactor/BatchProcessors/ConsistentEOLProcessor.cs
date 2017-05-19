@@ -10,25 +10,17 @@ namespace CodeRefactor.BatchProcessors
 {
     class ConsistentEOLProcessor : IBatchProcessor
     {
-        public bool IsAvailable
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public bool IsAvailable => true;
 
-        public string Text
-        {
-            get
-            {
-                return TextHelper.GetString("Info.ConsistentEOLs");
-            }
-        }
+        public string Text => TextHelper.GetString("Info.ConsistentEOLs");
 
-        public void Process(ITabbedDocument document)
+        public void Process(string[] files)
         {
-            document.SciControl.ConvertEOLs(document.SciControl.EOLMode);
+            foreach (var file in files)
+            {
+                var document = PluginBase.MainForm.OpenEditableDocument(file) as ITabbedDocument;
+                document.SciControl.ConvertEOLs(document.SciControl.EOLMode);
+            }
         }
     }
 }

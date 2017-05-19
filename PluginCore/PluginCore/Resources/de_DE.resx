@@ -6126,8 +6126,8 @@ AND - All conditions are met.</value>
     <value>Ungenutzter Import</value>
     <comment>Added after 5.2.1</comment>
   </data>
-  <data name="HaXeContext.Info.UnusedVariable" xml:space="preserve">
-    <value>Ungenutzte Variable</value>
+  <data name="HaXeContext.Info.UnresolvedIdentifier" xml:space="preserve">
+    <value>Nicht deklarierter Bezeichner</value>
     <comment>Added after 5.2.1</comment>
   </data>
   <data name="CodeRefactor.Label.FindAllReferencesResult" xml:space="preserve">

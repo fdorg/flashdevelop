@@ -11,29 +11,13 @@ namespace LintingHelper.BatchProcess
 {
     class LintProcessor : IBatchProcessor
     {
-        public bool IsAvailable
-        {
-            get
-            {
-                return LintingManager.HasLanguage(PluginBase.CurrentProject.Language);
-            }
-        }
+        public bool IsAvailable => LintingManager.HasLanguage(PluginBase.CurrentProject.Language);
 
-        public string Text
-        {
-            get
-            {
-                return TextHelper.GetString("Label.RunLinters");
-            }
-        }
+        public string Text => TextHelper.GetString("Label.RunLinters");
 
-        public LintProcessor()
+        public void Process(string[] files)
         {
-        }
-
-        public void Process(ITabbedDocument document)
-        {
-            LintingManager.LintDocument(document);
+            LintingManager.LintFiles(files);
         }
     }
 }

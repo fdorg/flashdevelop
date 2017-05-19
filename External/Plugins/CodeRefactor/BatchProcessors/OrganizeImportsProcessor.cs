@@ -12,27 +12,19 @@ namespace CodeRefactor.BatchProcessors
 {
     class OrganizeImportsProcessor : IBatchProcessor
     {
-        public bool IsAvailable
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public bool IsAvailable => true;
 
-        public string Text
-        {
-            get
-            {
-                return TextHelper.GetStringWithoutMnemonics("Label.OrganizeImports");
-            }
-        }
+        public string Text => TextHelper.GetStringWithoutMnemonics("Label.OrganizeImports");
 
-        public void Process(ITabbedDocument document)
+        public void Process(string[] files)
         {
-            var command = (OrganizeImports)CommandFactoryProvider.GetFactory(document).CreateOrganizeImportsCommand();
-            command.SciControl = document.SciControl;
-            command.Execute();
+            foreach (var file in files)
+            {
+                var document = PluginBase.MainForm.OpenEditableDocument(file) as ITabbedDocument;
+                var command = (OrganizeImports)CommandFactoryProvider.GetFactory(document).CreateOrganizeImportsCommand();
+                command.SciControl = document.SciControl;
+                command.Execute();
+            }
         }
     }
 }
