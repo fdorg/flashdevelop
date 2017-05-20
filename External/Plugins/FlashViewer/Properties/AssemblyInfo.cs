@@ -4,7 +4,7 @@ using PluginCore;
 // Information about this assembly is defined by the following attributes. 
 // Change them to the information which is associated with the assembly you compile.
 [assembly: AssemblyTitle("FlashViewer")]
-[assembly: AssemblyDescription("FlashViewer Plugin For " + DistroConfig.DISTRIBUTION_NAME)]
+[assembly: AssemblyDescription("Flash Viewer Plugin For " + DistroConfig.DISTRIBUTION_NAME)]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany(DistroConfig.DISTRIBUTION_COMPANY)]
 [assembly: AssemblyProduct("FlashViewer")]
