@@ -258,7 +258,6 @@ namespace HaXeContext
                         Errors = lines;
                         return HaxeCompleteStatus.ERROR;
                     }
-                    break;
                 default:
                     try
                     {

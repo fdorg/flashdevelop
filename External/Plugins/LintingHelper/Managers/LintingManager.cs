@@ -161,7 +161,7 @@ namespace LintingHelper.Managers
             var cachedResults = Cache.GetAllResults();
             foreach (var result in cachedResults)
             {
-                string chars = null;
+                string chars;
                 if (result.Length > 0)
                 {
                     chars = $"chars {result.FirstChar}-{result.FirstChar + result.Length}";
@@ -196,11 +196,6 @@ namespace LintingHelper.Managers
                 }
                 TraceManager.Add(message, state, TraceGroup);
             }
-
-            PluginBase.RunAsync(() =>
-            {
-                PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + TraceGroup);
-            });
         }
     }
 }

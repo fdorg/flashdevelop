@@ -68,7 +68,7 @@ namespace HaXeContext.Linters
                                     result.Severity = LintingSeverity.Error;
                                     break;
                                 case HaxeDiagnosticsSeverity.WARNING:
-                                    result.Severity = LintingSeverity.Info;
+                                    result.Severity = LintingSeverity.Warning;
                                     break;
                                 default:
                                     continue;
