@@ -1801,10 +1801,16 @@ namespace ASCompletion.Completion
 
             bool isVararg = false;
             string paramName = contextMember.Name;
+            var paramType = contextMember.Type;
             if (paramName.StartsWithOrdinal("..."))
             {
-                paramName = paramName.TrimStart(new char[] { ' ', '.' });
+                paramName = paramName.TrimStart(' ', '.');
                 isVararg = true;
+            }
+            else if (inClass.InFile.haXe && paramName.StartsWithOrdinal("?"))
+            {
+                paramName = paramName.Remove(0, 1);
+                if (!string.IsNullOrEmpty(paramType) && !paramType.StartsWith("Null<")) paramType = $"Null<{paramType}>";
             }
             string varName = paramName;
             string scopedVarName = varName;
@@ -1818,7 +1824,7 @@ namespace ASCompletion.Completion
             }
             else
             {
-                if (ASContext.CommonSettings.PrefixFields.Length > 0 && !paramName.StartsWithOrdinal(ASContext.CommonSettings.PrefixFields))
+                if (ASContext.CommonSettings.PrefixFields.Length > 0 && !varName.StartsWithOrdinal(ASContext.CommonSettings.PrefixFields))
                 {
                     scopedVarName = varName = ASContext.CommonSettings.PrefixFields + varName;
                 }
@@ -1858,7 +1864,7 @@ namespace ASCompletion.Completion
 
             MemberModel mem = NewMember(varName, member, FlagType.Variable, scope);
             if (isVararg) mem.Type = "Array";
-            else mem.Type = contextMember.Type;
+            else mem.Type = paramType;
 
             GenerateVariable(mem, position, true);
             ASContext.Panel.RestoreLastLookupPosition();
@@ -2017,8 +2023,10 @@ namespace ASCompletion.Completion
                     hasDot = false;
                 }
             }
-            if (expr.Type != null && (expr.Type.Flags & FlagType.Class) > 0 && expr.Context != null && expr.Context.WordBefore == "new")
+            if (expr.Type != null && (expr.Type.Flags & FlagType.Class) > 0 && expr.Context?.WordBefore == "new")
                 result = sci.WordStartPosition(result - 1, false);
+            else if(IsHaxe && expr.Context?.WordBefore == "cast" && (char)sci.CharAt(result) == '(')
+                result = sci.WordStartPosition(result - 1, true);
             return result;
         }
 
@@ -3234,16 +3242,22 @@ namespace ASCompletion.Completion
                     {
                         bracesCount--;
                         if (bracesCount > 0) continue;
-                        if (haxe && sci.GetWordLeft(position - 1, false) == "cast")
+                        if (haxe && sci.GetWordLeft(position - 1, true) == "cast")
                         {
                             pos = startPos + line.Length;
                             break;
                         }
-                        pos = position;
-                        var lineFromPosition = sci.LineFromPosition(pos);
+                        var lineFromPosition = sci.LineFromPosition(position);
                         startPos = sci.PositionFromLine(lineFromPosition);
-                        line = sci.GetLine(lineFromPosition);
-                        line = line.Substring(0, pos - startPos);
+                        var tmpLine = sci.GetLine(lineFromPosition);
+                        tmpLine = tmpLine.Substring(0, position - startPos);
+                        if (string.IsNullOrEmpty(tmpLine.TrimStart()))
+                        {
+                            pos = startPos + line.Length;
+                            break;
+                        }
+                        line = tmpLine;
+                        pos = position;
                         bracesRemoved = true;
                         break;
                     }

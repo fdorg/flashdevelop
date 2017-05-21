@@ -6105,37 +6105,37 @@ AND - All conditions are met.</value>
   </data>
   <data name="ResultsPanel.Description.DefaultGrouping" xml:space="preserve">
     <value>The default column to group results by.</value>
-	<comment>Added after 5.2.1</comment>
+    <comment>Added after 5.2.1</comment>
   </data>
   <data name="LintingHelper.Description.LintOnSave" xml:space="preserve">
     <value>Runs the available linters when a file is saved.</value>
-	<comment>Added after 5.2.1</comment>
+    <comment>Added after 5.2.1</comment>
   </data>
   <data name="LintingHelper.Description.LintOnOpen" xml:space="preserve">
     <value>Runs the available linters when a file is opened.</value>
-	<comment>Added after 5.2.1</comment>
+    <comment>Added after 5.2.1</comment>
   </data>
   <data name="LintingHelper.Label.RunLinters" xml:space="preserve">
     <value>Run Linters</value>
-	<comment>Added after 5.2.1</comment>
+    <comment>Added after 5.2.1</comment>
   </data>
   <data name="HaXeContext.Info.UnusedImport" xml:space="preserve">
     <value>Unused import</value>
     <comment>Added after 5.2.1</comment>
   </data>
-  <data name="HaXeContext.Info.UnusedVariable" xml:space="preserve">
-    <value>Unused variable</value>
+  <data name="HaXeContext.Info.UnresolvedIdentifier" xml:space="preserve">
+    <value>Unresolved identifier</value>
     <comment>Added after 5.2.1</comment>
   </data>
   <data name="CodeRefactor.Label.FindAllReferencesResult" xml:space="preserve">
-    <value>References</value>
+    <value>'{0}' References</value>
     <comment>Added after 5.2.1</comment>
   </data>
   <data name="FlashDevelop.Label.FindAndReplaceResults" xml:space="preserve">
     <value>Find and Replace</value>
     <comment>Added after 5.2.1</comment>
   </data>
-  <data name="LintingManager.Label.LintingResults" xml:space="preserve">
+  <data name="LintingHelper.Label.LintingResults" xml:space="preserve">
     <value>Linters</value>
     <comment>Added after 5.2.1</comment>
   </data>
@@ -6146,5 +6146,29 @@ AND - All conditions are met.</value>
   <data name="HaXeContext.Description.UseGenericsShortNotation" xml:space="preserve">
     <value>Use short notation for generics instantiation whenever possible (ie. var arr:Array&lt;String&gt; = new Array())</value>
     <comment>after 5.2.1</comment>
+  </data>
+  <data name="FlashDevelop.Label.Clear" xml:space="preserve">
+    <value>&amp;Clear</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="FlashDevelop.Label.PasteHistory" xml:space="preserve">
+    <value>Paste History</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="FlashDevelop.Description.ClipboardHistorySize" xml:space="preserve">
+    <value>The number of items to store in the clipboard history. Minimum value is 1.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ResultsPanel.Label.KeepResults" xml:space="preserve">
+    <value>Keep Results</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ResultsPanel.Description.HighlightOnlyActivePanelEntries" xml:space="preserve">
+    <value>Highlight only the entries in the active panel and the main panel.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ResultsPanel.Description.KeepResultsByDefault" xml:space="preserve">
+    <value>Keep result panels locked by default.</value>
+    <comment>Added after 5.2.0</comment>
   </data>
 </root>

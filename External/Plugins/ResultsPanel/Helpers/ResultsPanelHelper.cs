@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -6,78 +7,245 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResultsPanel.Helpers
 {
-    class ResultsPanelHelper
+    internal static class ResultsPanelHelper
     {
-        readonly Dictionary<string, PluginUI> pluginUis = new Dictionary<string, PluginUI>();
-        readonly List<DockContent> pluginPanels = new List<DockContent>();
+        private static PluginMain main;
+        private static PluginUI mainUI;
+        private static List<PluginUI> pluginUIs;
 
-        readonly PluginMain main;
+        internal static PluginUI ActiveUI { get; set; }
 
-        public ResultsPanelHelper(PluginMain m)
+        internal static IList<PluginUI> PluginUIs
         {
-            main = m;
+            get { return pluginUIs; }
         }
 
-        public void Clear(string group)
+        internal static void Initialize(PluginMain pluginMain, PluginUI pluginUI)
         {
-            if (group == null) return;
+            main = pluginMain;
+            mainUI = pluginUI;
+            pluginUIs = new List<PluginUI>();
+            ActiveUI = mainUI;
 
-            PluginUI ui;
-            if (pluginUis.TryGetValue(group, out ui))
-                ui.ClearOutput();
+            mainUI.ParentPanel.Tag = mainUI;
+            mainUI.ParentPanel.IsActivatedChanged += ParentPanel_IsActivatedChanged;
         }
 
         /// <summary>
-        /// Removes all results panels that are managed by this helper, so they are not saved in the layout file.
-        /// This should be called when FlashDevelop is closing.
+        /// Clears an existing panel, or creates a new panel with <paramref name="groupData"/>.
         /// </summary>
-        public void RemoveResultsPanels()
+        internal static void ClearResults(string groupData)
         {
-            foreach (var panel in pluginPanels)
-                panel.Close();
-        }
-
-        public void ShowResults(string group)
-        {
-            PluginUI ui;
-            if (!pluginUis.TryGetValue(group, out ui))
-                ui = AddResultsPanel(group);
-
-            ui.DisplayOutput();
-        }
-
-        public void OnTrace()
-        {
-            var traces = TraceManager.TraceLog;
-            foreach (var trace in traces)
+            if (groupData == null)
             {
-                if (trace.Group == null) continue; //null is handled by default panel
-
-                if (!pluginUis.ContainsKey(trace.Group))
-                    AddResultsPanel(trace.Group);
+                mainUI.ClearOutput();
+                return;
             }
 
-            foreach (var ui in pluginUis.Values)
+            string groupId;
+            string[] args;
+            TraceManager.ParseGroupData(groupData, out groupId, out args);
+
+            foreach (var pluginUI in pluginUIs)
             {
-                ui.AddLogEntries();
+                if (pluginUI.GroupData == groupData ||
+                    pluginUI.GroupId == groupId && !pluginUI.Locked)
+                {
+                    UpdateResultsPanel(pluginUI, groupData, groupId, args);
+                    pluginUI.ClearOutput();
+                    return;
+                }
+            }
+
+            var newUI = AddResultsPanel(groupData, groupId, args);
+            //newUI.ClearOutput();
+        }
+
+        /// <summary>
+        /// Displays an existing panel, or creates a new panel with <paramref name="groupData"/> and displays it.
+        /// </summary>
+        internal static void ShowResults(string groupData)
+        {
+            if (groupData == null)
+            {
+                mainUI.AddLogEntries();
+                mainUI.DisplayOutput();
+                return;
+            }
+
+            string groupId;
+            string[] args;
+            TraceManager.ParseGroupData(groupData, out groupId, out args);
+
+            foreach (var pluginUI in pluginUIs)
+            {
+                if (pluginUI.GroupData == groupData ||
+                    pluginUI.GroupId == groupId && !pluginUI.Locked)
+                {
+                    pluginUI.AddLogEntries();
+                    pluginUI.DisplayOutput();
+                    return;
+                }
+            }
+
+            var newUI = AddResultsPanel(groupData, groupId, args);
+            newUI.AddLogEntries();
+            newUI.DisplayOutput();
+        }
+
+        /// <summary>
+        /// Apply settings to all panels.
+        /// </summary>
+        internal static void ApplySettings()
+        {
+            mainUI.ApplySettings();
+            foreach (var pluginUI in pluginUIs)
+            {
+                pluginUI.ApplySettings();
+                pluginUI.ClearSquiggles();
+            }
+
+            mainUI.ClearSquiggles();
+            mainUI.AddSquiggles();
+            if (mainUI.Settings.HighlightOnlyActivePanelEntries)
+            {
+                if (ActiveUI.GroupId != null)
+                {
+                    ActiveUI.AddSquiggles();
+                }
+            }
+            else
+            {
+                foreach (var pluginUI in pluginUIs)
+                {
+                    if (!pluginUI.ParentPanel.IsHidden)
+                    {
+                        pluginUI.AddSquiggles();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Update all panels.
+        /// </summary>
+        public static void OnTrace()
+        {
+            mainUI.AddLogEntries();
+            foreach (var pluginUI in pluginUIs)
+            {
+                pluginUI.AddLogEntries();
+            }
+        }
+
+        /// <summary>
+        /// Add highlights to the open file.
+        /// </summary>
+        internal static void OnFileOpen(TextEvent e)
+        {
+            mainUI.AddSquiggles(e.Value);
+
+            if (mainUI.Settings.HighlightOnlyActivePanelEntries)
+            {
+                if (ActiveUI.GroupId != null)
+                {
+                    ActiveUI.AddSquiggles(e.Value);
+                }
+            }
+            else
+            {
+                foreach (var pluginUI in pluginUIs)
+                {
+                    pluginUI.AddSquiggles(e.Value);
+                }
             }
         }
 
         /// <summary>
         /// Creates a new results panel.
         /// </summary>
-        /// <param name="group">The group of the results panel</param>
-        PluginUI AddResultsPanel(string group)
+        /// <param name="groupData">
+        /// The trace group of the results panel.
+        /// <para/>
+        /// Format: <c>GroupID:arg1,arg2,...</c>
+        /// </param>
+        private static PluginUI AddResultsPanel(string groupData, string groupId, string[] args)
         {
-            var traceGroup = TraceManager.GetTraceGroup(group);
+            var traceGroup = TraceManager.GetTraceGroup(groupId); // Group must exist
+            var ui = new PluginUI(main, groupData, groupId, traceGroup.ShowFilterButtons, traceGroup.AllowMultiplePanels);
+            ui.Text = string.Format(traceGroup.Title ?? TextHelper.GetString("Title.PluginPanel"), args);
+            ui.ParentPanel = PluginBase.MainForm.CreateDynamicPersistDockablePanel(ui, main.Guid, groupId, traceGroup.Icon ?? main.pluginImage, DockState.DockBottomAutoHide);
+            ui.ParentPanel.Tag = ui;
+            ui.ParentPanel.DockStateChanged += ParentPanel_DockStateChanged;
+            ui.ParentPanel.IsActivatedChanged += ParentPanel_IsActivatedChanged;
 
-            var ui = new PluginUI(main, group);
-            ui.Text = traceGroup?.Title ?? TextHelper.GetString("Title.PluginPanel");
-
-            pluginPanels.Add(PluginBase.MainForm.CreateDockablePanel(ui, "", traceGroup?.Icon ?? main.pluginImage, DockState.DockBottomAutoHide));
-            pluginUis.Add(group, ui);
+            if (args.Length > 0) // Possible multiple instances for one group id
+            {
+                for (int i = 0; i < pluginUIs.Count; i++)
+                {
+                    if (pluginUIs[i].GroupId == groupId && pluginUIs[i].ParentPanel.IsHidden)
+                    {
+                        CloseResultsPanel(pluginUIs[i]);
+                        break; // There should only be one panel hidden without being closed
+                    }
+                }
+            }
+            pluginUIs.Add(ui);
 
             return ui;
+        }
+
+        /// <summary>
+        /// Update an existing panel to use for a new group data.
+        /// </summary>
+        private static void UpdateResultsPanel(PluginUI ui, string groupData, string groupId, string[] args)
+        {
+            if (ui.GroupData != groupData)
+            {
+                var traceGroup = TraceManager.GetTraceGroup(groupId);
+                ui.GroupData = groupData;
+                ui.Text = string.Format(traceGroup.Title ?? TextHelper.GetString("Title.PluginPanel"), args);
+                ui.ParentPanel.Text = ui.Text;
+            }
+        }
+
+        /// <summary>
+        /// Close the panel and remove it from the list.
+        /// </summary>
+        private static void CloseResultsPanel(PluginUI ui)
+        {
+            ui.ParentPanel.DockStateChanged -= ParentPanel_DockStateChanged;
+            ui.ParentPanel.IsActivatedChanged -= ParentPanel_IsActivatedChanged;
+            ui.ParentPanel.Close();
+            pluginUIs.Remove(ui);
+        }
+
+        private static void ParentPanel_DockStateChanged(object sender, EventArgs e)
+        {
+            var ui = (PluginUI) ((DockContent) sender).Tag;
+            if (ui.ParentPanel.IsHidden)
+            {
+                ui.OnPanelHidden();
+
+                for (int i = 0; i < pluginUIs.Count; i++)
+                {
+                    if (pluginUIs[i] != ui && pluginUIs[i].GroupId == ui.GroupId)
+                    {
+                        // ui is not the only panel with the group id, so safely close it
+                        CloseResultsPanel(ui);
+                        break;
+                    }
+                }
+            }
+        }
+
+        private static void ParentPanel_IsActivatedChanged(object sender, EventArgs e)
+        {
+            var ui = (PluginUI) ((DockContent) sender).Tag;
+            if (ui.ParentPanel.IsActivated)
+            {
+                ui.OnPanelActivated();
+            }
         }
     }
 }

@@ -72,12 +72,14 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Helpers\ResultsPanelHelper.cs" />
+    <Compile Include="PanelContextMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PluginMain.cs" />
     <Compile Include="PluginUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ResultComparer.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="ArrowHelper.cs" />
   </ItemGroup>

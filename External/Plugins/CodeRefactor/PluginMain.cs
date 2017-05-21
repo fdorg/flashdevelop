@@ -41,12 +41,7 @@ namespace CodeRefactor
         TreeView projectTreeView;
 
         public const string TraceGroup = "CodeRefactor";
-
-        static PluginMain()
-        {
-            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetStringWithoutMnemonics("CodeRefactor.Label.Refactor"), null);
-        }
-
+        
         #region Required Properties
 
         /// <summary>
@@ -118,6 +113,8 @@ namespace CodeRefactor
             this.InitBasics();
             this.LoadSettings();
             this.CreateMenuItems();
+            this.RegisterMenuItems();
+            this.RegisterTraceGroups();
         }
 
         /// <summary>
@@ -302,7 +299,6 @@ namespace CodeRefactor
             searchMenu.DropDownItems.Add(new ToolStripSeparator());
             searchMenu.DropDownItems.Add(this.viewReferencesItem);
             editorMenu.Items.Insert(8, this.editorReferencesItem);
-            RegisterMenuItems();
         }
 
         /// <summary>
@@ -328,6 +324,12 @@ namespace CodeRefactor
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.TruncateImports", this.refactorContextMenu.TruncateMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.CodeGenerator", this.refactorContextMenu.CodeGeneratorMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.BatchProcess", this.refactorContextMenu.BatchMenuItem);
+        }
+
+        private void RegisterTraceGroups()
+        {
+            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetStringWithoutMnemonics("Label.Refactor"), false);
+            TraceManager.RegisterTraceGroup(FindAllReferences.TraceGroup, TextHelper.GetString("Label.FindAllReferencesResult"), false, true);
         }
 
         /// <summary>

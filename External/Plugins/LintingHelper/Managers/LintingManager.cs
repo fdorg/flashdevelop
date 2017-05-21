@@ -9,7 +9,7 @@ namespace LintingHelper.Managers
 {
     public static class LintingManager
     {
-        const string TraceGroup = "LintingManager";
+        internal const string TraceGroup = "LintingManager";
 
         static readonly Dictionary<string, List<ILintProvider>> linters = new Dictionary<string, List<ILintProvider>>();
 
@@ -19,12 +19,7 @@ namespace LintingHelper.Managers
             {LintingSeverity.Error, (int) TraceType.Error},
             {LintingSeverity.Warning, (int) TraceType.Warning}
         };
-
-        static LintingManager()
-        {
-            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetStringWithoutMnemonics("LintingManager.Label.LintingResults"), null);
-        }
-
+        
         internal static LintingCache Cache = new LintingCache();
 
         /// <summary>
@@ -95,7 +90,7 @@ namespace LintingHelper.Managers
                 //remove cache
                 foreach (var file in files)
                 {
-                    UnLintDocument(DocumentManager.FindDocument(file));
+                    UnLintFile(file);
                 }
                 linter.LintAsync(files, (results) =>
                 {
@@ -142,6 +137,13 @@ namespace LintingHelper.Managers
             LintDocument(PluginBase.MainForm.CurrentDocument);
         }
 
+        public static void UnLintFile(string file)
+        {
+            var doc = DocumentManager.FindDocument(file);
+            Cache.RemoveDocument(file);
+            doc?.SciControl.RemoveHighlights();
+        }
+
         public static void UnLintDocument(ITabbedDocument doc)
         {
             Cache.RemoveDocument(doc.FileName);
@@ -167,8 +169,8 @@ namespace LintingHelper.Managers
 
             Cache.AddResults(results);
 
-            
-            foreach (var result in Cache.GetAllResults())
+            var cachedResults = Cache.GetAllResults();
+            foreach (var result in cachedResults)
             {
                 TraceResult(result);
 

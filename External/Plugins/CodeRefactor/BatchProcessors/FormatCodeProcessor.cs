@@ -11,30 +11,18 @@ namespace CodeRefactor.BatchProcessors
 {
     class FormatCodeProcessor : IBatchProcessor
     {
-        public string Text
+        public string Text => TextHelper.GetString("Info.FormatCode");
+
+        public bool IsAvailable => true;
+
+        public void Process(string[] files)
         {
-            get
+            foreach (var file in files)
             {
-                return TextHelper.GetString("Info.FormatCode");
+                var document = PluginBase.MainForm.OpenEditableDocument(file) as ITabbedDocument;
+                DataEvent de = new DataEvent(EventType.Command, "CodeFormatter.FormatDocument", document);
+                EventManager.DispatchEvent(this, de);
             }
-        }
-
-        public bool IsAvailable
-        {
-            get
-            {
-                return true;
-            }
-        }
-
-        public FormatCodeProcessor()
-        {
-        }
-
-        public void Process(ITabbedDocument document)
-        {
-            DataEvent de = new DataEvent(EventType.Command, "CodeFormatter.FormatDocument", document);
-            EventManager.DispatchEvent(this, de);
         }
     }
 }

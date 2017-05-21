@@ -17,7 +17,7 @@ namespace CodeRefactor.Commands
     /// </summary>
     public class FindAllReferences : RefactorCommand<IDictionary<String, List<SearchMatch>>>
     {
-        private const string TraceGroup = "CodeRefactor.FindAllReferences";
+        internal const string TraceGroup = "CodeRefactor.FindAllReferences";
 
         protected bool IgnoreDeclarationSource { get; private set; }
 
@@ -29,12 +29,7 @@ namespace CodeRefactor.Commands
         public bool IncludeComments { get; set; }
 
         public bool IncludeStrings { get; set; }
-
-        static FindAllReferences()
-        {
-            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetString("CodeRefactor.Label.FindAllReferencesResult"), null);
-        }
-
+        
         /// <summary>
         /// A new FindAllReferences refactoring command. Outputs found results.
         /// Uses the current text location as the declaration target.
@@ -204,18 +199,18 @@ namespace CodeRefactor.Commands
         /// </summary>
         private void ReportResults()
         {
-            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + TraceGroup);
+            string groupData = TraceManager.CreateGroupDataUnique(TraceGroup, CurrentTarget.Member == null ? CurrentTarget.Type.Name : CurrentTarget.Member.Name);
+            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
             foreach (KeyValuePair<String, List<SearchMatch>> entry in this.Results)
             {
                 // Outputs the lines as they change
                 foreach (SearchMatch match in entry.Value)
                 {
-                    var message = entry.Key + ":" + match.Line + ": chars " + match.Column + "-" +
-                                  (match.Column + match.Length) + " : " + match.LineText.Trim();
-                    TraceManager.Add(message, (Int32)TraceType.Info, TraceGroup);
+                    string message = $"{entry.Key}:{match.Line}: chars {match.Column}-{match.Column + match.Length} : {match.LineText.Trim()}";
+                    TraceManager.Add(message, (int) TraceType.Info, groupData);
                 }
             }
-            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + TraceGroup);
+            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
         }
 
         #endregion
