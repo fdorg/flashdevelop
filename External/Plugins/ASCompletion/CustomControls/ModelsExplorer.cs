@@ -503,12 +503,6 @@ namespace ASCompletion
                 UpdateTree();
                 return true;
             }
-            else if (keys == Keys.Escape)
-            {
-                if (panelCtrl.DockState == DockState.Float) panelCtrl.Hide();
-                if (PluginBase.MainForm.CurrentDocument.IsEditable)
-                    PluginBase.MainForm.CurrentDocument.SciControl.Focus();
-            }
             return false;
         }
 

@@ -56,6 +56,47 @@ namespace FlashDevelop.Docking
             return this.pluginGuid;
         }
 
+        protected override bool ProcessDialogKey(Keys keyData)
+        {
+            if (keyData == Keys.Escape)
+            {
+                if (this.IsAutoHidden)
+                {
+                    this.DockPanel.ActiveAutoHideContent = null;
+                    return true;
+                }
+                else if (this.IsFloat)
+                {
+                    if (this.HideOnClose)
+                    {
+                        this.Hide();
+                    }
+                    else
+                    {
+                        this.Close();
+                    }
+                    return true;
+                }
+            }
+            return base.ProcessDialogKey(keyData);
+        }
+
+        private bool IsAutoHidden
+        {
+            get
+            {
+                switch (this.DockState)
+                {
+                    case DockState.DockTopAutoHide:
+                    case DockState.DockLeftAutoHide:
+                    case DockState.DockRightAutoHide:
+                    case DockState.DockBottomAutoHide:
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        }
     }
 
 }
