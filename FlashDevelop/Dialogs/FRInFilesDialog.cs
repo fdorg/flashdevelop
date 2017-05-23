@@ -1015,7 +1015,9 @@ namespace FlashDevelop.Dialogs
                 }
                 catch (Exception ex)
                 {
-                    ErrorManager.ShowInfo(ex.Message); 
+                    ErrorManager.ShowInfo(ex.Message);
+                    this.Select();
+                    this.findComboBox.SelectAll();
                     return false;
                 }
             }
