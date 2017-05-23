@@ -1659,6 +1659,8 @@ namespace ProjectManager
             if (PluginBase.CurrentProject != null)
             {
                 if (projectResources == null) projectResources = new OpenResourceForm(this);
+                PluginBase.MainForm.ThemeControls(projectResources);
+                projectResources.ThemeControls();
                 projectResources.ShowDialog(pluginUI);
             }
         }
