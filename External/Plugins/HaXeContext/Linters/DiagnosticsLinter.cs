@@ -15,14 +15,6 @@ namespace HaXeContext.Linters
 {
     class DiagnosticsLinter : ILintProvider
     {
-        static readonly Dictionary<HaxeDiagnosticsSeverity, LintingSeverity> DiagnosticsSeverityToLintingSeverity =
-            new Dictionary<HaxeDiagnosticsSeverity, LintingSeverity>
-            {
-                {HaxeDiagnosticsSeverity.ERROR, LintingSeverity.Error},
-                {HaxeDiagnosticsSeverity.INFO, LintingSeverity.Info},
-                {HaxeDiagnosticsSeverity.WARNING, LintingSeverity.Warning}
-            };
-
         public void LintAsync(string[] files, LintCallback callback)
         {
             var context = ASContext.GetLanguageContext("haxe") as Context;
@@ -65,8 +57,22 @@ namespace HaXeContext.Linters
                                 FirstChar = res.Range.CharacterStart,
                                 Length = lastChar - firstChar,
                                 Line = line,
-                                Severity = DiagnosticsSeverityToLintingSeverity[res.Severity]
                             };
+
+                            switch (res.Severity)
+                            {
+                                case HaxeDiagnosticsSeverity.INFO:
+                                    result.Severity = LintingSeverity.Info;
+                                    break;
+                                case HaxeDiagnosticsSeverity.ERROR:
+                                    result.Severity = LintingSeverity.Error;
+                                    break;
+                                case HaxeDiagnosticsSeverity.WARNING:
+                                    result.Severity = LintingSeverity.Warning;
+                                    break;
+                                default:
+                                    continue;
+                            }
 
                             switch (res.Kind)
                             {
