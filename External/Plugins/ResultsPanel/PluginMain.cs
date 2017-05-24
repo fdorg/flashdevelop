@@ -99,8 +99,8 @@ namespace ResultsPanel
             this.InitBasics();
             this.LoadSettings();
             this.AddEventHandlers();
-            this.CreatePluginPanel();
             this.CreateMenuItem();
+            this.CreatePluginPanel();
         }
 
         /// <summary>
@@ -247,7 +247,7 @@ namespace ResultsPanel
         /// </summary>
         public void CreateMenuItem()
         {
-            viewItemMainPanel = new ToolStripMenuItemEx(TextHelper.GetString("Label.ViewMenuItem"), pluginImage) { Tag = pluginUI.GroupData };
+            viewItemMainPanel = new ToolStripMenuItemEx(TextHelper.GetString("Label.ViewMenuItem"), pluginImage) { Tag = null };
             viewItemSeparator = new ToolStripSeparator();
 
             viewItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), pluginImage);

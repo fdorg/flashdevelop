@@ -12,14 +12,6 @@ namespace LintingHelper.Managers
         internal const string TraceGroup = "LintingManager";
 
         static readonly Dictionary<string, List<ILintProvider>> linters = new Dictionary<string, List<ILintProvider>>();
-
-        static readonly Dictionary<LintingSeverity, int> severityMap = new Dictionary<LintingSeverity, int>
-        {
-            {LintingSeverity.Info, (int) TraceType.Info},
-            {LintingSeverity.Error, (int) TraceType.Error},
-            {LintingSeverity.Warning, (int) TraceType.Warning}
-        };
-        
         internal static LintingCache Cache = new LintingCache();
 
         /// <summary>
@@ -90,7 +82,7 @@ namespace LintingHelper.Managers
                 //remove cache
                 foreach (var file in files)
                 {
-                    UnLintDocument(DocumentManager.FindDocument(file));
+                    UnLintFile(file);
                 }
                 linter.LintAsync(files, (results) =>
                 {
@@ -137,10 +129,14 @@ namespace LintingHelper.Managers
             LintDocument(PluginBase.MainForm.CurrentDocument);
         }
 
+        public static void UnLintFile(string file)
+        {
+            Cache.RemoveDocument(file);
+        }
+
         public static void UnLintDocument(ITabbedDocument doc)
         {
             Cache.RemoveDocument(doc.FileName);
-            doc.SciControl.RemoveHighlights();
         }
 
         /// <summary>
@@ -162,63 +158,44 @@ namespace LintingHelper.Managers
 
             Cache.AddResults(results);
 
-            
-            foreach (var result in Cache.GetAllResults())
+            var cachedResults = Cache.GetAllResults();
+            foreach (var result in cachedResults)
             {
-                TraceResult(result);
-
-                var doc = DocumentManager.FindDocument(result.File);
-                if (doc != null)
+                string chars;
+                if (result.Length > 0)
                 {
-                    var start = doc.SciControl.PositionFromLine(result.Line - 1);
-                    var len = doc.SciControl.LineLength(result.Line - 1);
-                    start += result.FirstChar;
-                    if (result.Length > 0)
+                    chars = $"chars {result.FirstChar}-{result.FirstChar + result.Length}";
+                }
+                else
+                {
+                    var doc = DocumentManager.FindDocument(result.File);
+                    if (doc != null)
                     {
-                        len = result.Length;
+                        chars = $"chars {result.FirstChar}-{doc.SciControl.LineLength(result.Line - 1)}";
                     }
                     else
                     {
-                        len -= result.FirstChar;
+                        chars = $"char {result.FirstChar}";
                     }
-
-                    var id = 0;
-                    int color = 0;
-                    var lang = PluginBase.MainForm.SciConfig.GetLanguage(language);
-                    switch (result.Severity)
-                    {
-                        case LintingSeverity.Error:
-                            color = lang.editorstyle.ErrorLineBack;
-                            id = 3;
-                            break;
-                        case LintingSeverity.Warning:
-                            color = lang.editorstyle.DebugLineBack;
-                            id = 4;
-                            break;
-                        case LintingSeverity.Info:
-                            color = lang.editorstyle.HighlightWordBackColor;
-                            id = 5;
-                            break;
-                    }
-
-                    PluginBase.RunAsync(() =>
-                    {
-                        doc.SciControl.AddHighlight(id, (int)ScintillaNet.Enums.IndicatorStyle.Squiggle, color, start, len);
-                    });
                 }
+                string message = $"{result.File}:{result.Line}: {chars} : {result.Severity}: {result.Description}";
+                int state;
+                switch (result.Severity)
+                {
+                    case LintingSeverity.Info:
+                        state = (int) TraceType.Info;
+                        break;
+                    case LintingSeverity.Warning:
+                        state = (int) TraceType.Warning;
+                        break;
+                    case LintingSeverity.Error:
+                        state = (int) TraceType.Error;
+                        break;
+                    default:
+                        continue;
+                }
+                TraceManager.Add(message, state, TraceGroup);
             }
-
-            PluginBase.RunAsync(() =>
-            {
-                PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + TraceGroup);
-            });
-        }
-
-        static void TraceResult(LintingResult result)
-        {
-            var line = result.File + ":" + result.Line + ": " + result.Severity.ToString() + ": " + result.Description;
-
-            TraceManager.Add(line, severityMap[result.Severity], TraceGroup);
         }
     }
 }

@@ -4440,7 +4440,7 @@ namespace FlashDevelop
                 ToolStripItem button = (ToolStripItem)sender;
                 String command = ((ItemData)button.Tag).Tag;
                 Type mfType = Globals.SciControl.GetType();
-                MethodInfo method = mfType.GetMethod(command);
+                MethodInfo method = mfType.GetMethod(command, new Type[0]);
                 method.Invoke(Globals.SciControl, null);
             }
             catch (Exception ex)

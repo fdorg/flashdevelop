@@ -60,39 +60,35 @@ namespace ScintillaNet.Configuration
         [XmlAttribute("colorize-marker-back")]
         public string colorizemarkerback;
 
-        public int ResolveColor(string aColor)
+        public int ResolveColor(string colorString)
         {
-            if (aColor != null)
+            if (string.IsNullOrEmpty(colorString))
             {
-                Value v = _parent.MasterScintilla.GetValue(aColor);
-                while (v != null)
-                {
-                    aColor = v.val;
-                    v = _parent.MasterScintilla.GetValue(aColor);
-                }
-                Color c = Color.FromName(aColor);
-                if (c.ToArgb() == 0)
-                {
-                    if (aColor.IndexOfOrdinal("0x") == 0)
-                    {
-                        return TO_COLORREF(Int32.Parse(aColor.Substring(2), NumberStyles.HexNumber));
-                    } 
-                    else 
-                    {
-                        try
-                        {
-                            return TO_COLORREF(Int32.Parse(aColor));
-                        }
-                        catch (Exception){}
-                    }
-                }
-                return TO_COLORREF(c.ToArgb() & 0x00ffffff);
+                return 0x000000;
             }
-            return 0;
+            var value = _parent.MasterScintilla.GetValue(colorString);
+            while (value != null)
+            {
+                colorString = value.val;
+                value = _parent.MasterScintilla.GetValue(colorString);
+            }
+            int color = Color.FromName(colorString).ToArgb();
+            if (color == 0x00000000)
+            {
+                if (!colorString.StartsWithOrdinal("0x") || !int.TryParse(colorString.Substring(2), NumberStyles.HexNumber, null, out color))
+                {
+                    int.TryParse(colorString, out color);
+                }
+            }
+            return TO_COLORREF(color);
         }
-        private int TO_COLORREF(int c)
+
+        /// <summary>
+        /// Converts ARGB color value to Scintilla's Colour format (BGR)
+        /// </summary>
+        private int TO_COLORREF(int color)
         {
-            return (((c & 0xff0000) >> 16)+((c & 0x0000ff) << 16)+(c & 0x00ff00));
+            return ((color & 0xFF0000) >> 16) + (color & 0x00FF00) + ((color & 0x0000FF) << 16);
         }
         
         public int CaretForegroundColor
@@ -271,7 +267,7 @@ namespace ScintillaNet.Configuration
                 {
                     return ResolveColor(debuglineback);
                 }
-                return ResolveColor("0xffff00");
+                return ResolveColor("0xffa500");
             }
         }
 

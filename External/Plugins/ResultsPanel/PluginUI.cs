@@ -826,66 +826,10 @@ namespace ResultsPanel
         /// </summary>
         private void EntriesView_DoubleClick(object sender, EventArgs e)
         {
-            if (this.entriesView.SelectedItems.Count < 1) return;
-            ListViewItem item = this.entriesView.SelectedItems[0];
-            if (item == null) return;
-            String file = item.SubItems[4].Text + "\\" + item.SubItems[3].Text;
-            file = file.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-            file = PathHelper.GetLongPathName(file);
-            if (File.Exists(file))
+            if (this.entriesView.SelectedIndices.Count > 0)
             {
-                PluginBase.MainForm.OpenEditableDocument(file, false);
-                ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
-                if (!PluginBase.MainForm.CurrentDocument.IsEditable) return;
-                Int32 line = Convert.ToInt32(item.SubItems[1].Text) - 1;
-                String description = item.SubItems[2].Text;
-                Match mcaret = errorCharacters.Match(description);
-                Match mcaret2 = errorCharacter.Match(description);
-                Match mcaret3 = errorCharacters2.Match(description);
-                Match mcaret4 = lookupRange.Match(description);
-                if (mcaret.Success)
-                {
-                    Int32 start = Convert.ToInt32(mcaret.Groups["start"].Value);
-                    Int32 end = Convert.ToInt32(mcaret.Groups["end"].Value);
-                    // An error (!=0) with this pattern is most likely a MTASC error (not multibyte)
-                    if (item.ImageIndex == 0)
-                    {
-                        // start & end columns are multibyte lengths
-                        start = this.MBSafeColumn(sci, line, start);
-                        end = this.MBSafeColumn(sci, line, end);
-                    }
-                    Int32 startPosition = sci.PositionFromLine(line) + start;
-                    Int32 endPosition = sci.PositionFromLine(line) + end;
-                    this.SetSelAndFocus(sci, line, startPosition, endPosition);
-                }
-                else if (mcaret2.Success)
-                {
-                    Int32 start = Convert.ToInt32(mcaret2.Groups["start"].Value);
-                    // column is a multibyte length
-                    start = this.MBSafeColumn(sci, line, start);
-                    Int32 position = sci.PositionFromLine(line) + start;
-                    this.SetSelAndFocus(sci, line, position, position);
-                }
-                else if (mcaret3.Success)
-                {
-                    Int32 start = Convert.ToInt32(mcaret3.Groups["start"].Value);
-                    // column is a multibyte length
-                    start = this.MBSafeColumn(sci, line, start);
-                    Int32 position = sci.PositionFromLine(line) + start;
-                    this.SetSelAndFocus(sci, line, position, position);
-                }
-                else if (mcaret4.Success)
-                {
-                    // expected: both multibyte lengths
-                    Int32 start = Convert.ToInt32(mcaret4.Groups["start"].Value);
-                    Int32 end = Convert.ToInt32(mcaret4.Groups["end"].Value);
-                    this.MBSafeSetSelAndFocus(sci, line, start, end);
-                }
-                else
-                {
-                    Int32 position = sci.PositionFromLine(line);
-                    this.SetSelAndFocus(sci, line, position, position);
-                }
+                this.SelectItem(this.entriesView.SelectedIndices[0]);
+                this.NavigateToSelectedItem();
             }
         }
 
@@ -1116,50 +1060,77 @@ namespace ResultsPanel
         /// </summary>
         private void AddSquiggle(ListViewItem item)
         {
-            bool fixIndexes = true;
-            Match match = errorCharacters.Match(item.SubItems[2].Text);
-            if (match.Success)
+            ITabbedDocument document = null;
+            string fileName = GetFileName(item);
+            foreach (var doc in PluginBase.MainForm.Documents)
             {
-                // An error with this pattern is most likely a MTASC error (not multibyte)
-                if (item.ImageIndex != 0) fixIndexes = false;
-            }
-            else match = errorCharacter.Match(item.SubItems[2].Text);
-            if (!match.Success) match = errorCharacters2.Match(item.SubItems[2].Text);
-            if (match.Success)
-            {
-                string fileName = GetFileName(item);
-                int line = Convert.ToInt32(item.SubItems[1].Text) - 1;
-                int style = (int) ((item.ImageIndex == 0) ? IndicatorStyle.RoundBox : IndicatorStyle.Squiggle);
-                int indicator = (item.ImageIndex == 0) ? 0 : 2;
-                foreach (var document in PluginBase.MainForm.Documents)
+                if (fileName == doc.FileName)
                 {
-                    if (document.IsEditable && fileName == document.FileName)
-                    {
-                        ScintillaControl sci = document.SciControl;
-                        int fore = (item.ImageIndex == 0) ? PluginBase.MainForm.SciConfig.GetLanguage(sci.ConfigurationLanguage).editorstyle.HighlightBackColor : 0x000000ff;
-                        int end;
-                        int start = Convert.ToInt32(match.Groups["start"].Value);
-                        // start column is (probably) a multibyte length
-                        if (fixIndexes) start = this.MBSafeColumn(sci, line, start);
-                        if (match.Groups["end"] != null && match.Groups["end"].Success)
-                        {
-                            end = Convert.ToInt32(match.Groups["end"].Value);
-                            // end column is (probably) a multibyte length
-                            if (fixIndexes) end = this.MBSafeColumn(sci, line, end);
-                        }
-                        else
-                        {
-                            start = Math.Max(1, Math.Min(sci.LineLength(line) - 1, start));
-                            end = start--;
-                        }
-                        if ((start >= 0) && (end > start) && (end < sci.TextLength))
-                        {
-                            int position = sci.PositionFromLine(line) + start;
-                            sci.AddHighlight(indicator, style, fore, position, end - start);
-                        }
-                        break;
-                    }
+                    document = doc;
+                    break;
                 }
+            }
+            if (document == null || !document.IsEditable)
+            {
+                return;
+            }
+            var sci = document.SciControl;
+
+            int line = Convert.ToInt32(item.SubItems[1].Text) - 1;
+            string description = item.SubItems[2].Text;
+            int start, end;
+            Match match;
+            if ((match = errorCharacters.Match(description)).Success) // "chars {start}-{end}"
+            {
+                start = Convert.ToInt32(match.Groups["start"].Value);
+                end = Convert.ToInt32(match.Groups["end"].Value);
+                // An error (!=0) with this pattern is most likely a MTASC error (not multibyte)
+                if (item.ImageIndex == 0)
+                {
+                    // start & end columns are multibyte lengths
+                    start = this.MBSafeColumn(sci, line, start);
+                    end = this.MBSafeColumn(sci, line, end);
+                }
+            }
+            else if ((match = errorCharacter.Match(description)).Success // "char {start}"
+                || (match = errorCharacters2.Match(description)).Success) // "col: {start}"
+            {
+                start = Convert.ToInt32(match.Groups["start"].Value);
+                // column is a multibyte length
+                start = this.MBSafeColumn(sci, line, start);
+                end = start + 1;
+            }
+            else
+            {
+                return;
+            }
+            if (0 <= start && start < end && end <= sci.TextLength)
+            {
+                int indicator;
+                int style;
+                int color;
+                switch (item.ImageIndex)
+                {
+                    case 0:
+                        indicator = (int) TraceType.Info;
+                        style = (int) IndicatorStyle.RoundBox;
+                        color = PluginBase.MainForm.SciConfig.GetLanguage(sci.ConfigurationLanguage).editorstyle.HighlightBackColor;
+                        break;
+                    case 1:
+                        indicator = (int) TraceType.Error;
+                        style = (int) IndicatorStyle.Squiggle;
+                        color = PluginBase.MainForm.SciConfig.GetLanguage(sci.ConfigurationLanguage).editorstyle.ErrorLineBack;
+                        break;
+                    case 2:
+                        indicator = (int) TraceType.Warning;
+                        style = (int) IndicatorStyle.Squiggle;
+                        color = PluginBase.MainForm.SciConfig.GetLanguage(sci.ConfigurationLanguage).editorstyle.DebugLineBack;
+                        break;
+                    default:
+                        return;
+                }
+                int position = sci.PositionFromLine(line) + start;
+                sci.AddHighlight(indicator, style, color, position, end - start);
             }
         }
 
@@ -1174,11 +1145,16 @@ namespace ResultsPanel
                 string fileName = GetFileName(item);
                 foreach (var document in PluginBase.MainForm.Documents)
                 {
-                    var sci = document.SciControl;
-                    if (fileName == document.FileName && !cleared.Contains(fileName))
+                    if (fileName == document.FileName)
                     {
-                        sci.RemoveHighlights((item.ImageIndex == 0) ? 0 : 2);
-                        cleared.Add(fileName);
+                        if (!cleared.Contains(fileName))
+                        {
+                            var sci = document.SciControl;
+                            sci.RemoveHighlights((int) TraceType.Info);
+                            sci.RemoveHighlights((int) TraceType.Error);
+                            sci.RemoveHighlights((int) TraceType.Warning);
+                            cleared.Add(fileName);
+                        }
                         break;
                     }
                 }
@@ -1260,7 +1236,7 @@ namespace ResultsPanel
         */
         private static Regex errorCharacter = new Regex("(character|char)[\\s]+[^0-9]*(?<start>[0-9]+)", RegexOptions.Compiled);
         private static Regex errorCharacters = new Regex("(characters|chars)[\\s]+[^0-9]*(?<start>[0-9]+)-(?<end>[0-9]+)", RegexOptions.Compiled);
-        private static Regex errorCharacters2 = new Regex(@"col: (?<start>[0-9]+)\s*", RegexOptions.Compiled);
+        private static Regex errorCharacters2 = new Regex("col: (?<start>[0-9]+)\\s*", RegexOptions.Compiled);
 
         #endregion
 
@@ -1273,18 +1249,13 @@ namespace ResultsPanel
         /// </summary>
         public bool NextEntry()
         {
-            if (this.entriesView.Items.Count == 0) return false;
-            if (this.entryIndex >= 0 && this.entryIndex < this.entriesView.Items.Count)
+            if (this.entriesView.Items.Count > 0)
             {
-                this.entriesView.Items[this.entryIndex].ForeColor = this.entriesView.ForeColor;
+                this.SelectItem(this.entryIndex == this.entriesView.Items.Count - 1 ? 0 : this.entryIndex + 1);
+                this.NavigateToSelectedItem();
+                return true;
             }
-            this.entryIndex = (this.entryIndex + 1) % this.entriesView.Items.Count;
-            this.entriesView.SelectedItems.Clear();
-            this.entriesView.Items[this.entryIndex].Selected = true;
-            this.entriesView.Items[this.entryIndex].ForeColor = PluginBase.MainForm.GetThemeColor("ListView.Highlight", SystemColors.Highlight);
-            this.entriesView.EnsureVisible(this.entryIndex);
-            this.EntriesView_DoubleClick(null, null);
-            return true;
+            return false;
         }
 
         /// <summary>
@@ -1292,18 +1263,86 @@ namespace ResultsPanel
         /// </summary>
         public bool PreviousEntry()
         {
-            if (this.entriesView.Items.Count == 0) return false;
-            if (this.entryIndex >= 0 && this.entryIndex < this.entriesView.Items.Count)
+            if (this.entriesView.Items.Count > 0)
+            {
+                this.SelectItem(this.entryIndex == 0 ? this.entriesView.Items.Count - 1 : this.entryIndex - 1);
+                this.NavigateToSelectedItem();
+                return true;
+            }
+            return false;
+        }
+
+        private void SelectItem(int index)
+        {
+            if (0 <= this.entryIndex && this.entryIndex < this.entriesView.Items.Count)
             {
                 this.entriesView.Items[this.entryIndex].ForeColor = this.entriesView.ForeColor;
             }
-            if (--this.entryIndex < 0) this.entryIndex = this.entriesView.Items.Count - 1;
+            this.entryIndex = index;
             this.entriesView.SelectedItems.Clear();
             this.entriesView.Items[this.entryIndex].Selected = true;
             this.entriesView.Items[this.entryIndex].ForeColor = PluginBase.MainForm.GetThemeColor("ListView.Highlight", SystemColors.Highlight);
             this.entriesView.EnsureVisible(this.entryIndex);
-            this.EntriesView_DoubleClick(null, null);
-            return true;
+        }
+
+        private void NavigateToSelectedItem()
+        {
+            if (this.entriesView.SelectedItems.Count == 0) return;
+            var item = this.entriesView.SelectedItems[0];
+            if (item == null) return;
+            string file = item.SubItems[4].Text + "\\" + item.SubItems[3].Text;
+            file = file.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            file = PathHelper.GetLongPathName(file);
+            if (!File.Exists(file)) return;
+            PluginBase.MainForm.OpenEditableDocument(file, false);
+            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            if (!PluginBase.MainForm.CurrentDocument.IsEditable) return;
+            int line = Convert.ToInt32(item.SubItems[1].Text) - 1;
+            string description = item.SubItems[2].Text;
+            Match match;
+            if ((match = errorCharacters.Match(description)).Success)
+            {
+                int start = Convert.ToInt32(match.Groups["start"].Value);
+                int end = Convert.ToInt32(match.Groups["end"].Value);
+                // An error (!=0) with this pattern is most likely a MTASC error (not multibyte)
+                if (item.ImageIndex == 0)
+                {
+                    // start & end columns are multibyte lengths
+                    start = this.MBSafeColumn(sci, line, start);
+                    end = this.MBSafeColumn(sci, line, end);
+                }
+                int startPosition = sci.PositionFromLine(line) + start;
+                int endPosition = sci.PositionFromLine(line) + end;
+                this.SetSelAndFocus(sci, line, startPosition, endPosition);
+            }
+            else if ((match = errorCharacter.Match(description)).Success)
+            {
+                int start = Convert.ToInt32(match.Groups["start"].Value);
+                // column is a multibyte length
+                start = this.MBSafeColumn(sci, line, start);
+                int position = sci.PositionFromLine(line) + start;
+                this.SetSelAndFocus(sci, line, position, position);
+            }
+            else if ((match = errorCharacters2.Match(description)).Success)
+            {
+                int start = Convert.ToInt32(match.Groups["start"].Value);
+                // column is a multibyte length
+                start = this.MBSafeColumn(sci, line, start);
+                int position = sci.PositionFromLine(line) + start;
+                this.SetSelAndFocus(sci, line, position, position);
+            }
+            else if ((match = lookupRange.Match(description)).Success)
+            {
+                // expected: both multibyte lengths
+                int start = Convert.ToInt32(match.Groups["start"].Value);
+                int end = Convert.ToInt32(match.Groups["end"].Value);
+                this.MBSafeSetSelAndFocus(sci, line, start, end);
+            }
+            else
+            {
+                int position = sci.PositionFromLine(line);
+                this.SetSelAndFocus(sci, line, position, position);
+            }
         }
 
         #endregion
