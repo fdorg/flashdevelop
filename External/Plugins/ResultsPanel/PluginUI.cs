@@ -1055,6 +1055,66 @@ namespace ResultsPanel
             }
         }
 
+        internal List<string> GetResultsAt(ITabbedDocument document, int position)
+        {
+            var localResults = new List<string>();
+
+            foreach (ListViewItem item in EntriesView.Items)
+            {
+                var pos = GetPosition(document, item);
+                if (pos == null) continue;
+
+                var line = Convert.ToInt32(item.SubItems[1].Text) - 1;
+                var listStart = document.SciControl.PositionFromLine(line);
+                var start = listStart + pos[0];
+                var end = listStart + pos[1];
+
+                if (start <= position && end >= position)
+                {
+                    //suitable result
+                    string description = item.SubItems[2].Text;
+                    localResults.Add(description);
+                }
+            }
+
+            return localResults;
+        }
+
+        private int[] GetPosition(ITabbedDocument document, ListViewItem item)
+        {
+            var sci = document.SciControl;
+
+            int line = Convert.ToInt32(item.SubItems[1].Text) - 1;
+            string description = item.SubItems[2].Text;
+            int start, end;
+            Match match;
+            if ((match = errorCharacters.Match(description)).Success) // "chars {start}-{end}"
+            {
+                start = Convert.ToInt32(match.Groups["start"].Value);
+                end = Convert.ToInt32(match.Groups["end"].Value);
+                // An error (!=0) with this pattern is most likely a MTASC error (not multibyte)
+                if (item.ImageIndex == 0)
+                {
+                    // start & end columns are multibyte lengths
+                    start = this.MBSafeColumn(sci, line, start);
+                    end = this.MBSafeColumn(sci, line, end);
+                }
+            }
+            else if ((match = errorCharacter.Match(description)).Success // "char {start}"
+                     || (match = errorCharacters2.Match(description)).Success) // "col: {start}"
+            {
+                start = Convert.ToInt32(match.Groups["start"].Value);
+                // column is a multibyte length
+                start = this.MBSafeColumn(sci, line, start);
+                end = start + 1;
+            }
+            else
+            {
+                return null;
+            }
+            return new int[] {start, end};
+        }
+
         /// <summary>
         /// Squiggle one result
         /// </summary>
@@ -1075,35 +1135,14 @@ namespace ResultsPanel
                 return;
             }
             var sci = document.SciControl;
-
             int line = Convert.ToInt32(item.SubItems[1].Text) - 1;
-            string description = item.SubItems[2].Text;
-            int start, end;
-            Match match;
-            if ((match = errorCharacters.Match(description)).Success) // "chars {start}-{end}"
-            {
-                start = Convert.ToInt32(match.Groups["start"].Value);
-                end = Convert.ToInt32(match.Groups["end"].Value);
-                // An error (!=0) with this pattern is most likely a MTASC error (not multibyte)
-                if (item.ImageIndex == 0)
-                {
-                    // start & end columns are multibyte lengths
-                    start = this.MBSafeColumn(sci, line, start);
-                    end = this.MBSafeColumn(sci, line, end);
-                }
-            }
-            else if ((match = errorCharacter.Match(description)).Success // "char {start}"
-                || (match = errorCharacters2.Match(description)).Success) // "col: {start}"
-            {
-                start = Convert.ToInt32(match.Groups["start"].Value);
-                // column is a multibyte length
-                start = this.MBSafeColumn(sci, line, start);
-                end = start + 1;
-            }
-            else
-            {
-                return;
-            }
+
+            var pos = GetPosition(document, item);
+            if (pos == null) return;
+
+            var start = pos[0];
+            var end = pos[1];
+
             if (0 <= start && start < end && end <= sci.TextLength)
             {
                 int indicator;
