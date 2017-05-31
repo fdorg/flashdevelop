@@ -230,7 +230,7 @@ namespace HaXeContext
                 case HaxeCompilerService.USAGE:
                     pos = Sci.WordEndPosition(Sci.CurrentPos, true);
                     // necessary to get results with older versions due to a compiler bug
-                    if (haxeVersion.IsOlderThan(new SemVer("3.3.0"))) pos++;
+                    if (haxeVersion < "3.3.0") pos++;
                     break;
                 case HaxeCompilerService.DIAGNOSTICS:
                     pos = 0;

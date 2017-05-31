@@ -20,7 +20,7 @@ namespace HaXeContext.CodeRefactor.Provider
             if (settings.EnableCompilerForFindAllReferences
                 && settings.CompletionMode != HaxeCompletionModeEnum.FlashDevelop
                 && target.Member != null && ((target.Member.Flags & FlagType.LocalVar) > 0 || (target.Member.Flags & FlagType.ParameterVar) > 0)
-                && context.GetCurrentSDKVersion().IsGreaterThanOrEquals(new SemVer("3.2.0")))
+                && context.GetCurrentSDKVersion() >= "3.2.0")
             {
                 return new Commands.HaxeFindAllReferences(target, output, ignoreDeclarations)
                 {

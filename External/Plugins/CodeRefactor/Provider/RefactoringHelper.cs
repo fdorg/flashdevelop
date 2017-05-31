@@ -705,7 +705,7 @@ namespace CodeRefactor.Provider
                     || ((member.Flags & FlagType.LocalVar) > 0 || (member.Flags & FlagType.ParameterVar) > 0);
             }
             var type = target.Type;
-            return type != null && type.Access == Visibility.Private && (!type.InFile.haXe || new SemVer(PluginBase.CurrentSDK.Version).IsOlderThan(new SemVer("4.0.0")));
+            return type != null && type.Access == Visibility.Private && (!type.InFile.haXe || new SemVer(PluginBase.CurrentSDK.Version) < "4.0.0");
         }
     }
 

@@ -21,7 +21,7 @@ namespace HaXeContext.Linters
             if (context == null) return;
             var completionMode = ((HaXeSettings) context.Settings).CompletionMode;
             var haxeVersion = context.GetCurrentSDKVersion();
-            if (completionMode == HaxeCompletionModeEnum.FlashDevelop || haxeVersion.IsOlderThan(new SemVer("3.3.0"))) return;
+            if (completionMode == HaxeCompletionModeEnum.FlashDevelop || haxeVersion < "3.3.0") return;
 
             var list = new List<LintingResult>();
             for (var i = 0; i < files.Length; i++)
