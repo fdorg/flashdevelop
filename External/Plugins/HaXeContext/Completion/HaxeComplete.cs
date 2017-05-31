@@ -630,9 +630,7 @@ namespace HaXeContext
         public HaxeDiagnosticsKind Kind;
         public HaxeDiagnosticsSeverity Severity;
         public HaxePositionResult Range;
-
         public HaxeDiagnosticsArgs Args;
-        //no "args" for now
     }
 
     public class HaxeDiagnosticsArgs
