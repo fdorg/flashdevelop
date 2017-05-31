@@ -34,21 +34,27 @@ namespace HaXeContext.Linters
                     total--;
                     continue;
                 }
+                bool sciCreated = false;
                 var sci = DocumentManager.FindDocument(file)?.SciControl;
                 if (sci == null)
                 {
                     sci = new ScintillaControl
                     {
-                        Text = File.ReadAllText(file),
                         FileName = file,
                         ConfigurationLanguage = "haxe"
                     };
+                    sciCreated = true;
                 }
 
                 var hc = context.GetHaxeComplete(sci, new ASExpr { Position = 0 }, true, HaxeCompilerService.DIAGNOSTICS);
                 hc.GetDiagnostics((complete, results, status) =>
                 {
                     progress++;
+                    if (sciCreated)
+                    {
+                        sci.Dispose();
+                    }
+
                     if (status == HaxeCompleteStatus.DIAGNOSTICS && results != null)
                     {
                         foreach (var res in results)
