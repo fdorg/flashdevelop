@@ -1,9 +1,8 @@
-﻿using LintingHelper.Helpers;
+﻿using System.Collections.Generic;
+using System.Linq;
+using LintingHelper.Helpers;
 using PluginCore;
 using PluginCore.Managers;
-using System.Collections.Generic;
-using System.Linq;
-using PluginCore.Localization;
 
 namespace LintingHelper.Managers
 {

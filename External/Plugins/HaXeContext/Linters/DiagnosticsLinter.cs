@@ -1,10 +1,8 @@
-﻿using LintingHelper;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Context;
+using LintingHelper;
 using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -20,14 +18,22 @@ namespace HaXeContext.Linters
             var context = ASContext.GetLanguageContext("haxe") as Context;
             if (context == null) return;
             var completionMode = ((HaXeSettings) context.Settings).CompletionMode;
+            if (completionMode == HaxeCompletionModeEnum.FlashDevelop) return;
             var haxeVersion = context.GetCurrentSDKVersion();
-            if (completionMode == HaxeCompletionModeEnum.FlashDevelop || haxeVersion.IsOlderThan(new SemVer("3.3.0"))) return;
+            if (haxeVersion.IsOlderThan(new SemVer("3.3.0"))) return;
 
             var list = new List<LintingResult>();
+            int progress = 0;
+            int total = files.Length;
+
             for (var i = 0; i < files.Length; i++)
             {
                 var file = files[i];
-                if (!File.Exists(file)) continue;
+                if (!File.Exists(file))
+                {
+                    total--;
+                    continue;
+                }
                 var sci = DocumentManager.FindDocument(file)?.SciControl;
                 if (sci == null)
                 {
@@ -40,10 +46,9 @@ namespace HaXeContext.Linters
                 }
 
                 var hc = context.GetHaxeComplete(sci, new ASExpr { Position = 0 }, true, HaxeCompilerService.DIAGNOSTICS);
-                var i1 = i;
-
                 hc.GetDiagnostics((complete, results, status) =>
                 {
+                    progress++;
                     if (status == HaxeCompleteStatus.DIAGNOSTICS && results != null)
                     {
                         foreach (var res in results)
@@ -94,14 +99,11 @@ namespace HaXeContext.Linters
                     {
                         PluginBase.RunAsync(() =>
                         {
-                            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
-                            TraceManager.Add(hc.Errors, (int)TraceType.Error);
+                            TraceManager.Add(hc.Errors, (int) TraceType.Error);
                         });
-                        callback(list);
-                        return;
                     }
 
-                    if (i1 == files.Length - 1)
+                    if (progress == total)
                     {
                         callback(list);
                     }
