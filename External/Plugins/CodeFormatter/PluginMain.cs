@@ -182,7 +182,7 @@ namespace CodeFormatter
             this.mainMenuItem = new ToolStripMenuItem(label, null, new EventHandler(this.Format), Keys.Control | Keys.Shift | Keys.D2);
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.CodeFormatter", this.mainMenuItem);
 
-            String settingsLabel = "Haxe Formatter Settings"; //TODO: use TextHelper
+            String settingsLabel = TextHelper.GetString("Title.AStyleFormatterSettings");
             this.settingsMenuItem = new ToolStripMenuItem(settingsLabel, null, new EventHandler(this.ShowSettings), Keys.Control | Keys.Shift | Keys.D3);
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.Test", this.settingsMenuItem);
         }
