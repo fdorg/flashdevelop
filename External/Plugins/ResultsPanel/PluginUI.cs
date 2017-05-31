@@ -1060,21 +1060,11 @@ namespace ResultsPanel
         /// </summary>
         private void AddSquiggle(ListViewItem item)
         {
-            ITabbedDocument document = null;
-            string fileName = GetFileName(item);
-            foreach (var doc in PluginBase.MainForm.Documents)
-            {
-                if (fileName == doc.FileName)
-                {
-                    document = doc;
-                    break;
-                }
-            }
-            if (document == null || !document.IsEditable)
+            var sci = DocumentManager.FindDocument(GetFileName(item))?.SciControl;
+            if (sci == null)
             {
                 return;
             }
-            var sci = document.SciControl;
 
             int line = Convert.ToInt32(item.SubItems[1].Text) - 1;
             string description = item.SubItems[2].Text;
