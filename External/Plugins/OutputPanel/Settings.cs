@@ -15,6 +15,7 @@ namespace OutputPanel
         private Boolean useLegacyColoring = false;
         private List<HighlightMarker> highlightMarkers;
         private Boolean wrapOutput = false;
+        private ClearModeAction clearMode = ClearModeAction.OnEveryProcess;
 
         /// <summary> 
         /// Get and sets the alwaysShow
@@ -81,6 +82,24 @@ namespace OutputPanel
             set { this.highlightMarkers = value; }
         }
 
+        /// <summary> 
+        /// Get and sets the way in which the output text will be cleared
+        /// </summary>
+        [DisplayName("Clear Mode")]
+        [LocalizedDescription("OutputPanel.Description.ClearMode"), DefaultValue(ClearModeAction.OnEveryProcess)]
+        public ClearModeAction ClearMode
+        {
+            get { return this.clearMode; }
+            set { this.clearMode = value; }
+        }
+
+    }
+
+    public enum ClearModeAction
+    {
+        OnEveryProcess,
+        OnBuildStart,
+        Manual
     }
 
     [Serializable]

@@ -1,0 +1,5 @@
+<platform name="HashLink" haxe-target="hl">
+  <versions>
+    <version value="1.0" />
+  </versions>
+</platform>

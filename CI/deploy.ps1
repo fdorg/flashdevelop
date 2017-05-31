@@ -15,6 +15,7 @@ Param (
 
 $fd = $false;
 $hd = $false;
+$fdpr = $false; # Unused at the moment 
 $login = $variables["SecureLogin"]
 $pass = $variables["SecurePass"]
 
@@ -23,8 +24,11 @@ foreach($artifact in $artifacts.values)
     Write-Output "Upload artifact: $($artifact.name)"
     $ext = [System.IO.Path]::GetExtension($artifact.name)
     $name = [System.IO.Path]::GetFileNameWithoutExtension($artifact.name)
-    IF ($name -match "FlashDevelop") { $fd = $true; }
-    IF ($name -match "HaxeDevelop") { $hd = $true; }
+	
+	IF ($name -like "FlashDevelopPR_*") { $fdpr = $true; }
+    ELSEIF ($name -like "FlashDevelop*") { $fd = $true; }
+    ELSEIF ($name -like "HaxeDevelop*") { $hd = $true; }
+	
     IF ($ext -eq ".xml")
     {
         # Upload appman.xml file

@@ -214,9 +214,7 @@ namespace PluginCore.Controls
         /// </summary>
         static public void SelectItem(String name)
         {
-            int p = name.IndexOf('<');
-            if (p > 1) name = name.Substring(0, p) + "<T>";
-            string pname = (name.IndexOf('.') < 0) ? "." + name : null;
+            string pname = name.IndexOf('.') < 0 ? "." + name : null;
             ICompletionListItem found = null;
             foreach (ICompletionListItem item in completionList.Items)
             {
@@ -887,9 +885,10 @@ namespace PluginCore.Controls
             switch (key)
             {
                 case Keys.Back:
-                    if (word.Length >= MinWordLength)
+                    var wordLength = word.Length;
+                    if (wordLength > 0 && wordLength >= MinWordLength)
                     {
-                        word = word.Substring(0, word.Length - 1);
+                        word = word.Substring(0, wordLength - 1);
                         currentPos = sci.CurrentPos - 1;
                         lastIndex = 0;
                         FindWordStartingWith(word);

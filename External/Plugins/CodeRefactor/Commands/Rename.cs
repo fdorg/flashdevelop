@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
-using CodeRefactor.Controls;
 using CodeRefactor.Provider;
 using PluginCore;
 using PluginCore.Controls;
@@ -18,22 +17,23 @@ using ProjectManager.Projects;
 
 namespace CodeRefactor.Commands
 {
+    using Command = RefactorCommand<IDictionary<string, List<SearchMatch>>>;
+
     /// <summary>
     /// Refactors by renaming the given declaration and all its references.
     /// </summary>
-    public class Rename : RefactorCommand<IDictionary<string, List<SearchMatch>>>
+    public class Rename : Command
     {
+        private readonly Command findAllReferencesCommand;
+        private Command renamePackage;
         private bool isRenamePackage;
         private string renamePackagePath;
-        private FindAllReferences findAllReferencesCommand;
-        private Move renamePackage;
 
         private string oldFileName;
         private string newFileName;
 
         public string OldName { get; private set; }
         public string NewName { get; private set; }
-        public bool OutputResults { get; private set; }
         public ASResult Target { get; private set; }
         public string TargetName { get; private set; }
 
@@ -101,7 +101,7 @@ namespace CodeRefactor.Commands
                     if (aPath.IsValid && !aPath.Updating)
                     {
                         string path = Path.Combine(aPath.Path, package);
-                        if (aPath.IsValid && Directory.Exists(path))
+                        if (Directory.Exists(path))
                         {
                             TargetName = Path.GetFileName(path);
                             renamePackagePath = path;
@@ -118,7 +118,7 @@ namespace CodeRefactor.Commands
 
             // create a FindAllReferences refactor to get all the changes we need to make
             // we'll also let it output the results, at least until we implement a way of outputting the renamed results later
-            findAllReferencesCommand = new FindAllReferences(target, false, ignoreDeclarationSource) { OnlySourceFiles = true };
+            findAllReferencesCommand = CommandFactoryProvider.GetFactory(target).CreateFindAllReferencesCommand(target, false, ignoreDeclarationSource, true);
             // register a completion listener to the FindAllReferences so we can rename the entries
             findAllReferencesCommand.OnRefactorComplete += OnFindAllReferencesCompleted;
 
@@ -203,9 +203,6 @@ namespace CodeRefactor.Commands
             var member = isEnum || isClass ? target.Type : target.Member;
             var inFile = member.InFile;
 
-            // Is this possible? should return false? I'm inclined to think so
-            if (inFile == null) return true;
-
             oldFileName = inFile.FileName;
             string oldName = Path.GetFileNameWithoutExtension(oldFileName);
 
@@ -233,14 +230,70 @@ namespace CodeRefactor.Commands
             UserInterfaceManager.ProgressDialog.Show();
             UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("Info.UpdatingReferences"));
             MessageBar.Locked = true;
+            var isParameterVar = (Target.Member?.Flags & FlagType.ParameterVar) > 0;
             foreach (var entry in eventArgs.Results)
             {
                 UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.Updating") + " \"" + entry.Key + "\"");
                 // re-open the document and replace all the text
                 var doc = AssociatedDocumentHelper.LoadDocument(entry.Key);
                 var sci = doc.SciControl;
+                var targetMatches = entry.Value;
+                if (isParameterVar)
+                {
+                    var lineFrom = Target.Context.ContextFunction.LineFrom;
+                    var lineTo = Target.Context.ContextFunction.LineTo;
+                    var search = new FRSearch(NewName) {WholeWord = true, NoCase = false, SingleLine = true};
+                    var matches = search.Matches(sci.Text, sci.PositionFromLine(lineFrom), lineFrom);
+                    matches.RemoveAll(it => it.Line < lineFrom || it.Line > lineTo);
+                    if (matches.Count != 0)
+                    {
+                        sci.BeginUndoAction();
+                        try
+                        {
+                            for (var i = 0; i < matches.Count; i++)
+                            {
+                                var match = matches[i];
+                                var expr = ASComplete.GetExpressionType(sci, sci.MBSafePosition(match.Index) + sci.MBSafeTextLength(match.Value));
+                                if (expr.IsNull()) continue;
+                                var replacement = string.Empty;
+                                var flags = expr.Member.Flags;
+                                if ((flags & FlagType.Static) > 0)
+                                {
+                                    var classNameWithDot = ASContext.Context.CurrentClass.Name + ".";
+                                    if (!expr.Context.Value.StartsWith(classNameWithDot)) replacement = classNameWithDot + NewName;
+                                }
+                                else if((flags & FlagType.LocalVar) == 0)
+                                {
+                                    var decl = expr.Context.Value;
+                                    if (!decl.StartsWith("this.") && !decl.StartsWith("super.")) replacement = "this." + NewName;
+                                }
+                                if (string.IsNullOrEmpty(replacement)) continue;
+                                RefactoringHelper.SelectMatch(sci, match);
+                                sci.EnsureVisible(sci.LineFromPosition(sci.MBSafePosition(match.Index)));
+                                sci.ReplaceSel(replacement);
+                                for (var j = 0; j < targetMatches.Count; j++)
+                                {
+                                    var targetMatch = targetMatches[j];
+                                    if (targetMatch.Line <= match.Line) continue;
+                                    FRSearch.PadIndexes(targetMatches, j, match.Value, replacement);
+                                    if (targetMatch.Line == match.Line + 1)
+                                    {
+                                        targetMatch.LineText = sci.GetLine(match.Line);
+                                        targetMatch.Column += replacement.Length - match.Value.Length;
+                                    }
+                                    break;
+                                }
+                                FRSearch.PadIndexes(matches, i + 1, match.Value, replacement);
+                            }
+                        }
+                        finally
+                        {
+                            sci.EndUndoAction();
+                        }
+                    }
+                }
                 // replace matches in the current file with the new name
-                RefactoringHelper.ReplaceMatches(entry.Value, sci, NewName);
+                RefactoringHelper.ReplaceMatches(targetMatches, sci, NewName);
                 //Uncomment if we want to keep modified files
                 //if (sci.IsModify) AssociatedDocumentHelper.MarkDocumentToKeep(entry.Key);
                 doc.Save();
@@ -345,7 +398,7 @@ namespace CodeRefactor.Commands
                     foreach (string lineToReport in lineSetsToReport.Value)
                     {
                         // use the String.Format and replace the {0} from above with our final line state
-                        TraceManager.Add(string.Format(lineToReport, renamedLine), (int) TraceType.Info);
+                        TraceManager.Add(string.Format(lineToReport, renamedLine), (int) TraceType.Info, PluginMain.TraceGroup);
                     }
                 }
             }

@@ -112,7 +112,7 @@ namespace PluginCore.Utilities
             {
                 return Activator.CreateInstance(type);
             }
-            else if (info.Exists && info.Length == 0)
+            else if (info.Length == 0)
             {
                 info.Delete();
                 return Activator.CreateInstance(type);

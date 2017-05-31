@@ -1,15 +1,14 @@
 ﻿using System;
 using System.IO;
-using System.Text;
-using System.Drawing;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Linq;
 using System.Windows.Forms;
 using CodeRefactor.Commands;
+using CodeRefactor.Provider;
 using PluginCore.Localization;
-using PluginCore.Controls;
 using PluginCore.Managers;
 using PluginCore;
+using CodeRefactor.Managers;
 
 namespace CodeRefactor.Controls
 {
@@ -145,13 +144,14 @@ namespace CodeRefactor.Controls
                 TextHelper.GetString("Info.OpenFiles"),
                 TextHelper.GetString("Info.ProjectSources")
             });
-            this.operationComboBox.Items.AddRange(new Object[] 
+
+            //Add processors from BatchProcessManager
+            var customProcessors = BatchProcessManager.GetAvailableProcessors();
+            foreach (var proc in customProcessors)
             {
-                TextHelper.GetString("Info.FormatCode"),
-                TextHelper.GetStringWithoutMnemonics("Label.OrganizeImports"),
-                TextHelper.GetStringWithoutMnemonics("Label.TruncateImports"),
-                TextHelper.GetString("Info.ConsistentEOLs"),
-            });
+                this.operationComboBox.Items.Add(new BatchProcessorItem(proc));
+            }
+
             this.Text = " " + TextHelper.GetString("Title.BatchProcessDialog");
             this.targetComboBox.SelectedIndex = 0;
             this.operationComboBox.SelectedIndex = 0;
@@ -167,10 +167,12 @@ namespace CodeRefactor.Controls
             {
                 case 0: // Open Files
                 {
-                    foreach (ITabbedDocument document in PluginBase.MainForm.Documents)
+                    var files = new List<string>();
+                    foreach (var document in PluginBase.MainForm.Documents)
                     {
-                        if (document.IsEditable && !document.IsUntitled) this.DoProcess(document);
+                        if (document.IsEditable && !document.IsUntitled) files.Add(document.FileName);
                     }
+                    this.DoProcess(files.ToArray());
                     break;
                 }
                 case 1: // Project Sources
@@ -187,14 +189,8 @@ namespace CodeRefactor.Controls
                                 files.AddRange(Directory.GetFiles(project.GetAbsolutePath(path), filter, SearchOption.AllDirectories));
                             }
                         }
-                        foreach (String file in files)
-                        {
-                            if (File.Exists(file))
-                            {
-                                ITabbedDocument document = PluginBase.MainForm.OpenEditableDocument(file) as ITabbedDocument;
-                                this.DoProcess(document);
-                            }
-                        }
+                        files = files.FindAll(File.Exists);
+                        this.DoProcess(files.ToArray());
                     }
                     break;
                 }
@@ -205,37 +201,10 @@ namespace CodeRefactor.Controls
         /// <summary>
         /// Processes the specified document
         /// </summary>
-        private void DoProcess(ITabbedDocument document)
+        private void DoProcess(string[] files)
         {
-            switch (this.operationComboBox.SelectedIndex)
-            {
-                case 0: // Format Code
-                {
-                    DataEvent de = new DataEvent(EventType.Command, "CodeFormatter.FormatDocument", document);
-                    EventManager.DispatchEvent(this, de);
-                    break;
-                }
-                case 1: // Organize Imports
-                {
-                    OrganizeImports command = new OrganizeImports();
-                    command.SciControl = document.SciControl;
-                    command.Execute();
-                    break;
-                }
-                case 2: // Truncate Imports
-                {
-                    OrganizeImports command = new OrganizeImports();
-                    command.SciControl = document.SciControl;
-                    command.TruncateImports = true;
-                    command.Execute();
-                    break;
-                }
-                case 3: // Consistent EOLs
-                {
-                    document.SciControl.ConvertEOLs(document.SciControl.EOLMode);
-                    break;
-                }
-            }
+            var item = (BatchProcessorItem)this.operationComboBox.SelectedItem;
+            item.Processor.Process(files);
         }
 
         /// <summary>

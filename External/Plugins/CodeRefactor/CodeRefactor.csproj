@@ -75,12 +75,13 @@
   -->
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BatchProcessors\ConsistentEOLProcessor.cs" />
+    <Compile Include="BatchProcessors\FormatCodeProcessor.cs" />
+    <Compile Include="BatchProcessors\TruncateImportsProcessor.cs" />
     <Compile Include="Commands\ExtractLocalVariableCommand.cs" />
     <Compile Include="Commands\ExtractMethodCommand.cs" />
     <Compile Include="Commands\DelegateMethodsCommand.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="Controls\BatchProcessDialog.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Controls\BatchProcessorItem.cs" />
     <Compile Include="Controls\DelegateMethodsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -115,11 +117,15 @@
     <Compile Include="Controls\SurroundMenu.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Managers\BatchProcessManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PluginMain.cs" />
     <Compile Include="Commands\RefactorCommand.cs" />
     <Compile Include="Commands\RefactorCompleteEventArgs.cs" />
+    <Compile Include="Provider\CommandFactory.cs" />
+    <Compile Include="Provider\CommandFactoryProvider.cs" />
     <Compile Include="Provider\DocumentHelper.cs" />
+    <Compile Include="Provider\ICommandFactory.cs" />
     <Compile Include="Provider\MovingHelper.cs" />
     <Compile Include="Provider\RefactoringHelper.cs" />
     <Compile Include="Provider\RenamingHelper.cs" />
@@ -165,5 +171,8 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BatchProcessors\OrganizeImportsProcessor.cs" />
   </ItemGroup>
 </Project>

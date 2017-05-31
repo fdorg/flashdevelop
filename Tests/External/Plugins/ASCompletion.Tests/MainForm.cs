@@ -112,6 +112,11 @@ namespace FlashDevelop
             throw new NotImplementedException();
         }
 
+        public DockContent CreateDynamicPersistDockablePanel(Control ctrl, string guid, string id, Image image, DockState defaultDockState)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool CallCommand(string command, string arguments)
         {
             throw new NotImplementedException();
@@ -392,7 +397,11 @@ namespace FlashDevelop
             get { throw new NotImplementedException(); }
         }
 
-        public bool RequiresRestart { get; }
+        public bool RequiresRestart
+        {
+            get { throw new NotImplementedException(); }
+        }
+
 
         public bool RefreshConfig
         {
