@@ -43,7 +43,7 @@
             this.checkOneLineBrackets = new System.Windows.Forms.CheckBox();
             this.checkAddBrackets = new System.Windows.Forms.CheckBox();
             this.checkAttachClasses = new System.Windows.Forms.CheckBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblBracketStyle = new System.Windows.Forms.Label();
             this.cbBracketStyle = new System.Windows.Forms.ComboBox();
             this.tabPadding = new System.Windows.Forms.TabPage();
             this.checkFillEmptyLines = new System.Windows.Forms.CheckBox();
@@ -194,7 +194,7 @@
             this.tabBrackets.Controls.Add(this.checkOneLineBrackets);
             this.tabBrackets.Controls.Add(this.checkAddBrackets);
             this.tabBrackets.Controls.Add(this.checkAttachClasses);
-            this.tabBrackets.Controls.Add(this.label1);
+            this.tabBrackets.Controls.Add(this.lblBracketStyle);
             this.tabBrackets.Controls.Add(this.cbBracketStyle);
             this.tabBrackets.Location = new System.Drawing.Point(4, 22);
             this.tabBrackets.Name = "tabBrackets";
@@ -221,10 +221,10 @@
             this.checkRemoveBrackets.AutoSize = true;
             this.checkRemoveBrackets.Location = new System.Drawing.Point(6, 102);
             this.checkRemoveBrackets.Name = "checkRemoveBrackets";
-            this.checkRemoveBrackets.Size = new System.Drawing.Size(192, 17);
+            this.checkRemoveBrackets.Size = new System.Drawing.Size(183, 17);
             this.checkRemoveBrackets.TabIndex = 8;
             this.checkRemoveBrackets.Tag = "--remove-brackets";
-            this.checkRemoveBrackets.Text = "Remove brackets from conditionals";
+            this.checkRemoveBrackets.Text = "Remove braces from conditionals";
             this.checkRemoveBrackets.UseVisualStyleBackColor = true;
             this.checkRemoveBrackets.Click += new System.EventHandler(this.check_Click);
             // 
@@ -233,9 +233,9 @@
             this.checkOneLineBrackets.AutoSize = true;
             this.checkOneLineBrackets.Location = new System.Drawing.Point(25, 79);
             this.checkOneLineBrackets.Name = "checkOneLineBrackets";
-            this.checkOneLineBrackets.Size = new System.Drawing.Size(169, 17);
+            this.checkOneLineBrackets.Size = new System.Drawing.Size(160, 17);
             this.checkOneLineBrackets.TabIndex = 7;
-            this.checkOneLineBrackets.Text = "Add brackets on the same line";
+            this.checkOneLineBrackets.Text = "Add braces on the same line";
             this.checkOneLineBrackets.UseVisualStyleBackColor = true;
             this.checkOneLineBrackets.Click += new System.EventHandler(this.check_Click);
             // 
@@ -244,9 +244,9 @@
             this.checkAddBrackets.AutoSize = true;
             this.checkAddBrackets.Location = new System.Drawing.Point(6, 56);
             this.checkAddBrackets.Name = "checkAddBrackets";
-            this.checkAddBrackets.Size = new System.Drawing.Size(200, 17);
+            this.checkAddBrackets.Size = new System.Drawing.Size(191, 17);
             this.checkAddBrackets.TabIndex = 6;
-            this.checkAddBrackets.Text = "Add brackets to one line conditionals";
+            this.checkAddBrackets.Text = "Add braces to one line conditionals";
             this.checkAddBrackets.UseVisualStyleBackColor = true;
             this.checkAddBrackets.Click += new System.EventHandler(this.check_Click);
             // 
@@ -262,14 +262,14 @@
             this.checkAttachClasses.UseVisualStyleBackColor = true;
             this.checkAttachClasses.Click += new System.EventHandler(this.check_Click);
             // 
-            // label1
+            // lblBracketStyle
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(71, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Bracket style:";
+            this.lblBracketStyle.AutoSize = true;
+            this.lblBracketStyle.Location = new System.Drawing.Point(8, 9);
+            this.lblBracketStyle.Name = "lblBracketStyle";
+            this.lblBracketStyle.Size = new System.Drawing.Size(62, 13);
+            this.lblBracketStyle.TabIndex = 1;
+            this.lblBracketStyle.Text = "Brace style:";
             // 
             // cbBracketStyle
             // 
@@ -421,9 +421,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlSci.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlSci.Location = new System.Drawing.Point(229, 28);
+            this.pnlSci.Location = new System.Drawing.Point(292, 28);
             this.pnlSci.Name = "pnlSci";
-            this.pnlSci.Size = new System.Drawing.Size(521, 468);
+            this.pnlSci.Size = new System.Drawing.Size(458, 468);
             this.pnlSci.TabIndex = 11;
             // 
             // btnSave
@@ -491,7 +491,7 @@
         private System.Windows.Forms.CheckBox checkIndentCase;
         private System.Windows.Forms.CheckBox checkIndentSwitches;
         private System.Windows.Forms.Panel pnlSci;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblBracketStyle;
         private System.Windows.Forms.ComboBox cbBracketStyle;
         private System.Windows.Forms.CheckBox checkIndentConditional;
         private System.Windows.Forms.CheckBox checkAttachClasses;

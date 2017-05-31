@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using PluginCore.Localization;
 
 namespace CodeFormatter.Dialogs
 {
@@ -53,6 +54,7 @@ namespace CodeFormatter.Dialogs
         public HaxeAStyleDialog()
         {
             InitializeComponent();
+            InitializeLocalization();
             this.Font = PluginBase.Settings.DefaultFont;
 
             //Create Scintilla
@@ -80,6 +82,42 @@ namespace CodeFormatter.Dialogs
             ValidateControls();
             ReformatExample();
         }
+
+        #region Localization
+
+        private void InitializeLocalization()
+        {
+            this.Text = TextHelper.GetString("Title.AStyleFormatterSettings");
+            this.btnSave.Text = TextHelper.GetString("FlashDevelop.Label.Save");
+            this.btnCancel.Text = TextHelper.GetString("FlashDevelop.Label.Cancel");
+            this.checkAddBrackets.Text = TextHelper.GetString("Label.AddBrackets");
+            this.checkAttachClasses.Text = TextHelper.GetString("Label.AttachClasses");
+            this.checkBreakClosing.Text = TextHelper.GetString("Label.BreakClosing");
+            this.checkBreakElseifs.Text = TextHelper.GetString("Label.BreakElseifs");
+            this.checkDeleteEmptyLines.Text = TextHelper.GetString("Label.DeleteEmptyLines");
+            this.checkFillEmptyLines.Text = TextHelper.GetString("Label.FillEmptyLines");
+            this.checkForceTabs.Text = TextHelper.GetString("Label.ForceTabs");
+            this.checkIndentCase.Text = TextHelper.GetString("Label.IndentCases");
+            this.checkIndentConditional.Text = TextHelper.GetString("Label.IndentConditionals");
+            this.checkIndentSwitches.Text = TextHelper.GetString("Label.IndentSwitches");
+            this.checkKeepOneLineBlocks.Text = TextHelper.GetString("Label.KeepOneLineBlocks");
+            this.checkKeepOneLineStatements.Text = TextHelper.GetString("Label.KeepOneLineStatements");
+            this.checkPadCommas.Text = TextHelper.GetString("Label.PadCommas");
+            this.checkOneLineBrackets.Text = TextHelper.GetString("Label.AddOneLineBrackets");
+            this.checkPadAll.Text = TextHelper.GetString("Label.PadAllBlocks");
+            this.checkPadBlocks.Text = TextHelper.GetString("Label.PadBlocks");
+            this.checkPadHeaders.Text = TextHelper.GetString("Label.PadHeaders");
+            this.checkRemoveBrackets.Text = TextHelper.GetString("Label.RemoveBracketsFromContitionals");
+            this.checkTabs.Text = TextHelper.GetString("Label.UseTabs");
+            this.lblBracketStyle.Text = TextHelper.GetString("Label.BracketStyle");
+            this.lblIndentSize.Text = TextHelper.GetString("Label.IndentSize");
+            this.tabBrackets.Text = TextHelper.GetString("Info.Brackets");
+            this.tabFormatting.Text = TextHelper.GetString("Info.Formatting");
+            this.tabIndents.Text = TextHelper.GetString("Info.Indentation");
+            this.tabPadding.Text = TextHelper.GetString("Info.Padding");
+        }
+
+        #endregion
 
         private void SaveSettings()
         {
