@@ -20,7 +20,7 @@ namespace HaXeContext.Linters
             var completionMode = ((HaXeSettings) context.Settings).CompletionMode;
             if (completionMode == HaxeCompletionModeEnum.FlashDevelop) return;
             var haxeVersion = context.GetCurrentSDKVersion();
-            if (haxeVersion.IsOlderThan(new SemVer("3.3.0"))) return;
+            if (haxeVersion < "3.3.0") return;
 
             var list = new List<LintingResult>();
             int progress = 0;
