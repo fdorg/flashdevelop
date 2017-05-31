@@ -51,7 +51,15 @@ namespace CodeFormatter.Utilities
             {
                 options.Add(new HaxeAStyleOption("--mode", "cs"));
             }
-            
+            if (!options.Exists("--style"))
+            {
+                options.Add(new HaxeAStyleOption("--style", "allman"));
+            }
+            if (!options.Exists(o => o.Name != null && o.Name.StartsWith("--indent")))
+            {
+                options.Add(new HaxeAStyleOption("--indent=spaces", 4));
+            }
+
             //Not supported by old version of AStyle
             //if (!options.Exists("--options"))
             //{

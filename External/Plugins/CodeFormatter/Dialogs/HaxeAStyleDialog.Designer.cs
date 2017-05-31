@@ -462,6 +462,8 @@
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(346, 306);
             this.Name = "HaxeAStyleDialog";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.Text = "Haxe Formatter Settings";
             this.tabControl.ResumeLayout(false);
             this.tabIndents.ResumeLayout(false);
