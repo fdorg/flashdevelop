@@ -39,24 +39,21 @@ namespace HaXeContext.Linters
                     };
                 }
 
-                var hc = context.GetHaxeComplete(sci, new ASExpr {Position = 0}, true, HaxeCompilerService.DIAGNOSTICS);
+                var hc = context.GetHaxeComplete(sci, new ASExpr { Position = 0 }, true, HaxeCompilerService.DIAGNOSTICS);
                 var i1 = i;
-                
+
                 hc.GetDiagnostics((complete, results, status) =>
                 {
-                    if (status == HaxeCompleteStatus.DIAGNOSTICS && results != null && sci != null && !sci.IsDisposed)
+                    if (status == HaxeCompleteStatus.DIAGNOSTICS && results != null)
                     {
                         foreach (var res in results)
                         {
-                            var line = res.Range.LineStart + 1;
-                            var firstChar = sci.PositionFromLine(line) + res.Range.CharacterStart;
-                            var lastChar = sci.PositionFromLine(res.Range.LineEnd + 1) + res.Range.CharacterEnd;
                             var result = new LintingResult
                             {
                                 File = res.Range.Path,
                                 FirstChar = res.Range.CharacterStart,
-                                Length = lastChar - firstChar,
-                                Line = line,
+                                Length = res.Range.CharacterEnd - res.Range.CharacterStart,
+                                Line = res.Range.LineStart + 1,
                             };
 
                             switch (res.Severity)
@@ -105,7 +102,9 @@ namespace HaXeContext.Linters
                     }
 
                     if (i1 == files.Length - 1)
+                    {
                         callback(list);
+                    }
                 });
             }
         }

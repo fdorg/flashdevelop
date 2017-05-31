@@ -168,10 +168,10 @@ namespace LintingHelper.Managers
                 }
                 else
                 {
-                    var doc = DocumentManager.FindDocument(result.File);
-                    if (doc != null)
+                    var sci = DocumentManager.FindDocument(result.File)?.SciControl;
+                    if (sci != null)
                     {
-                        chars = $"chars {result.FirstChar}-{doc.SciControl.LineLength(result.Line - 1)}";
+                        chars = $"chars {result.FirstChar}-{sci.LineLength(result.Line - 1)}";
                     }
                     else
                     {
