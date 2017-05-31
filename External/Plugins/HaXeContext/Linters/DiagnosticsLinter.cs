@@ -27,8 +27,8 @@ namespace HaXeContext.Linters
             for (var i = 0; i < files.Length; i++)
             {
                 var file = files[i];
-                var sci = DocumentManager.FindDocument(file)?.SciControl;
                 if (!File.Exists(file)) continue;
+                var sci = DocumentManager.FindDocument(file)?.SciControl;
                 if (sci == null)
                 {
                     sci = new ScintillaControl
@@ -44,7 +44,7 @@ namespace HaXeContext.Linters
                 
                 hc.GetDiagnostics((complete, results, status) =>
                 {
-                    if (status == HaxeCompleteStatus.DIAGNOSTICS && results != null && sci != null)
+                    if (status == HaxeCompleteStatus.DIAGNOSTICS && results != null && sci != null && !sci.IsDisposed)
                     {
                         foreach (var res in results)
                         {
