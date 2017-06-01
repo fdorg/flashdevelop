@@ -6271,7 +6271,7 @@ AND - All conditions are met.</value>
     <comment>Added after 5.2.0</comment>
   </data>
   <data name="CodeFormatter.Info.Indentation" xml:space="preserve">
-    <value>Tabs / Enrückung</value>
+    <value>Tabs / Einrückung</value>
     <comment>Added after 5.2.0</comment>
   </data>
   <data name="CodeFormatter.Info.Padding" xml:space="preserve">
