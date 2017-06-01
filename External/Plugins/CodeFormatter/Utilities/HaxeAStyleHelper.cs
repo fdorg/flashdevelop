@@ -20,6 +20,91 @@ namespace CodeFormatter.Utilities
             configFile = Path.Combine(dataDir, "HaxeAStyleConfig.fdb");
         }
 
+        /// <summary>
+        /// Returns the brace style identifier used for AStyle for the given name.
+        /// </summary>
+        public static string GetBraceStyleFromName(string name)
+        {
+            switch (name)
+            {
+                case "Allman":
+                    return "allman";
+                case "Java":
+                    return "java";
+                case "Kernighan & Ritchie":
+                    return "kr";
+                case "Stroustrup":
+                    return "stroustrup";
+                case "Whitesmith":
+                    return "whitesmith";
+                case "VTK":
+                    return "vtk";
+                case "Banner":
+                    return "banner";
+                case "GNU":
+                    return "gnu";
+                case "Linux":
+                    return "linux";
+                case "Horstmann":
+                    return "horstmann";
+                case "One True Brace":
+                    return "otbs";
+                case "Google":
+                    return "google";
+                //case "Mozilla":
+                //    return "mozilla";
+                case "Pico":
+                    return "pico";
+                case "Lisp":
+                    return "lisp";
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Returns the name of the brace style denoted by the given identifier.
+        /// The inverse function is: <see cref="GetBraceStyleFromName"/>
+        /// </summary>
+        public static string GetNameFromBraceStyle(string identifier)
+        {
+            switch (identifier)
+            {
+                case "allman":
+                    return "Allman";
+                case "java":
+                    return "Java";
+                case "kr":
+                    return "Kernighan & Ritchie";
+                case "stroustrup":
+                    return "Stroustrup";
+                case "whitesmith":
+                    return "Whitesmith";
+                case "vtk":
+                    return "VTK";
+                case "banner":
+                    return "Banner";
+                case "gnu":
+                    return "GNU";
+                case "linux":
+                    return "Linux";
+                case "horstmann":
+                    return "Horstmann";
+                case "otbs":
+                    return "One True Brace";
+                case "google":
+                    return "Google";
+                //case "mozilla":
+                //    return "Mozilla";
+                case "pico":
+                    return "Pico";
+                case "lisp":
+                    return "Lisp";
+            }
+
+            return null;
+        }
+
         public static HaxeAStyleOptions LoadOptions()
         {
             HaxeAStyleOptions options = new HaxeAStyleOptions();
