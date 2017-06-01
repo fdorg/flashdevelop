@@ -146,5 +146,7 @@
   <ItemGroup>
     <Compile Include="Handlers\ASPrettyPrinter.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\AStyleExample.hx" />
+  </ItemGroup>
 </Project>

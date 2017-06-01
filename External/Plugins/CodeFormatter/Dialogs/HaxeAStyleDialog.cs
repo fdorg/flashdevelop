@@ -4,8 +4,10 @@ using PluginCore;
 using ScintillaNet;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 using PluginCore.Localization;
+using System.Reflection;
 
 namespace CodeFormatter.Dialogs
 {
@@ -14,6 +16,7 @@ namespace CodeFormatter.Dialogs
         private readonly ScintillaControl txtExample;
         private readonly Dictionary<CheckBox, string> mapping = new Dictionary<CheckBox, string>();
 
+        private readonly string exampleCode;
 
         #region Windows Form Designer generated code
 
@@ -530,6 +533,15 @@ namespace CodeFormatter.Dialogs
         {
             InitializeComponent();
             InitializeLocalization();
+
+            //Read example file
+            string id = "CodeFormatter.Resources.AStyleExample.hx";
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            using (var reader = new StreamReader(assembly.GetManifestResourceStream(id)))
+            {
+                exampleCode = reader.ReadToEnd();
+            }
+
             this.Font = PluginBase.Settings.DefaultFont;
 
             //Create Scintilla
@@ -791,20 +803,19 @@ namespace CodeFormatter.Dialogs
         /// </summary>
         private void ReformatExample()
         {
-            txtExample.IsReadOnly = false;
-            txtExample.Text = PluginBase.MainForm.CurrentDocument.SciControl.Text;
-            txtExample.TabWidth = (int)numIndentWidth.Value;
-
             AStyleInterface astyle = new AStyleInterface();
             string[] options = GetOptions().ToStringArray();
 
+            var firstLine = txtExample.FirstVisibleLine;
+
+            txtExample.IsReadOnly = false;
+            txtExample.Text = exampleCode;
+            txtExample.TabWidth = (int) numIndentWidth.Value;
             txtExample.IsFocus = true;
-            txtExample.MoveCaretInsideView();
-            var pos = txtExample.PositionFromLine(txtExample.CurrentLine);
             txtExample.Text = astyle.FormatSource(txtExample.Text, string.Join(" ", options));
-            txtExample.SetSel(pos, pos);
-            txtExample.ScrollCaret();
             txtExample.IsReadOnly = true;
+
+            txtExample.FirstVisibleLine = firstLine;
         }
 
         /// <summary>
