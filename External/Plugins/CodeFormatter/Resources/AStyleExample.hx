@@ -31,12 +31,12 @@ class AClass
 			
 		trace ("random trace");
 		
-		#if a
+		#if example
 		trace("an example");
 		#end
 	}
 	
-	function aFunction() {
+	function aFunction(arg1 : String,arg2 : Int) {
 		
 	}
 	
