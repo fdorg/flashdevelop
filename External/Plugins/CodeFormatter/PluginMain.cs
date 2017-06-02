@@ -247,7 +247,10 @@ namespace CodeFormatter
         /// </summary>
         public void ShowSettings(Object sender, EventArgs e)
         {
-            new HaxeAStyleDialog().ShowDialog();
+            using (var dialog = new HaxeAStyleDialog())
+            {
+                dialog.ShowDialog();
+            }
         }
 
         /// <summary>

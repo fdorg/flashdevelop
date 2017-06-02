@@ -549,8 +549,10 @@ namespace CodeFormatter.Dialogs
             {
                 Dock = DockStyle.Fill,
                 ConfigurationLanguage = "haxe",
-                ViewWhitespace = ScintillaNet.Enums.WhiteSpace.VisibleAlways
+                ViewWhitespace = ScintillaNet.Enums.WhiteSpace.VisibleAlways,
+                Lexer = 3
             };
+            txtExample.SetProperty("lexer.cpp.track.preprocessor", "0");
 
             this.pnlSci.Controls.Add(txtExample);
 
