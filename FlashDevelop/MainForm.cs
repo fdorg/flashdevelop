@@ -576,6 +576,7 @@ namespace FlashDevelop
             try
             {
                 DockablePanel dockablePanel = new DockablePanel(ctrl, guid);
+                dockablePanel.Show();
                 dockablePanel.Image = image;
                 dockablePanel.DockState = defaultDockState;
                 LayoutManager.PluginPanels.Add(dockablePanel);
@@ -600,6 +601,7 @@ namespace FlashDevelop
                 dockablePanel.DockState = defaultDockState;
                 LayoutManager.SetContentLayout(dockablePanel, dockablePanel.GetPersistString());
                 LayoutManager.PluginPanels.Add(dockablePanel);
+                dockablePanel.Show(); //show after setting correct dockstate, because otherwise it can affect the rest of the layout
                 return dockablePanel;
             }
             catch (Exception e)
