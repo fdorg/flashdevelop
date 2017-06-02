@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ASCompletion.Context;
 using CodeFormatter.Handlers;
@@ -12,7 +11,6 @@ using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 using ScintillaNet;
-using CodeFormatter.Dialogs;
 
 namespace CodeFormatter
 {
@@ -25,7 +23,6 @@ namespace CodeFormatter
         private String pluginAuth = "FlashDevelop Team";
         private ToolStripMenuItem contextMenuItem;
         private ToolStripMenuItem mainMenuItem;
-        private ToolStripMenuItem settingsMenuItem;
         private String settingFilename;
         private Settings settingObject;
 
@@ -181,15 +178,10 @@ namespace CodeFormatter
             String label = TextHelper.GetString("Label.CodeFormatter");
             this.mainMenuItem = new ToolStripMenuItem(label, null, new EventHandler(this.Format), Keys.Control | Keys.Shift | Keys.D2);
             PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.CodeFormatter", this.mainMenuItem);
-
-            String settingsLabel = TextHelper.GetString("Title.AStyleFormatterSettings");
-            this.settingsMenuItem = new ToolStripMenuItem(settingsLabel, null, new EventHandler(this.ShowSettings), Keys.Control | Keys.Shift | Keys.D3);
-            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.Test", this.settingsMenuItem);
         }
         private void AttachMainMenuItem(ToolStripMenuItem mainMenu)
         {
             mainMenu.DropDownItems.Insert(7, this.mainMenuItem);
-            mainMenu.DropDownItems.Insert(8, this.settingsMenuItem);
         }
 
         /// <summary>
@@ -241,17 +233,6 @@ namespace CodeFormatter
         private const int TYPE_XML = 2;
         private const int TYPE_CPP = 3;
         private const int TYPE_UNKNOWN = 4;
-
-        /// <summary>
-        /// Opens the Haxe AStyle settings dialog.
-        /// </summary>
-        public void ShowSettings(Object sender, EventArgs e)
-        {
-            using (var dialog = new HaxeAStyleDialog())
-            {
-                dialog.ShowDialog();
-            }
-        }
 
         /// <summary>
         /// Formats the current document
@@ -313,7 +294,7 @@ namespace CodeFormatter
                             String optionData;
                             if (doc.SciControl.ConfigurationLanguage == "haxe")
                             {
-                                optionData = HaxeAStyleHelper.GetAStyleArguments();
+                                optionData = HaxeAStyleHelper.GetAStyleArguments(this.settingObject);
                             }
                             else
                             {

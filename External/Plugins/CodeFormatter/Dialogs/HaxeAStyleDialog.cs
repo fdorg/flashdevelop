@@ -8,10 +8,11 @@ using System.IO;
 using System.Windows.Forms;
 using PluginCore.Localization;
 using System.Reflection;
+using System.Windows.Forms.Design;
 
 namespace CodeFormatter.Dialogs
 {
-    public class HaxeAStyleDialog : Form
+    public class HaxeAStyleDialog : Form, IWindowsFormsEditorService
     {
         private readonly ScintillaControl txtExample;
         private readonly Dictionary<CheckBox, string> mapping = new Dictionary<CheckBox, string>();
@@ -529,7 +530,7 @@ namespace CodeFormatter.Dialogs
 
         #endregion
 
-        public HaxeAStyleDialog()
+        public HaxeAStyleDialog(HaxeAStyleOptions options)
         {
             InitializeComponent();
             InitializeLocalization();
@@ -572,7 +573,7 @@ namespace CodeFormatter.Dialogs
                 "Horstmann", "One True Brace", "Google", /*"Mozilla",*/ "Pico", "Lisp"
             }; //Mozilla not supported by old version of AStyle
 
-            LoadSettings();
+            SetOptions(options);
 
             ValidateControls();
             ReformatExample();
@@ -613,16 +614,6 @@ namespace CodeFormatter.Dialogs
         }
 
         #endregion
-
-        private void SaveSettings()
-        {
-            HaxeAStyleHelper.SaveOptions(GetOptions());
-        }
-
-        private void LoadSettings()
-        {
-            SetOptions(HaxeAStyleHelper.LoadOptions());
-        }
 
         /// <summary>
         /// Fills <see cref="mapping"/>.
@@ -725,6 +716,7 @@ namespace CodeFormatter.Dialogs
             else if (useTabs != null)
             {
                 checkTabs.Checked = true;
+                //numIndentWidth.Enabled = false;
                 numIndentWidth.Value = Convert.ToDecimal(useTabs.Value);
             }
             else
@@ -739,11 +731,11 @@ namespace CodeFormatter.Dialogs
         /// options.
         /// </summary>
         /// <returns>An object of type <see cref="HaxeAStyleOptions" />, which is a list of <see cref="HaxeAStyleOption"/></returns>
-        private HaxeAStyleOptions GetOptions()
+        internal HaxeAStyleOptions GetOptions()
         {
             HaxeAStyleOptions options = new HaxeAStyleOptions();
 
-            HaxeAStyleHelper.AddDefaultOptions(options);
+            //HaxeAStyleHelper.AddDefaultOptions(options);
 
             //handling default switches
             foreach (TabPage page in this.tabControl.TabPages)
@@ -812,7 +804,8 @@ namespace CodeFormatter.Dialogs
 
             txtExample.IsReadOnly = false;
             txtExample.Text = exampleCode;
-            txtExample.TabWidth = (int) numIndentWidth.Value;
+            //txtExample.TabWidth = (int) numIndentWidth.Value;
+            txtExample.TabWidth = PluginBase.Settings.TabWidth;
             txtExample.IsFocus = true;
             txtExample.Text = astyle.FormatSource(txtExample.Text, string.Join(" ", options));
             txtExample.IsReadOnly = true;
@@ -910,13 +903,29 @@ namespace CodeFormatter.Dialogs
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            SaveSettings();
+            this.DialogResult = DialogResult.OK;
             this.Close();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
+            this.DialogResult = DialogResult.Cancel;
             this.Close();
+        }
+
+        public void CloseDropDown()
+        {
+            //throw new NotImplementedException();
+        }
+
+        public void DropDownControl(Control control)
+        {
+            //throw new NotImplementedException();
+        }
+
+        public DialogResult ShowDialog(Form dialog)
+        {
+            return dialog.ShowDialog(this);
         }
     }
 }

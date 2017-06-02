@@ -88,6 +88,7 @@
     <Compile Include="Handlers\MXMLLexer.cs" />
     <Compile Include="PluginMain.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="Utilities\HaxeAStyleEditor.cs" />
     <Compile Include="Utilities\HaxeAStyleHelper.cs" />
   </ItemGroup>
   <ItemGroup>
