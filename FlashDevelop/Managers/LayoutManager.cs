@@ -114,7 +114,7 @@ namespace FlashDevelop.Managers
             for (int i = 0; i < dynamicContentTemplates.Count; i++)
             {
                 var template = dynamicContentTemplates[i];
-                if (template.GetPersistString() == dockablePanel.GetPersistString())
+                if (template.GetPersistString() == persistString)
                 {
                     dockablePanel.DockPanel = template.DockPanel;
                     dockablePanel.AutoHidePortion = template.AutoHidePortion;
