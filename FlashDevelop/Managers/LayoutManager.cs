@@ -15,7 +15,7 @@ namespace FlashDevelop.Managers
         private static DeserializeDockContent contentDeserializer;
         private static HashSet<string> savedPersistStrings;
         private static List<DockContent> dynamicContentTemplates;
- 
+
         static LayoutManager()
         {
             PluginPanels = new List<DockContent>();
@@ -32,17 +32,18 @@ namespace FlashDevelop.Managers
             try
             {
                 FileHelper.EnsureUpdatedFile(file);
-                var dockPanel = Globals.MainForm.DockPanel;
                 if (File.Exists(file))
                 {
+                    var dockPanel = Globals.MainForm.DockPanel;
+                    var documents = dockPanel.GetDocuments();
                     savedPersistStrings.Clear();
-                    CloseDocumentContents();
+                    CloseDocumentContents(documents);
                     ClosePluginPanelContents();
                     CloseDynamicContentTemplates();
                     dockPanel.LoadFromXml(file, contentDeserializer);
                     RestoreDynamicContentTemplates();
-                    RestoreUnrestoredPlugins();
-                    ShowDocumentContents();
+                    RestoreUnrestoredPlugins(dockPanel);
+                    ShowDocumentContents(documents, dockPanel);
                 }
             }
             catch (Exception ex)
@@ -128,30 +129,26 @@ namespace FlashDevelop.Managers
                 }
             }
         }
-        
-        /// <summary>
-        /// Shows the document contents for xml restoring
-        /// </summary>
-        private static void ShowDocumentContents()
-        {
-            var dockPanel = Globals.MainForm.DockPanel;
-            var documents = dockPanel.GetDocuments();
-            foreach (DockContent document in documents)
-            {
-                document.Show(dockPanel);
-            }
-        }
 
         /// <summary>
         /// Closes the document contents for xml restoring
         /// </summary>
-        private static void CloseDocumentContents()
+        private static void CloseDocumentContents(IDockContent[] documents)
         {
-            var dockPanel = Globals.MainForm.DockPanel;
-            var documents = dockPanel.GetDocuments();
             foreach (DockContent document in documents)
             {
                 document.DockPanel = null;
+            }
+        }
+
+        /// <summary>
+        /// Shows the document contents for xml restoring
+        /// </summary>
+        private static void ShowDocumentContents(IDockContent[] documents, DockPanel dockPanel)
+        {
+            foreach (DockContent document in documents)
+            {
+                document.Show(dockPanel, DockState.Document);
             }
         }
 
@@ -178,9 +175,8 @@ namespace FlashDevelop.Managers
         /// Restore the plugins that have not been restored yet.
         /// These plugins may have been added later to the plugins dir.
         /// </summary>
-        private static void RestoreUnrestoredPlugins()
+        private static void RestoreUnrestoredPlugins(DockPanel dockPanel)
         {
-            var dockPanel = Globals.MainForm.DockPanel;
             foreach (var pluginPanel in PluginPanels)
             {
                 if (!savedPersistStrings.Contains(pluginPanel.GetPersistString()))
@@ -222,18 +218,11 @@ namespace FlashDevelop.Managers
             try
             {
                 Globals.MainForm.RestoringContents = true;
-                Session session = SessionManager.GetCurrentSession();
                 TextEvent te = new TextEvent(EventType.RestoreLayout, file);
                 EventManager.DispatchEvent(Globals.MainForm, te);
                 if (!te.Handled)
                 {
-                    Globals.MainForm.CloseAllDocuments(false);
-                    if (!Globals.MainForm.CloseAllCanceled)
-                    {
-                        session.Type = SessionType.Layout;
-                        BuildLayoutSystems(file);
-                        SessionManager.RestoreSession("", session);
-                    }
+                    BuildLayoutSystems(file);
                 }
                 Globals.MainForm.RestoringContents = false;
             }
