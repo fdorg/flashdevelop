@@ -2846,8 +2846,19 @@ namespace ASCompletion.Completion
                 if ((char) sci.CharAt(wordPos) == '(') newMemberType = parameterType;
                 else
                 {
+                    var isNativeFunctionType = false;
+                    if (parameterType == "Function")
+                    {
+                        if (IsHaxe)
+                        {
+                            var paramType = ASContext.Context.ResolveType(parameterType, callerExpr.InFile);
+                            if (paramType.InFile.Package == "haxe" && paramType.InFile.Module == "Constraints")
+                                isNativeFunctionType = true;
+                        }
+                        else isNativeFunctionType = true;
+                    }
                     var voidKey = ASContext.Context.Features.voidKey;
-                    if (parameterType == "Function") newMemberType = voidKey;
+                    if (isNativeFunctionType) newMemberType = voidKey;
                     else
                     {
                         var parCount = 0;
@@ -3299,9 +3310,10 @@ namespace ASCompletion.Completion
                                 if (t.Contains("->") && !t.StartsWith('(')) t = $"({t})";
                                 qualifiedName += t;
                             }
-                            resolve.Type.Name = qualifiedName;
+                            resolve = null;
+                            type = new ClassModel {Name = qualifiedName, InFile = FileModel.Ignore};
                         }
-                        resolve.Member = null;
+                        else resolve.Member = null;
                     }
                     else if (!string.IsNullOrEmpty(resolve.Path) && resolve.Path.EndsWith(".[]"))
                         resolve.Member = null;

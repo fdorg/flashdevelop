@@ -60,7 +60,7 @@ namespace HaXeContext
             stubFunctionClass.Name = stubFunctionClass.Type = "Function";
             stubFunctionClass.Flags = FlagType.Class;
             stubFunctionClass.Access = Visibility.Public;
-            var funFile = new FileModel();
+            var funFile = new FileModel{Package = "haxe", Module = "Constraints"};
             funFile.Classes.Add(stubFunctionClass);
             stubFunctionClass.InFile = funFile;
 
@@ -915,8 +915,6 @@ namespace HaXeContext
             if (string.IsNullOrEmpty(cname) || cname == features.voidKey || classPath == null)
                 return ClassModel.VoidClass;
 
-            if (cname == "Function") return stubFunctionClass;
-
             // handle generic types
             if (cname.IndexOf('<') > 0)
             {
@@ -948,6 +946,7 @@ namespace HaXeContext
                             return aClass;
 
                 // search in imported classes
+                var found = false;
                 MemberList imports = ResolveImports(inFile);
                 foreach (MemberModel import in imports)
                 {
@@ -961,9 +960,11 @@ namespace HaXeContext
                             int dotIndex = type.LastIndexOf('.');
                             if (dotIndex > 0) package = type.Substring(0, dotIndex);
                         }
+                        found = true;
                         break;
                     }
                 }
+                if (!found && cname == "Function") return stubFunctionClass;
             }
 
             return GetModel(package, cname, inPackage);
