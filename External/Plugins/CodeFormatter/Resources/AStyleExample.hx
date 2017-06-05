@@ -16,7 +16,7 @@ class AClass
 
 		if (true 
 			&& false)
-			trace("Inconsistent system")
+			trace("Inconsistent system");
 		
 		var a="";
 		var b = "";
