@@ -1055,6 +1055,9 @@ namespace ResultsPanel
             }
         }
 
+        /// <summary>
+        /// Returns the results of this ResultsPanel at the specified character position
+        /// </summary>
         internal List<string> GetResultsAt(ITabbedDocument document, int position)
         {
             var localResults = new List<string>();
@@ -1072,7 +1075,14 @@ namespace ResultsPanel
                 if (start <= position && end >= position)
                 {
                     //suitable result
-                    string description = item.SubItems[2].Text;
+                    var description = item.SubItems[2].Text;
+
+                    //remove character positions
+                    string[] split = description.Split(new[] { " : " }, StringSplitOptions.None);
+                    if (split.Length >= 2)
+                    {
+                        description = split[1];
+                    }
                     localResults.Add(description);
                 }
             }
