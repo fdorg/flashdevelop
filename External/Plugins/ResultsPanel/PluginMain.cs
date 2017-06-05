@@ -239,13 +239,12 @@ namespace ResultsPanel
 
         private void Scintilla_OnMouseHover(ScintillaControl sender, int position)
         {
-            var document = DocumentManager.FindDocument(sender);
             var desc = "";
 
             List<string> results;
             foreach (var ui in ResultsPanelHelper.PluginUIs)
             {
-                results = ui.GetResultsAt(document, position);
+                results = ui.GetResultsAt(sender, position);
                 foreach (var result in results)
                 {
                     if (!string.IsNullOrEmpty(result))
@@ -253,7 +252,7 @@ namespace ResultsPanel
                 }
             }
             //Main panel has to be handled specifically
-            results = ResultsPanelHelper.MainUI.GetResultsAt(document, position);
+            results = ResultsPanelHelper.MainUI.GetResultsAt(sender, position);
             foreach (var result in results)
             {
                 if (!string.IsNullOrEmpty(result))

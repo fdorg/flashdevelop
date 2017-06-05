@@ -1,10 +1,8 @@
-﻿using LintingHelper;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Context;
+using LintingHelper;
 using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -20,43 +18,53 @@ namespace HaXeContext.Linters
             var context = ASContext.GetLanguageContext("haxe") as Context;
             if (context == null) return;
             var completionMode = ((HaXeSettings) context.Settings).CompletionMode;
+            if (completionMode == HaxeCompletionModeEnum.FlashDevelop) return;
             var haxeVersion = context.GetCurrentSDKVersion();
-            if (completionMode == HaxeCompletionModeEnum.FlashDevelop || haxeVersion.IsOlderThan(new SemVer("3.3.0"))) return;
+            if (haxeVersion < "3.3.0") return;
 
             var list = new List<LintingResult>();
+            int progress = 0;
+            int total = files.Length;
+
             for (var i = 0; i < files.Length; i++)
             {
                 var file = files[i];
+                if (!File.Exists(file))
+                {
+                    total--;
+                    continue;
+                }
+                bool sciCreated = false;
                 var sci = DocumentManager.FindDocument(file)?.SciControl;
-                if (!File.Exists(file)) continue;
                 if (sci == null)
                 {
                     sci = new ScintillaControl
                     {
-                        Text = File.ReadAllText(file),
                         FileName = file,
                         ConfigurationLanguage = "haxe"
                     };
+                    sciCreated = true;
                 }
 
-                var hc = context.GetHaxeComplete(sci, new ASExpr {Position = 0}, true, HaxeCompilerService.DIAGNOSTICS);
-                var i1 = i;
-                
+                var hc = context.GetHaxeComplete(sci, new ASExpr { Position = 0 }, true, HaxeCompilerService.DIAGNOSTICS);
                 hc.GetDiagnostics((complete, results, status) =>
                 {
-                    if (status == HaxeCompleteStatus.DIAGNOSTICS && results != null && sci != null)
+                    progress++;
+                    if (sciCreated)
+                    {
+                        sci.Dispose();
+                    }
+
+                    if (status == HaxeCompleteStatus.DIAGNOSTICS && results != null)
                     {
                         foreach (var res in results)
                         {
-                            var line = res.Range.LineStart + 1;
-                            var firstChar = sci.PositionFromLine(line) + res.Range.CharacterStart;
-                            var lastChar = sci.PositionFromLine(res.Range.LineEnd + 1) + res.Range.CharacterEnd;
                             var result = new LintingResult
                             {
                                 File = res.Range.Path,
                                 FirstChar = res.Range.CharacterStart,
-                                Length = lastChar - firstChar,
-                                Line = line,
+                                Length = res.Range.CharacterEnd - res.Range.CharacterStart,
+                                Line = res.Range.LineStart + 1,
                             };
 
                             switch (res.Severity)
@@ -97,15 +105,14 @@ namespace HaXeContext.Linters
                     {
                         PluginBase.RunAsync(() =>
                         {
-                            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
-                            TraceManager.Add(hc.Errors, (int)TraceType.Error);
+                            TraceManager.Add(hc.Errors, (int) TraceType.Error);
                         });
-                        callback(list);
-                        return;
                     }
 
-                    if (i1 == files.Length - 1)
+                    if (progress == total)
+                    {
                         callback(list);
+                    }
                 });
             }
         }

@@ -108,13 +108,13 @@ namespace FlashDevelop.Managers
                     dockablePanel.AutoHidePortion = pluginPanel.AutoHidePortion;
                     dockablePanel.IsFloat = pluginPanel.IsFloat;
                     dockablePanel.Pane = pluginPanel.Pane;
-                    break;
+                    return;
                 }
             }
             for (int i = 0; i < dynamicContentTemplates.Count; i++)
             {
                 var template = dynamicContentTemplates[i];
-                if (template.GetPersistString() == dockablePanel.GetPersistString())
+                if (template.GetPersistString() == persistString)
                 {
                     dockablePanel.DockPanel = template.DockPanel;
                     dockablePanel.AutoHidePortion = template.AutoHidePortion;
@@ -124,9 +124,10 @@ namespace FlashDevelop.Managers
                     // No need for a template if a new window exists.
                     dynamicContentTemplates.RemoveAt(i);
                     template.Close();
-                    break;
+                    return;
                 }
             }
+            dockablePanel.Show();
         }
         
         /// <summary>

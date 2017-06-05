@@ -1058,17 +1058,17 @@ namespace ResultsPanel
         /// <summary>
         /// Returns the results of this ResultsPanel at the specified character position
         /// </summary>
-        internal List<string> GetResultsAt(ITabbedDocument document, int position)
+        internal List<string> GetResultsAt(ScintillaControl sci, int position)
         {
             var localResults = new List<string>();
 
             foreach (ListViewItem item in EntriesView.Items)
             {
-                var pos = GetPosition(document, item);
+                var pos = GetPosition(sci, item);
                 if (pos == null) continue;
 
                 var line = Convert.ToInt32(item.SubItems[1].Text) - 1;
-                var listStart = document.SciControl.PositionFromLine(line);
+                var listStart = sci.PositionFromLine(line);
                 var start = listStart + pos[0];
                 var end = listStart + pos[1];
 
@@ -1078,7 +1078,7 @@ namespace ResultsPanel
                     var description = item.SubItems[2].Text;
 
                     //remove character positions
-                    string[] split = description.Split(new[] { " : " }, StringSplitOptions.None);
+                    var split = description.Split(new[] { " : " }, StringSplitOptions.None);
                     if (split.Length >= 2)
                     {
                         description = split[1];
@@ -1090,10 +1090,8 @@ namespace ResultsPanel
             return localResults;
         }
 
-        private int[] GetPosition(ITabbedDocument document, ListViewItem item)
+        private int[] GetPosition(ScintillaControl sci, ListViewItem item)
         {
-            var sci = document.SciControl;
-
             int line = Convert.ToInt32(item.SubItems[1].Text) - 1;
             string description = item.SubItems[2].Text;
             int start, end;
@@ -1130,24 +1128,15 @@ namespace ResultsPanel
         /// </summary>
         private void AddSquiggle(ListViewItem item)
         {
-            ITabbedDocument document = null;
-            string fileName = GetFileName(item);
-            foreach (var doc in PluginBase.MainForm.Documents)
-            {
-                if (fileName == doc.FileName)
-                {
-                    document = doc;
-                    break;
-                }
-            }
-            if (document == null || !document.IsEditable)
+            var sci = DocumentManager.FindDocument(GetFileName(item))?.SciControl;
+            if (sci == null)
             {
                 return;
             }
-            var sci = document.SciControl;
+
             int line = Convert.ToInt32(item.SubItems[1].Text) - 1;
 
-            var pos = GetPosition(document, item);
+            var pos = GetPosition(sci, item);
             if (pos == null) return;
 
             var start = pos[0];
