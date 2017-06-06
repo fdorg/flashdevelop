@@ -1109,6 +1109,7 @@ namespace HaXeContext
 
         public override string GetDefaultValue(string type)
         {
+            if (string.IsNullOrEmpty(type) || type == features.voidKey) return null;
             switch (type)
             {
                 case "Float":

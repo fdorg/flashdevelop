@@ -2962,7 +2962,7 @@ namespace ASCompletion.Completion
             {
                 string body = null;
                 var type = member.Type;
-                if ((member.Flags & FlagType.Constructor) == 0 && !string.IsNullOrEmpty(type) && type != inClass.InFile.Context.Features.voidKey)
+                if ((member.Flags & FlagType.Constructor) == 0)
                 {
                     if (inClass.InFile.haXe)
                     {
