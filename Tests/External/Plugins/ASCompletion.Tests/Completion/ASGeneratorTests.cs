@@ -807,9 +807,29 @@ namespace ASCompletion.Completion
                                 .SetName("From foo(vector[0][0][0][0])")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1436");
                         yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction_103"), GeneratorJobType.Function)
-                                .Returns(ReadAllTextAS3("AfterGenerateFunction_103"))
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction_issue103"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextAS3("AfterGenerateFunction_issue103"))
                                 .SetName("Issue 103. Case 1")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction_issue103_2"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextAS3("AfterGenerateFunction_issue103_2"))
+                                .SetName("Issue 103. Case 2")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction_issue103_3"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextAS3("AfterGenerateFunction_issue103_3"))
+                                .SetName("Issue 103. Case 3")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction_issue103_4"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextAS3("AfterGenerateFunction_issue103_4"))
+                                .SetName("Issue 103. Case 4")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction_issue103_5"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextAS3("AfterGenerateFunction_issue103_5"))
+                                .SetName("Issue 103. Case 5")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                         yield return
                             new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction_issue1645"), GeneratorJobType.Function)
