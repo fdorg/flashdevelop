@@ -5,7 +5,7 @@ public class Main {
 	}
 	
 	function test():Void->Void {
-		
+		return null;
 	}
 	
 	function foo(v:Void->Void) {}

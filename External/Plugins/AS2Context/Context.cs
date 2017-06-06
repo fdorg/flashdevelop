@@ -1259,7 +1259,7 @@ namespace AS2Context
             return fullList;
         }
 
-        public override string GetDefaultValue(MemberModel member) => "undefined";
+        public override string GetDefaultValue(string type) => "undefined";
         #endregion
         
         #region command line compiler

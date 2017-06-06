@@ -2961,9 +2961,16 @@ namespace ASCompletion.Completion
             else
             {
                 string body = null;
-                if ((member.Flags & FlagType.Class) == 0 && !string.IsNullOrEmpty(member.Type) && member.Type != inClass.InFile.Context.Features.voidKey)
+                var type = member.Type;
+                if ((member.Flags & FlagType.Constructor) == 0 && !string.IsNullOrEmpty(type) && type != inClass.InFile.Context.Features.voidKey)
                 {
-                    var defaultValue = inClass.InFile.Context.GetDefaultValue(member);
+                    if (inClass.InFile.haXe)
+                    {
+                        var expr = inClass.InFile.Context.ResolveType(type, inClass.InFile);
+                        if ((expr.Flags & FlagType.Abstract) != 0 && !string.IsNullOrEmpty(expr.ExtendsType))
+                            type = expr.ExtendsType;
+                    }
+                    var defaultValue = inClass.InFile.Context.GetDefaultValue(type);
                     if (!string.IsNullOrEmpty(defaultValue)) body = $"return {defaultValue};";
                 }
                 template = TemplateUtils.GetTemplate("Function");

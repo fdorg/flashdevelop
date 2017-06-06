@@ -47,11 +47,7 @@ namespace ASCompletion.TestUtils
             });
             mock.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
             mock.IsFileValid.Returns(context.IsFileValid);
-            mock.GetDefaultValue(null).ReturnsForAnyArgs(it =>
-            {
-                var member = it.ArgAt<MemberModel>(0);
-                return member != null ? context.GetDefaultValue(member) : null;
-            });
+            mock.GetDefaultValue(null).ReturnsForAnyArgs(it => context.GetDefaultValue(it.ArgAt<string>(0)));
         }
 
         public static void BuildClassPath(this IASContext context)

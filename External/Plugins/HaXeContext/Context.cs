@@ -1107,7 +1107,17 @@ namespace HaXeContext
             return base.ResolvePackage(name, lazyMode);
         }
 
-        public override string GetDefaultValue(MemberModel member) => null;
+        public override string GetDefaultValue(string type)
+        {
+            switch (type)
+            {
+                case "Float":
+                case "Int":
+                case "UInt":
+                case "Bool": return null;
+                default: return "null";
+            }
+        }
 
         #endregion
 

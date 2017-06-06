@@ -5,7 +5,7 @@ public class Main {
 	}
 	
 	function test():Array<{x:Int, y:Int}> {
-		
+		return null;
 	}
 	
 	function foo(v:Void->Array<{x:Int, y:Int}>) {}

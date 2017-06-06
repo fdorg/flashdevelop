@@ -6,7 +6,7 @@ public class Main {
 	}
 	
 	function f3():Function {
-		
+		return null;
 	}
 	
 	function f1(f:Function) {}

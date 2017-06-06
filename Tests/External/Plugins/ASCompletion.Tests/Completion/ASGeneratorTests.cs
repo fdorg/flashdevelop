@@ -965,6 +965,11 @@ namespace ASCompletion.Completion
                                 .SetName("Issue103. Case 21")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
                         yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue103_22"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue103_22"))
+                                .SetName("Issue103. Case 22")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/103");
+                        yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue1645"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue1645"))
                                 .SetName("Issue1645. Case 1")

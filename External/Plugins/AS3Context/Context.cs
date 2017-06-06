@@ -979,9 +979,9 @@ namespace AS3Context
             topLevel.Members.Sort();
         }
 
-        public override string GetDefaultValue(MemberModel member)
+        public override string GetDefaultValue(string type)
         {
-            switch (member.Type)
+            switch (type)
             {
                 case "int":
                 case "uint": return "0";

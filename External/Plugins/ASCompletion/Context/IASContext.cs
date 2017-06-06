@@ -207,7 +207,7 @@ namespace ASCompletion.Context
         /// </summary>
         bool UnsetOutOfDate();
 
-        string GetDefaultValue(MemberModel member);
+        string GetDefaultValue(string type);
         #endregion
 
         #region Specific actions

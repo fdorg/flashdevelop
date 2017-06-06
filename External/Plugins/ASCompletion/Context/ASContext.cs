@@ -1261,7 +1261,7 @@ namespace ASCompletion.Context
             return new MemberList();
         }
 
-        public virtual string GetDefaultValue(MemberModel member) => null;
+        public virtual string GetDefaultValue(string type) => null;
         #endregion
 
         #region operations on text insertion
