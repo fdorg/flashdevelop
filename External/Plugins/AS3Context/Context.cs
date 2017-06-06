@@ -982,6 +982,7 @@ namespace AS3Context
         public override string GetDefaultValue(string type)
         {
             if (string.IsNullOrEmpty(type) || type == features.voidKey) return null;
+            if (type == features.dynamicKey) return "undefined";
             switch (type)
             {
                 case "int":
