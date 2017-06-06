@@ -2960,9 +2960,15 @@ namespace ASCompletion.Completion
             }
             else
             {
+                string body = null;
+                if ((member.Flags & FlagType.Class) == 0 && !string.IsNullOrEmpty(member.Type) && member.Type != inClass.InFile.Context.Features.voidKey)
+                {
+                    var defaultValue = inClass.InFile.Context.GetDefaultValue(member);
+                    if (!string.IsNullOrEmpty(defaultValue)) body = $"return {defaultValue};";
+                }
                 template = TemplateUtils.GetTemplate("Function");
                 decl = TemplateUtils.ToDeclarationWithModifiersString(member, template);
-                decl = TemplateUtils.ReplaceTemplateVariable(decl, "Body", null);
+                decl = TemplateUtils.ReplaceTemplateVariable(decl, "Body", body);
             }
             if (detach) decl = NewLine + TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", NewLine);
             else decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", null);

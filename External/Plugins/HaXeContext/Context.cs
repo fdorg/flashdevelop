@@ -1106,6 +1106,9 @@ namespace HaXeContext
                 name = "flash9";
             return base.ResolvePackage(name, lazyMode);
         }
+
+        public override string GetDefaultValue(MemberModel member) => null;
+
         #endregion
 
         #region Custom code completion

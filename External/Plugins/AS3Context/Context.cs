@@ -979,6 +979,18 @@ namespace AS3Context
             topLevel.Members.Sort();
         }
 
+        public override string GetDefaultValue(MemberModel member)
+        {
+            switch (member.Type)
+            {
+                case "int":
+                case "uint": return "0";
+                case "Number": return "NaN";
+                case "Boolean": return "false";
+                default: return "null";
+            }
+        }
+
         #endregion
 
         #region Command line compiler

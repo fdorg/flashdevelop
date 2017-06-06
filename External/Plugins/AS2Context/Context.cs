@@ -1258,6 +1258,8 @@ namespace AS2Context
             completionCache.AllTypes = fullList;
             return fullList;
         }
+
+        public override string GetDefaultValue(MemberModel member) => "undefined";
         #endregion
         
         #region command line compiler
