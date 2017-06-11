@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Controls;
@@ -239,29 +238,21 @@ namespace ResultsPanel
 
         private void Scintilla_OnMouseHover(ScintillaControl sender, int position)
         {
-            var desc = "";
+            var document = DocumentManager.FindDocument(sender);
+            if (document == null)
+                return;
 
-            List<string> results;
+            var results = new List<string>();
             foreach (var ui in ResultsPanelHelper.PluginUIs)
             {
-                results = ui.GetResultsAt(sender, position);
-                foreach (var result in results)
-                {
-                    if (!string.IsNullOrEmpty(result))
-                        desc += "\r\n" + result;
-                }
+                ui.GetResultsAt(results, document, position);
             }
             //Main panel has to be handled specifically
-            results = ResultsPanelHelper.MainUI.GetResultsAt(sender, position);
-            foreach (var result in results)
-            {
-                if (!string.IsNullOrEmpty(result))
-                    desc += "\r\n" + result;
-            }
+            ResultsPanelHelper.MainUI.GetResultsAt(results, document, position);
 
-            if (desc != string.Empty)
+            if (results.Count > 0)
             {
-                desc = desc.Remove(0, 2); //remove \r\n
+                var desc = string.Join(Environment.NewLine, results.ToArray());
                 UITools.ErrorTip.ShowAtMouseLocation(desc);
             }
         }
