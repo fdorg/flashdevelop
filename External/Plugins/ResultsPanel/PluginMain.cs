@@ -1,13 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 using ResultsPanel.Helpers;
+using ScintillaNet;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResultsPanel
@@ -228,6 +231,35 @@ namespace ResultsPanel
             EventType eventMask = EventType.ProcessEnd | EventType.ProcessStart | EventType.FileOpen | EventType.Command
                 | EventType.Trace | EventType.Keys | EventType.Shortcut | EventType.ApplySettings | EventType.ApplyTheme;
             EventManager.AddEventHandler(this, eventMask);
+
+            UITools.Manager.OnMouseHover += Scintilla_OnMouseHover;
+            UITools.Manager.OnMouseHoverEnd += Scintilla_OnMouseHoverEnd;
+        }
+
+        private void Scintilla_OnMouseHover(ScintillaControl sender, int position)
+        {
+            var document = DocumentManager.FindDocument(sender);
+            if (document == null)
+                return;
+
+            var results = new List<string>();
+            foreach (var ui in ResultsPanelHelper.PluginUIs)
+            {
+                ui.GetResultsAt(results, document, position);
+            }
+            //Main panel has to be handled specifically
+            ResultsPanelHelper.MainUI.GetResultsAt(results, document, position);
+
+            if (results.Count > 0)
+            {
+                var desc = string.Join(Environment.NewLine, results.ToArray());
+                UITools.ErrorTip.ShowAtMouseLocation(desc);
+            }
+        }
+
+        private void Scintilla_OnMouseHoverEnd(ScintillaControl sender, int position)
+        {
+            UITools.ErrorTip.Hide();
         }
 
         /// <summary>

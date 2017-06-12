@@ -1056,19 +1056,44 @@ namespace ResultsPanel
         }
 
         /// <summary>
-        /// Squiggle one result
+        /// Adds the results of this ResultsPanel at the specified character position to the given list.
         /// </summary>
-        private void AddSquiggle(ListViewItem item)
+        internal void GetResultsAt(List<string> results, ITabbedDocument document, int position)
         {
-            var sci = DocumentManager.FindDocument(GetFileName(item))?.SciControl;
-            if (sci == null)
+            foreach (ListViewItem item in EntriesView.Items)
             {
-                return;
-            }
+                var fullPath = Path.Combine(item.SubItems[4].Text, item.SubItems[3].Text);
+                if (fullPath != document.FileName) continue; //item is about different file
 
-            int line = Convert.ToInt32(item.SubItems[1].Text) - 1;
-            string description = item.SubItems[2].Text;
-            int start, end;
+                if (item.ImageIndex == 0) continue; //item is only information
+
+                int start;
+                int end;
+                var hasPos = GetPosition(document.SciControl, item, out start, out end);
+                if (!hasPos) continue; //item has no position
+
+                var line = Convert.ToInt32(item.SubItems[1].Text) - 1;
+                var lineStart = document.SciControl.PositionFromLine(line);
+                start += lineStart;
+                end += lineStart;
+
+                if (start > position || end < position) continue; //item is not at position
+                //suitable result
+                var description = item.SubItems[2].Text;
+
+                //remove character positions
+                var split = description.Split(new[] { " : " }, StringSplitOptions.None);
+                if (split.Length >= 2) description = split[1];
+
+                results.Add(description);
+            }
+        }
+
+        private bool GetPosition(ScintillaControl sci, ListViewItem item, out int start, out int end)
+        {
+            var line = Convert.ToInt32(item.SubItems[1].Text) - 1;
+            var description = item.SubItems[2].Text;
+
             Match match;
             if ((match = errorCharacters.Match(description)).Success) // "chars {start}-{end}"
             {
@@ -1083,7 +1108,7 @@ namespace ResultsPanel
                 }
             }
             else if ((match = errorCharacter.Match(description)).Success // "char {start}"
-                || (match = errorCharacters2.Match(description)).Success) // "col: {start}"
+                     || (match = errorCharacters2.Match(description)).Success) // "col: {start}"
             {
                 start = Convert.ToInt32(match.Groups["start"].Value);
                 // column is a multibyte length
@@ -1092,8 +1117,30 @@ namespace ResultsPanel
             }
             else
             {
+                start = end = -1;
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Squiggle one result
+        /// </summary>
+        private void AddSquiggle(ListViewItem item)
+        {
+            var sci = DocumentManager.FindDocument(GetFileName(item))?.SciControl;
+            if (sci == null)
+            {
                 return;
             }
+
+            int line = Convert.ToInt32(item.SubItems[1].Text) - 1;
+
+            int start;
+            int end;
+            var hasPos = GetPosition(sci, item, out start, out end);
+            if (!hasPos) return;
+
             if (0 <= start && start < end && end <= sci.TextLength)
             {
                 int indicator;
