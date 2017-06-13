@@ -477,6 +477,12 @@ namespace FlashDevelop.Docking
                 this.SciControl.IsReadOnly = FileHelper.FileIsReadOnly(this.FileName);
                 this.SciControl.SetSel(position, position);
                 this.SciControl.EmptyUndoBuffer();
+
+                foreach (var lineNum in this.bookmarks)
+                {
+                    MarkerManager.ToggleMarker(SciControl, 0, lineNum);
+                }
+
                 this.InitBookmarks();
 
                 this.fileInfo = new FileInfo(this.FileName);
