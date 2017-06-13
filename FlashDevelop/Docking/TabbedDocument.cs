@@ -478,9 +478,16 @@ namespace FlashDevelop.Docking
                 this.SciControl.SetSel(position, position);
                 this.SciControl.EmptyUndoBuffer();
 
+                int lineCount = SciControl.LineCount;
                 foreach (var lineNum in this.bookmarks)
                 {
-                    MarkerManager.ToggleMarker(SciControl, 0, lineNum);
+                    if (lineNum < 0) continue;
+                    if (lineNum >= lineCount)
+                    {
+                        if (!MarkerManager.HasMarker(SciControl, 0, lineCount - 1))
+                            MarkerManager.ToggleMarker(SciControl, 0, lineCount - 1);
+                    }
+                    else MarkerManager.ToggleMarker(SciControl, 0, lineNum);
                 }
 
                 this.InitBookmarks();
