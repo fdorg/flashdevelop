@@ -4,7 +4,6 @@ using System.Drawing.Design;
 using ASCompletion.Completion;
 using ASCompletion.Helpers;
 using Ookii.Dialogs;
-using PluginCore.Controls;
 using PluginCore.Localization;
 
 namespace ASCompletion.Settings
@@ -461,6 +460,16 @@ namespace ASCompletion.Settings
             set { handlerNamingConvention = value; }
         }
 
+        GeneratedMemberBodyStyle generatedMemberDefaultBodyStyle = GeneratedMemberBodyStyle.UncompilableCode;
+
+        [DisplayName("Generated Member Default Body Style")]
+        [LocalizedCategory("ASCompletion.Category.Generation"), DefaultValue(GeneratedMemberBodyStyle.UncompilableCode)]
+        public GeneratedMemberBodyStyle GeneratedMemberDefaultBodyStyle
+        {
+            get { return generatedMemberDefaultBodyStyle; }
+            set { generatedMemberDefaultBodyStyle = value; }
+        }
+
         #endregion
     }
 
@@ -492,5 +501,11 @@ namespace ASCompletion.Settings
         target_eventNameHandler = 1,
         onTargetEventName = 2,
         handleTargetEventName = 3
+    }
+
+    public enum GeneratedMemberBodyStyle
+    {
+        ReturnDefaultValue,
+        UncompilableCode
     }
 }

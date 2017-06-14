@@ -2933,8 +2933,7 @@ namespace ASCompletion.Completion
             if (functionParameters.Count > 0)
             {
                 var typesUsed = functionParameters.Select(parameter => parameter.paramQualType).ToList();
-                int o = AddImportsByName(typesUsed, sci.LineFromPosition(position));
-                position += o;
+                position += AddImportsByName(typesUsed, sci.LineFromPosition(position));
                 if (latest == null) sci.SetSel(position, sci.WordEndPosition(position, true));
                 else sci.SetSel(position, position);
             }
@@ -2961,17 +2960,19 @@ namespace ASCompletion.Completion
             else
             {
                 string body = null;
-                var type = member.Type;
-                if ((member.Flags & FlagType.Constructor) == 0)
+                switch (ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle)
                 {
-                    if (inClass.InFile.haXe)
-                    {
-                        var expr = inClass.InFile.Context.ResolveType(type, inClass.InFile);
-                        if ((expr.Flags & FlagType.Abstract) != 0 && !string.IsNullOrEmpty(expr.ExtendsType))
-                            type = expr.ExtendsType;
-                    }
-                    var defaultValue = inClass.InFile.Context.GetDefaultValue(type);
-                    if (!string.IsNullOrEmpty(defaultValue)) body = $"return {defaultValue};";
+                    case GeneratedMemberBodyStyle.ReturnDefaultValue:
+                        var type = member.Type;
+                        if (inClass.InFile.haXe)
+                        {
+                            var expr = inClass.InFile.Context.ResolveType(type, inClass.InFile);
+                            if ((expr.Flags & FlagType.Abstract) != 0 && !string.IsNullOrEmpty(expr.ExtendsType))
+                                type = expr.ExtendsType;
+                        }
+                        var defaultValue = inClass.InFile.Context.GetDefaultValue(type);
+                        if (!string.IsNullOrEmpty(defaultValue)) body = $"return {defaultValue};";
+                        break;
                 }
                 template = TemplateUtils.GetTemplate("Function");
                 decl = TemplateUtils.ToDeclarationWithModifiersString(member, template);
