@@ -6262,6 +6262,14 @@ AND - All conditions are met.</value>
     <value>Breite:</value>
     <comment>Added after 5.2.0</comment>
   </data>
+  <data name="CodeFormatter.Label.PadParensIn" xml:space="preserve">
+    <value>Leerzeichen innerhalb von Klammern einfügen</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.PadParensOut" xml:space="preserve">
+    <value>Leerzeichen um Klammern herum einfügen</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
   <data name="CodeFormatter.Info.Brackets" xml:space="preserve">
     <value>Klammern</value>
     <comment>Added after 5.2.0</comment>
@@ -6276,6 +6284,10 @@ AND - All conditions are met.</value>
   </data>
   <data name="CodeFormatter.Info.Padding" xml:space="preserve">
     <value>Padding</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.ShowCurrentFile" xml:space="preserve">
+    <value>Aktuelle Datei zeigen</value>
     <comment>Added after 5.2.0</comment>
   </data>
 </root>

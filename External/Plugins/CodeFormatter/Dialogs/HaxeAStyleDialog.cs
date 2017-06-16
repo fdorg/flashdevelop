@@ -52,6 +52,9 @@ namespace CodeFormatter.Dialogs
         private System.Windows.Forms.CheckBox checkKeepOneLineBlocks;
         private System.Windows.Forms.CheckBox checkBreakElseifs;
         private System.Windows.Forms.CheckBox checkBreakClosing;
+        private CheckBox checkPadParensIn;
+        private CheckBox checkPadParensOut;
+        private CheckBox checkCurrentFile;
 
         /// <summary>
         /// Required designer variable.
@@ -95,6 +98,8 @@ namespace CodeFormatter.Dialogs
             this.lblBracketStyle = new System.Windows.Forms.Label();
             this.cbBracketStyle = new System.Windows.Forms.ComboBox();
             this.tabPadding = new System.Windows.Forms.TabPage();
+            this.checkPadParensOut = new System.Windows.Forms.CheckBox();
+            this.checkPadParensIn = new System.Windows.Forms.CheckBox();
             this.checkFillEmptyLines = new System.Windows.Forms.CheckBox();
             this.checkDeleteEmptyLines = new System.Windows.Forms.CheckBox();
             this.checkPadHeaders = new System.Windows.Forms.CheckBox();
@@ -108,6 +113,7 @@ namespace CodeFormatter.Dialogs
             this.pnlSci = new System.Windows.Forms.Panel();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.checkCurrentFile = new System.Windows.Forms.CheckBox();
             this.tabControl.SuspendLayout();
             this.tabIndents.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numIndentWidth)).BeginInit();
@@ -195,23 +201,23 @@ namespace CodeFormatter.Dialogs
             // 
             this.numIndentWidth.Location = new System.Drawing.Point(50, 47);
             this.numIndentWidth.Maximum = new decimal(new int[] {
-                20,
-                0,
-                0,
-                0});
+            20,
+            0,
+            0,
+            0});
             this.numIndentWidth.Minimum = new decimal(new int[] {
-                2,
-                0,
-                0,
-                0});
+            2,
+            0,
+            0,
+            0});
             this.numIndentWidth.Name = "numIndentWidth";
             this.numIndentWidth.Size = new System.Drawing.Size(40, 20);
             this.numIndentWidth.TabIndex = 2;
             this.numIndentWidth.Value = new decimal(new int[] {
-                4,
-                0,
-                0,
-                0});
+            4,
+            0,
+            0,
+            0});
             this.numIndentWidth.ValueChanged += new System.EventHandler(this.numIndentWidth_ValueChanged);
             // 
             // checkForceTabs
@@ -332,6 +338,8 @@ namespace CodeFormatter.Dialogs
             // 
             // tabPadding
             // 
+            this.tabPadding.Controls.Add(this.checkPadParensOut);
+            this.tabPadding.Controls.Add(this.checkPadParensIn);
             this.tabPadding.Controls.Add(this.checkFillEmptyLines);
             this.tabPadding.Controls.Add(this.checkDeleteEmptyLines);
             this.tabPadding.Controls.Add(this.checkPadHeaders);
@@ -344,6 +352,30 @@ namespace CodeFormatter.Dialogs
             this.tabPadding.TabIndex = 2;
             this.tabPadding.Text = "Padding";
             this.tabPadding.UseVisualStyleBackColor = true;
+            // 
+            // checkPadParensOut
+            // 
+            this.checkPadParensOut.AutoSize = true;
+            this.checkPadParensOut.Location = new System.Drawing.Point(6, 167);
+            this.checkPadParensOut.Name = "checkPadParensOut";
+            this.checkPadParensOut.Size = new System.Drawing.Size(152, 17);
+            this.checkPadParensOut.TabIndex = 24;
+            this.checkPadParensOut.Tag = "--pad-paren-out";
+            this.checkPadParensOut.Text = "Pad ouside of parentheses";
+            this.checkPadParensOut.UseVisualStyleBackColor = true;
+            this.checkPadParensOut.Click += new System.EventHandler(this.check_Click);
+            // 
+            // checkPadParensIn
+            // 
+            this.checkPadParensIn.AutoSize = true;
+            this.checkPadParensIn.Location = new System.Drawing.Point(6, 144);
+            this.checkPadParensIn.Name = "checkPadParensIn";
+            this.checkPadParensIn.Size = new System.Drawing.Size(148, 17);
+            this.checkPadParensIn.TabIndex = 23;
+            this.checkPadParensIn.Tag = "--pad-paren-in";
+            this.checkPadParensIn.Text = "Pad inside of parentheses";
+            this.checkPadParensIn.UseVisualStyleBackColor = true;
+            this.checkPadParensIn.Click += new System.EventHandler(this.check_Click);
             // 
             // checkFillEmptyLines
             // 
@@ -466,9 +498,9 @@ namespace CodeFormatter.Dialogs
             // 
             // pnlSci
             // 
-            this.pnlSci.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                                                                        | System.Windows.Forms.AnchorStyles.Left)
-                                                                       | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlSci.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlSci.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pnlSci.Location = new System.Drawing.Point(292, 28);
             this.pnlSci.Name = "pnlSci";
@@ -497,6 +529,18 @@ namespace CodeFormatter.Dialogs
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
+            // checkCurrentFile
+            // 
+            this.checkCurrentFile.AutoSize = true;
+            this.checkCurrentFile.BackColor = System.Drawing.Color.White;
+            this.checkCurrentFile.Location = new System.Drawing.Point(167, 479);
+            this.checkCurrentFile.Name = "checkCurrentFile";
+            this.checkCurrentFile.Size = new System.Drawing.Size(105, 17);
+            this.checkCurrentFile.TabIndex = 13;
+            this.checkCurrentFile.Text = "Show current file";
+            this.checkCurrentFile.UseVisualStyleBackColor = false;
+            this.checkCurrentFile.CheckedChanged += new System.EventHandler(this.checkExampleFile_CheckedChanged);
+            // 
             // HaxeAStyleDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -505,6 +549,7 @@ namespace CodeFormatter.Dialogs
             this.Controls.Add(this.pnlSci);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.checkCurrentFile);
             this.Controls.Add(this.tabControl);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.MaximizeBox = false;
@@ -525,6 +570,7 @@ namespace CodeFormatter.Dialogs
             this.tabFormatting.ResumeLayout(false);
             this.tabFormatting.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -535,8 +581,14 @@ namespace CodeFormatter.Dialogs
             InitializeComponent();
             InitializeLocalization();
 
+            var currentDoc = PluginBase.MainForm.CurrentDocument;
+            if (string.IsNullOrEmpty(currentDoc?.SciControl?.Text) || currentDoc.SciControl.ConfigurationLanguage != "haxe")
+            {
+                checkCurrentFile.Enabled = false;
+            }
+
             //Read example file
-            string id = "CodeFormatter.Resources.AStyleExample.hx";
+            var id = "CodeFormatter.Resources.AStyleExample.hx";
             Assembly assembly = Assembly.GetExecutingAssembly();
             using (var reader = new StreamReader(assembly.GetManifestResourceStream(id)))
             {
@@ -586,6 +638,7 @@ namespace CodeFormatter.Dialogs
             this.Text = TextHelper.GetString("Title.AStyleFormatterSettings");
             this.btnSave.Text = TextHelper.GetString("FlashDevelop.Label.Save");
             this.btnCancel.Text = TextHelper.GetString("FlashDevelop.Label.Cancel");
+            this.checkCurrentFile.Text = TextHelper.GetString("Label.ShowCurrentFile");
             this.checkAddBrackets.Text = TextHelper.GetString("Label.AddBrackets");
             this.checkAttachClasses.Text = TextHelper.GetString("Label.AttachClasses");
             this.checkBreakClosing.Text = TextHelper.GetString("Label.BreakClosing");
@@ -605,6 +658,8 @@ namespace CodeFormatter.Dialogs
             this.checkPadHeaders.Text = TextHelper.GetString("Label.PadHeaders");
             this.checkRemoveBrackets.Text = TextHelper.GetString("Label.RemoveBracketsFromContitionals");
             this.checkTabs.Text = TextHelper.GetString("Label.UseTabs");
+            this.checkPadParensIn.Text = TextHelper.GetString("Label.PadParensIn");
+            this.checkPadParensOut.Text = TextHelper.GetString("Label.PadParensOut");
             this.lblBracketStyle.Text = TextHelper.GetString("Label.BracketStyle");
             this.lblIndentSize.Text = TextHelper.GetString("Label.IndentSize");
             this.tabBrackets.Text = TextHelper.GetString("Info.Brackets");
@@ -766,26 +821,18 @@ namespace CodeFormatter.Dialogs
             if (IsChecked(checkAddBrackets))
             {
                 if (IsChecked(checkOneLineBrackets))
-                {
                     options.Add(new HaxeAStyleOption("--add-one-line-brackets"));
-                }
                 else
-                {
                     options.Add(new HaxeAStyleOption("--add-brackets"));
-                }
             }
 
             //Padding
             if (IsChecked(checkPadBlocks))
             {
                 if (IsChecked(checkPadAll))
-                {
                     options.Add(new HaxeAStyleOption("--break-blocks", "all"));
-                }
                 else
-                {
                     options.Add(new HaxeAStyleOption("--break-blocks"));
-                }
             }
             //options.Add("--indent-continuation=" + numIndentContinuation.Value); //not supported by old version of AStyle
 
@@ -804,6 +851,12 @@ namespace CodeFormatter.Dialogs
 
             txtExample.IsReadOnly = false;
             txtExample.Text = exampleCode;
+
+            var currentDoc = PluginBase.MainForm.CurrentDocument;
+            if (checkCurrentFile.Checked && currentDoc?.SciControl != null)
+            {
+                txtExample.Text = currentDoc.SciControl.Text;
+            }
             //txtExample.TabWidth = (int) numIndentWidth.Value;
             txtExample.TabWidth = PluginBase.Settings.TabWidth;
             txtExample.IsFocus = true;
@@ -926,6 +979,11 @@ namespace CodeFormatter.Dialogs
         public DialogResult ShowDialog(Form dialog)
         {
             return dialog.ShowDialog(this);
+        }
+
+        private void checkExampleFile_CheckedChanged(object sender, EventArgs e)
+        {
+            ReformatExample();
         }
     }
 }

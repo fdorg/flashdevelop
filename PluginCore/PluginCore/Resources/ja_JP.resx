@@ -6320,6 +6320,14 @@ AND - All conditions are met.</value>
     <value>Width:</value>
     <comment>Added after 5.2.0</comment>
   </data>
+  <data name="CodeFormatter.Label.PadParensIn" xml:space="preserve">
+    <value>Pad inside of parentheses</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.PadParensOut" xml:space="preserve">
+    <value>Pad outside of parentheses</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
   <data name="CodeFormatter.Info.Brackets" xml:space="preserve">
     <value>Brackets</value>
     <comment>Added after 5.2.0</comment>
@@ -6334,6 +6342,10 @@ AND - All conditions are met.</value>
   </data>
   <data name="CodeFormatter.Info.Padding" xml:space="preserve">
     <value>Padding</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.ShowCurrentFile" xml:space="preserve">
+    <value>Show current file</value>
     <comment>Added after 5.2.0</comment>
   </data>
 </root>
