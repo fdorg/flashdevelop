@@ -6191,5 +6191,6 @@ AND - All conditions are met.</value>
   </data>
   <data name="FlashDevelop.Description.EndAtLastLine" xml:space="preserve">
     <value>Sets the scroll range so that maximum scroll position has the last line at the bottom of the view. Setting this to false allows scrolling one page below the last line.</value>
+    <comment>Added after 5.2.1</comment>
   </data>
 </root>
