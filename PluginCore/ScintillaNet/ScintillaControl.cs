@@ -154,22 +154,25 @@ namespace ScintillaNet
         /// </summary>
         private void OnScrollUpdate(ScintillaControl sender)
         {
-            Int32 vMax = sender.LinesVisible;
+            Boolean overScroll = sender.EndAtLastLine == 0;
+            Int32 vTotal = sender.LinesVisible;
             Int32 vPage = sender.LinesOnScreen;
+            Int32 vMax = overScroll ? (vTotal - 1) : (vTotal - vPage);
+            sender.vScrollBar.OverScroll = overScroll;
             sender.vScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.vScrollBar.Minimum = 0;
-            sender.vScrollBar.Maximum = vMax - 1;
+            sender.vScrollBar.Maximum = vMax;
             sender.vScrollBar.LargeChange = vPage;
             sender.vScrollBar.Value = sender.FirstVisibleLine;
-            sender.vScrollBar.CurrentPosition = vMax > 1 ? sender.VisibleFromDocLine(sender.CurrentLine) : -1;
+            sender.vScrollBar.CurrentPosition = (vMax > 0) ? sender.VisibleFromDocLine(sender.CurrentLine) : -1;
             sender.vScrollBar.Scroll += sender.OnScrollBarScroll;
+            sender.vScrollBar.Enabled = vMax > 0;
             sender.hScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.hScrollBar.Minimum = 0;
             sender.hScrollBar.Maximum = sender.ScrollWidth;
             sender.hScrollBar.LargeChange = sender.Width;
             sender.hScrollBar.Value = sender.XOffset;
             sender.hScrollBar.Scroll += sender.OnScrollBarScroll;
-            sender.vScrollBar.Enabled = vMax > 1;
         }
 
         /// <summary>

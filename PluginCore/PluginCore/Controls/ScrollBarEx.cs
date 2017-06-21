@@ -1178,7 +1178,7 @@ namespace PluginCore.Controls
                 pixelRange = this.Width - (2 * this.arrowWidth) - this.thumbWidth;
                 arrowSize = this.arrowWidth;
             }
-            int realRange = this.maximum - this.minimum;
+            int realRange = (this.overScroll ? (this.maximum + this.largeChange) : this.maximum) - this.minimum;
             float perc = 0f;
             if (realRange != 0)
             {
