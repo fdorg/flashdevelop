@@ -12,12 +12,16 @@ namespace PluginCore.Managers
         private static List<EventObject> highObjects;
         private static List<EventObject> normalObjects;
         private static List<EventObject> lowObjects;
+        private static EventObject[] eventObjectsSnapshot;
+        private static bool snapshotInvalid;
 
         static EventManager()
         {
             highObjects = new List<EventObject>();
             normalObjects = new List<EventObject>();
             lowObjects = new List<EventObject>();
+            eventObjectsSnapshot = new EventObject[0];
+            snapshotInvalid = false;
         }
 
         /// <summary>
@@ -33,6 +37,12 @@ namespace PluginCore.Managers
         /// </summary>
         public static void AddEventHandler(IEventHandler handler, EventType mask, HandlingPriority priority)
         {
+            if (handler == null)
+            {
+                throw new ArgumentNullException(nameof(handler));
+            }
+
+            snapshotInvalid = true;
             GetEventObjects(priority).Add(new EventObject(handler, mask, priority));
         }
 
@@ -49,6 +59,7 @@ namespace PluginCore.Managers
                 {
                     if (eventObjects[j].Handler == handler)
                     {
+                        snapshotInvalid = true;
                         eventObjects.RemoveAt(j);
                         break;
                     }
@@ -70,6 +81,7 @@ namespace PluginCore.Managers
                     obj.Mask &= ~mask;
                     if (obj.Mask == 0)
                     {
+                        snapshotInvalid = true;
                         eventObjects.RemoveAt(i);
                     }
                     break;
@@ -82,14 +94,27 @@ namespace PluginCore.Managers
         /// </summary>
         public static void DispatchEvent(object sender, NotifyEvent e)
         {
-            var eventObjects = new EventObject[highObjects.Count + normalObjects.Count + lowObjects.Count];
-            highObjects.CopyTo(eventObjects);
-            normalObjects.CopyTo(eventObjects, highObjects.Count);
-            lowObjects.CopyTo(eventObjects, highObjects.Count + normalObjects.Count);
-
-            for (int i = 0; i < eventObjects.Length; i++)
+            int length;
+            if (snapshotInvalid)
             {
-                var obj = eventObjects[i];
+                length = highObjects.Count + normalObjects.Count + lowObjects.Count;
+                if (eventObjectsSnapshot.Length != length)
+                {
+                    eventObjectsSnapshot = new EventObject[length];
+                }
+                highObjects.CopyTo(eventObjectsSnapshot, 0);
+                normalObjects.CopyTo(eventObjectsSnapshot, highObjects.Count);
+                lowObjects.CopyTo(eventObjectsSnapshot, highObjects.Count + normalObjects.Count);
+                snapshotInvalid = false;
+            }
+            else
+            {
+                length = eventObjectsSnapshot.Length;
+            }
+            
+            for (int i = 0; i < length; i++)
+            {
+                var obj = eventObjectsSnapshot[i];
                 if ((obj.Mask & e.Type) > e.Type)
                 {
                     try
@@ -126,7 +151,7 @@ namespace PluginCore.Managers
             }
         }
 
-        private class EventObject
+        private sealed class EventObject
         {
             internal IEventHandler Handler;
             internal HandlingPriority Priority;
