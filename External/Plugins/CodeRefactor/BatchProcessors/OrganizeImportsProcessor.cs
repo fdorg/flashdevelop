@@ -21,7 +21,8 @@ namespace CodeRefactor.BatchProcessors
             foreach (var file in files)
             {
                 var document = PluginBase.MainForm.OpenEditableDocument(file) as ITabbedDocument;
-                var command = (OrganizeImports)CommandFactoryProvider.GetFactory(document).CreateOrganizeImportsCommand();
+                var command = (OrganizeImports)CommandFactoryProvider.GetFactory(document)?.CreateOrganizeImportsCommand();
+                if (command == null) continue;
                 command.SciControl = document.SciControl;
                 command.Execute();
             }
