@@ -603,6 +603,7 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue1645.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue1645_2.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue1645_2.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\GetStatementReturnTypeOfNewObject.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
