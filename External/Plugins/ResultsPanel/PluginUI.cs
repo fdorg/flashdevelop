@@ -1302,7 +1302,7 @@ namespace ResultsPanel
         {
             if (this.entriesView.Items.Count > 0)
             {
-                this.SelectItem(this.entryIndex == 0 ? this.entriesView.Items.Count - 1 : this.entryIndex - 1);
+                this.SelectItem(this.entryIndex <= 0 ? this.entriesView.Items.Count - 1 : this.entryIndex - 1);
                 this.NavigateToSelectedItem();
                 return true;
             }
