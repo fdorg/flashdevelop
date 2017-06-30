@@ -249,7 +249,7 @@ namespace FlashDevelop.Dialogs
                 string text = (e.Index + 1) + "    " + string.Join(" ", lines);
 
                 brush.Color = e.ForeColor;
-                
+
                 using (var stringFormat = new StringFormat())
                 {
                     stringFormat.Trimming = StringTrimming.EllipsisCharacter;
