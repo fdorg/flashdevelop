@@ -576,6 +576,7 @@ namespace FlashDevelop
             try
             {
                 DockablePanel dockablePanel = new DockablePanel(ctrl, guid);
+                dockablePanel.Show();
                 dockablePanel.Image = image;
                 dockablePanel.DockState = defaultDockState;
                 LayoutManager.PluginPanels.Add(dockablePanel);
