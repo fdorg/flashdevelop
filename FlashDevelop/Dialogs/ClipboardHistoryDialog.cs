@@ -17,15 +17,15 @@ namespace FlashDevelop.Dialogs
         private ListBox listBox;
         private Button btnPaste;
         private Button btnCancel;
+        private Button btnCopy;
         private Button btnClear;
-        private RichTextBox preview;
+        private TextBox preview;
 
         /// <summary>
         /// Creates a new instance of <see cref="ClipboardHistoryDialog"/>.
         /// </summary>
         public ClipboardHistoryDialog()
         {
-            //FormGuid = "8c53f118-99ac-4287-b772-1424c1e2580a";
             InitializeComponent();
             InitializeFont();
             InitializeLocalization();
@@ -43,8 +43,9 @@ namespace FlashDevelop.Dialogs
             splitContainer = new SplitContainer();
             btnClear = new Button();
             listBox = new ListBox();
-            preview = new RichTextBox();
+            preview = new TextBox();
             btnCancel = new Button();
+            btnCopy = new Button();
             btnPaste = new Button();
             splitContainer.Panel1.SuspendLayout();
             splitContainer.Panel2.SuspendLayout();
@@ -72,6 +73,7 @@ namespace FlashDevelop.Dialogs
             // splitContainer.Panel2
             // 
             splitContainer.Panel2.Controls.Add(preview);
+            splitContainer.Panel2.Controls.Add(btnCopy);
             splitContainer.Panel2.Controls.Add(btnCancel);
             splitContainer.Panel2.Controls.Add(btnPaste);
             // 
@@ -114,6 +116,19 @@ namespace FlashDevelop.Dialogs
             btnCancel.UseMnemonic = false;
             btnCancel.UseVisualStyleBackColor = true;
             // 
+            // btnCopy
+            // 
+            btnCopy.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnCopy.Enabled = false;
+            btnCopy.Location = new Point(158, 236);
+            btnCopy.Name = "btnCopy";
+            btnCopy.Size = new Size(100, 30);
+            btnCopy.TabIndex = 2;
+            btnCopy.Text = "Copy";
+            btnCopy.UseMnemonic = false;
+            btnCopy.UseVisualStyleBackColor = true;
+            btnCopy.Click += BtnCopy_Click;
+            // 
             // btnClear
             // 
             btnClear.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
@@ -131,13 +146,12 @@ namespace FlashDevelop.Dialogs
             // 
             preview.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             preview.BackColor = SystemColors.Window;
-            preview.DetectUrls = false;
             preview.Location = new Point(12, 3);
+            preview.Multiline = true;
             preview.Name = "preview";
             preview.ReadOnly = true;
-            preview.ShortcutsEnabled = false;
             preview.Size = new Size(458, 227);
-            preview.TabIndex = 2;
+            preview.TabIndex = 3;
             preview.Text = "";
             preview.WordWrap = false;
             // 
@@ -192,6 +206,7 @@ namespace FlashDevelop.Dialogs
         {
             btnPaste.Text = TextHelper.GetStringWithoutMnemonics("Label.Paste");
             btnCancel.Text = TextHelper.GetStringWithoutMnemonics("Label.Cancel");
+            btnCopy.Text = TextHelper.GetStringWithoutMnemonics("Label.Copy");
             btnClear.Text = TextHelper.GetStringWithoutMnemonics("Label.Clear");
         }
 
@@ -234,13 +249,12 @@ namespace FlashDevelop.Dialogs
                 string text = (e.Index + 1) + "    " + string.Join(" ", lines);
 
                 brush.Color = e.ForeColor;
-
-                var stringFormat = new StringFormat()
+                
+                using (var stringFormat = new StringFormat())
                 {
-                    Trimming = StringTrimming.EllipsisCharacter
-                };
-
-                e.Graphics.DrawString(text, e.Font, brush, e.Bounds, stringFormat); 
+                    stringFormat.Trimming = StringTrimming.EllipsisCharacter;
+                    e.Graphics.DrawString(text, e.Font, brush, e.Bounds, stringFormat);
+                }
             }
         }
 
@@ -249,6 +263,15 @@ namespace FlashDevelop.Dialogs
             var selectedItem = (ClipboardTextData) listBox.SelectedItem;
             preview.Text = selectedItem?.Text;
             btnPaste.Enabled = selectedItem != null;
+            btnCopy.Enabled = !string.IsNullOrEmpty(selectedItem?.Text);
+        }
+
+        private void BtnCopy_Click(object sender, EventArgs e)
+        {
+            preview.SelectAll();
+            preview.Copy();
+
+            btnPaste.Select();
         }
 
         private void BtnClear_Click(object sender, EventArgs e)
