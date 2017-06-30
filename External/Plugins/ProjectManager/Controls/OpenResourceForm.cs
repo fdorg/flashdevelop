@@ -274,9 +274,9 @@ namespace ProjectManager.Controls
             List<String> matchedFiles;
             if (this.textBox.Text.Length > 0)
             {
-                matchedFiles = SearchUtil.GetMatchedItems(this.openedFiles, this.textBox.Text, "\\", 0);
+                matchedFiles = SearchUtil.getMatchedItems(this.openedFiles, this.textBox.Text, "\\", 0);
                 if (matchedFiles.Capacity > 0) matchedFiles.Add(ITEM_SPACER);
-                matchedFiles.AddRange(SearchUtil.GetMatchedItems(this.projectFiles, this.textBox.Text, "\\", this.MAX_ITEMS));
+                matchedFiles.AddRange(SearchUtil.getMatchedItems(this.projectFiles, this.textBox.Text, "\\", this.MAX_ITEMS));
             }
             else matchedFiles = openedFiles;
             foreach (String file in matchedFiles)
@@ -530,7 +530,7 @@ namespace ProjectManager.Controls
 
     public class SearchUtil
     {
-        public static List<string> GetMatchedItems(List<string> source, string searchText, string pathSeparator, int limit)
+        public static List<string> getMatchedItems(List<string> source, string searchText, string pathSeparator, int limit)
         {
             var i = 0;
             var matchedItems = new List<SearchResult>();

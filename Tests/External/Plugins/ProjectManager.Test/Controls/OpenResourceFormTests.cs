@@ -1,11 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
-using FlashDevelop;
-using NSubstitute;
 using NUnit.Framework;
-using PluginCore;
-using ScintillaNet;
-using ScintillaNet.Enums;
 
 namespace ProjectManager.Controls
 {
@@ -34,7 +28,7 @@ namespace ProjectManager.Controls
                     "src\\com\\module\\test\\ITestModule.hx",
                     "src\\com\\module\\test\\TestModule.hx"
                 });
-                var results = SearchUtil.GetMatchedItems(files, "m", "\\", 1);
+                var results = SearchUtil.getMatchedItems(files, "m", "\\", 1);
                 
                 Assert.AreEqual("src\\Main.hx", results[0]); //shortest and also starts with an "m", so should be first
             }
@@ -50,10 +44,10 @@ namespace ProjectManager.Controls
                     "src\\com\\module\\test\\ITestModule.hx",
                     "src\\com\\module\\test\\TestModule.hx"
                 });
-                var results = SearchUtil.GetMatchedItems(files, "m", "\\", 1);
+                var results = SearchUtil.getMatchedItems(files, "m", "\\", 1);
                 Assert.AreEqual(results.Count, 1);
 
-                results = SearchUtil.GetMatchedItems(files, "m", "\\", 1);
+                results = SearchUtil.getMatchedItems(files, "m", "\\", 1);
                 Assert.Greater(results.Count, 0);
             }
 
@@ -73,7 +67,7 @@ namespace ProjectManager.Controls
                     "src\\Main.hx",
                     "src\\StaticClass.hx"
                 });
-                var results = SearchUtil.GetMatchedItems(files, "iclass", "\\", 2);
+                var results = SearchUtil.getMatchedItems(files, "iclass", "\\", 2);
 
                 //since the file name starts with iclass, it should be prefered over "src\\StaticClass.hx", which has 
                 Assert.AreEqual("hexannotation\\hex\\annotation\\IClassAnnotationDataProvider.hx", results[0]);
@@ -96,7 +90,7 @@ namespace ProjectManager.Controls
                     "src\\com\\module\\test\\TestModule.hx"
                 });
 
-                var results = SearchUtil.GetMatchedItems(files, "test", "\\", 0);
+                var results = SearchUtil.getMatchedItems(files, "test", "\\", 0);
 
                 //"test\\TestModule.hx" should be first, because it has test in the path and also in the beginning of the file name
                 Assert.AreEqual("src\\com\\module\\test\\TestModule.hx", results[0]);
@@ -128,7 +122,7 @@ namespace ProjectManager.Controls
                     "src\\com\\module\\example\\ExampleModule.hx",
                     "src\\com\\module\\example\\IExampleModule.hx",
                 };
-                var results = SearchUtil.GetMatchedItems(files, "src\\com\\module", "\\", 0);
+                var results = SearchUtil.getMatchedItems(files, "src\\com\\module", "\\", 0);
 
                 CollectionAssert.AreEqual(excpected, results);
 
