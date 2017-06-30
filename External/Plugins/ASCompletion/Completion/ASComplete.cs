@@ -2710,13 +2710,6 @@ namespace ASCompletion.Completion
                     result.Type = qualif;
                 }
             }
-            else if (result != null
-                    && result.Member == null && (result.Type?.Flags & FlagType.Class) != 0 && string.IsNullOrEmpty(context.WordBefore)
-                    && !string.IsNullOrEmpty(result.Path))
-            {
-                var characters = ScintillaControl.Configuration.GetLanguage(ctx.Settings.LanguageId.ToLower()).characterclass.Characters;
-                if (result.Path.All(c => characters.Contains(c))) result = new ASResult {Type = ctx.ResolveType("Class", inFile)};
-            }
             return result ?? notFound;
         }
 

@@ -29,13 +29,14 @@ namespace HaXeContext.Linters
             for (var i = 0; i < files.Length; i++)
             {
                 var file = files[i];
-                if (!File.Exists(file))
+                ITabbedDocument document;
+                if (!File.Exists(file) || (document = DocumentManager.FindDocument(file)) != null && document.IsUntitled)
                 {
                     total--;
                     continue;
                 }
                 bool sciCreated = false;
-                var sci = DocumentManager.FindDocument(file)?.SciControl;
+                var sci = document?.SciControl;
                 if (sci == null)
                 {
                     sci = new ScintillaControl
