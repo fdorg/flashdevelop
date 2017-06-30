@@ -125,18 +125,15 @@ namespace StartPage
                     {
                         case ProjectManagerEvents.Project :
                             // Close pluginPanel if the user has the setting checked and a project is opened
-                            if (de.Data != null & this.startPage != null)
+                            if (de.Data != null && this.startPage != null)
                             {
                                 if (this.settingObject.CloseOnProjectOpen) this.startPage.Close();
-                                if (this.startPage != null)
-                                {
-                                    // The project manager does not update recent projects until after
-                                    // it broadcasts this event so we'll wait a little bit before refreshing
-                                    Timer timer = new Timer();
-                                    timer.Interval = 100;
-                                    timer.Tick += delegate { timer.Stop(); if (!this.startPageWebBrowser.IsDisposed) this.startPageWebBrowser.SendProjectInfo(); };
-                                    timer.Start();
-                                }
+                                // The project manager does not update recent projects until after
+                                // it broadcasts this event so we'll wait a little bit before refreshing
+                                Timer timer = new Timer();
+                                timer.Interval = 100;
+                                timer.Tick += delegate { timer.Stop(); if (!this.startPageWebBrowser.IsDisposed) this.startPageWebBrowser.SendProjectInfo(); };
+                                timer.Start();
                             }
                             break;
                     }

@@ -4,6 +4,7 @@ using System.IO;
 using ASCompletion.Completion;
 using CodeRefactor.Provider;
 using PluginCore;
+using PluginCore.Controls;
 using PluginCore.FRService;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -16,6 +17,8 @@ namespace CodeRefactor.Commands
     /// </summary>
     public class FindAllReferences : RefactorCommand<IDictionary<String, List<SearchMatch>>>
     {
+        internal const string TraceGroup = "CodeRefactor.FindAllReferences";
+
         protected bool IgnoreDeclarationSource { get; private set; }
 
         /// <summary>
@@ -26,7 +29,7 @@ namespace CodeRefactor.Commands
         public bool IncludeComments { get; set; }
 
         public bool IncludeStrings { get; set; }
-
+        
         /// <summary>
         /// A new FindAllReferences refactoring command. Outputs found results.
         /// Uses the current text location as the declaration target.
@@ -105,12 +108,13 @@ namespace CodeRefactor.Commands
         /// </summary>
         protected void FindFinished(FRResults results)
         {
-
             UserInterfaceManager.ProgressDialog.Reset();
             UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.ResolvingReferences"));
+            MessageBar.Locked = true;
             // First filter out any results that don't actually point to our source declaration
             this.Results = ResolveActualMatches(results, CurrentTarget);
             if (OutputResults) this.ReportResults();
+            MessageBar.Locked = false;
             UserInterfaceManager.ProgressDialog.Hide();
             // Select first match
             if (this.Results.Count > 0)
@@ -159,7 +163,7 @@ namespace CodeRefactor.Commands
                     bool add = false;
                     if (RefactoringHelper.DoesMatchPointToTarget(sci, match, target, this.AssociatedDocumentHelper))
                     {
-                        if (IgnoreDeclarationSource && !foundDeclarationSource && RefactoringHelper.IsMatchTheTarget(sci, match, target))
+                        if (IgnoreDeclarationSource && !foundDeclarationSource && RefactoringHelper.IsMatchTheTarget(sci, match, target, AssociatedDocumentHelper))
                         {
                             //ignore the declaration source
                             foundDeclarationSource = true;
@@ -195,16 +199,18 @@ namespace CodeRefactor.Commands
         /// </summary>
         private void ReportResults()
         {
-            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults");
+            string groupData = TraceManager.CreateGroupDataUnique(TraceGroup, CurrentTarget.Member == null ? CurrentTarget.Type.Name : CurrentTarget.Member.Name);
+            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
             foreach (KeyValuePair<String, List<SearchMatch>> entry in this.Results)
             {
                 // Outputs the lines as they change
                 foreach (SearchMatch match in entry.Value)
                 {
-                    TraceManager.Add(entry.Key + ":" + match.Line + ": chars " + match.Column + "-" + (match.Column + match.Length) + " : " + match.LineText.Trim(), (Int32)TraceType.Info);
+                    string message = $"{entry.Key}:{match.Line}: chars {match.Column}-{match.Column + match.Length} : {match.LineText.Trim()}";
+                    TraceManager.Add(message, (int) TraceType.Info, groupData);
                 }
             }
-            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults");
+            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
         }
 
         #endregion

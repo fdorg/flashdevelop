@@ -25,20 +25,40 @@ namespace SetVersion
                 Console.WriteLine("Template not found: " + revOut);
                 return;
             }
-            var head = File.ReadAllText(Path.Combine(git, "HEAD")).Trim();
-            var headRef = Regex.Match(head, "ref: refs/heads/(.*)");
-            if (!headRef.Success)
+            var headFile = Path.Combine(git, "HEAD");
+            Match headRef;
+            if (!File.Exists(headFile))
             {
-                Console.WriteLine("SetVersion: Can not find HEAD ref, write from env vars.");
+                Console.WriteLine("Git folder not found");
+                headRef = null;
+            }
+            else
+            {
+                var head = File.ReadAllText(headFile).Trim();
+                headRef = Regex.Match(head, "ref: refs/heads/(.*)");
+            }
+            if (headRef == null || !headRef.Success)
+            {
                 commit = Environment.ExpandEnvironmentVariables("%APPVEYOR_REPO_COMMIT%");
-                if (commit.Length == 40) commit = commit.Substring(0, 10);
-                branch = Environment.ExpandEnvironmentVariables("%APPVEYOR_REPO_BRANCH%");
-                build = Environment.ExpandEnvironmentVariables("%APPVEYOR_BUILD_NUMBER%");
+                if (commit != "%APPVEYOR_REPO_COMMIT%")
+                {
+                    Console.WriteLine("SetVersion: Can not find HEAD ref, write from env vars.");
+                    if (commit.Length == 40) commit = commit.Substring(0, 10);
+                    branch = Environment.ExpandEnvironmentVariables("%APPVEYOR_REPO_BRANCH%");
+                    build = Environment.ExpandEnvironmentVariables("%APPVEYOR_BUILD_NUMBER%");
+                }
+                else
+                {
+                    Console.WriteLine("SetVersion: Can not find HEAD ref nor CI env vars. Setting dummy values");
+                    commit = string.Empty;
+                    branch = "local";
+                    build = "0";
+                }
                 WriteFile(output, revOut, commit, branch, build);
                 return;
             }
             branch = headRef.Groups[1].Value;
-            var refPath = Path.Combine(Path.Combine(git, "refs\\heads"), branch);
+            var refPath = Path.Combine(Path.Combine(git, Path.Combine("refs", "heads")), branch);
             if (!File.Exists(refPath))
             {
                 Console.WriteLine("SetVersion: Can not read ref commit hash.");

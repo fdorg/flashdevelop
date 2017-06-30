@@ -112,7 +112,7 @@ namespace AS3Context
                 "null", "true", "false", "try", "catch", "finally", "throw", "use", "namespace"
             };
             features.accessKeywords = new string[] { 
-                "extern", "dynamic", "final", "public", "private", "protected", "internal", "static", "override"
+                "native", "dynamic", "final", "public", "private", "protected", "internal", "static", "override"
             };
             features.declKeywords = new string[] { "var", "function", "const", "namespace", "get", "set" };
             features.typesKeywords = new string[] { "import", "class", "interface" };
@@ -432,7 +432,7 @@ namespace AS3Context
         public override string[] GetExplorerMask()
         {
             string[] mask = as3settings.AS3FileTypes;
-            if (mask == null || mask.Length == 0 || (mask.Length == 1 && mask[1] == ""))
+            if (mask == null || mask.Length == 0 || (mask.Length == 1 && mask[0] == ""))
             {
                 as3settings.AS3FileTypes = mask = new string[] { "*.as", "*.mxml" };
                 return mask;
@@ -878,8 +878,14 @@ namespace AS3Context
         public override ClassModel ResolveType(string cname, FileModel inFile)
         {
             // handle generic types
-            if (cname != null && cname.IndexOf('<') > 0)
+            if (cname != null && cname.IndexOf('<') >= 0)
             {
+                if (cname.StartsWith('<'))
+                {
+                    //transform <T>[] to Vector.<T>
+                    cname = Regex.Replace(cname, @">\[.*", ">");
+                    cname = "Vector." + cname;
+                }
                 Match genType = re_genericType.Match(cname);
                 if (genType.Success)
                     return ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile);

@@ -2,6 +2,7 @@
 using ASCompletion.Completion;
 using ASCompletion.Model;
 using PluginCore;
+using ScintillaNet;
 
 namespace CodeRefactor.Provider
 {
@@ -20,6 +21,7 @@ namespace CodeRefactor.Provider
 
         public static void Register(string language, ICommandFactory factory)
         {
+            if (ContainsLanguage(language)) LanguageToFactory.Remove(language);
             LanguageToFactory.Add(language, factory);
         }
 
@@ -28,33 +30,33 @@ namespace CodeRefactor.Provider
             return LanguageToFactory.ContainsKey(language);
         }
 
-        public static ICommandFactory GetFactoryFromCurrentDocument()
+        public static ICommandFactory GetFactoryForCurrentDocument()
         {
             var document = PluginBase.MainForm.CurrentDocument;
             if (document == null || !document.IsEditable) return null;
-            return GetFactoryFromDocument(document);
+            return GetFactory(document);
         }
 
-        public static ICommandFactory GetFactoryFromDocument(ITabbedDocument document)
+        public static ICommandFactory GetFactory(ASResult target)
         {
-            var language = document.SciControl.ConfigurationLanguage;
-            return GetFactoryFromLanguage(language);
+            return GetFactory(target.InFile ?? target.Type.InFile);
         }
 
-        public static ICommandFactory GetFactoryFromTarget(ASResult target)
-        {
-            return GetFactoryFromFile(target.InFile ?? target.Type.InFile);
-        }
-
-        public static ICommandFactory GetFactoryFromFile(FileModel file)
+        public static ICommandFactory GetFactory(FileModel file)
         {
             var language = PluginBase.MainForm.SciConfig.GetLanguageFromFile(file.FileName);
-            return GetFactoryFromLanguage(language);
+            return GetFactory(language);
         }
 
-        public static ICommandFactory GetFactoryFromLanguage(string language)
+        public static ICommandFactory GetFactory(ITabbedDocument document) => GetFactory(document.SciControl);
+
+        public static ICommandFactory GetFactory(ScintillaControl sci) => GetFactory(sci.ConfigurationLanguage);
+
+        public static ICommandFactory GetFactory(string language)
         {
-            return LanguageToFactory[language];
+            ICommandFactory factory;
+            LanguageToFactory.TryGetValue(language, out factory);
+            return factory;
         }
     }
 }

@@ -45,18 +45,25 @@ namespace ASCompletion.Completion
 
         public static string ToDeclarationWithModifiersString(MemberModel m, string template)
         {
-            bool isConstructor = (m.Flags & FlagType.Constructor) > 0;
+            var features = ASContext.Context.Features;
+            var accessModifier = features.hasNamespaces && !string.IsNullOrEmpty(m.Namespace)
+                               ? m.Namespace
+                               : GetModifiers(m).Trim();
+            if (accessModifier == "private" && features.methodModifierDefault == Visibility.Private
+                && !ASContext.CommonSettings.GenerateDefaultModifierDeclaration)
+                accessModifier = null;
 
-            string methodModifiers;
-            if (isConstructor)
-                methodModifiers = GetModifiers(m).Trim();
+            string modifiers = null;
+            if ((m.Flags & FlagType.Constructor) > 0) modifiers = accessModifier;
             else
-                methodModifiers = (GetStaticExternOverride(m) + GetModifiers(m)).Trim();
+            {
+                modifiers = GetStaticExternOverride(m);
+                if (accessModifier != null) modifiers += accessModifier;
+                modifiers = modifiers.Trim();
+                if (modifiers.Length == 0) modifiers = null;
+            }
 
-            // Insert Modifiers (private, static, etc)
-            if (methodModifiers == "private" && ASContext.Context.Features.methodModifierDefault == Visibility.Private)
-                methodModifiers = null;
-            string res = ReplaceTemplateVariable(template, "Modifiers", methodModifiers);
+            string res = ReplaceTemplateVariable(template, "Modifiers", modifiers);
 
             // Insert Declaration
             res = ToDeclarationString(m, res);
@@ -68,7 +75,7 @@ namespace ASCompletion.Completion
         {
             // Insert Name
             if (m.Name != null)
-                template = ReplaceTemplateVariable(template, "Name", m.Name);
+                template = ReplaceTemplateVariable(template, "Name", m.FullName);
             else
                 template = ReplaceTemplateVariable(template, "Name", null);
 

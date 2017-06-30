@@ -201,7 +201,7 @@ namespace ProjectManager
             
             menus.ProjectMenu.NewProject.Click += delegate { NewProject(); };
             menus.ProjectMenu.OpenProject.Click += delegate { OpenProject(); };
-            menus.ProjectMenu.ImportProject.Click += delegate { ImportProject(); };
+            menus.ProjectMenu.ImportProject.Click += ImportProject;
             menus.ProjectMenu.CloseProject.Click += delegate { CloseProject(false); };
             menus.ProjectMenu.OpenResource.Click += delegate { OpenResource(); };
             menus.ProjectMenu.TestMovie.Click += delegate { TestMovie(); };
@@ -228,7 +228,7 @@ namespace ProjectManager
             pluginUI = new PluginUI(this, menus, fileActions, projectActions);
             pluginUI.NewProject += delegate { NewProject(); };
             pluginUI.OpenProject += delegate { OpenProject(); };
-            pluginUI.ImportProject += delegate { ImportProject(); };
+            pluginUI.ImportProject += ImportProject;
             pluginUI.Rename += fileActions.Rename;
             pluginUI.TreeBar.ShowHidden.Click += delegate { ToggleShowHidden(); };
             pluginUI.TreeBar.Synchronize.Click += delegate { TreeSyncToCurrentFile(); };
@@ -1055,9 +1055,21 @@ namespace ProjectManager
             if (project != null) SetProject(project);
         }
 
-        private void ImportProject()
+        private void ImportProject(object sender, EventArgs eventArgs)
         {
-            string project = projectActions.ImportProject();
+            string importFrom = null;
+            if (eventArgs is LinkLabelLinkClickedEventArgs)
+            {
+                var data = ((LinkLabelLinkClickedEventArgs)eventArgs).Link.LinkData;
+                if (data is string)
+                {
+                    var strings = ((string)data).Split('|');
+                    if (strings.Length > 1) importFrom = strings[1];
+                }
+            }
+            string project;
+            if (importFrom == null) project = projectActions.ImportProject();
+            else project = projectActions.ImportProject(importFrom);
             if (project != null) OpenProjectSilent(project);
         }
 

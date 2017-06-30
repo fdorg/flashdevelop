@@ -17,25 +17,12 @@ namespace PluginCore.Helpers
         /// <summary>
         /// Path to the current application directory
         /// </summary>
-        public static String BaseDir
-        {
-            get
-            {
-                if (PluginBase.MainForm.StandaloneMode) return Path.GetDirectoryName(GetAssemblyPath(Assembly.GetExecutingAssembly()));
-                else return UserAppDir;
-            }
-        }
+        public static String BaseDir => PluginBase.MainForm.StandaloneMode ? AppDir : UserAppDir;
 
         /// <summary>
         /// Path to the main application directory
         /// </summary>
-        public static String AppDir
-        {
-            get
-            {
-                return Path.GetDirectoryName(Application.ExecutablePath);
-            }
-        }
+        public static String AppDir => Path.GetDirectoryName(GetAssemblyPath(Assembly.GetExecutingAssembly()));
 
         /// <summary>
         /// Path to the user's application directory

@@ -12,6 +12,13 @@ Param (
     $projectBuildNumber
 )
 
+If ($env:HAXEPATH -eq $null)
+{
+	cinst.exe haxe -y
+	$env:HAXEPATH = "c:\ProgramData\chocolatey\lib\haxe\"
+	RefreshEnv
+}
+
 If ((Get-Command "nunit-console-x86.exe" -ErrorAction SilentlyContinue) -ne $null)
 {
     $testFiles = [System.IO.Directory]::GetFiles("FlashDevelop\Bin\Debug", "*.Tests.dll")

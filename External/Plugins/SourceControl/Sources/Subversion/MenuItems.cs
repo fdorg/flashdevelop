@@ -17,6 +17,7 @@ namespace SourceControl.Sources.Subversion
         ToolStripItem push;
         ToolStripItem showLog;
         ToolStripItem midSeparator;
+        ToolStripItem annotate;
         ToolStripItem diff;
         ToolStripItem diffChange;
         ToolStripItem add;
@@ -33,6 +34,7 @@ namespace SourceControl.Sources.Subversion
         public ToolStripItem Push { get { return push; } }
         public ToolStripItem ShowLog { get { return showLog; } }
         public ToolStripItem MidSeparator { get { return midSeparator; } }
+        public ToolStripItem Annotate { get { return annotate; } }
         public ToolStripItem Diff { get { return diff; } }
         public ToolStripItem DiffChange { get { return diffChange; } }
         public ToolStripItem Add { get { return add; } }
@@ -51,6 +53,7 @@ namespace SourceControl.Sources.Subversion
             push = null;
             showLog = new ToolStripMenuItem(TextHelper.GetString("Label.ShowLog"), PluginBase.MainForm.FindImage("95"), ShowLog_Click);
             midSeparator = new ToolStripSeparator();
+            annotate = new ToolStripMenuItem("Annotate", PluginBase.MainForm.FindImage("45")) { Enabled = false };
             diff = new ToolStripMenuItem(TextHelper.GetString("Label.Diff"), PluginBase.MainForm.FindImage("251"), Diff_Click);
             diffChange = new ToolStripMenuItem(TextHelper.GetString("Label.DiffWithPrevious"), PluginBase.MainForm.FindImage("251"), DiffChange_Click);
             add = new ToolStripMenuItem(TextHelper.GetString("Label.Add"), PluginBase.MainForm.FindImage("33"), Add_Click);

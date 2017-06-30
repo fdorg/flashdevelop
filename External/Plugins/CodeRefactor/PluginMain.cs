@@ -19,6 +19,7 @@ using ProjectManager;
 using ProjectManager.Actions;
 using ProjectManager.Controls.TreeView;
 using ProjectManager.Helpers;
+using CodeRefactor.Managers;
 
 namespace CodeRefactor
 {
@@ -39,8 +40,10 @@ namespace CodeRefactor
         private String settingFilename;
         TreeView projectTreeView;
 
-        #region Required Properties
+        public const string TraceGroup = "CodeRefactor";
         
+        #region Required Properties
+
         /// <summary>
         /// Api level of the plugin
         /// </summary>
@@ -110,6 +113,8 @@ namespace CodeRefactor
             this.InitBasics();
             this.LoadSettings();
             this.CreateMenuItems();
+            this.RegisterMenuItems();
+            this.RegisterTraceGroups();
         }
 
         /// <summary>
@@ -249,6 +254,11 @@ namespace CodeRefactor
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
             this.pluginDesc = TextHelper.GetString("Info.Description");
+
+            BatchProcessManager.AddBatchProcessor(new BatchProcessors.FormatCodeProcessor());
+            BatchProcessManager.AddBatchProcessor(new BatchProcessors.OrganizeImportsProcessor());
+            BatchProcessManager.AddBatchProcessor(new BatchProcessors.TruncateImportsProcessor());
+            BatchProcessManager.AddBatchProcessor(new BatchProcessors.ConsistentEOLProcessor());
         }
 
         /// <summary>
@@ -288,8 +298,7 @@ namespace CodeRefactor
             PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.ViewReferences", this.editorReferencesItem);
             searchMenu.DropDownItems.Add(new ToolStripSeparator());
             searchMenu.DropDownItems.Add(this.viewReferencesItem);
-            editorMenu.Items.Insert(7, this.editorReferencesItem);
-            RegisterMenuItems();
+            editorMenu.Items.Insert(8, this.editorReferencesItem);
         }
 
         /// <summary>
@@ -315,6 +324,12 @@ namespace CodeRefactor
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.TruncateImports", this.refactorContextMenu.TruncateMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.CodeGenerator", this.refactorContextMenu.CodeGeneratorMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.BatchProcess", this.refactorContextMenu.BatchMenuItem);
+        }
+
+        private void RegisterTraceGroups()
+        {
+            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetStringWithoutMnemonics("Label.Refactor"), false);
+            TraceManager.RegisterTraceGroup(FindAllReferences.TraceGroup, TextHelper.GetString("Label.FindAllReferencesResult"), false, true);
         }
 
         /// <summary>
@@ -456,12 +471,10 @@ namespace CodeRefactor
         /// </summary>
         private void RenameClicked(Object sender, EventArgs e)
         {
+            if (InlineRename.InProgress) return;
             try
             {
-                if (!InlineRename.InProgress)
-                {
-                    new Rename(true, settingObject.UseInlineRenaming);
-                }
+                CommandFactoryProvider.GetFactoryForCurrentDocument().CreateRenameCommandAndExecute(true, settingObject.UseInlineRenaming);
             }
             catch (Exception ex)
             {
@@ -496,7 +509,7 @@ namespace CodeRefactor
         {
             try
             {
-                var command = CommandFactoryProvider.GetFactoryFromCurrentDocument().CreateRenameFileCommand(oldPath, newPath);
+                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateRenameFileCommand(oldPath, newPath);
                 command.Execute();
             }
             catch (Exception ex)
@@ -513,7 +526,7 @@ namespace CodeRefactor
             try
             {
                 var snippet = (sender as ToolStripItem).Text;
-                var command = CommandFactoryProvider.GetFactoryFromCurrentDocument().CreateSurroundWithCommand(snippet);
+                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateSurroundWithCommand(snippet);
                 command.Execute();
             }
             catch (Exception ex)
@@ -529,7 +542,7 @@ namespace CodeRefactor
         {
             try
             {
-                var command = CommandFactoryProvider.GetFactoryFromCurrentDocument().CreateFindAllReferencesCommand(true);
+                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateFindAllReferencesCommand(true);
                 command.Execute();
             }
             catch (Exception ex)
@@ -545,7 +558,7 @@ namespace CodeRefactor
         {
             try
             {
-                var command = (OrganizeImports)CommandFactoryProvider.GetFactoryFromCurrentDocument().CreateOrganizeImportsCommand();
+                var command = (OrganizeImports)CommandFactoryProvider.GetFactoryForCurrentDocument().CreateOrganizeImportsCommand();
                 command.SeparatePackages = this.settingObject.SeparatePackages;
                 command.Execute();
             }
@@ -562,7 +575,7 @@ namespace CodeRefactor
         {
             try
             {
-                var command = (OrganizeImports)CommandFactoryProvider.GetFactoryFromCurrentDocument().CreateOrganizeImportsCommand();
+                var command = (OrganizeImports)CommandFactoryProvider.GetFactoryForCurrentDocument().CreateOrganizeImportsCommand();
                 command.SeparatePackages = this.settingObject.SeparatePackages;
                 command.TruncateImports = true;
                 command.Execute();
@@ -610,7 +623,7 @@ namespace CodeRefactor
                 var dialog = new DelegateMethodsDialog();
                 dialog.FillData(members, result.Type);
                 if (dialog.ShowDialog() != DialogResult.OK || dialog.checkedMembers.Count <= 0) return;
-                var command = CommandFactoryProvider.GetFactoryFromCurrentDocument().CreateDelegateMethodsCommand(result, dialog.checkedMembers);
+                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateDelegateMethodsCommand(result, dialog.checkedMembers);
                 command.Execute();
             }
             catch (Exception ex)
@@ -636,7 +649,7 @@ namespace CodeRefactor
                 {
                     newName = askName.Line.Trim();
                 }
-                var command = CommandFactoryProvider.GetFactoryFromCurrentDocument().CreateExtractMethodCommand(newName);
+                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateExtractMethodCommand(newName);
                 command.Execute();
             }
             catch (Exception ex)
@@ -652,7 +665,7 @@ namespace CodeRefactor
         {
             try
             {
-                var command = CommandFactoryProvider.GetFactoryFromCurrentDocument().CreateExtractLocalVariableCommand();
+                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateExtractLocalVariableCommand();
                 command.Execute();
             }
             catch (Exception ex)
