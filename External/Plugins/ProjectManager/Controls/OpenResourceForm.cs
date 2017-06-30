@@ -274,9 +274,9 @@ namespace ProjectManager.Controls
             List<String> matchedFiles;
             if (this.textBox.Text.Length > 0)
             {
-                matchedFiles = SearchUtil.getMatchedItems(this.openedFiles, this.textBox.Text, "\\", 0);
+                matchedFiles = SearchUtil.GetMatchedItems(this.openedFiles, this.textBox.Text, "\\", 0);
                 if (matchedFiles.Capacity > 0) matchedFiles.Add(ITEM_SPACER);
-                matchedFiles.AddRange(SearchUtil.getMatchedItems(this.projectFiles, this.textBox.Text, "\\", this.MAX_ITEMS));
+                matchedFiles.AddRange(SearchUtil.GetMatchedItems(this.projectFiles, this.textBox.Text, "\\", this.MAX_ITEMS));
             }
             else matchedFiles = openedFiles;
             foreach (String file in matchedFiles)
@@ -525,24 +525,23 @@ namespace ProjectManager.Controls
     struct SearchResult
     {
         public double score;
-        public String value;
+        public string value;
     }
 
     public class SearchUtil
     {
-        public delegate double Comparer(String value1, String value2, String value3);
-
-        public static List<String> getMatchedItems(List<String> source, String searchText, String pathSeparator, Int32 limit)
+        public static List<string> GetMatchedItems(List<string> source, string searchText, string pathSeparator, int limit)
         {
-            Int32 i = 0;
-            List<SearchResult> matchedItems = new List<SearchResult>();
-            String firstChar = searchText.Substring(0, 1);
-            Comparer searchMatch = new Comparer(SimpleSearchMatch);//(firstChar == firstChar.ToUpper()) ? new Comparer(AdvancedSearchMatch) : new Comparer(SimpleSearchMatch);
-            foreach (String item in source)
+            var i = 0;
+            var matchedItems = new List<SearchResult>();
+
+            foreach (var item in source)
             {
-                SearchResult result = new SearchResult();
-                result.score = searchMatch(item, searchText, pathSeparator);
-                result.value = item;
+                var result = new SearchResult
+                {
+                    score = SimpleSearchMatch(item, searchText, pathSeparator),
+                    value = item
+                };
 
                 if (result.score > 0)
                 {
@@ -550,44 +549,16 @@ namespace ProjectManager.Controls
                 }
             }
 
-            matchedItems.Sort(delegate (SearchResult r1, SearchResult r2)
-            {
-                return r2.score.CompareTo(r1.score);
-            });
+            matchedItems.Sort((r1, r2) => r2.score.CompareTo(r1.score));
 
-            List<String> results = new List<String>();
-            foreach (SearchResult r in matchedItems)
+            var results = new List<string>();
+            foreach (var r in matchedItems)
             {
                 if (limit > 0 && i++ >= limit) break;
                 results.Add(r.value);
             }
 
             return results;
-        }
-
-        static private double AdvancedSearchMatch(String file, String searchText, String pathSeparator)
-        {
-            int i = 0; int j = 0;
-            if (file.Length < searchText.Length) return 0;
-            Char[] text = Path.GetFileName(file).ToCharArray();
-            Char[] pattern = searchText.ToCharArray();
-            while (i < pattern.Length)
-            {
-                while (i < pattern.Length && j < text.Length && pattern[i] == text[j])
-                {
-                    i++;
-                    j++;
-                }
-                if (i == pattern.Length) return 1;
-                if (Char.IsLower(pattern[i])) return 0;
-                while (j < text.Length && Char.IsLower(text[j]))
-                {
-                    j++;
-                }
-                if (j == text.Length) return 0;
-                if (pattern[i] != text[j]) return 0;
-            }
-            return (i == pattern.Length) ? 1 : 0;
         }
 
         private static double SimpleSearchMatch(String file, String searchText, String pathSeparator)
@@ -603,7 +574,7 @@ namespace ProjectManager.Controls
         /**
          * Ported from: https://github.com/atom/fuzzaldrin/
          */
-        private static double Score(String str, String query, char pathSeparator)
+        private static double Score(string str, string query, char pathSeparator)
         {
             double score = 0;
 
