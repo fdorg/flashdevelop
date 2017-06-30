@@ -18,7 +18,6 @@ namespace ProjectManager.Controls
         private List<String> openedFiles;
         private List<String> projectFiles;
         private const String ITEM_SPACER = "-----------------";
-        //private System.Windows.Forms.Label infoLabel;
         private System.Windows.Forms.TextBox textBox;
         private System.Windows.Forms.ListBox listBox;
         private System.Windows.Forms.CheckBox cbInClasspathsOnly;
@@ -45,22 +44,12 @@ namespace ProjectManager.Controls
         /// </summary>
         private void InitializeComponent()
         {
-            //this.infoLabel = new System.Windows.Forms.Label();
             this.textBox = new System.Windows.Forms.TextBox();
             this.listBox = new System.Windows.Forms.ListBox();
             this.cbInClasspathsOnly = new System.Windows.Forms.CheckBox();
             this.checkBox = new System.Windows.Forms.CheckBox();
             this.refreshButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
-            // 
-            // infoLabel
-            // 
-            //this.infoLabel.AutoSize = true;
-            //this.infoLabel.Location = new System.Drawing.Point(10, 10);
-            //this.infoLabel.Name = "infoLabel";
-            //this.infoLabel.Size = new System.Drawing.Size(273, 13);
-            //this.infoLabel.TabIndex = 0;
-            //this.infoLabel.Text = "Search: (UPPERCASE for search by abbreviation)";
             // 
             // textBox
             // 
@@ -127,7 +116,6 @@ namespace ProjectManager.Controls
             this.Controls.Add(this.listBox);
             this.Controls.Add(this.textBox);
             this.Controls.Add(this.refreshButton);
-            //this.Controls.Add(this.infoLabel);
             this.Controls.Add(this.checkBox);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -166,7 +154,6 @@ namespace ProjectManager.Controls
         /// </summary>
         private void InitializeLocalization()
         {
-            //this.infoLabel.Text = TextHelper.GetString("Label.SearchString");
             this.cbInClasspathsOnly.Text = TextHelper.GetString("Label.InClasspathsOnly");
             this.checkBox.Text = TextHelper.GetString("Label.CodeFilesOnly");
             this.Text = " " + TextHelper.GetString("Title.OpenResource");
