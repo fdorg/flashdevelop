@@ -1,13 +1,13 @@
 ﻿package {
 	public class Main {
 		public function Main() {
-			f1(f3());
+			foo(test());
 		}
 		
-		private function f3():Function {
+		private function test():Object {
 			return null;
 		}
 		
-		private function f1(f:Function):void {}
+		private function foo(i:Object):void {}
 	}
 }

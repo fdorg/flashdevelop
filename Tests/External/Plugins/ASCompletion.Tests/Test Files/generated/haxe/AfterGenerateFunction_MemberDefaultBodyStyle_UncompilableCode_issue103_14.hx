@@ -1,11 +1,11 @@
 ﻿package;
 public class Main {
 	public function new() {
-		foo(test());
+		foo(test(1, 2));
 	}
 	
-	function test():Int->String->Void {
-		return null;
+	function test(float:Float, float1:Float):Int->String->Void {
+		
 	}
 	
 	function foo(v:Int->String->Void) {}

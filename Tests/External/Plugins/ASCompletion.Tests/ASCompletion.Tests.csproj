@@ -539,8 +539,8 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterGeneratePrivateFunction2_generateExplicitScopeIsTrue.as" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_13.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_13.hx" />
-    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_103.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_103.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue103.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue103.as" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_14.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_14.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_15.hx" />
@@ -605,6 +605,32 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue1645.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue1645_2.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue1645_2.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue103_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue103_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue103_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue103_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue103_5.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue103_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue103_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue103_5.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue103_22.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue103_22.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue103_6.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue103_6.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_6.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_5.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue1645_2.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_13.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_14.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_18.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_19.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_20.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_21.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue1645_2.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\GetStatementReturnTypeOfNewObject.as" />
   </ItemGroup>
   <ItemGroup>

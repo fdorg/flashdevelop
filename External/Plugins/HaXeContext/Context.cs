@@ -1106,6 +1106,20 @@ namespace HaXeContext
                 name = "flash9";
             return base.ResolvePackage(name, lazyMode);
         }
+
+        public override string GetDefaultValue(string type)
+        {
+            if (string.IsNullOrEmpty(type) || type == features.voidKey) return null;
+            switch (type)
+            {
+                case "Float":
+                case "Int":
+                case "UInt":
+                case "Bool": return null;
+                default: return "null";
+            }
+        }
+
         #endregion
 
         #region Custom code completion

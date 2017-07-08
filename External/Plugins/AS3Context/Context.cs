@@ -979,6 +979,20 @@ namespace AS3Context
             topLevel.Members.Sort();
         }
 
+        public override string GetDefaultValue(string type)
+        {
+            if (string.IsNullOrEmpty(type) || type == features.voidKey) return null;
+            if (type == features.dynamicKey) return "undefined";
+            switch (type)
+            {
+                case "int":
+                case "uint": return "0";
+                case "Number": return "NaN";
+                case "Boolean": return "false";
+                default: return "null";
+            }
+        }
+
         #endregion
 
         #region Command line compiler
