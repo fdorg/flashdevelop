@@ -1415,8 +1415,8 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromCallback3_useSpaces"))
                                 .SetName("from callback 3");
                         yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromCallback3_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromCallback3_useSpaces"))
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromClass_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromClass_useSpaces"))
                                 .SetName("from Class");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromArray_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
@@ -2242,6 +2242,10 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfArrayAccess"))
                                 .Returns(new ClassModel {Name = "int", InFile = FileModel.Ignore})
                                 .SetName("Get statement return type of v[0][0].length");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("GetStatementReturnTypeOfNewObject"))
+                                .Returns(new ClassModel {Name = "Object", InFile = FileModel.Ignore})
+                                .SetName("Get statement return type of new Object");
                     }
                 }
 

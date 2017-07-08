@@ -1261,46 +1261,42 @@ namespace ASCompletion.Completion
 
         static void AssignStatementToVar(ClassModel inClass, ScintillaControl sci)
         {
+            var ctx = inClass.InFile.Context;
             int lineNum = sci.CurrentLine;
             string line = sci.GetLine(lineNum);
             StatementReturnType returnType = GetStatementReturnType(sci, inClass, line, sci.PositionFromLine(lineNum));
-
-            if (returnType == null) return;
-            
-            string type = null;
-            string varname = null;
             ASResult resolve = returnType.resolve;
-            string word = returnType.word;
-
-            if (resolve != null && !resolve.IsNull())
+            string type = null;
+            if (resolve.Member == null && (resolve.Type.Flags & FlagType.Class) != 0
+                && resolve.Type.Name != ctx.Features.booleanKey
+                && resolve.Type.Name != "Function"
+                && !string.IsNullOrEmpty(resolve.Path) && !char.IsDigit(resolve.Path[0]))
             {
-                if (resolve.Member != null && resolve.Member.Type != null)
+                var expr = ASComplete.GetExpression(sci, returnType.position);
+                if (string.IsNullOrEmpty(expr.WordBefore))
                 {
-                    type = resolve.Member.Type;
-                }
-                else if (resolve.Type != null && resolve.Type.Name != null)
-                {
-                    type = resolve.Type.QualifiedName;
-                }
-
-                if (resolve.Member != null && resolve.Member.Name != null)
-                {
-                    varname = GuessVarName(resolve.Member.Name, type);
+                    var characters = ScintillaControl.Configuration.GetLanguage(ctx.Settings.LanguageId.ToLower()).characterclass.Characters;
+                    if (resolve.Path.All(it => characters.Contains(it)))
+                    {
+                        if (inClass.InFile.haXe) type = "Class<Dynamic>";
+                        else type = ctx.ResolveType("Class", resolve.InFile).QualifiedName;
+                    }
                 }
             }
 
-            if (!string.IsNullOrEmpty(word) && Char.IsDigit(word[0])) word = null;
-
-            if (!string.IsNullOrEmpty(word) && (string.IsNullOrEmpty(type) || Regex.IsMatch(type, "(<[^]]+>)")))
-                word = null;
-
-            if (!string.IsNullOrEmpty(type) && type.Equals("void", StringComparison.OrdinalIgnoreCase))
-                type = null;
-
+            var word = returnType.word;
+            if (!string.IsNullOrEmpty(word) && char.IsDigit(word[0])) word = null;
+            string varname = null;
+            if (string.IsNullOrEmpty(type) && !resolve.IsNull())
+            {
+                if (resolve.Member?.Type != null) type = resolve.Member.Type;
+                else if (resolve.Type?.Name != null) type = resolve.Type.QualifiedName;
+                if (resolve.Member?.Name != null) varname = GuessVarName(resolve.Member.Name, type);
+            }
+            if (!string.IsNullOrEmpty(word) && (string.IsNullOrEmpty(type) || Regex.IsMatch(type, "(<[^]]+>)"))) word = null;
+            if (type == ctx.Features.voidKey) type = null;
             if (varname == null) varname = GuessVarName(word, type);
-
-            if (varname != null && varname == word)
-                varname = varname.Length == 1 ? varname + "1" : varname[0] + "";
+            if (varname != null && varname == word) varname = varname.Length == 1 ? varname + "1" : varname[0] + "";
             varname = AvoidKeyword(varname);
             string cleanType = null;
             if (type != null) cleanType = FormatType(GetShortType(type));
@@ -1315,21 +1311,8 @@ namespace ASCompletion.Completion
 
             if (type != null)
             {
-                ClassModel inClassForImport = null;
-                if (resolve.InClass != null)
-                {
-                    inClassForImport = resolve.InClass;
-                }
-                else if (resolve.RelClass != null)
-                {
-                    inClassForImport = resolve.RelClass;
-                }
-                else 
-                {
-                    inClassForImport = inClass;
-                }
-                List<string> l = new List<string>();
-                l.Add(GetQualifiedType(type, inClassForImport));
+                var inClassForImport = resolve.InClass ?? resolve.RelClass ?? inClass;
+                var l = new List<string> {GetQualifiedType(type, inClassForImport)};
                 AddImportsByName(l, sci.LineFromPosition(pos));
             }
         }

@@ -20,6 +20,11 @@ namespace ResultsPanel.Helpers
             get { return pluginUIs; }
         }
 
+        internal static PluginUI MainUI
+        {
+            get { return mainUI; }
+        }
+
         internal static void Initialize(PluginMain pluginMain, PluginUI pluginUI)
         {
             main = pluginMain;

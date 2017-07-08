@@ -39,6 +39,11 @@ namespace PluginCore.Controls
             get { return manager.simpleTip; }
         }
 
+        static public RichToolTip ErrorTip
+        {
+            get { return manager.errorTip; }
+        }
+
         static public MethodCallTip CallTip
         {
             get { return manager.callTip; }
@@ -85,6 +90,7 @@ namespace PluginCore.Controls
         private CodeTip codeTip;
         private RichToolTip simpleTip;
         private MethodCallTip callTip;
+        private RichToolTip errorTip;
 
         private bool ignoreKeys;
         private bool showDetails;
@@ -101,6 +107,7 @@ namespace PluginCore.Controls
                 codeTip = new CodeTip(PluginBase.MainForm);
                 simpleTip = new RichToolTip(PluginBase.MainForm);
                 callTip = new MethodCallTip(PluginBase.MainForm);
+                errorTip = new RichToolTip(PluginBase.MainForm);
             }
             catch(Exception ex)
             {
@@ -188,7 +195,7 @@ namespace PluginCore.Controls
             try
             {
                 // check mouse over the editor
-                if ((position < 0) || simpleTip.Visible || CompletionList.HasMouseIn) return;
+                if ((position < 0) || simpleTip.Visible || errorTip.Visible || CompletionList.HasMouseIn) return;
                 Point mousePos = (PluginBase.MainForm as Form).PointToClient(Cursor.Position);
                 if (mousePos.X == lastMousePos.X && mousePos.Y == lastMousePos.Y)
                     return;
@@ -210,6 +217,12 @@ namespace PluginCore.Controls
                         return;
                 }
                 if (OnMouseHover != null) OnMouseHover(sci, position);
+
+                if (errorTip.Visible)
+                {
+                    //move simpleTip up to not overlap error tip
+                    simpleTip.Location = new Point(simpleTip.Location.X, simpleTip.Location.Y - errorTip.Size.Height);
+                }
             }
             catch (Exception ex)
             {
@@ -236,6 +249,7 @@ namespace PluginCore.Controls
         private void HandleDwellEnd(ScintillaControl sci, int position, int x, int y)
         {
             simpleTip.Hide();
+            errorTip.Hide();
             if (OnMouseHoverEnd != null) OnMouseHoverEnd(sci, position);
         }
 
@@ -318,6 +332,7 @@ namespace PluginCore.Controls
             callTip.Hide();
             CompletionList.Hide();
             simpleTip.Hide();
+            errorTip.Hide();
         }
         
         private void OnTextInserted(ScintillaControl sci, int position, int length, int linesAdded)
