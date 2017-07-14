@@ -115,7 +115,7 @@ namespace PluginCore.Managers
             for (int i = 0; i < length; i++)
             {
                 var obj = eventObjectsSnapshot[i];
-                if ((obj.Mask & e.Type) > e.Type)
+                if ((obj.Mask & e.Type) == e.Type)
                 {
                     try
                     {
