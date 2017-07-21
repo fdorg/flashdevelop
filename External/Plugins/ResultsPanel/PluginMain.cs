@@ -28,7 +28,7 @@ namespace ResultsPanel
         internal Image pluginImage;
         internal PanelContextMenu contextMenuStrip;
         private ToolStripMenuItem viewItem;
-        private ToolStripMenuItem viewItemMainPanel;
+        private ToolStripMenuItemEx viewItemMainPanel;
         private ToolStripSeparator viewItemSeparator;
 
         #region Required Properties
@@ -158,8 +158,8 @@ namespace ResultsPanel
                     break;
 
                 case EventType.Keys:
-                    KeyEvent ke = (KeyEvent) e;
-                    switch (PluginBase.MainForm.GetShortcutItemId(ke.Value))
+                    KeyEvent ke = (KeyEvent)e;
+                    switch (ke.Command)
                     {
                         case null:
                             break;
@@ -176,8 +176,8 @@ namespace ResultsPanel
                             ke.Handled = ResultsPanelHelper.ActiveUI.ClearIgnoredEntries();
                             break;
                         default:
-                            if (ke.Value == PanelContextMenu.CopyEntryKeys) ke.Handled = ResultsPanelHelper.ActiveUI.CopyTextShortcut();
-                            else if (ke.Value == PanelContextMenu.IgnoreEntryKeys) ke.Handled = ResultsPanelHelper.ActiveUI.IgnoreEntryShortcut();
+                            if (ke.Keys == PanelContextMenu.CopyEntryKeys) ke.Handled = ResultsPanelHelper.ActiveUI.CopyTextShortcut();
+                            else if (ke.Keys == PanelContextMenu.IgnoreEntryKeys) ke.Handled = ResultsPanelHelper.ActiveUI.IgnoreEntryShortcut();
                             break;
                     }
 
@@ -278,7 +278,7 @@ namespace ResultsPanel
         /// </summary>
         public void CreateMenuItem()
         {
-            viewItemMainPanel = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), pluginImage) { Tag = null };
+            viewItemMainPanel = new ToolStripMenuItemEx(TextHelper.GetString("Label.ViewMenuItem"), pluginImage) { Tag = null };
             viewItemSeparator = new ToolStripSeparator();
 
             viewItem = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), pluginImage);

@@ -6104,7 +6104,7 @@ AND - All conditions are met.</value>
   </data>
   <data name="Label.GotoTypeDeclaration" xml:space="preserve">
     <value>Goto Type Declaration</value>
-    <comment>Added after 5.2.1</comment>
+    <comment>Added after 5.2.0</comment>
   </data>
   <data name="ResultsPanel.Description.DefaultGrouping" xml:space="preserve">
     <value>Die Standard-Spalte nach der Resultate gruppiert werden.</value>
@@ -6172,6 +6172,26 @@ AND - All conditions are met.</value>
   </data>
   <data name="ResultsPanel.Description.KeepResultsByDefault" xml:space="preserve">
     <value>Keep result panels locked by default.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="FlashDevelop.Info.PressNewShortcut" xml:space="preserve">
+    <value>Press new shortcut keys:</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="FlashDevelop.Info.ShortcutUndefined" xml:space="preserve">
+    <value>The key combination ({0}) is not defined.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="FlashDevelop.Info.ShortcutWaiting" xml:space="preserve">
+    <value>({0}) was pressed. Waiting for a second key input...</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="FlashDevelop.Label.Reset" xml:space="preserve">
+    <value>&amp;Reset</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="FlashDevelop.Description.DisableExtendedShortcutKeys" xml:space="preserve">
+    <value>Disable extended shortcut keys. Extended shortcut keys allow two key combinations to be input as one shortcut.</value>
     <comment>Added after 5.2.0</comment>
   </data>
 </root>

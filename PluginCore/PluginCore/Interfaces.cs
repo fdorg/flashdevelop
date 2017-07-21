@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using PluginCore.Controls;
 using PluginCore.Localization;
-using PluginCore.Managers;
 using ScintillaNet;
 using ScintillaNet.Configuration;
 using ScintillaNet.Enums;
@@ -141,13 +141,47 @@ namespace PluginCore
         /// </summary>
         void AutoUpdateMenuItem(ToolStripItem item, String action);
         /// <summary>
-        /// Registers a new menu item with the shortcut manager.
+        /// Adds an ignored key. Ignored keys are valid shortcut keys that are not defined with <see cref="RegisterShortcutItem(string, ShortcutKeys, bool)"/>,
+        /// but should not prompt an "undefined shortcut keys" message. Instead these keys should have their default behaviors.
+        /// These are constant shortcuts which cannot be modified using the shortcut dialog.
         /// </summary>
+        void AddIgnoredKeys(ShortcutKeys keys);
+        /// <summary>
+        /// Returns a <see cref="bool"/> value indicating whether the specified key is ignored.
+        /// </summary>
+        Boolean ContainsIgnoredKeys(ShortcutKeys keys);
+        /// <summary>
+        /// Removes the specified key from ignored keys.
+        /// </summary>
+        void RemoveIgnoredKeys(ShortcutKeys keys);
+        /// <summary>
+        /// Clears all ignored keys.
+        /// </summary>
+        void ClearIgnoredKeys();
+        /// <summary>
+        /// Registers a new menu item with the shortcut manager.
+        /// <para/>
+        /// [deprecated] Use the <see cref="RegisterShortcutItem(string, ShortcutKeys, bool)"/> method instead.
+        /// </summary>
+        [Obsolete("This method has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         void RegisterShortcutItem(String id, Keys keys);
         /// <summary>
         /// Registers a new menu item with the shortcut manager.
         /// </summary>
+        void RegisterShortcutItem(String id, ShortcutKeys keys, bool supportsExtended = true);
+        /// <summary>
+        /// Registers a new menu item with the shortcut manager.
+        /// <para/>
+        /// [deprecated] Use the <see cref="RegisterShortcutItem(string, ToolStripMenuItemEx)"/> method instead.
+        /// </summary>
+        [Obsolete("This method has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         void RegisterShortcutItem(String id, ToolStripMenuItem item);
+        /// <summary>
+        /// Registers a new menu item with the shortcut manager.
+        /// </summary>
+        void RegisterShortcutItem(String id, ToolStripMenuItemEx item);
         /// <summary>
         /// Registers a new secondary menu item with the shortcut manager.
         /// </summary>
@@ -157,6 +191,18 @@ namespace PluginCore
         /// - should be called when the tooltip changes.
         /// </summary>
         void ApplySecondaryShortcut(ToolStripItem item);
+        /// <summary>
+        /// A utility method for handling extended shortcuts where the context prevents the default mechanism (e.g. in a dialog form).
+        /// Returns <code>true</code> if the current key press is processed; <code>false</code> otherwise.
+        /// <para/>
+        /// This method alters the value of <code>previousKeys</code>, therefore its value should not be used in context after calling this method.
+        /// <para/>
+        /// When calling from <see cref="Control.ProcessCmdKey(ref Message, Keys)"/>, make sure to return <code>true</code> if this method returns <code>true</code>.
+        /// </summary>
+        /// <param name="previousKeys">The reference to the stored previous <see cref="ShortcutKeys"/> value.</param>
+        /// <param name="input">The <see cref="Keys"/> value specifying the current keyboard input.</param>
+        /// <param name="shortcutId">The shortcut ID to process, or <see cref="string.Empty"/> if this method returns <code>false</code>.</param>
+        bool HandleShortcutManually(ref ShortcutKeys previousKeys, Keys input, out string shortcutId);
         /// <summary>
         /// Create the specified new document from the given template.
         /// </summary>
@@ -203,12 +249,28 @@ namespace PluginCore
         String ProcessArgString(String args);
         /// <summary>
         /// Gets the specified item's shortcut keys.
+        /// <para/>
+        /// [deprecated] Use the <see cref="GetShortcutKeys(string)"/> method instead.
         /// </summary>
+        [Obsolete("This method has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         Keys GetShortcutItemKeys(String id);
         /// <summary>
         /// Gets the specified item's id.
+        /// <para/>
+        /// [deprecated] Use the <see cref="GetShortcutId(ShortcutKeys)"/> method instead.
         /// </summary>
+        [Obsolete("This method has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         String GetShortcutItemId(Keys keys);
+        /// <summary>
+        /// Gets the specified item's shortcut keys.
+        /// </summary>
+        ShortcutKeys GetShortcutKeys(String id);
+        /// <summary>
+        /// Gets the specified item's id.
+        /// </summary>
+        String GetShortcutId(ShortcutKeys keys);
         /// <summary>
         /// Gets a theme property value.
         /// </summary>
@@ -328,8 +390,14 @@ namespace PluginCore
         ToolStripPanel ToolStripPanel { get; }
         /// <summary>
         /// Gets the tool strip status label.
+        /// Use <see cref="StatusLabelText"/> instead to modify the status text.
         /// </summary>
         ToolStripStatusLabel StatusLabel { get; }
+        /// <summary>
+        /// Gets or sets the text of the <see cref="StatusLabel"/>.
+        /// Use this property instead of directly accessing the <code>Text</code> property of <see cref="StatusLabel"/>.
+        /// </summary>
+        string StatusLabelText { get; set; }
         /// <summary>
         /// Gets the tool strip progress label.
         /// </summary>
@@ -420,7 +488,12 @@ namespace PluginCore
         Boolean RefreshConfig { get; }
         /// <summary>
         /// Gets the ignored keys.
+        /// <para/>
+        /// [deprecated] This property always returns an empty <see cref="List{T}"/>.
+        /// Use the <see cref="AddIgnoredKeys"/> method instead.
         /// </summary>
+        [Obsolete("This property has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         List<Keys> IgnoredKeys { get; }
         /// <summary>
         /// Gets the version of the application.
@@ -493,6 +566,7 @@ namespace PluginCore
         Boolean DisableFindOptionSync { get; set; }
         Boolean DisableSimpleQuickFind { get; set; }
         Boolean DisableReplaceFilesConfirm { get; set; }
+        Boolean DisableExtendedShortcutKeys { get; set; }
         Boolean AutoReloadModifiedFiles { get; set; }
         Boolean UseListViewGrouping { get; set; }
         Boolean RedirectFilesResults { get; set; }

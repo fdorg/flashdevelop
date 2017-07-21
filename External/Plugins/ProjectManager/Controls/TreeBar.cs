@@ -50,7 +50,7 @@ namespace ProjectManager.Controls
             Synchronize = new ToolStripButton(Icons.SyncToFile.Img);
             Synchronize.ToolTipText = TextHelper.GetString("ToolTip.Synchronize");
             Synchronize.Padding = new Padding(0);
-            PluginBase.MainForm.RegisterShortcutItem("ProjectTree.LocateActiveFile", Keys.Shift | Keys.Alt | Keys.L);
+            PluginBase.MainForm.RegisterShortcutItem("ProjectTree.LocateActiveFile", Keys.Shift | Keys.Alt | Keys.L, true);
             PluginBase.MainForm.RegisterSecondaryItem("ProjectTree.LocateActiveFile", Synchronize);
 
             SynchronizeMain = new ToolStripButton(Icons.ActionScriptCompile.Img);

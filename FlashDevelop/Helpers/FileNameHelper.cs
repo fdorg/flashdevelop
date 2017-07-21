@@ -112,7 +112,17 @@ namespace FlashDevelop.Helpers
         {
             get
             {
-                //Alternative: Path.Combine(PathHelper.ShortcutsDir, "CURRENT");
+                return Path.Combine(PathHelper.ShortcutsDir, "CURRENT");
+            }
+        }
+
+        /// <summary>
+        /// Path to the old shortcut file
+        /// </summary>
+        public static String ShortcutDataOld
+        {
+            get
+            {
                 return Path.Combine(PathHelper.SettingDir, "ShortcutData.fda");
             }
         }

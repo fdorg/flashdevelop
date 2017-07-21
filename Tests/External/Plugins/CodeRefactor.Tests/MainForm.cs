@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using FlashDevelop.Utilities;
 using PluginCore;
+using PluginCore.Controls;
 using ScintillaNet.Configuration;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -274,6 +275,51 @@ namespace FlashDevelop
             throw new NotImplementedException();
         }
 
+        public void AddIgnoredKeys(ShortcutKeys keys)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ContainsIgnoredKeys(ShortcutKeys keys)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveIgnoredKeys(ShortcutKeys keys)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ClearIgnoredKeys()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RegisterShortcutItem(string id, ShortcutKeys keys, bool supportsExtended = true)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool HandleShortcutManually(ref ShortcutKeys previousKeys, Keys input, out string shortcutId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ShortcutKeys GetShortcutKeys(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetShortcutId(ShortcutKeys keys)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RegisterShortcutItem(string id, ToolStripMenuItemEx item)
+        {
+            throw new NotImplementedException();
+        }
+
         public ISettings Settings { get; set; }
 
         public ToolStrip ToolStrip
@@ -449,5 +495,10 @@ namespace FlashDevelop
             get { throw new NotImplementedException(); }
         }
 
+        public string StatusLabelText
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
     }
 }

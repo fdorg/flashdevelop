@@ -33,10 +33,9 @@ namespace ScintillaNet
         private bool useHighlightGuides = true;
         private System.Timers.Timer highlightDelay;
         private static Scintilla sciConfiguration = null;
-        private static Dictionary<String, ShortcutOverride> shortcutOverrides = new Dictionary<String, ShortcutOverride>();
         private Enums.IndentView indentView = Enums.IndentView.Real;
         private Enums.SmartIndent smartIndent = Enums.SmartIndent.CPP;
-        private Hashtable ignoredKeys = new Hashtable();
+        //private Hashtable ignoredKeys = new Hashtable();
         private string configLanguage = String.Empty;
         private string fileName = String.Empty;
         private int lastSelectionLength = 0;
@@ -2416,7 +2415,7 @@ namespace ScintillaNet
         /// </summary> 
         public virtual void AddIgnoredKeys(Keys keys)
         {
-            ignoredKeys.Add((int)keys, (int)keys);
+            //ignoredKeys.Add((int)keys, (int)keys);
         }
 
         /// <summary>
@@ -2424,7 +2423,7 @@ namespace ScintillaNet
         /// </summary> 
         public virtual void RemoveIgnoredKeys(Keys keys)
         {
-            ignoredKeys.Remove((int)keys);
+            //ignoredKeys.Remove((int)keys);
         }
 
         /// <summary>
@@ -2432,7 +2431,7 @@ namespace ScintillaNet
         /// </summary> 
         public virtual void ClearIgnoredKeys()
         {
-            ignoredKeys.Clear();
+            //ignoredKeys.Clear();
         }
 
         /// <summary>
@@ -2440,7 +2439,8 @@ namespace ScintillaNet
         /// </summary> 
         public virtual bool ContainsIgnoredKeys(Keys keys)
         {
-            return ignoredKeys.ContainsKey((int)keys);
+            //return ignoredKeys.ContainsKey((int)keys);
+            return false;
         }
 
         /// <summary>
@@ -5300,66 +5300,70 @@ namespace ScintillaNet
 
         #region Scintilla Shortcuts
 
+        private static ShortcutKeys ShortcutKey_ResetZoom = Keys.Control | Keys.NumPad0;
+        private static ShortcutKeys ShortcutKey_ZoomIn = Keys.Control | Keys.Add;
+        private static ShortcutKeys ShortcutKey_ZoomOut = Keys.Control | Keys.Subtract;
+
         /// <summary>
         /// Initializes the user customizable shortcut overrides
         /// </summary>
         public static void InitShortcuts()
         {
             // reference: http://www.scintilla.org/SciTEDoc.html "Keyboard commands"
-            AddShortcut("ResetZoom", Keys.Control | Keys.NumPad0, sci => sci.ResetZoom());
-            AddShortcut("ZoomOut", Keys.Control | Keys.Subtract, sci => sci.ZoomOut());
-            AddShortcut("ZoomIn", Keys.Control | Keys.Add, sci => sci.ZoomIn());
+            PluginBase.MainForm.RegisterShortcutItem("Scintilla.ResetZoom", ShortcutKey_ResetZoom);
+            PluginBase.MainForm.RegisterShortcutItem("Scintilla.ZoomIn", ShortcutKey_ZoomIn);
+            PluginBase.MainForm.RegisterShortcutItem("Scintilla.ZoomOut", ShortcutKey_ZoomOut);
         }
 
         /// <summary>
-        /// Adds a new shortcut override
+        /// [deprecated] Use the <see cref="UpdateShortcut(string, ShortcutKeys)"/> method instead.
         /// </summary>
-        private static void AddShortcut(String displayName, Keys keys, Action<ScintillaControl> action)
+        [Obsolete("This method has been deprecated.", true)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static void UpdateShortcut(string id, Keys shortcut)
         {
-            shortcutOverrides.Add("Scintilla." + displayName, new ShortcutOverride(keys, action));
-            PluginBase.MainForm.RegisterShortcutItem("Scintilla." + displayName, keys);
+            UpdateShortcut(id, (ShortcutKeys) shortcut);
         }
 
         /// <summary>
         /// Updates the shortcut if it changes or needs updating
         /// </summary>
-        public static void UpdateShortcut(String id, Keys shortcut)
+        public static bool UpdateShortcut(string id, ShortcutKeys shortcut)
         {
-            if (id.StartsWithOrdinal("Scintilla.")) shortcutOverrides[id].keys = shortcut;
+            switch (id)
+            {
+                case "Scintilla.ResetZoom":
+                    ShortcutKey_ResetZoom = shortcut;
+                    return true;
+                case "Scintilla.ZoomIn":
+                    ShortcutKey_ZoomIn = shortcut;
+                    return true;
+                case "Scintilla.ZoomOut":
+                    ShortcutKey_ZoomOut = shortcut;
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         /// <summary>
         /// Execute the shortcut override using reflection
         /// </summary>
-        private Boolean ExecuteShortcut(Int32 keys)
+        public bool ExecuteShortcut(string action)
         {
-            try
+            switch (action)
             {
-                foreach (ShortcutOverride shortcut in shortcutOverrides.Values)
-                {
-                    if ((Keys)keys == shortcut.keys)
-                    {
-                        shortcut.action(this);
-                        return true;
-                    }
-                }
-                return false;
-            }
-            catch (Exception) { return false; }
-        }
-
-        /// <summary>
-        /// Shortcut override object
-        /// </summary>
-        private class ShortcutOverride
-        {
-            public Keys keys;
-            public Action<ScintillaControl> action;
-
-            public ShortcutOverride(Keys keys, Action<ScintillaControl> action)
-            {
-                this.keys = keys;
-                this.action = action;
+                case "Scintilla.ResetZoom":
+                    ResetZoom();
+                    return true;
+                case "Scintilla.ZoomIn":
+                    ZoomIn();
+                    return true;
+                case "Scintilla.ZoomOut":
+                    ZoomOut();
+                    return true;
+                default:
+                    return false;
             }
         }
 
@@ -5430,31 +5434,20 @@ namespace ScintillaNet
             switch (m.Msg)
             {
                 case WM_KEYDOWN:
+                    int code = (int) m.WParam;
+                    if (ignoreAllKeys ||
+                        ProcessCmdKey(ref m, (Keys) code | ModifierKeys) ||
+                        (ModifierKeys & Keys.Control) != 0 &&
+                        (ModifierKeys & Keys.Alt) == 0 &&
+                        'A' <= code && code <= 'Z') // Eat non-writable characters
                     {
-                        Int32 keys = (Int32)Control.ModifierKeys + (Int32)m.WParam;
-                        if (!IsFocus || ignoreAllKeys || ignoredKeys.ContainsKey(keys))
-                        {
-                            if (this.ExecuteShortcut(keys) || base.PreProcessMessage(ref m)) return true;
-                        }
-                        if (((Control.ModifierKeys & Keys.Control) != 0) && ((Control.ModifierKeys & Keys.Alt) == 0))
-                        {
-                            Int32 code = (Int32)m.WParam;
-                            if ((code >= 65) && (code <= 90)) return true; // Eat non-writable characters
-                            else if ((code == 9) || (code == 33) || (code == 34)) // Transmit Ctrl with Tab, PageUp/PageDown
-                            {
-                                return base.PreProcessMessage(ref m);
-                            }
-                        }
-                        break;
+                        return true;
                     }
+                    break;
+
                 case WM_SYSKEYDOWN:
-                    {
-                        return base.PreProcessMessage(ref m);
-                    }
                 case WM_SYSCHAR:
-                    {
-                        return base.PreProcessMessage(ref m);
-                    }
+                    return base.PreProcessMessage(ref m);
             }
             return false;
         }

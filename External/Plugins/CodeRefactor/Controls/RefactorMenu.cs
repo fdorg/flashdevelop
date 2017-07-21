@@ -1,9 +1,11 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using ASCompletion;
 using ASCompletion.Context;
 using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Localization;
 
 namespace CodeRefactor.Controls
@@ -13,27 +15,35 @@ namespace CodeRefactor.Controls
         public RefactorMenu(Boolean createSurroundMenu)
         {
             this.Text = TextHelper.GetString("Label.Refactor");
-            this.RenameMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.Rename")) as ToolStripMenuItem;
+            this.RenameMenuItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.Rename"));
             this.RenameMenuItem.Image = PluginBase.MainForm.FindImage("331");
-            this.MoveMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.Move")) as ToolStripMenuItem;
-            this.ExtractMethodMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.ExtractMethod"), null) as ToolStripMenuItem;
-            this.ExtractLocalVariableMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.ExtractLocalVariable"), null) as ToolStripMenuItem;
-            this.DelegateMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.DelegateMethods"), null) as ToolStripMenuItem;
+            this.DropDownItems.Add(this.RenameMenuItem);
+            this.MoveMenuItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.Move"));
+            this.DropDownItems.Add(this.MoveMenuItem);
+            this.ExtractMethodMenuItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.ExtractMethod"), null);
+            this.DropDownItems.Add(this.ExtractMethodMenuItem);
+            this.ExtractLocalVariableMenuItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.ExtractLocalVariable"), null);
+            this.DropDownItems.Add(this.ExtractLocalVariableMenuItem);
+            this.DelegateMenuItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.DelegateMethods"), null);
+            this.DropDownItems.Add(this.DelegateMenuItem);
             if (createSurroundMenu)
             {
                 this.SurroundMenu = new SurroundMenu();
                 this.DropDownItems.Add(this.SurroundMenu);
             }
             this.DropDownItems.Add(new ToolStripSeparator());
-            this.CodeGeneratorMenuItem = new ToolStripMenuItem(TextHelper.GetString("Label.InvokeCodeGenerator"), null, null, createSurroundMenu ? Keys.Control | Keys.Shift | Keys.D1 : Keys.None);
+            this.CodeGeneratorMenuItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.InvokeCodeGenerator"), null, null, createSurroundMenu ? Keys.Control | Keys.Shift | Keys.D1 : Keys.None);
             this.DropDownItems.Add(this.CodeGeneratorMenuItem);
             this.DropDownItems.Add(new ToolStripSeparator());
-            this.OrganizeMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.OrganizeImports"), null) as ToolStripMenuItem;
+            this.OrganizeMenuItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.OrganizeImports"));
             this.OrganizeMenuItem.Image = Overlay(ASContext.Panel.GetIcon(PluginUI.ICON_PACKAGE), "-1|22|4|4");
-            this.TruncateMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.TruncateImports"), null) as ToolStripMenuItem;
+            this.DropDownItems.Add(this.OrganizeMenuItem);
+            this.TruncateMenuItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.TruncateImports"));
             this.TruncateMenuItem.Image = Overlay(ASContext.Panel.GetIcon(PluginUI.ICON_PACKAGE), "-1|18|4|4");
+            this.DropDownItems.Add(this.TruncateMenuItem);
             this.DropDownItems.Add(new ToolStripSeparator());
-            this.BatchMenuItem = this.DropDownItems.Add(TextHelper.GetString("Label.BatchProcess"), null) as ToolStripMenuItem;
+            this.BatchMenuItem = new ToolStripMenuItemEx(TextHelper.GetString("Label.BatchProcess"), null);
+            this.DropDownItems.Add(this.BatchMenuItem);
         }
 
         /// <summary>
@@ -44,46 +54,55 @@ namespace CodeRefactor.Controls
         /// <summary>
         /// Accessor to the BatchMenuItem
         /// </summary>
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem BatchMenuItem { get; }
 
         /// <summary>
         /// Accessor to the RenameMenuItem
         /// </summary>
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem RenameMenuItem { get; }
 
         /// <summary>
         /// Accessor to the MoveMenuItem
         /// </summary>
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem MoveMenuItem { get; }
 
         /// <summary>
         /// Accessor to the TruncateMenuItem
         /// </summary>
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem TruncateMenuItem { get; }
 
         /// <summary>
         /// Accessor to the OrganizeMenuItem
         /// </summary>
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem OrganizeMenuItem { get; }
 
         /// <summary>
         /// Accessor to the ExtractMethodMenuItem
         /// </summary>
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem ExtractMethodMenuItem { get; }
 
         /// <summary>
         /// Accessor to the DelegateMenuItem
         /// </summary>
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem DelegateMenuItem { get; }
 
         /// <summary>
         /// Accessor to the ExtractLocalVariableMenuItem
         /// </summary>
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem ExtractLocalVariableMenuItem { get; }
 
         /// <summary>
         /// Accessor to the CodeGeneratorMenuItem
         /// </summary>
+        [Obsolete("Type is ToolStripMenuItemEx")]
         public ToolStripMenuItem CodeGeneratorMenuItem { get; }
 
         private static Image Overlay(Image source, string overlayData)

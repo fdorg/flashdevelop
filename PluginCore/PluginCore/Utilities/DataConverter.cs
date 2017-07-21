@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Text;
 using System.Windows.Forms;
+using PluginCore.Helpers;
 using PluginCore.Managers;
 
 namespace PluginCore.Utilities
@@ -34,8 +35,7 @@ namespace PluginCore.Utilities
         /// </summary>
         public static String KeysToString(Keys keys)
         {
-            KeysConverter kc = new KeysConverter();
-            return kc.ConvertToString(keys);
+            return ShortcutKeysConverter.ConvertToString(keys);
         }
 
         /// <summary>

@@ -195,10 +195,10 @@ namespace ASCompletion
 
                     // key combinations
                     case EventType.Keys:
-                        Keys key = (e as KeyEvent).Value;
+                        ShortcutKeys key = (e as KeyEvent).Keys;
                         if (ModelsExplorer.HasFocus)
                         {
-                            e.Handled = ModelsExplorer.Instance.OnShortcut(key);
+                            e.Handled = ModelsExplorer.Instance.OnShortcut((Keys) key);
                             return;
                         }
                         if (!doc.IsEditable) return;
@@ -210,7 +210,7 @@ namespace ASCompletion
                         de = e as DataEvent;
                         if (de.Action == "Completion.ShowHelp")
                         {
-                            ASComplete.HelpKeys = (Keys)de.Data;
+                            ASComplete.HelpKeys = (ShortcutKeys) de.Data;
                             de.Handled = true;
                         }
                         return;
@@ -515,17 +515,17 @@ namespace ASCompletion
 
                                     // alternative to default shortcuts
                                     case "ASCompletion.CtrlSpace":
-                                        ASComplete.OnShortcut(Keys.Control | Keys.Space, ASContext.CurSciControl);
+                                        ASComplete.OnShortcut((ShortcutKeys) (Keys.Control | Keys.Space), ASContext.CurSciControl);
                                         e.Handled = true;
                                         break;
 
                                     case "ASCompletion.CtrlShiftSpace":
-                                        ASComplete.OnShortcut(Keys.Control | Keys.Shift | Keys.Space, ASContext.CurSciControl);
+                                        ASComplete.OnShortcut((ShortcutKeys) (Keys.Control | Keys.Shift | Keys.Space), ASContext.CurSciControl);
                                         e.Handled = true;
                                         break;
 
                                     case "ASCompletion.CtrlAltSpace":
-                                        ASComplete.OnShortcut(Keys.Control | Keys.Alt | Keys.Space, ASContext.CurSciControl);
+                                        ASComplete.OnShortcut((ShortcutKeys) (Keys.Control | Keys.Alt | Keys.Space), ASContext.CurSciControl);
                                         e.Handled = true;
                                         break;
 
@@ -537,7 +537,7 @@ namespace ASCompletion
                                             EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "ASCompletion.ContextualGenerator.AddOptions", options));
                                             if (options.Count == 0)
                                             {
-                                                PluginBase.MainForm.StatusLabel.Text = TextHelper.GetString("Info.NoContextGeneratorCode");
+                                                PluginBase.MainForm.StatusLabelText = TextHelper.GetString("Info.NoContextGeneratorCode");
                                             }
                                             CompletionList.Show(options, false);
                                         }
@@ -638,11 +638,11 @@ namespace ASCompletion
         {
             IMainForm mainForm = PluginBase.MainForm;
             menuItems = new List<ToolStripItem>();
-            ToolStripMenuItem item;
+            ToolStripMenuItemEx item;
             ToolStripMenuItem menu = (ToolStripMenuItem)mainForm.FindMenuItem("ViewMenu");
             if (menu != null)
             {
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.ViewMenuItem"), pluginIcon, new EventHandler(OpenPanel));
+                item = new ToolStripMenuItemEx(TextHelper.GetString("Label.ViewMenuItem"), pluginIcon, new EventHandler(OpenPanel));
                 PluginBase.MainForm.RegisterShortcutItem("ViewMenu.ShowOutline", item);
                 menu.DropDownItems.Add(item);
             }
@@ -656,14 +656,14 @@ namespace ASCompletion
 
                 // check actionscript
                 image = pluginUI.GetIcon(PluginUI.ICON_CHECK_SYNTAX);
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.CheckSyntax"), image, new EventHandler(CheckSyntax), Keys.F7);
+                item = new ToolStripMenuItemEx(TextHelper.GetString("Label.CheckSyntax"), image, new EventHandler(CheckSyntax), Keys.F7);
                 PluginBase.MainForm.RegisterShortcutItem("FlashToolsMenu.CheckSyntax", item);
                 menu.DropDownItems.Add(item);
                 menuItems.Add(item);
 
                 // quick build
                 image = pluginUI.GetIcon(PluginUI.ICON_QUICK_BUILD);
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.QuickBuild"), image, new EventHandler(QuickBuild), Keys.Control | Keys.F8);
+                item = new ToolStripMenuItemEx(TextHelper.GetString("Label.QuickBuild"), image, new EventHandler(QuickBuild), Keys.Control | Keys.F8);
                 PluginBase.MainForm.RegisterShortcutItem("FlashToolsMenu.QuickBuild", item);
                 menu.DropDownItems.Add(item);
                 //menuItems.Add(item);
@@ -673,18 +673,18 @@ namespace ASCompletion
 
                 // type explorer
                 image = mainForm.FindImage("202");
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.TypesExplorer"), image, new EventHandler(TypesExplorer), Keys.Control | Keys.J);
+                item = new ToolStripMenuItemEx(TextHelper.GetString("Label.TypesExplorer"), image, new EventHandler(TypesExplorer), Keys.Control | Keys.J);
                 PluginBase.MainForm.RegisterShortcutItem("FlashToolsMenu.TypeExplorer", item);
                 menu.DropDownItems.Add(item);
 
                 // model cleanup
                 image = mainForm.FindImage("153");
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.RebuildClasspathCache"), image, new EventHandler(RebuildClasspath));
+                item = new ToolStripMenuItemEx(TextHelper.GetString("Label.RebuildClasspathCache"), image, new EventHandler(RebuildClasspath));
                 PluginBase.MainForm.RegisterShortcutItem("FlashToolsMenu.RebuildClasspathCache", item);
                 menu.DropDownItems.Add(item);
 
                 // convert to intrinsic
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.ConvertToIntrinsic"), null, new EventHandler(MakeIntrinsic));
+                item = new ToolStripMenuItemEx(TextHelper.GetString("Label.ConvertToIntrinsic"), null, new EventHandler(MakeIntrinsic));
                 PluginBase.MainForm.RegisterShortcutItem("FlashToolsMenu.ConvertToIntrinsic", item);
                 menu.DropDownItems.Add(item);
                 menuItems.Add(item);
@@ -715,21 +715,21 @@ namespace ASCompletion
 
                 // goto declaration
                 image = mainForm.FindImage("99|9|3|-3");
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.GotoDeclaration"), image, new EventHandler(GotoDeclaration), Keys.F4);
+                item = new ToolStripMenuItemEx(TextHelper.GetString("Label.GotoDeclaration"), image, new EventHandler(GotoDeclaration), Keys.F4);
                 PluginBase.MainForm.RegisterShortcutItem("SearchMenu.GotoDeclaration", item);
                 menu.DropDownItems.Add(item);
                 menuItems.Add(item);
 
                 // goto type declaration
                 image = mainForm.FindImage("99|9|3|-3");
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.GotoTypeDeclaration"), image, GotoTypeDeclaration);
+                item = new ToolStripMenuItemEx(TextHelper.GetString("Label.GotoTypeDeclaration"), image, GotoTypeDeclaration);
                 PluginBase.MainForm.RegisterShortcutItem("SearchMenu.GotoTypeDeclaration", item);
                 menu.DropDownItems.Add(item);
                 menuItems.Add(item);
 
                 // goto back from declaration
                 image = mainForm.FindImage("99|1|-3|-3");
-                item = new ToolStripMenuItem(TextHelper.GetString("Label.BackFromDeclaration"), image, new EventHandler(BackDeclaration), Keys.Shift | Keys.F4);
+                item = new ToolStripMenuItemEx(TextHelper.GetString("Label.BackFromDeclaration"), image, new EventHandler(BackDeclaration), Keys.Shift | Keys.F4);
                 PluginBase.MainForm.RegisterShortcutItem("SearchMenu.BackFromDeclaration", item);
                 menu.DropDownItems.Add(item);
                 pluginUI.LookupMenuItem = item;
@@ -740,13 +740,13 @@ namespace ASCompletion
                 if (emenu != null)
                 {
                     image = mainForm.FindImage("99|9|3|-3");
-                    item = new ToolStripMenuItem(TextHelper.GetString("Label.GotoDeclaration"), image, new EventHandler(GotoDeclaration));
+                    item = new ToolStripMenuItemEx(TextHelper.GetString("Label.GotoDeclaration"), image, new EventHandler(GotoDeclaration));
                     PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.GotoDeclaration", item);
                     emenu.Items.Insert(4, item);
                     menuItems.Add(item);
 
                     image = mainForm.FindImage("99|9|3|-3");
-                    item = new ToolStripMenuItem(TextHelper.GetString("Label.GotoTypeDeclaration"), image, GotoTypeDeclaration);
+                    item = new ToolStripMenuItemEx(TextHelper.GetString("Label.GotoTypeDeclaration"), image, GotoTypeDeclaration);
                     PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.GotoTypeDeclaration", item);
                     emenu.Items.Insert(5, item);
                     emenu.Items.Insert(6, new ToolStripSeparator());
@@ -766,10 +766,9 @@ namespace ASCompletion
             CompletionList.OnInsert += new InsertedTextHandler(ASComplete.HandleCompletionInsert);
 
             // shortcuts
-            PluginBase.MainForm.IgnoredKeys.Add(Keys.Back);
-            PluginBase.MainForm.IgnoredKeys.Add(Keys.Control | Keys.Enter);
-            PluginBase.MainForm.IgnoredKeys.Add(Keys.Space | Keys.Control | Keys.Alt); // complete project types
-            PluginBase.MainForm.RegisterShortcutItem("Completion.ShowHelp", Keys.F1);
+            PluginBase.MainForm.AddIgnoredKeys(Keys.Control | Keys.Enter);
+            PluginBase.MainForm.AddIgnoredKeys(Keys.Space | Keys.Control | Keys.Alt); // complete project types
+            PluginBase.MainForm.RegisterShortcutItem("Completion.ShowHelp", ASComplete.HelpKeys);
 
             // application events
             EventManager.AddEventHandler(this, eventMask);

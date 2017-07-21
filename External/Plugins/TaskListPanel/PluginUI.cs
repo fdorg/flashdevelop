@@ -816,8 +816,7 @@ namespace TaskListPanel
                     if (document.IsEditable) RefreshCurrentFile(document.SciControl);
                     break;
                 case EventType.Keys:
-                    Keys keys = (e as KeyEvent).Value;
-                    if (this.ContainsFocus && keys == Keys.Escape)
+                    if (this.ContainsFocus && (e as KeyEvent).Keys == Keys.Escape)
                     {
                         ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
                         if (doc != null && doc.IsEditable)
