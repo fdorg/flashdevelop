@@ -5,7 +5,7 @@ public class Main {
 	}
 	
 	function test(float:Float, float1:Float):Int->String->Void {
-		
+		return null;
 	}
 	
 	function foo(v:Int->String->Void) {}

@@ -1261,7 +1261,7 @@ namespace ResultsPanel
         * Match TypeScript style errors
         * i.e. C:\path\to\src\Class.as(9,20): description
         */
-        private static Regex fileEntry2 = new Regex(@"^(?<filename>[^(]*)\((?<line>[0-9,]+)\).?:(?<description>.*)$", RegexOptions.Compiled);
+        private static Regex fileEntry2 = new Regex(@"^(?<filename>.*)\((?<line>[0-9,]+)\).?:(?<description>.*)$", RegexOptions.Compiled);
 
         /**
         * Match find in files style ranges
@@ -1302,7 +1302,7 @@ namespace ResultsPanel
         {
             if (this.entriesView.Items.Count > 0)
             {
-                this.SelectItem(this.entryIndex == 0 ? this.entriesView.Items.Count - 1 : this.entryIndex - 1);
+                this.SelectItem(this.entryIndex <= 0 ? this.entriesView.Items.Count - 1 : this.entryIndex - 1);
                 this.NavigateToSelectedItem();
                 return true;
             }

@@ -1,4 +1,4 @@
-﻿package;
+package;
 class Foo {
 	public function new() {}
 	@:isVar public var foo(get, set):haxe.io.Input;
