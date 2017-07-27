@@ -234,28 +234,27 @@ namespace PluginCore.Controls
                 Point[] arrow;
                 Int32 pad;
                 Point middle = new Point(rect.Left + rect.Width / 2, (rect.Top + rect.Height / 2));
-                switch (arrowUp)
+                if (arrowUp)
                 {
-                    case true:
-                        pad = ScaleHelper.Scale(4);
-                        middle.Y += ScaleHelper.Scale(2);
-                        arrow = new Point[]
-                        {
-                            new Point(middle.X - pad , middle.Y + 1),
-                            new Point(middle.X + pad  + 1, middle.Y + 1),
-                            new Point(middle.X, middle.Y - pad)
-                        };
-                        break;
-                    default:
-                        pad = ScaleHelper.Scale(3);
-                        middle.Y -= ScaleHelper.Scale(1);
-                        arrow = new Point[]
-                        {
-                            new Point(middle.X - pad, middle.Y - 1),
-                            new Point(middle.X + pad + 1, middle.Y - 1),
-                            new Point(middle.X, middle.Y + pad)
-                        };
-                        break;
+                    pad = ScaleHelper.Scale(4);
+                    middle.Y += ScaleHelper.Scale(2);
+                    arrow = new Point[]
+                    {
+                        new Point(middle.X - pad , middle.Y + 1),
+                        new Point(middle.X + pad  + 1, middle.Y + 1),
+                        new Point(middle.X, middle.Y - pad)
+                    };
+                }
+                else
+                {
+                    pad = ScaleHelper.Scale(3);
+                    middle.Y -= ScaleHelper.Scale(1);
+                    arrow = new Point[]
+                    {
+                        new Point(middle.X - pad, middle.Y - 1),
+                        new Point(middle.X + pad + 1, middle.Y - 1),
+                        new Point(middle.X, middle.Y + pad)
+                    };
                 }
                 g.FillPolygon(brush, arrow);
             }
@@ -268,34 +267,33 @@ namespace PluginCore.Controls
         /// <param name="g">The <see cref="Graphics"/> used to paint.</param>
         /// <param name="rect">The rectangle in which to paint.</param>
         /// <param name="color">The color to draw the arrow buttons with.</param>
-        /// <param name="arrowUp">true for an up arrow, false otherwise.</param>
-        private static void DrawArrowButtonHorizontal(Graphics g, Rectangle rect, Color color, bool arrowUp)
+        /// <param name="arrowLeft">true for a left arrow, false otherwise.</param>
+        private static void DrawArrowButtonHorizontal(Graphics g, Rectangle rect, Color color, bool arrowLeft)
         {
             using (Brush brush = new SolidBrush(color))
             {
                 Point[] arrow;
                 Int32 pad;
                 Point middle = new Point(rect.Left + rect.Width / 2, rect.Top + rect.Height / 2);
-                switch (arrowUp)
+                if (arrowLeft)
                 {
-                    case true:
-                        pad = ScaleHelper.Scale(2);
-                        arrow = new Point[]
-                        {
-                            new Point(middle.X + pad, middle.Y - 2 * pad),
-                            new Point(middle.X + pad, middle.Y + 2 * pad),
-                            new Point(middle.X - pad, middle.Y)
-                        };
-                        break;
-                    default:
-                        pad = ScaleHelper.Scale(2);
-                        arrow = new Point[]
-                        {
-                            new Point(middle.X - pad, middle.Y - 2 * pad),
-                            new Point(middle.X - pad, middle.Y + 2 * pad),
-                            new Point(middle.X + pad, middle.Y)
-                        };
-                        break;
+                    pad = ScaleHelper.Scale(2);
+                    arrow = new Point[]
+                    {
+                        new Point(middle.X + pad, middle.Y - 2 * pad),
+                        new Point(middle.X + pad, middle.Y + 2 * pad),
+                        new Point(middle.X - pad, middle.Y)
+                    };
+                }
+                else
+                {
+                    pad = ScaleHelper.Scale(2);
+                    arrow = new Point[]
+                    {
+                        new Point(middle.X - pad, middle.Y - 2 * pad),
+                        new Point(middle.X - pad, middle.Y + 2 * pad),
+                        new Point(middle.X + pad, middle.Y)
+                    };
                 }
                 g.FillPolygon(brush, arrow);
             }
@@ -314,11 +312,6 @@ namespace PluginCore.Controls
         /// Highlights the current line if: value > -1
         /// </summary>
         private int curPos = -1;
-
-        /// <summary>
-        /// Is over scroll enabled? Follows large change value.
-        /// </summary>
-        private bool overScroll = false;
 
         /// <summary>
         /// The scrollbar orientation - horizontal / vertical.
@@ -439,6 +432,26 @@ namespace PluginCore.Controls
         /// The height of an arrow.
         /// </summary>
         private int arrowHeight = ScaleHelper.Scale(13);
+
+        /// <summary>
+        /// The top padding for the thumb.
+        /// </summary>
+        private int thumbPaddingTop = ScaleHelper.Scale(3);
+
+        /// <summary>
+        /// The bottom padding for the thumb.
+        /// </summary>
+        private int thumbPaddingBottom = ScaleHelper.Scale(4);
+
+        /// <summary>
+        /// The left padding for the thumb.
+        /// </summary>
+        private int thumbPaddingLeft = ScaleHelper.Scale(3);
+
+        /// <summary>
+        /// The right padding for the thumb.
+        /// </summary>
+        private int thumbPaddingRight = ScaleHelper.Scale(3);
 
         /// <summary>
         /// The bottom limit for the thumb bottom.
@@ -572,29 +585,6 @@ namespace PluginCore.Controls
         #endregion
 
         #region Properties
-
-        /// <summary>
-        /// Gets or sets the current position.
-        /// </summary>
-        [Category("Behavior")]
-        [Description("Gets or sets the is over scroll is enabled.")]
-        [DefaultValue(false)]
-        public Boolean OverScroll
-        {
-            get
-            {
-                return this.overScroll;
-            }
-            set
-            {
-                // no change, return
-                if (this.overScroll == value)
-                {
-                    return;
-                }
-                this.overScroll = value;
-            }
-        }
 
         /// <summary>
         /// Gets or sets the current position.
@@ -1165,26 +1155,18 @@ namespace PluginCore.Controls
             }
         }
 
+        private int GetPosition(int position)
+        {
+            int pixelRange = this.thumbBottomLimitTop - this.thumbTopLimit; // == size - thumbSize - arrows - paddings
+            int offset = (this.orientation == ScrollBarOrientation.Vertical) ? (this.arrowHeight + this.thumbPaddingTop) : (this.arrowWidth + this.thumbPaddingLeft);
+            int realRange = this.maximum - this.minimum;
+            float perc = (realRange != 0) ? ((float)(position - this.minimum) / (float)realRange) : 0f;
+            return Math.Max(this.thumbTopLimit, Math.Min(this.thumbBottomLimitTop, Convert.ToInt32((perc * pixelRange) + offset)));
+        }
+
         private int GetCurPosition()
         {
-            int pixelRange, arrowSize;
-            if (this.orientation == ScrollBarOrientation.Vertical)
-            {
-                pixelRange = this.Height - (2 * this.arrowHeight) - this.thumbHeight;
-                arrowSize = this.arrowHeight;
-            }
-            else
-            {
-                pixelRange = this.Width - (2 * this.arrowWidth) - this.thumbWidth;
-                arrowSize = this.arrowWidth;
-            }
-            int realRange = (this.overScroll ? (this.maximum + this.largeChange) : this.maximum) - this.minimum;
-            float perc = 0f;
-            if (realRange != 0)
-            {
-                perc = ((float)this.curPos - (float)this.minimum) / (float)realRange;
-            }
-            return Math.Max(this.thumbTopLimit, Math.Min(this.thumbBottomLimitTop, Convert.ToInt32((perc * pixelRange) + arrowSize)));
+            return GetPosition(this.curPos);
         }
 
         /// <summary>
@@ -1340,27 +1322,11 @@ namespace PluginCore.Controls
                     {
                         // The thumb is between the ends of the track.
                         this.ChangeThumbPosition(pos);
-                        int pixelRange, thumbPos, arrowSize;
-                        // calculate the value - first some helper variables
-                        // dependent on the current orientation
-                        if (this.orientation == ScrollBarOrientation.Vertical)
-                        {
-                            pixelRange = this.Height - (2 * this.arrowHeight) - this.thumbHeight;
-                            thumbPos = this.thumbRectangle.Y;
-                            arrowSize = this.arrowHeight;
-                        }
-                        else
-                        {
-                            pixelRange = this.Width - (2 * this.arrowWidth) - this.thumbWidth;
-                            thumbPos = this.thumbRectangle.X;
-                            arrowSize = this.arrowWidth;
-                        }
-                        float perc = 0f;
-                        if (pixelRange != 0)
-                        {
-                            // percent of the new position
-                            perc = (float)(thumbPos - arrowSize) / (float)pixelRange;
-                        }
+                        int pixelRange = this.thumbBottomLimitTop - this.thumbTopLimit; // == size - thumbSize - arrows - paddings
+                        int position = (this.orientation == ScrollBarOrientation.Vertical) ? (this.thumbRectangle.Y - this.arrowHeight - this.thumbPaddingTop) : 
+                            (this.thumbRectangle.X - this.arrowWidth - this.thumbPaddingLeft);
+                        // percent of the new position
+                        float perc = (pixelRange != 0) ? ((float)position / (float)pixelRange) : 0f;
                         // the new value is somewhere between max and min, starting
                         // at min position
                         this.value = Convert.ToInt32((perc * (this.maximum - this.minimum)) + this.minimum);
@@ -1469,19 +1435,14 @@ namespace PluginCore.Controls
                 keyUp = Keys.Left;
                 keyDown = Keys.Right;
             }
-            if (keyData == keyUp)
+            if ((keyData == keyUp) || (keyData == keyDown))
             {
-                this.Value -= this.smallChange;
+                this.Value = this.GetValue(true, keyData == keyUp);
                 return true;
             }
-            if (keyData == keyDown)
+            if ((keyData == Keys.PageUp) || (keyData == Keys.PageDown))
             {
-                this.Value += this.smallChange;
-                return true;
-            }
-            if (keyData == Keys.PageUp)
-            {
-                this.Value = this.GetValue(false, true);
+                this.Value = this.GetValue(false, keyData == Keys.PageUp);
                 return true;
             }
             if (keyData == Keys.PageDown)
@@ -1550,7 +1511,10 @@ namespace PluginCore.Controls
             {
                 rect.Height -= this.Margin.Bottom;
             }
-            else rect.Width -= this.Margin.Right;
+            else
+            {
+                rect.Width -= this.Margin.Right;
+            }
             // set up the width's, height's and rectangles for the different
             // elements
             if (this.orientation == ScrollBarOrientation.Vertical)
@@ -1585,11 +1549,11 @@ namespace PluginCore.Controls
                 // Set the default starting thumb position.
                 //this.thumbPosition = this.thumbRectangle.Height / 2;
                 // Set the bottom limit of the thumb's bottom border.
-                this.thumbBottomLimitBottom = rect.Bottom - this.arrowHeight - ScaleHelper.Scale(4);
+                this.thumbBottomLimitBottom = rect.Bottom - this.arrowHeight - thumbPaddingBottom;
                 // Set the bottom limit of the thumb's top border.
                 this.thumbBottomLimitTop = this.thumbBottomLimitBottom - this.thumbRectangle.Height;
                 // Set the top limit of the thumb's top border.
-                this.thumbTopLimit = rect.Y + this.arrowHeight + ScaleHelper.Scale(3);
+                this.thumbTopLimit = rect.Y + this.arrowHeight + thumbPaddingTop;
             }
             else
             {
@@ -1623,11 +1587,11 @@ namespace PluginCore.Controls
                 // Set the default starting thumb position.
                 //this.thumbPosition = this.thumbRectangle.Width / 2;
                 // Set the bottom limit of the thumb's bottom border.
-                this.thumbBottomLimitBottom = rect.Right - this.arrowWidth - ScaleHelper.Scale(3);
+                this.thumbBottomLimitBottom = rect.Right - this.arrowWidth - thumbPaddingRight;
                 // Set the bottom limit of the thumb's top border.
                 this.thumbBottomLimitTop = this.thumbBottomLimitBottom - this.thumbRectangle.Width;
                 // Set the top limit of the thumb's top border.
-                this.thumbTopLimit = rect.X + this.arrowWidth + ScaleHelper.Scale(3);
+                this.thumbTopLimit = rect.X + this.arrowWidth + thumbPaddingLeft;
             }
             this.ChangeThumbPosition(this.GetThumbPosition());
             this.Refresh();
@@ -1677,26 +1641,16 @@ namespace PluginCore.Controls
         /// <returns>The new scrollbar value.</returns>
         private int GetValue(bool smallIncrement, bool up)
         {
-            int newValue;
             // calculate the new value of the scrollbar
             // with checking if new value is in bounds (min/max)
             if (up)
             {
-                newValue = this.value - (smallIncrement ? this.smallChange : this.largeChange);
-                if (newValue < this.minimum)
-                {
-                    newValue = this.minimum;
-                }
+                return Math.Max(this.minimum, this.value - (smallIncrement ? this.smallChange : this.largeChange));
             }
             else
             {
-                newValue = this.value + (smallIncrement ? this.smallChange : this.largeChange);
-                if (newValue > this.maximum)
-                {
-                    newValue = this.maximum;
-                }
+                return Math.Min(this.maximum, this.value + (smallIncrement ? this.smallChange : this.largeChange));
             }
-            return newValue;
         }
 
         /// <summary>
@@ -1705,24 +1659,7 @@ namespace PluginCore.Controls
         /// <returns>The new thumb position.</returns>
         private int GetThumbPosition()
         {
-            int pixelRange, arrowSize;
-            if (this.orientation == ScrollBarOrientation.Vertical)
-            {
-                pixelRange = this.Height - (2 * this.arrowHeight) - this.thumbHeight;
-                arrowSize = this.arrowHeight;
-            }
-            else
-            {
-                pixelRange = this.Width - (2 * this.arrowWidth) - this.thumbWidth;
-                arrowSize = this.arrowWidth;
-            }
-            int realRange = this.maximum - this.minimum;
-            float perc = 0f;
-            if (realRange != 0)
-            {
-                perc = ((float)this.value - (float)this.minimum) / (float)realRange;
-            }
-            return Math.Max(this.thumbTopLimit, Math.Min(this.thumbBottomLimitTop, Convert.ToInt32((perc * pixelRange) + arrowSize)));
+            return GetPosition(this.value);
         }
 
         /// <summary>
@@ -1731,12 +1668,9 @@ namespace PluginCore.Controls
         /// <returns>The height of the thumb.</returns>
         private int GetThumbSize()
         {
-            int trackSize = this.orientation == ScrollBarOrientation.Vertical ? this.Height - (2 * this.arrowHeight) : this.Width - (2 * this.arrowWidth);
-            if (this.maximum == 0 || this.largeChange == 0)
-            {
-                return trackSize;
-            }
-            float newThumbSize = ((float)this.largeChange * (float)trackSize) / (float)(this.overScroll ? (float)(this.maximum + this.largeChange) : this.maximum);
+            int trackSize = this.orientation == ScrollBarOrientation.Vertical ? (this.Height - 2 * this.arrowHeight - thumbPaddingTop - thumbPaddingBottom) :
+                (this.Width - 2 * this.arrowWidth - thumbPaddingLeft - thumbPaddingRight);
+            float newThumbSize = (float)this.largeChange * (float)trackSize / (float)(this.maximum - this.minimum);
             return Convert.ToInt32(Math.Min((float)trackSize, Math.Max(newThumbSize, 10f)));
         }
 
@@ -1996,29 +1930,14 @@ namespace PluginCore.Controls
         /// <param name="e">The event arguments.</param>
         private void ScrollHereClick(object sender, EventArgs e)
         {
-            int thumbSize, thumbPos, arrowSize, size;
-            if (this.orientation == ScrollBarOrientation.Vertical)
-            {
-                thumbSize = this.thumbHeight;
-                arrowSize = this.arrowHeight;
-                size = this.Height;
-                this.ChangeThumbPosition(Math.Max(this.thumbTopLimit, Math.Min(this.thumbBottomLimitTop, this.trackPosition - (this.thumbRectangle.Height / 2))));
-                thumbPos = this.thumbRectangle.Y;
-            }
-            else
-            {
-                thumbSize = this.thumbWidth;
-                arrowSize = this.arrowWidth;
-                size = this.Width;
-                this.ChangeThumbPosition(Math.Max(this.thumbTopLimit, Math.Min(this.thumbBottomLimitTop, this.trackPosition - (this.thumbRectangle.Width / 2))));
-                thumbPos = this.thumbRectangle.X;
-            }
-            int pixelRange = size - (2 * arrowSize) - thumbSize;
-            float perc = 0f;
-            if (pixelRange != 0)
-            {
-                perc = (float)(thumbPos - arrowSize) / (float)pixelRange;
-            }
+            int thumbSize = (this.orientation == ScrollBarOrientation.Vertical) ? this.thumbHeight : this.thumbWidth;
+            this.ChangeThumbPosition(Math.Max(this.thumbTopLimit, Math.Min(this.thumbBottomLimitTop, this.trackPosition - (thumbSize / 2))));
+
+            int pixelRange = this.thumbBottomLimitTop - this.thumbTopLimit; // == size - thumbSize - arrows - paddings
+            int position = (this.orientation == ScrollBarOrientation.Vertical) ? (this.thumbRectangle.Y - this.arrowHeight - this.thumbPaddingTop) :
+                (this.thumbRectangle.X - this.arrowWidth - this.thumbPaddingLeft);
+
+            float perc = (pixelRange != 0) ? ((float)position / (float)pixelRange) : 0f;
             int oldValue = this.value;
             this.value = Convert.ToInt32((perc * (this.maximum - this.minimum)) + this.minimum);
             this.OnScroll(new ScrollEventArgs(ScrollEventType.ThumbPosition, oldValue, this.value, this.scrollOrientation));
@@ -2112,13 +2031,11 @@ namespace PluginCore.Controls
         public void InitScrollBars()
         {
             vScrollBar = new ScrollBarEx();
-            vScrollBar.OverScroll = true;
             vScrollBar.Width = ScaleHelper.Scale(SystemInformation.VerticalScrollBarWidth);
             vScrollBar.Orientation = ScrollBarOrientation.Vertical;
             vScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
             vScrollBar.Margin = new Padding(0, 0, 0, ScaleHelper.Scale(SystemInformation.HorizontalScrollBarHeight));
             hScrollBar = new ScrollBarEx();
-            hScrollBar.OverScroll = true;
             hScrollBar.Height = ScaleHelper.Scale(SystemInformation.HorizontalScrollBarHeight);
             hScrollBar.Orientation = ScrollBarOrientation.Horizontal;
             hScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
@@ -2299,13 +2216,11 @@ namespace PluginCore.Controls
         public void InitScrollBars()
         {
             vScrollBar = new ScrollBarEx();
-            vScrollBar.OverScroll = true;
             vScrollBar.Width = ScaleHelper.Scale(SystemInformation.VerticalScrollBarWidth);
             vScrollBar.Orientation = ScrollBarOrientation.Vertical;
             vScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
             vScrollBar.Margin = new Padding(0, 0, 0, ScaleHelper.Scale(SystemInformation.HorizontalScrollBarHeight));
             hScrollBar = new ScrollBarEx();
-            hScrollBar.OverScroll = true;
             hScrollBar.Height = ScaleHelper.Scale(SystemInformation.HorizontalScrollBarHeight);
             hScrollBar.Orientation = ScrollBarOrientation.Horizontal;
             hScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
@@ -2485,13 +2400,11 @@ namespace PluginCore.Controls
         public void InitScrollBars()
         {
             vScrollBar = new ScrollBarEx();
-            vScrollBar.OverScroll = true;
             vScrollBar.Width = ScaleHelper.Scale(SystemInformation.VerticalScrollBarWidth);
             vScrollBar.Orientation = ScrollBarOrientation.Vertical;
             vScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
             vScrollBar.Margin = new Padding(0, 0, 0, ScaleHelper.Scale(SystemInformation.HorizontalScrollBarHeight));
             hScrollBar = new ScrollBarEx();
-            hScrollBar.OverScroll = true;
             hScrollBar.Height = ScaleHelper.Scale(SystemInformation.HorizontalScrollBarHeight);
             hScrollBar.Orientation = ScrollBarOrientation.Horizontal;
             hScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
@@ -2669,13 +2582,11 @@ namespace PluginCore.Controls
         public void InitScrollBars()
         {
             vScrollBar = new ScrollBarEx();
-            vScrollBar.OverScroll = true;
             vScrollBar.Width = ScaleHelper.Scale(SystemInformation.VerticalScrollBarWidth);
             vScrollBar.Orientation = ScrollBarOrientation.Vertical;
             vScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
             vScrollBar.Margin = new Padding(0, 0, 0, ScaleHelper.Scale(SystemInformation.HorizontalScrollBarHeight));
             hScrollBar = new ScrollBarEx();
-            hScrollBar.OverScroll = true;
             hScrollBar.Height = ScaleHelper.Scale(SystemInformation.HorizontalScrollBarHeight);
             hScrollBar.Orientation = ScrollBarOrientation.Horizontal;
             hScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();

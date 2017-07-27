@@ -128,7 +128,6 @@ namespace ScintillaNet
         private void InitScrollBars(ScintillaControl sender)
         {
             sender.vScrollBar = new ScrollBarEx();
-            sender.vScrollBar.OverScroll = true;
             sender.vScrollBar.Width = ScaleHelper.Scale(17);
             sender.vScrollBar.Orientation = ScrollBarOrientation.Vertical;
             sender.vScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
@@ -158,7 +157,6 @@ namespace ScintillaNet
             Int32 vTotal = sender.LinesVisible;
             Int32 vPage = sender.LinesOnScreen;
             Int32 vMax = overScroll ? (vTotal - 1) : (vTotal - vPage);
-            sender.vScrollBar.OverScroll = overScroll;
             sender.vScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.vScrollBar.Minimum = 0;
             sender.vScrollBar.Maximum = vMax;
