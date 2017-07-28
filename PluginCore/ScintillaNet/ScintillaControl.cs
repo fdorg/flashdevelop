@@ -160,6 +160,7 @@ namespace ScintillaNet
             sender.vScrollBar.ViewPortSize = sender.vScrollBar.LargeChange = vPage;
             sender.vScrollBar.Value = sender.FirstVisibleLine;
             sender.vScrollBar.CurrentPosition = (vMax > 0) ? sender.VisibleFromDocLine(sender.CurrentLine) : -1;
+            sender.vScrollBar.MaxCurrentPosition = vTotal - 1;
             sender.vScrollBar.Scroll += sender.OnScrollBarScroll;
             sender.vScrollBar.Enabled = vMax > 0;
             sender.hScrollBar.Scroll -= sender.OnScrollBarScroll;

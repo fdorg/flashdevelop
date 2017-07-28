@@ -314,6 +314,11 @@ namespace PluginCore.Controls
         private int curPos = -1;
 
         /// <summary>
+        /// The maximum value of curPos. If overScroll (EndAtLastLine) is disabled, it is greater than the maximum scrollbar value, otherwise they are equal.
+        /// </summary>
+        private int maxCurPos = 100;
+
+        /// <summary>
         /// The scrollbar orientation - horizontal / vertical.
         /// </summary>
         private ScrollBarOrientation orientation = ScrollBarOrientation.Vertical;
@@ -611,6 +616,30 @@ namespace PluginCore.Controls
                     return;
                 }
                 this.curPos = value;
+                this.Invalidate();
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the maximum value of current position.
+        /// </summary>
+        [Category("Behavior")]
+        [Description("Gets or sets the maximum value of current position.")]
+        [DefaultValue(-1)]
+        public int MaxCurrentPosition
+        {
+            get
+            {
+                return this.maxCurPos;
+            }
+            set
+            {
+                // no change, return
+                if (this.maxCurPos == value)
+                {
+                    return;
+                }
+                this.maxCurPos = value;
                 this.Invalidate();
             }
         }
@@ -1184,18 +1213,18 @@ namespace PluginCore.Controls
             }
         }
 
-        private int GetPosition(int position)
-        {
-            int pixelRange = this.thumbBottomLimitTop - this.thumbTopLimit; // == size - thumbSize - arrows - paddings
-            int offset = (this.orientation == ScrollBarOrientation.Vertical) ? (this.arrowHeight + this.thumbPaddingTop) : (this.arrowWidth + this.thumbPaddingLeft);
-            int realRange = this.maximum - this.minimum;
-            float perc = (realRange != 0) ? ((float)(position - this.minimum) / (float)realRange) : 0f;
-            return Math.Max(this.thumbTopLimit, Math.Min(this.thumbBottomLimitTop, Convert.ToInt32((perc * pixelRange) + offset)));
-        }
-
+        /// <summary>
+        /// Calculates the current position.
+        /// </summary>
+        /// <returns>The current position.</returns>
         private int GetCurPosition()
         {
-            return GetPosition(this.curPos);
+            int bottomLimit = (this.maxCurPos > this.maximum) ? thumbBottomLimitBottom : this.thumbBottomLimitTop;
+            int pixelRange = bottomLimit - this.thumbTopLimit; // == size - (overScroll ? thumbSize : 0) arrows - paddings
+            int offset = (this.orientation == ScrollBarOrientation.Vertical) ? (this.arrowHeight + this.thumbPaddingTop) : (this.arrowWidth + this.thumbPaddingLeft);
+            int realRange = this.maxCurPos - this.minimum;
+            float perc = (realRange != 0) ? ((float)(this.curPos - this.minimum) / (float)realRange) : 0f;
+            return Math.Max(this.thumbTopLimit, Math.Min(bottomLimit, Convert.ToInt32((perc * pixelRange) + offset)));
         }
 
         /// <summary>
@@ -1679,7 +1708,11 @@ namespace PluginCore.Controls
         /// <returns>The new thumb position.</returns>
         private int GetThumbPosition()
         {
-            return GetPosition(this.value);
+            int pixelRange = this.thumbBottomLimitTop - this.thumbTopLimit; // == size - thumbSize - arrows - paddings
+            int offset = (this.orientation == ScrollBarOrientation.Vertical) ? (this.arrowHeight + this.thumbPaddingTop) : (this.arrowWidth + this.thumbPaddingLeft);
+            int realRange = this.maximum - this.minimum;
+            float perc = (realRange != 0) ? ((float)(this.value - this.minimum) / (float)realRange) : 0f;
+            return Math.Max(this.thumbTopLimit, Math.Min(this.thumbBottomLimitTop, Convert.ToInt32((perc * pixelRange) + offset)));
         }
 
         /// <summary>
