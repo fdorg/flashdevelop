@@ -1360,6 +1360,7 @@ namespace PluginCore.Controls
                 // Update the thumb position, if the new location is within the bounds.
                 if (this.thumbClicked)
                 {
+                    int oldThumbLocation = (this.orientation == ScrollBarOrientation.Vertical) ? this.thumbRectangle.Y : this.thumbRectangle.X;
                     int oldScrollValue = this.value;
                     this.topButtonState = ScrollBarArrowButtonState.UpActive;
                     this.bottomButtonState = ScrollBarArrowButtonState.DownActive;
@@ -1389,12 +1390,21 @@ namespace PluginCore.Controls
                         // at min position
                         this.value = Convert.ToInt32((perc * (this.maximum - this.minimum)) + this.minimum);
                     }
-                    // raise scroll event if new value different
+
+                    // raise scroll event if value has changed
                     if (oldScrollValue != this.value)
                     {
                         this.OnScroll(new ScrollEventArgs(ScrollEventType.ThumbTrack, oldScrollValue, this.value, this.scrollOrientation));
-
                         this.Refresh();
+                    }
+                    else
+                    {
+                        int newThumbLocation = (this.orientation == ScrollBarOrientation.Vertical) ? this.thumbRectangle.Y : this.thumbRectangle.X;
+                        // repaint if thumb location has changed, but only at the top and bottom, to prevent thumb jumping around
+                        if ((oldThumbLocation != newThumbLocation) && ((newThumbLocation == thumbTopLimit) || (newThumbLocation == thumbBottomLimitTop)))
+                        {
+                            this.Refresh();
+                        }
                     }
                 }
             }
