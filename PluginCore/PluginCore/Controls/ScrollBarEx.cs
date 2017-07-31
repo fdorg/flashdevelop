@@ -2083,6 +2083,7 @@ namespace PluginCore.Controls
         protected Control control;
         protected ScrollBarEx vScrollBar;
         protected ScrollBarEx hScrollBar;
+        protected Control scrollerCorner;
 
         /// <summary>
         /// Initialize ScrollerBase
@@ -2133,6 +2134,7 @@ namespace PluginCore.Controls
                 control = null;
                 vScrollBar.Dispose();
                 hScrollBar.Dispose();
+                scrollerCorner.Dispose();
             }
 
             disposed = true;
@@ -2151,6 +2153,9 @@ namespace PluginCore.Controls
             hScrollBar.Height = ScaleHelper.Scale(SystemInformation.HorizontalScrollBarHeight);
             hScrollBar.Orientation = ScrollBarOrientation.Horizontal;
             hScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
+            scrollerCorner = new Control();
+            scrollerCorner.Width = vScrollBar.Width;
+            scrollerCorner.Height = hScrollBar.Height;
             if (PluginBase.MainForm.GetThemeFlag("ScrollBar.UseGlobally", false))
             {
                 AddScrollBars();
@@ -2166,6 +2171,7 @@ namespace PluginCore.Controls
         {
             control.Parent.Controls.Add(hScrollBar);
             control.Parent.Controls.Add(vScrollBar);
+            control.Parent.Controls.Add(scrollerCorner);
             vScrollBar.Scroll += OnScroll;
             hScrollBar.Scroll += OnScroll;
             vScrollBar.VisibleChanged += OnResize;
@@ -2181,6 +2187,7 @@ namespace PluginCore.Controls
         {
             control.Parent.Controls.Remove(hScrollBar);
             control.Parent.Controls.Remove(vScrollBar);
+            control.Parent.Controls.Remove(scrollerCorner);
             vScrollBar.Scroll -= OnScroll;
             hScrollBar.Scroll -= OnScroll;
             vScrollBar.VisibleChanged -= OnResize;
@@ -2205,6 +2212,7 @@ namespace PluginCore.Controls
             hScrollBar.HotArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotArrowColor", hScrollBar.ForeColor);
             hScrollBar.ActiveArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ActiveArrowColor", hScrollBar.ActiveForeColor);
             hScrollBar.HotForeColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotForeColor", hScrollBar.ForeColor);
+            scrollerCorner.BackColor = PluginBase.MainForm.GetThemeColor("ScrollBar.BackColor", vScrollBar.BackColor);
         }
 
         /// <summary>
@@ -2232,10 +2240,17 @@ namespace PluginCore.Controls
 
         protected virtual void OnResize(Object sender, EventArgs e)
         {
-            vScrollBar.BringToFront();
             vScrollBar.SetBounds(control.Location.X + control.Width - vScrollBar.Width, control.Location.Y, vScrollBar.Width, control.Height - (hScrollBar.Visible ? hScrollBar.Height : 0));
-            hScrollBar.BringToFront();
             hScrollBar.SetBounds(control.Location.X, control.Location.Y + control.Height - hScrollBar.Height, control.Width - (vScrollBar.Visible ? vScrollBar.Width : 0), hScrollBar.Height);
+            scrollerCorner.Visible = vScrollBar.Visible && hScrollBar.Visible;
+            if (scrollerCorner.Visible)
+            {
+                scrollerCorner.Location = new System.Drawing.Point(vScrollBar.Location.X, hScrollBar.Location.Y);
+                scrollerCorner.Refresh();
+                scrollerCorner.BringToFront();
+            }
+            vScrollBar.BringToFront();
+            hScrollBar.BringToFront();
             control.Invalidate();
         }
 
