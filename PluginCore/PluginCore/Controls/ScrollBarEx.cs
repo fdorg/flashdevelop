@@ -197,7 +197,7 @@ namespace PluginCore.Controls
         private static void DrawThumbVertical(Graphics g, Rectangle rect, Color color)
         {
             rect.X += ScaleHelper.Scale(2);
-            rect.Width -= ScaleHelper.Scale(4);
+            rect.Width -= 2 * ScaleHelper.Scale(2);
             using (Brush brush = new SolidBrush(color))
             {
                 g.FillRectangle(brush, rect);
@@ -213,7 +213,7 @@ namespace PluginCore.Controls
         private static void DrawThumbHorizontal(Graphics g, Rectangle rect, Color color)
         {
             rect.Y += ScaleHelper.Scale(2);
-            rect.Height -= ScaleHelper.Scale(4);
+            rect.Height -= 2 * ScaleHelper.Scale(2);
             using (Brush brush = new SolidBrush(color))
             {
                 g.FillRectangle(brush, rect);
@@ -424,9 +424,10 @@ namespace PluginCore.Controls
         private int value;
 
         /// <summary>
-        /// The width of the thumb.
+        /// The thickness of the thumb.
         /// </summary>
-        private int thumbWidth = ScaleHelper.Scale(13);
+        private const int THUMB_THICKNESS = 13;
+        private int thumbWidth;
 
         /// <summary>
         /// The height of the thumb.
@@ -436,32 +437,38 @@ namespace PluginCore.Controls
         /// <summary>
         /// The width of an arrow.
         /// </summary>
-        private int arrowWidth = ScaleHelper.Scale(13);
+        private const int ARROW_WIDTH = 13;
+        private int arrowWidth;
 
         /// <summary>
         /// The height of an arrow.
         /// </summary>
-        private int arrowHeight = ScaleHelper.Scale(13);
+        private const int ARROW_HEIGHT = 13;
+        private int arrowHeight;
 
         /// <summary>
         /// The top padding for the thumb.
         /// </summary>
-        private int thumbPaddingTop = ScaleHelper.Scale(3);
+        private const int THUMB_PADDING_TOP = 3;
+        private int thumbPaddingTop;
 
         /// <summary>
         /// The bottom padding for the thumb.
         /// </summary>
-        private int thumbPaddingBottom = ScaleHelper.Scale(4);
+        private const int THUMB_PADDING_BOTTOM = 3;
+        private int thumbPaddingBottom;
 
         /// <summary>
         /// The left padding for the thumb.
         /// </summary>
-        private int thumbPaddingLeft = ScaleHelper.Scale(3);
+        private const int THUMB_PADDING_LEFT = 3;
+        private int thumbPaddingLeft;
 
         /// <summary>
         /// The right padding for the thumb.
         /// </summary>
-        private int thumbPaddingRight = ScaleHelper.Scale(3);
+        private const int THUMB_PADDING_RIGHT = 3;
+        private int thumbPaddingRight;
 
         /// <summary>
         /// The bottom limit for the thumb bottom.
@@ -1576,11 +1583,15 @@ namespace PluginCore.Controls
             }
             // set up the width's, height's and rectangles for the different
             // elements
+            this.arrowHeight = ScaleHelper.Scale(ARROW_HEIGHT);
+            this.arrowWidth = ScaleHelper.Scale(ARROW_WIDTH);
+            this.thumbPaddingTop = ScaleHelper.Scale(THUMB_PADDING_TOP);
+            this.thumbPaddingBottom = ScaleHelper.Scale(THUMB_PADDING_BOTTOM);
+            this.thumbPaddingLeft = ScaleHelper.Scale(THUMB_PADDING_LEFT);
+            this.thumbPaddingRight = ScaleHelper.Scale(THUMB_PADDING_RIGHT);
             if (this.orientation == ScrollBarOrientation.Vertical)
             {
-                this.arrowHeight = ScaleHelper.Scale(13);
-                this.arrowWidth = ScaleHelper.Scale(13);
-                this.thumbWidth = ScaleHelper.Scale(13);
+                this.thumbWidth = ScaleHelper.Scale(THUMB_THICKNESS);
                 this.thumbHeight = this.GetThumbSize();
                 this.clickedBarRectangle = rect;
                 this.clickedBarRectangle.Inflate(-1, -1);
@@ -1616,10 +1627,8 @@ namespace PluginCore.Controls
             }
             else
             {
-                this.arrowHeight = ScaleHelper.Scale(13);
-                this.arrowWidth = ScaleHelper.Scale(13);
-                this.thumbHeight = ScaleHelper.Scale(13);
                 this.thumbWidth = this.GetThumbSize();
+                this.thumbHeight = ScaleHelper.Scale(THUMB_THICKNESS);
                 this.clickedBarRectangle = rect;
                 this.clickedBarRectangle.Inflate(-1, -1);
                 this.clickedBarRectangle.X += this.arrowWidth;
@@ -2101,9 +2110,10 @@ namespace PluginCore.Controls
             if (e.Type == EventType.ApplyTheme)
             {
                 Boolean enabled = PluginBase.MainForm.GetThemeFlag("ScrollBar.UseGlobally", false);
-                if (enabled && !control.Parent.Controls.Contains(vScrollBar))
+                if (enabled)
                 {
-                    AddScrollBars();
+                    if (!control.Parent.Controls.Contains(vScrollBar))
+                        AddScrollBars();
                     UpdateScrollBarTheme();
                 }
                 else if (!enabled && control.Parent.Controls.Contains(vScrollBar))

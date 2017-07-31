@@ -93,9 +93,10 @@ namespace ScintillaNet
                 Color color = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor");
                 String value = PluginBase.MainForm.GetThemeValue("ScrollBar.UseCustom");
                 Boolean enabled = value == "True" || (value == null && color != Color.Empty);
-                if (enabled && !this.Controls.Contains(this.vScrollBar))
+                if (enabled)
                 {
-                    this.AddScrollBars(this);
+                    if (!this.Controls.Contains(this.vScrollBar))
+                        this.AddScrollBars(this);
                     this.UpdateScrollBarTheme(this);
                 }
                 else if (!enabled && this.Controls.Contains(this.vScrollBar))
@@ -122,6 +123,7 @@ namespace ScintillaNet
             sender.hScrollBar.ActiveArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ActiveArrowColor", sender.hScrollBar.ActiveForeColor);
             sender.hScrollBar.HotForeColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotForeColor", sender.hScrollBar.ForeColor);
             sender.scrollerCorner.BackColor = PluginBase.MainForm.GetThemeColor("ScrollBar.BackColor", sender.vScrollBar.BackColor);
+            sender.vScrollBar.BackColor = sender.hScrollBar.BackColor = Color.LightGreen;
         }
 
         /// <summary>
