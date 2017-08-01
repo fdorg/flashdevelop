@@ -267,10 +267,6 @@ namespace PluginCore.Controls
                     });
 
             }
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.Default;
-            Pen p = Pens.AliceBlue.Clone() as Pen;
-            p.Color = Color.FromArgb(64, Color.OrangeRed);
-            g.DrawRectangle(p, new Rectangle(rect.X, rect.Y, rect.Width - 1, rect.Height - 1));
         }
 
         /// <summary>
@@ -295,10 +291,6 @@ namespace PluginCore.Controls
                         headPoint
                     });
             }
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.Default;
-            Pen p = Pens.AliceBlue.Clone() as Pen;
-            p.Color = Color.FromArgb(64, Color.OrangeRed);
-            g.DrawRectangle(p, new Rectangle(rect.X, rect.Y, rect.Width - 1, rect.Height - 1));
         }
 
         #endregion
