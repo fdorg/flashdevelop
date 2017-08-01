@@ -123,7 +123,6 @@ namespace ScintillaNet
             sender.hScrollBar.ActiveArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ActiveArrowColor", sender.hScrollBar.ActiveForeColor);
             sender.hScrollBar.HotForeColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotForeColor", sender.hScrollBar.ForeColor);
             sender.scrollerCorner.BackColor = PluginBase.MainForm.GetThemeColor("ScrollBar.BackColor", sender.vScrollBar.BackColor);
-            sender.vScrollBar.BackColor = sender.hScrollBar.BackColor = Color.LightGreen;
         }
 
         /// <summary>
@@ -132,11 +131,11 @@ namespace ScintillaNet
         private void InitScrollBars(ScintillaControl sender)
         {
             sender.vScrollBar = new ScrollBarEx();
-            sender.vScrollBar.Width = ScaleHelper.Scale(17);
+            sender.vScrollBar.Width = ScrollBarEx.ScaleOddUp(17); // Should be odd for nice and crisp arrow points.
             sender.vScrollBar.Orientation = ScrollBarOrientation.Vertical;
             sender.vScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
             sender.hScrollBar = new ScrollBarEx();
-            sender.hScrollBar.Height = ScaleHelper.Scale(17);
+            sender.hScrollBar.Height = ScrollBarEx.ScaleOddUp(17); // Should be odd for nice and crisp arrow points.
             sender.hScrollBar.Orientation = ScrollBarOrientation.Horizontal;
             sender.hScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
             sender.scrollerCorner = new Control();
