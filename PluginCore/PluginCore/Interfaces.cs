@@ -555,6 +555,7 @@ namespace PluginCore
         Boolean DisableSmartMatch { get; set; }
         Boolean SaveUnicodeWithBOM { get; set; }
         Boolean KeepCaretCentered { get; set; }
+        Boolean EndAtLastLine { get; set; }
         String InsertionTriggers { get; set; }
         Int32 ClipboardHistorySize { get; set; }
 

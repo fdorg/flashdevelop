@@ -228,6 +228,16 @@ namespace FlashDevelop.Settings
             set { this.keepCaretCentered = value; }
         }
 
+        [DefaultValue(false)]
+        [DisplayName("End At Last Line")]
+        [LocalizedCategory("FlashDevelop.Category.Editor")]
+        [LocalizedDescription("FlashDevelop.Description.EndAtLastLine")]
+        public Boolean EndAtLastLine
+        {
+            get { return this.endAtLastLine; }
+            set { this.endAtLastLine = value; }
+        }
+
         [DefaultValue(true)]
         [DisplayName("Disable Highlight Guide")]
         [LocalizedCategory("FlashDevelop.Category.Editor")]
