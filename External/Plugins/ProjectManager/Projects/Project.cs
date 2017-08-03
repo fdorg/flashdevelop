@@ -69,6 +69,7 @@ namespace ProjectManager.Projects
             hiddenPaths = new HiddenPathCollection();
             libraryAssets = new AssetCollection(this);
             storage = new Dictionary<string, string>();
+            StdPaths = new List<string>();
 
             InputPath = "";
             OutputPath = "";
@@ -131,6 +132,7 @@ namespace ProjectManager.Projects
         public AssetCollection LibraryAssets { get { return libraryAssets; } }
         public virtual String LibrarySWFPath { get { return OutputPath; } }
         public Dictionary<string, string> Storage { get { return storage; } }
+        public List<string> StdPaths { get; private set; }
 
         public CompilerOptions CompilerOptions
         {

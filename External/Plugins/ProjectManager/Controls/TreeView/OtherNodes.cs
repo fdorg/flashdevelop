@@ -209,15 +209,17 @@ namespace ProjectManager.Controls.TreeView
         public override void Refresh(bool recursive)
         {
             base.Refresh(recursive);
-
-            ArrayList projectClasspaths = new ArrayList();
-            ArrayList globalClasspaths = new ArrayList();
-
             GenericNodeList nodesToDie = new GenericNodeList();
-            foreach (GenericNode oldRef in Nodes) nodesToDie.Add(oldRef);
-            //if (Nodes.Count == 0) recursive = true;
+            nodesToDie.AddRange(Nodes);
+            foreach (var path in project.StdPaths)
+            {
+                var node = ReuseNode(path, nodesToDie) as ProjectClasspathNode ?? new ProjectClasspathNode(project, path, path);
+                Nodes.Add(node);
+                node.Refresh(recursive);
+            }
 
             // explore classpaths
+            ArrayList projectClasspaths = new ArrayList();
             if (PluginMain.Settings.ShowProjectClasspaths)
             {
                 projectClasspaths.AddRange(project.Classpaths);
@@ -225,6 +227,7 @@ namespace ProjectManager.Controls.TreeView
             }
             projectClasspaths.Sort();
 
+            ArrayList globalClasspaths = new ArrayList();
             if (PluginMain.Settings.ShowGlobalClasspaths)
                 globalClasspaths.AddRange(PluginMain.Settings.GlobalClasspaths);
             globalClasspaths.Sort();
@@ -269,9 +272,7 @@ namespace ProjectManager.Controls.TreeView
                     if (!Path.IsPathRooted(absolute))
                         absolute = project.GetAbsolutePath(asset.Path);
 
-                    bool showNode = true;
-                    if (absolute.StartsWithOrdinal(project.Directory))
-                        showNode = false;
+                    bool showNode = !absolute.StartsWithOrdinal(project.Directory);
                     foreach (string path in project.AbsoluteClasspaths)
                         if (absolute.StartsWithOrdinal(path))
                         {
