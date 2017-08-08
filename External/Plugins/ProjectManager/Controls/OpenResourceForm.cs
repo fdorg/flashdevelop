@@ -127,7 +127,7 @@ namespace ProjectManager.Controls
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Open Resource";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OpenResourceKeyDown);
-            this.Activated += new EventHandler(OpenResourceFormActivated);
+            this.Load += new EventHandler(OpenResourceFormLoad);
             this.ResumeLayout(false);
             this.PerformLayout();
         }
@@ -189,7 +189,7 @@ namespace ProjectManager.Controls
         /// <summary>
         /// 
         /// </summary>
-        private void OpenResourceFormActivated(Object sender, EventArgs e)
+        private void OpenResourceFormLoad(Object sender, EventArgs e)
         {
             if (openedFiles == null) this.CreateFileList();
             else
@@ -524,16 +524,34 @@ namespace ProjectManager.Controls
 
             foreach (var item in source)
             {
+                double score;
+                var file = Path.GetFileName(item);
+                var dir = Path.GetDirectoryName(item);
+
+                var searchFile = Path.GetFileName(searchText);
+                var searchDir = Path.GetDirectoryName(searchText);
+
+                if (AdvancedSearchMatch(file, searchFile, pathSeparator))
+                    score = 1000.0 / item.Length;
+                else
+                    score = SimpleSearchMatch(file, searchFile, pathSeparator) / item.Length;
+
+                if (!string.IsNullOrEmpty(searchDir))
+                {
+                    if (AdvancedSearchMatch(dir, searchDir, pathSeparator))
+                        score += 1000.0 / item.Length;
+                    else
+                        score += SimpleSearchMatch(dir, searchDir, pathSeparator) / item.Length;
+                }
+
+                if (score <= 0) continue;
+
                 var result = new SearchResult
                 {
-                    score = SimpleSearchMatch(item, searchText, pathSeparator),
+                    score = score,
                     value = item
                 };
-
-                if (result.score > 0)
-                {
-                    matchedItems.Add(result);
-                }
+                matchedItems.Add(result);
             }
 
             matchedItems.Sort((r1, r2) => r2.score.CompareTo(r1.score));
@@ -548,14 +566,42 @@ namespace ProjectManager.Controls
             return results;
         }
 
-        private static double SimpleSearchMatch(String file, String searchText, String pathSeparator)
+        private static bool AdvancedSearchMatch(string file, string searchText, string pathSeparator)
+        {
+            int i = 0; int j = 0;
+            if (file.Length < searchText.Length) return false;
+            Char[] text = Path.GetFileName(file).ToCharArray();
+            Char[] pattern = searchText.ToCharArray();
+            while (i < pattern.Length)
+            {
+                while (i < pattern.Length && j < text.Length && pattern[i] == text[j])
+                {
+                    i++;
+                    j++;
+                }
+                if (i == pattern.Length) return true;
+                if (Char.IsLower(pattern[i])) return false;
+                while (j < text.Length && Char.IsLower(text[j]))
+                {
+                    j++;
+                }
+                if (j == text.Length) return false;
+                if (pattern[i] != text[j]) return false;
+            }
+            return (i == pattern.Length);
+        }
+
+        private static double SimpleSearchMatch(string file, string searchText, string pathSeparator)
         {
             if (file.StartsWith(searchText, StringComparison.OrdinalIgnoreCase)) //Equality bonus
             {
-                return (searchText.Length + 0d) / file.Length;
+                return ((file.Length + 1d) / file.Length + (file.Length + 1d) / searchText.Length) / 2;
             }
 
-            return 0.66 * Score(Path.GetFileName(file), searchText, pathSeparator[0]) + 0.33 * Score(Path.GetDirectoryName(file), searchText, pathSeparator[0]);
+            var score = Score(file, searchText, pathSeparator[0]);
+
+            return score;
+
         }
 
         /**
