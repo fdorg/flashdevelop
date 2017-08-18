@@ -407,6 +407,14 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class ImplementInterface : GenerateJob
             {
+                internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
+
+                [TestFixtureSetUp]
+                public void ImplementInterfaceSetup()
+                {
+                    ASContext.CommonSettings.DeclarationModifierOrder = DeclarationModifierOrder;
+                }
+
                 private ClassModel GetAs3ImplementInterfaceModel()
                 {
                     var interfaceModel = new ClassModel { InFile = new FileModel(), Name = "ITest", Type = "ITest" };
@@ -610,6 +618,34 @@ namespace ASCompletion.Completion
 
                     return sci.Text;
                 }
+
+                public IEnumerable<TestCaseData> AS3TestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeImplementInterfaceMethods"), GeneratorJobType.ImplementInterface)
+                                .Returns(ReadAllTextAS3("AfterImplementInterfaceMethods"))
+                                .SetName("Implement interface methods. Issue 1684")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1684");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(AS3TestCases))]
+                public string AS3(string sourceText, GeneratorJobType job)
+                {
+                    SetAs3Features(sci);
+                    sci.Text = sourceText;
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    var currentModel = ASContext.Context.CurrentModel;
+                    new ASFileParser().ParseSrc(currentModel, sci.Text);
+                    var currentClass = currentModel.Classes[0];
+                    ASContext.Context.CurrentClass.Returns(currentClass);
+                    ASGenerator.contextParam = currentClass.Implements[0];
+                    ASGenerator.GenerateJob(job, ASContext.Context.CurrentMember, ASContext.Context.CurrentClass, null, null);
+                    return sci.Text;
+                }
+
             }
 
             [TestFixture]

@@ -632,6 +632,8 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue103_21.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue1645_2.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\GetStatementReturnTypeOfNewObject.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeImplementInterfaceMethods.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterImplementInterfaceMethods.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

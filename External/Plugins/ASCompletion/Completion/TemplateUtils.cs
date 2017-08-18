@@ -30,23 +30,18 @@ namespace ASCompletion.Completion
 
         public static string GetModifiers(MemberModel member)
         {
-            string modifiers = "";
             Visibility acc = member.Access;
-            if ((acc & Visibility.Private) > 0)
-                modifiers += "private ";
-            else if ((acc & Visibility.Public) > 0)
-                modifiers += "public ";
-            else if ((acc & Visibility.Protected) > 0)
-                modifiers += "protected ";
-            else if ((acc & Visibility.Internal) > 0)
-                modifiers += "internal ";
-            return modifiers;
+            if ((acc & Visibility.Private) > 0) return "private ";
+            if ((acc & Visibility.Public) > 0) return "public ";
+            if ((acc & Visibility.Protected) > 0) return "protected ";
+            if ((acc & Visibility.Internal) > 0) return "internal ";
+            return "";
         }
 
         public static string ToDeclarationWithModifiersString(MemberModel m, string template)
         {
             var features = ASContext.Context.Features;
-            var accessModifier = features.hasNamespaces && !string.IsNullOrEmpty(m.Namespace)
+            var accessModifier = m.Access == 0 && features.hasNamespaces && !string.IsNullOrEmpty(m.Namespace)
                                ? m.Namespace
                                : GetModifiers(m).Trim();
             if (accessModifier == "private" && features.methodModifierDefault == Visibility.Private
