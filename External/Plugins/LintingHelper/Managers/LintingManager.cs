@@ -131,11 +131,13 @@ namespace LintingHelper.Managers
         public static void UnLintFile(string file)
         {
             Cache.RemoveDocument(file);
+            UpdateLinterPanel();
         }
 
         public static void UnLintDocument(ITabbedDocument doc)
         {
             Cache.RemoveDocument(doc.FileName);
+            UpdateLinterPanel();
         }
 
         /// <summary>
@@ -150,12 +152,16 @@ namespace LintingHelper.Managers
             fileList.AddRange(PluginBase.MainForm.Documents.Select(d => d.FileName));
             Cache.RemoveAllExcept(fileList);
 
-            PluginBase.RunAsync(() =>
-            {
-                PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + TraceGroup);
-            });
-
             Cache.AddResults(results);
+
+            UpdateLinterPanel();
+        }
+
+        static void UpdateLinterPanel()
+        {
+            //PluginBase.RunAsync(() =>
+            //{
+            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + TraceGroup);
 
             var cachedResults = Cache.GetAllResults();
             foreach (var result in cachedResults)
@@ -182,19 +188,20 @@ namespace LintingHelper.Managers
                 switch (result.Severity)
                 {
                     case LintingSeverity.Info:
-                        state = (int) TraceType.Info;
+                        state = (int)TraceType.Info;
                         break;
                     case LintingSeverity.Warning:
-                        state = (int) TraceType.Warning;
+                        state = (int)TraceType.Warning;
                         break;
                     case LintingSeverity.Error:
-                        state = (int) TraceType.Error;
+                        state = (int)TraceType.Error;
                         break;
                     default:
                         continue;
                 }
                 TraceManager.Add(message, state, TraceGroup);
             }
+            //});
         }
     }
 }

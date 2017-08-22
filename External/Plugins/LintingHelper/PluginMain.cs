@@ -94,7 +94,7 @@ namespace LintingHelper
         private void AddEventHandlers()
         {
             BatchProcessManager.AddBatchProcessor(new BatchProcess.LintProcessor());
-            EventManager.AddEventHandler(this, EventType.FileOpen | EventType.FileSave | EventType.FileModify);
+            EventManager.AddEventHandler(this, EventType.FileOpen | EventType.FileSave | EventType.FileModify | EventType.FileClose);
         }
 
         private void InitBasics()
@@ -142,6 +142,9 @@ namespace LintingHelper
                         var fileSave = (TextEvent) e;
                         Managers.LintingManager.LintFiles(new string[] { fileSave.Value });
                     }
+                    break;
+                case EventType.FileClose:
+                    LintingManager.UnLintFile((e as TextEvent).Value);
                     break;
                 case EventType.FileModify:
                     var file = ((TextEvent)e).Value;
