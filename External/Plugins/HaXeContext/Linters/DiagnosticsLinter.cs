@@ -17,10 +17,12 @@ namespace HaXeContext.Linters
         {
             var context = ASContext.GetLanguageContext("haxe") as Context;
             if (context == null) return;
-            var completionMode = ((HaXeSettings) context.Settings).CompletionMode;
-            if (completionMode == HaxeCompletionModeEnum.FlashDevelop) return;
+            var settings = (HaXeSettings) context.Settings;
             var haxeVersion = context.GetCurrentSDKVersion();
-            if (haxeVersion < "3.3.0") return;
+            if (settings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop
+                || (settings.EnabledFeatures & CompletionFeatures.Diagnostics) == 0
+                || haxeVersion < "3.3.0")
+                return;
 
             var list = new List<LintingResult>();
             int progress = 0;
