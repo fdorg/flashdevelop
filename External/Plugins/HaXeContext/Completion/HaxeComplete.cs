@@ -129,7 +129,11 @@ namespace HaXeContext
             QuotePath(hxmlArgs);
             EscapeMacros(hxmlArgs);
 
-            hxmlArgs.Add(String.Format("--display \"{0}\"@{1}{2}", FileName, pos, GetMode()));
+            if (CompilerService == HaxeCompilerService.GLOBAL_DIAGNOSTICS)
+                hxmlArgs.Add("--display diagnostics");
+            else
+                hxmlArgs.Add(String.Format("--display \"{0}\"@{1}{2}", FileName, pos, GetMode()));
+
             hxmlArgs.Add("-D use_rtti_doc");
             hxmlArgs.Add("-D display-details");
             if (hxproj.TraceEnabled) hxmlArgs.Add("-debug");
@@ -156,6 +160,9 @@ namespace HaXeContext
 
                 case HaxeCompilerService.DIAGNOSTICS:
                     return "@diagnostics";
+
+                //case HaxeCompilerService.GLOBAL_DIAGNOSTICS:
+                //    return "diagnostics";
             }
 
             return "";
@@ -232,6 +239,7 @@ namespace HaXeContext
                     // necessary to get results with older versions due to a compiler bug
                     if (haxeVersion < "3.3.0") pos++;
                     break;
+                case HaxeCompilerService.GLOBAL_DIAGNOSTICS:
                 case HaxeCompilerService.DIAGNOSTICS:
                     pos = 0;
                     break;
@@ -249,15 +257,16 @@ namespace HaXeContext
             switch (CompilerService)
             {
                 case HaxeCompilerService.DIAGNOSTICS:
-                    try
-                    {
+                case HaxeCompilerService.GLOBAL_DIAGNOSTICS:
+                    //try
+                    //{
                         return ProcessResponse(JsonMapper.ToObject(lines));
-                    }
-                    catch
-                    {
-                        Errors = lines;
-                        return HaxeCompleteStatus.ERROR;
-                    }
+                    //}
+                    //catch(Exception e)
+                    //{
+                    //    Errors = lines;
+                    //    return HaxeCompleteStatus.ERROR;
+                    //}
                 default:
                     try
                     {
@@ -331,8 +340,12 @@ namespace HaXeContext
             return HaxeCompleteStatus.DIAGNOSTICS;
         }
 
+
+
         HaxePositionResult ParseRange(JsonData range, string path)
         {
+            if (range == null) return null;
+
             var start = range["start"];
             var end = range["end"];
 
@@ -622,7 +635,12 @@ namespace HaXeContext
         /// <summary>
         /// Since Haxe 3.3.0-rc1
         /// </summary>
-        DIAGNOSTICS
+        DIAGNOSTICS,
+
+        /// <summary>
+        /// Since Haxe 3.3.0-rc1
+        /// </summary>
+        GLOBAL_DIAGNOSTICS
     }
 
     public class HaxeDiagnosticsResult
