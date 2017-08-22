@@ -171,27 +171,28 @@ namespace HaXeContext
                     CommandFactoryProvider.Register("haxe", new HaxeCommandFactory());
                     break;
                 case EventType.Trace:
-                    var libs = new List<string>();
-                    var length = TraceManager.TraceLog.Count - logCount;
-                    for (var i = 0; i < length; i++)
+                    if (settingObject.DisableLibInstallation) return;
+                    var patterns = new[]
                     {
-                        var item = TraceManager.TraceLog[logCount + i];
-                        var patterns = new []
-                        {
-                            "(Library )([A-Za-z_.0-9]+)( is not installed)",
-                            "(Could not find haxelib \")([A-Za-z_.0-9]+)(\", does it need to be installed?)"//openfl project
-                        };
+                        "Library \\s*(?<name>[^ ]+)\\s*?(\\s*version (?<version>[^ ]+))?",
+                        "Could not find haxelib\\s*(?<name>\"[^ ]+\")?(\\s*version \"(?<version>[^ ]+)\")?"//openfl project
+                    };
+                    var nameToVersion = new Dictionary<string, string>();
+                    for (var i = logCount; i < TraceManager.TraceLog.Count; i++)
+                    {
+                        var message = TraceManager.TraceLog[i].Message?.Trim();
+                        if (string.IsNullOrEmpty(message)) continue;
                         foreach (var pattern in patterns)
                         {
-                            var match = Regex.Match(item.Message, pattern);
-                            if (match.Success) libs.Add(match.Groups[2].Value);
+                            var m = Regex.Match(message, pattern);
+                            if (m.Success) nameToVersion[m.Groups["name"].Value] = m.Groups["version"].Value;
                         }
                     }
                     logCount = TraceManager.TraceLog.Count;
-                    if (libs.Count == 0) return;
+                    if (nameToVersion.Count == 0) return;
                     var text = TextHelper.GetString("Info.MissingLib");
                     var result = MessageBox.Show(PluginBase.MainForm, text, string.Empty, MessageBoxButtons.OKCancel);
-                    if (result == DialogResult.OK) contextInstance.Install(libs);
+                    if (result == DialogResult.OK) contextInstance.InstallHaxelib(nameToVersion);
                     break;
             }
         }

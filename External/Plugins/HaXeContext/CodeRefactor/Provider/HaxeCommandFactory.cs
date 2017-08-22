@@ -15,18 +15,18 @@ namespace HaXeContext.CodeRefactor.Provider
     {
         public override Command CreateFindAllReferencesCommand(ASResult target, bool output, bool ignoreDeclarations, bool onlySourceFiles)
         {
-            if (target.Member != null && (target.Member.Flags & (FlagType.LocalVar | FlagType.ParameterVar)) != 0)
+            var context = (Context)ASContext.GetLanguageContext("haxe");
+            var settings = (HaXeSettings)context.Settings;
+            if (settings.EnableCompilerForFindAllReferences
+                && (settings.EnabledFeatures & CompletionFeatures.Usage) == CompletionFeatures.Usage
+                && settings.CompletionMode != HaxeCompletionModeEnum.FlashDevelop
+                && target.Member != null && ((target.Member.Flags & FlagType.LocalVar) > 0 || (target.Member.Flags & FlagType.ParameterVar) > 0)
+                && context.GetCurrentSDKVersion() >= "3.2.0")
             {
-                var context = (Context) ASContext.GetLanguageContext("haxe");
-                var settings = (HaXeSettings) context.Settings;
-                if (settings.CompletionMode != HaxeCompletionModeEnum.FlashDevelop
-                    && context.GetCurrentSDKVersion().IsGreaterThanOrEquals(new SemVer("3.2.0")) && (settings.EnabledFeatures & CompletionFeatures.Usage) == CompletionFeatures.Usage)
+                return new Commands.HaxeFindAllReferences(target, output, ignoreDeclarations)
                 {
-                    return new Commands.HaxeFindAllReferences(target, output, ignoreDeclarations)
-                    {
-                        OnlySourceFiles = onlySourceFiles
-                    };
-                }
+                    OnlySourceFiles = onlySourceFiles
+                };
             }
             return base.CreateFindAllReferencesCommand(target, output, ignoreDeclarations, onlySourceFiles);
         }

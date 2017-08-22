@@ -104,6 +104,7 @@ namespace ASCompletion.Completion
         public MemberModel functionArguments;
         public char[] SpecialPostfixOperators = {};
         public string ConstructorKey;
+        public bool HasGenericsShortNotation;
 
         /// <summary>
         /// Tells if a word is a keyword which precedes a type (like 'new')

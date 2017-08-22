@@ -9,6 +9,7 @@ namespace HaXeContext
 {
     public delegate void ClasspathChangedEvent();
     public delegate void CompletionModeChangedEventHandler();
+    public delegate void UseGenericsShortNotationChangedEventHandler();
 
     [Serializable]
     public class HaXeSettings : ASCompletion.Settings.IContextSettings
@@ -186,19 +187,26 @@ namespace HaXeContext
 
         #endregion
 
-        #region haXe specific members
+        #region Haxe specific members
 
         [field: NonSerialized]
         public event CompletionModeChangedEventHandler CompletionModeChanged;
 
+        [field: NonSerialized]
+        public event UseGenericsShortNotationChangedEventHandler UseGenericsShortNotationChanged;
+
         private const int DEFAULT_COMPLETION_SERVER_PORT = 6000;
-        const int DEFAULT_FLASHVERSION = 10;
-        const string DEFAULT_HAXECHECKPARAMS = "";
+        private const int DEFAULT_FLASHVERSION = 10;
+        private const string DEFAULT_HAXECHECKPARAMS = "";
         private const HaxeCompletionModeEnum DEFAULT_HAXECOMPLETIONMODE = HaxeCompletionModeEnum.Compiler;
-        const bool DEFAULT_DISABLEMIXEDCOMPLETION = false;
-        const bool DEFAULT_DISABLECOMPLETIONONDEMAND = true;
-        const bool DEFAULT_EXPORTHXML = false;
-        const CompletionFeatures DEFAULT_ENABLEDCOMPILERSERVICES = CompletionFeatures.Diagnostics | CompletionFeatures.DisplayStdIn | CompletionFeatures.Usage;
+
+        private const bool DEFAULT_DISABLEMIXEDCOMPLETION = false;
+        private const bool DEFAULT_DISABLECOMPLETIONONDEMAND = true;
+        private const bool DEFAULT_EXPORTHXML = false;
+        private const bool DEFAULT_DISABLE_LIB_INSTALLATION = true;
+        private const bool DEFAULT_ENABLE_COMPILER_FOR_FIND_ALL_REFERENCES = true;
+        private const bool DEFAULT_USEGENERICSSHORTNOTATION = true;
+        private const CompletionFeatures DEFAULT_ENABLEDCOMPILERSERVICES = CompletionFeatures.Diagnostics | CompletionFeatures.DisplayStdIn | CompletionFeatures.Usage;
 
         private int completionServerPort = DEFAULT_COMPLETION_SERVER_PORT;
         private int flashVersion = 10;
@@ -207,6 +215,9 @@ namespace HaXeContext
         private bool disableCompletionOnDemand = DEFAULT_DISABLECOMPLETIONONDEMAND;
         private bool exportHXML = DEFAULT_EXPORTHXML;
         private HaxeCompletionModeEnum _completionMode = DEFAULT_HAXECOMPLETIONMODE;
+        private bool disableLibInstallation = DEFAULT_DISABLE_LIB_INSTALLATION;
+        private bool enableCompilerForFindAllReferences = DEFAULT_ENABLE_COMPILER_FOR_FIND_ALL_REFERENCES;
+        private bool useGenericsShortNotation = DEFAULT_USEGENERICSSHORTNOTATION;
 
         [DisplayName("Default Flash Version")]
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("HaXeContext.Description.DefaultFlashVersion"), DefaultValue(DEFAULT_FLASHVERSION)]
@@ -287,19 +298,45 @@ namespace HaXeContext
             typeof(UITypeEditor))]
         public CompletionFeatures EnabledFeatures { get; set; } = DEFAULT_ENABLEDCOMPILERSERVICES;
 
+        [DisplayName("Disable Automatic Libraries Installation")]
+        [DefaultValue(DEFAULT_DISABLE_LIB_INSTALLATION)]
+        public bool DisableLibInstallation
+        {
+            get { return disableLibInstallation; }
+            set { disableLibInstallation = value; }
+        }
+
+        [DisplayName("Enable Compiler Services For Find All References")]
+        [Category("Code Refactor")]
+        [DefaultValue(DEFAULT_ENABLE_COMPILER_FOR_FIND_ALL_REFERENCES)]
+        public bool EnableCompilerForFindAllReferences
+        {
+            get { return enableCompilerForFindAllReferences; }
+            set { enableCompilerForFindAllReferences = value; }
+        }
+
+        [DisplayName("Use Short Notation For Generics")]
+        [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("HaXeContext.Description.UseGenericsShortNotation"), DefaultValue(DEFAULT_USEGENERICSSHORTNOTATION)]
+        public bool UseGenericsShortNotation
+        {
+            get { return useGenericsShortNotation; }
+            set
+            {
+                if (useGenericsShortNotation != value)
+                {
+                    useGenericsShortNotation = value;
+                    UseGenericsShortNotationChanged?.Invoke();
+                }
+            }
+        }
+
         #endregion
 
         [Browsable(false)]
-        private void FireChanged()
-        {
-            if (OnClasspathChanged != null) OnClasspathChanged();
-        }
+        void FireChanged() => OnClasspathChanged?.Invoke();
 
         [Browsable(false)]
-        private void FireCompletionMode()
-        {
-            if (CompletionModeChanged != null) CompletionModeChanged();
-        }
+        void FireCompletionMode() => CompletionModeChanged?.Invoke();
 
         [Browsable(false)]
         public void Init()

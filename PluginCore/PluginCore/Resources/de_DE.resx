@@ -6108,30 +6108,70 @@ AND - All conditions are met.</value>
   </data>
   <data name="ResultsPanel.Description.DefaultGrouping" xml:space="preserve">
     <value>Die Standard-Spalte nach der Resultate gruppiert werden.</value>
-	<comment>Added after 5.2.1</comment>
+    <comment>Added after 5.2.1</comment>
   </data>
   <data name="LintingHelper.Description.LintOnSave" xml:space="preserve">
     <value>Startet die verfügbaren Linter, wenn eine Datei gespeichert wird.</value>
-	<comment>Added after 5.2.1</comment>
+    <comment>Added after 5.2.1</comment>
   </data>
   <data name="LintingHelper.Description.LintOnOpen" xml:space="preserve">
     <value>Startet die verfügbaren Linter, wenn eine Datei geöffnet wird.</value>
-	<comment>Added after 5.2.1</comment>
+    <comment>Added after 5.2.1</comment>
   </data>
   <data name="LintingHelper.Label.RunLinters" xml:space="preserve">
     <value>Linter starten</value>
-	<comment>Added after 5.2.1</comment>
+    <comment>Added after 5.2.1</comment>
   </data>
   <data name="HaXeContext.Info.UnusedImport" xml:space="preserve">
     <value>Ungenutzter Import</value>
     <comment>Added after 5.2.1</comment>
   </data>
-  <data name="HaXeContext.Info.UnusedVariable" xml:space="preserve">
-    <value>Ungenutzte Variable</value>
+  <data name="HaXeContext.Info.UnresolvedIdentifier" xml:space="preserve">
+    <value>Nicht deklarierter Bezeichner</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="CodeRefactor.Label.FindAllReferencesResult" xml:space="preserve">
+    <value>'{0}' Referenzen</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="FlashDevelop.Label.FindAndReplaceResults" xml:space="preserve">
+    <value>Suchen und Ersetzen</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="LintingHelper.Label.LintingResults" xml:space="preserve">
+    <value>Linter</value>
     <comment>Added after 5.2.1</comment>
   </data>
   <data name="HaXeContext.Info.MissingLib" xml:space="preserve">
     <value>Missing libraries detected. Would you like to try to install them through the package manager?</value>
     <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="HaXeContext.Description.UseGenericsShortNotation" xml:space="preserve">
+    <value>Use short notation for generics instantiation whenever possible (ie. var arr:Array&lt;String&gt; = new Array())</value>
+    <comment>after 5.2.1</comment>
+  </data>
+  <data name="FlashDevelop.Label.Clear" xml:space="preserve">
+    <value>&amp;Clear</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="FlashDevelop.Label.PasteHistory" xml:space="preserve">
+    <value>Paste History</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="FlashDevelop.Description.ClipboardHistorySize" xml:space="preserve">
+    <value>The number of items to store in the clipboard history. Minimum value is 1.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ResultsPanel.Label.KeepResults" xml:space="preserve">
+    <value>Keep Results</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ResultsPanel.Description.HighlightOnlyActivePanelEntries" xml:space="preserve">
+    <value>Highlight only the entries in the active panel and the main panel.</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="ResultsPanel.Description.KeepResultsByDefault" xml:space="preserve">
+    <value>Keep result panels locked by default.</value>
+    <comment>Added after 5.2.0</comment>
   </data>
 </root>

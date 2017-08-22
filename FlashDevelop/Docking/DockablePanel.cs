@@ -11,7 +11,7 @@ namespace FlashDevelop.Docking
     {
         private Image image;
         private String pluginGuid;
-        
+
         public DockablePanel(Control ctrl, String pluginGuid)
         {
             this.Text = ctrl.Text;
@@ -24,7 +24,6 @@ namespace FlashDevelop.Docking
             this.HideOnClose = true;
             this.Controls.Add(ctrl);
             Globals.MainForm.ThemeControls(this);
-            this.Show();
         }
 
         /// <summary>
@@ -55,7 +54,21 @@ namespace FlashDevelop.Docking
         {
             return this.pluginGuid;
         }
+        
+        internal class Template : DockContent
+        {
+            private string persistString;
 
+            internal Template(string persistString)
+            {
+                this.persistString = persistString;
+            }
+
+            public override string GetPersistString()
+            {
+                return persistString;
+            }
+        }
     }
 
 }

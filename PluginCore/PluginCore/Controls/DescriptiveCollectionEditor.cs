@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
 using System.Windows.Forms;
@@ -20,6 +22,13 @@ namespace PluginCore.Controls
             form.Size = ScaleHelper.Scale(new Size(600, 400));
             ShowDescription(form);
             return form;
+        }
+
+        public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
+        {
+            var list = new List<T>((T[]) value);
+            list = (List<T>) base.EditValue(context, provider, list);
+            return list.ToArray();
         }
 
         protected override Type CreateCollectionItemType()

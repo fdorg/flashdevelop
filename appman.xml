@@ -451,12 +451,12 @@
     <Name>QuickNavigate</Name>
 		<Version>2.9</Version>
 		<Build>22</Build>
-		<Checksum>3ee2eb49f8ed5887d4bd4879b9bf373</Checksum>
+		<Checksum>0567a6b931fd24c1e03a839df5c47237</Checksum>
 		<Desc>Quickly navigate through Types, Fields, Projects and more</Desc>
 		<Group>Plugins</Group>
 		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4_INFO_t=5961</Info>
 		<Urls>
-			<Url>https://github.com/SlavaRa/fdplugin-quicknavigate/releases/download/2.9.22/QuickNavigate.fdz</Url>
+			<Url>https://github.com/SlavaRa/fdplugin-quicknavigate/releases/download/2.9.57/QuickNavigate.fdz</Url>
 	  </Urls>
 	</Entry>
 	<Entry>
@@ -592,14 +592,14 @@
 	<Entry>
 		<Id>yeomantemplates</Id>
 		<Name>Yeoman</Name>
-		<Version>0.4</Version>
+		<Version>0.5.1</Version>
 		<Build>1</Build>
-		<Checksum>2632B57F753DD691FF4271384EF81B2E</Checksum>
+		<Checksum>B88C4DE3390E85407F33980843F624EC</Checksum>
 		<Desc>Adds Yeoman generators to the project add menu</Desc>
 		<Group>Plugins</Group>
 		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4&amp;t=12936</Info>
 		<Urls>
-			<Url>https://github.com/DoclerLabs/hexDevelop/releases/download/v0.4/Yeoman.fdz</Url>
+			<Url>https://github.com/DoclerLabs/hexDevelop/releases/download/v0.5.1/Yeoman.fdz</Url>
 		</Urls>
 	</Entry>
 	<Entry>

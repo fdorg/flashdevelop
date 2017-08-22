@@ -7,36 +7,53 @@ namespace PluginCore.PluginCore.Utilities
     class SemVerTests
     {
         [Test]
-        public void IsOlderThan()
+        public void IsEqualTo()
         {
-            var ver = new SemVer("3.2.1");
-            Assert.IsTrue(ver.IsOlderThan(new SemVer("3.3.0")));
-            Assert.IsFalse(ver.IsOlderThan(new SemVer("3.0.0")));
+            var ver = new SemVer("3.3.0");
+            Assert.IsFalse(ver == "3.2.1");
+            Assert.IsTrue(ver == "3.3.0");
         }
 
         [Test]
-        public void Equals()
+        public void IsNotEqualTo()
         {
             var ver = new SemVer("3.3.0");
-            Assert.IsTrue(ver.Equals(new SemVer("3.3.0")));
-            Assert.IsFalse(ver.Equals(new SemVer("3.2.1")));
+            Assert.IsTrue(ver != "3.2.1");
+            Assert.IsFalse(ver != "3.3.0");
+        }
+
+        [Test]
+        public void IsLessThan()
+        {
+            var ver = new SemVer("3.2.1");
+            Assert.IsFalse(ver < "3.0.0");
+            Assert.IsTrue(ver < "3.3.0");
+        }
+
+        [Test]
+        public void IsLessThanOrEqualTo()
+        {
+            var ver = new SemVer("3.3.0");
+            Assert.IsFalse(ver <= "3.2.1");
+            Assert.IsTrue(ver <= "3.3.0");
+            Assert.IsTrue(ver <= "3.4.0");
         }
 
         [Test]
         public void IsGreaterThan()
         {
             var ver = new SemVer("3.3.0");
-            Assert.IsTrue(ver.IsGreaterThan(new SemVer("3.2.1")));
-            Assert.IsFalse(ver.IsGreaterThan(new SemVer("3.3.0")));
+            Assert.IsTrue(ver > "3.2.1");
+            Assert.IsFalse(ver > "3.3.0");
         }
 
         [Test]
         public void IsGreaterThanOrEquals()
         {
             var ver = new SemVer("3.3.0");
-            Assert.IsTrue(ver.IsGreaterThanOrEquals(new SemVer("3.2.1")));
-            Assert.IsTrue(ver.IsGreaterThanOrEquals(new SemVer("3.3.0")));
-            Assert.IsFalse(ver.IsGreaterThanOrEquals(new SemVer("3.4.0")));
+            Assert.IsTrue(ver >= "3.2.1");
+            Assert.IsTrue(ver >= "3.3.0");
+            Assert.IsFalse(ver >= "3.4.0");
         }
     }
 }

@@ -68,6 +68,6 @@ namespace CodeRefactor.Managers
             get;
         }
 
-        void Process(ITabbedDocument document);
+        void Process(string[] files);
     }
 }

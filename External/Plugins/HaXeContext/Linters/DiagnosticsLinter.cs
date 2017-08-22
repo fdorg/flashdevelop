@@ -1,72 +1,118 @@
-﻿using LintingHelper;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
 using ASCompletion.Completion;
 using ASCompletion.Context;
+using LintingHelper;
 using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
+using ScintillaNet;
 
 namespace HaXeContext.Linters
 {
     class DiagnosticsLinter : ILintProvider
     {
-        static readonly Dictionary<HaxeDiagnosticsSeverity, LintingSeverity> DiagnosticsSeverityToLintingSeverity =
-            new Dictionary<HaxeDiagnosticsSeverity, LintingSeverity>
-            {
-                {HaxeDiagnosticsSeverity.ERROR, LintingSeverity.Error},
-                {HaxeDiagnosticsSeverity.INFO, LintingSeverity.Info},
-                {HaxeDiagnosticsSeverity.WARNING, LintingSeverity.Warning}
-            };
-
         public void LintAsync(string[] files, LintCallback callback)
         {
             var context = ASContext.GetLanguageContext("haxe") as Context;
             if (context == null) return;
             var completionMode = ((HaXeSettings) context.Settings).CompletionMode;
+            if (completionMode == HaxeCompletionModeEnum.FlashDevelop) return;
             var haxeVersion = context.GetCurrentSDKVersion();
-            if (completionMode == HaxeCompletionModeEnum.FlashDevelop || haxeVersion.IsOlderThan(new SemVer("3.3.0"))) return;
-            foreach (var file in files)
+            if (haxeVersion < "3.3.0") return;
+
+            var list = new List<LintingResult>();
+            int progress = 0;
+            int total = files.Length;
+
+            for (var i = 0; i < files.Length; i++)
             {
-                var document = DocumentManager.FindDocument(file) ?? PluginBase.MainForm.OpenEditableDocument(file) as ITabbedDocument;
-                if (document == null) continue;
-                var hc = context.GetHaxeComplete(document.SciControl, new ASExpr {Position = 0}, true, HaxeCompilerService.DIAGNOSTICS);
+                var file = files[i];
+                if (!File.Exists(file))
+                {
+                    total--;
+                    continue;
+                }
+                bool sciCreated = false;
+                var sci = DocumentManager.FindDocument(file)?.SciControl;
+                if (sci == null)
+                {
+                    sci = new ScintillaControl
+                    {
+                        FileName = file,
+                        ConfigurationLanguage = "haxe"
+                    };
+                    sciCreated = true;
+                }
+
+                var hc = context.GetHaxeComplete(sci, new ASExpr { Position = 0 }, true, HaxeCompilerService.DIAGNOSTICS);
                 hc.GetDiagnostics((complete, results, status) =>
                 {
-                    var sci = document.SciControl;
-                    if (results == null || sci == null)
+                    progress++;
+                    if (sciCreated)
                     {
-                        callback(null);
-                        return;
+                        sci.Dispose();
                     }
-                    var list = new List<LintingResult>();
-                    foreach (var res in results)
-                    {
-                        var line = res.Range.LineStart + 1;
-                        var firstChar = sci.PositionFromLine(line) + res.Range.CharacterStart;
-                        var lastChar = sci.PositionFromLine(res.Range.LineEnd + 1) + res.Range.CharacterEnd;
-                        var result = new LintingResult
-                        {
-                            File = res.Range.Path,
-                            FirstChar = res.Range.CharacterStart,
-                            Length = lastChar - firstChar,
-                            Line = line,
-                            Severity = DiagnosticsSeverityToLintingSeverity[res.Severity]
-                        };
 
-                        switch (res.Kind)
+                    if (status == HaxeCompleteStatus.DIAGNOSTICS && results != null)
+                    {
+                        foreach (var res in results)
                         {
-                            case HaxeDiagnosticsKind.UNUSEDIMPORT:
-                                result.Description = TextHelper.GetString("HaXeContext.Info.UnusedImport");
-                                break;
-                            case HaxeDiagnosticsKind.UNUSEDVAR:
-                                result.Description = TextHelper.GetString("HaXeContext.Info.UnusedVariable");
-                                break;
+                            var result = new LintingResult
+                            {
+                                File = res.Range.Path,
+                                FirstChar = res.Range.CharacterStart,
+                                Length = res.Range.CharacterEnd - res.Range.CharacterStart,
+                                Line = res.Range.LineStart + 1,
+                            };
+
+                            switch (res.Severity)
+                            {
+                                case HaxeDiagnosticsSeverity.INFO:
+                                    result.Severity = LintingSeverity.Info;
+                                    break;
+                                case HaxeDiagnosticsSeverity.ERROR:
+                                    result.Severity = LintingSeverity.Error;
+                                    break;
+                                case HaxeDiagnosticsSeverity.WARNING:
+                                    result.Severity = LintingSeverity.Warning;
+                                    break;
+                                default:
+                                    continue;
+                            }
+
+                            switch (res.Kind)
+                            {
+                                case HaxeDiagnosticsKind.UnusedImport:
+                                    result.Description = TextHelper.GetString("Info.UnusedImport");
+                                    break;
+                                case HaxeDiagnosticsKind.UnresolvedIdentifier:
+                                    result.Description = TextHelper.GetString("Info.UnresolvedIdentifier");
+                                    break;
+                                case HaxeDiagnosticsKind.CompilerError:
+                                case HaxeDiagnosticsKind.RemovableCode:
+                                    result.Description = res.Args.Description;
+                                    break;
+                                default: //in case new kinds are added in new compiler versions
+                                    continue;
+                            }
+
+                            list.Add(result);
                         }
-
-                        list.Add(result);
                     }
-                    callback(list);
+                    else if (status == HaxeCompleteStatus.ERROR)
+                    {
+                        PluginBase.RunAsync(() =>
+                        {
+                            TraceManager.Add(hc.Errors, (int) TraceType.Error);
+                        });
+                    }
+
+                    if (progress == total)
+                    {
+                        callback(list);
+                    }
                 });
             }
         }
