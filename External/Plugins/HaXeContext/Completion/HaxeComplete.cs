@@ -258,15 +258,15 @@ namespace HaXeContext
             {
                 case HaxeCompilerService.DIAGNOSTICS:
                 case HaxeCompilerService.GLOBAL_DIAGNOSTICS:
-                    //try
-                    //{
+                    try
+                    {
                         return ProcessResponse(JsonMapper.ToObject(lines));
-                    //}
-                    //catch(Exception e)
-                    //{
-                    //    Errors = lines;
-                    //    return HaxeCompleteStatus.ERROR;
-                    //}
+                    }
+                    catch (JsonException)
+                    {
+                        Errors = lines;
+                        return HaxeCompleteStatus.ERROR;
+                    }
                 default:
                     try
                     {
