@@ -511,9 +511,9 @@ namespace ProjectManager.Controls
 
     struct SearchResult
     {
-        public double score;
-        public double folderScore;
-        public string value;
+        public double Score;
+        public double FolderScore;
+        public string Value;
     }
 
     public class SearchUtil
@@ -538,34 +538,32 @@ namespace ProjectManager.Controls
                 else
                     score = SimpleSearchMatch(file, searchFile, pathSeparator);
 
-                score /= file.Length; //divide by length to prefer shorter results over longer ones
+                score /= file.Length; //divide by length to prefer shorter results
 
                 if (score <= 0) continue;
 
                 //score folder path
                 var folderScore = 0.0;
                 if (!string.IsNullOrEmpty(searchDir))
-                    folderScore = SimpleSearchMatch(dir, searchDir, pathSeparator);
-
-                folderScore /= dir.Length;
+                    folderScore = SimpleSearchMatch(dir, searchDir, pathSeparator, false); //do not divide by length here, because short folders should not be favoured too much
 
                 var result = new SearchResult
                 {
-                    score = score,
-                    folderScore = folderScore,
-                    value = item
+                    Score = score,
+                    FolderScore = folderScore,
+                    Value = item
                 };
                 matchedItems.Add(result);
             }
 
             //sort results in following priority: folderScore, score, length (folderScore being the most important one)
-            var sortedMatches = matchedItems.OrderByDescending(r => r.folderScore).ThenByDescending(r => r.score).ThenBy(r => r.value.Length);
+            var sortedMatches = matchedItems.OrderByDescending(r => r.FolderScore).ThenByDescending(r => r.Score).ThenBy(r => r.Value.Length);
 
             var results = new List<string>();
             foreach (var r in sortedMatches)
             {
                 if (limit > 0 && i++ >= limit) break;
-                results.Add(r.value);
+                results.Add(r.Value);
             }
 
             return results;
@@ -575,8 +573,8 @@ namespace ProjectManager.Controls
         {
             int i = 0; int j = 0;
             if (file.Length < searchText.Length) return false;
-            char[] text = file.ToCharArray();
-            char[] pattern = searchText.ToCharArray();
+            var text = file.ToCharArray();
+            var pattern = searchText.ToCharArray();
             while (i < pattern.Length)
             {
                 while (i < pattern.Length && j < text.Length && pattern[i] == text[j])
@@ -596,26 +594,33 @@ namespace ProjectManager.Controls
             return i == pattern.Length;
         }
 
-        static double SimpleSearchMatch(string file, string searchText, string pathSeparator)
+        static double SimpleSearchMatch(string file, string searchText, string pathSeparator, bool normalize = true)
         {
             if (file.StartsWith(searchText, StringComparison.OrdinalIgnoreCase)) //Equality bonus
                 return ((file.Length + 1d) / file.Length + (file.Length + 1d) / searchText.Length) / 2;
 
-            var score = Score(file, searchText, pathSeparator[0]);
+            var score = normalize ? Score(file, searchText, pathSeparator[0]) : ScoreWithoutNormalize(file, searchText, pathSeparator[0]);
 
             return score;
 
         }
 
+        static double Score(string str, string query, char pathSeparator)
+        {
+            var score = ScoreWithoutNormalize(str, query, pathSeparator);
+
+            return (score / str.Length + score / query.Length) / 2;
+        }
+
         /**
          * Ported from: https://github.com/atom/fuzzaldrin/
          */
-        static double Score(string str, string query, char pathSeparator)
+        static double ScoreWithoutNormalize(string str, string query, char pathSeparator)
         {
             double score = 0;
 
             if (str.ToLower().Contains(query.ToLower())) //Contains bonus
-                score = 1;
+                return 1;
 
             int strIndex = 0;
 
@@ -642,7 +647,7 @@ namespace ProjectManager.Controls
                 strIndex = index + 1;
             }
 
-            return (score / str.Length + score / query.Length) / 2;
+            return score;
         }
 
     }
