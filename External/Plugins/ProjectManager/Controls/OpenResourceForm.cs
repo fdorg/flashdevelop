@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using PluginCore.Localization;
 using PluginCore.Helpers;
 using PluginCore.Controls;
-using ProjectManager;
 using PluginCore;
+using System.Linq;
 
 namespace ProjectManager.Controls
 {
@@ -512,6 +512,7 @@ namespace ProjectManager.Controls
     struct SearchResult
     {
         public double score;
+        public double folderScore;
         public string value;
     }
 
@@ -536,28 +537,30 @@ namespace ProjectManager.Controls
                 else
                     score = SimpleSearchMatch(file, searchFile, pathSeparator) / item.Length;
 
+                if (score <= 0) continue;
+
+                double folderScore = 0;
                 if (!string.IsNullOrEmpty(searchDir))
                 {
                     if (AdvancedSearchMatch(dir, searchDir, pathSeparator))
-                        score += 1000.0 / item.Length;
+                        folderScore = 1000.0;
                     else
-                        score += SimpleSearchMatch(dir, searchDir, pathSeparator) / item.Length;
+                        folderScore = SimpleSearchMatch(dir, searchDir, pathSeparator);
                 }
-
-                if (score <= 0) continue;
 
                 var result = new SearchResult
                 {
                     score = score,
+                    folderScore = folderScore,
                     value = item
                 };
                 matchedItems.Add(result);
             }
 
-            matchedItems.Sort((r1, r2) => r2.score.CompareTo(r1.score));
+            var sortedMatches = matchedItems.OrderBy(r => r.folderScore).ThenBy(r => r.score).Reverse();
 
             var results = new List<string>();
-            foreach (var r in matchedItems)
+            foreach (var r in sortedMatches)
             {
                 if (limit > 0 && i++ >= limit) break;
                 results.Add(r.value);
@@ -568,6 +571,8 @@ namespace ProjectManager.Controls
 
         private static bool AdvancedSearchMatch(string file, string searchText, string pathSeparator)
         {
+            if (searchText.ToUpperInvariant() != searchText) return false;
+
             int i = 0; int j = 0;
             if (file.Length < searchText.Length) return false;
             Char[] text = Path.GetFileName(file).ToCharArray();
