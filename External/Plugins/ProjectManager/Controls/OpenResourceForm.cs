@@ -532,21 +532,20 @@ namespace ProjectManager.Controls
                 var searchFile = Path.GetFileName(searchText);
                 var searchDir = Path.GetDirectoryName(searchText);
 
+                //score file name
                 if (AdvancedSearchMatch(file, searchFile, pathSeparator))
-                    score = 1000.0 / item.Length;
+                    score = 1000.0;
                 else
-                    score = SimpleSearchMatch(file, searchFile, pathSeparator) / item.Length;
+                    score = SimpleSearchMatch(file, searchFile, pathSeparator);
+
+                score /= item.Length; //divide by length to prefer shorter results over longer ones
 
                 if (score <= 0) continue;
 
-                double folderScore = 0;
+                //score folder path
+                var folderScore = 0.0;
                 if (!string.IsNullOrEmpty(searchDir))
-                {
-                    if (AdvancedSearchMatch(dir, searchDir, pathSeparator))
-                        folderScore = 1000.0;
-                    else
-                        folderScore = SimpleSearchMatch(dir, searchDir, pathSeparator);
-                }
+                    folderScore = SimpleSearchMatch(dir, searchDir, pathSeparator);
 
                 var result = new SearchResult
                 {
@@ -557,6 +556,7 @@ namespace ProjectManager.Controls
                 matchedItems.Add(result);
             }
 
+            //sort results by folderScore and score (score being more important)
             var sortedMatches = matchedItems.OrderBy(r => r.folderScore).ThenBy(r => r.score).Reverse();
 
             var results = new List<string>();
@@ -571,12 +571,10 @@ namespace ProjectManager.Controls
 
         private static bool AdvancedSearchMatch(string file, string searchText, string pathSeparator)
         {
-            if (searchText.ToUpperInvariant() != searchText) return false;
-
             int i = 0; int j = 0;
             if (file.Length < searchText.Length) return false;
-            Char[] text = Path.GetFileName(file).ToCharArray();
-            Char[] pattern = searchText.ToCharArray();
+            char[] text = file.ToCharArray();
+            char[] pattern = searchText.ToCharArray();
             while (i < pattern.Length)
             {
                 while (i < pattern.Length && j < text.Length && pattern[i] == text[j])
@@ -585,15 +583,15 @@ namespace ProjectManager.Controls
                     j++;
                 }
                 if (i == pattern.Length) return true;
-                if (Char.IsLower(pattern[i])) return false;
-                while (j < text.Length && Char.IsLower(text[j]))
+                if (char.IsLower(pattern[i])) return false;
+                while (j < text.Length && char.IsLower(text[j]))
                 {
                     j++;
                 }
                 if (j == text.Length) return false;
                 if (pattern[i] != text[j]) return false;
             }
-            return (i == pattern.Length);
+            return i == pattern.Length;
         }
 
         private static double SimpleSearchMatch(string file, string searchText, string pathSeparator)
