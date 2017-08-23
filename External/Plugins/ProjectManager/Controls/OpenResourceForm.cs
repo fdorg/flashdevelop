@@ -522,6 +522,17 @@ namespace ProjectManager.Controls
         {
             var i = 0;
             var matchedItems = new List<SearchResult>();
+            string searchFile;
+            string searchDir;
+            try
+            {
+                searchFile = Path.GetFileName(searchText);
+                searchDir = Path.GetDirectoryName(searchText);
+            }
+            catch (ArgumentException)
+            {
+                return new List<string>();
+            }
 
             foreach (var item in source)
             {
@@ -529,14 +540,11 @@ namespace ProjectManager.Controls
                 var file = Path.GetFileName(item);
                 var dir = Path.GetDirectoryName(item);
 
-                var searchFile = Path.GetFileName(searchText);
-                var searchDir = Path.GetDirectoryName(searchText);
-
                 //score file name
                 if (AdvancedSearchMatch(file, searchFile))
                     score = 1000.0;
                 else
-                    score = SimpleSearchMatch(file, searchFile, pathSeparator);
+                    score = Score(file, searchText, pathSeparator[0]);
 
                 score /= file.Length; //divide by length to prefer shorter results
 
@@ -545,13 +553,13 @@ namespace ProjectManager.Controls
                 //score folder path
                 var folderScore = 0.0;
                 if (!string.IsNullOrEmpty(searchDir))
-                    folderScore = SimpleSearchMatch(dir, searchDir, pathSeparator, false); //do not divide by length here, because short folders should not be favoured too much
+                    folderScore = ScoreWithoutNormalize(dir, searchDir, pathSeparator[0]); //do not divide by length here, because short folders should not be favoured too much
 
                 var result = new SearchResult
                 {
                     Score = score,
                     FolderScore = folderScore,
-                    Value = item
+                    Value = $"{item} {folderScore} {score}"//item
                 };
                 matchedItems.Add(result);
             }
@@ -592,17 +600,6 @@ namespace ProjectManager.Controls
                 if (pattern[i] != text[j]) return false;
             }
             return i == pattern.Length;
-        }
-
-        static double SimpleSearchMatch(string file, string searchText, string pathSeparator, bool normalize = true)
-        {
-            if (file.StartsWith(searchText, StringComparison.OrdinalIgnoreCase)) //Equality bonus
-                return ((file.Length + 1d) / file.Length + (file.Length + 1d) / searchText.Length) / 2;
-
-            var score = normalize ? Score(file, searchText, pathSeparator[0]) : ScoreWithoutNormalize(file, searchText, pathSeparator[0]);
-
-            return score;
-
         }
 
         static double Score(string str, string query, char pathSeparator)
