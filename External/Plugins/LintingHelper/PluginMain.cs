@@ -132,7 +132,8 @@ namespace LintingHelper
                     var fileOpen = (TextEvent) e;
                     if (this.settingObject.LintOnOpen)
                     {
-                        LintingManager.LintFiles(new string[] { fileOpen.Value });
+                        LintingManager.Cache.RemoveDocument(fileOpen.Value);
+                        LintingManager.LintFiles(new[] { fileOpen.Value });
                     }
                     break;
                 case EventType.FileSave:
@@ -141,14 +142,15 @@ namespace LintingHelper
                     if (reason != "HaxeComplete" && this.settingObject.LintOnSave)
                     {
                         var fileSave = (TextEvent) e;
-                        LintingManager.LintFiles(new string[] { fileSave.Value });
+                        LintingManager.Cache.RemoveDocument(fileSave.Value);
+                        LintingManager.LintFiles(new[] { fileSave.Value });
                     }
                     break;
                 case EventType.Command:
                     var ev = (DataEvent) e;
                     if (ev.Action == ProjectManagerEvents.BuildComplete || ev.Action == ProjectManagerEvents.Project)
                     {
-                        LintingManager.Cache.RemoveAllExcept(new string[] { });
+                        LintingManager.Cache.RemoveAll();
                         LintingManager.UpdateLinterPanel();
                     }
                     break;
