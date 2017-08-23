@@ -538,7 +538,7 @@ namespace ProjectManager.Controls
                 else
                     score = SimpleSearchMatch(file, searchFile, pathSeparator);
 
-                score /= item.Length; //divide by length to prefer shorter results over longer ones
+                score /= file.Length; //divide by length to prefer shorter results over longer ones
 
                 if (score <= 0) continue;
 
@@ -546,6 +546,8 @@ namespace ProjectManager.Controls
                 var folderScore = 0.0;
                 if (!string.IsNullOrEmpty(searchDir))
                     folderScore = SimpleSearchMatch(dir, searchDir, pathSeparator);
+
+                folderScore /= dir.Length;
 
                 var result = new SearchResult
                 {
@@ -556,8 +558,8 @@ namespace ProjectManager.Controls
                 matchedItems.Add(result);
             }
 
-            //sort results by folderScore and score (score being more important)
-            var sortedMatches = matchedItems.OrderBy(r => r.folderScore).ThenBy(r => r.score).Reverse();
+            //sort results in following priority: score, folderScore, length (score being the most important one)
+            var sortedMatches = matchedItems.OrderByDescending(r => r.score).ThenByDescending(r => r.folderScore).ThenBy(r => r.value.Length);
 
             var results = new List<string>();
             foreach (var r in sortedMatches)
