@@ -533,7 +533,7 @@ namespace ProjectManager.Controls
                 var searchDir = Path.GetDirectoryName(searchText);
 
                 //score file name
-                if (AdvancedSearchMatch(file, searchFile, pathSeparator))
+                if (AdvancedSearchMatch(file, searchFile))
                     score = 1000.0;
                 else
                     score = SimpleSearchMatch(file, searchFile, pathSeparator);
@@ -569,7 +569,7 @@ namespace ProjectManager.Controls
             return results;
         }
 
-        private static bool AdvancedSearchMatch(string file, string searchText, string pathSeparator)
+        static bool AdvancedSearchMatch(string file, string searchText)
         {
             int i = 0; int j = 0;
             if (file.Length < searchText.Length) return false;
@@ -594,12 +594,10 @@ namespace ProjectManager.Controls
             return i == pattern.Length;
         }
 
-        private static double SimpleSearchMatch(string file, string searchText, string pathSeparator)
+        static double SimpleSearchMatch(string file, string searchText, string pathSeparator)
         {
             if (file.StartsWith(searchText, StringComparison.OrdinalIgnoreCase)) //Equality bonus
-            {
                 return ((file.Length + 1d) / file.Length + (file.Length + 1d) / searchText.Length) / 2;
-            }
 
             var score = Score(file, searchText, pathSeparator[0]);
 
@@ -610,14 +608,12 @@ namespace ProjectManager.Controls
         /**
          * Ported from: https://github.com/atom/fuzzaldrin/
          */
-        private static double Score(string str, string query, char pathSeparator)
+        static double Score(string str, string query, char pathSeparator)
         {
             double score = 0;
 
             if (str.ToLower().Contains(query.ToLower())) //Contains bonus
-            {
                 score = 1;
-            }
 
             int strIndex = 0;
 
@@ -628,28 +624,19 @@ namespace ProjectManager.Controls
                 var index = str.IndexOf(character, strIndex, StringComparison.OrdinalIgnoreCase);
 
                 if (index == -1)
-                {
                     return 0;
-                }
 
-                double charScore = 0.1;
+                var charScore = 0.1;
 
                 if (str[index] == query[i]) //same case bonus
-                {
                     charScore += 0.1;
-                }
 
                 if (index == 0 || str[index - 1] == pathSeparator) //start of string bonus
-                {
                     charScore += 0.8;
-                }
                 else if (i == index) //equivalent position bonus
-                {
                     charScore += 0.5;
-                }
 
                 score += charScore;
-
                 strIndex = index + 1;
             }
 
