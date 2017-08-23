@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using LintingHelper.Helpers;
 using PluginCore;
 using PluginCore.Managers;
@@ -79,10 +78,10 @@ namespace LintingHelper.Managers
             foreach (var linter in GetLinters(language))
             {
                 //remove cache
-                foreach (var file in files)
-                {
-                    UnLintFile(file);
-                }
+                //foreach (var file in files)
+                //{
+                //    UnLintFile(file);
+                //}
                 linter.LintAsync(files, (results) =>
                 {
                     ApplyLint(files, language, results);
@@ -148,16 +147,16 @@ namespace LintingHelper.Managers
             if (results == null)
                 return;
 
-            var fileList = new List<string>(files);
-            fileList.AddRange(PluginBase.MainForm.Documents.Select(d => d.FileName));
-            Cache.RemoveAllExcept(fileList);
+            //var fileList = new List<string>(files);
+            //fileList.AddRange(PluginBase.MainForm.Documents.Select(d => d.FileName));
+            //Cache.RemoveAllExcept(fileList);
 
             Cache.AddResults(results);
 
             UpdateLinterPanel();
         }
 
-        static void UpdateLinterPanel()
+        internal static void UpdateLinterPanel()
         {
             //PluginBase.RunAsync(() =>
             //{

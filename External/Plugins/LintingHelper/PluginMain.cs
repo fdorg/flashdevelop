@@ -9,6 +9,7 @@ using System.Drawing;
 using System.IO;
 using LintingHelper.Managers;
 using PluginCore.Localization;
+using ProjectManager;
 
 namespace LintingHelper
 {
@@ -94,7 +95,7 @@ namespace LintingHelper
         private void AddEventHandlers()
         {
             BatchProcessManager.AddBatchProcessor(new BatchProcess.LintProcessor());
-            EventManager.AddEventHandler(this, EventType.FileOpen | EventType.FileSave | EventType.FileModify | EventType.FileClose);
+            EventManager.AddEventHandler(this, EventType.FileOpen | EventType.FileSave | EventType.FileModify | EventType.Command);
         }
 
         private void InitBasics()
@@ -143,12 +144,17 @@ namespace LintingHelper
                         Managers.LintingManager.LintFiles(new string[] { fileSave.Value });
                     }
                     break;
-                case EventType.FileClose:
-                    LintingManager.UnLintFile((e as TextEvent).Value);
+                case EventType.Command:
+                    var ev = (DataEvent) e;
+                    if (ev.Action == ProjectManagerEvents.BuildComplete)
+                    {
+                        LintingManager.Cache.RemoveAllExcept(new string[] { });
+                        LintingManager.UpdateLinterPanel();
+                    }
                     break;
                 case EventType.FileModify:
                     var file = ((TextEvent)e).Value;
-                    Managers.LintingManager.UnLintDocument(DocumentManager.FindDocument(file));
+                    LintingManager.UnLintFile((e as TextEvent).Value);
                     break;
             }
         }
