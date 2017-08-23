@@ -4254,8 +4254,7 @@ namespace ScintillaNet
         /// </summary>
         public void DeleteForward()
         {
-            SetSel(CurrentPos + 1, CurrentPos + 1);
-            DeleteBack();
+            Clear();
         }
 
         /// <summary>
