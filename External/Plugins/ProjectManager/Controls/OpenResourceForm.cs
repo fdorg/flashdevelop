@@ -558,8 +558,8 @@ namespace ProjectManager.Controls
                 matchedItems.Add(result);
             }
 
-            //sort results in following priority: score, folderScore, length (score being the most important one)
-            var sortedMatches = matchedItems.OrderByDescending(r => r.score).ThenByDescending(r => r.folderScore).ThenBy(r => r.value.Length);
+            //sort results in following priority: folderScore, score, length (folderScore being the most important one)
+            var sortedMatches = matchedItems.OrderByDescending(r => r.folderScore).ThenByDescending(r => r.score).ThenBy(r => r.value.Length);
 
             var results = new List<string>();
             foreach (var r in sortedMatches)
