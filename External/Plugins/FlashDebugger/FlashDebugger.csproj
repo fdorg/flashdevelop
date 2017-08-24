@@ -185,6 +185,9 @@
     <Content Include="Icons\Breakpoints\Enabled.png" />
     <Content Include="Icons\Continue.png" />
     <Content Include="Icons\Current.png" />
+    <Content Include="jni4net.n.w32.v40-0.8.8.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Icons\DeleteBreakpoints.png" />
     <None Include="Icons\DeleteBreakpoint.png" />
     <None Include="Icons\ExportBreakpoints.png" />
@@ -197,9 +200,6 @@
     <Content Include="Icons\Stop.png" />
     <None Include="Icons\ToggleBreakpoints.png" />
     <Content Include="jni4net.j-0.8.8.0.jar">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="jni4net.n.w32.v20-0.8.8.0.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
