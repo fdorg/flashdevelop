@@ -17,8 +17,9 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile />
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -77,7 +78,7 @@
     <Compile Include="Completion\ArgumentsProcessor.cs" />
     <Compile Include="Completion\ASComplete.cs" />
     <Compile Include="Completion\ASGenerator.cs" />
-    <Compile Include="Completion\Braces.cs" />
+    <Compile Include="Completion\Brace.cs" />
     <Compile Include="Completion\CodeUtils.cs" />
     <Compile Include="Completion\Reformater.cs" />
     <Compile Include="Completion\TemplateUtils.cs" />
@@ -85,6 +86,9 @@
     <Compile Include="Completion\ASDocumentation.cs" />
     <Compile Include="Completion\ContextFeatures.cs" />
     <Compile Include="Context\IASContext.cs" />
+    <Compile Include="Controls\AddClosingBracesRulesEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="CustomControls\StateSavingTreeView.cs" />
     <Compile Include="CustomControls\ModelsExplorer.cs">
       <SubType>UserControl</SubType>
@@ -92,6 +96,7 @@
     <Compile Include="CustomControls\ModelsExplorer.Designer.cs">
       <DependentUpon>ModelsExplorer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\AddClosingBracesRulesEditor.cs" />
     <Compile Include="Helpers\FlashErrorsWatcher.cs" />
     <Compile Include="Helpers\ModifierOrderEditor.cs" />
     <Compile Include="Model\ASFileParser.cs" />

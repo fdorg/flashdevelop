@@ -173,8 +173,8 @@ namespace PluginCore.Bridge
                         string[] lines = so.Data.ToString().Split('*');
                         foreach (string line in lines)
                         {
-                            if (line.Length > 0 && this.DataReceived != null)
-                                this.DataReceived(this, new DataReceivedEventArgs(line, so.Client));
+                            if (line.Length > 0)
+                                DataReceived?.Invoke(this, new DataReceivedEventArgs(line, so.Client));
                         }
                         so.Data = new StringBuilder();
                     }

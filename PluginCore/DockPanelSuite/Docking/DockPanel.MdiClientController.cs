@@ -234,8 +234,8 @@ namespace WeifenLuo.WinFormsUI.Docking
                     case (int)Win32.Msgs.WM_NCCALCSIZE:
                         // If AutoScroll is set to false, hide the scrollbars when the control
                         // calculates its non-client area.
-                        if (!AutoScroll) 
-                        { 
+                        if (!AutoScroll)
+                        {
                             if (NativeMethods.ShouldUseWin32()) NativeMethods.ShowScrollBar(m.HWnd, (int)Win32.ScrollBars.SB_BOTH, 0 /*false*/);
                         }
                         break;

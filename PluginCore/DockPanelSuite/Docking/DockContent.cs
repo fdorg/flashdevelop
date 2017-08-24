@@ -13,6 +13,7 @@ namespace WeifenLuo.WinFormsUI.Docking
         {
             m_dockHandler = new DockContentHandler(this, new GetPersistStringCallback(GetPersistString));
             m_dockHandler.DockStateChanged += new EventHandler(DockHandler_DockStateChanged);
+            m_dockHandler.IsActivatedChanged += new EventHandler(DockHandler_IsActivatedChanged);
         }
 
         private DockContentHandler m_dockHandler = null;
@@ -277,6 +278,24 @@ namespace WeifenLuo.WinFormsUI.Docking
         protected virtual void OnDockStateChanged(EventArgs e)
         {
             EventHandler handler = (EventHandler)Events[DockStateChangedEvent];
+            if (handler != null)
+                handler(this, e);
+        }
+
+        private void DockHandler_IsActivatedChanged(object sender, EventArgs e)
+        {
+            OnIsActivatedChanged(e);
+        }
+
+        private static readonly object IsActivatedChangedEvent = new object();
+        public event EventHandler IsActivatedChanged
+        {
+            add { Events.AddHandler(IsActivatedChangedEvent, value); }
+            remove { Events.RemoveHandler(IsActivatedChangedEvent, value); }
+        }
+        protected virtual void OnIsActivatedChanged(EventArgs e)
+        {
+            EventHandler handler = (EventHandler) Events[IsActivatedChangedEvent];
             if (handler != null)
                 handler(this, e);
         }

@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Text;
-using ASCompletion.Context;
 using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Utilities;
@@ -11,6 +10,9 @@ namespace CodeRefactor.Commands
 {
     public class SurroundWithCommand
     {
+        public const string SurroundFolder = "surround";
+        public const string SurroundExt = ".fds";
+
         protected string SnippetCode;
 
         public SurroundWithCommand(string snippet)
@@ -94,15 +96,10 @@ namespace CodeRefactor.Commands
             }
         }
 
-        public static String GetSnippet(String word, String syntax, Encoding current)
+        public static string GetSnippet(string word, string syntax, Encoding current)
         {
-            string surroundFolder = "surround";
-
-            String globalDir = Path.Combine(PathHelper.SnippetDir, surroundFolder);
-            String global = Path.Combine(globalDir, word + ".fds");
-            String specificDir = Path.Combine(PathHelper.SnippetDir, syntax);
-            specificDir = Path.Combine(specificDir, surroundFolder);
-            String specific = Path.Combine(specificDir, word + ".fds");
+            string specific = Path.Combine(Path.Combine(Path.Combine(PathHelper.SnippetDir, syntax), SurroundFolder), word + SurroundExt);
+            string global = Path.Combine(Path.Combine(PathHelper.SnippetDir, SurroundFolder), word + SurroundExt);
             if (File.Exists(specific))
             {
                 EncodingFileInfo info = FileHelper.GetEncodingFileInfo(specific);

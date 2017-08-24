@@ -227,7 +227,7 @@ namespace PluginCore.Managers
         /// </summary>
         public void Initialize()
         {
-            if (Populate != null) Populate(this, EventArgs.Empty);
+            Populate?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>

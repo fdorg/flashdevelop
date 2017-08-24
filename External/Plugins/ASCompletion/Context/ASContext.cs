@@ -375,7 +375,7 @@ namespace ASCompletion.Context
             }
             else shouldIgnore = true;
 
-            FileModel.Ignore.FileName = filename ?? "";
+            FileModel.Ignore.FileName = filename;
             // find the doc context(s)
             if (!shouldIgnore)
             {
@@ -1189,7 +1189,6 @@ namespace ASCompletion.Context
         /// <summary>
         /// Return imported classes list (not null)
         /// </summary>
-        /// <param name="package">Package to explore</param>
         /// <param name="inFile">Current file</param>
         public virtual MemberList ResolveImports(FileModel inFile)
         {
@@ -1261,6 +1260,8 @@ namespace ASCompletion.Context
         {
             return new MemberList();
         }
+
+        public virtual string GetDefaultValue(string type) => null;
         #endregion
 
         #region operations on text insertion
@@ -1574,6 +1575,7 @@ namespace ASCompletion.Context
             int.TryParse(parts[0], out majorVersion);
             if (parts.Length > 1) int.TryParse(parts[1], out minorVersion);
         }
+
         #endregion
     }
 

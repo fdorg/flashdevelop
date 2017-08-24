@@ -17,8 +17,9 @@
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile />
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -101,6 +102,15 @@
       <Name>ASCompletion</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\CodeRefactor\CodeRefactor.csproj">
+      <Project>{1f6df858-6011-4cac-b33e-7000ee90ffbe}</Project>
+      <Name>CodeRefactor</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\LintingHelper\LintingHelper.csproj">
+      <Project>{8b5a1c53-af20-4379-a8d1-31822acc6ad8}</Project>
+      <Name>LintingHelper</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ProjectManager\ProjectManager.csproj">
       <Project>{78101C01-E186-4954-B1DD-DEBB7905FAD8}</Project>
       <Name>ProjectManager</Name>
@@ -108,14 +118,17 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeRefactor\Commands\HaxeFindAllReferences.cs" />
+    <Compile Include="CodeRefactor\Provider\HaxeCommandFactory.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="Completion\HaxeComplete.cs" />
     <Compile Include="Completion\IHaxeCompletionHandler.cs" />
     <Compile Include="Completion\CompilerCompletionHandler.cs" />
     <Compile Include="Completion\CompletionServerCompletionHandler.cs" />
-    <Compile Include="HaxeComplete330.cs" />
+    <Compile Include="Completion\HaxeComplete330.cs" />
     <Compile Include="HaXeSettings.cs" />
     <Compile Include="ExternalToolchain.cs" />
+    <Compile Include="Linters\DiagnosticsLinter.cs" />
     <Compile Include="PluginMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -141,4 +154,5 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
 </Project>

@@ -228,6 +228,16 @@ namespace FlashDevelop.Settings
             set { this.keepCaretCentered = value; }
         }
 
+        [DefaultValue(false)]
+        [DisplayName("End At Last Line")]
+        [LocalizedCategory("FlashDevelop.Category.Editor")]
+        [LocalizedDescription("FlashDevelop.Description.EndAtLastLine")]
+        public Boolean EndAtLastLine
+        {
+            get { return this.endAtLastLine; }
+            set { this.endAtLastLine = value; }
+        }
+
         [DefaultValue(true)]
         [DisplayName("Disable Highlight Guide")]
         [LocalizedCategory("FlashDevelop.Category.Editor")]
@@ -354,6 +364,24 @@ namespace FlashDevelop.Settings
                 return this.highlightMatchingWordsDelay;
             }
             set { this.highlightMatchingWordsDelay = value; }
+        }
+
+        [DefaultValue(50)]
+        [DisplayName("Clipboard History Size")]
+        [LocalizedCategory("FlashDevelop.Category.Editor")]
+        [LocalizedDescription("FlashDevelop.Description.ClipboardHistorySize")]
+        public Int32 ClipboardHistorySize
+        {
+            get
+            {
+                if (this.clipboardHistorySize <= 0) this.clipboardHistorySize = 50; // value was lost in the settings file, and was set via serialization.
+                return this.clipboardHistorySize;
+            }
+            set
+            {
+                if (value <= 0) throw new ArgumentOutOfRangeException(nameof(value));
+                this.clipboardHistorySize = value;
+            }
         }
 
         #endregion

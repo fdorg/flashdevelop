@@ -364,7 +364,7 @@ namespace PluginCore.Controls
                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
                 g.DrawImage(item.Icon, 1, e.Bounds.Top + ((e.Bounds.Height - newHeight) / 2), newHeight, newHeight);
                 int p = item.Label.LastIndexOf('.');
-                if (p > 0 && !selected)
+                if (p > 0 && !selected && !(item is ICompletionListSpecialItem))
                 {
                     string package = item.Label.Substring(0, p + 1);
                     g.DrawString(package, e.Font, packageBrush, tbounds, StringFormat.GenericDefault);
@@ -885,9 +885,10 @@ namespace PluginCore.Controls
             switch (key)
             {
                 case Keys.Back:
-                    if (word.Length >= MinWordLength)
+                    var wordLength = word.Length;
+                    if (wordLength > 0 && wordLength >= MinWordLength)
                     {
-                        word = word.Substring(0, word.Length - 1);
+                        word = word.Substring(0, wordLength - 1);
                         currentPos = sci.CurrentPos - 1;
                         lastIndex = 0;
                         FindWordStartingWith(word);

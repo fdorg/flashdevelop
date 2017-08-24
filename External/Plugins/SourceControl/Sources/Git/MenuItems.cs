@@ -18,6 +18,7 @@ namespace SourceControl.Sources.Git
         ToolStripItem push;
         ToolStripItem showLog;
         ToolStripItem midSeparator;
+        ToolStripItem annotate;
         ToolStripItem diff;
         ToolStripItem diffChange;
         ToolStripItem add;
@@ -34,6 +35,7 @@ namespace SourceControl.Sources.Git
         public ToolStripItem Push { get { return push; } }
         public ToolStripItem ShowLog { get { return showLog; } }
         public ToolStripItem MidSeparator { get { return midSeparator; } }
+        public ToolStripItem Annotate { get { return annotate; } }
         public ToolStripItem Diff { get { return diff; } }
         public ToolStripItem DiffChange { get { return diffChange; } }
         public ToolStripItem Add { get { return add; } }
@@ -52,6 +54,7 @@ namespace SourceControl.Sources.Git
             push = new ToolStripMenuItem(TextHelper.GetString("Label.Push"), PluginBase.MainForm.FindImage("159|9|-3|3"), Push_Click);
             showLog = new ToolStripMenuItem(TextHelper.GetString("Label.ShowLog"), PluginBase.MainForm.FindImage("95"), ShowLog_Click);
             midSeparator = new ToolStripSeparator();
+            annotate = new ToolStripMenuItem("Annotate", PluginBase.MainForm.FindImage("45"), Annotate_Click);
             diff = new ToolStripMenuItem(TextHelper.GetString("Label.Diff"), PluginBase.MainForm.FindImage("251"), Diff_Click);
             diffChange = new ToolStripMenuItem(TextHelper.GetString("Label.DiffWithPrevious"), PluginBase.MainForm.FindImage("251"), DiffChange_Click);
             add = new ToolStripMenuItem(TextHelper.GetString("Label.Add"), PluginBase.MainForm.FindImage("33"), Add_Click);
@@ -99,6 +102,14 @@ namespace SourceControl.Sources.Git
         void Ignore_Click(object sender, EventArgs e)
         {
             TortoiseProc.Execute("ignore", GetPaths());
+        }
+
+        void Annotate_Click(object sender, EventArgs e)
+        {
+            if (currentNodes != null)
+            {
+                new BlameCommand((currentNodes[0] as GenericNode).BackingPath);
+            }
         }
 
         void DiffChange_Click(object sender, EventArgs e)

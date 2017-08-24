@@ -206,6 +206,8 @@ namespace ASCompletion.Context
         /// <returns>Model state before reseting the flag</returns>
         /// </summary>
         bool UnsetOutOfDate();
+
+        string GetDefaultValue(string type);
         #endregion
 
         #region Specific actions
