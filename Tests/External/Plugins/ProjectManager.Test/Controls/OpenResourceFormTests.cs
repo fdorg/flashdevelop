@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 
 namespace ProjectManager.Controls
@@ -90,44 +91,15 @@ namespace ProjectManager.Controls
                     "src\\com\\module\\test\\TestModule.hx"
                 });
 
-                var results = SearchUtil.getMatchedItems(files, "test", "\\", 0);
+                var results = SearchUtil.getMatchedItems(files, "test\\test", "\\", 0);
 
                 //"test\\TestModule.hx" should be first, because it has test in the path and also in the beginning of the file name
                 Assert.AreEqual("src\\com\\module\\test\\TestModule.hx", results[0]);
-                Assert.AreEqual("src\\com\\module\\TestModule.hx", results[1]);
-                Assert.AreEqual("src\\com\\module\\test\\ITestModule.hx", results[2]);
+                Assert.AreEqual("src\\com\\module\\test\\ITestModule.hx", results[1]);
+                //these have no test in the path
+                Assert.AreEqual("src\\com\\module\\TestModule.hx", results[2]);
                 Assert.AreEqual("src\\com\\module\\ITestModule.hx", results[3]);
             }
-
-            [Test]
-            public void ExactTest()
-            {
-                List<string> files = new List<string>();
-                files.AddRange(new string[] {
-                    "src\\StaticClass.hx",
-                    "src\\com\\module\\ITestModule.hx",
-                    "src\\com\\module\\TestModule.hx",
-                    "src\\com\\module\\example\\ExampleModule.hx",
-                    "src\\com\\module\\example\\IExampleModule.hx",
-                    "src\\com\\module\\test\\ITestModule.hx",
-                    "src\\com\\module\\test\\TestModule.hx"
-                });
-
-                var excpected = new string[]
-                {
-                    "src\\com\\module\\TestModule.hx",
-                    "src\\com\\module\\ITestModule.hx",
-                    "src\\com\\module\\test\\TestModule.hx",
-                    "src\\com\\module\\test\\ITestModule.hx",
-                    "src\\com\\module\\example\\ExampleModule.hx",
-                    "src\\com\\module\\example\\IExampleModule.hx",
-                };
-                var results = SearchUtil.getMatchedItems(files, "src\\com\\module", "\\", 0);
-
-                CollectionAssert.AreEqual(excpected, results);
-
-            }
-
         }
     }
 }
