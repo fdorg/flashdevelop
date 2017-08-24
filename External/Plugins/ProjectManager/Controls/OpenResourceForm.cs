@@ -544,9 +544,9 @@ namespace ProjectManager.Controls
                 if (AdvancedSearchMatch(file, searchFile))
                     score = 1000.0;
                 else
-                    score = Score(file, searchText, pathSeparator[0]);
+                    score = Score(file, searchFile, pathSeparator[0]);
 
-                score /= file.Length; //divide by length to prefer shorter results
+                //score /= file.Length; //divide by length to prefer shorter results
 
                 if (score <= 0) continue;
 
@@ -559,7 +559,7 @@ namespace ProjectManager.Controls
                 {
                     Score = score,
                     FolderScore = folderScore,
-                    Value = $"{item} {folderScore} {score}"//item
+                    Value = item
                 };
                 matchedItems.Add(result);
             }
@@ -579,6 +579,8 @@ namespace ProjectManager.Controls
 
         static bool AdvancedSearchMatch(string file, string searchText)
         {
+            if (!string.Equals(searchText.ToUpperInvariant(), searchText)) return false;
+
             int i = 0; int j = 0;
             if (file.Length < searchText.Length) return false;
             var text = file.ToCharArray();
@@ -616,8 +618,11 @@ namespace ProjectManager.Controls
         {
             double score = 0;
 
+            if (str.StartsWith(query, StringComparison.OrdinalIgnoreCase)) //Starts with bonus
+                return query.Length + 1;
+
             if (str.ToLower().Contains(query.ToLower())) //Contains bonus
-                return 1;
+                return query.Length;
 
             int strIndex = 0;
 
