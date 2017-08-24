@@ -35,7 +35,7 @@ namespace AirProperties
         /// <summary>
         /// 
         /// </summary>
-        public LocaleManager(ref List<string> applicationLocales)
+        public LocaleManager(List<string> applicationLocales)
         {
             InitializeComponent();
             InitializeLocalization();
