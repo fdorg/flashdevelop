@@ -4498,10 +4498,10 @@ namespace ASCompletion.Completion
             int length = 0;
             IASContext context = ASContext.Context;
             List<string> addedTypes = new List<string>();
-            string cleanType = null;
+            typesUsed = context.DecomposeTypes(typesUsed);
             foreach (string type in typesUsed)
             {
-                cleanType = CleanType(type);
+                var cleanType = CleanType(type);
                 if (string.IsNullOrEmpty(cleanType) || cleanType.IndexOf('.') <= 0 || addedTypes.Contains(cleanType))
                     continue;
                 addedTypes.Add(cleanType);
@@ -4552,15 +4552,13 @@ namespace ASCompletion.Completion
             int firstLine = line;
             bool found = false;
             int packageLine = -1;
-            string txt;
             int indent = 0;
             int skipIfDef = 0;
-            Match mImport;
             var importComparer = new CaseSensitiveImportComparer();
             while (line < curLine)
             {
-                txt = sci.GetLine(line++).TrimStart();
-                if (txt.StartsWithOrdinal("package"))
+                var txt = sci.GetLine(line++).TrimStart();
+                if (txt.StartsWith("package"))
                 {
                     packageLine = line;
                     firstLine = line;
@@ -4579,7 +4577,7 @@ namespace ASCompletion.Completion
                     found = true;
                     indent = sci.GetLineIndentation(line - 1);
                     // insert in alphabetical order
-                    mImport = ASFileParserRegexes.Import.Match(txt);
+                    var mImport = ASFileParserRegexes.Import.Match(txt);
                     if (mImport.Success && importComparer.Compare(mImport.Groups["package"].Value, fullPath) > 0)
                     {
                         line--;
