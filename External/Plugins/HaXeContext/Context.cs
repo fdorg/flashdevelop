@@ -1120,6 +1120,69 @@ namespace HaXeContext
             }
         }
 
+        public override IEnumerable<string> DecomposeTypes(IEnumerable<string> types)
+        {
+            var result = new List<string>();
+            foreach (var type in types)
+            {
+                if(type.Contains("->") || type.Contains('{'))
+                {
+                    var length = type.Length;
+                    var brCount = 0;
+                    var inAnonType = false;
+                    var hasColon = false;
+                    var pos = 0;
+                    var i = 0;
+                    while (i < length)
+                    {
+                        var c = (char) type[i];
+                        if (c <= ' ') pos++;
+                        else if (c == '(') pos = i + 1;
+                        else if (c == '{')
+                        {
+                            inAnonType = true;
+                            brCount++;
+                            hasColon = false;
+                            pos = i + 1;
+                        }
+                        else if (c == '}')
+                        {
+                            if (hasColon) result.Add(type.Substring(pos, i - pos));
+                            if (--brCount == 0) inAnonType = false;
+                            hasColon = false;
+                            pos = i + 1;
+                        }
+                        else if (inAnonType)
+                        {
+                            if (hasColon)
+                            {
+                                if (c == ',')
+                                {
+                                    result.Add(type.Substring(pos, i - pos));
+                                    pos = i + 1;
+                                    hasColon = false;
+                                }
+                            }
+                            else if(c == ':')
+                            {
+                                hasColon = true;
+                                pos = i + 1;
+                            }
+                        }
+                        if (c == '-')
+                        {
+                            result.Add(type.Substring(pos, i - pos));
+                            i++;
+                            pos = i + 1;
+                        }
+                        i++;
+                    }
+                }
+                else result.Add(type);
+            }
+            return result;
+        }
+
         #endregion
 
         #region Custom code completion
