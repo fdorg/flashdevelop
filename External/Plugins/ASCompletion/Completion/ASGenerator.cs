@@ -4493,16 +4493,16 @@ namespace ASCompletion.Completion
         /// <param name="typesUsed">Types to import if needed</param>
         /// <param name="atLine">Current line in editor</param>
         /// <returns>Inserted characters count</returns>
-        private static int AddImportsByName(List<string> typesUsed, int atLine)
+        private static int AddImportsByName(IEnumerable<string> typesUsed, int atLine)
         {
             int length = 0;
             IASContext context = ASContext.Context;
-            List<string> addedTypes = new List<string>();
+            var addedTypes = new HashSet<string>();
             typesUsed = context.DecomposeTypes(typesUsed);
             foreach (string type in typesUsed)
             {
                 var cleanType = CleanType(type);
-                if (string.IsNullOrEmpty(cleanType) || cleanType.IndexOf('.') <= 0 || addedTypes.Contains(cleanType))
+                if (string.IsNullOrEmpty(cleanType) || addedTypes.Contains(cleanType) || cleanType.IndexOf('.') <= 0)
                     continue;
                 addedTypes.Add(cleanType);
                 MemberModel import = new MemberModel(cleanType.Substring(cleanType.LastIndexOf('.') + 1), cleanType, FlagType.Import, Visibility.Public);

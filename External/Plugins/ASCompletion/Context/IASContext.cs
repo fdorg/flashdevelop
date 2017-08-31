@@ -213,7 +213,7 @@ namespace ASCompletion.Context
         /// <returns>Default value</returns>
         string GetDefaultValue(string type);
 
-        List<string> DecomposeTypes(List<string> types);
+        IEnumerable<string> DecomposeTypes(IEnumerable<string> types);
         #endregion
 
         #region Specific actions

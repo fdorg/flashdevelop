@@ -1120,7 +1120,7 @@ namespace HaXeContext
             }
         }
 
-        public override List<string> DecomposeTypes(List<string> types)
+        public override IEnumerable<string> DecomposeTypes(IEnumerable<string> types)
         {
             var result = new List<string>();
             foreach (var type in types)

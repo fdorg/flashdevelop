@@ -1264,7 +1264,7 @@ namespace ASCompletion.Context
         /// <inheritdoc />
         public virtual string GetDefaultValue(string type) => null;
 
-        public virtual List<string> DecomposeTypes(List<string> types) => types;
+        public virtual IEnumerable<string> DecomposeTypes(IEnumerable<string> types) => types;
         #endregion
 
         #region operations on text insertion
