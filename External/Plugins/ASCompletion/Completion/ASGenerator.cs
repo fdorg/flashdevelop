@@ -405,6 +405,7 @@ namespace ASCompletion.Completion
                     }
                 }
             }
+            ASContext.Context.CodeGenerator?.ContextualGenerator(Sci, options, resolve);
             // TODO: Empty line, show generators list? yep
         }
 
@@ -2021,7 +2022,7 @@ namespace ASCompletion.Completion
         /// <param name="sci">The Scintilla control containing the document</param>
         /// <returns>The position inside the Scintilla document</returns>
         /// <remarks>For now internal because for the current use we don't need to detect a lot of cases! use with caution!</remarks>
-        internal static int GetEndOfStatement(int startPos, int endPos, ScintillaControl sci)
+        public static int GetEndOfStatement(int startPos, int endPos, ScintillaControl sci)
         {
             int groupCount = 0;
             int brCount = 0;
@@ -2389,7 +2390,7 @@ namespace ASCompletion.Completion
             return result;
         }
 
-        internal static List<FunctionParameter> ParseFunctionParameters(ScintillaControl sci, int p)
+        public static List<FunctionParameter> ParseFunctionParameters(ScintillaControl sci, int p)
         {
             List<FunctionParameter> prms = new List<FunctionParameter>();
             StringBuilder sb = new StringBuilder();
@@ -2402,7 +2403,6 @@ namespace ASCompletion.Completion
             bool writeParam = false;
             int subClosuresCount = 0;
             var arrCount = 0;
-            ASResult result = null;
             IASContext ctx = ASContext.Context;
             char[] charsToTrim = new char[] { ' ', '\t', '\r', '\n' };
             int counter = sci.TextLength; // max number of chars in parameters line (to avoid infinitive loop)
@@ -2412,8 +2412,8 @@ namespace ASCompletion.Completion
             // add [] and <>
             while (p < counter && !doBreak)
             {
-                char c = (char)sci.CharAt(p++);
-                result = null;
+                var c = (char)sci.CharAt(p++);
+                ASResult result = null;
                 if (c == '(' && !isFuncStarted)
                 {
                     if (sb.ToString().Trim(charsToTrim).Length == 0)
@@ -2425,10 +2425,7 @@ namespace ASCompletion.Completion
                         break;
                     }
                 }
-                else if (c == ';' && !isFuncStarted)
-                {
-                    break;
-                }
+                else if (c == ';' && !isFuncStarted) break;
                 else if (c == ')' && isFuncStarted && !wasEscapeChar && !isDoubleQuote && !isSingleQuote && subClosuresCount == 0)
                 {
                     isFuncStarted = false;
@@ -2450,14 +2447,13 @@ namespace ASCompletion.Completion
                             }
                             else
                             {
-                                result = new ASResult();
-                                result.Type = ctx.ResolveType(ctx.Features.objectKey, null);
+                                result = ASComplete.GetExpressionType(sci, p);
                                 types.Insert(0, result);
                             }
                         }
                         else if (c == '(')
                         {
-                            if (!sb.ToString().Contains("<"))
+                            if (!sb.ToString().Contains("<") && !isFuncStarted)
                             {
                                 result = ASComplete.GetExpressionType(sci, lastMemberPos + 1);
                                 if (!result.IsNull())
@@ -2482,6 +2478,9 @@ namespace ASCompletion.Completion
                 }
                 else if ((c == ')' || c == ']' || c == '>' || c == '}') && !wasEscapeChar && !isDoubleQuote && !isSingleQuote)
                 {
+                    subClosuresCount--;
+                    sb.Append(c);
+                    wasEscapeChar = false;
                     if (c == ']')
                     {
                         if (arrCount > 0) arrCount--;
@@ -2501,9 +2500,11 @@ namespace ASCompletion.Completion
                             }
                         }
                     }
-                    subClosuresCount--;
-                    sb.Append(c);
-                    wasEscapeChar = false;
+                    else if (c == ')' && subClosuresCount == 0 && sb.ToString().StartsWithOrdinal("new"))
+                    {
+                        lastMemberPos = p - 1;
+                        writeParam = true;
+                    }
                 }
                 else if (c == '\\')
                 {
@@ -2513,14 +2514,10 @@ namespace ASCompletion.Completion
                 else if (c == '"' && !wasEscapeChar && !isSingleQuote)
                 {
                     isDoubleQuote = !isDoubleQuote;
-                    if (subClosuresCount == 0)
+                    if (subClosuresCount == 0 && !isDoubleQuote && (char) sci.CharAt(p) != '.')
                     {
-                        if (isDoubleQuote)
-                        {
-                            result = new ASResult();
-                            result.Type = ctx.ResolveType(ctx.Features.stringKey, null);
-                            types.Add(result);
-                        }
+                        result = ASComplete.GetExpressionType(sci, p);
+                        types.Add(result);
                     }
                     sb.Append(c);
                     wasEscapeChar = false;
@@ -2528,21 +2525,24 @@ namespace ASCompletion.Completion
                 else if (c == '\'' && !wasEscapeChar && !isDoubleQuote)
                 {
                     isSingleQuote = !isSingleQuote;
-                    if (subClosuresCount == 0)
+                    if (subClosuresCount == 0 && !isSingleQuote)
                     {
-                        if (isSingleQuote)
-                        {
-                            result = new ASResult();
-                            result.Type = ctx.ResolveType(ctx.Features.stringKey, null);
-                            types.Add(result);
-                        }
+                        result = ASComplete.GetExpressionType(sci, p);
+                        types.Add(result);
                     }
                     sb.Append(c);
                     wasEscapeChar = false;
                 }
                 else if (c == ',' && subClosuresCount == 0)
                 {
-                    if (!isSingleQuote && !isDoubleQuote)
+                    if (isFuncStarted)
+                    {
+                        result = ASComplete.GetExpressionType(sci, p - 1, true, true);
+                        result.Context.coma = ComaExpression.FunctionParameter;
+                        types.Add(result);
+                        writeParam = true;
+                    }
+                    else if (!isSingleQuote && !isDoubleQuote)
                     {
                         writeParam = true;
                     }
@@ -2563,7 +2563,8 @@ namespace ASCompletion.Completion
                 }
                 else if (characterClass.IndexOf(c) > -1)
                 {
-                    doBreak = true;
+                    if (!isDoubleQuote && !isSingleQuote) doBreak = true;
+                    else sb.Append(c);
                 }
 
                 if (writeParam)
@@ -2574,11 +2575,15 @@ namespace ASCompletion.Completion
                     {
                         if (trimmed.Contains("<"))
                         {
+                            var expr = trimmed.StartsWithOrdinal("new")
+                                ? ASComplete.GetExpressionType(sci, lastMemberPos + 1, true, true).Context
+                                : null;
                             trimmed = Regex.Replace(trimmed, @"^new\s", string.Empty);
                             trimmed = Regex.Replace(trimmed, @">\(.*", ">");
                             var type = ctx.ResolveType(trimmed, ctx.CurrentModel);
-                            result = new ASResult {Type = type};
+                            result = new ASResult {Type = type, Context = expr};
                         }
+                        else if (trimmed.StartsWithOrdinal("new")) result = ASComplete.GetExpressionType(sci, lastMemberPos + 1, true, true);
                         else result = ASComplete.GetExpressionType(sci, lastMemberPos + 1);
                         if (result != null && !result.IsNull())
                         {
@@ -2686,8 +2691,7 @@ namespace ASCompletion.Completion
                     bool gotMatch = false;
                     for (int j = 0; j < i; j++)
                     {
-                        if (prms[j] != prms[i]
-                            && prms[j].paramName == suggestedName)
+                        if (prms[j] != prms[i] && prms[j].paramName == suggestedName)
                         {
                             gotMatch = true;
                             break;
@@ -3312,7 +3316,7 @@ namespace ASCompletion.Completion
                         }
                         else resolve.Member = null;
                     }
-                    else if (!string.IsNullOrEmpty(resolve.Path) && resolve.Path.EndsWith(".[]"))
+                    else if (!string.IsNullOrEmpty(resolve.Path) && Regex.IsMatch(resolve.Path, @"(\.\[.{0,}?\])$", RegexOptions.RightToLeft))
                         resolve.Member = null;
                 }
                 word = sci.GetWordFromPosition(pos);
@@ -4818,7 +4822,7 @@ namespace ASCompletion.Completion
         }
     }
 
-    internal class FunctionParameter
+    public class FunctionParameter
     {
         public string paramType;
         public string paramQualType;

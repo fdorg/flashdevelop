@@ -302,6 +302,8 @@ namespace ASCompletion.Context
         MemberModel ResolveFunctionContext(ScintillaControl sci, ASExpr expression, bool autoHide);
 
         bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression);
+
+        IContextualGenerator CodeGenerator { get; }
         #endregion
 
         #region Properties

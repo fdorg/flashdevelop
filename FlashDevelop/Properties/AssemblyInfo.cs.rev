@@ -22,3 +22,4 @@ using System.Resources;
 [assembly: InternalsVisibleTo("PluginCore.Tests")]
 [assembly: InternalsVisibleTo("ASCompletion.Tests")]
 [assembly: InternalsVisibleTo("CodeRefactor.Tests")]
+[assembly: InternalsVisibleTo("HaxeContext.Tests")]

@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using ProjectManager.Projects.Haxe;
 using ProjectManager.Projects;
 using AS3Context;
+using HaXeContext.Completion;
 using PluginCore.Utilities;
 using ScintillaNet;
 
@@ -148,6 +149,7 @@ namespace HaXeContext
             //OnCompletionModeChange(); // defered to first use
 
             haxelibsCache = new Dictionary<string, List<string>>();
+            CodeGenerator = new CodeGenerator();
             //BuildClassPath(); // defered to first use
         }
         #endregion
@@ -759,7 +761,6 @@ namespace HaXeContext
         /// <summary>
         /// Return imported classes list (not null)
         /// </summary>
-        /// <param name="package">Package to explore</param>
         /// <param name="inFile">Current file</param>
         public override MemberList ResolveImports(FileModel inFile)
         {

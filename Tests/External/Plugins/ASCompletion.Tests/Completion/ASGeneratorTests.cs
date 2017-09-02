@@ -2326,6 +2326,10 @@ namespace ASCompletion.Completion
                                 .Returns(new List<MemberModel> {new ClassModel {Name = "Boolean", InFile = FileModel.Ignore}})
                                 .SetName("Parse function parameters of foo(true)");
                         yield return
+                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Boolean_false"))
+                                .Returns(new List<MemberModel> {new ClassModel {Name = "Boolean", InFile = FileModel.Ignore}})
+                                .SetName("Parse function parameters of foo(falsee)");
+                        yield return
                             new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Digit"))
                                 .Returns(new List<MemberModel> {new ClassModel {Name = "Number", InFile = FileModel.Ignore}})
                                 .SetName("Parse function parameters of foo(1)");
@@ -2380,6 +2384,10 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Boolean"))
                                 .Returns(new List<MemberModel> {new ClassModel {Name = "Bool", InFile = FileModel.Ignore}})
                                 .SetName("Parse function parameters of foo(true)");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Boolean_false"))
+                                .Returns(new List<MemberModel> {new ClassModel {Name = "Bool", InFile = FileModel.Ignore}})
+                                .SetName("Parse function parameters of foo(false)");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Digit"))
                                 .Returns(new List<MemberModel> {new ClassModel {Name = "Float", InFile = FileModel.Ignore}})
