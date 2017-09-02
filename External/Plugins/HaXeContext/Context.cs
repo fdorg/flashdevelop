@@ -972,9 +972,12 @@ namespace HaXeContext
 
         public override string GetQualifiedType(string type, ClassModel aType)
         {
-            type = type.Replace("->", "&");
-            type = base.GetQualifiedType(type, aType);
-            type = type.Replace("&", "->");
+            if (!string.IsNullOrEmpty(type))
+            {
+                type = type.Replace("->", "&");
+                type = base.GetQualifiedType(type, aType);
+                type = type.Replace("&", "->");
+            }
             return type;
         }
 
