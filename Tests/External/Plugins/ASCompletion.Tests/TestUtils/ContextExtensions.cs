@@ -50,6 +50,11 @@ namespace ASCompletion.TestUtils
             mock.IsFileValid.Returns(context.IsFileValid);
             mock.GetDefaultValue(null).ReturnsForAnyArgs(it => context.GetDefaultValue(it.ArgAt<string>(0)));
             mock.DecomposeTypes(null).ReturnsForAnyArgs(it => context.DecomposeTypes(it.ArgAt<List<string>>(0) ?? new List<string>()));
+            mock.GetQualifiedType(null, null).ReturnsForAnyArgs(it =>
+            {
+                var type = it.ArgAt<string>(0);
+                return string.IsNullOrEmpty(type) ? null : context.GetQualifiedType(type, it.ArgAt<ClassModel>(1));
+            });
         }
 
         public static void BuildClassPath(this IASContext context)

@@ -907,7 +907,7 @@ namespace HaXeContext
         /// Retrieves a class model from its name
         /// </summary>
         /// <param name="cname">Class (short or full) name</param>
-        /// <param name="inClass">Current file</param>
+        /// <param name="inFile">Current file</param>
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         public override ClassModel ResolveType(string cname, FileModel inFile)
         {
@@ -968,6 +968,17 @@ namespace HaXeContext
             }
 
             return GetModel(package, cname, inPackage);
+        }
+
+        public override string GetQualifiedType(string type, ClassModel aType)
+        {
+            if (!string.IsNullOrEmpty(type))
+            {
+                type = type.Replace("->", "&");
+                type = base.GetQualifiedType(type, aType);
+                type = type.Replace("&", "->");
+            }
+            return type;
         }
 
         ClassModel ResolveTypeByPackage(string package, string cname, FileModel inFile, string inPackage)
