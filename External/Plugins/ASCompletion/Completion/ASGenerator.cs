@@ -2297,27 +2297,16 @@ namespace ASCompletion.Completion
 
             // if this is a constant, we assign a value to constant
             string returnTypeStr = null;
-            string eventValue = null;
             if (job == GeneratorJobType.Constant && returnType == null)
             {
                 isStatic.Flags |= FlagType.Static;
-                eventValue = "String = \"" + Camelize(contextToken) + "\"";
             }
             else if (returnType != null)
             {
                 ClassModel inClassForImport;
-                if (returnType.InClass != null)
-                {
-                    inClassForImport = returnType.InClass;
-                }
-                else if (returnType.RelClass != null)
-                {
-                    inClassForImport = returnType.RelClass;
-                }
-                else
-                {
-                    inClassForImport = inClass;
-                }
+                if (returnType.InClass != null) inClassForImport = returnType.InClass;
+                else if (returnType.RelClass != null) inClassForImport = returnType.RelClass;
+                else inClassForImport = inClass;
                 List<string> imports = new List<string>();
                 if (returnType.Member != null)
                 {
@@ -2341,7 +2330,6 @@ namespace ASCompletion.Completion
             FlagType kind = job.Equals(GeneratorJobType.Constant) ? FlagType.Constant : FlagType.Variable;
             MemberModel newMember = NewMember(contextToken, isStatic, kind, visibility);
             if (returnTypeStr != null) newMember.Type = returnTypeStr;
-            else if (eventValue != null) newMember.Type = eventValue;
             else
             {
                 var pos = wordStartPos;
@@ -2350,6 +2338,15 @@ namespace ASCompletion.Completion
                 {
                     var expr = ASComplete.GetExpressionType(sci, pos);
                     if (expr?.Member?.Parameters?.Count > 0) newMember.Type = expr.Member.Parameters[index].Type;
+                }
+            }
+            if (job == GeneratorJobType.Constant && returnType == null)
+            {
+                if (string.IsNullOrEmpty(newMember.Type)) newMember.Type = "String = \"" + Camelize(contextToken) + "\"";
+                else
+                {
+                    var value = ASContext.Context.GetDefaultValue(newMember.Type);
+                    if (!string.IsNullOrEmpty(value)) newMember.Type += " = " + value;
                 }
             }
             GenerateVariable(newMember, position, detach);
