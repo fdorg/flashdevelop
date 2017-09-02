@@ -1312,7 +1312,7 @@ namespace ASCompletion.Completion
             if (type != null)
             {
                 var inClassForImport = resolve.InClass ?? resolve.RelClass ?? inClass;
-                var l = new List<string> {GetQualifiedType(type, inClassForImport)};
+                var l = new List<string> {ASContext.Context.GetQualifiedType(type, inClassForImport)};
                 AddImportsByName(l, sci.LineFromPosition(pos));
             }
         }
@@ -1736,7 +1736,7 @@ namespace ASCompletion.Completion
                 {
                     if (parms[i].Type != null)
                     {
-                        t = GetQualifiedType(parms[i].Type, inClass); 
+                        t = context.GetQualifiedType(parms[i].Type, inClass); 
                         importsList.Add(t);
                     }
                 }
@@ -1744,7 +1744,7 @@ namespace ASCompletion.Completion
 
             if (member.Type != null)
             {
-                t = GetQualifiedType(member.Type, inClass);
+                t = context.GetQualifiedType(member.Type, inClass);
                 importsList.Add(t);
             }
 
@@ -2324,13 +2324,13 @@ namespace ASCompletion.Completion
                     if (returnType.Member.Type != ASContext.Context.Features.voidKey)
                     {
                         returnTypeStr = FormatType(GetShortType(returnType.Member.Type));
-                        imports.Add(GetQualifiedType(returnType.Member.Type, inClassForImport));
+                        imports.Add(ASContext.Context.GetQualifiedType(returnType.Member.Type, inClassForImport));
                     }
                 }
                 else if (returnType.Type != null)
                 {
                     returnTypeStr = FormatType(GetShortType(returnType.Type.QualifiedName));
-                    imports.Add(GetQualifiedType(returnType.Type.QualifiedName, inClassForImport));
+                    imports.Add(ASContext.Context.GetQualifiedType(returnType.Type.QualifiedName, inClassForImport));
                 }
                 if (imports.Count > 0)
                 {
@@ -2652,7 +2652,7 @@ namespace ASCompletion.Completion
                                 }
                                 else
                                 {
-                                    paramQualType = GetQualifiedType(result.Member.Type, result.InClass);
+                                    paramQualType = ctx.GetQualifiedType(result.Member.Type, result.InClass);
                                 }
                             }
                         }
@@ -2978,7 +2978,7 @@ namespace ASCompletion.Completion
             {
                 FunctionParameter p = parameters[i];
                 constructorArgs.Add(new MemberModel(p.paramName, p.paramType, FlagType.ParameterVar, 0));
-                constructorArgTypes.Add(CleanType(GetQualifiedType(p.paramQualType, inClass)));
+                constructorArgTypes.Add(CleanType(ASContext.Context.GetQualifiedType(p.paramQualType, inClass)));
             }
             
             paramMember.Parameters = constructorArgs;
@@ -3494,11 +3494,11 @@ namespace ASCompletion.Completion
                     sb.Append(decl);
                     canGenerate = true;
 
-                    AddTypeOnce(typesUsed, GetQualifiedType(method.Type, iType));
+                    AddTypeOnce(typesUsed, context.GetQualifiedType(method.Type, iType));
 
                     if (method.Parameters != null && method.Parameters.Count > 0)
                         foreach (MemberModel param in method.Parameters)
-                            AddTypeOnce(typesUsed, GetQualifiedType(param.Type, iType));
+                            AddTypeOnce(typesUsed, context.GetQualifiedType(param.Type, iType));
                 }
                 // interface inheritance
                 iType = iType.Extends;
@@ -3510,7 +3510,7 @@ namespace ASCompletion.Completion
             try
             {
                 int position = sci.CurrentPos;
-                if (ASContext.Context.Settings.GenerateImports && typesUsed.Count > 0)
+                if (context.Settings.GenerateImports && typesUsed.Count > 0)
                 {
                     int offset = AddImportsByName(typesUsed, sci.LineFromPosition(position));
                     position += offset;
@@ -3524,29 +3524,6 @@ namespace ASCompletion.Completion
         private static void AddTypeOnce(List<string> typesUsed, string qualifiedName)
         {
             if (!typesUsed.Contains(qualifiedName)) typesUsed.Add(qualifiedName);
-        }
-
-        private static string GetQualifiedType(string type, ClassModel aType)
-        {
-            if (string.IsNullOrEmpty(type)) return "*";
-            if (type.IndexOf('<') > 0) // Vector.<Point>
-            {
-                Match mGeneric = Regex.Match(type, "<([^>]+)>");
-                if (mGeneric.Success)
-                {
-                    return GetQualifiedType(mGeneric.Groups[1].Value, aType);
-                }
-            }
-
-            if (type.IndexOf('.') > 0) return type;
-
-            ClassModel aClass = ASContext.Context.ResolveType(type, aType.InFile);
-            if (!aClass.IsVoid())
-            {
-                if (aClass.InFile.Package.Length != 0)
-                    return aClass.QualifiedName;
-            }
-            return "*";
         }
 
         private static MemberModel NewMember(string contextToken, MemberModel calledFrom, FlagType kind, Visibility visi)
@@ -4168,7 +4145,7 @@ namespace ASCompletion.Completion
                     decl += template;
                 }
                 decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", "");
-                typesUsed.Add(GetQualifiedType(type, ofClass));
+                typesUsed.Add(context.GetQualifiedType(type, ofClass));
             }
             else
             {
@@ -4177,7 +4154,7 @@ namespace ASCompletion.Completion
                 type = (noRet && type != null) ? features.voidKey : type;
                 if (!noRet)
                 {
-                    string qType = GetQualifiedType(type, ofClass);
+                    string qType = context.GetQualifiedType(type, ofClass);
                     typesUsed.Add(qType);
                     if (qType == type)
                     {
@@ -4458,11 +4435,11 @@ namespace ASCompletion.Completion
                 {
                     if (param.Name.StartsWith('.')) break;
                     args += ", " + TemplateUtils.GetParamName(param);
-                    AddTypeOnce(typesUsed, GetQualifiedType(param.Type, aType));
+                    AddTypeOnce(typesUsed, ASContext.Context.GetQualifiedType(param.Type, aType));
                 }
 
             bool noRet = string.IsNullOrEmpty(member.Type) || member.Type.Equals("void", StringComparison.OrdinalIgnoreCase);
-            if (!noRet) AddTypeOnce(typesUsed, GetQualifiedType(member.Type, aType));
+            if (!noRet) AddTypeOnce(typesUsed, ASContext.Context.GetQualifiedType(member.Type, aType));
 
             string action = "";
             if ((member.Flags & FlagType.Function) > 0)

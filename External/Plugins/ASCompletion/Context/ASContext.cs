@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ASCompletion.Commands;
 using ASCompletion.Completion;
@@ -1217,6 +1218,25 @@ namespace ASCompletion.Context
         {
             // to be implemented
             return null;
+        }
+
+        public virtual string GetQualifiedType(string type, ClassModel aType)
+        {
+            if (string.IsNullOrEmpty(type)) return "*";
+            if (type.IndexOf('<') > 0) // Vector.<Point>
+            {
+                Match mGeneric = Regex.Match(type, "<([^>]+)>");
+                if (mGeneric.Success)
+                {
+                    return GetQualifiedType(mGeneric.Groups[1].Value, aType);
+                }
+            }
+
+            if (type.IndexOf('.') > 0) return type;
+
+            ClassModel aClass = ResolveType(type, aType.InFile);
+            if (!aClass.IsVoid() && aClass.InFile.Package.Length != 0) return aClass.QualifiedName;
+            return "*";
         }
 
         /// <summary>

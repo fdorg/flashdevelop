@@ -646,6 +646,10 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideFunction_issue_1553_5.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideFunction_issue_1553_6.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideFunction_issue_1553_6.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideFunction_issue_1696_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideFunction_issue_1696_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideFunction_issue_1696_2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideFunction_issue_1696_2.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
