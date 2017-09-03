@@ -19,3 +19,4 @@ using PluginCore;
 
 [assembly: InternalsVisibleTo("ASCompletion.Tests")]
 [assembly: InternalsVisibleTo("CodeRefactor.Tests")]
+[assembly: InternalsVisibleTo("HaxeContext.Tests")]

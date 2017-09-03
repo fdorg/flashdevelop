@@ -89,6 +89,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LintingHelper", "External\P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectManager.Test", "Tests\External\Plugins\ProjectManager.Test\ProjectManager.Test.csproj", "{F616101E-6103-4788-9382-964D0A1D0A09}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HaxeContext.Tests", "Tests\External\Plugins\HaxeContext.Tests\HaxeContext.Tests.csproj", "{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -674,8 +676,26 @@ Global
 		{F616101E-6103-4788-9382-964D0A1D0A09}.Release+Tests|Any CPU.Build.0 = Release|Any CPU
 		{F616101E-6103-4788-9382-964D0A1D0A09}.Release+Tests|x86.ActiveCfg = Release|Any CPU
 		{F616101E-6103-4788-9382-964D0A1D0A09}.Release+Tests|x86.Build.0 = Release|Any CPU
+		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Debug+Tests|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Debug+Tests|Any CPU.Build.0 = Debug|Any CPU
+		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Debug+Tests|x86.ActiveCfg = Debug|Any CPU
+		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Debug+Tests|x86.Build.0 = Debug|Any CPU
+		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Release|x86.ActiveCfg = Release|Any CPU
+		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Release|x86.Build.0 = Release|Any CPU
+		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Release+Tests|Any CPU.ActiveCfg = Release|Any CPU
+		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Release+Tests|Any CPU.Build.0 = Release|Any CPU
+		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Release+Tests|x86.ActiveCfg = Release|Any CPU
+		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Release+Tests|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2FD1F61A-3490-4AAD-B095-5FA7AA101210}
 	EndGlobalSection
 EndGlobal
