@@ -1122,7 +1122,7 @@ namespace HaXeContext
 
         public override IEnumerable<string> DecomposeTypes(IEnumerable<string> types)
         {
-            var result = new List<string>();
+            var result = new HashSet<string>();
             foreach (var type in types)
             {
                 if(type.Contains("->") || type.Contains('{'))
@@ -1135,7 +1135,7 @@ namespace HaXeContext
                     var i = 0;
                     while (i < length)
                     {
-                        var c = (char) type[i];
+                        var c = type[i];
                         if (c <= ' ') pos++;
                         else if (c == '(') pos = i + 1;
                         else if (c == '{')
@@ -1171,9 +1171,16 @@ namespace HaXeContext
                         }
                         if (c == '-')
                         {
-                            result.Add(type.Substring(pos, i - pos));
+                            if (i > pos) result.Add(type.Substring(pos, i - pos));
                             i++;
                             pos = i + 1;
+                            if (type.IndexOfOrdinal("->", pos) == -1 && type.IndexOfOrdinal("{", pos) == -1)
+                            {
+                                var index = type.IndexOfOrdinal("}", pos);
+                                if (index != -1) result.Add(type.Substring(pos, index - pos));
+                                else result.Add(type.Substring(pos));
+                                break;
+                            }
                         }
                         i++;
                     }
