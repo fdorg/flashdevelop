@@ -10,7 +10,7 @@ namespace HaXeContext
         Context context;
 
         [TestFixtureSetUp]
-        public void FixtureSetUp() => context = new Context(new HaXeSettings());
+        public void ContextTestsSetUp() => context = new Context(new HaXeSettings());
 
         IEnumerable<TestCaseData> DecomposeTypesTestCases
         {
