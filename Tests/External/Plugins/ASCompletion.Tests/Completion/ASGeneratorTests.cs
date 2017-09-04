@@ -2176,6 +2176,21 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1553_6"))
                                 .SetName("Override function foo(c:{v:Type.ValueType, t:{t:haxe.Timer}}})")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1553");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1696_1"), "Foo", "foo", FlagType.Function)
+                                .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1696_1"))
+                                .SetName("Override function foo(v:Array<haxe.Timer->String>)")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1696_2"), "Foo", "foo", FlagType.Function)
+                                .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1696_2"))
+                                .SetName("Override function foo(v:Array<haxe.Timer->Type.ValueType->String>)")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1696_3"), "Foo", "foo", FlagType.Function)
+                                .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1696_3"))
+                                .SetName("Override function foo(v:{a:Array<haxe.Timer>}->{a:haxe.ds.Vector<Type.ValueType>}->String)")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
                     }
                 }
 
