@@ -1122,33 +1122,47 @@ namespace HaXeContext
 
         public override IEnumerable<string> DecomposeTypes(IEnumerable<string> types)
         {
+            var characterClass = ScintillaControl.Configuration.GetLanguage("haxe").characterclass.Characters;
             var result = new HashSet<string>();
             foreach (var type in types)
             {
-                if(type.Contains("->") || type.Contains('{'))
+                if(type.Contains("->") || type.Contains('{') || type.Contains('<'))
                 {
                     var length = type.Length;
-                    var brCount = 0;
+                    var braCount = 0;
+                    var genCount = 0;
                     var inAnonType = false;
                     var hasColon = false;
                     var pos = 0;
-                    var i = 0;
-                    while (i < length)
+                    for (var i = 0; i < length; i++)
                     {
                         var c = type[i];
+                        if (c == '.' || characterClass.Contains(c)) continue;
                         if (c <= ' ') pos++;
                         else if (c == '(') pos = i + 1;
+                        else if (c == '<')
+                        {
+                            genCount++;
+                            result.Add(type.Substring(pos, i - pos));
+                            pos = i + 1;
+                        }
+                        else if (c == '>')
+                        {
+                            genCount--;
+                            if (pos != i) result.Add(type.Substring(pos, i - pos));
+                            pos = i + 1;
+                        }
                         else if (c == '{')
                         {
                             inAnonType = true;
-                            brCount++;
+                            braCount++;
                             hasColon = false;
                             pos = i + 1;
                         }
                         else if (c == '}')
                         {
                             if (hasColon) result.Add(type.Substring(pos, i - pos));
-                            if (--brCount == 0) inAnonType = false;
+                            if (--braCount == 0) inAnonType = false;
                             hasColon = false;
                             pos = i + 1;
                         }
@@ -1169,12 +1183,20 @@ namespace HaXeContext
                                 pos = i + 1;
                             }
                         }
+                        else if (genCount > 0)
+                        {
+                            if (c == ',')
+                            {
+                                if (i > pos) result.Add(type.Substring(pos, i - pos));
+                                pos = i + 1;
+                            }
+                        }
                         if (c == '-')
                         {
                             if (i > pos) result.Add(type.Substring(pos, i - pos));
                             i++;
                             pos = i + 1;
-                            if (type.IndexOfOrdinal("->", pos) == -1 && type.IndexOfOrdinal("{", pos) == -1)
+                            if (type.IndexOfOrdinal("->", pos) == -1 && type.IndexOfOrdinal("{", pos) == -1 && type.IndexOfOrdinal(",") == -1)
                             {
                                 var index = type.IndexOfOrdinal("}", pos);
                                 if (index != -1) result.Add(type.Substring(pos, index - pos));
@@ -1182,7 +1204,6 @@ namespace HaXeContext
                                 break;
                             }
                         }
-                        i++;
                     }
                 }
                 else result.Add(type);

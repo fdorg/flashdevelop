@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using ASCompletion.Completion;
 using NUnit.Framework;
 
 namespace HaXeContext
 {
     [TestFixture]
-    class ContextTests
+    class ContextTests : ASCompleteTests
     {
         Context context;
 
@@ -39,6 +40,24 @@ namespace HaXeContext
                 yield return new TestCaseData(new List<string> {"haxe.Timer->haxe.Timer"})
                     .SetName("haxe.Timer->haxe.Timer")
                     .Returns(new[] {"haxe.Timer"});
+                yield return new TestCaseData(new List<string> {"haxe.ds.Vector<{haxe.Timer->Type.ValueType}>"})
+                    .SetName("haxe.ds.Vector<{haxe.Timer->Type.ValueType}>")
+                    .Returns(new[] {"haxe.ds.Vector", "haxe.Timer", "Type.ValueType"});
+                yield return new TestCaseData(new List<string> {"Array<Int>->Map<String, Int>->haxe.ds.Vector<{c:haxe.Timer->Type.ValueType}>"})
+                    .SetName("Array<Int>->Map<String, Int>->haxe.ds.Vector<{c:haxe.Timer->Type.ValueType}>")
+                    .Returns(new[] {"Array", "Int", "Map", "String", "haxe.ds.Vector", "haxe.Timer", "Type.ValueType"});
+                yield return new TestCaseData(new List<string> {"Array<Array<Map<haxe.ds.Vector<haxe.Timer>, Type.ValueType>>>"})
+                    .SetName("Array<Array<Map<haxe.ds.Vector<haxe.Timer>, Type.ValueType>>>")
+                    .Returns(new[] {"Array", "Map", "haxe.ds.Vector", "haxe.Timer", "Type.ValueType"});
+                yield return new TestCaseData(new List<string> {"Array<Array<Map<haxe.ds.Vector<haxe.Timer>,Type.ValueType>>>"})
+                    .SetName("Array<Array<Map<haxe.ds.Vector<haxe.Timer>,Type.ValueType>>>")
+                    .Returns(new[] {"Array", "Map", "haxe.ds.Vector", "haxe.Timer", "Type.ValueType"});
+                yield return new TestCaseData(new List<string> {"Array<Array<Map<haxe.ds.Vector<{t:haxe.Timer}>, Type.ValueType>>>"})
+                    .SetName("Array<Array<Map<haxe.ds.Vector<{t:haxe.Timer}>, Type.ValueType>>>")
+                    .Returns(new[] {"Array", "Map", "haxe.ds.Vector", "haxe.Timer", "Type.ValueType"});
+                yield return new TestCaseData(new List<string> {"Array<Array<Map<haxe.ds.Vector<{t:haxe.Timer}>->Type.ValueType, Int>>>"})
+                    .SetName("Array<Array<Map<haxe.ds.Vector<{t:haxe.Timer}>->Type.ValueType, Int>>>")
+                    .Returns(new[] {"Array", "Map", "haxe.ds.Vector", "haxe.Timer", "Type.ValueType", "Int"});
             }
         }
 
