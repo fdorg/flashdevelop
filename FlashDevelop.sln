@@ -91,6 +91,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectManager.Test", "Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HaxeContext.Tests", "Tests\External\Plugins\HaxeContext.Tests\HaxeContext.Tests.csproj", "{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AS3Context.Tests", "Tests\External\Plugins\AS3Context.Tests\AS3Context.Tests.csproj", "{536FDE15-CA93-4F84-B1FF-08126C3C443A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -691,6 +693,22 @@ Global
 		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Release+Tests|Any CPU.Build.0 = Release|Any CPU
 		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Release+Tests|x86.ActiveCfg = Release|Any CPU
 		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Release+Tests|x86.Build.0 = Release|Any CPU
+		{536FDE15-CA93-4F84-B1FF-08126C3C443A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{536FDE15-CA93-4F84-B1FF-08126C3C443A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{536FDE15-CA93-4F84-B1FF-08126C3C443A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{536FDE15-CA93-4F84-B1FF-08126C3C443A}.Debug|x86.Build.0 = Debug|Any CPU
+		{536FDE15-CA93-4F84-B1FF-08126C3C443A}.Debug+Tests|Any CPU.ActiveCfg = Debug|Any CPU
+		{536FDE15-CA93-4F84-B1FF-08126C3C443A}.Debug+Tests|Any CPU.Build.0 = Debug|Any CPU
+		{536FDE15-CA93-4F84-B1FF-08126C3C443A}.Debug+Tests|x86.ActiveCfg = Debug|Any CPU
+		{536FDE15-CA93-4F84-B1FF-08126C3C443A}.Debug+Tests|x86.Build.0 = Debug|Any CPU
+		{536FDE15-CA93-4F84-B1FF-08126C3C443A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{536FDE15-CA93-4F84-B1FF-08126C3C443A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{536FDE15-CA93-4F84-B1FF-08126C3C443A}.Release|x86.ActiveCfg = Release|Any CPU
+		{536FDE15-CA93-4F84-B1FF-08126C3C443A}.Release|x86.Build.0 = Release|Any CPU
+		{536FDE15-CA93-4F84-B1FF-08126C3C443A}.Release+Tests|Any CPU.ActiveCfg = Release|Any CPU
+		{536FDE15-CA93-4F84-B1FF-08126C3C443A}.Release+Tests|Any CPU.Build.0 = Release|Any CPU
+		{536FDE15-CA93-4F84-B1FF-08126C3C443A}.Release+Tests|x86.ActiveCfg = Release|Any CPU
+		{536FDE15-CA93-4F84-B1FF-08126C3C443A}.Release+Tests|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
