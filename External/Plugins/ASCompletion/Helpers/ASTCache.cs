@@ -29,9 +29,6 @@ namespace ASCompletion.Helpers
         {
             var action = new Action(() =>
             {
-                //wait for it to finish
-                SpinWait.SpinUntil(() => !PathExplorer.IsWorking); //this is a terribly hacky way of doing it :(
-
                 var c = new Dictionary<ClassModel, CachedClassModel>();
                 
                 var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
@@ -123,7 +120,7 @@ namespace ASCompletion.Helpers
         /// </summary>
         /// <param name="cls"></param>
         /// <returns></returns>
-        HashSet<ClassModel> ResolveExtends(ClassModel cls)
+        static HashSet<ClassModel> ResolveExtends(ClassModel cls)
         {
             var set = new HashSet<ClassModel>();
 
@@ -137,6 +134,7 @@ namespace ASCompletion.Helpers
             return set;
         }
 
+        //TODO: move these into context, maybe?
         /// <summary>
         /// Gets all ClassModels from <paramref name="interfaces"/> and the interfaces they extend that contain a definition of <paramref name="member"/>
         /// </summary>

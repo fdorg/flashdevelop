@@ -849,6 +849,7 @@ namespace ASCompletion
             sci.MarginSensitiveN(Margin, true);
             sci.SetMarginWidthN(Margin, 0); //margin is only made visible if something is found
 
+            sci.MarginClick -= Sci_MarginClick;
             sci.MarginClick += Sci_MarginClick;
 
             //FIXME: this probably fails in non-haxe projects
@@ -869,7 +870,6 @@ namespace ASCompletion
             sci.MarkerDeleteAll(MarkerDown);
             sci.MarkerDeleteAll(MarkerUpDown);
 
-            //after updating, we can add markers
             var cls = astCache.GetCachedModel(clas);
             if (cls == null) return;
 
@@ -900,11 +900,13 @@ namespace ASCompletion
                 var searchMask = (1 << MarkerDown) | (1 << MarkerUp);
                 if ((mask & searchMask) == searchMask)
                 {
-                    sci.MarkerDelete(i, MarkerDown);
                     sci.MarkerDelete(i, MarkerUp);
-                    //sci.MarkerAdd(i, MarkerUpDown);
+                    sci.MarkerDelete(i, MarkerDown);
+                    sci.MarkerDelete(i, MarkerUp);      //for some reason this needs to be done twice,
+                    sci.MarkerDelete(i, MarkerDown);    //otherwise some markers are not removed
+
+                    sci.MarkerAdd(i, MarkerUpDown);
                 }
-                    
             }
         }
 

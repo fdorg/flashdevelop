@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Linq;
 using System.Timers;
 using System.Windows.Forms;
-using ASCompletion.Context;
 using ASCompletion.Model;
 using PluginCore;
 using Timer = System.Timers.Timer;
@@ -30,6 +29,11 @@ namespace ASCompletion.Controls
                 FullRowSelect = false,
                 HeaderStyle = ColumnHeaderStyle.None
             };
+
+            listView.Groups.Add("implementors", "Implemented by"); //TODO: translations
+            listView.Groups.Add("implemented", "Implements");
+            listView.Groups.Add("overriders", "Overridden by");
+            listView.Groups.Add("overridden", "Overrides");
 
 
             fadingTimer = new Timer
@@ -89,13 +93,12 @@ namespace ASCompletion.Controls
         internal static void Show(IEnumerable<Reference> implementors, IEnumerable<Reference> implemented, IEnumerable<Reference> overriders, IEnumerable<Reference> overridden)
         {
             listView.Hide();
-            listView.Groups.Clear();
             listView.Items.Clear();
 
-            var implementorsGroup = listView.Groups.Add("implementors", "Implemented by"); //TODO: translations
-            var implementedGroup = listView.Groups.Add("implemented", "Implements");
-            var overridersGroup = listView.Groups.Add("overriders", "Overridden by");
-            var overriddenGroup = listView.Groups.Add("overridden", "Overrides");
+            var implementorsGroup = listView.Groups["implementors"];
+            var implementedGroup = listView.Groups["implemented"];
+            var overridersGroup = listView.Groups["overriders"];
+            var overriddenGroup = listView.Groups["overridden"];
 
             AddItems(implementorsGroup, implementors);
             AddItems(implementedGroup, implemented);
