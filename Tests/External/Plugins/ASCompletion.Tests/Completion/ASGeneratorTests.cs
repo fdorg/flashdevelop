@@ -407,6 +407,14 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class ImplementInterface : GenerateJob
             {
+                internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
+
+                [TestFixtureSetUp]
+                public void ImplementInterfaceSetup()
+                {
+                    ASContext.CommonSettings.DeclarationModifierOrder = DeclarationModifierOrder;
+                }
+
                 private ClassModel GetAs3ImplementInterfaceModel()
                 {
                     var interfaceModel = new ClassModel { InFile = new FileModel(), Name = "ITest", Type = "ITest" };
@@ -610,6 +618,34 @@ namespace ASCompletion.Completion
 
                     return sci.Text;
                 }
+
+                public IEnumerable<TestCaseData> AS3TestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeImplementInterfaceMethods"), GeneratorJobType.ImplementInterface)
+                                .Returns(ReadAllTextAS3("AfterImplementInterfaceMethods"))
+                                .SetName("Implement interface methods. Issue 1684")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1684");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(AS3TestCases))]
+                public string AS3(string sourceText, GeneratorJobType job)
+                {
+                    ASContext.Context.SetAs3Features();
+                    sci.Text = sourceText;
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    var currentModel = ASContext.Context.CurrentModel;
+                    new ASFileParser().ParseSrc(currentModel, sci.Text);
+                    var currentClass = currentModel.Classes[0];
+                    ASContext.Context.CurrentClass.Returns(currentClass);
+                    ASGenerator.contextParam = currentClass.Implements[0];
+                    ASGenerator.GenerateJob(job, null, ASContext.Context.CurrentClass, null, null);
+                    return sci.Text;
+                }
+
             }
 
             [TestFixture]
@@ -1500,7 +1536,7 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateVariable : GenerateJob
             {
-                internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
+                internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "inline", "override" };
 
                 [TestFixtureSetUp]
                 public void GenerateVariableSetup()
@@ -1548,6 +1584,14 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextAS3("BeforeGenerateVariable_issue1460_2"), GeneratorJobType.Variable)
                                 .Returns(ReadAllTextAS3("AfterGeneratePrivateVariable_issue1460_2"))
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateConstant"), GeneratorJobType.Constant)
+                                .Returns(ReadAllTextAS3("AfterGenerateConstant"))
+                                .SetName("Generate constant");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateConstant_issue1460"), GeneratorJobType.Constant)
+                                .Returns(ReadAllTextAS3("AfterGenerateConstant_issue1460"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
                     }
                 }
 
@@ -1593,6 +1637,14 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable_issue1460_3"), GeneratorJobType.Variable)
                                 .Returns(ReadAllTextHaxe("AfterGenerateVariable_issue1460_3"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateConstant"), GeneratorJobType.Constant)
+                                .Returns(ReadAllTextHaxe("AfterGenerateConstant"))
+                                .SetName("Generate constant");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateConstant_issue1460"), GeneratorJobType.Constant)
+                                .Returns(ReadAllTextHaxe("AfterGenerateConstant_issue1460"))
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
                     }
                 }
@@ -2096,7 +2148,8 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeOverrideIssue793"), "Foo", "foo", FlagType.Getter | FlagType.Setter)
                                 .Returns(ReadAllTextHaxe("AfterOverrideIssue793"))
-                                .SetName("issue #793");
+                                .SetName("issue #793")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/793");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeOverridePublicFunction"), "Foo", "foo", FlagType.Function)
                                 .Returns(ReadAllTextHaxe("AfterOverridePublicFunction"))
@@ -2109,6 +2162,36 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunctionWithTypeParams"), "Foo", "foo", FlagType.Function)
                                 .Returns(ReadAllTextHaxe("AfterOverrideFunctionWithTypeParams"))
                                 .SetName("Override function with type parameters");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1553_1"), "Foo", "foo", FlagType.Function)
+                                .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1553_1"))
+                                .SetName("Override function foo(c:haxe.Timer->Void)")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1553");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1553_2"), "Foo", "foo", FlagType.Function)
+                                .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1553_2"))
+                                .SetName("Override function foo(c:haxe.Timer->(Type.ValueType->Void))")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1553");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1553_3"), "Foo", "foo", FlagType.Function)
+                                .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1553_3"))
+                                .SetName("Override function foo(c:haxe.Timer->{v:Type.ValueType, s:String}->Void)")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1553");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1553_4"), "Foo", "foo", FlagType.Function)
+                                .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1553_4"))
+                                .SetName("Override function foo(c:haxe.Timer->({v:Type.ValueType, s:String}->Void))")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1553");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1553_5"), "Foo", "foo", FlagType.Function)
+                                .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1553_5"))
+                                .SetName("Override function foo(c:{v:Type.ValueType, t:haxe.Timer})")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1553");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1553_6"), "Foo", "foo", FlagType.Function)
+                                .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1553_6"))
+                                .SetName("Override function foo(c:{v:Type.ValueType, t:{t:haxe.Timer}}})")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1553");
                     }
                 }
 

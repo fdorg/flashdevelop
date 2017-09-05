@@ -2297,27 +2297,16 @@ namespace ASCompletion.Completion
 
             // if this is a constant, we assign a value to constant
             string returnTypeStr = null;
-            string eventValue = null;
             if (job == GeneratorJobType.Constant && returnType == null)
             {
                 isStatic.Flags |= FlagType.Static;
-                eventValue = "String = \"" + Camelize(contextToken) + "\"";
             }
             else if (returnType != null)
             {
                 ClassModel inClassForImport;
-                if (returnType.InClass != null)
-                {
-                    inClassForImport = returnType.InClass;
-                }
-                else if (returnType.RelClass != null)
-                {
-                    inClassForImport = returnType.RelClass;
-                }
-                else
-                {
-                    inClassForImport = inClass;
-                }
+                if (returnType.InClass != null) inClassForImport = returnType.InClass;
+                else if (returnType.RelClass != null) inClassForImport = returnType.RelClass;
+                else inClassForImport = inClass;
                 List<string> imports = new List<string>();
                 if (returnType.Member != null)
                 {
@@ -2341,7 +2330,6 @@ namespace ASCompletion.Completion
             FlagType kind = job.Equals(GeneratorJobType.Constant) ? FlagType.Constant : FlagType.Variable;
             MemberModel newMember = NewMember(contextToken, isStatic, kind, visibility);
             if (returnTypeStr != null) newMember.Type = returnTypeStr;
-            else if (eventValue != null) newMember.Type = eventValue;
             else
             {
                 var pos = wordStartPos;
@@ -2350,6 +2338,15 @@ namespace ASCompletion.Completion
                 {
                     var expr = ASComplete.GetExpressionType(sci, pos);
                     if (expr?.Member?.Parameters?.Count > 0) newMember.Type = expr.Member.Parameters[index].Type;
+                }
+            }
+            if (job == GeneratorJobType.Constant && returnType == null)
+            {
+                if (string.IsNullOrEmpty(newMember.Type)) newMember.Type = "String = \"" + Camelize(contextToken) + "\"";
+                else
+                {
+                    var value = ASContext.Context.GetDefaultValue(newMember.Type);
+                    if (!string.IsNullOrEmpty(value)) newMember.Type += " = " + value;
                 }
             }
             GenerateVariable(newMember, position, detach);
@@ -4493,16 +4490,16 @@ namespace ASCompletion.Completion
         /// <param name="typesUsed">Types to import if needed</param>
         /// <param name="atLine">Current line in editor</param>
         /// <returns>Inserted characters count</returns>
-        private static int AddImportsByName(List<string> typesUsed, int atLine)
+        private static int AddImportsByName(IEnumerable<string> typesUsed, int atLine)
         {
             int length = 0;
             IASContext context = ASContext.Context;
-            List<string> addedTypes = new List<string>();
-            string cleanType = null;
+            var addedTypes = new HashSet<string>();
+            typesUsed = context.DecomposeTypes(typesUsed);
             foreach (string type in typesUsed)
             {
-                cleanType = CleanType(type);
-                if (string.IsNullOrEmpty(cleanType) || cleanType.IndexOf('.') <= 0 || addedTypes.Contains(cleanType))
+                var cleanType = CleanType(type);
+                if (string.IsNullOrEmpty(cleanType) || addedTypes.Contains(cleanType) || cleanType.IndexOf('.') <= 0)
                     continue;
                 addedTypes.Add(cleanType);
                 MemberModel import = new MemberModel(cleanType.Substring(cleanType.LastIndexOf('.') + 1), cleanType, FlagType.Import, Visibility.Public);
@@ -4552,15 +4549,13 @@ namespace ASCompletion.Completion
             int firstLine = line;
             bool found = false;
             int packageLine = -1;
-            string txt;
             int indent = 0;
             int skipIfDef = 0;
-            Match mImport;
             var importComparer = new CaseSensitiveImportComparer();
             while (line < curLine)
             {
-                txt = sci.GetLine(line++).TrimStart();
-                if (txt.StartsWithOrdinal("package"))
+                var txt = sci.GetLine(line++).TrimStart();
+                if (txt.StartsWith("package"))
                 {
                     packageLine = line;
                     firstLine = line;
@@ -4579,7 +4574,7 @@ namespace ASCompletion.Completion
                     found = true;
                     indent = sci.GetLineIndentation(line - 1);
                     // insert in alphabetical order
-                    mImport = ASFileParserRegexes.Import.Match(txt);
+                    var mImport = ASFileParserRegexes.Import.Match(txt);
                     if (mImport.Success && importComparer.Compare(mImport.Groups["package"].Value, fullPath) > 0)
                     {
                         line--;

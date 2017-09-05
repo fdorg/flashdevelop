@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using PluginCore.Localization;
 using PluginCore.Helpers;
 using PluginCore.Controls;
-using ProjectManager;
 using PluginCore;
+using System.Linq;
 
 namespace ProjectManager.Controls
 {
@@ -261,9 +261,10 @@ namespace ProjectManager.Controls
             List<String> matchedFiles;
             if (this.textBox.Text.Length > 0)
             {
-                matchedFiles = SearchUtil.getMatchedItems(this.openedFiles, this.textBox.Text, "\\", 0);
+                String searchText = this.textBox.Text.Replace("\\", "/");
+                matchedFiles = SearchUtil.getMatchedItems(this.openedFiles, searchText, "/", 0);
                 if (matchedFiles.Capacity > 0) matchedFiles.Add(ITEM_SPACER);
-                matchedFiles.AddRange(SearchUtil.getMatchedItems(this.projectFiles, this.textBox.Text, "\\", this.MAX_ITEMS));
+                matchedFiles.AddRange(SearchUtil.getMatchedItems(this.projectFiles, searchText, "/", this.MAX_ITEMS));
             }
             else matchedFiles = openedFiles;
             foreach (String file in matchedFiles)
@@ -511,8 +512,9 @@ namespace ProjectManager.Controls
 
     struct SearchResult
     {
-        public double score;
-        public string value;
+        public double Score;
+        public double FolderScore;
+        public string Value;
     }
 
     public class SearchUtil
@@ -521,6 +523,17 @@ namespace ProjectManager.Controls
         {
             var i = 0;
             var matchedItems = new List<SearchResult>();
+            string searchFile;
+            string searchDir;
+            try
+            {
+                searchFile = Path.GetFileName(searchText);
+                searchDir = Path.GetDirectoryName(searchText);
+            }
+            catch (ArgumentException)
+            {
+                return new List<string>();
+            }
 
             foreach (var item in source)
             {
@@ -528,50 +541,51 @@ namespace ProjectManager.Controls
                 var file = Path.GetFileName(item);
                 var dir = Path.GetDirectoryName(item);
 
-                var searchFile = Path.GetFileName(searchText);
-                var searchDir = Path.GetDirectoryName(searchText);
-
-                if (AdvancedSearchMatch(file, searchFile, pathSeparator))
-                    score = 1000.0 / item.Length;
+                //score file name
+                if (AdvancedSearchMatch(file, searchFile))
+                    score = 1000.0;
                 else
-                    score = SimpleSearchMatch(file, searchFile, pathSeparator) / item.Length;
+                    score = Score(file, searchFile, pathSeparator[0]);
 
-                if (!string.IsNullOrEmpty(searchDir))
-                {
-                    if (AdvancedSearchMatch(dir, searchDir, pathSeparator))
-                        score += 1000.0 / item.Length;
-                    else
-                        score += SimpleSearchMatch(dir, searchDir, pathSeparator) / item.Length;
-                }
+                //score /= file.Length; //divide by length to prefer shorter results
 
                 if (score <= 0) continue;
 
+                //score folder path
+                var folderScore = 0.0;
+                if (!string.IsNullOrEmpty(searchDir))
+                    folderScore = ScoreWithoutNormalize(dir, searchDir, pathSeparator[0]); //do not divide by length here, because short folders should not be favoured too much
+
                 var result = new SearchResult
                 {
-                    score = score,
-                    value = item
+                    Score = score,
+                    FolderScore = folderScore,
+                    Value = item
                 };
                 matchedItems.Add(result);
             }
 
-            matchedItems.Sort((r1, r2) => r2.score.CompareTo(r1.score));
+            //sort results in following priority: folderScore, score, length (folderScore being the most important one)
+            var sortedMatches = matchedItems.OrderByDescending(r => r.FolderScore).ThenByDescending(r => r.Score).ThenBy(r => r.Value.Length);
 
             var results = new List<string>();
-            foreach (var r in matchedItems)
+            foreach (var r in sortedMatches)
             {
                 if (limit > 0 && i++ >= limit) break;
-                results.Add(r.value);
+                results.Add(r.Value);
             }
 
             return results;
         }
 
-        private static bool AdvancedSearchMatch(string file, string searchText, string pathSeparator)
+        static bool AdvancedSearchMatch(string file, string searchText)
         {
+            if (!string.Equals(searchText.ToUpperInvariant(), searchText)) return false;
+
             int i = 0; int j = 0;
             if (file.Length < searchText.Length) return false;
-            Char[] text = Path.GetFileName(file).ToCharArray();
-            Char[] pattern = searchText.ToCharArray();
+            var text = file.ToCharArray();
+            var pattern = searchText.ToCharArray();
             while (i < pattern.Length)
             {
                 while (i < pattern.Length && j < text.Length && pattern[i] == text[j])
@@ -580,41 +594,36 @@ namespace ProjectManager.Controls
                     j++;
                 }
                 if (i == pattern.Length) return true;
-                if (Char.IsLower(pattern[i])) return false;
-                while (j < text.Length && Char.IsLower(text[j]))
+                if (char.IsLower(pattern[i])) return false;
+                while (j < text.Length && char.IsLower(text[j]))
                 {
                     j++;
                 }
                 if (j == text.Length) return false;
                 if (pattern[i] != text[j]) return false;
             }
-            return (i == pattern.Length);
+            return i == pattern.Length;
         }
 
-        private static double SimpleSearchMatch(string file, string searchText, string pathSeparator)
+        static double Score(string str, string query, char pathSeparator)
         {
-            if (file.StartsWith(searchText, StringComparison.OrdinalIgnoreCase)) //Equality bonus
-            {
-                return ((file.Length + 1d) / file.Length + (file.Length + 1d) / searchText.Length) / 2;
-            }
+            var score = ScoreWithoutNormalize(str, query, pathSeparator);
 
-            var score = Score(file, searchText, pathSeparator[0]);
-
-            return score;
-
+            return (score / str.Length + score / query.Length) / 2;
         }
 
         /**
          * Ported from: https://github.com/atom/fuzzaldrin/
          */
-        private static double Score(string str, string query, char pathSeparator)
+        static double ScoreWithoutNormalize(string str, string query, char pathSeparator)
         {
             double score = 0;
 
+            if (str.StartsWith(query, StringComparison.OrdinalIgnoreCase)) //Starts with bonus
+                return query.Length + 1;
+
             if (str.ToLower().Contains(query.ToLower())) //Contains bonus
-            {
-                score = 1;
-            }
+                return query.Length;
 
             int strIndex = 0;
 
@@ -625,32 +634,23 @@ namespace ProjectManager.Controls
                 var index = str.IndexOf(character, strIndex, StringComparison.OrdinalIgnoreCase);
 
                 if (index == -1)
-                {
                     return 0;
-                }
 
-                double charScore = 0.1;
+                var charScore = 0.1;
 
                 if (str[index] == query[i]) //same case bonus
-                {
                     charScore += 0.1;
-                }
 
                 if (index == 0 || str[index - 1] == pathSeparator) //start of string bonus
-                {
                     charScore += 0.8;
-                }
                 else if (i == index) //equivalent position bonus
-                {
                     charScore += 0.5;
-                }
 
                 score += charScore;
-
                 strIndex = index + 1;
             }
 
-            return (score / str.Length + score / query.Length) / 2;
+            return score;
         }
 
     }

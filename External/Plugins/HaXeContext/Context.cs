@@ -1120,6 +1120,97 @@ namespace HaXeContext
             }
         }
 
+        public override IEnumerable<string> DecomposeTypes(IEnumerable<string> types)
+        {
+            var characterClass = ScintillaControl.Configuration.GetLanguage("haxe").characterclass.Characters;
+            var result = new HashSet<string>();
+            foreach (var type in types)
+            {
+                if(type.Contains("->") || type.Contains('{') || type.Contains('<'))
+                {
+                    var length = type.Length;
+                    var braCount = 0;
+                    var genCount = 0;
+                    var inAnonType = false;
+                    var hasColon = false;
+                    var pos = 0;
+                    for (var i = 0; i < length; i++)
+                    {
+                        var c = type[i];
+                        if (c == '.' || characterClass.Contains(c)) continue;
+                        if (c <= ' ') pos++;
+                        else if (c == '(') pos = i + 1;
+                        else if (c == '<')
+                        {
+                            genCount++;
+                            result.Add(type.Substring(pos, i - pos));
+                            pos = i + 1;
+                        }
+                        else if (c == '>')
+                        {
+                            genCount--;
+                            if (pos != i) result.Add(type.Substring(pos, i - pos));
+                            pos = i + 1;
+                        }
+                        else if (c == '{')
+                        {
+                            inAnonType = true;
+                            braCount++;
+                            hasColon = false;
+                            pos = i + 1;
+                        }
+                        else if (c == '}')
+                        {
+                            if (hasColon) result.Add(type.Substring(pos, i - pos));
+                            if (--braCount == 0) inAnonType = false;
+                            hasColon = false;
+                            pos = i + 1;
+                        }
+                        else if (inAnonType)
+                        {
+                            if (hasColon)
+                            {
+                                if (c == ',')
+                                {
+                                    result.Add(type.Substring(pos, i - pos));
+                                    pos = i + 1;
+                                    hasColon = false;
+                                }
+                            }
+                            else if(c == ':')
+                            {
+                                hasColon = true;
+                                pos = i + 1;
+                            }
+                        }
+                        else if (genCount > 0)
+                        {
+                            if (c == ',')
+                            {
+                                if (i > pos) result.Add(type.Substring(pos, i - pos));
+                                pos = i + 1;
+                            }
+                        }
+                        if (c == '-')
+                        {
+                            if (i > pos) result.Add(type.Substring(pos, i - pos));
+                            i++;
+                            pos = i + 1;
+                            if (type.IndexOfOrdinal("->", pos) == -1 && type.IndexOfOrdinal("{", pos) == -1 && type.IndexOfOrdinal(",") == -1)
+                            {
+                                var index = type.IndexOfOrdinal("}", pos);
+                                if (index != -1) result.Add(type.Substring(pos, index - pos));
+                                else result.Add(type.Substring(pos));
+                                break;
+                            }
+                        }
+                    }
+                }
+                else result.Add(type);
+            }
+            return result;
+        }
+
         #endregion
 
         #region Custom code completion

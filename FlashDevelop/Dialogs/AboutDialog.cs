@@ -165,8 +165,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public static new void Show()
         {
-            AboutDialog aboutDialog = new AboutDialog();
-            aboutDialog.ShowDialog();
+            using (AboutDialog aboutDialog = new AboutDialog())
+                aboutDialog.ShowDialog();
         }
 
         #endregion

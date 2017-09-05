@@ -184,11 +184,13 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static String GetOpenFile()
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.InitialDirectory = GetCurDir();
-            ofd.Multiselect = false;
-            if (ofd.ShowDialog(Globals.MainForm) == DialogResult.OK) return ofd.FileName;
-            else return String.Empty;
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.InitialDirectory = GetCurDir();
+                ofd.Multiselect = false;
+                if (ofd.ShowDialog(Globals.MainForm) == DialogResult.OK) return ofd.FileName;
+                else return String.Empty;
+            }
         }
         
         /// <summary>
@@ -196,10 +198,12 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static String GetSaveFile()
         {
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.InitialDirectory = GetCurDir();
-            if (sfd.ShowDialog(Globals.MainForm) == DialogResult.OK) return sfd.FileName;
-            else return String.Empty;
+            using (SaveFileDialog sfd = new SaveFileDialog())
+            {
+                sfd.InitialDirectory = GetCurDir();
+                if (sfd.ShowDialog(Globals.MainForm) == DialogResult.OK) return sfd.FileName;
+                else return String.Empty;
+            }
         }
         
         /// <summary>
@@ -207,10 +211,12 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static String GetOpenDir()
         {
-            VistaFolderBrowserDialog fbd = new VistaFolderBrowserDialog();
-            fbd.RootFolder = Environment.SpecialFolder.MyComputer;
-            if (fbd.ShowDialog(Globals.MainForm) == DialogResult.OK) return fbd.SelectedPath;
-            else return String.Empty;
+            using (VistaFolderBrowserDialog fbd = new VistaFolderBrowserDialog())
+            {
+                fbd.RootFolder = Environment.SpecialFolder.MyComputer;
+                if (fbd.ShowDialog(Globals.MainForm) == DialogResult.OK) return fbd.SelectedPath;
+                else return String.Empty;
+            }
         }
         
         /// <summary>
@@ -413,13 +419,15 @@ namespace FlashDevelop.Utilities
             }
             if (reUserArgs.IsMatch(args)) // User arguments
             {
-                ArgReplaceDialog rvd = new ArgReplaceDialog(args, reUserArgs);
-                userArgs = rvd.Dictionary; // Save dictionary temporarily...
-                if (rvd.ShowDialog() == DialogResult.OK)
+                using (ArgReplaceDialog rvd = new ArgReplaceDialog(args, reUserArgs))
                 {
-                    args = reUserArgs.Replace(args, new MatchEvaluator(ReplaceUserArgs));
+                    userArgs = rvd.Dictionary; // Save dictionary temporarily...
+                    if (rvd.ShowDialog() == DialogResult.OK)
+                    {
+                        args = reUserArgs.Replace(args, new MatchEvaluator(ReplaceUserArgs));
+                    }
+                    else args = reUserArgs.Replace(args, new MatchEvaluator(ReplaceWithEmpty));
                 }
-                else args = reUserArgs.Replace(args, new MatchEvaluator(ReplaceWithEmpty));
             }
             return args;
         }
