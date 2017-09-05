@@ -648,6 +648,11 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterImplementInterface_issue1696_1"))
                                 .SetName("Implement interface methods. Issue 1696")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeImplementInterface_issue1696_2"), GeneratorJobType.ImplementInterface)
+                                .Returns(ReadAllTextHaxe("AfterImplementInterface_issue1696_2"))
+                                .SetName("Implement interface properties. Issue 1696")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
                     }
                 }
 
