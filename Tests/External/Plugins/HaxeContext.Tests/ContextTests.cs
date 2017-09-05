@@ -40,8 +40,8 @@ namespace HaXeContext
                 yield return new TestCaseData(new List<string> {"haxe.Timer->haxe.Timer"})
                     .SetName("haxe.Timer->haxe.Timer")
                     .Returns(new[] {"haxe.Timer"});
-                yield return new TestCaseData(new List<string> {"haxe.ds.Vector<{haxe.Timer->Type.ValueType}>"})
-                    .SetName("haxe.ds.Vector<{haxe.Timer->Type.ValueType}>")
+                yield return new TestCaseData(new List<string> {"haxe.ds.Vector<{c:haxe.Timer->Type.ValueType}>"})
+                    .SetName("haxe.ds.Vector<{c:haxe.Timer->Type.ValueType}>")
                     .Returns(new[] {"haxe.ds.Vector", "haxe.Timer", "Type.ValueType"});
                 yield return new TestCaseData(new List<string> {"Array<Int>->Map<String, Int>->haxe.ds.Vector<{c:haxe.Timer->Type.ValueType}>"})
                     .SetName("Array<Int>->Map<String, Int>->haxe.ds.Vector<{c:haxe.Timer->Type.ValueType}>")

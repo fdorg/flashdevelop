@@ -1196,11 +1196,9 @@ namespace HaXeContext
                             if (i > pos) result.Add(type.Substring(pos, i - pos));
                             i++;
                             pos = i + 1;
-                            if (type.IndexOfOrdinal("->", pos) == -1 && type.IndexOfOrdinal("{", pos) == -1 && type.IndexOfOrdinal(",") == -1)
+                            if (braCount == 0 && genCount == 0 && type.IndexOfOrdinal("{", pos) == -1 && type.IndexOfOrdinal(",", pos) == -1)
                             {
-                                var index = type.IndexOfOrdinal("}", pos);
-                                if (index != -1) result.Add(type.Substring(pos, index - pos));
-                                else result.Add(type.Substring(pos));
+                                result.Add(type.Substring(pos));
                                 break;
                             }
                         }
