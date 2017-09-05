@@ -1536,7 +1536,7 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateVariable : GenerateJob
             {
-                internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
+                internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "inline", "override" };
 
                 [TestFixtureSetUp]
                 public void GenerateVariableSetup()
@@ -1584,6 +1584,14 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextAS3("BeforeGenerateVariable_issue1460_2"), GeneratorJobType.Variable)
                                 .Returns(ReadAllTextAS3("AfterGeneratePrivateVariable_issue1460_2"))
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateConstant"), GeneratorJobType.Constant)
+                                .Returns(ReadAllTextAS3("AfterGenerateConstant"))
+                                .SetName("Generate constant");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateConstant_issue1460"), GeneratorJobType.Constant)
+                                .Returns(ReadAllTextAS3("AfterGenerateConstant_issue1460"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
                     }
                 }
 
@@ -1629,6 +1637,14 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateVariable_issue1460_3"), GeneratorJobType.Variable)
                                 .Returns(ReadAllTextHaxe("AfterGenerateVariable_issue1460_3"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateConstant"), GeneratorJobType.Constant)
+                                .Returns(ReadAllTextHaxe("AfterGenerateConstant"))
+                                .SetName("Generate constant");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateConstant_issue1460"), GeneratorJobType.Constant)
+                                .Returns(ReadAllTextHaxe("AfterGenerateConstant_issue1460"))
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1460");
                     }
                 }
@@ -2191,6 +2207,11 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1696_3"))
                                 .SetName("Override function foo(v:{a:Array<haxe.Timer>}->{a:haxe.ds.Vector<Type.ValueType>}->String)")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1696_4"), "flash.display.DisplayObjectContainer", "addChild", FlagType.Function)
+                                .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1696_4"))
+                                .SetName("Override function addChild(child:DisplayObject)")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
                     }
                 }
 
@@ -2222,6 +2243,25 @@ namespace ASCompletion.Completion
                     var currentClass = currentModel.Classes.Find(it => currentLine >= it.LineFrom && currentLine < it.LineTo);
                     ASContext.Context.CurrentClass.Returns(currentClass);
                     var ofClass = currentModel.Classes.Find(model => model.Name == ofClassName);
+                    if (ofClass == null)
+                    {
+                        foreach (var classpath in ASContext.Context.Classpath)
+                        {
+                            classpath.ForeachFile(model =>
+                            {
+                                foreach (var it in model.Classes)
+                                {
+                                    if (it.QualifiedName == ofClassName)
+                                    {
+                                        ofClass = it;
+                                        return false;
+                                    }
+                                }
+                                return true;
+                            });
+                            if (ofClass != null) break;
+                        }
+                    }
                     var member = ofClass.Members.Search(memberName, memberFlags, 0);
                     ASGenerator.GenerateOverride(sci, ofClass, member, sci.CurrentPos);
                     return sci.Text;

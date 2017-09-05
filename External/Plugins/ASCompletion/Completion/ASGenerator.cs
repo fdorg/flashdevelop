@@ -2297,27 +2297,16 @@ namespace ASCompletion.Completion
 
             // if this is a constant, we assign a value to constant
             string returnTypeStr = null;
-            string eventValue = null;
             if (job == GeneratorJobType.Constant && returnType == null)
             {
                 isStatic.Flags |= FlagType.Static;
-                eventValue = "String = \"" + Camelize(contextToken) + "\"";
             }
             else if (returnType != null)
             {
                 ClassModel inClassForImport;
-                if (returnType.InClass != null)
-                {
-                    inClassForImport = returnType.InClass;
-                }
-                else if (returnType.RelClass != null)
-                {
-                    inClassForImport = returnType.RelClass;
-                }
-                else
-                {
-                    inClassForImport = inClass;
-                }
+                if (returnType.InClass != null) inClassForImport = returnType.InClass;
+                else if (returnType.RelClass != null) inClassForImport = returnType.RelClass;
+                else inClassForImport = inClass;
                 List<string> imports = new List<string>();
                 if (returnType.Member != null)
                 {
@@ -2341,7 +2330,6 @@ namespace ASCompletion.Completion
             FlagType kind = job.Equals(GeneratorJobType.Constant) ? FlagType.Constant : FlagType.Variable;
             MemberModel newMember = NewMember(contextToken, isStatic, kind, visibility);
             if (returnTypeStr != null) newMember.Type = returnTypeStr;
-            else if (eventValue != null) newMember.Type = eventValue;
             else
             {
                 var pos = wordStartPos;
@@ -2350,6 +2338,15 @@ namespace ASCompletion.Completion
                 {
                     var expr = ASComplete.GetExpressionType(sci, pos);
                     if (expr?.Member?.Parameters?.Count > 0) newMember.Type = expr.Member.Parameters[index].Type;
+                }
+            }
+            if (job == GeneratorJobType.Constant && returnType == null)
+            {
+                if (string.IsNullOrEmpty(newMember.Type)) newMember.Type = "String = \"" + Camelize(contextToken) + "\"";
+                else
+                {
+                    var value = ASContext.Context.GetDefaultValue(newMember.Type);
+                    if (!string.IsNullOrEmpty(value)) newMember.Type += " = " + value;
                 }
             }
             GenerateVariable(newMember, position, detach);
@@ -3526,6 +3523,22 @@ namespace ASCompletion.Completion
             if (!typesUsed.Contains(qualifiedName)) typesUsed.Add(qualifiedName);
         }
 
+        static IEnumerable<string> GetQualifiedTypes(IEnumerable<string> types, FileModel inFile)
+        {
+            var result = new HashSet<string>();
+            types = ASContext.Context.DecomposeTypes(types);
+            foreach (var type in types)
+            {
+                if (type.Contains(".")) result.Add(type);
+                else
+                {
+                    var model = ASContext.Context.ResolveType(type, inFile);
+                    if (!model.IsVoid() && model.InFile.Package.Length > 0) result.Add(model.QualifiedName);
+                }
+            }
+            return result;
+        }
+
         private static string GetQualifiedType(string type, ClassModel aType)
         {
             if (string.IsNullOrEmpty(type)) return "*";
@@ -4168,23 +4181,14 @@ namespace ASCompletion.Completion
                     decl += template;
                 }
                 decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", "");
-                typesUsed.Add(GetQualifiedType(type, ofClass));
+                typesUsed.Add(type);
             }
             else
             {
                 var type = FormatType(newMember.Type);
                 var noRet = type == null || type.Equals("void", StringComparison.OrdinalIgnoreCase);
                 type = (noRet && type != null) ? features.voidKey : type;
-                if (!noRet)
-                {
-                    string qType = GetQualifiedType(type, ofClass);
-                    typesUsed.Add(qType);
-                    if (qType == type)
-                    {
-                        ClassModel rType = context.ResolveType(type, ofClass.InFile);
-                        if (!rType.IsVoid()) type = rType.Name;
-                    }
-                }
+                if (!noRet) typesUsed.Add(type);
                 newMember.Template = member.Template;
                 newMember.Type = type;
                 // fix parameters if needed
@@ -4193,7 +4197,7 @@ namespace ASCompletion.Completion
                         if (para.Type == "any") para.Type = "*";
 
                 newMember.Parameters = parameters;
-                var action = (isProxy || isAS2Event) ? "" : GetSuperCall(member, typesUsed, ofClass);
+                var action = (isProxy || isAS2Event) ? "" : GetSuperCall(member, typesUsed);
                 var template = TemplateUtils.GetTemplate("MethodOverride");
                 template = TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
                 template = TemplateUtils.ReplaceTemplateVariable(template, "Method", action);
@@ -4205,7 +4209,8 @@ namespace ASCompletion.Completion
             {
                 if (context.Settings.GenerateImports && typesUsed.Count > 0)
                 {
-                    int offset = AddImportsByName(typesUsed, line);
+                    var types = GetQualifiedTypes(typesUsed, ofClass.InFile);
+                    int offset = AddImportsByName(types, line);
                     position += offset;
                     startPos += offset;
                 }
@@ -4450,7 +4455,7 @@ namespace ASCompletion.Completion
             return type;
         }
 
-        private static string GetSuperCall(MemberModel member, List<string> typesUsed, ClassModel aType)
+        private static string GetSuperCall(MemberModel member, List<string> typesUsed)
         {
             string args = "";
             if (member.Parameters != null)
@@ -4458,11 +4463,11 @@ namespace ASCompletion.Completion
                 {
                     if (param.Name.StartsWith('.')) break;
                     args += ", " + TemplateUtils.GetParamName(param);
-                    AddTypeOnce(typesUsed, GetQualifiedType(param.Type, aType));
+                    AddTypeOnce(typesUsed, param.Type);
                 }
 
             bool noRet = string.IsNullOrEmpty(member.Type) || member.Type.Equals("void", StringComparison.OrdinalIgnoreCase);
-            if (!noRet) AddTypeOnce(typesUsed, GetQualifiedType(member.Type, aType));
+            if (!noRet) AddTypeOnce(typesUsed, member.Type);
 
             string action = "";
             if ((member.Flags & FlagType.Function) > 0)

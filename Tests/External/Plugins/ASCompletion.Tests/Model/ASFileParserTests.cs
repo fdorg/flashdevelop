@@ -1296,6 +1296,18 @@ namespace ASCompletion.Model
                         .Returns(new[] {"Array<?(?Int->Void)->?Int->Void>"});
                     yield return new TestCaseData("function foo ( p : Array < ? ( ?Int -> Void ) -> ?Int -> Void > ) {}")
                         .Returns(new[] {"Array<?(?Int->Void)->?Int->Void>"});
+                    yield return new TestCaseData("function foo(v:{a:Array<haxe.Timer>}->{a:haxe.ds.Vector<Type.ValueType>}->String) {}")
+                        .Returns(new[] {"{a:Array<haxe.Timer>}->{a:haxe.ds.Vector<Type.ValueType>}->String"})
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1699");
+                    yield return new TestCaseData("function foo(v:{a:Array<haxe.Timer>->haxe.ds.Vector<Type.ValueType>}->String) {}")
+                        .Returns(new[] {"{a:Array<haxe.Timer>->haxe.ds.Vector<Type.ValueType>}->String"})
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1699");
+                    yield return new TestCaseData("function foo(v:{a:Array<haxe.Timer>->Int->{x:Int, y:Int}}->String) {}")
+                        .Returns(new[] {"{a:Array<haxe.Timer>->Int->{x:Int, y:Int}}->String"})
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1699");
+                    yield return new TestCaseData("function foo(v:Array<{a:Array<haxe.Timer>->Int->{x:Int, y:Int}}>->String) {}")
+                        .Returns(new[] {"Array<{a:Array<haxe.Timer>->Int->{x:Int, y:Int}}>->String"})
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1699");
                 }
             }
 

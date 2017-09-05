@@ -1,7 +1,7 @@
 ﻿package;
 import Type.ValueType;
-import haxe.Timer;
 import haxe.ds.Vector;
+import haxe.Timer;
 class Foo {
 	public function new() {}
 	public function foo(v:{a:Array<haxe.Timer>}->{a:haxe.ds.Vector<Type.ValueType>}->String) {}
