@@ -1150,7 +1150,7 @@ namespace HaXeContext
                         else if (c == '>')
                         {
                             genCount--;
-                            if (pos != i) result.Add(type.Substring(pos, i - pos));
+                            if (i > pos) result.Add(type.Substring(pos, i - pos));
                             pos = i + 1;
                         }
                         else if (c == '{')
@@ -1162,9 +1162,8 @@ namespace HaXeContext
                         }
                         else if (c == '}')
                         {
-                            if (hasColon) result.Add(type.Substring(pos, i - pos));
+                            if (i > pos) result.Add(type.Substring(pos, i - pos));
                             if (--braCount == 0) inAnonType = false;
-                            hasColon = false;
                             pos = i + 1;
                         }
                         else if (inAnonType)
@@ -1197,7 +1196,11 @@ namespace HaXeContext
                             if (i > pos) result.Add(type.Substring(pos, i - pos));
                             i++;
                             pos = i + 1;
-                            if (braCount == 0 && genCount == 0 && type.IndexOfOrdinal("{", pos) == -1 && type.IndexOfOrdinal(",", pos) == -1)
+                            hasColon = false;
+                            if (braCount == 0 && genCount == 0 
+                                && type.IndexOfOrdinal("{", pos) == -1
+                                && type.IndexOfOrdinal("<", pos) == -1
+                                && type.IndexOfOrdinal(",", pos) == -1)
                             {
                                 result.Add(type.Substring(pos));
                                 break;
