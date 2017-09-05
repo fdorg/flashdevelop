@@ -3399,7 +3399,7 @@ namespace ASCompletion.Completion
 
         private static void GenerateImplementation(ClassModel iType, ClassModel inClass, ScintillaControl sci, bool detached)
         {
-            List<string> typesUsed = new List<string>();
+            var typesUsed = new HashSet<string>();
 
             StringBuilder sb = new StringBuilder();
 
@@ -3491,12 +3491,13 @@ namespace ASCompletion.Completion
                     sb.Append(decl);
                     canGenerate = true;
 
-                    AddTypeOnce(typesUsed, GetQualifiedType(method.Type, iType));
+                    typesUsed.Add(method.Type);
 
                     if (method.Parameters != null && method.Parameters.Count > 0)
                         foreach (MemberModel param in method.Parameters)
-                            AddTypeOnce(typesUsed, GetQualifiedType(param.Type, iType));
+                            typesUsed.Add(param.Type);
                 }
+                if (ASContext.Context.Settings.GenerateImports) typesUsed = (HashSet<string>) GetQualifiedTypes(typesUsed, iType.InFile);
                 // interface inheritance
                 iType = iType.Extends;
             }

@@ -1126,6 +1126,7 @@ namespace HaXeContext
             var result = new HashSet<string>();
             foreach (var type in types)
             {
+                if (string.IsNullOrEmpty(type)) continue;
                 if(type.Contains("->") || type.Contains('{') || type.Contains('<'))
                 {
                     var length = type.Length;
