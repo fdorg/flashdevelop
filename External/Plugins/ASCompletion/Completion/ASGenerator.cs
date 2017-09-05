@@ -3530,7 +3530,7 @@ namespace ASCompletion.Completion
             types = ASContext.Context.DecomposeTypes(types);
             foreach (var type in types)
             {
-                if (type.Contains(".")) result.Add(type);
+                if (type == "*" || type.Contains(".")) result.Add(type);
                 else
                 {
                     var model = ASContext.Context.ResolveType(type, inFile);
