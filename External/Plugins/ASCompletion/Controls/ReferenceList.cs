@@ -27,10 +27,10 @@ namespace ASCompletion.Controls
                 View = View.Details,
                 ShowGroups = true,
                 MultiSelect = false,
-                FullRowSelect = false
+                FullRowSelect = false,
+                HeaderStyle = ColumnHeaderStyle.None
             };
 
-            listView.HeaderStyle = ColumnHeaderStyle.None;
 
             fadingTimer = new Timer
             {
@@ -89,7 +89,6 @@ namespace ASCompletion.Controls
         internal static void Show(IEnumerable<Reference> implementors, IEnumerable<Reference> implemented, IEnumerable<Reference> overriders, IEnumerable<Reference> overridden)
         {
             listView.Hide();
-
             listView.Groups.Clear();
             listView.Items.Clear();
 
@@ -140,7 +139,6 @@ namespace ASCompletion.Controls
                     Tag = r,
                     Group = group
                 };
-                //group.Items.Add(item);
                 listView.Items.Add(item);
             }
             

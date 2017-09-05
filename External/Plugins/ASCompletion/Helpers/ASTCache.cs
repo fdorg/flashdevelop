@@ -29,16 +29,15 @@ namespace ASCompletion.Helpers
         {
             var action = new Action(() =>
             {
-                //FIXME: need to make sure this is called AFTER the Context has cached everything
-                SpinWait.SpinUntil(() => !PathExplorer.IsWorking); //wait for it to finish
+                //wait for it to finish
+                SpinWait.SpinUntil(() => !PathExplorer.IsWorking); //this is a terribly hacky way of doing it :(
 
-                //Thread.Sleep(1500);
                 var c = new Dictionary<ClassModel, CachedClassModel>();
                 
                 var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
                 foreach (MemberModel cls in context.GetAllProjectClasses())
                 {
-                    var clas = GetClassModel(c, cls);
+                    var clas = GetClassModel(cls);
                     clas.ResolveExtends();
 
                     var cachedClassModel = GetOrCreate(c, clas);
@@ -53,16 +52,16 @@ namespace ASCompletion.Helpers
                         {
                             //if ((member.Flags & FlagType.Function) == 0 && (member.Flags & FlagType.Variable) == 0) continue;
 
-                            var implementing = GetDefiningInterfaces(member, interfaces).ToHashSet();
+                            var implementing = GetDefiningInterfaces(member, interfaces);
 
                             if (implementing.Count == 0) continue;
 
-                            cachedClassModel.Implementing.AddUnion(member, implementing);
+                            cachedClassModel.Implementing.AddUnion(member, implementing.Keys);
                             //now that we know member is implementing the interfaces in implementing, we can add clas as implementor for them
                             foreach (var interf in implementing)
                             {
-                                var cachedModel = GetOrCreate(c, interf);
-                                var set = CacheHelper.GetOrCreateSet(cachedModel.Implementors, interf.Members.Search(member.Name, 0, 0)); //TODO: search is done already in GetDefiningInterfaces
+                                var cachedModel = GetOrCreate(c, interf.Key);
+                                var set = CacheHelper.GetOrCreateSet(cachedModel.Implementors, interf.Value);
                                 set.Add(clas);
                             }
 
@@ -74,16 +73,16 @@ namespace ASCompletion.Helpers
                     {
                         if ((member.Flags & (FlagType.Function | FlagType.Override)) > 0)
                         {
-                            var overridden = GetOverrideParents(clas, member).ToHashSet();
+                            var overridden = GetOverriddenClasses(clas, member);
 
                             if (overridden == null || overridden.Count <= 0) continue;
 
-                            cachedClassModel.Overriding.AddUnion(member, overridden);
+                            cachedClassModel.Overriding.AddUnion(member, overridden.Keys);
                             //now that we know member is overriding the classes in overridden, we can add clas as overrider for them
                             foreach (var over in overridden)
                             {
-                                var cachedModel = GetOrCreate(c, over);
-                                var set = CacheHelper.GetOrCreateSet(cachedModel.Overriders, over.Members.Search(member.Name, FlagType.Function, member.Access)); //TODO: this is doing work twice
+                                var cachedModel = GetOrCreate(c, over.Key);
+                                var set = CacheHelper.GetOrCreateSet(cachedModel.Overriders, over.Value);
                                 set.Add(clas);
                             }
                         }
@@ -141,19 +140,19 @@ namespace ASCompletion.Helpers
         /// <summary>
         /// Gets all ClassModels from <paramref name="interfaces"/> and the interfaces they extend that contain a definition of <paramref name="member"/>
         /// </summary>
-        /// <returns></returns>
-        internal HashSet<ClassModel> GetDefiningInterfaces(MemberModel member, HashSet<ClassModel> interfaces)
+        /// <returns>A Dictionary containing all pairs of ClassModels and MemberModels were implemented by <paramref name="member"/></returns>
+        internal Dictionary<ClassModel, MemberModel> GetDefiningInterfaces(MemberModel member, HashSet<ClassModel> interfaces)
         {
-            //if ((member.Flags & FlagType.Function) == 0 && (member.Flags & FlagType.Variable) == 0) return null;
-
             //look for all ClassModels with variables / functions of the same name as member
             //this could give faulty results if there are variables / functions of the same name with different signature in the interface
-            var implementors = interfaces.Where(interf => interf.Members.Search(member.Name, 0, 0) != null).ToHashSet();
-            
-            //var parentInterfaces = interfaces.Select(interf => interf.Extends).Where(e => !e.IsVoid()).ToHashSet();
-            //if (parentInterfaces.Count == 0) return implementors;
+            var implementors = new Dictionary<ClassModel, MemberModel>();
 
-            //implementors.UnionWith(GetDefiningInterfaces(member, parentInterfaces));
+            foreach (var interf in interfaces)
+            {
+                var interfMember = interf.Members.Search(member.Name, 0, 0);
+                if (interfMember != null)
+                    implementors.Add(interf, interfMember);
+            }
 
             return implementors;
         }
@@ -162,12 +161,13 @@ namespace ASCompletion.Helpers
         /// Gets all ClassModels that are a super-class of the given <paramref name="cls"/> and contain a function that is overridden
         /// by <paramref name="function"/>
         /// </summary>
-        internal HashSet<ClassModel> GetOverrideParents(ClassModel cls, MemberModel function)
+        /// <returns>A Dictionary containing all pairs of ClassModels and MemberModels that were overridden by <paramref name="function"/></returns>
+        internal Dictionary<ClassModel, MemberModel> GetOverriddenClasses(ClassModel cls, MemberModel function)
         {
             if (cls.Extends == null || cls.Extends.IsVoid()) return null;
             if ((function.Flags & FlagType.Function) == 0 || (function.Flags & FlagType.Override) == 0) return null;
 
-            var parentFunctions = new HashSet<ClassModel>();
+            var parentFunctions = new Dictionary<ClassModel, MemberModel>();
 
             var currentParent = cls.Extends;
             while (currentParent != null && !currentParent.IsVoid())
@@ -176,7 +176,7 @@ namespace ASCompletion.Helpers
                 //it should not be necessary to check the parameters in Haxe, because two functions with different signature cannot have the same name
 
                 if (parentFun != null)
-                    parentFunctions.Add(currentParent);
+                    parentFunctions.Add(currentParent, parentFun);
 
                 currentParent = currentParent.Extends;
             }
@@ -195,7 +195,7 @@ namespace ASCompletion.Helpers
             return cached;
         }
 
-        static ClassModel GetClassModel(Dictionary<ClassModel, CachedClassModel> cache, MemberModel clas)
+        static ClassModel GetClassModel(MemberModel clas)
         {
             var pos = clas.Type.LastIndexOf('.');
             var package = pos == -1 ? "" : clas.Type.Substring(0, pos);
@@ -212,14 +212,12 @@ namespace ASCompletion.Helpers
         /// If this ClassModel is an interface, this contains a set of classes - for each member - that implement the given members
         /// </summary>
         public Dictionary<MemberModel, HashSet<ClassModel>> Implementors = new Dictionary<MemberModel, HashSet<ClassModel>>();
-
-        //TODO: investigate whether this one can be done on the fly
+        
         /// <summary>
         /// Contains a set of interfaces - for each member - that contain the member.
         /// </summary>
         public Dictionary<MemberModel, HashSet<ClassModel>> Implementing = new Dictionary<MemberModel, HashSet<ClassModel>>();
-
-        //TODO: investigate whether this one can be done on the fly
+        
         /// <summary>
         /// Contains a set of classes - for each member - that override the member.
         /// </summary>
@@ -240,7 +238,7 @@ namespace ASCompletion.Helpers
             return new HashSet<T>(e);
         }
 
-        internal static void AddUnion<S, T>(this Dictionary<S, HashSet<T>> dict, S key, HashSet<T> value)
+        internal static void AddUnion<S, T>(this Dictionary<S, HashSet<T>> dict, S key, IEnumerable<T> value)
         {
             var set = GetOrCreateSet(dict, key);
 
