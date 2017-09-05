@@ -413,6 +413,7 @@ namespace ASCompletion.Completion
                 public void ImplementInterfaceSetup()
                 {
                     ASContext.CommonSettings.DeclarationModifierOrder = DeclarationModifierOrder;
+                    ASContext.Context.Settings.GenerateImports.Returns(true);
                 }
 
                 private ClassModel GetAs3ImplementInterfaceModel()
@@ -594,7 +595,7 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(ImplementInterfaceAs3TestCases))]
-                public string As3(string sourceText, ClassModel sourceModel, ClassModel interfaceToImplement)
+                public string AS3(string sourceText, ClassModel sourceModel, ClassModel interfaceToImplement)
                 {
                     SetAs3Features(sci);
                     ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceToImplement);
@@ -635,6 +636,35 @@ namespace ASCompletion.Completion
                 public string AS3(string sourceText, GeneratorJobType job)
                 {
                     ASContext.Context.SetAs3Features();
+                    return Common(sourceText, job);
+                }
+
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeImplementInterface_issue1696_1"), GeneratorJobType.ImplementInterface)
+                                .Returns(ReadAllTextHaxe("AfterImplementInterface_issue1696_1"))
+                                .SetName("Implement interface methods. Issue 1696")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeImplementInterface_issue1696_2"), GeneratorJobType.ImplementInterface)
+                                .Returns(ReadAllTextHaxe("AfterImplementInterface_issue1696_2"))
+                                .SetName("Implement interface properties. Issue 1696")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public string Haxe(string sourceText, GeneratorJobType job)
+                {
+                    ASContext.Context.SetHaxeFeatures();
+                    return Common(sourceText, job);
+                }
+
+                string Common(string sourceText, GeneratorJobType job)
+                {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
                     var currentModel = ASContext.Context.CurrentModel;
@@ -645,7 +675,6 @@ namespace ASCompletion.Completion
                     ASGenerator.GenerateJob(job, null, ASContext.Context.CurrentClass, null, null);
                     return sci.Text;
                 }
-
             }
 
             [TestFixture]
@@ -1288,6 +1317,8 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class AssignStatementToVar : GenerateJob
             {
+                [TestFixtureSetUp]
+                public void AssignStatementToVarSetUp() => ASContext.Context.Settings.GenerateImports = true;
 
                 public IEnumerable<TestCaseData> AS3TestCases
                 {
@@ -1486,6 +1517,11 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromArrayAccess"), GeneratorJobType.AssignStatementToVar, false)
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromArrayAccess"))
                                 .SetName("array[0]");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1696_1"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1696_1"))
+                                .SetName("issue 1696")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
                     }
                 }
 

@@ -1045,7 +1045,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        AddAsParameter(inClass, sci, member, detach);
+                        AddAsParameter(sci, member);
                     }
                     finally
                     {
@@ -1136,7 +1136,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        ChangeMethodDecl(sci, member, inClass);
+                        ChangeMethodDecl(sci, inClass);
                     }
                     finally
                     {
@@ -1160,7 +1160,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        EventMetatag(inClass, sci, member);
+                        EventMetatag(inClass, sci);
                     }
                     finally
                     {
@@ -1309,11 +1309,11 @@ namespace ASCompletion.Completion
             sci.SetSel(pos, pos);
             InsertCode(pos, template, sci);
 
-            if (type != null)
+            if (ASContext.Context.Settings.GenerateImports && type != null)
             {
                 var inClassForImport = resolve.InClass ?? resolve.RelClass ?? inClass;
-                var l = new List<string> {GetQualifiedType(type, inClassForImport)};
-                AddImportsByName(l, sci.LineFromPosition(pos));
+                var types = GetQualifiedTypes(new [] {type}, inClassForImport.InFile);
+                AddImportsByName(types, sci.LineFromPosition(pos));
             }
         }
 
@@ -1329,7 +1329,7 @@ namespace ASCompletion.Completion
                 : word;
         }
 
-        private static void EventMetatag(ClassModel inClass, ScintillaControl sci, MemberModel member)
+        private static void EventMetatag(ClassModel inClass, ScintillaControl sci)
         {
             ASResult resolve = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
             string line = sci.GetLine(inClass.LineFrom);
@@ -1452,7 +1452,7 @@ namespace ASCompletion.Completion
             GenerateVariable(m, position, detach);
         }
 
-        private static void ChangeMethodDecl(ScintillaControl sci, MemberModel member, ClassModel inClass)
+        private static void ChangeMethodDecl(ScintillaControl sci, ClassModel inClass)
         {
             int wordPos = sci.WordEndPosition(sci.CurrentPos, true);
             List<FunctionParameter> functionParameters = ParseFunctionParameters(sci, wordPos);
@@ -1644,7 +1644,7 @@ namespace ASCompletion.Completion
             }
         }
 
-        private static void AddAsParameter(ClassModel inClass, ScintillaControl sci, MemberModel member, bool detach)
+        private static void AddAsParameter(ScintillaControl sci, MemberModel member)
         {
             if (!RemoveLocalDeclaration(sci, contextMember)) return;
 
@@ -3399,7 +3399,7 @@ namespace ASCompletion.Completion
 
         private static void GenerateImplementation(ClassModel iType, ClassModel inClass, ScintillaControl sci, bool detached)
         {
-            List<string> typesUsed = new List<string>();
+            var typesUsed = new HashSet<string>();
 
             StringBuilder sb = new StringBuilder();
 
@@ -3491,12 +3491,13 @@ namespace ASCompletion.Completion
                     sb.Append(decl);
                     canGenerate = true;
 
-                    AddTypeOnce(typesUsed, GetQualifiedType(method.Type, iType));
+                    typesUsed.Add(method.Type);
 
                     if (method.Parameters != null && method.Parameters.Count > 0)
                         foreach (MemberModel param in method.Parameters)
-                            AddTypeOnce(typesUsed, GetQualifiedType(param.Type, iType));
+                            typesUsed.Add(param.Type);
                 }
+                if (ASContext.Context.Settings.GenerateImports) typesUsed = (HashSet<string>) GetQualifiedTypes(typesUsed, iType.InFile);
                 // interface inheritance
                 iType = iType.Extends;
             }
