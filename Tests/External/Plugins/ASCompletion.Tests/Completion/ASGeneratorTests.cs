@@ -413,7 +413,6 @@ namespace ASCompletion.Completion
                 public void ImplementInterfaceSetup()
                 {
                     ASContext.CommonSettings.DeclarationModifierOrder = DeclarationModifierOrder;
-                    ASContext.Context.Settings.GenerateImports.Returns(true);
                 }
 
                 private ClassModel GetAs3ImplementInterfaceModel()
@@ -597,9 +596,8 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(ImplementInterfaceAs3TestCases))]
                 public string AS3(string sourceText, ClassModel sourceModel, ClassModel interfaceToImplement)
                 {
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceToImplement);
-                    sci.ConfigurationLanguage = "as3";
                     sci.Text = sourceText;
                     ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, sourceModel, null, null);
                     return sci.Text;
@@ -608,12 +606,24 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(ImplementInterfaceHaxeTestCases))]
                 public string Haxe(string sourceText, ClassModel sourceModel, ClassModel interfaceToImplement)
                 {
-                    ASContext.Context.SetHaxeFeatures();
+                    SetHaxeFeatures(sci);
                     ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceToImplement);
-                    sci.ConfigurationLanguage = "haxe";
                     sci.Text = sourceText;
                     ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, sourceModel, null, null);
                     return sci.Text;
+                }
+            }
+
+            [TestFixture]
+            public class ImplementInterface2 : GenerateJob
+            {
+                internal static string[] DeclarationModifierOrder = {"public", "protected", "internal", "private", "static", "override"};
+
+                [TestFixtureSetUp]
+                public void ImplementInterfaceSetup()
+                {
+                    ASContext.CommonSettings.DeclarationModifierOrder = DeclarationModifierOrder;
+                    ASContext.Context.Settings.GenerateImports.Returns(true);
                 }
 
                 public IEnumerable<TestCaseData> AS3TestCases
@@ -631,6 +641,7 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText, GeneratorJobType job)
                 {
+                    sci.ConfigurationLanguage = "as3";
                     ASContext.Context.SetAs3Features();
                     return Common(sourceText, job);
                 }
@@ -655,6 +666,7 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
                 public string Haxe(string sourceText, GeneratorJobType job)
                 {
+                    sci.ConfigurationLanguage = "haxe";
                     ASContext.Context.SetHaxeFeatures();
                     return Common(sourceText, job);
                 }
