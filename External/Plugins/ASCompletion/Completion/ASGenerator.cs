@@ -1045,7 +1045,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        AddAsParameter(inClass, sci, member, detach);
+                        AddAsParameter(sci, member);
                     }
                     finally
                     {
@@ -1136,7 +1136,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        ChangeMethodDecl(sci, member, inClass);
+                        ChangeMethodDecl(sci, inClass);
                     }
                     finally
                     {
@@ -1160,7 +1160,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        EventMetatag(inClass, sci, member);
+                        EventMetatag(inClass, sci);
                     }
                     finally
                     {
@@ -1329,7 +1329,7 @@ namespace ASCompletion.Completion
                 : word;
         }
 
-        private static void EventMetatag(ClassModel inClass, ScintillaControl sci, MemberModel member)
+        private static void EventMetatag(ClassModel inClass, ScintillaControl sci)
         {
             ASResult resolve = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
             string line = sci.GetLine(inClass.LineFrom);
@@ -1452,7 +1452,7 @@ namespace ASCompletion.Completion
             GenerateVariable(m, position, detach);
         }
 
-        private static void ChangeMethodDecl(ScintillaControl sci, MemberModel member, ClassModel inClass)
+        private static void ChangeMethodDecl(ScintillaControl sci, ClassModel inClass)
         {
             int wordPos = sci.WordEndPosition(sci.CurrentPos, true);
             List<FunctionParameter> functionParameters = ParseFunctionParameters(sci, wordPos);
@@ -1644,7 +1644,7 @@ namespace ASCompletion.Completion
             }
         }
 
-        private static void AddAsParameter(ClassModel inClass, ScintillaControl sci, MemberModel member, bool detach)
+        private static void AddAsParameter(ScintillaControl sci, MemberModel member)
         {
             if (!RemoveLocalDeclaration(sci, contextMember)) return;
 
