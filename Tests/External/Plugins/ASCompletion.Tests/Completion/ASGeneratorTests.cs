@@ -597,26 +597,22 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(ImplementInterfaceAs3TestCases))]
                 public string AS3(string sourceText, ClassModel sourceModel, ClassModel interfaceToImplement)
                 {
-                    SetAs3Features(sci);
+                    ASContext.Context.SetAs3Features();
                     ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceToImplement);
-
+                    sci.ConfigurationLanguage = "as3";
                     sci.Text = sourceText;
-
                     ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, sourceModel, null, null);
-
                     return sci.Text;
                 }
 
                 [Test, TestCaseSource(nameof(ImplementInterfaceHaxeTestCases))]
                 public string Haxe(string sourceText, ClassModel sourceModel, ClassModel interfaceToImplement)
                 {
-                    SetHaxeFeatures(sci);
+                    ASContext.Context.SetHaxeFeatures();
                     ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(interfaceToImplement);
-
+                    sci.ConfigurationLanguage = "haxe";
                     sci.Text = sourceText;
-
                     ASGenerator.GenerateJob(GeneratorJobType.ImplementInterface, null, sourceModel, null, null);
-
                     return sci.Text;
                 }
 
