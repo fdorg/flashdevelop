@@ -1312,6 +1312,8 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class AssignStatementToVar : GenerateJob
             {
+                [TestFixtureSetUp]
+                public void AssignStatementToVarSetUp() => ASContext.Context.Settings.GenerateImports = true;
 
                 public IEnumerable<TestCaseData> AS3TestCases
                 {
@@ -1510,6 +1512,11 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromArrayAccess"), GeneratorJobType.AssignStatementToVar, false)
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromArrayAccess"))
                                 .SetName("array[0]");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1696_1"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1696_1"))
+                                .SetName("issue 1696")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
                     }
                 }
 

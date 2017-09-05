@@ -1309,11 +1309,11 @@ namespace ASCompletion.Completion
             sci.SetSel(pos, pos);
             InsertCode(pos, template, sci);
 
-            if (type != null)
+            if (ASContext.Context.Settings.GenerateImports && type != null)
             {
                 var inClassForImport = resolve.InClass ?? resolve.RelClass ?? inClass;
-                var l = new List<string> {GetQualifiedType(type, inClassForImport)};
-                AddImportsByName(l, sci.LineFromPosition(pos));
+                var types = GetQualifiedTypes(new [] {type}, inClassForImport.InFile);
+                AddImportsByName(types, sci.LineFromPosition(pos));
             }
         }
 
