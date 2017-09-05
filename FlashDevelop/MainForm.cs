@@ -4385,7 +4385,7 @@ namespace FlashDevelop
         public void ExecuteScriptExternal(String script)
         {
             if (!File.Exists(script)) throw new FileNotFoundException();
-            using (AsmHelper helper = new AsmHelper(CSScript.Compile(script, null, true), null, true))
+            using (AsmHelper helper = new AsmHelper(CSScript.CompileFile(script, null, true), null, true))
             {
                 helper.Invoke("*.Execute");
             }
