@@ -140,8 +140,7 @@ namespace ASCompletion.Helpers
 
             return set;
         }
-
-        //TODO: move these into context, maybe?
+        
         /// <summary>
         /// Gets all ClassModels from <paramref name="interfaces"/> and the interfaces they extend that contain a definition of <paramref name="member"/>
         /// </summary>

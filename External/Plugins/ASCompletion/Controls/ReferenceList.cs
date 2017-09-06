@@ -6,6 +6,7 @@ using System.Timers;
 using System.Windows.Forms;
 using ASCompletion.Model;
 using PluginCore;
+using PluginCore.Localization;
 using Timer = System.Timers.Timer;
 
 namespace ASCompletion.Controls
@@ -30,11 +31,10 @@ namespace ASCompletion.Controls
                 HeaderStyle = ColumnHeaderStyle.None
             };
 
-            listView.Groups.Add("implementors", "Implemented by..."); //TODO: translations
-            listView.Groups.Add("implemented", "Implements...");
-            listView.Groups.Add("overriders", "Overridden by...");
-            listView.Groups.Add("overridden", "Overrides...");
-
+            listView.Groups.Add("implementors", TextHelper.GetString("Label.ImplementedBy"));
+            listView.Groups.Add("implements", TextHelper.GetString("Label.Implements"));
+            listView.Groups.Add("overriders", TextHelper.GetString("Label.OverriddenBy"));
+            listView.Groups.Add("overrides", TextHelper.GetString("Label.Overrides"));
 
             fadingTimer = new Timer
             {
@@ -96,9 +96,9 @@ namespace ASCompletion.Controls
             listView.Items.Clear();
 
             var implementorsGroup = listView.Groups["implementors"];
-            var implementedGroup = listView.Groups["implemented"];
+            var implementedGroup = listView.Groups["implements"];
             var overridersGroup = listView.Groups["overriders"];
-            var overriddenGroup = listView.Groups["overridden"];
+            var overriddenGroup = listView.Groups["overrides"];
 
             AddItems(implementorsGroup, implementors);
             AddItems(implementedGroup, implemented);
