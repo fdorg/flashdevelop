@@ -164,7 +164,7 @@ namespace ASCompletion
         public void Dispose()
         {
             timerPosition.Enabled = false;
-            astCacheTimer.Enabled = false; //FIXME: timer / UpdateCache keeps form open when closing until finished
+            astCacheTimer.Enabled = false;
             PathExplorer.StopBackgroundExploration();
             SaveSettings();
         }

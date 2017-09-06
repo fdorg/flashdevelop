@@ -32,8 +32,17 @@ namespace ASCompletion.Helpers
                 var c = new Dictionary<ClassModel, CachedClassModel>();
                 
                 var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
+                if (context.Classpath == null)
+                {
+                    PluginBase.RunAsync(new MethodInvoker(finished));
+                    return;
+                }
+
                 foreach (MemberModel cls in context.GetAllProjectClasses())
                 {
+                    if (PluginBase.MainForm.ClosingEntirely)
+                        return; //make sure we leave if the form is closing, so we do not block it
+
                     var clas = GetClassModel(cls);
                     clas.ResolveExtends();
 
@@ -47,8 +56,6 @@ namespace ASCompletion.Helpers
                         //look at each member and see if one of them is defined in an interface of clas
                         foreach (MemberModel member in clas.Members)
                         {
-                            //if ((member.Flags & FlagType.Function) == 0 && (member.Flags & FlagType.Variable) == 0) continue;
-
                             var implementing = GetDefiningInterfaces(member, interfaces);
 
                             if (implementing.Count == 0) continue;
@@ -171,7 +178,7 @@ namespace ASCompletion.Helpers
             while (currentParent != null && !currentParent.IsVoid())
             {
                 var parentFun = currentParent.Members.Search(function.Name, FlagType.Function, function.Access); //can it have a different access?
-                //it should not be necessary to check the parameters in Haxe, because two functions with different signature cannot have the same name
+                //it should not be necessary to check the parameters, because two functions with different signature cannot have the same name (at least in Haxe)
 
                 if (parentFun != null)
                     parentFunctions.Add(currentParent, parentFun);

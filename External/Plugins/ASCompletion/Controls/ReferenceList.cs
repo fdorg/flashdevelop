@@ -30,10 +30,10 @@ namespace ASCompletion.Controls
                 HeaderStyle = ColumnHeaderStyle.None
             };
 
-            listView.Groups.Add("implementors", "Implemented by"); //TODO: translations
-            listView.Groups.Add("implemented", "Implements");
-            listView.Groups.Add("overriders", "Overridden by");
-            listView.Groups.Add("overridden", "Overrides");
+            listView.Groups.Add("implementors", "Implemented by..."); //TODO: translations
+            listView.Groups.Add("implemented", "Implements...");
+            listView.Groups.Add("overriders", "Overridden by...");
+            listView.Groups.Add("overridden", "Overrides...");
 
 
             fadingTimer = new Timer
