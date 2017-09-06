@@ -1501,11 +1501,12 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVarFromCastExp3"), GeneratorJobType.AssignStatementToVar, false)
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromCastExp3"))
                                 .SetName("cast ( d, String )");
-                        //yield return
-                        //    new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue_1704_1"), GeneratorJobType.AssignStatementToVar, false)
-                        //        .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue_1704_1"))
-                        //        .SetName("from (function foo():haxe.ds.Vector<haxe.Timer->Type.ValueType> ...)()")
-                        //        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue_1704_1"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue_1704_1"))
+                                .SetName("from (function foo():haxe.ds.Vector<haxe.Timer->Type.ValueType> ...)()")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704")
+                                .Ignore("Depends on https://github.com/fdorg/flashdevelop/pull/1706");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue_1704_2"), GeneratorJobType.AssignStatementToVar, false)
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue_1704_2"))
