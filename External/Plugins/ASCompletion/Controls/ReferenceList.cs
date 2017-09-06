@@ -55,9 +55,15 @@ namespace ASCompletion.Controls
         static void ListView_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char) Keys.Enter)
+            {
                 ListView_DoubleClick(null, null);
+            }
             else if (e.KeyChar == (char) Keys.Escape)
-                FadingTimer_Elapsed(null, null);
+            {
+                listView.Hide();
+                fadingTimer.Stop();
+            }
+
         }
 
         static void ListView_MouseLeave(object sender, EventArgs e)
@@ -114,6 +120,7 @@ namespace ASCompletion.Controls
 
             listView.BringToFront();
             listView.Show();
+            listView.Focus();
             
             if (listView.Items.Count > 0)
                 listView.Height = Math.Min(listView.Items[listView.Items.Count - 1].Bounds.Bottom + 10, 500);
