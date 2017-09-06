@@ -1261,46 +1261,42 @@ namespace ASCompletion.Completion
 
         static void AssignStatementToVar(ClassModel inClass, ScintillaControl sci)
         {
+            var ctx = inClass.InFile.Context;
             int lineNum = sci.CurrentLine;
             string line = sci.GetLine(lineNum);
             StatementReturnType returnType = GetStatementReturnType(sci, inClass, line, sci.PositionFromLine(lineNum));
-
-            if (returnType == null) return;
-            
-            string type = null;
-            string varname = null;
             ASResult resolve = returnType.resolve;
-            string word = returnType.word;
-
-            if (resolve != null && !resolve.IsNull())
+            string type = null;
+            if (resolve.Member == null && (resolve.Type.Flags & FlagType.Class) != 0
+                && resolve.Type.Name != ctx.Features.booleanKey
+                && resolve.Type.Name != "Function"
+                && !string.IsNullOrEmpty(resolve.Path) && !char.IsDigit(resolve.Path[0]))
             {
-                if (resolve.Member != null && resolve.Member.Type != null)
+                var expr = ASComplete.GetExpression(sci, returnType.position);
+                if (string.IsNullOrEmpty(expr.WordBefore))
                 {
-                    type = resolve.Member.Type;
-                }
-                else if (resolve.Type != null && resolve.Type.Name != null)
-                {
-                    type = resolve.Type.QualifiedName;
-                }
-
-                if (resolve.Member != null && resolve.Member.Name != null)
-                {
-                    varname = GuessVarName(resolve.Member.Name, type);
+                    var characters = ScintillaControl.Configuration.GetLanguage(ctx.Settings.LanguageId.ToLower()).characterclass.Characters;
+                    if (resolve.Path.All(it => characters.Contains(it)))
+                    {
+                        if (inClass.InFile.haXe) type = "Class<Dynamic>";
+                        else type = ctx.ResolveType("Class", resolve.InFile).QualifiedName;
+                    }
                 }
             }
 
-            if (!string.IsNullOrEmpty(word) && Char.IsDigit(word[0])) word = null;
-
-            if (!string.IsNullOrEmpty(word) && (string.IsNullOrEmpty(type) || Regex.IsMatch(type, "(<[^]]+>)")))
-                word = null;
-
-            if (!string.IsNullOrEmpty(type) && type.Equals("void", StringComparison.OrdinalIgnoreCase))
-                type = null;
-
+            var word = returnType.word;
+            if (!string.IsNullOrEmpty(word) && char.IsDigit(word[0])) word = null;
+            string varname = null;
+            if (string.IsNullOrEmpty(type) && !resolve.IsNull())
+            {
+                if (resolve.Member?.Type != null) type = resolve.Member.Type;
+                else if (resolve.Type?.Name != null) type = resolve.Type.QualifiedName;
+                if (resolve.Member?.Name != null) varname = GuessVarName(resolve.Member.Name, type);
+            }
+            if (!string.IsNullOrEmpty(word) && (string.IsNullOrEmpty(type) || Regex.IsMatch(type, "(<[^]]+>)"))) word = null;
+            if (type == ctx.Features.voidKey) type = null;
             if (varname == null) varname = GuessVarName(word, type);
-
-            if (varname != null && varname == word)
-                varname = varname.Length == 1 ? varname + "1" : varname[0] + "";
+            if (varname != null && varname == word) varname = varname.Length == 1 ? varname + "1" : varname[0] + "";
             varname = AvoidKeyword(varname);
             string cleanType = null;
             if (type != null) cleanType = FormatType(GetShortType(type));
@@ -1315,21 +1311,8 @@ namespace ASCompletion.Completion
 
             if (type != null)
             {
-                ClassModel inClassForImport = null;
-                if (resolve.InClass != null)
-                {
-                    inClassForImport = resolve.InClass;
-                }
-                else if (resolve.RelClass != null)
-                {
-                    inClassForImport = resolve.RelClass;
-                }
-                else 
-                {
-                    inClassForImport = inClass;
-                }
-                List<string> l = new List<string>();
-                l.Add(GetQualifiedType(type, inClassForImport));
+                var inClassForImport = resolve.InClass ?? resolve.RelClass ?? inClass;
+                var l = new List<string> {GetQualifiedType(type, inClassForImport)};
                 AddImportsByName(l, sci.LineFromPosition(pos));
             }
         }
@@ -2314,27 +2297,16 @@ namespace ASCompletion.Completion
 
             // if this is a constant, we assign a value to constant
             string returnTypeStr = null;
-            string eventValue = null;
             if (job == GeneratorJobType.Constant && returnType == null)
             {
                 isStatic.Flags |= FlagType.Static;
-                eventValue = "String = \"" + Camelize(contextToken) + "\"";
             }
             else if (returnType != null)
             {
                 ClassModel inClassForImport;
-                if (returnType.InClass != null)
-                {
-                    inClassForImport = returnType.InClass;
-                }
-                else if (returnType.RelClass != null)
-                {
-                    inClassForImport = returnType.RelClass;
-                }
-                else
-                {
-                    inClassForImport = inClass;
-                }
+                if (returnType.InClass != null) inClassForImport = returnType.InClass;
+                else if (returnType.RelClass != null) inClassForImport = returnType.RelClass;
+                else inClassForImport = inClass;
                 List<string> imports = new List<string>();
                 if (returnType.Member != null)
                 {
@@ -2358,7 +2330,6 @@ namespace ASCompletion.Completion
             FlagType kind = job.Equals(GeneratorJobType.Constant) ? FlagType.Constant : FlagType.Variable;
             MemberModel newMember = NewMember(contextToken, isStatic, kind, visibility);
             if (returnTypeStr != null) newMember.Type = returnTypeStr;
-            else if (eventValue != null) newMember.Type = eventValue;
             else
             {
                 var pos = wordStartPos;
@@ -2367,6 +2338,15 @@ namespace ASCompletion.Completion
                 {
                     var expr = ASComplete.GetExpressionType(sci, pos);
                     if (expr?.Member?.Parameters?.Count > 0) newMember.Type = expr.Member.Parameters[index].Type;
+                }
+            }
+            if (job == GeneratorJobType.Constant && returnType == null)
+            {
+                if (string.IsNullOrEmpty(newMember.Type)) newMember.Type = "String = \"" + Camelize(contextToken) + "\"";
+                else
+                {
+                    var value = ASContext.Context.GetDefaultValue(newMember.Type);
+                    if (!string.IsNullOrEmpty(value)) newMember.Type += " = " + value;
                 }
             }
             GenerateVariable(newMember, position, detach);
@@ -2846,67 +2826,86 @@ namespace ASCompletion.Completion
                 if ((char) sci.CharAt(wordPos) == '(') newMemberType = parameterType;
                 else
                 {
-                    var parCount = 0;
-                    var braCount = 0;
-                    var genCount = 0;
-                    var startPosition = 0;
-                    var typeLength = parameterType.Length;
-                    for (var i = 0; i < typeLength; i++)
+                    var isNativeFunctionType = false;
+                    if (parameterType == "Function")
                     {
-                        string type = null;
-                        var c = parameterType[i];
-                        if (c == '(') parCount++;
-                        else if (c == ')')
+                        if (IsHaxe)
                         {
-                            parCount--;
-                            if (parCount == 0 && braCount == 0 && genCount == 0)
-                            {
-                                type = parameterType.Substring(startPosition, (i + 1) - startPosition);
-                                startPosition = i + 1;
-                            }
+                            var paramType = ASContext.Context.ResolveType(parameterType, callerExpr.InFile);
+                            if (paramType.InFile.Package == "haxe" && paramType.InFile.Module == "Constraints")
+                                isNativeFunctionType = true;
                         }
-                        else if (c == '{') braCount++;
-                        else if (c == '}')
-                        {
-                            braCount--;
-                            if (parCount == 0 && braCount == 0 && genCount == 0)
-                            {
-                                type = parameterType.Substring(startPosition, (i + 1) - startPosition);
-                                startPosition = i + 1;
-                            }
-                        }
-                        else if (c == '<') genCount++;
-                        else if (c == '>' && parameterType[i - 1] != '-')
-                        {
-                            genCount--;
-                            if (parCount == 0 && braCount == 0 && genCount == 0)
-                            {
-                                type = parameterType.Substring(startPosition, (i + 1) - startPosition);
-                                startPosition = i + 1;
-                            }
-                        }
-                        else if (parCount == 0 && braCount == 0 && genCount == 0 && c == '-' && parameterType[i + 1] == '>')
-                        {
-                            if (i > startPosition) type = parameterType.Substring(startPosition, i - startPosition);
-                            startPosition = i + 2;
-                            i++;
-                        }
-                        if (type == null)
-                        {
-                            if (i == typeLength - 1 && i > startPosition) newMemberType = parameterType.Substring(startPosition);
-                            continue;
-                        }
-                        type = cleanType(type);
-                        var parameter = $"parameter{functionParameters.Count}";
-                        if (type.StartsWith('?'))
-                        {
-                            parameter = $"?{parameter}";
-                            type = type.TrimStart('?');
-                        }
-                        if (i == typeLength - 1) newMemberType = type;
-                        else functionParameters.Add(new FunctionParameter(parameter, type, type, callerExpr));
+                        else isNativeFunctionType = true;
                     }
-                    if (functionParameters.Count == 1 && functionParameters[0].paramType == ASContext.Context.Features.voidKey) functionParameters.Clear();
+                    var voidKey = ASContext.Context.Features.voidKey;
+                    if (isNativeFunctionType) newMemberType = voidKey;
+                    else
+                    {
+                        var parCount = 0;
+                        var braCount = 0;
+                        var genCount = 0;
+                        var startPosition = 0;
+                        var typeLength = parameterType.Length;
+                        for (var i = 0; i < typeLength; i++)
+                        {
+                            string type = null;
+                            var c = parameterType[i];
+                            if (c == '(') parCount++;
+                            else if (c == ')')
+                            {
+                                parCount--;
+                                if (parCount == 0 && braCount == 0 && genCount == 0)
+                                {
+                                    type = parameterType.Substring(startPosition, (i + 1) - startPosition);
+                                    startPosition = i + 1;
+                                }
+                            }
+                            else if (c == '{') braCount++;
+                            else if (c == '}')
+                            {
+                                braCount--;
+                                if (parCount == 0 && braCount == 0 && genCount == 0)
+                                {
+                                    type = parameterType.Substring(startPosition, (i + 1) - startPosition);
+                                    startPosition = i + 1;
+                                }
+                            }
+                            else if (c == '<') genCount++;
+                            else if (c == '>' && parameterType[i - 1] != '-')
+                            {
+                                genCount--;
+                                if (parCount == 0 && braCount == 0 && genCount == 0)
+                                {
+                                    type = parameterType.Substring(startPosition, (i + 1) - startPosition);
+                                    startPosition = i + 1;
+                                }
+                            }
+                            else if (parCount == 0 && braCount == 0 && genCount == 0 && c == '-' &&
+                                     parameterType[i + 1] == '>')
+                            {
+                                if (i > startPosition) type = parameterType.Substring(startPosition, i - startPosition);
+                                startPosition = i + 2;
+                                i++;
+                            }
+                            if (type == null)
+                            {
+                                if (i == typeLength - 1 && i > startPosition)
+                                    newMemberType = parameterType.Substring(startPosition);
+                                continue;
+                            }
+                            type = cleanType(type);
+                            var parameter = $"parameter{functionParameters.Count}";
+                            if (type.StartsWith('?'))
+                            {
+                                parameter = $"?{parameter}";
+                                type = type.TrimStart('?');
+                            }
+                            if (i == typeLength - 1) newMemberType = type;
+                            else functionParameters.Add(new FunctionParameter(parameter, type, type, callerExpr));
+                        }
+                        if (functionParameters.Count == 1 && functionParameters[0].paramType == voidKey)
+                            functionParameters.Clear();
+                    }
                 }
                 newMemberType = cleanType(newMemberType);
             }
@@ -2914,8 +2913,7 @@ namespace ASCompletion.Completion
             if (functionParameters.Count > 0)
             {
                 var typesUsed = functionParameters.Select(parameter => parameter.paramQualType).ToList();
-                int o = AddImportsByName(typesUsed, sci.LineFromPosition(position));
-                position += o;
+                position += AddImportsByName(typesUsed, sci.LineFromPosition(position));
                 if (latest == null) sci.SetSel(position, sci.WordEndPosition(position, true));
                 else sci.SetSel(position, position);
             }
@@ -2941,9 +2939,24 @@ namespace ASCompletion.Completion
             }
             else
             {
+                string body = null;
+                switch (ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle)
+                {
+                    case GeneratedMemberBodyStyle.ReturnDefaultValue:
+                        var type = member.Type;
+                        if (inClass.InFile.haXe)
+                        {
+                            var expr = inClass.InFile.Context.ResolveType(type, inClass.InFile);
+                            if ((expr.Flags & FlagType.Abstract) != 0 && !string.IsNullOrEmpty(expr.ExtendsType))
+                                type = expr.ExtendsType;
+                        }
+                        var defaultValue = inClass.InFile.Context.GetDefaultValue(type);
+                        if (!string.IsNullOrEmpty(defaultValue)) body = $"return {defaultValue};";
+                        break;
+                }
                 template = TemplateUtils.GetTemplate("Function");
                 decl = TemplateUtils.ToDeclarationWithModifiersString(member, template);
-                decl = TemplateUtils.ReplaceTemplateVariable(decl, "Body", null);
+                decl = TemplateUtils.ReplaceTemplateVariable(decl, "Body", body);
             }
             if (detach) decl = NewLine + TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", NewLine);
             else decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", null);
@@ -3291,9 +3304,10 @@ namespace ASCompletion.Completion
                                 if (t.Contains("->") && !t.StartsWith('(')) t = $"({t})";
                                 qualifiedName += t;
                             }
-                            resolve.Type.Name = qualifiedName;
+                            resolve = null;
+                            type = new ClassModel {Name = qualifiedName, InFile = FileModel.Ignore};
                         }
-                        resolve.Member = null;
+                        else resolve.Member = null;
                     }
                     else if (!string.IsNullOrEmpty(resolve.Path) && resolve.Path.EndsWith(".[]"))
                         resolve.Member = null;
@@ -4476,16 +4490,16 @@ namespace ASCompletion.Completion
         /// <param name="typesUsed">Types to import if needed</param>
         /// <param name="atLine">Current line in editor</param>
         /// <returns>Inserted characters count</returns>
-        private static int AddImportsByName(List<string> typesUsed, int atLine)
+        private static int AddImportsByName(IEnumerable<string> typesUsed, int atLine)
         {
             int length = 0;
             IASContext context = ASContext.Context;
-            List<string> addedTypes = new List<string>();
-            string cleanType = null;
+            var addedTypes = new HashSet<string>();
+            typesUsed = context.DecomposeTypes(typesUsed);
             foreach (string type in typesUsed)
             {
-                cleanType = CleanType(type);
-                if (string.IsNullOrEmpty(cleanType) || cleanType.IndexOf('.') <= 0 || addedTypes.Contains(cleanType))
+                var cleanType = CleanType(type);
+                if (string.IsNullOrEmpty(cleanType) || addedTypes.Contains(cleanType) || cleanType.IndexOf('.') <= 0)
                     continue;
                 addedTypes.Add(cleanType);
                 MemberModel import = new MemberModel(cleanType.Substring(cleanType.LastIndexOf('.') + 1), cleanType, FlagType.Import, Visibility.Public);
@@ -4535,15 +4549,13 @@ namespace ASCompletion.Completion
             int firstLine = line;
             bool found = false;
             int packageLine = -1;
-            string txt;
             int indent = 0;
             int skipIfDef = 0;
-            Match mImport;
             var importComparer = new CaseSensitiveImportComparer();
             while (line < curLine)
             {
-                txt = sci.GetLine(line++).TrimStart();
-                if (txt.StartsWithOrdinal("package"))
+                var txt = sci.GetLine(line++).TrimStart();
+                if (txt.StartsWith("package"))
                 {
                     packageLine = line;
                     firstLine = line;
@@ -4562,7 +4574,7 @@ namespace ASCompletion.Completion
                     found = true;
                     indent = sci.GetLineIndentation(line - 1);
                     // insert in alphabetical order
-                    mImport = ASFileParserRegexes.Import.Match(txt);
+                    var mImport = ASFileParserRegexes.Import.Match(txt);
                     if (mImport.Success && importComparer.Compare(mImport.Groups["package"].Value, fullPath) > 0)
                     {
                         line--;

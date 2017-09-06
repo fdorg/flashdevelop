@@ -17,6 +17,7 @@ using ScintillaNet;
 using ScintillaNet.Enums;
 using SwfOp;
 using Timer = System.Timers.Timer;
+using System.Linq;
 
 namespace AS3Context
 {
@@ -977,6 +978,52 @@ namespace AS3Context
             if (topLevel.Members.Search(features.voidKey, 0, 0) == null)
                 topLevel.Members.Add(new MemberModel(features.voidKey, "", FlagType.Intrinsic, Visibility.Public));
             topLevel.Members.Sort();
+        }
+
+        public override string GetDefaultValue(string type)
+        {
+            if (string.IsNullOrEmpty(type) || type == features.voidKey) return null;
+            if (type == features.dynamicKey) return "undefined";
+            switch (type)
+            {
+                case "int":
+                case "uint": return "0";
+                case "Number": return "NaN";
+                case "Boolean": return "false";
+                default: return "null";
+            }
+        }
+
+        public override IEnumerable<string> DecomposeTypes(IEnumerable<string> types)
+        {
+            var characterClass = ScintillaControl.Configuration.GetLanguage("as3").characterclass.Characters;
+            var result = new HashSet<string>();
+            foreach (var type in types)
+            {
+                if (string.IsNullOrEmpty(type)) result.Add("*");
+                else if (type.Contains("<"))
+                {
+                    var length = type.Length;
+                    var pos = 0;
+                    for (var i = 0; i < length; i++)
+                    {
+                        var c = type[i];
+                        if (c == '.' || characterClass.Contains(c)) continue;
+                        if (c == '<')
+                        {
+                            result.Add(type.Substring(pos, i - pos - 1));
+                            pos = i + 1;
+                        }
+                        else if (c == '>')
+                        {
+                            result.Add(type.Substring(pos, i - pos));
+                            break;
+                        }
+                    }
+                }
+                else result.Add(type);
+            }
+            return result;
         }
 
         #endregion

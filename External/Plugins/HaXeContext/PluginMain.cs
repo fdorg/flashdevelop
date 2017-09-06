@@ -160,7 +160,6 @@ namespace HaXeContext
                     {
                         e.Handled = OpenVirtualFileModel((string) de.Data);
                     }
-                    else if (action == "ResultsPanel.ClearResults") logCount = 0;
                     break;
 
                 case EventType.UIStarted:
@@ -172,15 +171,21 @@ namespace HaXeContext
                     break;
                 case EventType.Trace:
                     if (settingObject.DisableLibInstallation) return;
+                    int count = TraceManager.TraceLog.Count;
+                    if (count <= logCount)
+                    {
+                        this.logCount = count;
+                        return;
+                    }
                     var patterns = new[]
                     {
                         "Library \\s*(?<name>[^ ]+)\\s*?(\\s*version (?<version>[^ ]+))?",
                         "Could not find haxelib\\s*(?<name>\"[^ ]+\")?(\\s*version \"(?<version>[^ ]+)\")?"//openfl project
                     };
                     var nameToVersion = new Dictionary<string, string>();
-                    for (var i = logCount; i < TraceManager.TraceLog.Count; i++)
+                    for (; logCount < count; logCount++)
                     {
-                        var message = TraceManager.TraceLog[i].Message?.Trim();
+                        var message = TraceManager.TraceLog[logCount].Message?.Trim();
                         if (string.IsNullOrEmpty(message)) continue;
                         foreach (var pattern in patterns)
                         {
@@ -188,7 +193,6 @@ namespace HaXeContext
                             if (m.Success) nameToVersion[m.Groups["name"].Value] = m.Groups["version"].Value;
                         }
                     }
-                    logCount = TraceManager.TraceLog.Count;
                     if (nameToVersion.Count == 0) return;
                     var text = TextHelper.GetString("Info.MissingLib");
                     var result = MessageBox.Show(PluginBase.MainForm, text, string.Empty, MessageBoxButtons.OKCancel);

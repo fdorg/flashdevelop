@@ -311,6 +311,10 @@ namespace FlashDevelop.Managers
                 }
                 sci.SetVisiblePolicy((Int32)(CaretPolicy.Strict | CaretPolicy.Even), 0);
                 /**
+                * Set scroll range (if false, over-scroll mode is enabled)
+                */
+                sci.EndAtLastLine = settings.EndAtLastLine ? 1 : 0;
+                /**
                 * Adjust the print margin
                 */
                 sci.EdgeColumn = settings.PrintMarginColumn;
@@ -376,7 +380,6 @@ namespace FlashDevelop.Managers
             sci.CurrentPos = 0;
             sci.CursorType = -1;
             sci.Dock = DockStyle.Fill;
-            sci.EndAtLastLine = 0;
             sci.EdgeColumn = 0;
             sci.EdgeMode = 0;
             sci.IsMouseDownCaptures = true;

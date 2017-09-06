@@ -52,6 +52,11 @@ namespace CodeRefactor.Provider
 
         public static ICommandFactory GetFactory(ScintillaControl sci) => GetFactory(sci.ConfigurationLanguage);
 
-        public static ICommandFactory GetFactory(string language) => LanguageToFactory[language];
+        public static ICommandFactory GetFactory(string language)
+        {
+            ICommandFactory factory;
+            LanguageToFactory.TryGetValue(language, out factory);
+            return factory;
+        }
     }
 }

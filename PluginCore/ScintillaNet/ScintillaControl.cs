@@ -47,6 +47,7 @@ namespace ScintillaNet
 
         private ScrollBarEx vScrollBar;
         private ScrollBarEx hScrollBar;
+        private Control scrollerCorner;
 
         /// <summary>
         /// Is the vertical scroll bar visible?
@@ -92,9 +93,10 @@ namespace ScintillaNet
                 Color color = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor");
                 String value = PluginBase.MainForm.GetThemeValue("ScrollBar.UseCustom");
                 Boolean enabled = value == "True" || (value == null && color != Color.Empty);
-                if (enabled && !this.Controls.Contains(this.vScrollBar))
+                if (enabled)
                 {
-                    this.AddScrollBars(this);
+                    if (!this.Controls.Contains(this.vScrollBar))
+                        this.AddScrollBars(this);
                     this.UpdateScrollBarTheme(this);
                 }
                 else if (!enabled && this.Controls.Contains(this.vScrollBar))
@@ -120,6 +122,7 @@ namespace ScintillaNet
             sender.hScrollBar.HotArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotArrowColor", sender.hScrollBar.ForeColor);
             sender.hScrollBar.ActiveArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ActiveArrowColor", sender.hScrollBar.ActiveForeColor);
             sender.hScrollBar.HotForeColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotForeColor", sender.hScrollBar.ForeColor);
+            sender.scrollerCorner.BackColor = PluginBase.MainForm.GetThemeColor("ScrollBar.BackColor", sender.vScrollBar.BackColor);
         }
 
         /// <summary>
@@ -128,17 +131,16 @@ namespace ScintillaNet
         private void InitScrollBars(ScintillaControl sender)
         {
             sender.vScrollBar = new ScrollBarEx();
-            sender.vScrollBar.OverScroll = true;
-            sender.vScrollBar.Width = ScaleHelper.Scale(17);
+            sender.vScrollBar.Width = ScrollBarEx.ScaleOddUp(17); // Should be odd for nice and crisp arrow points.
             sender.vScrollBar.Orientation = ScrollBarOrientation.Vertical;
             sender.vScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
-            sender.vScrollBar.Dock = DockStyle.Right;
-            sender.vScrollBar.Margin = new Padding(0, 0, 0, ScaleHelper.Scale(17));
             sender.hScrollBar = new ScrollBarEx();
-            sender.hScrollBar.Height = ScaleHelper.Scale(17);
+            sender.hScrollBar.Height = ScrollBarEx.ScaleOddUp(17); // Should be odd for nice and crisp arrow points.
             sender.hScrollBar.Orientation = ScrollBarOrientation.Horizontal;
             sender.hScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
-            sender.hScrollBar.Dock = DockStyle.Bottom;
+            sender.scrollerCorner = new Control();
+            sender.scrollerCorner.Width = sender.vScrollBar.Width;
+            sender.scrollerCorner.Height = sender.hScrollBar.Height;
             Color color = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor");
             String value = PluginBase.MainForm.GetThemeValue("ScrollBar.UseCustom");
             if (value == "True" || (value == null && color != Color.Empty))
@@ -154,22 +156,25 @@ namespace ScintillaNet
         /// </summary>
         private void OnScrollUpdate(ScintillaControl sender)
         {
-            Int32 vMax = sender.LinesVisible;
+            Boolean overScroll = sender.EndAtLastLine == 0;
+            Int32 vTotal = sender.LinesVisible;
             Int32 vPage = sender.LinesOnScreen;
+            Int32 vMax = overScroll ? (vTotal - 1) : (vTotal - vPage);
             sender.vScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.vScrollBar.Minimum = 0;
-            sender.vScrollBar.Maximum = vMax - 1;
-            sender.vScrollBar.LargeChange = vPage;
+            sender.vScrollBar.Maximum = vMax;
+            sender.vScrollBar.ViewPortSize = sender.vScrollBar.LargeChange = vPage;
             sender.vScrollBar.Value = sender.FirstVisibleLine;
-            sender.vScrollBar.CurrentPosition = vMax > 1 ? sender.VisibleFromDocLine(sender.CurrentLine) : -1;
+            sender.vScrollBar.CurrentPosition = (vMax > 0) ? sender.VisibleFromDocLine(sender.CurrentLine) : -1;
+            sender.vScrollBar.MaxCurrentPosition = vTotal - 1;
             sender.vScrollBar.Scroll += sender.OnScrollBarScroll;
+            sender.vScrollBar.Enabled = vMax > 0;
             sender.hScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.hScrollBar.Minimum = 0;
             sender.hScrollBar.Maximum = sender.ScrollWidth;
-            sender.hScrollBar.LargeChange = sender.Width;
+            sender.hScrollBar.ViewPortSize = sender.hScrollBar.LargeChange = sender.Width;
             sender.hScrollBar.Value = sender.XOffset;
             sender.hScrollBar.Scroll += sender.OnScrollBarScroll;
-            sender.vScrollBar.Enabled = vMax > 1;
         }
 
         /// <summary>
@@ -201,6 +206,7 @@ namespace ScintillaNet
             sender.hScrollBar.Scroll += sender.OnScrollBarScroll;
             sender.Controls.Add(sender.hScrollBar);
             sender.Controls.Add(sender.vScrollBar);
+            sender.Controls.Add(sender.scrollerCorner);
             sender.Painted += sender.OnScrollUpdate;
             sender.IsVScrollBar = vScroll;
             sender.IsHScrollBar = hScroll;
@@ -220,6 +226,7 @@ namespace ScintillaNet
             sender.hScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.Controls.Remove(sender.hScrollBar);
             sender.Controls.Remove(sender.vScrollBar);
+            sender.Controls.Remove(sender.scrollerCorner);
             sender.Painted -= sender.OnScrollUpdate;
             sender.IsVScrollBar = vScroll;
             sender.IsHScrollBar = hScroll;
@@ -272,7 +279,16 @@ namespace ScintillaNet
         {
             Int32 vsbWidth = this.Controls.Contains(this.vScrollBar) && this.vScrollBar.Visible ? this.vScrollBar.Width : 0;
             Int32 hsbHeight = this.Controls.Contains(this.hScrollBar) && this.hScrollBar.Visible ? this.hScrollBar.Height : 0;
-            if (Win32.ShouldUseWin32()) SetWindowPos(this.hwndScintilla, 0, ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width - vsbWidth, ClientRectangle.Height - hsbHeight, 0);
+            if (Win32.ShouldUseWin32())
+                SetWindowPos(this.hwndScintilla, 0, ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width - vsbWidth, ClientRectangle.Height - hsbHeight, 0);
+            if (this.Controls.Contains(this.vScrollBar))
+            {
+                this.vScrollBar.SetBounds(ClientRectangle.Width - vsbWidth, 0, this.vScrollBar.Width, ClientRectangle.Height - hsbHeight);
+                this.hScrollBar.SetBounds(0, ClientRectangle.Height - hsbHeight, ClientRectangle.Width - vsbWidth, this.hScrollBar.Height);
+                this.scrollerCorner.Visible = this.vScrollBar.Visible && this.hScrollBar.Visible;
+                if (this.scrollerCorner.Visible)
+                    this.scrollerCorner.Location = new System.Drawing.Point(this.vScrollBar.Location.X, this.hScrollBar.Location.Y);
+            }
         }
 
         #endregion
@@ -4238,8 +4254,7 @@ namespace ScintillaNet
         /// </summary>
         public void DeleteForward()
         {
-            SetSel(CurrentPos + 1, CurrentPos + 1);
-            DeleteBack();
+            Clear();
         }
 
         /// <summary>
@@ -5895,6 +5910,7 @@ namespace ScintillaNet
                                             AnchorPosition = bracePos + 1;
                                             CurrentPos--; //before ch (newline)
                                             DeleteBack();
+                                            AnchorPosition = bracePos + 2;
                                             CurrentPos = bracePos + 2; //same as CurrentPos++ (after ch)
                                         }
                                     }

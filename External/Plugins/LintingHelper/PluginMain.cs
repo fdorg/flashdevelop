@@ -21,7 +21,6 @@ namespace LintingHelper
         private string pluginAuth = "FlashDevelop Team";
         private Settings settingObject;
         private string settingFilename;
-        internal static RichToolTip Tip;
 
         public int Api
         {
@@ -96,44 +95,10 @@ namespace LintingHelper
         {
             BatchProcessManager.AddBatchProcessor(new BatchProcess.LintProcessor());
             EventManager.AddEventHandler(this, EventType.FileOpen | EventType.FileSave | EventType.FileModify);
-
-            UITools.Manager.OnMouseHover += Scintilla_OnMouseHover;
-            UITools.Manager.OnMouseHoverEnd += Scintilla_OnMouseHoverEnd;
-        }
-
-        private void Scintilla_OnMouseHover(ScintillaNet.ScintillaControl sender, int position)
-        {
-            var results = Managers.LintingManager.Cache.GetResultsFromPosition(DocumentManager.FindDocument(sender), position);
-            if (results == null)
-                return;
-
-            var desc = "";
-
-            foreach (var result in results)
-            {
-                if (!string.IsNullOrEmpty(result.Description))
-                    desc += "\r\n" + result.Description;
-            }
-
-            if (desc != string.Empty)
-            {
-                desc = desc.Remove(0, 2); //remove \r\n
-                Tip.ShowAtMouseLocation(desc);
-
-                //move simpleTip up to not overlap linting tip
-                UITools.Tip.Location = new Point(UITools.Tip.Location.X, UITools.Tip.Location.Y - Tip.Size.Height);
-            }
-        }
-
-        private void Scintilla_OnMouseHoverEnd(ScintillaNet.ScintillaControl sender, int position)
-        {
-            Tip.Hide();
         }
 
         private void InitBasics()
         {
-            Tip = new RichToolTip(PluginBase.MainForm);
-
             string dataPath = Path.Combine(PathHelper.DataDir, nameof(LintingHelper));
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             this.settingFilename = Path.Combine(dataPath, $"{nameof(Settings)}.fdb");

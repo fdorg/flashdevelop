@@ -96,6 +96,11 @@ namespace PluginCore
         #endregion
     }
 
+    public interface ICompletionListSpecialItem : ICompletionListItem
+    {
+
+    }
+
     public interface IMainForm : IContainerControl, IWin32Window
     {
         #region IMainForm Methods
@@ -555,6 +560,7 @@ namespace PluginCore
         Boolean DisableSmartMatch { get; set; }
         Boolean SaveUnicodeWithBOM { get; set; }
         Boolean KeepCaretCentered { get; set; }
+        Boolean EndAtLastLine { get; set; }
         String InsertionTriggers { get; set; }
         Int32 ClipboardHistorySize { get; set; }
 

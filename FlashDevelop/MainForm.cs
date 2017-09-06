@@ -576,6 +576,7 @@ namespace FlashDevelop
             try
             {
                 DockablePanel dockablePanel = new DockablePanel(ctrl, guid);
+                dockablePanel.Show();
                 dockablePanel.Image = image;
                 dockablePanel.DockState = defaultDockState;
                 LayoutManager.PluginPanels.Add(dockablePanel);
@@ -3543,10 +3544,12 @@ namespace FlashDevelop
         /// </summary>
         public void InsertHash(Object sender, System.EventArgs e)
         {
-            HashDialog cd = new HashDialog();
-            if (cd.ShowDialog() == DialogResult.OK)
+            using (HashDialog cd = new HashDialog())
             {
-                Globals.SciControl.ReplaceSel(cd.HashResultText);
+                if (cd.ShowDialog() == DialogResult.OK)
+                {
+                    Globals.SciControl.ReplaceSel(cd.HashResultText);
+                }
             }
         }
 
@@ -4042,25 +4045,27 @@ namespace FlashDevelop
         /// </summary>
         public void SelectTheme(Object sender, System.EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.InitialDirectory = PathHelper.ThemesDir;
-            ofd.Title = " " + TextHelper.GetString("Title.OpenFileDialog");
-            ofd.Filter = TextHelper.GetString("Info.ThemesFilter");
-            if (ofd.ShowDialog(this) == DialogResult.OK)
+            using (OpenFileDialog ofd = new OpenFileDialog())
             {
-                String ext = Path.GetExtension(ofd.FileName).ToLower();
-                if (ext == ".fdi")
+                ofd.InitialDirectory = PathHelper.ThemesDir;
+                ofd.Title = " " + TextHelper.GetString("Title.OpenFileDialog");
+                ofd.Filter = TextHelper.GetString("Info.ThemesFilter");
+                if (ofd.ShowDialog(this) == DialogResult.OK)
                 {
-                    ThemeManager.LoadTheme(ofd.FileName);
-                    ThemeManager.WalkControls(this);
-                }
-                else
-                {
-                    this.CallCommand("ExtractZip", ofd.FileName + ";true");
-                    String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
-                    if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
-                    ThemeManager.WalkControls(this);
-                    this.RefreshSciConfig();
+                    String ext = Path.GetExtension(ofd.FileName).ToLower();
+                    if (ext == ".fdi")
+                    {
+                        ThemeManager.LoadTheme(ofd.FileName);
+                        ThemeManager.WalkControls(this);
+                    }
+                    else
+                    {
+                        this.CallCommand("ExtractZip", ofd.FileName + ";true");
+                        String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
+                        if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
+                        ThemeManager.WalkControls(this);
+                        this.RefreshSciConfig();
+                    }
                 }
             }
         }
@@ -4287,28 +4292,30 @@ namespace FlashDevelop
         {
             try
             {
-                SaveFileDialog sfd = new SaveFileDialog();
-                sfd.AddExtension = true; sfd.DefaultExt = "fdz";
-                sfd.Filter = TextHelper.GetString("FlashDevelop.Info.ZipFilter");
-                String dirMarker = "\\" + DistroConfig.DISTRIBUTION_NAME + "\\";
-                if (sfd.ShowDialog(this) == DialogResult.OK)
+                using (SaveFileDialog sfd = new SaveFileDialog())
                 {
-                    List<String> settingFiles = new List<String>();
-                    ZipFile zipFile = ZipFile.Create(sfd.FileName);
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.DataDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.SnippetDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.SettingDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.TemplateDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.UserLibraryDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.UserProjectsDir, "*.*", SearchOption.AllDirectories));
-                    zipFile.BeginUpdate();
-                    foreach (String settingFile in settingFiles)
+                    sfd.AddExtension = true; sfd.DefaultExt = "fdz";
+                    sfd.Filter = TextHelper.GetString("FlashDevelop.Info.ZipFilter");
+                    String dirMarker = "\\" + DistroConfig.DISTRIBUTION_NAME + "\\";
+                    if (sfd.ShowDialog(this) == DialogResult.OK)
                     {
-                        Int32 index = settingFile.IndexOfOrdinal(dirMarker) + dirMarker.Length;
-                        zipFile.Add(settingFile, "$(BaseDir)\\" + settingFile.Substring(index));
+                        List<String> settingFiles = new List<String>();
+                        ZipFile zipFile = ZipFile.Create(sfd.FileName);
+                        settingFiles.AddRange(Directory.GetFiles(PathHelper.DataDir, "*.*", SearchOption.AllDirectories));
+                        settingFiles.AddRange(Directory.GetFiles(PathHelper.SnippetDir, "*.*", SearchOption.AllDirectories));
+                        settingFiles.AddRange(Directory.GetFiles(PathHelper.SettingDir, "*.*", SearchOption.AllDirectories));
+                        settingFiles.AddRange(Directory.GetFiles(PathHelper.TemplateDir, "*.*", SearchOption.AllDirectories));
+                        settingFiles.AddRange(Directory.GetFiles(PathHelper.UserLibraryDir, "*.*", SearchOption.AllDirectories));
+                        settingFiles.AddRange(Directory.GetFiles(PathHelper.UserProjectsDir, "*.*", SearchOption.AllDirectories));
+                        zipFile.BeginUpdate();
+                        foreach (String settingFile in settingFiles)
+                        {
+                            Int32 index = settingFile.IndexOfOrdinal(dirMarker) + dirMarker.Length;
+                            zipFile.Add(settingFile, "$(BaseDir)\\" + settingFile.Substring(index));
+                        }
+                        zipFile.CommitUpdate();
+                        zipFile.Close();
                     }
-                    zipFile.CommitUpdate();
-                    zipFile.Close();
                 }
             }
             catch (Exception ex)
@@ -4378,7 +4385,7 @@ namespace FlashDevelop
         public void ExecuteScriptExternal(String script)
         {
             if (!File.Exists(script)) throw new FileNotFoundException();
-            using (AsmHelper helper = new AsmHelper(CSScript.Compile(script, null, true), null, true))
+            using (AsmHelper helper = new AsmHelper(CSScript.CompileFile(script, null, true), null, true))
             {
                 helper.Invoke("*.Execute");
             }
