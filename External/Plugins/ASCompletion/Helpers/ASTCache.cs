@@ -38,63 +38,63 @@ namespace ASCompletion.Helpers
                     return;
                 }
 
-                foreach (MemberModel cls in context.GetAllProjectClasses())
+                foreach (MemberModel memberModel in context.GetAllProjectClasses())
                 {
                     if (PluginBase.MainForm.ClosingEntirely)
                         return; //make sure we leave if the form is closing, so we do not block it
 
-                    var clas = GetClassModel(cls);
-                    clas.ResolveExtends();
+                    var cls = GetClassModel(memberModel);
+                    cls.ResolveExtends();
 
-                    var cachedClassModel = GetOrCreate(c, clas);
+                    var cachedClassModel = GetOrCreate(c, cls);
 
-                    //look for functions / variables in clas that originate from interfaces of clas
-                    var interfaces = ResolveInterfaces(clas);
+                    //look for functions / variables in cls that originate from interfaces of cls
+                    var interfaces = ResolveInterfaces(cls);
 
                     if (interfaces.Count > 0)
                     {
-                        //look at each member and see if one of them is defined in an interface of clas
-                        foreach (MemberModel member in clas.Members)
+                        //look at each member and see if one of them is defined in an interface of cls
+                        foreach (MemberModel member in cls.Members)
                         {
                             var implementing = GetDefiningInterfaces(member, interfaces);
 
                             if (implementing.Count == 0) continue;
 
                             cachedClassModel.Implementing.AddUnion(member, implementing.Keys);
-                            //now that we know member is implementing the interfaces in implementing, we can add clas as implementor for them
+                            //now that we know member is implementing the interfaces in implementing, we can add cls as implementor for them
                             foreach (var interf in implementing)
                             {
                                 var cachedModel = GetOrCreate(c, interf.Key);
                                 var set = CacheHelper.GetOrCreateSet(cachedModel.Implementors, interf.Value);
-                                set.Add(clas);
+                                set.Add(cls);
                             }
 
                         }
                     }
 
-                    //look for functions in clas that originate from a super-class
-                    foreach (MemberModel member in clas.Members)
+                    //look for functions in cls that originate from a super-class
+                    foreach (MemberModel member in cls.Members)
                     {
                         if ((member.Flags & (FlagType.Function | FlagType.Override)) > 0)
                         {
-                            var overridden = GetOverriddenClasses(clas, member);
+                            var overridden = GetOverriddenClasses(cls, member);
 
                             if (overridden == null || overridden.Count <= 0) continue;
 
                             cachedClassModel.Overriding.AddUnion(member, overridden.Keys);
-                            //now that we know member is overriding the classes in overridden, we can add clas as overrider for them
+                            //now that we know member is overriding the classes in overridden, we can add cls as overrider for them
                             foreach (var over in overridden)
                             {
                                 var cachedModel = GetOrCreate(c, over.Key);
                                 var set = CacheHelper.GetOrCreateSet(cachedModel.Overriders, over.Value);
-                                set.Add(clas);
+                                set.Add(cls);
                             }
                         }
                     }
 
                     if (cachedClassModel.Implementing.Count == 0 && cachedClassModel.Implementors.Count == 0 &&
                         cachedClassModel.Overriders.Count == 0 && cachedClassModel.Overriding.Count == 0)
-                        c.Remove(clas);
+                        c.Remove(cls);
                 }
 
                 cache = c;
@@ -191,19 +191,20 @@ namespace ASCompletion.Helpers
         static CachedClassModel GetOrCreate(Dictionary<ClassModel, CachedClassModel> cache, ClassModel cls)
         {
             CachedClassModel cached;
-            cache.TryGetValue(cls, out cached);
-            if (cached != null) return cached;
-
-            cached = new CachedClassModel();
-            cache.Add(cls, cached);
+            if (!cache.TryGetValue(cls, out cached))
+            {
+                cached = new CachedClassModel();
+                cache.Add(cls, cached);
+            }
+            
             return cached;
         }
 
-        static ClassModel GetClassModel(MemberModel clas)
+        static ClassModel GetClassModel(MemberModel cls)
         {
-            var pos = clas.Type.LastIndexOf('.');
-            var package = pos == -1 ? "" : clas.Type.Substring(0, pos);
-            var name = clas.Type.Substring(pos + 1);
+            var pos = cls.Type.LastIndexOf('.');
+            var package = pos == -1 ? "" : cls.Type.Substring(0, pos);
+            var name = cls.Type.Substring(pos + 1);
 
             var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
             return context.GetModel(package, name, "");
@@ -252,12 +253,11 @@ namespace ASCompletion.Helpers
         internal static ISet<T> GetOrCreateSet<S, T>(Dictionary<S, HashSet<T>> dict, S key)
         {
             HashSet<T> set;
-            dict.TryGetValue(key, out set);
-
-            if (set != null) return set;
-
-            set = new HashSet<T>();
-            dict.Add(key, set);
+            if (!dict.TryGetValue(key, out set))
+            {
+                set = new HashSet<T>();
+                dict.Add(key, set);
+            }
             return set;
         }
     }
