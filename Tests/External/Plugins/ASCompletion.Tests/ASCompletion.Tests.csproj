@@ -660,6 +660,8 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1704_2.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1704_3.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1704_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1704_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1704_4.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
