@@ -164,7 +164,7 @@ namespace ASCompletion
         public void Dispose()
         {
             timerPosition.Enabled = false;
-            astCacheTimer.Enabled = false;
+            astCacheTimer.Enabled = false; //FIXME: timer / UpdateCache keeps form open when closing until finished
             PathExplorer.StopBackgroundExploration();
             SaveSettings();
         }
@@ -235,7 +235,8 @@ namespace ASCompletion
                     // File management
                     //
                     case EventType.FileOpen:
-                        InitDocument(PluginBase.MainForm.CurrentDocument);
+                        InitDocument(PluginBase.MainForm.CurrentDocument.SplitSci1);
+                        InitDocument(PluginBase.MainForm.CurrentDocument.SplitSci2);
                         break;
 
                     case EventType.FileSave:
@@ -465,7 +466,8 @@ namespace ASCompletion
                             {
                                 foreach (var document in PluginBase.MainForm.Documents)
                                 {
-                                    InitDocument(document);
+                                    InitDocument(document.SplitSci1);
+                                    InitDocument(document.SplitSci2);
                                 }
                                 astCacheTimer.Enabled = false;
                                 astCacheTimer.Enabled = true;
@@ -834,9 +836,8 @@ namespace ASCompletion
 
         #region Plugin actions
 
-        void InitDocument(ITabbedDocument document)
+        void InitDocument(ScintillaControl sci)
         {
-            var sci = document.SciControl;
             if (sci == null) return;
 
             //Register marker
@@ -852,14 +853,14 @@ namespace ASCompletion
             sci.MarginClick -= Sci_MarginClick;
             sci.MarginClick += Sci_MarginClick;
 
-            //FIXME: this probably fails in non-haxe projects
             if (PluginBase.CurrentProject == null) return;
             var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language) as ASContext;
             if (context == null) return;
 
-            var fileModel = context.GetCachedFileModel(document.FileName);//ASContext.Context.GetFileModel(document.FileName); //ASContext.Context.CurrentModel;
+            var fileModel = context.GetCachedFileModel(sci.FileName);
             foreach (var clas in fileModel.Classes)
             {
+                UpdateDocumentFromCache(sci, clas); //use what we already have
                 UpdateDocumentFromCache(sci, clas); //use what we already have
             }
         }
@@ -1037,7 +1038,8 @@ namespace ASCompletion
             {
                 foreach (var document in PluginBase.MainForm.Documents)
                 {
-                    InitDocument(document);
+                    InitDocument(document.SplitSci1);
+                    InitDocument(document.SplitSci2);
                 }
                 astCacheTimer.Enabled = !PluginBase.MainForm.ClosingEntirely;
             });
