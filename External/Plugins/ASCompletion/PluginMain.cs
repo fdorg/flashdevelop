@@ -74,9 +74,9 @@ namespace ASCompletion
         const int MarkerUp = 17;
         const int MarkerUpDown = 18;
 
-        static readonly Bitmap downArrow = new Bitmap(PluginBase.MainForm.FindImage16("22"));
-        static readonly Bitmap upArrow = new Bitmap(PluginBase.MainForm.FindImage16("8"));
-        static readonly Bitmap upDownArrow;
+        Bitmap downArrow;
+        Bitmap upArrow;
+        Bitmap upDownArrow;
 
         readonly ASTCache astCache = new ASTCache();
         Timer astCacheTimer;
@@ -146,6 +146,7 @@ namespace ASCompletion
             try
             {
                 InitSettings();
+                LoadBitmaps();
                 CreatePanel();
                 CreateMenuItems();
                 AddEventHandlers();
@@ -625,14 +626,6 @@ namespace ASCompletion
 
         #region Initialization
 
-        static PluginMain()
-        {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            var stream = assembly.GetManifestResourceStream("ASCompletion.Icons.UpDownArrow.png");
-            
-            upDownArrow = new Bitmap(PluginBase.MainForm.ImageSetAdjust(Image.FromStream(stream)));
-        }
-
         private void InitSettings()
         {
             pluginDesc = TextHelper.GetString("Info.Description");
@@ -666,6 +659,16 @@ namespace ASCompletion
         private void SaveSettings()
         {
             ObjectSerializer.Serialize(settingsFile, this.settingObject);
+        }
+
+        void LoadBitmaps()
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var stream = assembly.GetManifestResourceStream("ASCompletion.Icons.UpDownArrow.png");
+
+            upDownArrow = new Bitmap(PluginBase.MainForm.ImageSetAdjust(Image.FromStream(stream)));
+            downArrow = new Bitmap(PluginBase.MainForm.FindImage16("22"));
+            upArrow = new Bitmap(PluginBase.MainForm.FindImage16("8"));
         }
 
         private void CreatePanel()
