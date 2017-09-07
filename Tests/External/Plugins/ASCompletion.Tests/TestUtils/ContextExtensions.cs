@@ -49,7 +49,8 @@ namespace ASCompletion.TestUtils
             mock.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
             mock.IsFileValid.Returns(context.IsFileValid);
             mock.GetDefaultValue(null).ReturnsForAnyArgs(it => context.GetDefaultValue(it.ArgAt<string>(0)));
-            mock.DecomposeTypes(null).ReturnsForAnyArgs(it => context.DecomposeTypes(it.ArgAt<List<string>>(0) ?? new List<string>()));
+            mock.DecomposeTypes(null).ReturnsForAnyArgs(it => context.DecomposeTypes(it.ArgAt<IEnumerable<string>>(0) ?? new string[0]));
+            mock.Classpath.Returns(context.Classpath);
         }
 
         public static void BuildClassPath(this IASContext context)
