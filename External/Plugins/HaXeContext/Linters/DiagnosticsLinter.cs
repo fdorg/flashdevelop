@@ -44,6 +44,11 @@ namespace HaXeContext.Linters
         {
             if (status == HaxeCompleteStatus.DIAGNOSTICS && results != null)
             {
+                var wasLinted = new Dictionary<string, bool>();
+
+                foreach (var file in files)
+                    wasLinted[file] = false;
+
                 foreach (var res in results)
                 {
                     var range = res.Range ?? res.Args.Range;
@@ -59,7 +64,9 @@ namespace HaXeContext.Linters
                     if (!files.Contains(result.File)) //ignore results we were not asked for
                         continue;
 
-                        switch (res.Severity)
+                    wasLinted[result.File] = true;
+
+                    switch (res.Severity)
                     {
                         case HaxeDiagnosticsSeverity.INFO:
                             result.Severity = LintingSeverity.Info;
@@ -89,8 +96,17 @@ namespace HaXeContext.Linters
                         default: //in case new kinds are added in new compiler versions
                             continue;
                     }
-
+                    
                     list.Add(result);
+                }
+
+                foreach (var file in wasLinted)
+                {
+                    if (!file.Value)
+                    {
+                        //at this point, the file either has no flaws, or was not linted, because it is not in use
+                        //TODO: lint this file on its own :(
+                    }
                 }
             }
             else if (status == HaxeCompleteStatus.ERROR)
