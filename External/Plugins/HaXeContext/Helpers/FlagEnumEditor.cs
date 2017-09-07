@@ -32,7 +32,7 @@ namespace HaXeContext.Helpers
             list.Value = EnumHelper.ConvertToInt(value);
             service.DropDownControl(list);
 
-            return list.Value;
+            return (CompletionFeatures)list.Value;
 
             //return base.EditValue(context, provider, value);
         }

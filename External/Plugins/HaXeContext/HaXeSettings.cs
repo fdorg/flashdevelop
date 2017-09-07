@@ -290,13 +290,18 @@ namespace HaXeContext
             set { HaxeProject.saveHXML = exportHXML = value; }
         }
 
+        /// <summary>
+        /// A flag enum of enabled compiler features.
+        /// It should never actually be set to null (only 0).
+        /// It is only nullable because otherwise the deserializer will set it to 0 by default (instead of everything enabled)
+        /// </summary>
         [DisplayName("Enabled Compiler Services")]
         [LocalizedCategory("ASCompletion.Category.Language"),
          LocalizedDescription("HaXeContext.Description.EnabledCompilerServices"),
          DefaultValue(DEFAULT_ENABLEDCOMPILERSERVICES)]
         [Editor(typeof(Helpers.FlagEnumEditor),
             typeof(UITypeEditor))]
-        public CompletionFeatures EnabledFeatures { get; set; } = DEFAULT_ENABLEDCOMPILERSERVICES;
+        public CompletionFeatures? EnabledFeatures { get; set; } = DEFAULT_ENABLEDCOMPILERSERVICES;
 
         [DisplayName("Disable Automatic Libraries Installation")]
         [DefaultValue(DEFAULT_DISABLE_LIB_INSTALLATION)]
