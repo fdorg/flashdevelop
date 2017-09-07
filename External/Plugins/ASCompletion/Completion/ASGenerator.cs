@@ -1045,7 +1045,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        AddAsParameter(inClass, sci, member, detach);
+                        AddAsParameter(sci, member);
                     }
                     finally
                     {
@@ -1136,7 +1136,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        ChangeMethodDecl(sci, member, inClass);
+                        ChangeMethodDecl(sci, inClass);
                     }
                     finally
                     {
@@ -1160,7 +1160,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        EventMetatag(inClass, sci, member);
+                        EventMetatag(inClass, sci);
                     }
                     finally
                     {
@@ -1309,11 +1309,11 @@ namespace ASCompletion.Completion
             sci.SetSel(pos, pos);
             InsertCode(pos, template, sci);
 
-            if (type != null)
+            if (ASContext.Context.Settings.GenerateImports && type != null)
             {
                 var inClassForImport = resolve.InClass ?? resolve.RelClass ?? inClass;
-                var l = new List<string> {GetQualifiedType(type, inClassForImport)};
-                AddImportsByName(l, sci.LineFromPosition(pos));
+                var types = GetQualifiedTypes(new [] {type}, inClassForImport.InFile);
+                AddImportsByName(types, sci.LineFromPosition(pos));
             }
         }
 
@@ -1329,7 +1329,7 @@ namespace ASCompletion.Completion
                 : word;
         }
 
-        private static void EventMetatag(ClassModel inClass, ScintillaControl sci, MemberModel member)
+        private static void EventMetatag(ClassModel inClass, ScintillaControl sci)
         {
             ASResult resolve = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
             string line = sci.GetLine(inClass.LineFrom);
@@ -1452,7 +1452,7 @@ namespace ASCompletion.Completion
             GenerateVariable(m, position, detach);
         }
 
-        private static void ChangeMethodDecl(ScintillaControl sci, MemberModel member, ClassModel inClass)
+        private static void ChangeMethodDecl(ScintillaControl sci, ClassModel inClass)
         {
             int wordPos = sci.WordEndPosition(sci.CurrentPos, true);
             List<FunctionParameter> functionParameters = ParseFunctionParameters(sci, wordPos);
@@ -1644,7 +1644,7 @@ namespace ASCompletion.Completion
             }
         }
 
-        private static void AddAsParameter(ClassModel inClass, ScintillaControl sci, MemberModel member, bool detach)
+        private static void AddAsParameter(ScintillaControl sci, MemberModel member)
         {
             if (!RemoveLocalDeclaration(sci, contextMember)) return;
 
@@ -2297,27 +2297,16 @@ namespace ASCompletion.Completion
 
             // if this is a constant, we assign a value to constant
             string returnTypeStr = null;
-            string eventValue = null;
             if (job == GeneratorJobType.Constant && returnType == null)
             {
                 isStatic.Flags |= FlagType.Static;
-                eventValue = "String = \"" + Camelize(contextToken) + "\"";
             }
             else if (returnType != null)
             {
                 ClassModel inClassForImport;
-                if (returnType.InClass != null)
-                {
-                    inClassForImport = returnType.InClass;
-                }
-                else if (returnType.RelClass != null)
-                {
-                    inClassForImport = returnType.RelClass;
-                }
-                else
-                {
-                    inClassForImport = inClass;
-                }
+                if (returnType.InClass != null) inClassForImport = returnType.InClass;
+                else if (returnType.RelClass != null) inClassForImport = returnType.RelClass;
+                else inClassForImport = inClass;
                 List<string> imports = new List<string>();
                 if (returnType.Member != null)
                 {
@@ -2341,7 +2330,6 @@ namespace ASCompletion.Completion
             FlagType kind = job.Equals(GeneratorJobType.Constant) ? FlagType.Constant : FlagType.Variable;
             MemberModel newMember = NewMember(contextToken, isStatic, kind, visibility);
             if (returnTypeStr != null) newMember.Type = returnTypeStr;
-            else if (eventValue != null) newMember.Type = eventValue;
             else
             {
                 var pos = wordStartPos;
@@ -2350,6 +2338,15 @@ namespace ASCompletion.Completion
                 {
                     var expr = ASComplete.GetExpressionType(sci, pos);
                     if (expr?.Member?.Parameters?.Count > 0) newMember.Type = expr.Member.Parameters[index].Type;
+                }
+            }
+            if (job == GeneratorJobType.Constant && returnType == null)
+            {
+                if (string.IsNullOrEmpty(newMember.Type)) newMember.Type = "String = \"" + Camelize(contextToken) + "\"";
+                else
+                {
+                    var value = ASContext.Context.GetDefaultValue(newMember.Type);
+                    if (!string.IsNullOrEmpty(value)) newMember.Type += " = " + value;
                 }
             }
             GenerateVariable(newMember, position, detach);
@@ -3402,7 +3399,7 @@ namespace ASCompletion.Completion
 
         private static void GenerateImplementation(ClassModel iType, ClassModel inClass, ScintillaControl sci, bool detached)
         {
-            List<string> typesUsed = new List<string>();
+            var typesUsed = new HashSet<string>();
 
             StringBuilder sb = new StringBuilder();
 
@@ -3494,12 +3491,13 @@ namespace ASCompletion.Completion
                     sb.Append(decl);
                     canGenerate = true;
 
-                    AddTypeOnce(typesUsed, GetQualifiedType(method.Type, iType));
+                    typesUsed.Add(method.Type);
 
                     if (method.Parameters != null && method.Parameters.Count > 0)
                         foreach (MemberModel param in method.Parameters)
-                            AddTypeOnce(typesUsed, GetQualifiedType(param.Type, iType));
+                            typesUsed.Add(param.Type);
                 }
+                if (ASContext.Context.Settings.GenerateImports) typesUsed = (HashSet<string>) GetQualifiedTypes(typesUsed, iType.InFile);
                 // interface inheritance
                 iType = iType.Extends;
             }
@@ -3524,6 +3522,22 @@ namespace ASCompletion.Completion
         private static void AddTypeOnce(List<string> typesUsed, string qualifiedName)
         {
             if (!typesUsed.Contains(qualifiedName)) typesUsed.Add(qualifiedName);
+        }
+
+        static IEnumerable<string> GetQualifiedTypes(IEnumerable<string> types, FileModel inFile)
+        {
+            var result = new HashSet<string>();
+            types = ASContext.Context.DecomposeTypes(types);
+            foreach (var type in types)
+            {
+                if (type == "*" || type.Contains(".")) result.Add(type);
+                else
+                {
+                    var model = ASContext.Context.ResolveType(type, inFile);
+                    if (!model.IsVoid() && model.InFile.Package.Length > 0) result.Add(model.QualifiedName);
+                }
+            }
+            return result;
         }
 
         private static string GetQualifiedType(string type, ClassModel aType)
@@ -4168,23 +4182,14 @@ namespace ASCompletion.Completion
                     decl += template;
                 }
                 decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", "");
-                typesUsed.Add(GetQualifiedType(type, ofClass));
+                typesUsed.Add(type);
             }
             else
             {
                 var type = FormatType(newMember.Type);
                 var noRet = type == null || type.Equals("void", StringComparison.OrdinalIgnoreCase);
                 type = (noRet && type != null) ? features.voidKey : type;
-                if (!noRet)
-                {
-                    string qType = GetQualifiedType(type, ofClass);
-                    typesUsed.Add(qType);
-                    if (qType == type)
-                    {
-                        ClassModel rType = context.ResolveType(type, ofClass.InFile);
-                        if (!rType.IsVoid()) type = rType.Name;
-                    }
-                }
+                if (!noRet) typesUsed.Add(type);
                 newMember.Template = member.Template;
                 newMember.Type = type;
                 // fix parameters if needed
@@ -4193,7 +4198,7 @@ namespace ASCompletion.Completion
                         if (para.Type == "any") para.Type = "*";
 
                 newMember.Parameters = parameters;
-                var action = (isProxy || isAS2Event) ? "" : GetSuperCall(member, typesUsed, ofClass);
+                var action = (isProxy || isAS2Event) ? "" : GetSuperCall(member, typesUsed);
                 var template = TemplateUtils.GetTemplate("MethodOverride");
                 template = TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
                 template = TemplateUtils.ReplaceTemplateVariable(template, "Method", action);
@@ -4205,7 +4210,8 @@ namespace ASCompletion.Completion
             {
                 if (context.Settings.GenerateImports && typesUsed.Count > 0)
                 {
-                    int offset = AddImportsByName(typesUsed, line);
+                    var types = GetQualifiedTypes(typesUsed, ofClass.InFile);
+                    int offset = AddImportsByName(types, line);
                     position += offset;
                     startPos += offset;
                 }
@@ -4450,7 +4456,7 @@ namespace ASCompletion.Completion
             return type;
         }
 
-        private static string GetSuperCall(MemberModel member, List<string> typesUsed, ClassModel aType)
+        private static string GetSuperCall(MemberModel member, List<string> typesUsed)
         {
             string args = "";
             if (member.Parameters != null)
@@ -4458,11 +4464,11 @@ namespace ASCompletion.Completion
                 {
                     if (param.Name.StartsWith('.')) break;
                     args += ", " + TemplateUtils.GetParamName(param);
-                    AddTypeOnce(typesUsed, GetQualifiedType(param.Type, aType));
+                    AddTypeOnce(typesUsed, param.Type);
                 }
 
             bool noRet = string.IsNullOrEmpty(member.Type) || member.Type.Equals("void", StringComparison.OrdinalIgnoreCase);
-            if (!noRet) AddTypeOnce(typesUsed, GetQualifiedType(member.Type, aType));
+            if (!noRet) AddTypeOnce(typesUsed, member.Type);
 
             string action = "";
             if ((member.Flags & FlagType.Function) > 0)
@@ -4493,16 +4499,16 @@ namespace ASCompletion.Completion
         /// <param name="typesUsed">Types to import if needed</param>
         /// <param name="atLine">Current line in editor</param>
         /// <returns>Inserted characters count</returns>
-        private static int AddImportsByName(List<string> typesUsed, int atLine)
+        private static int AddImportsByName(IEnumerable<string> typesUsed, int atLine)
         {
             int length = 0;
             IASContext context = ASContext.Context;
-            List<string> addedTypes = new List<string>();
-            string cleanType = null;
+            var addedTypes = new HashSet<string>();
+            typesUsed = context.DecomposeTypes(typesUsed);
             foreach (string type in typesUsed)
             {
-                cleanType = CleanType(type);
-                if (string.IsNullOrEmpty(cleanType) || cleanType.IndexOf('.') <= 0 || addedTypes.Contains(cleanType))
+                var cleanType = CleanType(type);
+                if (string.IsNullOrEmpty(cleanType) || addedTypes.Contains(cleanType) || cleanType.IndexOf('.') <= 0)
                     continue;
                 addedTypes.Add(cleanType);
                 MemberModel import = new MemberModel(cleanType.Substring(cleanType.LastIndexOf('.') + 1), cleanType, FlagType.Import, Visibility.Public);
@@ -4552,15 +4558,13 @@ namespace ASCompletion.Completion
             int firstLine = line;
             bool found = false;
             int packageLine = -1;
-            string txt;
             int indent = 0;
             int skipIfDef = 0;
-            Match mImport;
             var importComparer = new CaseSensitiveImportComparer();
             while (line < curLine)
             {
-                txt = sci.GetLine(line++).TrimStart();
-                if (txt.StartsWithOrdinal("package"))
+                var txt = sci.GetLine(line++).TrimStart();
+                if (txt.StartsWith("package"))
                 {
                     packageLine = line;
                     firstLine = line;
@@ -4579,7 +4583,7 @@ namespace ASCompletion.Completion
                     found = true;
                     indent = sci.GetLineIndentation(line - 1);
                     // insert in alphabetical order
-                    mImport = ASFileParserRegexes.Import.Match(txt);
+                    var mImport = ASFileParserRegexes.Import.Match(txt);
                     if (mImport.Success && importComparer.Compare(mImport.Groups["package"].Value, fullPath) > 0)
                     {
                         line--;

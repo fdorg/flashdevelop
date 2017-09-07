@@ -346,17 +346,19 @@ namespace MacroManager
         /// </summary>
         private void ExportMacros(Object sender, EventArgs e)
         {
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Filter = TextHelper.GetString("Info.MacroFilter") + "|*.fdm";
-            sfd.InitialDirectory = PluginBase.MainForm.WorkingDirectory;
-            if (sfd.ShowDialog() == DialogResult.OK)
+            using (SaveFileDialog sfd = new SaveFileDialog())
             {
-                List<Macro> macros = new List<Macro>();
-                foreach (ListViewItem item in this.listView.SelectedItems)
+                sfd.Filter = TextHelper.GetString("Info.MacroFilter") + "|*.fdm";
+                sfd.InitialDirectory = PluginBase.MainForm.WorkingDirectory;
+                if (sfd.ShowDialog() == DialogResult.OK)
                 {
-                    macros.Add((Macro)item.Tag);
+                    List<Macro> macros = new List<Macro>();
+                    foreach (ListViewItem item in this.listView.SelectedItems)
+                    {
+                        macros.Add((Macro)item.Tag);
+                    }
+                    ObjectSerializer.Serialize(sfd.FileName, macros);
                 }
-                ObjectSerializer.Serialize(sfd.FileName, macros);
             }
         }
 
@@ -365,17 +367,19 @@ namespace MacroManager
         /// </summary>
         private void ImportMacros(Object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = TextHelper.GetString("Info.MacroFilter") + "|*.fdm";
-            ofd.InitialDirectory = PluginBase.MainForm.WorkingDirectory;
-            if (ofd.ShowDialog() == DialogResult.OK)
+            using (OpenFileDialog ofd = new OpenFileDialog())
             {
-                this.SaveUserMacros();
-                List<Macro> macros = new List<Macro>();
-                Object macrosObject = ObjectSerializer.Deserialize(ofd.FileName, macros, false);
-                macros = (List<Macro>)macrosObject;
-                this.pluginMain.AppSettings.UserMacros.AddRange(macros);
-                this.PopulateMacroList(this.pluginMain.AppSettings.UserMacros);
+                ofd.Filter = TextHelper.GetString("Info.MacroFilter") + "|*.fdm";
+                ofd.InitialDirectory = PluginBase.MainForm.WorkingDirectory;
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    this.SaveUserMacros();
+                    List<Macro> macros = new List<Macro>();
+                    Object macrosObject = ObjectSerializer.Deserialize(ofd.FileName, macros, false);
+                    macros = (List<Macro>)macrosObject;
+                    this.pluginMain.AppSettings.UserMacros.AddRange(macros);
+                    this.PopulateMacroList(this.pluginMain.AppSettings.UserMacros);
+                }
             }
         }
 
@@ -402,8 +406,8 @@ namespace MacroManager
         /// </summary>
         public static void Show(PluginMain pluginMain)
         {
-            ManagerDialog managerDialog = new ManagerDialog(pluginMain);
-            managerDialog.ShowDialog();
+            using (ManagerDialog managerDialog = new ManagerDialog(pluginMain))
+                managerDialog.ShowDialog();
         }
 
         #endregion

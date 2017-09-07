@@ -10,7 +10,7 @@
 ;--------------------------------
 
 ; Define version info
-!define VERSION "5.2.1"
+!define VERSION "5.3.0"
 
 ; Installer details
 VIAddVersionKey "CompanyName" "${DIST_COMP}"

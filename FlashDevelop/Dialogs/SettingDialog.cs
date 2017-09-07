@@ -680,9 +680,11 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public static void Show(String itemName, String filter)
         {
-            SettingDialog settingDialog = new SettingDialog(itemName, filter);
-            settingDialog.closeButton.Select();
-            settingDialog.ShowDialog();
+            using (SettingDialog settingDialog = new SettingDialog(itemName, filter))
+            {
+                settingDialog.closeButton.Select();
+                settingDialog.ShowDialog();
+            }
         }
 
         #endregion

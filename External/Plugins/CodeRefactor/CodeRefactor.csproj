@@ -131,7 +131,7 @@
     <Compile Include="Provider\RefactoringHelper.cs" />
     <Compile Include="Provider\RenamingHelper.cs" />
     <Compile Include="Provider\UserInterfaceManager.cs" />
-    <Compile Include="RefactorItem.cs" />
+    <Compile Include="CompletionListItems.cs" />
     <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>

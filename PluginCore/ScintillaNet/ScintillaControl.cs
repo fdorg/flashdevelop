@@ -4254,8 +4254,7 @@ namespace ScintillaNet
         /// </summary>
         public void DeleteForward()
         {
-            SetSel(CurrentPos + 1, CurrentPos + 1);
-            DeleteBack();
+            Clear();
         }
 
         /// <summary>
@@ -5911,6 +5910,7 @@ namespace ScintillaNet
                                             AnchorPosition = bracePos + 1;
                                             CurrentPos--; //before ch (newline)
                                             DeleteBack();
+                                            AnchorPosition = bracePos + 2;
                                             CurrentPos = bracePos + 2; //same as CurrentPos++ (after ch)
                                         }
                                     }

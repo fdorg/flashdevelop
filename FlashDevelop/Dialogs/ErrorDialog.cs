@@ -188,12 +188,14 @@ namespace FlashDevelop.Dialogs
         public static void Show(Exception ex)
         {
             SystemSounds.Hand.Play();
-            ErrorDialog errorDialog = new ErrorDialog();
-            errorDialog.infoTextBox.Text = ex.Message + "\r\n\r\n" + ex.StackTrace;
-            errorDialog.countLabel.Text += " " + errorCount++;
-            if (errorCount < 7) errorDialog.exitButton.Enabled = false;
-            else errorDialog.exitButton.Enabled = true;
-            errorDialog.ShowDialog();
+            using (ErrorDialog errorDialog = new ErrorDialog())
+            {
+                errorDialog.infoTextBox.Text = ex.Message + "\r\n\r\n" + ex.StackTrace;
+                errorDialog.countLabel.Text += " " + errorCount++;
+                if (errorCount < 7) errorDialog.exitButton.Enabled = false;
+                else errorDialog.exitButton.Enabled = true;
+                errorDialog.ShowDialog();
+            }
         }
 
         #endregion

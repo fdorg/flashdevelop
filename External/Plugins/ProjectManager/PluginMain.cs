@@ -451,91 +451,95 @@ namespace ProjectManager
 
                 case EventType.Command:
                     if (de.Action.StartsWithOrdinal("ProjectManager."))
-                    if (de.Action == ProjectManagerCommands.NewProject)
                     {
-                        NewProject();
-                        e.Handled = true;
-                    }
-                    else if (de.Action == ProjectManagerCommands.OpenProject)
-                    {
-                        if (de.Data != null && File.Exists((string)de.Data))
+                        if (de.Action == ProjectManagerCommands.NewProject)
                         {
-                            OpenProjectSilent((string)de.Data);
+                            NewProject();
+                            e.Handled = true;
                         }
-                        else OpenProject();
-                        e.Handled = true;
-                    }
-                    else if (de.Action == ProjectManagerCommands.SendProject)
-                    {
-                        BroadcastProjectInfo(activeProject);
-                        e.Handled = true;
-                    }
-                    else if (de.Action == ProjectManagerCommands.InstalledSDKsChanged)
-                    {
-                        project = activeProject; // TODO refresh SDK for all projects
-                        BuildActions.GetCompilerPath(project); // refresh project's SDK
-                        e.Handled = true;
-                    }
-                    else if (de.Action == ProjectManagerCommands.BuildProject)
-                    {
-                        if (Tree.Projects.Count > 0)
+                        else if (de.Action == ProjectManagerCommands.OpenProject)
+                        {
+                            if (de.Data != null && File.Exists((string)de.Data))
+                            {
+                                OpenProjectSilent((string)de.Data);
+                            }
+                            else OpenProject();
+                            e.Handled = true;
+                        }
+                        else if (de.Action == ProjectManagerCommands.SendProject)
+                        {
+                            BroadcastProjectInfo(activeProject);
+                            e.Handled = true;
+                        }
+                        else if (de.Action == ProjectManagerCommands.InstalledSDKsChanged)
+                        {
+                            project = activeProject; // TODO refresh SDK for all projects
+                            BuildActions.GetCompilerPath(project); // refresh project's SDK
+                            e.Handled = true;
+                        }
+                        else if (de.Action == ProjectManagerCommands.BuildProject)
+                        {
+                            if (Tree.Projects.Count > 0)
+                            {
+                                AutoSelectConfiguration((string)de.Data);
+                                BuildProject();
+                                e.Handled = true;
+                            }
+                        }
+                        else if (de.Action == ProjectManagerCommands.TestMovie)
+                        {
+                            project = activeProject; // TODO we need a "runnable" project
+                            if (project != null)
+                            {
+                                AutoSelectConfiguration((string)de.Data);
+                                TestMovie();
+                                e.Handled = true;
+                            }
+                        }
+                        else if (de.Action == ProjectManagerCommands.PlayOutput)
+                        {
+                            if (activeProject != null || de.Data != null)
+                            {
+                                OpenSwf((string)de.Data);
+                                de.Handled = true;
+                            }
+                        }
+                        else if (de.Action == ProjectManagerCommands.RestartFlexShell)
+                        {
+                            FlexCompilerShell.Cleanup();
+                        }
+                        else if (de.Action == ProjectManagerCommands.SetConfiguration)
                         {
                             AutoSelectConfiguration((string)de.Data);
-                            BuildProject();
-                            e.Handled = true;
                         }
-                    }
-                    else if (de.Action == ProjectManagerCommands.TestMovie)
-                    {
-                        project = activeProject; // TODO we need a "runnable" project
-                        if (project != null)
+                        else if (de.Action == ProjectManagerCommands.HotBuild)
                         {
-                            AutoSelectConfiguration((string)de.Data);
-                            TestMovie();
-                            e.Handled = true;
+                            if (activeProject != null)
+                            {
+                                AutoSelectConfiguration((string)de.Data);
+                                TestMovie();
+                                e.Handled = true;
+                            }
                         }
-                    }
-                    else if (de.Action == ProjectManagerCommands.PlayOutput)
-                    {
-                        if (activeProject != null || de.Data != null)
+                        else if (de.Action == ProjectManagerCommands.RefreshTree)
                         {
-                            OpenSwf((string)de.Data);
-                            de.Handled = true;
+                            TreeRefreshSelectedNode();
                         }
-                    }
-                    else if (de.Action == ProjectManagerCommands.RestartFlexShell)
-                    {
-                        FlexCompilerShell.Cleanup();
-                    }
-                    else if (de.Action == ProjectManagerCommands.SetConfiguration)
-                    {
-                        AutoSelectConfiguration((string)de.Data);
-                    }
-                    else if (de.Action == ProjectManagerCommands.HotBuild)
-                    {
-                        if (activeProject != null)
+                        else if (de.Action == ProjectManagerCommands.LineEntryDialog)
                         {
-                            AutoSelectConfiguration((string)de.Data);
-                            TestMovie();
-                            e.Handled = true;
-                        }
-                    }
-                    else if (de.Action == ProjectManagerCommands.RefreshTree)
-                    {
-                        TreeRefreshSelectedNode();
-                    }
-                    else if (de.Action == ProjectManagerCommands.LineEntryDialog)
-                    {
-                        Hashtable info = (Hashtable)de.Data;
-                        LineEntryDialog askName = new LineEntryDialog((string)info["title"], (string)info["label"], (string)info["suggestion"]);
-                        DialogResult choice = askName.ShowDialog();
-                        if (choice == DialogResult.OK && askName.Line.Trim().Length > 0 && askName.Line.Trim() != (string)info["suggestion"])
-                        {
-                            info["suggestion"] = askName.Line.Trim();
-                        }
-                        if (choice == DialogResult.OK)
-                        {
-                            e.Handled = true;
+                            Hashtable info = (Hashtable)de.Data;
+                            using (var askName = new LineEntryDialog((string)info["title"], (string)info["label"], (string)info["suggestion"]))
+                            {
+                                DialogResult choice = askName.ShowDialog();
+                                if (choice == DialogResult.OK && askName.Line.Trim().Length > 0 && askName.Line.Trim() != (string)info["suggestion"])
+                                {
+                                    info["suggestion"] = askName.Line.Trim();
+                                }
+                                if (choice == DialogResult.OK)
+                                {
+                                    e.Handled = true;
+                                }
+                            }
                         }
                     }
                     break;
@@ -1372,11 +1376,13 @@ namespace ProjectManager
             Project project = Tree.ProjectOf(Tree.SelectedNode);
             if (project != null)
             {
-                LibraryAssetDialog dialog = new LibraryAssetDialog(/*Tree.SelectedAsset*/ project.GetAsset(Tree.SelectedPath), project);
-                if (dialog.ShowDialog(pluginUI) == DialogResult.OK)
+                using (var dialog = new LibraryAssetDialog( /*Tree.SelectedAsset*/project.GetAsset(Tree.SelectedPath), project))
                 {
-                    Tree.SelectedNode.Refresh(false);
-                    project.Save();
+                    if (dialog.ShowDialog(pluginUI) == DialogResult.OK)
+                    {
+                        Tree.SelectedNode.Refresh(false);
+                        project.Save();
+                    }
                 }
             }
         }
