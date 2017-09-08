@@ -77,11 +77,11 @@ namespace LintingHelper.Managers
 
             foreach (var linter in GetLinters(language))
             {
-                linter.LintAsync(files, (results) =>
+                linter.LintAsync(files, results => PluginBase.RunAsync(() =>
                 {
                     ApplyLint(results);
                     EventManager.DispatchEvent(linter, new DataEvent(EventType.Command, "LintingManager.FilesLinted", files));
-                });
+                }));
             }
         }
 
@@ -118,11 +118,11 @@ namespace LintingHelper.Managers
 
             foreach (var linter in GetLinters(language))
             {
-                linter.LintProjectAsync(project, results =>
+                linter.LintProjectAsync(project, results => PluginBase.RunAsync(() =>
                 {
                     ApplyLint(results);
                     EventManager.DispatchEvent(linter, new TextEvent(EventType.Command, "LintingManager.ProjectLinted"));
-                });
+                }));
             }
         }
 
