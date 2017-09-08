@@ -77,14 +77,9 @@ namespace LintingHelper.Managers
 
             foreach (var linter in GetLinters(language))
             {
-                //remove cache
-                //foreach (var file in files)
-                //{
-                //    UnLintFile(file);
-                //}
                 linter.LintAsync(files, (results) =>
                 {
-                    ApplyLint(files, language, results);
+                    ApplyLint(results);
                     EventManager.DispatchEvent(linter, new DataEvent(EventType.Command, "LintingManager.FilesLinted", files));
                 });
             }
@@ -108,6 +103,26 @@ namespace LintingHelper.Managers
             foreach (var lang in filesByLang.Keys)
             {
                 LintFiles(filesByLang[lang].ToArray(), lang);
+            }
+        }
+
+        /// <summary>
+        /// Lint the whole <paramref name="project"/>
+        /// </summary>
+        public static void LintProject(IProject project)
+        {
+            var language = project.Language.ToLower();
+
+            //remove cache
+            Cache.RemoveAll();
+
+            foreach (var linter in GetLinters(language))
+            {
+                linter.LintProjectAsync(project, results =>
+                {
+                    ApplyLint(results);
+                    EventManager.DispatchEvent(linter, new TextEvent(EventType.Command, "LintingManager.ProjectLinted"));
+                });
             }
         }
 
@@ -142,14 +157,10 @@ namespace LintingHelper.Managers
         /// <summary>
         /// Applies the results to all open files
         /// </summary>
-        static void ApplyLint(string[] files, string language, List<LintingResult> results)
+        static void ApplyLint(List<LintingResult> results)
         {
             if (results == null)
                 return;
-
-            //var fileList = new List<string>(files);
-            //fileList.AddRange(PluginBase.MainForm.Documents.Select(d => d.FileName));
-            //Cache.RemoveAllExcept(fileList);
 
             Cache.AddResults(results);
 
@@ -158,8 +169,6 @@ namespace LintingHelper.Managers
 
         internal static void UpdateLinterPanel()
         {
-            //PluginBase.RunAsync(() =>
-            //{
             PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + TraceGroup);
 
             var cachedResults = Cache.GetAllResults();
@@ -200,7 +209,6 @@ namespace LintingHelper.Managers
                 }
                 TraceManager.Add(message, state, TraceGroup);
             }
-            //});
         }
     }
 }

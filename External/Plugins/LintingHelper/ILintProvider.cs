@@ -11,5 +11,6 @@ namespace LintingHelper
     public interface ILintProvider
     {
         void LintAsync(string[] files, LintCallback callback);
+        void LintProjectAsync(IProject project, LintCallback callback);
     }
 }

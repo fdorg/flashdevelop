@@ -1,10 +1,7 @@
 ﻿using LintingHelper.Helpers;
 using PluginCore;
-using PluginCore.Managers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace LintingHelper
 {
@@ -99,7 +96,7 @@ namespace LintingHelper
         /// Removes all documents except the given ones from the cache
         /// </summary>
         /// <param name="documents">The documents that should not be removed</param>
-        public void RemoveAllExcept(IEnumerable<string> documents)
+        public void RemoveAllExcept(IList<string> documents)
         {
             var copy = new List<string>(results.Keys);
             foreach (var doc in copy)
@@ -110,6 +107,5 @@ namespace LintingHelper
                 }
             }
         }
-
     }
 }

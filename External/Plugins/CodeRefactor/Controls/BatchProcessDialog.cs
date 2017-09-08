@@ -163,48 +163,28 @@ namespace CodeRefactor.Controls
         /// </summary>
         private void ProcessButtonClick(Object sender, EventArgs e)
         {
+            var item = (BatchProcessorItem)this.operationComboBox.SelectedItem;
+
             switch (this.targetComboBox.SelectedIndex)
             {
                 case 0: // Open Files
-                {
                     var files = new List<string>();
                     foreach (var document in PluginBase.MainForm.Documents)
                     {
                         if (document.IsEditable && !document.IsUntitled) files.Add(document.FileName);
                     }
-                    this.DoProcess(files.ToArray());
+                    
+                    item.Processor.Process(files);
+                    
                     break;
-                }
                 case 1: // Project Sources
-                {
                     IProject project = PluginBase.CurrentProject;
+
                     if (project != null)
-                    {
-                        List<String> files = new List<String>();
-                        String[] filters = project.DefaultSearchFilter.Split(';');
-                        foreach (String path in project.SourcePaths)
-                        {
-                            foreach (String filter in filters)
-                            {
-                                files.AddRange(Directory.GetFiles(project.GetAbsolutePath(path), filter, SearchOption.AllDirectories));
-                            }
-                        }
-                        files = files.FindAll(File.Exists);
-                        this.DoProcess(files.ToArray());
-                    }
+                        item.Processor.ProcessProject(project);
                     break;
-                }
             }
             this.Close();
-        }
-
-        /// <summary>
-        /// Processes the specified document
-        /// </summary>
-        private void DoProcess(string[] files)
-        {
-            var item = (BatchProcessorItem)this.operationComboBox.SelectedItem;
-            item.Processor.Process(files);
         }
 
         /// <summary>

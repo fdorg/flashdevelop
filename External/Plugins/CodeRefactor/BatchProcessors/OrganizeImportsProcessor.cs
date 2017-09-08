@@ -16,7 +16,7 @@ namespace CodeRefactor.BatchProcessors
 
         public string Text => TextHelper.GetStringWithoutMnemonics("Label.OrganizeImports");
 
-        public void Process(string[] files)
+        public void Process(IEnumerable<string> files)
         {
             foreach (var file in files)
             {
@@ -26,6 +26,12 @@ namespace CodeRefactor.BatchProcessors
                 command.SciControl = document.SciControl;
                 command.Execute();
             }
+        }
+
+        public void ProcessProject(IProject project)
+        {
+            var files = BatchProcessManager.GetAllProjectFiles(project);
+            Process(files);
         }
     }
 }
