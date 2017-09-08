@@ -49,6 +49,8 @@ namespace HaXeContext
         readonly string FileName;
         private readonly SemVer haxeVersion;
 
+        internal List<string> AdditionalArguments = new List<string>();
+
         public HaxeComplete(ScintillaControl sci, ASExpr expr, bool autoHide, IHaxeCompletionHandler completionHandler, HaxeCompilerService compilerService, SemVer haxeVersion)
         {
             Sci = sci;
@@ -132,11 +134,13 @@ namespace HaXeContext
             if (CompilerService == HaxeCompilerService.GLOBAL_DIAGNOSTICS)
                 hxmlArgs.Add("--display diagnostics");
             else
-                hxmlArgs.Add(String.Format("--display \"{0}\"@{1}{2}", FileName, pos, GetMode()));
+                hxmlArgs.Add($"--display \"{FileName}\"@{pos}{GetMode()}");
 
             hxmlArgs.Add("-D use_rtti_doc");
             hxmlArgs.Add("-D display-details");
             if (hxproj.TraceEnabled) hxmlArgs.Add("-debug");
+
+            hxmlArgs.AddRange(AdditionalArguments);
             return hxmlArgs.ToArray();
         }
 
@@ -296,6 +300,8 @@ namespace HaXeContext
         {
             diagnosticsResults = new List<HaxeDiagnosticsResult>();
 
+            if (!json.IsArray) return HaxeCompleteStatus.ERROR;
+            
             foreach (JsonData file in json)
             {
                 var path = (string)file["file"];

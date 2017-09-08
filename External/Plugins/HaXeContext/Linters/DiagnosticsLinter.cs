@@ -30,6 +30,16 @@ namespace HaXeContext.Linters
             };
 
             var hc = context.GetHaxeComplete(sci, new ASExpr {Position = 0}, true, HaxeCompilerService.GLOBAL_DIAGNOSTICS);
+
+            //Make sure all files are actually compiled
+            foreach (var file in files)
+            {
+                var fileModel = context.GetCachedFileModel(file);
+                hc.AdditionalArguments.Add($"--macro \"haxe.macro.Context.getModule('{fileModel.FullPackage}')\"");
+                //TODO: this adds way too many arguments for any non trivial codebase
+            }
+                
+
             hc.GetDiagnostics((complete, results, status) =>
             {
                 sci.Dispose();
