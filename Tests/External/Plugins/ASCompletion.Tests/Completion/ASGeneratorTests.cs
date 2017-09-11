@@ -1325,6 +1325,9 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class AssignStatementToVar : GenerateJob
             {
+                [TestFixtureSetUp]
+                public void AssignStatementToVarSetUp() => ASContext.Context.Settings.GenerateImports = true;
+
                 public IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
@@ -1539,6 +1542,11 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVarFromCastExp3"))
                                 .SetName("cast ( d, String )");
                         yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1696_1"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1696_1"))
+                                .SetName("issue 1696")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
+                        yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue_1704_1"), GeneratorJobType.AssignStatementToVar, false)
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue_1704_1"))
                                 .SetName("from (function foo():haxe.ds.Vector<haxe.Timer->Type.ValueType> ...)()")
@@ -1559,11 +1567,6 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue_1704_4"))
                                 .SetName("from (function foo():haxe.Timer->{v:haxe.ds.Vector<Int>->Type.ValueType} ...)()")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1696_1"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1696_1"))
-                                .SetName("issue 1696")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
                     }
                 }
 
