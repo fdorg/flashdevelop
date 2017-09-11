@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
+using System.Threading.Tasks;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using LintingHelper;
@@ -11,76 +13,95 @@ using ScintillaNet;
 
 namespace HaXeContext.Linters
 {
-    class DiagnosticsLinter : ILintProvider
+    internal class DiagnosticsLinter : ILintProvider
     {
+        readonly ProcessingQueue fileQueue = new ProcessingQueue(5);
+
         public void LintAsync(string[] files, LintCallback callback)
         {
             var context = ASContext.GetLanguageContext("haxe") as Context;
-            if (context == null) return;
-            var completionMode = ((HaXeSettings) context.Settings).CompletionMode;
-            if (completionMode == HaxeCompletionModeEnum.FlashDevelop) return;
-            var haxeVersion = context.GetCurrentSDKVersion();
-            if (haxeVersion < "3.3.0") return;
+            if (context == null || !CanContinue(context)) return;
 
+            var total = files.Length;
             var list = new List<LintingResult>();
 
-            var sci = new ScintillaControl
-            {
-                FileName = "",
-                ConfigurationLanguage = "haxe"
-            };
-
-            var hc = context.GetHaxeComplete(sci, new ASExpr {Position = 0}, true, HaxeCompilerService.GLOBAL_DIAGNOSTICS);
-
-            //Make sure all files are actually compiled
             foreach (var file in files)
             {
-                var fileModel = context.GetCachedFileModel(file);
-                hc.AdditionalArguments.Add($"--macro \"haxe.macro.Context.getModule('{fileModel.FullPackage}')\"");
-                //TODO: this adds way too many arguments for any non trivial codebase
+                ITabbedDocument document;
+                if (!File.Exists(file) || (document = DocumentManager.FindDocument(file)) != null && document.IsUntitled)
+                {
+                    total--;
+                    continue;
+                }
+
+                var sciCreated = false;
+                var sci = document?.SciControl;
+                if (sci == null)
+                {
+                    sci = GetStubSci();
+                    sci.FileName = file;
+                    sci.Text = File.ReadAllText(file);
+                    sciCreated = true;
+                }
+
+                var hc = context.GetHaxeComplete(sci, new ASExpr { Position = 0 }, true, HaxeCompilerService.DIAGNOSTICS);
+
+                fileQueue.Run(finished =>
+                {
+                    hc.GetDiagnostics((complete, results, status) =>
+                    {
+                        total--;
+
+                        if (sciCreated)
+                            sci.Dispose();
+
+                        AddDiagnosticsResults(list, status, results, hc);
+
+                        if (total == 0)
+                            callback(list);
+
+                        finished();
+                    });
+                });
             }
-                
-
-            hc.GetDiagnostics((complete, results, status) =>
-            {
-                sci.Dispose();
-
-                AddDiagnosticsResults(list, files, status, results, hc);
-
-                callback(list);
-            });
         }
 
         public void LintProjectAsync(IProject project, LintCallback callback)
         {
             var context = ASContext.GetLanguageContext("haxe") as Context;
-            if (context == null) return;
-            var completionMode = ((HaXeSettings)context.Settings).CompletionMode;
-            if (completionMode == HaxeCompletionModeEnum.FlashDevelop) return;
-            var haxeVersion = context.GetCurrentSDKVersion();
-            if (haxeVersion < "3.3.0") return;
+            if (context == null || !CanContinue(context)) return;
 
             var list = new List<LintingResult>();
-
-            var sci = new ScintillaControl
-            {
-                FileName = "",
-                ConfigurationLanguage = "haxe"
-            };
-
+            var sci = GetStubSci();
             var hc = context.GetHaxeComplete(sci, new ASExpr { Position = 0 }, true, HaxeCompilerService.GLOBAL_DIAGNOSTICS);
 
             hc.GetDiagnostics((complete, results, status) =>
             {
                 sci.Dispose();
-
-                AddDiagnosticsResults(list, null, status, results, hc);
+                
+                AddDiagnosticsResults(list, status, results, hc);
 
                 callback(list);
             });
         }
 
-        void AddDiagnosticsResults(List<LintingResult> list, string[] files, HaxeCompleteStatus status, List<HaxeDiagnosticsResult> results, HaxeComplete hc)
+        static bool CanContinue(Context context)
+        {
+            var completionMode = ((HaXeSettings)context.Settings).CompletionMode;
+            if (completionMode == HaxeCompletionModeEnum.FlashDevelop) return false;
+            var haxeVersion = context.GetCurrentSDKVersion();
+            if (haxeVersion < "3.3.0") return false;
+
+            return true;
+        }
+
+        static ScintillaControl GetStubSci() => new ScintillaControl
+        {
+            FileName = "",
+            ConfigurationLanguage = "haxe"
+        };
+
+        void AddDiagnosticsResults(List<LintingResult> list, HaxeCompleteStatus status, List<HaxeDiagnosticsResult> results, HaxeComplete hc)
         {
             if (status == HaxeCompleteStatus.DIAGNOSTICS && results != null)
             {
@@ -95,9 +116,6 @@ namespace HaXeContext.Linters
                         Length = range.CharacterEnd - range.CharacterStart,
                         Line = range.LineStart + 1,
                     };
-
-                    if (files != null && !files.Contains(result.File)) //ignore results we were not asked for
-                        continue;
 
                     switch (res.Severity)
                     {
@@ -141,5 +159,56 @@ namespace HaXeContext.Linters
                 });
             }
         }
+    }
+
+    class ProcessingQueue
+    {
+        readonly BlockingCollection<Action<Action>> queue = new BlockingCollection<Action<Action>>(new ConcurrentQueue<Action<Action>>());
+        readonly int maxRunning;
+        readonly HashSet<Task> running = new HashSet<Task>(); //TODO: running is modified on different threads
+
+        public ProcessingQueue(int maxConcurrent)
+        {
+            maxRunning = maxConcurrent;
+        }
+
+        public void Run(Action<Action> action)
+        {
+            lock (running)
+            {
+                if (running.Count < maxRunning)
+                {
+                    running.Add(CreateTask(action));
+                }
+                else
+                {
+                    queue.Add(action);
+                }
+            }
+        }
+
+        void TaskFinished(Task task)
+        {
+            lock (running)
+                running.Remove(task);
+
+            Action<Action> act;
+            if (queue.TryTake(out act))
+            {
+                Task t = CreateTask(act);
+
+                lock (running)
+                    running.Add(t);
+            }
+        }
+
+        Task CreateTask(Action<Action> action)
+        {
+            Task task = null;
+            task = Task.Factory.StartNew(() => action(() => TaskFinished(task)));
+
+            return task;
+        }
+
     }
 }

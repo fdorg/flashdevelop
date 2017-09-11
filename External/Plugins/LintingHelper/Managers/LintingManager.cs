@@ -121,7 +121,7 @@ namespace LintingHelper.Managers
                 linter.LintProjectAsync(project, results => PluginBase.RunAsync(() =>
                 {
                     ApplyLint(results);
-                    EventManager.DispatchEvent(linter, new TextEvent(EventType.Command, "LintingManager.ProjectLinted"));
+                    EventManager.DispatchEvent(linter, new DataEvent(EventType.Command, "LintingManager.ProjectLinted", null));
                 }));
             }
         }
