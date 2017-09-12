@@ -1550,8 +1550,7 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue_1704_1"), GeneratorJobType.AssignStatementToVar, false)
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue_1704_1"))
                                 .SetName("from (function foo():haxe.ds.Vector<haxe.Timer->Type.ValueType> ...)()")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704")
-                                .Ignore("Depends on https://github.com/fdorg/flashdevelop/pull/1706");
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue_1704_2"), GeneratorJobType.AssignStatementToVar, false)
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue_1704_2"))
@@ -2619,6 +2618,9 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class ChangeConstructorDeclaration : GenerateJob
             {
+                [TestFixtureSetUp]
+                public void ChangeConstructorDeclarationSetup() => ASContext.Context.Settings.GenerateImports.Returns(true);
+
                 public IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
@@ -2697,6 +2699,16 @@ namespace ASCompletion.Completion
                             new TestCaseData("BeforeChangeConstructorDeclaration_Dynamic")
                                 .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_Dynamic"))
                                 .SetName("new Foo({}) -> function new(dynamicValue:Dynamic)");
+                        yield return
+                            new TestCaseData("BeforeChangeConstructorDeclaration_issue1712_1")
+                                .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_issue1712_1"))
+                                .SetName("new Foo(new Array<haxe.Timer->Type.ValueType>()) -> function Foo(array:haxe.Timer->Type.ValueType)")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1712");
+                        yield return
+                            new TestCaseData("BeforeChangeConstructorDeclaration_issue1712_2")
+                                .Returns(ReadAllTextHaxe("AfterChangeConstructorDeclaration_issue1712_2"))
+                                .SetName("new Foo(new haxe.ds.Vector<Int>(0)) -> function Foo(vector:haxe.ds.Vector<Int>)")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1712");
                     }
                 }
 
