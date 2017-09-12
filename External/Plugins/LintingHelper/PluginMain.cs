@@ -152,7 +152,16 @@ namespace LintingHelper
                     {
                         LintingManager.Cache.RemoveAll();
                         LintingManager.UpdateLinterPanel();
+                        if (ev.Action == ProjectManagerEvents.Project)
+                        {
+                            foreach (var doc in PluginBase.MainForm.Documents)
+                            {
+                                if (!doc.IsUntitled)
+                                    LintingManager.LintDocument(doc);
+                            }
+                        }
                     }
+                    
                     break;
                 case EventType.FileModify:
                     LintingManager.UnLintFile(((TextEvent)e).Value);
