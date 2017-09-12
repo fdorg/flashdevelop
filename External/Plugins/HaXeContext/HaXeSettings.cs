@@ -204,9 +204,8 @@ namespace HaXeContext
         private const bool DEFAULT_DISABLECOMPLETIONONDEMAND = true;
         private const bool DEFAULT_EXPORTHXML = false;
         private const bool DEFAULT_DISABLE_LIB_INSTALLATION = true;
-        private const bool DEFAULT_ENABLE_COMPILER_FOR_FIND_ALL_REFERENCES = true;
         private const bool DEFAULT_USEGENERICSSHORTNOTATION = true;
-        private const CompletionFeatures DEFAULT_ENABLEDCOMPILERSERVICES = CompletionFeatures.Diagnostics | CompletionFeatures.DisplayStdIn | CompletionFeatures.Usage;
+        private const CompletionFeatures DEFAULT_ENABLEDCOMPILERSERVICES = CompletionFeatures.Diagnostics | CompletionFeatures.DisplayStdIn | CompletionFeatures.Usage | CompletionFeatures.EnableForFindAllReferences;
 
         private int completionServerPort = DEFAULT_COMPLETION_SERVER_PORT;
         private int flashVersion = 10;
@@ -216,7 +215,6 @@ namespace HaXeContext
         private bool exportHXML = DEFAULT_EXPORTHXML;
         private HaxeCompletionModeEnum _completionMode = DEFAULT_HAXECOMPLETIONMODE;
         private bool disableLibInstallation = DEFAULT_DISABLE_LIB_INSTALLATION;
-        private bool enableCompilerForFindAllReferences = DEFAULT_ENABLE_COMPILER_FOR_FIND_ALL_REFERENCES;
         private bool useGenericsShortNotation = DEFAULT_USEGENERICSSHORTNOTATION;
 
         [DisplayName("Default Flash Version")]
@@ -311,15 +309,6 @@ namespace HaXeContext
             set { disableLibInstallation = value; }
         }
 
-        [DisplayName("Enable Compiler Services For Find All References")]
-        [Category("Code Refactor")]
-        [DefaultValue(DEFAULT_ENABLE_COMPILER_FOR_FIND_ALL_REFERENCES)]
-        public bool EnableCompilerForFindAllReferences
-        {
-            get { return enableCompilerForFindAllReferences; }
-            set { enableCompilerForFindAllReferences = value; }
-        }
-
         [DisplayName("Use Short Notation For Generics")]
         [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("HaXeContext.Description.UseGenericsShortNotation"), DefaultValue(DEFAULT_USEGENERICSSHORTNOTATION)]
         public bool UseGenericsShortNotation
@@ -363,6 +352,7 @@ namespace HaXeContext
     {
         Diagnostics = 1,
         Usage = 2,
-        DisplayStdIn = 4
+        DisplayStdIn = 4,
+        EnableForFindAllReferences = 8
     }
 }
