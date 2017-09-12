@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Windows.Forms;
 using ASCompletion.Context;
 using ASCompletion.Model;
@@ -98,7 +97,7 @@ namespace ASCompletion.Helpers
                         cachedClassModel.Overriders.Count == 0 && cachedClassModel.Overriding.Count == 0)
                         c.Remove(cls);
                 }
-                
+
                 cache = c;
                 IsDirty = false;
                 PluginBase.RunAsync(new MethodInvoker(finished));

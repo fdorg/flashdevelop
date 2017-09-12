@@ -863,55 +863,56 @@ namespace ASCompletion
             if (context == null) return;
 
             var fileModel = context.GetCachedFileModel(sci.FileName);
-            foreach (var clas in fileModel.Classes)
-            {
-                UpdateDocumentFromCache(sci, clas); //use what we already have
-                UpdateDocumentFromCache(sci, clas); //use what we already have
-            }
+
+            UpdateDocumentFromCache(sci, fileModel);
+            UpdateDocumentFromCache(sci, fileModel);
         }
 
-        void UpdateDocumentFromCache(ScintillaControl sci, ClassModel clas)
+        void UpdateDocumentFromCache(ScintillaControl sci, FileModel fileModel)
         {
             sci.MarkerDeleteAll(MarkerUp);
             sci.MarkerDeleteAll(MarkerDown);
             sci.MarkerDeleteAll(MarkerUpDown);
 
-            var cls = astCache.GetCachedModel(clas);
-            if (cls == null) return;
+            foreach (var clas in fileModel.Classes)
+            {
+                var cls = astCache.GetCachedModel(clas);
+                if (cls == null) return;
 
-            foreach (var implementing in cls.Implementing)
-            {
-                sci.SetMarginWidthN(Margin, 16);
-                sci.MarkerAdd(implementing.Key.LineFrom, MarkerUp);
-            }
-            foreach (var implementor in cls.Implementors)
-            {
-                sci.SetMarginWidthN(Margin, 16);
-                sci.MarkerAdd(implementor.Key.LineFrom, MarkerDown);
-            }
-            foreach (var overriders in cls.Overriders)
-            {
-                sci.SetMarginWidthN(Margin, 16);
-                sci.MarkerAdd(overriders.Key.LineFrom, MarkerDown);
-            }
-            foreach (var overrides in cls.Overriding)
-            {
-                sci.SetMarginWidthN(Margin, 16);
-                sci.MarkerAdd(overrides.Key.LineFrom, MarkerUp);
-            }
-
-            for (var i = 0; i < sci.LineCount; ++i)
-            {
-                var mask = sci.MarkerGet(i);
-                var searchMask = (1 << MarkerDown) | (1 << MarkerUp);
-                if ((mask & searchMask) == searchMask)
+                foreach (var implementing in cls.Implementing)
                 {
-                    sci.MarkerDelete(i, MarkerUp);
-                    sci.MarkerDelete(i, MarkerDown);
-                    sci.MarkerDelete(i, MarkerUp);      //for some reason this needs to be done twice,
-                    sci.MarkerDelete(i, MarkerDown);    //otherwise some markers are not removed
+                    sci.SetMarginWidthN(Margin, 16);
+                    sci.MarkerAdd(implementing.Key.LineFrom, MarkerUp);
+                }
+                foreach (var implementor in cls.Implementors)
+                {
+                    sci.SetMarginWidthN(Margin, 16);
+                    sci.MarkerAdd(implementor.Key.LineFrom, MarkerDown);
+                }
+                foreach (var overriders in cls.Overriders)
+                {
+                    sci.SetMarginWidthN(Margin, 16);
+                    sci.MarkerAdd(overriders.Key.LineFrom, MarkerDown);
+                }
+                foreach (var overrides in cls.Overriding)
+                {
+                    sci.SetMarginWidthN(Margin, 16);
+                    sci.MarkerAdd(overrides.Key.LineFrom, MarkerUp);
+                }
 
-                    sci.MarkerAdd(i, MarkerUpDown);
+                for (var i = 0; i < sci.LineCount; ++i)
+                {
+                    var mask = sci.MarkerGet(i);
+                    var searchMask = (1 << MarkerDown) | (1 << MarkerUp);
+                    if ((mask & searchMask) == searchMask)
+                    {
+                        sci.MarkerDelete(i, MarkerUp);
+                        sci.MarkerDelete(i, MarkerDown);
+                        sci.MarkerDelete(i, MarkerUp);      //for some reason this needs to be done twice,
+                        sci.MarkerDelete(i, MarkerDown);    //otherwise some markers are not removed
+
+                        sci.MarkerAdd(i, MarkerUpDown);
+                    }
                 }
             }
         }
