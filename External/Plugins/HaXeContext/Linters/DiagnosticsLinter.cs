@@ -15,7 +15,12 @@ namespace HaXeContext.Linters
 {
     internal class DiagnosticsLinter : ILintProvider
     {
-        readonly ProcessingQueue fileQueue = new ProcessingQueue(5);
+        readonly ProcessingQueue fileQueue;
+
+        public DiagnosticsLinter(HaXeSettings settings)
+        {
+            fileQueue = new ProcessingQueue(settings.MaximumDiagnosticsProcesses <= 0 ? 5 : settings.MaximumDiagnosticsProcesses);
+        }
 
         public void LintAsync(string[] files, LintCallback callback)
         {
@@ -38,9 +43,7 @@ namespace HaXeContext.Linters
                 var sci = document?.SciControl;
                 if (sci == null)
                 {
-                    sci = GetStubSci();
-                    sci.FileName = file;
-                    sci.Text = File.ReadAllText(file);
+                    sci = GetStubSci(file);
                     sciCreated = true;
                 }
 
@@ -90,14 +93,13 @@ namespace HaXeContext.Linters
             var completionMode = ((HaXeSettings)context.Settings).CompletionMode;
             if (completionMode == HaxeCompletionModeEnum.FlashDevelop) return false;
             var haxeVersion = context.GetCurrentSDKVersion();
-            if (haxeVersion < "3.3.0") return false;
 
-            return true;
+            return haxeVersion >= "3.3.0";
         }
 
-        static ScintillaControl GetStubSci() => new ScintillaControl
+        static ScintillaControl GetStubSci(string filename = "") => new ScintillaControl
         {
-            FileName = "",
+            FileName = filename,
             ConfigurationLanguage = "haxe"
         };
 
