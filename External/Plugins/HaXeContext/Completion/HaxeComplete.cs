@@ -49,8 +49,6 @@ namespace HaXeContext
         readonly string FileName;
         private readonly SemVer haxeVersion;
 
-        internal List<string> AdditionalArguments = new List<string>();
-
         public HaxeComplete(ScintillaControl sci, ASExpr expr, bool autoHide, IHaxeCompletionHandler completionHandler, HaxeCompilerService compilerService, SemVer haxeVersion)
         {
             Sci = sci;
@@ -139,8 +137,7 @@ namespace HaXeContext
             hxmlArgs.Add("-D use_rtti_doc");
             hxmlArgs.Add("-D display-details");
             if (hxproj.TraceEnabled) hxmlArgs.Add("-debug");
-
-            hxmlArgs.AddRange(AdditionalArguments);
+            
             return hxmlArgs.ToArray();
         }
 
