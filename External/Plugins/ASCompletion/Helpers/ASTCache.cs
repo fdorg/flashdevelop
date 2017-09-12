@@ -13,6 +13,8 @@ namespace ASCompletion.Helpers
 
     internal class ASTCache
     {
+        internal bool IsDirty { get; set; } = true;
+
         Dictionary<ClassModel, CachedClassModel> cache = new Dictionary<ClassModel, CachedClassModel>();
 
         public CachedClassModel GetCachedModel(ClassModel cls)
@@ -29,14 +31,14 @@ namespace ASCompletion.Helpers
         {
             var action = new Action(() =>
             {
-                var c = new Dictionary<ClassModel, CachedClassModel>();
-                
                 var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-                if (context.Classpath == null)
+                if (context.Classpath == null || !IsDirty || PathExplorer.IsWorking)
                 {
                     PluginBase.RunAsync(new MethodInvoker(finished));
                     return;
                 }
+
+                var c = new Dictionary<ClassModel, CachedClassModel>();
 
                 foreach (MemberModel memberModel in context.GetAllProjectClasses())
                 {
@@ -96,8 +98,9 @@ namespace ASCompletion.Helpers
                         cachedClassModel.Overriders.Count == 0 && cachedClassModel.Overriding.Count == 0)
                         c.Remove(cls);
                 }
-
+                
                 cache = c;
+                IsDirty = false;
                 PluginBase.RunAsync(new MethodInvoker(finished));
             });
             action.BeginInvoke(null, null);

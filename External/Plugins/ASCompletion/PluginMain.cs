@@ -250,6 +250,8 @@ namespace ASCompletion
                             if (ASContext.Context.Settings.CheckSyntaxOnSave) CheckSyntax(null, null);
                             ASContext.Context.RemoveClassCompilerCache();
                         }
+
+                        astCache.IsDirty = true;
                         return;
 
                     case EventType.SyntaxDetect:
@@ -1035,17 +1037,21 @@ namespace ASCompletion
 
         void AstCacheTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            astCacheTimer.Enabled = false;
-
-            astCache.UpdateCache(() =>
+            if (astCache.IsDirty)
             {
-                foreach (var document in PluginBase.MainForm.Documents)
+                astCacheTimer.Enabled = false;
+
+                astCache.UpdateCache(() =>
                 {
-                    InitDocument(document.SplitSci1);
-                    InitDocument(document.SplitSci2);
-                }
-                astCacheTimer.Enabled = !PluginBase.MainForm.ClosingEntirely;
-            });
+                    foreach (var document in PluginBase.MainForm.Documents)
+                    {
+                        InitDocument(document.SplitSci1);
+                        InitDocument(document.SplitSci2);
+                    }
+                    astCacheTimer.Enabled = !PluginBase.MainForm.ClosingEntirely;
+                });
+            }
+            
         }
 
         void Sci_MarginClick(ScintillaControl sender, int modifiers, int position, int margin)
