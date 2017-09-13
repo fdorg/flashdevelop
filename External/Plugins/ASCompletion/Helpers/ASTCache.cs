@@ -23,6 +23,11 @@ namespace ASCompletion.Helpers
             return v;
         }
 
+        public void Clear()
+        {
+            cache.Clear();
+        }
+
         /// <summary>
         /// Update the cache for the whole project
         /// </summary>

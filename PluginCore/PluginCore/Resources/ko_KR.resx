@@ -6213,4 +6213,8 @@ AND - 모든 조건을 만족할때.</value>
     <value>Overrides...</value>
     <comment>Added after 5.2.1</comment>
   </data>
+  <data name="ASCompletion.Category.InheritanceNavigation" xml:space="preserve">
+    <value>Inheritance Navigation</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
 </root>

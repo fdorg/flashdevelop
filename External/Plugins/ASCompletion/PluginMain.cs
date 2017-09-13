@@ -266,6 +266,23 @@ namespace ASCompletion
                         break;
 
                     case EventType.ApplySettings:
+                        astCacheTimer.Enabled = !settingObject.DisableInheritanceNavigation;
+                        if (settingObject.ASTCacheUpdateInterval <= 0)
+                            settingObject.ASTCacheUpdateInterval = 3;
+
+                        astCacheTimer.Interval = settingObject.ASTCacheUpdateInterval * 1000;
+
+                        if (settingObject.DisableInheritanceNavigation)
+                        {
+                            astCache.Clear();
+                            foreach (var document in PluginBase.MainForm.Documents)
+                            {
+                                //remove the markers
+                                UpdateMarkersFromCache(document.SplitSci1);
+                                UpdateMarkersFromCache(document.SplitSci2);
+                            }
+                        }
+                        goto case EventType.SyntaxChange;
                     case EventType.SyntaxChange:
                     case EventType.FileSwitch:
                         if (!doc.IsEditable)
@@ -463,7 +480,7 @@ namespace ASCompletion
                         {
                             ASContext.UserRefreshRequestAll();
                         }
-                        else if (command == "ProjectManager.Project")
+                        else if (command == "ProjectManager.Project" && !settingObject.DisableInheritanceNavigation)
                         {
                             astCache.IsDirty = true;
                             astCacheTimer.Enabled = true;
@@ -824,10 +841,10 @@ namespace ASCompletion
             //Cache update
             astCacheTimer = new Timer
             {
-                SynchronizingObject = PluginBase.MainForm as Form,
-                Interval = 5000
+                SynchronizingObject = PluginBase.MainForm as Form
             };
             astCacheTimer.Elapsed += AstCacheTimer_Elapsed;
+            
         }
 
         #endregion
@@ -836,7 +853,7 @@ namespace ASCompletion
 
         void ApplyMarkers(ScintillaControl sci)
         {
-            if (sci == null) return;
+            if (settingObject.DisableInheritanceNavigation || sci == null) return;
 
             //Register marker
             sci.MarkerDefineRGBAImage(MarkerDown, downArrow);
@@ -856,17 +873,19 @@ namespace ASCompletion
 
         void UpdateMarkersFromCache(ScintillaControl sci)
         {
-            if (PluginBase.CurrentProject == null) return;
-            var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language) as ASContext;
-            if (context == null) return;
-
-            var fileModel = context.GetCachedFileModel(sci.FileName);
-
             sci.SetMarginWidthN(Margin, 0); //margin is only made visible if something is found
 
             sci.MarkerDeleteAll(MarkerUp);
             sci.MarkerDeleteAll(MarkerDown);
             sci.MarkerDeleteAll(MarkerUpDown);
+
+            if (settingObject.DisableInheritanceNavigation) return;
+
+            if (PluginBase.CurrentProject == null) return;
+            var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language) as ASContext;
+            if (context == null) return;
+
+            var fileModel = context.GetCachedFileModel(sci.FileName);
 
             foreach (var clas in fileModel.Classes)
             {
@@ -1032,21 +1051,19 @@ namespace ASCompletion
 
         void AstCacheTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (astCache.IsDirty)
-            {
-                astCacheTimer.Enabled = false;
+            if (PluginBase.CurrentProject == null || !astCache.IsDirty) return;
 
-                astCache.UpdateCache(() =>
+            astCacheTimer.Enabled = false;
+
+            astCache.UpdateCache(() =>
+            {
+                foreach (var document in PluginBase.MainForm.Documents)
                 {
-                    foreach (var document in PluginBase.MainForm.Documents)
-                    {
-                        UpdateMarkersFromCache(document.SplitSci1);
-                        UpdateMarkersFromCache(document.SplitSci1);
-                    }
-                    astCacheTimer.Enabled = !PluginBase.MainForm.ClosingEntirely;
-                });
-            }
-            
+                    UpdateMarkersFromCache(document.SplitSci1);
+                    UpdateMarkersFromCache(document.SplitSci1);
+                }
+                astCacheTimer.Enabled = !PluginBase.MainForm.ClosingEntirely;
+            });
         }
 
         void Sci_MarginClick(ScintillaControl sender, int modifiers, int position, int margin)
@@ -1129,6 +1146,8 @@ namespace ASCompletion
         {
             ASComplete.OnTextChanged(sender, position, length, linesAdded);
             ASContext.OnTextChanged(sender, position, length, linesAdded);
+
+            if (settingObject.DisableInheritanceNavigation) return;
 
             var line = sender.LineFromPosition(position);
 

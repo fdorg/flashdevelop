@@ -6194,4 +6194,8 @@ AND - All conditions are met.</value>
     <value>Überschreibt...</value>
     <comment>Added after 5.2.1</comment>
   </data>
+  <data name="ASCompletion.Category.InheritanceNavigation" xml:space="preserve">
+    <value>Vererbungsnavigation</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
 </root>
