@@ -1798,7 +1798,9 @@ namespace HaXeContext
                 return;
             }
             if (Directory.Exists(haxePath)) haxePath = Path.Combine(haxePath, "haxelib.exe");
-            nameToVersion.Select(it => $"{haxePath};install {it.Key} {it.Value} -cwd \"{Directory.GetCurrentDirectory()}\"")
+
+            var cwd = Directory.GetCurrentDirectory();
+            nameToVersion.Select(it => $"{haxePath};install {it.Key} {it.Value} -cwd \"{cwd}\"")
                 .ToList()
                 .ForEach(it => MainForm.CallCommand("RunProcessCaptured", it));
         }
