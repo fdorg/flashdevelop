@@ -236,8 +236,8 @@ namespace ASCompletion
                     // File management
                     //
                     case EventType.FileOpen:
-                        InitDocument(PluginBase.MainForm.CurrentDocument.SplitSci1);
-                        InitDocument(PluginBase.MainForm.CurrentDocument.SplitSci2);
+                        ApplyMarkers(PluginBase.MainForm.CurrentDocument.SplitSci1);
+                        ApplyMarkers(PluginBase.MainForm.CurrentDocument.SplitSci2);
                         break;
 
                     case EventType.FileSave:
@@ -465,17 +465,10 @@ namespace ASCompletion
                         }
                         else if (command == "ProjectManager.Project")
                         {
-                            astCache.UpdateCache(() =>
-                            {
-                                foreach (var document in PluginBase.MainForm.Documents)
-                                {
-                                    InitDocument(document.SplitSci1);
-                                    InitDocument(document.SplitSci2);
-                                }
-                                astCacheTimer.Enabled = false;
-                                astCacheTimer.Enabled = true;
-                            });
+                            astCache.IsDirty = true;
+                            astCacheTimer.Enabled = true;
                         }
+                        
                         break;
                 }
 
@@ -841,7 +834,7 @@ namespace ASCompletion
 
         #region Plugin actions
 
-        void InitDocument(ScintillaControl sci)
+        void ApplyMarkers(ScintillaControl sci)
         {
             if (sci == null) return;
 
@@ -853,23 +846,24 @@ namespace ASCompletion
             var mask = sci.GetMarginMaskN(Margin) | (1 << MarkerDown) | (1 << MarkerUp) | (1 << MarkerUpDown);
             sci.SetMarginMaskN(Margin, mask);
             sci.MarginSensitiveN(Margin, true);
-            sci.SetMarginWidthN(Margin, 0); //margin is only made visible if something is found
 
             sci.MarginClick -= Sci_MarginClick;
             sci.MarginClick += Sci_MarginClick;
 
+            UpdateMarkersFromCache(sci);
+            UpdateMarkersFromCache(sci);
+        }
+
+        void UpdateMarkersFromCache(ScintillaControl sci)
+        {
             if (PluginBase.CurrentProject == null) return;
             var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language) as ASContext;
             if (context == null) return;
 
             var fileModel = context.GetCachedFileModel(sci.FileName);
 
-            UpdateDocumentFromCache(sci, fileModel);
-            UpdateDocumentFromCache(sci, fileModel);
-        }
+            sci.SetMarginWidthN(Margin, 0); //margin is only made visible if something is found
 
-        void UpdateDocumentFromCache(ScintillaControl sci, FileModel fileModel)
-        {
             sci.MarkerDeleteAll(MarkerUp);
             sci.MarkerDeleteAll(MarkerDown);
             sci.MarkerDeleteAll(MarkerUpDown);
@@ -1046,8 +1040,8 @@ namespace ASCompletion
                 {
                     foreach (var document in PluginBase.MainForm.Documents)
                     {
-                        InitDocument(document.SplitSci1);
-                        InitDocument(document.SplitSci2);
+                        UpdateMarkersFromCache(document.SplitSci1);
+                        UpdateMarkersFromCache(document.SplitSci1);
                     }
                     astCacheTimer.Enabled = !PluginBase.MainForm.ClosingEntirely;
                 });
@@ -1135,6 +1129,29 @@ namespace ASCompletion
         {
             ASComplete.OnTextChanged(sender, position, length, linesAdded);
             ASContext.OnTextChanged(sender, position, length, linesAdded);
+
+            var line = sender.LineFromPosition(position);
+
+            var mask = sender.MarkerGet(line);
+            var searchMask = (1 << MarkerDown) | (1 << MarkerUp) | (1 << MarkerUpDown);
+            if ((mask & searchMask) > 0)
+            {
+                var declaration = ASContext.Context.GetDeclarationAtLine(line); //this could be problematic if there are multiple declarations in one line
+                var cached = astCache.GetCachedModel(declaration.InClass);
+
+                if (cached == null || declaration.Member == null) return;
+
+                //Remove member from cache
+                cached.Implementing.Remove(declaration.Member);
+                cached.Implementors.Remove(declaration.Member);
+                cached.Overriders.Remove(declaration.Member);
+                cached.Overriding.Remove(declaration.Member);
+
+                UpdateMarkersFromCache(sender);
+                
+                //trigger cache update
+                astCache.IsDirty = true;
+            }
         }
 
         private void OnUpdateCallTip(ScintillaControl sci, int position)
