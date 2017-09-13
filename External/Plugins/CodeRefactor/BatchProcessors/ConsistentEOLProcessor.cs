@@ -25,7 +25,8 @@ namespace CodeRefactor.BatchProcessors
 
         public void ProcessProject(IProject project)
         {
-            
+            var files = BatchProcessManager.GetAllProjectFiles(project);
+            Process(files);
         }
     }
 }
