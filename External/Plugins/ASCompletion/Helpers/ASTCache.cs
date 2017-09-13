@@ -14,7 +14,7 @@ namespace ASCompletion.Helpers
     {
         internal bool IsDirty { get; set; } = true;
 
-        Dictionary<ClassModel, CachedClassModel> cache = new Dictionary<ClassModel, CachedClassModel>();
+        Dictionary<ClassModel, CachedClassModel> cache = new Dictionary<ClassModel, CachedClassModel>(new ClassModelComparer());
 
         public CachedClassModel GetCachedModel(ClassModel cls)
         {
@@ -37,7 +37,7 @@ namespace ASCompletion.Helpers
                     return;
                 }
 
-                var c = new Dictionary<ClassModel, CachedClassModel>();
+                var c = new Dictionary<ClassModel, CachedClassModel>(cache.Comparer);
 
                 foreach (MemberModel memberModel in context.GetAllProjectClasses())
                 {
@@ -262,5 +262,17 @@ namespace ASCompletion.Helpers
             }
             return set;
         }
+    }
+
+    internal class ClassModelComparer : IEqualityComparer<ClassModel>
+    {
+        public bool Equals(ClassModel x, ClassModel y)
+        {
+            if (x == null || y == null) return x == y;
+
+            return x.Type == y.Type;
+        }
+
+        public int GetHashCode(ClassModel obj) => obj.BaseType.GetHashCode();
     }
 }
