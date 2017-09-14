@@ -139,9 +139,9 @@ namespace SourceControl
 
     public enum RememberValue
     {
+        Ask,
         Yes,
-        No,
-        Ask
+        No
     }
 
 }

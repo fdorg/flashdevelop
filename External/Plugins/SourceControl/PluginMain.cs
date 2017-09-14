@@ -11,8 +11,6 @@ using ProjectManager.Actions;
 using ProjectManager.Projects;
 using SourceControl.Actions;
 using SourceControl.Helpers;
-using SourceControl.Dialogs;
-using System.Windows.Forms;
 
 namespace SourceControl
 {
@@ -277,20 +275,7 @@ namespace SourceControl
                     {
                         string file = (e as TextEvent).Value;
                         if (File.Exists(file))
-                        {
-                            SourceControlDialog dialog = new SourceControlDialog("Add file to version control",
-                            "Would you like to add the following file to version control?\n" + file);
-                            dialog.ShowDialog();
-                            if (dialog.DialogResult == DialogResult.Yes)
-                            {
-                                e.Handled = ProjectWatcher.HandleFileNew(file);
-                            }
-                            if (dialog.Remember)
-                            {
-                                //Settings.AddByDefault = dialog.DialogResult == DialogResult.Yes;
-                                //TODO: save
-                            }
-                        } //TODO: Settings.AddByDefault
+                            e.Handled = ProjectWatcher.HandleFileNew(file);   
                     }
                     catch (Exception ex)
                     {

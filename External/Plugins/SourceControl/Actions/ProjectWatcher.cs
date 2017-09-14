@@ -5,8 +5,10 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Localization;
+using PluginCore.Managers;
 using ProjectManager.Projects;
 using SourceControl.Managers;
 using SourceControl.Sources;
@@ -22,6 +24,7 @@ namespace SourceControl.Actions
         static FSWatchers fsWatchers;
         static OverlayManager ovManager;
         static Project currentProject;
+        static List<string> addBuffer = new List<string>();
 
         public static bool Initialized { get { return initialized; } }
         public static Image Skin { get; set; }
@@ -169,7 +172,7 @@ namespace SourceControl.Actions
                 return true; // prevent regular deletion
             }
 
-            if (hasUnknown.Count > 0 && confirm)
+            if (hasUnknown.Count > 0 && confirm) //this never happens (at least on git), because it is always handled by the "regular deletion" part above
             {
                 string title = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
                 string msg = TextHelper.GetString("SourceControl.Info.ConfirmUnversionedDelete") + "\n\n" + GetSomeFiles(hasUnknown);
@@ -191,8 +194,8 @@ namespace SourceControl.Actions
                         //TODO: there should probably still be a message wether you really want to delete the files.
                         return result.Manager.FileActions.FileDelete(paths, confirm);
                     case RememberValue.Ask:
-                        using (var dialog = new Dialogs.SourceControlDialog("Remove files from version control?",
-                            "Would you like to remove the files from version control?"))
+                        using (var dialog = new Dialogs.SourceControlDialog(TextHelper.GetString("FlashDevelop.Title.ConfirmDialog"),
+                            "Would you like to remove the file(s) from version control?"))
                         {
                             dialog.ShowDialog();
                             if (dialog.Remember)
@@ -282,30 +285,11 @@ namespace SourceControl.Actions
             if (!initialized)
                 return false;
 
+            addBuffer.Add(path); //at this point there is not yet an ITabbedDocument for the file
+
             WatcherVCResult result = fsWatchers.ResolveVC(path, true);
             if (result == null || result.Status == VCItemStatus.Unknown)
                 return false;
-
-            switch (PluginMain.SCSettings.ShouldDelete)
-            {
-                case RememberValue.Yes:
-                    return result.Manager.FileActions.FileNew(path);
-                case RememberValue.Ask:
-                    using (var dialog = new Dialogs.SourceControlDialog("Add new file to version control?",
-                        "Would you like to add the new file to version control?"))
-                    {
-                        dialog.ShowDialog();
-                        if (dialog.Remember)
-                        {
-                            PluginMain.SCSettings.ShouldAdd = dialog.DialogResult == DialogResult.Yes ? RememberValue.Yes : RememberValue.No;
-                        }
-                        if (dialog.DialogResult == DialogResult.Yes)
-                        {
-                            return result.Manager.FileActions.FileNew(path);
-                        }
-                    }
-                    break;
-            }
 
             return false;
         }
@@ -316,7 +300,27 @@ namespace SourceControl.Actions
                 return false;
 
             WatcherVCResult result = fsWatchers.ResolveVC(path, true);
-            if (result == null || result.Status == VCItemStatus.Unknown)
+            if (result == null)
+                return false;
+
+            if (addBuffer.Remove(path))
+            {
+                MessageBar.ShowQuestion("Would you like to add this file to version control?", new[] { "Yes", "No" },
+                    s =>
+                    {
+                        if (s == "Yes")
+                        {
+                            result.Manager.FileActions.FileNew(path);
+                            ForceRefresh();
+                        }
+
+                        TraceManager.Add(s);
+                    });
+                //TODO: Add some way to remember this
+            }
+
+            
+            if (result.Status == VCItemStatus.Unknown)
                 return false;
 
             return result.Manager.FileActions.FileOpen(path);

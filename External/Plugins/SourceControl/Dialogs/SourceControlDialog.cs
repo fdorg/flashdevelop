@@ -11,13 +11,7 @@ namespace SourceControl.Dialogs
 {
     public partial class SourceControlDialog : Form
     {
-        public bool Remember
-        {
-            get
-            {
-                return checkRemember.Checked;
-            }
-        }
+        public bool Remember => checkRemember.Checked;
 
         public SourceControlDialog(string title, string message)
         {
