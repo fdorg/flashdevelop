@@ -2,6 +2,7 @@
 using PluginCore.Managers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -47,6 +48,27 @@ namespace CodeRefactor.Managers
             }
             return procs;
         }
+
+        public static IEnumerable<string> GetAllProjectFiles(IProject project)
+        {
+            if (project == null)
+                return null;
+            
+            List<String> files = new List<String>();
+            String[] filters = project.DefaultSearchFilter.Split(';');
+
+            foreach (String path in project.SourcePaths)
+            {
+                foreach (String filter in filters)
+                {
+                    files.AddRange(Directory.GetFiles(project.GetAbsolutePath(path), filter,
+                        SearchOption.AllDirectories));
+                }
+            }
+            files = files.FindAll(File.Exists);
+
+            return files;
+        }
     }
 
     public interface IBatchProcessor
@@ -68,6 +90,7 @@ namespace CodeRefactor.Managers
             get;
         }
 
-        void Process(string[] files);
+        void Process(IEnumerable<string> files);
+        void ProcessProject(IProject project);
     }
 }

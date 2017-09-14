@@ -15,9 +15,14 @@ namespace LintingHelper.BatchProcess
 
         public string Text => TextHelper.GetString("Label.RunLinters");
 
-        public void Process(string[] files)
+        public void Process(IEnumerable<string> files)
         {
-            LintingManager.LintFiles(files);
+            LintingManager.LintFiles(files.ToArray());
+        }
+
+        public void ProcessProject(IProject project)
+        {
+            LintingManager.LintProject(project);
         }
     }
 }
