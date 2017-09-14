@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using ScintillaNet.Configuration;
+using ScintillaNet.Lexers;
 using PluginCore.FRService;
 using PluginCore.Utilities;
 using PluginCore.Managers;
@@ -46,6 +47,7 @@ namespace ScintillaNet
 
         private ScrollBarEx vScrollBar;
         private ScrollBarEx hScrollBar;
+        private Control scrollerCorner;
 
         /// <summary>
         /// Is the vertical scroll bar visible?
@@ -91,9 +93,10 @@ namespace ScintillaNet
                 Color color = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor");
                 String value = PluginBase.MainForm.GetThemeValue("ScrollBar.UseCustom");
                 Boolean enabled = value == "True" || (value == null && color != Color.Empty);
-                if (enabled && !this.Controls.Contains(this.vScrollBar))
+                if (enabled)
                 {
-                    this.AddScrollBars(this);
+                    if (!this.Controls.Contains(this.vScrollBar))
+                        this.AddScrollBars(this);
                     this.UpdateScrollBarTheme(this);
                 }
                 else if (!enabled && this.Controls.Contains(this.vScrollBar))
@@ -119,6 +122,7 @@ namespace ScintillaNet
             sender.hScrollBar.HotArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotArrowColor", sender.hScrollBar.ForeColor);
             sender.hScrollBar.ActiveArrowColor = PluginBase.MainForm.GetThemeColor("ScrollBar.ActiveArrowColor", sender.hScrollBar.ActiveForeColor);
             sender.hScrollBar.HotForeColor = PluginBase.MainForm.GetThemeColor("ScrollBar.HotForeColor", sender.hScrollBar.ForeColor);
+            sender.scrollerCorner.BackColor = PluginBase.MainForm.GetThemeColor("ScrollBar.BackColor", sender.vScrollBar.BackColor);
         }
 
         /// <summary>
@@ -127,17 +131,16 @@ namespace ScintillaNet
         private void InitScrollBars(ScintillaControl sender)
         {
             sender.vScrollBar = new ScrollBarEx();
-            sender.vScrollBar.OverScroll = true;
-            sender.vScrollBar.Width = ScaleHelper.Scale(17);
+            sender.vScrollBar.Width = ScrollBarEx.ScaleOddUp(17); // Should be odd for nice and crisp arrow points.
             sender.vScrollBar.Orientation = ScrollBarOrientation.Vertical;
             sender.vScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
-            sender.vScrollBar.Dock = DockStyle.Right;
-            sender.vScrollBar.Margin = new Padding(0, 0, 0, ScaleHelper.Scale(17));
             sender.hScrollBar = new ScrollBarEx();
-            sender.hScrollBar.Height = ScaleHelper.Scale(17);
+            sender.hScrollBar.Height = ScrollBarEx.ScaleOddUp(17); // Should be odd for nice and crisp arrow points.
             sender.hScrollBar.Orientation = ScrollBarOrientation.Horizontal;
             sender.hScrollBar.ContextMenuStrip.Renderer = new DockPanelStripRenderer();
-            sender.hScrollBar.Dock = DockStyle.Bottom;
+            sender.scrollerCorner = new Control();
+            sender.scrollerCorner.Width = sender.vScrollBar.Width;
+            sender.scrollerCorner.Height = sender.hScrollBar.Height;
             Color color = PluginBase.MainForm.GetThemeColor("ScrollBar.ForeColor");
             String value = PluginBase.MainForm.GetThemeValue("ScrollBar.UseCustom");
             if (value == "True" || (value == null && color != Color.Empty))
@@ -153,22 +156,25 @@ namespace ScintillaNet
         /// </summary>
         private void OnScrollUpdate(ScintillaControl sender)
         {
-            Int32 vMax = sender.LinesVisible;
+            Boolean overScroll = sender.EndAtLastLine == 0;
+            Int32 vTotal = sender.LinesVisible;
             Int32 vPage = sender.LinesOnScreen;
+            Int32 vMax = overScroll ? (vTotal - 1) : (vTotal - vPage);
             sender.vScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.vScrollBar.Minimum = 0;
-            sender.vScrollBar.Maximum = vMax - 1;
-            sender.vScrollBar.LargeChange = vPage;
+            sender.vScrollBar.Maximum = vMax;
+            sender.vScrollBar.ViewPortSize = sender.vScrollBar.LargeChange = vPage;
             sender.vScrollBar.Value = sender.FirstVisibleLine;
-            sender.vScrollBar.CurrentPosition = vMax > 1 ? sender.VisibleFromDocLine(sender.CurrentLine) : -1;
+            sender.vScrollBar.CurrentPosition = (vMax > 0) ? sender.VisibleFromDocLine(sender.CurrentLine) : -1;
+            sender.vScrollBar.MaxCurrentPosition = vTotal - 1;
             sender.vScrollBar.Scroll += sender.OnScrollBarScroll;
+            sender.vScrollBar.Enabled = vMax > 0;
             sender.hScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.hScrollBar.Minimum = 0;
             sender.hScrollBar.Maximum = sender.ScrollWidth;
-            sender.hScrollBar.LargeChange = sender.Width;
+            sender.hScrollBar.ViewPortSize = sender.hScrollBar.LargeChange = sender.Width;
             sender.hScrollBar.Value = sender.XOffset;
             sender.hScrollBar.Scroll += sender.OnScrollBarScroll;
-            sender.vScrollBar.Enabled = vMax > 1;
         }
 
         /// <summary>
@@ -200,6 +206,7 @@ namespace ScintillaNet
             sender.hScrollBar.Scroll += sender.OnScrollBarScroll;
             sender.Controls.Add(sender.hScrollBar);
             sender.Controls.Add(sender.vScrollBar);
+            sender.Controls.Add(sender.scrollerCorner);
             sender.Painted += sender.OnScrollUpdate;
             sender.IsVScrollBar = vScroll;
             sender.IsHScrollBar = hScroll;
@@ -219,6 +226,7 @@ namespace ScintillaNet
             sender.hScrollBar.Scroll -= sender.OnScrollBarScroll;
             sender.Controls.Remove(sender.hScrollBar);
             sender.Controls.Remove(sender.vScrollBar);
+            sender.Controls.Remove(sender.scrollerCorner);
             sender.Painted -= sender.OnScrollUpdate;
             sender.IsVScrollBar = vScroll;
             sender.IsHScrollBar = hScroll;
@@ -271,7 +279,16 @@ namespace ScintillaNet
         {
             Int32 vsbWidth = this.Controls.Contains(this.vScrollBar) && this.vScrollBar.Visible ? this.vScrollBar.Width : 0;
             Int32 hsbHeight = this.Controls.Contains(this.hScrollBar) && this.hScrollBar.Visible ? this.hScrollBar.Height : 0;
-            if (Win32.ShouldUseWin32()) SetWindowPos(this.hwndScintilla, 0, ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width - vsbWidth, ClientRectangle.Height - hsbHeight, 0);
+            if (Win32.ShouldUseWin32())
+                SetWindowPos(this.hwndScintilla, 0, ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width - vsbWidth, ClientRectangle.Height - hsbHeight, 0);
+            if (this.Controls.Contains(this.vScrollBar))
+            {
+                this.vScrollBar.SetBounds(ClientRectangle.Width - vsbWidth, 0, this.vScrollBar.Width, ClientRectangle.Height - hsbHeight);
+                this.hScrollBar.SetBounds(0, ClientRectangle.Height - hsbHeight, ClientRectangle.Width - vsbWidth, this.hScrollBar.Height);
+                this.scrollerCorner.Visible = this.vScrollBar.Visible && this.hScrollBar.Visible;
+                if (this.scrollerCorner.Visible)
+                    this.scrollerCorner.Location = new System.Drawing.Point(this.vScrollBar.Location.X, this.hScrollBar.Location.Y);
+            }
         }
 
         #endregion
@@ -997,7 +1014,7 @@ namespace ScintillaNet
         {
             get
             {
-                return SPerform(2027, 0, 0);
+                return SPerform(2027, 0, 0) - 1; //ignore the terminating null character
             }
         }
 
@@ -3190,10 +3207,10 @@ namespace ScintillaNet
         /// </summary>
         unsafe public string GetCurLine(int length)
         {
-            int sz = SPerform(2027, length, 0);
-            byte[] buffer = new byte[sz + 1];
+            length = Math.Min(length, SPerform(2027, 0, 0) - 1);
+            byte[] buffer = new byte[length + 1];
             fixed (byte* b = buffer) SPerform(2027, length + 1, (uint)b);
-            return Encoding.GetEncoding(this.CodePage).GetString(buffer, 0, sz - 1);
+            return Encoding.GetEncoding(this.CodePage).GetString(buffer, 0, length);
         }
 
         /// <summary>
@@ -3686,13 +3703,42 @@ namespace ScintillaNet
         }
 
         /// <summary>
+        /// Cut the selection to the clipboard as RTF.
+        /// </summary>
+        public void CutRTF()
+        {
+            if (SelTextSize > 0)
+            {
+                CopyRTF();
+                Clear();
+            }
+        }
+
+        /// <summary>
         /// Copy the selection to the clipboard as RTF.
         /// </summary>
         public void CopyRTF()
         {
-            Language language = ScintillaControl.Configuration.GetLanguage(this.configLanguage);
-            String conversion = RTF.GetConversion(language, this, this.SelectionStart, this.SelectionEnd);
-            Clipboard.SetText(conversion, TextDataFormat.Rtf);
+            int start = SelectionStart;
+            int end = SelectionEnd;
+
+            if (start < end)
+            {
+                CopyRTF(start, end);
+            }
+        }
+
+        /// <summary>
+        /// Copy the text in range to the clipboard as RTF.
+        /// </summary>
+        public void CopyRTF(int start, int end)
+        {
+            var dataObject = new DataObject();
+            var language = Configuration.GetLanguage(configLanguage);
+            string rtfText = RTF.GetConversion(language, this, start, end);
+            dataObject.SetText(GetTextRange(start, end));
+            dataObject.SetText(rtfText, TextDataFormat.Rtf);
+            Clipboard.SetDataObject(dataObject);
         }
 
         /// <summary>
@@ -4208,8 +4254,7 @@ namespace ScintillaNet
         /// </summary>
         public void DeleteForward()
         {
-            SetSel(CurrentPos + 1, CurrentPos + 1);
-            DeleteBack();
+            Clear();
         }
 
         /// <summary>
@@ -5830,28 +5875,46 @@ namespace ScintillaNet
                             int curLine = CurrentLine;
                             int tempLine = curLine;
                             int previousIndent;
-                            string tempText;
+                            string tempText3; //line text without newline
+                            string tempText2; //line text trim end
+                            string tempText; //line text without comment and trim end
                             do
                             {
                                 --tempLine;
-                                previousIndent = GetLineIndentation(tempLine);
-                                tempText = GetLine(tempLine).TrimEnd();
+                                tempText3 = GetLine(tempLine);
+                                tempText3 = tempText3.Substring(0, tempText3.Length - 1); //remove newline
+                                tempText2 = tempText3.TrimEnd();
+                                tempText = tempText2;
                                 if (tempText.Length == 0) previousIndent = -1;
+                                else previousIndent = GetLineIndentation(tempLine);
                             }
                             while ((tempLine > 0) && (previousIndent < 0));
-                            if (tempText.IndexOfOrdinal("//") > 0) // remove comment at end of line
+                            int commentIndex = tempText.IndexOfOrdinal("//");
+                            if (commentIndex > 0) // remove comment at end of line
                             {
-                                int slashes = this.MBSafeTextLength(tempText.Substring(0, tempText.IndexOfOrdinal("//") + 1));
+                                int slashes = this.MBSafeTextLength(tempText.Substring(0, commentIndex + 1));
                                 if (this.PositionIsOnComment(PositionFromLine(tempLine) + slashes))
-                                    tempText = tempText.Substring(0, tempText.IndexOfOrdinal("//")).Trim();
+                                    tempText = tempText.Substring(0, commentIndex).TrimEnd();
                             }
                             if (tempText.EndsWith('{'))
                             {
-                                int bracePos = CurrentPos - 1;
-                                while (bracePos > 0 && CharAt(bracePos) != '{') bracePos--;
+                                int bracePos = CurrentPos - 2 - (tempText3.Length - tempText.Length); //CurrentPos - 1 is always ch (newline)
                                 int style = BaseStyleAt(bracePos);
                                 if (bracePos >= 0 && CharAt(bracePos) == '{' && (style == 10/*CPP*/ || style == 5/*CSS*/))
+                                {
                                     previousIndent += TabWidth;
+                                    if (tempText.Length == tempText2.Length) //Doesn't end with comment
+                                    {
+                                        if (tempText3.Length > tempText.Length) //Ends with whitespace after {
+                                        {
+                                            AnchorPosition = bracePos + 1;
+                                            CurrentPos--; //before ch (newline)
+                                            DeleteBack();
+                                            AnchorPosition = bracePos + 2;
+                                            CurrentPos = bracePos + 2; //same as CurrentPos++ (after ch)
+                                        }
+                                    }
+                                }
                             }
                             // TODO: Should this test a config variable for indenting after case : statements?
                             if (Lexer == 3 && tempText.EndsWith(':') && !tempText.EndsWithOrdinal("::") && !this.PositionIsOnComment(PositionFromLine(tempLine)))
@@ -5902,14 +5965,11 @@ namespace ScintillaNet
                         this.BeginUndoAction();
                         try
                         {
-                            int position = CurrentPos;
-                            int curLine = LineFromPosition(position);
-                            int previousIndent = GetLineIndentation(curLine - 1);
-                            int match = SafeBraceMatch(position - 1);
-                            if (match != -1)
+                            int position = CurrentPos - 1;
+                            int match = SafeBraceMatch(position); //SafeBraceMatch() calls Colourise(0, -1)
+                            if (match != -1 && !PositionIsInString(position))
                             {
-                                previousIndent = GetLineIndentation(LineFromPosition(match));
-                                IndentLine(curLine, previousIndent);
+                                IndentLine(LineFromPosition(position), GetLineIndentation(LineFromPosition(match)));
                             }
                         }
                         finally
@@ -5928,22 +5988,33 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// Detects the string-literal quote style
+        /// Detects the string-literal quote style. Returns space if undefined.
         /// </summary>
         /// <param name="position">lookup position</param>
         /// <returns>' or " or Space if undefined</returns>
         public char GetStringType(int position)
         {
-            char next = (char)CharAt(position);
-            char c;
+            char current;
+            char previous = (char) CharAt(position);
             for (int i = position; i > 0; i--)
             {
-                c = next;
-                next = (char)CharAt(i - 1);
+                current = previous;
+                previous = (char) CharAt(i - 1);
 
-                if (next == '\\' && (c == '\'' || c == '"')) i--;
-                if (c == '\'') return '\'';
-                else if (c == '"') return '"';
+                if (current == '\'' || current == '"')
+                {
+                    bool escaped = false;
+                    while (previous == '\\')
+                    {
+                        i--;
+                        previous = (char) CharAt(i - 1);
+                        escaped = !escaped;
+                    }
+                    if (!escaped)
+                    {
+                        return current;
+                    }
+                }
             }
             return ' ';
         }
@@ -6306,6 +6377,49 @@ namespace ScintillaNet
                 style == 9);
             }
             return false;
+        }
+
+        /// <summary>
+        /// Checks that if the specified position is in string.
+        /// You may need to manually update coloring: <see cref="Colourise(int, int)"/>.
+        /// </summary>
+        public bool PositionIsInString(int position)
+        {
+            return PositionIsInString(position, Lexer);
+        }
+
+        /// <summary>
+        /// Checks that if the specified position is in string.
+        /// You may need to manually update coloring: <see cref="Colourise(int, int)"/>.
+        /// </summary>
+        private bool PositionIsInString(int position, int lexer)
+        {
+            int style = BaseStyleAt(position);
+            
+            switch ((Enums.Lexer) lexer)
+            {
+                case Enums.Lexer.CPP:
+                case Enums.Lexer.BULLANT:
+                case Enums.Lexer.HTML:
+                case Enums.Lexer.XML:
+                case Enums.Lexer.PERL:
+                case Enums.Lexer.RUBY:
+                case Enums.Lexer.LUA:
+                case Enums.Lexer.SQL:
+                case Enums.Lexer.GAP:
+                case Enums.Lexer.R:
+                    return style == (int) CPP.STRING || style == (int) CPP.CHARACTER;
+                case Enums.Lexer.SMALLTALK:
+                    return style == (int) SMALLTALK.STRING;
+                case Enums.Lexer.PLM:
+                    return style == (int) PLM.STRING;
+                case Enums.Lexer.MAGIK:
+                case Enums.Lexer.POWERSHELL:
+                    return style == (int) MAGIK.STRING || style == (int) MAGIK.CHARACTER;
+                // TODO: and more...
+                default:
+                    return false;
+            }
         }
 
         /// <summary>
@@ -7166,7 +7280,7 @@ namespace ScintillaNet
         /// </summary>
         public void CutAllowLineEx()
         {
-            if (this.SelTextSize == 0 && this.GetLine(this.CurrentLine).Trim() != "")
+            if (this.SelTextSize == 0 && this.GetLine(this.CurrentLine).Trim().Length > 0)
             {
                 this.LineCut();
             }
@@ -7174,15 +7288,87 @@ namespace ScintillaNet
         }
 
         /// <summary>
-        /// Cut the selection, if selection empty cut the line with the caret
+        /// Copy the selection, if selection empty copy the line with the caret
         /// </summary>
         public void CopyAllowLineEx()
         {
-            if (this.SelTextSize == 0 && this.GetLine(this.CurrentLine).Trim() != "")
+            if (this.SelTextSize == 0 && this.GetLine(this.CurrentLine).Trim().Length > 0)
             {
                 this.CopyAllowLine();
             }
             else this.Copy();
+        }
+
+        /// <summary>
+        /// Cut the selection in RTF. If selection is empty, cut the line containing the caret.
+        /// </summary>
+        public void CutRTFAllowLine()
+        {
+            if (this.SelTextSize == 0)
+            {
+                int line = this.CurrentLine;
+                this.AnchorPosition = this.PositionFromLine(line);
+                this.CurrentPos = this.PositionFromLine(line + 1);
+            }
+
+            this.CutRTF();
+        }
+
+        /// <summary>
+        /// Copy the selection in RTF. If selection is empty, copy the line containing the caret.
+        /// </summary>
+        public void CopyRTFAllowLine()
+        {
+            int start = this.SelectionStart;
+            int end = this.SelectionEnd;
+
+            if (start == end)
+            {
+                int line = this.CurrentLine;
+                start = this.PositionFromLine(line);
+                end = this.PositionFromLine(line + 1);
+            }
+
+            if (start < end)
+            {
+                this.CopyRTF(start, end);
+            }
+        }
+
+        /// <summary>
+        /// Cut the selection in RTF. If selection is empty and the current line is not empty, cut the line containing the caret.
+        /// </summary>
+        public void CutRTFAllowLineEx()
+        {
+            if (this.SelTextSize == 0 && this.GetLine(this.CurrentLine).Trim().Length > 0)
+            {
+                int line = this.CurrentLine;
+                this.AnchorPosition = this.PositionFromLine(line);
+                this.CurrentPos = this.PositionFromLine(line + 1);
+            }
+
+            this.CutRTF();
+        }
+
+        /// <summary>
+        /// Copy the selection in RTF. If selection is empty and the current line is not empty, copy the line containing the caret.
+        /// </summary>
+        public void CopyRTFAllowLineEx()
+        {
+            int start = this.SelectionStart;
+            int end = this.SelectionEnd;
+
+            if (start == end && this.GetLine(this.CurrentLine).Trim().Length > 0)
+            {
+                int line = this.CurrentLine;
+                start = this.PositionFromLine(line);
+                end = this.PositionFromLine(line + 1);
+            }
+
+            if (start < end)
+            {
+                this.CopyRTF(start, end);
+            }
         }
 
         /// <summary>

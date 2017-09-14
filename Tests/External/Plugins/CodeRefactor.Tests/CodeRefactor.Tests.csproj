@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CodeRefactor</RootNamespace>
     <AssemblyName>CodeRefactor.Tests</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -50,8 +51,8 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NSubstitute, Version=1.10.0.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\NSubstitute.1.10.0.0\lib\net35\NSubstitute.dll</HintPath>
+    <Reference Include="NSubstitute, Version=2.0.3.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\NSubstitute.2.0.3\lib\net40\NSubstitute.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
@@ -68,7 +69,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\CodeRefactorTests.cs" />
+    <Compile Include="CodeRefactorTests.cs" />
+    <Compile Include="Commands\RefactorCommandTests.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -81,7 +83,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="TestUtils\ContextExtensions.cs" />
+    <Compile Include="Provider\RefactoringHelperTests.cs" />
     <Compile Include="TestUtils\TestFile.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -120,6 +122,10 @@
       <Name>PluginCore</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\ASCompletion.Tests\ASCompletion.Tests.csproj">
+      <Project>{ABC71D26-295C-4C6C-B6DE-320AD49EEF79}</Project>
+      <Name>ASCompletion.Tests</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -141,16 +147,24 @@
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromString.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromNumber.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_ReplaceInitialOccurrence.hx" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\BeforeOrganizeImports.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\AfterOrganizeImports.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\BeforeOrganizeImports_withImportsFromSameModule.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\AfterOrganizeImports_withImportsFromSameModule.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\BeforeOrganizeImports_withImportsFromSameModule2.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\AfterOrganizeImports_withImportsFromSameModule2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\ParameterVar.hx" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\Constructor.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\LocalVar.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\PrivateVar.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\PublicVar.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\LocalFunction.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\Type.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\PrivateTypedef.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,4 +1,4 @@
-﻿package;
+package;
 import haxe.io.Input;
 class Foo {
 	public function new() {}

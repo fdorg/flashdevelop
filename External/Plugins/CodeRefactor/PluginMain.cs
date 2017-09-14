@@ -19,6 +19,7 @@ using ProjectManager;
 using ProjectManager.Actions;
 using ProjectManager.Controls.TreeView;
 using ProjectManager.Helpers;
+using CodeRefactor.Managers;
 
 namespace CodeRefactor
 {
@@ -39,8 +40,10 @@ namespace CodeRefactor
         private String settingFilename;
         TreeView projectTreeView;
 
-        #region Required Properties
+        public const string TraceGroup = "CodeRefactor";
         
+        #region Required Properties
+
         /// <summary>
         /// Api level of the plugin
         /// </summary>
@@ -110,6 +113,8 @@ namespace CodeRefactor
             this.InitBasics();
             this.LoadSettings();
             this.CreateMenuItems();
+            this.RegisterMenuItems();
+            this.RegisterTraceGroups();
         }
 
         /// <summary>
@@ -249,6 +254,11 @@ namespace CodeRefactor
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
             this.settingFilename = Path.Combine(dataPath, "Settings.fdb");
             this.pluginDesc = TextHelper.GetString("Info.Description");
+
+            BatchProcessManager.AddBatchProcessor(new BatchProcessors.FormatCodeProcessor());
+            BatchProcessManager.AddBatchProcessor(new BatchProcessors.OrganizeImportsProcessor());
+            BatchProcessManager.AddBatchProcessor(new BatchProcessors.TruncateImportsProcessor());
+            BatchProcessManager.AddBatchProcessor(new BatchProcessors.ConsistentEOLProcessor());
         }
 
         /// <summary>
@@ -284,12 +294,13 @@ namespace CodeRefactor
             ToolStripMenuItem searchMenu = PluginBase.MainForm.FindMenuItem("SearchMenu") as ToolStripMenuItem;
             this.viewReferencesItem = new ToolStripMenuItem(TextHelper.GetString("Label.FindAllReferences"), null, this.FindAllReferencesClicked);
             this.editorReferencesItem = new ToolStripMenuItem(TextHelper.GetString("Label.FindAllReferences"), null, this.FindAllReferencesClicked);
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.SurroundWith", this.refactorMainMenu.SurroundMenu);
             PluginBase.MainForm.RegisterShortcutItem("SearchMenu.ViewReferences", this.viewReferencesItem);
+            PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.SurroundWith", this.surroundContextMenu);
             PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.ViewReferences", this.editorReferencesItem);
             searchMenu.DropDownItems.Add(new ToolStripSeparator());
             searchMenu.DropDownItems.Add(this.viewReferencesItem);
             editorMenu.Items.Insert(8, this.editorReferencesItem);
-            RegisterMenuItems();
         }
 
         /// <summary>
@@ -315,6 +326,12 @@ namespace CodeRefactor
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.TruncateImports", this.refactorContextMenu.TruncateMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.CodeGenerator", this.refactorContextMenu.CodeGeneratorMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.BatchProcess", this.refactorContextMenu.BatchMenuItem);
+        }
+
+        private void RegisterTraceGroups()
+        {
+            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetStringWithoutMnemonics("Label.Refactor"), false);
+            TraceManager.RegisterTraceGroup(FindAllReferences.TraceGroup, TextHelper.GetString("Label.FindAllReferencesResult"), false, true);
         }
 
         /// <summary>
@@ -428,26 +445,12 @@ namespace CodeRefactor
             if (document != null && document.IsEditable && RefactoringHelper.GetLanguageIsValid())
             {
                 this.surroundContextMenu.GenerateSnippets(document.SciControl);
-                foreach (ToolStripMenuItem item in this.surroundContextMenu.DropDownItems)
-                {
-                    item.Click += this.SurroundWithClicked;
-                }
-                foreach (ToolStripMenuItem item in this.refactorMainMenu.SurroundMenu.DropDownItems)
-                {
-                    item.Click -= this.SurroundWithClicked;
-                }
                 this.refactorMainMenu.SurroundMenu.GenerateSnippets(document.SciControl);
-                foreach (ToolStripMenuItem item in this.refactorMainMenu.SurroundMenu.DropDownItems)
-                {
-                    item.Click += this.SurroundWithClicked;
-                }
             }
             else
             {
-                this.surroundContextMenu.DropDownItems.Clear();
-                this.refactorMainMenu.SurroundMenu.DropDownItems.Clear();
-                this.refactorMainMenu.SurroundMenu.DropDownItems.Add("");
-                this.surroundContextMenu.DropDownItems.Add("");
+                this.surroundContextMenu.Clear();
+                this.refactorMainMenu.SurroundMenu.Clear();
             }
         }
 
@@ -495,23 +498,6 @@ namespace CodeRefactor
             try
             {
                 var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateRenameFileCommand(oldPath, newPath);
-                command.Execute();
-            }
-            catch (Exception ex)
-            {
-                ErrorManager.ShowError(ex);
-            }
-        }
-
-        /// <summary>
-        /// Invoked when the user selects the "Surround with Try/catch block" command
-        /// </summary>
-        private void SurroundWithClicked(Object sender, EventArgs e)
-        {
-            try
-            {
-                var snippet = (sender as ToolStripItem).Text;
-                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateSurroundWithCommand(snippet);
                 command.Execute();
             }
             catch (Exception ex)

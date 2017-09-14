@@ -42,21 +42,23 @@ namespace ProjectManager.Actions
 
         public Project NewProject()
         {
-            NewProjectDialog dialog = new NewProjectDialog();
-            if (dialog.ShowDialog(owner) == DialogResult.OK)
+            using (NewProjectDialog dialog = new NewProjectDialog())
             {
-                try
+                if (dialog.ShowDialog(owner) == DialogResult.OK)
                 {
-                    FlashDevelopActions.CheckAuthorName();
-                    ProjectCreator creator = new ProjectCreator();
-                    Project created = creator.CreateProject(dialog.TemplateDirectory, dialog.ProjectLocation, dialog.ProjectName, dialog.PackageName);
-                    PatchProject(created);
-                    return created;
-                }
-                catch (Exception exception)
-                {
-                    string msg = TextHelper.GetString("Info.CouldNotCreateProject");
-                    ErrorManager.ShowInfo(msg + " " + exception.Message);
+                    try
+                    {
+                        FlashDevelopActions.CheckAuthorName();
+                        ProjectCreator creator = new ProjectCreator();
+                        Project created = creator.CreateProject(dialog.TemplateDirectory, dialog.ProjectLocation, dialog.ProjectName, dialog.PackageName);
+                        PatchProject(created);
+                        return created;
+                    }
+                    catch (Exception exception)
+                    {
+                        string msg = TextHelper.GetString("Info.CouldNotCreateProject");
+                        ErrorManager.ShowInfo(msg + " " + exception.Message);
+                    }
                 }
             }
 
@@ -65,14 +67,16 @@ namespace ProjectManager.Actions
 
         public Project OpenProject()
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Title = " " + TextHelper.GetString("Title.OpenProjectDialog");
-            dialog.Filter = ProjectCreator.GetProjectFilters();
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Title = " " + TextHelper.GetString("Title.OpenProjectDialog");
+                dialog.Filter = ProjectCreator.GetProjectFilters();
 
-            if (dialog.ShowDialog(owner) == DialogResult.OK)
-                return OpenProjectSilent(dialog.FileName);
-            else
-                return null;
+                if (dialog.ShowDialog(owner) == DialogResult.OK)
+                    return OpenProjectSilent(dialog.FileName);
+            }
+
+            return null;
         }
 
         public Project OpenProjectSilent(string path)
@@ -96,51 +100,52 @@ namespace ProjectManager.Actions
 
         internal string ImportProject(string importFrom)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Title = TextHelper.GetString("Title.ImportProject");
-            dialog.Filter = TextHelper.GetString("Info.ImportProjectFilter");
-            if (importFrom == "hxml") dialog.FilterIndex = 3;
-            if (dialog.ShowDialog() == DialogResult.OK && File.Exists(dialog.FileName))
+            using (OpenFileDialog dialog = new OpenFileDialog())
             {
-                string fileName = dialog.FileName;
-                string currentDirectory = Directory.GetCurrentDirectory();
-
-                try
+                dialog.Title = TextHelper.GetString("Title.ImportProject");
+                dialog.Filter = TextHelper.GetString("Info.ImportProjectFilter");
+                if (importFrom == "hxml") dialog.FilterIndex = 3;
+                if (dialog.ShowDialog() == DialogResult.OK && File.Exists(dialog.FileName))
                 {
-                    if (FileInspector.IsHxml(Path.GetExtension(fileName).ToLower()))
+                    string fileName = dialog.FileName;
+                    string currentDirectory = Directory.GetCurrentDirectory();
+                    try
                     {
-                        var project = HaxeProject.Load(fileName);
-                        var path = Path.GetDirectoryName(project.ProjectPath);
-                        var name = Path.GetFileNameWithoutExtension(project.OutputPath);
-                        var newPath = Path.Combine(path, $"{name}.hxproj");
-                        PatchProject(project);
-                        PatchHxmlProject(project);
-                        project.SaveAs(newPath);
-                        return newPath;
-                    }
-                    if (FileInspector.IsFlexBuilderPackagedProject(fileName))
-                    {
-                        fileName = ExtractPackagedProject(fileName);
-                    }
-                    if (FileInspector.IsFlexBuilderProject(fileName))
-                    {
-                        AS3Project imported = AS3Project.Load(fileName);
-                        string path = Path.GetDirectoryName(imported.ProjectPath);
-                        string name = Path.GetFileNameWithoutExtension(imported.OutputPath);
-                        string newPath = Path.Combine(path, name + ".as3proj");
-                        PatchProject(imported);
-                        PatchFbProject(imported);
-                        imported.SaveAs(newPath);
+                        if (FileInspector.IsHxml(Path.GetExtension(fileName).ToLower()))
+                        {
+                            var project = HaxeProject.Load(fileName);
+                            var path = Path.GetDirectoryName(project.ProjectPath);
+                            var name = Path.GetFileNameWithoutExtension(project.OutputPath);
+                            var newPath = Path.Combine(path, $"{name}.hxproj");
+                            PatchProject(project);
+                            PatchHxmlProject(project);
+                            project.SaveAs(newPath);
+                            return newPath;
+                        }
+                        if (FileInspector.IsFlexBuilderPackagedProject(fileName))
+                        {
+                            fileName = ExtractPackagedProject(fileName);
+                        }
+                        if (FileInspector.IsFlexBuilderProject(fileName))
+                        {
+                            AS3Project imported = AS3Project.Load(fileName);
+                            string path = Path.GetDirectoryName(imported.ProjectPath);
+                            string name = Path.GetFileNameWithoutExtension(imported.OutputPath);
+                            string newPath = Path.Combine(path, name + ".as3proj");
+                            PatchProject(imported);
+                            PatchFbProject(imported);
+                            imported.SaveAs(newPath);
 
-                        return newPath;
+                            return newPath;
+                        }
+                        ErrorManager.ShowInfo(TextHelper.GetString("Info.NotValidFlashBuilderProject"));
                     }
-                    ErrorManager.ShowInfo(TextHelper.GetString("Info.NotValidFlashBuilderProject"));
-                }
-                catch (Exception exception)
-                {
-                    Directory.SetCurrentDirectory(currentDirectory);
-                    string msg = TextHelper.GetString("Info.CouldNotOpenProject");
-                    ErrorManager.ShowInfo(msg + " " + exception.Message);
+                    catch (Exception exception)
+                    {
+                        Directory.SetCurrentDirectory(currentDirectory);
+                        string msg = TextHelper.GetString("Info.CouldNotOpenProject");
+                        ErrorManager.ShowInfo(msg + " " + exception.Message);
+                    }
                 }
             }
             return null;
@@ -474,16 +479,8 @@ namespace ProjectManager.Actions
             string export = (node != null && node is ExportNode) ? (node as ExportNode).Export : null;
             string textToInsert = project.GetInsertFileText(mainForm.CurrentDocument.FileName, path, export, nodeType);
             if (textToInsert == null) return;
-            if (mainForm.CurrentDocument.IsEditable)
-            {
-                mainForm.CurrentDocument.SciControl.AddText(textToInsert.Length, textToInsert);
-                mainForm.CurrentDocument.Activate();
-            }
-            else
-            {
-                string msg = TextHelper.GetString("Info.EmbedNeedsOpenDocument");
-                ErrorManager.ShowInfo(msg);
-            }
+            mainForm.CurrentDocument.SciControl.AddText(textToInsert.Length, textToInsert);
+            mainForm.CurrentDocument.Activate();
         }
 
         public void ToggleLibraryAsset(Project project, string[] paths)

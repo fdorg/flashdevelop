@@ -46,6 +46,7 @@ namespace FlashDevelop.Settings
         private Boolean confirmOnExit = false;
         private Boolean keepIndentTabs = false;
         private Boolean keepCaretCentered = false;
+        private Boolean endAtLastLine = false;
         private Boolean disableFindOptionSync = false;
         private Boolean disableSimpleQuickFind = false;
         private Boolean disableTabDifferentiation = false;
@@ -98,6 +99,7 @@ namespace FlashDevelop.Settings
         private Boolean uiWrapList = false;
         private Boolean uiDisableSmartMatch = false;
         private String uiInsertionTriggers = "";
+        private Int32 clipboardHistorySize = 50;
     }
 
 }

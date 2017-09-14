@@ -37,10 +37,12 @@ namespace ProjectManager.Actions
                 if (arg.Key == "DefaultUser" && arg.Value == "...")
                 {
                     String caption = TextHelper.GetString("Title.AuthorName");
-                    LineEntryDialog prompt = new LineEntryDialog(caption, "Author", "");
-                    if (prompt.ShowDialog() == DialogResult.OK)
+                    using (LineEntryDialog prompt = new LineEntryDialog(caption, "Author", ""))
                     {
-                        arg.Value = prompt.Line;
+                        if (prompt.ShowDialog() == DialogResult.OK)
+                        {
+                            arg.Value = prompt.Line;
+                        }
                     }
                 }
             }

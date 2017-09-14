@@ -101,7 +101,7 @@ namespace CodeRefactor.Commands
                     if (aPath.IsValid && !aPath.Updating)
                     {
                         string path = Path.Combine(aPath.Path, package);
-                        if (aPath.IsValid && Directory.Exists(path))
+                        if (Directory.Exists(path))
                         {
                             TargetName = Path.GetFileName(path);
                             renamePackagePath = path;
@@ -398,7 +398,7 @@ namespace CodeRefactor.Commands
                     foreach (string lineToReport in lineSetsToReport.Value)
                     {
                         // use the String.Format and replace the {0} from above with our final line state
-                        TraceManager.Add(string.Format(lineToReport, renamedLine), (int) TraceType.Info);
+                        TraceManager.Add(string.Format(lineToReport, renamedLine), (int) TraceType.Info, PluginMain.TraceGroup);
                     }
                 }
             }

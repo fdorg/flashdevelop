@@ -375,7 +375,7 @@ namespace ASCompletion.Context
             }
             else shouldIgnore = true;
 
-            FileModel.Ignore.FileName = filename ?? "";
+            FileModel.Ignore.FileName = filename;
             // find the doc context(s)
             if (!shouldIgnore)
             {
@@ -1211,7 +1211,7 @@ namespace ASCompletion.Context
         /// Retrieves a class model from its name
         /// </summary>
         /// <param name="cname">Class (short or full) name</param>
-        /// <param name="inClass">Current file</param>
+        /// <param name="inFile">Current file</param>
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         public virtual ClassModel ResolveType(string cname, FileModel inFile)
         {
@@ -1260,6 +1260,11 @@ namespace ASCompletion.Context
         {
             return new MemberList();
         }
+
+        /// <inheritdoc />
+        public virtual string GetDefaultValue(string type) => null;
+
+        public virtual IEnumerable<string> DecomposeTypes(IEnumerable<string> types) => types;
         #endregion
 
         #region operations on text insertion

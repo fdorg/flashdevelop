@@ -60,7 +60,7 @@ namespace HaXeContext
             stubFunctionClass.Name = stubFunctionClass.Type = "Function";
             stubFunctionClass.Flags = FlagType.Class;
             stubFunctionClass.Access = Visibility.Public;
-            var funFile = new FileModel();
+            var funFile = new FileModel{Package = "haxe", Module = "Constraints"};
             funFile.Classes.Add(stubFunctionClass);
             stubFunctionClass.InFile = funFile;
 
@@ -136,6 +136,7 @@ namespace HaXeContext
             features.inlineKey = "inline";
             features.hiddenPackagePrefix = '_';
             features.stringInterpolationQuotes = "'";
+            features.ConstructorKey = "new";
 
             /* INITIALIZATION */
 
@@ -143,6 +144,7 @@ namespace HaXeContext
 
             currentSDK = PathHelper.ResolvePath(hxsettings.GetDefaultSDK().Path) ?? "";
             initSettings.CompletionModeChanged += OnCompletionModeChange;
+            initSettings.UseGenericsShortNotationChanged += UseGenericsShortNotationChange;
             //OnCompletionModeChange(); // defered to first use
 
             haxelibsCache = new Dictionary<string, List<string>>();
@@ -248,8 +250,17 @@ namespace HaXeContext
             currentEnv = sdkPath;
 
             LoadMetadata();
-            if (GetCurrentSDKVersion().IsGreaterThanOrEquals(new SemVer("3.3.0"))) features.SpecialPostfixOperators = new[] {'!'};
+
+            if (GetCurrentSDKVersion() >= "3.3.0") features.SpecialPostfixOperators = new[] {'!'};
             else features.SpecialPostfixOperators = new char[0];
+
+            UseGenericsShortNotationChange();
+        }
+
+        private void UseGenericsShortNotationChange()
+        {
+            // We may want to create 2 different feature flags for this, but atm it's enough this way
+            features.HasGenericsShortNotation = GetCurrentSDKVersion() >= "3" && hxsettings.UseGenericsShortNotation;
         }
 
         public void LoadMetadata()
@@ -904,8 +915,6 @@ namespace HaXeContext
             if (string.IsNullOrEmpty(cname) || cname == features.voidKey || classPath == null)
                 return ClassModel.VoidClass;
 
-            if (cname == "Function") return stubFunctionClass;
-
             // handle generic types
             if (cname.IndexOf('<') > 0)
             {
@@ -937,6 +946,7 @@ namespace HaXeContext
                             return aClass;
 
                 // search in imported classes
+                var found = false;
                 MemberList imports = ResolveImports(inFile);
                 foreach (MemberModel import in imports)
                 {
@@ -950,9 +960,11 @@ namespace HaXeContext
                             int dotIndex = type.LastIndexOf('.');
                             if (dotIndex > 0) package = type.Substring(0, dotIndex);
                         }
+                        found = true;
                         break;
                     }
                 }
+                if (!found && cname == "Function") return stubFunctionClass;
             }
 
             return GetModel(package, cname, inPackage);
@@ -980,7 +992,7 @@ namespace HaXeContext
             ClassModel aClass = ResolveType(baseType, inFile);
             if (aClass.IsVoid()) return aClass;
 
-            if (aClass.QualifiedName == "Dynamic")
+            if (aClass.QualifiedName == features.dynamicKey)
             {
                 ClassModel indexClass = ResolveType(indexType, inFile);
                 //if (!indexClass.IsVoid()) return indexClass;
@@ -1094,6 +1106,113 @@ namespace HaXeContext
                 name = "flash9";
             return base.ResolvePackage(name, lazyMode);
         }
+
+        public override string GetDefaultValue(string type)
+        {
+            if (string.IsNullOrEmpty(type) || type == features.voidKey) return null;
+            switch (type)
+            {
+                case "Float":
+                case "Int":
+                case "UInt":
+                case "Bool": return null;
+                default: return "null";
+            }
+        }
+
+        public override IEnumerable<string> DecomposeTypes(IEnumerable<string> types)
+        {
+            var characterClass = ScintillaControl.Configuration.GetLanguage("haxe").characterclass.Characters;
+            var result = new HashSet<string>();
+            foreach (var type in types)
+            {
+                if (string.IsNullOrEmpty(type)) continue;
+                if(type.Contains("->") || type.Contains('{') || type.Contains('<'))
+                {
+                    var length = type.Length;
+                    var braCount = 0;
+                    var genCount = 0;
+                    var inAnonType = false;
+                    var hasColon = false;
+                    var pos = 0;
+                    for (var i = 0; i < length; i++)
+                    {
+                        var c = type[i];
+                        if (c == '.' || characterClass.Contains(c)) continue;
+                        if (c <= ' ') pos++;
+                        else if (c == '(') pos = i + 1;
+                        else if (c == '<')
+                        {
+                            genCount++;
+                            result.Add(type.Substring(pos, i - pos));
+                            pos = i + 1;
+                        }
+                        else if (c == '>')
+                        {
+                            genCount--;
+                            if (i > pos) result.Add(type.Substring(pos, i - pos));
+                            pos = i + 1;
+                        }
+                        else if (c == '{')
+                        {
+                            inAnonType = true;
+                            braCount++;
+                            hasColon = false;
+                            pos = i + 1;
+                        }
+                        else if (c == '}')
+                        {
+                            if (i > pos) result.Add(type.Substring(pos, i - pos));
+                            if (--braCount == 0) inAnonType = false;
+                            pos = i + 1;
+                        }
+                        else if (inAnonType)
+                        {
+                            if (hasColon)
+                            {
+                                if (c == ',')
+                                {
+                                    result.Add(type.Substring(pos, i - pos));
+                                    pos = i + 1;
+                                    hasColon = false;
+                                }
+                            }
+                            else if(c == ':')
+                            {
+                                hasColon = true;
+                                pos = i + 1;
+                            }
+                        }
+                        else if (genCount > 0)
+                        {
+                            if (c == ',')
+                            {
+                                if (i > pos) result.Add(type.Substring(pos, i - pos));
+                                pos = i + 1;
+                            }
+                        }
+                        if (c == '-')
+                        {
+                            if (i > pos) result.Add(type.Substring(pos, i - pos));
+                            i++;
+                            pos = i + 1;
+                            hasColon = false;
+                            if (braCount == 0 && genCount == 0 
+                                && type.IndexOfOrdinal("{", pos) == -1
+                                && type.IndexOfOrdinal("<", pos) == -1
+                                && type.IndexOfOrdinal(",", pos) == -1)
+                            {
+                                result.Add(type.Substring(pos));
+                                break;
+                            }
+                        }
+                    }
+                }
+                else result.Add(type);
+            }
+            return result;
+        }
+
         #endregion
 
         #region Custom code completion
@@ -1176,7 +1295,7 @@ namespace HaXeContext
         internal HaxeComplete GetHaxeComplete(ScintillaControl sci, ASExpr expression, bool autoHide, HaxeCompilerService compilerService)
         {
             var sdkVersion = GetCurrentSDKVersion();
-            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.CompletionServer && sdkVersion.IsGreaterThanOrEquals(new SemVer("3.3.0")))
+            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.CompletionServer && sdkVersion >= "3.3.0")
                 return new HaxeComplete330(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
             return new HaxeComplete(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
         }
@@ -1408,7 +1527,7 @@ namespace HaXeContext
 
         public override bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression)
         {
-            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || GetCurrentSDKVersion().IsOlderThan(new SemVer("3.2.0")))
+            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || GetCurrentSDKVersion() < "3.2.0")
                 return false;
 
             var hc = GetHaxeComplete(sci, expression, false, HaxeCompilerService.POSITION);
@@ -1667,8 +1786,26 @@ namespace HaXeContext
             RunCMD(command);
             return true;
         }
+
         #endregion
 
+        #region haxelib
+
+        internal void InstallHaxelib(Dictionary<string, string> nameToVersion)
+        {
+            var haxePath = PathHelper.ResolvePath(GetCompilerPath());
+            if (!Directory.Exists(haxePath) && !File.Exists(haxePath))
+            {
+                ErrorManager.ShowInfo(TextHelper.GetString("Info.InvalidHaXePath"));
+                return;
+            }
+            if (Path.GetExtension(haxePath) == string.Empty) haxePath = Path.Combine(haxePath, "haxelib.exe");
+            nameToVersion.Select(it => $"{haxePath};install {it.Key} {it.Value}")
+                     .ToList()
+                     .ForEach(it => MainForm.CallCommand("RunProcessCaptured", it));
+        }
+
+        #endregion
     }
 
     class HaxeCompletionCache: CompletionCache

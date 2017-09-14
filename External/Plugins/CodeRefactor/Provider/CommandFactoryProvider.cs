@@ -2,6 +2,7 @@
 using ASCompletion.Completion;
 using ASCompletion.Model;
 using PluginCore;
+using ScintillaNet;
 
 namespace CodeRefactor.Provider
 {
@@ -36,11 +37,6 @@ namespace CodeRefactor.Provider
             return GetFactory(document);
         }
 
-        public static ICommandFactory GetFactory(ITabbedDocument document)
-        {
-            return GetFactory(document.SciControl.ConfigurationLanguage);
-        }
-
         public static ICommandFactory GetFactory(ASResult target)
         {
             return GetFactory(target.InFile ?? target.Type.InFile);
@@ -52,9 +48,15 @@ namespace CodeRefactor.Provider
             return GetFactory(language);
         }
 
+        public static ICommandFactory GetFactory(ITabbedDocument document) => GetFactory(document.SciControl);
+
+        public static ICommandFactory GetFactory(ScintillaControl sci) => GetFactory(sci.ConfigurationLanguage);
+
         public static ICommandFactory GetFactory(string language)
         {
-            return LanguageToFactory[language];
+            ICommandFactory factory;
+            LanguageToFactory.TryGetValue(language, out factory);
+            return factory;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ASCompletion.Context;
@@ -12,50 +13,44 @@ namespace ASCompletion.TestUtils
 {
     public static class ContextExtensions
     {
-        public static void SetAs3Features(this IASContext context)
+        public static void SetAs3Features(this IASContext mock)
         {
-            var currentModel = new FileModel {Context = context, Version = 3};
-            var asContext = new AS3Context.Context(new AS3Context.AS3Settings());
-            BuildClassPath(asContext);
-            asContext.CurrentModel = currentModel;
-            context.Features.Returns(asContext.Features);
-            context.CurrentModel.Returns(currentModel);
-            var visibleExternalElements = asContext.GetVisibleExternalElements();
-            context.GetVisibleExternalElements().Returns(visibleExternalElements);
-            context.GetCodeModel(null).ReturnsForAnyArgs(x =>
-            {
-                var src = x[0] as string;
-                return string.IsNullOrEmpty(src) ? null : asContext.GetCodeModel(src);
-            });
-            context.IsImported(null, Arg.Any<int>()).ReturnsForAnyArgs(it =>
-            {
-                var member = it.ArgAt<MemberModel>(0);
-                return member != null && asContext.IsImported(member, it.ArgAt<int>(1));
-            });
-            context.ResolveType(null, null).ReturnsForAnyArgs(x => asContext.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
+            var context = new AS3Context.Context(new AS3Context.AS3Settings());
+            BuildClassPath(context);
+            context.CurrentModel = new FileModel {Context = mock, Version = 3};
+            SetFeatures(mock, context);
         }
 
-        public static void SetHaxeFeatures(this IASContext context)
+        public static void SetHaxeFeatures(this IASContext mock)
         {
-            var currentModel = new FileModel {Context = context, Version = 4, haXe = true};
-            var haxeContext = new HaXeContext.Context(new HaXeContext.HaXeSettings());
-            BuildClassPath(haxeContext);
-            haxeContext.CurrentModel = currentModel;
-            context.Features.Returns(haxeContext.Features);
-            context.CurrentModel.Returns(currentModel);
-            var visibleExternalElements = haxeContext.GetVisibleExternalElements();
-            context.GetVisibleExternalElements().Returns(visibleExternalElements);
-            context.GetCodeModel(null).ReturnsForAnyArgs(x =>
+            var context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+            BuildClassPath(context);
+            context.CurrentModel = new FileModel {Context = mock, Version = 4, haXe = true};
+            SetFeatures(mock, context);
+        }
+
+        static void SetFeatures(IASContext mock, IASContext context)
+        {
+            mock.Settings.LanguageId.Returns(context.Settings.LanguageId);
+            mock.Features.Returns(context.Features);
+            mock.CurrentModel.Returns(context.CurrentModel);
+            var visibleExternalElements = context.GetVisibleExternalElements();
+            mock.GetVisibleExternalElements().Returns(visibleExternalElements);
+            mock.GetCodeModel(null).ReturnsForAnyArgs(x =>
             {
                 var src = x[0] as string;
-                return string.IsNullOrEmpty(src) ? null : haxeContext.GetCodeModel(src);
+                return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
             });
-            context.IsImported(null, Arg.Any<int>()).ReturnsForAnyArgs(it =>
+            mock.IsImported(null, Arg.Any<int>()).ReturnsForAnyArgs(it =>
             {
                 var member = it.ArgAt<MemberModel>(0);
-                return member != null && haxeContext.IsImported(member, it.ArgAt<int>(1));
+                return member != null && context.IsImported(member, it.ArgAt<int>(1));
             });
-            context.ResolveType(null, null).ReturnsForAnyArgs(x => haxeContext.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
+            mock.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
+            mock.IsFileValid.Returns(context.IsFileValid);
+            mock.GetDefaultValue(null).ReturnsForAnyArgs(it => context.GetDefaultValue(it.ArgAt<string>(0)));
+            mock.DecomposeTypes(null).ReturnsForAnyArgs(it => context.DecomposeTypes(it.ArgAt<IEnumerable<string>>(0) ?? new string[0]));
+            mock.Classpath.Returns(context.Classpath);
         }
 
         public static void BuildClassPath(this IASContext context)
