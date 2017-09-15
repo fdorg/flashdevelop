@@ -104,7 +104,7 @@ namespace HaXeContext
             this.LoadSettings();
             this.AddEventHandlers();
 
-            LintingManager.RegisterLinter("haxe", new DiagnosticsLinter());
+            LintingManager.RegisterLinter("haxe", new DiagnosticsLinter(settingObject));
         }
 
         /// <summary>
