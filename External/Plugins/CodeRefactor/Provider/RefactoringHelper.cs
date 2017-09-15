@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,6 +11,7 @@ using PluginCore.FRService;
 using PluginCore.Helpers;
 using PluginCore.Managers;
 using PluginCore.Utilities;
+using ProjectManager;
 using ProjectManager.Projects;
 using ScintillaNet;
 
@@ -631,6 +633,8 @@ namespace CodeRefactor.Provider
             {
                 FileHelper.ForceMove(oldPath, newPath);
                 DocumentManager.MoveDocuments(oldPath, newPath);
+                RaiseMoveEvent(oldPath, newPath);
+
                 if (project.IsDocumentClass(oldPath)) newDocumentClass = newPath;
             }
             else if (Directory.Exists(oldPath))
@@ -653,6 +657,7 @@ namespace CodeRefactor.Provider
                 // We need to use our own method for moving directories if folders in the new path already exist
                 FileHelper.ForceMoveDirectory(oldPath, newPath);
                 DocumentManager.MoveDocuments(oldPath, newPath);
+                RaiseMoveEvent(oldPath, newPath);
             }
             if (!string.IsNullOrEmpty(newDocumentClass))
             {
@@ -692,6 +697,27 @@ namespace CodeRefactor.Provider
                     return true;
                 default:
                     return false;
+            }
+        }
+
+        internal static void RaiseMoveEvent(string fromPath, string toPath)
+        {
+            if (Directory.Exists(toPath))
+            {
+                foreach (var file in Directory.EnumerateFiles(toPath))
+                    RaiseMoveEvent(Path.Combine(fromPath, file), Path.Combine(toPath, file));
+                foreach (var folder in Directory.EnumerateDirectories(toPath))
+                    RaiseMoveEvent(Path.Combine(fromPath, folder), Path.Combine(toPath, folder));
+            }
+            else if (File.Exists(toPath))
+            {
+                var data = new Hashtable
+                {
+                    ["fromPath"] = fromPath,
+                    ["toPath"] = toPath
+                };
+                var de = new DataEvent(EventType.Command, ProjectManagerEvents.FileMoved, data);
+                EventManager.DispatchEvent(null, de);
             }
         }
 

@@ -507,6 +507,7 @@ namespace CodeRefactor.Commands
                         project.SetDocumentClass(newDocumentClass, true);
                         project.Save();
                     }
+                    RefactoringHelper.RaiseMoveEvent(oldPath, newPath);
                 }
             }
 
