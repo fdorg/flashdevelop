@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.ComponentModel;
 using System.IO;
 using PluginCore;
@@ -174,6 +175,9 @@ namespace SourceControl
                                 de.Handled = true;
                             }
                             break;
+                        case ProjectFileActionsEvents.FilePaste:
+                            //TODO: handle copy / cut and paste
+                            break;
 
                         case ProjectFileActionsEvents.FileDelete:
                             try
@@ -199,6 +203,18 @@ namespace SourceControl
                             }
                             break;
 
+                        case ProjectManagerEvents.FileMoved:
+                            try
+                            {
+                                var file = de.Data as Hashtable;
+                                ProjectWatcher.HandleFileMoved((string)file["fromPath"], (string)file["toPath"]);
+                            }
+                            catch (Exception ex)
+                            {
+                                ErrorManager.ShowError(ex);
+                                de.Handled = true;
+                            }
+                            break;
                         case ProjectManagerEvents.BuildProject:
                             try
                             {

@@ -6189,6 +6189,18 @@ AND - All conditions are met.</value>
     <value>Keep result panels locked by default.</value>
     <comment>Added after 5.2.0</comment>
   </data>
+  <data name="SourceControl.Description.ShouldDelete" xml:space="preserve">
+    <value>Whether files should be deleted from version control when you delete them.</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Description.ShouldAdd" xml:space="preserve"> <!-- TODO: not used at the moment -->
+    <value>Whether files should be added to version control when you create / add them.</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Description.NeverAskForCommit" xml:space="preserve">
+    <value>Sets whether you will be asked to make a commit after moving / deleting files, etc.</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
   <data name="FlashDevelop.Description.EndAtLastLine" xml:space="preserve">
     <value>Sets the scroll range so that maximum scroll position has the last line at the bottom of the view. Setting this to false allows scrolling one page below the last line.</value>
     <comment>Added after 5.2.1</comment>

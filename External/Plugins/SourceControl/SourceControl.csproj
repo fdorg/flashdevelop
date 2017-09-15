@@ -84,6 +84,9 @@
   <ItemGroup>
     <Compile Include="Actions\ProjectWatcher.cs" />
     <Compile Include="Actions\TreeContextMenuUpdate.cs" />
+    <Compile Include="Dialogs\LineEntryDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Dialogs\SourceControlDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -147,9 +150,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Dialogs\SourceControlDialog.resx">
-      <DependentUpon>SourceControlDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Resources\icons.png" />
   </ItemGroup>
   <ItemGroup>

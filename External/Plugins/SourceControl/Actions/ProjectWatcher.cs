@@ -12,6 +12,7 @@ using PluginCore.Managers;
 using ProjectManager.Projects;
 using SourceControl.Managers;
 using SourceControl.Sources;
+using SourceControl.Dialogs;
 
 namespace SourceControl.Actions
 {
@@ -253,6 +254,28 @@ namespace SourceControl.Actions
             return result.Manager.FileActions.FileMove(paths[0], paths[1]);
         }
 
+        /// <summary>
+        /// Called after a file was sucessfully moved.
+        /// </summary>
+        /// <param name="file">The file that was moved</param>
+        internal static void HandleFileMoved(string fromFile, string toFile)
+        {
+            WatcherVCResult result = fsWatchers.ResolveVC(toFile, true);
+            if (result == null || result.Status == VCItemStatus.Unknown)
+                return; // target dir not under VC, ignore
+
+            if (PluginBase.CurrentProject != null)
+            {
+                fromFile = PluginBase.CurrentProject.GetRelativePath(fromFile);
+                toFile = PluginBase.CurrentProject.GetRelativePath(toFile);
+            }
+            
+            var message = AskForCommit($"Moved {fromFile} to {toFile}");
+
+            if (message != null)
+                result.Manager.Commit(new[] { toFile }, message);
+        }
+
         internal static bool HandleBuildProject()
         {
             WatcherVCResult result = fsWatchers.ResolveVC(currentProject.OutputPathAbsolute, true);
@@ -351,6 +374,28 @@ namespace SourceControl.Actions
         }
 
         #endregion
+
+        static string AskForCommit(string message)
+        {
+            var title = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+            var msg = "Would you like to create a commit for this action?";
+
+            //TODO: Add "Never button / checkbox"
+
+            using (LineEntryDialog led = new LineEntryDialog(title, msg, message))
+            {
+                var result = led.ShowDialog();
+                if (result == DialogResult.Cancel) //Never
+                {
+                    //TODO: save this
+                    return null;
+                }
+                if (result != DialogResult.Yes || led.Line == "")
+                    return null;
+
+                return led.Line;
+            }
+        }
 
     }
     

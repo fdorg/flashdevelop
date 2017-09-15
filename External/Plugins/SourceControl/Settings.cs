@@ -118,9 +118,14 @@ namespace SourceControl
             set { this.tortoiseHGProcPath = value; }
         }
 
+        [DefaultValue(false)]
+        [DisplayName("Never ask for commits")]
+        [LocalizedDescription("SourceControl.Description.NeverAskForCommit")]
+        public bool NeverAskForCommit { get; set; }
+
         [DefaultValue(RememberValue.Ask)]
         [DisplayName("Delete files from source control")]
-        [LocalizedDescription("SourceControl.Description.AskForDelete")]
+        [LocalizedDescription("SourceControl.Description.ShouldDelete")]
         public RememberValue ShouldDelete
         {
             get { return this.shouldDelete; }
@@ -130,7 +135,7 @@ namespace SourceControl
         [DefaultValue(RememberValue.Ask)]
         [DisplayName("Add files to source control")]
         [LocalizedDescription("SourceControl.Description.ShouldAdd")]
-        public RememberValue ShouldAdd
+        public RememberValue ShouldAdd //TODO: not used at the moment
         {
             get { return this.shouldAdd; }
             set { this.shouldAdd = value; }

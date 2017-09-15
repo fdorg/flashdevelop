@@ -113,5 +113,10 @@ namespace SourceControl.Sources.Mercurial
             }
             return false;
         }
+
+        public void Commit(string[] files, string message)
+        {
+            //TODO: implement
+        }
     }
 }
