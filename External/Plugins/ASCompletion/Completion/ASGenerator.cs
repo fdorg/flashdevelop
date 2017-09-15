@@ -4419,17 +4419,7 @@ namespace ASCompletion.Completion
 
         private static string GetShortType(string type)
         {
-            if (string.IsNullOrEmpty(type))
-            {
-                return type;
-            }
-            Regex r = new Regex(@"[^\.]+(\.<.+>)?(@.+|$)");
-            Match m = r.Match(type);
-            if (m.Success)
-            {
-                type = m.Value;
-            }
-            return type;
+            return string.IsNullOrEmpty(type) ? type : Regex.Replace(type, @"(?=\w+\.<)|(?:\w+\.)", string.Empty);
         }
 
         private static string FormatType(string type)

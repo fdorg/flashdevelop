@@ -1802,10 +1802,12 @@ namespace HaXeContext
                 ErrorManager.ShowInfo(TextHelper.GetString("Info.InvalidHaXePath"));
                 return;
             }
-            if (Path.GetExtension(haxePath) == string.Empty) haxePath = Path.Combine(haxePath, "haxelib.exe");
-            nameToVersion.Select(it => $"{haxePath};install {it.Key} {it.Value}")
-                     .ToList()
-                     .ForEach(it => MainForm.CallCommand("RunProcessCaptured", it));
+            if (Directory.Exists(haxePath)) haxePath = Path.Combine(haxePath, "haxelib.exe");
+
+            var cwd = Directory.GetCurrentDirectory();
+            nameToVersion.Select(it => $"{haxePath};install {it.Key} {it.Value} -cwd \"{cwd}\"")
+                .ToList()
+                .ForEach(it => MainForm.CallCommand("RunProcessCaptured", it));
         }
 
         #endregion
