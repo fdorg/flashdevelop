@@ -186,7 +186,7 @@ namespace SourceControl.Actions
                 if (MessageBox.Show(msg, title, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK) return true;
             }
 
-            if (hasModification.Count > 0 || svnRemove.Count > 0) //there are versioned files
+            if ((hasModification.Count > 0 || svnRemove.Count > 0) && confirm) //there are versioned files
             {
                 switch (PluginMain.SCSettings.ShouldDelete)
                 {

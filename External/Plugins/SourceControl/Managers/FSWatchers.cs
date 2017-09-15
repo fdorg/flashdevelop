@@ -14,7 +14,7 @@ namespace SourceControl.Managers
     public class FSWatchers
     {
         Dictionary<FileSystemWatcher, IVCManager> watchers = new Dictionary<FileSystemWatcher, IVCManager>();
-        List<IVCManager> dirtyVC = new List<IVCManager>();
+        HashSet<IVCManager> dirtyVC = new HashSet<IVCManager>();
         Timer updateTimer;
         string lastDirtyPath;
         bool disposing;
@@ -183,8 +183,7 @@ namespace SourceControl.Managers
 
             lock (dirtyVC)
             {
-                if (!dirtyVC.Contains(manager))
-                    dirtyVC.Add(manager);
+                dirtyVC.Add(manager);
             }
 
             updateTimer.Stop();
@@ -218,8 +217,7 @@ namespace SourceControl.Managers
                 foreach (FileSystemWatcher watcher in watchers.Keys)
                 {
                     IVCManager manager = watchers[watcher];
-                    if (!dirtyVC.Contains(manager))
-                        dirtyVC.Add(manager);
+                    dirtyVC.Add(manager);
                 }
             }
 

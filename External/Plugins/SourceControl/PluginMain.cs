@@ -187,7 +187,7 @@ namespace SourceControl
                             }
                             break;
                             
-                        case ProjectFileActionsEvents.FileMove:
+                        case ProjectFileActionsEvents.FileMove: //this is never called, because CodeRefactor catches it before us
                             try
                             {
                                 de.Handled = ProjectWatcher.HandleFileMove(de.Data as String[]);
