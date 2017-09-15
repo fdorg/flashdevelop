@@ -32,6 +32,8 @@ namespace PluginCore.Helpers
             return ext == ".hx" || ext == ".hxp";
         }
 
+        public static bool IsHxml(string ext) => ext == ".hxml";
+
         public static bool IsMxml(string path, string ext)
         {
             return ext == ".mxml";

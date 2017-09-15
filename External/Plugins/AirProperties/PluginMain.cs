@@ -219,10 +219,12 @@ namespace AirProperties
         /// </summary>
         public void OpenWizard(Object sender, EventArgs e)
         {
-            this.wizard = new AirWizard(this);
-            if (this.wizard.IsPropertiesLoaded)
+            using (this.wizard = new AirWizard(this))
             {
-                this.wizard.ShowDialog(PluginBase.MainForm);
+                if (this.wizard.IsPropertiesLoaded)
+                {
+                    this.wizard.ShowDialog(PluginBase.MainForm);
+                }
             }
         }
 

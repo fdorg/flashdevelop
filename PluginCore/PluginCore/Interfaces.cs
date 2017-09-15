@@ -78,6 +78,7 @@ namespace PluginCore
         void Reload(Boolean showQuestion);
         void Revert(Boolean showQuestion);
         void Save(String file);
+        void Save(string file, string reason);
         void Save();
 
         #endregion
@@ -93,6 +94,11 @@ namespace PluginCore
         Bitmap Icon { get; }
 
         #endregion
+    }
+
+    public interface ICompletionListSpecialItem : ICompletionListItem
+    {
+
     }
 
     public interface IMainForm : IContainerControl, IWin32Window
@@ -180,6 +186,10 @@ namespace PluginCore
         /// Creates a floating panel for the plugin.
         /// </summary>
         DockContent CreateDockablePanel(Control form, String guid, Image image, DockState defaultDockState);
+        /// <summary>
+        /// Creates a dynamic persist panel for plugins.
+        /// </summary>
+        DockContent CreateDynamicPersistDockablePanel(Control ctrl, String guid, String id, Image image, DockState defaultDockState);
         /// <summary>
         /// Calls a normal <see cref="IMainForm"/> method.
         /// </summary>
@@ -550,7 +560,9 @@ namespace PluginCore
         Boolean DisableSmartMatch { get; set; }
         Boolean SaveUnicodeWithBOM { get; set; }
         Boolean KeepCaretCentered { get; set; }
+        Boolean EndAtLastLine { get; set; }
         String InsertionTriggers { get; set; }
+        Int32 ClipboardHistorySize { get; set; }
 
         #endregion
     }

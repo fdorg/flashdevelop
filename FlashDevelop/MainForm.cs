@@ -576,6 +576,7 @@ namespace FlashDevelop
             try
             {
                 DockablePanel dockablePanel = new DockablePanel(ctrl, guid);
+                dockablePanel.Show();
                 dockablePanel.Image = image;
                 dockablePanel.DockState = defaultDockState;
                 LayoutManager.PluginPanels.Add(dockablePanel);
@@ -589,7 +590,28 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Opens the specified file and creates a editable document
+        /// Creates a dynamic persist panel for plugins.
+        /// </summary>
+        public DockContent CreateDynamicPersistDockablePanel(Control ctrl, String guid, String id, Image image, DockState defaultDockState)
+        {
+            try
+            {
+                var dockablePanel = new DockablePanel(ctrl, guid + ":" + id);
+                dockablePanel.Image = image;
+                dockablePanel.DockState = defaultDockState;
+                LayoutManager.SetContentLayout(dockablePanel, dockablePanel.GetPersistString());
+                LayoutManager.PluginPanels.Add(dockablePanel);
+                return dockablePanel;
+            }
+            catch (Exception e)
+            {
+                ErrorManager.ShowError(e);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Opens the specified file and creates an editable document
         /// </summary>
         public DockContent OpenEditableDocument(String org, Encoding encoding, Boolean restorePosition)
         {
@@ -948,6 +970,7 @@ namespace FlashDevelop
                 LayoutManager.BuildLayoutSystems(FileNameHelper.LayoutData);
                 ShortcutManager.LoadCustomShortcuts();
                 ArgumentDialog.LoadCustomArguments();
+                ClipboardManager.Initialize(this);
                 PluginCore.Controls.UITools.Init();
             }
             catch (Exception ex)
@@ -1263,6 +1286,7 @@ namespace FlashDevelop
                 SessionManager.SaveSession(file, session);
                 ShortcutManager.SaveCustomShortcuts();
                 ArgumentDialog.SaveCustomArguments();
+                ClipboardManager.Dispose();
                 PluginServices.DisposePlugins();
                 this.KillProcess();
                 this.SaveAllSettings();
@@ -1416,7 +1440,7 @@ namespace FlashDevelop
                             e.Cancel = true;
                         }
                     }
-                    else if (document.IsModified) document.Save();
+                    else document.Save();
                 }
                 else if (result == DialogResult.Cancel)
                 {
@@ -1714,9 +1738,9 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Notifies the plugins for the FileSave event
+        /// Notifies the plugins for the FileSave event and includes the given reason for the save.
         /// </summary>
-        public void OnFileSave(ITabbedDocument document, String oldFile)
+        public void OnFileSave(ITabbedDocument document, string oldFile, string reason)
         {
             if (oldFile != null)
             {
@@ -1728,10 +1752,30 @@ namespace FlashDevelop
             }
             this.OnUpdateMainFormDialogTitle();
             if (document.IsEditable) document.SciControl.MarkerDeleteAll(2);
-            TextEvent save = new TextEvent(EventType.FileSave, document.FileName);
+            TextDataEvent save = new TextDataEvent(EventType.FileSave, document.FileName, reason);
             EventManager.DispatchEvent(this, save);
             ButtonManager.UpdateFlaggedButtons();
             TabTextManager.UpdateTabTexts();
+        }
+
+        /// <summary>
+        /// Notifies the plugins for the FileSave event
+        /// </summary>
+        public void OnFileSave(ITabbedDocument document, String oldFile)
+        {
+            OnFileSave(document, oldFile, null);
+        }
+
+        /// <summary>
+        /// Handles clipboard updates.
+        /// </summary>
+        protected override void WndProc(ref Message m)
+        {
+            if (ClipboardManager.HandleWndProc(ref m))
+            {
+                ClipboardHistoryDialog.UpdateHistory();
+            }
+            base.WndProc(ref m);
         }
 
         #endregion
@@ -2180,6 +2224,7 @@ namespace FlashDevelop
             this.toolStrip.Visible = this.isFullScreen ? false : this.appSettings.ViewToolBar;
             ButtonManager.UpdateFlaggedButtons();
             TabTextManager.UpdateTabTexts();
+            ClipboardManager.ApplySettings();
         }
 
         /// <summary>
@@ -2513,6 +2558,18 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Paste text using <see cref="ClipboardHistoryDialog"/>.
+        /// </summary>
+        public void PasteHistory(object sender, EventArgs e)
+        {
+            ClipboardTextData data;
+            if (ClipboardHistoryDialog.Show(out data))
+            {
+                Globals.SciControl.ReplaceSel(data.Text);
+            }
+        }
+
+        /// <summary>
         /// Pastes lines at the correct indent level
         /// </summary>
         public void SmartPaste(Object sender, System.EventArgs e)
@@ -2601,6 +2658,9 @@ namespace FlashDevelop
         {
             try
             {
+                var button = (ToolStripItem)sender;
+                var reason = ((ItemData)button.Tag).Tag as string;
+                
                 if (this.CurrentDocument.IsUntitled)
                 {
                     this.saveFileDialog.FileName = this.CurrentDocument.FileName;
@@ -2617,7 +2677,7 @@ namespace FlashDevelop
                 }
                 else if (this.CurrentDocument.IsModified)
                 {
-                    this.CurrentDocument.Save();
+                    this.CurrentDocument.Save(this.CurrentDocument.FileName, reason);
                 }
             }
             catch (Exception ex)
@@ -2914,7 +2974,11 @@ namespace FlashDevelop
         public void FindAndReplace(Object sender, System.EventArgs e)
         {
             if (!this.frInDocDialog.Visible) this.frInDocDialog.Show();
-            else this.frInDocDialog.Activate();
+            else
+            {
+                this.frInDocDialog.InitializeFindText();
+                this.frInDocDialog.Activate();
+            }
         }
 
         /// <summary>
@@ -2938,7 +3002,11 @@ namespace FlashDevelop
         public void FindAndReplaceInFiles(Object sender, System.EventArgs e)
         {
             if (!this.frInFilesDialog.Visible) this.frInFilesDialog.Show();
-            else this.frInFilesDialog.Activate();
+            else
+            {
+                this.frInFilesDialog.UpdateFindText();
+                this.frInFilesDialog.Activate();
+            }
         }
 
         /// <summary>
@@ -3476,10 +3544,12 @@ namespace FlashDevelop
         /// </summary>
         public void InsertHash(Object sender, System.EventArgs e)
         {
-            HashDialog cd = new HashDialog();
-            if (cd.ShowDialog() == DialogResult.OK)
+            using (HashDialog cd = new HashDialog())
             {
-                Globals.SciControl.ReplaceSel(cd.HashResultText);
+                if (cd.ShowDialog() == DialogResult.OK)
+                {
+                    Globals.SciControl.ReplaceSel(cd.HashResultText);
+                }
             }
         }
 
@@ -3975,25 +4045,27 @@ namespace FlashDevelop
         /// </summary>
         public void SelectTheme(Object sender, System.EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.InitialDirectory = PathHelper.ThemesDir;
-            ofd.Title = " " + TextHelper.GetString("Title.OpenFileDialog");
-            ofd.Filter = TextHelper.GetString("Info.ThemesFilter");
-            if (ofd.ShowDialog(this) == DialogResult.OK)
+            using (OpenFileDialog ofd = new OpenFileDialog())
             {
-                String ext = Path.GetExtension(ofd.FileName).ToLower();
-                if (ext == ".fdi")
+                ofd.InitialDirectory = PathHelper.ThemesDir;
+                ofd.Title = " " + TextHelper.GetString("Title.OpenFileDialog");
+                ofd.Filter = TextHelper.GetString("Info.ThemesFilter");
+                if (ofd.ShowDialog(this) == DialogResult.OK)
                 {
-                    ThemeManager.LoadTheme(ofd.FileName);
-                    ThemeManager.WalkControls(this);
-                }
-                else
-                {
-                    this.CallCommand("ExtractZip", ofd.FileName + ";true");
-                    String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
-                    if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
-                    ThemeManager.WalkControls(this);
-                    this.RefreshSciConfig();
+                    String ext = Path.GetExtension(ofd.FileName).ToLower();
+                    if (ext == ".fdi")
+                    {
+                        ThemeManager.LoadTheme(ofd.FileName);
+                        ThemeManager.WalkControls(this);
+                    }
+                    else
+                    {
+                        this.CallCommand("ExtractZip", ofd.FileName + ";true");
+                        String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
+                        if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
+                        ThemeManager.WalkControls(this);
+                        this.RefreshSciConfig();
+                    }
                 }
             }
         }
@@ -4036,7 +4108,7 @@ namespace FlashDevelop
                 ToolStripItem button = (ToolStripItem)sender;
                 String command = ((ItemData)button.Tag).Tag;
                 Type mfType = Globals.SciControl.GetType();
-                MethodInfo method = mfType.GetMethod(command);
+                MethodInfo method = mfType.GetMethod(command, new Type[0]);
                 method.Invoke(Globals.SciControl, null);
             }
             catch (Exception ex)
@@ -4048,16 +4120,15 @@ namespace FlashDevelop
         /// <summary>
         /// Calls a custom plugin command
         /// </summary>
-        public void PluginCommand(Object sender, System.EventArgs e)
+        public void PluginCommand(object sender, EventArgs e)
         {
             try
             {
-                ToolStripItem button = (ToolStripItem)sender;
-                String[] args = ((ItemData)button.Tag).Tag.Split(';');
-                String action = args[0]; // Action of the command
-                String data = (args.Length > 1) ? args[1] : null;
-                DataEvent de = new DataEvent(EventType.Command, action, data);
-                EventManager.DispatchEvent(this, de);
+                var item = (ToolStripItem) sender;
+                string[] args = ((ItemData) item.Tag).Tag.Split(new[] { ';' }, 2);
+                string action = args[0]; // Action of the command
+                string data = args.Length > 1 ? args[1] : null;
+                EventManager.DispatchEvent(this, new DataEvent(EventType.Command, action, data));
             }
             catch (Exception ex)
             {
@@ -4068,18 +4139,15 @@ namespace FlashDevelop
         /// <summary>
         /// Calls a normal MainForm method
         /// </summary>
-        public Boolean CallCommand(String name, String tag)
+        public Boolean CallCommand(String command, String args)
         {
             try
             {
-                Type mfType = this.GetType();
-                System.Reflection.MethodInfo method = mfType.GetMethod(name);
+                var method = this.GetType().GetMethod(command);
                 if (method == null) throw new MethodAccessException();
-                ToolStripMenuItem button = new ToolStripMenuItem();
-                button.Tag = new ItemData(null, tag, null); // Tag is used for args
-                Object[] parameters = new Object[2];
-                parameters[0] = button; parameters[1] = null;
-                method.Invoke(this, parameters);
+                var item = new ToolStripMenuItem();
+                item.Tag = new ItemData(null, args, null); // Tag is used for args
+                method.Invoke(this, new[] { item, null });
                 return true;
             }
             catch (Exception ex)
@@ -4224,28 +4292,30 @@ namespace FlashDevelop
         {
             try
             {
-                SaveFileDialog sfd = new SaveFileDialog();
-                sfd.AddExtension = true; sfd.DefaultExt = "fdz";
-                sfd.Filter = TextHelper.GetString("FlashDevelop.Info.ZipFilter");
-                String dirMarker = "\\" + DistroConfig.DISTRIBUTION_NAME + "\\";
-                if (sfd.ShowDialog(this) == DialogResult.OK)
+                using (SaveFileDialog sfd = new SaveFileDialog())
                 {
-                    List<String> settingFiles = new List<String>();
-                    ZipFile zipFile = ZipFile.Create(sfd.FileName);
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.DataDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.SnippetDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.SettingDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.TemplateDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.UserLibraryDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.UserProjectsDir, "*.*", SearchOption.AllDirectories));
-                    zipFile.BeginUpdate();
-                    foreach (String settingFile in settingFiles)
+                    sfd.AddExtension = true; sfd.DefaultExt = "fdz";
+                    sfd.Filter = TextHelper.GetString("FlashDevelop.Info.ZipFilter");
+                    String dirMarker = "\\" + DistroConfig.DISTRIBUTION_NAME + "\\";
+                    if (sfd.ShowDialog(this) == DialogResult.OK)
                     {
-                        Int32 index = settingFile.IndexOfOrdinal(dirMarker) + dirMarker.Length;
-                        zipFile.Add(settingFile, "$(BaseDir)\\" + settingFile.Substring(index));
+                        List<String> settingFiles = new List<String>();
+                        ZipFile zipFile = ZipFile.Create(sfd.FileName);
+                        settingFiles.AddRange(Directory.GetFiles(PathHelper.DataDir, "*.*", SearchOption.AllDirectories));
+                        settingFiles.AddRange(Directory.GetFiles(PathHelper.SnippetDir, "*.*", SearchOption.AllDirectories));
+                        settingFiles.AddRange(Directory.GetFiles(PathHelper.SettingDir, "*.*", SearchOption.AllDirectories));
+                        settingFiles.AddRange(Directory.GetFiles(PathHelper.TemplateDir, "*.*", SearchOption.AllDirectories));
+                        settingFiles.AddRange(Directory.GetFiles(PathHelper.UserLibraryDir, "*.*", SearchOption.AllDirectories));
+                        settingFiles.AddRange(Directory.GetFiles(PathHelper.UserProjectsDir, "*.*", SearchOption.AllDirectories));
+                        zipFile.BeginUpdate();
+                        foreach (String settingFile in settingFiles)
+                        {
+                            Int32 index = settingFile.IndexOfOrdinal(dirMarker) + dirMarker.Length;
+                            zipFile.Add(settingFile, "$(BaseDir)\\" + settingFile.Substring(index));
+                        }
+                        zipFile.CommitUpdate();
+                        zipFile.Close();
                     }
-                    zipFile.CommitUpdate();
-                    zipFile.Close();
                 }
             }
             catch (Exception ex)
@@ -4315,7 +4385,7 @@ namespace FlashDevelop
         public void ExecuteScriptExternal(String script)
         {
             if (!File.Exists(script)) throw new FileNotFoundException();
-            using (AsmHelper helper = new AsmHelper(CSScript.Compile(script, null, true), null, true))
+            using (AsmHelper helper = new AsmHelper(CSScript.CompileFile(script, null, true), null, true))
             {
                 helper.Invoke("*.Execute");
             }

@@ -4,7 +4,6 @@ using System.Drawing.Design;
 using ASCompletion.Completion;
 using ASCompletion.Helpers;
 using Ookii.Dialogs;
-using PluginCore.Controls;
 using PluginCore.Localization;
 
 namespace ASCompletion.Settings
@@ -307,26 +306,58 @@ namespace ASCompletion.Settings
               "//e.target:Event.COMPLETE", "//e.target:Event.INIT"
         };
 
-        static Braces[] DEFAULT_ADD_CLOSING_BRACES_OPTIONS =
+        static Brace[] DEFAULT_ADD_CLOSING_BRACES_RULES =
         {
-            new Braces('(',  ')',  null, null, null, null, ")]}>", Mode.Inclusive, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Mode.Inclusive, Logic.OR),
-            new Braces('[',  ']',  null, null, null, null, ")]}>", Mode.Inclusive, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Mode.Inclusive, Logic.OR),
-            new Braces('{',  '}',  null, null, null, null, ")]}>", Mode.Inclusive, new[] { Style.Default }, Mode.Inclusive, Logic.OR),
-            new Braces('"',  '"',  null, null, null, null, null,   null,           new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.String, Style.Character, Style.Operator, Style.Preprocessor, Style.Attribute }, Mode.Inclusive, null),
-            new Braces('\'', '\'', null, null, null, null, null,   null,           new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentLineDoc, Style.String, Style.Character, Style.Operator, Style.Preprocessor, Style.Attribute }, Mode.Inclusive, null),
-            new Braces('<',  '>',  null, null, new[] { Style.Operator, Style.Type }, Mode.Inclusive, "<", Mode.Exclusive, new[] { Style.Identifier, Style.Type }, Mode.Exclusive, Logic.AND),
+            new Brace("Parentheses", '(', ')', false, true, new[]
+            {
+                new Brace.Rule(null, null, null, null, false, ")}]>", false, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentDoc, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Brace.Logic.Or),
+                new Brace.Rule(null, null, false, new[] { Style.Character }, true, "'", false, new[] { Style.Character }, Brace.Logic.And)
+            }),
+            new Brace("Haxe Interpolation", '{', '}', false, true, new[]
+            {
+                new Brace.Rule(false, "$", false, new[] { Style.Character }, null, null, false, new[] { Style.Character }, Brace.Logic.And)
+            }),
+            new Brace("Braces", '{', '}', true, true, new[]
+            {
+                new Brace.Rule(null, null, null, null, false, ")}]>", false, new[] { Style.Default }, Brace.Logic.Or),
+                new Brace.Rule(null, null, false, new[] { Style.Character }, true, "'", false, new[] { Style.Character }, Brace.Logic.And)
+            }),
+            new Brace("Brackets", '[', ']', false, true, new[]
+            {
+                new Brace.Rule(null, null, null, null, false, ")}]>", false, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentDoc, Style.CommentLineDoc, Style.Preprocessor, Style.Keyword, Style.Attribute }, Brace.Logic.Or),
+                new Brace.Rule(null, null, false, new[] { Style.Character }, true, "'", false, new[] { Style.Character }, Brace.Logic.And)
+            }),
+            new Brace("Generic", '<', '>', false, false, new[]
+            {
+                new Brace.Rule(null, null, false, new[] { Style.Type }, true, "<", true, new[] { Style.Identifier, Style.Type }, Brace.Logic.And)
+            }),
+            new Brace("AS3 Vector", '<', '>', false, false, new[]
+            {
+                new Brace.Rule(false, ".", false, new[] { Style.Operator }, true, "<", true, new[] { Style.Identifier, Style.Type }, Brace.Logic.And)
+            }),
+            new Brace("String", '"', '"', false, false, new[]
+            {
+                new Brace.Rule(null, null, null, null, null, null, false, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentDoc, Style.CommentLineDoc, Style.String, Style.Character, Style.Preprocessor, Style.Operator, Style.Attribute }, null),
+                new Brace.Rule(null, null, false, new[] { Style.Character }, true, "'", false, new[] { Style.Character }, Brace.Logic.And)
+            }),
+            new Brace("Character", '\'', '\'', false, false, new[]
+            {
+                new Brace.Rule(null, null, null, null, null, null, false, new[] { Style.Default, Style.Comment, Style.CommentLine, Style.CommentDoc, Style.CommentLineDoc, Style.String, Style.Character, Style.Preprocessor, Style.Operator, Style.Attribute }, null),
+                new Brace.Rule(null, null, false, new[] { Style.Character }, true, "'", false, new[] { Style.Character }, Brace.Logic.And)
+            })
         };
 
         private bool generateProtectedDeclarations = DEFAULT_GENERATE_PROTECTED;
         private string[] eventListenersAutoRemove;
-        private string[] declarationModifierOrder = null;
+        private string[] declarationModifierOrder;
         private PropertiesGenerationLocations propertiesGenerationLocation;
         private MethodsGenerationLocations methodsGenerationLocation;
         private string prefixFields = DEFAULT_GENERATE_PREFIXFIELDS;
         private bool addClosingBraces = DEFAULT_GENERATE_ADDCLOSINGBRACES;
-        private Braces[] addClosingBracesOptions;
+        private Brace[] addClosingBracesRules;
         private bool generateScope = DEFAULT_GENERATE_SCOPE;
         private HandlerNamingConventions handlerNamingConvention = DEFAULT_HANDLER_CONVENTION;
+        private bool generateDefaultModifierDeclaration;
 
         [DisplayName("Event Listeners Auto Remove")]
         [LocalizedCategory("ASCompletion.Category.Generation"), LocalizedDescription("ASCompletion.Description.EventListenersAutoRemove")]
@@ -364,6 +395,17 @@ namespace ASCompletion.Settings
             set { generateScope = value; }
         }
 
+        [DisplayName("Generate Default Modifier Declaration")]
+        [LocalizedCategory("ASCompletion.Category.Generation"),
+        //TODO: localize me
+        //LocalizedDescription("ASCompletion.Description.GenerateDefaultModifierDeclaration"),
+        DefaultValue(false)]
+        public bool GenerateDefaultModifierDeclaration
+        {
+            get { return generateDefaultModifierDeclaration; }
+            set { generateDefaultModifierDeclaration = value; }
+        }
+
         [DisplayName("Properties Generation Location")]
         [LocalizedCategory("ASCompletion.Category.Generation"), LocalizedDescription("ASCompletion.Description.PropertiesGenerationLocation"),
         DefaultValue(DEFAULT_GENERATE_PROPERTIES)]
@@ -391,13 +433,13 @@ namespace ASCompletion.Settings
             set { addClosingBraces = value; }
         }
 
-        [DisplayName("Add Closing Braces Options")]
+        [DisplayName("Add Closing Braces Rules")]
         [LocalizedCategory("ASCompletion.Category.Generation"), LocalizedDescription("ASCompletion.Description.AddClosingBracesOptions")]
-        [Editor(typeof(DescriptiveCollectionEditor<Braces>), typeof(UITypeEditor))]
-        public Braces[] AddClosingBracesOptions
+        [Editor(typeof(AddClosingBracesRulesEditor), typeof(UITypeEditor))]
+        public Brace[] AddClosingBracesRules
         {
-            get { return addClosingBracesOptions ?? DEFAULT_ADD_CLOSING_BRACES_OPTIONS; }
-            set { addClosingBracesOptions = value; }
+            get { return addClosingBracesRules ?? DEFAULT_ADD_CLOSING_BRACES_RULES; }
+            set { addClosingBracesRules = value.Length == 0 ? null : value; }
         }
 
         [DisplayName("Prefix Fields When Generating From Params")]
@@ -416,6 +458,16 @@ namespace ASCompletion.Settings
         {
             get { return handlerNamingConvention; }
             set { handlerNamingConvention = value; }
+        }
+
+        GeneratedMemberBodyStyle generatedMemberDefaultBodyStyle = GeneratedMemberBodyStyle.UncompilableCode;
+
+        [DisplayName("Generated Member Default Body Style")]
+        [LocalizedCategory("ASCompletion.Category.Generation"), DefaultValue(GeneratedMemberBodyStyle.UncompilableCode)]
+        public GeneratedMemberBodyStyle GeneratedMemberDefaultBodyStyle
+        {
+            get { return generatedMemberDefaultBodyStyle; }
+            set { generatedMemberDefaultBodyStyle = value; }
         }
 
         #endregion
@@ -449,5 +501,11 @@ namespace ASCompletion.Settings
         target_eventNameHandler = 1,
         onTargetEventName = 2,
         handleTargetEventName = 3
+    }
+
+    public enum GeneratedMemberBodyStyle
+    {
+        ReturnDefaultValue,
+        UncompilableCode
     }
 }

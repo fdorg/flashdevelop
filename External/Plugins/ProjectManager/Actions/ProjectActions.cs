@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -16,6 +17,7 @@ using ProjectManager.Controls.TreeView;
 using ProjectManager.Helpers;
 using ProjectManager.Projects;
 using ProjectManager.Projects.AS3;
+using ProjectManager.Projects.Haxe;
 
 namespace ProjectManager.Actions
 {
@@ -40,21 +42,23 @@ namespace ProjectManager.Actions
 
         public Project NewProject()
         {
-            NewProjectDialog dialog = new NewProjectDialog();
-            if (dialog.ShowDialog(owner) == DialogResult.OK)
+            using (NewProjectDialog dialog = new NewProjectDialog())
             {
-                try
+                if (dialog.ShowDialog(owner) == DialogResult.OK)
                 {
-                    FlashDevelopActions.CheckAuthorName();
-                    ProjectCreator creator = new ProjectCreator();
-                    Project created = creator.CreateProject(dialog.TemplateDirectory, dialog.ProjectLocation, dialog.ProjectName, dialog.PackageName);
-                    PatchProject(created);
-                    return created;
-                }
-                catch (Exception exception)
-                {
-                    string msg = TextHelper.GetString("Info.CouldNotCreateProject");
-                    ErrorManager.ShowInfo(msg + " " + exception.Message);
+                    try
+                    {
+                        FlashDevelopActions.CheckAuthorName();
+                        ProjectCreator creator = new ProjectCreator();
+                        Project created = creator.CreateProject(dialog.TemplateDirectory, dialog.ProjectLocation, dialog.ProjectName, dialog.PackageName);
+                        PatchProject(created);
+                        return created;
+                    }
+                    catch (Exception exception)
+                    {
+                        string msg = TextHelper.GetString("Info.CouldNotCreateProject");
+                        ErrorManager.ShowInfo(msg + " " + exception.Message);
+                    }
                 }
             }
 
@@ -63,14 +67,16 @@ namespace ProjectManager.Actions
 
         public Project OpenProject()
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Title = " " + TextHelper.GetString("Title.OpenProjectDialog");
-            dialog.Filter = ProjectCreator.GetProjectFilters();
+            using (OpenFileDialog dialog = new OpenFileDialog())
+            {
+                dialog.Title = " " + TextHelper.GetString("Title.OpenProjectDialog");
+                dialog.Filter = ProjectCreator.GetProjectFilters();
 
-            if (dialog.ShowDialog(owner) == DialogResult.OK)
-                return OpenProjectSilent(dialog.FileName);
-            else
-                return null;
+                if (dialog.ShowDialog(owner) == DialogResult.OK)
+                    return OpenProjectSilent(dialog.FileName);
+            }
+
+            return null;
         }
 
         public Project OpenProjectSilent(string path)
@@ -90,46 +96,71 @@ namespace ProjectManager.Actions
             }
         }
 
-        public string ImportProject()
+        public string ImportProject() => ImportProject(null);
+
+        internal string ImportProject(string importFrom)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Title = TextHelper.GetString("Title.ImportProject");
-            dialog.Filter = TextHelper.GetString("Info.ImportProjectFilter");
-            if (dialog.ShowDialog() == DialogResult.OK && File.Exists(dialog.FileName))
+            using (OpenFileDialog dialog = new OpenFileDialog())
             {
-                string fbProject = dialog.FileName;
-                string currentDirectory = Directory.GetCurrentDirectory();
-
-                try
+                dialog.Title = TextHelper.GetString("Title.ImportProject");
+                dialog.Filter = TextHelper.GetString("Info.ImportProjectFilter");
+                if (importFrom == "hxml") dialog.FilterIndex = 3;
+                if (dialog.ShowDialog() == DialogResult.OK && File.Exists(dialog.FileName))
                 {
-                    if (FileInspector.IsFlexBuilderPackagedProject(fbProject))
+                    string fileName = dialog.FileName;
+                    string currentDirectory = Directory.GetCurrentDirectory();
+                    try
                     {
-                        fbProject = ExtractPackagedProject(fbProject);
-                    }
+                        if (FileInspector.IsHxml(Path.GetExtension(fileName).ToLower()))
+                        {
+                            var project = HaxeProject.Load(fileName);
+                            var path = Path.GetDirectoryName(project.ProjectPath);
+                            var name = Path.GetFileNameWithoutExtension(project.OutputPath);
+                            var newPath = Path.Combine(path, $"{name}.hxproj");
+                            PatchProject(project);
+                            PatchHxmlProject(project);
+                            project.SaveAs(newPath);
+                            return newPath;
+                        }
+                        if (FileInspector.IsFlexBuilderPackagedProject(fileName))
+                        {
+                            fileName = ExtractPackagedProject(fileName);
+                        }
+                        if (FileInspector.IsFlexBuilderProject(fileName))
+                        {
+                            AS3Project imported = AS3Project.Load(fileName);
+                            string path = Path.GetDirectoryName(imported.ProjectPath);
+                            string name = Path.GetFileNameWithoutExtension(imported.OutputPath);
+                            string newPath = Path.Combine(path, name + ".as3proj");
+                            PatchProject(imported);
+                            PatchFbProject(imported);
+                            imported.SaveAs(newPath);
 
-                    if (FileInspector.IsFlexBuilderProject(fbProject))
-                    {
-                        AS3Project imported = AS3Project.Load(fbProject);
-                        string path = Path.GetDirectoryName(imported.ProjectPath);
-                        string name = Path.GetFileNameWithoutExtension(imported.OutputPath);
-                        string newPath = Path.Combine(path, name + ".as3proj");
-                        PatchProject(imported);
-                        PatchFbProject(imported);
-                        imported.SaveAs(newPath);
-
-                        return newPath;
-                    }
-                    else
+                            return newPath;
+                        }
                         ErrorManager.ShowInfo(TextHelper.GetString("Info.NotValidFlashBuilderProject"));
-                }
-                catch (Exception exception)
-                {
-                    Directory.SetCurrentDirectory(currentDirectory);
-                    string msg = TextHelper.GetString("Info.CouldNotOpenProject");
-                    ErrorManager.ShowInfo(msg + " " + exception.Message);
+                    }
+                    catch (Exception exception)
+                    {
+                        Directory.SetCurrentDirectory(currentDirectory);
+                        string msg = TextHelper.GetString("Info.CouldNotOpenProject");
+                        ErrorManager.ShowInfo(msg + " " + exception.Message);
+                    }
                 }
             }
             return null;
+        }
+
+        static void PatchHxmlProject(Project project)
+        {
+            project.OutputPath = Path.GetFileName(project.ProjectPath);
+            project.MovieOptions.Background = string.Empty;
+            project.MovieOptions.BackgroundColor = Color.Empty;
+            project.MovieOptions.Platform = "hxml";
+            project.MovieOptions.Fps = 0;
+            project.MovieOptions.Width = 0;
+            project.MovieOptions.Height = 0;
+            project.MovieOptions.Version = string.Empty;
         }
 
         private void PatchFbProject(AS3Project project)
@@ -448,16 +479,8 @@ namespace ProjectManager.Actions
             string export = (node != null && node is ExportNode) ? (node as ExportNode).Export : null;
             string textToInsert = project.GetInsertFileText(mainForm.CurrentDocument.FileName, path, export, nodeType);
             if (textToInsert == null) return;
-            if (mainForm.CurrentDocument.IsEditable)
-            {
-                mainForm.CurrentDocument.SciControl.AddText(textToInsert.Length, textToInsert);
-                mainForm.CurrentDocument.Activate();
-            }
-            else
-            {
-                string msg = TextHelper.GetString("Info.EmbedNeedsOpenDocument");
-                ErrorManager.ShowInfo(msg);
-            }
+            mainForm.CurrentDocument.SciControl.AddText(textToInsert.Length, textToInsert);
+            mainForm.CurrentDocument.Activate();
         }
 
         public void ToggleLibraryAsset(Project project, string[] paths)

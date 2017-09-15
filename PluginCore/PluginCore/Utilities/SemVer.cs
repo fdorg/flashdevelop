@@ -19,33 +19,126 @@
         {
             // ignore the pre-release denotation if present
             int hyphenIndex = version.IndexOf('-');
-            if (hyphenIndex >= 0)
-                version = version.Substring(0, hyphenIndex);
+            if (hyphenIndex >= 0) version = version.Substring(0, hyphenIndex);
 
             string[] numbers = version.Split('.');
 
-            if (numbers.Length >= 1)
-                int.TryParse(numbers[0], out Major);
-            if (numbers.Length >= 2)
-                int.TryParse(numbers[1], out Minor);
-            if (numbers.Length >= 3)
-                int.TryParse(numbers[2], out Patch);
+            if (numbers.Length >= 1) int.TryParse(numbers[0], out Major);
+            if (numbers.Length >= 2) int.TryParse(numbers[1], out Minor);
+            if (numbers.Length >= 3) int.TryParse(numbers[2], out Patch);
         }
+
+        #region Operators
+
+        public static bool operator ==(SemVer left, SemVer right)
+        {
+            return left.Major == right.Major
+                && left.Minor == right.Minor
+                && left.Patch == right.Patch;
+        }
+
+        public static bool operator !=(SemVer left, SemVer right)
+        {
+            return left.Major != right.Major
+                || left.Minor != right.Minor
+                || left.Patch != right.Patch;
+        }
+
+        public static bool operator <(SemVer left, SemVer right)
+        {
+            return left.Major < right.Major
+                || left.Major == right.Major && (left.Minor < right.Minor
+                || left.Minor == right.Minor && (left.Patch < right.Patch));
+        }
+
+        public static bool operator >(SemVer left, SemVer right)
+        {
+            return left.Major > right.Major
+                || left.Major == right.Major && (left.Minor > right.Minor
+                || left.Minor == right.Minor && (left.Patch > right.Patch));
+        }
+
+        public static bool operator <=(SemVer left, SemVer right)
+        {
+            return left.Major < right.Major
+                || left.Major == right.Major && (left.Minor < right.Minor
+                || left.Minor == right.Minor && (left.Patch < right.Patch
+                || left.Patch == right.Patch));
+        }
+
+        public static bool operator >=(SemVer left, SemVer right)
+        {
+            return left.Major > right.Major
+                || left.Major == right.Major && (left.Minor > right.Minor
+                || left.Minor == right.Minor && (left.Patch > right.Patch
+                || left.Patch == right.Patch));
+        }
+
+        public static bool operator ==(SemVer left, string right)
+        {
+            return left == new SemVer(right);
+        }
+
+        public static bool operator !=(SemVer left, string right)
+        {
+            return left != new SemVer(right);
+        }
+
+        public static bool operator <(SemVer left, string right)
+        {
+            return left < new SemVer(right);
+        }
+
+        public static bool operator >(SemVer left, string right)
+        {
+            return left > new SemVer(right);
+        }
+
+        public static bool operator <=(SemVer left, string right)
+        {
+            return left <= new SemVer(right);
+        }
+
+        public static bool operator >=(SemVer left, string right)
+        {
+            return left >= new SemVer(right);
+        }
+
+        #endregion
 
         public override string ToString()
         {
-            return string.Format("{0}.{1}.{2}", Major, Minor, Patch);
+            return $"{Major}.{Minor}.{Patch}";
         }
 
         public bool IsOlderThan(SemVer semVer)
         {
-            if (semVer.Major > Major)
-                return true;
-            if (semVer.Major == Major && semVer.Minor > Minor)
-                return true;
-            if (semVer.Major == Major && semVer.Minor == Minor && semVer.Patch > Patch)
-                return true;
-            return false;
+            return this < semVer;
+        }
+
+        public bool Equals(SemVer semVer)
+        {
+            return this == semVer;
+        }
+
+        public bool IsGreaterThan(SemVer semVer)
+        {
+            return this > semVer;
+        }
+
+        public bool IsGreaterThanOrEquals(SemVer semVer)
+        {
+            return this >= semVer;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is SemVer ? this == (SemVer) obj : base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return Major << 16 ^ Minor << 8 ^ Patch;
         }
     }
 }

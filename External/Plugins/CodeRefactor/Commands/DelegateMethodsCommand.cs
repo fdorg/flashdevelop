@@ -6,7 +6,7 @@ using ScintillaNet;
 
 namespace CodeRefactor.Commands
 {
-    class DelegateMethodsCommand
+    public class DelegateMethodsCommand
     {
         private ASResult result;
         private Dictionary<MemberModel, ClassModel> selectedMembers;

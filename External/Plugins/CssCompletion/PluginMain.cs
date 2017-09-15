@@ -140,7 +140,7 @@ namespace CssCompletion
                 case EventType.SyntaxChange:
                 case EventType.ApplySettings:
                 {
-                    if (document.IsEditable && this.IsSupported(document))
+                    if (this.IsSupported(document))
                     {
                         string ext = Path.GetExtension(document.FileName).ToLower();
                         features = enabledLanguages.ContainsKey(ext) ? enabledLanguages[ext] : null;
@@ -149,7 +149,7 @@ namespace CssCompletion
                         if (features != null && features.Syntax != null)
                         {
                             ScintillaControl sci = document.SciControl;
-                            sci.SetProperty(features.Syntax, features != null ? "1" : "0");
+                            sci.SetProperty(features.Syntax, "1");
                             sci.Colourise(0, -1);
                         }
                     }
@@ -162,7 +162,7 @@ namespace CssCompletion
                 }
                 case EventType.FileSave:
                 {
-                    if (document != null && document.IsEditable && this.IsSupported(document))
+                    if (this.IsSupported(document))
                     {
                         updateFile = document.FileName;
                         updateFeatures = features;

@@ -472,7 +472,7 @@ namespace AS2Context
         /// Retrieves a class model from its name
         /// </summary>
         /// <param name="cname">Class (short or full) name</param>
-        /// <param name="inClass">Current file</param>
+        /// <param name="inFile">Current file</param>
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         public override ClassModel ResolveType(string cname, FileModel inFile)
         {
@@ -569,7 +569,7 @@ namespace AS2Context
 
             ClassModel indexClass = ResolveType(indexType, inFile);
 
-            if (baseType == "Object" || baseType == "Dynamic")
+            if (baseType == inFile.Context.Features.dynamicKey)
             {
                 if (!indexClass.IsVoid()) return indexClass;
                 return MakeCustomObjectClass(originalClass, indexType);
@@ -701,32 +701,46 @@ namespace AS2Context
                 // qualified path
                 if (pkg == package && aFile.Classes.Count > 0)
                 {
-                    foreach (ClassModel aClass in aFile.Classes)
+                    var count = aFile.Classes.Count;
+                    for (var i = 0; i < count; i++)
+                    {
+                        var aClass = aFile.Classes[i];
                         if (aClass.Name == cname && (pkg == "" || aFile.Module == "" || aFile.Module == aClass.Name))
                         {
                             found = aClass;
                             return false;
                         }
+                    }
                 }
                 else if (testModule && aFile.FullPackage == package && aFile.Classes.Count > 0)
                 {
-                    foreach (ClassModel aClass in aFile.Classes)
+                    var count = aFile.Classes.Count;
+                    for (var i = 0; i < count; i++)
+                    {
+                        var aClass = aFile.Classes[i];
                         if (aClass.Name == cname)
                         {
                             found = aClass;
                             return false;
                         }
+                    }
                 }
                 // in the same (or parent) package
                 else if (testSamePackage)
                 {
                     if (inPackage == pkg || (matchParentPackage && pkg.Length < pLen && inPackage.StartsWithOrdinal(pkg + ".")))
-                        foreach (ClassModel aClass in aFile.Classes)
+                    {
+                        var count = aFile.Classes.Count;
+                        for (var i = 0; i < count; i++)
+                        {
+                            var aClass = aFile.Classes[i];
                             if (aClass.Name == cname /*&& (aFile.Module == "" || aFile.Module == aClass.Name)*/)
                             {
                                 found = aClass;
                                 return false;
                             }
+                        }
+                    }
                 }
                 return true;
             });
@@ -988,7 +1002,7 @@ namespace AS2Context
                 if (lazyMode || settings.LazyClasspathExploration || aPath.IsTemporaryPath)
                 {
                     string path = Path.Combine(aPath.Path, packagePath);
-                    if (aPath.IsValid && Directory.Exists(path))
+                    if (Directory.Exists(path))
                     {
                         try
                         {
@@ -1014,15 +1028,19 @@ namespace AS2Context
                         string package = model.Package;
                         if (package == name)
                         {
-                            foreach (ClassModel type in model.Classes)
+                            var count = model.Classes.Count;
+                            for (var i = 0; i < count; i++)
                             {
+                                var type = model.Classes[i];
                                 if (type.IndexType != null) continue;
-                                MemberModel item = type.ToMemberModel();
                                 if (type.Access != Visibility.Private)
-                                    pModel.Imports.Add(item);
+                                    pModel.Imports.Add(type.ToMemberModel());
                             }
-                            foreach (MemberModel member in model.Members)
-                                pModel.Members.Add(member.Clone() as MemberModel);
+                            count = model.Members.Count;
+                            for (var i = 0; i < count; i++)
+                            {
+                                pModel.Members.Add(model.Members[i].Clone() as MemberModel);
+                            }
                         }
                         else if (package != prevPackage
                                 && (package.Length > name.Length && package.StartsWithOrdinal(packagePrefix))) // imports
@@ -1240,6 +1258,8 @@ namespace AS2Context
             completionCache.AllTypes = fullList;
             return fullList;
         }
+
+        public override string GetDefaultValue(string type) => "undefined";
         #endregion
         
         #region command line compiler

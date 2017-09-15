@@ -29,9 +29,19 @@ namespace PluginCore.Controls
             }
         }
 
+        static public CodeTip CodeTip
+        {
+            get { return manager.codeTip; }
+        }
+
         static public RichToolTip Tip
         {
             get { return manager.simpleTip; }
+        }
+
+        static public RichToolTip ErrorTip
+        {
+            get { return manager.errorTip; }
         }
 
         static public MethodCallTip CallTip
@@ -77,8 +87,10 @@ namespace PluginCore.Controls
             EventType.Command | 
             EventType.FileSwitch;
 
+        private CodeTip codeTip;
         private RichToolTip simpleTip;
         private MethodCallTip callTip;
+        private RichToolTip errorTip;
 
         private bool ignoreKeys;
         private bool showDetails;
@@ -92,8 +104,10 @@ namespace PluginCore.Controls
             try
             {
                 CompletionList.CreateControl(PluginBase.MainForm);
+                codeTip = new CodeTip(PluginBase.MainForm);
                 simpleTip = new RichToolTip(PluginBase.MainForm);
                 callTip = new MethodCallTip(PluginBase.MainForm);
+                errorTip = new RichToolTip(PluginBase.MainForm);
             }
             catch(Exception ex)
             {
@@ -144,7 +158,9 @@ namespace PluginCore.Controls
                         || cmd.IndexOfOrdinal("Watcher") > 0
                         || cmd.IndexOfOrdinal("Get") > 0
                         || cmd.IndexOfOrdinal("Set") > 0
-                        || cmd.IndexOfOrdinal("SDK") > 0)
+                        || cmd.IndexOfOrdinal("SDK") > 0
+                        || cmd == "ResultsPanel.ClearResults"
+                        || cmd == "LintingManager.FilesLinted")
                         return; // ignore notifications
                     break;
             }
@@ -175,13 +191,13 @@ namespace PluginCore.Controls
             if (OnMarkerChanged != null) OnMarkerChanged(sender, line);
         }
 
-        private void HandleDwellStart(ScintillaControl sci, int position)
+        private void HandleDwellStart(ScintillaControl sci, int position, int x, int y)
         {
             if (OnMouseHover == null || sci == null || DisableEvents) return;
             try
             {
                 // check mouse over the editor
-                if ((position < 0) || simpleTip.Visible || CompletionList.HasMouseIn) return;
+                if ((position < 0) || simpleTip.Visible || errorTip.Visible || CompletionList.HasMouseIn) return;
                 Point mousePos = (PluginBase.MainForm as Form).PointToClient(Cursor.Position);
                 if (mousePos.X == lastMousePos.X && mousePos.Y == lastMousePos.Y)
                     return;
@@ -203,6 +219,12 @@ namespace PluginCore.Controls
                         return;
                 }
                 if (OnMouseHover != null) OnMouseHover(sci, position);
+
+                if (errorTip.Visible)
+                {
+                    //move simpleTip up to not overlap error tip
+                    simpleTip.Location = new Point(simpleTip.Location.X, simpleTip.Location.Y - errorTip.Size.Height);
+                }
             }
             catch (Exception ex)
             {
@@ -226,9 +248,10 @@ namespace PluginCore.Controls
             return new Point(pos.X - ctrlPos.X, pos.Y - ctrlPos.Y);
         }
 
-        private void HandleDwellEnd(ScintillaControl sci, int position)
+        private void HandleDwellEnd(ScintillaControl sci, int position, int x, int y)
         {
             simpleTip.Hide();
+            errorTip.Hide();
             if (OnMouseHoverEnd != null) OnMouseHoverEnd(sci, position);
         }
 
@@ -307,9 +330,11 @@ namespace PluginCore.Controls
                 if (CompletionList.Active && CompletionList.CheckPosition(position)) return;
                 if (callTip.CallTipActive && callTip.CheckPosition(position)) return;
             }
+            codeTip.Hide();
             callTip.Hide();
             CompletionList.Hide();
             simpleTip.Hide();
+            errorTip.Hide();
         }
         
         private void OnTextInserted(ScintillaControl sci, int position, int length, int linesAdded)
@@ -334,6 +359,7 @@ namespace PluginCore.Controls
             if (lockedSciControl != null && lockedSciControl.IsAlive) sci = (ScintillaControl)lockedSciControl.Target;
             else
             {
+                codeTip.Hide();
                 callTip.Hide();
                 CompletionList.Hide();
                 SendChar(sci, value);
@@ -363,6 +389,7 @@ namespace PluginCore.Controls
                 {
                     UnlockControl();
                     CompletionList.Hide();
+                    codeTip.Hide();
                     callTip.Hide();
                 }*/
                 // offer to handle the shortcut
@@ -398,6 +425,7 @@ namespace PluginCore.Controls
                     return false; // let text copy in tip
                 UnlockControl();
                 CompletionList.Hide((char)27);
+                codeTip.Hide();
                 callTip.Hide();
                 return false;
             }

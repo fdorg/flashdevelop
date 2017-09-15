@@ -590,21 +590,23 @@ namespace ProjectManager.Controls.AS2
 
         private void browseButton_Click(object sender, System.EventArgs e)
         {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = TextHelper.GetString("Info.FileFilter");
-
-            // try pre-setting the current update path
-            try
+            using (OpenFileDialog dialog = new OpenFileDialog())
             {
-                if (asset.UpdatePath.Length > 0)
-                    dialog.FileName = asset.Project.GetAbsolutePath(asset.UpdatePath);
-                else
-                    dialog.FileName = asset.Project.GetAbsolutePath(asset.Path);
-            }
-            catch { }
+                dialog.Filter = TextHelper.GetString("Info.FileFilter");
 
-            if (dialog.ShowDialog(this) == DialogResult.OK)
-                updatedTextBox.Text = asset.Project.GetRelativePath(dialog.FileName);
+                // try pre-setting the current update path
+                try
+                {
+                    if (asset.UpdatePath.Length > 0)
+                        dialog.FileName = asset.Project.GetAbsolutePath(asset.UpdatePath);
+                    else
+                        dialog.FileName = asset.Project.GetAbsolutePath(asset.Path);
+                }
+                catch { }
+
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                    updatedTextBox.Text = asset.Project.GetRelativePath(dialog.FileName);
+            }
         }
 
         private void swcLibOption_CheckedChanged(object sender, EventArgs e)

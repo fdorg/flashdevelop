@@ -71,6 +71,7 @@ namespace LayoutManager
             this.layoutsListView.UseCompatibleStateImageBehavior = false;
             this.layoutsListView.View = System.Windows.Forms.View.List;
             this.layoutsListView.DoubleClick += new System.EventHandler(this.LayoutsListViewDoubleClick);
+            this.layoutsListView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.LayoutsListViewKeyDown);
             this.layoutsListView.SelectedIndexChanged += new System.EventHandler(this.LayoutsListViewSelectedIndexChanged);
             // 
             // toolStrip
@@ -243,7 +244,7 @@ namespace LayoutManager
                 this.menuDeleteButton.Enabled = false;
                 this.menuLoadButton.Enabled = false;
             }
-            else if (this.layoutsListView.SelectedItems.Count > 0)
+            else
             {
                 if (this.GetSelectedItem().ImageIndex != 1)
                 {
@@ -331,14 +332,16 @@ namespace LayoutManager
         {
             try
             {
-                SaveFileDialog sfd = new SaveFileDialog();
-                sfd.Filter = TextHelper.GetString("Info.OpenFileFilter");
-                sfd.InitialDirectory = this.GetLayoutsDir();
-                sfd.DefaultExt = "fdl"; sfd.FileName = "";
-                if (sfd.ShowDialog(this) == DialogResult.OK && sfd.FileName.Length != 0)
+                using (SaveFileDialog sfd = new SaveFileDialog())
                 {
-                    PluginBase.MainForm.DockPanel.SaveAsXml(sfd.FileName);
-                    this.PopulateLayoutsListView();
+                    sfd.Filter = TextHelper.GetString("Info.OpenFileFilter");
+                    sfd.InitialDirectory = this.GetLayoutsDir();
+                    sfd.DefaultExt = "fdl"; sfd.FileName = "";
+                    if (sfd.ShowDialog(this) == DialogResult.OK && sfd.FileName.Length != 0)
+                    {
+                        PluginBase.MainForm.DockPanel.SaveAsXml(sfd.FileName);
+                        this.PopulateLayoutsListView();
+                    }
                 }
             }
             catch (Exception ex)
@@ -365,6 +368,16 @@ namespace LayoutManager
             {
                 PluginBase.MainForm.CallCommand("RestoreLayout", item.Tag.ToString());
             }
+        }
+
+        /// <summary>
+        /// If the user presses Enter, dispatch double click
+        /// </summary>
+        void LayoutsListViewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter) return;
+            LayoutsListViewDoubleClick(null, null);
+            e.Handled = true;
         }
 
         /// <summary>

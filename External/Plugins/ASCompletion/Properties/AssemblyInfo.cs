@@ -14,7 +14,10 @@ using PluginCore;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyVersion("1.0.0.0")]
+
 [assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.MainAssembly)]
 
 [assembly: InternalsVisibleTo("ASCompletion.Tests")]
 [assembly: InternalsVisibleTo("CodeRefactor.Tests")]
+[assembly: InternalsVisibleTo("AS3Context.Tests")]
+[assembly: InternalsVisibleTo("HaxeContext.Tests")]

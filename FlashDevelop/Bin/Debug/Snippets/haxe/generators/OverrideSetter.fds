@@ -1,4 +1,4 @@
 //@:setter($(Name))
 <<$(Modifiers) >>function set_$(Name)(value:$(Type)):$(Type) $(CSLB){
-	return set_$(Name)(value);$(EntryPoint)
+	return super.set_$(Name)(value);$(EntryPoint)
 }
