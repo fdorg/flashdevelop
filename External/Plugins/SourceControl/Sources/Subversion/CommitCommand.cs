@@ -1,7 +1,7 @@
 ﻿
 using System.IO;
 
-namespace SourceControl.Sources.Git
+namespace SourceControl.Sources.Subversion
 {
     class CommitCommand : BaseCommand
     {
@@ -12,7 +12,9 @@ namespace SourceControl.Sources.Git
             var args = "commit";
 
             foreach (var file in files)
+            {
                 args += " \"" + VCHelper.GetRelativePath(file, workingDir) + "\"";
+            }
 
             args += " -m \"" + VCHelper.EscapeCommandLine(message) + "\"";
 

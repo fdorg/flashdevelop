@@ -175,9 +175,8 @@ namespace SourceControl
                                 de.Handled = true;
                             }
                             break;
-                        case ProjectFileActionsEvents.FilePaste:
-                            //TODO: handle copy / cut and paste
-                            break;
+                        //case ProjectFileActionsEvents.FilePaste: //ProjectManagerEvents.FilePasted
+                        //cannot distinguish between copy and cut
 
                         case ProjectFileActionsEvents.FileDelete:
                             try

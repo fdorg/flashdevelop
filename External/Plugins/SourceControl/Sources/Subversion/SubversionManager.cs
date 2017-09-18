@@ -118,7 +118,7 @@ namespace SourceControl.Sources.Subversion
 
         public void Commit(string[] files, string message)
         {
-            //TODO: implement
+            new Git.CommitCommand(files, message, Path.GetDirectoryName(files[0]));
         }
     }
 }

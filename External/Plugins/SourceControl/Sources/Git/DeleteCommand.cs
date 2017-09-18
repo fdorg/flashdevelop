@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using PluginCore.Managers;
+using SourceControl.Actions;
 
 namespace SourceControl.Sources.Git
 {
@@ -32,6 +33,13 @@ namespace SourceControl.Sources.Git
             }
 
             if (count > 0) Run(args, Path.GetDirectoryName(paths[0]));
+        }
+
+        override protected void Runner_ProcessEnded(object sender, int exitCode)
+        {
+            base.Runner_ProcessEnded(sender, exitCode);
+
+            ProjectWatcher.HandleFilesDeleted(paths);
         }
     }
 }

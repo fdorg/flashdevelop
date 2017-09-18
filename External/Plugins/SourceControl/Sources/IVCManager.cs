@@ -42,6 +42,9 @@ namespace SourceControl.Sources
         /// </summary>
         bool SetPathDirty(string path, string rootPath);
 
+        /// <summary>
+        /// Commits the given files with the given message
+        /// </summary>
         void Commit(string[] files, string message);
     }
 

@@ -18,8 +18,6 @@ namespace SourceControl
         private Boolean enableSVN;
         private Boolean enableGIT;
         private Boolean enableHG;
-        private RememberValue shouldDelete = RememberValue.Ask;
-        private RememberValue shouldAdd = RememberValue.Ask;
 
 
         [DefaultValue(false)]
@@ -119,34 +117,8 @@ namespace SourceControl
         }
 
         [DefaultValue(false)]
-        [DisplayName("Never ask for commits")]
+        [DisplayName("Never create a commit when moving, deleting, etc. files ")]
         [LocalizedDescription("SourceControl.Description.NeverAskForCommit")]
-        public bool NeverAskForCommit { get; set; }
-
-        [DefaultValue(RememberValue.Ask)]
-        [DisplayName("Delete files from source control")]
-        [LocalizedDescription("SourceControl.Description.ShouldDelete")]
-        public RememberValue ShouldDelete
-        {
-            get { return this.shouldDelete; }
-            set { this.shouldDelete = value; }
-        }
-
-        [DefaultValue(RememberValue.Ask)]
-        [DisplayName("Add files to source control")]
-        [LocalizedDescription("SourceControl.Description.ShouldAdd")]
-        public RememberValue ShouldAdd //TODO: not used at the moment
-        {
-            get { return this.shouldAdd; }
-            set { this.shouldAdd = value; }
-        }
+        public bool NeverCommit { get; set; }
     }
-
-    public enum RememberValue
-    {
-        Ask,
-        Yes,
-        No
-    }
-
 }

@@ -116,7 +116,7 @@ namespace SourceControl.Sources.Mercurial
 
         public void Commit(string[] files, string message)
         {
-            //TODO: implement
+            new CommitCommand(files, message, Path.GetDirectoryName(files[0]));
         }
     }
 }

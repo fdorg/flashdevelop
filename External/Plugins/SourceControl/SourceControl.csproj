@@ -114,6 +114,7 @@
     <Compile Include="Sources\Ignores.cs" />
     <Compile Include="Sources\Mercurial\AddCommand.cs" />
     <Compile Include="Sources\Mercurial\BaseCommand.cs" />
+    <Compile Include="Sources\Mercurial\CommitCommand.cs" />
     <Compile Include="Sources\Mercurial\DeleteCommand.cs" />
     <Compile Include="Sources\Mercurial\FileActions.cs" />
     <Compile Include="Sources\Mercurial\MenuItems.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="Sources\Mercurial\TortoiseProc.cs" />
     <Compile Include="Sources\Subversion\AddCommand.cs" />
     <Compile Include="Sources\Subversion\BaseCommand.cs" />
+    <Compile Include="Sources\Subversion\CommitCommand.cs" />
     <Compile Include="Sources\Subversion\MoveCommand.cs" />
     <Compile Include="Sources\Subversion\DeleteCommand.cs" />
     <Compile Include="Sources\Subversion\FileActions.cs" />
@@ -136,6 +138,7 @@
     <Compile Include="Sources\Subversion\SubversionManager.cs" />
     <Compile Include="Sources\Subversion\Status.cs" />
     <Compile Include="Sources\Subversion\TortoiseProc.cs" />
+    <Compile Include="Sources\VCHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\PluginCore\PluginCore.csproj">

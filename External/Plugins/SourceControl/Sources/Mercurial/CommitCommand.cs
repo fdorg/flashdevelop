@@ -1,7 +1,7 @@
 ﻿
 using System.IO;
 
-namespace SourceControl.Sources.Git
+namespace SourceControl.Sources.Mercurial
 {
     class CommitCommand : BaseCommand
     {
@@ -11,8 +11,11 @@ namespace SourceControl.Sources.Git
 
             var args = "commit";
 
-            foreach (var file in files)
-                args += " \"" + VCHelper.GetRelativePath(file, workingDir) + "\"";
+            if (files != null)
+                foreach (var file in files)
+                {
+                    args += " \"" + VCHelper.GetRelativePath(file, workingDir) + "\"";
+                }
 
             args += " -m \"" + VCHelper.EscapeCommandLine(message) + "\"";
 

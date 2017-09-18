@@ -105,7 +105,7 @@ namespace SourceControl.Actions
 
         internal static bool HandleFileRename(string[] paths)
         {
-            WatcherVCResult result = fsWatchers.ResolveVC(paths[0], true);
+            var result = fsWatchers.ResolveVC(paths[0], true);
             if (result == null || result.Status == VCItemStatus.Unknown)
                 return false;
 
@@ -186,33 +186,42 @@ namespace SourceControl.Actions
                 string msg = TextHelper.GetString("SourceControl.Info.ConfirmLocalModsDelete") + "\n\n" + GetSomeFiles(hasModification);
                 if (MessageBox.Show(msg, title, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK) return true;
             }
-
-            if ((hasModification.Count > 0 || svnRemove.Count > 0) && confirm) //there are versioned files
+            else if (svnRemove.Count > 0) //there are versioned files
             {
-                switch (PluginMain.SCSettings.ShouldDelete)
+                if (confirm)
                 {
-                    case RememberValue.Yes:
-                        //TODO: there should probably still be a message wether you really want to delete the files.
-                        return result.Manager.FileActions.FileDelete(paths, confirm);
-                    case RememberValue.Ask:
-                        using (var dialog = new Dialogs.SourceControlDialog(TextHelper.GetString("FlashDevelop.Title.ConfirmDialog"),
-                            "Would you like to remove the file(s) from version control?"))
-                        {
-                            dialog.ShowDialog();
-                            if (dialog.Remember)
-                            {
-                                PluginMain.SCSettings.ShouldDelete = dialog.DialogResult == DialogResult.Yes ? RememberValue.Yes : RememberValue.No;
-                            }
-                            if (dialog.DialogResult == DialogResult.Yes)
-                            {
-                                return result.Manager.FileActions.FileDelete(paths, confirm);
-                            }
-                        }
-                        break;
+                    var title = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
+                    var msg = "Would you like to remove the file(s) from version control?" + "\n\n" + GetSomeFiles(hasModification);
+                    if (MessageBox.Show(msg, title, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK) return true;
                 }
+
+                return result.Manager.FileActions.FileDelete(svnRemove.ToArray(), confirm);
             }
 
             return false;
+        }
+
+        public static void HandleFilesDeleted(string[] files)
+        {
+            var result = fsWatchers.ResolveVC(files[0], true);
+            if (result == null || result.Status == VCItemStatus.Unknown)
+                return;
+
+            var msg = "Deleted";
+            foreach (var file in files)
+            {
+                var fileRelative = file;
+                if (PluginBase.CurrentProject != null)
+                    fileRelative = PluginBase.CurrentProject.GetRelativePath(fileRelative);
+
+                msg += " " + fileRelative;
+            }
+
+            var message = AskForCommit(msg);
+
+            if (message != null)
+                result.Manager.Commit(files, message);
+                
         }
 
         private static string GetSomeFiles(List<string> list)
@@ -257,20 +266,24 @@ namespace SourceControl.Actions
         /// <summary>
         /// Called after a file was sucessfully moved.
         /// </summary>
-        /// <param name="file">The file that was moved</param>
         internal static void HandleFileMoved(string fromFile, string toFile)
         {
-            WatcherVCResult result = fsWatchers.ResolveVC(toFile, true);
-            if (result == null || result.Status == VCItemStatus.Unknown)
-                return; // target dir not under VC, ignore
+            var result = fsWatchers.ResolveVC(toFile, true);
+            if (result == null || result.Status == VCItemStatus.Unknown) // target dir not under VC, counts as delete
+            {
+                HandleFilesDeleted(new[] {fromFile});
+                return;
+            }
 
+            var fromFileRelative = fromFile;
+            var toFileRelative = toFile;
             if (PluginBase.CurrentProject != null)
             {
-                fromFile = PluginBase.CurrentProject.GetRelativePath(fromFile);
-                toFile = PluginBase.CurrentProject.GetRelativePath(toFile);
+                fromFileRelative = PluginBase.CurrentProject.GetRelativePath(fromFileRelative);
+                toFileRelative = PluginBase.CurrentProject.GetRelativePath(toFileRelative);
             }
             
-            var message = AskForCommit($"Moved {fromFile} to {toFile}");
+            var message = AskForCommit($"Moved {fromFileRelative} to {toFileRelative}");
 
             if (message != null)
                 result.Manager.Commit(new[] { toFile }, message);
@@ -377,6 +390,9 @@ namespace SourceControl.Actions
 
         static string AskForCommit(string message)
         {
+            if (PluginMain.SCSettings.NeverCommit)
+                return null;
+
             var title = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
             var msg = "Would you like to create a commit for this action?";
 
@@ -387,7 +403,7 @@ namespace SourceControl.Actions
                 var result = led.ShowDialog();
                 if (result == DialogResult.Cancel) //Never
                 {
-                    //TODO: save this
+                    PluginMain.SCSettings.NeverCommit = true;
                     return null;
                 }
                 if (result != DialogResult.Yes || led.Line == "")
@@ -396,7 +412,6 @@ namespace SourceControl.Actions
                 return led.Line;
             }
         }
-
     }
     
     class UnsafeOperationException:Exception
