@@ -210,11 +210,7 @@ namespace SourceControl.Actions
             var msg = "Deleted";
             foreach (var file in files)
             {
-                var fileRelative = file;
-                if (PluginBase.CurrentProject != null)
-                    fileRelative = PluginBase.CurrentProject.GetRelativePath(fileRelative);
-
-                msg += " " + fileRelative;
+                msg += " " + GetRelativeFile(file);
             }
 
             var message = AskForCommit(msg);
