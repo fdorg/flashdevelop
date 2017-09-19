@@ -60,7 +60,7 @@ namespace FlashDevelop.Dialogs
             this.clearButton = new System.Windows.Forms.Button();
             this.idHeader = new System.Windows.Forms.ColumnHeader();
             this.keyHeader = new System.Windows.Forms.ColumnHeader();
-            this.listView = new System.Windows.Forms.ListView();
+            this.listView = new System.Windows.Forms.ListViewEx();
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.infoLabel = new System.Windows.Forms.Label();
             this.importButton = new System.Windows.Forms.Button();

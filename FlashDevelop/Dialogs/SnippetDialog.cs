@@ -1,10 +1,8 @@
 using System;
 using System.IO;
-using System.Text;
 using System.Drawing;
 using ICSharpCode.SharpZipLib.Zip;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Windows.Forms;
 using PluginCore.Localization;
 using FlashDevelop.Utilities;
@@ -65,21 +63,21 @@ namespace FlashDevelop.Dialogs
             this.addButton = new System.Windows.Forms.Button();
             this.exportButton = new System.Windows.Forms.Button();
             this.columnHeader = new System.Windows.Forms.ColumnHeader();
-            this.contentsTextBox = new System.Windows.Forms.TextBox();
+            this.contentsTextBox = new System.Windows.Forms.TextBoxEx();
             this.deleteButton = new System.Windows.Forms.Button();
             this.revertButton = new System.Windows.Forms.Button();
-            this.snippetNameTextBox = new System.Windows.Forms.TextBox();
+            this.snippetNameTextBox = new System.Windows.Forms.TextBoxEx();
             this.nameLabel = new System.Windows.Forms.Label();
             this.languageLabel = new System.Windows.Forms.Label();
-            this.snippetListView = new System.Windows.Forms.ListView();
+            this.snippetListView = new System.Windows.Forms.ListViewEx();
             this.snippetsLabel = new System.Windows.Forms.Label();
             this.saveButton = new System.Windows.Forms.Button();
             this.insertLabel = new System.Windows.Forms.Label();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.browseDialog = new Ookii.Dialogs.VistaFolderBrowserDialog();
-            this.languageDropDown = new System.Windows.Forms.ComboBox();
+            this.languageDropDown = new System.Windows.Forms.FlatCombo();
             this.closeButton = new System.Windows.Forms.Button();
-            this.insertComboBox = new System.Windows.Forms.ComboBox();
+            this.insertComboBox = new System.Windows.Forms.FlatCombo();
             this.SuspendLayout();
             // 
             // saveFileDialog

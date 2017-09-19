@@ -1,18 +1,15 @@
 using System;
 using System.IO;
-using System.Text;
-using System.Drawing;
 using System.Windows.Forms;
-using System.ComponentModel;
-using System.Collections.Generic;
-using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Utilities;
 using PluginCore.Helpers;
+using PluginCore.Controls;
+using PluginCore;
 
 namespace FlashDevelop.Dialogs
 {
-    public class RecoveryDialog : Form
+    public class RecoveryDialog : SmartForm
     {
         private System.Windows.Forms.Label infoLabel;
         private System.Windows.Forms.Button deleteButton;
@@ -23,6 +20,7 @@ namespace FlashDevelop.Dialogs
         {
             this.Owner = Globals.MainForm;
             this.Font = Globals.Settings.DefaultFont;
+            this.FormGuid = "54452519-b993-47f6-9d27-22d31bced4ff";
             this.InitializeComponent();
             this.ApplyLocalizedTexts();
             ScaleHelper.AdjustForHighDPI(this);

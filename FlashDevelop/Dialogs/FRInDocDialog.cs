@@ -63,17 +63,17 @@ namespace FlashDevelop.Dialogs
             this.matchCaseCheckBox = new System.Windows.Forms.CheckBox();
             this.closeButton = new System.Windows.Forms.Button();
             this.findPrevButton = new System.Windows.Forms.Button();
-            this.findComboBox = new System.Windows.Forms.ComboBox();
+            this.findComboBox = new System.Windows.Forms.FlatCombo();
             this.findLabel = new System.Windows.Forms.Label();
             this.escapedCheckBox = new System.Windows.Forms.CheckBox();
             this.useRegexCheckBox = new System.Windows.Forms.CheckBox();
             this.infoPictureBox = new System.Windows.Forms.PictureBox();
             this.infoLabel = new System.Windows.Forms.Label();
-            this.optionsGroupBox = new System.Windows.Forms.GroupBox();
-            this.replaceComboBox = new System.Windows.Forms.ComboBox();
+            this.optionsGroupBox = new System.Windows.Forms.GroupBoxEx();
+            this.replaceComboBox = new System.Windows.Forms.FlatCombo();
             this.replaceLabel = new System.Windows.Forms.Label();
             this.replaceAllButton = new System.Windows.Forms.Button();
-            this.lookComboBox = new System.Windows.Forms.ComboBox();
+            this.lookComboBox = new System.Windows.Forms.FlatCombo();
             this.lookLabel = new System.Windows.Forms.Label();
             this.bookmarkAllButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.infoPictureBox)).BeginInit();
@@ -192,7 +192,6 @@ namespace FlashDevelop.Dialogs
             // infoPictureBox
             //
             this.infoPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.infoPictureBox.BackColor = System.Drawing.SystemColors.Control;
             this.infoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.infoPictureBox.Location = new System.Drawing.Point(14, 202);
             this.infoPictureBox.Name = "infoPictureBox";

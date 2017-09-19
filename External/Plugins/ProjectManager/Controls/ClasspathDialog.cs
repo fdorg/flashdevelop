@@ -52,7 +52,7 @@ namespace ProjectManager.Controls
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOK = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBoxEx();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 

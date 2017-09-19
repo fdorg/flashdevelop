@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
@@ -11,7 +10,7 @@ using PluginCore.Helpers;
 
 namespace PluginCore.Controls
 {
-    public class SmartForm : Form
+    public class SmartForm : FormEx, IEventHandler
     {
         private String formGuid;
         private String helpLink;
@@ -25,8 +24,8 @@ namespace PluginCore.Controls
         {
             this.formProps = new FormProps();
             this.Load += new EventHandler(this.SmartFormLoad);
-            this.Shown += new EventHandler(this.SmartFormShown);
             this.FormClosed += new FormClosedEventHandler(this.SmartFormClosed);
+            EventManager.AddEventHandler(this, EventType.ApplyTheme);
         }
 
         /// <summary>
@@ -70,14 +69,25 @@ namespace PluginCore.Controls
         }
 
         /// <summary>
-        /// Center the dialog to parent if requested
+        /// Apply theming properties to the controls
         /// </summary>
-        private void SmartFormShown(Object sender, EventArgs e)
+        private void ApplyTheming()
         {
-            if (this.StartPosition == FormStartPosition.CenterParent)
+            this.UseTheme = PluginBase.MainForm.GetThemeFlag("SmartForm.UseTheme");
+            PluginBase.MainForm.SetUseTheme(this, this.UseTheme);
+            if (this.UseTheme)
             {
-                this.CenterToParent();
+                ScrollBarEx.Attach(this, true);
+                PluginBase.MainForm.ThemeControls(this);
             }
+        }
+
+        /// <summary>
+        /// Handles the incoming theming change event and updates.
+        /// </summary>
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        {
+            if (e.Type == EventType.ApplyTheme) this.ApplyTheming();
         }
 
         /// <summary>
@@ -85,7 +95,12 @@ namespace PluginCore.Controls
         /// </summary>
         private void SmartFormLoad(Object sender, EventArgs e)
         {
+            this.ApplyTheming();
             ScaleHelper.AdjustForHighDPI(this);
+            if (this.StartPosition == FormStartPosition.CenterParent)
+            {
+                this.CenterToParent();
+            }
             if (!String.IsNullOrEmpty(this.formGuid) && File.Exists(this.FormPropsFile))
             {
                 Object obj = ObjectSerializer.Deserialize(this.FormPropsFile, this.formProps);

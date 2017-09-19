@@ -113,6 +113,9 @@ namespace PluginCore
         public const Int32 SB_THUMBTRACK = 5;
         public const Int32 SB_LEFT = 6;
         public const Int32 SB_RIGHT = 7;
+        public const Int32 WM_NCPAINT = 0x85;
+        public const Int32 WM_ERASEBKGND = 0x14;
+        public const Int32 WM_PAINT = 0xf;
         public const Int32 WM_HSCROLL = 0x0114;
         public const Int32 WM_VSCROLL = 0x0115;
         public const UInt32 LVM_SCROLL = 0x1014;

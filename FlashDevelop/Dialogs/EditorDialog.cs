@@ -3,22 +3,20 @@ using System.IO;
 using System.Xml;
 using System.Text;
 using System.Drawing;
-using System.Xml.XPath;
 using System.Drawing.Text;
 using System.Windows.Forms;
-using System.ComponentModel;
 using ICSharpCode.SharpZipLib.Zip;
-using System.Collections.Generic;
 using FlashDevelop.Utilities;
 using FlashDevelop.Managers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Helpers;
+using PluginCore.Controls;
 using PluginCore;
 
 namespace FlashDevelop.Dialogs
 {
-    public class EditorDialog : Form
+    public class EditorDialog : SmartForm
     {
         private String languageFile;
         private XmlDocument languageDoc;
@@ -110,6 +108,7 @@ namespace FlashDevelop.Dialogs
         {
             this.Owner = Globals.MainForm;
             this.Font = Globals.Settings.DefaultFont;
+            this.FormGuid = "c52528e8-084c-4cb7-9129-cfb64b4184c6";
             this.InitializeComponent();
             this.ApplyLocalizedTexts();
             this.InitializeGraphics();
@@ -130,10 +129,10 @@ namespace FlashDevelop.Dialogs
             this.defaultButton = new System.Windows.Forms.Button();
             this.revertButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.itemListView = new System.Windows.Forms.ListView();
+            this.itemListView = new System.Windows.Forms.ListViewEx();
             this.columnHeader = new System.Windows.Forms.ColumnHeader();
             this.colorDialog = new System.Windows.Forms.ColorDialog();
-            this.itemGroupBox = new System.Windows.Forms.GroupBox();
+            this.itemGroupBox = new System.Windows.Forms.GroupBoxEx();
             this.sampleTextLabel = new System.Windows.Forms.Label();
             this.italicsCheckBox = new System.Windows.Forms.CheckBox();
             this.colorizeCheckBox = new System.Windows.Forms.CheckBox();
@@ -142,8 +141,8 @@ namespace FlashDevelop.Dialogs
             this.boldCheckBox = new System.Windows.Forms.CheckBox();
             this.backgroundTextBox = new System.Windows.Forms.TextBox();
             this.foregroundTextBox = new System.Windows.Forms.TextBox();
-            this.fontSizeComboBox = new System.Windows.Forms.ComboBox();
-            this.fontNameComboBox = new System.Windows.Forms.ComboBox();
+            this.fontSizeComboBox = new System.Windows.Forms.FlatCombo();
+            this.fontNameComboBox = new System.Windows.Forms.FlatCombo();
             this.sizeLabel = new System.Windows.Forms.Label();
             this.backgroundLabel = new System.Windows.Forms.Label();
             this.foregroundLabel = new System.Windows.Forms.Label();
@@ -165,7 +164,7 @@ namespace FlashDevelop.Dialogs
             this.markerForeTextBox = new System.Windows.Forms.TextBox();
             this.markerBackTextBox = new System.Windows.Forms.TextBox();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.languageGroupBox = new System.Windows.Forms.GroupBox();
+            this.languageGroupBox = new System.Windows.Forms.GroupBoxEx();
             this.caretForeLabel = new System.Windows.Forms.Label();
             this.caretlineBackLabel = new System.Windows.Forms.Label();
             this.selectionBackLabel = new System.Windows.Forms.Label();
@@ -198,7 +197,7 @@ namespace FlashDevelop.Dialogs
             this.disabledLineButton = new System.Windows.Forms.Button();
             this.disabledLineLabel = new System.Windows.Forms.Label();
             this.disabledLineTextBox = new System.Windows.Forms.TextBox();
-            this.languageDropDown = new System.Windows.Forms.ComboBox();
+            this.languageDropDown = new System.Windows.Forms.FlatCombo();
             this.exportButton = new System.Windows.Forms.Button();
             this.itemGroupBox.SuspendLayout();
             this.languageGroupBox.SuspendLayout();

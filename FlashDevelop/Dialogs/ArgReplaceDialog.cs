@@ -9,10 +9,11 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using PluginCore.Managers;
 using PluginCore.Localization;
+using PluginCore.Controls;
 
 namespace FlashDevelop.Dialogs
 {
-    public class ArgReplaceDialog : Form
+    public class ArgReplaceDialog : SmartForm
     {
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Panel bottomPanel;
@@ -31,6 +32,7 @@ namespace FlashDevelop.Dialogs
             this.InitializeInterface();
             this.Owner = Globals.MainForm;
             this.Font = Globals.Settings.DefaultFont;
+            this.FormGuid = "c52528e8-084c-4cb7-9129-cfb64b4184c6";
             if (this.argsPanel.Controls.Count == 0)
             {
                 this.Close();

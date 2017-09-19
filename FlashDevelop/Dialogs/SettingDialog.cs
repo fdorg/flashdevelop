@@ -58,8 +58,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
-            this.itemListView = new System.Windows.Forms.ListView();
-            this.filterText = new System.Windows.Forms.TextBox();
+            this.itemListView = new System.Windows.Forms.ListViewEx();
+            this.filterText = new System.Windows.Forms.TextBoxEx();
             this.itemPropertyGrid = new FlashDevelop.Controls.FilteredGrid();
             this.columnHeader = new System.Windows.Forms.ColumnHeader();
             this.closeButton = new System.Windows.Forms.Button();

@@ -1958,6 +1958,14 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Sets if child controls should use theme.
+        /// </summary>
+        public void SetUseTheme(Object obj, Boolean use)
+        {
+            ThemeManager.SetUseTheme(obj, use);
+        }
+
+        /// <summary>
         /// Finds the specified menu item by name
         /// </summary>
         public ToolStripItem FindMenuItem(String name)

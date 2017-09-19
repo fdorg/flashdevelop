@@ -1,15 +1,12 @@
 using System;
-using System.Drawing;
-using System.Windows.Forms;
 using PluginCore.Localization;
-using FlashDevelop.Helpers;
 using PluginCore.Managers;
+using PluginCore.Controls;
 using PluginCore.Helpers;
-using PluginCore;
 
 namespace FlashDevelop.Dialogs
 {
-    public class GoToDialog : Form
+    public class GoToDialog : SmartForm
     {
         private System.Windows.Forms.Button lineButton;
         private System.Windows.Forms.Button closeButton;
@@ -21,6 +18,7 @@ namespace FlashDevelop.Dialogs
         {
             this.Owner = Globals.MainForm;
             this.Font = Globals.Settings.DefaultFont;
+            this.FormGuid = "4d5fdc1c-2698-46e9-b22d-fa9a42ba8d26";
             this.InitializeComponent();
             this.ApplyLocalizedTexts();
             ScaleHelper.AdjustForHighDPI(this);

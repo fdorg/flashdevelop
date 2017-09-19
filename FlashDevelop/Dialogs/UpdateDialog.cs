@@ -1,20 +1,17 @@
 using System;
 using System.IO;
 using System.Net;
-using System.Text;
-using System.Timers;
-using System.Drawing;
-using System.Diagnostics;
 using System.Windows.Forms;
 using System.ComponentModel;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Helpers;
+using PluginCore.Controls;
 using PluginCore;
 
 namespace FlashDevelop.Dialogs
 {
-    public class UpdateDialog : Form
+    public class UpdateDialog : SmartForm
     {
         private UpdateInfo updateInfo = null;
         private System.Windows.Forms.Label infoLabel;
@@ -28,6 +25,7 @@ namespace FlashDevelop.Dialogs
         {
             this.Owner = Globals.MainForm;
             this.Font = Globals.Settings.DefaultFont;
+            this.FormGuid = "4d5fdc1c-2698-46e9-b22d-fa9a42ba8d26";
             this.InitializeComponent();
             this.ApplyLocalizedTexts();
             this.InitializeUpdating();

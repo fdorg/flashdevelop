@@ -44,8 +44,8 @@ namespace ProjectManager.Controls
         /// </summary>
         private void InitializeComponent()
         {
-            this.textBox = new System.Windows.Forms.TextBox();
-            this.listBox = new System.Windows.Forms.ListBox();
+            this.textBox = new System.Windows.Forms.TextBoxEx();
+            this.listBox = new System.Windows.Forms.ListBoxEx();
             this.cbInClasspathsOnly = new System.Windows.Forms.CheckBox();
             this.checkBox = new System.Windows.Forms.CheckBox();
             this.refreshButton = new System.Windows.Forms.Button();
@@ -98,10 +98,11 @@ namespace ProjectManager.Controls
             // 
             this.listBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.listBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.listBox.IntegralHeight = false;
             this.listBox.FormattingEnabled = true;
             this.listBox.Location = new System.Drawing.Point(12, 62);
             this.listBox.Name = "listBox";
-            this.listBox.Size = new System.Drawing.Size(498, 276);
+            this.listBox.Size = new System.Drawing.Size(498, 264);
             this.listBox.TabIndex = 5;
             this.listBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBoxDrawItem);
             this.listBox.Resize += new System.EventHandler(this.ListBoxResize);
@@ -498,13 +499,16 @@ namespace ProjectManager.Controls
             this.listBox.Refresh();
         }
 
-        #endregion
-
+        /// <summary>
+        /// 
+        /// </summary>
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
             previousSearch = this.textBox.Text;
         }
+
+        #endregion
 
     }
 

@@ -239,6 +239,10 @@ namespace PluginCore
         /// </summary>
         Color GetThemeColor(String id, Color fallback);
         /// <summary>
+        /// Sets if child controls should use theme.
+        /// </summary>
+        void SetUseTheme(Object parent, Boolean use);
+        /// <summary>
         /// Finds the specified plugin.
         /// </summary>
         IPlugin FindPlugin(String guid);

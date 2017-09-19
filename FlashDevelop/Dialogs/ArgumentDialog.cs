@@ -1,12 +1,10 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Drawing;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using PluginCore.Localization;
-using FlashDevelop.Settings;
 using FlashDevelop.Helpers;
 using PluginCore.Utilities;
 using PluginCore.Helpers;
@@ -15,7 +13,7 @@ using PluginCore;
 
 namespace FlashDevelop.Dialogs
 {
-    public class ArgumentDialog : Form
+    public class ArgumentDialog : SmartForm
     {
         private static List<Argument> arguments;
         private System.Windows.Forms.Label keyLabel;
@@ -42,6 +40,7 @@ namespace FlashDevelop.Dialogs
         {
             this.Owner = Globals.MainForm;
             this.Font = Globals.Settings.DefaultFont;
+            this.FormGuid = "ea726ad2-ef09-4e4c-bfc6-41cc980be521";
             this.InitializeComponent();
             this.InitializeItemGroups();
             this.InitializeContextMenu();
@@ -58,12 +57,12 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
-            this.keyTextBox = new System.Windows.Forms.TextBox();
-            this.argsListView = new System.Windows.Forms.ListView();
+            this.keyTextBox = new System.Windows.Forms.TextBoxEx();
+            this.argsListView = new System.Windows.Forms.ListViewEx();
             this.valueLabel = new System.Windows.Forms.Label();
-            this.detailsGroupBox = new System.Windows.Forms.GroupBox();
+            this.detailsGroupBox = new System.Windows.Forms.GroupBoxEx();
             this.keyLabel = new System.Windows.Forms.Label();
-            this.valueTextBox = new System.Windows.Forms.TextBox();
+            this.valueTextBox = new System.Windows.Forms.TextBoxEx();
             this.infoLabel = new System.Windows.Forms.Label();
             this.closeButton = new System.Windows.Forms.Button();
             this.columnHeader = new System.Windows.Forms.ColumnHeader();
@@ -135,8 +134,7 @@ namespace FlashDevelop.Dialogs
             this.keyLabel.TabIndex = 1;
             this.keyLabel.Text = "Key:";
             // 
-            // valueTextBox 
-            // Font needs to be set here so that controls resize correctly in high-dpi
+            // valueTextBox
             //
             this.valueTextBox.AcceptsTab = true;
             this.valueTextBox.AcceptsReturn = true;

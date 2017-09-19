@@ -66,19 +66,20 @@ namespace ProjectManager.Controls
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.btnUp = new System.Windows.Forms.Button();
             this.btnDown = new System.Windows.Forms.Button();
-            this.langComboBox = new System.Windows.Forms.ComboBox();
+            this.langComboBox = new System.Windows.Forms.FlatCombo();
             this.SuspendLayout();
             // 
             // listBox
             // 
             this.listBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.listBox.Location = new System.Drawing.Point(0, 0);
+            this.listBox.Location = new System.Drawing.Point(1, 1);
             this.listBox.Name = "listBox";
-            this.listBox.Size = new System.Drawing.Size(275, 143);
+            this.listBox.Size = new System.Drawing.Size(271, 133);
             this.listBox.TabIndex = 0;
             this.listBox.DoubleClick += new System.EventHandler(this.listBox_DoubleClick);
             this.listBox.SelectedIndexChanged += new System.EventHandler(this.listBox_SelectedIndexChanged);
             this.listBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.listBox_MouseMove);
+            this.listBox.IntegralHeight = false;
             // 
             // btnNewClasspath
             // 
