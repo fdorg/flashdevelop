@@ -6205,4 +6205,8 @@ AND - All conditions are met.</value>
     <value>Sets the scroll range so that maximum scroll position has the last line at the bottom of the view. Setting this to false allows scrolling one page below the last line.</value>
     <comment>Added after 5.2.1</comment>
   </data>
+  <data name="HaXeContext.Description.MaximumDiagnosticsProcesses" xml:space="preserve">
+    <value>Sets the maximum number of processes for diagnostics (linting) that run at the same time. Defaults to 5.</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
 </root>

@@ -1,10 +1,7 @@
 ﻿using LintingHelper.Helpers;
 using PluginCore;
-using PluginCore.Managers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace LintingHelper
 {
@@ -62,11 +59,8 @@ namespace LintingHelper
         }
 
         /// <summary>
-        /// Adds the given <paramref name="results"/>.
-        /// Uses DocumentManager to look up the documents.
-        /// Files that are not opened are 
+        /// Adds the given <paramref name="results"/> to the cache
         /// </summary>
-        /// <param name="results"></param>
         public void AddResults(List<LintingResult> results)
         {
             foreach (var result in results)
@@ -91,10 +85,18 @@ namespace LintingHelper
         }
 
         /// <summary>
-        /// Removes documents that are not opened anymore
+        /// Clears the whole cache
         /// </summary>
-        /// <param name="documents">The documents that are currently opened</param>
-        public void RemoveAllExcept(IEnumerable<string> documents)
+        public void RemoveAll()
+        {
+            results.Clear();
+        }
+
+        /// <summary>
+        /// Removes all documents except the given ones from the cache
+        /// </summary>
+        /// <param name="documents">The documents that should not be removed</param>
+        public void RemoveAllExcept(IList<string> documents)
         {
             var copy = new List<string>(results.Keys);
             foreach (var doc in copy)
@@ -105,6 +107,5 @@ namespace LintingHelper
                 }
             }
         }
-
     }
 }
