@@ -25,7 +25,7 @@ namespace SourceControl.Actions
         static FSWatchers fsWatchers;
         static OverlayManager ovManager;
         static Project currentProject;
-        static List<string> addBuffer = new List<string>();
+        static HashSet<string> addBuffer = new HashSet<string>();
 
         public static bool Initialized { get { return initialized; } }
         public static Image Skin { get; set; }
@@ -254,11 +254,13 @@ namespace SourceControl.Actions
         internal static bool HandleFileMove(string[] paths)
         {
             WatcherVCResult result = fsWatchers.ResolveVC(paths[0], true);
-            if (result == null || result.Status == VCItemStatus.Unknown)
-                return false; // origin not under VC, ignore
             WatcherVCResult result2 = fsWatchers.ResolveVC(paths[1], true);
-            if (result2 == null || result2.Status == VCItemStatus.Unknown)
-                return false; // target dir not under VC, ignore
+
+            var fromVCed = result != null && result.Status >= VCItemStatus.UpToDate && result.Status != VCItemStatus.Added;
+            var toVCed = result2 != null && result2.Status >= VCItemStatus.UpToDate && result2.Status != VCItemStatus.Added;
+
+            if (!fromVCed || !toVCed) // origin or target not under VC, ignore
+                return false;
 
             return result.Manager.FileActions.FileMove(paths[0], paths[1]);
         }
@@ -268,25 +270,29 @@ namespace SourceControl.Actions
         /// </summary>
         internal static void HandleFileMoved(string fromFile, string toFile)
         {
+            var fResult = fsWatchers.ResolveVC(fromFile, true);
             var result = fsWatchers.ResolveVC(toFile, true);
-            if (result == null || result.Status == VCItemStatus.Unknown) // target dir not under VC, counts as delete
-            {
-                HandleFilesDeleted(new[] {fromFile});
-                return;
-            }
 
-            var fromFileRelative = fromFile;
-            var toFileRelative = toFile;
-            if (PluginBase.CurrentProject != null)
-            {
-                fromFileRelative = PluginBase.CurrentProject.GetRelativePath(fromFileRelative);
-                toFileRelative = PluginBase.CurrentProject.GetRelativePath(toFileRelative);
-            }
-            
-            var message = AskForCommit($"Moved {fromFileRelative} to {toFileRelative}");
+            var fromVCed = fResult != null && fResult.Status >= VCItemStatus.UpToDate && fResult.Status != VCItemStatus.Added;
+            var toVCed = result != null && result.Status >= VCItemStatus.UpToDate && result.Status != VCItemStatus.Added;
 
-            if (message != null)
-                result.Manager.Commit(new[] { toFile }, message);
+            if (fromVCed && toVCed)
+            {
+                var fromFileRelative = fromFile;
+                var toFileRelative = toFile;
+                if (PluginBase.CurrentProject != null)
+                {
+                    fromFileRelative = PluginBase.CurrentProject.GetRelativePath(fromFileRelative);
+                    toFileRelative = PluginBase.CurrentProject.GetRelativePath(toFileRelative);
+                }
+
+                var message = AskForCommit($"Moved {fromFileRelative} to {toFileRelative}");
+
+                if (message != null)
+                    result.Manager.Commit(new[] { toFile }, message);
+            }
+            else if (fromVCed) //counts as delete
+                HandleFilesDeleted(new[] { fromFile });
         }
 
         internal static bool HandleBuildProject()
@@ -321,11 +327,11 @@ namespace SourceControl.Actions
             if (!initialized)
                 return false;
 
-            addBuffer.Add(path); //at this point there is not yet an ITabbedDocument for the file
-
             WatcherVCResult result = fsWatchers.ResolveVC(path, true);
-            if (result == null || result.Status == VCItemStatus.Unknown)
+            if (result == null || result.Status == VCItemStatus.Unknown || result.Status == VCItemStatus.Ignored)
                 return false;
+
+            addBuffer.Add(path); //at this point there is not yet an ITabbedDocument for the file
 
             return false;
         }
@@ -335,11 +341,11 @@ namespace SourceControl.Actions
             if (!initialized)
                 return false;
 
-            WatcherVCResult result = fsWatchers.ResolveVC(path, true);
+            var result = fsWatchers.ResolveVC(path, true);
             if (result == null)
                 return false;
 
-            if (addBuffer.Remove(path))
+            if (addBuffer.Remove(path) || result.Status == VCItemStatus.Unknown)
             {
                 MessageBar.ShowQuestion("Would you like to add this file to version control?", new[] { "Yes", "No" },
                     s =>
@@ -352,9 +358,7 @@ namespace SourceControl.Actions
 
                         TraceManager.Add(s);
                     });
-                //TODO: Add some way to remember this
             }
-
             
             if (result.Status == VCItemStatus.Unknown)
                 return false;
