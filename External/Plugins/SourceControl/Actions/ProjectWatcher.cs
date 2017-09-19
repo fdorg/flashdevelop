@@ -191,7 +191,7 @@ namespace SourceControl.Actions
                 if (confirm)
                 {
                     var title = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-                    var msg = "Would you like to remove the file(s) from version control?" + "\n\n" + GetSomeFiles(hasModification);
+                    var msg = TextHelper.GetString("Info.RemoveFiles") + "\n\n" + GetSomeFiles(hasModification);
                     if (MessageBox.Show(msg, title, MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK) return true;
                 }
 
@@ -273,7 +273,7 @@ namespace SourceControl.Actions
             var toVCed = result != null && result.Status >= VCItemStatus.UpToDate && result.Status != VCItemStatus.Added;
 
             if (fromVCed && toVCed)
-                AskWithTwoFiles(result.Manager, "Moved", fromFile, toFile);
+                AskWithTwoFiles(result.Manager, "Moved", fromFile, toFile, true);
             else if (fromVCed) //counts as delete
                 HandleFilesDeleted(new[] { fromFile });
         }
@@ -330,10 +330,13 @@ namespace SourceControl.Actions
 
             if (addBuffer.Remove(path) || result.Status == VCItemStatus.Unknown)
             {
-                MessageBar.ShowQuestion("Would you like to add this file to version control?", new[] { "Yes", "No" },
+                var yes = TextHelper.GetString("Label.Yes");
+                var no = TextHelper.GetString("Label.No");
+
+                MessageBar.ShowQuestion(TextHelper.GetString("Info.AddFile"), new[] { yes, no },
                     s =>
                     {
-                        if (s == "Yes")
+                        if (s == yes)
                         {
                             result.Manager.FileActions.FileNew(path);
                             ForceRefresh();
@@ -359,7 +362,7 @@ namespace SourceControl.Actions
 
             if (fromVCed && toVCed)
             {
-                AskWithTwoFiles(result.Manager, "Copied", fromFile, toFile);
+                AskWithTwoFiles(result.Manager, "Copied", fromFile, toFile, false);
             }
             else if (toVCed)
             {
@@ -397,7 +400,7 @@ namespace SourceControl.Actions
 
         #endregion
 
-        static void AskWithTwoFiles(IVCManager manager, string verb, string from, string to)
+        static void AskWithTwoFiles(IVCManager manager, string verb, string from, string to, bool commitBoth)
         {
             var fromFileRelative = GetRelativeFile(from);
             var toFileRelative = GetRelativeFile(to);
@@ -405,7 +408,7 @@ namespace SourceControl.Actions
             var message = AskForCommit($"{verb} {fromFileRelative} to {toFileRelative}");
 
             if (message != null)
-                manager.Commit(new[] { to }, message);
+                manager.Commit(commitBoth ? new[] { from, to } : new []{ to }, message);
         }
 
         static string GetRelativeFile(string file)
@@ -419,9 +422,7 @@ namespace SourceControl.Actions
                 return null;
 
             var title = TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
-            var msg = "Would you like to create a commit for this action?";
-
-            //TODO: Add "Never button / checkbox"
+            var msg = TextHelper.GetString("Info.CreateCommit");
 
             using (LineEntryDialog led = new LineEntryDialog(title, msg, message))
             {

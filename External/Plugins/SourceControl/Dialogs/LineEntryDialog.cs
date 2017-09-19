@@ -157,7 +157,8 @@ namespace SourceControl.Dialogs
         private void InititalizeLocalization()
         {
             this.btnYes.Text = TextHelper.GetString("Label.Yes");
-            this.btnNo.Text = TextHelper.GetString("Label.No"); //TODO: add these
+            this.btnNo.Text = TextHelper.GetString("Label.No");
+            this.btnNever.Text = TextHelper.GetString("Label.Never");
             this.titleLabel.Text = TextHelper.GetString("Info.EnterText");
             this.Text = " " + TextHelper.GetString("Title.EnterText");
         }

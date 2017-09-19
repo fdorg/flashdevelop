@@ -11,10 +11,9 @@ namespace SourceControl.Sources.Subversion
 
             var args = "commit";
 
-            foreach (var file in files)
-            {
-                args += " \"" + VCHelper.GetRelativePath(file, workingDir) + "\"";
-            }
+            if (files != null)
+                foreach (var file in files)
+                    args += " \"" + VCHelper.GetRelativePath(file, workingDir) + "\"";
 
             args += " -m \"" + VCHelper.EscapeCommandLine(message) + "\"";
 

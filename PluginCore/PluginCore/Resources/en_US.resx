@@ -6189,16 +6189,32 @@ AND - All conditions are met.</value>
     <value>Keep result panels locked by default.</value>
     <comment>Added after 5.2.0</comment>
   </data>
-  <data name="SourceControl.Description.ShouldDelete" xml:space="preserve">
-    <value>Whether files should be deleted from version control when you delete them.</value>
-    <comment>Added after 5.2.1</comment>
-  </data>
-  <data name="SourceControl.Description.ShouldAdd" xml:space="preserve"> <!-- TODO: not used at the moment -->
-    <value>Whether files should be added to version control when you create / add them.</value>
-    <comment>Added after 5.2.1</comment>
-  </data>
   <data name="SourceControl.Description.NeverAskForCommit" xml:space="preserve">
     <value>Sets whether you will be asked to make a commit after moving / deleting files, etc.</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Label.Yes" xml:space="preserve">
+    <value>Yes</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Label.No" xml:space="preserve">
+    <value>No</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Label.Never" xml:space="preserve">
+    <value>Never</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Info.CreateCommit" xml:space="preserve">
+    <value>Would you like to create a commit for this action?</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Info.AddFile" xml:space="preserve">
+    <value>Would you like to add this file to version control?</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Info.RemoveFiles" xml:space="preserve">
+    <value>Would you like to remove the file(s) from version control?</value>
     <comment>Added after 5.2.1</comment>
   </data>
   <data name="FlashDevelop.Description.EndAtLastLine" xml:space="preserve">
