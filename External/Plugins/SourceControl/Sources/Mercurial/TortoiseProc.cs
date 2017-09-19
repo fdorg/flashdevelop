@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using SourceControl.Actions;
 
 namespace SourceControl.Sources.Mercurial
 {
@@ -15,7 +16,14 @@ namespace SourceControl.Sources.Mercurial
             ProcessStartInfo info = new ProcessStartInfo(GetTortoiseProc(), args);
             info.UseShellExecute = false;
             info.CreateNoWindow = true;
-            Process.Start(info);
+
+            var proc = new Process
+            {
+                StartInfo = info,
+                EnableRaisingEvents = true
+            };
+            proc.Exited += (sender, eventArgs) => ProjectWatcher.ForceRefresh();
+            proc.Start();
         }
 
         static public void Execute(string command, string path1, string path2)
@@ -24,7 +32,14 @@ namespace SourceControl.Sources.Mercurial
             ProcessStartInfo info = new ProcessStartInfo(GetTortoiseProc(), args);
             info.UseShellExecute = false;
             info.CreateNoWindow = true;
-            Process.Start(info);
+
+            var proc = new Process
+            {
+                StartInfo = info,
+                EnableRaisingEvents = true
+            };
+            proc.Exited += (sender, eventArgs) => ProjectWatcher.ForceRefresh();
+            proc.Start();
         }
 
         static private string GetTortoiseProc()

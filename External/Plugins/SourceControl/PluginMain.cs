@@ -175,8 +175,12 @@ namespace SourceControl
                                 de.Handled = true;
                             }
                             break;
-                        //case ProjectFileActionsEvents.FilePaste: //ProjectManagerEvents.FilePasted
-                        //cannot distinguish between copy and cut
+                        case ProjectManagerEvents.FilePasted: //ProjectFileActionsEvents.FilePaste
+                            //cannot distinguish between copy and cut, so assume it was copied
+                            var files = de.Data as Hashtable;
+                            ProjectWatcher.HandleFileCopied((string)files["fromPath"], (string)files["toPath"]);
+                            break;
+
 
                         case ProjectFileActionsEvents.FileDelete:
                             try

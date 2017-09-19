@@ -277,20 +277,7 @@ namespace SourceControl.Actions
             var toVCed = result != null && result.Status >= VCItemStatus.UpToDate && result.Status != VCItemStatus.Added;
 
             if (fromVCed && toVCed)
-            {
-                var fromFileRelative = fromFile;
-                var toFileRelative = toFile;
-                if (PluginBase.CurrentProject != null)
-                {
-                    fromFileRelative = PluginBase.CurrentProject.GetRelativePath(fromFileRelative);
-                    toFileRelative = PluginBase.CurrentProject.GetRelativePath(toFileRelative);
-                }
-
-                var message = AskForCommit($"Moved {fromFileRelative} to {toFileRelative}");
-
-                if (message != null)
-                    result.Manager.Commit(new[] { toFile }, message);
-            }
+                AskWithTwoFiles(result.Manager, "Moved", fromFile, toFile);
             else if (fromVCed) //counts as delete
                 HandleFilesDeleted(new[] { fromFile });
         }
@@ -366,6 +353,28 @@ namespace SourceControl.Actions
             return result.Manager.FileActions.FileOpen(path);
         }
 
+        internal static void HandleFileCopied(string fromFile, string toFile)
+        {
+            var fResult = fsWatchers.ResolveVC(fromFile, true);
+            var result = fsWatchers.ResolveVC(toFile, true);
+
+            var fromVCed = fResult != null && fResult.Status >= VCItemStatus.UpToDate && fResult.Status != VCItemStatus.Added;
+            var toVCed = result != null && result.Status >= VCItemStatus.UpToDate && result.Status != VCItemStatus.Added;
+
+            if (fromVCed && toVCed)
+            {
+                AskWithTwoFiles(result.Manager, "Copied", fromFile, toFile);
+            }
+            else if (toVCed)
+            {
+                var toFileRelative = GetRelativeFile(toFile);
+                var message = AskForCommit($"Created {toFileRelative}"); //note: we do not know if it actually is created (could be replaced, etc.)
+
+                if (message != null)
+                    result.Manager.Commit(new[] {toFile}, message);
+            }
+        }
+
         internal static bool HandleFileReload(string path)
         {
             if (!initialized)
@@ -391,6 +400,22 @@ namespace SourceControl.Actions
         }
 
         #endregion
+
+        static void AskWithTwoFiles(IVCManager manager, string verb, string from, string to)
+        {
+            var fromFileRelative = GetRelativeFile(from);
+            var toFileRelative = GetRelativeFile(to);
+
+            var message = AskForCommit($"{verb} {fromFileRelative} to {toFileRelative}");
+
+            if (message != null)
+                manager.Commit(new[] { to }, message);
+        }
+
+        static string GetRelativeFile(string file)
+        {
+            return PluginBase.CurrentProject != null ? PluginBase.CurrentProject.GetRelativePath(file) : file;
+        }
 
         static string AskForCommit(string message)
         {
