@@ -79,6 +79,8 @@ namespace ASCompletion
         Bitmap upDownArrow;
 
         readonly ASTCache astCache = new ASTCache();
+        bool initializedCache = true;
+        IProject lastProject;
         Timer astCacheTimer;
 
         #region Required Properties
@@ -250,8 +252,6 @@ namespace ASCompletion
                             if (ASContext.Context.Settings.CheckSyntaxOnSave) CheckSyntax(null, null);
                             ASContext.Context.RemoveClassCompilerCache();
                         }
-
-                        astCache.IsDirty = true;
                         return;
 
                     case EventType.SyntaxDetect:
@@ -266,7 +266,6 @@ namespace ASCompletion
                         break;
 
                     case EventType.ApplySettings:
-                        astCacheTimer.Enabled = !settingObject.DisableInheritanceNavigation;
                         if (settingObject.ASTCacheUpdateInterval <= 0)
                             settingObject.ASTCacheUpdateInterval = 3;
 
@@ -274,6 +273,7 @@ namespace ASCompletion
 
                         if (settingObject.DisableInheritanceNavigation)
                         {
+                            astCacheTimer.Stop();
                             astCache.Clear();
                             foreach (var document in PluginBase.MainForm.Documents)
                             {
@@ -461,6 +461,12 @@ namespace ASCompletion
                                 }
                                 e.Handled = true;
                             }
+                            //PathExplorer finished looking for files, update cache
+                            else if (command == "ASCompletion.PathExplorerFinished" && !initializedCache)
+                            {
+                                UpdateCompleteCache();
+                                initializedCache = true;
+                            }
                         }
 
                         // Create a fake document from a FileModel
@@ -482,8 +488,11 @@ namespace ASCompletion
                         }
                         else if (command == "ProjectManager.Project" && !settingObject.DisableInheritanceNavigation)
                         {
-                            astCache.IsDirty = true;
-                            astCacheTimer.Enabled = true;
+                            if (lastProject != PluginBase.CurrentProject)
+                            {
+                                lastProject = PluginBase.CurrentProject;
+                                initializedCache = false;
+                            }
                         }
                         
                         break;
@@ -821,6 +830,8 @@ namespace ASCompletion
             UITools.CallTip.OnUpdateCallTip += new MethodCallTip.UpdateCallTipHandler(OnUpdateCallTip);
             UITools.Tip.OnUpdateSimpleTip += new RichToolTip.UpdateTipHandler(OnUpdateSimpleTip);
             CompletionList.OnInsert += new InsertedTextHandler(ASComplete.HandleCompletionInsert);
+            FileModel.OnFileUpdate += OnFileUpdate;
+            PathModel.OnFileRemove += OnFileRemove;
 
             // shortcuts
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Back);
@@ -839,17 +850,47 @@ namespace ASCompletion
             timerPosition.Elapsed += new ElapsedEventHandler(timerPosition_Elapsed);
 
             //Cache update
+            astCache.FinishedUpdate += UpdateOpenDocumentMarkers;
             astCacheTimer = new Timer
             {
-                SynchronizingObject = PluginBase.MainForm as Form
+                SynchronizingObject = PluginBase.MainForm as Form,
+                AutoReset = false,
+                Enabled = false
             };
             astCacheTimer.Elapsed += AstCacheTimer_Elapsed;
             
         }
 
+        void OnFileRemove(FileModel obj)
+        {
+            PluginBase.RunAsync(() =>
+            {
+                foreach (var cls in obj.Classes)
+                    astCache.Remove(cls);
+
+                EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "ASCompletion.FileModelUpdated", obj));
+            });
+        }
+
         #endregion
 
         #region Plugin actions
+
+        void UpdateCompleteCache()
+        {
+            if (PluginBase.CurrentProject == null) return;
+
+            astCache.UpdateCompleteCache();
+        }
+
+        void UpdateOpenDocumentMarkers()
+        {
+            foreach (var document in PluginBase.MainForm.Documents)
+            {
+                UpdateMarkersFromCache(document.SplitSci1);
+                UpdateMarkersFromCache(document.SplitSci1);
+            }
+        }
 
         void ApplyMarkers(ScintillaControl sci)
         {
@@ -1049,21 +1090,26 @@ namespace ASCompletion
 
         #region Event handlers
 
+        /// <summary>
+        /// Called when a file is parsed again (could be called multiple times)
+        /// </summary>
+        /// <param name="obj"></param>
+        private void OnFileUpdate(FileModel obj)
+        {
+            PluginBase.RunAsync(() =>
+            {
+                foreach (var cls in obj.Classes)
+                    astCache.MarkAsOutdated(cls);
+
+                astCacheTimer.Start();
+
+                EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "ASCompletion.FileModelUpdated", obj));
+            });
+        }
+
         void AstCacheTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (PluginBase.CurrentProject == null || !astCache.IsDirty) return;
-
-            astCacheTimer.Enabled = false;
-
-            astCache.UpdateCache(() =>
-            {
-                foreach (var document in PluginBase.MainForm.Documents)
-                {
-                    UpdateMarkersFromCache(document.SplitSci1);
-                    UpdateMarkersFromCache(document.SplitSci1);
-                }
-                astCacheTimer.Enabled = !PluginBase.MainForm.ClosingEntirely;
-            });
+            astCache.UpdateOutdatedModels();
         }
 
         void Sci_MarginClick(ScintillaControl sender, int modifiers, int position, int margin)
@@ -1161,15 +1207,19 @@ namespace ASCompletion
                 if (cached == null || declaration.Member == null) return;
 
                 //Remove member from cache
-                cached.Implementing.Remove(declaration.Member);
-                cached.Implementors.Remove(declaration.Member);
-                cached.Overriders.Remove(declaration.Member);
-                cached.Overriding.Remove(declaration.Member);
+                //cached.Implementing.Remove(declaration.Member);
+                //cached.Implementors.Remove(declaration.Member);
+                //cached.Overriders.Remove(declaration.Member);
+                //cached.Overriding.Remove(declaration.Member);
 
-                UpdateMarkersFromCache(sender);
-                
+                //UpdateMarkersFromCache(sender);
+                sender.MarkerDelete(line, MarkerUp);
+                sender.MarkerDelete(line, MarkerDown);
+                sender.MarkerDelete(line, MarkerUp);
+                sender.MarkerDelete(line, MarkerDown);
+
                 //trigger cache update
-                astCache.IsDirty = true;
+                //astCacheTimer.Start();
             }
         }
 

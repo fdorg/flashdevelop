@@ -18,6 +18,8 @@ namespace ASCompletion.Model
     /// </summary>
     public class PathModel
     {
+        static internal event Action<FileModel> OnFileRemove;
+
         //static private readonly bool cacheEnabled = false;
         static private Dictionary<string, PathModel> pathes = new Dictionary<string, PathModel>();
 
@@ -574,7 +576,9 @@ namespace ASCompletion.Model
             if (!IsValid) return;
             lock (lockObject)
             {
-                files.Remove(fileName.ToUpper());
+                var fn = fileName.ToUpper();
+                OnFileRemove?.Invoke(files[fn]);
+                files.Remove(fn);
             }
         }
 
