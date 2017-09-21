@@ -36,21 +36,24 @@ namespace ASCompletion.Helpers
         public void Remove(ClassModel cls)
         {
             //TODO: might have to lock on cache?
-            var cachedClassModel = GetOrCreate(cache, cls);
+            lock (cache)
+            {
+                var cachedClassModel = GetOrCreate(cache, cls);
 
-            var implementing = cachedClassModel.Implementing;
-            var overriding = cachedClassModel.Overriding;
-            var implementors = cachedClassModel.Implementors;
-            var overriders = cachedClassModel.Overriders;
+                var implementing = cachedClassModel.Implementing;
+                var overriding = cachedClassModel.Overriding;
+                var implementors = cachedClassModel.Implementors;
+                var overriders = cachedClassModel.Overriders;
 
-            //remove old references to cls
-            RemoveConnections(cls, implementing, ccm => ccm.Implementors);
-            RemoveConnections(cls, overriding, ccm => ccm.Overriders);
-            RemoveConnections(cls, implementors, ccm => ccm.Implementing);
-            RemoveConnections(cls, overriders, ccm => ccm.Overriding);
+                //remove old references to cls
+                RemoveConnections(cls, implementing, ccm => ccm.Implementors);
+                RemoveConnections(cls, overriding, ccm => ccm.Overriders);
+                RemoveConnections(cls, implementors, ccm => ccm.Implementing);
+                RemoveConnections(cls, overriders, ccm => ccm.Overriding);
 
-            //remove cls itself
-            cache.Remove(cls);
+                //remove cls itself
+                cache.Remove(cls);
+            }
         }
 
         public void MarkAsOutdated(ClassModel cls)
@@ -83,25 +86,33 @@ namespace ASCompletion.Helpers
 
                     //TODO: might have to lock on cache?
                     //get the old CachedClassModel
-                    var cachedClassModel = GetOrCreate(cache, cls);
+                    CachedClassModel cachedClassModel;
+                    CacheDictionary implementors;
+                    CacheDictionary overriders;
 
-                    var implementors = cachedClassModel.Implementors;
-                    var overriders = cachedClassModel.Overriders;
+                    lock (cache)
+                    {
+                        cachedClassModel = GetOrCreate(cache, cls);
 
-                    //remove old cls
-                    Remove(cls);
+                        implementors = cachedClassModel.Implementors;
+                        overriders = cachedClassModel.Overriders;
 
-                    UpdateClass(cls, cache);
+                        //remove old cls
+                        Remove(cls);
 
+                        UpdateClass(cls, cache);
+                    }
                     //also update overriders and implementors, so that cls is updated by them
                     var implementorClasses = implementors.Values.SelectMany(i => i).Distinct();
                     var overriderClasses = overriders.Values.SelectMany(i => i).Distinct();
 
                     foreach (var implementor in implementorClasses)
-                        UpdateClass(implementor, cache);
+                        lock(cache)
+                            UpdateClass(implementor, cache);
 
                     foreach (var overrider in overriderClasses)
-                        UpdateClass(overrider, cache);
+                        lock (cache)
+                            UpdateClass(overrider, cache);
                 }
                 outdatedModels.Clear();
 
@@ -154,7 +165,8 @@ namespace ASCompletion.Helpers
                     UpdateClass(cls, c);
                 }
 
-                cache = c;
+                lock(cache)
+                    cache = c;
                 if (FinishedUpdate != null)
                     PluginBase.RunAsync(new MethodInvoker(FinishedUpdate));
                 IsUpdating = false;
