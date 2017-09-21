@@ -14,7 +14,7 @@ namespace ASCompletion.Helpers
 
     internal class ASTCache
     {
-        public event Action FinishedUpdate; 
+        public event Action FinishedUpdate;
         internal bool IsUpdating { get; set; }
 
         Dictionary<ClassModel, CachedClassModel> cache = new Dictionary<ClassModel, CachedClassModel>(new ClassModelComparer());

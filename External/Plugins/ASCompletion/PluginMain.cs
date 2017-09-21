@@ -82,6 +82,12 @@ namespace ASCompletion
         bool initializedCache = true;
         IProject lastProject;
         Timer astCacheTimer;
+        /// <summary>
+        /// This timer is used to periodically update the astCache for all project classes.
+        /// This is needed because the per file update will miss some connections.
+        /// By default it is called every 2 minutes.
+        /// </summary>
+        Timer completeAstCacheTimer;
 
         #region Required Properties
 
@@ -168,6 +174,7 @@ namespace ASCompletion
         {
             timerPosition.Enabled = false;
             astCacheTimer.Enabled = false;
+            completeAstCacheTimer.Enabled = false;
             PathExplorer.StopBackgroundExploration();
             SaveSettings();
         }
@@ -267,13 +274,15 @@ namespace ASCompletion
 
                     case EventType.ApplySettings:
                         if (settingObject.ASTCacheUpdateInterval <= 0)
-                            settingObject.ASTCacheUpdateInterval = 3;
+                            settingObject.ASTCacheUpdateInterval = 120; //2 minutes
 
-                        astCacheTimer.Interval = settingObject.ASTCacheUpdateInterval * 1000;
+                        //astCacheTimer.Interval = settingObject.ASTCacheUpdateInterval * 1000;
+                        completeAstCacheTimer.Interval = settingObject.ASTCacheUpdateInterval * 1000;
 
                         if (settingObject.DisableInheritanceNavigation)
                         {
                             astCacheTimer.Stop();
+                            completeAstCacheTimer.Stop();
                             astCache.Clear();
                             foreach (var document in PluginBase.MainForm.Documents)
                             {
@@ -465,6 +474,7 @@ namespace ASCompletion
                             else if (command == "ASCompletion.PathExplorerFinished" && !initializedCache)
                             {
                                 UpdateCompleteCache();
+                                completeAstCacheTimer.Start();
                                 initializedCache = true;
                             }
                         }
@@ -858,7 +868,14 @@ namespace ASCompletion
                 Enabled = false
             };
             astCacheTimer.Elapsed += AstCacheTimer_Elapsed;
-            
+            completeAstCacheTimer = new Timer
+            {
+                SynchronizingObject = PluginBase.MainForm as Form,
+                Enabled = false
+            };
+            completeAstCacheTimer.Elapsed += CompleteAstCacheTimer_Elapsed;
+
+
         }
 
         void OnFileRemove(FileModel obj)
@@ -1110,6 +1127,11 @@ namespace ASCompletion
         void AstCacheTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             astCache.UpdateOutdatedModels();
+        }
+
+        void CompleteAstCacheTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            astCache.UpdateCompleteCache();
         }
 
         void Sci_MarginClick(ScintillaControl sender, int modifiers, int position, int margin)
