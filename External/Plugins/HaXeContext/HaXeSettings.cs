@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Drawing.Design;
 using PluginCore.Localization;
 using ProjectManager.Projects.Haxe;
 using PluginCore;
@@ -198,12 +199,13 @@ namespace HaXeContext
         private const int DEFAULT_FLASHVERSION = 10;
         private const string DEFAULT_HAXECHECKPARAMS = "";
         private const HaxeCompletionModeEnum DEFAULT_HAXECOMPLETIONMODE = HaxeCompletionModeEnum.Compiler;
+
         private const bool DEFAULT_DISABLEMIXEDCOMPLETION = false;
         private const bool DEFAULT_DISABLECOMPLETIONONDEMAND = true;
         private const bool DEFAULT_EXPORTHXML = false;
         private const bool DEFAULT_DISABLE_LIB_INSTALLATION = true;
-        private const bool DEFAULT_ENABLE_COMPILER_FOR_FIND_ALL_REFERENCES = true;
         private const bool DEFAULT_USEGENERICSSHORTNOTATION = true;
+        private const CompletionFeatures DEFAULT_ENABLEDCOMPILERSERVICES = CompletionFeatures.Diagnostics | CompletionFeatures.DisplayStdIn | CompletionFeatures.Usage | CompletionFeatures.EnableForFindAllReferences;
 
         private int completionServerPort = DEFAULT_COMPLETION_SERVER_PORT;
         private int flashVersion = 10;
@@ -213,7 +215,6 @@ namespace HaXeContext
         private bool exportHXML = DEFAULT_EXPORTHXML;
         private HaxeCompletionModeEnum _completionMode = DEFAULT_HAXECOMPLETIONMODE;
         private bool disableLibInstallation = DEFAULT_DISABLE_LIB_INSTALLATION;
-        private bool enableCompilerForFindAllReferences = DEFAULT_ENABLE_COMPILER_FOR_FIND_ALL_REFERENCES;
         private bool useGenericsShortNotation = DEFAULT_USEGENERICSSHORTNOTATION;
 
         [DisplayName("Default Flash Version")]
@@ -287,21 +288,25 @@ namespace HaXeContext
             set { HaxeProject.saveHXML = exportHXML = value; }
         }
 
+        /// <summary>
+        /// A flag enum of enabled compiler features.
+        /// It should never actually be set to null (only 0).
+        /// It is only nullable because otherwise the deserializer will set it to 0 by default (instead of everything enabled)
+        /// </summary>
+        [DisplayName("Enabled Compiler Services")]
+        [LocalizedCategory("ASCompletion.Category.Language"),
+         LocalizedDescription("HaXeContext.Description.EnabledCompilerServices"),
+         DefaultValue(DEFAULT_ENABLEDCOMPILERSERVICES)]
+        [Editor(typeof(Helpers.FlagEnumEditor),
+            typeof(UITypeEditor))]
+        public CompletionFeatures? EnabledFeatures { get; set; } = DEFAULT_ENABLEDCOMPILERSERVICES;
+
         [DisplayName("Disable Automatic Libraries Installation")]
         [DefaultValue(DEFAULT_DISABLE_LIB_INSTALLATION)]
         public bool DisableLibInstallation
         {
             get { return disableLibInstallation; }
             set { disableLibInstallation = value; }
-        }
-
-        [DisplayName("Enable Compiler Services For Find All References")]
-        [Category("Code Refactor")]
-        [DefaultValue(DEFAULT_ENABLE_COMPILER_FOR_FIND_ALL_REFERENCES)]
-        public bool EnableCompilerForFindAllReferences
-        {
-            get { return enableCompilerForFindAllReferences; }
-            set { enableCompilerForFindAllReferences = value; }
         }
 
         [DisplayName("Use Short Notation For Generics")]
@@ -344,5 +349,14 @@ namespace HaXeContext
         FlashDevelop,
         Compiler,
         CompletionServer
+    }
+
+    [Flags]
+    public enum CompletionFeatures
+    {
+        Diagnostics = 1,
+        Usage = 2,
+        DisplayStdIn = 4,
+        EnableForFindAllReferences = 8
     }
 }

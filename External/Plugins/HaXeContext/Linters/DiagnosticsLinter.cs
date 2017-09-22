@@ -25,6 +25,7 @@ namespace HaXeContext.Linters
         public void LintAsync(string[] files, LintCallback callback)
         {
             var context = ASContext.GetLanguageContext("haxe") as Context;
+
             if (context == null || !CanContinue(context)) return;
 
             var total = files.Length;
@@ -90,8 +91,10 @@ namespace HaXeContext.Linters
 
         static bool CanContinue(Context context)
         {
-            var completionMode = ((HaXeSettings)context.Settings).CompletionMode;
+            var settings = ((HaXeSettings) context.Settings);
+            var completionMode = settings.CompletionMode;
             if (completionMode == HaxeCompletionModeEnum.FlashDevelop) return false;
+            if ((settings.EnabledFeatures & CompletionFeatures.Diagnostics) == 0) return false;
             var haxeVersion = context.GetCurrentSDKVersion();
 
             return haxeVersion >= "3.3.0";
