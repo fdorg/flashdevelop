@@ -13,6 +13,8 @@ namespace ASCompletion.Controls
 {
     class ReferenceList
     {
+        const int MinWidth = 150;
+
         static readonly Timer fadingTimer;
         static readonly ListView listView;
 
@@ -72,6 +74,7 @@ namespace ASCompletion.Controls
             listView.Location = p;
 
             listView.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+            listView.Columns[0].Width = Math.Max(MinWidth, listView.Columns[0].Width);
             listView.Width = listView.Columns[0].Width + 30;
 
             listView.BringToFront();

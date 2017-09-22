@@ -258,29 +258,28 @@ namespace ASCompletion.Helpers
                 }
             }
 
-            //look for functions in cls that originate from a super-class
-            foreach (MemberModel member in cls.Members)
+            if (cls.Extends != null && !cls.Extends.IsVoid())
             {
-                if ((member.Flags & (FlagType.Function | FlagType.Override)) > 0)
+                //look for functions in cls that originate from a super-class
+                foreach (MemberModel member in cls.Members)
                 {
-                    var overridden = GetOverriddenClasses(cls, member);
-
-                    if (overridden == null || overridden.Count <= 0) continue;
-
-                    cachedClassModel.Overriding.AddUnion(member, overridden.Keys);
-                    //now that we know member is overriding the classes in overridden, we can add cls as overrider for them
-                    foreach (var over in overridden)
+                    if ((member.Flags & (FlagType.Function | FlagType.Override)) > 0)
                     {
-                        var cachedModel = GetOrCreate(cache, over.Key);
-                        var set = CacheHelper.GetOrCreateSet(cachedModel.Overriders, over.Value);
-                        set.Add(cls);
+                        var overridden = GetOverriddenClasses(cls, member);
+
+                        if (overridden == null || overridden.Count <= 0) continue;
+
+                        cachedClassModel.Overriding.AddUnion(member, overridden.Keys);
+                        //now that we know member is overriding the classes in overridden, we can add cls as overrider for them
+                        foreach (var over in overridden)
+                        {
+                            var cachedModel = GetOrCreate(cache, over.Key);
+                            var set = CacheHelper.GetOrCreateSet(cachedModel.Overriders, over.Value);
+                            set.Add(cls);
+                        }
                     }
                 }
             }
-
-            //if (cachedClassModel.Implementing.Count == 0 && cachedClassModel.Implementors.Count == 0 &&
-            //    cachedClassModel.Overriders.Count == 0 && cachedClassModel.Overriding.Count == 0)
-            //    cache.Remove(cls);
         }
         
         /// <summary>
