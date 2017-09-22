@@ -69,7 +69,7 @@ namespace ASCompletion
         private Regex reArgs = new Regex("\\$\\((Typ|Mbr|Itm)", RegexOptions.Compiled);
         private Regex reCostlyArgs = new Regex("\\$\\((TypClosest|ItmUnique)", RegexOptions.Compiled);
 
-        const int Margin = 3;
+        const int Margin = 1;
         const int MarkerDown = 16;
         const int MarkerUp = 17;
         const int MarkerUpDown = 18;
@@ -885,6 +885,22 @@ namespace ASCompletion
                 foreach (var cls in obj.Classes)
                     astCache.Remove(cls);
 
+                var sci1 = DocumentManager.FindDocument(obj.FileName)?.SplitSci1;
+                var sci2 = DocumentManager.FindDocument(obj.FileName)?.SplitSci2;
+
+                if (sci1 != null)
+                {
+                    sci1.MarkerDeleteAll(MarkerUp);
+                    sci1.MarkerDeleteAll(MarkerDown);
+                    sci1.MarkerDeleteAll(MarkerUpDown);
+                }
+                if (sci2 != null)
+                {
+                    sci2.MarkerDeleteAll(MarkerUp);
+                    sci2.MarkerDeleteAll(MarkerDown);
+                    sci2.MarkerDeleteAll(MarkerUpDown);
+                }
+
                 EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "ASCompletion.FileModelUpdated", obj));
             });
         }
@@ -912,7 +928,7 @@ namespace ASCompletion
         void ApplyMarkers(ScintillaControl sci)
         {
             if (settingObject.DisableInheritanceNavigation || sci == null) return;
-
+            
             //Register marker
             sci.MarkerDefineRGBAImage(MarkerDown, downArrow);
             sci.MarkerDefineRGBAImage(MarkerUp, upArrow);
@@ -931,6 +947,7 @@ namespace ASCompletion
 
         void UpdateMarkersFromCache(ScintillaControl sci)
         {
+            var marginWidth = 16;
             sci.SetMarginWidthN(Margin, 0); //margin is only made visible if something is found
 
             sci.MarkerDeleteAll(MarkerUp);
@@ -952,22 +969,22 @@ namespace ASCompletion
 
                 foreach (var implementing in cls.Implementing)
                 {
-                    sci.SetMarginWidthN(Margin, 16);
+                    sci.SetMarginWidthN(Margin, marginWidth);
                     sci.MarkerAdd(implementing.Key.LineFrom, MarkerUp);
                 }
                 foreach (var implementor in cls.Implementors)
                 {
-                    sci.SetMarginWidthN(Margin, 16);
+                    sci.SetMarginWidthN(Margin, marginWidth);
                     sci.MarkerAdd(implementor.Key.LineFrom, MarkerDown);
                 }
                 foreach (var overriders in cls.Overriders)
                 {
-                    sci.SetMarginWidthN(Margin, 16);
+                    sci.SetMarginWidthN(Margin, marginWidth);
                     sci.MarkerAdd(overriders.Key.LineFrom, MarkerDown);
                 }
                 foreach (var overrides in cls.Overriding)
                 {
-                    sci.SetMarginWidthN(Margin, 16);
+                    sci.SetMarginWidthN(Margin, marginWidth);
                     sci.MarkerAdd(overrides.Key.LineFrom, MarkerUp);
                 }
 
@@ -1237,8 +1254,10 @@ namespace ASCompletion
                 //UpdateMarkersFromCache(sender);
                 sender.MarkerDelete(line, MarkerUp);
                 sender.MarkerDelete(line, MarkerDown);
+                sender.MarkerDelete(line, MarkerUpDown);
                 sender.MarkerDelete(line, MarkerUp);
                 sender.MarkerDelete(line, MarkerDown);
+                sender.MarkerDelete(line, MarkerUpDown);
 
                 //trigger cache update
                 //astCacheTimer.Start();
