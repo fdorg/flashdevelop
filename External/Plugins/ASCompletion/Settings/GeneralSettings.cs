@@ -479,8 +479,8 @@ namespace ASCompletion.Settings
         public bool DisableInheritanceNavigation { get; set; } = false;
 
         [DisplayName("Inheritance Navigation Update Interval")]
-        [LocalizedCategory("ASCompletion.Category.InheritanceNavigation"), DefaultValue(3)]
-        public int ASTCacheUpdateInterval { get; set; } = 3;
+        [LocalizedCategory("ASCompletion.Category.InheritanceNavigation"), DefaultValue(120)]
+        public int ASTCacheUpdateInterval { get; set; } = 120;
         #endregion
     }
 
