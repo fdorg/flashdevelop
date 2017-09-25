@@ -87,12 +87,6 @@
     <Compile Include="Dialogs\LineEntryDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Dialogs\SourceControlDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\SourceControlDialog.Designer.cs">
-      <DependentUpon>SourceControlDialog.cs</DependentUpon>
-    </Compile>
     <Compile Include="Helpers\AnnotatedDocument.cs" />
     <Compile Include="Helpers\Commit.cs" />
     <Compile Include="Managers\FSWatchers.cs" />
