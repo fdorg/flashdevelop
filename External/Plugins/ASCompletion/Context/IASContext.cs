@@ -164,7 +164,6 @@ namespace ASCompletion.Context
         /// <summary>
         /// Return imported classes list (not null)
         /// </summary>
-        /// <param name="package">Package to explore</param>
         /// <param name="inFile">Current file</param>
         MemberList ResolveImports(FileModel inFile);
 
@@ -207,7 +206,14 @@ namespace ASCompletion.Context
         /// </summary>
         bool UnsetOutOfDate();
 
+        /// <summary>
+        /// Returns the default value for the given type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns>Default value</returns>
         string GetDefaultValue(string type);
+
+        IEnumerable<string> DecomposeTypes(IEnumerable<string> types);
         #endregion
 
         #region Specific actions

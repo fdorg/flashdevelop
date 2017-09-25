@@ -15,7 +15,7 @@ namespace CodeRefactor.BatchProcessors
 
         public bool IsAvailable => true;
 
-        public void Process(string[] files)
+        public void Process(IEnumerable<string> files)
         {
             foreach (var file in files)
             {
@@ -23,6 +23,12 @@ namespace CodeRefactor.BatchProcessors
                 DataEvent de = new DataEvent(EventType.Command, "CodeFormatter.FormatDocument", document);
                 EventManager.DispatchEvent(this, de);
             }
+        }
+
+        public void ProcessProject(IProject project)
+        {
+            var files = BatchProcessManager.GetAllProjectFiles(project);
+            Process(files);
         }
     }
 }

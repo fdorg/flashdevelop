@@ -9,6 +9,7 @@ using System.Drawing;
 using System.IO;
 using LintingHelper.Managers;
 using PluginCore.Localization;
+using ProjectManager;
 
 namespace LintingHelper
 {
@@ -94,7 +95,7 @@ namespace LintingHelper
         private void AddEventHandlers()
         {
             BatchProcessManager.AddBatchProcessor(new BatchProcess.LintProcessor());
-            EventManager.AddEventHandler(this, EventType.FileOpen | EventType.FileSave | EventType.FileModify);
+            EventManager.AddEventHandler(this, EventType.FileOpen | EventType.FileSave | EventType.FileModify | EventType.Command);
         }
 
         private void InitBasics()
@@ -131,7 +132,8 @@ namespace LintingHelper
                     var fileOpen = (TextEvent) e;
                     if (this.settingObject.LintOnOpen)
                     {
-                        Managers.LintingManager.LintFiles(new string[] { fileOpen.Value });
+                        LintingManager.Cache.RemoveDocument(fileOpen.Value);
+                        LintingManager.LintFiles(new[] { fileOpen.Value });
                     }
                     break;
                 case EventType.FileSave:
@@ -140,12 +142,29 @@ namespace LintingHelper
                     if (reason != "HaxeComplete" && this.settingObject.LintOnSave)
                     {
                         var fileSave = (TextEvent) e;
-                        Managers.LintingManager.LintFiles(new string[] { fileSave.Value });
+                        LintingManager.Cache.RemoveDocument(fileSave.Value);
+                        LintingManager.LintFiles(new[] { fileSave.Value });
                     }
                     break;
+                case EventType.Command:
+                    var ev = (DataEvent) e;
+                    if (ev.Action == ProjectManagerEvents.BuildComplete || ev.Action == ProjectManagerEvents.Project)
+                    {
+                        LintingManager.Cache.RemoveAll();
+                        LintingManager.UpdateLinterPanel();
+                        if (ev.Action == ProjectManagerEvents.Project)
+                        {
+                            foreach (var doc in PluginBase.MainForm.Documents)
+                            {
+                                if (!doc.IsUntitled)
+                                    LintingManager.LintDocument(doc);
+                            }
+                        }
+                    }
+                    
+                    break;
                 case EventType.FileModify:
-                    var file = ((TextEvent)e).Value;
-                    Managers.LintingManager.UnLintDocument(DocumentManager.FindDocument(file));
+                    LintingManager.UnLintFile(((TextEvent)e).Value);
                     break;
             }
         }

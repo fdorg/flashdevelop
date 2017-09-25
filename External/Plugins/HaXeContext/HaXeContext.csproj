@@ -78,6 +78,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
   </ItemGroup>
@@ -128,6 +129,7 @@
     <Compile Include="Completion\HaxeComplete330.cs" />
     <Compile Include="HaXeSettings.cs" />
     <Compile Include="ExternalToolchain.cs" />
+    <Compile Include="Helpers\FlagEnumEditor.cs" />
     <Compile Include="Linters\DiagnosticsLinter.cs" />
     <Compile Include="PluginMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
