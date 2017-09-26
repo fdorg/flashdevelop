@@ -621,9 +621,9 @@ namespace CodeRefactor.Provider
         /// <param name="newPath"></param>
         public static void Move(string oldPath, string newPath)
         {
-            Move(oldPath, newPath, true);
+            Move(oldPath, newPath, true, oldPath);
         }
-        public static void Move(string oldPath, string newPath, bool renaming)
+        public static void Move(string oldPath, string newPath, bool renaming, string originalOld)
         {
             if (string.IsNullOrEmpty(oldPath) || string.IsNullOrEmpty(newPath)) return;
             Project project = (Project)PluginBase.CurrentProject;
@@ -633,7 +633,7 @@ namespace CodeRefactor.Provider
             {
                 FileHelper.ForceMove(oldPath, newPath);
                 DocumentManager.MoveDocuments(oldPath, newPath);
-                RaiseMoveEvent(oldPath, newPath);
+                RaiseMoveEvent(originalOld, newPath);
 
                 if (project.IsDocumentClass(oldPath)) newDocumentClass = newPath;
             }
@@ -657,13 +657,17 @@ namespace CodeRefactor.Provider
                 // We need to use our own method for moving directories if folders in the new path already exist
                 FileHelper.ForceMoveDirectory(oldPath, newPath);
                 DocumentManager.MoveDocuments(oldPath, newPath);
-                RaiseMoveEvent(oldPath, newPath);
+                RaiseMoveEvent(originalOld, newPath);
             }
             if (!string.IsNullOrEmpty(newDocumentClass))
             {
                 project.SetDocumentClass(newDocumentClass, true);
                 project.Save();
             }
+        }
+        public static void Move(string oldPath, string newPath, bool renaming)
+        {
+            Move(oldPath, newPath, renaming, oldPath);
         }
         
         public static bool IsInsideCommentOrString(SearchMatch match, ScintillaControl sci, bool includeComments, bool includeStrings)
