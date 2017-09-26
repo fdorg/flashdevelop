@@ -6200,6 +6200,17 @@ namespace ScintillaNet
                 {
                     int fold = sci.GetFoldLevel(i) & foldHeader;
                     if (fold == foldHeader) ppStart = true;
+                    else
+                    {
+                        int foldParent = sci.FoldParent(i);
+                        if (foldParent != -1)
+                        {
+                            pos = sci.PositionFromLine(foldParent);
+                            ind = sci.GetLineIndentation(i);
+                            style = sci.BaseStyleAt(pos + ind);
+                            if (style == lexerPpStyle) ppStart = true;
+                        }
+                    }
                     break;
                 }
             }
