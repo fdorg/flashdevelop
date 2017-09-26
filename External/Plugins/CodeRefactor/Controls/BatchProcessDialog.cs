@@ -35,11 +35,11 @@ namespace CodeRefactor.Controls
         /// </summary>
         private void InitializeComponent()
         {
-            this.cancelButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.ButtonEx();
             this.operationComboBox = new System.Windows.Forms.FlatCombo();
             this.operationLabel = new System.Windows.Forms.Label();
             this.targetLabel = new System.Windows.Forms.Label();
-            this.processButton = new System.Windows.Forms.Button();
+            this.processButton = new System.Windows.Forms.ButtonEx();
             this.targetComboBox = new System.Windows.Forms.FlatCombo();
             this.SuspendLayout();
             // 

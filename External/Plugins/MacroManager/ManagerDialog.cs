@@ -47,9 +47,9 @@ namespace MacroManager
         {
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.listView = new System.Windows.Forms.ListViewEx();
-            this.addButton = new System.Windows.Forms.Button();
-            this.deleteButton = new System.Windows.Forms.Button();
-            this.closeButton = new System.Windows.Forms.Button();
+            this.addButton = new System.Windows.Forms.ButtonEx();
+            this.deleteButton = new System.Windows.Forms.ButtonEx();
+            this.closeButton = new System.Windows.Forms.ButtonEx();
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.columnHeader = new System.Windows.Forms.ColumnHeader();
             this.infoLabel = new System.Windows.Forms.Label();

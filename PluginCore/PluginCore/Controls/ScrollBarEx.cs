@@ -2147,16 +2147,18 @@ namespace PluginCore.Controls
         protected virtual void OnResize(Object sender, EventArgs e)
         {
             int borderWidth = 1;
-            // TextBox and ListBox draw scrollbars outside
+            // We need to do some theming related tweaks...
             if (control is ListBox && (control as ListBox).BorderStyle == BorderStyle.None) borderWidth = 0;
-            if (control is ListView && (control as ListView).BorderStyle == BorderStyle.None) borderWidth = 0;
-            if (control is TextBoxBase && (control as TextBoxBase).BorderStyle == BorderStyle.None) borderWidth = 0;
+            else if (control is TreeView && (control as TreeView).BorderStyle == BorderStyle.None) borderWidth = 0;
+            else if (control is ListView && (control as ListView).BorderStyle == BorderStyle.None) borderWidth = 0;
+            else if (control is RichTextBox && (control as RichTextBox).BorderStyle == BorderStyle.None) borderWidth = 0;
+            else if (control is TextBox && (control as TextBox).BorderStyle == BorderStyle.FixedSingle) borderWidth = 0;
             vScrollBar.SetBounds(control.Location.X + control.Width - vScrollBar.Width - borderWidth, control.Location.Y + borderWidth, vScrollBar.Width, (control.Height - (borderWidth * 2)) - (hScrollBar.Visible ? hScrollBar.Height : 0));
             hScrollBar.SetBounds(control.Location.X + borderWidth, control.Location.Y + control.Height - hScrollBar.Height - borderWidth, (control.Width - (borderWidth * 2)) - (vScrollBar.Visible ? vScrollBar.Width : 0), hScrollBar.Height);
             scrollerCorner.Visible = vScrollBar.Visible && hScrollBar.Visible;
             if (scrollerCorner.Visible)
             {
-                scrollerCorner.Location = new System.Drawing.Point(vScrollBar.Location.X, hScrollBar.Location.Y);
+                scrollerCorner.Location = new Point(vScrollBar.Location.X, hScrollBar.Location.Y);
                 scrollerCorner.Refresh();
                 scrollerCorner.BringToFront();
             }
@@ -2356,13 +2358,11 @@ namespace PluginCore.Controls
             if (e.OldValue == -1 || listBox.Items.Count == 0) return;
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
             {
-                int wParam = Win32.SB_THUMBPOSITION | e.NewValue << 16;
-                Win32.SendMessage(listBox.Handle, Win32.WM_VSCROLL, (IntPtr)wParam, IntPtr.Zero);
+                listBox.TopIndex = e.NewValue;
             }
             else
             {
-                int wParam = Win32.SB_THUMBPOSITION | e.NewValue << 16;
-                Win32.SendMessage(listBox.Handle, Win32.WM_HSCROLL, (IntPtr)wParam, IntPtr.Zero);
+                listBox.TopIndex = e.NewValue;
             }
         }
     }

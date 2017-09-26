@@ -23,7 +23,6 @@ namespace FlashDevelop.Dialogs
             this.FormGuid = "54452519-b993-47f6-9d27-22d31bced4ff";
             this.InitializeComponent();
             this.ApplyLocalizedTexts();
-            ScaleHelper.AdjustForHighDPI(this);
         }
 
         #region Windows Form Designer Generated Code
@@ -34,9 +33,9 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
-            this.deleteButton = new System.Windows.Forms.Button();
-            this.openButton = new System.Windows.Forms.Button();
-            this.notifyButton = new System.Windows.Forms.Button();
+            this.deleteButton = new System.Windows.Forms.ButtonEx();
+            this.openButton = new System.Windows.Forms.ButtonEx();
+            this.notifyButton = new System.Windows.Forms.ButtonEx();
             this.infoLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 

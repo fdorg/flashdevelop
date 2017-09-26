@@ -28,7 +28,7 @@ namespace CodeRefactor.Controls
         private void InitializeComponent()
         {
             this.progressBar = new System.Windows.Forms.ProgressBarEx();
-            this.closeButton = new System.Windows.Forms.Button();
+            this.closeButton = new System.Windows.Forms.ButtonEx();
             this.labelStatus = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 

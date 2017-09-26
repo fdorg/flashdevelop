@@ -60,23 +60,23 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
-            this.addButton = new System.Windows.Forms.Button();
-            this.exportButton = new System.Windows.Forms.Button();
+            this.addButton = new System.Windows.Forms.ButtonEx();
+            this.exportButton = new System.Windows.Forms.ButtonEx();
             this.columnHeader = new System.Windows.Forms.ColumnHeader();
             this.contentsTextBox = new System.Windows.Forms.TextBoxEx();
-            this.deleteButton = new System.Windows.Forms.Button();
-            this.revertButton = new System.Windows.Forms.Button();
+            this.deleteButton = new System.Windows.Forms.ButtonEx();
+            this.revertButton = new System.Windows.Forms.ButtonEx();
             this.snippetNameTextBox = new System.Windows.Forms.TextBoxEx();
             this.nameLabel = new System.Windows.Forms.Label();
             this.languageLabel = new System.Windows.Forms.Label();
             this.snippetListView = new System.Windows.Forms.ListViewEx();
             this.snippetsLabel = new System.Windows.Forms.Label();
-            this.saveButton = new System.Windows.Forms.Button();
+            this.saveButton = new System.Windows.Forms.ButtonEx();
             this.insertLabel = new System.Windows.Forms.Label();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.browseDialog = new Ookii.Dialogs.VistaFolderBrowserDialog();
             this.languageDropDown = new System.Windows.Forms.FlatCombo();
-            this.closeButton = new System.Windows.Forms.Button();
+            this.closeButton = new System.Windows.Forms.ButtonEx();
             this.insertComboBox = new System.Windows.Forms.FlatCombo();
             this.SuspendLayout();
             // 
@@ -127,7 +127,7 @@ namespace FlashDevelop.Dialogs
             // 
             // snippetNameTextBox
             //
-            this.snippetNameTextBox.Location = new System.Drawing.Point(151, 26);
+            this.snippetNameTextBox.Location = new System.Drawing.Point(151, 25);
             this.snippetNameTextBox.Name = "snippetNameTextBox";
             this.snippetNameTextBox.Size = new System.Drawing.Size(140, 19);
             this.snippetNameTextBox.TabIndex = 6;
@@ -253,7 +253,7 @@ namespace FlashDevelop.Dialogs
             this.CancelButton = this.closeButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(615, 393);
+            this.ClientSize = new System.Drawing.Size(615, 394);
             this.MinimumSize = new System.Drawing.Size(615, 393);
             this.Controls.Add(this.languageDropDown);
             this.Controls.Add(this.insertComboBox);

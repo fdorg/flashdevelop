@@ -47,6 +47,15 @@ namespace PluginCore
         #endregion
     }
 
+    public interface IThemeHandler
+    {
+        #region IThemeHandler Methods
+
+        void AfterTheming();
+
+        #endregion
+    }
+
     public interface ITabbedDocument : IDockContent
     {
         #region ITabbedDocument Properties
@@ -98,7 +107,9 @@ namespace PluginCore
 
     public interface ICompletionListSpecialItem : ICompletionListItem
     {
+        #region ICompletionListSpecialItem Properties
 
+        #endregion
     }
 
     public interface IMainForm : IContainerControl, IWin32Window

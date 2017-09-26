@@ -60,12 +60,12 @@ namespace ProjectManager.Controls
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.listBox = new System.Windows.Forms.ListBox();
-            this.btnNewClasspath = new System.Windows.Forms.Button();
-            this.btnRemove = new System.Windows.Forms.Button();
+            this.listBox = new System.Windows.Forms.ListBoxEx();
+            this.btnNewClasspath = new System.Windows.Forms.ButtonEx();
+            this.btnRemove = new System.Windows.Forms.ButtonEx();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.btnUp = new System.Windows.Forms.Button();
-            this.btnDown = new System.Windows.Forms.Button();
+            this.btnUp = new System.Windows.Forms.ButtonEx();
+            this.btnDown = new System.Windows.Forms.ButtonEx();
             this.langComboBox = new System.Windows.Forms.FlatCombo();
             this.SuspendLayout();
             // 
@@ -85,7 +85,7 @@ namespace ProjectManager.Controls
             // 
             this.btnNewClasspath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnNewClasspath.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnNewClasspath.Location = new System.Drawing.Point(0, 149);
+            this.btnNewClasspath.Location = new System.Drawing.Point(0, 147);
             this.btnNewClasspath.Name = "btnNewClasspath";
             this.btnNewClasspath.Size = new System.Drawing.Size(107, 21);
             this.btnNewClasspath.TabIndex = 1;
@@ -96,7 +96,7 @@ namespace ProjectManager.Controls
             // 
             this.btnRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnRemove.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.btnRemove.Location = new System.Drawing.Point(111, 149);
+            this.btnRemove.Location = new System.Drawing.Point(111, 147);
             this.btnRemove.Name = "btnRemove";
             this.btnRemove.Size = new System.Drawing.Size(69, 21);
             this.btnRemove.TabIndex = 2;

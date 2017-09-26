@@ -48,8 +48,8 @@ namespace FlashDevelop.Dialogs
         private void InitializeComponent()
         {
             this.bottomPanel = new System.Windows.Forms.Panel();
-            this.cancelButton = new System.Windows.Forms.Button();
-            this.okButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.ButtonEx();
+            this.okButton = new System.Windows.Forms.ButtonEx();
             this.argsPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.bottomPanel.SuspendLayout();
             this.SuspendLayout();

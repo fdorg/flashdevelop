@@ -26,6 +26,7 @@ namespace PluginCore.Controls
             this.Load += new EventHandler(this.SmartFormLoad);
             this.FormClosed += new FormClosedEventHandler(this.SmartFormClosed);
             EventManager.AddEventHandler(this, EventType.ApplyTheme);
+            ScaleHelper.AdjustForHighDPI(this);
         }
 
         /// <summary>
@@ -44,6 +45,14 @@ namespace PluginCore.Controls
         {
             get { return this.formGuid; }
             set { this.formGuid = value.ToUpper(); }
+        }
+
+        /// <summary>
+        /// Gets or sets the help link
+        /// </summary>
+        public new Boolean UseTheme
+        {
+            get { return PluginBase.MainForm.GetThemeFlag("SmartForm.UseTheme", false); }
         }
 
         /// <summary>
@@ -73,7 +82,6 @@ namespace PluginCore.Controls
         /// </summary>
         private void ApplyTheming()
         {
-            this.UseTheme = PluginBase.MainForm.GetThemeFlag("SmartForm.UseTheme");
             PluginBase.MainForm.SetUseTheme(this, this.UseTheme);
             if (this.UseTheme)
             {
@@ -96,7 +104,6 @@ namespace PluginCore.Controls
         private void SmartFormLoad(Object sender, EventArgs e)
         {
             this.ApplyTheming();
-            ScaleHelper.AdjustForHighDPI(this);
             if (this.StartPosition == FormStartPosition.CenterParent)
             {
                 this.CenterToParent();
@@ -105,7 +112,7 @@ namespace PluginCore.Controls
             {
                 Object obj = ObjectSerializer.Deserialize(this.FormPropsFile, this.formProps);
                 this.formProps = (FormProps)obj;
-                if (!this.formProps.WindowSize.IsEmpty)
+                if (!this.formProps.WindowSize.IsEmpty && this.FormBorderStyle == FormBorderStyle.Sizable)
                 {
                     this.Size = this.formProps.WindowSize;
                 }
@@ -113,7 +120,7 @@ namespace PluginCore.Controls
             if (!String.IsNullOrEmpty(this.helpLink))
             {
                 this.HelpButton = true;
-                this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.SmartFormHelpButtonClick);
+                this.HelpButtonClicked += new CancelEventHandler(this.SmartFormHelpButtonClick);
             }
             ApplyProps?.Invoke(this);
         }
@@ -124,7 +131,7 @@ namespace PluginCore.Controls
         private void SmartFormClosed(Object sender, FormClosedEventArgs e)
         {
             SaveProps?.Invoke(this);
-            if (!String.IsNullOrEmpty(this.formGuid) && !this.Size.IsEmpty)
+            if (!String.IsNullOrEmpty(this.formGuid) && !this.Size.IsEmpty && this.FormBorderStyle == FormBorderStyle.Sizable)
             {
                 this.formProps.WindowSize = this.Size;
                 ObjectSerializer.Serialize(this.FormPropsFile, this.formProps);

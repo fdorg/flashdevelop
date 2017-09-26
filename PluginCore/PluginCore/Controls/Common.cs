@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
 using System.ComponentModel.Design;
 using PluginCore.Helpers;
-using PluginCore.Managers;
 using PluginCore;
 
 namespace System.Windows.Forms
@@ -14,15 +13,25 @@ namespace System.Windows.Forms
         public static Int32 BorderWidth { get; set; } = 1;
 
         /// <summary>
-        /// Adds a wrapper panel to the control to create a border
+        /// Should we use custom border panel?
+        /// </summary>
+        public static Boolean UseCustomBorder
+        {
+            get { return PluginBase.MainForm.GetThemeFlag("ThemeManager.UseCustomBorder", false); }
+        }
+
+        /// <summary>
+        /// Adds a wrapper panel to the control to create a border.
         /// </summary>
         public static BorderPanel Attach(Control ctrl)
         {
+            if (!UseCustomBorder) return null;
             return Attach(ctrl, true);
         }
         public static BorderPanel Attach(Control ctrl, Boolean visible)
         {
             BorderPanel panel;
+            if (!UseCustomBorder) return null;
             if (ctrl.Tag is BorderPanel) panel = ctrl.Tag as BorderPanel;
             else
             {
@@ -66,30 +75,15 @@ namespace System.Windows.Forms
 
     }
 
-    public class DataGridViewEx : DataGridView, IEventHandler
+    public class DataGridViewEx : DataGridView
     {
+        private Boolean themeBorder = false;
         public Boolean UseTheme { get; set; } = true;
         public Color BorderColor { get; set; } = SystemColors.ControlDark;
 
         public DataGridViewEx()
         {
             this.CellPainting += this.OnDataGridViewCellPainting;
-            EventManager.AddEventHandler(this, EventType.ApplyTheme);
-        }
-
-        public void HandleEvent(object sender, NotifyEvent e, HandlingPriority priority)
-        {
-            if (e.Type == EventType.ApplyTheme) RefreshColors();
-        }
-
-        private void RefreshColors()
-        {
-            Color fore = PluginBase.MainForm.GetThemeColor("DataGridView.ForeColor");
-            Color back = PluginBase.MainForm.GetThemeColor("DataGridView.BackColor");
-            Color border = PluginBase.MainForm.GetThemeColor("DataGridView.LineColor");
-            DefaultCellStyle.ForeColor = (fore != Color.Empty) ? fore : SystemColors.WindowText;
-            DefaultCellStyle.BackColor = (back != Color.Empty) ? back : SystemColors.Window;
-            GridColor = (border != Color.Empty) ? border :  SystemColors.ControlDark;
         }
 
         private void OnDataGridViewCellPainting(Object sender, DataGridViewCellPaintingEventArgs e)
@@ -119,9 +113,18 @@ namespace System.Windows.Forms
             switch (message.Msg)
             {
                 case Win32.WM_PAINT:
-                case Win32.WM_NCPAINT:
-                case Win32.WM_ERASEBKGND:
-                    BorderPanel.Attach(this, this.UseTheme && this.BorderStyle == BorderStyle.None);
+                    GridColor = PluginBase.MainForm.GetThemeColor("DataGridView.LineColor", SystemColors.ControlDark);
+                    DefaultCellStyle.ForeColor = PluginBase.MainForm.GetThemeColor("DataGridView.ForeColor", SystemColors.WindowText);
+                    DefaultCellStyle.BackColor = PluginBase.MainForm.GetThemeColor("DataGridView.BackColor", SystemColors.Window);
+                    if (this.UseTheme && this.BorderStyle == BorderStyle.FixedSingle)
+                    {
+                        this.themeBorder = true;
+                        this.BorderStyle = BorderStyle.None;
+                    }
+                    if (this.UseTheme && this.themeBorder)
+                    {
+                        BorderPanel.Attach(this);
+                    }
                     break;
             }
         }
@@ -131,13 +134,16 @@ namespace System.Windows.Forms
     public class ListViewEx : ListView
     {
         private Timer expandDelay;
+        private Boolean themeBorder = false;
         public Boolean UseTheme { get; set; } = true;
-        public new Boolean GridLines { get; set; } = false;
         public Color GridLineColor { get; set; } = SystemColors.Control;
+        public Color BorderColor { get; set; } = SystemColors.ControlDark;
+        private Boolean themeGridLines = false;
 
         public ListViewEx()
         {
             this.OwnerDraw = true;
+            this.DoubleBuffered = true;
             this.DrawColumnHeader += this.OnDrawColumnHeader;
             this.DrawSubItem += this.OnDrawSubItem;
             this.DrawItem += this.OnDrawItem;
@@ -149,23 +155,23 @@ namespace System.Windows.Forms
             base.GridLines = false;
         }
 
-        private void OnDrawSubItem(object sender, DrawListViewSubItemEventArgs e)
-        {
-            e.DrawDefault = true;
-            if (this.GridLines && Items.Count > 0)
-            {
-                Pen pen = new Pen(GridLineColor);
-                e.Graphics.DrawLine(pen, new Point(e.Bounds.Left - 1, e.Bounds.Top), new Point(e.Bounds.Left - 1, e.Bounds.Bottom));
-            }
-        }
-
         private void OnDrawItem(object sender, DrawListViewItemEventArgs e)
         {
             e.DrawDefault = true;
-            if (this.GridLines && Items.Count > 0)
+            if (this.themeGridLines && this.Items.Count > 0)
             {
-                Pen pen = new Pen(GridLineColor);
+                Pen pen = new Pen(this.GridLineColor);
                 e.Graphics.DrawLine(pen, new Point(e.Bounds.Left, e.Bounds.Top - 1), new Point(e.Bounds.Right, e.Bounds.Top - 1));
+            }
+        }
+
+        private void OnDrawSubItem(object sender, DrawListViewSubItemEventArgs e)
+        {
+            e.DrawDefault = true;
+            if (this.themeGridLines && this.Items.Count > 0)
+            {
+                Pen pen = new Pen(this.GridLineColor);
+                e.Graphics.DrawLine(pen, new Point(e.Bounds.Left - 1, e.Bounds.Top), new Point(e.Bounds.Left - 1, e.Bounds.Bottom));
             }
         }
 
@@ -174,7 +180,7 @@ namespace System.Windows.Forms
             Color back = PluginBase.MainForm.GetThemeColor("ColumnHeader.BackColor");
             Color text = PluginBase.MainForm.GetThemeColor("ColumnHeader.TextColor");
             Color border = PluginBase.MainForm.GetThemeColor("ColumnHeader.BorderColor");
-            if (UseTheme && back != Color.Empty && border != Color.Empty && text != Color.Empty)
+            if (this.UseTheme && back != Color.Empty && border != Color.Empty && text != Color.Empty)
             {
                 e.Graphics.FillRectangle(new SolidBrush(back), e.Bounds.X, 0, e.Bounds.Width, e.Bounds.Height);
                 e.Graphics.DrawLine(new Pen(border), e.Bounds.X, e.Bounds.Height - 1, e.Bounds.X + e.Bounds.Width, e.Bounds.Height - 1);
@@ -193,6 +199,11 @@ namespace System.Windows.Forms
             {
                 this.Columns[this.Columns.Count - 1].Width = -2;
             }
+            if (this.UseTheme && this.GridLines) // Update gridlines...
+            {
+                base.GridLines = false;
+                this.themeGridLines = true;
+            }
         }
 
         protected override void WndProc(ref Message message)
@@ -201,11 +212,16 @@ namespace System.Windows.Forms
             switch (message.Msg)
             {
                 case Win32.WM_PAINT:
-                case Win32.WM_NCPAINT:
-                case Win32.WM_ERASEBKGND:
-                    this.expandDelay.Enabled = true; // Delay column expand...
-                    OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));
-                    BorderPanel.Attach(this, this.UseTheme && this.BorderStyle == BorderStyle.None);
+                    this.expandDelay.Enabled = true;
+                    if (this.UseTheme && this.BorderStyle == BorderStyle.FixedSingle)
+                    {
+                        this.themeBorder = true;
+                        this.BorderStyle = BorderStyle.None;
+                    }
+                    if (this.UseTheme && this.themeBorder)
+                    {
+                        BorderPanel.Attach(this);
+                    }
                     break;
             }
         }
@@ -213,7 +229,9 @@ namespace System.Windows.Forms
 
     public class TreeViewEx : TreeView
     {
+        private Boolean themeBorder = false;
         public Boolean UseTheme { get; set; } = true;
+        public Color BorderColor { get; set; } = SystemColors.ControlDark;
         private static Int32 SIZE1 = ScaleHelper.Scale(1);
         private static Int32 SIZE2 = ScaleHelper.Scale(2);
         private static Int32 SIZE3 = ScaleHelper.Scale(3);
@@ -328,10 +346,16 @@ namespace System.Windows.Forms
             switch (message.Msg)
             {
                 case Win32.WM_PAINT:
-                case Win32.WM_NCPAINT:
-                case Win32.WM_ERASEBKGND:
                     OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));
-                    BorderPanel.Attach(this, this.UseTheme && this.BorderStyle == BorderStyle.None);
+                    if (this.UseTheme && this.BorderStyle == BorderStyle.FixedSingle)
+                    {
+                        this.themeBorder = true;
+                        this.BorderStyle = BorderStyle.None;
+                    }
+                    if (this.UseTheme && this.themeBorder)
+                    {
+                        BorderPanel.Attach(this);
+                    }
                     break;
             }
         }
@@ -386,41 +410,16 @@ namespace System.Windows.Forms
 
     }
 
-    public class FlatCombo : ComboBox, IEventHandler
+    public class FlatCombo : ComboBox
     {
         public Boolean UseTheme { get; set; } = true;
-        private Pen BorderPen = new Pen(SystemColors.ControlDark);
-        private SolidBrush BackBrush = new SolidBrush(SystemColors.Window);
-        private SolidBrush ArrowBrush = new SolidBrush(SystemColors.ControlText);
         private ComboBoxStyle prevStyle = ComboBoxStyle.DropDown;
+        private Color borderColor { get; set; } = SystemColors.ControlDark;
         private Boolean updatingStyle = false;
-        
+
         public FlatCombo()
         {
-            EventManager.AddEventHandler(this, EventType.ApplyTheme);
-        }
-
-        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
-        {
-            if (e.Type == EventType.ApplyTheme)
-            {
-                this.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
-                this.UseTheme = (this.FlatStyle == FlatStyle.Popup);
-                this.RefreshColors();
-            }
-        }
-
-        private void RefreshColors()
-        {
-            Color fore = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ForeColor");
-            Color back = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BackColor");
-            Color border = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor");
-            if (fore == Color.Empty && back == Color.Empty && border == Color.Empty) this.UseTheme = false;
-            this.BorderPen.Color = this.UseTheme && border != Color.Empty ? border : SystemColors.ControlDark;
-            this.ArrowBrush.Color = this.UseTheme && fore != Color.Empty ? fore : SystemColors.ControlText;
-            this.BackBrush.Color = this.UseTheme && back != Color.Empty ? back : SystemColors.Window;
-            this.ForeColor = this.UseTheme && fore != Color.Empty ? fore : SystemColors.ControlText;
-            this.BackColor = this.UseTheme && back != Color.Empty ? back : SystemColors.Window;
+            this.borderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor", SystemColors.ControlDark);
         }
 
         protected override void WndProc(ref Message m)
@@ -430,25 +429,25 @@ namespace System.Windows.Forms
             switch (m.Msg)
             {
                 case Win32.WM_PAINT:
-                case Win32.WM_NCPAINT:
-                case Win32.WM_ERASEBKGND:
-                case Win32.WM_PRINTCLIENT:
                     Int32 pad = ScaleHelper.Scale(2);
                     Int32 width = ScaleHelper.Scale(18);
                     Graphics g = this.CreateGraphics();
+                    var pen = new Pen(this.borderColor);
+                    var back = new SolidBrush(PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BackColor", SystemColors.Window));
+                    var arrow = new SolidBrush(PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ForeColor", SystemColors.ControlText));
                     Rectangle backRect = new Rectangle(this.ClientRectangle.X, this.ClientRectangle.Y, this.ClientRectangle.Width - 1, this.ClientRectangle.Height - 1);
                     Rectangle dropRect = new Rectangle(this.ClientRectangle.Right - width, this.ClientRectangle.Y, width, this.ClientRectangle.Height);
-                    if (this.Enabled) g.FillRectangle(BackBrush, dropRect);
-                    g.DrawRectangle(BorderPen, backRect);
+                    if (this.Enabled) g.FillRectangle(back, dropRect);
+                    g.DrawRectangle(pen, backRect);
                     Point middle = new Point(dropRect.Left + (dropRect.Width / 2), dropRect.Top + (dropRect.Height / 2));
-                    Point[] arrow = new Point[] 
+                    Point[] shape = new Point[]
                     {
                         new Point(middle.X - pad, middle.Y - 1),
                         new Point(middle.X + pad + 1, middle.Y - 1),
                         new Point(middle.X, middle.Y + pad)
                     };
-                    if (this.Enabled) g.FillPolygon(ArrowBrush, arrow);
-                    else g.FillPolygon(SystemBrushes.ControlDark, arrow);
+                    if (this.Enabled) g.FillPolygon(arrow, shape);
+                    else g.FillPolygon(SystemBrushes.ControlDark, shape);
                     break;
                 default:
                     break;
@@ -477,8 +476,7 @@ namespace System.Windows.Forms
         protected override void OnMouseEnter(System.EventArgs e)
         {
             base.OnMouseEnter(e);
-            Color border = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ActiveBorderColor");
-            BorderPen.Color = border != Color.Empty ? border : SystemColors.Highlight;
+            this.borderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ActiveBorderColor", SystemColors.Highlight);
             this.Invalidate();
         }
 
@@ -486,60 +484,35 @@ namespace System.Windows.Forms
         {
             base.OnMouseLeave(e);
             if (this.Focused) return;
-            Color border = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor");
-            BorderPen.Color = border != Color.Empty ? border : SystemColors.ControlDark;
+            this.borderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor", SystemColors.ControlDark);
             this.Invalidate();
         }
 
         protected override void OnLostFocus(System.EventArgs e)
         {
             base.OnLostFocus(e);
-            Color border = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor");
-            BorderPen.Color = border != Color.Empty ? border : SystemColors.ControlDark;
+            this.borderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor", SystemColors.ControlDark);
             this.Invalidate();
         }
 
         protected override void OnGotFocus(System.EventArgs e)
         {
             base.OnGotFocus(e);
-            Color border = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ActiveBorderColor");
-            BorderPen.Color = border != Color.Empty ? border : SystemColors.Highlight;
+            this.borderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ActiveBorderColor", SystemColors.Highlight);
             this.Invalidate();
         }
 
         protected override void OnMouseHover(System.EventArgs e)
         {
             base.OnMouseHover(e);
-            Color border = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ActiveBorderColor");
-            BorderPen.Color = border != Color.Empty ? border : SystemColors.Highlight;
+            this.borderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ActiveBorderColor", SystemColors.Highlight);
             this.Invalidate();
-        }
-
-    }
-
-    public class TextBoxEx : TextBox
-    {
-        public Boolean UseTheme { get; set; } = true;
-        public Color BorderColor { get; set; } = SystemColors.ControlDark;
-
-        protected override void WndProc(ref Message message)
-        {
-            base.WndProc(ref message);
-            switch (message.Msg)
-            {
-                case Win32.WM_PAINT:
-                case Win32.WM_NCPAINT:
-                case Win32.WM_ERASEBKGND:
-                    Graphics g = this.CreateGraphics();
-                    g.DrawRectangle(new Pen(this.BackColor), new Rectangle(0, 0, this.Width-1, this.Height-1));
-                    BorderPanel.Attach(this, this.UseTheme && this.BorderStyle == BorderStyle.FixedSingle);
-                    break;
-            }
         }
     }
 
     public class ListBoxEx : ListBox
     {
+        private Boolean themeBorder = false;
         public Boolean UseTheme { get; set; } = true;
         public Color BorderColor { get; set; } = SystemColors.ControlDark;
 
@@ -549,9 +522,48 @@ namespace System.Windows.Forms
             switch (message.Msg)
             {
                 case Win32.WM_PAINT:
-                case Win32.WM_NCPAINT:
-                case Win32.WM_ERASEBKGND:
-                    BorderPanel.Attach(this, this.UseTheme && this.BorderStyle == BorderStyle.FixedSingle);
+                    if (this.UseTheme && this.BorderStyle == BorderStyle.FixedSingle)
+                    {
+                        this.themeBorder = true;
+                        this.BorderStyle = BorderStyle.None;
+                    }
+                    if (this.UseTheme && this.themeBorder)
+                    {
+                        BorderPanel.Attach(this);
+                    }
+                    break;
+            }
+        }
+    }
+
+    public class TextBoxEx : TextBox
+    {
+        private Boolean themeBorder = false;
+        public Boolean UseTheme { get; set; } = true;
+        public Color BorderColor { get; set; } = SystemColors.ControlDark;
+
+        protected override void WndProc(ref Message message)
+        {
+            base.WndProc(ref message);
+            switch (message.Msg)
+            {
+                case Win32.WM_PAINT:
+                    if (this.UseTheme && this.BorderStyle == BorderStyle.FixedSingle)
+                    {
+                        this.themeBorder = true;
+                        if (this.Multiline) this.BorderStyle = BorderStyle.None;
+                    }
+                    if (this.UseTheme && this.themeBorder)
+                    {
+                        Graphics g = this.CreateGraphics();
+                        Rectangle r = new Rectangle(0, 0, this.ClientSize.Width - 1, this.ClientSize.Height - 1);
+                        if (this.Multiline)
+                        {
+                            g.DrawRectangle(new Pen(this.BackColor), r);
+                            BorderPanel.Attach(this);
+                        }
+                        else g.DrawRectangle(new Pen(this.BorderColor), r);
+                    }
                     break;
             }
         }
@@ -561,10 +573,11 @@ namespace System.Windows.Forms
     {
         public Boolean UseTheme { get; set; } = true;
         public Color BorderColor { get; set; } = SystemColors.ControlDark;
+        private Boolean themeBorder = false;
 
         public void Recreate()
         {
-            this.RecreateHandle();
+            this.RecreateHandle(); // TODO: Crashes FD sometimes on start...
         }
 
         protected override void WndProc(ref Message message)
@@ -573,9 +586,15 @@ namespace System.Windows.Forms
             switch (message.Msg)
             {
                 case Win32.WM_PAINT:
-                case Win32.WM_NCPAINT:
-                case Win32.WM_ERASEBKGND:
-                    BorderPanel.Attach(this, this.UseTheme && this.BorderStyle == BorderStyle.None);
+                    if (this.UseTheme && this.BorderStyle == BorderStyle.FixedSingle)
+                    {
+                        this.themeBorder = true;
+                        this.BorderStyle = BorderStyle.None;
+                    }
+                    if (this.UseTheme && this.themeBorder)
+                    {
+                        BorderPanel.Attach(this);
+                    }
                     break;
             }
         }
@@ -597,9 +616,9 @@ namespace System.Windows.Forms
             {
                 Rectangle rec = new Rectangle(0, 0, this.Width, this.Height);
                 double scaleFactor = (((double)Value - (double)Minimum) / ((double)Maximum - (double)Minimum));
-                rec.Width = (int)((rec.Width * scaleFactor) - 4); rec.Height -= 4;
+                rec.Width = (int)((rec.Width * scaleFactor) - 2); rec.Height -= 2;
                 e.Graphics.FillRectangle(new SolidBrush(this.BackColor), new Rectangle(0, 0, this.Width - 1, this.Height - 1));
-                e.Graphics.FillRectangle(new SolidBrush(this.ForeColor), 2, 2, rec.Width, rec.Height);
+                e.Graphics.FillRectangle(new SolidBrush(this.ForeColor), 1, 1, rec.Width, rec.Height);
                 e.Graphics.DrawRectangle(new Pen(this.BorderColor), new Rectangle(0, 0, this.Width - 1, this.Height - 1));
             }
             else base.OnPaint(e);
@@ -643,7 +662,91 @@ namespace System.Windows.Forms
                 Color color = PluginBase.MainForm.GetThemeColor("PropertyGrid.BackColor", SystemColors.Control);
                 e.Graphics.FillRectangle(new SolidBrush(color), this.ClientRectangle);
             }
-            else base.OnPaint(e);
+        }
+    }
+
+    public class PictureBoxEx : PictureBox
+    {
+        public Boolean UseTheme { get; set; } = true;
+        public Color BorderColor { get; set; } = SystemColors.ControlDark;
+        private Boolean themeBorder = false;
+
+        protected override void WndProc(ref Message message)
+        {
+            base.WndProc(ref message);
+            switch (message.Msg)
+            {
+                case Win32.WM_PAINT:
+                    if (this.UseTheme && this.BorderStyle == BorderStyle.FixedSingle)
+                    {
+                        this.themeBorder = true;
+                        this.BorderStyle = BorderStyle.None;
+                    }
+                    if (this.UseTheme && this.themeBorder)
+                    {
+                        BorderPanel.Attach(this);
+                    }
+                    break;
+            }
+        }
+    }
+
+    public class ButtonEx : Button
+    {
+        public Boolean UseTheme { get; set; } = true;
+        public Color DisabledTextColor { get; set; } = SystemColors.ControlDark;
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+            if (this.UseTheme && !this.Enabled)
+            {
+                TextRenderer.DrawText(e.Graphics, this.Text, this.Font, this.ClientRectangle, this.DisabledTextColor);
+            }
+        }
+    }
+
+    public class CheckBoxEx : CheckBox
+    {
+        public Boolean UseTheme { get; set; } = true;
+        public Color DisabledTextColor { get; set; } = SystemColors.ControlDark;
+        public Color BorderColor { get; set; } = SystemColors.ControlDark;
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+            if (this.UseTheme)
+            { 
+                Size size = SystemInformation.MenuCheckSize;
+                var checkRect = new Rectangle(0, 4, size.Width - 3, size.Height - 3);
+                var markRect = new Rectangle(3, 7, size.Width - 8, size.Height - 8);
+                if (this.RightToLeft == RightToLeft.Yes)
+                {
+                    var offset = (this.Width - 1) - (size.Width - 3);
+                    checkRect.Offset(offset, 0);
+                    markRect.Offset(offset, 0);
+                }
+                Color back = this.FlatAppearance.CheckedBackColor;
+                if (ClientRectangle.Contains(PointToClient(MousePosition)))
+                {
+                    if (MouseButtons == MouseButtons.Left)
+                    {
+                        back = this.FlatAppearance.MouseDownBackColor;
+                    }
+                    else back = this.FlatAppearance.MouseOverBackColor;
+                }
+                e.Graphics.FillRectangle(new SolidBrush(back), checkRect);
+                e.Graphics.DrawRectangle(new Pen(this.BorderColor), checkRect);
+                if (this.CheckState == CheckState.Indeterminate)
+                {
+                    e.Graphics.FillRectangle(new SolidBrush(this.BackColor), markRect);
+                }
+                else if (this.CheckState == CheckState.Checked)
+                {
+                    Image image = PluginBase.MainForm.FindImageAndSetAdjust("485");
+                    e.Graphics.DrawImage(image, checkRect, new Rectangle(Point.Empty, image.Size), GraphicsUnit.Pixel);
+                }
+            }
         }
     }
 
@@ -653,7 +756,15 @@ namespace System.Windows.Forms
 
         public FormEx()
         {
-            this.SetStyle(ControlStyles.ResizeRedraw, true);
+            this.ResizeRedraw = true;
+        }
+
+        protected override void OnPaintBackground(PaintEventArgs e)
+        {
+            if (!this.UseTheme)
+            {
+                base.OnPaintBackground(e);
+            }
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -666,8 +777,8 @@ namespace System.Windows.Forms
                 if (this.WindowState != FormWindowState.Maximized && (this.FormBorderStyle == FormBorderStyle.Sizable || this.FormBorderStyle == FormBorderStyle.SizableToolWindow))
                 {
                     this.SizeGripStyle = SizeGripStyle.Hide;
-                    Color dark = PluginBase.MainForm.GetThemeColor("Form.3dLightColor", SystemColors.ControlDark);
-                    Color light = PluginBase.MainForm.GetThemeColor("Form.3dDarkColor", SystemColors.ControlLight);
+                    Color dark = PluginBase.MainForm.GetThemeColor("Form.3dDarkColor", SystemColors.ControlDark);
+                    Color light = PluginBase.MainForm.GetThemeColor("Form.3dLightColor", SystemColors.ControlLight);
                     using (SolidBrush darkBrush = new SolidBrush(dark), lightBrush = new SolidBrush(light))
                     {
                         Int32 y = this.ClientRectangle.Bottom - 3 * 2 + 1;
@@ -684,6 +795,81 @@ namespace System.Windows.Forms
                         }
                     }
                 }
+            }
+        }
+    }
+
+    public class TabControlEx : CustomTabControl, IThemeHandler
+    {
+        public Boolean UseTheme
+        {
+            get { return PluginBase.MainForm.GetThemeFlag("TabControl.UseTheme"); }
+        }
+
+        public TabControlEx()
+        {
+            if (this.UseTheme) this.DisplayStyle = TabStyle.Flat;
+        }
+
+        private void MatchBackColor(Control parent)
+        {
+            foreach (Control ctrl in parent.Controls)
+            {
+                if (ctrl is Label || ctrl is CheckBox || ctrl is GroupBox)
+                {
+                    ctrl.BackColor = Color.Empty;
+                }
+                this.MatchBackColor(ctrl);
+            }
+        }
+
+        public void AfterTheming()
+        {
+            this.MatchBackColor(this);
+        }
+    }
+
+    public class StatusBarEx : StatusBar
+    {
+        public Boolean UseTheme { get; set; } = true;
+
+        protected override void WndProc(ref Message message)
+        {
+            base.WndProc(ref message);
+            switch (message.Msg)
+            {
+                case Win32.WM_PAINT:
+                    if (this.UseTheme)
+                    {
+                        Graphics g = this.CreateGraphics();
+                        Color back = PluginBase.MainForm.GetThemeColor("StatusBar.BackColor", SystemColors.Control);
+                        Color fore = PluginBase.MainForm.GetThemeColor("StatusBar.ForeColor", SystemColors.ControlText);
+                        g.FillRectangle(new SolidBrush(back), this.ClientRectangle);
+                        g.DrawLine(SystemPens.ControlDark, new Point(this.ClientRectangle.X, this.ClientRectangle.Y + 1), new Point(this.ClientRectangle.Width, this.ClientRectangle.Y + 1));
+                        if (this.SizingGrip)
+                        {
+                            Color dark = PluginBase.MainForm.GetThemeColor("StatusBar.3dDarkColor", SystemColors.ControlDark);
+                            Color light = PluginBase.MainForm.GetThemeColor("StatusBar.3dLightColor", SystemColors.ControlLight);
+                            using (SolidBrush darkBrush = new SolidBrush(dark), lightBrush = new SolidBrush(light))
+                            {
+                                Int32 y = this.ClientRectangle.Bottom - 3 * 2 + 1;
+                                for (Int32 i = 3; i >= 1; i--)
+                                {
+                                    Int32 x = (this.ClientRectangle.Right - 3 * 2 + 1);
+                                    for (Int32 j = 0; j < i; j++)
+                                    {
+                                        g.FillRectangle(lightBrush, x + 1, y + 1, 2, 2);
+                                        g.FillRectangle(darkBrush, x, y, 2, 2);
+                                        x -= 4;
+                                    }
+                                    y -= 4;
+                                }
+                            }
+                        }
+                        var tff = TextFormatFlags.VerticalCenter;
+                        TextRenderer.DrawText(g, this.Text, this.Font, new Point(0, (this.Height/2) + 2), fore, tff);
+                    }
+                    break;
             }
         }
     }

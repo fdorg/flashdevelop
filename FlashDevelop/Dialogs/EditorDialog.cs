@@ -16,7 +16,7 @@ using PluginCore;
 
 namespace FlashDevelop.Dialogs
 {
-    public class EditorDialog : SmartForm
+    public class EditorDialog : SmartForm, IThemeHandler
     {
         private String languageFile;
         private XmlDocument languageDoc;
@@ -113,7 +113,6 @@ namespace FlashDevelop.Dialogs
             this.ApplyLocalizedTexts();
             this.InitializeGraphics();
             this.PopulateControls();
-            ScaleHelper.AdjustForHighDPI(this);
         }
 
         #region Windows Form Designer Generated Code
@@ -124,45 +123,45 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
-            this.okButton = new System.Windows.Forms.Button();
-            this.applyButton = new System.Windows.Forms.Button();
-            this.defaultButton = new System.Windows.Forms.Button();
-            this.revertButton = new System.Windows.Forms.Button();
-            this.cancelButton = new System.Windows.Forms.Button();
+            this.okButton = new System.Windows.Forms.ButtonEx();
+            this.applyButton = new System.Windows.Forms.ButtonEx();
+            this.defaultButton = new System.Windows.Forms.ButtonEx();
+            this.revertButton = new System.Windows.Forms.ButtonEx();
+            this.cancelButton = new System.Windows.Forms.ButtonEx();
             this.itemListView = new System.Windows.Forms.ListViewEx();
             this.columnHeader = new System.Windows.Forms.ColumnHeader();
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.itemGroupBox = new System.Windows.Forms.GroupBoxEx();
             this.sampleTextLabel = new System.Windows.Forms.Label();
-            this.italicsCheckBox = new System.Windows.Forms.CheckBox();
-            this.colorizeCheckBox = new System.Windows.Forms.CheckBox();
-            this.backgroundButton = new System.Windows.Forms.Button();
-            this.foregroundButton = new System.Windows.Forms.Button();
-            this.boldCheckBox = new System.Windows.Forms.CheckBox();
-            this.backgroundTextBox = new System.Windows.Forms.TextBox();
-            this.foregroundTextBox = new System.Windows.Forms.TextBox();
+            this.italicsCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.colorizeCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.backgroundButton = new System.Windows.Forms.ButtonEx();
+            this.foregroundButton = new System.Windows.Forms.ButtonEx();
+            this.boldCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.backgroundTextBox = new System.Windows.Forms.TextBoxEx();
+            this.foregroundTextBox = new System.Windows.Forms.TextBoxEx();
             this.fontSizeComboBox = new System.Windows.Forms.FlatCombo();
             this.fontNameComboBox = new System.Windows.Forms.FlatCombo();
             this.sizeLabel = new System.Windows.Forms.Label();
             this.backgroundLabel = new System.Windows.Forms.Label();
             this.foregroundLabel = new System.Windows.Forms.Label();
             this.fontLabel = new System.Windows.Forms.Label();
-            this.caretForeButton = new System.Windows.Forms.Button();
-            this.caretlineBackButton = new System.Windows.Forms.Button();
-            this.selectionBackButton = new System.Windows.Forms.Button();
-            this.selectionForeButton = new System.Windows.Forms.Button();
-            this.caretForeTextBox = new System.Windows.Forms.TextBox();
-            this.caretlineBackTextBox = new System.Windows.Forms.TextBox();
-            this.selectionForeTextBox = new System.Windows.Forms.TextBox();
-            this.selectionBackTextBox = new System.Windows.Forms.TextBox();
-            this.marginForeButton = new System.Windows.Forms.Button();
-            this.marginBackButton = new System.Windows.Forms.Button();
-            this.markerBackButton = new System.Windows.Forms.Button();
-            this.markerForeButton = new System.Windows.Forms.Button();
-            this.marginForeTextBox = new System.Windows.Forms.TextBox();
-            this.marginBackTextBox = new System.Windows.Forms.TextBox();
-            this.markerForeTextBox = new System.Windows.Forms.TextBox();
-            this.markerBackTextBox = new System.Windows.Forms.TextBox();
+            this.caretForeButton = new System.Windows.Forms.ButtonEx();
+            this.caretlineBackButton = new System.Windows.Forms.ButtonEx();
+            this.selectionBackButton = new System.Windows.Forms.ButtonEx();
+            this.selectionForeButton = new System.Windows.Forms.ButtonEx();
+            this.caretForeTextBox = new System.Windows.Forms.TextBoxEx();
+            this.caretlineBackTextBox = new System.Windows.Forms.TextBoxEx();
+            this.selectionForeTextBox = new System.Windows.Forms.TextBoxEx();
+            this.selectionBackTextBox = new System.Windows.Forms.TextBoxEx();
+            this.marginForeButton = new System.Windows.Forms.ButtonEx();
+            this.marginBackButton = new System.Windows.Forms.ButtonEx();
+            this.markerBackButton = new System.Windows.Forms.ButtonEx();
+            this.markerForeButton = new System.Windows.Forms.ButtonEx();
+            this.marginForeTextBox = new System.Windows.Forms.TextBoxEx();
+            this.marginBackTextBox = new System.Windows.Forms.TextBoxEx();
+            this.markerForeTextBox = new System.Windows.Forms.TextBoxEx();
+            this.markerBackTextBox = new System.Windows.Forms.TextBoxEx();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.languageGroupBox = new System.Windows.Forms.GroupBoxEx();
             this.caretForeLabel = new System.Windows.Forms.Label();
@@ -173,32 +172,32 @@ namespace FlashDevelop.Dialogs
             this.marginBackLabel = new System.Windows.Forms.Label();
             this.markerBackLabel = new System.Windows.Forms.Label();
             this.markerForeLabel = new System.Windows.Forms.Label();
-            this.printMarginButton = new System.Windows.Forms.Button();
+            this.printMarginButton = new System.Windows.Forms.ButtonEx();
             this.printMarginLabel = new System.Windows.Forms.Label();
-            this.printMarginTextBox = new System.Windows.Forms.TextBox();
-            this.highlightBackButton = new System.Windows.Forms.Button();
+            this.printMarginTextBox = new System.Windows.Forms.TextBoxEx();
+            this.highlightBackButton = new System.Windows.Forms.ButtonEx();
             this.highlightBackLabel = new System.Windows.Forms.Label();
-            this.highlightBackTextBox = new System.Windows.Forms.TextBox();
-            this.highlightWordBackButton = new System.Windows.Forms.Button();
+            this.highlightBackTextBox = new System.Windows.Forms.TextBoxEx();
+            this.highlightWordBackButton = new System.Windows.Forms.ButtonEx();
             this.highlightWordBackLabel = new System.Windows.Forms.Label();
-            this.highlightWordBackTextBox = new System.Windows.Forms.TextBox();
-            this.modifiedLineButton = new System.Windows.Forms.Button();
+            this.highlightWordBackTextBox = new System.Windows.Forms.TextBoxEx();
+            this.modifiedLineButton = new System.Windows.Forms.ButtonEx();
             this.modifiedLineLabel = new System.Windows.Forms.Label();
-            this.modifiedLineTextBox = new System.Windows.Forms.TextBox();
-            this.bookmarkLineButton = new System.Windows.Forms.Button();
+            this.modifiedLineTextBox = new System.Windows.Forms.TextBoxEx();
+            this.bookmarkLineButton = new System.Windows.Forms.ButtonEx();
             this.bookmarkLineLabel = new System.Windows.Forms.Label();
-            this.bookmarkLineTextBox = new System.Windows.Forms.TextBox();
-            this.errorLineButton = new System.Windows.Forms.Button();
+            this.bookmarkLineTextBox = new System.Windows.Forms.TextBoxEx();
+            this.errorLineButton = new System.Windows.Forms.ButtonEx();
             this.errorLineLabel = new System.Windows.Forms.Label();
-            this.errorLineTextBox = new System.Windows.Forms.TextBox();
-            this.debugLineButton = new System.Windows.Forms.Button();
+            this.errorLineTextBox = new System.Windows.Forms.TextBoxEx();
+            this.debugLineButton = new System.Windows.Forms.ButtonEx();
             this.debugLineLabel = new System.Windows.Forms.Label();
-            this.debugLineTextBox = new System.Windows.Forms.TextBox();
-            this.disabledLineButton = new System.Windows.Forms.Button();
+            this.debugLineTextBox = new System.Windows.Forms.TextBoxEx();
+            this.disabledLineButton = new System.Windows.Forms.ButtonEx();
             this.disabledLineLabel = new System.Windows.Forms.Label();
-            this.disabledLineTextBox = new System.Windows.Forms.TextBox();
+            this.disabledLineTextBox = new System.Windows.Forms.TextBoxEx();
             this.languageDropDown = new System.Windows.Forms.FlatCombo();
-            this.exportButton = new System.Windows.Forms.Button();
+            this.exportButton = new System.Windows.Forms.ButtonEx();
             this.itemGroupBox.SuspendLayout();
             this.languageGroupBox.SuspendLayout();
             this.SuspendLayout();
@@ -1069,6 +1068,14 @@ namespace FlashDevelop.Dialogs
         }
 
         /// <summary>
+        /// Apply styling after theme manager
+        /// </summary>
+        public void AfterTheming()
+        {
+            this.UpdateSampleText();
+        }
+
+        /// <summary>
         /// Initializes all ui components
         /// </summary>
         private void PopulateControls()
@@ -1879,7 +1886,10 @@ namespace FlashDevelop.Dialogs
         public static new void Show()
         {
             using (EditorDialog sp = new EditorDialog())
+            {
                 sp.ShowDialog();
+            }
+                
         }
 
         #endregion

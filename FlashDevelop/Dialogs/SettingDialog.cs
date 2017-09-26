@@ -62,15 +62,15 @@ namespace FlashDevelop.Dialogs
             this.filterText = new System.Windows.Forms.TextBoxEx();
             this.itemPropertyGrid = new FlashDevelop.Controls.FilteredGrid();
             this.columnHeader = new System.Windows.Forms.ColumnHeader();
-            this.closeButton = new System.Windows.Forms.Button();
+            this.closeButton = new System.Windows.Forms.ButtonEx();
             this.nameLabel = new System.Windows.Forms.Label();
             this.infoPictureBox = new System.Windows.Forms.PictureBox();
             this.filterLabel = new System.Windows.Forms.Label();
             this.infoLabel = new System.Windows.Forms.Label();
             this.descLabel = new System.Windows.Forms.Label();
-            this.disableCheckBox = new System.Windows.Forms.CheckBox();
+            this.disableCheckBox = new System.Windows.Forms.CheckBoxEx();
             this.helpLabel = new System.Windows.Forms.LinkLabel();
-            this.clearFilterButton = new System.Windows.Forms.Button();
+            this.clearFilterButton = new System.Windows.Forms.ButtonEx();
             ((System.ComponentModel.ISupportInitialize)(this.infoPictureBox)).BeginInit();
             this.SuspendLayout();
             //

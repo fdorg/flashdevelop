@@ -46,7 +46,6 @@ namespace FlashDevelop.Dialogs
             this.InitializeContextMenu();
             this.InitializeGraphics();
             this.ApplyLocalizedTexts();
-            ScaleHelper.AdjustForHighDPI(this);
         }
 
         #region Windows Form Designer Generated Code
@@ -64,11 +63,11 @@ namespace FlashDevelop.Dialogs
             this.keyLabel = new System.Windows.Forms.Label();
             this.valueTextBox = new System.Windows.Forms.TextBoxEx();
             this.infoLabel = new System.Windows.Forms.Label();
-            this.closeButton = new System.Windows.Forms.Button();
+            this.closeButton = new System.Windows.Forms.ButtonEx();
             this.columnHeader = new System.Windows.Forms.ColumnHeader();
             this.infoPictureBox = new System.Windows.Forms.PictureBox();
-            this.addButton = new System.Windows.Forms.Button();
-            this.deleteButton = new System.Windows.Forms.Button();
+            this.addButton = new System.Windows.Forms.ButtonEx();
+            this.deleteButton = new System.Windows.Forms.ButtonEx();
             this.detailsGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.infoPictureBox)).BeginInit();
             this.SuspendLayout();

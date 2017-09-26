@@ -32,7 +32,6 @@ namespace FlashDevelop.Dialogs
             this.resultHashText = String.Empty;
             this.InitializeComponent();
             this.ApplyLocalizedTexts();
-            ScaleHelper.AdjustForHighDPI(this);
         }
 
         #region Windows Form Designer Generated Code
@@ -43,16 +42,16 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
-            this.inputTextBox = new System.Windows.Forms.TextBox();
-            this.okButton = new System.Windows.Forms.Button();
+            this.inputTextBox = new System.Windows.Forms.TextBoxEx();
+            this.okButton = new System.Windows.Forms.ButtonEx();
             this.hashLabel = new System.Windows.Forms.Label();
             this.hashComboBox = new System.Windows.Forms.FlatCombo();
             this.inputTextLabel = new System.Windows.Forms.Label();
             this.outputTextLabel = new System.Windows.Forms.Label();
-            this.outputTextBox = new System.Windows.Forms.TextBox();
+            this.outputTextBox = new System.Windows.Forms.TextBoxEx();
             this.encodingLabel = new System.Windows.Forms.Label();
             this.encodingComboBox = new System.Windows.Forms.FlatCombo();
-            this.cancelButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.ButtonEx();
             this.SuspendLayout();
             // 
             // inputTextBox

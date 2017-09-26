@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
+using System.Drawing;
 using System.Reflection;
+using System.Collections.Generic;
 using System.Windows.Forms;
-using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Managers;
-using PluginCore.Controls;
+using PluginCore;
 
 namespace FlashDevelop.Managers
 {
@@ -114,7 +113,7 @@ namespace FlashDevelop.Managers
                     }
                 }
                 PropertyInfo info = obj.GetType().GetProperty("UseTheme");
-                if (info != null && info.CanWrite && !(obj is ComboBox))
+                if (info != null && info.CanWrite)
                 {
                     info.SetValue(obj, use, null);
                 }
@@ -173,6 +172,11 @@ namespace FlashDevelop.Managers
                     }
                 }
                 ThemeControl(obj);
+                if (obj is IThemeHandler)
+                {
+                    var th = obj as IThemeHandler;
+                    th.AfterTheming();
+                }
                 if (obj is MainForm)
                 {
                     NotifyEvent ne = new NotifyEvent(EventType.ApplyTheme);
@@ -217,6 +221,7 @@ namespace FlashDevelop.Managers
                 ApplyPropColor(obj, name + ".LinkColor");
                 ApplyPropColor(obj, name + ".BorderColor");
                 ApplyPropColor(obj, name + ".ActiveForeColor");
+                ApplyPropColor(obj, name + ".DisabledTextColor");
                 ApplyPropColor(obj, name + ".DisabledBorderColor");
                 ApplyPropColor(obj, name + ".CurrentPositionColor");
                 ApplyPropColor(obj, name + ".DisabledBackColor");
@@ -249,7 +254,7 @@ namespace FlashDevelop.Managers
                 }
                 // Set flat style from flat style key
                 PropertyInfo fstyle = type.GetProperty("FlatStyle");
-                if (fstyle != null && fstyle.CanWrite && !(obj is ComboBox))
+                if (fstyle != null && fstyle.CanWrite)
                 {
                     String key = name + ".FlatStyle";
                     String style = GetThemeValue(key);

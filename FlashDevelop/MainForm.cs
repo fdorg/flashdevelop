@@ -2566,9 +2566,9 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Paste text using <see cref="ClipboardHistoryDialog"/>.
+        /// Views the current clipboard history
         /// </summary>
-        public void PasteHistory(object sender, EventArgs e)
+        public void ClipboardHistory(object sender, EventArgs e)
         {
             ClipboardTextData data;
             if (ClipboardHistoryDialog.Show(out data))

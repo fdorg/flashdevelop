@@ -6173,8 +6173,8 @@ AND - 모든 조건을 만족할때.</value>
     <value>&amp;Clear</value>
     <comment>Added after 5.2.0</comment>
   </data>
-  <data name="FlashDevelop.Label.PasteHistory" xml:space="preserve">
-    <value>Paste History</value>
+  <data name="FlashDevelop.Label.ClipboardHistory" xml:space="preserve">
+    <value>Clipboard History</value>
     <comment>Added after 5.2.0</comment>
   </data>
   <data name="FlashDevelop.Description.ClipboardHistorySize" xml:space="preserve">

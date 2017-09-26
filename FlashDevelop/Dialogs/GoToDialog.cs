@@ -21,7 +21,6 @@ namespace FlashDevelop.Dialogs
             this.FormGuid = "4d5fdc1c-2698-46e9-b22d-fa9a42ba8d26";
             this.InitializeComponent();
             this.ApplyLocalizedTexts();
-            ScaleHelper.AdjustForHighDPI(this);
         }
         
         #region Windows Forms Designer Generated Code
@@ -32,11 +31,11 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeComponent() 
         {
-            this.lineTextBox = new System.Windows.Forms.TextBox();
-            this.positionButton = new System.Windows.Forms.Button();
+            this.lineTextBox = new System.Windows.Forms.TextBoxEx();
+            this.positionButton = new System.Windows.Forms.ButtonEx();
             this.valueLabel = new System.Windows.Forms.Label();
-            this.closeButton = new System.Windows.Forms.Button();
-            this.lineButton = new System.Windows.Forms.Button();
+            this.closeButton = new System.Windows.Forms.ButtonEx();
+            this.lineButton = new System.Windows.Forms.ButtonEx();
             this.SuspendLayout();
             // 
             // lineTextBox

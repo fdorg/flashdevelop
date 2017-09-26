@@ -59,9 +59,7 @@ namespace FlashDevelop.Managers
                     hwnd = IntPtr.Zero;
                 }
             }
-
             history = new FixedSizeQueue<ClipboardTextData>(Globals.Settings.ClipboardHistorySize);
-
             try
             {
                 var dataObject = Clipboard.GetDataObject();
@@ -93,7 +91,6 @@ namespace FlashDevelop.Managers
                     throw new NotSupportedException(ex.Message, ex);
                 }
             }
-
             hwnd = IntPtr.Zero;
             history = null;
         }
@@ -225,7 +222,6 @@ namespace FlashDevelop.Managers
             {
                 return false;
             }
-
             return dataObject.GetDataPresent(DataFormats.Text)/*
                 || dataObject.GetDataPresent(DataFormats.UnicodeText)
                 || dataObject.GetDataPresent(DataFormats.OemText)
@@ -255,5 +251,7 @@ namespace FlashDevelop.Managers
                 throw new ArgumentException("Specified " + nameof(IDataObject) + " does not contain any text data.");
             }
         }
+
     }
+
 }

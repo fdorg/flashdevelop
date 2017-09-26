@@ -46,9 +46,9 @@ namespace ProjectManager.Controls
         {
             this.textBox = new System.Windows.Forms.TextBoxEx();
             this.listBox = new System.Windows.Forms.ListBoxEx();
-            this.cbInClasspathsOnly = new System.Windows.Forms.CheckBox();
-            this.checkBox = new System.Windows.Forms.CheckBox();
-            this.refreshButton = new System.Windows.Forms.Button();
+            this.cbInClasspathsOnly = new System.Windows.Forms.CheckBoxEx();
+            this.checkBox = new System.Windows.Forms.CheckBoxEx();
+            this.refreshButton = new System.Windows.Forms.ButtonEx();
             this.SuspendLayout();
             // 
             // textBox

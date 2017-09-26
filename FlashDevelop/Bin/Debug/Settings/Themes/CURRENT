@@ -1,13 +1,16 @@
 ### Thyleus.fdi
 
-### ListBox, ComboBoxes, CheckBoxes, TextBox, PropertyGrid ScrollBars, ProgressBar, AppMan, New Project, Project Properties
+### PropertyGrid + ListBox scrollers, Main status progressbar, AppMan???
 
 # FD UI THEME (5.3+)
 
-# Use theme in dialogs?
+# Use themes in dialogs?
 SmartForm.UseTheme=True
 
-# Apply even if set to None
+# Should we use custom border?
+ThemeManager.UseCustomBorder=True
+
+# Apply even if set to None?
 ThemeManager.ForceBorderStyle=False
 
 Form.ForeColor=#333333
@@ -15,14 +18,17 @@ Form.BackColor=#94918D
 Form.3dLightColor=#AEA8A6
 Form.3dDarkColor=#7B7675
 
-Control.ForeColor=#333333
-Control.BackColor=#94918D
-
-PictureBox.ForeColor=#333333
-PictureBox.BackColor=#94918D
-
+# Flat, Popup, Standard, System
+Label.FlatStyle=Flat
 Label.ForeColor=#333333
 Label.BackColor=#94918D
+
+# None, Fixed3D, FixedSingle
+Label.BorderStyle=FixedSingle
+Label.BorderColor=#7B7675
+
+Control.ForeColor=#333333
+Control.BackColor=#94918D
 
 ComboBox.ForeColor=#333333
 ComboBox.BackColor=#D0CDCC
@@ -30,32 +36,35 @@ ComboBox.BackColor=#D0CDCC
 FlatCombo.ForeColor=#333333
 FlatCombo.BackColor=#D0CDCC
 
+# Flat, Popup, Standard, System
+FlatCombo.FlatStyle=Popup
+
 # None, Fixed3D, FixedSingle
 Panel.BorderStyle=None
 Panel.BorderColor=#7B7675
 
 # None, Fixed3D, FixedSingle
-ListBox.BorderStyle=None
+ListBox.BorderStyle=FixedSingle
 ListBox.BorderColor=#7B7675
 
 # None, Fixed3D, FixedSingle
 TextBox.BorderStyle=FixedSingle
 TextBox.BorderColor=#7B7675
 
-# None, Fixed3D
-RichTextBox.BorderStyle=None
+# None, Fixed3D, FixedSingle
+RichTextBox.BorderStyle=FixedSingle
 RichTextBox.BorderColor=#7B7675
 
 # None, Fixed3D, FixedSingle
-DataGridView.BorderStyle=None
+DataGridView.BorderStyle=FixedSingle
 DataGridView.BorderColor=#7B7675
 
 # None, Fixed3D, FixedSingle
-TreeView.BorderStyle=None
+TreeView.BorderStyle=FixedSingle
 TreeView.BorderColor=#7B7675
 
 # None, Fixed3D, FixedSingle
-ListView.BorderStyle=None
+ListView.BorderStyle=FixedSingle
 ListView.BorderColor=#7B7675
 ListView.GridLineColor=#858281
 
@@ -68,6 +77,36 @@ GroupBox.FlatStyle=Flat
 GroupBox.ForeColor=#333333
 GroupBox.BackColor=#94918D
 GroupBox.BorderColor=#7B7675
+
+# None, Fixed3D, FixedSingle
+PictureBox.BorderStyle=FixedSingle
+PictureBox.BorderColor=#7B7675
+PictureBox.ForeColor=#333333
+PictureBox.BackColor=#94918D
+
+TabPage.ForeColor=#333333
+TabPage.BackColor=#ADAAA7
+
+TabControl.UseTheme=True
+TabControl.FocusColor=#F0AC62
+TabControl.TextColor=#444444
+TabControl.TextColorDisabled=#444444
+TabControl.TextColorSelected=#333333
+TabControl.BorderColor=#7B7675
+TabControl.BorderColorHot=#7B7675
+TabControl.BorderColorSelected=#7B7675
+TabControl.CloserColor=#7B7675
+TabControl.CloserColorActive=#7B7675
+TabControl.TabActiveSeparator=#ADAAA7
+TabControl.TabBackColorHot=#cccccc
+TabControl.TabBackColorActive=#fefefe
+TabControl.TabBackColorDisabled=#cccccc
+TabControl.TabBackColor=#eeeeee
+
+StatusBar.ForeColor=#D1D1D1
+StatusBar.BackColor=#6D6B67
+StatusBar.3dLightColor=#AEA8A6
+StatusBar.3dDarkColor=#7B7675
 
 PropertyGrid.ForeColor=#333333
 PropertyGrid.BackColor=#94918D
@@ -91,8 +130,8 @@ CheckBox.FlatStyle=Flat
 CheckBox.ForeColor=#333333
 CheckBox.BackColor=#94918D
 CheckBox.CheckedBackColor=#E6E4E3
-CheckBox.MouseDownBackColor=#E6E4E3
 CheckBox.MouseOverBackColor=#BCBAB8
+CheckBox.MouseDownBackColor=#E6E4E3
 CheckBox.BorderColor=#7B7675
 
 # Flat, Popup, Standard, System
@@ -100,9 +139,17 @@ Button.FlatStyle=Flat
 Button.ForeColor=#333333
 Button.BackColor=#CDCBC9
 Button.CheckedBackColor=#E6E4E3
-Button.MouseDownBackColor=#E6E4E3
 Button.MouseOverBackColor=#BCBAB8
+Button.MouseDownBackColor=#E6E4E3
+Button.DisabledTextColor=#666666
 Button.BorderColor=#7B7675
+
+# Graph used in profiler
+MemGraph.ForeColor=#7B7675
+MemGraph.BackColor=#CDCBC9
+MemGraph.NormalColor=#BCBAB8
+MemGraph.CurrentColor=#0000ff
+MemGraph.PeakColor=#ff0000
 
 # FD UI THEME (5.2+)
 

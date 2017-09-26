@@ -75,9 +75,9 @@ namespace FlashDevelop.Controls
         {
             this.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             this.highlightTimer = new Timer();
-            this.wholeWordCheckBox = new CheckBox();
-            this.matchCaseCheckBox = new CheckBox();
-            this.highlightCheckBox = new CheckBox();
+            this.wholeWordCheckBox = new CheckBoxEx();
+            this.matchCaseCheckBox = new CheckBoxEx();
+            this.highlightCheckBox = new CheckBoxEx();
             this.nextButton = new ToolStripButton();
             this.closeButton = new ToolStripButton();
             this.moreButton = new ToolStripButton();
@@ -236,6 +236,9 @@ namespace FlashDevelop.Controls
                 this.previousButton.Image = Globals.MainForm.FindImage("63");
                 this.closeButton.Image = Globals.MainForm.FindImage("111");
             }
+            PluginBase.MainForm.ThemeControls(this.highlightCheckBox);
+            PluginBase.MainForm.ThemeControls(this.matchCaseCheckBox);
+            PluginBase.MainForm.ThemeControls(this.wholeWordCheckBox);
         }
 
         /// <summary>
