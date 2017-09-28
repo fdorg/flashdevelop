@@ -38,8 +38,9 @@ namespace PluginCore.Controls
             else if (obj is ListBox) return new ListBoxScroller(obj as ListBox);
             else if (obj is ListView) return new ListViewScroller(obj as ListView);
             else if (obj is TreeView) return new TreeViewScroller(obj as TreeView);
-            else if (obj is TextBoxBase && (obj as TextBoxBase).Multiline) return new TextBoxScroller(obj as TextBoxBase);
+            else if (obj is RichTextBox) return new RichTextBoxScroller(obj as RichTextBox);
             else if (obj is DataGridView) return new DataGridViewScroller(obj as DataGridView);
+            else if (obj is TextBox && (obj as TextBox).Multiline) return new TextBoxScroller(obj as TextBox);
             else return null;
         }
 
@@ -55,6 +56,7 @@ namespace PluginCore.Controls
         #endregion
 
         #region Tunables
+
         /// <summary>
         /// Auto-repeat delay.
         /// </summary>
@@ -2151,6 +2153,7 @@ namespace PluginCore.Controls
             if (control is ListBox && (control as ListBox).BorderStyle == BorderStyle.None) borderWidth = 0;
             else if (control is TreeView && (control as TreeView).BorderStyle == BorderStyle.None) borderWidth = 0;
             else if (control is ListView && (control as ListView).BorderStyle == BorderStyle.None) borderWidth = 0;
+            else if (control is DataGridView && (control as DataGridView).BorderStyle == BorderStyle.None) borderWidth = 0;
             else if (control is RichTextBox && (control as RichTextBox).BorderStyle == BorderStyle.None) borderWidth = 0;
             else if (control is TextBox && (control as TextBox).BorderStyle == BorderStyle.FixedSingle) borderWidth = 0;
             vScrollBar.SetBounds(control.Location.X + control.Width - vScrollBar.Width - borderWidth, control.Location.Y + borderWidth, vScrollBar.Width, (control.Height - (borderWidth * 2)) - (hScrollBar.Visible ? hScrollBar.Height : 0));
@@ -2178,17 +2181,17 @@ namespace PluginCore.Controls
         protected virtual void OnScroll(Object sender, ScrollEventArgs e) {}
     }
 
-    public class ListViewScroller : ScrollerBase
+    public class TextBoxScroller : ScrollerBase
     {
         private bool disposed = false;
-        protected ListView listView;
+        private TextBox textBox;
 
         /// <summary>
-        /// Initialize ListViewScroller
+        /// Initialize TextBoxScroller
         /// </summary>
-        public ListViewScroller(ListView view) : base(view)
+        public TextBoxScroller(TextBox view) : base(view)
         {
-            listView = view;
+            textBox = view;
             InitScrollBars();
         }
 
@@ -2200,28 +2203,121 @@ namespace PluginCore.Controls
             if (disposed) return;
             if (disposing)
             {
-                listView = null;
+                textBox = null;
             }
             disposed = true;
             base.Dispose(disposing);
         }
 
         /// <summary>
-        /// Updates the listView on scrollbar scroll
+        /// Updates the textBox on scrollbar scroll
         /// </summary>
         protected override void OnScroll(Object sender, ScrollEventArgs e)
         {
-            if (e.OldValue == -1 || listView.Items.Count == 0) return;
-            Int32 height = listView.GetItemRect(0).Height; // Item height in pixels
+            if (e.OldValue == -1 || textBox.Lines.Length == 0) return;
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
             {
-                Int32 vScroll = -(e.OldValue - e.NewValue) * height;
-                Win32.SendMessage(listView.Handle, (Int32)Win32.LVM_SCROLL, IntPtr.Zero, (IntPtr)vScroll);
+                int wParam = Win32.SB_THUMBPOSITION | e.NewValue << 16;
+                Win32.SendMessage(textBox.Handle, Win32.WM_VSCROLL, (IntPtr)wParam, IntPtr.Zero);
             }
             else
             {
-                Int32 hScroll = -(e.OldValue - e.NewValue);
-                Win32.SendMessage(listView.Handle, (Int32)Win32.LVM_SCROLL, (IntPtr)hScroll, IntPtr.Zero);
+                int wParam = Win32.SB_THUMBPOSITION | e.NewValue << 16;
+                Win32.SendMessage(textBox.Handle, Win32.WM_HSCROLL, (IntPtr)wParam, IntPtr.Zero);
+            }
+        }
+    }
+
+    public class RichTextBoxScroller : ScrollerBase
+    {
+        private bool disposed = false;
+        private RichTextBox textBox;
+
+        /// <summary>
+        /// Initialize RichTextBoxScroller
+        /// </summary>
+        public RichTextBoxScroller(RichTextBox view) : base(view)
+        {
+            textBox = view;
+            InitScrollBars();
+        }
+
+        /// <summary>
+        /// Dispose the controls
+        /// </summary>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposed) return;
+            if (disposing)
+            {
+                textBox = null;
+            }
+            disposed = true;
+            base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// Updates the textBox on scrollbar scroll
+        /// </summary>
+        protected override void OnScroll(Object sender, ScrollEventArgs e)
+        {
+            if (e.OldValue == -1 || textBox.Lines.Length == 0) return;
+            if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
+            {
+                int wParam = Win32.SB_THUMBPOSITION | e.NewValue << 16;
+                Win32.SendMessage(textBox.Handle, Win32.WM_VSCROLL, (IntPtr)wParam, IntPtr.Zero);
+            }
+            else
+            {
+                int wParam = Win32.SB_THUMBPOSITION | e.NewValue << 16;
+                Win32.SendMessage(textBox.Handle, Win32.WM_HSCROLL, (IntPtr)wParam, IntPtr.Zero);
+            }
+        }
+    }
+
+    public class PropertyGridScroller : ScrollerBase
+    {
+        private bool disposed = false;
+        private PropertyGrid propertyGrid;
+
+        /// <summary>
+        /// Initialize PropertyGridScroller
+        /// </summary>
+        public PropertyGridScroller(PropertyGrid view) : base(view)
+        {
+            propertyGrid = view;
+            InitScrollBars();
+        }
+
+        /// <summary>
+        /// Dispose the controls
+        /// </summary>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposed) return;
+            if (disposing)
+            {
+                propertyGrid = null;
+            }
+            disposed = true;
+            base.Dispose(disposing);
+        }
+
+        /// <summary>
+        /// Updates the propertyGrid on scrollbar scroll
+        /// </summary>
+        protected override void OnScroll(Object sender, ScrollEventArgs e)
+        {
+            if (e.OldValue == -1 || propertyGrid.SelectedObjects.Length == 0) return;
+            if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
+            {
+                int wParam = Win32.SB_THUMBPOSITION | e.NewValue << 16;
+                Win32.SendMessage(propertyGrid.Handle, Win32.WM_VSCROLL, (IntPtr)wParam, IntPtr.Zero);
+            }
+            else
+            {
+                int wParam = Win32.SB_THUMBPOSITION | e.NewValue << 16;
+                Win32.SendMessage(propertyGrid.Handle, Win32.WM_HSCROLL, (IntPtr)wParam, IntPtr.Zero);
             }
         }
     }
@@ -2275,17 +2371,17 @@ namespace PluginCore.Controls
         }
     }
 
-    public class TextBoxScroller : ScrollerBase
+    public class ListViewScroller : ScrollerBase
     {
         private bool disposed = false;
-        private TextBoxBase textBox;
+        protected ListView listView;
 
         /// <summary>
-        /// Initialize TreeViewScroller
+        /// Initialize ListViewScroller
         /// </summary>
-        public TextBoxScroller(TextBoxBase view) : base(view)
+        public ListViewScroller(ListView view) : base(view)
         {
-            textBox = view;
+            listView = view;
             InitScrollBars();
         }
 
@@ -2297,27 +2393,28 @@ namespace PluginCore.Controls
             if (disposed) return;
             if (disposing)
             {
-                textBox = null;
+                listView = null;
             }
             disposed = true;
             base.Dispose(disposing);
         }
 
         /// <summary>
-        /// Updates the textBox on scrollbar scroll
+        /// Updates the listView on scrollbar scroll
         /// </summary>
         protected override void OnScroll(Object sender, ScrollEventArgs e)
         {
-            if (e.OldValue == -1 || textBox.Lines.Length == 0) return;
+            if (e.OldValue == -1 || listView.Items.Count == 0) return;
+            Int32 height = listView.GetItemRect(0).Height; // Item height in pixels
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
             {
-                int wParam = Win32.SB_THUMBPOSITION | e.NewValue << 16;
-                Win32.SendMessage(textBox.Handle, Win32.WM_VSCROLL, (IntPtr)wParam, IntPtr.Zero);
+                Int32 vScroll = -(e.OldValue - e.NewValue) * height;
+                Win32.SendMessage(listView.Handle, (Int32)Win32.LVM_SCROLL, IntPtr.Zero, (IntPtr)vScroll);
             }
             else
             {
-                int wParam = Win32.SB_THUMBPOSITION | e.NewValue << 16;
-                Win32.SendMessage(textBox.Handle, Win32.WM_HSCROLL, (IntPtr)wParam, IntPtr.Zero);
+                Int32 hScroll = -(e.OldValue - e.NewValue);
+                Win32.SendMessage(listView.Handle, (Int32)Win32.LVM_SCROLL, (IntPtr)hScroll, IntPtr.Zero);
             }
         }
     }
@@ -2351,18 +2448,21 @@ namespace PluginCore.Controls
         }
 
         /// <summary>
-        /// Updates the listBox on scrollbar scroll
+        /// Updates the dataGridView on scrollbar scroll
         /// </summary>
         protected override void OnScroll(Object sender, ScrollEventArgs e)
         {
             if (e.OldValue == -1 || listBox.Items.Count == 0) return;
+            Int32 height = listBox.GetItemHeight(0); // Item height in pixels
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
             {
-                listBox.TopIndex = e.NewValue;
+                Int32 vScroll = -(e.OldValue - e.NewValue) * height;
+                Win32.SendMessage(listBox.Handle, (Int32)Win32.LVM_SCROLL, IntPtr.Zero, (IntPtr)vScroll);
             }
             else
             {
-                listBox.TopIndex = e.NewValue;
+                Int32 hScroll = -(e.OldValue - e.NewValue);
+                Win32.SendMessage(listBox.Handle, (Int32)Win32.LVM_SCROLL, (IntPtr)hScroll, IntPtr.Zero);
             }
         }
     }

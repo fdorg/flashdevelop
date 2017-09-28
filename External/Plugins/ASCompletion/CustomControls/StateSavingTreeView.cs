@@ -21,7 +21,7 @@ namespace System.Windows.Forms
     /// Exposes methods to save and restore TreeView state (such as scroll position
     /// and expanded nodes) when rebuilding.
     /// </summary>
-    public class StateSavingTreeView : TreeView
+    public class StateSavingTreeView : TreeViewEx
     {
         public TreeState State = new TreeState();
 

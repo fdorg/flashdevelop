@@ -88,6 +88,7 @@ namespace System.Windows.Forms
 
         private void OnDataGridViewCellPainting(Object sender, DataGridViewCellPaintingEventArgs e)
         {
+            if (this.DesignMode) return;
             if (e.RowIndex == -1)
             {
                 Color back = PluginBase.MainForm.GetThemeColor("ColumnHeader.BackColor");
@@ -110,6 +111,7 @@ namespace System.Windows.Forms
         protected override void WndProc(ref Message message)
         {
             base.WndProc(ref message);
+            if (this.DesignMode) return;
             switch (message.Msg)
             {
                 case Win32.WM_PAINT:
@@ -206,9 +208,24 @@ namespace System.Windows.Forms
             }
         }
 
+        // Removes/hides focus cues
+        protected override void OnEnter(EventArgs e)
+        {
+            base.OnEnter(e);
+            Message m = Message.Create(this.Handle, Win32.WM_CHANGEUISTATE, new IntPtr(0x10001), new IntPtr(0));
+            this.WndProc(ref m);
+        }
+        protected override void OnSelectedIndexChanged(EventArgs e)
+        {
+            base.OnSelectedIndexChanged(e);
+            Message m = Message.Create(this.Handle, 0x127, new IntPtr(0x10001), new IntPtr(0));
+            this.WndProc(ref m);
+        }
+
         protected override void WndProc(ref Message message)
         {
             base.WndProc(ref message);
+            if (this.DesignMode) return;
             switch (message.Msg)
             {
                 case Win32.WM_PAINT:
@@ -232,112 +249,19 @@ namespace System.Windows.Forms
         private Boolean themeBorder = false;
         public Boolean UseTheme { get; set; } = true;
         public Color BorderColor { get; set; } = SystemColors.ControlDark;
-        private static Int32 SIZE1 = ScaleHelper.Scale(1);
-        private static Int32 SIZE2 = ScaleHelper.Scale(2);
-        private static Int32 SIZE3 = ScaleHelper.Scale(3);
 
-        public TreeViewEx() : base()
+        // Removes/hides focus cues
+        protected override void OnEnter(EventArgs e) // Removes focus cues
         {
-            this.DrawMode = TreeViewDrawMode.OwnerDrawAll;
-            this.DrawNode += OnDrawNode;
-            this.DragOver += OnDragOver;
-            this.ShowPlusMinus = true;
+            base.OnEnter(e);
+            Message m = Message.Create(this.Handle, Win32.WM_CHANGEUISTATE, new IntPtr(0x10001), new IntPtr(0));
+            this.WndProc(ref m);
         }
-
-        protected override CreateParams CreateParams
+        protected override void OnAfterSelect(TreeViewEventArgs e)
         {
-            get
-            {
-                CreateParams cp = base.CreateParams;
-                cp.ExStyle |= 0x02000000; // WS_CLIPCHILDREN
-                return cp;
-            }
-        }
-
-        private void OnDragOver(Object sender, DragEventArgs e)
-        {
-            Point point = this.PointToClient(new Point(e.X, e.Y));
-            TreeViewHitTestInfo hit = this.HitTest(point);
-            if (hit.Node != null) this.SelectedNode = hit.Node;
-        }
-
-        private void OnDrawNode(Object sender, DrawTreeNodeEventArgs e)
-        {
-            if (UseTheme)
-            {
-                e.DrawDefault = false;
-                Rectangle bounds = e.Node.Bounds;
-                Color backHl = PluginBase.MainForm.GetThemeColor("TreeView.Highlight", SystemColors.Highlight);
-                Color foreHl = PluginBase.MainForm.GetThemeColor("TreeView.HighlightText", SystemColors.HighlightText);
-                SolidBrush brushFore = new SolidBrush(e.Node.TreeView.LineColor);
-                SolidBrush brushBack = new SolidBrush(e.Node.TreeView.BackColor);
-                if (bounds.IsEmpty || !e.Node.IsVisible) return;
-                if ((e.State & TreeNodeStates.Focused) != 0)
-                {
-                    e.Graphics.FillRectangle(new SolidBrush(backHl), Rectangle.Inflate(bounds, 1, 0));
-                }
-                else if ((e.State & TreeNodeStates.Selected) != 0)
-                {
-                    e.Graphics.FillRectangle(new SolidBrush(Color.Gray), Rectangle.Inflate(bounds, 1, 0));
-                }
-                else e.Graphics.FillRectangle(brushBack, bounds);
-                if (e.Node.Nodes.Count > 0)
-                {
-                    Point[] arrow;
-                    Point middle = new Point(bounds.Left - 28, bounds.Top + bounds.Height / 2);
-                    if (e.Node.IsExpanded)
-                    {
-                        arrow = new Point[]
-                        {
-                        new Point(middle.X - SIZE3, middle.Y - 1),
-                        new Point(middle.X + SIZE3 + 1, middle.Y - 1),
-                        new Point(middle.X, middle.Y + SIZE3)
-                        };
-                        e.Graphics.FillPolygon(brushFore, arrow);
-                        arrow = new Point[]
-                        {
-                        new Point(middle.X - SIZE1, middle.Y - 1),
-                        new Point(middle.X + SIZE1 + 1, middle.Y - 1),
-                        new Point(middle.X, middle.Y + SIZE1)
-                        };
-                        e.Graphics.FillPolygon(brushBack, arrow);
-                    }
-                    else
-                    {
-                        arrow = new Point[]
-                        {
-                        new Point(middle.X - SIZE2, middle.Y - 2 * SIZE2),
-                        new Point(middle.X - SIZE2, middle.Y + 2 * SIZE2),
-                        new Point(middle.X + SIZE2, middle.Y)
-                        };
-                        e.Graphics.FillPolygon(brushFore, arrow);
-                        arrow = new Point[]
-                        {
-                        new Point(middle.X - SIZE1 - 1, middle.Y - 2 * SIZE1),
-                        new Point(middle.X - SIZE1 - 1, middle.Y + 2 * SIZE1),
-                        new Point(middle.X + SIZE1 - 1, middle.Y)
-                        };
-                        e.Graphics.FillPolygon(brushBack, arrow);
-                    }
-                }
-                if (e.Node.ImageIndex != -1)
-                {
-                    Point nodePt = new Point(bounds.Location.X - 20, bounds.Location.Y + 1);
-                    Image nodeImg = e.Node.TreeView.ImageList.Images[e.Node.ImageIndex];
-                    e.Graphics.DrawImage(nodeImg, nodePt);
-                }
-                Rectangle textRect = bounds;
-                Font nodeFont = e.Node.NodeFont;
-                Color textColor = e.Node.ForeColor;
-                textRect = Rectangle.Inflate(textRect, 2, 0);
-                if (nodeFont == null) nodeFont = ((TreeView)sender).Font;
-                if (nodeFont.Bold) textRect.X += 1;
-                if ((e.State & TreeNodeStates.Focused) != 0) textColor = foreHl;
-                if ((e.State & TreeNodeStates.Selected) != 0) textColor = foreHl;
-                if ((e.State & TreeNodeStates.Hot) != 0) nodeFont = new Font(nodeFont, FontStyle.Underline);
-                TextRenderer.DrawText(e.Graphics, e.Node.Text, nodeFont, textRect, textColor);
-            }
-            else e.DrawDefault = true;
+            base.OnAfterSelect(e);
+            Message m = Message.Create(this.Handle, Win32.WM_CHANGEUISTATE, new IntPtr(0x10001), new IntPtr(0));
+            this.WndProc(ref m);
         }
 
         protected override void WndProc(ref Message message)
@@ -657,6 +581,7 @@ namespace System.Windows.Forms
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
+            if (this.DesignMode) return;
             if (this.UseTheme)
             {
                 Color color = PluginBase.MainForm.GetThemeColor("PropertyGrid.BackColor", SystemColors.Control);
@@ -714,39 +639,43 @@ namespace System.Windows.Forms
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            base.OnPaint(e);
             if (this.UseTheme)
-            { 
+            {
                 Size size = SystemInformation.MenuCheckSize;
-                var checkRect = new Rectangle(0, 4, size.Width - 3, size.Height - 3);
-                var markRect = new Rectangle(3, 7, size.Width - 8, size.Height - 8);
+                var offset = (this.ClientRectangle.Height - 1) - size.Height;
+                var flags = TextFormatFlags.Left | TextFormatFlags.VerticalCenter;
+                var checkRect = new Rectangle(this.ClientRectangle.X, this.ClientRectangle.Y + offset, size.Width - 2, size.Height - 2);
+                var innerRect = new Rectangle(this.ClientRectangle.X + 3, this.ClientRectangle.Y + offset + 3, size.Width - 7, size.Height - 7);
+                var textRect = new Rectangle(this.ClientRectangle.Location, this.ClientRectangle.Size);
                 if (this.RightToLeft == RightToLeft.Yes)
                 {
-                    var offset = (this.Width - 1) - (size.Width - 3);
+                    offset = this.ClientRectangle.Width - size.Width;
+                    flags = TextFormatFlags.Right | TextFormatFlags.VerticalCenter;
+                    textRect.Offset(-size.Width, 0);
                     checkRect.Offset(offset, 0);
-                    markRect.Offset(offset, 0);
                 }
+                else textRect.Offset(checkRect.Width + 3, 0);
                 Color back = this.FlatAppearance.CheckedBackColor;
                 if (ClientRectangle.Contains(PointToClient(MousePosition)))
                 {
-                    if (MouseButtons == MouseButtons.Left)
-                    {
-                        back = this.FlatAppearance.MouseDownBackColor;
-                    }
+                    if (MouseButtons == MouseButtons.Left) back = this.FlatAppearance.MouseDownBackColor;
                     else back = this.FlatAppearance.MouseOverBackColor;
                 }
+                e.Graphics.FillRectangle(new SolidBrush(this.BackColor), this.ClientRectangle);
                 e.Graphics.FillRectangle(new SolidBrush(back), checkRect);
                 e.Graphics.DrawRectangle(new Pen(this.BorderColor), checkRect);
                 if (this.CheckState == CheckState.Indeterminate)
                 {
-                    e.Graphics.FillRectangle(new SolidBrush(this.BackColor), markRect);
+                    e.Graphics.FillRectangle(new SolidBrush(this.BackColor), innerRect);
                 }
                 else if (this.CheckState == CheckState.Checked)
                 {
                     Image image = PluginBase.MainForm.FindImageAndSetAdjust("485");
                     e.Graphics.DrawImage(image, checkRect, new Rectangle(Point.Empty, image.Size), GraphicsUnit.Pixel);
                 }
+                TextRenderer.DrawText(e.Graphics, this.Text, this.Font, textRect, this.ForeColor, flags);
             }
+            else base.OnPaint(e);
         }
     }
 
@@ -803,7 +732,7 @@ namespace System.Windows.Forms
     {
         public Boolean UseTheme
         {
-            get { return PluginBase.MainForm.GetThemeFlag("TabControl.UseTheme"); }
+            get { return PluginBase.MainForm.GetThemeFlag("TabControl.UseTheme", false); }
         }
 
         public TabControlEx()
@@ -836,6 +765,7 @@ namespace System.Windows.Forms
         protected override void WndProc(ref Message message)
         {
             base.WndProc(ref message);
+            if (this.DesignMode) return;
             switch (message.Msg)
             {
                 case Win32.WM_PAINT:

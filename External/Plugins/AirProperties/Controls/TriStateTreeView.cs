@@ -11,7 +11,7 @@ namespace AirProperties.Controls
     // Tree can be navigated by keyboard (cursor keys & space)
     // No need to do anything special in calling code
     // </remarks>
-    public class TriStateTreeView : System.Windows.Forms.TreeView
+    public class TriStateTreeView : System.Windows.Forms.TreeViewEx
     {
         // <remarks>
         // CheckedState is an enum of all allowable nodes states

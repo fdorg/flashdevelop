@@ -77,6 +77,38 @@ namespace System.Windows.Forms
             return brush;
         }
 
+        protected override void DrawTabFocusIndicator(GraphicsPath tabpath, int index, Graphics graphics)
+        {
+            if (this._FocusTrack && this._TabControl.Focused && index == this._TabControl.SelectedIndex)
+            {
+                Int32 width = 3;
+                Rectangle focusRect = Rectangle.Empty;
+                RectangleF pathRect = tabpath.GetBounds();
+                Brush focusBrush = new SolidBrush(this._FocusColor);
+                switch (this._TabControl.Alignment)
+                {
+                    case TabAlignment.Top:
+                        focusRect = new Rectangle((int)pathRect.X, (int)pathRect.Y, (int)pathRect.Width, width);
+                        break;
+                    case TabAlignment.Bottom:
+                        focusRect = new Rectangle((int)pathRect.X, (int)pathRect.Bottom - width, (int)pathRect.Width, width);
+                        break;
+                    case TabAlignment.Left:
+                        focusRect = new Rectangle((int)pathRect.X, (int)pathRect.Y, width, (int)pathRect.Height);
+                        break;
+                    case TabAlignment.Right:
+                        focusRect = new Rectangle((int)pathRect.Right - width, (int)pathRect.Y, width, (int)pathRect.Height);
+                        break;
+                }
+                //	Ensure the focus stip does not go outside the tab
+                Region focusRegion = new Region(focusRect);
+                focusRegion.Intersect(tabpath);
+                graphics.FillRegion(focusBrush, focusRegion);
+                focusRegion.Dispose();
+                focusBrush.Dispose();
+            }
+        }
+
         public override void AddTabBorder(System.Drawing.Drawing2D.GraphicsPath path, System.Drawing.Rectangle tabBounds)
         {
             switch (this._TabControl.Alignment)

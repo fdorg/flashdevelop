@@ -2304,7 +2304,6 @@ namespace FlashDevelop
                 return Path.GetDirectoryName(project.ProjectPath);
             }
             else return PathHelper.AppDir;
-
         }
 
         /// <summary>
@@ -4353,6 +4352,15 @@ namespace FlashDevelop
                 String message = TextHelper.GetString("Info.CouldNotExecuteScript");
                 ErrorManager.ShowWarning(message + "\r\n" + ex.Message, null);
             }
+        }
+
+        /// <summary>
+        /// Test the controls in a dedicated form
+        /// </summary>
+        public void TestControls(Object sender, EventArgs e)
+        {
+            ControlDialog cd = new ControlDialog();
+            cd.Show(this);
         }
 
         /// <summary>

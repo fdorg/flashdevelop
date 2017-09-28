@@ -31,7 +31,7 @@ namespace ASClassWizard.Wizards
         private void InitializeComponent()
         {
             this.inviteLabel = new System.Windows.Forms.Label();
-            this.browserView = new System.Windows.Forms.TreeView();
+            this.browserView = new System.Windows.Forms.TreeViewEx();
             this.okButton = new System.Windows.Forms.ButtonEx();
             this.cancelButton = new System.Windows.Forms.ButtonEx();
             this.SuspendLayout();

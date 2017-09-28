@@ -174,9 +174,9 @@ ScrollBar.ActiveArrowColor=#333333
 
 ListView.UseGrouping=True
 ListView.Highlight=#ffa500
-ListView.HighlightText=#ffa500
+ListView.HighlightText=#ffffff
 TreeView.Highlight=#ffa500
-TreeView.HighlightText=#ffa500
+TreeView.HighlightText=#ffffff
 
 #FlashLogViewer.DebugColor
 #FlashLogViewer.WarningColor

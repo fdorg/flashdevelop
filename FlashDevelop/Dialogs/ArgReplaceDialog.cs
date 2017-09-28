@@ -10,10 +10,11 @@ using System.Windows.Forms;
 using PluginCore.Managers;
 using PluginCore.Localization;
 using PluginCore.Controls;
+using PluginCore;
 
 namespace FlashDevelop.Dialogs
 {
-    public class ArgReplaceDialog : SmartForm
+    public class ArgReplaceDialog : SmartForm, IThemeHandler
     {
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Panel bottomPanel;
@@ -135,6 +136,15 @@ namespace FlashDevelop.Dialogs
         public Dictionary<String, String> Dictionary
         {
             get { return this.argDictionary; }
+        }
+
+        /// <summary>
+        /// Make sure back colors match
+        /// </summary>
+        public void AfterTheming()
+        {
+            Color color = PluginBase.MainForm.GetThemeColor("Form.BackColor", SystemColors.Control);
+            this.argsPanel.BackColor = this.bottomPanel.BackColor = color;
         }
 
         /// <summary>
