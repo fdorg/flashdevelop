@@ -2,6 +2,8 @@
 using System.ComponentModel.Design;
 using PluginCore.Helpers;
 using PluginCore;
+using System.Runtime.InteropServices;
+using System.Reflection;
 
 namespace System.Windows.Forms
 {
@@ -230,6 +232,7 @@ namespace System.Windows.Forms
             {
                 case Win32.WM_PAINT:
                     this.expandDelay.Enabled = true;
+                    this.OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));
                     if (this.UseTheme && this.BorderStyle == BorderStyle.FixedSingle)
                     {
                         this.themeBorder = true;
@@ -270,7 +273,7 @@ namespace System.Windows.Forms
             switch (message.Msg)
             {
                 case Win32.WM_PAINT:
-                    OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));
+                    this.OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));
                     if (this.UseTheme && this.BorderStyle == BorderStyle.FixedSingle)
                     {
                         this.themeBorder = true;
@@ -445,7 +448,13 @@ namespace System.Windows.Forms
             base.WndProc(ref message);
             switch (message.Msg)
             {
+                case Win32.WM_KEYUP:
+                case Win32.WM_KEYDOWN:
+                case Win32.WM_MOUSEWHEEL:
+                    this.OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));
+                    break;
                 case Win32.WM_PAINT:
+                    this.OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));
                     if (this.UseTheme && this.BorderStyle == BorderStyle.FixedSingle)
                     {
                         this.themeBorder = true;
@@ -472,6 +481,7 @@ namespace System.Windows.Forms
             switch (message.Msg)
             {
                 case Win32.WM_PAINT:
+                    this.OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));
                     if (this.UseTheme && this.BorderStyle == BorderStyle.FixedSingle)
                     {
                         this.themeBorder = true;
@@ -510,6 +520,7 @@ namespace System.Windows.Forms
             switch (message.Msg)
             {
                 case Win32.WM_PAINT:
+                    this.OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));
                     if (this.UseTheme && this.BorderStyle == BorderStyle.FixedSingle)
                     {
                         this.themeBorder = true;
@@ -577,6 +588,30 @@ namespace System.Windows.Forms
     public class PropertyGridEx : PropertyGrid
     {
         public Boolean UseTheme { get; set; } = true;
+
+        public PropertyGridEx()
+        {
+            this.SelectedObjectsChanged += this.OnSelectedObjectsChanged;
+        }
+
+        private void OnValueChanged(Object sender, EventArgs e)
+        {
+            this.OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));
+        }
+
+        private void OnSelectedObjectsChanged(Object sender, EventArgs e)
+        {
+            foreach (Control ctrl in this.Controls)
+            {
+                if (ctrl.Text == "PropertyGridView")
+                {
+                    Type type = ctrl.GetType();
+                    FieldInfo field = type.GetField("scrollBar", BindingFlags.Instance | BindingFlags.NonPublic);
+                    var scrollBar = field.GetValue(ctrl) as ScrollBar;
+                    scrollBar.ValueChanged += this.OnValueChanged;
+                }
+            }
+        }
 
         protected override void OnPaint(PaintEventArgs e)
         {
@@ -681,7 +716,7 @@ namespace System.Windows.Forms
 
     public class FormEx : Form
     {
-        public Boolean UseTheme { get; set; } = true;
+        public virtual Boolean UseTheme { get; set; } = true;
 
         public FormEx()
         {
@@ -769,6 +804,7 @@ namespace System.Windows.Forms
             switch (message.Msg)
             {
                 case Win32.WM_PAINT:
+                    this.OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));
                     if (this.UseTheme)
                     {
                         Graphics g = this.CreateGraphics();

@@ -26,7 +26,12 @@ namespace FlashDevelop.Dialogs
             ScrollBarEx.Attach(this.dataGridViewEx);
             PluginBase.MainForm.ThemeControls(this);
             this.BackColor = Globals.MainForm.GetThemeColor("Form.BackColor", SystemColors.Control);
-            this.dataGridViewEx.Rows.Add(20);
+            for (var i = 0; i < 30; i++)
+            {
+                var msg = "Hello from the other side of the moon " + i;
+                this.dataGridViewEx.Rows.Add(msg);
+                this.listBoxEx.Items.Add(msg);
+            }
             this.treeViewEx.ExpandAll();
         }
 
@@ -64,24 +69,26 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Hello Item");
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Hello Item");
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Hello Item");
-            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("Hello Item");
-            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("Hello Item");
-            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("Hello Item");
-            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem("Hello Item");
-            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("Hello Item");
-            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem("Hello Item");
-            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem("Hello Item");
-            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem("Hello Item");
-            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem("Hello Item");
-            System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem("Hello Item");
-            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem("Hello Item");
-            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem("Hello Item");
-            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem("Hello Item");
-            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem("Hello Item");
-            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem("");
+            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Hello Item 1");
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Hello Item 2");
+            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Hello Item 3");
+            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("Hello Item 4");
+            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("Hello Item 5");
+            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("Hello Item 6");
+            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem("Hello Item 7");
+            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("Hello Item 8");
+            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem("Hello Item 9");
+            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem("Hello Item 10");
+            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem("Hello Item 11");
+            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem("Hello Item 12");
+            System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem("Hello Item 13");
+            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem("Hello Item 14");
+            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem("Hello Item 15");
+            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem("Hello Item 16");
+            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem("Hello Item 17");
+            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem("Hello Item 18");
+            System.Windows.Forms.ListViewItem listViewItem19 = new System.Windows.Forms.ListViewItem("Hello Item 19");
+            System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem("Hello Item 20");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ControlDialog));
             System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Node1");
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Node2");
@@ -393,31 +400,6 @@ namespace FlashDevelop.Dialogs
             this.listBoxEx.BorderColor = System.Drawing.SystemColors.ControlDark;
             this.listBoxEx.FormattingEnabled = true;
             this.listBoxEx.IntegralHeight = false;
-            this.listBoxEx.Items.AddRange(new object[] {
-            "Hello from the other side of the moon",
-            "Hello from the other side of the moon",
-            "Hello from the other side of the moon",
-            "Hello from the other side of the moon",
-            "Hello from the other side of the moon",
-            "Hello from the other side of the moon",
-            "Hello from the other side of the moon",
-            "Hello from the other side of the moon",
-            "Hello from the other side of the moon",
-            "Hello from the other side of the moon",
-            "Hello from the other side of the moon",
-            "Hello from the other side of the moon",
-            "Hello from the other side of the moon",
-            "Hello from the other side of the moon",
-            "Hello from the other side of the moon",
-            "Hello from the other side of the moon",
-            "Hello from the other side of the moon",
-            "Hello from the other side of the moon",
-            "Hello from the other side of the moon",
-            "Hello from the other side of the moon",
-            "Hello from the other side of the moon",
-            "Hello from the other side of the moon",
-            "Hello from the other side of the moon",
-            "Hello from the other side of the moon"});
             this.listBoxEx.Location = new System.Drawing.Point(553, 13);
             this.listBoxEx.Name = "listBoxEx";
             this.listBoxEx.Size = new System.Drawing.Size(261, 280);
@@ -449,7 +431,9 @@ namespace FlashDevelop.Dialogs
             listViewItem15,
             listViewItem16,
             listViewItem17,
-            listViewItem18});
+            listViewItem18,
+            listViewItem19,
+            listViewItem20});
             this.listViewEx.Location = new System.Drawing.Point(12, 301);
             this.listViewEx.Name = "listViewEx";
             this.listViewEx.OwnerDraw = true;

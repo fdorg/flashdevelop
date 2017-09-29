@@ -1143,6 +1143,7 @@ namespace FlashDevelop
         private void OnMainFormShow(Object sender, System.EventArgs e)
         {
             if (RecoveryDialog.ShouldShowDialog()) RecoveryDialog.Show();
+            this.TestControls(null, null);
         }
 
         /// <summary>

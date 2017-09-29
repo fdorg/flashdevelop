@@ -5,6 +5,7 @@ using System.Windows.Forms.Design;
 using System.ComponentModel;
 using PluginCore.Helpers;
 using PluginCore.Managers;
+using System.Reflection;
 
 namespace PluginCore.Controls
 {
@@ -40,7 +41,11 @@ namespace PluginCore.Controls
             else if (obj is TreeView) return new TreeViewScroller(obj as TreeView);
             else if (obj is RichTextBox) return new RichTextBoxScroller(obj as RichTextBox);
             else if (obj is DataGridView) return new DataGridViewScroller(obj as DataGridView);
-            else if (obj is TextBox && (obj as TextBox).Multiline) return new TextBoxScroller(obj as TextBox);
+            else if (obj is PropertyGrid) return new PropertyGridScroller(obj as PropertyGrid);
+            else if (obj is TextBox && (obj as TextBox).Multiline && (obj as TextBox).WordWrap)
+            {
+                return new TextBoxScroller(obj as TextBoxEx);
+            }
             else return null;
         }
 
@@ -2131,7 +2136,7 @@ namespace PluginCore.Controls
                 vScrollBar.Scroll -= OnScroll;
                 vScrollBar.Minimum = vScroll.nMin;
                 vScrollBar.Maximum = vScroll.nMax - (vScroll.nPage - 1);
-                vScrollBar.ViewPortSize = vScrollBar.LargeChange = vScroll.nPage - 1;
+                vScrollBar.ViewPortSize = vScrollBar.LargeChange = (vScroll.nPage - 1);
                 vScrollBar.Value = vScroll.nPos;
                 vScrollBar.Scroll += OnScroll;
                 hScrollBar.Scroll -= OnScroll;
@@ -2210,6 +2215,64 @@ namespace PluginCore.Controls
         }
 
         /// <summary>
+        /// Gets the current line index
+        /// </summary>
+        public Int32 GetLineIndex(int index)
+        {
+            return Win32.SendMessage(textBox.Handle, Win32.EM_LINEINDEX, index, 0);
+        }
+
+        /// <summary>
+        /// Gets the amount of lines, also with wrapping
+        /// </summary>
+        public Int32 GetLineCount()
+        {
+            return Win32.SendMessage(textBox.Handle, Win32.EM_GETLINECOUNT, 0, 0);
+        }
+
+        /// <summary>
+        /// Gets the first visible line on screen
+        /// </summary>
+        public Int32 GetFirstVisibleLine()
+        {
+            return (Int32)Win32.SendMessage(textBox.Handle, Win32.EM_GETFIRSTVISIBLELINE, 0, 0);
+        }
+
+        /// <summary>
+        /// Gets the amount of visible lines
+        /// </summary>
+        public Int32 GetVisibleLines()
+        {
+            var rect = new Win32.RECT();
+            Win32.SendMessage(textBox.Handle, Win32.EM_GETRECT, IntPtr.Zero, ref rect);
+            var count = (rect.Bottom - rect.Top) / textBox.Font.Height;
+            return count;
+        }
+
+        /// <summary>
+        /// Updates the scrollbar scroll states
+        /// </summary>
+        protected override void UpdateScrollState()
+        {
+            Int32 vScrollMax = GetLineCount();
+            Int32 vScrollPos = GetFirstVisibleLine();
+            Int32 vScrollPage = GetVisibleLines();
+            if (this.textBox.ScrollBars != ScrollBars.Vertical)
+            {
+                // Force scrollbar so that content is displayed correctly...
+                this.textBox.ScrollBars = ScrollBars.Vertical;
+            }
+            vScrollBar.Visible = vScrollMax > (vScrollPage - 1) && vScrollMax != vScrollPage;
+            vScrollBar.Scroll -= OnScroll;
+            vScrollBar.Minimum = 0;
+            vScrollBar.Maximum = vScrollMax - (vScrollPage);
+            vScrollBar.ViewPortSize = vScrollBar.LargeChange = (vScrollPage - 1);
+            vScrollBar.Value = vScrollPos;
+            vScrollBar.Scroll += OnScroll;
+            hScrollBar.Visible = false;
+        }
+
+        /// <summary>
         /// Updates the textBox on scrollbar scroll
         /// </summary>
         protected override void OnScroll(Object sender, ScrollEventArgs e)
@@ -2219,11 +2282,6 @@ namespace PluginCore.Controls
             {
                 int wParam = Win32.SB_THUMBPOSITION | e.NewValue << 16;
                 Win32.SendMessage(textBox.Handle, Win32.WM_VSCROLL, (IntPtr)wParam, IntPtr.Zero);
-            }
-            else
-            {
-                int wParam = Win32.SB_THUMBPOSITION | e.NewValue << 16;
-                Win32.SendMessage(textBox.Handle, Win32.WM_HSCROLL, (IntPtr)wParam, IntPtr.Zero);
             }
         }
     }
@@ -2304,6 +2362,79 @@ namespace PluginCore.Controls
         }
 
         /// <summary>
+        /// Gets the amount of visible rows
+        /// </summary>
+        private Int32 GetVisibleRows()
+        {
+            foreach (Control ctrl in propertyGrid.Controls)
+            {
+                if (ctrl.Text == "PropertyGridView")
+                {
+                    Type type = ctrl.GetType();
+                    FieldInfo field = type.GetField("visibleRows", BindingFlags.Instance | BindingFlags.NonPublic);
+                    return (Int32)field.GetValue(ctrl) - 1;
+                }
+            }
+            return 0;
+        }
+
+        /// <summary>
+        /// Updates the scroll position of the scrollbar
+        /// </summary>
+        private void SetScrollOffset(Int32 value)
+        {
+            foreach (Control ctrl in propertyGrid.Controls)
+            {
+                if (ctrl.Text == "PropertyGridView")
+                {
+                    Type type = ctrl.GetType();
+                    MethodInfo info = type.GetMethod("SetScrollOffset");
+                    object[] parameters = { value };
+                    info.Invoke(ctrl, parameters);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the scrollbar reference
+        /// </summary>
+        private ScrollBar GetScrollBar()
+        {
+            foreach (Control ctrl in propertyGrid.Controls)
+            {
+                if (ctrl.Text == "PropertyGridView")
+                {
+                    Type type = ctrl.GetType();
+                    FieldInfo field = type.GetField("scrollBar", BindingFlags.Instance | BindingFlags.NonPublic);
+                    return field.GetValue(ctrl) as ScrollBar;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Updates the scrollbar scroll states
+        /// </summary>
+        protected override void UpdateScrollState()
+        {
+            var scrollBar = GetScrollBar();
+            if (scrollBar != null)
+            {
+                vScrollBar.Scroll -= OnScroll;
+                vScrollBar.Visible = scrollBar.Visible;
+                vScrollBar.Minimum = scrollBar.Minimum;
+                vScrollBar.Maximum = scrollBar.Maximum - (GetVisibleRows() - 1);
+                vScrollBar.SmallChange = scrollBar.SmallChange;
+                vScrollBar.LargeChange = scrollBar.LargeChange;
+                vScrollBar.ViewPortSize = scrollBar.LargeChange = (GetVisibleRows() - 1);
+                vScrollBar.Value = scrollBar.Value;
+                vScrollBar.Scroll += OnScroll;
+            }
+            else vScrollBar.Visible = false;
+            hScrollBar.Visible = false;
+        }
+
+        /// <summary>
         /// Updates the propertyGrid on scrollbar scroll
         /// </summary>
         protected override void OnScroll(Object sender, ScrollEventArgs e)
@@ -2311,13 +2442,7 @@ namespace PluginCore.Controls
             if (e.OldValue == -1 || propertyGrid.SelectedObjects.Length == 0) return;
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
             {
-                int wParam = Win32.SB_THUMBPOSITION | e.NewValue << 16;
-                Win32.SendMessage(propertyGrid.Handle, Win32.WM_VSCROLL, (IntPtr)wParam, IntPtr.Zero);
-            }
-            else
-            {
-                int wParam = Win32.SB_THUMBPOSITION | e.NewValue << 16;
-                Win32.SendMessage(propertyGrid.Handle, Win32.WM_HSCROLL, (IntPtr)wParam, IntPtr.Zero);
+                SetScrollOffset(e.NewValue);
             }
         }
     }
@@ -2448,21 +2573,18 @@ namespace PluginCore.Controls
         }
 
         /// <summary>
-        /// Updates the dataGridView on scrollbar scroll
+        /// Updates the listBox on scrollbar scroll
         /// </summary>
         protected override void OnScroll(Object sender, ScrollEventArgs e)
         {
             if (e.OldValue == -1 || listBox.Items.Count == 0) return;
-            Int32 height = listBox.GetItemHeight(0); // Item height in pixels
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
             {
-                Int32 vScroll = -(e.OldValue - e.NewValue) * height;
-                Win32.SendMessage(listBox.Handle, (Int32)Win32.LVM_SCROLL, IntPtr.Zero, (IntPtr)vScroll);
+                Win32.PostMessage((IntPtr)listBox.Handle, Win32.WM_VSCROLL, 4 + 0x10000 * e.NewValue, 0);
             }
             else
             {
-                Int32 hScroll = -(e.OldValue - e.NewValue);
-                Win32.SendMessage(listBox.Handle, (Int32)Win32.LVM_SCROLL, (IntPtr)hScroll, IntPtr.Zero);
+                Win32.PostMessage((IntPtr)listBox.Handle, Win32.WM_HSCROLL, 4 + 0x10000 * e.NewValue, 0);
             }
         }
     }
@@ -2511,7 +2633,7 @@ namespace PluginCore.Controls
             vScrollBar.Scroll -= OnScroll;
             vScrollBar.Minimum = 0;
             vScrollBar.Maximum = vScrollMax - (vScrollPage);
-            vScrollBar.ViewPortSize = vScrollBar.LargeChange = vScrollPage - 1;
+            vScrollBar.ViewPortSize = vScrollBar.LargeChange = (vScrollPage - 1);
             vScrollBar.Value = vScrollPos;
             vScrollBar.Scroll += OnScroll;
             hScrollBar.Scroll -= OnScroll;

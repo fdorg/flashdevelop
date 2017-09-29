@@ -50,7 +50,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Gets or sets the help link
         /// </summary>
-        public new Boolean UseTheme
+        public override Boolean UseTheme
         {
             get { return PluginBase.MainForm.GetThemeFlag("SmartForm.UseTheme", false); }
         }

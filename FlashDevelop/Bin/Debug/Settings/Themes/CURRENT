@@ -5,7 +5,7 @@
 # FD UI THEME (5.3+)
 
 # Use themes in dialogs?
-SmartForm.UseTheme=True
+SmartForm.UseTheme=False
 
 # Should we use custom border?
 ThemeManager.UseCustomBorder=True
