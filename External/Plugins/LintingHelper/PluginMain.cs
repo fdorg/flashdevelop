@@ -156,7 +156,7 @@ namespace LintingHelper
                         {
                             foreach (var doc in PluginBase.MainForm.Documents)
                             {
-                                if (!doc.IsUntitled)
+                                if (!doc.IsUntitled && doc.SciControl != null)
                                     LintingManager.LintDocument(doc);
                             }
                         }
