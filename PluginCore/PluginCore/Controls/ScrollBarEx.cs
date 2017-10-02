@@ -1,11 +1,11 @@
-﻿using System;
+﻿using PluginCore.Helpers;
+using PluginCore.Managers;
+using System;
+using System.ComponentModel;
 using System.Drawing;
+using System.Reflection;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
-using System.ComponentModel;
-using PluginCore.Helpers;
-using PluginCore.Managers;
-using System.Reflection;
 
 namespace PluginCore.Controls
 {
@@ -2158,10 +2158,25 @@ namespace PluginCore.Controls
             if (control is ListBox && (control as ListBox).BorderStyle == BorderStyle.None) borderWidth = 0;
             else if (control is TreeView && (control as TreeView).BorderStyle == BorderStyle.None) borderWidth = 0;
             else if (control is ListView && (control as ListView).BorderStyle == BorderStyle.None) borderWidth = 0;
+            else if (control is TextBox && (control as TextBox).BorderStyle == BorderStyle.FixedSingle) borderWidth = 0;
             else if (control is DataGridView && (control as DataGridView).BorderStyle == BorderStyle.None) borderWidth = 0;
             else if (control is RichTextBox && (control as RichTextBox).BorderStyle == BorderStyle.None) borderWidth = 0;
-            else if (control is TextBox && (control as TextBox).BorderStyle == BorderStyle.FixedSingle) borderWidth = 0;
-            vScrollBar.SetBounds(control.Location.X + control.Width - vScrollBar.Width - borderWidth, control.Location.Y + borderWidth, vScrollBar.Width, (control.Height - (borderWidth * 2)) - (hScrollBar.Visible ? hScrollBar.Height : 0));
+            int vScrollBarHeight = (control.Height - (borderWidth * 2)) - (hScrollBar.Visible ? hScrollBar.Height : 0);
+            if (control is PropertyGrid)
+            {
+                foreach (Control ctrl in control.Controls)
+                {
+                    if (ctrl.Text == "PropertyGridView")
+                    {
+                        Type type = ctrl.GetType();
+                        FieldInfo field = type.GetField("scrollBar", BindingFlags.Instance | BindingFlags.NonPublic);
+                        var scrollBar = field.GetValue(ctrl) as ScrollBar;
+                        vScrollBarHeight = scrollBar.Height;
+                    }
+                }
+            }
+            // Sets size, location and visibility
+            vScrollBar.SetBounds(control.Location.X + control.Width - vScrollBar.Width - borderWidth, control.Location.Y + borderWidth, vScrollBar.Width, vScrollBarHeight);
             hScrollBar.SetBounds(control.Location.X + borderWidth, control.Location.Y + control.Height - hScrollBar.Height - borderWidth, (control.Width - (borderWidth * 2)) - (vScrollBar.Visible ? vScrollBar.Width : 0), hScrollBar.Height);
             scrollerCorner.Visible = vScrollBar.Visible && hScrollBar.Visible;
             if (scrollerCorner.Visible)
@@ -2533,7 +2548,13 @@ namespace PluginCore.Controls
             Int32 height = listView.GetItemRect(0).Height; // Item height in pixels
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
             {
-                Int32 vScroll = -(e.OldValue - e.NewValue) * height;
+                Int32 vScroll;
+                if (listView.ShowGroups)
+                {
+                    Int32 prevPos = Win32.GetScrollPos(listView.Handle, Win32.SB_VERT);
+                    vScroll = -(prevPos - e.NewValue);
+                }
+                else vScroll = -(e.OldValue - e.NewValue) * height;
                 Win32.SendMessage(listView.Handle, (Int32)Win32.LVM_SCROLL, IntPtr.Zero, (IntPtr)vScroll);
             }
             else

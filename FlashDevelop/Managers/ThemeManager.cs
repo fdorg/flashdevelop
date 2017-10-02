@@ -1,12 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Drawing;
-using System.Reflection;
-using System.Collections.Generic;
-using System.Windows.Forms;
+﻿using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Managers;
-using PluginCore;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Reflection;
+using System.Windows.Forms;
 
 namespace FlashDevelop.Managers
 {

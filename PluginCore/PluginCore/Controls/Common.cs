@@ -1,8 +1,7 @@
-﻿using System.Drawing;
-using System.ComponentModel.Design;
+﻿using PluginCore;
 using PluginCore.Helpers;
-using PluginCore;
-using System.Runtime.InteropServices;
+using System.ComponentModel.Design;
+using System.Drawing;
 using System.Reflection;
 
 namespace System.Windows.Forms
@@ -334,7 +333,6 @@ namespace System.Windows.Forms
         {
             get { return this.Control as FlatCombo; }
         }
-
     }
 
     public class FlatCombo : ComboBox
@@ -594,12 +592,7 @@ namespace System.Windows.Forms
             this.SelectedObjectsChanged += this.OnSelectedObjectsChanged;
         }
 
-        private void OnValueChanged(Object sender, EventArgs e)
-        {
-            this.OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));
-        }
-
-        private void OnSelectedObjectsChanged(Object sender, EventArgs e)
+        public ScrollBar GetScrollBar()
         {
             foreach (Control ctrl in this.Controls)
             {
@@ -607,10 +600,21 @@ namespace System.Windows.Forms
                 {
                     Type type = ctrl.GetType();
                     FieldInfo field = type.GetField("scrollBar", BindingFlags.Instance | BindingFlags.NonPublic);
-                    var scrollBar = field.GetValue(ctrl) as ScrollBar;
-                    scrollBar.ValueChanged += this.OnValueChanged;
+                    return field.GetValue(ctrl) as ScrollBar;
                 }
             }
+            return null;
+        }
+
+        private void OnValueChanged(Object sender, EventArgs e)
+        {
+            this.OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));
+        }
+
+        private void OnSelectedObjectsChanged(Object sender, EventArgs e)
+        {
+            ScrollBar scrollBar = GetScrollBar();
+            if (scrollBar != null) scrollBar.ValueChanged += this.OnValueChanged;
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -655,12 +659,14 @@ namespace System.Windows.Forms
     {
         public Boolean UseTheme { get; set; } = true;
         public Color DisabledTextColor { get; set; } = SystemColors.ControlDark;
+        public Color DisabledBackColor { get; set; } = SystemColors.Control;
 
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
             if (this.UseTheme && !this.Enabled)
             {
+                e.Graphics.FillRectangle(new SolidBrush(this.DisabledBackColor), Rectangle.Inflate(this.ClientRectangle, -2, -2));
                 TextRenderer.DrawText(e.Graphics, this.Text, this.Font, this.ClientRectangle, this.DisabledTextColor);
             }
         }
@@ -833,10 +839,82 @@ namespace System.Windows.Forms
                             }
                         }
                         var tff = TextFormatFlags.VerticalCenter;
-                        TextRenderer.DrawText(g, this.Text, this.Font, new Point(0, (this.Height/2) + 2), fore, tff);
+                        TextRenderer.DrawText(g, this.Text, this.Font, new Point(0, (this.Height / 2) + 2), fore, tff);
                     }
                     break;
             }
+        }
+    }
+
+    public class ToolStripProgressBarEx : ToolStripControlHost
+    {
+        private static readonly Padding defaultMargin = new Padding(1, 2, 1, 1);
+        private static readonly Padding defaultStatusStripMargin = new Padding(1, 5, 1, 4);
+
+        public ToolStripProgressBarEx() : base(new ProgressBarEx())
+        {
+            this.Font = PluginBase.Settings.DefaultFont;
+            this.ProgressBar.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripProgressBar.ForeColor", SystemColors.Highlight);
+            this.ProgressBar.Margin = DefaultMargin;
+            this.ProgressBar.Size = DefaultSize;
+        }
+
+        protected override Size DefaultSize
+        {
+            get { return new Size(100, 12); }
+        }
+
+        protected override Padding DefaultMargin
+        {
+            get
+            {
+                if (this.Owner != null && this.Owner is StatusStrip)
+                {
+                    return defaultStatusStripMargin;
+                }
+                else return defaultMargin;
+            }
+        }
+
+        public ProgressBar ProgressBar
+        {
+            get { return this.Control as ProgressBar; }
+        }
+
+        public Int32 Step
+        {
+            set { this.ProgressBar.Step = value; }
+            get { return this.ProgressBar.Step; }
+        }
+
+        public ProgressBarStyle Style
+        {
+            set { this.ProgressBar.Style = value; }
+            get { return this.ProgressBar.Style; }
+        }
+
+        public Int32 MarqueeAnimationSpeed
+        {
+            get { return this.ProgressBar.MarqueeAnimationSpeed; }
+            set { this.ProgressBar.MarqueeAnimationSpeed = value; }
+        }
+
+        public Int32 Maximum
+        {
+            set { this.ProgressBar.Maximum = value; }
+            get { return this.ProgressBar.Maximum; }
+        }
+
+        public Int32 Minimum
+        {
+            set { this.ProgressBar.Minimum = value; }
+            get { return this.ProgressBar.Minimum; }
+        }
+
+        public Int32 Value
+        {
+            set { this.ProgressBar.Value = value; }
+            get { return this.ProgressBar.Value; }
         }
     }
 

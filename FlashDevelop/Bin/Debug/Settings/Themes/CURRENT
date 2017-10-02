@@ -1,11 +1,9 @@
 ### Thyleus.fdi
 
-### Main status progressbar, AppMan???
-
 # FD UI THEME (5.3+)
 
 # Use themes in dialogs?
-SmartForm.UseTheme=False
+SmartForm.UseTheme=True
 
 # Should we use custom border?
 ThemeManager.UseCustomBorder=True
@@ -71,6 +69,7 @@ ListView.GridLineColor=#858281
 ProgressBar.ForeColor=#F0AC62
 ProgressBar.BackColor=#858281
 ProgressBar.BorderColor=#7B7675
+ToolStripProgressBar.ForeColor=#EC9637
 
 # Flat, Popup, Standard, System
 GroupBox.FlatStyle=Flat
@@ -142,6 +141,7 @@ Button.CheckedBackColor=#E6E4E3
 Button.MouseOverBackColor=#BCBAB8
 Button.MouseDownBackColor=#E6E4E3
 Button.DisabledTextColor=#666666
+Button.DisabledBackColor=#CDCBC9
 Button.BorderColor=#7B7675
 
 # Graph used in profiler

@@ -102,7 +102,7 @@ namespace FlashDevelop
         private MenuStrip menuStrip;
         private StatusStrip statusStrip;
         private ToolStripPanel toolStripPanel;
-        private ToolStripProgressBar toolStripProgressBar;
+        private ToolStripProgressBarEx toolStripProgressBar;
         private ToolStripStatusLabel toolStripProgressLabel;
         private ToolStripStatusLabel toolStripStatusLabel;
         private ToolStripButton restartButton;
@@ -211,9 +211,9 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Gets the toolStripProgressBar
+        /// Gets the ToolStripProgressBarEx
         /// </summary>
-        public ToolStripProgressBar ProgressBar
+        public ToolStripProgressBarEx ProgressBar
         {
             get { return this.toolStripProgressBar; }
         }
@@ -994,7 +994,7 @@ namespace FlashDevelop
             this.tabMenu = StripBarManager.GetContextMenu(FileNameHelper.TabMenu);
             this.toolStripStatusLabel = new ToolStripStatusLabel();
             this.toolStripProgressLabel = new ToolStripStatusLabel();
-            this.toolStripProgressBar = new ToolStripProgressBar();
+            this.toolStripProgressBar = new ToolStripProgressBarEx();
             this.printPreviewDialog = new PrintPreviewDialog();
             this.saveFileDialog = new SaveFileDialog();
             this.openFileDialog = new OpenFileDialog();

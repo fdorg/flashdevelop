@@ -1,15 +1,17 @@
-﻿using System;
-using System.Drawing;
-using System.Windows.Forms;
+﻿using FlashDevelop.Helpers;
+using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
-using PluginCore;
-using FlashDevelop.Helpers;
+using System;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace FlashDevelop.Dialogs
 {
     public class ControlDialog : Form
     {
+        private Boolean showGroups = true;
+
         public ControlDialog()
         {
             this.InitializeComponent();
@@ -33,6 +35,16 @@ namespace FlashDevelop.Dialogs
                 this.listBoxEx.Items.Add(msg);
             }
             this.treeViewEx.ExpandAll();
+        }
+
+        public Boolean ShowGroups
+        {
+            get { return showGroups; }
+            set
+            {
+                this.showGroups = value;
+                this.listViewEx.ShowGroups = value;
+            }
         }
 
         #region Windows Form Designer Generated Code
@@ -69,6 +81,8 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("First Group", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Second Group", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Hello Item 1");
             System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Hello Item 2");
             System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Hello Item 3");
@@ -303,7 +317,9 @@ namespace FlashDevelop.Dialogs
             // 
             // buttonEx3
             // 
+            this.buttonEx3.DisabledBackColor = System.Drawing.SystemColors.Control;
             this.buttonEx3.DisabledTextColor = System.Drawing.SystemColors.ControlDark;
+            this.buttonEx3.Enabled = false;
             this.buttonEx3.Location = new System.Drawing.Point(25, 104);
             this.buttonEx3.Name = "buttonEx3";
             this.buttonEx3.Size = new System.Drawing.Size(92, 30);
@@ -361,6 +377,7 @@ namespace FlashDevelop.Dialogs
             // 
             // buttonEx
             // 
+            this.buttonEx.DisabledBackColor = System.Drawing.SystemColors.Control;
             this.buttonEx.DisabledTextColor = System.Drawing.SystemColors.ControlDark;
             this.buttonEx.Location = new System.Drawing.Point(25, 180);
             this.buttonEx.Name = "buttonEx";
@@ -386,6 +403,7 @@ namespace FlashDevelop.Dialogs
             // 
             // buttonEx2
             // 
+            this.buttonEx2.DisabledBackColor = System.Drawing.SystemColors.Control;
             this.buttonEx2.DisabledTextColor = System.Drawing.SystemColors.ControlDark;
             this.buttonEx2.Location = new System.Drawing.Point(25, 142);
             this.buttonEx2.Name = "buttonEx2";
@@ -413,6 +431,33 @@ namespace FlashDevelop.Dialogs
             this.columnHeader,
             this.columnHeader1});
             this.listViewEx.GridLineColor = System.Drawing.SystemColors.Control;
+            listViewGroup1.Header = "First Group";
+            listViewGroup1.Name = "listViewGroup";
+            listViewGroup2.Header = "Second Group";
+            listViewGroup2.Name = "listViewGroup2";
+            this.listViewEx.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
+            listViewGroup1,
+            listViewGroup2});
+            listViewItem1.Group = listViewGroup1;
+            listViewItem2.Group = listViewGroup1;
+            listViewItem3.Group = listViewGroup1;
+            listViewItem4.Group = listViewGroup1;
+            listViewItem5.Group = listViewGroup1;
+            listViewItem6.Group = listViewGroup1;
+            listViewItem7.Group = listViewGroup1;
+            listViewItem8.Group = listViewGroup1;
+            listViewItem9.Group = listViewGroup1;
+            listViewItem10.Group = listViewGroup1;
+            listViewItem11.Group = listViewGroup2;
+            listViewItem12.Group = listViewGroup2;
+            listViewItem13.Group = listViewGroup2;
+            listViewItem14.Group = listViewGroup2;
+            listViewItem15.Group = listViewGroup2;
+            listViewItem16.Group = listViewGroup2;
+            listViewItem17.Group = listViewGroup2;
+            listViewItem18.Group = listViewGroup2;
+            listViewItem19.Group = listViewGroup2;
+            listViewItem20.Group = listViewGroup2;
             this.listViewEx.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1,
             listViewItem2,

@@ -264,7 +264,6 @@ namespace FlashDevelop.Dialogs
             imageList.Images.Add(Globals.MainForm.FindImage("342", false));
             imageList.Images.Add(Globals.MainForm.FindImage("50", false));
             imageList.Images.Add(Globals.MainForm.FindImage("153", false)); // clear
-            //this.infoPictureBox.Image = Globals.MainForm.FindImage("229", false);
             this.itemListView.SmallImageList = imageList;
             this.clearFilterButton.ImageList = imageList;
             this.clearFilterButton.ImageIndex = 3;
@@ -278,7 +277,6 @@ namespace FlashDevelop.Dialogs
             this.helpLabel.Text = TextHelper.GetString("Info.Help");
             this.Text = " " + TextHelper.GetString("Title.SettingDialog");
             this.disableCheckBox.Text = " " + TextHelper.GetString("Info.Disable");
-            //this.infoLabel.Text = TextHelper.GetString("Info.SettingsTakeEffect");
             this.filterLabel.Text = TextHelper.GetString("Info.FilterSettings");
             this.nameLabel.Text = TextHelper.GetString("Info.NoItemSelected");
             this.closeButton.Text = TextHelper.GetString("Label.Close");
@@ -532,6 +530,9 @@ namespace FlashDevelop.Dialogs
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private void UpdateRestartRequired(string key, object oldValue, object newValue)
         {
             bool previous = requireRestart.Count > 0;
@@ -546,6 +547,9 @@ namespace FlashDevelop.Dialogs
             if (requireRestart.Count > 0 != previous) UpdateInfo();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private void UpdateInfo()
         {
             if (requireRestart.Count > 0)

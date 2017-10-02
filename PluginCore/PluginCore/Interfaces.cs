@@ -2,14 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using PluginCore.Controls;
 using PluginCore.Localization;
-using PluginCore.Managers;
 using ScintillaNet;
 using ScintillaNet.Configuration;
 using ScintillaNet.Enums;
 using WeifenLuo.WinFormsUI.Docking;
-using Keys = System.Windows.Forms.Keys;
 
 namespace PluginCore
 {
@@ -159,7 +156,7 @@ namespace PluginCore
         /// <summary>
         /// Registers a new menu item with the shortcut manager.
         /// </summary>
-        void RegisterShortcutItem(String id, Keys keys);
+        void RegisterShortcutItem(String id, System.Windows.Forms.Keys keys);
         /// <summary>
         /// Registers a new menu item with the shortcut manager.
         /// </summary>
@@ -220,11 +217,11 @@ namespace PluginCore
         /// <summary>
         /// Gets the specified item's shortcut keys.
         /// </summary>
-        Keys GetShortcutItemKeys(String id);
+        System.Windows.Forms.Keys GetShortcutItemKeys(String id);
         /// <summary>
         /// Gets the specified item's id.
         /// </summary>
-        String GetShortcutItemId(Keys keys);
+        String GetShortcutItemId(System.Windows.Forms.Keys keys);
         /// <summary>
         /// Gets a theme property value.
         /// </summary>
@@ -357,7 +354,7 @@ namespace PluginCore
         /// <summary>
         /// Gets the tool strip progress bar.
         /// </summary>
-        ToolStripProgressBar ProgressBar { get; }
+        ToolStripProgressBarEx ProgressBar { get; }
         /// <summary>
         /// Gets the collection of controls contained within this control.
         /// </summary>
@@ -441,7 +438,7 @@ namespace PluginCore
         /// <summary>
         /// Gets the ignored keys.
         /// </summary>
-        List<Keys> IgnoredKeys { get; }
+        List<System.Windows.Forms.Keys> IgnoredKeys { get; }
         /// <summary>
         /// Gets the version of the application.
         /// </summary>

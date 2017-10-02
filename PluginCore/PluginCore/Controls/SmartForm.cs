@@ -1,12 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Drawing;
-using System.Windows.Forms;
-using System.ComponentModel;
-using System.Collections.Generic;
+﻿using PluginCore.Helpers;
 using PluginCore.Managers;
 using PluginCore.Utilities;
-using PluginCore.Helpers;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
 
 namespace PluginCore.Controls
 {
