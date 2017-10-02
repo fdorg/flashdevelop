@@ -23,19 +23,20 @@ namespace ASCompletion.Helpers
         public CachedClassModel GetCachedModel(ClassModel cls)
         {
             CachedClassModel v;
-            cache.TryGetValue(cls, out v);
+            lock (cache)
+                cache.TryGetValue(cls, out v);
             return v;
         }
 
         public void Clear()
         {
             outdatedModels.Clear();
-            cache.Clear();
+            lock (cache)
+                cache.Clear();
         }
 
         public void Remove(ClassModel cls)
         {
-            //TODO: might have to lock on cache?
             lock (cache)
             {
                 var cachedClassModel = GetOrCreate(cache, cls);
@@ -50,6 +51,14 @@ namespace ASCompletion.Helpers
                 RemoveConnections(cls, overriding, ccm => ccm.Overriders);
                 RemoveConnections(cls, implementors, ccm => ccm.Implementing);
                 RemoveConnections(cls, overriders, ccm => ccm.Overriding);
+
+                //remove connected classes hashset
+                foreach (var clsModel in cachedClassModel.ConnectedClassModels)
+                {
+                    CachedClassModel cachedClass;
+                    if (cache.TryGetValue(clsModel, out cachedClass))
+                        cachedClass.ConnectedClassModels.Remove(clsModel);
+                }
 
                 //remove cls itself
                 cache.Remove(cls);
@@ -84,35 +93,25 @@ namespace ASCompletion.Helpers
                 {
                     cls.ResolveExtends();
 
-                    //TODO: might have to lock on cache?
-                    //get the old CachedClassModel
                     CachedClassModel cachedClassModel;
-                    CacheDictionary implementors;
-                    CacheDictionary overriders;
+                    HashSet<ClassModel> connectedClasses;
 
                     lock (cache)
                     {
+                        //get the old CachedClassModel
                         cachedClassModel = GetOrCreate(cache, cls);
-
-                        implementors = cachedClassModel.Implementors;
-                        overriders = cachedClassModel.Overriders;
+                        connectedClasses = cachedClassModel.ConnectedClassModels;
 
                         //remove old cls
                         Remove(cls);
 
                         UpdateClass(cls, cache);
                     }
-                    //also update overriders and implementors, so that cls is updated by them
-                    var implementorClasses = implementors.Values.SelectMany(i => i).Distinct();
-                    var overriderClasses = overriders.Values.SelectMany(i => i).Distinct();
 
-                    foreach (var implementor in implementorClasses)
-                        lock(cache)
-                            UpdateClass(implementor, cache);
-
-                    foreach (var overrider in overriderClasses)
+                    //also update all classes / interfaces that are connected to cls
+                    foreach (var connection in connectedClasses)
                         lock (cache)
-                            UpdateClass(overrider, cache);
+                            UpdateClass(connection, cache);
                 }
                 outdatedModels.Clear();
 
@@ -195,7 +194,6 @@ namespace ASCompletion.Helpers
 
         void RemoveConnections(ClassModel cls, CacheDictionary goThrough, Func<CachedClassModel, CacheDictionary> removeFrom)
         {
-            //TODO: this removes all connections, but it should only remove no longer existing ones
             //for easier understandability, the comments below explain the process using the following example:
             //goThrough := GetCachedModel(cls).Implementing
             //removeFrom(c) := c.Implementors
@@ -214,7 +212,7 @@ namespace ASCompletion.Helpers
                     {
                         p.Value.Remove(cls);
 
-                        if (p.Value.Count == 0) //TODO: check if this is really necessary (or even bad?)
+                        if (p.Value.Count == 0)
                             toRemove.Add(p.Key); //empty ones should be removed
                     }
 
@@ -238,6 +236,12 @@ namespace ASCompletion.Helpers
             //look for functions / variables in cls that originate from interfaces of cls
             var interfaces = ResolveInterfaces(cls);
 
+            foreach (var interf in interfaces)
+            {
+                cachedClassModel.ConnectedClassModels.Add(interf); //cachedClassModel is connected to interf.Key
+                GetOrCreate(cache, interf).ConnectedClassModels.Add(cls); //the inverse is also true
+            }
+
             if (interfaces.Count > 0)
             {
                 //look at each member and see if one of them is defined in an interface of cls
@@ -260,6 +264,14 @@ namespace ASCompletion.Helpers
 
             if (cls.Extends != null && !cls.Extends.IsVoid())
             {
+
+                var currentParent = cls.Extends;
+                while (currentParent != null && !currentParent.IsVoid())
+                {
+                    cachedClassModel.ConnectedClassModels.Add(currentParent); //cachedClassModel is connected to interf.Key
+                    GetOrCreate(cache, currentParent).ConnectedClassModels.Add(cls); //the inverse is also true
+                    currentParent = currentParent.Extends;
+                }
                 //look for functions in cls that originate from a super-class
                 foreach (MemberModel member in cls.Members)
                 {
@@ -371,6 +383,8 @@ namespace ASCompletion.Helpers
 
     class CachedClassModel
     {
+        public HashSet<ClassModel> ConnectedClassModels = new HashSet<ClassModel>();
+
         /// <summary>
         /// If this ClassModel is an interface, this contains a set of classes - for each member - that implement the given members
         /// </summary>
