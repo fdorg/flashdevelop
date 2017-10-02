@@ -141,12 +141,7 @@ namespace ProjectManager.Controls
         /// </summary>
         private void InitializeGraphics()
         {
-            ImageList imageList = new ImageList();
-            imageList.ColorDepth = ColorDepth.Depth32Bit;
-            imageList.ImageSize = ScaleHelper.Scale(new Size(16, 16));
-            imageList.Images.Add(PluginBase.MainForm.FindImage("-1|24|0|0", false));
-            this.refreshButton.ImageList = imageList;
-            this.refreshButton.ImageIndex = 0;
+            this.refreshButton.Image = PluginBase.MainForm.FindImage("-1|24|0|0");
         }
 
         /// <summary>
@@ -157,6 +152,20 @@ namespace ProjectManager.Controls
             this.cbInClasspathsOnly.Text = TextHelper.GetString("Label.InClasspathsOnly");
             this.checkBox.Text = TextHelper.GetString("Label.CodeFilesOnly");
             this.Text = " " + TextHelper.GetString("Title.OpenResource");
+        }
+
+        /// <summary>
+        /// Apply undefined control theme colors.
+        /// </summary>
+        internal void ThemeControls()
+        {
+            var backColor = PluginBase.MainForm.GetThemeColor("MenuStrip.BackColor", this.BackColor);
+            var foreColor = PluginBase.MainForm.GetThemeColor("MenuStrip.ForeColor", SystemColors.ControlText);
+            this.BackColor = backColor;
+            this.infoLabel.ForeColor = foreColor;
+            this.cbInClasspathsOnly.ForeColor = foreColor;
+            this.checkBox.ForeColor = foreColor;
+            this.refreshButton.BackColor = this.textBox.BackColor;
         }
 
         /// <summary>
