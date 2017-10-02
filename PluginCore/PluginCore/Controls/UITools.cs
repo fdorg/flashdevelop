@@ -158,7 +158,9 @@ namespace PluginCore.Controls
                         || cmd.IndexOfOrdinal("Watcher") > 0
                         || cmd.IndexOfOrdinal("Get") > 0
                         || cmd.IndexOfOrdinal("Set") > 0
-                        || cmd.IndexOfOrdinal("SDK") > 0)
+                        || cmd.IndexOfOrdinal("SDK") > 0
+                        || cmd == "ResultsPanel.ClearResults"
+                        || cmd == "LintingManager.FilesLinted")
                         return; // ignore notifications
                     break;
             }

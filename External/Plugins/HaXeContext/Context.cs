@@ -1126,6 +1126,7 @@ namespace HaXeContext
             var result = new HashSet<string>();
             foreach (var type in types)
             {
+                if (string.IsNullOrEmpty(type)) continue;
                 if(type.Contains("->") || type.Contains('{') || type.Contains('<'))
                 {
                     var length = type.Length;
@@ -1149,7 +1150,7 @@ namespace HaXeContext
                         else if (c == '>')
                         {
                             genCount--;
-                            if (pos != i) result.Add(type.Substring(pos, i - pos));
+                            if (i > pos) result.Add(type.Substring(pos, i - pos));
                             pos = i + 1;
                         }
                         else if (c == '{')
@@ -1161,9 +1162,8 @@ namespace HaXeContext
                         }
                         else if (c == '}')
                         {
-                            if (hasColon) result.Add(type.Substring(pos, i - pos));
+                            if (i > pos) result.Add(type.Substring(pos, i - pos));
                             if (--braCount == 0) inAnonType = false;
-                            hasColon = false;
                             pos = i + 1;
                         }
                         else if (inAnonType)
@@ -1196,11 +1196,13 @@ namespace HaXeContext
                             if (i > pos) result.Add(type.Substring(pos, i - pos));
                             i++;
                             pos = i + 1;
-                            if (type.IndexOfOrdinal("->", pos) == -1 && type.IndexOfOrdinal("{", pos) == -1 && type.IndexOfOrdinal(",") == -1)
+                            hasColon = false;
+                            if (braCount == 0 && genCount == 0 
+                                && type.IndexOfOrdinal("{", pos) == -1
+                                && type.IndexOfOrdinal("<", pos) == -1
+                                && type.IndexOfOrdinal(",", pos) == -1)
                             {
-                                var index = type.IndexOfOrdinal("}", pos);
-                                if (index != -1) result.Add(type.Substring(pos, index - pos));
-                                else result.Add(type.Substring(pos));
+                                result.Add(type.Substring(pos));
                                 break;
                             }
                         }
@@ -1293,7 +1295,8 @@ namespace HaXeContext
         internal HaxeComplete GetHaxeComplete(ScintillaControl sci, ASExpr expression, bool autoHide, HaxeCompilerService compilerService)
         {
             var sdkVersion = GetCurrentSDKVersion();
-            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.CompletionServer && sdkVersion >= "3.3.0")
+            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.CompletionServer && sdkVersion >= "3.3.0"
+                && (hxsettings.EnabledFeatures & CompletionFeatures.DisplayStdIn) == CompletionFeatures.DisplayStdIn)
                 return new HaxeComplete330(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
             return new HaxeComplete(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
         }
@@ -1307,7 +1310,8 @@ namespace HaXeContext
         /// <returns>Null (not handled) or member list</returns>
         public override MemberList ResolveDotContext(ScintillaNet.ScintillaControl sci, ASExpr expression, bool autoHide)
         {
-            if (resolvingDot || hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || PluginBase.MainForm.CurrentDocument.IsUntitled)
+            if (resolvingDot || hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop
+                || PluginBase.MainForm.CurrentDocument.IsUntitled)
                 return null;
 
             if (autoHide && !hxsettings.DisableCompletionOnDemand)
@@ -1481,7 +1485,8 @@ namespace HaXeContext
         /// <returns>Null (not handled) or function signature</returns>
         public override MemberModel ResolveFunctionContext(ScintillaNet.ScintillaControl sci, ASExpr expression, bool autoHide)
         {
-            if (resolvingFunction || hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || PluginBase.MainForm.CurrentDocument.IsUntitled)
+            if (resolvingFunction || hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop
+                || PluginBase.MainForm.CurrentDocument.IsUntitled)
                 return null;
 
             if (autoHide && !hxsettings.DisableCompletionOnDemand)
@@ -1797,10 +1802,12 @@ namespace HaXeContext
                 ErrorManager.ShowInfo(TextHelper.GetString("Info.InvalidHaXePath"));
                 return;
             }
-            if (Path.GetExtension(haxePath) == string.Empty) haxePath = Path.Combine(haxePath, "haxelib.exe");
-            nameToVersion.Select(it => $"{haxePath};install {it.Key} {it.Value}")
-                     .ToList()
-                     .ForEach(it => MainForm.CallCommand("RunProcessCaptured", it));
+            if (Directory.Exists(haxePath)) haxePath = Path.Combine(haxePath, "haxelib.exe");
+
+            var cwd = Directory.GetCurrentDirectory();
+            nameToVersion.Select(it => $"{haxePath};install {it.Key} {it.Value} -cwd \"{cwd}\"")
+                .ToList()
+                .ForEach(it => MainForm.CallCommand("RunProcessCaptured", it));
         }
 
         #endregion

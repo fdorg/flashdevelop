@@ -4550,19 +4550,17 @@ namespace ASCompletion.Completion
 
         private static void SmartEventInsertion(ScintillaControl sci, int position, ICompletionListItem item)
         {
+            if (!ASContext.Context.Settings.GenerateImports) return;
             try
             {
                 ClassModel import = (item as EventItem).EventType;
                 if (!ASContext.Context.IsImported(import, sci.LineFromPosition(position)))
                 {
-                    if (ASContext.Context.Settings.GenerateImports)
+                    int offset = ASGenerator.InsertImport(import, true);
+                    if (offset > 0)
                     {
-                        int offset = ASGenerator.InsertImport(import, true);
-                        if (offset > 0)
-                        {
-                            position += offset;
-                            sci.SetSel(position, position);
-                        }
+                        position += offset;
+                        sci.SetSel(position, position);
                     }
                 }
             }
