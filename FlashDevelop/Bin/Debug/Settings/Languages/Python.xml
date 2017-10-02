@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Scintilla xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<keyword-classes>
 		<keyword-class name="python-primary-keywords">
@@ -68,30 +68,30 @@
 				<keyword key="1" class="python-additional-keywords" />
 			</use-keywords>
 			<!-- COLORING_START -->
-			<editor-style caret-fore="0xFFFFFF" caretline-back="0xFBC404" selection-fore="0x000000" selection-back="0x8E8775" margin-fore="0x302d26" margin-back="0x302d26" highlight-back="0xffffff" marker-fore="0x302d26" marker-back="0x726A65" colorize-marker-back="true" />
+			<editor-style caret-fore="0x000000" caretline-back="0xececec" selection-fore="0xffffff" selection-back="0x3399ff" colorize-marker-back="true" margin-fore="0xffffff" margin-back="0xffffff" marker-back="0xbcbcbc" />
 			<use-styles>
-				<style name="default" fore="0xf9f9f9" back="0x302d26" size="9" font="Consolas,Courier New,monospace" />
-				<style name="commentline" fore="0x8F8B76" />
-				<style name="number" fore="0x7bc654" />
-				<style name="string" fore="0xd38b38" />
-				<style name="character" fore="0xEEA382" />
-				<style name="word" fore="0xb6a129" />
-				<style name="triple" />
-				<style name="tripledouble" />
+				<style name="default" fore="0x000000" back="0xffffff" size="9" font="Consolas,Courier New,monospace" />
+				<style name="commentline" fore="0x008000" />
+				<style name="number" fore="0x000099" />
+				<style name="string" fore="0xa31515" />
+				<style name="character" fore="0xa31515" />
+				<style name="word" fore="0x000099" />
+				<style name="triple" fore="0xa31515" />
+				<style name="tripledouble" fore="0xa31515" />
 				<style name="classname" />
 				<style name="defname" />
 				<style name="operator" />
 				<style name="identifier" />
-				<style name="commentblock" fore="0x8F8B76" />
+				<style name="commentblock" fore="0x008000" />
 				<style name="stringeol" />
-				<style name="word2" fore="0xFFFFC1" />
-				<style name="decorator" />
-				<style name="gdefault" fore="0x47423D" />
-				<style name="linenumber" fore="0x716B5E" />
-				<style name="bracelight" fore="0x8B8538" bold="true" back="0x423F35" />
-				<style name="bracebad" bold="true" fore="0xFF8000" />
-				<style name="controlchar" />
-				<style name="indentguide" fore="0x9B9484" />
+				<style name="word2" fore="0x008080" />
+				<style name="decorator" fore="0xFF0080" />
+				<style name="gdefault" fore="0xefece9" />
+				<style name="linenumber" fore="0x666666" />
+				<style name="bracelight" fore="0x0000cc" back="0xcdcdff" bold="true" />
+				<style name="bracebad" bold="true" />
+				<style name="controlchar" fore="0xffffff" />
+				<style name="indentguide" fore="0xc0c0c0" />
 				<style name="lastpredefined" fore="0x666666" />
 			</use-styles>
 			<!-- COLORING_END -->
