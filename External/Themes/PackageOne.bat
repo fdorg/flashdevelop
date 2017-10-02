@@ -13,6 +13,7 @@ echo [1] Default
 echo [2] DimGray
 echo [3] Obsidian
 echo [4] Thyleus
+echo [5] ThyleusV2
 set /p option="Which theme? "
 if "%option%" == "1" goto :option1
 if "%option%" == "2" goto :option2
@@ -39,4 +40,8 @@ exit
 :option4
 7z a -tzip .\FlashDevelop\Bin\Debug\Settings\Themes\FullThemes\ThyleusTheme.fdz .\External\Themes\FullThemes\ThyleusTheme\* -xr!.empty
 7z a -tzip .\FlashDevelop\Bin\Debug\Settings\Themes\SyntaxThemes\ThyleusTheme.fdz .\External\Themes\SyntaxThemes\ThyleusTheme\* -xr!.empty
+exit
+
+:option4
+7z a -tzip .\FlashDevelop\Bin\Debug\Settings\Themes\FullThemes\ThyleusThemeV2.fdz .\External\Themes\FullThemesV2\ThyleusTheme\* -xr!.empty
 exit
