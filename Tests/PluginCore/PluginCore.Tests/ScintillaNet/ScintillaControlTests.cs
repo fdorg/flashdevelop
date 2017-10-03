@@ -142,5 +142,36 @@ namespace PluginCore.ScintillaNet
                 return sci.GetWordRight(sci.CurrentPos, skipWS);
             }
         }
+
+        [TestFixture]
+        class OnSmartIndent : ScintillaControlTests
+        {
+            IEnumerable<TestCaseData> CppTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("function test() {\n$(EntryPoint)\n}", '\n').Returns("function test() {\n\t\n}");
+                    yield return new TestCaseData("function test() {\n\t\n$(EntryPoint)\n}", '\n').Returns("function test() {\n\t\n\t\n}");
+                }
+            }
+
+            // Remark, OnSmartIndent happens after the char has been inserted
+            [Test, TestCaseSource(nameof(CppTestCases))]
+            public string Cpp(string sourceText, int ch)
+            {
+                sci.SmartIndentType = SmartIndent.CPP;
+                sci.ConfigurationLanguage = "haxe";
+                return Common(sci, sourceText, ch);
+            }
+
+            static string Common(ScintillaControl sci, string sourceText, int ch)
+            {
+                sci.Text = sourceText;
+                sci.Colourise(0, -1);
+                SnippetHelper.PostProcessSnippets(sci, 0);
+                sci.OnSmartIndent(sci, ch);
+                return sci.Text;
+            }
+        }
     }
 }

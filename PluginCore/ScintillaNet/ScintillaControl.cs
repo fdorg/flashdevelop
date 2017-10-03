@@ -5841,7 +5841,7 @@ namespace ScintillaNet
         /// Provides support for smart indenting
         /// </summary>
         ///
-        private void OnSmartIndent(ScintillaControl ctrl, int ch)
+        internal void OnSmartIndent(ScintillaControl ctrl, int ch)
         {
             char newline = (EOLMode == 1) ? '\r' : '\n';
             switch (SmartIndentType)
@@ -5899,6 +5899,7 @@ namespace ScintillaNet
                             if (tempText.EndsWith('{'))
                             {
                                 int bracePos = CurrentPos - 2 - (tempText3.Length - tempText.Length); //CurrentPos - 1 is always ch (newline)
+                                while (bracePos > 0 && CharAt(bracePos) != '{') bracePos--;
                                 int style = BaseStyleAt(bracePos);
                                 if (bracePos >= 0 && CharAt(bracePos) == '{' && (style == 10/*CPP*/ || style == 5/*CSS*/))
                                 {
