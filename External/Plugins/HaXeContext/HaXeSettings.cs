@@ -325,8 +325,8 @@ namespace HaXeContext
         }
 
         [DisplayName("Maximum Number Of Diagnostics Processes")]
-        [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("HaXeContext.Description.MaximumDiagnosticsProcesses"), DefaultValue(5)]
-        public int MaximumDiagnosticsProcesses { get; set; } = 5;
+        [LocalizedCategory("ASCompletion.Category.Language"), LocalizedDescription("HaXeContext.Description.MaximumDiagnosticsProcesses"), DefaultValue(1)]
+        public int MaximumDiagnosticsProcesses { get; set; } = 1;
 
         #endregion
 

@@ -6179,7 +6179,7 @@ AND - All conditions are met.</value>
     <comment>Added after 5.2.1</comment>
   </data>
   <data name="HaXeContext.Description.MaximumDiagnosticsProcesses" xml:space="preserve">
-    <value>Die maximale Anzahl an Prozessen für Diagnostics (Linting), die gleichzeitig laufen. Standardmäßig 5.</value>
+    <value>Die maximale Anzahl an Prozessen für Diagnostics (Linting), die gleichzeitig laufen. Standardmäßig 1.</value>
     <comment>Added after 5.2.1</comment>
   </data>
 </root>
