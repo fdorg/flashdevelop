@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Timers;
 using System.Windows.Forms;
+using ASCompletion.Completion;
 using ASCompletion.Model;
 using PluginCore;
 using PluginCore.Localization;
@@ -140,6 +141,8 @@ namespace ASCompletion.Controls
             var reference = (Reference)selection.Tag;
 
             HideList();
+            if (PluginBase.MainForm.CurrentDocument.SciControl != null)
+                ASComplete.SaveLastLookupPosition(PluginBase.MainForm.CurrentDocument.SciControl);
             PluginBase.MainForm.OpenEditableDocument(reference.File, false);
             PluginBase.MainForm.CurrentDocument.SciControl.GotoLine(reference.Line);
         }
