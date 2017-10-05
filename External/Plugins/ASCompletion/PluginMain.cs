@@ -1165,7 +1165,7 @@ namespace ASCompletion
                 
                 if (declaration.InClass.LineFrom == line)
                 {
-                    ReferenceList.Show( //TODO: declaration.Member is null
+                    ReferenceList.Show(
                         ReferenceList.ConvertClassCache(cached.ImplementorClassModels).ToList(),
                         new List<Reference>(0), 
                         ReferenceList.ConvertClassCache(cached.ChildClassModels).ToList(),
@@ -1246,34 +1246,24 @@ namespace ASCompletion
 
             if (settingObject.DisableInheritanceNavigation) return;
 
-            var line = sender.LineFromPosition(position);
-            //TODO: this needs to be improved, sometimes markers stay
-            var mask = sender.MarkerGet(line);
-            var searchMask = (1 << MarkerDown) | (1 << MarkerUp) | (1 << MarkerUpDown);
-            if ((mask & searchMask) > 0)
+            var start = sender.LineFromPosition(position);
+            var end = sender.LineFromPosition(position + Math.Abs(length));
+
+            for (var i = start; i <= end; ++i)
             {
-                var declaration = ASContext.Context.GetDeclarationAtLine(line); //this could be problematic if there are multiple declarations in one line
-                var cached = astCache.GetCachedModel(declaration.InClass);
-
-                if (cached == null || declaration.Member == null) return;
-
-                //Remove member from cache
-                //cached.Implementing.Remove(declaration.Member);
-                //cached.Implementors.Remove(declaration.Member);
-                //cached.Overriders.Remove(declaration.Member);
-                //cached.Overriding.Remove(declaration.Member);
-
-                //UpdateMarkersFromCache(sender);
-                sender.MarkerDelete(line, MarkerUp);
-                sender.MarkerDelete(line, MarkerDown);
-                sender.MarkerDelete(line, MarkerUpDown);
-                sender.MarkerDelete(line, MarkerUp);
-                sender.MarkerDelete(line, MarkerDown);
-                sender.MarkerDelete(line, MarkerUpDown);
-
-                //trigger cache update
-                //astCacheTimer.Start();
+                var mask = sender.MarkerGet(i);
+                var searchMask = (1 << MarkerDown) | (1 << MarkerUp) | (1 << MarkerUpDown);
+                if ((mask & searchMask) > 0)
+                {
+                    sender.MarkerDelete(i, MarkerUp);
+                    sender.MarkerDelete(i, MarkerDown);
+                    sender.MarkerDelete(i, MarkerUpDown);
+                    sender.MarkerDelete(i, MarkerUp);
+                    sender.MarkerDelete(i, MarkerDown);
+                    sender.MarkerDelete(i, MarkerUpDown);
+                }
             }
+            
         }
 
         private void OnUpdateCallTip(ScintillaControl sci, int position)
