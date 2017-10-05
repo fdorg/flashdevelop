@@ -117,7 +117,7 @@ namespace ASCompletion.Helpers
                 //for new ClassModels, we need to update everything in the list of classes that extend / implement something that does not exist
                 if (newModels)
                 {
-                    var toUpdate = new HashSet<ClassModel>();
+                    HashSet<ClassModel> toUpdate;
                     lock (unfinishedModels)
                         toUpdate = new HashSet<ClassModel>(unfinishedModels);
 
