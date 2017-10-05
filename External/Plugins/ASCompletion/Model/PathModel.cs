@@ -19,6 +19,7 @@ namespace ASCompletion.Model
     public class PathModel
     {
         static internal event Action<FileModel> OnFileRemove;
+        static internal event Action<FileModel> OnFileAdded;
 
         //static private readonly bool cacheEnabled = false;
         static private Dictionary<string, PathModel> pathes = new Dictionary<string, PathModel>();
@@ -546,6 +547,7 @@ namespace ASCompletion.Model
             lock (lockObject)
             {
                 files[aFile.FileName.ToUpper()] = aFile;
+                OnFileAdded?.Invoke(aFile);
             }
         }
 

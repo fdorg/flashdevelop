@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Timers;
@@ -82,12 +83,6 @@ namespace ASCompletion
         bool initializedCache = true;
         IProject lastProject;
         Timer astCacheTimer;
-        /// <summary>
-        /// This timer is used to periodically update the astCache for all project classes.
-        /// This is needed because the per file update will miss some connections.
-        /// By default it is called every 2 minutes.
-        /// </summary>
-        Timer completeAstCacheTimer;
 
         #region Required Properties
 
@@ -174,7 +169,6 @@ namespace ASCompletion
         {
             timerPosition.Enabled = false;
             astCacheTimer.Enabled = false;
-            completeAstCacheTimer.Enabled = false;
             PathExplorer.StopBackgroundExploration();
             SaveSettings();
         }
@@ -276,13 +270,9 @@ namespace ASCompletion
                         if (settingObject.ASTCacheUpdateInterval <= 0)
                             settingObject.ASTCacheUpdateInterval = 120; //2 minutes
 
-                        //astCacheTimer.Interval = settingObject.ASTCacheUpdateInterval * 1000;
-                        completeAstCacheTimer.Interval = settingObject.ASTCacheUpdateInterval * 1000;
-
                         if (settingObject.DisableInheritanceNavigation)
                         {
                             astCacheTimer.Stop();
-                            completeAstCacheTimer.Stop();
                             astCache.Clear();
                             foreach (var document in PluginBase.MainForm.Documents)
                             {
@@ -474,7 +464,6 @@ namespace ASCompletion
                             else if (command == "ASCompletion.PathExplorerFinished" && !initializedCache)
                             {
                                 UpdateCompleteCache();
-                                completeAstCacheTimer.Start();
                                 initializedCache = true;
                             }
                         }
@@ -842,6 +831,7 @@ namespace ASCompletion
             CompletionList.OnInsert += new InsertedTextHandler(ASComplete.HandleCompletionInsert);
             FileModel.OnFileUpdate += OnFileUpdate;
             PathModel.OnFileRemove += OnFileRemove;
+            PathModel.OnFileAdded += OnFileUpdate;
 
             // shortcuts
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Back);
@@ -868,41 +858,6 @@ namespace ASCompletion
                 Enabled = false
             };
             astCacheTimer.Elapsed += AstCacheTimer_Elapsed;
-            completeAstCacheTimer = new Timer
-            {
-                SynchronizingObject = PluginBase.MainForm as Form,
-                Enabled = false
-            };
-            completeAstCacheTimer.Elapsed += CompleteAstCacheTimer_Elapsed;
-
-
-        }
-
-        void OnFileRemove(FileModel obj)
-        {
-            PluginBase.RunAsync(() =>
-            {
-                foreach (var cls in obj.Classes)
-                    astCache.Remove(cls);
-
-                var sci1 = DocumentManager.FindDocument(obj.FileName)?.SplitSci1;
-                var sci2 = DocumentManager.FindDocument(obj.FileName)?.SplitSci2;
-
-                if (sci1 != null)
-                {
-                    sci1.MarkerDeleteAll(MarkerUp);
-                    sci1.MarkerDeleteAll(MarkerDown);
-                    sci1.MarkerDeleteAll(MarkerUpDown);
-                }
-                if (sci2 != null)
-                {
-                    sci2.MarkerDeleteAll(MarkerUp);
-                    sci2.MarkerDeleteAll(MarkerDown);
-                    sci2.MarkerDeleteAll(MarkerUpDown);
-                }
-
-                EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "ASCompletion.FileModelUpdated", obj));
-            });
         }
 
         #endregion
@@ -966,6 +921,12 @@ namespace ASCompletion
             {
                 var cls = astCache.GetCachedModel(clas);
                 if (cls == null) return;
+
+                if (cls.ChildClassModels.Count > 0 || cls.ImplementorClassModels.Count > 0)
+                {
+                    sci.SetMarginWidthN(Margin, marginWidth);
+                    sci.MarkerAdd(clas.LineFrom, MarkerDown);
+                }
 
                 foreach (var implementing in cls.Implementing)
                 {
@@ -1124,17 +1085,59 @@ namespace ASCompletion
 
         #region Event handlers
 
+        void OnFileRemove(FileModel obj)
+        {
+            PluginBase.RunAsync(() =>
+            {
+
+                foreach (var cls in obj.Classes)
+                {
+                    var cached = astCache.GetCachedModel(cls);
+                    astCache.Remove(cls);
+                    if (cached != null)
+                        foreach (var c in cached.ConnectedClassModels) //need to update all connected stuff
+                            astCache.MarkAsOutdated(c);
+                }
+
+                astCacheTimer.Stop();
+                astCacheTimer.Start();
+
+                var sci1 = DocumentManager.FindDocument(obj.FileName)?.SplitSci1;
+                var sci2 = DocumentManager.FindDocument(obj.FileName)?.SplitSci2;
+
+                if (sci1 != null)
+                {
+                    sci1.MarkerDeleteAll(MarkerUp);
+                    sci1.MarkerDeleteAll(MarkerDown);
+                    sci1.MarkerDeleteAll(MarkerUpDown);
+                }
+                if (sci2 != null)
+                {
+                    sci2.MarkerDeleteAll(MarkerUp);
+                    sci2.MarkerDeleteAll(MarkerDown);
+                    sci2.MarkerDeleteAll(MarkerUpDown);
+                }
+
+                EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "ASCompletion.FileModelUpdated", obj));
+            });
+        }
+
         /// <summary>
         /// Called when a file is parsed again (could be called multiple times)
         /// </summary>
         /// <param name="obj"></param>
-        private void OnFileUpdate(FileModel obj)
+        void OnFileUpdate(FileModel obj)
         {
             PluginBase.RunAsync(() =>
             {
-                foreach (var cls in obj.Classes)
-                    astCache.MarkAsOutdated(cls);
+                if (PluginBase.CurrentProject == null) return;
 
+                foreach (var cls in obj.Classes)
+                {
+                    astCache.MarkAsOutdated(cls);
+                }
+
+                astCacheTimer.Stop();
                 astCacheTimer.Start();
 
                 EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "ASCompletion.FileModelUpdated", obj));
@@ -1144,11 +1147,6 @@ namespace ASCompletion
         void AstCacheTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             astCache.UpdateOutdatedModels();
-        }
-
-        void CompleteAstCacheTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            astCache.UpdateCompleteCache();
         }
 
         void Sci_MarginClick(ScintillaControl sender, int modifiers, int position, int margin)
@@ -1162,7 +1160,21 @@ namespace ASCompletion
                 var declaration = ASContext.Context.GetDeclarationAtLine(line); //this could be problematic if there are multiple declarations in one line
                 var cached = astCache.GetCachedModel(declaration.InClass);
 
-                if (cached == null || declaration.Member == null) return;
+                if (cached == null) return;
+
+                
+                if (declaration.InClass.LineFrom == line)
+                {
+                    ReferenceList.Show( //TODO: declaration.Member is null
+                        ReferenceList.ConvertClassCache(cached.ImplementorClassModels).ToList(),
+                        new List<Reference>(0), 
+                        ReferenceList.ConvertClassCache(cached.ChildClassModels).ToList(),
+                        new List<Reference>(0)
+                    );
+                    return;
+                }
+
+                if (declaration.Member == null) return;
 
                 HashSet<ClassModel> implementing;
                 cached.Implementing.TryGetValue(declaration.Member, out implementing);
@@ -1177,10 +1189,10 @@ namespace ASCompletion
                 cached.Overriding.TryGetValue(declaration.Member, out overridden);
 
                 ReferenceList.Show(
-                    ReferenceList.ConvertCache(declaration.Member, implementors ?? new HashSet<ClassModel>()),
-                    ReferenceList.ConvertCache(declaration.Member, implementing ?? new HashSet<ClassModel>()),
-                    ReferenceList.ConvertCache(declaration.Member, overriders ?? new HashSet<ClassModel>()),
-                    ReferenceList.ConvertCache(declaration.Member, overridden ?? new HashSet<ClassModel>())
+                    ReferenceList.ConvertCache(declaration.Member, implementors ?? new HashSet<ClassModel>()).ToList(),
+                    ReferenceList.ConvertCache(declaration.Member, implementing ?? new HashSet<ClassModel>()).ToList(),
+                    ReferenceList.ConvertCache(declaration.Member, overriders ?? new HashSet<ClassModel>()).ToList(),
+                    ReferenceList.ConvertCache(declaration.Member, overridden ?? new HashSet<ClassModel>()).ToList()
                 );
             }
         }
@@ -1235,7 +1247,7 @@ namespace ASCompletion
             if (settingObject.DisableInheritanceNavigation) return;
 
             var line = sender.LineFromPosition(position);
-
+            //TODO: this needs to be improved, sometimes markers stay
             var mask = sender.MarkerGet(line);
             var searchMask = (1 << MarkerDown) | (1 << MarkerUp) | (1 << MarkerUpDown);
             if ((mask & searchMask) > 0)

@@ -99,6 +99,16 @@ namespace ASCompletion.Controls
             });
         }
 
+        internal static IEnumerable<Reference> ConvertClassCache(IEnumerable<ClassModel> list)
+        {
+            return list.Select(m => new Reference
+            {
+                File = m.InFile.FileName,
+                Line = m.LineFrom,
+                Type = m.QualifiedName
+            });
+        }
+
         #region Event Listeners
 
         static void ListView_LostFocus(object sender, EventArgs e)
