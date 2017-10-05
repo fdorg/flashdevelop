@@ -117,24 +117,17 @@ namespace ASCompletion.Helpers
                 //for new ClassModels, we need to update everything in the list of classes that extend / implement something that does not exist
                 if (newModels)
                 {
-                    var toRemove = new HashSet<ClassModel>();
+                    var toUpdate = new HashSet<ClassModel>();
                     lock (unfinishedModels)
-                        foreach (var model in unfinishedModels)
-                        {
-                            model.ResolveExtends();
+                        toUpdate = new HashSet<ClassModel>(unfinishedModels);
 
-                            var isComplete = IsCompletelyResolvable(model);
-                            if (isComplete) //class is complete now
-                                toRemove.Add(model); //TODO: also non-complete classes should be updated if it is only because of one of the parents being incomplete
-                        }
-
-                    foreach (var model in toRemove)
+                    foreach (var model in toUpdate)
                     {
+                        lock (unfinishedModels)
+                            unfinishedModels.Remove(model); //will be added back by UpdateClass if needed
+
                         lock (cache)
                             UpdateClass(model, cache);
-
-                        lock (unfinishedModels)
-                            unfinishedModels.Remove(model);
                     }
                 }
                 
