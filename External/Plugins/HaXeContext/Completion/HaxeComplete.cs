@@ -263,7 +263,7 @@ namespace HaXeContext
                     {
                         return ProcessResponse(JsonMapper.ToObject(lines));
                     }
-                    catch (JsonException)
+                    catch (Exception)
                     {
                         Errors = lines;
                         return HaxeCompleteStatus.ERROR;
