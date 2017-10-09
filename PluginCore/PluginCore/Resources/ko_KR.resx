@@ -6198,7 +6198,7 @@ AND - 모든 조건을 만족할때.</value>
     <comment>Added after 5.2.1</comment>
   </data>
   <data name="HaXeContext.Description.MaximumDiagnosticsProcesses" xml:space="preserve">
-    <value>Sets the maximum number of processes for diagnostics (linting) that run at the same time. Defaults to 5.</value>
+    <value>Sets the maximum number of processes for diagnostics (linting) that run at the same time. Defaults to 1.</value>
     <comment>Added after 5.2.1</comment>
   </data>
 </root>
