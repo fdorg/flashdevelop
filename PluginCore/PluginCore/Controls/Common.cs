@@ -846,17 +846,28 @@ namespace System.Windows.Forms
         }
     }
 
-    public class ToolStripProgressBarEx : ToolStripControlHost
+    public class ToolStripProgressBarEx : ToolStripProgressBar
     {
         private static readonly Padding defaultMargin = new Padding(1, 2, 1, 1);
         private static readonly Padding defaultStatusStripMargin = new Padding(1, 5, 1, 4);
 
-        public ToolStripProgressBarEx() : base(new ProgressBarEx())
+        public ToolStripProgressBarEx() : base()
         {
+            this.OverrideControl();
             this.Font = PluginBase.Settings.DefaultFont;
             this.ProgressBar.ForeColor = PluginBase.MainForm.GetThemeColor("ToolStripProgressBar.ForeColor", SystemColors.Highlight);
             this.ProgressBar.Margin = DefaultMargin;
             this.ProgressBar.Size = DefaultSize;
+        }
+
+        private void OverrideControl()
+        {
+            this.OnUnsubscribeControlEvents(this.Control);
+            Type type = this.GetType();
+            FieldInfo prop = type.BaseType.BaseType.GetField("control", BindingFlags.NonPublic | BindingFlags.Instance);
+            prop.SetValue(this, new ProgressBarEx());
+            this.OnSubscribeControlEvents(this.Control);
+            this.Invalidate();
         }
 
         protected override Size DefaultSize
@@ -874,47 +885,6 @@ namespace System.Windows.Forms
                 }
                 else return defaultMargin;
             }
-        }
-
-        public ProgressBar ProgressBar
-        {
-            get { return this.Control as ProgressBar; }
-        }
-
-        public Int32 Step
-        {
-            set { this.ProgressBar.Step = value; }
-            get { return this.ProgressBar.Step; }
-        }
-
-        public ProgressBarStyle Style
-        {
-            set { this.ProgressBar.Style = value; }
-            get { return this.ProgressBar.Style; }
-        }
-
-        public Int32 MarqueeAnimationSpeed
-        {
-            get { return this.ProgressBar.MarqueeAnimationSpeed; }
-            set { this.ProgressBar.MarqueeAnimationSpeed = value; }
-        }
-
-        public Int32 Maximum
-        {
-            set { this.ProgressBar.Maximum = value; }
-            get { return this.ProgressBar.Maximum; }
-        }
-
-        public Int32 Minimum
-        {
-            set { this.ProgressBar.Minimum = value; }
-            get { return this.ProgressBar.Minimum; }
-        }
-
-        public Int32 Value
-        {
-            set { this.ProgressBar.Value = value; }
-            get { return this.ProgressBar.Value; }
         }
     }
 

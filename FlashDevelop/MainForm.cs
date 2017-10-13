@@ -213,7 +213,7 @@ namespace FlashDevelop
         /// <summary>
         /// Gets the ToolStripProgressBarEx
         /// </summary>
-        public ToolStripProgressBarEx ProgressBar
+        public ToolStripProgressBar ProgressBar
         {
             get { return this.toolStripProgressBar; }
         }

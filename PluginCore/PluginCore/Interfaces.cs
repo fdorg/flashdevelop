@@ -354,7 +354,7 @@ namespace PluginCore
         /// <summary>
         /// Gets the tool strip progress bar.
         /// </summary>
-        ToolStripProgressBarEx ProgressBar { get; }
+        ToolStripProgressBar ProgressBar { get; }
         /// <summary>
         /// Gets the collection of controls contained within this control.
         /// </summary>
