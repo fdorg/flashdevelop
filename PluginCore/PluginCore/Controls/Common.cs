@@ -702,7 +702,7 @@ namespace System.Windows.Forms
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            if (this.UseTheme)
+            if (this.UseTheme && PluginBase.MainForm.GetThemeColor("CheckBox.BackColor") != Color.Empty)
             {
                 Size size = SystemInformation.MenuCheckSize;
                 var offset = (this.ClientRectangle.Height - 1) - size.Height;
@@ -724,6 +724,7 @@ namespace System.Windows.Forms
                     if (MouseButtons == MouseButtons.Left) back = this.FlatAppearance.MouseDownBackColor;
                     else back = this.FlatAppearance.MouseOverBackColor;
                 }
+                ButtonRenderer.DrawParentBackground(e.Graphics, this.ClientRectangle, this);
                 e.Graphics.FillRectangle(new SolidBrush(this.BackColor), this.ClientRectangle);
                 e.Graphics.FillRectangle(new SolidBrush(back), checkRect);
                 e.Graphics.DrawRectangle(new Pen(this.BorderColor), checkRect);
