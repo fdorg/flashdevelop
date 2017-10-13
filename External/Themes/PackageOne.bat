@@ -19,6 +19,7 @@ if "%option%" == "1" goto :option1
 if "%option%" == "2" goto :option2
 if "%option%" == "3" goto :option3
 if "%option%" == "4" goto :option4
+if "%option%" == "5" goto :option5
 echo Invalid option, try again.
 goto :start
 
@@ -42,6 +43,7 @@ exit
 7z a -tzip .\FlashDevelop\Bin\Debug\Settings\Themes\SyntaxThemes\ThyleusTheme.fdz .\External\Themes\SyntaxThemes\ThyleusTheme\* -xr!.empty
 exit
 
-:option4
-7z a -tzip .\FlashDevelop\Bin\Debug\Settings\Themes\FullThemes\ThyleusThemeV2.fdz .\External\Themes\FullThemesV2\ThyleusTheme\* -xr!.empty
+:option5
+7z a -tzip .\FlashDevelop\Bin\Debug\Settings\Themes\FullThemes\ThyleusThemeV2.fdz .\External\Themes\FullThemes\ThyleusThemeV2\* -xr!.empty
+pause
 exit
