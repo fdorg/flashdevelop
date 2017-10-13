@@ -178,9 +178,9 @@ ListView.HighlightText=#ffffff
 TreeView.Highlight=#ffa500
 TreeView.HighlightText=#ffffff
 
-#FlashLogViewer.DebugColor
-#FlashLogViewer.WarningColor
-#FlashLogViewer.ErrorColor
+#FlashLogViewer.DebugColor=#000000
+#FlashLogViewer.WarningColor=#ffa500
+#FlashLogViewer.ErrorColor=#ff0000
 
 #OutputPanel.InfoColor=#808080
 #OutputPanel.DebugColor=#000000
