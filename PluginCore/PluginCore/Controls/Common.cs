@@ -76,7 +76,7 @@ namespace System.Windows.Forms
 
     }
 
-    public class DataGridViewEx : DataGridView
+    public class DataGridViewEx : DataGridView, IThemeHandler
     {
         private Boolean themeBorder = false;
         public Boolean UseTheme { get; set; } = true;
@@ -85,6 +85,13 @@ namespace System.Windows.Forms
         public DataGridViewEx()
         {
             this.CellPainting += this.OnDataGridViewCellPainting;
+        }
+
+        public void AfterTheming()
+        {
+            GridColor = PluginBase.MainForm.GetThemeColor("DataGridView.LineColor", SystemColors.ControlDark);
+            DefaultCellStyle.ForeColor = PluginBase.MainForm.GetThemeColor("DataGridView.ForeColor", SystemColors.WindowText);
+            DefaultCellStyle.BackColor = PluginBase.MainForm.GetThemeColor("DataGridView.BackColor", SystemColors.Window);
         }
 
         private void OnDataGridViewCellPainting(Object sender, DataGridViewCellPaintingEventArgs e)
@@ -116,9 +123,6 @@ namespace System.Windows.Forms
             switch (message.Msg)
             {
                 case Win32.WM_PAINT:
-                    GridColor = PluginBase.MainForm.GetThemeColor("DataGridView.LineColor", SystemColors.ControlDark);
-                    DefaultCellStyle.ForeColor = PluginBase.MainForm.GetThemeColor("DataGridView.ForeColor", SystemColors.WindowText);
-                    DefaultCellStyle.BackColor = PluginBase.MainForm.GetThemeColor("DataGridView.BackColor", SystemColors.Window);
                     if (this.UseTheme && this.BorderStyle == BorderStyle.FixedSingle)
                     {
                         this.themeBorder = true;
@@ -335,16 +339,34 @@ namespace System.Windows.Forms
         }
     }
 
-    public class FlatCombo : ComboBox
+    public class FlatCombo : ComboBox, IThemeHandler
     {
         public Boolean UseTheme { get; set; } = true;
         private ComboBoxStyle prevStyle = ComboBoxStyle.DropDown;
         private Color borderColor { get; set; } = SystemColors.ControlDark;
         private Boolean updatingStyle = false;
 
-        public FlatCombo()
+        public void AfterTheming()
         {
+            Color fore = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ForeColor");
+            Color back = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BackColor");
             this.borderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor", SystemColors.ControlDark);
+            this.ForeColor = UseTheme && fore != Color.Empty ? fore : SystemColors.ControlText;
+            this.BackColor = UseTheme && back != Color.Empty ? back : SystemColors.Window;
+        }
+
+        // Removes/hides focus cues
+        protected override void OnEnter(EventArgs e)
+        {
+            base.OnEnter(e);
+            Message m = Message.Create(this.Handle, Win32.WM_CHANGEUISTATE, new IntPtr(0x10001), new IntPtr(0));
+            this.WndProc(ref m);
+        }
+        protected override void OnSelectedIndexChanged(EventArgs e)
+        {
+            base.OnSelectedIndexChanged(e);
+            Message m = Message.Create(this.Handle, 0x127, new IntPtr(0x10001), new IntPtr(0));
+            this.WndProc(ref m);
         }
 
         protected override void WndProc(ref Message m)
