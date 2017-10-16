@@ -702,7 +702,7 @@ namespace System.Windows.Forms
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            if (this.UseTheme && PluginBase.MainForm.GetThemeColor("CheckBox.BackColor") != Color.Empty)
+            if (!this.DesignMode && this.UseTheme && PluginBase.MainForm.GetThemeColor("CheckBox.BackColor") != Color.Empty)
             {
                 Size size = SystemInformation.MenuCheckSize;
                 var offset = (this.ClientRectangle.Height - 1) - size.Height;

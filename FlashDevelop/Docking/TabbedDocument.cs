@@ -4,11 +4,9 @@ using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
-using WeifenLuo.WinFormsUI;
 using WeifenLuo.WinFormsUI.Docking;
 using PluginCore.Localization;
 using FlashDevelop.Managers;
-using FlashDevelop.Helpers;
 using FlashDevelop.Controls;
 using PluginCore.Utilities;
 using PluginCore.Managers;
@@ -136,8 +134,7 @@ namespace FlashDevelop.Docking
                 int count = 0;
                 foreach (ITabbedDocument document in Globals.MainForm.Documents)
                 {
-                    if (document.DockHandler.PanelPane == DockHandler.PanelPane)
-                        count++;
+                    if (document.DockHandler.PanelPane == DockHandler.PanelPane) count++;
                 }
                 return count <= 1;
             }

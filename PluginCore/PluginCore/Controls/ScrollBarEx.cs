@@ -2006,7 +2006,8 @@ namespace PluginCore.Controls
             if (e.Type == EventType.ApplyTheme)
             {
                 Boolean enabled = PluginBase.MainForm.GetThemeFlag("ScrollBar.UseGlobally", false);
-                if (enabled)
+                if (control.Parent == null) return;
+                else if (enabled)
                 {
                     if (!control.Parent.Controls.Contains(vScrollBar)) AddScrollBars();
                     UpdateScrollBarTheme();
@@ -2498,15 +2499,13 @@ namespace PluginCore.Controls
             if (e.OldValue == -1 || treeView.Nodes.Count == 0) return;
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
             {
-                treeView.BeginUpdate();
-                Win32.SetScrollPos(treeView.Handle, Win32.SB_VERT, e.NewValue, true);
-                treeView.EndUpdate();
+                int wParam = Win32.SB_THUMBPOSITION | e.NewValue << 16;
+                Win32.SendMessage(treeView.Handle, Win32.WM_VSCROLL, (IntPtr)wParam, IntPtr.Zero);
             }
             else
             {
-                treeView.BeginUpdate();
-                Win32.SetScrollPos(treeView.Handle, Win32.SB_HORZ, e.NewValue, true);
-                treeView.EndUpdate();
+                int wParam = Win32.SB_THUMBPOSITION | e.NewValue << 16;
+                Win32.SendMessage(treeView.Handle, Win32.WM_HSCROLL, (IntPtr)wParam, IntPtr.Zero);
             }
         }
     }
@@ -2549,7 +2548,7 @@ namespace PluginCore.Controls
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
             {
                 Int32 vScroll;
-                if (listView.ShowGroups)
+                if (listView.ShowGroups && !PlatformHelper.isRunningOnWine())
                 {
                     Int32 prevPos = Win32.GetScrollPos(listView.Handle, Win32.SB_VERT);
                     vScroll = -(prevPos - e.NewValue);
