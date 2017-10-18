@@ -2084,8 +2084,9 @@ namespace PluginCore.Controls
             hScrollBar.Scroll += OnScroll;
             vScrollBar.VisibleChanged += OnResize;
             hScrollBar.VisibleChanged += OnResize;
-            control.Paint += OnPaint;
+            control.Parent.Resize += OnResize;
             control.Resize += OnResize;
+            control.Paint += OnPaint;
         }
 
         /// <summary>
@@ -2100,8 +2101,9 @@ namespace PluginCore.Controls
             hScrollBar.Scroll -= OnScroll;
             vScrollBar.VisibleChanged -= OnResize;
             hScrollBar.VisibleChanged -= OnResize;
-            control.Paint -= OnPaint;
+            control.Parent.Resize -= OnResize;
             control.Resize -= OnResize;
+            control.Paint -= OnPaint;
         }
 
         /// <summary>
@@ -2154,14 +2156,8 @@ namespace PluginCore.Controls
         /// </summary>
         protected virtual void OnResize(Object sender, EventArgs e)
         {
-            int borderWidth = 1;
-            // We need to do some theming related tweaks...
-            if (control is ListBox && (control as ListBox).BorderStyle == BorderStyle.None) borderWidth = 0;
-            else if (control is TreeView && (control as TreeView).BorderStyle == BorderStyle.None) borderWidth = 0;
-            else if (control is ListView && (control as ListView).BorderStyle == BorderStyle.None) borderWidth = 0;
-            else if (control is TextBox && (control as TextBox).BorderStyle == BorderStyle.FixedSingle) borderWidth = 0;
-            else if (control is DataGridView && (control as DataGridView).BorderStyle == BorderStyle.None) borderWidth = 0;
-            else if (control is RichTextBox && (control as RichTextBox).BorderStyle == BorderStyle.None) borderWidth = 0;
+            int borderWidth = 0;
+            if (control is PropertyGrid && borderWidth == 0) borderWidth = 1;
             int vScrollBarHeight = (control.Height - (borderWidth * 2)) - (hScrollBar.Visible ? hScrollBar.Height : 0);
             if (control is PropertyGrid)
             {
@@ -2499,13 +2495,32 @@ namespace PluginCore.Controls
             if (e.OldValue == -1 || treeView.Nodes.Count == 0) return;
             if (e.ScrollOrientation == ScrollOrientation.VerticalScroll)
             {
-                int wParam = Win32.SB_THUMBPOSITION | e.NewValue << 16;
-                Win32.SendMessage(treeView.Handle, Win32.WM_VSCROLL, (IntPtr)wParam, IntPtr.Zero);
+                if (!PlatformHelper.isRunningOnWine())
+                {
+                    treeView.BeginUpdate();
+                    Win32.SetScrollPos(treeView.Handle, Win32.SB_VERT, e.NewValue, true);
+                    treeView.EndUpdate();
+                }
+                else
+                {
+                    int wParam = Win32.SB_THUMBPOSITION | e.NewValue << 16;
+                    Win32.SendMessage(treeView.Handle, Win32.WM_VSCROLL, (IntPtr)wParam, IntPtr.Zero);
+                }
+
             }
             else
             {
-                int wParam = Win32.SB_THUMBPOSITION | e.NewValue << 16;
-                Win32.SendMessage(treeView.Handle, Win32.WM_HSCROLL, (IntPtr)wParam, IntPtr.Zero);
+                if (!PlatformHelper.isRunningOnWine())
+                {
+                    treeView.BeginUpdate();
+                    Win32.SetScrollPos(treeView.Handle, Win32.SB_HORZ, e.NewValue, true);
+                    treeView.EndUpdate();
+                }
+                else
+                {
+                    int wParam = Win32.SB_THUMBPOSITION | e.NewValue << 16;
+                    Win32.SendMessage(treeView.Handle, Win32.WM_HSCROLL, (IntPtr)wParam, IntPtr.Zero);
+                }
             }
         }
     }

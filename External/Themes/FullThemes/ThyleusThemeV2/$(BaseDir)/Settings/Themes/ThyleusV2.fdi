@@ -170,13 +170,13 @@ ScrollBar.UseCustom=True
 ScrollBar.HotForeColor=#4B4645
 ScrollBar.ArrowColor=#4B4645
 ScrollBar.HotArrowColor=#4B4645
-ScrollBar.ActiveArrowColor=#333333
+ScrollBar.ActiveArrowColor=#3E3A39
 
 ListView.UseGrouping=True
-ListView.Highlight=#ffa500
-ListView.HighlightText=#ffffff
-TreeView.Highlight=#ffa500
-TreeView.HighlightText=#ffffff
+#ListView.Highlight=#ffa500
+#ListView.HighlightText=#ffffff
+#TreeView.Highlight=#ffa500
+#TreeView.HighlightText=#ffffff
 
 #FlashLogViewer.DebugColor=#000000
 #FlashLogViewer.WarningColor=#ffa500
@@ -236,7 +236,7 @@ DockPanel.ShowAutoHideContentOn=Hover
 ScrollBar.ForeColor=#4B4645
 ScrollBar.BackColor=#7B7675
 ScrollBar.BorderColor=#7B7675
-ScrollBar.ActiveForeColor=#333333
+ScrollBar.ActiveForeColor=#3E3A39
 ScrollBar.DisabledBackColor=#7B7675
 ScrollBar.DisabledBorderColor=#7B7675
 ScrollBar.CurrentPositionColor=#F0AC62
@@ -250,7 +250,7 @@ ColumnHeader.TextColor=#333333
 ColumnHeader.BorderColor=#7B7675
 
 ToolStripComboBoxControl.BorderColor=#7B7675
-ToolStripComboBoxControl.ActiveBorderColor=#3897ff
+ToolStripComboBoxControl.ActiveBorderColor=#7B7675
 ToolStripTextBoxControl.BorderColor=#7B7675
 
 ToolStrip.BorderColor=#7B7675
@@ -266,8 +266,8 @@ VS2005DockPaneCaption.ActiveImageColor=#D1D1D1
 VS2005DockPaneCaption.ImageColor=#D1D1D1
 VS2005DockPaneCaption.BorderColor=#7B7675
 
-VS2005DockPaneStrip.DocTabActiveBorder=#ABA8A5
-VS2005DockPaneStrip.DocTabActiveForeColor=#333333
+VS2005DockPaneStrip.DocTabActiveBorder=#A29E9B
+VS2005DockPaneStrip.DocTabActiveForeColor=#FEFEFE
 VS2005DockPaneStrip.DocTabInactiveBorder=#ABA8A5
 VS2005DockPaneStrip.ToolActiveBorderColor=#7B7675
 VS2005DockPaneStrip.ToolBorderColor=#94918D
@@ -280,8 +280,8 @@ ToolStripMenu.TitleBorderColor=#7B7675
 ToolStripMenu.SeparatorColor=#B5B0AC
 ToolStripMenu.DropDownBackColor=#CBC8C5
 ToolStripMenu.DropDownBorderColor=#7B7675
-ToolStripMenu.MarginBorderColor=#B6B3AF
-ToolStripMenu.MarginBackColor=#CBC8C5
+ToolStripMenu.MarginBorderColor=#D7D5D2
+ToolStripMenu.MarginBackColor=#D7D5D2
 ToolStripMenu.BorderColor=#7B7675
 ToolStripMenu.BackColor=#DFDEDB
 
@@ -367,8 +367,8 @@ ToolStrip.BackColor=#94918D
 ToolStrip.3dLightColor=#AEA8A6
 ToolStrip.3dDarkColor=#7B7675
 
-ToolStripItem.BackColor=#CBC8C5
-ToolStripItem.BorderColor=#AAA8A6
+ToolStripItem.BackColor=#C7C4C0
+ToolStripItem.BorderColor=#C7C4C0
 
 ToolStripComboBoxControl.ForeColor=#333333
 ToolStripComboBoxControl.BackColor=#D0CDCC
@@ -388,13 +388,13 @@ VS2005DockPaneCaption.TabGradientStart=#626160
 VS2005DockPaneCaption.TabGradientEnd=#3C372F
 
 VS2005DockPaneStrip.ForeColor=#333333
-VS2005DockPaneStrip.TabForeColor=#333333
+VS2005DockPaneStrip.TabForeColor=#686664
 VS2005DockPaneStrip.DocBackColor=#ABA8A5
 VS2005DockPaneStrip.ToolBackColor=#94918D
 VS2005DockPaneStrip.ToolActiveBackColor=#E9E9E9
-VS2005DockPaneStrip.DocActiveBackColor=#F5F5F5
-VS2005DockPaneStrip.DocInactiveBackColor=#D5D2D0
-VS2005DockPaneStrip.TabSeparatorColor=#FBB54A
+VS2005DockPaneStrip.DocActiveBackColor=#403C37
+VS2005DockPaneStrip.DocInactiveBackColor=#ABA8A5
+VS2005DockPaneStrip.TabSeparatorColor=#413D38
 VS2005DockPaneStrip.TabStripColor=#F0AC62
 
 VS2005AutoHideStrip.ForeColor=#333333

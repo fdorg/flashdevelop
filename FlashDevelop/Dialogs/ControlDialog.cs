@@ -81,72 +81,74 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("First Group", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Second Group", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("Hello Item 1");
-            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("Hello Item 2");
-            System.Windows.Forms.ListViewItem listViewItem3 = new System.Windows.Forms.ListViewItem("Hello Item 3");
-            System.Windows.Forms.ListViewItem listViewItem4 = new System.Windows.Forms.ListViewItem("Hello Item 4");
-            System.Windows.Forms.ListViewItem listViewItem5 = new System.Windows.Forms.ListViewItem("Hello Item 5");
-            System.Windows.Forms.ListViewItem listViewItem6 = new System.Windows.Forms.ListViewItem("Hello Item 6");
-            System.Windows.Forms.ListViewItem listViewItem7 = new System.Windows.Forms.ListViewItem("Hello Item 7");
-            System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("Hello Item 8");
-            System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem("Hello Item 9");
-            System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem("Hello Item 10");
-            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem("Hello Item 11");
-            System.Windows.Forms.ListViewItem listViewItem12 = new System.Windows.Forms.ListViewItem("Hello Item 12");
-            System.Windows.Forms.ListViewItem listViewItem13 = new System.Windows.Forms.ListViewItem("Hello Item 13");
-            System.Windows.Forms.ListViewItem listViewItem14 = new System.Windows.Forms.ListViewItem("Hello Item 14");
-            System.Windows.Forms.ListViewItem listViewItem15 = new System.Windows.Forms.ListViewItem("Hello Item 15");
-            System.Windows.Forms.ListViewItem listViewItem16 = new System.Windows.Forms.ListViewItem("Hello Item 16");
-            System.Windows.Forms.ListViewItem listViewItem17 = new System.Windows.Forms.ListViewItem("Hello Item 17");
-            System.Windows.Forms.ListViewItem listViewItem18 = new System.Windows.Forms.ListViewItem("Hello Item 18");
-            System.Windows.Forms.ListViewItem listViewItem19 = new System.Windows.Forms.ListViewItem("Hello Item 19");
-            System.Windows.Forms.ListViewItem listViewItem20 = new System.Windows.Forms.ListViewItem("Hello Item 20");
+            System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("First Group", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("Second Group", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewItem listViewItem61 = new System.Windows.Forms.ListViewItem("Hello Item 1");
+            System.Windows.Forms.ListViewItem listViewItem62 = new System.Windows.Forms.ListViewItem("Hello Item 2");
+            System.Windows.Forms.ListViewItem listViewItem63 = new System.Windows.Forms.ListViewItem("Hello Item 3");
+            System.Windows.Forms.ListViewItem listViewItem64 = new System.Windows.Forms.ListViewItem("Hello Item 4");
+            System.Windows.Forms.ListViewItem listViewItem65 = new System.Windows.Forms.ListViewItem("Hello Item 5");
+            System.Windows.Forms.ListViewItem listViewItem66 = new System.Windows.Forms.ListViewItem("Hello Item 6");
+            System.Windows.Forms.ListViewItem listViewItem67 = new System.Windows.Forms.ListViewItem("Hello Item 7");
+            System.Windows.Forms.ListViewItem listViewItem68 = new System.Windows.Forms.ListViewItem("Hello Item 8");
+            System.Windows.Forms.ListViewItem listViewItem69 = new System.Windows.Forms.ListViewItem("Hello Item 9");
+            System.Windows.Forms.ListViewItem listViewItem70 = new System.Windows.Forms.ListViewItem("Hello Item 10");
+            System.Windows.Forms.ListViewItem listViewItem71 = new System.Windows.Forms.ListViewItem("Hello Item 11");
+            System.Windows.Forms.ListViewItem listViewItem72 = new System.Windows.Forms.ListViewItem("Hello Item 12");
+            System.Windows.Forms.ListViewItem listViewItem73 = new System.Windows.Forms.ListViewItem("Hello Item 13");
+            System.Windows.Forms.ListViewItem listViewItem74 = new System.Windows.Forms.ListViewItem("Hello Item 14");
+            System.Windows.Forms.ListViewItem listViewItem75 = new System.Windows.Forms.ListViewItem("Hello Item 15");
+            System.Windows.Forms.ListViewItem listViewItem76 = new System.Windows.Forms.ListViewItem("Hello Item 16");
+            System.Windows.Forms.ListViewItem listViewItem77 = new System.Windows.Forms.ListViewItem("Hello Item 17");
+            System.Windows.Forms.ListViewItem listViewItem78 = new System.Windows.Forms.ListViewItem("Hello Item 18");
+            System.Windows.Forms.ListViewItem listViewItem79 = new System.Windows.Forms.ListViewItem("Hello Item 19");
+            System.Windows.Forms.ListViewItem listViewItem80 = new System.Windows.Forms.ListViewItem("Hello Item 20, Filler, Filler, Filler, Filler, Filler, Filler, Filler, Filler, Fi" +
+        "ller, Filler, Filler, Filler, Filler, Filler, Filler, Filler");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ControlDialog));
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Node1");
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Node2");
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Node3");
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Node4");
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Node5");
-            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Node0", new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2,
-            treeNode3,
-            treeNode4,
-            treeNode5});
-            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Node7");
-            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Node8");
-            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Node9");
-            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Node10");
-            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Node11");
-            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Node12");
-            System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("Node6", new System.Windows.Forms.TreeNode[] {
-            treeNode7,
-            treeNode8,
-            treeNode9,
-            treeNode10,
-            treeNode11,
-            treeNode12});
-            System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Node14");
-            System.Windows.Forms.TreeNode treeNode15 = new System.Windows.Forms.TreeNode("Node15");
-            System.Windows.Forms.TreeNode treeNode16 = new System.Windows.Forms.TreeNode("Node16");
-            System.Windows.Forms.TreeNode treeNode17 = new System.Windows.Forms.TreeNode("Node17");
-            System.Windows.Forms.TreeNode treeNode18 = new System.Windows.Forms.TreeNode("Node18");
-            System.Windows.Forms.TreeNode treeNode19 = new System.Windows.Forms.TreeNode("Node19");
-            System.Windows.Forms.TreeNode treeNode20 = new System.Windows.Forms.TreeNode("Node20");
-            System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("Node21");
-            System.Windows.Forms.TreeNode treeNode22 = new System.Windows.Forms.TreeNode("Node22");
-            System.Windows.Forms.TreeNode treeNode23 = new System.Windows.Forms.TreeNode("Node13", new System.Windows.Forms.TreeNode[] {
-            treeNode14,
-            treeNode15,
-            treeNode16,
-            treeNode17,
-            treeNode18,
-            treeNode19,
-            treeNode20,
-            treeNode21,
-            treeNode22});
+            System.Windows.Forms.TreeNode treeNode70 = new System.Windows.Forms.TreeNode("Node1");
+            System.Windows.Forms.TreeNode treeNode71 = new System.Windows.Forms.TreeNode("Node2");
+            System.Windows.Forms.TreeNode treeNode72 = new System.Windows.Forms.TreeNode("Node3");
+            System.Windows.Forms.TreeNode treeNode73 = new System.Windows.Forms.TreeNode("Node4");
+            System.Windows.Forms.TreeNode treeNode74 = new System.Windows.Forms.TreeNode("Node5");
+            System.Windows.Forms.TreeNode treeNode75 = new System.Windows.Forms.TreeNode("Node0", new System.Windows.Forms.TreeNode[] {
+            treeNode70,
+            treeNode71,
+            treeNode72,
+            treeNode73,
+            treeNode74});
+            System.Windows.Forms.TreeNode treeNode76 = new System.Windows.Forms.TreeNode("Node7");
+            System.Windows.Forms.TreeNode treeNode77 = new System.Windows.Forms.TreeNode("Node8");
+            System.Windows.Forms.TreeNode treeNode78 = new System.Windows.Forms.TreeNode("Node9");
+            System.Windows.Forms.TreeNode treeNode79 = new System.Windows.Forms.TreeNode("Node10");
+            System.Windows.Forms.TreeNode treeNode80 = new System.Windows.Forms.TreeNode("Node11");
+            System.Windows.Forms.TreeNode treeNode81 = new System.Windows.Forms.TreeNode("Node12");
+            System.Windows.Forms.TreeNode treeNode82 = new System.Windows.Forms.TreeNode("Node6", new System.Windows.Forms.TreeNode[] {
+            treeNode76,
+            treeNode77,
+            treeNode78,
+            treeNode79,
+            treeNode80,
+            treeNode81});
+            System.Windows.Forms.TreeNode treeNode83 = new System.Windows.Forms.TreeNode("Node14");
+            System.Windows.Forms.TreeNode treeNode84 = new System.Windows.Forms.TreeNode("Node15");
+            System.Windows.Forms.TreeNode treeNode85 = new System.Windows.Forms.TreeNode("Node16");
+            System.Windows.Forms.TreeNode treeNode86 = new System.Windows.Forms.TreeNode("Node17");
+            System.Windows.Forms.TreeNode treeNode87 = new System.Windows.Forms.TreeNode("Node18");
+            System.Windows.Forms.TreeNode treeNode88 = new System.Windows.Forms.TreeNode("Node19");
+            System.Windows.Forms.TreeNode treeNode89 = new System.Windows.Forms.TreeNode("Node20");
+            System.Windows.Forms.TreeNode treeNode90 = new System.Windows.Forms.TreeNode("Node21");
+            System.Windows.Forms.TreeNode treeNode91 = new System.Windows.Forms.TreeNode("Node22, Filler, Filler, Filler, Filler, Filler, Filler, Filler, Filler, Filler, F" +
+        "iller, Filler, Filler, Filler, Filler, Filler, Filler");
+            System.Windows.Forms.TreeNode treeNode92 = new System.Windows.Forms.TreeNode("Node13", new System.Windows.Forms.TreeNode[] {
+            treeNode83,
+            treeNode84,
+            treeNode85,
+            treeNode86,
+            treeNode87,
+            treeNode88,
+            treeNode89,
+            treeNode90,
+            treeNode91});
             this.statusBarEx = new System.Windows.Forms.StatusBarEx();
             this.customTabControl = new System.Windows.Forms.CustomTabControl();
             this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -190,6 +192,8 @@ namespace FlashDevelop.Dialogs
             // 
             // customTabControl
             // 
+            this.customTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.customTabControl.Controls.Add(this.tabPage2);
             this.customTabControl.Controls.Add(this.tabPage1);
             // 
@@ -267,6 +271,8 @@ namespace FlashDevelop.Dialogs
             // 
             // propertyGridEx
             // 
+            this.propertyGridEx.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.propertyGridEx.LineColor = System.Drawing.SystemColors.ControlDark;
             this.propertyGridEx.Location = new System.Drawing.Point(822, 13);
             this.propertyGridEx.Name = "propertyGridEx";
@@ -277,6 +283,7 @@ namespace FlashDevelop.Dialogs
             // 
             // groupBoxEx
             // 
+            this.groupBoxEx.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.groupBoxEx.BorderColor = System.Drawing.SystemColors.ControlDark;
             this.groupBoxEx.Controls.Add(this.pictureBoxEx);
             this.groupBoxEx.Controls.Add(this.progressBarEx);
@@ -415,6 +422,7 @@ namespace FlashDevelop.Dialogs
             // 
             // listBoxEx
             // 
+            this.listBoxEx.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.listBoxEx.BorderColor = System.Drawing.SystemColors.ControlDark;
             this.listBoxEx.FormattingEnabled = true;
             this.listBoxEx.IntegralHeight = false;
@@ -426,59 +434,61 @@ namespace FlashDevelop.Dialogs
             // 
             // listViewEx
             // 
+            this.listViewEx.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.listViewEx.BorderColor = System.Drawing.SystemColors.ControlDark;
             this.listViewEx.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader,
             this.columnHeader1});
             this.listViewEx.GridLineColor = System.Drawing.SystemColors.Control;
-            listViewGroup1.Header = "First Group";
-            listViewGroup1.Name = "listViewGroup";
-            listViewGroup2.Header = "Second Group";
-            listViewGroup2.Name = "listViewGroup2";
+            listViewGroup7.Header = "First Group";
+            listViewGroup7.Name = "listViewGroup";
+            listViewGroup8.Header = "Second Group";
+            listViewGroup8.Name = "listViewGroup2";
             this.listViewEx.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1,
-            listViewGroup2});
-            listViewItem1.Group = listViewGroup1;
-            listViewItem2.Group = listViewGroup1;
-            listViewItem3.Group = listViewGroup1;
-            listViewItem4.Group = listViewGroup1;
-            listViewItem5.Group = listViewGroup1;
-            listViewItem6.Group = listViewGroup1;
-            listViewItem7.Group = listViewGroup1;
-            listViewItem8.Group = listViewGroup1;
-            listViewItem9.Group = listViewGroup1;
-            listViewItem10.Group = listViewGroup1;
-            listViewItem11.Group = listViewGroup2;
-            listViewItem12.Group = listViewGroup2;
-            listViewItem13.Group = listViewGroup2;
-            listViewItem14.Group = listViewGroup2;
-            listViewItem15.Group = listViewGroup2;
-            listViewItem16.Group = listViewGroup2;
-            listViewItem17.Group = listViewGroup2;
-            listViewItem18.Group = listViewGroup2;
-            listViewItem19.Group = listViewGroup2;
-            listViewItem20.Group = listViewGroup2;
+            listViewGroup7,
+            listViewGroup8});
+            listViewItem61.Group = listViewGroup7;
+            listViewItem62.Group = listViewGroup7;
+            listViewItem63.Group = listViewGroup7;
+            listViewItem64.Group = listViewGroup7;
+            listViewItem65.Group = listViewGroup7;
+            listViewItem66.Group = listViewGroup7;
+            listViewItem67.Group = listViewGroup7;
+            listViewItem68.Group = listViewGroup7;
+            listViewItem69.Group = listViewGroup7;
+            listViewItem70.Group = listViewGroup7;
+            listViewItem71.Group = listViewGroup8;
+            listViewItem72.Group = listViewGroup8;
+            listViewItem73.Group = listViewGroup8;
+            listViewItem74.Group = listViewGroup8;
+            listViewItem75.Group = listViewGroup8;
+            listViewItem76.Group = listViewGroup8;
+            listViewItem77.Group = listViewGroup8;
+            listViewItem78.Group = listViewGroup8;
+            listViewItem79.Group = listViewGroup8;
+            listViewItem80.Group = listViewGroup8;
             this.listViewEx.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1,
-            listViewItem2,
-            listViewItem3,
-            listViewItem4,
-            listViewItem5,
-            listViewItem6,
-            listViewItem7,
-            listViewItem8,
-            listViewItem9,
-            listViewItem10,
-            listViewItem11,
-            listViewItem12,
-            listViewItem13,
-            listViewItem14,
-            listViewItem15,
-            listViewItem16,
-            listViewItem17,
-            listViewItem18,
-            listViewItem19,
-            listViewItem20});
+            listViewItem61,
+            listViewItem62,
+            listViewItem63,
+            listViewItem64,
+            listViewItem65,
+            listViewItem66,
+            listViewItem67,
+            listViewItem68,
+            listViewItem69,
+            listViewItem70,
+            listViewItem71,
+            listViewItem72,
+            listViewItem73,
+            listViewItem74,
+            listViewItem75,
+            listViewItem76,
+            listViewItem77,
+            listViewItem78,
+            listViewItem79,
+            listViewItem80});
             this.listViewEx.Location = new System.Drawing.Point(12, 301);
             this.listViewEx.Name = "listViewEx";
             this.listViewEx.OwnerDraw = true;
@@ -500,6 +510,8 @@ namespace FlashDevelop.Dialogs
             // 
             // textBoxEx
             // 
+            this.textBoxEx.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxEx.BorderColor = System.Drawing.SystemColors.ControlDark;
             this.textBoxEx.Location = new System.Drawing.Point(282, 12);
             this.textBoxEx.Multiline = true;
@@ -511,59 +523,63 @@ namespace FlashDevelop.Dialogs
             // 
             // treeViewEx
             // 
+            this.treeViewEx.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.treeViewEx.BorderColor = System.Drawing.SystemColors.ControlDark;
             this.treeViewEx.Location = new System.Drawing.Point(416, 301);
             this.treeViewEx.Name = "treeViewEx";
-            treeNode1.Name = "Node1";
-            treeNode1.Text = "Node1";
-            treeNode2.Name = "Node2";
-            treeNode2.Text = "Node2";
-            treeNode3.Name = "Node3";
-            treeNode3.Text = "Node3";
-            treeNode4.Name = "Node4";
-            treeNode4.Text = "Node4";
-            treeNode5.Name = "Node5";
-            treeNode5.Text = "Node5";
-            treeNode6.Name = "Node0";
-            treeNode6.Text = "Node0";
-            treeNode7.Name = "Node7";
-            treeNode7.Text = "Node7";
-            treeNode8.Name = "Node8";
-            treeNode8.Text = "Node8";
-            treeNode9.Name = "Node9";
-            treeNode9.Text = "Node9";
-            treeNode10.Name = "Node10";
-            treeNode10.Text = "Node10";
-            treeNode11.Name = "Node11";
-            treeNode11.Text = "Node11";
-            treeNode12.Name = "Node12";
-            treeNode12.Text = "Node12";
-            treeNode13.Name = "Node6";
-            treeNode13.Text = "Node6";
-            treeNode14.Name = "Node14";
-            treeNode14.Text = "Node14";
-            treeNode15.Name = "Node15";
-            treeNode15.Text = "Node15";
-            treeNode16.Name = "Node16";
-            treeNode16.Text = "Node16";
-            treeNode17.Name = "Node17";
-            treeNode17.Text = "Node17";
-            treeNode18.Name = "Node18";
-            treeNode18.Text = "Node18";
-            treeNode19.Name = "Node19";
-            treeNode19.Text = "Node19";
-            treeNode20.Name = "Node20";
-            treeNode20.Text = "Node20";
-            treeNode21.Name = "Node21";
-            treeNode21.Text = "Node21";
-            treeNode22.Name = "Node22";
-            treeNode22.Text = "Node22";
-            treeNode23.Name = "Node13";
-            treeNode23.Text = "Node13";
+            treeNode70.Name = "Node1";
+            treeNode70.Text = "Node1";
+            treeNode71.Name = "Node2";
+            treeNode71.Text = "Node2";
+            treeNode72.Name = "Node3";
+            treeNode72.Text = "Node3";
+            treeNode73.Name = "Node4";
+            treeNode73.Text = "Node4";
+            treeNode74.Name = "Node5";
+            treeNode74.Text = "Node5";
+            treeNode75.Name = "Node0";
+            treeNode75.Text = "Node0";
+            treeNode76.Name = "Node7";
+            treeNode76.Text = "Node7";
+            treeNode77.Name = "Node8";
+            treeNode77.Text = "Node8";
+            treeNode78.Name = "Node9";
+            treeNode78.Text = "Node9";
+            treeNode79.Name = "Node10";
+            treeNode79.Text = "Node10";
+            treeNode80.Name = "Node11";
+            treeNode80.Text = "Node11";
+            treeNode81.Name = "Node12";
+            treeNode81.Text = "Node12";
+            treeNode82.Name = "Node6";
+            treeNode82.Text = "Node6";
+            treeNode83.Name = "Node14";
+            treeNode83.Text = "Node14";
+            treeNode84.Name = "Node15";
+            treeNode84.Text = "Node15";
+            treeNode85.Name = "Node16";
+            treeNode85.Text = "Node16";
+            treeNode86.Name = "Node17";
+            treeNode86.Text = "Node17";
+            treeNode87.Name = "Node18";
+            treeNode87.Text = "Node18";
+            treeNode88.Name = "Node19";
+            treeNode88.Text = "Node19";
+            treeNode89.Name = "Node20";
+            treeNode89.Text = "Node20";
+            treeNode90.Name = "Node21";
+            treeNode90.Text = "Node21";
+            treeNode91.Name = "Node22";
+            treeNode91.Text = "Node22, Filler, Filler, Filler, Filler, Filler, Filler, Filler, Filler, Filler, F" +
+    "iller, Filler, Filler, Filler, Filler, Filler, Filler";
+            treeNode92.Name = "Node13";
+            treeNode92.Text = "Node13";
             this.treeViewEx.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode6,
-            treeNode13,
-            treeNode23});
+            treeNode75,
+            treeNode82,
+            treeNode92});
             this.treeViewEx.Size = new System.Drawing.Size(398, 218);
             this.treeViewEx.TabIndex = 1;
             this.treeViewEx.UseTheme = true;
@@ -593,9 +609,7 @@ namespace FlashDevelop.Dialogs
             this.Controls.Add(this.treeViewEx);
             this.Controls.Add(this.richTextBoxEx);
             this.DoubleBuffered = true;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(1000, 700);
             this.Name = "ControlDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ControlDialog";
