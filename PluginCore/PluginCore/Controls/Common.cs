@@ -690,6 +690,12 @@ namespace System.Windows.Forms
             {
                 e.Graphics.FillRectangle(new SolidBrush(this.DisabledBackColor), Rectangle.Inflate(this.ClientRectangle, -2, -2));
                 TextRenderer.DrawText(e.Graphics, this.Text, this.Font, this.ClientRectangle, this.DisabledTextColor);
+                if (this.Image != null)
+                {
+                    var x = (this.Width / 2) - (this.Image.Width / 2);
+                    var y = (this.Height / 2) - (this.Image.Height / 2);
+                    ControlPaint.DrawImageDisabled(e.Graphics, this.Image, x, y, Color.Transparent);
+                }
             }
         }
     }
