@@ -6182,4 +6182,24 @@ AND - All conditions are met.</value>
     <value>Die maximale Anzahl an Prozessen für Diagnostics (Linting), die gleichzeitig laufen. Standardmäßig 1.</value>
     <comment>Added after 5.2.1</comment>
   </data>
+  <data name="ASCompletion.Label.ImplementedBy" xml:space="preserve">
+    <value>Implementiert von...</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Label.Implements" xml:space="preserve">
+    <value>Implementiert...</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Label.OverriddenBy" xml:space="preserve">
+    <value>Überschrieben von...</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Label.Overrides" xml:space="preserve">
+    <value>Überschreibt...</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Category.InheritanceNavigation" xml:space="preserve">
+    <value>Vererbungsnavigation</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
 </root>

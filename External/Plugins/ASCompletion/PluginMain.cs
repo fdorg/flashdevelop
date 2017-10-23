@@ -4,12 +4,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Timers;
 using System.Windows.Forms;
 using ASCompletion.Commands;
 using ASCompletion.Completion;
 using ASCompletion.Context;
+using ASCompletion.Controls;
 using ASCompletion.Helpers;
 using ASCompletion.Model;
 using ASCompletion.Settings;
@@ -40,6 +43,7 @@ namespace ASCompletion
         private PluginUI pluginUI;
         private Image pluginIcon;
         private EventType eventMask =
+            EventType.FileOpen |
             EventType.FileSave |
             EventType.FileSwitch |
             EventType.SyntaxChange |
@@ -65,6 +69,20 @@ namespace ASCompletion
         private Regex reVirtualFile = new Regex("\\.(swf|swc)::", RegexOptions.Compiled);
         private Regex reArgs = new Regex("\\$\\((Typ|Mbr|Itm)", RegexOptions.Compiled);
         private Regex reCostlyArgs = new Regex("\\$\\((TypClosest|ItmUnique)", RegexOptions.Compiled);
+
+        const int Margin = 1;
+        const int MarkerDown = 16;
+        const int MarkerUp = 17;
+        const int MarkerUpDown = 18;
+
+        Bitmap downArrow;
+        Bitmap upArrow;
+        Bitmap upDownArrow;
+
+        readonly ASTCache astCache = new ASTCache();
+        bool initializedCache = true;
+        IProject lastProject;
+        Timer astCacheTimer;
 
         #region Required Properties
 
@@ -131,6 +149,7 @@ namespace ASCompletion
             try
             {
                 InitSettings();
+                LoadBitmaps();
                 CreatePanel();
                 CreateMenuItems();
                 AddEventHandlers();
@@ -149,6 +168,7 @@ namespace ASCompletion
         public void Dispose()
         {
             timerPosition.Enabled = false;
+            astCacheTimer.Enabled = false;
             PathExplorer.StopBackgroundExploration();
             SaveSettings();
         }
@@ -218,6 +238,11 @@ namespace ASCompletion
                     //
                     // File management
                     //
+                    case EventType.FileOpen:
+                        ApplyMarkers(PluginBase.MainForm.CurrentDocument.SplitSci1);
+                        ApplyMarkers(PluginBase.MainForm.CurrentDocument.SplitSci2);
+                        break;
+
                     case EventType.FileSave:
                         if (!doc.IsEditable) return;
                         ASContext.Context.CheckModel(false);
@@ -242,6 +267,21 @@ namespace ASCompletion
                         break;
 
                     case EventType.ApplySettings:
+                        if (settingObject.ASTCacheUpdateInterval <= 0)
+                            settingObject.ASTCacheUpdateInterval = 120; //2 minutes
+
+                        if (settingObject.DisableInheritanceNavigation)
+                        {
+                            astCacheTimer.Stop();
+                            astCache.Clear();
+                            foreach (var document in PluginBase.MainForm.Documents)
+                            {
+                                //remove the markers
+                                UpdateMarkersFromCache(document.SplitSci1);
+                                UpdateMarkersFromCache(document.SplitSci2);
+                            }
+                        }
+                        goto case EventType.SyntaxChange;
                     case EventType.SyntaxChange:
                     case EventType.FileSwitch:
                         if (!doc.IsEditable)
@@ -420,6 +460,12 @@ namespace ASCompletion
                                 }
                                 e.Handled = true;
                             }
+                            //PathExplorer finished looking for files, update cache
+                            else if (command == "ASCompletion.PathExplorerFinished" && !initializedCache)
+                            {
+                                UpdateCompleteCache();
+                                initializedCache = true;
+                            }
                         }
 
                         // Create a fake document from a FileModel
@@ -439,6 +485,15 @@ namespace ASCompletion
                         {
                             ASContext.UserRefreshRequestAll();
                         }
+                        else if (command == "ProjectManager.Project" && !settingObject.DisableInheritanceNavigation)
+                        {
+                            if (lastProject != PluginBase.CurrentProject)
+                            {
+                                lastProject = PluginBase.CurrentProject;
+                                initializedCache = false;
+                            }
+                        }
+                        
                         break;
                 }
 
@@ -626,6 +681,16 @@ namespace ASCompletion
             ObjectSerializer.Serialize(settingsFile, this.settingObject);
         }
 
+        void LoadBitmaps()
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var stream = assembly.GetManifestResourceStream("ASCompletion.Icons.UpDownArrow.png");
+
+            upDownArrow = new Bitmap(PluginBase.MainForm.ImageSetAdjust(Image.FromStream(stream)));
+            downArrow = new Bitmap(PluginBase.MainForm.FindImage16("22"));
+            upArrow = new Bitmap(PluginBase.MainForm.FindImage16("8"));
+        }
+
         private void CreatePanel()
         {
             pluginIcon = PluginBase.MainForm.FindImage("99");
@@ -764,6 +829,9 @@ namespace ASCompletion
             UITools.CallTip.OnUpdateCallTip += new MethodCallTip.UpdateCallTipHandler(OnUpdateCallTip);
             UITools.Tip.OnUpdateSimpleTip += new RichToolTip.UpdateTipHandler(OnUpdateSimpleTip);
             CompletionList.OnInsert += new InsertedTextHandler(ASComplete.HandleCompletionInsert);
+            FileModel.OnFileUpdate += OnFileUpdate;
+            PathModel.OnFileRemove += OnFileRemove;
+            PathModel.OnFileAdded += OnFileUpdate;
 
             // shortcuts
             PluginBase.MainForm.IgnoredKeys.Add(Keys.Back);
@@ -780,11 +848,123 @@ namespace ASCompletion
             timerPosition.SynchronizingObject = PluginBase.MainForm as Form;
             timerPosition.Interval = 200;
             timerPosition.Elapsed += new ElapsedEventHandler(timerPosition_Elapsed);
+
+            //Cache update
+            astCache.FinishedUpdate += UpdateOpenDocumentMarkers;
+            astCacheTimer = new Timer
+            {
+                SynchronizingObject = PluginBase.MainForm as Form,
+                AutoReset = false,
+                Enabled = false
+            };
+            astCacheTimer.Elapsed += AstCacheTimer_Elapsed;
         }
 
         #endregion
 
         #region Plugin actions
+
+        void UpdateCompleteCache()
+        {
+            if (PluginBase.CurrentProject == null) return;
+
+            astCache.UpdateCompleteCache();
+        }
+
+        void UpdateOpenDocumentMarkers()
+        {
+            foreach (var document in PluginBase.MainForm.Documents)
+            {
+                UpdateMarkersFromCache(document.SplitSci1);
+                UpdateMarkersFromCache(document.SplitSci1);
+            }
+        }
+
+        void ApplyMarkers(ScintillaControl sci)
+        {
+            if (settingObject.DisableInheritanceNavigation || sci == null) return;
+            
+            //Register marker
+            sci.MarkerDefineRGBAImage(MarkerDown, downArrow);
+            sci.MarkerDefineRGBAImage(MarkerUp, upArrow);
+            sci.MarkerDefineRGBAImage(MarkerUpDown, upDownArrow);
+            //Setup margin
+            var mask = sci.GetMarginMaskN(Margin) | (1 << MarkerDown) | (1 << MarkerUp) | (1 << MarkerUpDown);
+            sci.SetMarginMaskN(Margin, mask);
+            sci.MarginSensitiveN(Margin, true);
+
+            sci.MarginClick -= Sci_MarginClick;
+            sci.MarginClick += Sci_MarginClick;
+
+            UpdateMarkersFromCache(sci);
+            UpdateMarkersFromCache(sci);
+        }
+
+        void UpdateMarkersFromCache(ScintillaControl sci)
+        {
+            var marginWidth = 16;
+            sci.SetMarginWidthN(Margin, 0); //margin is only made visible if something is found
+
+            sci.MarkerDeleteAll(MarkerUp);
+            sci.MarkerDeleteAll(MarkerDown);
+            sci.MarkerDeleteAll(MarkerUpDown);
+
+            if (settingObject.DisableInheritanceNavigation) return;
+
+            if (PluginBase.CurrentProject == null) return;
+            var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language) as ASContext;
+            if (context == null) return;
+
+            var fileModel = context.GetCachedFileModel(sci.FileName);
+
+            foreach (var clas in fileModel.Classes)
+            {
+                var cls = astCache.GetCachedModel(clas);
+                if (cls == null) return;
+
+                if (cls.ChildClassModels.Count > 0 || cls.ImplementorClassModels.Count > 0)
+                {
+                    sci.SetMarginWidthN(Margin, marginWidth);
+                    sci.MarkerAdd(clas.LineFrom, MarkerDown);
+                }
+
+                foreach (var implementing in cls.Implementing)
+                {
+                    sci.SetMarginWidthN(Margin, marginWidth);
+                    sci.MarkerAdd(implementing.Key.LineFrom, MarkerUp);
+                }
+                foreach (var implementor in cls.Implementors)
+                {
+                    sci.SetMarginWidthN(Margin, marginWidth);
+                    sci.MarkerAdd(implementor.Key.LineFrom, MarkerDown);
+                }
+                foreach (var overriders in cls.Overriders)
+                {
+                    sci.SetMarginWidthN(Margin, marginWidth);
+                    sci.MarkerAdd(overriders.Key.LineFrom, MarkerDown);
+                }
+                foreach (var overrides in cls.Overriding)
+                {
+                    sci.SetMarginWidthN(Margin, marginWidth);
+                    sci.MarkerAdd(overrides.Key.LineFrom, MarkerUp);
+                }
+
+                for (var i = 0; i < sci.LineCount; ++i)
+                {
+                    var mask = sci.MarkerGet(i);
+                    var searchMask = (1 << MarkerDown) | (1 << MarkerUp);
+                    if ((mask & searchMask) == searchMask)
+                    {
+                        sci.MarkerDelete(i, MarkerUp);
+                        sci.MarkerDelete(i, MarkerDown);
+                        sci.MarkerDelete(i, MarkerUp);      //for some reason this needs to be done twice,
+                        sci.MarkerDelete(i, MarkerDown);    //otherwise some markers are not removed
+
+                        sci.MarkerAdd(i, MarkerUpDown);
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// AS2/AS3 detection
@@ -905,6 +1085,118 @@ namespace ASCompletion
 
         #region Event handlers
 
+        void OnFileRemove(FileModel obj)
+        {
+            PluginBase.RunAsync(() =>
+            {
+
+                foreach (var cls in obj.Classes)
+                {
+                    var cached = astCache.GetCachedModel(cls);
+                    astCache.Remove(cls);
+                    if (cached != null)
+                        foreach (var c in cached.ConnectedClassModels) //need to update all connected stuff
+                            astCache.MarkAsOutdated(c);
+                }
+
+                astCacheTimer.Stop();
+                astCacheTimer.Start();
+
+                var sci1 = DocumentManager.FindDocument(obj.FileName)?.SplitSci1;
+                var sci2 = DocumentManager.FindDocument(obj.FileName)?.SplitSci2;
+
+                if (sci1 != null)
+                {
+                    sci1.MarkerDeleteAll(MarkerUp);
+                    sci1.MarkerDeleteAll(MarkerDown);
+                    sci1.MarkerDeleteAll(MarkerUpDown);
+                }
+                if (sci2 != null)
+                {
+                    sci2.MarkerDeleteAll(MarkerUp);
+                    sci2.MarkerDeleteAll(MarkerDown);
+                    sci2.MarkerDeleteAll(MarkerUpDown);
+                }
+
+                EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "ASCompletion.FileModelUpdated", obj));
+            });
+        }
+
+        /// <summary>
+        /// Called when a file is parsed again (could be called multiple times)
+        /// </summary>
+        /// <param name="obj"></param>
+        void OnFileUpdate(FileModel obj)
+        {
+            PluginBase.RunAsync(() =>
+            {
+                if (PluginBase.CurrentProject == null) return;
+
+                foreach (var cls in obj.Classes)
+                {
+                    astCache.MarkAsOutdated(cls);
+                }
+
+                astCacheTimer.Stop();
+                astCacheTimer.Start();
+
+                EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "ASCompletion.FileModelUpdated", obj));
+            });
+        }
+
+        void AstCacheTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            astCache.UpdateOutdatedModels();
+        }
+
+        void Sci_MarginClick(ScintillaControl sender, int modifiers, int position, int margin)
+        {
+            if (margin != Margin) return;
+
+            var line = sender.LineFromPosition(position);
+            var lineMask = sender.MarkerGet(line);
+            if ((lineMask & (1 << MarkerDown)) > 0 || (lineMask & (1 << MarkerUp)) > 0 || (lineMask & (1 << MarkerUpDown)) > 0) //marker is clicked
+            {
+                var declaration = ASContext.Context.GetDeclarationAtLine(line); //this could be problematic if there are multiple declarations in one line
+                var cached = astCache.GetCachedModel(declaration.InClass);
+
+                if (cached == null) return;
+
+                
+                if (declaration.InClass.LineFrom == line)
+                {
+                    ReferenceList.Show(
+                        ReferenceList.ConvertClassCache(cached.ImplementorClassModels).ToList(),
+                        new List<Reference>(0), 
+                        ReferenceList.ConvertClassCache(cached.ChildClassModels).ToList(),
+                        new List<Reference>(0)
+                    );
+                    return;
+                }
+
+                if (declaration.Member == null) return;
+
+                HashSet<ClassModel> implementing;
+                cached.Implementing.TryGetValue(declaration.Member, out implementing);
+
+                HashSet<ClassModel> implementors;
+                cached.Implementors.TryGetValue(declaration.Member, out implementors);
+
+                HashSet<ClassModel> overriders;
+                cached.Overriders.TryGetValue(declaration.Member, out overriders);
+
+                HashSet<ClassModel> overridden;
+                cached.Overriding.TryGetValue(declaration.Member, out overridden);
+
+                ReferenceList.Show(
+                    ReferenceList.ConvertCache(declaration.Member, implementors ?? new HashSet<ClassModel>()).ToList(),
+                    ReferenceList.ConvertCache(declaration.Member, implementing ?? new HashSet<ClassModel>()).ToList(),
+                    ReferenceList.ConvertCache(declaration.Member, overriders ?? new HashSet<ClassModel>()).ToList(),
+                    ReferenceList.ConvertCache(declaration.Member, overridden ?? new HashSet<ClassModel>()).ToList()
+                );
+            }
+        }
+
         /// <summary>
         /// Display completion list or calltip info
         /// </summary>
@@ -951,6 +1243,27 @@ namespace ASCompletion
         {
             ASComplete.OnTextChanged(sender, position, length, linesAdded);
             ASContext.OnTextChanged(sender, position, length, linesAdded);
+
+            if (settingObject.DisableInheritanceNavigation) return;
+
+            var start = sender.LineFromPosition(position);
+            var end = sender.LineFromPosition(position + Math.Abs(length));
+
+            for (var i = start; i <= end; ++i)
+            {
+                var mask = sender.MarkerGet(i);
+                var searchMask = (1 << MarkerDown) | (1 << MarkerUp) | (1 << MarkerUpDown);
+                if ((mask & searchMask) > 0)
+                {
+                    sender.MarkerDelete(i, MarkerUp);
+                    sender.MarkerDelete(i, MarkerDown);
+                    sender.MarkerDelete(i, MarkerUpDown);
+                    sender.MarkerDelete(i, MarkerUp);
+                    sender.MarkerDelete(i, MarkerDown);
+                    sender.MarkerDelete(i, MarkerUpDown);
+                }
+            }
+            
         }
 
         private void OnUpdateCallTip(ScintillaControl sci, int position)
