@@ -6174,6 +6174,34 @@ AND - All conditions are met.</value>
     <value>Keep result panels locked by default.</value>
     <comment>Added after 5.2.0</comment>
   </data>
+  <data name="SourceControl.Description.NeverAskForCommit" xml:space="preserve">
+    <value>Sets whether you will be asked to make a commit after moving / deleting files, etc.</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Label.Yes" xml:space="preserve">
+    <value>Ja</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Label.No" xml:space="preserve">
+    <value>Nein</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Label.Never" xml:space="preserve">
+    <value>Niemals</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Info.CreateCommit" xml:space="preserve">
+    <value>Möchten Sie für diese Aktion einen neuen Commit erstellen?</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Info.AddFile" xml:space="preserve">
+    <value>Möchten Sie diese Datei Ihrer Sourcecontrolverwaltung hinzufügen?</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Info.RemoveFiles" xml:space="preserve">
+    <value>Möchten Sie diese Datei(en) aus Ihrer Sourcecontrolverwaltung entfernen?</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
   <data name="FlashDevelop.Description.EndAtLastLine" xml:space="preserve">
     <value>Sets the scroll range so that maximum scroll position has the last line at the bottom of the view. Setting this to false allows scrolling one page below the last line.</value>
     <comment>Added after 5.2.1</comment>

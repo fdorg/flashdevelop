@@ -1,7 +1,7 @@
 ﻿
 using System.IO;
 
-namespace SourceControl.Sources.Git
+namespace SourceControl.Sources.Mercurial
 {
     class CommitCommand : BaseCommand
     {
