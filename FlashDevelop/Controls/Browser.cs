@@ -196,7 +196,7 @@ namespace FlashDevelop.Controls
         private void InitializeInterface()
         {
             this.addressComboBox.FlatStyle = Globals.Settings.ComboBoxFlatStyle;
-            this.toolStrip.Renderer = new DockPanelStripRenderer(true, false);
+            this.toolStrip.Renderer = new DockPanelStripRenderer(true, true);
             this.toolStrip.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
             if (ScaleHelper.GetScale() >= 1.5)
             {

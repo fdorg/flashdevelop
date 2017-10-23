@@ -1,18 +1,15 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
-using CodeRefactor.Commands;
-using CodeRefactor.Provider;
-using PluginCore.Localization;
-using PluginCore.Managers;
-using PluginCore;
 using CodeRefactor.Managers;
+using PluginCore.Localization;
+using PluginCore.Controls;
+using PluginCore;
 
 namespace CodeRefactor.Controls
 {
-    public class BatchProcessDialog : Form
+    public class BatchProcessDialog : SmartForm
     {
         private System.Windows.Forms.Label targetLabel;
         private System.Windows.Forms.Label operationLabel;
@@ -25,6 +22,7 @@ namespace CodeRefactor.Controls
         {
             this.Owner = (Form)PluginBase.MainForm;
             this.Font = PluginBase.Settings.DefaultFont;
+            this.FormGuid = "8edcdafb-b859-410f-9d78-59c0002db62d";
             this.InitializeComponent();
             this.InitializeDefaults();
         }
@@ -37,18 +35,18 @@ namespace CodeRefactor.Controls
         /// </summary>
         private void InitializeComponent()
         {
-            this.cancelButton = new System.Windows.Forms.Button();
-            this.operationComboBox = new System.Windows.Forms.ComboBox();
+            this.cancelButton = new System.Windows.Forms.ButtonEx();
+            this.operationComboBox = new System.Windows.Forms.FlatCombo();
             this.operationLabel = new System.Windows.Forms.Label();
             this.targetLabel = new System.Windows.Forms.Label();
-            this.processButton = new System.Windows.Forms.Button();
-            this.targetComboBox = new System.Windows.Forms.ComboBox();
+            this.processButton = new System.Windows.Forms.ButtonEx();
+            this.targetComboBox = new System.Windows.Forms.FlatCombo();
             this.SuspendLayout();
             // 
             // cancelButton
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.cancelButton.Location = new System.Drawing.Point(133, 106);
+            this.cancelButton.Location = new System.Drawing.Point(216, 106);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 0;
@@ -85,7 +83,7 @@ namespace CodeRefactor.Controls
             // processButton
             // 
             this.processButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.processButton.Location = new System.Drawing.Point(216, 106);
+            this.processButton.Location = new System.Drawing.Point(133, 106);
             this.processButton.Name = "processButton";
             this.processButton.Size = new System.Drawing.Size(75, 23);
             this.processButton.TabIndex = 1;
@@ -139,19 +137,19 @@ namespace CodeRefactor.Controls
         /// </summary>
         private void InitializeDefaults()
         {
+            this.targetComboBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
+            this.operationComboBox.FlatStyle = PluginBase.Settings.ComboBoxFlatStyle;
             this.targetComboBox.Items.AddRange(new Object[] 
             {
                 TextHelper.GetString("Info.OpenFiles"),
                 TextHelper.GetString("Info.ProjectSources")
             });
-
             //Add processors from BatchProcessManager
             var customProcessors = BatchProcessManager.GetAvailableProcessors();
             foreach (var proc in customProcessors)
             {
                 this.operationComboBox.Items.Add(new BatchProcessorItem(proc));
             }
-
             this.Text = " " + TextHelper.GetString("Title.BatchProcessDialog");
             this.targetComboBox.SelectedIndex = 0;
             this.operationComboBox.SelectedIndex = 0;

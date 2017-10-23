@@ -16,5 +16,4 @@ using PluginCore;
 [assembly: AssemblyVersion("1.0.0.0")]
 
 [assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.MainAssembly)]
-
 [assembly: InternalsVisibleTo("PluginCore.Tests")]

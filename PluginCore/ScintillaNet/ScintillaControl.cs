@@ -95,8 +95,7 @@ namespace ScintillaNet
                 Boolean enabled = value == "True" || (value == null && color != Color.Empty);
                 if (enabled)
                 {
-                    if (!this.Controls.Contains(this.vScrollBar))
-                        this.AddScrollBars(this);
+                    if (!this.Controls.Contains(this.vScrollBar)) this.AddScrollBars(this);
                     this.UpdateScrollBarTheme(this);
                 }
                 else if (!enabled && this.Controls.Contains(this.vScrollBar))
@@ -280,14 +279,18 @@ namespace ScintillaNet
             Int32 vsbWidth = this.Controls.Contains(this.vScrollBar) && this.vScrollBar.Visible ? this.vScrollBar.Width : 0;
             Int32 hsbHeight = this.Controls.Contains(this.hScrollBar) && this.hScrollBar.Visible ? this.hScrollBar.Height : 0;
             if (Win32.ShouldUseWin32())
+            {
                 SetWindowPos(this.hwndScintilla, 0, ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width - vsbWidth, ClientRectangle.Height - hsbHeight, 0);
+            }
             if (this.Controls.Contains(this.vScrollBar))
             {
                 this.vScrollBar.SetBounds(ClientRectangle.Width - vsbWidth, 0, this.vScrollBar.Width, ClientRectangle.Height - hsbHeight);
                 this.hScrollBar.SetBounds(0, ClientRectangle.Height - hsbHeight, ClientRectangle.Width - vsbWidth, this.hScrollBar.Height);
                 this.scrollerCorner.Visible = this.vScrollBar.Visible && this.hScrollBar.Visible;
                 if (this.scrollerCorner.Visible)
-                    this.scrollerCorner.Location = new System.Drawing.Point(this.vScrollBar.Location.X, this.hScrollBar.Location.Y);
+                {
+                    this.scrollerCorner.Location = new Point(this.vScrollBar.Location.X, this.hScrollBar.Location.Y);
+                }
             }
         }
 

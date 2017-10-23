@@ -4,11 +4,9 @@ using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
-using WeifenLuo.WinFormsUI;
 using WeifenLuo.WinFormsUI.Docking;
 using PluginCore.Localization;
 using FlashDevelop.Managers;
-using FlashDevelop.Helpers;
 using FlashDevelop.Controls;
 using PluginCore.Utilities;
 using PluginCore.Managers;
@@ -136,8 +134,7 @@ namespace FlashDevelop.Docking
                 int count = 0;
                 foreach (ITabbedDocument document in Globals.MainForm.Documents)
                 {
-                    if (document.DockHandler.PanelPane == DockHandler.PanelPane)
-                        count++;
+                    if (document.DockHandler.PanelPane == DockHandler.PanelPane) count++;
                 }
                 return count <= 1;
             }
@@ -414,8 +411,11 @@ namespace FlashDevelop.Docking
             EventManager.DispatchEvent(this, saving);
             if (!saving.Handled)
             {
-                this.UpdateDocumentIcon(file);
-                this.SciControl.FileName = file;
+                if (otherFile)
+                {
+                    this.UpdateDocumentIcon(file);
+                    this.SciControl.FileName = file;
+                }
                 ScintillaManager.CleanUpCode(this.SciControl);
                 DataEvent de = new DataEvent(EventType.FileEncode, file, this.SciControl.Text);
                 EventManager.DispatchEvent(this, de); // Lets ask if a plugin wants to encode and save the data..
