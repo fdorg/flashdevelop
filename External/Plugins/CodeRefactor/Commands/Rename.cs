@@ -219,7 +219,7 @@ namespace CodeRefactor.Commands
             if (string.IsNullOrEmpty(oldFileName) || oldFileName.Equals(newFileName)) return false;
 
             // Check if the new file name already exists
-            return FileHelper.ConfirmOverwrite(newFileName);
+            return oldFileName.Equals(newFileName, StringComparison.OrdinalIgnoreCase) || FileHelper.ConfirmOverwrite(newFileName);
         }
 
         /// <summary>
@@ -323,23 +323,14 @@ namespace CodeRefactor.Commands
                 reopen = true;
             }
 
-            // name casing changed
-            if (oldFileName.Equals(newFileName, StringComparison.OrdinalIgnoreCase))
+            FileHelper.MoveFile(oldFileName, newFileName, true);
+            DocumentManager.MoveDocuments(oldFileName, newFileName);
+            
+            var project = (Project) PluginBase.CurrentProject;
+            if (project.IsDocumentClass(oldFileName))
             {
-                string tmpPath = oldFileName + "$renaming$";
-                RefactoringHelper.Move(oldFileName, tmpPath);
-                RefactoringHelper.Move(tmpPath, newFileName);
-            }
-            else
-            {
-                var project = (Project) PluginBase.CurrentProject;
-                FileHelper.ForceMove(oldFileName, newFileName);
-                DocumentManager.MoveDocuments(oldFileName, newFileName);
-                if (project.IsDocumentClass(oldFileName))
-                {
-                    project.SetDocumentClass(newFileName, true);
-                    project.Save();
-                }
+                project.SetDocumentClass(newFileName, true);
+                project.Save();
             }
 
             if (results.ContainsKey(oldFileName))

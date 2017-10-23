@@ -439,7 +439,7 @@ namespace ProjectManager.Actions
                 string caption = " " + TextHelper.GetString("FlashDevelop.Title.ConfirmDialog");
                 string message = TextHelper.GetString("Info.ExtensionChangeWarning");
 
-                if (oldExt.ToUpperInvariant() != newExt.ToUpperInvariant() &&
+                if (!oldExt.Equals(newExt, StringComparison.OrdinalIgnoreCase) &&
                     MessageBox.Show(message, caption, MessageBoxButtons.YesNo) == DialogResult.No)
                     return false;
             }
@@ -458,38 +458,11 @@ namespace ProjectManager.Actions
 
                 if (isDirectory)
                 {
-                    // this is required for renaming directories, don't ask me why
-                    string oldPathFixed = (oldPath.EndsWith('\\')) ? oldPath : oldPath + "\\";
-                    string newPathFixed = (newPath.EndsWith('\\')) ? newPath : newPath + "\\";
-                    if (oldPathFixed.Equals(newPathFixed, StringComparison.OrdinalIgnoreCase))
-                    {
-                        // name casing changed
-                        string tmpPath = newPathFixed.Substring(0, newPathFixed.Length - 1) + "$renaming$\\";
-                        Directory.Move(oldPathFixed, tmpPath);
-                        oldPathFixed = tmpPath;
-                    }
-                    if (FileHelper.ConfirmOverwrite(newPath))
-                    {
-                        FileHelper.ForceMoveDirectory(oldPathFixed, newPathFixed);
-                    }
-                    else return false;
+                    if (!FileHelper.MoveDirectory(oldPath, newPath)) return false;
                 }
                 else
                 {
-                    string oldName = Path.GetFileName(oldPath);
-                    if (oldName.Equals(newName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        // name casing changed
-                        string tmpPath = newPath + "$renaming$";
-                        File.Move(oldPath, tmpPath);
-                        oldPath = tmpPath;
-                    }
-
-                    if (FileHelper.ConfirmOverwrite(newPath))
-                    {
-                        FileHelper.ForceMove(oldPath, newPath);
-                    }
-                    else return false;
+                    if (!FileHelper.MoveFile(oldPath, newPath)) return false;
                 }
                 OnFileMoved(oldPath, newPath);
             }

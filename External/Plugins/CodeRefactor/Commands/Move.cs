@@ -306,27 +306,11 @@ namespace CodeRefactor.Commands
                 string newPath = item.Value;
                 if (File.Exists(oldPath))
                 {
-                    newPath = Path.Combine(newPath, Path.GetFileName(oldPath));
-                    // refactor failed or was refused
-                    if (Path.GetFileName(oldPath).Equals(newPath, StringComparison.OrdinalIgnoreCase))
-                    {
-                        // name casing changed
-                        string tmpPath = oldPath + "$renaming$";
-                        RefactoringHelper.Move(oldPath, tmpPath);
-                        oldPath = tmpPath;
-                    }
-                    if (!Path.IsPathRooted(newPath)) newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
+                    newPath = Path.Combine(Path.GetDirectoryName(oldPath), Path.Combine(newPath, Path.GetFileName(oldPath)));
                     RefactoringHelper.Move(oldPath, newPath, true);
                 }
                 else if (Directory.Exists(oldPath))
                 {
-                    if (Path.GetFileName(oldPath).Equals(newPath, StringComparison.OrdinalIgnoreCase))
-                    {
-                        // name casing changed
-                        string tmpPath = oldPath + "$renaming$";
-                        RefactoringHelper.Move(oldPath, tmpPath);
-                        oldPath = tmpPath;
-                    }
                     RefactoringHelper.Move(oldPath, newPath, renaming);
                 }
             }
@@ -463,8 +447,7 @@ namespace CodeRefactor.Commands
                 string newPath = item.Value;
                 if (File.Exists(oldPath))
                 {
-                    newPath = Path.Combine(newPath, Path.GetFileName(oldPath));
-                    if (!Path.IsPathRooted(newPath)) newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
+                    newPath = Path.Combine(Path.GetDirectoryName(oldPath), Path.Combine(newPath, Path.GetFileName(oldPath)));
                     RefactoringHelper.Move(oldPath, newPath, true);
                 }
                 else if (Directory.Exists(oldPath))
@@ -473,37 +456,15 @@ namespace CodeRefactor.Commands
 
                     // Look for document class changes
                     // Do not use RefactoringHelper to avoid possible dialogs that we don't want
-                    Project project = (Project)PluginBase.CurrentProject;
-                    string newDocumentClass = null;
-                    string searchPattern = project.DefaultSearchFilter;
-                    foreach (string pattern in searchPattern.Split(';'))
-                    {
-                        foreach (string file in Directory.GetFiles(oldPath, pattern, SearchOption.AllDirectories))
-                        {
-                            if (project.IsDocumentClass(file))
-                            {
-                                newDocumentClass = file.Replace(oldPath, newPath);
-                                break;
-                            }
-                        }
-                        if (newDocumentClass != null) break;
-                    }
+                    string newDocumentClass;
+                    if (RefactoringHelper.TryGetDocumentClass(oldPath, out newDocumentClass)) newDocumentClass.Replace(oldPath, newPath);
 
-                    // Check if this is a name casing change
-                    if (oldPath.Equals(newPath, StringComparison.OrdinalIgnoreCase))
-                    {
-                        string tmpPath = oldPath + "$renaming$";
-                        FileHelper.ForceMoveDirectory(oldPath, tmpPath);
-                        DocumentManager.MoveDocuments(oldPath, tmpPath);
-                        oldPath = tmpPath;
-                    }
-
-                    // Move directory contents to final location
-                    FileHelper.ForceMoveDirectory(oldPath, newPath);
+                    FileHelper.MoveDirectory(oldPath, newPath, true);
                     DocumentManager.MoveDocuments(oldPath, newPath);
-
+                    
                     if (!string.IsNullOrEmpty(newDocumentClass))
                     {
+                        var project = (Project) PluginBase.CurrentProject;
                         project.SetDocumentClass(newDocumentClass, true);
                         project.Save();
                     }

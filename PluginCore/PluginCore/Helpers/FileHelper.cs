@@ -174,7 +174,7 @@ namespace PluginCore.Helpers
         /// </summary>
         public static void ForceMove(String oldPath, String newPath)
         {
-            if (File.Exists(newPath)) File.Delete(newPath);
+            File.Delete(newPath);
             File.Move(oldPath, newPath);
         }
 
@@ -212,9 +212,7 @@ namespace PluginCore.Helpers
         {
             Stack<String> stack = new Stack<String>();
             stack.Push(String.Empty);
-            String sep = Path.DirectorySeparatorChar.ToString();
-            String alt = Path.AltDirectorySeparatorChar.ToString();
-            Int32 length = oldPath.EndsWithOrdinal(sep) || oldPath.EndsWithOrdinal(alt) ? oldPath.Length : oldPath.Length + 1;
+            Int32 length = oldPath.EndsWith(Path.DirectorySeparatorChar) || oldPath.EndsWith(Path.AltDirectorySeparatorChar) ? oldPath.Length : oldPath.Length + 1;
             while (stack.Count > 0)
             {
                 String subPath = stack.Pop();
@@ -233,6 +231,85 @@ namespace PluginCore.Helpers
             Directory.Delete(oldPath, true);
         }
 
+        /// <summary>
+        /// Moves a file, taking into account the cases when only the case in the file name is changed.
+        /// </summary>
+        public static bool MoveFile(string oldPath, string newPath, bool suppressPromptAndOverwrite = false)
+        {
+            if (oldPath.Equals(newPath, StringComparison.OrdinalIgnoreCase))
+            {
+                string tmpPath = GetTempRenamePath(oldPath);
+                File.Move(oldPath, tmpPath);
+
+                if (suppressPromptAndOverwrite || ConfirmOverwrite(newPath)) // In case of case-sensitive environment?
+                {
+                    ForceMove(tmpPath, newPath);
+                    return true;
+                }
+                else
+                {
+                    File.Move(tmpPath, oldPath);
+                    return false;
+                }
+            }
+            else if (suppressPromptAndOverwrite || ConfirmOverwrite(newPath))
+            {
+                ForceMove(oldPath, newPath);
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Moves a directory, taking into account the cases when only the case in the directory name is changed.
+        /// </summary>
+        public static bool MoveDirectory(string oldPath, string newPath, bool suppressPromptAndOverwrite = false)
+        {
+            if (oldPath.EndsWith(Path.DirectorySeparatorChar) || oldPath.EndsWith(Path.AltDirectorySeparatorChar))
+            {
+                oldPath = oldPath.Substring(0, oldPath.Length - 1);
+            }
+            if (newPath.EndsWith(Path.DirectorySeparatorChar) || newPath.EndsWith(Path.AltDirectorySeparatorChar))
+            {
+                newPath = newPath.Substring(0, newPath.Length - 1);
+            }
+            if (oldPath.Equals(newPath, StringComparison.OrdinalIgnoreCase))
+            {
+                string tmpPath = GetTempRenamePath(oldPath);
+                Directory.Move(oldPath, tmpPath);
+
+                if (suppressPromptAndOverwrite || ConfirmOverwrite(newPath)) // In case of case-sensitive environment?
+                {
+                    ForceMoveDirectory(tmpPath, newPath);
+                    return true;
+                }
+                else
+                {
+                    Directory.Move(tmpPath, oldPath);
+                    return false;
+                }
+            }
+            else if (suppressPromptAndOverwrite || ConfirmOverwrite(newPath))
+            {
+                ForceMoveDirectory(oldPath, newPath);
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Creates a temporary path for renaming.
+        /// </summary>
+        public static string GetTempRenamePath(string target)
+        {
+            string tempPath = target + "$renaming$";
+            while (Directory.Exists(tempPath) || File.Exists(tempPath))
+            {
+                tempPath = target + Path.GetRandomFileName();
+            }
+            return tempPath;
+        }
+        
         /// <summary>
         /// If the path already exists, the user is asked to confirm
         /// </summary>

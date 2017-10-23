@@ -624,41 +624,56 @@ namespace CodeRefactor.Provider
         public static void Move(string oldPath, string newPath, bool renaming)
         {
             if (string.IsNullOrEmpty(oldPath) || string.IsNullOrEmpty(newPath)) return;
-            Project project = (Project)PluginBase.CurrentProject;
-            string newDocumentClass = null;
+            var project = (Project) PluginBase.CurrentProject;
 
-            if (File.Exists(oldPath) && FileHelper.ConfirmOverwrite(newPath))
+            if (File.Exists(oldPath))
             {
-                FileHelper.ForceMove(oldPath, newPath);
-                DocumentManager.MoveDocuments(oldPath, newPath);
-                if (project.IsDocumentClass(oldPath)) newDocumentClass = newPath;
+                if (FileHelper.MoveFile(oldPath, newPath))
+                {
+                    DocumentManager.MoveDocuments(oldPath, newPath);
+                    if (project.IsDocumentClass(oldPath))
+                    {
+                        project.SetDocumentClass(newPath, true);
+                        project.Save();
+                    }
+                }
             }
             else if (Directory.Exists(oldPath))
             {
                 newPath = renaming ? Path.Combine(Path.GetDirectoryName(oldPath), newPath) : Path.Combine(newPath, Path.GetFileName(oldPath));
-                if (!FileHelper.ConfirmOverwrite(newPath)) return;
-                string searchPattern = project.DefaultSearchFilter;
-                foreach (string pattern in searchPattern.Split(';'))
+                string newDocumentClass;
+                if (TryGetDocumentClass(oldPath, out newDocumentClass))
                 {
-                    foreach (string file in Directory.GetFiles(oldPath, pattern, SearchOption.AllDirectories))
-                    {
-                        if (project.IsDocumentClass(file))
-                        {
-                            newDocumentClass = file.Replace(oldPath, newPath);
-                            break;
-                        }
-                    }
-                    if (newDocumentClass != null) break;
+                    newDocumentClass.Replace(oldPath, newPath);
                 }
-                // We need to use our own method for moving directories if folders in the new path already exist
-                FileHelper.ForceMoveDirectory(oldPath, newPath);
-                DocumentManager.MoveDocuments(oldPath, newPath);
+                if (FileHelper.MoveDirectory(oldPath, newPath))
+                {
+                    DocumentManager.MoveDocuments(oldPath, newPath);
+                    if (!string.IsNullOrEmpty(newDocumentClass))
+                    {
+                        project.SetDocumentClass(newDocumentClass, true);
+                        project.Save();
+                    }
+                }
             }
-            if (!string.IsNullOrEmpty(newDocumentClass))
+        }
+
+        public static bool TryGetDocumentClass(string directoryPath, out string documentClass)
+        {
+            var project = (Project) PluginBase.CurrentProject;
+            foreach (string pattern in project.DefaultSearchFilter.Split(';'))
             {
-                project.SetDocumentClass(newDocumentClass, true);
-                project.Save();
+                foreach (string file in Directory.GetFiles(directoryPath, pattern, SearchOption.AllDirectories))
+                {
+                    if (project.IsDocumentClass(file))
+                    {
+                        documentClass = file;
+                        return true;
+                    }
+                }
             }
+            documentClass = null;
+            return false;
         }
         
         public static bool IsInsideCommentOrString(SearchMatch match, ScintillaControl sci, bool includeComments, bool includeStrings)

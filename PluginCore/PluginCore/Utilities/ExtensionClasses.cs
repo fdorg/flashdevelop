@@ -40,8 +40,7 @@ namespace PluginCore
         /// <returns></returns>
         public static bool EndsWith(this string @this, char value)
         {
-            int length = @this.Length;
-            return length != 0 && @this[length - 1] == value;
+            return @this.Length != 0 && @this[@this.Length - 1] == value;
         }
 
         /// <summary>

@@ -44,19 +44,11 @@ namespace CodeRefactor.Commands
                     return;
                 }
             }
-            // refactor failed or was refused
-            if (Path.GetFileName(oldPath).Equals(newPath, StringComparison.OrdinalIgnoreCase))
-            {
-                // name casing changed
-                string tmpPath = oldPath + "$renaming$";
-                File.Move(oldPath, tmpPath);
-                oldPath = tmpPath;
-            }
-            if (!Path.IsPathRooted(newPath)) newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
 
-            if (FileHelper.ConfirmOverwrite(newPath))
+            newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
+
+            if (FileHelper.MoveFile(oldPath, newPath))
             {
-                FileHelper.ForceMove(oldPath, newPath);
                 DocumentManager.MoveDocuments(oldPath, newPath);
             }
         }
