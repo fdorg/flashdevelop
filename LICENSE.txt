@@ -1,6 +1,7 @@
 The MIT License (MIT)
 
-Copyright (c) 2005-2017 FlashDevelop.org
+Copyright (c) 2005-2017 Mika Palmu - FlashDevelop.org
+Portions copyright Philippe Elsass and all helpful contributors.
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
