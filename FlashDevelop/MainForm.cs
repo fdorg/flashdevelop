@@ -2665,9 +2665,6 @@ namespace FlashDevelop
         {
             try
             {
-                var button = (ToolStripItem)sender;
-                var reason = ((ItemData)button.Tag).Tag as string;
-                
                 if (this.CurrentDocument.IsUntitled)
                 {
                     this.saveFileDialog.FileName = this.CurrentDocument.FileName;
@@ -2684,6 +2681,8 @@ namespace FlashDevelop
                 }
                 else if (this.CurrentDocument.IsModified)
                 {
+                    var button = (ToolStripItem)sender;
+                    var reason = ((ItemData)button.Tag).Tag;
                     this.CurrentDocument.Save(this.CurrentDocument.FileName, reason);
                 }
             }
