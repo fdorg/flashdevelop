@@ -20,6 +20,7 @@ namespace FlashDebugger
         public const int indicatorDebugEnabledBreakpoint = 28;
         public const int indicatorDebugDisabledBreakpoint = 29;
         public const int indicatorDebugCurrentLine = 30;
+        const int BreakpointMargin = 0; //same as BookmarksMargin (see FlashDevelop.Managers.ScintillaManager)
 
         #region Scintilla Events
 
@@ -40,13 +41,13 @@ namespace FlashDebugger
         {
             sci.ModEventMask |= (Int32)ModificationFlags.ChangeMarker;
             sci.MarkerChanged += new MarkerChangedHandler(SciControl_MarkerChanged);
-            sci.MarginSensitiveN(0, true);
-            int mask = sci.GetMarginMaskN(0);
+            sci.MarginSensitiveN(BreakpointMargin, true);
+            int mask = sci.GetMarginMaskN(BreakpointMargin);
             mask |= GetMarkerMask(markerBPEnabled);
             mask |= GetMarkerMask(markerBPDisabled);
             mask |= GetMarkerMask(markerBPNotAvailable);
             mask |= GetMarkerMask(markerCurrentLine);
-            sci.SetMarginMaskN(0, mask);
+            sci.SetMarginMaskN(BreakpointMargin, mask);
             var enabledImage = ScaleHelper.Scale(Resource.Enabled);
             var disabledImage = ScaleHelper.Scale(Resource.Disabled);
             var curlineImage = ScaleHelper.Scale(Resource.CurLine);
@@ -130,7 +131,7 @@ namespace FlashDebugger
         /// </summary>
         static public void SciControl_MarginClick(ScintillaControl sender, int modifiers, int position, int margin)
         {
-            if (margin != 0) return;
+            if (margin != BreakpointMargin) return;
             //if (PluginMain.debugManager.FlashInterface.isDebuggerStarted && !PluginMain.debugManager.FlashInterface.isDebuggerSuspended) return;
             int line = sender.LineFromPosition(position);
             if (IsMarkerSet(sender, markerBPEnabled, line))

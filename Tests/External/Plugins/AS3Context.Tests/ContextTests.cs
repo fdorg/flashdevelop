@@ -10,7 +10,7 @@ namespace AS3Context
         Context context;
 
         [TestFixtureSetUp]
-        public void FixtureSetUp() => context = new Context(new AS3Settings());
+        public new void FixtureSetUp() => context = new Context(new AS3Settings());
 
         IEnumerable<TestCaseData> DecomposeTypesTestCases
         {

@@ -51,16 +51,16 @@ namespace ProjectManager.Controls.AS2
         /// </summary>
         private void InitializeComponent()
         {
-            this.cancelButton = new System.Windows.Forms.Button();
-            this.okButton = new System.Windows.Forms.Button();
-            this.autoIDBox = new System.Windows.Forms.CheckBox();
-            this.idTextBox = new System.Windows.Forms.TextBox();
+            this.cancelButton = new System.Windows.Forms.ButtonEx();
+            this.okButton = new System.Windows.Forms.ButtonEx();
+            this.autoIDBox = new System.Windows.Forms.CheckBoxEx();
+            this.idTextBox = new System.Windows.Forms.TextBoxEx();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.swfTabPage = new System.Windows.Forms.TabPage();
-            this.specifySharepointBox = new System.Windows.Forms.CheckBox();
+            this.specifySharepointBox = new System.Windows.Forms.CheckBoxEx();
             this.addPreloaderButton = new System.Windows.Forms.RadioButton();
             this.explainLink = new System.Windows.Forms.LinkLabel();
-            this.sharepointTextBox = new System.Windows.Forms.TextBox();
+            this.sharepointTextBox = new System.Windows.Forms.TextBoxEx();
             this.sharedLibraryButton = new System.Windows.Forms.RadioButton();
             this.addLibraryButton = new System.Windows.Forms.RadioButton();
             this.swcTabPage = new System.Windows.Forms.TabPage();
@@ -68,14 +68,14 @@ namespace ProjectManager.Controls.AS2
             this.swcExtOption = new System.Windows.Forms.RadioButton();
             this.swcLibOption = new System.Windows.Forms.RadioButton();
             this.fontTabPage = new System.Windows.Forms.TabPage();
-            this.charactersTextBox = new System.Windows.Forms.TextBox();
+            this.charactersTextBox = new System.Windows.Forms.TextBoxEx();
             this.embedTheseButton = new System.Windows.Forms.RadioButton();
             this.embedAllButton = new System.Windows.Forms.RadioButton();
             this.advancedTabPage = new System.Windows.Forms.TabPage();
-            this.browseButton = new System.Windows.Forms.Button();
-            this.updatedTextBox = new System.Windows.Forms.TextBox();
-            this.keepUpdatedBox = new System.Windows.Forms.CheckBox();
-            this.bitmapLinkageBox = new System.Windows.Forms.CheckBox();
+            this.browseButton = new System.Windows.Forms.ButtonEx();
+            this.updatedTextBox = new System.Windows.Forms.TextBoxEx();
+            this.keepUpdatedBox = new System.Windows.Forms.CheckBoxEx();
+            this.bitmapLinkageBox = new System.Windows.Forms.CheckBoxEx();
             this.tabControl.SuspendLayout();
             this.swfTabPage.SuspendLayout();
             this.swcTabPage.SuspendLayout();

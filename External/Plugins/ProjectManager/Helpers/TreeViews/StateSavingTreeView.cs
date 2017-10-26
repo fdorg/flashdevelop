@@ -13,7 +13,7 @@ namespace System.Windows.Forms
     /// I am no longer using this class, since the new ProjectTreeView updates all
     /// nodes in-place for improved scaleability.
     /// </remarks>
-    public class StateSavingTreeView : TreeView
+    public class StateSavingTreeView : TreeViewEx
     {
         string topPath;
         string bottomPath;

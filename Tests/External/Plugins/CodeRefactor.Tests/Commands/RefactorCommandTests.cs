@@ -206,6 +206,14 @@ namespace CodeRefactor.Commands
         {
             protected static string ReadAllTextHaxe(string fileName) => TestFile.ReadAllText($"{nameof(CodeRefactor)}.Test_Files.coderefactor.organizeimports.haxe.{fileName}.hx");
 
+            [TestFixtureSetUp]
+            public void OrganizeImportsFixtureSetUp()
+            {
+                // Needed for preprocessor directives...
+                Sci.SetProperty("fold", "1");
+                Sci.SetProperty("fold.preprocessor", "1");
+            }
+
             public IEnumerable<TestCaseData> HaxeTestCases
             {
                 get
@@ -222,6 +230,14 @@ namespace CodeRefactor.Commands
                         new TestCaseData(ReadAllTextHaxe("BeforeOrganizeImports_withImportsFromSameModule2"), "Main.hx")
                             .Returns(ReadAllTextHaxe("AfterOrganizeImports_withImportsFromSameModule2"))
                             .SetName("Issue782. Package is not empty.");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("BeforeOrganizeImports_withImportsFromSameModule2"), "Main.hx")
+                            .Returns(ReadAllTextHaxe("AfterOrganizeImports_withImportsFromSameModule2"))
+                            .SetName("Issue782. Package is not empty.");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("BeforeOrganizeImports_withElseIfDirective"), "Main.hx")
+                            .Returns(ReadAllTextHaxe("AfterOrganizeImports_withElseIfDirective"))
+                            .SetName("Issue783. Shouldn't touch #elseif blocks.");
                 }
             }
 
@@ -237,6 +253,7 @@ namespace CodeRefactor.Commands
                     FileName = fileName
                 });
                 Sci.Text = sourceText;
+                Sci.Colourise(0, -1);   // Needed for preprocessor directives...
                 SnippetHelper.PostProcessSnippets(Sci, 0);
                 var currentModel = ASContext.Context.CurrentModel;
                 new ASFileParser().ParseSrc(currentModel, Sci.Text);

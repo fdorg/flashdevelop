@@ -1,11 +1,14 @@
 ﻿using System;
 using System.IO;
 using PluginCore.Managers;
+using SourceControl.Actions;
 
 namespace SourceControl.Sources.Mercurial
 {
     class DeleteCommand : BaseCommand
     {
+        string[] paths;
+
         public DeleteCommand(string[] paths)
         {
             string args = "rm -f";
@@ -27,7 +30,16 @@ namespace SourceControl.Sources.Mercurial
                 count++;
             }
 
+            this.paths = paths;
+
             if (count > 0) Run(args, Path.GetDirectoryName(paths[0]));
+        }
+
+        override protected void Runner_ProcessEnded(object sender, int exitCode)
+        {
+            base.Runner_ProcessEnded(sender, exitCode);
+
+            ProjectWatcher.HandleFilesDeleted(paths);
         }
     }
 }

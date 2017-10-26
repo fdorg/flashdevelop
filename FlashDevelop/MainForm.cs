@@ -102,7 +102,7 @@ namespace FlashDevelop
         private MenuStrip menuStrip;
         private StatusStrip statusStrip;
         private ToolStripPanel toolStripPanel;
-        private ToolStripProgressBar toolStripProgressBar;
+        private ToolStripProgressBarEx toolStripProgressBar;
         private ToolStripStatusLabel toolStripProgressLabel;
         private ToolStripStatusLabel toolStripStatusLabel;
         private ToolStripButton restartButton;
@@ -211,7 +211,7 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Gets the toolStripProgressBar
+        /// Gets the ToolStripProgressBarEx
         /// </summary>
         public ToolStripProgressBar ProgressBar
         {
@@ -994,7 +994,7 @@ namespace FlashDevelop
             this.tabMenu = StripBarManager.GetContextMenu(FileNameHelper.TabMenu);
             this.toolStripStatusLabel = new ToolStripStatusLabel();
             this.toolStripProgressLabel = new ToolStripStatusLabel();
-            this.toolStripProgressBar = new ToolStripProgressBar();
+            this.toolStripProgressBar = new ToolStripProgressBarEx();
             this.printPreviewDialog = new PrintPreviewDialog();
             this.saveFileDialog = new SaveFileDialog();
             this.openFileDialog = new OpenFileDialog();
@@ -1958,6 +1958,14 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Sets if child controls should use theme.
+        /// </summary>
+        public void SetUseTheme(Object obj, Boolean use)
+        {
+            ThemeManager.SetUseTheme(obj, use);
+        }
+
+        /// <summary>
         /// Finds the specified menu item by name
         /// </summary>
         public ToolStripItem FindMenuItem(String name)
@@ -2296,7 +2304,6 @@ namespace FlashDevelop
                 return Path.GetDirectoryName(project.ProjectPath);
             }
             else return PathHelper.AppDir;
-
         }
 
         /// <summary>
@@ -2558,9 +2565,9 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Paste text using <see cref="ClipboardHistoryDialog"/>.
+        /// Views the current clipboard history
         /// </summary>
-        public void PasteHistory(object sender, EventArgs e)
+        public void ClipboardHistory(object sender, EventArgs e)
         {
             ClipboardTextData data;
             if (ClipboardHistoryDialog.Show(out data))
@@ -4345,6 +4352,15 @@ namespace FlashDevelop
                 String message = TextHelper.GetString("Info.CouldNotExecuteScript");
                 ErrorManager.ShowWarning(message + "\r\n" + ex.Message, null);
             }
+        }
+
+        /// <summary>
+        /// Test the controls in a dedicated form
+        /// </summary>
+        public void TestControls(Object sender, EventArgs e)
+        {
+            ControlDialog cd = new ControlDialog();
+            cd.Show(this);
         }
 
         /// <summary>

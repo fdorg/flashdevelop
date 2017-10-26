@@ -15,7 +15,7 @@ using Ookii.Dialogs;
 
 namespace ProjectManager.Controls
 {
-    public class NewProjectDialog : SmartForm
+    public class NewProjectDialog : SmartForm, IThemeHandler
     {
         static string lastTemplate;
         string defaultProjectImage;
@@ -47,22 +47,22 @@ namespace ProjectManager.Controls
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.cancelButton = new System.Windows.Forms.Button();
-            this.okButton = new System.Windows.Forms.Button();
-            this.previewBox = new System.Windows.Forms.PictureBox();
-            this.projectListView = new System.Windows.Forms.ListView();
+            this.cancelButton = new System.Windows.Forms.ButtonEx();
+            this.okButton = new System.Windows.Forms.ButtonEx();
+            this.previewBox = new System.Windows.Forms.PictureBoxEx();
+            this.projectListView = new System.Windows.Forms.ListViewEx();
             this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
             this.imageList = new System.Windows.Forms.ImageList(this.components);
-            this.locationTextBox = new System.Windows.Forms.TextBox();
+            this.locationTextBox = new System.Windows.Forms.TextBoxEx();
             this.label1 = new System.Windows.Forms.Label();
             this.descriptionLabel = new System.Windows.Forms.Label();
-            this.browseButton = new System.Windows.Forms.Button();
+            this.browseButton = new System.Windows.Forms.ButtonEx();
             this.label2 = new System.Windows.Forms.Label();
-            this.nameTextBox = new System.Windows.Forms.TextBox();
-            this.createDirectoryBox = new System.Windows.Forms.CheckBox();
-            this.statusBar = new System.Windows.Forms.StatusBar();
+            this.nameTextBox = new System.Windows.Forms.TextBoxEx();
+            this.createDirectoryBox = new System.Windows.Forms.CheckBoxEx();
+            this.statusBar = new System.Windows.Forms.StatusBarEx();
             this.label3 = new System.Windows.Forms.Label();
-            this.packageTextBox = new System.Windows.Forms.TextBox();
+            this.packageTextBox = new System.Windows.Forms.TextBoxEx();
             ((System.ComponentModel.ISupportInitialize)(this.previewBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -601,6 +601,13 @@ namespace ProjectManager.Controls
             }
         }
 
+        /// <summary>
+        /// Make sure previewBox background remains white
+        /// </summary>
+        public void AfterTheming()
+        {
+            this.previewBox.BackColor = Color.White;
+        }
     }
 
 }
