@@ -1,4 +1,5 @@
 using System;
+using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -891,7 +892,7 @@ namespace ASCompletion
             sci.MarkerDefineRGBAImage(MarkerUp, upArrow);
             sci.MarkerDefineRGBAImage(MarkerUpDown, upDownArrow);
             //Setup margin
-            var mask = sci.GetMarginMaskN(Margin) | (1 << MarkerDown) | (1 << MarkerUp) | (1 << MarkerUpDown);
+            var mask = (1 << MarkerDown) | (1 << MarkerUp) | (1 << MarkerUpDown);
             sci.SetMarginMaskN(Margin, mask);
             sci.MarginSensitiveN(Margin, true);
 
