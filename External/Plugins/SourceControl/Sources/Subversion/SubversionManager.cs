@@ -115,5 +115,10 @@ namespace SourceControl.Sources.Subversion
             }
             return false;
         }
+
+        public void Commit(string[] files, string message)
+        {
+            new Git.CommitCommand(files, message, Path.GetDirectoryName(files[0]));
+        }
     }
 }

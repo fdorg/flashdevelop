@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using SourceControl.Actions;
 
 namespace SourceControl.Sources.Git
 {
@@ -14,7 +15,14 @@ namespace SourceControl.Sources.Git
             string args = String.Format("/command:{0} /path:\"{1}\"", command, path);
             ProcessStartInfo info = new ProcessStartInfo(GetTortoiseProc(), args);
             info.UseShellExecute = true;
-            Process.Start(info);
+
+            var proc = new Process
+            {
+                StartInfo = info,
+                EnableRaisingEvents = true
+            };
+            proc.Exited += (sender, eventArgs) => ProjectWatcher.ForceRefresh();
+            proc.Start();
         }
 
         public static void Execute(string command, string path1, string path2)
@@ -22,13 +30,28 @@ namespace SourceControl.Sources.Git
             string args = String.Format("/command:{0} /path:\"{1}\" /path2:\"{2}\"", command, path1, path2);
             ProcessStartInfo info = new ProcessStartInfo(GetTortoiseProc(), args);
             info.UseShellExecute = true;
-            Process.Start(info);
+
+            var proc = new Process
+            {
+                StartInfo = info,
+                EnableRaisingEvents = true
+            };
+            proc.Exited += (sender, eventArgs) => ProjectWatcher.ForceRefresh();
+            proc.Start();
         }
 
         public static void ExecuteCustom(string command, string arguments)
         {
             string args = "/command:" + command + " " + arguments;
-            Process.Start(new ProcessStartInfo(GetTortoiseProc(), args) { UseShellExecute = true });
+            var info = new ProcessStartInfo(GetTortoiseProc(), args) { UseShellExecute = true };
+
+            var proc = new Process
+            {
+                StartInfo = info,
+                EnableRaisingEvents = true
+            };
+            proc.Exited += (sender, eventArgs) => ProjectWatcher.ForceRefresh();
+            proc.Start();
         }
 
         static private string GetTortoiseProc()

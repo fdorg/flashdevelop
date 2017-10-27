@@ -18,6 +18,7 @@ namespace ASCompletion.Completion
         public bool IsPhp = false;
         public bool IsHaXe = false;
         public string WordCharacters = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM0123456789_$@";
+        public int InString;
     }
 
     public class Reformater
@@ -53,7 +54,7 @@ namespace ASCompletion.Completion
             // reformat line
             bool fixedOffset = (i > offset);
             bool needSpace = false;
-            int inString = 0;
+            int inString = options.InString;
             bool inComments = false;
             while (i < n)
             {

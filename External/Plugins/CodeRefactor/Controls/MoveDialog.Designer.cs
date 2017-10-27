@@ -12,12 +12,12 @@ namespace CodeRefactor.Controls
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
-            this.input = new System.Windows.Forms.TextBox();
-            this.showExternalClasspaths = new System.Windows.Forms.CheckBox();
-            this.tree = new System.Windows.Forms.ListBox();
-            this.cancelButton = new System.Windows.Forms.Button();
-            this.processButton = new System.Windows.Forms.Button();
-            this.fixPackages = new System.Windows.Forms.CheckBox();
+            this.input = new System.Windows.Forms.TextBoxEx();
+            this.showExternalClasspaths = new System.Windows.Forms.CheckBoxEx();
+            this.tree = new System.Windows.Forms.ListBoxEx();
+            this.cancelButton = new System.Windows.Forms.ButtonEx();
+            this.processButton = new System.Windows.Forms.ButtonEx();
+            this.fixPackages = new System.Windows.Forms.CheckBoxEx();
             this.SuspendLayout();
             // 
             // label1

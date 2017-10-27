@@ -11,7 +11,7 @@ namespace FlashDevelop.Controls
     /// This class overrides the standard PropertyGrid provided by Microsoft.
     /// It also allows to hide (or filter) the properties of the SelectedObject displayed by the PropertyGrid.
     /// </summary>
-    public class FilteredGrid : PropertyGrid
+    public class FilteredGrid : PropertyGridEx
     {
         /// <summary>
         /// Contain a reference to the collection of properties to show in the parent PropertyGrid.

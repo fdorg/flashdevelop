@@ -6154,8 +6154,8 @@ AND - All conditions are met.</value>
     <value>&amp;Clear</value>
     <comment>Added after 5.2.0</comment>
   </data>
-  <data name="FlashDevelop.Label.PasteHistory" xml:space="preserve">
-    <value>Paste History</value>
+  <data name="FlashDevelop.Label.ClipboardHistory" xml:space="preserve">
+    <value>Clipboard History</value>
     <comment>Added after 5.2.0</comment>
   </data>
   <data name="FlashDevelop.Description.ClipboardHistorySize" xml:space="preserve">
@@ -6174,8 +6174,60 @@ AND - All conditions are met.</value>
     <value>Keep result panels locked by default.</value>
     <comment>Added after 5.2.0</comment>
   </data>
+  <data name="SourceControl.Description.NeverAskForCommit" xml:space="preserve">
+    <value>Sets whether you will be asked to make a commit after moving / deleting files, etc.</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Label.Yes" xml:space="preserve">
+    <value>Ja</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Label.No" xml:space="preserve">
+    <value>Nein</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Label.Never" xml:space="preserve">
+    <value>Niemals</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Info.CreateCommit" xml:space="preserve">
+    <value>Möchten Sie für diese Aktion einen neuen Commit erstellen?</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Info.AddFile" xml:space="preserve">
+    <value>Möchten Sie diese Datei Ihrer Sourcecontrolverwaltung hinzufügen?</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="SourceControl.Info.RemoveFiles" xml:space="preserve">
+    <value>Möchten Sie diese Datei(en) aus Ihrer Sourcecontrolverwaltung entfernen?</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
   <data name="FlashDevelop.Description.EndAtLastLine" xml:space="preserve">
     <value>Sets the scroll range so that maximum scroll position has the last line at the bottom of the view. Setting this to false allows scrolling one page below the last line.</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="HaXeContext.Description.MaximumDiagnosticsProcesses" xml:space="preserve">
+    <value>Die maximale Anzahl an Prozessen für Diagnostics (Linting), die gleichzeitig laufen. Standardmäßig 1.</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Label.ImplementedBy" xml:space="preserve">
+    <value>Implementiert von...</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Label.Implements" xml:space="preserve">
+    <value>Implementiert...</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Label.OverriddenBy" xml:space="preserve">
+    <value>Überschrieben von...</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Label.Overrides" xml:space="preserve">
+    <value>Überschreibt...</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Category.InheritanceNavigation" xml:space="preserve">
+    <value>Vererbungsnavigation</value>
     <comment>Added after 5.2.1</comment>
   </data>
 </root>

@@ -1209,16 +1209,16 @@ namespace ASCompletion.Completion
             }
         }
 
-        private static void ReformatLine(ScintillaControl Sci, int position)
+        private static void ReformatLine(ScintillaControl sci, int position)
         {
-            int line = Sci.LineFromPosition(position);
-            string txt = Sci.GetLine(line).TrimEnd(new char[] { '\r', '\n' });
-            int curPos = Sci.CurrentPos;
-            int startPos = Sci.PositionFromLine(line);
-            int offset = Sci.MBSafeLengthFromBytes(txt, position - startPos);
+            int line = sci.LineFromPosition(position);
+            string txt = sci.GetLine(line).TrimEnd('\r', '\n');
+            int curPos = sci.CurrentPos;
+            int startPos = sci.PositionFromLine(line);
+            int offset = sci.MBSafeLengthFromBytes(txt, position - startPos);
             
             ReformatOptions options = new ReformatOptions();
-            options.Newline = LineEndDetector.GetNewLineMarker(Sci.EOLMode);
+            options.Newline = LineEndDetector.GetNewLineMarker(sci.EOLMode);
             options.CondenseWhitespace = ASContext.CommonSettings.CondenseWhitespace;
             options.BraceAfterLine = ASContext.CommonSettings.ReformatBraces 
                 && PluginBase.MainForm.Settings.CodingStyle == CodingStyle.BracesAfterLine;
@@ -1229,15 +1229,22 @@ namespace ASCompletion.Completion
             options.IsPhp = ASContext.Context.Settings.LanguageId == "PHP";
             options.IsHaXe = ASContext.Context.Settings.LanguageId == "HAXE";
 
+            if (options.IsHaXe)
+            {
+                var initialStyle = sci.BaseStyleAt(startPos);
+                if (initialStyle == 6) options.InString = 1;
+                else if (initialStyle == 7) options.InString = 2;
+            }
+
             int newOffset = offset;
             string replace = Reformater.ReformatLine(txt, options, ref newOffset);
 
             if (replace != txt)
             {
                 position = curPos + newOffset - offset;
-                Sci.SetSel(startPos, startPos + Sci.MBSafeTextLength(txt));
-                Sci.ReplaceSel(replace);
-                Sci.SetSel(position, position);
+                sci.SetSel(startPos, startPos + sci.MBSafeTextLength(txt));
+                sci.ReplaceSel(replace);
+                sci.SetSel(position, position);
             }
         }
 
@@ -4627,19 +4634,17 @@ namespace ASCompletion.Completion
 
         private static void SmartEventInsertion(ScintillaControl sci, int position, ICompletionListItem item)
         {
+            if (!ASContext.Context.Settings.GenerateImports) return;
             try
             {
                 ClassModel import = (item as EventItem).EventType;
                 if (!ASContext.Context.IsImported(import, sci.LineFromPosition(position)))
                 {
-                    if (ASContext.Context.Settings.GenerateImports)
+                    int offset = ASGenerator.InsertImport(import, true);
+                    if (offset > 0)
                     {
-                        int offset = ASGenerator.InsertImport(import, true);
-                        if (offset > 0)
-                        {
-                            position += offset;
-                            sci.SetSel(position, position);
-                        }
+                        position += offset;
+                        sci.SetSel(position, position);
                     }
                 }
             }

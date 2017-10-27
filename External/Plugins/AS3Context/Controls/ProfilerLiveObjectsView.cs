@@ -13,13 +13,18 @@ namespace AS3Context.Controls
     {
         public event ViewObjectEvent OnViewObject;
 
-        ListViewXP listView;
+        ListView listView;
         private Dictionary<string, TypeItem> items;
         private Dictionary<string, bool> finished = new Dictionary<string, bool>();
         private TypeItemComparer comparer;
         private ToolStripMenuItem viewObjectsItem;
 
-        public ProfilerLiveObjectsView(ListViewXP view)
+        public ListView ListView
+        {
+            get { return listView; }
+        }
+
+        public ProfilerLiveObjectsView(ListView view)
         {
             // config
             listView = view;
@@ -82,7 +87,6 @@ namespace AS3Context.Controls
         /// <param name="lines"></param>
         public void UpdateTypeGrid(string[] lines)
         {
-            listView.SetExStyles();
             listView.BeginUpdate();
             foreach (TypeItem item in items.Values)
                 item.Zero();

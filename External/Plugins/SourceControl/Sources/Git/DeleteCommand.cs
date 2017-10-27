@@ -1,13 +1,18 @@
 ﻿using System;
 using System.IO;
 using PluginCore.Managers;
+using SourceControl.Actions;
 
 namespace SourceControl.Sources.Git
 {
     class DeleteCommand : BaseCommand
     {
+        private string[] paths;
+
         public DeleteCommand(string[] paths)
         {
+            this.paths = paths;
+
             string args = "rm -f";
             int count = 0;
             foreach (string path in paths)
@@ -28,6 +33,13 @@ namespace SourceControl.Sources.Git
             }
 
             if (count > 0) Run(args, Path.GetDirectoryName(paths[0]));
+        }
+
+        override protected void Runner_ProcessEnded(object sender, int exitCode)
+        {
+            base.Runner_ProcessEnded(sender, exitCode);
+
+            ProjectWatcher.HandleFilesDeleted(paths);
         }
     }
 }

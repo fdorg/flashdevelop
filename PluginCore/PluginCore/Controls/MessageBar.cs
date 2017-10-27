@@ -12,21 +12,65 @@ namespace PluginCore.Controls
     {
         static public bool Locked;
 
+        const string WarningIcon = "196";
+        const string QuestionIcon = "222";
+
         private ToolTip tip;
         private Label label;
         private InertButton buttonClose;
+        InertButton[] optionButtons;
         private String currentMessage;
 
-        public MessageBar()
+        public MessageBar() : this(WarningIcon) //warning
+        {
+        }
+
+        public MessageBar(string icon)
         {
             this.InitializeComponent();
-            this.InitializeGraphics();
+            this.InitializeGraphics(icon);
+        }
+
+        public static void ShowQuestion(string message, string[] options, Action<string> onChoose)
+        {
+            var bar = CreateBar(PluginBase.MainForm.CurrentDocument, message, QuestionIcon);
+            bar.Visible = false;
+            //remove old option buttons
+            if (bar.optionButtons != null)
+            {
+                foreach (var btn in bar.optionButtons)
+                    bar.Controls.Remove(btn);
+            }
+            //add new option buttons
+            bar.optionButtons = new InertButton[options.Length];
+            var x = bar.buttonClose.Location.X;
+            for (var i = options.Length-1; i >= 0; --i)
+            {
+                var option = options[i];
+
+                var btn = CreateOptionButton(option);
+
+                var width = TextRenderer.MeasureText(option, btn.Font).Width + 4;
+                btn.Size = new Size(width, 16);
+                x -= width + 5;
+                btn.Location = new Point(x, 4);
+                btn.Click += (sender, args) =>
+                {
+                    bar.MessageBarClick(null, null);
+                    onChoose(((InertButton) sender).Text);
+                };
+
+                bar.optionButtons[i] = btn;
+                bar.Controls.Add(btn);
+                btn.BringToFront();
+            }
+            bar.Visible = true;
         }
         
         static public void ShowWarning(String message)
         {
             if (Locked) return;
-            CreateBar(PluginBase.MainForm.CurrentDocument, message);
+            CreateBar(PluginBase.MainForm.CurrentDocument, message, WarningIcon);
         }
 
         static public void HideWarning()
@@ -34,7 +78,7 @@ namespace PluginCore.Controls
             HideBar(PluginBase.MainForm.CurrentDocument);
         }
 
-        static private MessageBar CreateBar(ITabbedDocument target, String message)
+        static MessageBar CreateBar(ITabbedDocument target, string message, string icon)
         {
             MessageBar bar;
             foreach (Control ctrl in target.Controls)
@@ -42,12 +86,12 @@ namespace PluginCore.Controls
                 if (ctrl is MessageBar)
                 {
                     bar = (ctrl as MessageBar);
-                    bar.Update(message);
+                    bar.Update(message, icon);
                     bar.Visible = true;
                     return bar;
                 }
             }
-            bar = new MessageBar();
+            bar = new MessageBar(icon);
             bar.Visible = false;
             target.Controls.Add(bar);
             bar.Dock = DockStyle.Top;
@@ -55,6 +99,26 @@ namespace PluginCore.Controls
             bar.SendToBack();
             bar.Visible = true;
             return bar;
+        }
+
+        static InertButton CreateOptionButton(string text)
+        {
+            return new InertButton
+            {
+                Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                BorderWidth = 1,
+                ImageDisabled = null,
+                ImageIndexDisabled = -1,
+                ImageIndexEnabled = -1,
+                IsPopup = false,
+                Monochrome = true,
+                RepeatClick = false,
+                RepeatClickDelay = 500,
+                RepeatClickInterval = 100,
+                Text = text,
+                ToolTipText = "",
+                UseVisualStyleBackColor = true
+            };
         }
 
         static public void HideBar(ITabbedDocument target)
@@ -80,15 +144,26 @@ namespace PluginCore.Controls
             // buttonClose
             // 
             this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonClose.BorderWidth = 1;
+            this.buttonClose.ImageDisabled = null;
+            this.buttonClose.ImageIndexDisabled = -1;
+            this.buttonClose.ImageIndexEnabled = -1;
+            this.buttonClose.IsPopup = false;
             this.buttonClose.Location = new System.Drawing.Point(477, 5);
+            this.buttonClose.Monochrome = true;
             this.buttonClose.Name = "buttonClose";
+            this.buttonClose.RepeatClick = true;
+            this.buttonClose.RepeatClickDelay = 500;
+            this.buttonClose.RepeatClickInterval = 100;
             this.buttonClose.Size = new System.Drawing.Size(16, 14);
             this.buttonClose.TabIndex = 2;
+            this.buttonClose.ToolTipText = "";
             this.buttonClose.Click += new System.EventHandler(this.MessageBarClick);
             // 
             // label
             // 
-            this.label.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.label.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label.ForeColor = System.Drawing.SystemColors.InfoText;
             this.label.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.label.Location = new System.Drawing.Point(2, 0);
@@ -101,28 +176,34 @@ namespace PluginCore.Controls
             this.label.MouseLeave += new System.EventHandler(this.LabelMouseLeave);
             // 
             // MessageBar
-            //
+            // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.Info;
-            this.ForeColor = System.Drawing.SystemColors.InfoText;
             this.Controls.Add(this.buttonClose);
             this.Controls.Add(this.label);
+            this.ForeColor = System.Drawing.SystemColors.InfoText;
             this.Name = "MessageBar";
             this.Size = new System.Drawing.Size(496, 24);
             this.Click += new System.EventHandler(this.MessageBarClick);
             this.ResumeLayout(false);
-            this.PerformLayout();
+
         }
         
         #endregion
         
         #region Methods And Event Handlers
         
-        private void InitializeGraphics()
+        private void InitializeGraphics(string icon)
         {
-            label.Image = PluginBase.MainForm.FindImage16("196"); // warning
+            label.Image = PluginBase.MainForm.FindImage16(icon);
             buttonClose.ImageEnabled = ResourceHelper.LoadBitmap("MessageBarClose.bmp");
+        }
+
+        public void Update(string message, string icon)
+        {
+            Update(message);
+            label.Image = PluginBase.MainForm.FindImage16(icon);
         }
 
         public void Update(String message)

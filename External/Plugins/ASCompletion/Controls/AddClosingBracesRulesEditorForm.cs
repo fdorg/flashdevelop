@@ -60,15 +60,15 @@ namespace ASCompletion.Controls
 
         private void InitializeComponent()
         {
-            listBox = new ListBox();
+            listBox = new ListBoxEx();
             var lblName = new Label();
-            txtName = new TextBox();
+            txtName = new TextBoxEx();
             var lblOpenChar = new Label();
-            txtOpenChar = new TextBox();
+            txtOpenChar = new TextBoxEx();
             var lblCloseChar = new Label();
-            txtCloseChar = new TextBox();
-            cbxAddSpace = new CheckBox();
-            cbxIgnoreWhitespace = new CheckBox();
+            txtCloseChar = new TextBoxEx();
+            cbxAddSpace = new CheckBoxEx();
+            cbxIgnoreWhitespace = new CheckBoxEx();
             rulesGridView = new DataGridView();
             not1 = new DataGridViewCheckBoxColumn();
             afterChars = new DataGridViewRegexColumn();
@@ -82,13 +82,13 @@ namespace ASCompletion.Controls
             not4 = new DataGridViewCheckBoxColumn();
             beforeStyles = new DataGridViewStylesColumn();
             colDelete = new DataGridViewImageColumn();
-            btnUp = new Button();
-            btnDown = new Button();
-            btnAdd = new Button();
-            btnRemove = new Button();
-            btnAddRule = new Button();
-            btnOk = new Button();
-            btnCancel = new Button();
+            btnUp = new ButtonEx();
+            btnDown = new ButtonEx();
+            btnAdd = new ButtonEx();
+            btnRemove = new ButtonEx();
+            btnAddRule = new ButtonEx();
+            btnOk = new ButtonEx();
+            btnCancel = new ButtonEx();
             ((ISupportInitialize) (rulesGridView)).BeginInit();
             SuspendLayout();
             // 
