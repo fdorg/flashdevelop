@@ -147,7 +147,7 @@ namespace ASCompletion.Helpers
             var action = new Action(() =>
             {
                 var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-                if (context.Classpath == null || PathExplorer.IsWorking)
+                if (context == null || context.Classpath == null || PathExplorer.IsWorking)
                 {
                     if (FinishedUpdate != null)
                         PluginBase.RunAsync(new MethodInvoker(FinishedUpdate));
