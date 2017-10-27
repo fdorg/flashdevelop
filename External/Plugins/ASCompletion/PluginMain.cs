@@ -1,4 +1,5 @@
 using System;
+using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -875,8 +876,10 @@ namespace ASCompletion
         {
             foreach (var document in PluginBase.MainForm.Documents)
             {
+                if (!document.IsEditable) continue;
+
                 UpdateMarkersFromCache(document.SplitSci1);
-                UpdateMarkersFromCache(document.SplitSci1);
+                UpdateMarkersFromCache(document.SplitSci2);
             }
         }
 
@@ -889,14 +892,13 @@ namespace ASCompletion
             sci.MarkerDefineRGBAImage(MarkerUp, upArrow);
             sci.MarkerDefineRGBAImage(MarkerUpDown, upDownArrow);
             //Setup margin
-            var mask = sci.GetMarginMaskN(Margin) | (1 << MarkerDown) | (1 << MarkerUp) | (1 << MarkerUpDown);
+            var mask = (1 << MarkerDown) | (1 << MarkerUp) | (1 << MarkerUpDown);
             sci.SetMarginMaskN(Margin, mask);
             sci.MarginSensitiveN(Margin, true);
 
             sci.MarginClick -= Sci_MarginClick;
             sci.MarginClick += Sci_MarginClick;
 
-            UpdateMarkersFromCache(sci);
             UpdateMarkersFromCache(sci);
         }
 
@@ -957,8 +959,8 @@ namespace ASCompletion
                     {
                         sci.MarkerDelete(i, MarkerUp);
                         sci.MarkerDelete(i, MarkerDown);
-                        sci.MarkerDelete(i, MarkerUp);      //for some reason this needs to be done twice,
-                        sci.MarkerDelete(i, MarkerDown);    //otherwise some markers are not removed
+                        sci.MarkerDelete(i, MarkerUp);      //this needs to be done twice,
+                        sci.MarkerDelete(i, MarkerDown);    //because a member could for example implement and override at the same time
 
                         sci.MarkerAdd(i, MarkerUpDown);
                     }
