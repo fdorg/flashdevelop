@@ -875,8 +875,10 @@ namespace ASCompletion
         {
             foreach (var document in PluginBase.MainForm.Documents)
             {
+                if (!document.IsEditable) continue;
+
                 UpdateMarkersFromCache(document.SplitSci1);
-                UpdateMarkersFromCache(document.SplitSci1);
+                UpdateMarkersFromCache(document.SplitSci2);
             }
         }
 
@@ -896,7 +898,6 @@ namespace ASCompletion
             sci.MarginClick -= Sci_MarginClick;
             sci.MarginClick += Sci_MarginClick;
 
-            UpdateMarkersFromCache(sci);
             UpdateMarkersFromCache(sci);
         }
 
@@ -957,7 +958,7 @@ namespace ASCompletion
                     {
                         sci.MarkerDelete(i, MarkerUp);
                         sci.MarkerDelete(i, MarkerDown);
-                        sci.MarkerDelete(i, MarkerUp);      //for some reason this needs to be done twice,
+                        sci.MarkerDelete(i, MarkerUp);      //this needs to be done twice, because a member could for example implement and override at the same time
                         sci.MarkerDelete(i, MarkerDown);    //otherwise some markers are not removed
 
                         sci.MarkerAdd(i, MarkerUpDown);
