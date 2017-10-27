@@ -958,8 +958,8 @@ namespace ASCompletion
                     {
                         sci.MarkerDelete(i, MarkerUp);
                         sci.MarkerDelete(i, MarkerDown);
-                        sci.MarkerDelete(i, MarkerUp);      //this needs to be done twice, because a member could for example implement and override at the same time
-                        sci.MarkerDelete(i, MarkerDown);    //otherwise some markers are not removed
+                        sci.MarkerDelete(i, MarkerUp);      //this needs to be done twice,
+                        sci.MarkerDelete(i, MarkerDown);    //because a member could for example implement and override at the same time
 
                         sci.MarkerAdd(i, MarkerUpDown);
                     }
