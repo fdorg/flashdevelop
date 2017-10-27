@@ -392,16 +392,24 @@ namespace ASCompletion.Completion
                             .Returns("new String.#1~.charCodeAt.#0~.toString")
                             .SetName("From new String().charCodeAt(0).toString|");
                     yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpressionOfStringInitializer.charCodeAt0.toString"))
+                            .Returns(";\"string\".#1~.charCodeAt.#0~.toString")
+                            .SetName("From \"string\".charCodeAt(0).toString|");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpressionOfStringInitializer2.charCodeAt0.toString"))
+                            .Returns(";'string'.#1~.charCodeAt.#0~.toString")
+                            .SetName("From 'string'.charCodeAt(0).toString|");
+                    yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfEmptyStringInitializer"))
                             .Returns(";\"\"")
                             .SetName("From \"\"|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfEmptyStringInitializerSingleQuotes"))
-                            .Returns(";\"\"")
+                            .Returns(";''")
                             .SetName("From ''|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfStringInitializer"))
-                            .Returns(";\"\"")
+                            .Returns(";\"string\"")
                             .SetName("From \"string\"|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfGlogalFunctionString"))
@@ -421,7 +429,7 @@ namespace ASCompletion.Completion
                             .SetName("From [].push|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfTwoDimensionalArrayInitializer"))
-                            .Returns(";.[]")
+                            .Returns(";.[[], []]")
                             .SetName("From [[], []]|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfVectorInitializer"))
@@ -433,7 +441,7 @@ namespace ASCompletion.Completion
                             .SetName("From new <Vector.<int>>[new <int>[]]|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfArrayAccess"))
-                            .Returns(",.[].[].[]")
+                            .Returns(",.[4,5,6].[0].[2]")
                             .SetName("From [[1,2,3], [4,5,6][0][2]|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfNewVector"))
@@ -513,6 +521,10 @@ namespace ASCompletion.Completion
                         new TestCaseData(ReadAllTextHaxe("GetExpressionOfNewArray3"))
                             .Returns("new Array<{name:String, params:Array<Dynamic>}>")
                             .SetName("From new Array<{name:String, params:Array<Dynamic>}>|");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpressionOfStringInterpolation.charAt"))
+                            .Returns(";'result: ${1 + 2}'.#0~.charAt")
+                            .SetName("'result: ${1 + 2}'.charAt");
                 }
             }
 
