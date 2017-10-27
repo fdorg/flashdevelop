@@ -20,7 +20,7 @@ namespace SourceControl.Sources.Git
                         fileArgs += " \"" + VCHelper.GetRelativePath(file, workingDir) + "\"";
 
             commitArgs = "commit" + fileArgs + " -m \"" + VCHelper.EscapeCommandLine(message) + "\"";
-            if (files != null) Run("add" + fileArgs, workingDir);
+            if (!string.IsNullOrEmpty(fileArgs)) Run("add" + fileArgs, workingDir);
             else Run(commitArgs, workingDir);
         }
 
