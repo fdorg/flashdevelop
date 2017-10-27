@@ -149,8 +149,8 @@ namespace FlashDevelop.Docking
             {
                 foreach (Control ctrl in this.Controls)
                 {
-                    if (ctrl is ScintillaControl && !this.Disposing) return ctrl as ScintillaControl;
-                    else if (ctrl is SplitContainer && ctrl.Name == "fdSplitView" && !this.Disposing)
+                    if (ctrl is ScintillaControl && !this.Disposing && !this.IsDisposed) return ctrl as ScintillaControl;
+                    else if (ctrl is SplitContainer && ctrl.Name == "fdSplitView" && !this.Disposing && !this.IsDisposed)
                     {
                         SplitContainer casted = ctrl as SplitContainer;
                         ScintillaControl sci1 = casted.Panel1.Controls[0] as ScintillaControl;
@@ -477,7 +477,6 @@ namespace FlashDevelop.Docking
                 this.SciControl.IsReadOnly = FileHelper.FileIsReadOnly(this.FileName);
                 this.SciControl.SetSel(position, position);
                 this.SciControl.EmptyUndoBuffer();
-
                 int lineCount = SciControl.LineCount;
                 foreach (var lineNum in this.bookmarks)
                 {
@@ -485,13 +484,13 @@ namespace FlashDevelop.Docking
                     if (lineNum >= lineCount)
                     {
                         if (!MarkerManager.HasMarker(SciControl, 0, lineCount - 1))
+                        {
                             MarkerManager.ToggleMarker(SciControl, 0, lineCount - 1);
+                        }
                     }
                     else MarkerManager.ToggleMarker(SciControl, 0, lineNum);
                 }
-
                 this.InitBookmarks();
-
                 this.fileInfo = new FileInfo(this.FileName);
             }
             Globals.MainForm.OnDocumentReload(this);
