@@ -80,7 +80,7 @@ namespace ASCompletion.Helpers
             var action = new Action(() =>
             {
                 var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-                if (context.Classpath == null)
+                if (context == null || context.Classpath == null)
                     return;
 
                 List<ClassModel> outdated;
