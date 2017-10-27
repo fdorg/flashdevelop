@@ -121,7 +121,6 @@
   <ItemGroup>
     <Compile Include="CodeRefactor\Commands\HaxeFindAllReferences.cs" />
     <Compile Include="CodeRefactor\Provider\HaxeCommandFactory.cs" />
-    <Compile Include="Completion\CodeGenerator.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="Completion\HaxeComplete.cs" />
     <Compile Include="Completion\IHaxeCompletionHandler.cs" />

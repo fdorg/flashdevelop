@@ -405,7 +405,6 @@ namespace ASCompletion.Completion
                     }
                 }
             }
-            ASContext.Context.CodeGenerator?.ContextualGenerator(Sci, options, resolve);
             // TODO: Empty line, show generators list? yep
         }
 

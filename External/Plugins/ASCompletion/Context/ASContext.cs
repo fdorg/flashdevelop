@@ -1355,8 +1355,6 @@ namespace ASCompletion.Context
         {
             return false;
         }
-
-        public IContextualGenerator CodeGenerator { get; protected set; } = null;
         #endregion
 
         #region plugin commands
