@@ -1076,7 +1076,7 @@ namespace ASCompletion.Completion
             {
                 if (m.LineFrom > lineNum)
                     continue;
-                if (closestList != null && (lineNum - m.LineFrom) >= (lineNum - closestList.LineFrom))
+                if (closestList != null && m.LineFrom <= closestList.LineFrom)
                     continue;
 
                 ClassModel aType2 = ASContext.Context.ResolveType(m.Type, context.CurrentModel);
