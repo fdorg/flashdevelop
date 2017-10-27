@@ -1495,7 +1495,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            ChangeDecl(sci, funcResult.Member, functionParameters);
+            ChangeDecl(sci, inClass, funcResult.Member, functionParameters);
         }
 
         private static void ChangeConstructorDecl(ScintillaControl sci, ClassModel inClass)
@@ -1543,10 +1543,10 @@ namespace ASCompletion.Completion
             if (funcResult.Member == null) return;
             if (!string.IsNullOrEmpty(ASContext.Context.Features.ConstructorKey)) funcResult.Member.Name = ASContext.Context.Features.ConstructorKey;
 
-            ChangeDecl(sci, funcResult.Member, functionParameters);
+            ChangeDecl(sci, inClass, funcResult.Member, functionParameters);
         }
 
-        private static void ChangeDecl(ScintillaControl sci, MemberModel memberModel, List<FunctionParameter> functionParameters)
+        private static void ChangeDecl(ScintillaControl sci, ClassModel inClass, MemberModel memberModel, List<FunctionParameter> functionParameters)
         {
             bool paramsDiffer = false;
             if (memberModel.Parameters != null)
@@ -1624,20 +1624,15 @@ namespace ASCompletion.Completion
                 InsertCode(sci.CurrentPos, "$(Boundary) " + decl, sci);
 
                 // add imports to function argument types
-                if (functionParameters.Count > 0)
+                if (ASContext.Context.Settings.GenerateImports && functionParameters.Count > 0)
                 {
-                    List<string> l = new List<string>();
-                    foreach (FunctionParameter fp in functionParameters)
+                    var l = new string[functionParameters.Count];
+                    for (var i = 0; i < functionParameters.Count; i++)
                     {
-                        try
-                        {
-                            l.Add(fp.paramQualType);
-                        }
-                        catch (Exception)
-                        {
-                        }
+                        l[i] = functionParameters[i].paramQualType;
                     }
-                    start += AddImportsByName(l, sci.LineFromPosition(end));
+                    var types = GetQualifiedTypes(l, inClass.InFile);
+                    start += AddImportsByName(types, sci.LineFromPosition(end));
                 }
 
                 sci.SetSel(start, start);

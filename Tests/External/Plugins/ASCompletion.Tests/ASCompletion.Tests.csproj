@@ -686,6 +686,10 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue_1704_3.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue_1704_4.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue_1704_4.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterChangeConstructorDeclaration_issue1712_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeChangeConstructorDeclaration_issue1712_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeChangeConstructorDeclaration_issue1712_2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterChangeConstructorDeclaration_issue1712_2.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
