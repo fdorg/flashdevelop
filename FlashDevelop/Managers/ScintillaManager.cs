@@ -27,9 +27,9 @@ namespace FlashDevelop.Managers
         private static readonly Object initializationLock = new Object();
         public static event Action ConfigurationLoaded;
 
-        const int LineMargin = 2;
-        const int BookmarksMargin = 0;
-        const int FoldingMargin = 3;
+        internal const int LineMargin = 2;
+        internal const int BookmarksMargin = 0;
+        internal const int FoldingMargin = 3;
 
         static ScintillaManager()
         {
