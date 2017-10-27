@@ -621,7 +621,11 @@ namespace CodeRefactor.Provider
         /// <param name="newPath"></param>
         public static void Move(string oldPath, string newPath)
         {
-            Move(oldPath, newPath, true, oldPath);
+            Move(oldPath, newPath, true);
+        }
+        public static void Move(string oldPath, string newPath, bool renaming)
+        {
+            Move(oldPath, newPath, renaming, oldPath);
         }
         public static void Move(string oldPath, string newPath, bool renaming, string originalOld)
         {
@@ -664,10 +668,6 @@ namespace CodeRefactor.Provider
                 project.SetDocumentClass(newDocumentClass, true);
                 project.Save();
             }
-        }
-        public static void Move(string oldPath, string newPath, bool renaming)
-        {
-            Move(oldPath, newPath, renaming, oldPath);
         }
         
         public static bool IsInsideCommentOrString(SearchMatch match, ScintillaControl sci, bool includeComments, bool includeStrings)
