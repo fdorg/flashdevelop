@@ -8,7 +8,6 @@ using FlashDevelop.Utilities;
 using PluginCore.FRService;
 using PluginCore.Managers;
 using PluginCore.Controls;
-using PluginCore.Helpers;
 using ScintillaNet;
 
 namespace FlashDevelop.Dialogs
@@ -375,6 +374,7 @@ namespace FlashDevelop.Dialogs
             this.escapedCheckBox.Text = " " + TextHelper.GetString("Label.EscapedCharacters");
             this.useRegexCheckBox.Text = " " + TextHelper.GetString("Label.RegularExpressions");
             this.Text = " " + TextHelper.GetString("Title.FindAndReplaceDialog");
+            this.lookComboBox.FlatStyle = Globals.Settings.ComboBoxFlatStyle;
         }
 
         /// <summary>
