@@ -948,14 +948,15 @@ namespace AS3Context
         {
             MemberList list = new MemberList();
             // private classes
-            foreach(ClassModel model in cFile.Classes)
-                if (model.Access == Visibility.Private)
-                {
-                    MemberModel item = model.ToMemberModel();
-                    item.Type = item.Name;
-                    item.Access = Visibility.Private;
-                    list.Add(item);
-                }
+            if (cFile != null)
+                foreach (ClassModel model in cFile.Classes)
+                    if (model.Access == Visibility.Private)
+                    {
+                        MemberModel item = model.ToMemberModel();
+                        item.Type = item.Name;
+                        item.Access = Visibility.Private;
+                        list.Add(item);
+                    }
             // 'Class' members
             if (cClass != null)
                 foreach (MemberModel member in cClass.Members)

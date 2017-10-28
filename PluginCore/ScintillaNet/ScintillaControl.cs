@@ -5698,18 +5698,18 @@ namespace ScintillaNet
                 switch (PluginBase.MainForm.Settings.HighlightMatchingWordsMode) // Handle selection highlighting
                 {
                     case Enums.HighlightMatchingWordsMode.SelectionOrPosition:
+                    {
+                        StartHighlightSelectionTimer(sci);
+                        break;
+                    }
+                    case Enums.HighlightMatchingWordsMode.SelectedWord:
+                    {
+                        if (sci.SelText == sci.GetWordFromPosition(sci.CurrentPos))
                         {
                             StartHighlightSelectionTimer(sci);
-                            break;
                         }
-                    case Enums.HighlightMatchingWordsMode.SelectedWord:
-                        {
-                            if (sci.SelText == sci.GetWordFromPosition(sci.CurrentPos))
-                            {
-                                StartHighlightSelectionTimer(sci);
-                            }
-                            break;
-                        }
+                        break;
+                    }
                 }
             }
             lastSelectionStart = sci.SelectionStart;
@@ -5884,8 +5884,7 @@ namespace ScintillaNet
                             do
                             {
                                 --tempLine;
-                                tempText3 = GetLine(tempLine);
-                                tempText3 = tempText3.Substring(0, tempText3.Length - 1); //remove newline
+                                tempText3 = GetLine(tempLine).TrimEnd('\n', '\r');
                                 tempText2 = tempText3.TrimEnd();
                                 tempText = tempText2;
                                 if (tempText.Length == 0) previousIndent = -1;
