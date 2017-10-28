@@ -296,7 +296,7 @@ namespace System.Windows.Forms
         public ToolStripComboBoxEx() : base(new FlatCombo())
         {
             Font font = PluginBase.Settings.DefaultFont;
-            this.FlatStyle = FlatStyle.Popup;
+            this.FlatCombo.FlatStyle = FlatStyle.Popup;
             this.FlatCombo.Font = font;
         }
 
