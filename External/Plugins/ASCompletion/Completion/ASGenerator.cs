@@ -4218,10 +4218,10 @@ namespace ASCompletion.Completion
             finally { Sci.EndUndoAction(); }
         }
 
-        public static void GenerateDelegateMethods(ScintillaControl Sci, MemberModel member,
+        public static void GenerateDelegateMethods(ScintillaControl sci, MemberModel member,
             Dictionary<MemberModel, ClassModel> selectedMembers, ClassModel classModel, ClassModel inClass)
         {
-            Sci.BeginUndoAction();
+            sci.BeginUndoAction();
             try
             {
                 string result = TemplateUtils.ReplaceTemplateVariable(
@@ -4230,12 +4230,8 @@ namespace ASCompletion.Completion
                     classModel.Type);
 
                 int position = -1;
-                ClassModel type;
                 List<string> importsList = new List<string>();
-                bool isStaticMember = false;
-
-                if ((member.Flags & FlagType.Static) > 0)
-                    isStaticMember = true;
+                bool isStaticMember = (member.Flags & FlagType.Static) > 0;
 
                 inClass.ResolveExtends();
                 
@@ -4347,7 +4343,7 @@ namespace ASCompletion.Completion
                                 TemplateUtils.CallParametersString(pseudoParamsOwner));
 
                             callMethodTemplate = TemplateUtils.ReplaceTemplateVariable(callMethodTemplate, "Lastsubargument", 
-                                m.Parameters[m.Parameters.Count - 1].Name.TrimStart(new char[] { '.', ' '}));
+                                m.Parameters[m.Parameters.Count - 1].Name.TrimStart('.', ' '));
                         }
 
                         methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Body", callMethodTemplate);
@@ -4355,17 +4351,9 @@ namespace ASCompletion.Completion
                     methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "BlankLine", NewLine);
                     result += methodTemplate;
 
-                    if (m.Parameters != null)
+                    if (ASContext.Context.Settings.GenerateImports && m.Parameters != null)
                     {
-                        for (int i = 0; i < m.Parameters.Count; i++)
-                        {
-                            MemberModel param = m.Parameters[i];
-                            if (param.Type != null)
-                            {
-                                type = ASContext.Context.ResolveType(param.Type, selectedMembers[m].InFile);
-                                importsList.Add(type.QualifiedName);
-                            }
-                        }
+                        importsList.AddRange(from param in m.Parameters where param.Type != null select param.Type);
                     }
 
                     if (position < 0)
@@ -4373,37 +4361,30 @@ namespace ASCompletion.Completion
                         MemberModel latest = GetLatestMemberForFunction(inClass, mCopy.Access, mCopy);
                         if (latest == null)
                         {
-                            position = Sci.WordStartPosition(Sci.CurrentPos, true);
-                            Sci.SetSel(position, Sci.WordEndPosition(position, true));
+                            position = sci.WordStartPosition(sci.CurrentPos, true);
+                            sci.SetSel(position, sci.WordEndPosition(position, true));
                         }
                         else
                         {
-                            position = Sci.PositionFromLine(latest.LineTo + 1) - ((Sci.EOLMode == 0) ? 2 : 1);
-                            Sci.SetSel(position, position);
+                            position = sci.PositionFromLine(latest.LineTo + 1) - ((sci.EOLMode == 0) ? 2 : 1);
+                            sci.SetSel(position, position);
                         }
                     }
-                    else
-                    {
-                        position = Sci.CurrentPos;
-                    }
+                    else position = sci.CurrentPos;
 
-                    if (m.Type != null)
-                    {
-                        type = ASContext.Context.ResolveType(m.Type, selectedMembers[m].InFile);
-                        importsList.Add(type.QualifiedName);
-                    }
+                    if (ASContext.Context.Settings.GenerateImports && m.Type != null) importsList.Add(m.Type);
                 }
 
-                if (importsList.Count > 0 && position > -1)
+                if (ASContext.Context.Settings.GenerateImports && importsList.Count > 0 && position > -1)
                 {
-                    int o = AddImportsByName(importsList, Sci.LineFromPosition(position));
-                    position += o;
-                    Sci.SetSel(position, position);
+                    var types = GetQualifiedTypes(importsList, inClass.InFile);
+                    position += AddImportsByName(types, sci.LineFromPosition(position));
+                    sci.SetSel(position, position);
                 }
 
-                InsertCode(position, result, Sci);
+                InsertCode(position, result, sci);
             }
-            finally { Sci.EndUndoAction(); }
+            finally { sci.EndUndoAction(); }
         }
 
         private static void GetStartPos(string currentText, ref int startPos, string keyword)

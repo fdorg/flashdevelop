@@ -695,6 +695,8 @@
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionOfStringInterpolation.charAt.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_Boolean_false.as" />
     <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_Boolean_false.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateDelegateMethod.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateDelegateMethod.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
