@@ -1084,7 +1084,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        GenerateToString(inClass, sci, member);
+                        GenerateToString(sci, member, inClass);
                     }
                     finally
                     {
@@ -1108,7 +1108,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        AddInterfaceDefJob(inClass, sci, member, (String)data);
+                        AddInterfaceDefJob(sci, member, inClass, (String)data);
                     }
                     finally
                     {
@@ -1120,7 +1120,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        ConvertToConst(inClass, sci, member, detach);
+                        ConvertToConst(sci, member, inClass, detach);
                     }
                     finally
                     {
@@ -1156,7 +1156,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        EventMetatag(inClass, sci);
+                        EventMetatag(sci, inClass);
                     }
                     finally
                     {
@@ -1168,7 +1168,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        AssignStatementToVar(inClass, sci);
+                        AssignStatementToVar(sci, inClass);
                     }
                     finally
                     {
@@ -1255,7 +1255,7 @@ namespace ASCompletion.Completion
             }
         }
 
-        static void AssignStatementToVar(ClassModel inClass, ScintillaControl sci)
+        static void AssignStatementToVar(ScintillaControl sci, ClassModel inClass)
         {
             var ctx = inClass.InFile.Context;
             int lineNum = sci.CurrentLine;
@@ -1325,7 +1325,7 @@ namespace ASCompletion.Completion
                 : word;
         }
 
-        private static void EventMetatag(ClassModel inClass, ScintillaControl sci)
+        private static void EventMetatag(ScintillaControl sci, ClassModel inClass)
         {
             ASResult resolve = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
             string line = sci.GetLine(inClass.LineFrom);
@@ -1374,7 +1374,7 @@ namespace ASCompletion.Completion
             InsertCode(position, template, sci);
         }
 
-        private static void ConvertToConst(ClassModel inClass, ScintillaControl sci, MemberModel member, bool detach)
+        private static void ConvertToConst(ScintillaControl sci, MemberModel member, ClassModel inClass, bool detach)
         {
             String suggestion = "NEW_CONST";
             String label = TextHelper.GetString("ASCompletion.Label.ConstName");
@@ -1669,7 +1669,7 @@ namespace ASCompletion.Completion
             sci.CurrentPos = currPos;
         }
 
-        private static void AddInterfaceDefJob(ClassModel inClass, ScintillaControl sci, MemberModel member, string interf)
+        private static void AddInterfaceDefJob(ScintillaControl sci, MemberModel member, ClassModel inClass, string interf)
         {
             var context = ASContext.Context;
             ClassModel aType = context.ResolveType(interf, context.CurrentModel);
@@ -2109,7 +2109,7 @@ namespace ASCompletion.Completion
             return startPos;
         }
 
-        private static void GenerateToString(ClassModel inClass, ScintillaControl sci, MemberModel member)
+        private static void GenerateToString(ScintillaControl sci, MemberModel member, ClassModel inClass)
         {
             MemberModel resultMember = new MemberModel("toString", ASContext.Context.Features.stringKey, FlagType.Function, Visibility.Public);
 
@@ -2891,20 +2891,20 @@ namespace ASCompletion.Completion
                 newMemberType = cleanType(newMemberType);
             }
             // add imports to function argument types
-            if (functionParameters.Count > 0)
+            if (ASContext.Context.Settings.GenerateImports && functionParameters.Count > 0)
             {
-                var typesUsed = functionParameters.Select(parameter => parameter.paramQualType).ToList();
-                position += AddImportsByName(typesUsed, sci.LineFromPosition(position));
+                var types = GetQualifiedTypes(functionParameters.Select(it => it.paramQualType), inClass.InFile);
+                position += AddImportsByName(types, sci.LineFromPosition(position));
                 if (latest == null) sci.SetSel(position, sci.WordEndPosition(position, true));
                 else sci.SetSel(position, position);
             }
             var newMember = NewMember(contextToken, isStatic, FlagType.Function, visibility);
-            newMember.Parameters = functionParameters.Select(parameter => new MemberModel(parameter.paramName, parameter.paramType, FlagType.ParameterVar, 0)).ToList();
+            newMember.Parameters = functionParameters.Select(parameter => new MemberModel(parameter.paramName, parameter.paramQualType, FlagType.ParameterVar, 0)).ToList();
             if (newMemberType != null) newMember.Type = newMemberType;
             GenerateFunction(newMember, position, detach, inClass);
         }
 
-        private static void GenerateFunction(MemberModel member, int position, bool detach, ClassModel inClass)
+        static void GenerateFunction(MemberModel member, int position, bool detach, ClassModel inClass)
         {
             string template;
             string decl;
@@ -3524,6 +3524,7 @@ namespace ASCompletion.Completion
         private static string GetQualifiedType(string type, ClassModel aType)
         {
             if (string.IsNullOrEmpty(type)) return "*";
+            if (ASContext.Context.DecomposeTypes(new [] {type}).Count() > 1) return type;
             if (type.IndexOf('<') > 0) // Vector.<Point>
             {
                 Match mGeneric = Regex.Match(type, "<([^>]+)>");
