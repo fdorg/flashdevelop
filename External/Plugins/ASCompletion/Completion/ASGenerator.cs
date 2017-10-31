@@ -4264,31 +4264,69 @@ namespace ASCompletion.Completion
                         baseClassType = baseClassType.Extends;
                     }
 
-                    if (isStaticMember && (m.Flags & FlagType.Static) == 0)
-                        mCopy.Flags |= FlagType.Static;
-
-                    if ((m.Flags & FlagType.Setter) > 0)
+                    var flags = m.Flags;
+                    if (isStaticMember && (flags & FlagType.Static) == 0) mCopy.Flags |= FlagType.Static;
+                    var variableTemplate = string.Empty;
+                    if (IsHaxe & (flags & (FlagType.Getter | FlagType.Setter)) != 0)
                     {
-                        methodTemplate += TemplateUtils.GetTemplate("Setter");
-                        methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Modifiers", 
-                            (TemplateUtils.GetStaticExternOverride(m) + TemplateUtils.GetModifiers(m)).Trim());
-                        methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Name", m.Name);
-                        methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "EntryPoint", "");
-                        methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Type", m.Parameters[0].Type);
-                        methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Member", member.Name + "." + m.Name);
-                        methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Void", ASContext.Context.Features.voidKey ?? "void");
+                        variableTemplate = NewLine + NewLine + (TemplateUtils.GetStaticExternOverride(m) + TemplateUtils.GetModifiers(m)).Trim() + " var " + m.Name;
                     }
-                    else if ((m.Flags & FlagType.Getter) > 0)
+                    if ((flags & FlagType.Getter) > 0)
                     {
-                        methodTemplate += TemplateUtils.GetTemplate("Getter");
-                        methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Modifiers",
-                            (TemplateUtils.GetStaticExternOverride(m) + TemplateUtils.GetModifiers(m)).Trim());
-                        methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Name", m.Name);
-                        methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "EntryPoint", "");
-                        methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Type", FormatType(m.Type));
-                        methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Member", member.Name + "." + m.Name);
+                        if (!IsHaxe || (m.Parameters[0].Name != "null" && m.Parameters[0].Name != "never"))
+                        {
+                            string modifiers;
+                            if (IsHaxe)
+                            {
+                                variableTemplate += "(get, ";
+                                modifiers = (TemplateUtils.GetStaticExternOverride(m) + TemplateUtils.GetModifiers(Visibility.Private)).Trim();
+                            }
+                            else modifiers = (TemplateUtils.GetStaticExternOverride(m) + TemplateUtils.GetModifiers(m)).Trim();
+                            methodTemplate += TemplateUtils.GetTemplate("Getter");
+                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Modifiers", modifiers);
+                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Name", m.Name);
+                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "EntryPoint", "");
+                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Type", FormatType(m.Type));
+                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Member", member.Name + "." + m.Name);
+                            flags &= ~FlagType.Function;
+                        }
+                        else if (IsHaxe) variableTemplate += "(" + m.Parameters[0].Name + ", ";
                     }
-                    else
+                    if ((flags & FlagType.Setter) > 0)
+                    {
+                        if (!IsHaxe || (m.Parameters[1].Name != "null" && m.Parameters[1].Name != "never"))
+                        {
+                            string modifiers;
+                            string type;
+                            if (IsHaxe)
+                            {
+                                variableTemplate += "set)";
+                                if (methodTemplate != NewLine) methodTemplate += NewLine;
+                                modifiers = (TemplateUtils.GetStaticExternOverride(m) + TemplateUtils.GetModifiers(Visibility.Private)).Trim();
+                                type = FormatType(m.Type);
+                            }
+                            else
+                            {
+                                modifiers = (TemplateUtils.GetStaticExternOverride(m) + TemplateUtils.GetModifiers(m)).Trim();
+                                type = m.Parameters[0].Type;
+                            }
+                            methodTemplate += TemplateUtils.GetTemplate("Setter");
+                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Modifiers", modifiers);
+                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Name", m.Name);
+                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "EntryPoint", "");
+                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Type", type);
+                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Member", member.Name + "." + m.Name);
+                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Void", ASContext.Context.Features.voidKey ?? "void");
+                            flags &= ~FlagType.Function;
+                        }
+                        else if (IsHaxe) variableTemplate += m.Parameters[1].Name + ")";
+                    }
+                    if (!string.IsNullOrEmpty(variableTemplate))
+                    {
+                        variableTemplate += ":" + m.Type + ";";
+                        result += variableTemplate;
+                    }
+                    if ((flags & FlagType.Function) > 0)
                     {
                         methodTemplate += TemplateUtils.GetTemplate("Function");
                         methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Body", "<<$(Return) >>$(Body)");
