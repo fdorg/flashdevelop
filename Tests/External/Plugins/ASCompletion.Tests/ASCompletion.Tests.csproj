@@ -697,6 +697,8 @@
     <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_Boolean_false.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateDelegateMethod.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateDelegateMethod.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAddInterfaceDefTests_issue1731_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAddInterfaceDefTests_issue1731_1.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
