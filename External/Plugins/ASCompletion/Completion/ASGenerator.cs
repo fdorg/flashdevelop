@@ -788,15 +788,13 @@ namespace ASCompletion.Completion
             }
         }
 
-        private static void ShowAddInterfaceDefList(FoundDeclaration found, List<string> interfaces, List<ICompletionListItem> options)
+        static void ShowAddInterfaceDefList(FoundDeclaration found, IEnumerable<string> interfaces, ICollection<ICompletionListItem> options)
         {
-            if (GetLangIsValid())
+            if (!GetLangIsValid()) return;
+            var label = TextHelper.GetString("ASCompletion.Label.AddInterfaceDef");
+            foreach (var interf in interfaces)
             {
-                string labelClass = TextHelper.GetString("ASCompletion.Label.AddInterfaceDef");
-                foreach (String interf in interfaces)
-                {
-                    options.Add(new GeneratorItem(String.Format(labelClass, interf), GeneratorJobType.AddInterfaceDef, found.member, found.inClass, interf));
-                }
+                options.Add(new GeneratorItem(String.Format(label, interf), GeneratorJobType.AddInterfaceDef, found.member, found.inClass, interf));
             }
         }
 
@@ -1544,7 +1542,7 @@ namespace ASCompletion.Completion
             ChangeDecl(sci, inClass, funcResult.Member, functionParameters);
         }
 
-        private static void ChangeDecl(ScintillaControl sci, ClassModel inClass, MemberModel memberModel, List<FunctionParameter> functionParameters)
+        private static void ChangeDecl(ScintillaControl sci, ClassModel inClass, MemberModel memberModel, IList<FunctionParameter> functionParameters)
         {
             bool paramsDiffer = false;
             if (memberModel.Parameters != null)
@@ -1673,10 +1671,11 @@ namespace ASCompletion.Completion
 
         private static void AddInterfaceDefJob(ClassModel inClass, ScintillaControl sci, MemberModel member, string interf)
         {
-            ClassModel aType = ASContext.Context.ResolveType(interf, ASContext.Context.CurrentModel);
+            var context = ASContext.Context;
+            ClassModel aType = context.ResolveType(interf, context.CurrentModel);
             if (aType.IsVoid()) return;
 
-            FileModel fileModel = ASFileParser.ParseFile(ASContext.Context.CreateFileModel(aType.InFile.FileName));
+            FileModel fileModel = ASFileParser.ParseFile(context.CreateFileModel(aType.InFile.FileName));
             foreach (ClassModel cm in fileModel.Classes)
             {
                 if (cm.QualifiedName.Equals(aType.QualifiedName))
@@ -1686,7 +1685,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            string template = TemplateUtils.GetTemplate("IFunction");
+            string template;
             if ((member.Flags & FlagType.Getter) > 0)
             {
                 template = TemplateUtils.GetTemplate("IGetter");
@@ -1695,6 +1694,7 @@ namespace ASCompletion.Completion
             {
                 template = TemplateUtils.GetTemplate("ISetter");
             }
+            else template = TemplateUtils.GetTemplate("IFunction");
 
             ASContext.MainForm.OpenEditableDocument(aType.InFile.FileName, true);
             sci = ASContext.CurSciControl;
@@ -1712,40 +1712,25 @@ namespace ASCompletion.Completion
             }
             sci.SetSel(position, position);
             sci.CurrentPos = position;
-
-            IASContext context = ASContext.Context;
-            ContextFeatures features = context.Features;
-
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Type", member.Type ?? context.Features.voidKey);
             template = TemplateUtils.ToDeclarationString(member, template);
             template = TemplateUtils.ReplaceTemplateVariable(template, "BlankLine", NewLine);
-            template = TemplateUtils.ReplaceTemplateVariable(template, "Void", features.voidKey);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Void", context.Features.voidKey);
 
-            List<string> importsList = new List<string>();
-            string t;
-            List<MemberModel> parms = member.Parameters;
-            if (parms != null && parms.Count > 0)
+            if (context.Settings.GenerateImports)
             {
-                for (int i = 0; i < parms.Count; i++)
+                List<string> importsList = new List<string>();
+                List<MemberModel> parms = member.Parameters;
+                if (parms != null && parms.Count > 0)
                 {
-                    if (parms[i].Type != null)
-                    {
-                        t = GetQualifiedType(parms[i].Type, inClass); 
-                        importsList.Add(t);
-                    }
+                    importsList.AddRange(from t in parms where t.Type != null select t.Type);
                 }
-            }
-
-            if (member.Type != null)
-            {
-                t = GetQualifiedType(member.Type, inClass);
-                importsList.Add(t);
-            }
-
-            if (importsList.Count > 0)
-            {
-                int o = AddImportsByName(importsList, sci.LineFromPosition(position));
-                position += o;
-                
+                if (member.Type != null) importsList.Add(member.Type);
+                if (importsList.Count > 0)
+                {
+                    var types = GetQualifiedTypes(importsList, inClass.InFile);
+                    position += AddImportsByName(types, sci.LineFromPosition(position));
+                }
             }
 
             sci.SetSel(position, position);

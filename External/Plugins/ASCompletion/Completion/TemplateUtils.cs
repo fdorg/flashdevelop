@@ -87,10 +87,7 @@ namespace ASCompletion.Completion
             else
                 template = ReplaceTemplateVariable(template, "Type", null);
 
-            if (m.Value != null)
-                template = ReplaceTemplateVariable(template, "Value", m.Value);
-            else
-                template = ReplaceTemplateVariable(template, "Value", null);
+            template = ReplaceTemplateVariable(template, "Value", m.Value);
 
             return template;
         }

@@ -2980,6 +2980,53 @@ namespace ASCompletion.Completion
 
                 internal static string Common(string sourceText) => ASGenerator.AvoidKeyword(sourceText);
             }
+
+            [TestFixture]
+            public class AddInterfaceDefTests : GenerateJob
+            {
+                [TestFixtureSetUp]
+                public void AddInterfaceDefTestsSetup() => ASContext.Context.Settings.GenerateImports.Returns(true);
+
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData("BeforeAddInterfaceDefTests_issue1731_1")
+                                .Returns(ReadAllTextHaxe("AfterAddInterfaceDefTests_issue1731_1"))
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1731");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public string Haxe(string fileName) => HaxeImpl(fileName, sci);
+
+                internal static string HaxeImpl(string fileName, ScintillaControl sci)
+                {
+                    SetHaxeFeatures(sci);
+                    var sourceText = ReadAllTextHaxe(fileName);
+                    fileName = GetFullPathHaxe(fileName);
+                    ASContext.Context.CurrentModel.FileName = fileName;
+                    PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
+                    return Common(sourceText, sci);
+                }
+
+                internal static string Common(string sourceText, ScintillaControl sci)
+                {
+                    sci.Text = sourceText;
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    var currentModel = ASContext.Context.CurrentModel;
+                    new ASFileParser().ParseSrc(currentModel, sci.Text);
+                    var currentClass = currentModel.Classes[0];
+                    ASContext.Context.CurrentClass.Returns(currentClass);
+                    ASContext.Context.CurrentModel.Returns(currentModel);
+                    var currentMember = currentClass.Members[0];
+                    ASContext.Context.CurrentMember.Returns(currentMember);
+                    ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
+                    ASGenerator.GenerateJob(GeneratorJobType.AddInterfaceDef, currentMember, currentClass, null, currentClass.Implements[0]);
+                    return sci.Text;
+                }
+            }
         }
 
         protected static string ReadAllTextAS3(string fileName)
