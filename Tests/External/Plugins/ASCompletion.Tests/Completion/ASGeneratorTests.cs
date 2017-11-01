@@ -1943,6 +1943,68 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
+            public class GenerateVariableWithGenerateImports : GenerateJob
+            {
+                [TestFixtureSetUp]
+                public void GenerateVariableSetup()
+                {
+                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateVariable.DeclarationModifierOrder;
+                    ASContext.Context.Settings.GenerateImports.Returns(true);
+                }
+
+                public IEnumerable<TestCaseData> AS3TestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData("BeforeGeneratePublicVariable_issue1734_1", GeneratorJobType.VariablePublic)
+                                .Returns(ReadAllTextAS3("AfterGeneratePublicVariable_issue1734_1"))
+                                .SetName("Issue1734. Case 1")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1734");
+                        yield return
+                            new TestCaseData("BeforeGeneratePublicVariable_issue1734_2", GeneratorJobType.VariablePublic)
+                                .Returns(ReadAllTextAS3("AfterGeneratePublicVariable_issue1734_2"))
+                                .SetName("Issue1734. Case 2")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1734");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(AS3TestCases))]
+                public string AS3(string fileName, GeneratorJobType job)
+                {
+                    SetAs3Features(sci);
+                    var sourceText = ReadAllTextAS3(fileName);
+                    fileName = GetFullPathAS3(fileName);
+                    ASContext.Context.CurrentModel.FileName = fileName;
+                    PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
+                    return GenerateVariable.Common(sourceText, job, sci);
+                }
+                
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData("BeforeGeneratePublicVariable_issue1734_1", GeneratorJobType.VariablePublic)
+                                .Returns(ReadAllTextHaxe("AfterGeneratePublicVariable_issue1734_1"))
+                                .SetName("Issue1734. Case 1")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1734");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public string Haxe(string fileName, GeneratorJobType job)
+                {
+                    SetHaxeFeatures(sci);
+                    var sourceText = ReadAllTextHaxe(fileName);
+                    fileName = GetFullPathHaxe(fileName);
+                    ASContext.Context.CurrentModel.FileName = fileName;
+                    PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
+                    return GenerateVariable.Common(sourceText, job, sci);
+                }
+            }
+
+            [TestFixture]
             public class GenerateEventHandler : GenerateJob
             {
                 internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
@@ -3115,10 +3177,9 @@ namespace ASCompletion.Completion
             }
         }
 
-        protected static string ReadAllTextAS3(string fileName)
-        {
-            return TestFile.ReadAllText($"ASCompletion.Test_Files.generated.as3.{fileName}.as");
-        }
+        protected static string ReadAllTextAS3(string fileName) => TestFile.ReadAllText(GetFullPathAS3(fileName));
+
+        protected static string GetFullPathAS3(string fileName) => $"ASCompletion.Test_Files.generated.as3.{fileName}.as";
 
         protected static string ReadAllTextHaxe(string fileName) => TestFile.ReadAllText(GetFullPathHaxe(fileName));
 
