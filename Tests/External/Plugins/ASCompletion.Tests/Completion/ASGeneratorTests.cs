@@ -1075,7 +1075,7 @@ namespace ASCompletion.Completion
                     return Common(sourceText, job, sci);
                 }
 
-                static string Common(string sourceText, GeneratorJobType job, ScintillaControl sci)
+                internal static string Common(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
@@ -1320,6 +1320,40 @@ namespace ASCompletion.Completion
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText, GeneratorJobType job) => GenerateFunction.AS3Impl(sourceText, job, sci);
+            }
+
+            [TestFixture]
+            public class GenerateFunctionWithGenerateImports : GenerateJob
+            {
+                [TestFixtureSetUp]
+                public void GenerateFunctionSetup()
+                {
+                    ASContext.CommonSettings.DeclarationModifierOrder = GenerateFunction.DeclarationModifierOrder;
+                    ASContext.Context.Settings.GenerateImports.Returns(true);
+                }
+
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData("BeforeGeneratePublicFunction_issue1735_1", GeneratorJobType.FunctionPublic)
+                                .Returns(ReadAllTextHaxe("AfterGeneratePublicFunction_issue1735_1"))
+                                .SetName("Issue1725. Case 1")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1735");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public string Haxe(string fileName, GeneratorJobType job)
+                {
+                    SetHaxeFeatures(sci);
+                    var sourceText = ReadAllTextHaxe(fileName);
+                    fileName = GetFullPathHaxe(fileName);
+                    ASContext.Context.CurrentModel.FileName = fileName;
+                    PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
+                    return GenerateFunction.Common(sourceText, job, sci);
+                }
             }
 
             [TestFixture]
