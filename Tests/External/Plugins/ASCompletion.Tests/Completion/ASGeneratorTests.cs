@@ -2982,6 +2982,58 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
+            public class GenerateDelegateMethods : GenerateJob
+            {
+                [TestFixtureSetUp]
+                public void GenerateDelegateMethodsSetup() => ASContext.Context.Settings.GenerateImports.Returns(true);
+
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData("BeforeGenerateDelegateMethod")
+                                .Returns(ReadAllTextHaxe("AfterGenerateDelegateMethod"));
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public string Haxe(string fileName) => HaxeImpl(fileName, sci);
+
+                internal string HaxeImpl(string fileName, ScintillaControl sci)
+                {
+                    SetHaxeFeatures(sci);
+                    var sourceText = ReadAllTextHaxe(fileName);
+                    fileName = GetFullPathHaxe(fileName);
+                    ASContext.Context.CurrentModel.FileName = fileName;
+                    PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
+                    return Common(sourceText, sci);
+                }
+
+                internal string Common(string sourceText, ScintillaControl sci)
+                {
+                    sci.Text = sourceText;
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    var currentModel = ASContext.Context.CurrentModel;
+                    new ASFileParser().ParseSrc(currentModel, sci.Text);
+                    var currentClass = currentModel.Classes[0];
+                    ASContext.Context.CurrentClass.Returns(currentClass);
+                    ASContext.Context.CurrentModel.Returns(currentModel);
+                    var currentMember = currentClass.Members[0];
+                    ASContext.Context.CurrentMember.Returns(currentMember);
+                    ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
+                    var type = ASContext.Context.ResolveType(currentMember.Type, currentModel);
+                    var selectedMembers = new Dictionary<MemberModel, ClassModel>();
+                    foreach (var it in type.Members.Items)
+                    {
+                        selectedMembers[it] = ASContext.Context.ResolveType(it.Type, it.InFile);
+                    }
+                    ASGenerator.GenerateDelegateMethods(sci, currentMember, selectedMembers, type, currentClass);
+                    return sci.Text;
+                }
+            }
+
+            [TestFixture]
             public class AddInterfaceDefTests : GenerateJob
             {
                 [TestFixtureSetUp]

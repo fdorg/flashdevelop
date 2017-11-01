@@ -28,13 +28,14 @@ namespace ASCompletion.Completion
             return modifiers;
         }
 
-        public static string GetModifiers(MemberModel member)
+        public static string GetModifiers(MemberModel member) => GetModifiers(member.Access);
+
+        public static string GetModifiers(Visibility acceess)
         {
-            Visibility acc = member.Access;
-            if ((acc & Visibility.Private) > 0) return "private ";
-            if ((acc & Visibility.Public) > 0) return "public ";
-            if ((acc & Visibility.Protected) > 0) return "protected ";
-            if ((acc & Visibility.Internal) > 0) return "internal ";
+            if ((acceess & Visibility.Private) > 0) return "private ";
+            if ((acceess & Visibility.Public) > 0) return "public ";
+            if ((acceess & Visibility.Protected) > 0) return "protected ";
+            if ((acceess & Visibility.Internal) > 0) return "internal ";
             return "";
         }
 
