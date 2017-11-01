@@ -2285,23 +2285,24 @@ namespace ASCompletion.Completion
                 if (returnType.InClass != null) inClassForImport = returnType.InClass;
                 else if (returnType.RelClass != null) inClassForImport = returnType.RelClass;
                 else inClassForImport = inClass;
-                List<string> imports = new List<string>();
+                List<string> imports = new List<string>(1);
                 if (returnType.Member != null)
                 {
                     if (returnType.Member.Type != ASContext.Context.Features.voidKey)
                     {
-                        returnTypeStr = FormatType(GetShortType(returnType.Member.Type));
-                        imports.Add(GetQualifiedType(returnType.Member.Type, inClassForImport));
+                        returnTypeStr = returnType.Member.Type;
+                        imports.Add(returnType.Member.Type);
                     }
                 }
                 else if (returnType.Type != null)
                 {
-                    returnTypeStr = FormatType(GetShortType(returnType.Type.QualifiedName));
-                    imports.Add(GetQualifiedType(returnType.Type.QualifiedName, inClassForImport));
+                    returnTypeStr = returnType.Type.QualifiedName;
+                    imports.Add(returnType.Type.QualifiedName);
                 }
-                if (imports.Count > 0)
+                if (ASContext.Context.Settings.GenerateImports && imports.Count > 0)
                 {
-                    position += AddImportsByName(imports, sci.LineFromPosition(position));
+                    var types = GetQualifiedTypes(imports, inClassForImport.InFile);
+                    position += AddImportsByName(types, sci.LineFromPosition(position));
                     sci.SetSel(position, position);
                 }
             }
