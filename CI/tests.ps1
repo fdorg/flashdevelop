@@ -38,7 +38,10 @@ If ((Get-Command "nunit-console-x86.exe" -ErrorAction SilentlyContinue) -ne $nul
         #}
         
         if ($LASTEXITCODE -ne 0)
-        {            exit 1        }    }
+        {
+            exit 1
+        }
+    }
 }
 ELSE
 {

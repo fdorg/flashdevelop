@@ -2,10 +2,10 @@
 <Entries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 	<Entry>
 		<Id>haxe3setup</Id>
-		<Name>Haxe + Neko</Name>
-		<Version>3.4.2</Version>
+		<Name>Haxe + Neko (x86)</Name>
+		<Version>3.4.4</Version>
 		<Build>1</Build>
-		<Desc>Haxe 3 and Neko virtual machine installer</Desc>
+		<Desc>Haxe 3 and Neko virtual machine 32-bit installer</Desc>
 		<Group>Compilers</Group>
 		<Bundles>
 			<Bundle>Haxe</Bundle>
@@ -13,7 +13,23 @@
 		<Type>Executable</Type>
 		<Info>http://www.haxe.org</Info>
 		<Urls>
-			<Url>http://haxe.org/website-content/downloads/3.4.2/downloads/haxe-3.4.2-win.exe</Url>
+			<Url>http://haxe.org/website-content/downloads/3.4.4/downloads/haxe-3.4.4-win.exe</Url>
+		</Urls>
+	</Entry>
+	<Entry>
+		<Id>haxe3setup64</Id>
+		<Name>Haxe + Neko (x64)</Name>
+		<Version>3.4.4</Version>
+		<Build>1</Build>
+		<Desc>Haxe 3 and Neko virtual machine 64-bit installer</Desc>
+		<Group>Compilers</Group>
+		<Bundles>
+			<Bundle>Haxe</Bundle>
+		</Bundles>
+		<Type>Executable</Type>
+		<Info>http://www.haxe.org</Info>
+		<Urls>
+			<Url>http://haxe.org/website-content/downloads/3.4.4/downloads/haxe-3.4.4-win64.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
