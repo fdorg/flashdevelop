@@ -1076,7 +1076,7 @@ namespace ASCompletion.Completion
             {
                 if (m.LineFrom > lineNum)
                     continue;
-                if (closestList != null && (lineNum - m.LineFrom) >= (lineNum - closestList.LineFrom))
+                if (closestList != null && m.LineFrom <= closestList.LineFrom)
                     continue;
 
                 ClassModel aType2 = ASContext.Context.ResolveType(m.Type, context.CurrentModel);
@@ -1818,7 +1818,7 @@ namespace ASCompletion.Completion
                             position--;
                             continue;
                         }
-                        if (c == '"' && Sci.CharAt(position - 1) != '\\') dquCount--;
+                        if (Sci.CharAt(position - 1) != '\\') dquCount--;
                     }
                     else if (squCount > 0)
                     {
@@ -1827,7 +1827,7 @@ namespace ASCompletion.Completion
                             position--;
                             continue;
                         }
-                        if (c == '\'' && Sci.CharAt(position - 1) != '\\') squCount--;
+                        if (Sci.CharAt(position - 1) != '\\') squCount--;
                     }
                     else if (c == ';' && braCount == 0)
                     {
@@ -2780,7 +2780,7 @@ namespace ASCompletion.Completion
 
                     // if the current class ends back to the starting point (classA -> classB -> classA), 
                     // restore the private, protected, and internal member references
-                    if (curClass != null && curClass == step.Type)
+                    if (curClass == step.Type)
                     {
                         // full visibility for this evaluation only
                         Visibility selfVisibility = acc | Visibility.Private | Visibility.Protected | Visibility.Internal;
@@ -3601,7 +3601,7 @@ namespace ASCompletion.Completion
                             else
                             {
                                 dQuotes--;
-                                if (sQuotes == 0 && dQuotes == 0)
+                                if (dQuotes == 0)
                                 {
                                     expression.Separator = ';';
                                     if (expression.SubExpressions != null)
@@ -3615,19 +3615,16 @@ namespace ASCompletion.Completion
                                     continue;
                                 }
                             }
-                            if (arrCount == 0 && parCount == 0)
+                            if (hadDot)
                             {
-                                if (hadDot)
-                                {
-                                    sbSub.Clear();
-                                    sbSub.Insert(0, "\"");
-                                    if (expression.SubExpressions == null) expression.SubExpressions = new List<string>();
-                                    expression.SubExpressions.Add(string.Empty);
-                                    sb.Insert(0, ".#" + (subCount++) + "~");
-                                }
-                                else hadDot = false;
-                                continue;
+                                sbSub.Clear();
+                                sbSub.Insert(0, "\"");
+                                if (expression.SubExpressions == null) expression.SubExpressions = new List<string>();
+                                expression.SubExpressions.Add(string.Empty);
+                                sb.Insert(0, ".#" + (subCount++) + "~");
                             }
+                            else hadDot = false;
+                            continue;
                         }
                         else if (c == '\'' && dQuotes == 0)
                         {
@@ -3636,7 +3633,7 @@ namespace ASCompletion.Completion
                             else
                             {
                                 sQuotes--;
-                                if (sQuotes == 0 && dQuotes == 0)
+                                if (sQuotes == 0)
                                 {
                                     expression.Separator = ';';
                                     if (expression.SubExpressions != null)
@@ -3650,19 +3647,16 @@ namespace ASCompletion.Completion
                                     continue;
                                 }
                             }
-                            if (arrCount == 0 && parCount == 0)
+                            if (hadDot)
                             {
-                                if (hadDot)
-                                {
-                                    sbSub.Clear();
-                                    sbSub.Insert(0, "'");
-                                    if (expression.SubExpressions == null) expression.SubExpressions = new List<string>();
-                                    expression.SubExpressions.Add(string.Empty);
-                                    sb.Insert(0, ".#" + (subCount++) + "~");
-                                }
-                                else hadDot = false;
-                                continue;
+                                sbSub.Clear();
+                                sbSub.Insert(0, "'");
+                                if (expression.SubExpressions == null) expression.SubExpressions = new List<string>();
+                                expression.SubExpressions.Add(string.Empty);
+                                sb.Insert(0, ".#" + (subCount++) + "~");
                             }
+                            else hadDot = false;
+                            continue;
                         }
                     }
                     if (parCount > 0 || arrCount > 0 || genCount > 0 || braCount > 0 || dQuotes > 0 || sQuotes > 0) 
