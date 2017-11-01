@@ -80,6 +80,7 @@
     <Compile Include="Completion\ASGenerator.cs" />
     <Compile Include="Completion\Brace.cs" />
     <Compile Include="Completion\CodeUtils.cs" />
+    <Compile Include="Completion\IContextualGenerator.cs" />
     <Compile Include="Completion\Reformater.cs" />
     <Compile Include="Completion\TemplateUtils.cs" />
     <Compile Include="Context\ASContext.cs" />
