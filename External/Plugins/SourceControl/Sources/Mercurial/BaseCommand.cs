@@ -7,6 +7,7 @@ using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
+using SourceControl.Actions;
 
 namespace SourceControl.Sources.Mercurial
 {
@@ -73,6 +74,8 @@ namespace SourceControl.Sources.Mercurial
         {
             runner = null;
             DisplayErrors();
+
+            ProjectWatcher.ForceRefresh();
         }
 
         protected virtual void DisplayErrors()

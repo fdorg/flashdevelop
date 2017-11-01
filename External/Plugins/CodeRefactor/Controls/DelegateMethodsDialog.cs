@@ -38,9 +38,9 @@ namespace CodeRefactor.Controls
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnOK = new System.Windows.Forms.Button();
+            this.btnOK = new System.Windows.Forms.ButtonEx();
             this.checkedListBox = new CodeRefactor.Controls.DividedCheckedListBox();
-            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.ButtonEx();
             this.SuspendLayout();
             // 
             // btnOK

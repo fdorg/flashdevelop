@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.ComponentModel;
 using System.IO;
 using PluginCore;
@@ -174,6 +175,12 @@ namespace SourceControl
                                 de.Handled = true;
                             }
                             break;
+                        case ProjectManagerEvents.FilePasted: //ProjectFileActionsEvents.FilePaste
+                            //cannot distinguish between copy and cut, so assume it was copied
+                            var files = de.Data as Hashtable;
+                            ProjectWatcher.HandleFileCopied((string)files["fromPath"], (string)files["toPath"]);
+                            break;
+
 
                         case ProjectFileActionsEvents.FileDelete:
                             try
@@ -186,8 +193,8 @@ namespace SourceControl
                                 de.Handled = true;
                             }
                             break;
-
-                        case ProjectFileActionsEvents.FileMove:
+                            
+                        case ProjectFileActionsEvents.FileMove: //this is never called, because CodeRefactor catches it before us
                             try
                             {
                                 de.Handled = ProjectWatcher.HandleFileMove(de.Data as String[]);
@@ -199,6 +206,18 @@ namespace SourceControl
                             }
                             break;
 
+                        case ProjectManagerEvents.FileMoved:
+                            try
+                            {
+                                var file = de.Data as Hashtable;
+                                ProjectWatcher.HandleFileMoved((string)file["fromPath"], (string)file["toPath"]);
+                            }
+                            catch (Exception ex)
+                            {
+                                ErrorManager.ShowError(ex);
+                                de.Handled = true;
+                            }
+                            break;
                         case ProjectManagerEvents.BuildProject:
                             try
                             {
@@ -273,7 +292,9 @@ namespace SourceControl
                 case EventType.FileTemplate:
                     try
                     {
-                        e.Handled = ProjectWatcher.HandleFileNew((e as TextEvent).Value);
+                        string file = (e as TextEvent).Value;
+                        if (File.Exists(file))
+                            e.Handled = ProjectWatcher.HandleFileNew(file);   
                     }
                     catch (Exception ex)
                     {

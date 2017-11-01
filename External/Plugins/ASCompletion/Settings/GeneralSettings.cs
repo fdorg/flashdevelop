@@ -471,6 +471,17 @@ namespace ASCompletion.Settings
         }
 
         #endregion
+
+        #region Implementors / Overriders
+
+        [DisplayName("Disable Inheritance Navigation")]
+        [LocalizedCategory("ASCompletion.Category.InheritanceNavigation"), DefaultValue(false)]
+        public bool DisableInheritanceNavigation { get; set; } = false;
+
+        [DisplayName("Inheritance Navigation Update Interval")]
+        [LocalizedCategory("ASCompletion.Category.InheritanceNavigation"), DefaultValue(120)]
+        public int ASTCacheUpdateInterval { get; set; } = 120;
+        #endregion
     }
 
     public enum OutlineSorting

@@ -102,6 +102,12 @@ namespace PluginCore
             public int nTrackPos;
         }
 
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int Left, Top, Right, Bottom;
+        }
+
         #endregion
 
         #region Constants
@@ -113,30 +119,40 @@ namespace PluginCore
         public const Int32 SB_THUMBTRACK = 5;
         public const Int32 SB_LEFT = 6;
         public const Int32 SB_RIGHT = 7;
+        public const Int32 SB_ENDSCROLL = 8;
+        public const Int32 WM_NCPAINT = 0x85;
+        public const Int32 WM_ERASEBKGND = 0x14;
+        public const Int32 WM_PAINT = 0xf;
         public const Int32 WM_HSCROLL = 0x0114;
         public const Int32 WM_VSCROLL = 0x0115;
-        public const UInt32 LVM_SCROLL = 0x1014;
-        public const UInt32 SWP_SHOWWINDOW = 64;
-        public const Int32 SW_RESTORE = 9;
-        public const Int32 WM_SETREDRAW = 0xB;
-        public const Int32 WM_PRINTCLIENT = 0x0318;
-        public const Int32 PRF_CLIENT = 0x00000004;
-        public const Int32 TVM_SETEXTENDEDSTYLE = TV_FIRST + 44;
-        public const Int32 TVS_EX_DOUBLEBUFFER = 0x0004;
-        public const Int32 TV_FIRST = 0x1100;
-        public const Int32 WM_NCLBUTTONDOWN = 0x00A1;
-        public const Int32 WM_LBUTTONDOWN = 0x0201;
-        public const Int32 VK_ESCAPE = 0x1B;
         public const Int32 WM_COPYDATA = 74;
         public const Int32 WM_MOUSEWHEEL = 0x20A;
         public const Int32 WM_KEYDOWN = 0x100;
         public const Int32 WM_KEYUP = 0x101;
+        public const Int32 WM_NCLBUTTONDOWN = 0x00A1;
+        public const Int32 WM_LBUTTONDOWN = 0x0201;
+        public const Int32 WM_CHANGEUISTATE = 0x127;
+        public const Int32 WM_SETREDRAW = 0xB;
+        public const Int32 WM_PRINTCLIENT = 0x0318;
+        public const Int32 WM_NCHITTEST = 0x84;
         public const Int32 SIF_RANGE = 0x0001;
         public const Int32 SIF_PAGE = 0x0002;
         public const Int32 SIF_POS = 0x0004;
         public const Int32 SIF_DISABLENOSCROLL = 0x0008;
         public const Int32 SIF_TRACKPOS = 0x0010;
         public const Int32 SIF_ALL = (SIF_RANGE | SIF_PAGE | SIF_POS | SIF_TRACKPOS);
+        public const UInt32 LVM_SCROLL = 0x1014;
+        public const UInt32 SWP_SHOWWINDOW = 64;
+        public const Int32 SW_RESTORE = 9;
+        public const Int32 PRF_CLIENT = 0x00000004;
+        public const Int32 TVM_SETEXTENDEDSTYLE = TV_FIRST + 44;
+        public const Int32 TVS_EX_DOUBLEBUFFER = 0x0004;
+        public const Int32 TV_FIRST = 0x1100;
+        public const Int32 VK_ESCAPE = 0x1B;
+        public const Int32 EM_GETFIRSTVISIBLELINE = 0x00CE;
+        public const Int32 EM_GETRECT = 0xB2;
+        public const Int32 EM_GETLINECOUNT = 0xBA;
+        public const Int32 EM_LINEINDEX = 0xBB;
 
         #endregion
 
@@ -155,7 +171,13 @@ namespace PluginCore
         public static extern IntPtr SendMessage(IntPtr hWnd, Int32 msg, IntPtr wp, IntPtr lp);
 
         [DllImport("user32.dll")]
+        public static extern IntPtr SendMessage(IntPtr hWnd, Int32 Msg, IntPtr wParam, ref RECT lParam);
+
+        [DllImport("user32.dll")]
         public static extern Int32 SendMessage(IntPtr handle, Int32 messg, Int32 wparam, Int32 lparam);
+
+        [DllImport("user32.Dll", EntryPoint = "PostMessageA")]
+        public static extern Boolean PostMessage(IntPtr hWnd, UInt32 msg, Int32 wParam, Int32 lParam);
 
         [DllImport("user32.dll")]
         public static extern IntPtr WindowFromPoint(Point pt);

@@ -33,11 +33,11 @@ namespace ASClassWizard.Wizards
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.cancelButton = new System.Windows.Forms.Button();
-            this.okButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.ButtonEx();
+            this.okButton = new System.Windows.Forms.ButtonEx();
             this.itemList = new ASClassWizard.Wizards.GListBox();
             this.classBrowserBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.filterBox = new System.Windows.Forms.TextBox();
+            this.filterBox = new System.Windows.Forms.TextBoxEx();
             ((System.ComponentModel.ISupportInitialize)(this.classBrowserBindingSource)).BeginInit();
             this.SuspendLayout();
             // 

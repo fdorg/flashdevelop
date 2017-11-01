@@ -58,6 +58,7 @@ namespace CodeRefactor.Commands
             {
                 FileHelper.ForceMove(oldPath, newPath);
                 DocumentManager.MoveDocuments(oldPath, newPath);
+                RefactoringHelper.RaiseMoveEvent(oldPath, newPath);
             }
         }
 

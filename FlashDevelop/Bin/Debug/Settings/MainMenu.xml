@@ -69,7 +69,7 @@
 		<button label="Label.Cut" click="ScintillaCommand" tag="CutAllowLine" shortcut="Control|X" image="158" flags="Enable:IsEditable" />
 		<button label="Label.Copy" click="ScintillaCommand" tag="CopyAllowLineEx" shortcut="Control|C" image="278" flags="Enable:IsEditable" />
 		<button label="Label.Paste" click="ScintillaCommand" tag="Paste" shortcut="Control|V" image="283" flags="Enable:IsEditable|CanPaste" />
-		<button label="Label.PasteHistory" click="PasteHistory" shortcut="Control|Shift|V" image="283|16|-2|2" flags="Enable:IsEditable" />
+		<button label="Label.ClipboardHistory" click="ClipboardHistory" shortcut="Control|Shift|V" image="283|16|-2|2" flags="Enable:IsEditable" />
 		<button label="Label.SmartPaste" click="SmartPaste" shortcut="Control|Alt|V" flags="Enable:IsEditable|CanPaste" />
 		<button label="Label.SelectAll" click="ScintillaCommand" tag="SelectAll" shortcut="Control|A" flags="Enable:IsEditable" />
 		<separator />

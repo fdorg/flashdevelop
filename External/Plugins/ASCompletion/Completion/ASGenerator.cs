@@ -57,8 +57,9 @@ namespace ASCompletion.Completion
 
         public static void ContextualGenerator(ScintillaControl Sci, List<ICompletionListItem> options)
         {
-            if (ASContext.Context is ASContext) (ASContext.Context as ASContext).UpdateCurrentFile(false); // update model
-            if ((ASContext.Context.CurrentClass.Flags & (FlagType.Enum | FlagType.TypeDef)) > 0) return;
+            var context = ASContext.Context;
+            if (context is ASContext) ((ASContext) context).UpdateCurrentFile(false); // update model
+            if ((context.CurrentClass.Flags & (FlagType.Enum | FlagType.TypeDef)) > 0) return;
 
             lookupPosition = -1;
             int position = Sci.CurrentPos;
@@ -66,22 +67,20 @@ namespace ASCompletion.Completion
             if (style == 19) // on keyword
                 return;
 
-            bool isNotInterface = (ASContext.Context.CurrentClass.Flags & FlagType.Interface) == 0;
-            int line = Sci.LineFromPosition(position);
-            contextToken = Sci.GetWordFromPosition(position);
             contextMatch = null;
+            contextToken = Sci.GetWordFromPosition(position);
+            ASResult resolve = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(position, true));
+            if (context.CodeGenerator != null && context.CodeGenerator.ContextualGenerator(Sci, options, resolve)) return;
 
+            int line = Sci.LineFromPosition(position);
             FoundDeclaration found = GetDeclarationAtLine(Sci, line);
-            string text = Sci.GetLine(line);
-            bool suggestItemDeclaration = false;
-
+            bool isNotInterface = (context.CurrentClass.Flags & FlagType.Interface) == 0;
             if (isNotInterface && ASComplete.IsLiteralStyle(style))
             {
                 ShowConvertToConst(found, options);
                 return;
             }
-
-            ASResult resolve = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(position, true));
+            
             contextResolved = resolve;
             
             // ignore automatic vars (MovieClip members)
@@ -103,7 +102,7 @@ namespace ASCompletion.Completion
                     return;
                 }
 
-                if (resolve.Member != null && !ASContext.Context.CurrentClass.IsVoid()
+                if (resolve.Member != null && !context.CurrentClass.IsVoid()
                     && (resolve.Member.Flags & FlagType.LocalVar) > 0) // promote to class var
                 {
                     contextMember = resolve.Member;
@@ -111,16 +110,17 @@ namespace ASCompletion.Completion
                     return;
                 }
             }
-            
+
+            var suggestItemDeclaration = false;
             if (contextToken != null && resolve.Member == null) // import declaration
             {
-                if ((resolve.Type == null || resolve.Type.IsVoid() || !ASContext.Context.IsImported(resolve.Type, line)) && CheckAutoImport(found, options)) return;
+                if ((resolve.Type == null || resolve.Type.IsVoid() || !context.IsImported(resolve.Type, line)) && CheckAutoImport(found, options)) return;
                 if (resolve.Type == null)
                 {
                     suggestItemDeclaration = ASComplete.IsTextStyle(Sci.BaseStyleAt(position - 1));
                 }
             }
-
+            var text = Sci.GetLine(line);
             if (isNotInterface && found.member != null)
             {
                 // private var -> property
@@ -131,7 +131,7 @@ namespace ASCompletion.Completion
                     if (m.Success)
                     {
                         contextMatch = m;
-                        ClassModel type = ASContext.Context.ResolveType(contextToken, ASContext.Context.CurrentModel);
+                        ClassModel type = context.ResolveType(contextToken, context.CurrentModel);
                         if (type.IsVoid() && CheckAutoImport(found, options))
                             return;
                     }
@@ -175,7 +175,7 @@ namespace ASCompletion.Completion
                             return;
                         }
                         // suggest delegate
-                        if (ASContext.Context.Features.hasDelegates)
+                        if (context.Features.hasDelegates)
                         {
                             m = Regex.Match(text, @"([a-z0-9_.]+)\s*\+=\s*" + contextToken, RegexOptions.IgnoreCase);
                             if (m.Success)
@@ -210,7 +210,7 @@ namespace ASCompletion.Completion
                         }
 
                         // insert default delegate name, then "generate delegate" suggestion
-                        if (ASContext.Context.Features.hasDelegates)
+                        if (context.Features.hasDelegates)
                         {
                             m = Regex.Match(text, @"([a-z0-9_.]+)\s*\+=\s*", RegexOptions.IgnoreCase);
                             if (m.Success)
@@ -265,7 +265,7 @@ namespace ASCompletion.Completion
                     foreach (string interf in found.inClass.Implements)
                     {
                         bool skip = false;
-                        ClassModel cm = ASContext.Context.ResolveType(interf, ASContext.Context.CurrentModel);
+                        ClassModel cm = context.ResolveType(interf, context.CurrentModel);
                         foreach (MemberModel m in cm.Members)
                         {
                             if (m.Name.Equals(funcName) && m.Flags.Equals(flags))
@@ -302,7 +302,7 @@ namespace ASCompletion.Completion
             {
                 bool hasConstructor = false;
                 bool hasToString = false;
-                foreach (MemberModel m in ASContext.Context.CurrentClass.Members)
+                foreach (MemberModel m in context.CurrentClass.Members)
                 {
                     if (!hasConstructor && (m.Flags & FlagType.Constructor) > 0)
                         hasConstructor = true;
@@ -321,7 +321,7 @@ namespace ASCompletion.Completion
             if (isNotInterface 
                 && resolve.Member != null
                 && resolve.Type != null
-                && resolve.Type.QualifiedName == ASContext.Context.Features.stringKey
+                && resolve.Type.QualifiedName == context.Features.stringKey
                 && found.inClass != ClassModel.VoidClass)
             {
                 int lineStartPos = Sci.PositionFromLine(Sci.CurrentLine);
@@ -405,6 +405,7 @@ namespace ASCompletion.Completion
                     }
                 }
             }
+            
             // TODO: Empty line, show generators list? yep
         }
 
@@ -790,15 +791,13 @@ namespace ASCompletion.Completion
             }
         }
 
-        private static void ShowAddInterfaceDefList(FoundDeclaration found, List<string> interfaces, List<ICompletionListItem> options)
+        static void ShowAddInterfaceDefList(FoundDeclaration found, IEnumerable<string> interfaces, ICollection<ICompletionListItem> options)
         {
-            if (GetLangIsValid())
+            if (!GetLangIsValid()) return;
+            var label = TextHelper.GetString("ASCompletion.Label.AddInterfaceDef");
+            foreach (var interf in interfaces)
             {
-                string labelClass = TextHelper.GetString("ASCompletion.Label.AddInterfaceDef");
-                foreach (String interf in interfaces)
-                {
-                    options.Add(new GeneratorItem(String.Format(labelClass, interf), GeneratorJobType.AddInterfaceDef, found.member, found.inClass, interf));
-                }
+                options.Add(new GeneratorItem(String.Format(label, interf), GeneratorJobType.AddInterfaceDef, found.member, found.inClass, interf));
             }
         }
 
@@ -1045,7 +1044,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        AddAsParameter(inClass, sci, member, detach);
+                        AddAsParameter(sci, member);
                     }
                     finally
                     {
@@ -1088,7 +1087,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        GenerateToString(inClass, sci, member);
+                        GenerateToString(sci, member, inClass);
                     }
                     finally
                     {
@@ -1112,7 +1111,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        AddInterfaceDefJob(inClass, sci, member, (String)data);
+                        AddInterfaceDefJob(sci, member, inClass, (String)data);
                     }
                     finally
                     {
@@ -1124,7 +1123,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        ConvertToConst(inClass, sci, member, detach);
+                        ConvertToConst(sci, member, inClass, detach);
                     }
                     finally
                     {
@@ -1136,7 +1135,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        ChangeMethodDecl(sci, member, inClass);
+                        ChangeMethodDecl(sci, inClass);
                     }
                     finally
                     {
@@ -1160,7 +1159,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        EventMetatag(inClass, sci, member);
+                        EventMetatag(sci, inClass);
                     }
                     finally
                     {
@@ -1172,7 +1171,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        AssignStatementToVar(inClass, sci);
+                        AssignStatementToVar(sci, inClass);
                     }
                     finally
                     {
@@ -1259,7 +1258,7 @@ namespace ASCompletion.Completion
             }
         }
 
-        static void AssignStatementToVar(ClassModel inClass, ScintillaControl sci)
+        static void AssignStatementToVar(ScintillaControl sci, ClassModel inClass)
         {
             var ctx = inClass.InFile.Context;
             int lineNum = sci.CurrentLine;
@@ -1309,11 +1308,11 @@ namespace ASCompletion.Completion
             sci.SetSel(pos, pos);
             InsertCode(pos, template, sci);
 
-            if (type != null)
+            if (ASContext.Context.Settings.GenerateImports && type != null)
             {
                 var inClassForImport = resolve.InClass ?? resolve.RelClass ?? inClass;
-                var l = new List<string> {GetQualifiedType(type, inClassForImport)};
-                AddImportsByName(l, sci.LineFromPosition(pos));
+                var types = GetQualifiedTypes(new [] {type}, inClassForImport.InFile);
+                AddImportsByName(types, sci.LineFromPosition(pos));
             }
         }
 
@@ -1329,7 +1328,7 @@ namespace ASCompletion.Completion
                 : word;
         }
 
-        private static void EventMetatag(ClassModel inClass, ScintillaControl sci, MemberModel member)
+        private static void EventMetatag(ScintillaControl sci, ClassModel inClass)
         {
             ASResult resolve = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
             string line = sci.GetLine(inClass.LineFrom);
@@ -1378,7 +1377,7 @@ namespace ASCompletion.Completion
             InsertCode(position, template, sci);
         }
 
-        private static void ConvertToConst(ClassModel inClass, ScintillaControl sci, MemberModel member, bool detach)
+        private static void ConvertToConst(ScintillaControl sci, MemberModel member, ClassModel inClass, bool detach)
         {
             String suggestion = "NEW_CONST";
             String label = TextHelper.GetString("ASCompletion.Label.ConstName");
@@ -1452,7 +1451,7 @@ namespace ASCompletion.Completion
             GenerateVariable(m, position, detach);
         }
 
-        private static void ChangeMethodDecl(ScintillaControl sci, MemberModel member, ClassModel inClass)
+        private static void ChangeMethodDecl(ScintillaControl sci, ClassModel inClass)
         {
             int wordPos = sci.WordEndPosition(sci.CurrentPos, true);
             List<FunctionParameter> functionParameters = ParseFunctionParameters(sci, wordPos);
@@ -1495,7 +1494,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            ChangeDecl(sci, funcResult.Member, functionParameters);
+            ChangeDecl(sci, inClass, funcResult.Member, functionParameters);
         }
 
         private static void ChangeConstructorDecl(ScintillaControl sci, ClassModel inClass)
@@ -1543,10 +1542,10 @@ namespace ASCompletion.Completion
             if (funcResult.Member == null) return;
             if (!string.IsNullOrEmpty(ASContext.Context.Features.ConstructorKey)) funcResult.Member.Name = ASContext.Context.Features.ConstructorKey;
 
-            ChangeDecl(sci, funcResult.Member, functionParameters);
+            ChangeDecl(sci, inClass, funcResult.Member, functionParameters);
         }
 
-        private static void ChangeDecl(ScintillaControl sci, MemberModel memberModel, List<FunctionParameter> functionParameters)
+        private static void ChangeDecl(ScintillaControl sci, ClassModel inClass, MemberModel memberModel, IList<FunctionParameter> functionParameters)
         {
             bool paramsDiffer = false;
             if (memberModel.Parameters != null)
@@ -1624,27 +1623,22 @@ namespace ASCompletion.Completion
                 InsertCode(sci.CurrentPos, "$(Boundary) " + decl, sci);
 
                 // add imports to function argument types
-                if (functionParameters.Count > 0)
+                if (ASContext.Context.Settings.GenerateImports && functionParameters.Count > 0)
                 {
-                    List<string> l = new List<string>();
-                    foreach (FunctionParameter fp in functionParameters)
+                    var l = new string[functionParameters.Count];
+                    for (var i = 0; i < functionParameters.Count; i++)
                     {
-                        try
-                        {
-                            l.Add(fp.paramQualType);
-                        }
-                        catch (Exception)
-                        {
-                        }
+                        l[i] = functionParameters[i].paramQualType;
                     }
-                    start += AddImportsByName(l, sci.LineFromPosition(end));
+                    var types = GetQualifiedTypes(l, inClass.InFile);
+                    start += AddImportsByName(types, sci.LineFromPosition(end));
                 }
 
                 sci.SetSel(start, start);
             }
         }
 
-        private static void AddAsParameter(ClassModel inClass, ScintillaControl sci, MemberModel member, bool detach)
+        private static void AddAsParameter(ScintillaControl sci, MemberModel member)
         {
             if (!RemoveLocalDeclaration(sci, contextMember)) return;
 
@@ -1678,12 +1672,13 @@ namespace ASCompletion.Completion
             sci.CurrentPos = currPos;
         }
 
-        private static void AddInterfaceDefJob(ClassModel inClass, ScintillaControl sci, MemberModel member, string interf)
+        private static void AddInterfaceDefJob(ScintillaControl sci, MemberModel member, ClassModel inClass, string interf)
         {
-            ClassModel aType = ASContext.Context.ResolveType(interf, ASContext.Context.CurrentModel);
+            var context = ASContext.Context;
+            ClassModel aType = context.ResolveType(interf, context.CurrentModel);
             if (aType.IsVoid()) return;
 
-            FileModel fileModel = ASFileParser.ParseFile(ASContext.Context.CreateFileModel(aType.InFile.FileName));
+            FileModel fileModel = ASFileParser.ParseFile(context.CreateFileModel(aType.InFile.FileName));
             foreach (ClassModel cm in fileModel.Classes)
             {
                 if (cm.QualifiedName.Equals(aType.QualifiedName))
@@ -1693,7 +1688,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            string template = TemplateUtils.GetTemplate("IFunction");
+            string template;
             if ((member.Flags & FlagType.Getter) > 0)
             {
                 template = TemplateUtils.GetTemplate("IGetter");
@@ -1702,6 +1697,7 @@ namespace ASCompletion.Completion
             {
                 template = TemplateUtils.GetTemplate("ISetter");
             }
+            else template = TemplateUtils.GetTemplate("IFunction");
 
             ASContext.MainForm.OpenEditableDocument(aType.InFile.FileName, true);
             sci = ASContext.CurSciControl;
@@ -1719,40 +1715,25 @@ namespace ASCompletion.Completion
             }
             sci.SetSel(position, position);
             sci.CurrentPos = position;
-
-            IASContext context = ASContext.Context;
-            ContextFeatures features = context.Features;
-
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Type", member.Type ?? context.Features.voidKey);
             template = TemplateUtils.ToDeclarationString(member, template);
             template = TemplateUtils.ReplaceTemplateVariable(template, "BlankLine", NewLine);
-            template = TemplateUtils.ReplaceTemplateVariable(template, "Void", features.voidKey);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Void", context.Features.voidKey);
 
-            List<string> importsList = new List<string>();
-            string t;
-            List<MemberModel> parms = member.Parameters;
-            if (parms != null && parms.Count > 0)
+            if (context.Settings.GenerateImports)
             {
-                for (int i = 0; i < parms.Count; i++)
+                List<string> importsList = new List<string>();
+                List<MemberModel> parms = member.Parameters;
+                if (parms != null && parms.Count > 0)
                 {
-                    if (parms[i].Type != null)
-                    {
-                        t = GetQualifiedType(parms[i].Type, inClass); 
-                        importsList.Add(t);
-                    }
+                    importsList.AddRange(from t in parms where t.Type != null select t.Type);
                 }
-            }
-
-            if (member.Type != null)
-            {
-                t = GetQualifiedType(member.Type, inClass);
-                importsList.Add(t);
-            }
-
-            if (importsList.Count > 0)
-            {
-                int o = AddImportsByName(importsList, sci.LineFromPosition(position));
-                position += o;
-                
+                if (member.Type != null) importsList.Add(member.Type);
+                if (importsList.Count > 0)
+                {
+                    var types = GetQualifiedTypes(importsList, inClass.InFile);
+                    position += AddImportsByName(types, sci.LineFromPosition(position));
+                }
             }
 
             sci.SetSel(position, position);
@@ -2021,7 +2002,7 @@ namespace ASCompletion.Completion
         /// <param name="sci">The Scintilla control containing the document</param>
         /// <returns>The position inside the Scintilla document</returns>
         /// <remarks>For now internal because for the current use we don't need to detect a lot of cases! use with caution!</remarks>
-        internal static int GetEndOfStatement(int startPos, int endPos, ScintillaControl sci)
+        public static int GetEndOfStatement(int startPos, int endPos, ScintillaControl sci)
         {
             int groupCount = 0;
             int brCount = 0;
@@ -2131,7 +2112,7 @@ namespace ASCompletion.Completion
             return startPos;
         }
 
-        private static void GenerateToString(ClassModel inClass, ScintillaControl sci, MemberModel member)
+        private static void GenerateToString(ScintillaControl sci, MemberModel member, ClassModel inClass)
         {
             MemberModel resultMember = new MemberModel("toString", ASContext.Context.Features.stringKey, FlagType.Function, Visibility.Public);
 
@@ -2297,27 +2278,16 @@ namespace ASCompletion.Completion
 
             // if this is a constant, we assign a value to constant
             string returnTypeStr = null;
-            string eventValue = null;
             if (job == GeneratorJobType.Constant && returnType == null)
             {
                 isStatic.Flags |= FlagType.Static;
-                eventValue = "String = \"" + Camelize(contextToken) + "\"";
             }
             else if (returnType != null)
             {
                 ClassModel inClassForImport;
-                if (returnType.InClass != null)
-                {
-                    inClassForImport = returnType.InClass;
-                }
-                else if (returnType.RelClass != null)
-                {
-                    inClassForImport = returnType.RelClass;
-                }
-                else
-                {
-                    inClassForImport = inClass;
-                }
+                if (returnType.InClass != null) inClassForImport = returnType.InClass;
+                else if (returnType.RelClass != null) inClassForImport = returnType.RelClass;
+                else inClassForImport = inClass;
                 List<string> imports = new List<string>();
                 if (returnType.Member != null)
                 {
@@ -2341,7 +2311,6 @@ namespace ASCompletion.Completion
             FlagType kind = job.Equals(GeneratorJobType.Constant) ? FlagType.Constant : FlagType.Variable;
             MemberModel newMember = NewMember(contextToken, isStatic, kind, visibility);
             if (returnTypeStr != null) newMember.Type = returnTypeStr;
-            else if (eventValue != null) newMember.Type = eventValue;
             else
             {
                 var pos = wordStartPos;
@@ -2350,6 +2319,15 @@ namespace ASCompletion.Completion
                 {
                     var expr = ASComplete.GetExpressionType(sci, pos);
                     if (expr?.Member?.Parameters?.Count > 0) newMember.Type = expr.Member.Parameters[index].Type;
+                }
+            }
+            if (job == GeneratorJobType.Constant && returnType == null)
+            {
+                if (string.IsNullOrEmpty(newMember.Type)) newMember.Type = "String = \"" + Camelize(contextToken) + "\"";
+                else
+                {
+                    var value = ASContext.Context.GetDefaultValue(newMember.Type);
+                    if (!string.IsNullOrEmpty(value)) newMember.Type += " = " + value;
                 }
             }
             GenerateVariable(newMember, position, detach);
@@ -2389,7 +2367,7 @@ namespace ASCompletion.Completion
             return result;
         }
 
-        internal static List<FunctionParameter> ParseFunctionParameters(ScintillaControl sci, int p)
+        public static List<FunctionParameter> ParseFunctionParameters(ScintillaControl sci, int p)
         {
             List<FunctionParameter> prms = new List<FunctionParameter>();
             StringBuilder sb = new StringBuilder();
@@ -2402,7 +2380,6 @@ namespace ASCompletion.Completion
             bool writeParam = false;
             int subClosuresCount = 0;
             var arrCount = 0;
-            ASResult result = null;
             IASContext ctx = ASContext.Context;
             char[] charsToTrim = new char[] { ' ', '\t', '\r', '\n' };
             int counter = sci.TextLength; // max number of chars in parameters line (to avoid infinitive loop)
@@ -2412,8 +2389,8 @@ namespace ASCompletion.Completion
             // add [] and <>
             while (p < counter && !doBreak)
             {
-                char c = (char)sci.CharAt(p++);
-                result = null;
+                var c = (char)sci.CharAt(p++);
+                ASResult result = null;
                 if (c == '(' && !isFuncStarted)
                 {
                     if (sb.ToString().Trim(charsToTrim).Length == 0)
@@ -2425,10 +2402,7 @@ namespace ASCompletion.Completion
                         break;
                     }
                 }
-                else if (c == ';' && !isFuncStarted)
-                {
-                    break;
-                }
+                else if (c == ';' && !isFuncStarted) break;
                 else if (c == ')' && isFuncStarted && !wasEscapeChar && !isDoubleQuote && !isSingleQuote && subClosuresCount == 0)
                 {
                     isFuncStarted = false;
@@ -2450,14 +2424,13 @@ namespace ASCompletion.Completion
                             }
                             else
                             {
-                                result = new ASResult();
-                                result.Type = ctx.ResolveType(ctx.Features.objectKey, null);
+                                result = ASComplete.GetExpressionType(sci, p);
                                 types.Insert(0, result);
                             }
                         }
                         else if (c == '(')
                         {
-                            if (!sb.ToString().Contains("<"))
+                            if (!sb.ToString().Contains("<") && !isFuncStarted)
                             {
                                 result = ASComplete.GetExpressionType(sci, lastMemberPos + 1);
                                 if (!result.IsNull())
@@ -2482,6 +2455,9 @@ namespace ASCompletion.Completion
                 }
                 else if ((c == ')' || c == ']' || c == '>' || c == '}') && !wasEscapeChar && !isDoubleQuote && !isSingleQuote)
                 {
+                    subClosuresCount--;
+                    sb.Append(c);
+                    wasEscapeChar = false;
                     if (c == ']')
                     {
                         if (arrCount > 0) arrCount--;
@@ -2501,9 +2477,11 @@ namespace ASCompletion.Completion
                             }
                         }
                     }
-                    subClosuresCount--;
-                    sb.Append(c);
-                    wasEscapeChar = false;
+                    else if (c == ')' && subClosuresCount == 0 && sb.ToString().StartsWithOrdinal("new"))
+                    {
+                        lastMemberPos = p - 1;
+                        writeParam = true;
+                    }
                 }
                 else if (c == '\\')
                 {
@@ -2513,14 +2491,10 @@ namespace ASCompletion.Completion
                 else if (c == '"' && !wasEscapeChar && !isSingleQuote)
                 {
                     isDoubleQuote = !isDoubleQuote;
-                    if (subClosuresCount == 0)
+                    if (subClosuresCount == 0 && !isDoubleQuote && (char) sci.CharAt(p) != '.')
                     {
-                        if (isDoubleQuote)
-                        {
-                            result = new ASResult();
-                            result.Type = ctx.ResolveType(ctx.Features.stringKey, null);
-                            types.Add(result);
-                        }
+                        result = ASComplete.GetExpressionType(sci, p);
+                        types.Add(result);
                     }
                     sb.Append(c);
                     wasEscapeChar = false;
@@ -2528,21 +2502,24 @@ namespace ASCompletion.Completion
                 else if (c == '\'' && !wasEscapeChar && !isDoubleQuote)
                 {
                     isSingleQuote = !isSingleQuote;
-                    if (subClosuresCount == 0)
+                    if (subClosuresCount == 0 && !isSingleQuote)
                     {
-                        if (isSingleQuote)
-                        {
-                            result = new ASResult();
-                            result.Type = ctx.ResolveType(ctx.Features.stringKey, null);
-                            types.Add(result);
-                        }
+                        result = ASComplete.GetExpressionType(sci, p);
+                        types.Add(result);
                     }
                     sb.Append(c);
                     wasEscapeChar = false;
                 }
                 else if (c == ',' && subClosuresCount == 0)
                 {
-                    if (!isSingleQuote && !isDoubleQuote)
+                    if (isFuncStarted)
+                    {
+                        result = ASComplete.GetExpressionType(sci, p - 1, true, true);
+                        result.Context.coma = ComaExpression.FunctionParameter;
+                        types.Add(result);
+                        writeParam = true;
+                    }
+                    else if (!isSingleQuote && !isDoubleQuote)
                     {
                         writeParam = true;
                     }
@@ -2563,7 +2540,8 @@ namespace ASCompletion.Completion
                 }
                 else if (characterClass.IndexOf(c) > -1)
                 {
-                    doBreak = true;
+                    if (!isDoubleQuote && !isSingleQuote) doBreak = true;
+                    else sb.Append(c);
                 }
 
                 if (writeParam)
@@ -2574,11 +2552,15 @@ namespace ASCompletion.Completion
                     {
                         if (trimmed.Contains("<"))
                         {
+                            var expr = trimmed.StartsWithOrdinal("new")
+                                ? ASComplete.GetExpressionType(sci, lastMemberPos + 1, true, true).Context
+                                : null;
                             trimmed = Regex.Replace(trimmed, @"^new\s", string.Empty);
                             trimmed = Regex.Replace(trimmed, @">\(.*", ">");
                             var type = ctx.ResolveType(trimmed, ctx.CurrentModel);
-                            result = new ASResult {Type = type};
+                            result = new ASResult {Type = type, Context = expr};
                         }
+                        else if (trimmed.StartsWithOrdinal("new")) result = ASComplete.GetExpressionType(sci, lastMemberPos + 1, true, true);
                         else result = ASComplete.GetExpressionType(sci, lastMemberPos + 1);
                         if (result != null && !result.IsNull())
                         {
@@ -2686,8 +2668,7 @@ namespace ASCompletion.Completion
                     bool gotMatch = false;
                     for (int j = 0; j < i; j++)
                     {
-                        if (prms[j] != prms[i]
-                            && prms[j].paramName == suggestedName)
+                        if (prms[j] != prms[i] && prms[j].paramName == suggestedName)
                         {
                             gotMatch = true;
                             break;
@@ -2913,20 +2894,20 @@ namespace ASCompletion.Completion
                 newMemberType = cleanType(newMemberType);
             }
             // add imports to function argument types
-            if (functionParameters.Count > 0)
+            if (ASContext.Context.Settings.GenerateImports && functionParameters.Count > 0)
             {
-                var typesUsed = functionParameters.Select(parameter => parameter.paramQualType).ToList();
-                position += AddImportsByName(typesUsed, sci.LineFromPosition(position));
+                var types = GetQualifiedTypes(functionParameters.Select(it => it.paramQualType), inClass.InFile);
+                position += AddImportsByName(types, sci.LineFromPosition(position));
                 if (latest == null) sci.SetSel(position, sci.WordEndPosition(position, true));
                 else sci.SetSel(position, position);
             }
             var newMember = NewMember(contextToken, isStatic, FlagType.Function, visibility);
-            newMember.Parameters = functionParameters.Select(parameter => new MemberModel(parameter.paramName, parameter.paramType, FlagType.ParameterVar, 0)).ToList();
+            newMember.Parameters = functionParameters.Select(parameter => new MemberModel(parameter.paramName, parameter.paramQualType, FlagType.ParameterVar, 0)).ToList();
             if (newMemberType != null) newMember.Type = newMemberType;
             GenerateFunction(newMember, position, detach, inClass);
         }
 
-        private static void GenerateFunction(MemberModel member, int position, bool detach, ClassModel inClass)
+        static void GenerateFunction(MemberModel member, int position, bool detach, ClassModel inClass)
         {
             string template;
             string decl;
@@ -3312,7 +3293,7 @@ namespace ASCompletion.Completion
                         }
                         else resolve.Member = null;
                     }
-                    else if (!string.IsNullOrEmpty(resolve.Path) && resolve.Path.EndsWith(".[]"))
+                    else if (!string.IsNullOrEmpty(resolve.Path) && Regex.IsMatch(resolve.Path, @"(\.\[.{0,}?\])$", RegexOptions.RightToLeft))
                         resolve.Member = null;
                 }
                 word = sci.GetWordFromPosition(pos);
@@ -3402,7 +3383,7 @@ namespace ASCompletion.Completion
 
         private static void GenerateImplementation(ClassModel iType, ClassModel inClass, ScintillaControl sci, bool detached)
         {
-            List<string> typesUsed = new List<string>();
+            var typesUsed = new HashSet<string>();
 
             StringBuilder sb = new StringBuilder();
 
@@ -3494,12 +3475,13 @@ namespace ASCompletion.Completion
                     sb.Append(decl);
                     canGenerate = true;
 
-                    AddTypeOnce(typesUsed, GetQualifiedType(method.Type, iType));
+                    typesUsed.Add(method.Type);
 
                     if (method.Parameters != null && method.Parameters.Count > 0)
                         foreach (MemberModel param in method.Parameters)
-                            AddTypeOnce(typesUsed, GetQualifiedType(param.Type, iType));
+                            typesUsed.Add(param.Type);
                 }
+                if (ASContext.Context.Settings.GenerateImports) typesUsed = (HashSet<string>) GetQualifiedTypes(typesUsed, iType.InFile);
                 // interface inheritance
                 iType = iType.Extends;
             }
@@ -3526,9 +3508,26 @@ namespace ASCompletion.Completion
             if (!typesUsed.Contains(qualifiedName)) typesUsed.Add(qualifiedName);
         }
 
+        static IEnumerable<string> GetQualifiedTypes(IEnumerable<string> types, FileModel inFile)
+        {
+            var result = new HashSet<string>();
+            types = ASContext.Context.DecomposeTypes(types);
+            foreach (var type in types)
+            {
+                if (type == "*" || type.Contains(".")) result.Add(type);
+                else
+                {
+                    var model = ASContext.Context.ResolveType(type, inFile);
+                    if (!model.IsVoid() && model.InFile.Package.Length > 0) result.Add(model.QualifiedName);
+                }
+            }
+            return result;
+        }
+
         private static string GetQualifiedType(string type, ClassModel aType)
         {
             if (string.IsNullOrEmpty(type)) return "*";
+            if (ASContext.Context.DecomposeTypes(new [] {type}).Count() > 1) return type;
             if (type.IndexOf('<') > 0) // Vector.<Point>
             {
                 Match mGeneric = Regex.Match(type, "<([^>]+)>");
@@ -4168,23 +4167,14 @@ namespace ASCompletion.Completion
                     decl += template;
                 }
                 decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", "");
-                typesUsed.Add(GetQualifiedType(type, ofClass));
+                typesUsed.Add(type);
             }
             else
             {
                 var type = FormatType(newMember.Type);
                 var noRet = type == null || type.Equals("void", StringComparison.OrdinalIgnoreCase);
                 type = (noRet && type != null) ? features.voidKey : type;
-                if (!noRet)
-                {
-                    string qType = GetQualifiedType(type, ofClass);
-                    typesUsed.Add(qType);
-                    if (qType == type)
-                    {
-                        ClassModel rType = context.ResolveType(type, ofClass.InFile);
-                        if (!rType.IsVoid()) type = rType.Name;
-                    }
-                }
+                if (!noRet) typesUsed.Add(type);
                 newMember.Template = member.Template;
                 newMember.Type = type;
                 // fix parameters if needed
@@ -4193,7 +4183,7 @@ namespace ASCompletion.Completion
                         if (para.Type == "any") para.Type = "*";
 
                 newMember.Parameters = parameters;
-                var action = (isProxy || isAS2Event) ? "" : GetSuperCall(member, typesUsed, ofClass);
+                var action = (isProxy || isAS2Event) ? "" : GetSuperCall(member, typesUsed);
                 var template = TemplateUtils.GetTemplate("MethodOverride");
                 template = TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
                 template = TemplateUtils.ReplaceTemplateVariable(template, "Method", action);
@@ -4205,7 +4195,8 @@ namespace ASCompletion.Completion
             {
                 if (context.Settings.GenerateImports && typesUsed.Count > 0)
                 {
-                    int offset = AddImportsByName(typesUsed, line);
+                    var types = GetQualifiedTypes(typesUsed, ofClass.InFile);
+                    int offset = AddImportsByName(types, line);
                     position += offset;
                     startPos += offset;
                 }
@@ -4216,10 +4207,10 @@ namespace ASCompletion.Completion
             finally { Sci.EndUndoAction(); }
         }
 
-        public static void GenerateDelegateMethods(ScintillaControl Sci, MemberModel member,
+        public static void GenerateDelegateMethods(ScintillaControl sci, MemberModel member,
             Dictionary<MemberModel, ClassModel> selectedMembers, ClassModel classModel, ClassModel inClass)
         {
-            Sci.BeginUndoAction();
+            sci.BeginUndoAction();
             try
             {
                 string result = TemplateUtils.ReplaceTemplateVariable(
@@ -4228,12 +4219,8 @@ namespace ASCompletion.Completion
                     classModel.Type);
 
                 int position = -1;
-                ClassModel type;
                 List<string> importsList = new List<string>();
-                bool isStaticMember = false;
-
-                if ((member.Flags & FlagType.Static) > 0)
-                    isStaticMember = true;
+                bool isStaticMember = (member.Flags & FlagType.Static) > 0;
 
                 inClass.ResolveExtends();
                 
@@ -4266,31 +4253,69 @@ namespace ASCompletion.Completion
                         baseClassType = baseClassType.Extends;
                     }
 
-                    if (isStaticMember && (m.Flags & FlagType.Static) == 0)
-                        mCopy.Flags |= FlagType.Static;
-
-                    if ((m.Flags & FlagType.Setter) > 0)
+                    var flags = m.Flags;
+                    if (isStaticMember && (flags & FlagType.Static) == 0) mCopy.Flags |= FlagType.Static;
+                    var variableTemplate = string.Empty;
+                    if (IsHaxe & (flags & (FlagType.Getter | FlagType.Setter)) != 0)
                     {
-                        methodTemplate += TemplateUtils.GetTemplate("Setter");
-                        methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Modifiers", 
-                            (TemplateUtils.GetStaticExternOverride(m) + TemplateUtils.GetModifiers(m)).Trim());
-                        methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Name", m.Name);
-                        methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "EntryPoint", "");
-                        methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Type", m.Parameters[0].Type);
-                        methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Member", member.Name + "." + m.Name);
-                        methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Void", ASContext.Context.Features.voidKey ?? "void");
+                        variableTemplate = NewLine + NewLine + (TemplateUtils.GetStaticExternOverride(m) + TemplateUtils.GetModifiers(m)).Trim() + " var " + m.Name;
                     }
-                    else if ((m.Flags & FlagType.Getter) > 0)
+                    if ((flags & FlagType.Getter) > 0)
                     {
-                        methodTemplate += TemplateUtils.GetTemplate("Getter");
-                        methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Modifiers",
-                            (TemplateUtils.GetStaticExternOverride(m) + TemplateUtils.GetModifiers(m)).Trim());
-                        methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Name", m.Name);
-                        methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "EntryPoint", "");
-                        methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Type", FormatType(m.Type));
-                        methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Member", member.Name + "." + m.Name);
+                        if (!IsHaxe || (m.Parameters[0].Name != "null" && m.Parameters[0].Name != "never"))
+                        {
+                            string modifiers;
+                            if (IsHaxe)
+                            {
+                                variableTemplate += "(get, ";
+                                modifiers = (TemplateUtils.GetStaticExternOverride(m) + TemplateUtils.GetModifiers(Visibility.Private)).Trim();
+                            }
+                            else modifiers = (TemplateUtils.GetStaticExternOverride(m) + TemplateUtils.GetModifiers(m)).Trim();
+                            methodTemplate += TemplateUtils.GetTemplate("Getter");
+                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Modifiers", modifiers);
+                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Name", m.Name);
+                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "EntryPoint", "");
+                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Type", FormatType(m.Type));
+                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Member", member.Name + "." + m.Name);
+                            flags &= ~FlagType.Function;
+                        }
+                        else if (IsHaxe) variableTemplate += "(" + m.Parameters[0].Name + ", ";
                     }
-                    else
+                    if ((flags & FlagType.Setter) > 0)
+                    {
+                        if (!IsHaxe || (m.Parameters[1].Name != "null" && m.Parameters[1].Name != "never"))
+                        {
+                            string modifiers;
+                            string type;
+                            if (IsHaxe)
+                            {
+                                variableTemplate += "set)";
+                                if (methodTemplate != NewLine) methodTemplate += NewLine;
+                                modifiers = (TemplateUtils.GetStaticExternOverride(m) + TemplateUtils.GetModifiers(Visibility.Private)).Trim();
+                                type = FormatType(m.Type);
+                            }
+                            else
+                            {
+                                modifiers = (TemplateUtils.GetStaticExternOverride(m) + TemplateUtils.GetModifiers(m)).Trim();
+                                type = m.Parameters[0].Type;
+                            }
+                            methodTemplate += TemplateUtils.GetTemplate("Setter");
+                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Modifiers", modifiers);
+                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Name", m.Name);
+                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "EntryPoint", "");
+                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Type", type);
+                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Member", member.Name + "." + m.Name);
+                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Void", ASContext.Context.Features.voidKey ?? "void");
+                            flags &= ~FlagType.Function;
+                        }
+                        else if (IsHaxe) variableTemplate += m.Parameters[1].Name + ")";
+                    }
+                    if (!string.IsNullOrEmpty(variableTemplate))
+                    {
+                        variableTemplate += ":" + m.Type + ";";
+                        result += variableTemplate;
+                    }
+                    if ((flags & FlagType.Function) > 0)
                     {
                         methodTemplate += TemplateUtils.GetTemplate("Function");
                         methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Body", "<<$(Return) >>$(Body)");
@@ -4345,7 +4370,7 @@ namespace ASCompletion.Completion
                                 TemplateUtils.CallParametersString(pseudoParamsOwner));
 
                             callMethodTemplate = TemplateUtils.ReplaceTemplateVariable(callMethodTemplate, "Lastsubargument", 
-                                m.Parameters[m.Parameters.Count - 1].Name.TrimStart(new char[] { '.', ' '}));
+                                m.Parameters[m.Parameters.Count - 1].Name.TrimStart('.', ' '));
                         }
 
                         methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Body", callMethodTemplate);
@@ -4353,17 +4378,9 @@ namespace ASCompletion.Completion
                     methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "BlankLine", NewLine);
                     result += methodTemplate;
 
-                    if (m.Parameters != null)
+                    if (ASContext.Context.Settings.GenerateImports && m.Parameters != null)
                     {
-                        for (int i = 0; i < m.Parameters.Count; i++)
-                        {
-                            MemberModel param = m.Parameters[i];
-                            if (param.Type != null)
-                            {
-                                type = ASContext.Context.ResolveType(param.Type, selectedMembers[m].InFile);
-                                importsList.Add(type.QualifiedName);
-                            }
-                        }
+                        importsList.AddRange(from param in m.Parameters where param.Type != null select param.Type);
                     }
 
                     if (position < 0)
@@ -4371,37 +4388,30 @@ namespace ASCompletion.Completion
                         MemberModel latest = GetLatestMemberForFunction(inClass, mCopy.Access, mCopy);
                         if (latest == null)
                         {
-                            position = Sci.WordStartPosition(Sci.CurrentPos, true);
-                            Sci.SetSel(position, Sci.WordEndPosition(position, true));
+                            position = sci.WordStartPosition(sci.CurrentPos, true);
+                            sci.SetSel(position, sci.WordEndPosition(position, true));
                         }
                         else
                         {
-                            position = Sci.PositionFromLine(latest.LineTo + 1) - ((Sci.EOLMode == 0) ? 2 : 1);
-                            Sci.SetSel(position, position);
+                            position = sci.PositionFromLine(latest.LineTo + 1) - ((sci.EOLMode == 0) ? 2 : 1);
+                            sci.SetSel(position, position);
                         }
                     }
-                    else
-                    {
-                        position = Sci.CurrentPos;
-                    }
+                    else position = sci.CurrentPos;
 
-                    if (m.Type != null)
-                    {
-                        type = ASContext.Context.ResolveType(m.Type, selectedMembers[m].InFile);
-                        importsList.Add(type.QualifiedName);
-                    }
+                    if (ASContext.Context.Settings.GenerateImports && m.Type != null) importsList.Add(m.Type);
                 }
 
-                if (importsList.Count > 0 && position > -1)
+                if (ASContext.Context.Settings.GenerateImports && importsList.Count > 0 && position > -1)
                 {
-                    int o = AddImportsByName(importsList, Sci.LineFromPosition(position));
-                    position += o;
-                    Sci.SetSel(position, position);
+                    var types = GetQualifiedTypes(importsList, inClass.InFile);
+                    position += AddImportsByName(types, sci.LineFromPosition(position));
+                    sci.SetSel(position, position);
                 }
 
-                InsertCode(position, result, Sci);
+                InsertCode(position, result, sci);
             }
-            finally { Sci.EndUndoAction(); }
+            finally { sci.EndUndoAction(); }
         }
 
         private static void GetStartPos(string currentText, ref int startPos, string keyword)
@@ -4413,17 +4423,7 @@ namespace ASCompletion.Completion
 
         private static string GetShortType(string type)
         {
-            if (string.IsNullOrEmpty(type))
-            {
-                return type;
-            }
-            Regex r = new Regex(@"[^\.]+(\.<.+>)?(@.+|$)");
-            Match m = r.Match(type);
-            if (m.Success)
-            {
-                type = m.Value;
-            }
-            return type;
+            return string.IsNullOrEmpty(type) ? type : Regex.Replace(type, @"(?=\w+\.<)|(?:\w+\.)", string.Empty);
         }
 
         private static string FormatType(string type)
@@ -4450,7 +4450,7 @@ namespace ASCompletion.Completion
             return type;
         }
 
-        private static string GetSuperCall(MemberModel member, List<string> typesUsed, ClassModel aType)
+        private static string GetSuperCall(MemberModel member, List<string> typesUsed)
         {
             string args = "";
             if (member.Parameters != null)
@@ -4458,11 +4458,11 @@ namespace ASCompletion.Completion
                 {
                     if (param.Name.StartsWith('.')) break;
                     args += ", " + TemplateUtils.GetParamName(param);
-                    AddTypeOnce(typesUsed, GetQualifiedType(param.Type, aType));
+                    AddTypeOnce(typesUsed, param.Type);
                 }
 
             bool noRet = string.IsNullOrEmpty(member.Type) || member.Type.Equals("void", StringComparison.OrdinalIgnoreCase);
-            if (!noRet) AddTypeOnce(typesUsed, GetQualifiedType(member.Type, aType));
+            if (!noRet) AddTypeOnce(typesUsed, member.Type);
 
             string action = "";
             if ((member.Flags & FlagType.Function) > 0)
@@ -4493,16 +4493,16 @@ namespace ASCompletion.Completion
         /// <param name="typesUsed">Types to import if needed</param>
         /// <param name="atLine">Current line in editor</param>
         /// <returns>Inserted characters count</returns>
-        private static int AddImportsByName(List<string> typesUsed, int atLine)
+        private static int AddImportsByName(IEnumerable<string> typesUsed, int atLine)
         {
             int length = 0;
             IASContext context = ASContext.Context;
-            List<string> addedTypes = new List<string>();
-            string cleanType = null;
+            var addedTypes = new HashSet<string>();
+            typesUsed = context.DecomposeTypes(typesUsed);
             foreach (string type in typesUsed)
             {
-                cleanType = CleanType(type);
-                if (string.IsNullOrEmpty(cleanType) || cleanType.IndexOf('.') <= 0 || addedTypes.Contains(cleanType))
+                var cleanType = CleanType(type);
+                if (string.IsNullOrEmpty(cleanType) || addedTypes.Contains(cleanType) || cleanType.IndexOf('.') <= 0)
                     continue;
                 addedTypes.Add(cleanType);
                 MemberModel import = new MemberModel(cleanType.Substring(cleanType.LastIndexOf('.') + 1), cleanType, FlagType.Import, Visibility.Public);
@@ -4552,15 +4552,13 @@ namespace ASCompletion.Completion
             int firstLine = line;
             bool found = false;
             int packageLine = -1;
-            string txt;
             int indent = 0;
             int skipIfDef = 0;
-            Match mImport;
             var importComparer = new CaseSensitiveImportComparer();
             while (line < curLine)
             {
-                txt = sci.GetLine(line++).TrimStart();
-                if (txt.StartsWithOrdinal("package"))
+                var txt = sci.GetLine(line++).TrimStart();
+                if (txt.StartsWith("package"))
                 {
                     packageLine = line;
                     firstLine = line;
@@ -4579,7 +4577,7 @@ namespace ASCompletion.Completion
                     found = true;
                     indent = sci.GetLineIndentation(line - 1);
                     // insert in alphabetical order
-                    mImport = ASFileParserRegexes.Import.Match(txt);
+                    var mImport = ASFileParserRegexes.Import.Match(txt);
                     if (mImport.Success && importComparer.Compare(mImport.Groups["package"].Value, fullPath) > 0)
                     {
                         line--;
@@ -4818,7 +4816,7 @@ namespace ASCompletion.Completion
         }
     }
 
-    internal class FunctionParameter
+    public class FunctionParameter
     {
         public string paramType;
         public string paramQualType;

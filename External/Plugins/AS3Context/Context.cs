@@ -17,6 +17,7 @@ using ScintillaNet;
 using ScintillaNet.Enums;
 using SwfOp;
 using Timer = System.Timers.Timer;
+using System.Linq;
 
 namespace AS3Context
 {
@@ -873,7 +874,7 @@ namespace AS3Context
         /// Retrieves a class model from its name
         /// </summary>
         /// <param name="cname">Class (short or full) name</param>
-        /// <param name="inClass">Current file</param>
+        /// <param name="inFile">Current file</param>
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         public override ClassModel ResolveType(string cname, FileModel inFile)
         {
@@ -947,14 +948,15 @@ namespace AS3Context
         {
             MemberList list = new MemberList();
             // private classes
-            foreach(ClassModel model in cFile.Classes)
-                if (model.Access == Visibility.Private)
-                {
-                    MemberModel item = model.ToMemberModel();
-                    item.Type = item.Name;
-                    item.Access = Visibility.Private;
-                    list.Add(item);
-                }
+            if (cFile != null)
+                foreach (ClassModel model in cFile.Classes)
+                    if (model.Access == Visibility.Private)
+                    {
+                        MemberModel item = model.ToMemberModel();
+                        item.Type = item.Name;
+                        item.Access = Visibility.Private;
+                        list.Add(item);
+                    }
             // 'Class' members
             if (cClass != null)
                 foreach (MemberModel member in cClass.Members)
@@ -991,6 +993,38 @@ namespace AS3Context
                 case "Boolean": return "false";
                 default: return "null";
             }
+        }
+
+        public override IEnumerable<string> DecomposeTypes(IEnumerable<string> types)
+        {
+            var characterClass = ScintillaControl.Configuration.GetLanguage("as3").characterclass.Characters;
+            var result = new HashSet<string>();
+            foreach (var type in types)
+            {
+                if (string.IsNullOrEmpty(type)) result.Add("*");
+                else if (type.Contains("<"))
+                {
+                    var length = type.Length;
+                    var pos = 0;
+                    for (var i = 0; i < length; i++)
+                    {
+                        var c = type[i];
+                        if (c == '.' || characterClass.Contains(c)) continue;
+                        if (c == '<')
+                        {
+                            result.Add(type.Substring(pos, i - pos - 1));
+                            pos = i + 1;
+                        }
+                        else if (c == '>')
+                        {
+                            result.Add(type.Substring(pos, i - pos));
+                            break;
+                        }
+                    }
+                }
+                else result.Add(type);
+            }
+            return result;
         }
 
         #endregion

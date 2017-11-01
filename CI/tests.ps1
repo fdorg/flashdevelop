@@ -14,7 +14,7 @@ Param (
 
 If ($env:HAXEPATH -eq $null)
 {
-	cinst.exe haxe -y
+	cinst.exe haxe --version 3.4.3 -y
 	$env:HAXEPATH = "c:\ProgramData\chocolatey\lib\haxe\"
 	RefreshEnv
 }
@@ -38,7 +38,10 @@ If ((Get-Command "nunit-console-x86.exe" -ErrorAction SilentlyContinue) -ne $nul
         #}
         
         if ($LASTEXITCODE -ne 0)
-        {            exit 1        }    }
+        {
+            exit 1
+        }
+    }
 }
 ELSE
 {

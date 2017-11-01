@@ -95,8 +95,7 @@ namespace ScintillaNet
                 Boolean enabled = value == "True" || (value == null && color != Color.Empty);
                 if (enabled)
                 {
-                    if (!this.Controls.Contains(this.vScrollBar))
-                        this.AddScrollBars(this);
+                    if (!this.Controls.Contains(this.vScrollBar)) this.AddScrollBars(this);
                     this.UpdateScrollBarTheme(this);
                 }
                 else if (!enabled && this.Controls.Contains(this.vScrollBar))
@@ -280,14 +279,18 @@ namespace ScintillaNet
             Int32 vsbWidth = this.Controls.Contains(this.vScrollBar) && this.vScrollBar.Visible ? this.vScrollBar.Width : 0;
             Int32 hsbHeight = this.Controls.Contains(this.hScrollBar) && this.hScrollBar.Visible ? this.hScrollBar.Height : 0;
             if (Win32.ShouldUseWin32())
+            {
                 SetWindowPos(this.hwndScintilla, 0, ClientRectangle.X, ClientRectangle.Y, ClientRectangle.Width - vsbWidth, ClientRectangle.Height - hsbHeight, 0);
+            }
             if (this.Controls.Contains(this.vScrollBar))
             {
                 this.vScrollBar.SetBounds(ClientRectangle.Width - vsbWidth, 0, this.vScrollBar.Width, ClientRectangle.Height - hsbHeight);
                 this.hScrollBar.SetBounds(0, ClientRectangle.Height - hsbHeight, ClientRectangle.Width - vsbWidth, this.hScrollBar.Height);
                 this.scrollerCorner.Visible = this.vScrollBar.Visible && this.hScrollBar.Visible;
                 if (this.scrollerCorner.Visible)
-                    this.scrollerCorner.Location = new System.Drawing.Point(this.vScrollBar.Location.X, this.hScrollBar.Location.Y);
+                {
+                    this.scrollerCorner.Location = new Point(this.vScrollBar.Location.X, this.hScrollBar.Location.Y);
+                }
             }
         }
 
@@ -5695,18 +5698,18 @@ namespace ScintillaNet
                 switch (PluginBase.MainForm.Settings.HighlightMatchingWordsMode) // Handle selection highlighting
                 {
                     case Enums.HighlightMatchingWordsMode.SelectionOrPosition:
+                    {
+                        StartHighlightSelectionTimer(sci);
+                        break;
+                    }
+                    case Enums.HighlightMatchingWordsMode.SelectedWord:
+                    {
+                        if (sci.SelText == sci.GetWordFromPosition(sci.CurrentPos))
                         {
                             StartHighlightSelectionTimer(sci);
-                            break;
                         }
-                    case Enums.HighlightMatchingWordsMode.SelectedWord:
-                        {
-                            if (sci.SelText == sci.GetWordFromPosition(sci.CurrentPos))
-                            {
-                                StartHighlightSelectionTimer(sci);
-                            }
-                            break;
-                        }
+                        break;
+                    }
                 }
             }
             lastSelectionStart = sci.SelectionStart;
@@ -5841,7 +5844,7 @@ namespace ScintillaNet
         /// Provides support for smart indenting
         /// </summary>
         ///
-        private void OnSmartIndent(ScintillaControl ctrl, int ch)
+        internal void OnSmartIndent(ScintillaControl ctrl, int ch)
         {
             char newline = (EOLMode == 1) ? '\r' : '\n';
             switch (SmartIndentType)
@@ -5881,8 +5884,7 @@ namespace ScintillaNet
                             do
                             {
                                 --tempLine;
-                                tempText3 = GetLine(tempLine);
-                                tempText3 = tempText3.Substring(0, tempText3.Length - 1); //remove newline
+                                tempText3 = GetLine(tempLine).TrimEnd('\n', '\r');
                                 tempText2 = tempText3.TrimEnd();
                                 tempText = tempText2;
                                 if (tempText.Length == 0) previousIndent = -1;
@@ -5899,6 +5901,7 @@ namespace ScintillaNet
                             if (tempText.EndsWith('{'))
                             {
                                 int bracePos = CurrentPos - 2 - (tempText3.Length - tempText.Length); //CurrentPos - 1 is always ch (newline)
+                                while (bracePos > 0 && CharAt(bracePos) != '{') bracePos--;
                                 int style = BaseStyleAt(bracePos);
                                 if (bracePos >= 0 && CharAt(bracePos) == '{' && (style == 10/*CPP*/ || style == 5/*CSS*/))
                                 {
@@ -6200,6 +6203,17 @@ namespace ScintillaNet
                 {
                     int fold = sci.GetFoldLevel(i) & foldHeader;
                     if (fold == foldHeader) ppStart = true;
+                    else
+                    {
+                        int foldParent = sci.FoldParent(i);
+                        if (foldParent != -1)
+                        {
+                            pos = sci.PositionFromLine(foldParent);
+                            ind = sci.GetLineIndentation(i);
+                            style = sci.BaseStyleAt(pos + ind);
+                            if (style == lexerPpStyle) ppStart = true;
+                        }
+                    }
                     break;
                 }
             }
@@ -6951,7 +6965,7 @@ namespace ScintillaNet
         /// </summary>
         public void MoveLineUp()
         {
-            MoveLine(-1);
+            this.MoveLine(-1);
         }
 
         /// <summary>
@@ -6959,90 +6973,81 @@ namespace ScintillaNet
         /// </summary>
         public void MoveLineDown()
         {
-            MoveLine(1);
+            this.MoveLine(1);
         }
 
         /// <summary>
         /// Moves the current line(s) up or down
         /// </summary>
-        public void MoveLine(int dir)
+        public void MoveLine(int direction)
         {
-            int start = this.SelectionStart < this.SelectionEnd ? this.SelectionStart : this.SelectionEnd;
-            int end = this.SelectionStart > this.SelectionEnd ? this.SelectionStart : this.SelectionEnd;
-            int startLine = this.LineFromPosition(start);
-            int endLine = this.LineFromPosition(end);
-            // selection was not made in whole lines, so extend the end of selection to the start of the next line
-            if (this.PositionFromLine(endLine) != end || startLine == endLine) ++endLine;
-            if (this.SelectionStart == this.SelectionEnd && PluginBase.MainForm.Settings.CodingStyle == CodingStyle.BracesAfterLine)
+            if (direction == 0)
             {
-                string str = this.GetLine(startLine).Trim();
-                if (str.StartsWith('{')) startLine = this.GetStartLine(startLine - 1);
-                else if (str.IndexOf('(') >= 0)
-                {
-                    int pos = this.GetLine(startLine).IndexOf('(');
-                    pos += this.PositionFromLine(startLine);
-                    pos = this.BraceMatch(pos);
-                    if (pos != -1 /*INVALID_POSITION*/)
-                    {
-                        int nextLine = this.LineFromPosition(pos);
-                        if (this.GetLine(nextLine + 1).Trim().StartsWith('{')) endLine = nextLine + 2;
-                    }
-                }
+                return;
             }
-            int len = endLine - startLine;
-            this.BeginUndoAction();
-            this.SelectionStart = this.PositionFromLine(startLine);
-            this.SelectionEnd = this.PositionFromLine(endLine);
-            string selectStr = this.SelText;
-            int saveEndAtLastLine = EndAtLastLine;
-            this.EndAtLastLine = 0; // setting this to 0 prevents unwanted scrolling jumps when moving lines near the bottom of file
-            this.Clear();
-            if (dir > 0)
+
+            int anchorPosition = this.AnchorPosition;
+            int currentPosition = this.CurrentPos;
+            int selectionStart;
+            int selectionEnd;
+            if (anchorPosition <= currentPosition)
             {
-                if (startLine + 1 >= this.LineCount)
-                {
-                    String eol = LineEndDetector.GetNewLineMarker(EOLMode);
-                    this.AppendText(eol.Length, eol);
-                }
-                this.LineDown();
+                selectionStart = anchorPosition;
+                selectionEnd = currentPosition;
             }
-            else this.LineUp();
-            startLine += dir;
-            // line # moved past limits, so back out the change
-            if (startLine < 0 || startLine >= this.LineCount) startLine -= dir;
             else
             {
-                int ctrlBlock = this.IsControlBlock(selectStr);
-                if (ctrlBlock != 0)
-                {
-                    if (ConfigurationLanguage == "xml" || ConfigurationLanguage == "html" || ConfigurationLanguage == "css")
-                    {
-                        if (ctrlBlock < 0 && (selectStr.IndexOfOrdinal("</") >= 0 || selectStr.IndexOfOrdinal("/>") >= 0)) ctrlBlock = 0;
-                        else if (len > 1) ctrlBlock = 0;
-                    }
-                    else
-                    {
-                        char oppositeMark = (ctrlBlock < 0) ? '}' : '{';
-                        if (selectStr.IndexOf(oppositeMark) >= 0) ctrlBlock = 0;    // selection contains both open and close marks, so clear the setting
-                    }
-                }
-                // if we're moving a single control block start/end, reindent the affected lines that are moving in or out of the block
-                if (ctrlBlock != 0)
-                {
-                    int line = startLine;
-                    if (dir > 0) --line;
-                    int indent = dir * this.Indent;
-                    if (ctrlBlock < 0) indent = -indent;
-                    this.SetLineIndentation(line, this.GetLineIndentation(line) + indent);
-                }
+                selectionStart = currentPosition;
+                selectionEnd = anchorPosition;
             }
-            start = this.PositionFromLine(startLine);
-            this.InsertText(start, selectStr.TrimEnd() + LineEndDetector.GetNewLineMarker(EOLMode));
-            this.ReindentLines(startLine, len);
-            this.SelectionStart = start;
-            this.SelectionEnd = this.LineEndPosition(startLine + len - 1);
-            this.EndAtLastLine = saveEndAtLastLine;
+
+            int startLine = this.LineFromPosition(selectionStart);
+            int endLine = this.LineFromPosition(selectionEnd);
+            if (startLine == endLine || selectionEnd != this.PositionFromLine(endLine))
+            {
+                // Either selection was within one line, or the selection was not made in whole lines.
+                // Extend the end of the selection to the start of the next line.
+                endLine++;
+            }
+
+            if (direction > 0)
+            {
+                if (endLine + direction >= this.LineCount)
+                {
+                    return;
+                }
+                this.AnchorPosition = this.PositionFromLine(endLine);
+                this.CurrentPos = this.PositionFromLine(endLine + direction);
+            }
+            else
+            {
+                if (startLine + direction < 0 || endLine >= this.LineCount)
+                {
+                    return;
+                }
+                this.AnchorPosition = this.PositionFromLine(startLine + direction);
+                this.CurrentPos = this.PositionFromLine(startLine);
+                startLine = endLine + direction;
+            }
+
+            string line = this.SelText;
+            int length = line.Length;
+
+            this.BeginUndoAction();
+            this.Clear();
+            this.InsertText(this.PositionFromLine(startLine), line);
             this.EndUndoAction();
+
+            if (direction > 0)
+            {
+                this.AnchorPosition = anchorPosition + length;
+                this.CurrentPos = currentPosition + length;
+            }
+            else
+            {
+                this.AnchorPosition = anchorPosition - length;
+                this.CurrentPos = currentPosition - length;
+            }
         }
 
         /// <summary>

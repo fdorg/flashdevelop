@@ -966,7 +966,11 @@ namespace ASCompletion.Model
                     }
                     else if (c1 == '}')
                     {
-                        if (paramBraceCount > 0) { paramBraceCount--; stopParser = true; }
+                        if (paramBraceCount > 0)
+                        {
+                            paramBraceCount--;
+                            stopParser = true;
+                        }
                         else valueError = true;
                     }
                     else if (c1 == '(')
@@ -1098,7 +1102,9 @@ namespace ASCompletion.Model
                                 valueLength = 0;
                                 hadValue = false;
                                 inValue = false;
-                                curMember.Type = ASFileParserRegexes.Spaces.Replace(param, "").Replace(",", ", ");
+                                param = ASFileParserRegexes.Spaces.Replace(param, "").Replace(",", ", ");
+                                if (string.IsNullOrEmpty(curMember.Type)) curMember.Type = param;
+                                else curMember.Type += param;
                                 i -= 2;
                                 continue;
                             }
@@ -1642,7 +1648,6 @@ namespace ASCompletion.Model
                                 carriedMetaData.Add(meta);
                             }
                         }
-
                         // Unreachable code???? plus it seems a bit crazy we have so many places for function types
                         // Haxe signatures: T -> T -> T 
                         else if (haXe && c1 == '-' && curMember != null)
@@ -1651,12 +1656,12 @@ namespace ASCompletion.Model
                             {
                                 curMember.Type += "->";
                                 foundColon = true;
+                                i++;
+                                continue;
                             }
                         }
-
                         // escape next char
                         else if (c1 == '\\') { i++; continue; }
-
                         // literal regex
                         else if (c1 == '/' && version == 3)
                         {

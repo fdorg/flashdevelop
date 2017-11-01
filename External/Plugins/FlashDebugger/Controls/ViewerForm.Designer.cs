@@ -49,13 +49,13 @@ namespace FlashDebugger.Controls
         /// </summary>
         private void InitializeComponent()
         {
-            this.ExptextBox = new TextBox();
-            this.ValuetextBox = new TextBox();
-            this.WordWrapcheckBox = new CheckBox();
-            this.Closebutton = new Button();
-            this.CopyExpbutton = new Button();
-            this.CopyValuebutton = new Button();
-            this.CopyAllbutton = new Button();
+            this.ExptextBox = new TextBoxEx();
+            this.ValuetextBox = new TextBoxEx();
+            this.WordWrapcheckBox = new CheckBoxEx();
+            this.Closebutton = new ButtonEx();
+            this.CopyExpbutton = new ButtonEx();
+            this.CopyValuebutton = new ButtonEx();
+            this.CopyAllbutton = new ButtonEx();
             this.label1 = new Label();
             this.label2 = new Label();
             this.SuspendLayout();

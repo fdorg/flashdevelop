@@ -454,7 +454,9 @@ namespace CodeRefactor.Commands
 
                 // Casing changes, we cannot move directly here, there may be conflicts, better leave it to the next step
                 if (target.TmpFilePath != null)
-                    RefactoringHelper.Move(target.TmpFilePath, target.NewFilePath);
+                    RefactoringHelper.Move(target.TmpFilePath, target.NewFilePath, true, target.OldFilePath);
+                else
+                    RefactoringHelper.RaiseMoveEvent(target.OldFilePath, target.NewFilePath);
             }
             // Move non-source files and whole folders
             foreach (KeyValuePair<string, string> item in OldPathToNewPath)
@@ -507,6 +509,7 @@ namespace CodeRefactor.Commands
                         project.SetDocumentClass(newDocumentClass, true);
                         project.Save();
                     }
+                    RefactoringHelper.RaiseMoveEvent(oldPath, newPath);
                 }
             }
 
