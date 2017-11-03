@@ -114,7 +114,7 @@ namespace ASCompletion.Completion
             var suggestItemDeclaration = false;
             if (contextToken != null && resolve.Member == null) // import declaration
             {
-                if ((resolve.Type == null || resolve.Type.IsVoid() || !context.IsImported(resolve.Type, line)) && CheckAutoImport(found, options)) return;
+                if ((resolve.Type == null || resolve.Type.IsVoid() || !context.IsImported(resolve.Type, line)) && CheckAutoImport(resolve, options)) return;
                 if (resolve.Type == null)
                 {
                     suggestItemDeclaration = ASComplete.IsTextStyle(Sci.BaseStyleAt(position - 1));
@@ -132,7 +132,7 @@ namespace ASCompletion.Completion
                     {
                         contextMatch = m;
                         ClassModel type = context.ResolveType(contextToken, context.CurrentModel);
-                        if (type.IsVoid() && CheckAutoImport(found, options))
+                        if (type.IsVoid() && CheckAutoImport(resolve, options))
                             return;
                     }
                     ShowGetSetList(found, options);
@@ -533,8 +533,9 @@ namespace ASCompletion.Completion
             return result;
         }
 
-        private static bool CheckAutoImport(FoundDeclaration found, List<ICompletionListItem> options)
+        static bool CheckAutoImport(ASResult expr, List<ICompletionListItem> options)
         {
+            if (ASContext.Context.CurrentClass.Equals(expr.Type)) return false;
             MemberList allClasses = ASContext.Context.GetAllProjectClasses();
             if (allClasses != null)
             {
@@ -4280,7 +4281,7 @@ namespace ASCompletion.Completion
                             methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Member", member.Name + "." + m.Name);
                             flags &= ~FlagType.Function;
                         }
-                        else if (IsHaxe) variableTemplate += "(" + m.Parameters[0].Name + ", ";
+                        else variableTemplate += "(" + m.Parameters[0].Name + ", ";
                     }
                     if ((flags & FlagType.Setter) > 0)
                     {
@@ -4309,7 +4310,7 @@ namespace ASCompletion.Completion
                             methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Void", ASContext.Context.Features.voidKey ?? "void");
                             flags &= ~FlagType.Function;
                         }
-                        else if (IsHaxe) variableTemplate += m.Parameters[1].Name + ")";
+                        else variableTemplate += m.Parameters[1].Name + ")";
                     }
                     if (!string.IsNullOrEmpty(variableTemplate))
                     {

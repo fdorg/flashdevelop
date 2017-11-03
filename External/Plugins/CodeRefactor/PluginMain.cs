@@ -368,7 +368,7 @@ namespace CodeRefactor
                     var enabled = !result.IsPackage && (File.Exists(curFileName) || curFileName.Contains("[model]"));
                     this.editorReferencesItem.Enabled = enabled;
                     this.viewReferencesItem.Enabled = enabled;
-                    if (result.Member != null && result.Type != null && result.InClass != null && result.InFile != null)
+                    if (result.InFile != null && result.InClass != null && (result.InClass.Flags & FlagType.Interface) == 0 && result.Member != null && result.Type != null)
                     {
                         FlagType flags = result.Member.Flags;
                         if ((flags & FlagType.Variable) > 0 && (flags & FlagType.LocalVar) == 0 && (flags & FlagType.ParameterVar) == 0)
