@@ -57,8 +57,9 @@ namespace ASCompletion.Completion
 
         public static void ContextualGenerator(ScintillaControl Sci, List<ICompletionListItem> options)
         {
-            if (ASContext.Context is ASContext) (ASContext.Context as ASContext).UpdateCurrentFile(false); // update model
-            if ((ASContext.Context.CurrentClass.Flags & (FlagType.Enum | FlagType.TypeDef)) > 0) return;
+            var context = ASContext.Context;
+            if (context is ASContext) ((ASContext) context).UpdateCurrentFile(false); // update model
+            if ((context.CurrentClass.Flags & (FlagType.Enum | FlagType.TypeDef)) > 0) return;
 
             lookupPosition = -1;
             int position = Sci.CurrentPos;
@@ -66,22 +67,20 @@ namespace ASCompletion.Completion
             if (style == 19) // on keyword
                 return;
 
-            bool isNotInterface = (ASContext.Context.CurrentClass.Flags & FlagType.Interface) == 0;
-            int line = Sci.LineFromPosition(position);
-            contextToken = Sci.GetWordFromPosition(position);
             contextMatch = null;
+            contextToken = Sci.GetWordFromPosition(position);
+            ASResult resolve = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(position, true));
+            if (context.CodeGenerator != null && context.CodeGenerator.ContextualGenerator(Sci, options, resolve)) return;
 
+            int line = Sci.LineFromPosition(position);
             FoundDeclaration found = GetDeclarationAtLine(Sci, line);
-            string text = Sci.GetLine(line);
-            bool suggestItemDeclaration = false;
-
+            bool isNotInterface = (context.CurrentClass.Flags & FlagType.Interface) == 0;
             if (isNotInterface && ASComplete.IsLiteralStyle(style))
             {
                 ShowConvertToConst(found, options);
                 return;
             }
-
-            ASResult resolve = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(position, true));
+            
             contextResolved = resolve;
             
             // ignore automatic vars (MovieClip members)
@@ -103,7 +102,7 @@ namespace ASCompletion.Completion
                     return;
                 }
 
-                if (resolve.Member != null && !ASContext.Context.CurrentClass.IsVoid()
+                if (resolve.Member != null && !context.CurrentClass.IsVoid()
                     && (resolve.Member.Flags & FlagType.LocalVar) > 0) // promote to class var
                 {
                     contextMember = resolve.Member;
@@ -111,16 +110,17 @@ namespace ASCompletion.Completion
                     return;
                 }
             }
-            
+
+            var suggestItemDeclaration = false;
             if (contextToken != null && resolve.Member == null) // import declaration
             {
-                if ((resolve.Type == null || resolve.Type.IsVoid() || !ASContext.Context.IsImported(resolve.Type, line)) && CheckAutoImport(resolve, options)) return;
+                if ((resolve.Type == null || resolve.Type.IsVoid() || !context.IsImported(resolve.Type, line)) && CheckAutoImport(resolve, options)) return;
                 if (resolve.Type == null)
                 {
                     suggestItemDeclaration = ASComplete.IsTextStyle(Sci.BaseStyleAt(position - 1));
                 }
             }
-
+            var text = Sci.GetLine(line);
             if (isNotInterface && found.member != null)
             {
                 // private var -> property
@@ -131,7 +131,7 @@ namespace ASCompletion.Completion
                     if (m.Success)
                     {
                         contextMatch = m;
-                        ClassModel type = ASContext.Context.ResolveType(contextToken, ASContext.Context.CurrentModel);
+                        ClassModel type = context.ResolveType(contextToken, context.CurrentModel);
                         if (type.IsVoid() && CheckAutoImport(resolve, options))
                             return;
                     }
@@ -175,7 +175,7 @@ namespace ASCompletion.Completion
                             return;
                         }
                         // suggest delegate
-                        if (ASContext.Context.Features.hasDelegates)
+                        if (context.Features.hasDelegates)
                         {
                             m = Regex.Match(text, @"([a-z0-9_.]+)\s*\+=\s*" + contextToken, RegexOptions.IgnoreCase);
                             if (m.Success)
@@ -210,7 +210,7 @@ namespace ASCompletion.Completion
                         }
 
                         // insert default delegate name, then "generate delegate" suggestion
-                        if (ASContext.Context.Features.hasDelegates)
+                        if (context.Features.hasDelegates)
                         {
                             m = Regex.Match(text, @"([a-z0-9_.]+)\s*\+=\s*", RegexOptions.IgnoreCase);
                             if (m.Success)
@@ -265,7 +265,7 @@ namespace ASCompletion.Completion
                     foreach (string interf in found.inClass.Implements)
                     {
                         bool skip = false;
-                        ClassModel cm = ASContext.Context.ResolveType(interf, ASContext.Context.CurrentModel);
+                        ClassModel cm = context.ResolveType(interf, context.CurrentModel);
                         foreach (MemberModel m in cm.Members)
                         {
                             if (m.Name.Equals(funcName) && m.Flags.Equals(flags))
@@ -302,7 +302,7 @@ namespace ASCompletion.Completion
             {
                 bool hasConstructor = false;
                 bool hasToString = false;
-                foreach (MemberModel m in ASContext.Context.CurrentClass.Members)
+                foreach (MemberModel m in context.CurrentClass.Members)
                 {
                     if (!hasConstructor && (m.Flags & FlagType.Constructor) > 0)
                         hasConstructor = true;
@@ -321,7 +321,7 @@ namespace ASCompletion.Completion
             if (isNotInterface 
                 && resolve.Member != null
                 && resolve.Type != null
-                && resolve.Type.QualifiedName == ASContext.Context.Features.stringKey
+                && resolve.Type.QualifiedName == context.Features.stringKey
                 && found.inClass != ClassModel.VoidClass)
             {
                 int lineStartPos = Sci.PositionFromLine(Sci.CurrentLine);
@@ -373,7 +373,8 @@ namespace ASCompletion.Completion
                 }
                 else
                 {
-                    if (resolve.InClass != null
+                    if (resolve != null
+                        && resolve.InClass != null
                         && resolve.InClass.InFile != null
                         && resolve.Member != null
                         && (resolve.Member.Flags & FlagType.Function) > 0
@@ -388,7 +389,8 @@ namespace ASCompletion.Completion
                             ShowChangeMethodDeclList(found, options);
                         }
                     }
-                    else if (resolve.Type != null
+                    else if (resolve != null
+                        && resolve.Type != null
                         && resolve.Type.InFile != null
                         && resolve.RelClass != null
                         && File.Exists(resolve.Type.InFile.FileName)
@@ -403,6 +405,7 @@ namespace ASCompletion.Completion
                     }
                 }
             }
+            
             // TODO: Empty line, show generators list? yep
         }
 
@@ -2317,7 +2320,7 @@ namespace ASCompletion.Completion
                 if (pos != -1)
                 {
                     var expr = ASComplete.GetExpressionType(sci, pos);
-                    if (expr?.Member?.Parameters.Count > 0) newMember.Type = expr.Member.Parameters[index].Type;
+                    if (expr?.Member?.Parameters?.Count > 0) newMember.Type = expr.Member.Parameters[index].Type;
                 }
             }
             if (job == GeneratorJobType.Constant && returnType == null)
