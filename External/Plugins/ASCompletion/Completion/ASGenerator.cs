@@ -4277,7 +4277,7 @@ namespace ASCompletion.Completion
                             methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Member", member.Name + "." + m.Name);
                             flags &= ~FlagType.Function;
                         }
-                        else if (IsHaxe) variableTemplate += "(" + m.Parameters[0].Name + ", ";
+                        else variableTemplate += "(" + m.Parameters[0].Name + ", ";
                     }
                     if ((flags & FlagType.Setter) > 0)
                     {
@@ -4306,7 +4306,7 @@ namespace ASCompletion.Completion
                             methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Void", ASContext.Context.Features.voidKey ?? "void");
                             flags &= ~FlagType.Function;
                         }
-                        else if (IsHaxe) variableTemplate += m.Parameters[1].Name + ")";
+                        else variableTemplate += m.Parameters[1].Name + ")";
                     }
                     if (!string.IsNullOrEmpty(variableTemplate))
                     {
