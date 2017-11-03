@@ -114,7 +114,7 @@ namespace ASCompletion.Completion
             
             if (contextToken != null && resolve.Member == null) // import declaration
             {
-                if ((resolve.Type == null || resolve.Type.IsVoid() || !ASContext.Context.IsImported(resolve.Type, line)) && CheckAutoImport(found, options)) return;
+                if ((resolve.Type == null || resolve.Type.IsVoid() || !ASContext.Context.IsImported(resolve.Type, line)) && CheckAutoImport(resolve, options)) return;
                 if (resolve.Type == null)
                 {
                     suggestItemDeclaration = ASComplete.IsTextStyle(Sci.BaseStyleAt(position - 1));
@@ -132,7 +132,7 @@ namespace ASCompletion.Completion
                     {
                         contextMatch = m;
                         ClassModel type = ASContext.Context.ResolveType(contextToken, ASContext.Context.CurrentModel);
-                        if (type.IsVoid() && CheckAutoImport(found, options))
+                        if (type.IsVoid() && CheckAutoImport(resolve, options))
                             return;
                     }
                     ShowGetSetList(found, options);
@@ -530,8 +530,9 @@ namespace ASCompletion.Completion
             return result;
         }
 
-        private static bool CheckAutoImport(FoundDeclaration found, List<ICompletionListItem> options)
+        static bool CheckAutoImport(ASResult expr, List<ICompletionListItem> options)
         {
+            if (ASContext.Context.CurrentClass.Equals(expr.Type)) return false;
             MemberList allClasses = ASContext.Context.GetAllProjectClasses();
             if (allClasses != null)
             {

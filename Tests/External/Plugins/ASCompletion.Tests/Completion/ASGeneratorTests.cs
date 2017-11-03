@@ -3175,6 +3175,69 @@ namespace ASCompletion.Completion
                     return sci.Text;
                 }
             }
+
+            [TestFixture]
+            public class ContextualGeneratorTests : GenerateJob
+            {
+                [TestFixtureSetUp]
+                public void AddInterfaceDefTestsSetup() => ASContext.Context.Settings.GenerateImports.Returns(true);
+
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData("BeforeContextualGeneratorTests_issue1747_1")
+                                .Returns(ReadAllTextHaxe("AfterContextualGeneratorTests_issue1747_1"))
+                                .SetName("Issue1747. Case 1")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1747");
+                        yield return
+                            new TestCaseData("BeforeContextualGeneratorTests_issue1747_2")
+                                .Returns(ReadAllTextHaxe("AfterContextualGeneratorTests_issue1747_2"))
+                                .SetName("Issue1747. Case 2")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1747");
+                        yield return
+                            new TestCaseData("BeforeContextualGeneratorTests_issue1747_3")
+                                .Returns(ReadAllTextHaxe("AfterContextualGeneratorTests_issue1747_3"))
+                                .SetName("Issue1747. Case 3")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1747");
+                        yield return
+                            new TestCaseData("BeforeContextualGeneratorTests_issue1747_4")
+                                .Returns(ReadAllTextHaxe("AfterContextualGeneratorTests_issue1747_4"))
+                                .SetName("Issue1747. Case 4")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1747");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public string Haxe(string fileName) => HaxeImpl(fileName, sci);
+
+                internal static string HaxeImpl(string fileName, ScintillaControl sci)
+                {
+                    SetHaxeFeatures(sci);
+                    var sourceText = ReadAllTextHaxe(fileName);
+                    fileName = GetFullPathHaxe(fileName);
+                    ASContext.Context.CurrentModel.FileName = fileName;
+                    PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
+                    return Common(sourceText, sci);
+                }
+
+                internal static string Common(string sourceText, ScintillaControl sci)
+                {
+                    sci.Text = sourceText;
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    var currentModel = ASContext.Context.CurrentModel;
+                    new ASFileParser().ParseSrc(currentModel, sci.Text);
+                    var currentClass = currentModel.Classes[0];
+                    ASContext.Context.CurrentClass.Returns(currentClass);
+                    ASContext.Context.CurrentModel.Returns(currentModel);
+                    var currentMember = currentClass.Members.Items.FirstOrDefault();
+                    ASContext.Context.CurrentMember.Returns(currentMember);
+                    ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
+                    ASGenerator.ContextualGenerator(sci, new List<ICompletionListItem>());
+                    return sci.Text;
+                }
+            }
         }
 
         protected static string ReadAllTextAS3(string fileName) => TestFile.ReadAllText(GetFullPathAS3(fileName));
