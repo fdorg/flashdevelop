@@ -373,8 +373,7 @@ namespace ASCompletion.Completion
                 }
                 else
                 {
-                    if (resolve != null
-                        && resolve.InClass != null
+                    if (resolve.InClass != null
                         && resolve.InClass.InFile != null
                         && resolve.Member != null
                         && (resolve.Member.Flags & FlagType.Function) > 0
@@ -389,8 +388,7 @@ namespace ASCompletion.Completion
                             ShowChangeMethodDeclList(found, options);
                         }
                     }
-                    else if (resolve != null
-                        && resolve.Type != null
+                    else if (resolve.Type != null
                         && resolve.Type.InFile != null
                         && resolve.RelClass != null
                         && File.Exists(resolve.Type.InFile.FileName)
