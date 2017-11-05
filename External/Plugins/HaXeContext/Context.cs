@@ -137,6 +137,7 @@ namespace HaXeContext
             features.hiddenPackagePrefix = '_';
             features.stringInterpolationQuotes = "'";
             features.ConstructorKey = "new";
+            features.ArithmeticOperators = new HashSet<string> {"%", "*", "/", "+", "-", "--", "++"};
 
             /* INITIALIZATION */
 

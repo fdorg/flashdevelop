@@ -98,6 +98,11 @@ namespace ASCompletion.Completion
         public string inlineKey;
         public string namespaceKey;
         public string stringInterpolationQuotes = "";
+        public HashSet<string> ArithmeticOperators = new HashSet<string>();
+        public HashSet<string> AssignmentPperators = new HashSet<string>();
+        public HashSet<string> BitwiseOperators = new HashSet<string>();
+        public HashSet<string> ComparisonOperators = new HashSet<string>();
+        public HashSet<string> LogicalOperators = new HashSet<string>();
 
         public Dictionary<string, string> metadata = new Dictionary<string,string>();
 

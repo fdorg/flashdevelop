@@ -2641,7 +2641,7 @@ namespace ASCompletion.Completion
             else if (token.Length > 1 && token.First() == '{' && token.Last() == '}') head = new ASResult {Type = ctx.ResolveType(features.objectKey, inFile)};
             else if (token == "true" || token == "false") head = new ASResult {Type = ctx.ResolveType(features.booleanKey, inFile)};
             else if (features.hasE4X && token == "</>") head = new ASResult {Type = ctx.ResolveType("XML", inFile)};
-            else if (char.IsDigit(token, 0)) head = new ASResult {Type = ctx.ResolveType(features.numberKey, inClass.InFile)};
+            else if (context.coma == ComaExpression.ArithmeticOperators || char.IsDigit(token, 0)) head = new ASResult {Type = ctx.ResolveType(features.numberKey, inClass.InFile)};
             if (head?.Type != null) return EvalTail(context, inFile, head, tokens, complete, filterVisibility) ?? notFound;
             if (token.StartsWith('#'))
             {
@@ -3695,6 +3695,14 @@ namespace ASCompletion.Completion
                             }
                         }
                         sb.Insert(0, c);
+                    }
+                    else if (features.ArithmeticOperators.Contains(c.ToString()))
+                    {
+                        hadWS = false;
+                        hadDot = true;
+                        sb.Insert(0, c);
+                        positionExpression = position;
+                        expression.coma = ComaExpression.ArithmeticOperators;
                     }
                     else if (characterClass.IndexOf(c) >= 0)
                     {
@@ -5114,7 +5122,8 @@ namespace ASCompletion.Completion
         FunctionDeclaration,
         FunctionParameter,
         ArrayValue,
-        GenericIndexType
+        GenericIndexType,
+        ArithmeticOperators
     }
 
     /// <summary>
