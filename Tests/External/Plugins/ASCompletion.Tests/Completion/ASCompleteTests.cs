@@ -453,7 +453,7 @@ namespace ASCompletion.Completion
                             .SetName("From new Vector.<Vector.<String>>|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfRegex"))
-                            .Returns(";g")
+                            .Returns(";/regex/g")
                             .SetName("From /regex/g|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfDigit"))
@@ -465,7 +465,7 @@ namespace ASCompletion.Completion
                             .SetName("From 10.0|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfInt"))
-                            .Returns(";1")
+                            .Returns(";-1")
                             .SetName("From -1|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfBoolean"))
@@ -507,7 +507,7 @@ namespace ASCompletion.Completion
                             .SetName("From ['1' => 1, '2' => 2]|");
                     yield return
                         new TestCaseData(ReadAllTextHaxe("GetExpressionOfRegex"))
-                            .Returns(";g")
+                            .Returns(";/regex/g")
                             .SetName("~/regex/g|");
                     yield return
                         new TestCaseData(ReadAllTextHaxe("GetExpressionOfNewArray"))

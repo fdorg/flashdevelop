@@ -131,6 +131,7 @@ namespace AS3Context
             features.privateKey = "private";
             features.intrinsicKey = "extern";
             features.namespaceKey = "namespace";
+            features.ArithmeticOperators = new HashSet<string> {"%", "*", "/", "+", "-", "--", "++"};
 
             /* INITIALIZATION */
 

@@ -3696,14 +3696,6 @@ namespace ASCompletion.Completion
                         }
                         sb.Insert(0, c);
                     }
-                    else if (features.ArithmeticOperators.Contains(c.ToString()))
-                    {
-                        hadWS = false;
-                        hadDot = true;
-                        sb.Insert(0, c);
-                        positionExpression = position;
-                        expression.coma = ComaExpression.ArithmeticOperators;
-                    }
                     else if (characterClass.IndexOf(c) >= 0)
                     {
                         if (hadWS && !hadDot)
@@ -3742,6 +3734,7 @@ namespace ASCompletion.Completion
                     }
                     else if (c == '{')
                     {
+                        if (expression.coma == ComaExpression.ArithmeticOperators) break;
                         expression.coma = DisambiguateComa(sci, position, minPos);
                         expression.Separator = (expression.coma == ComaExpression.None) ? ';' : ',';
                         if (expression.coma == ComaExpression.AnonymousObjectParam)
@@ -3787,6 +3780,14 @@ namespace ASCompletion.Completion
                         expression.Separator = '=';
                         break;
                     }
+                    else if (features.ArithmeticOperators.Contains(c.ToString()))
+                    {
+                        hadWS = false;
+                        hadDot = true;
+                        sb.Insert(0, c);
+                        positionExpression = position;
+                        expression.coma = ComaExpression.ArithmeticOperators;
+                    }
                     else //if (hadWS && !hadDot)
                     {
                         if (hadDot && features.SpecialPostfixOperators.Contains(c))
@@ -3824,7 +3825,8 @@ namespace ASCompletion.Completion
                     expression.Separator = ';';
                     value = "</>";
                 }
-            } 
+            }
+            else if (expression.coma == ComaExpression.ArithmeticOperators) expression.Separator = ';';
             expression.Value = value;
             expression.PositionExpression = positionExpression;
             LastExpression = expression;
