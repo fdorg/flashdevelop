@@ -2641,7 +2641,7 @@ namespace ASCompletion.Completion
             else if (token.Length > 1 && token.First() == '{' && token.Last() == '}') head = new ASResult {Type = ctx.ResolveType(features.objectKey, inFile)};
             else if (token == "true" || token == "false") head = new ASResult {Type = ctx.ResolveType(features.booleanKey, inFile)};
             else if (features.hasE4X && token == "</>") head = new ASResult {Type = ctx.ResolveType("XML", inFile)};
-            else if (char.IsDigit(token, 0)) head = new ASResult {Type = ctx.ResolveType(features.numberKey, inClass.InFile)};
+            else if (context.coma == ComaExpression.ArithmeticOperators || char.IsDigit(token, 0)) head = new ASResult {Type = ctx.ResolveType(features.numberKey, inClass.InFile)};
             if (head?.Type != null) return EvalTail(context, inFile, head, tokens, complete, filterVisibility) ?? notFound;
             if (token.StartsWith('#'))
             {
@@ -3734,6 +3734,7 @@ namespace ASCompletion.Completion
                     }
                     else if (c == '{')
                     {
+                        if (expression.coma == ComaExpression.ArithmeticOperators) break;
                         expression.coma = DisambiguateComa(sci, position, minPos);
                         expression.Separator = (expression.coma == ComaExpression.None) ? ';' : ',';
                         if (expression.coma == ComaExpression.AnonymousObjectParam)
@@ -3779,6 +3780,14 @@ namespace ASCompletion.Completion
                         expression.Separator = '=';
                         break;
                     }
+                    else if (features.ArithmeticOperators.Contains(c.ToString()))
+                    {
+                        hadWS = false;
+                        hadDot = true;
+                        sb.Insert(0, c);
+                        positionExpression = position;
+                        expression.coma = ComaExpression.ArithmeticOperators;
+                    }
                     else //if (hadWS && !hadDot)
                     {
                         if (hadDot && features.SpecialPostfixOperators.Contains(c))
@@ -3816,7 +3825,8 @@ namespace ASCompletion.Completion
                     expression.Separator = ';';
                     value = "</>";
                 }
-            } 
+            }
+            else if (expression.coma == ComaExpression.ArithmeticOperators) expression.Separator = ';';
             expression.Value = value;
             expression.PositionExpression = positionExpression;
             LastExpression = expression;
@@ -5114,7 +5124,8 @@ namespace ASCompletion.Completion
         FunctionDeclaration,
         FunctionParameter,
         ArrayValue,
-        GenericIndexType
+        GenericIndexType,
+        ArithmeticOperators
     }
 
     /// <summary>

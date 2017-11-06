@@ -1917,6 +1917,7 @@ namespace ASCompletion.Completion
 
         public static int GetStartOfStatement(ScintillaControl sci, int statementEnd, ASResult expr)
         {
+            if (expr.Context?.coma == ComaExpression.ArithmeticOperators) return expr.Context.PositionExpression; 
             var line = sci.LineFromPosition(statementEnd);
             var text = sci.GetLine(line);
             var match = Regex.Match(text, @"[;\s\n\r]*", RegexOptions.RightToLeft);
