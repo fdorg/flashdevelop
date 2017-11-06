@@ -289,10 +289,12 @@ namespace ASCompletion.Completion
                 // "assign var to statement" suggestion
                 int curLine = Sci.CurrentLine;
                 string ln = Sci.GetLine(curLine).TrimEnd();
-                if (ln.Length > 0 && ln.IndexOf('=') == -1 
+                if (ln.Length > 0 && !ln.Contains('=')
                     && ln.Length <= Sci.CurrentPos - Sci.PositionFromLine(curLine)) // cursor at end of line
                 {
-                    ShowAssignStatementToVarList(found, options);
+                    var returnType = GetStatementReturnType(Sci, found.inClass, Sci.GetLine(curLine), Sci.PositionFromLine(curLine));
+                    if (returnType.resolve.Member?.Type == ASContext.Context.Features.voidKey) return;
+                    ShowAssignStatementToVarList(found, options, returnType);
                     return;
                 }
             }
@@ -729,13 +731,10 @@ namespace ASCompletion.Completion
             options.Add(new GeneratorItem(label, GeneratorJobType.VariablePublic, found.member, found.inClass));
         }
 
-        private static void ShowAssignStatementToVarList(FoundDeclaration found, List<ICompletionListItem> options)
+        static void ShowAssignStatementToVarList(FoundDeclaration found, ICollection<ICompletionListItem> options, StatementReturnType data)
         {
-            if (GetLangIsValid())
-            {
-                string labelClass = TextHelper.GetString("ASCompletion.Label.AssignStatementToVar");
-                options.Add(new GeneratorItem(labelClass, GeneratorJobType.AssignStatementToVar, found.member, found.inClass));
-            }
+            var label = TextHelper.GetString("ASCompletion.Label.AssignStatementToVar");
+            options.Add(new GeneratorItem(label, GeneratorJobType.AssignStatementToVar, found.member, found.inClass, data));
         }
 
         private static void ShowNewClassList(FoundDeclaration found, List<ICompletionListItem> options)
@@ -1169,7 +1168,8 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        AssignStatementToVar(sci, inClass);
+                        if (data is StatementReturnType) AssignStatementToVar(sci, inClass, (StatementReturnType)data);
+                        else AssignStatementToVar(sci, inClass);
                     }
                     finally
                     {
@@ -1258,11 +1258,14 @@ namespace ASCompletion.Completion
 
         static void AssignStatementToVar(ScintillaControl sci, ClassModel inClass)
         {
+            var currentLine = sci.CurrentLine;
+            var returnType = GetStatementReturnType(sci, inClass, sci.GetLine(currentLine), sci.PositionFromLine(currentLine));
+            AssignStatementToVar(sci, inClass, returnType);
+        }
+        static void AssignStatementToVar(ScintillaControl sci, ClassModel inClass, StatementReturnType returnType)
+        {
             var ctx = inClass.InFile.Context;
-            int lineNum = sci.CurrentLine;
-            string line = sci.GetLine(lineNum);
-            StatementReturnType returnType = GetStatementReturnType(sci, inClass, line, sci.PositionFromLine(lineNum));
-            ASResult resolve = returnType.resolve;
+            var resolve = returnType.resolve;
             string type = null;
             if (resolve.Member == null && (resolve.Type.Flags & FlagType.Class) != 0
                 && resolve.Type.Name != ctx.Features.booleanKey
@@ -1987,7 +1990,7 @@ namespace ASCompletion.Completion
             }
             if (expr.Type != null && (expr.Type.Flags & FlagType.Class) > 0 && expr.Context?.WordBefore == "new")
                 result = sci.WordStartPosition(result - 1, false);
-            else if(IsHaxe && expr.Context?.WordBefore == "cast" && (char)sci.CharAt(result) == '(')
+            else if (IsHaxe && expr.Context?.WordBefore == "cast" && (char)sci.CharAt(result) == '(')
                 result = sci.WordStartPosition(result - 1, true);
             return result;
         }
