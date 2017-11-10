@@ -115,6 +115,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
     <EmbeddedResource Include="Test Files\parser\ImportStaticMembers_Issue1150_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\ImportStaticMembers_Issue1150_2.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
