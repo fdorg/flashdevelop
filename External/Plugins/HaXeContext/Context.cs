@@ -592,14 +592,9 @@ namespace HaXeContext
 
         #region model caching
 
-        public override FileModel GetCodeModel(string src)
-        {
-            var result = base.GetCodeModel(src);
-            result.haXe = true;
-            return result;
-        }
+        public override FileModel GetCodeModel(string src) => base.GetCodeModel(new FileModel{haXe = true}, src, false);
 
-        protected override ASFileParser GetCodeParser()
+        public override ASFileParser GetCodeParser()
         {
             var result = new FileParser();
             result.Features.varKey = Features.varKey;

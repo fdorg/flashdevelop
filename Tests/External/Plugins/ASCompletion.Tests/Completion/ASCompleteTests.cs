@@ -357,7 +357,7 @@ namespace ASCompletion.Completion
                 sci.Text = sourceText;
                 SnippetHelper.PostProcessSnippets(sci, 0);
                 var currentModel = ASContext.Context.CurrentModel;
-                new ASFileParser().ParseSrc(currentModel, sci.Text);
+                ASContext.Context.GetCodeParser().ParseSrc(currentModel, sci.Text);
                 var currentClass = currentModel.Classes[0];
                 ASContext.Context.CurrentClass.Returns(currentClass);
                 var currentMember = currentClass.Members[0];

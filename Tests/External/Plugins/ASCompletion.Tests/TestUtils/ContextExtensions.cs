@@ -54,6 +54,8 @@ namespace ASCompletion.TestUtils
             mock.CreateFileModel(null).ReturnsForAnyArgs(it => context.CreateFileModel(it.ArgAt<string>(0)));
             var allProjectClasses = context.GetAllProjectClasses();
             mock.GetAllProjectClasses().Returns(allProjectClasses);
+            var parser = context.GetCodeParser();
+            mock.GetCodeParser().Returns(parser);
         }
 
         public static void BuildClassPath(this IASContext context)
@@ -77,7 +79,8 @@ namespace ASCompletion.TestUtils
                     {
                         foreach (var fileName in Directory.GetFiles(path, searchPattern, SearchOption.AllDirectories))
                         {
-                            it.AddFile(ASFileParser.ParseFile(new FileModel(fileName) {Context = context, Version = 3}));
+                            var parser = context.GetCodeParser();
+                            it.AddFile(parser.Parse(new FileModel(fileName) {Context = context, Version = 3}));
                         }
                     }
                     context.RefreshContextCache(path);
@@ -101,7 +104,8 @@ namespace ASCompletion.TestUtils
                 {
                     foreach (var fileName in Directory.GetFiles(path, searchPattern, SearchOption.AllDirectories))
                     {
-                        it.AddFile(ASFileParser.ParseFile(new FileModel(fileName) {Context = context, haXe = true, Version = 4}));
+                        var parser = context.GetCodeParser();
+                        it.AddFile(parser.Parse(new FileModel(fileName) {Context = context, haXe = true, Version = 4}));
                     }
                 }
                 context.RefreshContextCache(path);

@@ -984,7 +984,7 @@ namespace ASCompletion.Context
         /// Set local code parser features
         /// </summary>
         /// <returns></returns>
-        protected virtual ASFileParser GetCodeParser()
+        public virtual ASFileParser GetCodeParser()
         {
             ASFileParser parser = new ASFileParser();
             parser.Features.varKey = Context.Features.varKey;
@@ -1505,7 +1505,12 @@ namespace ASCompletion.Context
             }
             FileModel aFile;
             if (src == null) aFile = cFile;
-            else aFile = ASFileParser.ParseFile(CreateFileModel(src));
+            else
+            {
+                var parser = GetCodeParser();
+                aFile = parser.Parse(CreateFileModel(src));
+            }
+
             if (aFile.Version == 0) return;
             //
             string code = aFile.GenerateIntrinsic(false);
