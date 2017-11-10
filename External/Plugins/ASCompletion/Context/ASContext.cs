@@ -961,9 +961,9 @@ namespace ASCompletion.Context
         /// </summary>
         /// <param name="src">Source code</param>
         /// <returns></returns>
-        public virtual FileModel GetCodeModel(string src) => GetCodeModel(src, false);
+        public virtual FileModel GetCodeModel(string src) => GetCodeModel(src, true);
 
-        public virtual FileModel GetCodeModel(string src, bool scriptMode) => GetCodeModel(new FileModel(), src, true);
+        public virtual FileModel GetCodeModel(string src, bool scriptMode) => GetCodeModel(new FileModel(), src, scriptMode);
 
         /// <summary>
         /// Parse a raw source code
