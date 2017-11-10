@@ -6,7 +6,6 @@ namespace HaXeContext.Model
     {
         protected override void FinalizeModel()
         {
-            /*
             var imports = model.Imports;
             for (var i = 0; i < imports.Count; i++)
             {
@@ -26,7 +25,6 @@ namespace HaXeContext.Model
                 imports[i] = (MemberModel) member.Clone();
                 imports[i].InFile = new FileModel {FullPackage = fullPackage};
             }
-            */
             base.FinalizeModel();
         }
     }
