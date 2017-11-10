@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using ProjectManager.Projects.Haxe;
 using ProjectManager.Projects;
 using AS3Context;
+using HaXeContext.Model;
 using PluginCore.Utilities;
 using ScintillaNet;
 
@@ -589,6 +590,33 @@ namespace HaXeContext
         }
         #endregion
 
+        #region model caching
+
+        public override FileModel GetCodeModel(string src)
+        {
+            var result = base.GetCodeModel(src);
+            result.haXe = true;
+            return result;
+        }
+
+        protected override ASFileParser GetCodeParser()
+        {
+            var result = new FileParser();
+            result.Features.varKey = Features.varKey;
+            result.Features.constKey = Features.constKey;
+            result.Features.functionKey = Features.functionKey;
+            result.Features.hasEcmaTyping = Features.hasEcmaTyping;
+            result.Features.hasConsts = Features.hasConsts;
+            result.Features.hasVars = Features.hasVars;
+            result.Features.hasMethods = Features.hasMethods;
+            result.Features.hasGenerics = Features.hasGenerics;
+            result.Features.hasCArrays = Features.hasCArrays;
+            result.Features.CArrayTemplate = Features.CArrayTemplate;
+            return result;
+        }
+
+        #endregion
+
         #region SDK
         private InstalledSDK GetCurrentSDK()
         {
@@ -820,7 +848,7 @@ namespace HaXeContext
 
         private void ResolveImport(MemberModel item, MemberList imports)
         {
-            if (settings.LazyClasspathExploration)
+            if (settings.LazyClasspathExploration || string.IsNullOrEmpty(item.Type))
             {
                 imports.Add(item);
                 return;
@@ -840,8 +868,7 @@ namespace HaXeContext
             foreach (PathModel aPath in classPath)
                 if (aPath.IsValid && !aPath.Updating)
                 {
-                    string path;
-                    path = aPath.Path + dirSeparator + fileName;
+                    var path = aPath.Path + dirSeparator + fileName;
 
                     FileModel file = null;
                     // cached file
@@ -866,7 +893,7 @@ namespace HaXeContext
                 }
 
             if (!matched) // add anyway
-                imports.Add(new MemberModel(item.Name, item.Type, FlagType.Class, Visibility.Public));
+                imports.Add(item);
         }
 
         /// <summary>

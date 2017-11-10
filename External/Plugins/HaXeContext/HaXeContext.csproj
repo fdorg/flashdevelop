@@ -131,6 +131,7 @@
     <Compile Include="ExternalToolchain.cs" />
     <Compile Include="Helpers\FlagEnumEditor.cs" />
     <Compile Include="Linters\DiagnosticsLinter.cs" />
+    <Compile Include="Model\FileParser.cs" />
     <Compile Include="PluginMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
