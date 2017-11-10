@@ -1,0 +1,1 @@
+- [Haxe][Improvements] Added support for import static members. fixes #1150 
