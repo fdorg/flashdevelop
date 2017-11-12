@@ -1,1 +1,1 @@
-- [Improvements] Minimal fix to correctly locate/launch Adobe Animate CC 2017
+- [Improvements] Added paths to correctly locate/launch Adobe Animate CC 2017
