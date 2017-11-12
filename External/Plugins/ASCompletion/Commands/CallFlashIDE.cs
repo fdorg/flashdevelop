@@ -12,9 +12,9 @@ namespace ASCompletion.Commands
 {
     public class CallFlashIDE
     {
-        private delegate void RunBackgroundInvoker(string exe, string args);
-
-        static readonly private string[] FLASHIDE_PATH = {
+        static readonly string[] FLASHIDE_PATH = {
+            @"C:\Program Files\Adobe\Adobe Animate CC 2017\Animate.exe",
+            @"C:\Program Files (x86)\Adobe\Adobe Animate CC 2017\Animate.exe",
             @"C:\Program Files\Adobe\Adobe Animate CC 2016\Animate.exe",
             @"C:\Program Files (x86)\Adobe\Adobe Animate CC 2016\Animate.exe",
             @"C:\Program Files\Adobe\Adobe Animate CC 2015\Animate.exe",
