@@ -1,1 +1,2 @@
-- [Haxe][Improvements] Added support for import static members. fixes #1150 
+- [Improvements][Haxe] Added support for import static members. fixes #1150 
+- [Improvements] Added paths to correctly locate/launch Adobe Animate CC 2017
