@@ -1,1 +1,2 @@
+- [New][Haxe] Convert static call into using call. fixes #1565
 - [Improvements] Added paths to correctly locate/launch Adobe Animate CC 2017
