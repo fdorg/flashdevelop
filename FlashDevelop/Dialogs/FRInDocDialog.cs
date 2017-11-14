@@ -573,16 +573,23 @@ namespace FlashDevelop.Dialogs
                 sci.BeginUndoAction();
                 try
                 {
-                    for (Int32 i = 0, count = matches.Count; i < count; i++)
+                    var firstVisibleLine = sci.FirstVisibleLine;
+                    var pos = sci.CurrentPos;
+                    for (int i = 0, count = matches.Count; i < count; i++)
                     {
-                        if (!selectionOnly) FRDialogGenerics.SelectMatch(sci, matches[i]);
-                        else FRDialogGenerics.SelectMatchInTarget(sci, matches[i]);
-                        String replaceWith = this.GetReplaceText(matches[i]);
-                        FRSearch.PadIndexes(matches, i, matches[i].Value, replaceWith);
+                        var match = matches[i];
+                        var replacement = GetReplaceText(match);
+                        var replacementLenght = sci.MBSafeTextLength(replacement);
+                        if (sci.MBSafePosition(match.Index) < pos) pos += replacementLenght - sci.MBSafeTextLength(match.Value);
+                        if (selectionOnly) FRDialogGenerics.SelectMatchInTarget(sci, match);
+                        else FRDialogGenerics.SelectMatch(sci, match);
+                        FRSearch.PadIndexes(matches, i, match.Value, replacement);
                         sci.EnsureVisible(sci.CurrentLine);
-                        if (!selectionOnly) sci.ReplaceSel(replaceWith);
-                        else sci.ReplaceTarget(sci.MBSafeTextLength(replaceWith), replaceWith);
+                        if (selectionOnly) sci.ReplaceTarget(replacementLenght, replacement);
+                        else sci.ReplaceSel(replacement);
                     }
+                    sci.FirstVisibleLine = firstVisibleLine;
+                    sci.SetSel(pos, pos);
                 }
                 finally
                 {
