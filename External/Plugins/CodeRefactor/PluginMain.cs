@@ -693,6 +693,7 @@ namespace CodeRefactor
             RefactorItem.AddItemToList(refactorMainMenu.ExtractMethodMenuItem, list);
             RefactorItem.AddItemToList(refactorMainMenu.ExtractLocalVariableMenuItem, list);
             RefactorItem.AddItemToList(refactorMainMenu.DelegateMenuItem, list);
+            RefactorItem.AddItemToList(refactorMainMenu.SurroundMenu, list);
 
             var features = ASContext.Context.Features;
             if (!features.hasImports) return;
