@@ -919,6 +919,16 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextAS3("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue1645_2"))
                                 .SetName("Issue 1645. Case 2")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1645");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction_issue1780_1"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextAS3("AfterGenerateFunction_issue1780_1"))
+                                .SetName("foo(Math.round(1.5))")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1780");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction_issue1780_2"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextAS3("AfterGenerateFunction_issue1780_2"))
+                                .SetName("foo(round(1.5))")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1780");
                     }
                 }
 

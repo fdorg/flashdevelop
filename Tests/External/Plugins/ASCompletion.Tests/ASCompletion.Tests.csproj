@@ -720,6 +720,10 @@
     <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_Math.random.1.5.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue1780_2.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue1780_2.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue1780_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue1780_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue1780_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue1780_2.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
