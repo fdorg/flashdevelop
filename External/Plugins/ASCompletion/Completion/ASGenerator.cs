@@ -2622,10 +2622,10 @@ namespace ASCompletion.Completion
                             {
                                 paramName = result.Member.Name.Trim('@');
                             }
-                            if (result.Member.Type == null || result.Member.Type.Equals("void", StringComparison.OrdinalIgnoreCase))
+                            if (result.Member.Type == null)
                             {
-                                paramType = result.Type.Name;
-                                paramQualType = result.Type.QualifiedName;
+                                paramType = ctx.Features.dynamicKey;
+                                paramQualType = ctx.Features.dynamicKey;
                             }
                             else
                             {

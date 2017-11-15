@@ -1062,6 +1062,11 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue1780_1"))
                                 .SetName("foo(Math.round(1.5))")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1780");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue1780_2"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue1780_2"))
+                                .SetName("foo(round(1.5))")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1780");
                     }
                 }
 

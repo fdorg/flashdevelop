@@ -718,6 +718,8 @@
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue1780_1.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue1780_1.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_Math.random.1.5.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue1780_2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue1780_2.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
