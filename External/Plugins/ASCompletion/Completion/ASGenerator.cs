@@ -3526,9 +3526,10 @@ namespace ASCompletion.Completion
             return result;
         }
 
-        private static string GetQualifiedType(string type, ClassModel aType)
+        static string GetQualifiedType(string type, ClassModel aType)
         {
-            if (string.IsNullOrEmpty(type)) return "*";
+            var dynamicKey = ASContext.Context.Features.dynamicKey ?? "*";
+            if (string.IsNullOrEmpty(type)) return dynamicKey;
             if (ASContext.Context.DecomposeTypes(new [] {type}).Count() > 1) return type;
             if (type.IndexOf('<') > 0) // Vector.<Point>
             {
@@ -3544,10 +3545,9 @@ namespace ASCompletion.Completion
             ClassModel aClass = ASContext.Context.ResolveType(type, aType.InFile);
             if (!aClass.IsVoid())
             {
-                if (aClass.InFile.Package.Length != 0)
-                    return aClass.QualifiedName;
+                return aClass.QualifiedName;
             }
-            return "*";
+            return dynamicKey;
         }
 
         private static MemberModel NewMember(string contextToken, MemberModel calledFrom, FlagType kind, Visibility visi)
