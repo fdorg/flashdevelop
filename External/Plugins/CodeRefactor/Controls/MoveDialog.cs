@@ -48,11 +48,9 @@ namespace CodeRefactor.Controls
         public MoveDialog(List<string> files)
         {
             MovingFiles = files;
-            this.Owner = (Form)PluginBase.MainForm;
+            InitializeComponent();
             this.Font = PluginBase.Settings.DefaultFont;
             this.FormGuid = "2823102d-d712-4ce6-aa36-58e0bb4bf61d";
-            InitializeComponent();
-            Font = PluginBase.Settings.DefaultFont;
             tree.ItemHeight = tree.Font.Height;
             InitializeClasspaths();
             InitializeInput();
