@@ -716,6 +716,8 @@
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeContextualGeneratorTests_issue1747_4.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterContextualGeneratorTests_issue1747_4.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateClassTest_issue1762_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeContextualGeneratorTests_issue1767_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterContextualGeneratorTests_issue1767_1.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

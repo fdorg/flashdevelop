@@ -3207,6 +3207,11 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterContextualGeneratorTests_issue1747_4"))
                                 .SetName("Issue1747. Case 4")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1747");
+                        yield return
+                            new TestCaseData("BeforeContextualGeneratorTests_issue1767_1")
+                                .Returns(ReadAllTextHaxe("AfterContextualGeneratorTests_issue1767_1"))
+                                .SetName("Issue1767. Case 1")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1767");
                     }
                 }
 

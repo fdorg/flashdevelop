@@ -534,15 +534,15 @@ namespace ASCompletion.Completion
 
         static bool CheckAutoImport(ASResult expr, List<ICompletionListItem> options)
         {
-            if (ASContext.Context.CurrentClass.Equals(expr.Type)) return false;
+            if (ASContext.Context.CurrentClass.Equals(expr.RelClass)) return false;
             MemberList allClasses = ASContext.Context.GetAllProjectClasses();
             if (allClasses != null)
             {
-                List<string> names = new List<string>();
+                var names = new HashSet<string>();
                 List<MemberModel> matches = new List<MemberModel>();
                 string dotToken = "." + contextToken;
                 foreach (MemberModel member in allClasses)
-                    if (member.Name.EndsWithOrdinal(dotToken) && !names.Contains(member.Name))
+                    if (!names.Contains(member.Name) && member.Name.EndsWithOrdinal(dotToken))
                     {
                         matches.Add(member);
                         names.Add(member.Name);
