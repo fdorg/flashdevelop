@@ -51,7 +51,7 @@ namespace ASCompletion.Completion
         {
             ContextFeatures features = ASContext.Context.Features;
             if (features.overrideKey != null && word == features.overrideKey)
-                return HandleOverrideCompletion(Sci, autoHide);
+                return HandleOverrideCompletion(autoHide);
             return false;
         }
 
@@ -4038,13 +4038,13 @@ namespace ASCompletion.Completion
         #endregion
 
         #region override generator
+
         /// <summary>
         /// List methods to override
         /// </summary>
-        /// <param name="sci">Scintilla control</param>
         /// <param name="autoHide">Don't keep the list open if the word does not match</param>
         /// <returns>Completion was handled</returns>
-        static private bool HandleOverrideCompletion(ScintillaControl sci, bool autoHide)
+        static bool HandleOverrideCompletion(bool autoHide)
         {
             // explore members
             IASContext ctx = ASContext.Context;
@@ -4073,6 +4073,7 @@ namespace ASCompletion.Completion
                 {
                     foreach (MemberModel member in tmpClass.Members)
                     {
+                        if (curClass.Members.Search(member.Name, FlagType.Override, 0) != null) continue;
                         var parameters = member.Parameters;
                         if ((member.Flags & FlagType.Dynamic) > 0
                             && (member.Access & acc) > 0
