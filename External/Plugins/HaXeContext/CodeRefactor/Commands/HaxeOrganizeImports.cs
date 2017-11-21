@@ -2,10 +2,11 @@
 using System.Linq;
 using ASCompletion.Context;
 using ASCompletion.Model;
+using CodeRefactor.Commands;
 
 namespace HaXeContext.CodeRefactor.Commands
 {
-    class OrganizeImports : global::CodeRefactor.Commands.OrganizeImports
+    class HaxeOrganizeImports : OrganizeImports
     {
         protected override List<string> GetUniqueImports(List<MemberModel> imports, string searchInText, string sourceFile)
         {

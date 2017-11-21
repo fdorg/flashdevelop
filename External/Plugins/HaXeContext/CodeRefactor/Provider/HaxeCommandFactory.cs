@@ -12,7 +12,7 @@ namespace HaXeContext.CodeRefactor.Provider
 
     internal class HaxeCommandFactory : CommandFactory
     {
-        public override Command CreateOrganizeImportsCommand() => new Commands.OrganizeImports();
+        public override Command CreateOrganizeImportsCommand() => new Commands.HaxeOrganizeImports();
 
         public override Command CreateFindAllReferencesCommand(ASResult target, bool output, bool ignoreDeclarations, bool onlySourceFiles)
         {
