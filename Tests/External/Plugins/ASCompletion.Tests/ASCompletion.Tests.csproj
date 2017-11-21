@@ -715,6 +715,9 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterContextualGeneratorTests_issue1747_3.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeContextualGeneratorTests_issue1747_4.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterContextualGeneratorTests_issue1747_4.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateClassTest_issue1762_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeContextualGeneratorTests_issue1767_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterContextualGeneratorTests_issue1767_1.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue1780_1.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue1780_1.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_Math.random.1.5.hx" />
