@@ -2960,7 +2960,7 @@ namespace ASCompletion.Completion
             for (int i = 0; i < parameters.Count; i++)
             {
                 FunctionParameter p = parameters[i];
-                constructorArgs.Add(new MemberModel(p.paramName, p.paramType, FlagType.ParameterVar, 0));
+                constructorArgs.Add(new MemberModel(AvoidKeyword(p.paramName), p.paramType, FlagType.ParameterVar, 0));
                 constructorArgTypes.Add(CleanType(GetQualifiedType(p.paramQualType, inClass)));
             }
             
