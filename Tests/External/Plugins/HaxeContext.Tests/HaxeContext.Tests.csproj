@@ -67,6 +67,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\RefactorCommandTests.cs" />
     <Compile Include="ContextTests.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -90,6 +91,10 @@
       <Name>ASCompletion</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\External\Plugins\CodeRefactor\CodeRefactor.csproj">
+      <Project>{1F6DF858-6011-4CAC-B33E-7000EE90FFBE}</Project>
+      <Name>CodeRefactor</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\External\Plugins\HaXeContext\HaXeContext.csproj">
       <Project>{5b4e9515-994a-4da7-9916-cda8fd874701}</Project>
       <Name>HaXeContext</Name>
@@ -110,10 +115,16 @@
       <Name>ASCompletion.Tests</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\CodeRefactor.Tests\CodeRefactor.Tests.csproj">
+      <Project>{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}</Project>
+      <Name>CodeRefactor.Tests</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_issue191_1.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports_issue191_1.hx" />
     <EmbeddedResource Include="Test Files\parser\ImportStaticMembers_Issue1150_1.hx" />
     <EmbeddedResource Include="Test Files\parser\ImportStaticMembers_Issue1150_2.hx" />
   </ItemGroup>

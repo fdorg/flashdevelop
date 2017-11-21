@@ -5,7 +5,6 @@ using ASCompletion.Model;
 using CodeRefactor.Commands;
 using CodeRefactor.Provider;
 using PluginCore.FRService;
-using PluginCore.Utilities;
 
 namespace HaXeContext.CodeRefactor.Provider
 {
@@ -13,6 +12,8 @@ namespace HaXeContext.CodeRefactor.Provider
 
     internal class HaxeCommandFactory : CommandFactory
     {
+        public override Command CreateOrganizeImportsCommand() => new Commands.HaxeOrganizeImports();
+
         public override Command CreateFindAllReferencesCommand(ASResult target, bool output, bool ignoreDeclarations, bool onlySourceFiles)
         {
             var context = (Context)ASContext.GetLanguageContext("haxe");
