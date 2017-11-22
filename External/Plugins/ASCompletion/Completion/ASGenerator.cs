@@ -294,7 +294,8 @@ namespace ASCompletion.Completion
                 {
                     var returnType = GetStatementReturnType(Sci, found.inClass, Sci.GetLine(curLine), Sci.PositionFromLine(curLine));
                     if (returnType.resolve.Member?.Type == ASContext.Context.Features.voidKey) return;
-                    ShowAssignStatementToVarList(found, options, returnType);
+                    if (returnType.resolve.Type == null && returnType.resolve.Context?.WordBefore == "new") ShowNewClassList(found, options, returnType.resolve.Context);
+                    else ShowAssignStatementToVarList(found, options, returnType);
                     return;
                 }
             }
@@ -737,13 +738,12 @@ namespace ASCompletion.Completion
             options.Add(new GeneratorItem(label, GeneratorJobType.AssignStatementToVar, found.member, found.inClass, data));
         }
 
-        private static void ShowNewClassList(FoundDeclaration found, List<ICompletionListItem> options)
+        private static void ShowNewClassList(FoundDeclaration found, ICollection<ICompletionListItem> options) => ShowNewClassList(found, options, null);
+
+        static void ShowNewClassList(FoundDeclaration found, ICollection<ICompletionListItem> options, ASExpr expr)
         {
-            if (GetLangIsValid())
-            {
-                string labelClass = TextHelper.GetString("ASCompletion.Label.GenerateClass");
-                options.Add(new GeneratorItem(labelClass, GeneratorJobType.Class, found.member, found.inClass));
-            }
+            var label = TextHelper.GetString("ASCompletion.Label.GenerateClass");
+            options.Add(new GeneratorItem(label, GeneratorJobType.Class, found.member, found.inClass, expr));
         }
 
         private static void ShowConstructorAndToStringList(FoundDeclaration found, bool hasConstructor, bool hasToString, List<ICompletionListItem> options)
@@ -1071,8 +1071,8 @@ namespace ASCompletion.Completion
                     break;
 
                 case GeneratorJobType.Class:
-                    String clasName = sci.GetWordFromPosition(sci.CurrentPos);
-                    GenerateClass(sci, clasName, inClass);
+                    if (data is ASExpr) GenerateClass(sci, inClass, (ASExpr) data);
+                    else GenerateClass(sci, inClass, sci.GetWordFromPosition(sci.CurrentPos));
                     break;
 
                 case GeneratorJobType.Constructor:
@@ -2949,11 +2949,22 @@ namespace ASCompletion.Completion
             InsertCode(position, decl);
         }
 
-        private static void GenerateClass(ScintillaControl sci, String className, ClassModel inClass)
+        static void GenerateClass(ScintillaControl sci, ClassModel inClass, ASExpr data)
+        {
+            var parameters = ParseFunctionParameters(sci, sci.WordEndPosition(data.PositionExpression, false));
+            GenerateClass(inClass, data.Value, parameters);
+        }
+
+        static void GenerateClass(ScintillaControl sci, ClassModel inClass, string className)
+        {
+            var parameters = ParseFunctionParameters(sci, sci.WordEndPosition(sci.CurrentPos, true));
+            GenerateClass(inClass, className, parameters);
+        }
+
+        private static void GenerateClass(ClassModel inClass, string className, IList<FunctionParameter> parameters)
         {
             AddLookupPosition(); // remember last cursor position for Shift+F4
 
-            List<FunctionParameter> parameters = ParseFunctionParameters(sci, sci.WordEndPosition(sci.CurrentPos, true));
             List<MemberModel> constructorArgs = new List<MemberModel>();
             List<String> constructorArgTypes = new List<String>();
             MemberModel paramMember = new MemberModel();
