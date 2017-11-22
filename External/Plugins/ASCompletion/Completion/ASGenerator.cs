@@ -738,7 +738,7 @@ namespace ASCompletion.Completion
             options.Add(new GeneratorItem(label, GeneratorJobType.AssignStatementToVar, found.member, found.inClass, data));
         }
 
-        static void ShowNewClassList(FoundDeclaration found, ICollection<ICompletionListItem> options) => ShowNewClassList(found, options, null);
+        private static void ShowNewClassList(FoundDeclaration found, ICollection<ICompletionListItem> options) => ShowNewClassList(found, options, null);
 
         static void ShowNewClassList(FoundDeclaration found, ICollection<ICompletionListItem> options, ASExpr expr)
         {
@@ -2961,7 +2961,7 @@ namespace ASCompletion.Completion
             GenerateClass(inClass, className, parameters);
         }
 
-        static void GenerateClass(ClassModel inClass, string className, IList<FunctionParameter> parameters)
+        private static void GenerateClass(ClassModel inClass, string className, IList<FunctionParameter> parameters)
         {
             AddLookupPosition(); // remember last cursor position for Shift+F4
 
