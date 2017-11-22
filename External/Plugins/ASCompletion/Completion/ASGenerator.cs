@@ -406,7 +406,6 @@ namespace ASCompletion.Completion
                     }
                 }
             }
-            
             // TODO: Empty line, show generators list? yep
         }
 
