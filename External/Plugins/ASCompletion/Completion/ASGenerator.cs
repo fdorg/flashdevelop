@@ -3526,7 +3526,7 @@ namespace ASCompletion.Completion
             return result;
         }
 
-        static string GetQualifiedType(string type, ClassModel aType)
+        private static string GetQualifiedType(string type, ClassModel aType)
         {
             var dynamicKey = ASContext.Context.Features.dynamicKey ?? "*";
             if (string.IsNullOrEmpty(type)) return dynamicKey;
