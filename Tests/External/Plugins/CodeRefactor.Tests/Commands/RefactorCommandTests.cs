@@ -242,9 +242,11 @@ namespace CodeRefactor.Commands
             }
 
             [Test, TestCaseSource(nameof(HaxeTestCases))]
-            public string Haxe(string sourceText, string fileName)
+            public string Haxe(string sourceText, string fileName) => HaxeImpl(Sci, sourceText, fileName);
+
+            public static string HaxeImpl(ScintillaControl sci, string sourceText, string fileName)
             {
-                Sci.ConfigurationLanguage = "haxe";
+                sci.ConfigurationLanguage = "haxe";
                 ASContext.Context.SetHaxeFeatures();
                 ASContext.Context.CurrentModel.Returns(new FileModel
                 {
@@ -252,15 +254,20 @@ namespace CodeRefactor.Commands
                     Context = ASContext.Context,
                     FileName = fileName
                 });
-                Sci.Text = sourceText;
-                Sci.Colourise(0, -1);   // Needed for preprocessor directives...
-                SnippetHelper.PostProcessSnippets(Sci, 0);
+                return Common(sci, sourceText, fileName);
+            }
+
+            internal static string Common(ScintillaControl sci, string sourceText, string fileName)
+            {
+                sci.Text = sourceText;
+                sci.Colourise(0, -1); // Needed for preprocessor directives...
+                SnippetHelper.PostProcessSnippets(sci, 0);
                 var currentModel = ASContext.Context.CurrentModel;
-                new ASFileParser().ParseSrc(currentModel, Sci.Text);
-                CommandFactoryProvider.GetFactory(Sci)
+                new ASFileParser().ParseSrc(currentModel, sci.Text);
+                CommandFactoryProvider.GetFactory(sci)
                     .CreateOrganizeImportsCommand()
                     .Execute();
-                return Sci.Text;
+                return sci.Text;
             }
         }
     }
