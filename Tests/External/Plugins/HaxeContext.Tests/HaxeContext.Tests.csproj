@@ -93,6 +93,7 @@
     <ProjectReference Include="..\..\..\..\External\Plugins\CodeRefactor\CodeRefactor.csproj">
       <Project>{1F6DF858-6011-4CAC-B33E-7000EE90FFBE}</Project>
       <Name>CodeRefactor</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\External\Plugins\HaXeContext\HaXeContext.csproj">
       <Project>{5b4e9515-994a-4da7-9916-cda8fd874701}</Project>
@@ -117,6 +118,7 @@
     <ProjectReference Include="..\CodeRefactor.Tests\CodeRefactor.Tests.csproj">
       <Project>{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}</Project>
       <Name>CodeRefactor.Tests</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
