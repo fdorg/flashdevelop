@@ -125,6 +125,7 @@
     <ProjectReference Include="..\ASCompletion.Tests\ASCompletion.Tests.csproj">
       <Project>{ABC71D26-295C-4C6C-B6DE-320AD49EEF79}</Project>
       <Name>ASCompletion.Tests</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
