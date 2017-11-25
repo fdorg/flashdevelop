@@ -360,6 +360,20 @@ namespace ASClassWizard
                     var cmodel = processContext.GetModel(lastDotIndex < 0 ? "" : superClassFullName.Substring(0, lastDotIndex), superClassShortName, "");
                     if (!cmodel.IsVoid())
                     {
+                        if ((cmodel.Flags & FlagType.TypeDef) != 0)
+                        {
+                            var tmp = cmodel;
+                            while (!tmp.IsVoid())
+                            {
+                                if (!string.IsNullOrEmpty(tmp.Constructor))
+                                {
+                                    cmodel = tmp;
+                                    break;
+                                }
+                                tmp.ResolveExtends();
+                                tmp = tmp.Extends;
+                            }
+                        }
                         foreach (MemberModel member in cmodel.Members)
                         {
                             if (member.Name == cmodel.Constructor)
