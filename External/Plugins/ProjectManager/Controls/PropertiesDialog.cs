@@ -625,14 +625,14 @@ namespace ProjectManager.Controls
             // 
             // propertyGrid
             // 
-            this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGrid.LineColor = System.Drawing.SystemColors.ScrollBar;
+            this.propertyGrid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             this.propertyGrid.Location = new System.Drawing.Point(3, 3);
             this.propertyGrid.Name = "propertyGrid";
             this.propertyGrid.Size = new System.Drawing.Size(328, 266);
             this.propertyGrid.TabIndex = 0;
             this.propertyGrid.ToolbarVisible = false;
             this.propertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid_PropertyValueChanged);
+            this.propertyGrid.Font = this.Font;
             // 
             // sdkTabPage
             // 
