@@ -62,7 +62,6 @@ namespace TaskListPanel
             this.listView.ListViewItemSorter = this.columnSorter;
             Settings settings = (Settings)pluginMain.Settings;
             this.filesCache = new Dictionary<String, DateTime>();
-            EventManager.AddEventHandler(this, EventType.Keys); // Listen Esc
             try
             {
                 if (settings.GroupValues.Length > 0)
@@ -814,18 +813,6 @@ namespace TaskListPanel
                 case EventType.FileSave:
                     document = PluginBase.MainForm.CurrentDocument;
                     if (document.IsEditable) RefreshCurrentFile(document.SciControl);
-                    break;
-                case EventType.Keys:
-                    Keys keys = (e as KeyEvent).Value;
-                    if (this.ContainsFocus && keys == Keys.Escape)
-                    {
-                        ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-                        if (doc != null && doc.IsEditable)
-                        {
-                            doc.SciControl.Focus();
-                            e.Handled = true;
-                        }
-                    }
                     break;
             }
         }

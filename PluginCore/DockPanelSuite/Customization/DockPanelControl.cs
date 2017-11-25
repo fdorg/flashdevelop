@@ -42,23 +42,6 @@ namespace System.Windows.Forms
                 this.Padding = new Padding((borders & DockBorders.Left) > 0 ? 1 : 0, (borders & DockBorders.Top) > 0 ? 1 : 0, (borders & DockBorders.Right) > 0 ? 1 : 0, (borders & DockBorders.Bottom) > 0 ? 1 : 0);
             }
         }
-        
-        protected override Boolean ProcessDialogKey(Keys keyData)
-        {
-            if (this.AutoKeyHandling && this.ContainsFocus)
-            {
-                if (keyData == Keys.Escape)
-                {
-                    ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-                    if (doc != null && doc.IsEditable) 
-                    {
-                        doc.SciControl.Focus();
-                        return true;
-                    }
-                }
-            }
-            return base.ProcessDialogKey(keyData);
-        }
 
         /// <summary>
         /// Actual painting is done here
@@ -108,13 +91,6 @@ namespace System.Windows.Forms
                 if (isOnlyTab) Borders = DockBorders.Left | DockBorders.Bottom | DockBorders.Right;
                 else Borders = DockBorders.Left | DockBorders.Right;
             }
-        }
-
-        private Boolean IsAutoHidden(DockContent content)
-        {
-            DockState state = content.DockState;
-            return state == DockState.DockLeftAutoHide || state == DockState.DockRightAutoHide 
-                || state == DockState.DockTopAutoHide || state == DockState.DockBottomAutoHide;
         }
 
         /// <summary>

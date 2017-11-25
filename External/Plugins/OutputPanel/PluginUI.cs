@@ -340,11 +340,6 @@ namespace OutputPanel
                     this.FindNextMatch(false);
                     return true;
                 }
-                else if (keys == Keys.Escape)
-                {
-                    ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-                    if (doc != null && doc.IsEditable) doc.SciControl.Focus();
-                }
                 else if (keys == (Keys.Control | Keys.F))
                 {
                     findTextBox.Focus();
