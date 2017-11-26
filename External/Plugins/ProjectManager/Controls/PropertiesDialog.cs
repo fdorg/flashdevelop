@@ -625,8 +625,8 @@ namespace ProjectManager.Controls
             // 
             // propertyGrid
             // 
-            this.propertyGrid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            this.propertyGrid.Location = new System.Drawing.Point(3, 3);
+            this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill; this.propertyGrid.Location = new System.Drawing.Point(3, 3);
+            this.propertyGrid.LineColor = System.Drawing.SystemColors.ScrollBar;
             this.propertyGrid.Name = "propertyGrid";
             this.propertyGrid.Size = new System.Drawing.Size(328, 266);
             this.propertyGrid.TabIndex = 0;
