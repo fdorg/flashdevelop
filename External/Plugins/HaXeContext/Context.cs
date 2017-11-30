@@ -401,7 +401,7 @@ namespace HaXeContext
             HaxeProject proj = PluginBase.CurrentProject as HaxeProject;
 
             // swf-libs
-            if (HaxeTarget == "flash" && majorVersion >= 9 && proj != null)
+            if (proj != null && HaxeTarget == "flash" && majorVersion >= 9)
             {
                 foreach(LibraryAsset asset in proj.LibraryAssets)
                     if (asset.IsSwc)
@@ -419,7 +419,13 @@ namespace HaXeContext
             // add haxe libraries
             if (proj != null)
             {
-                foreach (string library in proj.CompilerOptions.Libraries)
+                var libraries = proj.CompilerOptions.Libraries.ToList();
+                foreach (var it in proj.CompilerOptions.Additional)
+                {
+                    var index = it.IndexOfOrdinal("-lib ");
+                    if (index != -1) libraries.Add(it.Substring(index + "-lib ".Length).Trim());
+                }
+                foreach (string library in libraries)
                     if (!string.IsNullOrEmpty(library.Trim()))
                     {
                         List<string> libPaths = LookupLibrary(library);

@@ -10,7 +10,7 @@ namespace HaXeContext.CodeRefactor.Commands
     {
         protected override List<string> GetUniqueImports(List<MemberModel> imports, string searchInText, string sourceFile)
         {
-            var result = new HashSet<string>();
+            var result = new HashSet<string>(base.GetUniqueImports(imports, searchInText, sourceFile));
             foreach (var import in imports)
             {
                 if (result.Contains(import.Type)) continue;

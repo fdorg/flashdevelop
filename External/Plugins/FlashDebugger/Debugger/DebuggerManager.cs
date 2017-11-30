@@ -108,8 +108,7 @@ namespace FlashDebugger
             {
                 try
                 {
-                    BridgeSetup bridgeSetup = null;
-                    bridgeSetup = new BridgeSetup();
+                    var bridgeSetup = new BridgeSetup(false);
 
                     string flexSDKPath = null;
                     if (currentProject != null) flexSDKPath = currentProject.CurrentSDK;
@@ -131,9 +130,8 @@ namespace FlashDebugger
                 }
                 catch (Exception ex)
                 {
-
                     String msg = "Debugger startup error. For troubleshooting see: http://www.flashdevelop.org/wikidocs/index.php?title=F.A.Q\n";
-                    TraceManager.Add(msg + "Error details: " + ex.ToString()); 
+                    TraceManager.Add(msg + "Error details: " + ex); 
                     return false;
                 }
             }
