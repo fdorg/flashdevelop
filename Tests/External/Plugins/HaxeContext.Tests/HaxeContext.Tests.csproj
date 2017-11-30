@@ -126,6 +126,14 @@
     <None Include="packages.config" />
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_issue191_1.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports_issue191_1.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_withImportsFromSameModule2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports_withElseIfDirective.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports_withImportsFromSameModule.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports_withImportsFromSameModule2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_withElseIfDirective.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_withImportsFromSameModule.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

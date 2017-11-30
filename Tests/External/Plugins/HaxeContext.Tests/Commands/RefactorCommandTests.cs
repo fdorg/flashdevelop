@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using ASCompletion.Context;
+using ASCompletion.TestUtils;
 using CodeRefactor;
 using CodeRefactor.Provider;
 using HaXeContext.CodeRefactor.Provider;
@@ -21,6 +23,8 @@ namespace HaXeContext.Commands
                 // Needed for preprocessor directives...
                 Sci.SetProperty("fold", "1");
                 Sci.SetProperty("fold.preprocessor", "1");
+                Sci.ConfigurationLanguage = "haxe";
+                ASContext.Context.SetHaxeFeatures();
                 CommandFactoryProvider.Register("haxe", new HaxeCommandFactory());
             }
 
@@ -33,6 +37,26 @@ namespace HaXeContext.Commands
                             .Returns(ReadAllTextHaxe("AfterOrganizeImports_issue191_1"))
                             .SetName("Issue191. Case 1.")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/191");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("BeforeOrganizeImports"), "BeforeOrganizeImports.hx")
+                            .Returns(ReadAllTextHaxe("AfterOrganizeImports"))
+                            .SetName("OrganizeImports");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("BeforeOrganizeImports_withImportsFromSameModule"), "Main.hx")
+                            .Returns(ReadAllTextHaxe("AfterOrganizeImports_withImportsFromSameModule"))
+                            .SetName("Issue782. Package is empty.");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("BeforeOrganizeImports_withImportsFromSameModule2"), "Main.hx")
+                            .Returns(ReadAllTextHaxe("AfterOrganizeImports_withImportsFromSameModule2"))
+                            .SetName("Issue782. Package is not empty.");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("BeforeOrganizeImports_withImportsFromSameModule2"), "Main.hx")
+                            .Returns(ReadAllTextHaxe("AfterOrganizeImports_withImportsFromSameModule2"))
+                            .SetName("Issue782. Package is not empty.");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("BeforeOrganizeImports_withElseIfDirective"), "Main.hx")
+                            .Returns(ReadAllTextHaxe("AfterOrganizeImports_withElseIfDirective"))
+                            .SetName("Issue783. Shouldn't touch #elseif blocks.");
                 }
             }
 
