@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using ASCompletion.Context;
-using ASCompletion.TestUtils;
 using CodeRefactor;
 using CodeRefactor.Provider;
 using HaXeContext.CodeRefactor.Provider;
@@ -23,8 +21,6 @@ namespace HaXeContext.Commands
                 // Needed for preprocessor directives...
                 Sci.SetProperty("fold", "1");
                 Sci.SetProperty("fold.preprocessor", "1");
-                Sci.ConfigurationLanguage = "haxe";
-                ASContext.Context.SetHaxeFeatures();
                 CommandFactoryProvider.Register("haxe", new HaxeCommandFactory());
             }
 
