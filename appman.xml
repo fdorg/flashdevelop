@@ -464,16 +464,16 @@
 	</Entry>
 	<Entry>
 		<Id>quicknavigate</Id>
-    <Name>QuickNavigate</Name>
-		<Version>2.9</Version>
-		<Build>22</Build>
-		<Checksum>0567a6b931fd24c1e03a839df5c47237</Checksum>
+    		<Name>QuickNavigate</Name>
+		<Version>3.0</Version>
+		<Build>89</Build>
+		<Checksum>b9bdc3f75c8743cba2668e39d5ef1d6</Checksum>
 		<Desc>Quickly navigate through Types, Fields, Projects and more</Desc>
 		<Group>Plugins</Group>
-		<Info>http://www.flashdevelop.org/community/viewtopic.php?f=4_INFO_t=5961</Info>
+		<Info>https://github.com/SlavaRa/fdplugin-quicknavigate</Info>
 		<Urls>
-			<Url>https://github.com/SlavaRa/fdplugin-quicknavigate/releases/download/2.9.57/QuickNavigate.fdz</Url>
-	  </Urls>
+			<Url>https://github.com/SlavaRa/fdplugin-quicknavigate/releases/download/3.0.89/QuickNavigate.fdz</Url>
+	  	</Urls>
 	</Entry>
 	<Entry>
 		<Id>vsbluefulltheme</Id>

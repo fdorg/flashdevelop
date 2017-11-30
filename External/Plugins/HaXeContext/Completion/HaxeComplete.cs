@@ -389,6 +389,7 @@ namespace HaXeContext
 
             var type = new MemberModel();
             type.Name = name;
+            type.Comments = reader.GetAttribute("d");
             ExtractType(reader, type);
             result = new HaxeCompleteResult();
             result.Type = type;
