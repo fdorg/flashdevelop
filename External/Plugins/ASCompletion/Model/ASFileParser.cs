@@ -1705,7 +1705,7 @@ namespace ASCompletion.Model
             while (i0 > 0)
             {
                 c = ba[i0--];
-                if ("=(,[{;?:+".IndexOf(c) >= 0) break; // ok
+                if ("=(,[{;?:+-*/|&~^><n!".IndexOf(c) >= 0) break; // ok
                 if (" \t".IndexOf(c) >= 0) continue;
                 return false; // anything else isn't expected before a regex
             }

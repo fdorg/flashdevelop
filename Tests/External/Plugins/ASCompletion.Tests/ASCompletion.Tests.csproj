@@ -725,6 +725,16 @@
     <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case4.hx" />
     <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case5.hx" />
     <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case6.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case7.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case8.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case9.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case10.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case11.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case12.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case13.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case14.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case15.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case16.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
