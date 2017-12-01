@@ -2073,7 +2073,7 @@ namespace ASCompletion.Model
                         .SetName("Issue 1814. Case 4. =");
                     yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case5.hx"))
                         .Returns(9)
-                        .SetName("Issue 1814. Case 5");
+                        .SetName("Issue 1814. Case 5. in");
                     yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case6.hx"))
                         .Returns(8)
                         .SetName("Issue 1814. Case 6. +");
