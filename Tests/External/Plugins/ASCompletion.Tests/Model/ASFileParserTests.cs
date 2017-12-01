@@ -2051,6 +2051,28 @@ namespace ASCompletion.Model
                 var result = model.Classes.First();
                 return result;
             }
+
+            static IEnumerable<TestCaseData> ParseClassTestCases_issue1814
+            {
+                get
+                {
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814.hx"), 9);
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case1.hx"), 9);
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case2.hx"), 9);
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case3.hx"), 9);
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case4.hx"), 9);
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case5.hx"), 9);
+                }
+            }
+
+            [Test, TestCaseSource(nameof(ParseClassTestCases_issue1814))]
+            public int ParseFile_Issue1814(TestFile resourceFile, int lineTo)
+            {
+                var srcModel = new FileModel(resourceFile.DestinationFile);
+                srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                var model = ASFileParser.ParseFile(srcModel);
+                return model.Classes[0].LineTo;
+            }
         }
     }
 }
