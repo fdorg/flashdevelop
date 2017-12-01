@@ -2056,17 +2056,31 @@ namespace ASCompletion.Model
             {
                 get
                 {
-                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814.hx"), 9);
-                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case1.hx"), 9);
-                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case2.hx"), 9);
-                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case3.hx"), 9);
-                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case4.hx"), 9);
-                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case5.hx"), 9);
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814.hx"))
+                        .Returns(9);
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case1.hx"))
+                        .Returns(9)
+                        .SetName("Issue 1814. Case 1");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case2.hx"))
+                        .Returns(9)
+                        .SetName("Issue 1814. Case 2");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case3.hx"))
+                        .Returns(9)
+                        .SetName("Issue 1814. Case 3");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case4.hx"))
+                        .Returns(9)
+                        .SetName("Issue 1814. Case 4");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case5.hx"))
+                        .Returns(9)
+                        .SetName("Issue 1814. Case 5");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case6.hx"))
+                        .Returns(8)
+                        .SetName("Issue 1814. Case 6");
                 }
             }
 
             [Test, TestCaseSource(nameof(ParseClassTestCases_issue1814))]
-            public int ParseFile_Issue1814(TestFile resourceFile, int lineTo)
+            public int ParseFile_Issue1814(TestFile resourceFile)
             {
                 var srcModel = new FileModel(resourceFile.DestinationFile);
                 srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());

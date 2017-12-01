@@ -723,6 +723,8 @@
     <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case2.hx" />
     <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case3.hx" />
     <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case4.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case5.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case6.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

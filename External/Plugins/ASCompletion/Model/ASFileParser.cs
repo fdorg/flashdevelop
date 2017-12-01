@@ -1694,8 +1694,7 @@ namespace ASCompletion.Model
             char c;
             // regex in valid context
 
-            if (!haXe)
-                i0 = i - 2;
+            if (!haXe) i0 = i - 2;
             else
             {
                 if (ba[i - 2] != '~')
@@ -1706,7 +1705,7 @@ namespace ASCompletion.Model
             while (i0 > 0)
             {
                 c = ba[i0--];
-                if ("=(,[{;?:".IndexOf(c) >= 0) break; // ok
+                if ("=(,[{;?:+".IndexOf(c) >= 0) break; // ok
                 if (" \t".IndexOf(c) >= 0) continue;
                 return false; // anything else isn't expected before a regex
             }
