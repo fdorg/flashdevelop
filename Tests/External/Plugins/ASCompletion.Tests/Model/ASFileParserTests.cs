@@ -2057,7 +2057,8 @@ namespace ASCompletion.Model
                 get
                 {
                     yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814.hx"))
-                        .Returns(9);
+                        .Returns(9)
+                        .SetName("Issue 1814. Case 0. ?");
                     yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case1.hx"))
                         .Returns(9)
                         .SetName("Issue 1814. Case 1. return");
