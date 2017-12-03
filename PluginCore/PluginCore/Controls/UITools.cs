@@ -151,6 +151,7 @@ namespace PluginCore.Controls
 
                 case EventType.Command:
                     string cmd = (e as DataEvent).Action;
+                    // EventType.Command handlind should quite probably disappear when merging the "Decoupled CompletionList". This is too hacky and error-prone...
                     if (cmd.IndexOfOrdinal("ProjectManager") > 0
                         || cmd.IndexOfOrdinal("Changed") > 0
                         || cmd.IndexOfOrdinal("Context") > 0
@@ -159,8 +160,11 @@ namespace PluginCore.Controls
                         || cmd.IndexOfOrdinal("Get") > 0
                         || cmd.IndexOfOrdinal("Set") > 0
                         || cmd.IndexOfOrdinal("SDK") > 0
+                        || cmd == "ASCompletion.FileModelUpdated"
+                        || cmd == "ASCompletion.PathExplorerFinished"
+                        || cmd == "ASCompletion.ContextualGenerator.AddOptions"
                         || cmd == "ResultsPanel.ClearResults"
-                        || cmd == "LintingManager.FilesLinted")
+                        || cmd.IndexOfOrdinal("LintingManager.") == 0)
                         return; // ignore notifications
                     break;
             }
