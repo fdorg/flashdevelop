@@ -283,6 +283,15 @@ namespace ProjectManager.Projects.Haxe
             return className;
         }
 
+        public new string OutputPathAbsolute {
+            get
+            {
+                var result = base.OutputPathAbsolute;
+                if (System.IO.Directory.Exists(result)) result = result.TrimEnd('\\', '/');
+                return result;
+            }
+        }
+
         #region Load/Save
 
         public static HaxeProject Load(string path)
