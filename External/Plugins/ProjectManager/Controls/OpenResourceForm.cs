@@ -506,6 +506,7 @@ namespace ProjectManager.Controls
                 return new List<string>();
             }
 
+            // If query contains any upper-case letters, consider case significant and match
             bool fileCaseMatters = !string.Equals(searchFile.ToLowerInvariant(), searchFile);
             bool dirCaseMatters = !string.Equals(searchDir.ToLowerInvariant(), searchDir);
             double fileScoreWeight = FileScoreWeightFactor * searchFile.Length;
@@ -593,8 +594,8 @@ namespace ProjectManager.Controls
             if (str.StartsWith(query, caseMatters ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase))
                 return query.Length + 1; // Exact match at the beginning - highest score
 
-            if (pathSeparator == null && (caseMatters ? str.Contains(query) : str.ToLower().Contains(query.ToLower()))) // Contains bonus
-                return query.Length; // Exact match - second highest score
+            if (pathSeparator == null && (caseMatters ? str.Contains(query) : str.ToLower().Contains(query.ToLower())))
+                return query.Length; // Exact match somewhere - second highest score
 
             double score = 0;
             int strIndex = 0;
@@ -603,8 +604,8 @@ namespace ProjectManager.Controls
             {
                 var queryChar = query[i];
 
-                // Require exact (case-sensitive) match for upper-case characters in the query (should provide results similar to the superseded AdvancedSearchMatch).
-                var index = str.IndexOf(queryChar.ToString(), strIndex, Char.IsUpper(queryChar) ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase);
+                // Use case-sensitive matching if caseMatters is true. Should provide results similar to the superseded `AdvancedSearchMatch`.
+                var index = str.IndexOf(queryChar.ToString(), strIndex, caseMatters ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase);
                 if (index == -1) return 0;
 
                 double charScore;
