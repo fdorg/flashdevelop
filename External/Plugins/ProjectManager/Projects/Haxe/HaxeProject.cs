@@ -283,7 +283,8 @@ namespace ProjectManager.Projects.Haxe
             return className;
         }
 
-        public new string OutputPathAbsolute {
+        public new string OutputPathAbsolute
+        {
             get
             {
                 var result = base.OutputPathAbsolute;
