@@ -45,7 +45,7 @@ namespace ProjectManager.Controls
                     "src\\com\\module\\test\\ITestModule.hx",
                     "src\\com\\module\\test\\TestModule.hx"
                 });
-                var results = SearchUtil.getMatchedItems(files, "m", "\\", 1);
+                var results = SearchUtil.getMatchedItems(files, "m", '\\', 1);
                 Assert.AreEqual(results.Count, 1);
 
                 results = SearchUtil.getMatchedItems(files, "m", '\\', 1);
