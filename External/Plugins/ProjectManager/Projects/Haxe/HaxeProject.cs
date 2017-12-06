@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
@@ -299,13 +300,34 @@ namespace ProjectManager.Projects.Haxe
 
             try
             {
-                return reader.ReadProject();
+                var project = reader.ReadProject();
+                var options = project.CompilerOptions;
+                var hxmls = options.Additional.Where(line => line.TrimEnd().EndsWith(".hxml")).ToArray();
+                if (hxmls.Length > 0)
+                {
+                    var libs = new HashSet<string>(options.Libraries);
+                    var defs = new HashSet<string>(options.Directives);
+                    var cps = new HashSet<string>(project.Classpaths);
+                    var adds = new HashSet<string>(options.Additional.Where(line => !line.TrimEnd().EndsWith(".hxml")));
+                    var target = string.Empty;
+                    var haxeTarget = string.Empty;
+                    var output = string.Empty;
+                    var mainClass = string.Empty;
+                    project.ParseHxmlEntries(hxmls, defs, cps, libs, adds, ref target, ref haxeTarget, ref output, ref mainClass);
+                    if (libs.Count > 0) options.Libraries = libs.ToArray();
+                    if (defs.Count > 0) options.Directives = defs.ToArray();
+                    if (adds.Count > 0) options.Additional = adds.ToArray();
+                    if (cps.Count > 0)
+                    {
+                        project.Classpaths.Clear();
+                        project.Classpaths.AddRange(cps);
+                    }
+                }
+                return project;
             }
             catch (XmlException exception)
             {
-                string format = string.Format("Error in XML Document line {0}, position {1}.",
-                    exception.LineNumber, exception.LinePosition);
-                throw new Exception(format, exception);
+                throw new Exception($"Error in XML Document line {exception.LineNumber}, position {exception.LinePosition}.", exception);
             }
             finally { reader.Close(); }
         }
@@ -357,9 +379,9 @@ namespace ProjectManager.Projects.Haxe
             string target = PlatformData.JAVASCRIPT_PLATFORM;
             string haxeTarget = "js";
             string output = "";
-            if (raw != null)
-                ParseHxmlEntries(raw, defs, cps, libs, add, ref target, ref haxeTarget, ref output);
-
+            string mainClass = CompilerOptions.MainClass;
+            if (raw != null) ParseHxmlEntries(raw, defs, cps, libs, add, ref target, ref haxeTarget, ref output, ref mainClass);
+            CompilerOptions.MainClass = mainClass;
             CompilerOptions.Directives = defs.ToArray();
             CompilerOptions.Libraries = libs.ToArray();
             CompilerOptions.Additional = add.ToArray();
@@ -385,7 +407,7 @@ namespace ProjectManager.Projects.Haxe
             }
         }
 
-        private void ParseHxmlEntries(string[] lines, List<string> defs, List<string> cps, List<string> libs, List<string> add, ref string target, ref string haxeTarget, ref string output)
+        private void ParseHxmlEntries(IEnumerable<string> lines, ICollection<string> defs, ICollection<string> cps, ICollection<string> libs, ICollection<string> add, ref string target, ref string haxeTarget, ref string output, ref string mainClass)
         {
             Regex reHxOp = new Regex("^-([a-z0-9-]+)\\s*(.*)", RegexOptions.IgnoreCase);
             foreach (string line in lines)
@@ -405,7 +427,7 @@ namespace ProjectManager.Projects.Haxe
                         case "D": defs.Add(value); break;
                         case "cp": cps.Add(CleanPath(value)); break;
                         case "lib": libs.Add(value); break;
-                        case "main": CompilerOptions.MainClass = value; break;
+                        case "main": mainClass = value; break;
                         case "swf":
                         case "swf9":
                             target = PlatformData.FLASHPLAYER_PLATFORM;
@@ -436,11 +458,39 @@ namespace ProjectManager.Projects.Haxe
                 }
                 else if (!trimmedLine.StartsWith("#") && trimmedLine.EndsWith(".hxml", StringComparison.OrdinalIgnoreCase))
                 {
-                    string subhxml = this.GetAbsolutePath(trimmedLine);
-                    if (File.Exists(subhxml))
+                    var subhxml = GetAbsolutePath(trimmedLine);
+                    if (!File.Exists(subhxml)) continue;
+                    var subhxmlDir = Path.GetDirectoryName(subhxml);
+                    var sublines = new List<string>();
+                    foreach (var it in File.ReadAllLines(subhxml))
                     {
-                        ParseHxmlEntries(File.ReadAllLines(subhxml), defs, cps, libs, add, ref target, ref haxeTarget, ref output);
+                        var subline = it.Trim();
+                        var match = reHxOp.Match(subline);
+                        if (match.Success)
+                        {
+                            var op = match.Groups[1].Value;
+                            switch (op)
+                            {
+                                case "cp":
+                                case "resource":
+                                case "lib-java":
+                                case "lib-net":
+                                case "lib-std":
+                                case "swf-lib":
+                                case "swf-lib-extern":
+                                case "cmd":
+                                    var path = match.Groups[2].Value.Trim();
+                                    if (!Path.IsPathRooted(path)) subline = "-" + op + " " + GetRelativePath(CleanPath(Path.GetFullPath(Path.Combine(subhxmlDir, path))));
+                                    break;
+                            }
+                        }
+                        else if (subline.EndsWith(".hxml", StringComparison.OrdinalIgnoreCase) && !Path.IsPathRooted(subline))
+                        {
+                            subline = GetRelativePath(CleanPath(Path.GetFullPath(Path.Combine(subhxmlDir, subline))));
+                        }
+                        sublines.Add(subline);
                     }
+                    ParseHxmlEntries(sublines, defs, cps, libs, add, ref target, ref haxeTarget, ref output, ref mainClass);
                 }
             }
         }
