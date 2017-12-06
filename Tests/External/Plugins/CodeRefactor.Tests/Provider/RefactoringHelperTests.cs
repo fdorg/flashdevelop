@@ -76,6 +76,7 @@ namespace CodeRefactor.Provider
                 return new Result(target.IsPackage, target.Member, target.Type);
             }
         }
+
         [TestFixture]
         class GetDefaultRefactorTargetNameTests : RefactoringHelperTests
         {
