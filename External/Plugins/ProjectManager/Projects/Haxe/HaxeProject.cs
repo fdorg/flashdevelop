@@ -403,7 +403,10 @@ namespace ProjectManager.Projects.Haxe
                     switch (op)
                     {
                         case "D": defs.Add(value); break;
-                        case "cp": cps.Add(CleanPath(value)); break;
+                        case "cp":
+                            value = value.Replace("\"", string.Empty);
+                            cps.Add(CleanPath(value));
+                            break;
                         case "lib": libs.Add(value); break;
                         case "main": CompilerOptions.MainClass = value; break;
                         case "swf":
