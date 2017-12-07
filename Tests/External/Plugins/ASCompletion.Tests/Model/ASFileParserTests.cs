@@ -2118,6 +2118,33 @@ namespace ASCompletion.Model
                 var model = ASFileParser.ParseFile(srcModel);
                 return model.Classes[0].LineTo;
             }
+
+            static IEnumerable<TestCaseData> ParseClassTestCases_issue104
+            {
+                get
+                {
+                    yield return new TestCaseData(TestFile.ReadAllText("ASCompletion.Test_Files.parser.haxe.Issue104_Typedef.hx"))
+                        .Returns("\r * typedef\r ")
+                        .SetName("Issue 104. typdef");
+                    yield return new TestCaseData(TestFile.ReadAllText("ASCompletion.Test_Files.parser.haxe.Issue104_Class.hx"))
+                        .Returns("\r * class\r ")
+                        .SetName("Issue 104. class");
+                    yield return new TestCaseData(TestFile.ReadAllText("ASCompletion.Test_Files.parser.haxe.Issue104_Interface.hx"))
+                        .Returns("\r * interface\r ")
+                        .SetName("Issue 104. interface");
+                    yield return new TestCaseData(TestFile.ReadAllText("ASCompletion.Test_Files.parser.haxe.Issue104_Enum.hx"))
+                        .Returns("\r * enum\r ")
+                        .SetName("Issue 104. enum");
+                }
+            }
+
+            [Test, TestCaseSource(nameof(ParseClassTestCases_issue104))]
+            public string ParseFile_Issue104(string sourceText)
+            {
+                var srcModel = new FileModel {Context = new HaXeContext.Context(new HaXeContext.HaXeSettings())};
+                new ASFileParser().ParseSrc(srcModel, sourceText);
+                return srcModel.Classes.First().ToMemberModel().Comments;
+            }
         }
     }
 }

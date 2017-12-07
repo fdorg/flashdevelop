@@ -4907,7 +4907,7 @@ namespace ASCompletion.Completion
         {
             get
             {
-                return ClassModel.MemberDeclaration(member) + ASDocumentation.GetTipDetails(member, null); 
+                return ClassModel.MemberDeclaration(member) + ASDocumentation.GetTipDetails(member, null);
             }
         }
 
