@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using AS3Context;
 using ASCompletion.Context;
 using ASCompletion.Model;
@@ -920,6 +921,32 @@ namespace ASCompletion.Completion
                 SnippetHelper.PostProcessSnippets(sci, 0);
                 var pos = sci.CurrentPos - 1;
                 return ASComplete.FindParameterIndex(sci, ref pos);
+            }
+        }
+
+        [TestFixture]
+        public class Issue104Tests : ASCompleteTests
+        {
+            static IEnumerable<TestCaseData> ParseClassTestCases_issue104
+            {
+                get
+                {
+                    yield return new TestCaseData("Iterable", FlagType.Class | FlagType.TypeDef)
+                        .Returns("\n\tAn `Iterable` is a data structure which has an `iterator()` method.\n\tSee `Lambda` for generic functions on iterable structures.\n\n\t@see https://haxe.org/manual/lf-iterators.html\n")
+                        .SetName("Issue 104. typdef");
+                    yield return new TestCaseData("Any", FlagType.Class | FlagType.Abstract)
+                        .Returns("\n\t`Any` is a type that is compatible with any other in both ways.\n\n\tThis means that a value of any type can be assigned to `Any`, and\n\tvice-versa, a value of `Any` type can be assigned to any other type.\n\n\tIt's a more type-safe alternative to `Dynamic`, because it doesn't\n\tsupport field access or operators and it's bound to monomorphs. So,\n\tto work with the actual value, it needs to be explicitly promoted\n\tto another type.\n")
+                        .SetName("Issue 104. abstract");
+                }
+            }
+
+            [Test, TestCaseSource(nameof(ParseClassTestCases_issue104))]
+            public string ParseFile_Issue104(string name, FlagType flags)
+            {
+                ASContext.Context.SetHaxeFeatures();
+                var visibleExternalElements = ASContext.Context.GetVisibleExternalElements();
+                var result = visibleExternalElements.Search(name, flags, 0);
+                return result.Comments;
             }
         }
 
