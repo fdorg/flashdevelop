@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using AS3Context;
 using ASCompletion.Context;
 using ASCompletion.Model;
