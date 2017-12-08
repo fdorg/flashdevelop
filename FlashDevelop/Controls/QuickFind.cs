@@ -78,7 +78,6 @@ namespace FlashDevelop.Controls
         public void InitializeComponent()
         {
             this.ImageScalingSize = ScaleHelper.Scale(new Size(16, 16));
-            this.highlightTimer = new Timer();
             this.wholeWordCheckBox = new CheckBoxEx();
             this.matchCaseCheckBox = new CheckBoxEx();
             this.highlightCheckBox = new CheckBoxEx();

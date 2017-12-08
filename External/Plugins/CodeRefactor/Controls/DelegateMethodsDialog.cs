@@ -27,6 +27,7 @@ namespace CodeRefactor.Controls
             this.FormGuid = "5e8c8d89-b70d-4840-9f49-1027b226517a";
             this.Text = TextHelper.GetString("Title.DelegateMethods");
             this.InitializeComponent();
+            this.checkedListBox.Font = PluginBase.Settings.DefaultFont; // Do not remove!!!
             this.btnOK.Focus();
         }
 
@@ -59,7 +60,6 @@ namespace CodeRefactor.Controls
             this.checkedListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.checkedListBox.CheckOnClick = true;
             this.checkedListBox.FormattingEnabled = true;
-            this.checkedListBox.Font = PluginBase.Settings.DefaultFont; // Do not remove!!!
             this.checkedListBox.Location = new System.Drawing.Point(9, 9);
             this.checkedListBox.Name = "checkedListBox";
             this.checkedListBox.Size = new System.Drawing.Size(463, 270);

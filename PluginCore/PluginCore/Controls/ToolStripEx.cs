@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Text;
 using System.Windows.Forms;
-using System.Collections.Generic;
-using PluginCore.Managers;
 using System.Reflection;
 
 namespace PluginCore.Controls
@@ -25,8 +22,11 @@ namespace PluginCore.Controls
         public ToolStripEx()
         {
             this.ItemAdded += new ToolStripItemEventHandler(this.OnItemAdded);
-            ((Form)PluginBase.MainForm).Deactivate += new EventHandler(this.OnFormDeactivate);
-            ((Form)PluginBase.MainForm).Activated += new EventHandler(this.OnFormDeactivate);
+            if (PluginBase.MainForm != null)
+            {
+                ((Form)PluginBase.MainForm).Deactivate += new EventHandler(this.OnFormDeactivate);
+                ((Form)PluginBase.MainForm).Activated += new EventHandler(this.OnFormDeactivate);
+            }
         }
 
         /// <summary>

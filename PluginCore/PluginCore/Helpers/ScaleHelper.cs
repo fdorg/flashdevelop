@@ -19,7 +19,7 @@ namespace PluginCore.Helpers
         /// </summary>
         public static double GetScale()
         {
-            if (curScale != double.MinValue) return curScale;
+            if (PluginBase.MainForm == null || curScale != double.MinValue) return curScale;
             using (var g = Graphics.FromHwnd(PluginBase.MainForm.Handle))
             {
                 curScale = g.DpiX / 96f;

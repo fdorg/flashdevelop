@@ -23,7 +23,7 @@ namespace PluginCore.Controls
         public SmartForm()
         {
             this.formProps = new FormProps();
-            this.Load += new EventHandler(this.SmartFormLoad);
+            if (PluginBase.MainForm != null) this.Load += new EventHandler(this.SmartFormLoad);
             this.FormClosed += new FormClosedEventHandler(this.SmartFormClosed);
             EventManager.AddEventHandler(this, EventType.ApplyTheme);
             ScaleHelper.AdjustForHighDPI(this);
@@ -50,10 +50,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Gets or sets the help link
         /// </summary>
-        public override Boolean UseTheme
-        {
-            get { return PluginBase.MainForm.GetThemeFlag("SmartForm.UseTheme", false); }
-        }
+        public override Boolean UseTheme => PluginBase.MainForm != null && PluginBase.MainForm.GetThemeFlag("SmartForm.UseTheme", false);
 
         /// <summary>
         /// Path to the unique setting file

@@ -42,6 +42,7 @@ namespace FlashDevelop.Dialogs
             this.Font = Globals.Settings.DefaultFont;
             this.FormGuid = "ea726ad2-ef09-4e4c-bfc6-41cc980be521";
             this.InitializeComponent();
+            this.valueTextBox.Font = Globals.Settings.ConsoleFont;
             this.InitializeItemGroups();
             this.InitializeContextMenu();
             this.InitializeGraphics();
@@ -137,7 +138,6 @@ namespace FlashDevelop.Dialogs
             //
             this.valueTextBox.AcceptsTab = true;
             this.valueTextBox.AcceptsReturn = true;
-            this.valueTextBox.Font = Globals.Settings.ConsoleFont;
             this.valueTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.valueTextBox.Location = new System.Drawing.Point(14, 77);
             this.valueTextBox.Multiline = true;
