@@ -50,10 +50,7 @@ namespace PluginCore.Controls
         /// <summary>
         /// Gets or sets the help link
         /// </summary>
-        public override Boolean UseTheme
-        {
-            get { return PluginBase.MainForm.GetThemeFlag("SmartForm.UseTheme", false); }
-        }
+        public override Boolean UseTheme => PluginBase.MainForm != null && PluginBase.MainForm.GetThemeFlag("SmartForm.UseTheme", false);
 
         /// <summary>
         /// Path to the unique setting file
@@ -103,6 +100,7 @@ namespace PluginCore.Controls
         /// </summary>
         private void SmartFormLoad(Object sender, EventArgs e)
         {
+            if (PluginBase.MainForm == null) return;
             this.ApplyTheming();
             if (this.StartPosition == FormStartPosition.CenterParent)
             {

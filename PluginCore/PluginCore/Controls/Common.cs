@@ -16,10 +16,7 @@ namespace System.Windows.Forms
         /// <summary>
         /// Should we use custom border panel?
         /// </summary>
-        public static Boolean UseCustomBorder
-        {
-            get { return PluginBase.MainForm.GetThemeFlag("ThemeManager.UseCustomBorder", false); }
-        }
+        public static Boolean UseCustomBorder => PluginBase.MainForm != null && PluginBase.MainForm.GetThemeFlag("ThemeManager.UseCustomBorder", false);
 
         /// <summary>
         /// Adds a wrapper panel to the control to create a border.
@@ -79,7 +76,7 @@ namespace System.Windows.Forms
     public class DataGridViewEx : DataGridView, IThemeHandler
     {
         private Boolean themeBorder = false;
-        public Boolean UseTheme { get; set; } = true;
+        public Boolean UseTheme { get; set; } = PluginBase.MainForm != null;
         public Color BorderColor { get; set; } = SystemColors.ControlDark;
 
         public DataGridViewEx()
@@ -142,7 +139,7 @@ namespace System.Windows.Forms
     {
         private Timer expandDelay;
         private Boolean themeBorder = false;
-        public Boolean UseTheme { get; set; } = true;
+        public Boolean UseTheme { get; set; } = PluginBase.MainForm != null;
         public Color GridLineColor { get; set; } = SystemColors.Control;
         public Color BorderColor { get; set; } = SystemColors.ControlDark;
         private Boolean themeGridLines = false;
@@ -253,7 +250,7 @@ namespace System.Windows.Forms
     public class TreeViewEx : TreeView
     {
         private Boolean themeBorder = false;
-        public Boolean UseTheme { get; set; } = true;
+        public Boolean UseTheme { get; set; } = PluginBase.MainForm != null;
         public Color BorderColor { get; set; } = SystemColors.ControlDark;
 
         // Removes/hides focus cues
@@ -295,9 +292,8 @@ namespace System.Windows.Forms
     {
         public ToolStripComboBoxEx() : base(new FlatCombo())
         {
-            Font font = PluginBase.Settings.DefaultFont;
             this.FlatCombo.FlatStyle = FlatStyle.Popup;
-            this.FlatCombo.Font = font;
+            if (PluginBase.MainForm != null) this.FlatCombo.Font = PluginBase.Settings.DefaultFont;
         }
 
         protected override Size DefaultSize
@@ -342,16 +338,16 @@ namespace System.Windows.Forms
 
     public class FlatCombo : ComboBox, IThemeHandler
     {
-        public Boolean UseTheme { get; set; } = true;
+        public Boolean UseTheme { get; set; } = PluginBase.MainForm != null;
         private ComboBoxStyle prevStyle = ComboBoxStyle.DropDown;
-        private Color borderColor { get; set; } = SystemColors.ControlDark;
+        private Color BorderColor { get; set; } = SystemColors.ControlDark;
         private Boolean updatingStyle = false;
 
         public void AfterTheming()
         {
             Color fore = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ForeColor");
             Color back = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BackColor");
-            this.borderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor", SystemColors.ControlDark);
+            this.BorderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor", SystemColors.ControlDark);
             this.ForeColor = UseTheme && fore != Color.Empty ? fore : SystemColors.ControlText;
             this.BackColor = UseTheme && back != Color.Empty ? back : SystemColors.Window;
         }
@@ -380,7 +376,7 @@ namespace System.Windows.Forms
                     Int32 pad = ScaleHelper.Scale(2);
                     Int32 width = ScaleHelper.Scale(18);
                     Graphics g = this.CreateGraphics();
-                    var pen = new Pen(this.borderColor);
+                    var pen = new Pen(this.BorderColor);
                     var back = new SolidBrush(PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BackColor", SystemColors.Window));
                     var arrow = new SolidBrush(PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ForeColor", SystemColors.ControlText));
                     Rectangle backRect = new Rectangle(this.ClientRectangle.X, this.ClientRectangle.Y, this.ClientRectangle.Width - 1, this.ClientRectangle.Height - 1);
@@ -424,7 +420,7 @@ namespace System.Windows.Forms
         protected override void OnMouseEnter(System.EventArgs e)
         {
             base.OnMouseEnter(e);
-            this.borderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ActiveBorderColor", SystemColors.Highlight);
+            this.BorderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ActiveBorderColor", SystemColors.Highlight);
             this.Invalidate();
         }
 
@@ -432,28 +428,28 @@ namespace System.Windows.Forms
         {
             base.OnMouseLeave(e);
             if (this.Focused) return;
-            this.borderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor", SystemColors.ControlDark);
+            this.BorderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor", SystemColors.ControlDark);
             this.Invalidate();
         }
 
         protected override void OnLostFocus(System.EventArgs e)
         {
             base.OnLostFocus(e);
-            this.borderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor", SystemColors.ControlDark);
+            this.BorderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor", SystemColors.ControlDark);
             this.Invalidate();
         }
 
         protected override void OnGotFocus(System.EventArgs e)
         {
             base.OnGotFocus(e);
-            this.borderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ActiveBorderColor", SystemColors.Highlight);
+            this.BorderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ActiveBorderColor", SystemColors.Highlight);
             this.Invalidate();
         }
 
         protected override void OnMouseHover(System.EventArgs e)
         {
             base.OnMouseHover(e);
-            this.borderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ActiveBorderColor", SystemColors.Highlight);
+            this.BorderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ActiveBorderColor", SystemColors.Highlight);
             this.Invalidate();
         }
     }
@@ -461,7 +457,7 @@ namespace System.Windows.Forms
     public class ListBoxEx : ListBox
     {
         private Boolean themeBorder = false;
-        public Boolean UseTheme { get; set; } = true;
+        public Boolean UseTheme { get; set; } = PluginBase.MainForm != null;
         public Color BorderColor { get; set; } = SystemColors.ControlDark;
 
         protected override void WndProc(ref Message message)
@@ -493,7 +489,7 @@ namespace System.Windows.Forms
     public class TextBoxEx : TextBox
     {
         private Boolean themeBorder = false;
-        public Boolean UseTheme { get; set; } = true;
+        public Boolean UseTheme { get; set; } = PluginBase.MainForm != null;
         public Color BorderColor { get; set; } = SystemColors.ControlDark;
 
         protected override void WndProc(ref Message message)
@@ -526,7 +522,7 @@ namespace System.Windows.Forms
 
     public class RichTextBoxEx : RichTextBox
     {
-        public Boolean UseTheme { get; set; } = true;
+        public Boolean UseTheme { get; set; } = PluginBase.MainForm != null;
         public Color BorderColor { get; set; } = SystemColors.ControlDark;
         private Boolean themeBorder = false;
 
@@ -558,7 +554,7 @@ namespace System.Windows.Forms
 
     public class ProgressBarEx : ProgressBar
     {
-        public Boolean UseTheme { get; set; } = true;
+        public Boolean UseTheme { get; set; } = PluginBase.MainForm != null;
         public Color BorderColor { get; set; } = SystemColors.ControlDark;
 
         public ProgressBarEx()
@@ -583,7 +579,7 @@ namespace System.Windows.Forms
 
     public class GroupBoxEx : GroupBox
     {
-        public Boolean UseTheme { get; set; } = true;
+        public Boolean UseTheme { get; set; } = PluginBase.MainForm != null;
         public Color BorderColor { get; set; } = SystemColors.ControlDark;
 
         protected override void OnPaint(PaintEventArgs e)
@@ -608,7 +604,7 @@ namespace System.Windows.Forms
 
     public class PropertyGridEx : PropertyGrid
     {
-        public Boolean UseTheme { get; set; } = true;
+        public Boolean UseTheme { get; set; } = PluginBase.MainForm != null;
 
         public PropertyGridEx()
         {
@@ -654,7 +650,7 @@ namespace System.Windows.Forms
 
     public class PictureBoxEx : PictureBox
     {
-        public Boolean UseTheme { get; set; } = true;
+        public Boolean UseTheme { get; set; } = PluginBase.MainForm != null;
         public Color BorderColor { get; set; } = SystemColors.ControlDark;
         private Boolean themeBorder = false;
 
@@ -680,7 +676,7 @@ namespace System.Windows.Forms
 
     public class ButtonEx : Button
     {
-        public Boolean UseTheme { get; set; } = true;
+        public Boolean UseTheme { get; set; } = PluginBase.MainForm != null;
         public Color DisabledTextColor { get; set; } = SystemColors.ControlDark;
         public Color DisabledBackColor { get; set; } = SystemColors.Control;
 
@@ -703,7 +699,7 @@ namespace System.Windows.Forms
 
     public class CheckBoxEx : CheckBox
     {
-        public Boolean UseTheme { get; set; } = true;
+        public Boolean UseTheme { get; set; } = PluginBase.MainForm != null;
         public Color DisabledTextColor { get; set; } = SystemColors.ControlDark;
         public Color BorderColor { get; set; } = SystemColors.ControlDark;
 
@@ -752,7 +748,7 @@ namespace System.Windows.Forms
 
     public class FormEx : Form
     {
-        public virtual Boolean UseTheme { get; set; } = true;
+        public virtual Boolean UseTheme { get; set; } = PluginBase.MainForm != null;
 
         public FormEx()
         {
@@ -801,10 +797,7 @@ namespace System.Windows.Forms
 
     public class TabControlEx : CustomTabControl, IThemeHandler
     {
-        public Boolean UseTheme
-        {
-            get { return PluginBase.MainForm.GetThemeFlag("TabControl.UseTheme", false); }
-        }
+        public Boolean UseTheme => PluginBase.MainForm != null && PluginBase.MainForm.GetThemeFlag("TabControl.UseTheme", false);
 
         public TabControlEx()
         {
@@ -831,7 +824,7 @@ namespace System.Windows.Forms
 
     public class StatusBarEx : StatusBar
     {
-        public Boolean UseTheme { get; set; } = true;
+        public Boolean UseTheme { get; set; } = PluginBase.MainForm != null;
 
         protected override void WndProc(ref Message message)
         {

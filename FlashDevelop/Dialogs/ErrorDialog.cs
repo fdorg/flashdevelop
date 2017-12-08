@@ -1,12 +1,7 @@
 using System;
-using System.Text;
 using System.Media;
 using System.Drawing;
-using System.Windows.Forms;
-using System.ComponentModel;
-using System.Collections.Generic;
 using PluginCore.Localization;
-using FlashDevelop.Helpers;
 using PluginCore.Controls;
 
 namespace FlashDevelop.Dialogs
@@ -27,6 +22,7 @@ namespace FlashDevelop.Dialogs
             this.Font = Globals.Settings.DefaultFont;
             this.FormGuid = "4f534f7c-8078-4053-9c54-343129c513b3";
             this.InitializeComponent();
+            this.infoTextBox.Font = Globals.Settings.ConsoleFont;
             this.ApplyLocalizedTexts();
             this.InitializeGraphics();
         }
@@ -85,7 +81,6 @@ namespace FlashDevelop.Dialogs
             // infoTextBox
             // Font needs to be set here so that controls resize correctly in high-dpi
             //
-            this.infoTextBox.Font = Globals.Settings.ConsoleFont;
             this.infoTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.infoTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.infoTextBox.Location = new System.Drawing.Point(13, 35);
