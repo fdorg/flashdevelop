@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AS2Context.Description.DefaultFlashVersion" xml:space="preserve">
     <value>Flash Player의 기본 버전.</value>
@@ -337,6 +337,7 @@
   </data>
   <data name="ASCompletion.Label.TypesExplorer" xml:space="preserve">
     <value>프로젝트 유형 탐색기...</value>
+    <comment>Modified after 5.3.0</comment>
   </data>
   <data name="ASCompletion.Label.ViewMenuItem" xml:space="preserve">
     <value>아웃라인 패널</value>

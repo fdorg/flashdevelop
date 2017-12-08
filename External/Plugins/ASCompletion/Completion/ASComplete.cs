@@ -3463,6 +3463,11 @@ namespace ASCompletion.Completion
                     var c2 = c;
                     c = (char)sci.CharAt(position);
                     // end of regex literal
+                    if ((dQuotes > 0 && c != '\"') || (sQuotes > 0 && c != '\''))
+                    {
+                        sbSub.Insert(0, c);
+                        continue;
+                    }
                     if (inRegex)
                     {
                         inRegex = false;
@@ -4907,7 +4912,7 @@ namespace ASCompletion.Completion
         {
             get
             {
-                return ClassModel.MemberDeclaration(member) + ASDocumentation.GetTipDetails(member, null); 
+                return ClassModel.MemberDeclaration(member) + ASDocumentation.GetTipDetails(member, null);
             }
         }
 
