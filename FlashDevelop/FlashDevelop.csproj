@@ -202,9 +202,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Dialogs\ClipboardHistoryDialog.resx">
-      <DependentUpon>ClipboardHistoryDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ControlDialog.resx">
       <DependentUpon>ControlDialog.cs</DependentUpon>
     </EmbeddedResource>
