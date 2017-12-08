@@ -286,8 +286,7 @@ namespace ASCompletion
                                 UpdateMarkersFromCache(document.SplitSci2);
                             }
                         }
-                        break;
-                        //goto case EventType.SyntaxChange;
+                        goto case EventType.SyntaxChange;
                     case EventType.SyntaxChange:
                     case EventType.FileSwitch:
                         if (!doc.IsEditable)
