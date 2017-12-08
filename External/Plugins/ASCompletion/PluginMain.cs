@@ -212,6 +212,10 @@ namespace ASCompletion
                         if (!doc.IsEditable) return;
                         timerPosition.Enabled = false;
                         timerPosition.Enabled = true;
+
+                        //Refresh from cache
+                        UpdateMarkersFromCache(PluginBase.MainForm.CurrentDocument.SplitSci1);
+                        UpdateMarkersFromCache(PluginBase.MainForm.CurrentDocument.SplitSci2);
                         return;
 
                     // key combinations
@@ -282,7 +286,8 @@ namespace ASCompletion
                                 UpdateMarkersFromCache(document.SplitSci2);
                             }
                         }
-                        goto case EventType.SyntaxChange;
+                        break;
+                        //goto case EventType.SyntaxChange;
                     case EventType.SyntaxChange:
                     case EventType.FileSwitch:
                         if (!doc.IsEditable)
