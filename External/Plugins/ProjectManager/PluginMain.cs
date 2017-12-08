@@ -1217,31 +1217,31 @@ namespace ProjectManager
 
         #region Event Broadcasting
 
-        public void BroadcastMenuInfo()
+        private void BroadcastMenuInfo()
         {
             DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.Menu, this.menus.ProjectMenu);
             EventManager.DispatchEvent(this, de);
         }
 
-        public void BroadcastToolBarInfo()
+        private void BroadcastToolBarInfo()
         {
             DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.ToolBar, this.pluginUI.TreeBar);
             EventManager.DispatchEvent(this, de);
         }
 
-        public void BroadcastProjectInfo(Project project)
+        private void BroadcastProjectInfo(Project project)
         {
             DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.Project, project);
             EventManager.DispatchEvent(this, de);
         }
 
-        public void BroadcastBuildComplete(IProject project)
+        private void BroadcastBuildComplete(IProject project)
         {
             DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.BuildComplete, project);
             EventManager.DispatchEvent(this, de);
         }
 
-        public void BroadcastBuildFailed(IProject project)
+        private void BroadcastBuildFailed(IProject project)
         {
             DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.BuildFailed, project);
             EventManager.DispatchEvent(this, de);
