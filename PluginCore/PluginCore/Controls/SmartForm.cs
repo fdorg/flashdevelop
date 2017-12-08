@@ -23,7 +23,7 @@ namespace PluginCore.Controls
         public SmartForm()
         {
             this.formProps = new FormProps();
-            this.Load += new EventHandler(this.SmartFormLoad);
+            if (PluginBase.MainForm != null) this.Load += new EventHandler(this.SmartFormLoad);
             this.FormClosed += new FormClosedEventHandler(this.SmartFormClosed);
             EventManager.AddEventHandler(this, EventType.ApplyTheme);
             ScaleHelper.AdjustForHighDPI(this);
@@ -100,7 +100,6 @@ namespace PluginCore.Controls
         /// </summary>
         private void SmartFormLoad(Object sender, EventArgs e)
         {
-            if (PluginBase.MainForm == null) return;
             this.ApplyTheming();
             if (this.StartPosition == FormStartPosition.CenterParent)
             {
