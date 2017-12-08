@@ -340,14 +340,14 @@ namespace System.Windows.Forms
     {
         public Boolean UseTheme { get; set; } = PluginBase.MainForm != null;
         private ComboBoxStyle prevStyle = ComboBoxStyle.DropDown;
-        private Color BorderColor { get; set; } = SystemColors.ControlDark;
+        private Color borderColor { get; set; } = SystemColors.ControlDark;
         private Boolean updatingStyle = false;
 
         public void AfterTheming()
         {
             Color fore = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ForeColor");
             Color back = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BackColor");
-            this.BorderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor", SystemColors.ControlDark);
+            this.borderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor", SystemColors.ControlDark);
             this.ForeColor = UseTheme && fore != Color.Empty ? fore : SystemColors.ControlText;
             this.BackColor = UseTheme && back != Color.Empty ? back : SystemColors.Window;
         }
@@ -376,7 +376,7 @@ namespace System.Windows.Forms
                     Int32 pad = ScaleHelper.Scale(2);
                     Int32 width = ScaleHelper.Scale(18);
                     Graphics g = this.CreateGraphics();
-                    var pen = new Pen(this.BorderColor);
+                    var pen = new Pen(this.borderColor);
                     var back = new SolidBrush(PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BackColor", SystemColors.Window));
                     var arrow = new SolidBrush(PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ForeColor", SystemColors.ControlText));
                     Rectangle backRect = new Rectangle(this.ClientRectangle.X, this.ClientRectangle.Y, this.ClientRectangle.Width - 1, this.ClientRectangle.Height - 1);
@@ -420,7 +420,7 @@ namespace System.Windows.Forms
         protected override void OnMouseEnter(System.EventArgs e)
         {
             base.OnMouseEnter(e);
-            this.BorderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ActiveBorderColor", SystemColors.Highlight);
+            this.borderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ActiveBorderColor", SystemColors.Highlight);
             this.Invalidate();
         }
 
@@ -428,28 +428,28 @@ namespace System.Windows.Forms
         {
             base.OnMouseLeave(e);
             if (this.Focused) return;
-            this.BorderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor", SystemColors.ControlDark);
+            this.borderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor", SystemColors.ControlDark);
             this.Invalidate();
         }
 
         protected override void OnLostFocus(System.EventArgs e)
         {
             base.OnLostFocus(e);
-            this.BorderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor", SystemColors.ControlDark);
+            this.borderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.BorderColor", SystemColors.ControlDark);
             this.Invalidate();
         }
 
         protected override void OnGotFocus(System.EventArgs e)
         {
             base.OnGotFocus(e);
-            this.BorderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ActiveBorderColor", SystemColors.Highlight);
+            this.borderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ActiveBorderColor", SystemColors.Highlight);
             this.Invalidate();
         }
 
         protected override void OnMouseHover(System.EventArgs e)
         {
             base.OnMouseHover(e);
-            this.BorderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ActiveBorderColor", SystemColors.Highlight);
+            this.borderColor = PluginBase.MainForm.GetThemeColor("ToolStripComboBoxControl.ActiveBorderColor", SystemColors.Highlight);
             this.Invalidate();
         }
     }
