@@ -1282,7 +1282,7 @@ namespace HaXeContext
             if (!File.Exists(process))
                 return null;
 
-            // Run haxe compiler
+            // Prepare process information
             var procInfo = new ProcessStartInfo();
             procInfo.FileName = process;
             procInfo.Arguments = args;
