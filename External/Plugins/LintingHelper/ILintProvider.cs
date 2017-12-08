@@ -1,8 +1,5 @@
 ﻿using PluginCore;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace LintingHelper
 {
@@ -10,7 +7,7 @@ namespace LintingHelper
 
     public interface ILintProvider
     {
-        void LintAsync(string[] files, LintCallback callback);
+        void LintAsync(IEnumerable<string> files, LintCallback callback);
         void LintProjectAsync(IProject project, LintCallback callback);
     }
 }
