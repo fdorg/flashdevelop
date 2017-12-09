@@ -107,7 +107,8 @@ namespace CodeRefactor.Provider
         {
             var type = target.Type;
             var member = target.Member;
-            if (type.IsEnum() || !type.IsVoid() && target.IsStatic && (member == null || (member.Flags & FlagType.Constructor) > 0))
+            if ((type.IsEnum() && member == null)
+                || (!type.IsVoid() && target.IsStatic && (member == null || (member.Flags & FlagType.Constructor) > 0)))
                 return type;
             return member;
         }
