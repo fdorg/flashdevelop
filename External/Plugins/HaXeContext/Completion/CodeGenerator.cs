@@ -3,16 +3,27 @@ using System.Collections.Generic;
 using System.Drawing;
 using ASCompletion.Completion;
 using ASCompletion.Context;
+using ASCompletion.Model;
 using PluginCore;
 using PluginCore.Localization;
 using ScintillaNet;
 
 namespace HaXeContext.Completion
 {
-    internal class CodeGenerator : IContextualGenerator
+    internal class CodeGenerator : ASGenerator
     {
-        public bool ContextualGenerator(ScintillaControl sci, List<ICompletionListItem> options, ASResult expr)
+        public override bool ContextualGenerator(ScintillaControl sci, List<ICompletionListItem> options, ASResult expr)
         {
+            var context = ASContext.Context;
+            if ((context.CurrentClass.Flags & (FlagType.Enum | FlagType.TypeDef)) > 0)
+            {
+                if (contextToken != null && expr.Member == null)
+                {
+                    var type = expr.Type ?? ClassModel.VoidClass;
+                    if (!context.IsImported(type, sci.CurrentLine)) CheckAutoImport(expr, options);
+                }
+                return true;
+            }
             return false;
         }
     }
