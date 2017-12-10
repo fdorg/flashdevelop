@@ -267,8 +267,9 @@ namespace HaXeContext
         {
             features.metadata = new Dictionary<string, string>();
 
-            Process process = CreateHaxeProcess("--help-metas");
-            if (process == null) return;
+            ProcessStartInfo processInfo = CreateHaxeProcessInfo("--help-metas");
+            if (processInfo == null) return;
+            var process = new Process {StartInfo = processInfo, EnableRaisingEvents = true};
             process.Start();
 
             String metaList = process.StandardOutput.ReadToEnd();
@@ -1242,18 +1243,18 @@ namespace HaXeContext
             switch (haxeSettings.CompletionMode)
             {
                 case HaxeCompletionModeEnum.Compiler:
-                    completionModeHandler = new CompilerCompletionHandler(CreateHaxeProcess(""));
+                    completionModeHandler = new CompilerCompletionHandler(CreateHaxeProcessInfo(""));
                     break;
                 case HaxeCompletionModeEnum.CompletionServer:
                     if (haxeSettings.CompletionServerPort < 1024)
-                        completionModeHandler = new CompilerCompletionHandler(CreateHaxeProcess(""));
+                        completionModeHandler = new CompilerCompletionHandler(CreateHaxeProcessInfo(""));
                     else
                     {
                         completionModeHandler =
                             new CompletionServerCompletionHandler(
-                                CreateHaxeProcess("--wait " + haxeSettings.CompletionServerPort),
+                                CreateHaxeProcessInfo("--wait " + haxeSettings.CompletionServerPort),
                                 haxeSettings.CompletionServerPort);
-                        (completionModeHandler as CompletionServerCompletionHandler).FallbackNeeded += new FallbackNeededHandler(Context_FallbackNeeded);
+                        ((CompletionServerCompletionHandler) completionModeHandler).FallbackNeeded += Context_FallbackNeeded;
                     }
                     break;
             }
@@ -1267,13 +1268,13 @@ namespace HaXeContext
                 completionModeHandler.Stop();
                 completionModeHandler = null;
             }
-            completionModeHandler = new CompilerCompletionHandler(CreateHaxeProcess(""));
+            completionModeHandler = new CompilerCompletionHandler(CreateHaxeProcessInfo(""));
         }
 
         /**
-         * Starts a haxe.exe process with the given arguments.
+         * Gets the needed information to create a haxe.exe process with the given arguments.
          */
-        internal Process CreateHaxeProcess(string args)
+        internal ProcessStartInfo CreateHaxeProcessInfo(string args)
         {
             // compiler path
             var hxPath = currentSDK ?? ""; 
@@ -1281,17 +1282,16 @@ namespace HaXeContext
             if (!File.Exists(process))
                 return null;
 
-            // Run haxe compiler
-            Process proc = new Process();
-            proc.StartInfo.FileName = process;
-            proc.StartInfo.Arguments = args;
-            proc.StartInfo.UseShellExecute = false;
-            proc.StartInfo.RedirectStandardOutput = true;
-            proc.StartInfo.RedirectStandardError = true;
-            proc.StartInfo.CreateNoWindow = true;
-            proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            proc.EnableRaisingEvents = true;
-            return proc;
+            // Prepare process information
+            var procInfo = new ProcessStartInfo();
+            procInfo.FileName = process;
+            procInfo.Arguments = args;
+            procInfo.UseShellExecute = false;
+            procInfo.RedirectStandardOutput = true;
+            procInfo.RedirectStandardError = true;
+            procInfo.CreateNoWindow = true;
+            procInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            return procInfo;
         }
 
         internal HaxeComplete GetHaxeComplete(ScintillaControl sci, ASExpr expression, bool autoHide, HaxeCompilerService compilerService)

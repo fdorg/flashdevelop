@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AS2Context.Description.DefaultFlashVersion" xml:space="preserve">
     <value>Default Flash Player target version when no project is defined.</value>
@@ -336,7 +336,8 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
     <value>Rebuild Classpath Cache</value>
   </data>
   <data name="ASCompletion.Label.TypesExplorer" xml:space="preserve">
-    <value>Project Type E&amp;xplorer...</value>
+    <value>Type E&amp;xplorer...</value>
+    <comment>Modified after 5.3.0</comment>
   </data>
   <data name="ASCompletion.Label.ViewMenuItem" xml:space="preserve">
     <value>Outline Panel</value>

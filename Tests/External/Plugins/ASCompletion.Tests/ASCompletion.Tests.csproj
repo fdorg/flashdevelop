@@ -100,6 +100,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Model\ASFileParserTests.cs" />
+    <Compile Include="Model\ClassModelTests.cs" />
     <Compile Include="PluginUIMock.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -735,6 +736,8 @@
     <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case14.hx" />
     <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case15.hx" />
     <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case16.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue1836.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue1836.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
