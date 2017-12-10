@@ -2107,6 +2107,9 @@ namespace ASCompletion.Model
                     yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case16.hx"))
                         .Returns(8)
                         .SetName("Issue 1814. Case 16. !");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case17.hx"))
+                        .Returns(9)
+                        .SetName("Issue 1814. Case 17. switch");
                 }
             }
 
