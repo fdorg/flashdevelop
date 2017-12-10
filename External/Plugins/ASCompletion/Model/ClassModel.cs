@@ -15,7 +15,6 @@ namespace ASCompletion.Model
     public class ClassModel: MemberModel
     {
         static public ClassModel VoidClass;
-        static private List<ClassModel> extensionList;
 
         static private Regex reSpacesAfterEOL = new Regex("(?<!(\n[ \t]*))(\n[ \t]+)(?!\n)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
         static private Regex reEOLAndStar = new Regex(@"[\r\n]+\s*\*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -28,17 +27,6 @@ namespace ASCompletion.Model
             VoidClass = new ClassModel();
             VoidClass.Name = "void";
             VoidClass.InFile = new FileModel("");
-        }
-
-        static private void EndResolveExtend()
-        {
-            extensionList = null;
-        }
-
-        static private void BeginResolveExtend(ClassModel firstClass)
-        {
-            extensionList = new List<ClassModel>();
-            if (firstClass != null) extensionList.Add(firstClass);
         }
 
         public string Constructor;
@@ -111,18 +99,14 @@ namespace ASCompletion.Model
         public void ResolveExtends()
         {
             ClassModel aClass = this;
-            BeginResolveExtend(aClass);
-            try
+            List<ClassModel> extensionList = new List<ClassModel> {this};
+            while (!aClass.IsVoid())
             {
-                while (!aClass.IsVoid())
-                {
-                    aClass = aClass.ResolveExtendedType();
-                }
+                aClass = aClass.ResolveExtendedType(extensionList);
             }
-            finally { EndResolveExtend(); }
         }
 
-        private ClassModel ResolveExtendedType()
+        private ClassModel ResolveExtendedType(List<ClassModel> extensionList)
         {
             if (InFile.Context == null)
             {
@@ -156,23 +140,21 @@ namespace ASCompletion.Model
             if (!extends.IsVoid())
             {
                 // check loops in inheritance
-                if (extensionList != null)
+                if (extends.Name != objectKey)
                 {
-                    if (extends.Name != objectKey)
+                    foreach(ClassModel model in extensionList)
                     {
-                        foreach(ClassModel model in extensionList)
+                        if (model.QualifiedName == extends.QualifiedName)
                         {
-                            if (model.QualifiedName == extends.QualifiedName)
-                            {
-                                string info = String.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), Type, extensionList[0].Type);
-                                MessageBar.ShowWarning(info);
-                                resolvedExtend = null;
-                                return VoidClass;
-                            }
+                            string info = String.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), Type, extensionList[0].Type);
+                            MessageBar.ShowWarning(info);
+                            resolvedExtend = null;
+                            return VoidClass;
                         }
                     }
-                    extensionList.Add(extends);
                 }
+                extensionList.Add(extends);
+
                 extends.InFile.Check();
             }
             resolvedExtend = new WeakReference(extends);
@@ -235,6 +217,7 @@ namespace ASCompletion.Model
             MemberModel self = new MemberModel();
             //int p = Name.LastIndexOf(".");
             //self.Name = (p >= 0) ? Name.Substring(p + 1) : Name;
+            self.Comments = Comments;
             self.Name = Name;
             self.Type = QualifiedName;
             self.Flags = Flags;

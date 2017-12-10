@@ -125,6 +125,7 @@
     <ProjectReference Include="..\ASCompletion.Tests\ASCompletion.Tests.csproj">
       <Project>{ABC71D26-295C-4C6C-B6DE-320AD49EEF79}</Project>
       <Name>ASCompletion.Tests</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -167,6 +168,7 @@
     <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\PrivateTypedef.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\AfterOrganizeImports_withElseIfDirective.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\BeforeOrganizeImports_withElseIfDirective.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\LocalVar_enum.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
