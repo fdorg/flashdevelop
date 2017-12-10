@@ -1711,7 +1711,8 @@ namespace ASCompletion.Model
                     || c == '|' || c == '&' || c == '~' || c == '^'
                     || c == '>' || c == '<' || c == '!'
                     || c == 'n' /* return ~/regex/ or in ~/regex/ */
-                    || c == 'h' /* switch ~/regex/ */)
+                    || c == 'h' /* switch ~/regex/ */
+                    || c == 'y' /* try ~/regex/ */)
                 {
                     break;// ok
                 }
