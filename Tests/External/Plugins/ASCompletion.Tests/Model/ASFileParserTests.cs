@@ -2115,7 +2115,10 @@ namespace ASCompletion.Model
                         .SetName("Issue 1814. Case 18. try");
                     yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case19.hx"))
                         .Returns(7)
-                        .SetName("Issue 1814. Case 19. function():Void ~/regex/");
+                        .SetName("Issue 1814. Case 19. function():Bool ~/regex/ ? true : false");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case20.hx"))
+                        .Returns(7)
+                        .SetName("Issue 1814. Case 20. function():{v:Bool} ~/regex/ ? {v:true} : {v:false}");
                 }
             }
 
