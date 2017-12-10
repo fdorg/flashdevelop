@@ -336,7 +336,8 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
     <value>Rebuild Classpath Cache</value>
   </data>
   <data name="ASCompletion.Label.TypesExplorer" xml:space="preserve">
-    <value>Project Type E&amp;xplorer...</value>
+    <value>Type E&amp;xplorer...</value>
+    <comment>Modified after 5.3.0</comment>
   </data>
   <data name="ASCompletion.Label.ViewMenuItem" xml:space="preserve">
     <value>Outline Panel</value>

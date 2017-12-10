@@ -358,6 +358,7 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   </data>
   <data name="ASCompletion.Label.TypesExplorer" xml:space="preserve">
     <value>Typ B&amp;rowser...</value>
+    <comment>Modified after 5.3.0</comment>
   </data>
   <data name="ASCompletion.Label.ViewMenuItem" xml:space="preserve">
     <value>&amp;Gliederung</value>

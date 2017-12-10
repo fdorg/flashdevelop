@@ -86,14 +86,7 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Do we contain a ScintillaControl?
         /// </summary>
-        public Boolean IsEditable
-        {
-            get
-            {
-                if (this.SciControl == null) return false;
-                else return true;
-            }
-        }
+        public Boolean IsEditable => this.SciControl != null;
 
         /// <summary>
         /// Are we splitted in to two sci controls?
@@ -119,10 +112,7 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// Does this document have any bookmarks?
         /// </summary>
-        public Boolean HasBookmarks
-        {
-            get { return bookmarks.Count > 0; }
-        }
+        public Boolean HasBookmarks => bookmarks.Count > 0;
 
         /// <summary>
         /// Does this document's pane have any other documents?
@@ -171,39 +161,18 @@ namespace FlashDevelop.Docking
         /// <summary>
         /// First splitted ScintillaControl 
         /// </summary>
-        public ScintillaControl SplitSci1
-        {
-            get
-            {
-                if (this.editor != null) return this.editor;
-                else return null;
-            }
-        }
+        public ScintillaControl SplitSci1 => editor;
 
         /// <summary>
         /// Second splitted ScintillaControl
         /// </summary>
-        public ScintillaControl SplitSci2
-        {
-            get
-            {
-                if (this.editor2 != null) return this.editor2;
-                else return null;
-            }
-        }
+        public ScintillaControl SplitSci2 => editor2;
 
         /// <summary>
         /// SplitContainer of the document
         /// </summary>
-        public SplitContainer SplitContainer
-        {
-            get
-            {
-                if (this.splitContainer != null) return this.splitContainer;
-                else return null;
-            }
-        }
-            
+        public SplitContainer SplitContainer => splitContainer;
+
         /// <summary>
         /// Gets if the file is untitled
         /// </summary>

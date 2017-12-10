@@ -335,6 +335,7 @@
   </data>
   <data name="ASCompletion.Label.TypesExplorer" xml:space="preserve">
     <value>タイプエクスプローラー(&amp;X)...</value>
+    <comment>Modified after 5.3.0</comment>
   </data>
   <data name="ASCompletion.Label.ViewMenuItem" xml:space="preserve">
     <value>アウトライン(&amp;O)</value>
