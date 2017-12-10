@@ -240,6 +240,16 @@ namespace FlashDevelop
             throw new NotImplementedException();
         }
 
+        public DockContent CreateDynamicPersistDockablePanel(Control ctrl, string guid, string id, Image image, DockState defaultDockState)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetUseTheme(Object parent, Boolean use)
+        {
+            throw new NotImplementedException();
+        }
+
         public ISettings Settings { get; set; }
 
         public ToolStrip ToolStrip

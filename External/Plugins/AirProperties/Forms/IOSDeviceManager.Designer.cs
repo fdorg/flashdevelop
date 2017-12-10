@@ -33,8 +33,8 @@ namespace AirProperties.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.OKButton = new System.Windows.Forms.Button();
-            this.CancelButton1 = new System.Windows.Forms.Button();
+            this.OKButton = new System.Windows.Forms.ButtonEx();
+            this.CancelButton1 = new System.Windows.Forms.ButtonEx();
             this.IOSDevicesTree = new AirProperties.Controls.TriStateTreeView();
             this.SuspendLayout();
             // 

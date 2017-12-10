@@ -6,8 +6,10 @@ using System.Threading;
 using System.Windows.Forms;
 using ASCompletion.Context;
 using ICSharpCode.SharpZipLib.Zip;
+using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Localization;
+using PluginCore.Managers;
 using PluginCore.Utilities;
 
 namespace ASCompletion.Model
@@ -178,9 +180,18 @@ namespace ASCompletion.Model
                 }
 
                 if (next != null)
+                {
                     next.BackgroundRun();
+                }
                 else
+                {
+                    PluginBase.RunAsync(() =>
+                    {
+                        EventManager.DispatchEvent(last, new DataEvent(EventType.Command, "ASCompletion.PathExplorerFinished", null));
+                    });
                     break;
+                }
+                    
 
                 last = next;
             }

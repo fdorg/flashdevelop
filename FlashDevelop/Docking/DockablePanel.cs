@@ -1,9 +1,9 @@
+using PluginCore.Helpers;
+using PluginCore.Utilities;
 using System;
-using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
-using PluginCore.Utilities;
 
 namespace FlashDevelop.Docking
 {
@@ -11,7 +11,7 @@ namespace FlashDevelop.Docking
     {
         private Image image;
         private String pluginGuid;
-        
+
         public DockablePanel(Control ctrl, String pluginGuid)
         {
             this.Text = ctrl.Text;
@@ -19,12 +19,14 @@ namespace FlashDevelop.Docking
             this.DockPanel = Globals.MainForm.DockPanel;
             if (ctrl.Tag != null) this.TabText = ctrl.Tag.ToString();
             this.DockAreas = DockAreas.DockBottom | DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.Float;
+            // Restrict docking on Wine/CrossOver as you can't dock panels back if undocked...
+            this.DockPanel.AllowEndUserFloatChange = !PlatformHelper.isRunningOnWine();
+            this.DockPanel.AllowEndUserDocking = !PlatformHelper.isRunningOnWine();
             this.Font = Globals.Settings.DefaultFont;
             this.pluginGuid = pluginGuid;
             this.HideOnClose = true;
             this.Controls.Add(ctrl);
             Globals.MainForm.ThemeControls(this);
-            this.Show();
         }
 
         /// <summary>
@@ -54,6 +56,25 @@ namespace FlashDevelop.Docking
         public override String GetPersistString()
         {
             return this.pluginGuid;
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        internal class Template : DockContent
+        {
+            private string persistString;
+
+            internal Template(string persistString)
+            {
+                this.persistString = persistString;
+            }
+
+            public override string GetPersistString()
+            {
+                return persistString;
+            }
+
         }
 
     }

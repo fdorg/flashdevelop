@@ -1,12 +1,10 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Drawing;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using PluginCore.Localization;
-using FlashDevelop.Settings;
 using FlashDevelop.Helpers;
 using PluginCore.Utilities;
 using PluginCore.Helpers;
@@ -15,7 +13,7 @@ using PluginCore;
 
 namespace FlashDevelop.Dialogs
 {
-    public class ArgumentDialog : Form
+    public class ArgumentDialog : SmartForm
     {
         private static List<Argument> arguments;
         private System.Windows.Forms.Label keyLabel;
@@ -42,12 +40,12 @@ namespace FlashDevelop.Dialogs
         {
             this.Owner = Globals.MainForm;
             this.Font = Globals.Settings.DefaultFont;
+            this.FormGuid = "ea726ad2-ef09-4e4c-bfc6-41cc980be521";
             this.InitializeComponent();
             this.InitializeItemGroups();
             this.InitializeContextMenu();
             this.InitializeGraphics();
             this.ApplyLocalizedTexts();
-            ScaleHelper.AdjustForHighDPI(this);
         }
 
         #region Windows Form Designer Generated Code
@@ -58,18 +56,18 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
-            this.keyTextBox = new System.Windows.Forms.TextBox();
-            this.argsListView = new System.Windows.Forms.ListView();
+            this.keyTextBox = new System.Windows.Forms.TextBoxEx();
+            this.argsListView = new System.Windows.Forms.ListViewEx();
             this.valueLabel = new System.Windows.Forms.Label();
-            this.detailsGroupBox = new System.Windows.Forms.GroupBox();
+            this.detailsGroupBox = new System.Windows.Forms.GroupBoxEx();
             this.keyLabel = new System.Windows.Forms.Label();
-            this.valueTextBox = new System.Windows.Forms.TextBox();
+            this.valueTextBox = new System.Windows.Forms.TextBoxEx();
             this.infoLabel = new System.Windows.Forms.Label();
-            this.closeButton = new System.Windows.Forms.Button();
+            this.closeButton = new System.Windows.Forms.ButtonEx();
             this.columnHeader = new System.Windows.Forms.ColumnHeader();
             this.infoPictureBox = new System.Windows.Forms.PictureBox();
-            this.addButton = new System.Windows.Forms.Button();
-            this.deleteButton = new System.Windows.Forms.Button();
+            this.addButton = new System.Windows.Forms.ButtonEx();
+            this.deleteButton = new System.Windows.Forms.ButtonEx();
             this.detailsGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.infoPictureBox)).BeginInit();
             this.SuspendLayout();
@@ -135,8 +133,7 @@ namespace FlashDevelop.Dialogs
             this.keyLabel.TabIndex = 1;
             this.keyLabel.Text = "Key:";
             // 
-            // valueTextBox 
-            // Font needs to be set here so that controls resize correctly in high-dpi
+            // valueTextBox
             //
             this.valueTextBox.AcceptsTab = true;
             this.valueTextBox.AcceptsReturn = true;
@@ -439,17 +436,19 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void ExportArguments(Object sender, EventArgs e)
         {
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda";
-            sfd.InitialDirectory = Globals.MainForm.WorkingDirectory;
-            if (sfd.ShowDialog() == DialogResult.OK)
+            using (SaveFileDialog sfd = new SaveFileDialog())
             {
-                List<Argument> args = new List<Argument>();
-                foreach (ListViewItem item in this.argsListView.SelectedItems)
+                sfd.Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda";
+                sfd.InitialDirectory = Globals.MainForm.WorkingDirectory;
+                if (sfd.ShowDialog() == DialogResult.OK)
                 {
-                    args.Add((Argument)item.Tag);
+                    List<Argument> args = new List<Argument>();
+                    foreach (ListViewItem item in this.argsListView.SelectedItems)
+                    {
+                        args.Add((Argument)item.Tag);
+                    }
+                    ObjectSerializer.Serialize(sfd.FileName, args);
                 }
-                ObjectSerializer.Serialize(sfd.FileName, args);
             }
         }
 
@@ -458,15 +457,17 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void ImportArguments(Object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda";
-            ofd.InitialDirectory = Globals.MainForm.WorkingDirectory;
-            if (ofd.ShowDialog() == DialogResult.OK)
+            using (OpenFileDialog ofd = new OpenFileDialog())
             {
-                List<Argument> args = new List<Argument>();
-                args = (List<Argument>)ObjectSerializer.Deserialize(ofd.FileName, args, false);
-                arguments.AddRange(args); // Append imported
-                this.PopulateArgumentList(arguments);
+                ofd.Filter = TextHelper.GetString("Info.ArgumentFilter") + "|*.fda";
+                ofd.InitialDirectory = Globals.MainForm.WorkingDirectory;
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    List<Argument> args = new List<Argument>();
+                    args = (List<Argument>)ObjectSerializer.Deserialize(ofd.FileName, args, false);
+                    arguments.AddRange(args); // Append imported
+                    this.PopulateArgumentList(arguments);
+                }
             }
         }
 
@@ -483,8 +484,10 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public static new void Show()
         {
-            ArgumentDialog argumentDialog = new ArgumentDialog();
-            argumentDialog.ShowDialog();
+            using (ArgumentDialog argumentDialog = new ArgumentDialog())
+            {
+                argumentDialog.ShowDialog();
+            }
         }
 
         #endregion

@@ -28,25 +28,21 @@ namespace ASCompletion.Completion
             return modifiers;
         }
 
-        public static string GetModifiers(MemberModel member)
+        public static string GetModifiers(MemberModel member) => GetModifiers(member.Access);
+
+        public static string GetModifiers(Visibility acceess)
         {
-            string modifiers = "";
-            Visibility acc = member.Access;
-            if ((acc & Visibility.Private) > 0)
-                modifiers += "private ";
-            else if ((acc & Visibility.Public) > 0)
-                modifiers += "public ";
-            else if ((acc & Visibility.Protected) > 0)
-                modifiers += "protected ";
-            else if ((acc & Visibility.Internal) > 0)
-                modifiers += "internal ";
-            return modifiers;
+            if ((acceess & Visibility.Private) > 0) return "private ";
+            if ((acceess & Visibility.Public) > 0) return "public ";
+            if ((acceess & Visibility.Protected) > 0) return "protected ";
+            if ((acceess & Visibility.Internal) > 0) return "internal ";
+            return "";
         }
 
         public static string ToDeclarationWithModifiersString(MemberModel m, string template)
         {
             var features = ASContext.Context.Features;
-            var accessModifier = features.hasNamespaces && !string.IsNullOrEmpty(m.Namespace)
+            var accessModifier = m.Access == 0 && features.hasNamespaces && !string.IsNullOrEmpty(m.Namespace)
                                ? m.Namespace
                                : GetModifiers(m).Trim();
             if (accessModifier == "private" && features.methodModifierDefault == Visibility.Private
@@ -92,10 +88,7 @@ namespace ASCompletion.Completion
             else
                 template = ReplaceTemplateVariable(template, "Type", null);
 
-            if (m.Value != null)
-                template = ReplaceTemplateVariable(template, "Value", m.Value);
-            else
-                template = ReplaceTemplateVariable(template, "Value", null);
+            template = ReplaceTemplateVariable(template, "Value", m.Value);
 
             return template;
         }

@@ -12,28 +12,27 @@ namespace CodeRefactor.BatchProcessors
 {
     class TruncateImportsProcessor : IBatchProcessor
     {
-        public bool IsAvailable
+        public bool IsAvailable => true;
+
+        public string Text => TextHelper.GetStringWithoutMnemonics("Label.TruncateImports");
+
+        public void Process(IEnumerable<string> files)
         {
-            get
+            foreach (var file in files)
             {
-                return true;
+                var document = PluginBase.MainForm.OpenEditableDocument(file) as ITabbedDocument;
+                var command = (OrganizeImports) CommandFactoryProvider.GetFactory(document)?.CreateOrganizeImportsCommand();
+                if (command == null) continue;
+                command.SciControl = document.SciControl;
+                command.TruncateImports = true;
+                command.Execute();
             }
         }
 
-        public string Text
+        public void ProcessProject(IProject project)
         {
-            get
-            {
-                return TextHelper.GetStringWithoutMnemonics("Label.TruncateImports");
-            }
-        }
-
-        public void Process(ITabbedDocument document)
-        {
-            var command = (OrganizeImports)CommandFactoryProvider.GetFactory(document).CreateOrganizeImportsCommand();
-            command.SciControl = document.SciControl;
-            command.TruncateImports = true;
-            command.Execute();
+            var files = BatchProcessManager.GetAllProjectFiles(project);
+            Process(files);
         }
     }
 }

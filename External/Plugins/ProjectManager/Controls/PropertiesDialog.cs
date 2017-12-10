@@ -109,58 +109,58 @@ namespace ProjectManager.Controls
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.btnOK = new System.Windows.Forms.Button();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnApply = new System.Windows.Forms.Button();
-            this.tabControl = new System.Windows.Forms.TabControl();
+            this.btnOK = new System.Windows.Forms.ButtonEx();
+            this.btnCancel = new System.Windows.Forms.ButtonEx();
+            this.btnApply = new System.Windows.Forms.ButtonEx();
+            this.tabControl = new System.Windows.Forms.TabControlEx();
             this.movieTab = new System.Windows.Forms.TabPage();
-            this.platformGroupBox = new System.Windows.Forms.GroupBox();
-            this.versionCombo = new System.Windows.Forms.ComboBox();
-            this.platformCombo = new System.Windows.Forms.ComboBox();
+            this.platformGroupBox = new System.Windows.Forms.GroupBoxEx();
+            this.versionCombo = new System.Windows.Forms.FlatCombo();
+            this.platformCombo = new System.Windows.Forms.FlatCombo();
             this.outputTypeLabel = new System.Windows.Forms.Label();
-            this.outputCombo = new System.Windows.Forms.ComboBox();
-            this.generalGroupBox = new System.Windows.Forms.GroupBox();
-            this.widthTextBox = new System.Windows.Forms.TextBox();
-            this.outputBrowseButton = new System.Windows.Forms.Button();
-            this.heightTextBox = new System.Windows.Forms.TextBox();
+            this.outputCombo = new System.Windows.Forms.FlatCombo();
+            this.generalGroupBox = new System.Windows.Forms.GroupBoxEx();
+            this.widthTextBox = new System.Windows.Forms.TextBoxEx();
+            this.outputBrowseButton = new System.Windows.Forms.ButtonEx();
+            this.heightTextBox = new System.Windows.Forms.TextBoxEx();
             this.xLabel = new System.Windows.Forms.Label();
             this.dimensionsLabel = new System.Windows.Forms.Label();
-            this.colorTextBox = new System.Windows.Forms.TextBox();
+            this.colorTextBox = new System.Windows.Forms.TextBoxEx();
             this.framerateLabel = new System.Windows.Forms.Label();
-            this.outputSwfBox = new System.Windows.Forms.TextBox();
-            this.fpsTextBox = new System.Windows.Forms.TextBox();
+            this.outputSwfBox = new System.Windows.Forms.TextBoxEx();
+            this.fpsTextBox = new System.Windows.Forms.TextBoxEx();
             this.exportinLabel = new System.Windows.Forms.Label();
             this.colorLabel = new System.Windows.Forms.Label();
             this.pxLabel = new System.Windows.Forms.Label();
             this.bgcolorLabel = new System.Windows.Forms.Label();
             this.fpsLabel = new System.Windows.Forms.Label();
-            this.playGroupBox = new System.Windows.Forms.GroupBox();
-            this.testMovieCombo = new System.Windows.Forms.ComboBox();
-            this.editCommandButton = new System.Windows.Forms.Button();
+            this.playGroupBox = new System.Windows.Forms.GroupBoxEx();
+            this.testMovieCombo = new System.Windows.Forms.FlatCombo();
+            this.editCommandButton = new System.Windows.Forms.ButtonEx();
             this.classpathsTab = new System.Windows.Forms.TabPage();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBoxEx();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.btnGlobalClasspaths = new System.Windows.Forms.Button();
+            this.btnGlobalClasspaths = new System.Windows.Forms.ButtonEx();
             this.buildTab = new System.Windows.Forms.TabPage();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.alwaysExecuteCheckBox = new System.Windows.Forms.CheckBox();
-            this.postBuilderButton = new System.Windows.Forms.Button();
-            this.postBuildBox = new System.Windows.Forms.TextBox();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.preBuilderButton = new System.Windows.Forms.Button();
-            this.preBuildBox = new System.Windows.Forms.TextBox();
+            this.groupBox5 = new System.Windows.Forms.GroupBoxEx();
+            this.alwaysExecuteCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.postBuilderButton = new System.Windows.Forms.ButtonEx();
+            this.postBuildBox = new System.Windows.Forms.TextBoxEx();
+            this.groupBox4 = new System.Windows.Forms.GroupBoxEx();
+            this.preBuilderButton = new System.Windows.Forms.ButtonEx();
+            this.preBuildBox = new System.Windows.Forms.TextBoxEx();
             this.compilerTab = new System.Windows.Forms.TabPage();
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.sdkTabPage = new System.Windows.Forms.TabPage();
-            this.manageButton = new System.Windows.Forms.Button();
-            this.sdkComboBox = new System.Windows.Forms.ComboBox();
-            this.sdkGroupBox = new System.Windows.Forms.GroupBox();
+            this.manageButton = new System.Windows.Forms.ButtonEx();
+            this.sdkComboBox = new System.Windows.Forms.FlatCombo();
+            this.sdkGroupBox = new System.Windows.Forms.GroupBoxEx();
             this.labelUseGlobal = new System.Windows.Forms.Label();
-            this.customGroupBox = new System.Windows.Forms.GroupBox();
-            this.browseButton = new System.Windows.Forms.Button();
-            this.customTextBox = new System.Windows.Forms.TextBox();
+            this.customGroupBox = new System.Windows.Forms.GroupBoxEx();
+            this.browseButton = new System.Windows.Forms.ButtonEx();
+            this.customTextBox = new System.Windows.Forms.TextBoxEx();
             this.labelUseCustom = new System.Windows.Forms.Label();
             this.warningImage = new System.Windows.Forms.PictureBox();
             this.labelWarning = new System.Windows.Forms.Label();
@@ -626,13 +626,14 @@ namespace ProjectManager.Controls
             // propertyGrid
             // 
             this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGrid.LineColor = System.Drawing.SystemColors.ScrollBar;
             this.propertyGrid.Location = new System.Drawing.Point(3, 3);
+            this.propertyGrid.LineColor = System.Drawing.SystemColors.ScrollBar;
             this.propertyGrid.Name = "propertyGrid";
             this.propertyGrid.Size = new System.Drawing.Size(328, 266);
             this.propertyGrid.TabIndex = 0;
             this.propertyGrid.ToolbarVisible = false;
             this.propertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid_PropertyValueChanged);
+            this.propertyGrid.Font = this.Font;
             // 
             // sdkTabPage
             // 
@@ -1323,20 +1324,22 @@ namespace ProjectManager.Controls
 
         private void outputBrowseButton_Click(object sender, EventArgs e)
         {
-            SaveFileDialog dialog = new SaveFileDialog();
-            dialog.Filter = "*.*|*.*"; // TextHelper.GetString("Info.FlashMovieFilter");
-            dialog.OverwritePrompt = false;
-            dialog.InitialDirectory = project.Directory;
-            // try pre-setting the current output path
-            try
+            using (SaveFileDialog dialog = new SaveFileDialog())
             {
-                string path = project.GetAbsolutePath(outputSwfBox.Text);
-                if (File.Exists(path)) dialog.FileName = path;
-            }
-            catch { }
-            if (dialog.ShowDialog(this) == DialogResult.OK)
-            {
-                outputSwfBox.Text = project.GetRelativePath(dialog.FileName);
+                dialog.Filter = "*.*|*.*"; // TextHelper.GetString("Info.FlashMovieFilter");
+                dialog.OverwritePrompt = false;
+                dialog.InitialDirectory = project.Directory;
+                // try pre-setting the current output path
+                try
+                {
+                    string path = project.GetAbsolutePath(outputSwfBox.Text);
+                    if (File.Exists(path)) dialog.FileName = path;
+                }
+                catch { }
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    outputSwfBox.Text = project.GetRelativePath(dialog.FileName);
+                }
             }
         }
 
@@ -1354,12 +1357,14 @@ namespace ProjectManager.Controls
                 caption = TextHelper.GetString("Title.CustomTestMovieCommand");
                 label = TextHelper.GetString("Label.CustomTestMovieCommand");
             }
-            LineEntryDialog dialog = new LineEntryDialog(caption, label, project.TestMovieCommand ?? "");
-            if (dialog.ShowDialog() == DialogResult.OK)
+            using (LineEntryDialog dialog = new LineEntryDialog(caption, label, project.TestMovieCommand ?? ""))
             {
-                project.TestMovieCommand = dialog.Line;
-                Modified();
-                btnOK.Focus();
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    project.TestMovieCommand = dialog.Line;
+                    Modified();
+                    btnOK.Focus();
+                }
             }
         }
 
@@ -1419,12 +1424,14 @@ namespace ProjectManager.Controls
 
         private void browseButton_Click(object sender, EventArgs e)
         {
-            VistaFolderBrowserDialog folder = new VistaFolderBrowserDialog();
-            if (customTextBox.Text.Length > 0 && Directory.Exists(customTextBox.Text))
-                folder.SelectedPath = customTextBox.Text;
-            if (folder.ShowDialog() == DialogResult.OK)
+            using (VistaFolderBrowserDialog folder = new VistaFolderBrowserDialog())
             {
-                customTextBox.Text = folder.SelectedPath;
+                if (customTextBox.Text.Length > 0 && Directory.Exists(customTextBox.Text))
+                    folder.SelectedPath = customTextBox.Text;
+                if (folder.ShowDialog() == DialogResult.OK)
+                {
+                    customTextBox.Text = folder.SelectedPath;
+                }
             }
         }
 

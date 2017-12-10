@@ -29,10 +29,10 @@ namespace ProjectManager.Controls.AS2
         private void InitializeComponent()
         {
             this.injectionTab = new System.Windows.Forms.TabPage();
-            this.inputBrowseButton = new System.Windows.Forms.Button();
-            this.inputSwfBox = new System.Windows.Forms.TextBox();
+            this.inputBrowseButton = new System.Windows.Forms.ButtonEx();
+            this.inputSwfBox = new System.Windows.Forms.TextBoxEx();
             this.inputFileLabel = new System.Windows.Forms.Label();
-            this.injectionCheckBox = new System.Windows.Forms.CheckBox();
+            this.injectionCheckBox = new System.Windows.Forms.CheckBoxEx();
             this.infoLabel = new System.Windows.Forms.Label();
             this.tabControl.SuspendLayout();
             this.injectionTab.SuspendLayout();

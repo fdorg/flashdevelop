@@ -1120,19 +1120,22 @@ namespace FileExplorer
         /// </summary>
         private int ExtractIconIfNecessary(String path, bool isFile)
         {
-            Icon icon; Image image;
-            Size size = ScaleHelper.Scale(new Size(16, 16));
-            if (Win32.ShouldUseWin32())
+            try
             {
-                if (isFile) icon = IconExtractor.GetFileIcon(path, false, true);
-                else icon = IconExtractor.GetFolderIcon(path, false, true);
-                image = ImageKonverter.ImageResize(icon.ToBitmap(), size.Width, size.Height);
-                image = PluginBase.MainForm.ImageSetAdjust(image);
-                icon.Dispose();
-                this.imageList.Images.Add(image);
-                return this.imageList.Images.Count - 1;
+                Icon icon; Image image;
+                Size size = ScaleHelper.Scale(new Size(16, 16));
+                if (Win32.ShouldUseWin32())
+                {
+                    if (isFile) icon = IconExtractor.GetFileIcon(path, false, true);
+                    else icon = IconExtractor.GetFolderIcon(path, false, true);
+                    image = ImageKonverter.ImageResize(icon.ToBitmap(), size.Width, size.Height);
+                    image = PluginBase.MainForm.ImageSetAdjust(image);
+                    icon.Dispose();
+                    this.imageList.Images.Add(image);
+                    return this.imageList.Images.Count - 1;
+                }
             }
-
+            catch {} // No errors please...
             return isFile ? 0 : 1;
         }
 
@@ -1145,6 +1148,9 @@ namespace FileExplorer
             AddNonWin32Images();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private void AddNonWin32Images()
         {
             if (Win32.ShouldUseWin32()) return;

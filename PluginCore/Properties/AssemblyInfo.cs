@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Resources;
+using System.Runtime.CompilerServices;
 using PluginCore;
 
 // Information about this assembly is defined by the following attributes. 
@@ -13,4 +14,6 @@ using PluginCore;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: AssemblyVersion("1.0.0.0")]
+
 [assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.MainAssembly)]
+[assembly: InternalsVisibleTo("PluginCore.Tests")]

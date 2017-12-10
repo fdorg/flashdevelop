@@ -39,10 +39,10 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
-            this.exitButton = new System.Windows.Forms.Button();
+            this.exitButton = new System.Windows.Forms.ButtonEx();
             this.headerLabel = new System.Windows.Forms.Label();
-            this.continueButton = new System.Windows.Forms.Button();
-            this.infoTextBox = new System.Windows.Forms.TextBox();
+            this.continueButton = new System.Windows.Forms.ButtonEx();
+            this.infoTextBox = new System.Windows.Forms.TextBoxEx();
             this.countLabel = new System.Windows.Forms.Label();
             this.pictureBox = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
@@ -188,12 +188,14 @@ namespace FlashDevelop.Dialogs
         public static void Show(Exception ex)
         {
             SystemSounds.Hand.Play();
-            ErrorDialog errorDialog = new ErrorDialog();
-            errorDialog.infoTextBox.Text = ex.Message + "\r\n\r\n" + ex.StackTrace;
-            errorDialog.countLabel.Text += " " + errorCount++;
-            if (errorCount < 7) errorDialog.exitButton.Enabled = false;
-            else errorDialog.exitButton.Enabled = true;
-            errorDialog.ShowDialog();
+            using (ErrorDialog errorDialog = new ErrorDialog())
+            {
+                errorDialog.infoTextBox.Text = ex.Message + "\r\n\r\n" + ex.StackTrace;
+                errorDialog.countLabel.Text += " " + errorCount++;
+                if (errorCount < 7) errorDialog.exitButton.Enabled = false;
+                else errorDialog.exitButton.Enabled = true;
+                errorDialog.ShowDialog();
+            }
         }
 
         #endregion

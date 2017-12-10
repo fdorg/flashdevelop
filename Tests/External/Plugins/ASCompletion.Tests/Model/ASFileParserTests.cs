@@ -1296,6 +1296,18 @@ namespace ASCompletion.Model
                         .Returns(new[] {"Array<?(?Int->Void)->?Int->Void>"});
                     yield return new TestCaseData("function foo ( p : Array < ? ( ?Int -> Void ) -> ?Int -> Void > ) {}")
                         .Returns(new[] {"Array<?(?Int->Void)->?Int->Void>"});
+                    yield return new TestCaseData("function foo(v:{a:Array<haxe.Timer>}->{a:haxe.ds.Vector<Type.ValueType>}->String) {}")
+                        .Returns(new[] {"{a:Array<haxe.Timer>}->{a:haxe.ds.Vector<Type.ValueType>}->String"})
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1699");
+                    yield return new TestCaseData("function foo(v:{a:Array<haxe.Timer>->haxe.ds.Vector<Type.ValueType>}->String) {}")
+                        .Returns(new[] {"{a:Array<haxe.Timer>->haxe.ds.Vector<Type.ValueType>}->String"})
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1699");
+                    yield return new TestCaseData("function foo(v:{a:Array<haxe.Timer>->Int->{x:Int, y:Int}}->String) {}")
+                        .Returns(new[] {"{a:Array<haxe.Timer>->Int->{x:Int, y:Int}}->String"})
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1699");
+                    yield return new TestCaseData("function foo(v:Array<{a:Array<haxe.Timer>->Int->{x:Int, y:Int}}>->String) {}")
+                        .Returns(new[] {"Array<{a:Array<haxe.Timer>->Int->{x:Int, y:Int}}>->String"})
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1699");
                 }
             }
 
@@ -2038,6 +2050,73 @@ namespace ASCompletion.Model
                 var model = context.GetCodeModel(sourceText);
                 var result = model.Classes.First();
                 return result;
+            }
+
+            static IEnumerable<TestCaseData> ParseClassTestCases_issue1814
+            {
+                get
+                {
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814.hx"))
+                        .Returns(9)
+                        .SetName("Issue 1814. Case 0. ?");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case1.hx"))
+                        .Returns(9)
+                        .SetName("Issue 1814. Case 1. return");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case2.hx"))
+                        .Returns(9)
+                        .SetName("Issue 1814. Case 2. [");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case3.hx"))
+                        .Returns(9)
+                        .SetName("Issue 1814. Case 3. :");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case4.hx"))
+                        .Returns(9)
+                        .SetName("Issue 1814. Case 4. =");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case5.hx"))
+                        .Returns(9)
+                        .SetName("Issue 1814. Case 5. in");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case6.hx"))
+                        .Returns(8)
+                        .SetName("Issue 1814. Case 6. +");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case7.hx"))
+                        .Returns(8)
+                        .SetName("Issue 1814. Case 7. =>");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case8.hx"))
+                        .Returns(8)
+                        .SetName("Issue 1814. Case 8. -");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case9.hx"))
+                        .Returns(8)
+                        .SetName("Issue 1814. Case 9. *");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case10.hx"))
+                        .Returns(8)
+                        .SetName("Issue 1814. Case 10. /");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case11.hx"))
+                        .Returns(8)
+                        .SetName("Issue 1814. Case 11. |");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case12.hx"))
+                        .Returns(8)
+                        .SetName("Issue 1814. Case 12. &");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case13.hx"))
+                        .Returns(8)
+                        .SetName("Issue 1814. Case 13. <");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case14.hx"))
+                        .Returns(8)
+                        .SetName("Issue 1814. Case 14. ~");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case15.hx"))
+                        .Returns(8)
+                        .SetName("Issue 1814. Case 15. ^");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case16.hx"))
+                        .Returns(8)
+                        .SetName("Issue 1814. Case 16. !");
+                }
+            }
+
+            [Test, TestCaseSource(nameof(ParseClassTestCases_issue1814))]
+            public int ParseFile_Issue1814(TestFile resourceFile)
+            {
+                var srcModel = new FileModel(resourceFile.DestinationFile);
+                srcModel.Context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+                var model = ASFileParser.ParseFile(srcModel);
+                return model.Classes[0].LineTo;
             }
         }
     }

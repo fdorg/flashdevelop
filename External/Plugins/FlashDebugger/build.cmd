@@ -1,6 +1,8 @@
 @echo off
 
-set FLEX_HOME="..\..\..\FlashDEvelop\bin\Debug\Tools\flexlibs"
+set FLEX_HOME="..\..\..\FlashDevelop\Bin\Debug\Tools\flexlibs"
+set JAVA_HOME="C:\Program Files\Java\jdk1.8.0_144"
+set PATH=C:\Program Files\Java\jdk1.8.0_144\bin
 
 mkdir generated
 
@@ -30,11 +32,13 @@ IF %ERRORLEVEL% NEQ 0 goto err
 jar cvf fbd.j4n.jar -C generated\bin "."
 IF %ERRORLEVEL% NEQ 0 goto err
 
-c:\Windows\Microsoft.NET\Framework\v2.0.50727\csc.exe /debug+ /nologo /warn:0 /t:library /out:fdb.j4n.dll /recurse:generated\clr\*.cs  /reference:"jni4net.n-0.8.8.0.dll"
+C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe /debug+ /nologo /warn:0 /t:library /out:fdb.j4n.dll /recurse:generated\clr\*.cs  /reference:"jni4net.n-0.8.8.0.dll"
 ::csc /debug+ /nologo /warn:0 /t:library /out:fdb.j4n.dll /recurse:generated\clr\*.cs  /reference:"jni4net.n-0.8.4.0.dll"
 IF %ERRORLEVEL% NEQ 0 goto err
 
+pause
 exit 0
 
 :err
+pause
 exit 1

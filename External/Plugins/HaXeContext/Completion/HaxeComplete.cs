@@ -58,7 +58,7 @@ namespace HaXeContext
             handler = completionHandler;
             CompilerService = compilerService;
             Status = HaxeCompleteStatus.NONE;
-            FileName = PluginBase.MainForm.CurrentDocument.FileName;
+            FileName = sci.FileName;
             this.haxeVersion = haxeVersion;
         }
 
@@ -129,10 +129,15 @@ namespace HaXeContext
             QuotePath(hxmlArgs);
             EscapeMacros(hxmlArgs);
 
-            hxmlArgs.Add(String.Format("--display \"{0}\"@{1}{2}", FileName, pos, GetMode()));
+            if (CompilerService == HaxeCompilerService.GLOBAL_DIAGNOSTICS)
+                hxmlArgs.Add("--display diagnostics");
+            else
+                hxmlArgs.Add($"--display \"{FileName}\"@{pos}{GetMode()}");
+
             hxmlArgs.Add("-D use_rtti_doc");
             hxmlArgs.Add("-D display-details");
             if (hxproj.TraceEnabled) hxmlArgs.Add("-debug");
+            
             return hxmlArgs.ToArray();
         }
 
@@ -156,6 +161,9 @@ namespace HaXeContext
 
                 case HaxeCompilerService.DIAGNOSTICS:
                     return "@diagnostics";
+
+                //case HaxeCompilerService.GLOBAL_DIAGNOSTICS:
+                //    return "diagnostics";
             }
 
             return "";
@@ -230,8 +238,9 @@ namespace HaXeContext
                 case HaxeCompilerService.USAGE:
                     pos = Sci.WordEndPosition(Sci.CurrentPos, true);
                     // necessary to get results with older versions due to a compiler bug
-                    if (haxeVersion.IsOlderThan(new SemVer("3.3.0"))) pos++;
+                    if (haxeVersion < "3.3.0") pos++;
                     break;
+                case HaxeCompilerService.GLOBAL_DIAGNOSTICS:
                 case HaxeCompilerService.DIAGNOSTICS:
                     pos = 0;
                     break;
@@ -246,13 +255,22 @@ namespace HaXeContext
 
         HaxeCompleteStatus ParseLines(string lines)
         {
-            try
+            switch (CompilerService)
             {
-                switch (CompilerService)
-                {
-                    case HaxeCompilerService.DIAGNOSTICS:
+                case HaxeCompilerService.DIAGNOSTICS:
+                case HaxeCompilerService.GLOBAL_DIAGNOSTICS:
+                    try
+                    {
                         return ProcessResponse(JsonMapper.ToObject(lines));
-                    default:
+                    }
+                    catch (Exception)
+                    {
+                        Errors = lines;
+                        return HaxeCompleteStatus.ERROR;
+                    }
+                default:
+                    try
+                    {
                         if (!lines.StartsWith('<'))
                         {
                             Errors = lines.Trim();
@@ -266,12 +284,12 @@ namespace HaXeContext
                                 return ProcessResponse(reader);
                             }
                         }
-                }
-            }
-            catch (Exception ex)
-            {
-                Errors = "Error parsing Haxe compiler output: " + ex.Message;
-                return HaxeCompleteStatus.ERROR;
+                    }
+                    catch (Exception ex)
+                    {
+                        Errors = "Error parsing Haxe compiler output: " + ex.Message;
+                        return HaxeCompleteStatus.ERROR;
+                    }
             }
         }
 
@@ -279,6 +297,8 @@ namespace HaXeContext
         {
             diagnosticsResults = new List<HaxeDiagnosticsResult>();
 
+            if (!json.IsArray) return HaxeCompleteStatus.ERROR;
+            
             foreach (JsonData file in json)
             {
                 var path = (string)file["file"];
@@ -287,27 +307,60 @@ namespace HaXeContext
                 foreach (JsonData diag in diagnostics)
                 {
                     var range = diag["range"];
-                    var start = range["start"];
-                    var end = range["end"];
+                    var args = diag["args"];
 
-                    diagnosticsResults.Add(new HaxeDiagnosticsResult
+                    var result = new HaxeDiagnosticsResult
                     {
-                        Kind = (HaxeDiagnosticsKind)(int)diag["kind"],
-                        Range = new HaxePositionResult
+                        Kind = (HaxeDiagnosticsKind) (int) diag["kind"],
+                        Range = ParseRange(range, path),
+                        Severity = (HaxeDiagnosticsSeverity) (int) diag["severity"]
+                    };
+                    if (args != null)
+                    {
+                        if (args.IsString)
                         {
-                            Path = path,
-                            //RangeType = HaxePositionCompleteRangeType.LINES, //RangeType is a mix of lines and characters
-                            CharacterStart = (int) start["character"],
-                            CharacterEnd = (int)end["character"],
-                            LineStart = (int)start["line"],
-                            LineEnd = (int)end["line"]
-                        },
-                        Severity = (HaxeDiagnosticsSeverity)(int)diag["severity"]
-                    });
+                            result.Args = new HaxeDiagnosticsArgs
+                            {
+                                Description = (string) args
+                            };
+                        }
+                        else if (args.IsObject)
+                        {
+                            result.Args = new HaxeDiagnosticsArgs
+                            {
+                                Description = (string) args["description"],
+                                Range = ParseRange(args["range"], path)
+                            };
+                        }
+                    }
+                    
+
+                    diagnosticsResults.Add(result);
+
                 }
             }
             
             return HaxeCompleteStatus.DIAGNOSTICS;
+        }
+
+
+
+        HaxePositionResult ParseRange(JsonData range, string path)
+        {
+            if (range == null) return null;
+
+            var start = range["start"];
+            var end = range["end"];
+
+            return new HaxePositionResult
+            {
+                Path = path,
+                //RangeType = HaxePositionCompleteRangeType.LINES, //RangeType is a mix of lines and characters
+                CharacterStart = (int) start["character"],
+                CharacterEnd = (int) end["character"],
+                LineStart = (int) start["line"],
+                LineEnd = (int) end["line"]
+            };
         }
 
         HaxeCompleteStatus ProcessResponse(XmlTextReader reader)
@@ -336,6 +389,7 @@ namespace HaXeContext
 
             var type = new MemberModel();
             type.Name = name;
+            type.Comments = reader.GetAttribute("d");
             ExtractType(reader, type);
             result = new HaxeCompleteResult();
             result.Type = type;
@@ -585,7 +639,12 @@ namespace HaXeContext
         /// <summary>
         /// Since Haxe 3.3.0-rc1
         /// </summary>
-        DIAGNOSTICS
+        DIAGNOSTICS,
+
+        /// <summary>
+        /// Since Haxe 3.3.0-rc1
+        /// </summary>
+        GLOBAL_DIAGNOSTICS
     }
 
     public class HaxeDiagnosticsResult
@@ -593,7 +652,13 @@ namespace HaXeContext
         public HaxeDiagnosticsKind Kind;
         public HaxeDiagnosticsSeverity Severity;
         public HaxePositionResult Range;
-        //no "args" for now
+        public HaxeDiagnosticsArgs Args;
+    }
+
+    public class HaxeDiagnosticsArgs
+    {
+        public string Description;
+        public HaxePositionResult Range;
     }
 
     public class HaxeCompleteResult
@@ -620,8 +685,11 @@ namespace HaXeContext
 
     public enum HaxeDiagnosticsKind
     {
-        UNUSEDIMPORT = 0,
-        UNUSEDVAR = 3
+        UnusedImport = 0,
+        UnresolvedIdentifier = 1,
+        CompilerError = 2,
+        RemovableCode = 3
+        //there seem to be more kinds, but they are not documented.
     }
 
     public enum HaxeDiagnosticsSeverity

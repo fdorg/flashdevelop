@@ -5,7 +5,7 @@ public class Main {
 	}
 	
 	function test():{x:Int, y:Int} {
-		
+		return null;
 	}
 	
 	function foo(v:Void->{x:Int, y:Int}) {}

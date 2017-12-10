@@ -1,30 +1,15 @@
-﻿using LintingHelper.Helpers;
+﻿using System.Collections.Generic;
+using LintingHelper.Helpers;
 using PluginCore;
 using PluginCore.Managers;
-using System.Collections.Generic;
-using System.Linq;
-using PluginCore.Localization;
 
 namespace LintingHelper.Managers
 {
     public static class LintingManager
     {
-        const string TraceGroup = "LintingManager";
+        internal const string TraceGroup = "LintingManager";
 
         static readonly Dictionary<string, List<ILintProvider>> linters = new Dictionary<string, List<ILintProvider>>();
-
-        static readonly Dictionary<LintingSeverity, int> severityMap = new Dictionary<LintingSeverity, int>
-        {
-            {LintingSeverity.Info, (int) TraceType.Info},
-            {LintingSeverity.Error, (int) TraceType.Error},
-            {LintingSeverity.Warning, (int) TraceType.Warning}
-        };
-
-        static LintingManager()
-        {
-            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetStringWithoutMnemonics("LintingManager.Label.LintingResults"), null);
-        }
-
         internal static LintingCache Cache = new LintingCache();
 
         /// <summary>
@@ -86,29 +71,24 @@ namespace LintingHelper.Managers
         /// </summary>
         /// <param name="files">the files to lint</param>
         /// <param name="language">the language to use</param>
-        public static void LintFiles(string[] files, string language)
+        public static void LintFiles(IEnumerable<string> files, string language)
         {
             language = language.ToLower();
 
             foreach (var linter in GetLinters(language))
             {
-                //remove cache
-                foreach (var file in files)
+                linter.LintAsync(files, results => PluginBase.RunAsync(() =>
                 {
-                    UnLintDocument(DocumentManager.FindDocument(file));
-                }
-                linter.LintAsync(files, (results) =>
-                {
-                    ApplyLint(files, language, results);
+                    ApplyLint(results);
                     EventManager.DispatchEvent(linter, new DataEvent(EventType.Command, "LintingManager.FilesLinted", files));
-                });
+                }));
             }
         }
 
         /// <summary>
         /// Lint <paramref name="files"/> trying to autodetect the language(s).
         /// </summary>
-        public static void LintFiles(string[] files)
+        public static void LintFiles(IEnumerable<string> files)
         {
             //detect languages
             var filesByLang = new Dictionary<string, List<string>>();
@@ -122,13 +102,33 @@ namespace LintingHelper.Managers
             
             foreach (var lang in filesByLang.Keys)
             {
-                LintFiles(filesByLang[lang].ToArray(), lang);
+                LintFiles(filesByLang[lang], lang);
+            }
+        }
+
+        /// <summary>
+        /// Lint the whole <paramref name="project"/>
+        /// </summary>
+        public static void LintProject(IProject project)
+        {
+            var language = project.Language.ToLower();
+
+            //remove cache
+            Cache.RemoveAll();
+
+            foreach (var linter in GetLinters(language))
+            {
+                linter.LintProjectAsync(project, results => PluginBase.RunAsync(() =>
+                {
+                    ApplyLint(results);
+                    EventManager.DispatchEvent(linter, new DataEvent(EventType.Command, "LintingManager.ProjectLinted", null));
+                }));
             }
         }
 
         public static void LintDocument(ITabbedDocument doc)
         {
-            var files = new string[] { doc.FileName };
+            var files = new [] { doc.FileName };
             var language = doc.SciControl.ConfigurationLanguage;
 
             LintFiles(files, language);
@@ -142,88 +142,73 @@ namespace LintingHelper.Managers
             LintDocument(PluginBase.MainForm.CurrentDocument);
         }
 
+        public static void UnLintFile(string file)
+        {
+            Cache.RemoveDocument(file);
+            UpdateLinterPanel();
+        }
+
         public static void UnLintDocument(ITabbedDocument doc)
         {
             Cache.RemoveDocument(doc.FileName);
-            doc.SciControl.RemoveHighlights();
+            UpdateLinterPanel();
         }
 
         /// <summary>
         /// Applies the results to all open files
         /// </summary>
-        static void ApplyLint(string[] files, string language, List<LintingResult> results)
+        static void ApplyLint(List<LintingResult> results)
         {
             if (results == null)
                 return;
 
-            var fileList = new List<string>(files);
-            fileList.AddRange(PluginBase.MainForm.Documents.Select(d => d.FileName));
-            Cache.RemoveAllExcept(fileList);
-
-            PluginBase.RunAsync(() =>
-            {
-                PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + TraceGroup);
-            });
-
             Cache.AddResults(results);
 
-            
-            foreach (var result in Cache.GetAllResults())
-            {
-                TraceResult(result);
+            UpdateLinterPanel();
+        }
 
-                var doc = DocumentManager.FindDocument(result.File);
-                if (doc != null)
+        internal static void UpdateLinterPanel()
+        {
+            PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + TraceGroup);
+
+            var cachedResults = Cache.GetAllResults();
+            foreach (var result in cachedResults)
+            {
+                string chars;
+                if (result.Length > 0)
                 {
-                    var start = doc.SciControl.PositionFromLine(result.Line - 1);
-                    var len = doc.SciControl.LineLength(result.Line - 1);
-                    start += result.FirstChar;
-                    if (result.Length > 0)
+                    chars = $"chars {result.FirstChar}-{result.FirstChar + result.Length}";
+                }
+                else
+                {
+                    var sci = DocumentManager.FindDocument(result.File)?.SciControl;
+                    if (sci != null)
                     {
-                        len = result.Length;
+                        chars = $"chars {result.FirstChar}-{sci.LineLength(result.Line - 1)}";
                     }
                     else
                     {
-                        len -= result.FirstChar;
+                        chars = $"char {result.FirstChar}";
                     }
-
-                    var id = 0;
-                    int color = 0;
-                    var lang = PluginBase.MainForm.SciConfig.GetLanguage(language);
-                    switch (result.Severity)
-                    {
-                        case LintingSeverity.Error:
-                            color = lang.editorstyle.ErrorLineBack;
-                            id = 3;
-                            break;
-                        case LintingSeverity.Warning:
-                            color = lang.editorstyle.DebugLineBack;
-                            id = 4;
-                            break;
-                        case LintingSeverity.Info:
-                            color = lang.editorstyle.HighlightWordBackColor;
-                            id = 5;
-                            break;
-                    }
-
-                    PluginBase.RunAsync(() =>
-                    {
-                        doc.SciControl.AddHighlight(id, (int)ScintillaNet.Enums.IndicatorStyle.Squiggle, color, start, len);
-                    });
                 }
+                string message = $"{result.File}:{result.Line}: {chars} : {result.Severity}: {result.Description}";
+                int state;
+                switch (result.Severity)
+                {
+                    case LintingSeverity.Info:
+                        state = (int)TraceType.Info;
+                        break;
+                    case LintingSeverity.Warning:
+                        state = (int)TraceType.Warning;
+                        break;
+                    case LintingSeverity.Error:
+                        state = (int)TraceType.Error;
+                        break;
+                    default:
+                        continue;
+                }
+                TraceManager.Add(message, state, TraceGroup);
             }
-
-            PluginBase.RunAsync(() =>
-            {
-                PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + TraceGroup);
-            });
-        }
-
-        static void TraceResult(LintingResult result)
-        {
-            var line = result.File + ":" + result.Line + ": " + result.Severity.ToString() + ": " + result.Description;
-
-            TraceManager.Add(line, severityMap[result.Severity], TraceGroup);
         }
     }
 }

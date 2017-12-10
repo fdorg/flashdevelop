@@ -111,6 +111,11 @@ namespace FlashDevelop
             throw new NotImplementedException();
         }
 
+        public DockContent CreateDynamicPersistDockablePanel(Control ctrl, string guid, string id, Image image, DockState defaultDockState)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool CallCommand(string command, string arguments)
         {
             throw new NotImplementedException();
@@ -265,6 +270,11 @@ namespace FlashDevelop
         }
 
         public int GetInstanceCount()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetUseTheme(Object parent, Boolean use)
         {
             throw new NotImplementedException();
         }

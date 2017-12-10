@@ -43,19 +43,19 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.AvailableListBox = new System.Windows.Forms.ListBox();
-            this.CustomLocaleField = new System.Windows.Forms.TextBox();
-            this.AddNewButton = new System.Windows.Forms.Button();
-            this.RemoveButton = new System.Windows.Forms.Button();
-            this.SelectedListBox = new System.Windows.Forms.ListBox();
-            this.AddButton = new System.Windows.Forms.Button();
-            this.OKButton = new System.Windows.Forms.Button();
-            this.LocalesGroupBox = new System.Windows.Forms.GroupBox();
+            this.AvailableListBox = new System.Windows.Forms.ListBoxEx();
+            this.CustomLocaleField = new System.Windows.Forms.TextBoxEx();
+            this.AddNewButton = new System.Windows.Forms.ButtonEx();
+            this.RemoveButton = new System.Windows.Forms.ButtonEx();
+            this.SelectedListBox = new System.Windows.Forms.ListBoxEx();
+            this.AddButton = new System.Windows.Forms.ButtonEx();
+            this.OKButton = new System.Windows.Forms.ButtonEx();
+            this.LocalesGroupBox = new System.Windows.Forms.GroupBoxEx();
             this.SelectedLocalesLabel = new System.Windows.Forms.Label();
             this.DefaultLocalesLabel = new System.Windows.Forms.Label();
             this.CustomLocaleLabel = new System.Windows.Forms.Label();
             this.ValidationErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
-            this.CancelButton1 = new System.Windows.Forms.Button();
+            this.CancelButton1 = new System.Windows.Forms.ButtonEx();
             this.LocalesGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ValidationErrorProvider)).BeginInit();
             this.SuspendLayout();

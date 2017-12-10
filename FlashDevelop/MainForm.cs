@@ -102,7 +102,7 @@ namespace FlashDevelop
         private MenuStrip menuStrip;
         private StatusStrip statusStrip;
         private ToolStripPanel toolStripPanel;
-        private ToolStripProgressBar toolStripProgressBar;
+        private ToolStripProgressBarEx toolStripProgressBar;
         private ToolStripStatusLabel toolStripProgressLabel;
         private ToolStripStatusLabel toolStripStatusLabel;
         private ToolStripButton restartButton;
@@ -211,7 +211,7 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Gets the toolStripProgressBar
+        /// Gets the ToolStripProgressBarEx
         /// </summary>
         public ToolStripProgressBar ProgressBar
         {
@@ -576,6 +576,7 @@ namespace FlashDevelop
             try
             {
                 DockablePanel dockablePanel = new DockablePanel(ctrl, guid);
+                dockablePanel.Show();
                 dockablePanel.Image = image;
                 dockablePanel.DockState = defaultDockState;
                 LayoutManager.PluginPanels.Add(dockablePanel);
@@ -584,6 +585,27 @@ namespace FlashDevelop
             catch (Exception ex)
             {
                 ErrorManager.ShowError(ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Creates a dynamic persist panel for plugins.
+        /// </summary>
+        public DockContent CreateDynamicPersistDockablePanel(Control ctrl, String guid, String id, Image image, DockState defaultDockState)
+        {
+            try
+            {
+                var dockablePanel = new DockablePanel(ctrl, guid + ":" + id);
+                dockablePanel.Image = image;
+                dockablePanel.DockState = defaultDockState;
+                LayoutManager.SetContentLayout(dockablePanel, dockablePanel.GetPersistString());
+                LayoutManager.PluginPanels.Add(dockablePanel);
+                return dockablePanel;
+            }
+            catch (Exception e)
+            {
+                ErrorManager.ShowError(e);
                 return null;
             }
         }
@@ -972,7 +994,7 @@ namespace FlashDevelop
             this.tabMenu = StripBarManager.GetContextMenu(FileNameHelper.TabMenu);
             this.toolStripStatusLabel = new ToolStripStatusLabel();
             this.toolStripProgressLabel = new ToolStripStatusLabel();
-            this.toolStripProgressBar = new ToolStripProgressBar();
+            this.toolStripProgressBar = new ToolStripProgressBarEx();
             this.printPreviewDialog = new PrintPreviewDialog();
             this.saveFileDialog = new SaveFileDialog();
             this.openFileDialog = new OpenFileDialog();
@@ -1568,7 +1590,7 @@ namespace FlashDevelop
         /// </summary>
         public void OnScintillaControlMarginClick(ScintillaControl sci, Int32 modifiers, Int32 position, Int32 margin)
         {
-            if (margin == 2)
+            if (margin == ScintillaManager.FoldingMargin)
             {
                 Int32 line = sci.LineFromPosition(position);
                 if (Control.ModifierKeys == Keys.Control) MarkerManager.ToggleMarker(sci, 0, line);
@@ -1936,6 +1958,14 @@ namespace FlashDevelop
         }
 
         /// <summary>
+        /// Sets if child controls should use theme.
+        /// </summary>
+        public void SetUseTheme(Object obj, Boolean use)
+        {
+            ThemeManager.SetUseTheme(obj, use);
+        }
+
+        /// <summary>
         /// Finds the specified menu item by name
         /// </summary>
         public ToolStripItem FindMenuItem(String name)
@@ -2274,7 +2304,6 @@ namespace FlashDevelop
                 return Path.GetDirectoryName(project.ProjectPath);
             }
             else return PathHelper.AppDir;
-
         }
 
         /// <summary>
@@ -2536,9 +2565,9 @@ namespace FlashDevelop
         }
 
         /// <summary>
-        /// Paste text using <see cref="ClipboardHistoryDialog"/>.
+        /// Views the current clipboard history
         /// </summary>
-        public void PasteHistory(object sender, EventArgs e)
+        public void ClipboardHistory(object sender, EventArgs e)
         {
             ClipboardTextData data;
             if (ClipboardHistoryDialog.Show(out data))
@@ -2636,9 +2665,6 @@ namespace FlashDevelop
         {
             try
             {
-                var button = (ToolStripItem)sender;
-                var reason = ((ItemData)button.Tag).Tag as string;
-                
                 if (this.CurrentDocument.IsUntitled)
                 {
                     this.saveFileDialog.FileName = this.CurrentDocument.FileName;
@@ -2655,6 +2681,8 @@ namespace FlashDevelop
                 }
                 else if (this.CurrentDocument.IsModified)
                 {
+                    var button = (ToolStripItem)sender;
+                    var reason = ((ItemData)button.Tag).Tag;
                     this.CurrentDocument.Save(this.CurrentDocument.FileName, reason);
                 }
             }
@@ -3522,10 +3550,12 @@ namespace FlashDevelop
         /// </summary>
         public void InsertHash(Object sender, System.EventArgs e)
         {
-            HashDialog cd = new HashDialog();
-            if (cd.ShowDialog() == DialogResult.OK)
+            using (HashDialog cd = new HashDialog())
             {
-                Globals.SciControl.ReplaceSel(cd.HashResultText);
+                if (cd.ShowDialog() == DialogResult.OK)
+                {
+                    Globals.SciControl.ReplaceSel(cd.HashResultText);
+                }
             }
         }
 
@@ -4021,25 +4051,27 @@ namespace FlashDevelop
         /// </summary>
         public void SelectTheme(Object sender, System.EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.InitialDirectory = PathHelper.ThemesDir;
-            ofd.Title = " " + TextHelper.GetString("Title.OpenFileDialog");
-            ofd.Filter = TextHelper.GetString("Info.ThemesFilter");
-            if (ofd.ShowDialog(this) == DialogResult.OK)
+            using (OpenFileDialog ofd = new OpenFileDialog())
             {
-                String ext = Path.GetExtension(ofd.FileName).ToLower();
-                if (ext == ".fdi")
+                ofd.InitialDirectory = PathHelper.ThemesDir;
+                ofd.Title = " " + TextHelper.GetString("Title.OpenFileDialog");
+                ofd.Filter = TextHelper.GetString("Info.ThemesFilter");
+                if (ofd.ShowDialog(this) == DialogResult.OK)
                 {
-                    ThemeManager.LoadTheme(ofd.FileName);
-                    ThemeManager.WalkControls(this);
-                }
-                else
-                {
-                    this.CallCommand("ExtractZip", ofd.FileName + ";true");
-                    String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
-                    if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
-                    ThemeManager.WalkControls(this);
-                    this.RefreshSciConfig();
+                    String ext = Path.GetExtension(ofd.FileName).ToLower();
+                    if (ext == ".fdi")
+                    {
+                        ThemeManager.LoadTheme(ofd.FileName);
+                        ThemeManager.WalkControls(this);
+                    }
+                    else
+                    {
+                        this.CallCommand("ExtractZip", ofd.FileName + ";true");
+                        String currentTheme = Path.Combine(PathHelper.ThemesDir, "CURRENT");
+                        if (File.Exists(currentTheme)) ThemeManager.LoadTheme(currentTheme);
+                        ThemeManager.WalkControls(this);
+                        this.RefreshSciConfig();
+                    }
                 }
             }
         }
@@ -4082,7 +4114,7 @@ namespace FlashDevelop
                 ToolStripItem button = (ToolStripItem)sender;
                 String command = ((ItemData)button.Tag).Tag;
                 Type mfType = Globals.SciControl.GetType();
-                MethodInfo method = mfType.GetMethod(command);
+                MethodInfo method = mfType.GetMethod(command, new Type[0]);
                 method.Invoke(Globals.SciControl, null);
             }
             catch (Exception ex)
@@ -4094,16 +4126,15 @@ namespace FlashDevelop
         /// <summary>
         /// Calls a custom plugin command
         /// </summary>
-        public void PluginCommand(Object sender, System.EventArgs e)
+        public void PluginCommand(object sender, EventArgs e)
         {
             try
             {
-                ToolStripItem button = (ToolStripItem)sender;
-                String[] args = ((ItemData)button.Tag).Tag.Split(';');
-                String action = args[0]; // Action of the command
-                String data = (args.Length > 1) ? args[1] : null;
-                DataEvent de = new DataEvent(EventType.Command, action, data);
-                EventManager.DispatchEvent(this, de);
+                var item = (ToolStripItem) sender;
+                string[] args = ((ItemData) item.Tag).Tag.Split(new[] { ';' }, 2);
+                string action = args[0]; // Action of the command
+                string data = args.Length > 1 ? args[1] : null;
+                EventManager.DispatchEvent(this, new DataEvent(EventType.Command, action, data));
             }
             catch (Exception ex)
             {
@@ -4114,18 +4145,15 @@ namespace FlashDevelop
         /// <summary>
         /// Calls a normal MainForm method
         /// </summary>
-        public Boolean CallCommand(String name, String tag)
+        public Boolean CallCommand(String command, String args)
         {
             try
             {
-                Type mfType = this.GetType();
-                System.Reflection.MethodInfo method = mfType.GetMethod(name);
+                var method = this.GetType().GetMethod(command);
                 if (method == null) throw new MethodAccessException();
-                ToolStripMenuItem button = new ToolStripMenuItem();
-                button.Tag = new ItemData(null, tag, null); // Tag is used for args
-                Object[] parameters = new Object[2];
-                parameters[0] = button; parameters[1] = null;
-                method.Invoke(this, parameters);
+                var item = new ToolStripMenuItem();
+                item.Tag = new ItemData(null, args, null); // Tag is used for args
+                method.Invoke(this, new[] { item, null });
                 return true;
             }
             catch (Exception ex)
@@ -4270,28 +4298,30 @@ namespace FlashDevelop
         {
             try
             {
-                SaveFileDialog sfd = new SaveFileDialog();
-                sfd.AddExtension = true; sfd.DefaultExt = "fdz";
-                sfd.Filter = TextHelper.GetString("FlashDevelop.Info.ZipFilter");
-                String dirMarker = "\\" + DistroConfig.DISTRIBUTION_NAME + "\\";
-                if (sfd.ShowDialog(this) == DialogResult.OK)
+                using (SaveFileDialog sfd = new SaveFileDialog())
                 {
-                    List<String> settingFiles = new List<String>();
-                    ZipFile zipFile = ZipFile.Create(sfd.FileName);
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.DataDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.SnippetDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.SettingDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.TemplateDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.UserLibraryDir, "*.*", SearchOption.AllDirectories));
-                    settingFiles.AddRange(Directory.GetFiles(PathHelper.UserProjectsDir, "*.*", SearchOption.AllDirectories));
-                    zipFile.BeginUpdate();
-                    foreach (String settingFile in settingFiles)
+                    sfd.AddExtension = true; sfd.DefaultExt = "fdz";
+                    sfd.Filter = TextHelper.GetString("FlashDevelop.Info.ZipFilter");
+                    String dirMarker = "\\" + DistroConfig.DISTRIBUTION_NAME + "\\";
+                    if (sfd.ShowDialog(this) == DialogResult.OK)
                     {
-                        Int32 index = settingFile.IndexOfOrdinal(dirMarker) + dirMarker.Length;
-                        zipFile.Add(settingFile, "$(BaseDir)\\" + settingFile.Substring(index));
+                        List<String> settingFiles = new List<String>();
+                        ZipFile zipFile = ZipFile.Create(sfd.FileName);
+                        settingFiles.AddRange(Directory.GetFiles(PathHelper.DataDir, "*.*", SearchOption.AllDirectories));
+                        settingFiles.AddRange(Directory.GetFiles(PathHelper.SnippetDir, "*.*", SearchOption.AllDirectories));
+                        settingFiles.AddRange(Directory.GetFiles(PathHelper.SettingDir, "*.*", SearchOption.AllDirectories));
+                        settingFiles.AddRange(Directory.GetFiles(PathHelper.TemplateDir, "*.*", SearchOption.AllDirectories));
+                        settingFiles.AddRange(Directory.GetFiles(PathHelper.UserLibraryDir, "*.*", SearchOption.AllDirectories));
+                        settingFiles.AddRange(Directory.GetFiles(PathHelper.UserProjectsDir, "*.*", SearchOption.AllDirectories));
+                        zipFile.BeginUpdate();
+                        foreach (String settingFile in settingFiles)
+                        {
+                            Int32 index = settingFile.IndexOfOrdinal(dirMarker) + dirMarker.Length;
+                            zipFile.Add(settingFile, "$(BaseDir)\\" + settingFile.Substring(index));
+                        }
+                        zipFile.CommitUpdate();
+                        zipFile.Close();
                     }
-                    zipFile.CommitUpdate();
-                    zipFile.Close();
                 }
             }
             catch (Exception ex)
@@ -4321,6 +4351,15 @@ namespace FlashDevelop
                 String message = TextHelper.GetString("Info.CouldNotExecuteScript");
                 ErrorManager.ShowWarning(message + "\r\n" + ex.Message, null);
             }
+        }
+
+        /// <summary>
+        /// Test the controls in a dedicated form
+        /// </summary>
+        public void TestControls(Object sender, EventArgs e)
+        {
+            ControlDialog cd = new ControlDialog();
+            cd.Show(this);
         }
 
         /// <summary>
@@ -4361,7 +4400,7 @@ namespace FlashDevelop
         public void ExecuteScriptExternal(String script)
         {
             if (!File.Exists(script)) throw new FileNotFoundException();
-            using (AsmHelper helper = new AsmHelper(CSScript.Compile(script, null, true), null, true))
+            using (AsmHelper helper = new AsmHelper(CSScript.CompileFile(script, null, true), null, true))
             {
                 helper.Invoke("*.Execute");
             }

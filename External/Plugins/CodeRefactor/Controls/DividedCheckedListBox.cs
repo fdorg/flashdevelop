@@ -9,12 +9,10 @@ namespace CodeRefactor.Controls
 {
     class DividedCheckedListBox : CheckedListBox
     {
-        private Color color = Color.FromArgb(255, 0, 0, 0);
-
         protected override void OnDrawItem(DrawItemEventArgs e)
         {
-            String label = Items[e.Index].ToString();
-            if (label.StartsWithOrdinal("---"))
+            string label;
+            if (e.Index > -1 && e.Index < Items.Count && (label = Items[e.Index].ToString()).StartsWithOrdinal("---"))
             {
                 e.Graphics.FillRectangle(new SolidBrush(BackColor), e.Bounds);
                 e.Graphics.DrawString(label.Substring(4), Font, Brushes.Gray, e.Bounds);

@@ -27,5 +27,10 @@
     <version value="21.0" swf-version="32" />
     <version value="22.0" swf-version="33" />
     <version value="23.0" swf-version="34" />
+    <version value="24.0" swf-version="35" />
+    <version value="25.0" swf-version="36" />
+    <version value="26.0" swf-version="37" />
+    <version value="27.0" swf-version="38" />
+    <version value="28.0" swf-version="39" />
   </versions>
 </platform>

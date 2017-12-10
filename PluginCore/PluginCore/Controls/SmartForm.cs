@@ -1,17 +1,16 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using System.Drawing;
-using System.Windows.Forms;
-using System.ComponentModel;
-using System.Collections.Generic;
+﻿using PluginCore.Helpers;
 using PluginCore.Managers;
 using PluginCore.Utilities;
-using PluginCore.Helpers;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
 
 namespace PluginCore.Controls
 {
-    public class SmartForm : Form
+    public class SmartForm : FormEx, IEventHandler
     {
         private String formGuid;
         private String helpLink;
@@ -25,8 +24,9 @@ namespace PluginCore.Controls
         {
             this.formProps = new FormProps();
             this.Load += new EventHandler(this.SmartFormLoad);
-            this.Shown += new EventHandler(this.SmartFormShown);
             this.FormClosed += new FormClosedEventHandler(this.SmartFormClosed);
+            EventManager.AddEventHandler(this, EventType.ApplyTheme);
+            ScaleHelper.AdjustForHighDPI(this);
         }
 
         /// <summary>
@@ -45,6 +45,14 @@ namespace PluginCore.Controls
         {
             get { return this.formGuid; }
             set { this.formGuid = value.ToUpper(); }
+        }
+
+        /// <summary>
+        /// Gets or sets the help link
+        /// </summary>
+        public override Boolean UseTheme
+        {
+            get { return PluginBase.MainForm.GetThemeFlag("SmartForm.UseTheme", false); }
         }
 
         /// <summary>
@@ -70,14 +78,24 @@ namespace PluginCore.Controls
         }
 
         /// <summary>
-        /// Center the dialog to parent if requested
+        /// Apply theming properties to the controls
         /// </summary>
-        private void SmartFormShown(Object sender, EventArgs e)
+        private void ApplyTheming()
         {
-            if (this.StartPosition == FormStartPosition.CenterParent)
+            PluginBase.MainForm.SetUseTheme(this, this.UseTheme);
+            if (this.UseTheme)
             {
-                this.CenterToParent();
+                ScrollBarEx.Attach(this, true);
+                PluginBase.MainForm.ThemeControls(this);
             }
+        }
+
+        /// <summary>
+        /// Handles the incoming theming change event and updates.
+        /// </summary>
+        public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
+        {
+            if (e.Type == EventType.ApplyTheme) this.ApplyTheming();
         }
 
         /// <summary>
@@ -85,12 +103,16 @@ namespace PluginCore.Controls
         /// </summary>
         private void SmartFormLoad(Object sender, EventArgs e)
         {
-            ScaleHelper.AdjustForHighDPI(this);
+            this.ApplyTheming();
+            if (this.StartPosition == FormStartPosition.CenterParent)
+            {
+                this.CenterToParent();
+            }
             if (!String.IsNullOrEmpty(this.formGuid) && File.Exists(this.FormPropsFile))
             {
                 Object obj = ObjectSerializer.Deserialize(this.FormPropsFile, this.formProps);
                 this.formProps = (FormProps)obj;
-                if (!this.formProps.WindowSize.IsEmpty)
+                if (!this.formProps.WindowSize.IsEmpty && this.FormBorderStyle == FormBorderStyle.Sizable)
                 {
                     this.Size = this.formProps.WindowSize;
                 }
@@ -98,7 +120,7 @@ namespace PluginCore.Controls
             if (!String.IsNullOrEmpty(this.helpLink))
             {
                 this.HelpButton = true;
-                this.HelpButtonClicked += new System.ComponentModel.CancelEventHandler(this.SmartFormHelpButtonClick);
+                this.HelpButtonClicked += new CancelEventHandler(this.SmartFormHelpButtonClick);
             }
             ApplyProps?.Invoke(this);
         }
@@ -109,7 +131,7 @@ namespace PluginCore.Controls
         private void SmartFormClosed(Object sender, FormClosedEventArgs e)
         {
             SaveProps?.Invoke(this);
-            if (!String.IsNullOrEmpty(this.formGuid) && !this.Size.IsEmpty)
+            if (!String.IsNullOrEmpty(this.formGuid) && !this.Size.IsEmpty && this.FormBorderStyle == FormBorderStyle.Sizable)
             {
                 this.formProps.WindowSize = this.Size;
                 ObjectSerializer.Serialize(this.FormPropsFile, this.formProps);

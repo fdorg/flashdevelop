@@ -19,6 +19,7 @@ namespace SourceControl
         private Boolean enableGIT;
         private Boolean enableHG;
 
+
         [DefaultValue(false)]
         [DisplayName("Enable SVN")]
         [LocalizedCategory("SourceControl.Category.SVN")]
@@ -115,6 +116,9 @@ namespace SourceControl
             set { this.tortoiseHGProcPath = value; }
         }
 
+        [DefaultValue(false)]
+        [DisplayName("Never create a commit when moving, deleting, etc. files ")]
+        [LocalizedDescription("SourceControl.Description.NeverAskForCommit")]
+        public bool NeverCommit { get; set; }
     }
-
 }

@@ -392,16 +392,24 @@ namespace ASCompletion.Completion
                             .Returns("new String.#1~.charCodeAt.#0~.toString")
                             .SetName("From new String().charCodeAt(0).toString|");
                     yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpressionOfStringInitializer.charCodeAt0.toString"))
+                            .Returns(";\"string\".#1~.charCodeAt.#0~.toString")
+                            .SetName("From \"string\".charCodeAt(0).toString|");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpressionOfStringInitializer2.charCodeAt0.toString"))
+                            .Returns(";'string'.#1~.charCodeAt.#0~.toString")
+                            .SetName("From 'string'.charCodeAt(0).toString|");
+                    yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfEmptyStringInitializer"))
-                            .Returns("\"")
+                            .Returns(";\"\"")
                             .SetName("From \"\"|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfEmptyStringInitializerSingleQuotes"))
-                            .Returns("\"")
+                            .Returns(";''")
                             .SetName("From ''|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfStringInitializer"))
-                            .Returns("\"")
+                            .Returns(";\"string\"")
                             .SetName("From \"string\"|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfGlogalFunctionString"))
@@ -409,7 +417,7 @@ namespace ASCompletion.Completion
                             .SetName("From String(\"string\")|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfObjectInitializer"))
-                            .Returns(";")
+                            .Returns(";{}")
                             .SetName("From {}|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfArrayInitializer"))
@@ -421,7 +429,7 @@ namespace ASCompletion.Completion
                             .SetName("From [].push|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfTwoDimensionalArrayInitializer"))
-                            .Returns(";.[]")
+                            .Returns(";.[[], []]")
                             .SetName("From [[], []]|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfVectorInitializer"))
@@ -433,7 +441,7 @@ namespace ASCompletion.Completion
                             .SetName("From new <Vector.<int>>[new <int>[]]|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfArrayAccess"))
-                            .Returns(",.[].[].[]")
+                            .Returns(",.[4,5,6].[0].[2]")
                             .SetName("From [[1,2,3], [4,5,6][0][2]|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfNewVector"))
@@ -465,8 +473,8 @@ namespace ASCompletion.Completion
                             .SetName("From true|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfXML"))
-                            .Returns(" ")
-                            .SetName("<xml><![CDATA[string]]></xml>|");
+                            .Returns(";</>")
+                            .SetName("<xml/>|");
                 }
             }
 
@@ -513,6 +521,10 @@ namespace ASCompletion.Completion
                         new TestCaseData(ReadAllTextHaxe("GetExpressionOfNewArray3"))
                             .Returns("new Array<{name:String, params:Array<Dynamic>}>")
                             .SetName("From new Array<{name:String, params:Array<Dynamic>}>|");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpressionOfStringInterpolation.charAt"))
+                            .Returns(";'result: ${1 + 2}'.#0~.charAt")
+                            .SetName("'result: ${1 + 2}'.charAt");
                 }
             }
 
@@ -908,6 +920,32 @@ namespace ASCompletion.Completion
                 SnippetHelper.PostProcessSnippets(sci, 0);
                 var pos = sci.CurrentPos - 1;
                 return ASComplete.FindParameterIndex(sci, ref pos);
+            }
+        }
+
+        [TestFixture]
+        public class Issue104Tests : ASCompleteTests
+        {
+            static IEnumerable<TestCaseData> ParseClassTestCases_issue104
+            {
+                get
+                {
+                    yield return new TestCaseData("Iterable", FlagType.Class | FlagType.TypeDef)
+                        .Returns("\n\tAn `Iterable` is a data structure which has an `iterator()` method.\n\tSee `Lambda` for generic functions on iterable structures.\n\n\t@see https://haxe.org/manual/lf-iterators.html\n")
+                        .SetName("Issue 104. typdef");
+                    yield return new TestCaseData("Any", FlagType.Class | FlagType.Abstract)
+                        .Returns("\n\t`Any` is a type that is compatible with any other in both ways.\n\n\tThis means that a value of any type can be assigned to `Any`, and\n\tvice-versa, a value of `Any` type can be assigned to any other type.\n\n\tIt's a more type-safe alternative to `Dynamic`, because it doesn't\n\tsupport field access or operators and it's bound to monomorphs. So,\n\tto work with the actual value, it needs to be explicitly promoted\n\tto another type.\n")
+                        .SetName("Issue 104. abstract");
+                }
+            }
+
+            [Test, TestCaseSource(nameof(ParseClassTestCases_issue104))]
+            public string ParseFile_Issue104(string name, FlagType flags)
+            {
+                ASContext.Context.SetHaxeFeatures();
+                var visibleExternalElements = ASContext.Context.GetVisibleExternalElements();
+                var result = visibleExternalElements.Search(name, flags, 0);
+                return result.Comments;
             }
         }
 

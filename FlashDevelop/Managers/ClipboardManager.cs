@@ -44,17 +44,22 @@ namespace FlashDevelop.Managers
 
             if (Win32.ShouldUseWin32())
             {
-                hwnd = window.Handle;
-                if (!UnsafeNativeMethods.AddClipboardFormatListener(hwnd))
+                try
+                {
+                    hwnd = window.Handle;
+                    if (!UnsafeNativeMethods.AddClipboardFormatListener(hwnd))
+                    {
+                        hwnd = IntPtr.Zero;
+                        var ex = new Win32Exception(Marshal.GetLastWin32Error());
+                        throw new NotSupportedException(ex.Message, ex);
+                    }
+                }
+                catch (EntryPointNotFoundException)
                 {
                     hwnd = IntPtr.Zero;
-                    var ex = new Win32Exception(Marshal.GetLastWin32Error());
-                    throw new NotSupportedException(ex.Message, ex);
                 }
             }
-
             history = new FixedSizeQueue<ClipboardTextData>(Globals.Settings.ClipboardHistorySize);
-
             try
             {
                 var dataObject = Clipboard.GetDataObject();
@@ -78,7 +83,7 @@ namespace FlashDevelop.Managers
             {
                 throw new InvalidOperationException(nameof(ClipboardManager) + " is either not initialized or already disposed.");
             }
-            else if (Win32.ShouldUseWin32())
+            else if (hwnd != IntPtr.Zero)
             {
                 if (!UnsafeNativeMethods.RemoveClipboardFormatListener(hwnd))
                 {
@@ -86,7 +91,6 @@ namespace FlashDevelop.Managers
                     throw new NotSupportedException(ex.Message, ex);
                 }
             }
-
             hwnd = IntPtr.Zero;
             history = null;
         }
@@ -218,7 +222,6 @@ namespace FlashDevelop.Managers
             {
                 return false;
             }
-
             return dataObject.GetDataPresent(DataFormats.Text)/*
                 || dataObject.GetDataPresent(DataFormats.UnicodeText)
                 || dataObject.GetDataPresent(DataFormats.OemText)
@@ -248,5 +251,7 @@ namespace FlashDevelop.Managers
                 throw new ArgumentException("Specified " + nameof(IDataObject) + " does not contain any text data.");
             }
         }
+
     }
+
 }

@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using PluginCore.Localization;
 using PluginCore.Helpers;
 using PluginCore.Controls;
-using ProjectManager;
 using PluginCore;
+using System.Linq;
 
 namespace ProjectManager.Controls
 {
@@ -18,7 +18,6 @@ namespace ProjectManager.Controls
         private List<String> openedFiles;
         private List<String> projectFiles;
         private const String ITEM_SPACER = "-----------------";
-        private System.Windows.Forms.Label infoLabel;
         private System.Windows.Forms.TextBox textBox;
         private System.Windows.Forms.ListBox listBox;
         private System.Windows.Forms.CheckBox cbInClasspathsOnly;
@@ -45,22 +44,12 @@ namespace ProjectManager.Controls
         /// </summary>
         private void InitializeComponent()
         {
-            this.infoLabel = new System.Windows.Forms.Label();
-            this.textBox = new System.Windows.Forms.TextBox();
-            this.listBox = new System.Windows.Forms.ListBox();
-            this.cbInClasspathsOnly = new System.Windows.Forms.CheckBox();
-            this.checkBox = new System.Windows.Forms.CheckBox();
-            this.refreshButton = new System.Windows.Forms.Button();
+            this.textBox = new System.Windows.Forms.TextBoxEx();
+            this.listBox = new System.Windows.Forms.ListBoxEx();
+            this.cbInClasspathsOnly = new System.Windows.Forms.CheckBoxEx();
+            this.checkBox = new System.Windows.Forms.CheckBoxEx();
+            this.refreshButton = new System.Windows.Forms.ButtonEx();
             this.SuspendLayout();
-            // 
-            // infoLabel
-            // 
-            this.infoLabel.AutoSize = true;
-            this.infoLabel.Location = new System.Drawing.Point(10, 10);
-            this.infoLabel.Name = "infoLabel";
-            this.infoLabel.Size = new System.Drawing.Size(273, 13);
-            this.infoLabel.TabIndex = 0;
-            this.infoLabel.Text = "Search: (UPPERCASE for search by abbreviation)";
             // 
             // textBox
             // 
@@ -109,10 +98,11 @@ namespace ProjectManager.Controls
             // 
             this.listBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.listBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.listBox.IntegralHeight = false;
             this.listBox.FormattingEnabled = true;
             this.listBox.Location = new System.Drawing.Point(12, 62);
             this.listBox.Name = "listBox";
-            this.listBox.Size = new System.Drawing.Size(498, 276);
+            this.listBox.Size = new System.Drawing.Size(498, 264);
             this.listBox.TabIndex = 5;
             this.listBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBoxDrawItem);
             this.listBox.Resize += new System.EventHandler(this.ListBoxResize);
@@ -127,7 +117,6 @@ namespace ProjectManager.Controls
             this.Controls.Add(this.listBox);
             this.Controls.Add(this.textBox);
             this.Controls.Add(this.refreshButton);
-            this.Controls.Add(this.infoLabel);
             this.Controls.Add(this.checkBox);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -139,6 +128,7 @@ namespace ProjectManager.Controls
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Open Resource";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OpenResourceKeyDown);
+            this.Load += new EventHandler(OpenResourceFormLoad);
             this.Activated += new EventHandler(OpenResourceFormActivated);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -148,9 +138,6 @@ namespace ProjectManager.Controls
 
         #region Methods And Event Handlers
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void InitializeGraphics()
         {
             ImageList imageList = new ImageList();
@@ -161,64 +148,49 @@ namespace ProjectManager.Controls
             this.refreshButton.ImageIndex = 0;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void InitializeLocalization()
         {
-            this.infoLabel.Text = TextHelper.GetString("Label.SearchString");
             this.cbInClasspathsOnly.Text = TextHelper.GetString("Label.InClasspathsOnly");
             this.checkBox.Text = TextHelper.GetString("Label.CodeFilesOnly");
             this.Text = " " + TextHelper.GetString("Title.OpenResource");
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void RefreshButtonClick(Object sender, EventArgs e)
         {
             this.CreateFileList();
             this.RefreshListBox();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void CbInClasspathsOnlyCheckedChanged(Object sender, EventArgs e)
         {
             this.CreateFileList();
             this.RefreshListBox();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void CheckBoxCheckedChanged(Object sender, EventArgs e)
         {
             this.CreateFileList();
             this.RefreshListBox();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private void OpenResourceFormActivated(Object sender, EventArgs e)
+        private void OpenResourceFormLoad(Object sender, EventArgs e)
         {
-            if (openedFiles == null) this.CreateFileList();
-            else
-            {
-                this.textBox.Focus();
-                this.textBox.Text = previousSearch;
-                this.textBox.SelectAll();
-                this.UpdateOpenFiles();
-                this.textBox.Focus();
-            }
+            this.CreateFileList();
             this.RefreshListBox();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
+        private void OpenResourceFormActivated(Object sender, EventArgs e)
+        {
+            this.textBox.Focus();
+            this.textBox.SelectAll();
+            if (previousSearch != null)
+            {
+                previousSearch = null;
+                this.UpdateOpenFiles();
+                this.textBox.Focus();
+            }
+        }
+
         private void ListBoxDrawItem(Object sender, DrawItemEventArgs e)
         {
             Boolean selected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
@@ -251,9 +223,6 @@ namespace ProjectManager.Controls
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void RefreshListBox()
         {
             this.listBox.BeginUpdate();
@@ -266,17 +235,15 @@ namespace ProjectManager.Controls
             this.listBox.EndUpdate();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void FillListBox()
         {
             List<String> matchedFiles;
             if (this.textBox.Text.Length > 0)
             {
-                matchedFiles = SearchUtil.getMatchedItems(this.openedFiles, this.textBox.Text, "\\", 0);
+                String searchText = this.textBox.Text.Replace("\\", "/");
+                matchedFiles = SearchUtil.getMatchedItems(this.openedFiles, searchText, "/", 0);
                 if (matchedFiles.Capacity > 0) matchedFiles.Add(ITEM_SPACER);
-                matchedFiles.AddRange(SearchUtil.getMatchedItems(this.projectFiles, this.textBox.Text, "\\", this.MAX_ITEMS));
+                matchedFiles.AddRange(SearchUtil.getMatchedItems(this.projectFiles, searchText, "/", this.MAX_ITEMS));
             }
             else matchedFiles = openedFiles;
             foreach (String file in matchedFiles)
@@ -315,9 +282,6 @@ namespace ProjectManager.Controls
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void CreateFileList()
         {
             List<String> open = this.GetOpenFiles();
@@ -430,9 +394,6 @@ namespace ProjectManager.Controls
             return (info.Attributes & FileAttributes.Hidden) > 0;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void Navigate()
         {
             if (this.listBox.SelectedItem != null)
@@ -446,9 +407,6 @@ namespace ProjectManager.Controls
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void OpenResourceKeyDown(Object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape) this.Close();
@@ -457,11 +415,14 @@ namespace ProjectManager.Controls
                 e.Handled = true;
                 this.Navigate();
             }
+            else if (e.KeyData == (Keys.Control | Keys.R))
+            {
+                e.SuppressKeyPress = true;
+                this.CreateFileList();
+                this.RefreshListBox();
+            }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void TextBoxKeyDown(Object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Down && this.listBox.SelectedIndex < this.listBox.Items.Count - 1)
@@ -486,31 +447,20 @@ namespace ProjectManager.Controls
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void TextBoxTextChanged(Object sender, EventArgs e)
         {
             this.RefreshListBox();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void ListBoxDoubleClick(Object sender, EventArgs e)
         {
             this.Navigate();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void ListBoxResize(Object sender, EventArgs e)
         {
             this.listBox.Refresh();
         }
-
-        #endregion
 
         protected override void OnClosed(EventArgs e)
         {
@@ -518,37 +468,88 @@ namespace ProjectManager.Controls
             previousSearch = this.textBox.Text;
         }
 
+        #endregion
+
     }
 
     #region Helpers
 
-    class SearchUtil
+    struct SearchResult
     {
-        public delegate Boolean Comparer(String value1, String value2, String value3);
+        public double Score;
+        public double FolderScore;
+        public string Value;
+    }
 
-        public static List<String> getMatchedItems(List<String> source, String searchText, String pathSeparator, Int32 limit)
+    public class SearchUtil
+    {
+        public static List<string> getMatchedItems(List<string> source, string searchText, string pathSeparator, int limit)
         {
-            Int32 i = 0;
-            List<String> matchedItems = new List<String>();
-            String firstChar = searchText.Substring(0, 1);
-            Comparer searchMatch = (firstChar == firstChar.ToUpper()) ? new Comparer(AdvancedSearchMatch) : new Comparer(SimpleSearchMatch);
-            foreach (String item in source)
+            var i = 0;
+            var matchedItems = new List<SearchResult>();
+            string searchFile;
+            string searchDir;
+            try
             {
-                if (searchMatch(item, searchText, pathSeparator))
-                {
-                    matchedItems.Add(item);
-                    if (limit > 0 && i++ > limit) break;
-                }
+                searchFile = Path.GetFileName(searchText);
+                searchDir = Path.GetDirectoryName(searchText);
             }
-            return matchedItems;
+            catch (ArgumentException)
+            {
+                return new List<string>();
+            }
+
+            foreach (var item in source)
+            {
+                double score;
+                var file = Path.GetFileName(item);
+                var dir = Path.GetDirectoryName(item);
+
+                //score file name
+                if (AdvancedSearchMatch(file, searchFile))
+                    score = 1000.0;
+                else
+                    score = Score(file, searchFile, pathSeparator[0]);
+
+                //score /= file.Length; //divide by length to prefer shorter results
+
+                if (score <= 0) continue;
+
+                //score folder path
+                var folderScore = 0.0;
+                if (!string.IsNullOrEmpty(searchDir))
+                    folderScore = ScoreWithoutNormalize(dir, searchDir, pathSeparator[0]); //do not divide by length here, because short folders should not be favoured too much
+
+                var result = new SearchResult
+                {
+                    Score = score,
+                    FolderScore = folderScore,
+                    Value = item
+                };
+                matchedItems.Add(result);
+            }
+
+            //sort results in following priority: folderScore, score, length (folderScore being the most important one)
+            var sortedMatches = matchedItems.OrderByDescending(r => r.FolderScore).ThenByDescending(r => r.Score).ThenBy(r => r.Value.Length);
+
+            var results = new List<string>();
+            foreach (var r in sortedMatches)
+            {
+                if (limit > 0 && i++ >= limit) break;
+                results.Add(r.Value);
+            }
+
+            return results;
         }
 
-        static private bool AdvancedSearchMatch(String file, String searchText, String pathSeparator)
+        static bool AdvancedSearchMatch(string file, string searchText)
         {
+            if (!string.Equals(searchText.ToUpperInvariant(), searchText)) return false;
+
             int i = 0; int j = 0;
             if (file.Length < searchText.Length) return false;
-            Char[] text = Path.GetFileName(file).ToCharArray();
-            Char[] pattern = searchText.ToCharArray();
+            var text = file.ToCharArray();
+            var pattern = searchText.ToCharArray();
             while (i < pattern.Length)
             {
                 while (i < pattern.Length && j < text.Length && pattern[i] == text[j])
@@ -557,21 +558,63 @@ namespace ProjectManager.Controls
                     j++;
                 }
                 if (i == pattern.Length) return true;
-                if (Char.IsLower(pattern[i])) return false;
-                while (j < text.Length && Char.IsLower(text[j]))
+                if (char.IsLower(pattern[i])) return false;
+                while (j < text.Length && char.IsLower(text[j]))
                 {
                     j++;
                 }
                 if (j == text.Length) return false;
                 if (pattern[i] != text[j]) return false;
             }
-            return (i == pattern.Length);
+            return i == pattern.Length;
         }
 
-        private static Boolean SimpleSearchMatch(String file, String searchText, String pathSeparator)
+        static double Score(string str, string query, char pathSeparator)
         {
-            String fileName = Path.GetFileName(file).ToLower();
-            return fileName.IndexOfOrdinal(searchText.ToLower()) > -1;
+            var score = ScoreWithoutNormalize(str, query, pathSeparator);
+
+            return (score / str.Length + score / query.Length) / 2;
+        }
+
+        /**
+         * Ported from: https://github.com/atom/fuzzaldrin/
+         */
+        static double ScoreWithoutNormalize(string str, string query, char pathSeparator)
+        {
+            double score = 0;
+
+            if (str.StartsWith(query, StringComparison.OrdinalIgnoreCase)) //Starts with bonus
+                return query.Length + 1;
+
+            if (str.ToLower().Contains(query.ToLower())) //Contains bonus
+                return query.Length;
+
+            int strIndex = 0;
+
+            for (int i = 0; i < query.Length; i++)
+            {
+                var character = query[i].ToString();
+
+                var index = str.IndexOf(character, strIndex, StringComparison.OrdinalIgnoreCase);
+
+                if (index == -1)
+                    return 0;
+
+                var charScore = 0.1;
+
+                if (str[index] == query[i]) //same case bonus
+                    charScore += 0.1;
+
+                if (index == 0 || str[index - 1] == pathSeparator) //start of string bonus
+                    charScore += 0.8;
+                else if (i == index) //equivalent position bonus
+                    charScore += 0.5;
+
+                score += charScore;
+                strIndex = index + 1;
+            }
+
+            return score;
         }
 
     }

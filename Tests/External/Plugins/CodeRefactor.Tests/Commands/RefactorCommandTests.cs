@@ -206,6 +206,14 @@ namespace CodeRefactor.Commands
         {
             protected static string ReadAllTextHaxe(string fileName) => TestFile.ReadAllText($"{nameof(CodeRefactor)}.Test_Files.coderefactor.organizeimports.haxe.{fileName}.hx");
 
+            [TestFixtureSetUp]
+            public void OrganizeImportsFixtureSetUp()
+            {
+                // Needed for preprocessor directives...
+                Sci.SetProperty("fold", "1");
+                Sci.SetProperty("fold.preprocessor", "1");
+            }
+
             public IEnumerable<TestCaseData> HaxeTestCases
             {
                 get
@@ -222,13 +230,23 @@ namespace CodeRefactor.Commands
                         new TestCaseData(ReadAllTextHaxe("BeforeOrganizeImports_withImportsFromSameModule2"), "Main.hx")
                             .Returns(ReadAllTextHaxe("AfterOrganizeImports_withImportsFromSameModule2"))
                             .SetName("Issue782. Package is not empty.");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("BeforeOrganizeImports_withImportsFromSameModule2"), "Main.hx")
+                            .Returns(ReadAllTextHaxe("AfterOrganizeImports_withImportsFromSameModule2"))
+                            .SetName("Issue782. Package is not empty.");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("BeforeOrganizeImports_withElseIfDirective"), "Main.hx")
+                            .Returns(ReadAllTextHaxe("AfterOrganizeImports_withElseIfDirective"))
+                            .SetName("Issue783. Shouldn't touch #elseif blocks.");
                 }
             }
 
             [Test, TestCaseSource(nameof(HaxeTestCases))]
-            public string Haxe(string sourceText, string fileName)
+            public string Haxe(string sourceText, string fileName) => HaxeImpl(Sci, sourceText, fileName);
+
+            public static string HaxeImpl(ScintillaControl sci, string sourceText, string fileName)
             {
-                Sci.ConfigurationLanguage = "haxe";
+                sci.ConfigurationLanguage = "haxe";
                 ASContext.Context.SetHaxeFeatures();
                 ASContext.Context.CurrentModel.Returns(new FileModel
                 {
@@ -236,14 +254,20 @@ namespace CodeRefactor.Commands
                     Context = ASContext.Context,
                     FileName = fileName
                 });
-                Sci.Text = sourceText;
-                SnippetHelper.PostProcessSnippets(Sci, 0);
+                return Common(sci, sourceText, fileName);
+            }
+
+            internal static string Common(ScintillaControl sci, string sourceText, string fileName)
+            {
+                sci.Text = sourceText;
+                sci.Colourise(0, -1); // Needed for preprocessor directives...
+                SnippetHelper.PostProcessSnippets(sci, 0);
                 var currentModel = ASContext.Context.CurrentModel;
-                new ASFileParser().ParseSrc(currentModel, Sci.Text);
-                CommandFactoryProvider.GetFactory(Sci)
+                new ASFileParser().ParseSrc(currentModel, sci.Text);
+                CommandFactoryProvider.GetFactory(sci)
                     .CreateOrganizeImportsCommand()
                     .Execute();
-                return Sci.Text;
+                return sci.Text;
             }
         }
     }

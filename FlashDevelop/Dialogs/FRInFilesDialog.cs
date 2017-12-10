@@ -1,12 +1,10 @@
 using System;
 using System.IO;
-using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using FlashDevelop.Managers;
 using PluginCore.Localization;
 using FlashDevelop.Utilities;
 using PluginCore.Utilities;
@@ -15,7 +13,6 @@ using PluginCore.FRService;
 using PluginCore.Managers;
 using PluginCore.Helpers;
 using Ookii.Dialogs;
-using ScintillaNet;
 using PluginCore;
 
 namespace FlashDevelop.Dialogs
@@ -56,12 +53,7 @@ namespace FlashDevelop.Dialogs
         private PluginCore.IProject lastProject;
 
         private const string TraceGroup = "FindInFiles";
-
-        static FRInFilesDialog()
-        {
-            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetString("FlashDevelop.Label.FindAndReplaceResults"), Globals.MainForm.FindImage("209"));
-        }
-
+        
         public FRInFilesDialog()
         {
             this.Owner = Globals.MainForm;
@@ -71,6 +63,8 @@ namespace FlashDevelop.Dialogs
             this.ApplyLocalizedTexts();
             this.InitializeGraphics();
             this.UpdateSettings();
+
+            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetString("FlashDevelop.Label.FindAndReplaceResults"), false, true, Globals.MainForm.FindImage("209"));
         }
 
         #region Windows Form Designer Generated Code
@@ -81,36 +75,36 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
-            this.replaceButton = new System.Windows.Forms.Button();
-            this.redirectCheckBox = new System.Windows.Forms.CheckBox();
-            this.regexCheckBox = new System.Windows.Forms.CheckBox();
-            this.optionsGroupBox = new System.Windows.Forms.GroupBox();
-            this.stringsCheckBox = new System.Windows.Forms.CheckBox();
-            this.commentsCheckBox = new System.Windows.Forms.CheckBox();
-            this.escapedCheckBox = new System.Windows.Forms.CheckBox();
-            this.wholeWordCheckBox = new System.Windows.Forms.CheckBox();
-            this.matchCaseCheckBox = new System.Windows.Forms.CheckBox();
-            this.subDirectoriesCheckBox = new System.Windows.Forms.CheckBox();
-            this.replaceComboBox = new System.Windows.Forms.ComboBox();
+            this.replaceButton = new System.Windows.Forms.ButtonEx();
+            this.redirectCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.regexCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.optionsGroupBox = new System.Windows.Forms.GroupBoxEx();
+            this.stringsCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.commentsCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.escapedCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.wholeWordCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.matchCaseCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.subDirectoriesCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.replaceComboBox = new System.Windows.Forms.FlatCombo();
             this.replaceLabel = new System.Windows.Forms.Label();
-            this.findComboBox = new System.Windows.Forms.ComboBox();
+            this.findComboBox = new System.Windows.Forms.FlatCombo();
             this.findLabel = new System.Windows.Forms.Label();
-            this.findButton = new System.Windows.Forms.Button();
-            this.folderComboBox = new System.Windows.Forms.ComboBox();
+            this.findButton = new System.Windows.Forms.ButtonEx();
+            this.folderComboBox = new System.Windows.Forms.FlatCombo();
             this.folderLabel = new System.Windows.Forms.Label();
-            this.extensionComboBox = new System.Windows.Forms.ComboBox();
+            this.extensionComboBox = new System.Windows.Forms.FlatCombo();
             this.extensionLabel = new System.Windows.Forms.Label();
-            this.browseButton = new System.Windows.Forms.Button();
+            this.browseButton = new System.Windows.Forms.ButtonEx();
             this.replacedHeader = new System.Windows.Forms.ColumnHeader();
-            this.cancelButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.ButtonEx();
             this.infoLabel = new System.Windows.Forms.Label();
             this.lineHeader = new System.Windows.Forms.ColumnHeader();
             this.descHeader = new System.Windows.Forms.ColumnHeader();
             this.pathHeader = new System.Windows.Forms.ColumnHeader();
             this.fileHeader = new System.Windows.Forms.ColumnHeader();
-            this.resultsView = new System.Windows.Forms.ListView();
-            this.progressBar = new System.Windows.Forms.ProgressBar();
-            this.closeButton = new System.Windows.Forms.Button();
+            this.resultsView = new System.Windows.Forms.ListViewEx();
+            this.progressBar = new System.Windows.Forms.ProgressBarEx();
+            this.closeButton = new System.Windows.Forms.ButtonEx();
             this.optionsGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -605,23 +599,25 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void BrowseButtonClick(Object sender, EventArgs e)
         {
-            VistaFolderBrowserDialog fbd = new VistaFolderBrowserDialog();
-            fbd.Multiselect = true;
-            String curDir = this.folderComboBox.Text;
-            if (curDir == "<Project>") 
+            using (VistaFolderBrowserDialog fbd = new VistaFolderBrowserDialog())
             {
-                if (PluginBase.CurrentProject != null)
+                fbd.Multiselect = true;
+                String curDir = this.folderComboBox.Text;
+                if (curDir == "<Project>")
                 {
-                    String projectPath = PluginBase.CurrentProject.ProjectPath;
-                    curDir = Path.GetDirectoryName(projectPath);
+                    if (PluginBase.CurrentProject != null)
+                    {
+                        String projectPath = PluginBase.CurrentProject.ProjectPath;
+                        curDir = Path.GetDirectoryName(projectPath);
+                    }
+                    else curDir = Globals.MainForm.WorkingDirectory;
                 }
-                else curDir = Globals.MainForm.WorkingDirectory;
-            }
-            if (Directory.Exists(curDir)) fbd.SelectedPath = curDir;
-            if (fbd.ShowDialog() == DialogResult.OK && Directory.Exists(fbd.SelectedPath))
-            {
-                this.folderComboBox.Text = String.Join(";", fbd.SelectedPaths);
-                this.folderComboBox.SelectionStart = this.folderComboBox.Text.Length;
+                if (Directory.Exists(curDir)) fbd.SelectedPath = curDir;
+                if (fbd.ShowDialog() == DialogResult.OK && Directory.Exists(fbd.SelectedPath))
+                {
+                    this.folderComboBox.Text = String.Join(";", fbd.SelectedPaths);
+                    this.folderComboBox.SelectionStart = this.folderComboBox.Text.Length;
+                }
             }
         }
 
@@ -711,20 +707,17 @@ namespace FlashDevelop.Dialogs
                 } 
                 else 
                 {
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + TraceGroup);
-
+                    string groupData = TraceManager.CreateGroupDataUnique(TraceGroup);
+                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
                     foreach (KeyValuePair<String, List<SearchMatch>> entry in results)
                     {
                         foreach (SearchMatch match in entry.Value)
                         {
-                            var message = entry.Key + ":" + match.Line + ": chars " + match.Column + "-" +
-                                          (match.Column + match.Length) + " : " + match.LineText.Trim();
-                            
-                            TraceManager.Add(message, (int)TraceType.Info, TraceGroup);
+                            string message = $"{entry.Key}:{match.Line}: chars {match.Column}-{match.Column + match.Length} : {match.LineText.Trim()}";
+                            TraceManager.Add(message, (int)TraceType.Info, groupData);
                         }
                     }
-
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + TraceGroup);
+                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
                     this.Hide();
                 }
             }
@@ -776,22 +769,19 @@ namespace FlashDevelop.Dialogs
                     String formatted = String.Format(message, matchCount, fileCount);
                     this.infoLabel.Text = formatted;
                 } 
-                else 
+                else
                 {
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + TraceGroup);
-
+                    string groupData = TraceManager.CreateGroupDataUnique(TraceGroup);
+                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
                     foreach (KeyValuePair<String, List<SearchMatch>> entry in results)
                     {
                         foreach (SearchMatch match in entry.Value)
                         {
-                            var message = entry.Key + ":" + match.Line + ": chars " + match.Column + "-" +
-                                          (match.Column + match.Length) + " : " + match.Value;
-
-                            TraceManager.Add(message, (Int32)TraceType.Info, TraceGroup);
+                            string message = $"{entry.Key}:{match.Line}: chars {match.Column}-{match.Column + match.Length} : {match.Value}";
+                            TraceManager.Add(message, (Int32)TraceType.Info, groupData);
                         }
                     }
-                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + TraceGroup);
-
+                    Globals.MainForm.CallCommand("PluginCommand", "ResultsPanel.ShowResults;" + groupData);
                     this.Hide();
                 }
             }
@@ -1024,7 +1014,9 @@ namespace FlashDevelop.Dialogs
                 }
                 catch (Exception ex)
                 {
-                    ErrorManager.ShowInfo(ex.Message); 
+                    ErrorManager.ShowInfo(ex.Message);
+                    this.Select();
+                    this.findComboBox.SelectAll();
                     return false;
                 }
             }

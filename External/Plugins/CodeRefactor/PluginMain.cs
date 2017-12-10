@@ -41,12 +41,7 @@ namespace CodeRefactor
         TreeView projectTreeView;
 
         public const string TraceGroup = "CodeRefactor";
-
-        static PluginMain()
-        {
-            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetStringWithoutMnemonics("CodeRefactor.Label.Refactor"), null);
-        }
-
+        
         #region Required Properties
 
         /// <summary>
@@ -118,6 +113,8 @@ namespace CodeRefactor
             this.InitBasics();
             this.LoadSettings();
             this.CreateMenuItems();
+            this.RegisterMenuItems();
+            this.RegisterTraceGroups();
         }
 
         /// <summary>
@@ -297,12 +294,13 @@ namespace CodeRefactor
             ToolStripMenuItem searchMenu = PluginBase.MainForm.FindMenuItem("SearchMenu") as ToolStripMenuItem;
             this.viewReferencesItem = new ToolStripMenuItem(TextHelper.GetString("Label.FindAllReferences"), null, this.FindAllReferencesClicked);
             this.editorReferencesItem = new ToolStripMenuItem(TextHelper.GetString("Label.FindAllReferences"), null, this.FindAllReferencesClicked);
+            PluginBase.MainForm.RegisterShortcutItem("RefactorMenu.SurroundWith", this.refactorMainMenu.SurroundMenu);
             PluginBase.MainForm.RegisterShortcutItem("SearchMenu.ViewReferences", this.viewReferencesItem);
+            PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.SurroundWith", this.surroundContextMenu);
             PluginBase.MainForm.RegisterSecondaryItem("SearchMenu.ViewReferences", this.editorReferencesItem);
             searchMenu.DropDownItems.Add(new ToolStripSeparator());
             searchMenu.DropDownItems.Add(this.viewReferencesItem);
             editorMenu.Items.Insert(8, this.editorReferencesItem);
-            RegisterMenuItems();
         }
 
         /// <summary>
@@ -328,6 +326,12 @@ namespace CodeRefactor
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.TruncateImports", this.refactorContextMenu.TruncateMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.CodeGenerator", this.refactorContextMenu.CodeGeneratorMenuItem);
             PluginBase.MainForm.RegisterSecondaryItem("RefactorMenu.BatchProcess", this.refactorContextMenu.BatchMenuItem);
+        }
+
+        private void RegisterTraceGroups()
+        {
+            TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetStringWithoutMnemonics("Label.Refactor"), false);
+            TraceManager.RegisterTraceGroup(FindAllReferences.TraceGroup, TextHelper.GetString("Label.FindAllReferencesResult"), false, true);
         }
 
         /// <summary>
@@ -364,7 +368,7 @@ namespace CodeRefactor
                     var enabled = !result.IsPackage && (File.Exists(curFileName) || curFileName.Contains("[model]"));
                     this.editorReferencesItem.Enabled = enabled;
                     this.viewReferencesItem.Enabled = enabled;
-                    if (result.Member != null && result.Type != null && result.InClass != null && result.InFile != null)
+                    if (result.InFile != null && result.InClass != null && (result.InClass.Flags & FlagType.Interface) == 0 && result.Member != null && result.Type != null)
                     {
                         FlagType flags = result.Member.Flags;
                         if ((flags & FlagType.Variable) > 0 && (flags & FlagType.LocalVar) == 0 && (flags & FlagType.ParameterVar) == 0)
@@ -441,26 +445,12 @@ namespace CodeRefactor
             if (document != null && document.IsEditable && RefactoringHelper.GetLanguageIsValid())
             {
                 this.surroundContextMenu.GenerateSnippets(document.SciControl);
-                foreach (ToolStripMenuItem item in this.surroundContextMenu.DropDownItems)
-                {
-                    item.Click += this.SurroundWithClicked;
-                }
-                foreach (ToolStripMenuItem item in this.refactorMainMenu.SurroundMenu.DropDownItems)
-                {
-                    item.Click -= this.SurroundWithClicked;
-                }
                 this.refactorMainMenu.SurroundMenu.GenerateSnippets(document.SciControl);
-                foreach (ToolStripMenuItem item in this.refactorMainMenu.SurroundMenu.DropDownItems)
-                {
-                    item.Click += this.SurroundWithClicked;
-                }
             }
             else
             {
-                this.surroundContextMenu.DropDownItems.Clear();
-                this.refactorMainMenu.SurroundMenu.DropDownItems.Clear();
-                this.refactorMainMenu.SurroundMenu.DropDownItems.Add("");
-                this.surroundContextMenu.DropDownItems.Add("");
+                this.surroundContextMenu.Clear();
+                this.refactorMainMenu.SurroundMenu.Clear();
             }
         }
 
@@ -508,23 +498,6 @@ namespace CodeRefactor
             try
             {
                 var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateRenameFileCommand(oldPath, newPath);
-                command.Execute();
-            }
-            catch (Exception ex)
-            {
-                ErrorManager.ShowError(ex);
-            }
-        }
-
-        /// <summary>
-        /// Invoked when the user selects the "Surround with Try/catch block" command
-        /// </summary>
-        private void SurroundWithClicked(Object sender, EventArgs e)
-        {
-            try
-            {
-                var snippet = (sender as ToolStripItem).Text;
-                var command = CommandFactoryProvider.GetFactoryForCurrentDocument().CreateSurroundWithCommand(snippet);
                 command.Execute();
             }
             catch (Exception ex)
@@ -720,6 +693,7 @@ namespace CodeRefactor
             RefactorItem.AddItemToList(refactorMainMenu.ExtractMethodMenuItem, list);
             RefactorItem.AddItemToList(refactorMainMenu.ExtractLocalVariableMenuItem, list);
             RefactorItem.AddItemToList(refactorMainMenu.DelegateMenuItem, list);
+            RefactorItem.AddItemToList(refactorMainMenu.SurroundMenu, list);
 
             var features = ASContext.Context.Features;
             if (!features.hasImports) return;

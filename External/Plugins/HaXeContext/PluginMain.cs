@@ -104,7 +104,7 @@ namespace HaXeContext
             this.LoadSettings();
             this.AddEventHandlers();
 
-            LintingManager.RegisterLinter("haxe", new DiagnosticsLinter());
+            LintingManager.RegisterLinter("haxe", new DiagnosticsLinter(settingObject));
         }
 
         /// <summary>
@@ -160,7 +160,6 @@ namespace HaXeContext
                     {
                         e.Handled = OpenVirtualFileModel((string) de.Data);
                     }
-                    else if (action == "ResultsPanel.ClearResults") logCount = 0;
                     break;
 
                 case EventType.UIStarted:
@@ -172,23 +171,28 @@ namespace HaXeContext
                     break;
                 case EventType.Trace:
                     if (settingObject.DisableLibInstallation) return;
-                    var nameToVersion = new Dictionary<string, string>();
-                    var length = TraceManager.TraceLog.Count - logCount;
-                    for (var i = 0; i < length; i++)
+                    int count = TraceManager.TraceLog.Count;
+                    if (count <= logCount)
                     {
-                        var item = TraceManager.TraceLog[logCount + i];
-                        var patterns = new []
-                        {
-                            "Library \\s*(?<name>[^ ]+)\\s*?(\\s*version (?<version>[^ ]+))?",
-                            "Could not find haxelib\\s*(?<name>\"[^ ]+\")?(\\s*version \"(?<version>[^ ]+)\")?"//openfl project
-                        };
+                        this.logCount = count;
+                        return;
+                    }
+                    var patterns = new[]
+                    {
+                        "Library \\s*(?<name>[^ ]+)\\s*?(\\s*version (?<version>[^ ]+))?",
+                        "Could not find haxelib\\s*(?<name>\"[^ ]+\")?(\\s*version \"(?<version>[^ ]+)\")?"//openfl project
+                    };
+                    var nameToVersion = new Dictionary<string, string>();
+                    for (; logCount < count; logCount++)
+                    {
+                        var message = TraceManager.TraceLog[logCount].Message?.Trim();
+                        if (string.IsNullOrEmpty(message)) continue;
                         foreach (var pattern in patterns)
                         {
-                            var m = Regex.Match(item.Message, pattern);
+                            var m = Regex.Match(message, pattern);
                             if (m.Success) nameToVersion[m.Groups["name"].Value] = m.Groups["version"].Value;
                         }
                     }
-                    logCount = TraceManager.TraceLog.Count;
                     if (nameToVersion.Count == 0) return;
                     var text = TextHelper.GetString("Info.MissingLib");
                     var result = MessageBox.Show(PluginBase.MainForm, text, string.Empty, MessageBoxButtons.OKCancel);

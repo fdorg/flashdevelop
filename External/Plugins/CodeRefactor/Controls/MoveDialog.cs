@@ -6,10 +6,11 @@ using System.Windows.Forms;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using PluginCore;
+using PluginCore.Controls;
 
 namespace CodeRefactor.Controls
 {
-    public partial class MoveDialog : Form
+    public partial class MoveDialog : SmartForm
     {
         IEnumerable<string> GetClasspaths(string path)
         {
@@ -42,12 +43,14 @@ namespace CodeRefactor.Controls
 
         public MoveDialog(string file):this(new List<string> { file })
         {
+
         }
         public MoveDialog(List<string> files)
         {
             MovingFiles = files;
             InitializeComponent();
-            Font = PluginBase.Settings.DefaultFont;
+            this.Font = PluginBase.Settings.DefaultFont;
+            this.FormGuid = "2823102d-d712-4ce6-aa36-58e0bb4bf61d";
             tree.ItemHeight = tree.Font.Height;
             InitializeClasspaths();
             InitializeInput();

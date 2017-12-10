@@ -332,14 +332,16 @@ namespace LayoutManager
         {
             try
             {
-                SaveFileDialog sfd = new SaveFileDialog();
-                sfd.Filter = TextHelper.GetString("Info.OpenFileFilter");
-                sfd.InitialDirectory = this.GetLayoutsDir();
-                sfd.DefaultExt = "fdl"; sfd.FileName = "";
-                if (sfd.ShowDialog(this) == DialogResult.OK && sfd.FileName.Length != 0)
+                using (SaveFileDialog sfd = new SaveFileDialog())
                 {
-                    PluginBase.MainForm.DockPanel.SaveAsXml(sfd.FileName);
-                    this.PopulateLayoutsListView();
+                    sfd.Filter = TextHelper.GetString("Info.OpenFileFilter");
+                    sfd.InitialDirectory = this.GetLayoutsDir();
+                    sfd.DefaultExt = "fdl"; sfd.FileName = "";
+                    if (sfd.ShowDialog(this) == DialogResult.OK && sfd.FileName.Length != 0)
+                    {
+                        PluginBase.MainForm.DockPanel.SaveAsXml(sfd.FileName);
+                        this.PopulateLayoutsListView();
+                    }
                 }
             }
             catch (Exception ex)

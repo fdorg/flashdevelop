@@ -60,7 +60,7 @@ namespace HaXeContext
             stubFunctionClass.Name = stubFunctionClass.Type = "Function";
             stubFunctionClass.Flags = FlagType.Class;
             stubFunctionClass.Access = Visibility.Public;
-            var funFile = new FileModel();
+            var funFile = new FileModel{Package = "haxe", Module = "Constraints"};
             funFile.Classes.Add(stubFunctionClass);
             stubFunctionClass.InFile = funFile;
 
@@ -251,7 +251,7 @@ namespace HaXeContext
 
             LoadMetadata();
 
-            if (GetCurrentSDKVersion().IsGreaterThanOrEquals(new SemVer("3.3.0"))) features.SpecialPostfixOperators = new[] {'!'};
+            if (GetCurrentSDKVersion() >= "3.3.0") features.SpecialPostfixOperators = new[] {'!'};
             else features.SpecialPostfixOperators = new char[0];
 
             UseGenericsShortNotationChange();
@@ -260,15 +260,16 @@ namespace HaXeContext
         private void UseGenericsShortNotationChange()
         {
             // We may want to create 2 different feature flags for this, but atm it's enough this way
-            features.HasGenericsShortNotation = GetCurrentSDKVersion().IsGreaterThanOrEquals(new SemVer("3")) && hxsettings.UseGenericsShortNotation;
+            features.HasGenericsShortNotation = GetCurrentSDKVersion() >= "3" && hxsettings.UseGenericsShortNotation;
         }
 
         public void LoadMetadata()
         {
             features.metadata = new Dictionary<string, string>();
 
-            Process process = CreateHaxeProcess("--help-metas");
-            if (process == null) return;
+            ProcessStartInfo processInfo = CreateHaxeProcessInfo("--help-metas");
+            if (processInfo == null) return;
+            var process = new Process {StartInfo = processInfo, EnableRaisingEvents = true};
             process.Start();
 
             String metaList = process.StandardOutput.ReadToEnd();
@@ -399,7 +400,7 @@ namespace HaXeContext
             HaxeProject proj = PluginBase.CurrentProject as HaxeProject;
 
             // swf-libs
-            if (HaxeTarget == "flash" && majorVersion >= 9 && proj != null)
+            if (proj != null && HaxeTarget == "flash" && majorVersion >= 9)
             {
                 foreach(LibraryAsset asset in proj.LibraryAssets)
                     if (asset.IsSwc)
@@ -417,7 +418,13 @@ namespace HaXeContext
             // add haxe libraries
             if (proj != null)
             {
-                foreach (string library in proj.CompilerOptions.Libraries)
+                var libraries = proj.CompilerOptions.Libraries.ToList();
+                foreach (var it in proj.CompilerOptions.Additional)
+                {
+                    var index = it.IndexOfOrdinal("-lib ");
+                    if (index != -1) libraries.Add(it.Substring(index + "-lib ".Length).Trim());
+                }
+                foreach (string library in libraries)
                     if (!string.IsNullOrEmpty(library.Trim()))
                     {
                         List<string> libPaths = LookupLibrary(library);
@@ -700,8 +707,9 @@ namespace HaXeContext
                 }
             }
 
-            foreach(ClassModel aClass in cFile.Classes)
-                fullList.Add(aClass.ToMemberModel());
+            if (cFile != null)
+                foreach(ClassModel aClass in cFile.Classes)
+                    fullList.Add(aClass.ToMemberModel());
 
             // in cache
             fullList.Sort();
@@ -759,7 +767,6 @@ namespace HaXeContext
         /// <summary>
         /// Return imported classes list (not null)
         /// </summary>
-        /// <param name="package">Package to explore</param>
         /// <param name="inFile">Current file</param>
         public override MemberList ResolveImports(FileModel inFile)
         {
@@ -915,8 +922,6 @@ namespace HaXeContext
             if (string.IsNullOrEmpty(cname) || cname == features.voidKey || classPath == null)
                 return ClassModel.VoidClass;
 
-            if (cname == "Function") return stubFunctionClass;
-
             // handle generic types
             if (cname.IndexOf('<') > 0)
             {
@@ -948,6 +953,7 @@ namespace HaXeContext
                             return aClass;
 
                 // search in imported classes
+                var found = false;
                 MemberList imports = ResolveImports(inFile);
                 foreach (MemberModel import in imports)
                 {
@@ -961,9 +967,11 @@ namespace HaXeContext
                             int dotIndex = type.LastIndexOf('.');
                             if (dotIndex > 0) package = type.Substring(0, dotIndex);
                         }
+                        found = true;
                         break;
                     }
                 }
+                if (!found && cname == "Function") return stubFunctionClass;
             }
 
             return GetModel(package, cname, inPackage);
@@ -993,8 +1001,6 @@ namespace HaXeContext
 
             if (aClass.QualifiedName == features.dynamicKey)
             {
-                ClassModel indexClass = ResolveType(indexType, inFile);
-                //if (!indexClass.IsVoid()) return indexClass;
                 return MakeCustomObjectClass(aClass, indexType);
             }
 
@@ -1005,18 +1011,16 @@ namespace HaXeContext
                     return otherClass;
 
             // resolve T
-            string Tdef = "<T>";
             string Tname = "T";
             Match m = re_Template.Match(aClass.Type);
             if (m.Success)
             {
                 Tname = m.Groups[1].Value;
-                Tdef = "<" + Tname + ">";
             }
             Regex reReplaceType = new Regex("\\b" + Tname + "\\b");
 
             // clone the type
-            aClass = aClass.Clone() as ClassModel;
+            aClass = (ClassModel) aClass.Clone();
             aClass.Name = baseType.Substring(baseType.LastIndexOf('.') + 1) + "<" + indexType + ">";
             aClass.IndexType = indexType;
 
@@ -1105,6 +1109,113 @@ namespace HaXeContext
                 name = "flash9";
             return base.ResolvePackage(name, lazyMode);
         }
+
+        public override string GetDefaultValue(string type)
+        {
+            if (string.IsNullOrEmpty(type) || type == features.voidKey) return null;
+            switch (type)
+            {
+                case "Float":
+                case "Int":
+                case "UInt":
+                case "Bool": return null;
+                default: return "null";
+            }
+        }
+
+        public override IEnumerable<string> DecomposeTypes(IEnumerable<string> types)
+        {
+            var characterClass = ScintillaControl.Configuration.GetLanguage("haxe").characterclass.Characters;
+            var result = new HashSet<string>();
+            foreach (var type in types)
+            {
+                if (string.IsNullOrEmpty(type)) continue;
+                if(type.Contains("->") || type.Contains('{') || type.Contains('<'))
+                {
+                    var length = type.Length;
+                    var braCount = 0;
+                    var genCount = 0;
+                    var inAnonType = false;
+                    var hasColon = false;
+                    var pos = 0;
+                    for (var i = 0; i < length; i++)
+                    {
+                        var c = type[i];
+                        if (c == '.' || characterClass.Contains(c)) continue;
+                        if (c <= ' ') pos++;
+                        else if (c == '(') pos = i + 1;
+                        else if (c == '<')
+                        {
+                            genCount++;
+                            result.Add(type.Substring(pos, i - pos));
+                            pos = i + 1;
+                        }
+                        else if (c == '>')
+                        {
+                            genCount--;
+                            if (i > pos) result.Add(type.Substring(pos, i - pos));
+                            pos = i + 1;
+                        }
+                        else if (c == '{')
+                        {
+                            inAnonType = true;
+                            braCount++;
+                            hasColon = false;
+                            pos = i + 1;
+                        }
+                        else if (c == '}')
+                        {
+                            if (i > pos) result.Add(type.Substring(pos, i - pos));
+                            if (--braCount == 0) inAnonType = false;
+                            pos = i + 1;
+                        }
+                        else if (inAnonType)
+                        {
+                            if (hasColon)
+                            {
+                                if (c == ',')
+                                {
+                                    result.Add(type.Substring(pos, i - pos));
+                                    pos = i + 1;
+                                    hasColon = false;
+                                }
+                            }
+                            else if(c == ':')
+                            {
+                                hasColon = true;
+                                pos = i + 1;
+                            }
+                        }
+                        else if (genCount > 0)
+                        {
+                            if (c == ',')
+                            {
+                                if (i > pos) result.Add(type.Substring(pos, i - pos));
+                                pos = i + 1;
+                            }
+                        }
+                        if (c == '-')
+                        {
+                            if (i > pos) result.Add(type.Substring(pos, i - pos));
+                            i++;
+                            pos = i + 1;
+                            hasColon = false;
+                            if (braCount == 0 && genCount == 0 
+                                && type.IndexOfOrdinal("{", pos) == -1
+                                && type.IndexOfOrdinal("<", pos) == -1
+                                && type.IndexOfOrdinal(",", pos) == -1)
+                            {
+                                result.Add(type.Substring(pos));
+                                break;
+                            }
+                        }
+                    }
+                }
+                else result.Add(type);
+            }
+            return result;
+        }
+
         #endregion
 
         #region Custom code completion
@@ -1132,18 +1243,18 @@ namespace HaXeContext
             switch (haxeSettings.CompletionMode)
             {
                 case HaxeCompletionModeEnum.Compiler:
-                    completionModeHandler = new CompilerCompletionHandler(CreateHaxeProcess(""));
+                    completionModeHandler = new CompilerCompletionHandler(CreateHaxeProcessInfo(""));
                     break;
                 case HaxeCompletionModeEnum.CompletionServer:
                     if (haxeSettings.CompletionServerPort < 1024)
-                        completionModeHandler = new CompilerCompletionHandler(CreateHaxeProcess(""));
+                        completionModeHandler = new CompilerCompletionHandler(CreateHaxeProcessInfo(""));
                     else
                     {
                         completionModeHandler =
                             new CompletionServerCompletionHandler(
-                                CreateHaxeProcess("--wait " + haxeSettings.CompletionServerPort),
+                                CreateHaxeProcessInfo("--wait " + haxeSettings.CompletionServerPort),
                                 haxeSettings.CompletionServerPort);
-                        (completionModeHandler as CompletionServerCompletionHandler).FallbackNeeded += new FallbackNeededHandler(Context_FallbackNeeded);
+                        ((CompletionServerCompletionHandler) completionModeHandler).FallbackNeeded += Context_FallbackNeeded;
                     }
                     break;
             }
@@ -1157,13 +1268,13 @@ namespace HaXeContext
                 completionModeHandler.Stop();
                 completionModeHandler = null;
             }
-            completionModeHandler = new CompilerCompletionHandler(CreateHaxeProcess(""));
+            completionModeHandler = new CompilerCompletionHandler(CreateHaxeProcessInfo(""));
         }
 
         /**
-         * Starts a haxe.exe process with the given arguments.
+         * Gets the needed information to create a haxe.exe process with the given arguments.
          */
-        internal Process CreateHaxeProcess(string args)
+        internal ProcessStartInfo CreateHaxeProcessInfo(string args)
         {
             // compiler path
             var hxPath = currentSDK ?? ""; 
@@ -1171,23 +1282,23 @@ namespace HaXeContext
             if (!File.Exists(process))
                 return null;
 
-            // Run haxe compiler
-            Process proc = new Process();
-            proc.StartInfo.FileName = process;
-            proc.StartInfo.Arguments = args;
-            proc.StartInfo.UseShellExecute = false;
-            proc.StartInfo.RedirectStandardOutput = true;
-            proc.StartInfo.RedirectStandardError = true;
-            proc.StartInfo.CreateNoWindow = true;
-            proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            proc.EnableRaisingEvents = true;
-            return proc;
+            // Prepare process information
+            var procInfo = new ProcessStartInfo();
+            procInfo.FileName = process;
+            procInfo.Arguments = args;
+            procInfo.UseShellExecute = false;
+            procInfo.RedirectStandardOutput = true;
+            procInfo.RedirectStandardError = true;
+            procInfo.CreateNoWindow = true;
+            procInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            return procInfo;
         }
 
         internal HaxeComplete GetHaxeComplete(ScintillaControl sci, ASExpr expression, bool autoHide, HaxeCompilerService compilerService)
         {
             var sdkVersion = GetCurrentSDKVersion();
-            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.CompletionServer && sdkVersion.IsGreaterThanOrEquals(new SemVer("3.3.0")))
+            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.CompletionServer && sdkVersion >= "3.3.0"
+                && (hxsettings.EnabledFeatures & CompletionFeatures.DisplayStdIn) == CompletionFeatures.DisplayStdIn)
                 return new HaxeComplete330(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
             return new HaxeComplete(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
         }
@@ -1201,7 +1312,8 @@ namespace HaXeContext
         /// <returns>Null (not handled) or member list</returns>
         public override MemberList ResolveDotContext(ScintillaNet.ScintillaControl sci, ASExpr expression, bool autoHide)
         {
-            if (resolvingDot || hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || PluginBase.MainForm.CurrentDocument.IsUntitled)
+            if (resolvingDot || hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop
+                || PluginBase.MainForm.CurrentDocument.IsUntitled)
                 return null;
 
             if (autoHide && !hxsettings.DisableCompletionOnDemand)
@@ -1375,7 +1487,8 @@ namespace HaXeContext
         /// <returns>Null (not handled) or function signature</returns>
         public override MemberModel ResolveFunctionContext(ScintillaNet.ScintillaControl sci, ASExpr expression, bool autoHide)
         {
-            if (resolvingFunction || hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || PluginBase.MainForm.CurrentDocument.IsUntitled)
+            if (resolvingFunction || hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop
+                || PluginBase.MainForm.CurrentDocument.IsUntitled)
                 return null;
 
             if (autoHide && !hxsettings.DisableCompletionOnDemand)
@@ -1419,7 +1532,7 @@ namespace HaXeContext
 
         public override bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression)
         {
-            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || GetCurrentSDKVersion().IsOlderThan(new SemVer("3.2.0")))
+            if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || GetCurrentSDKVersion() < "3.2.0")
                 return false;
 
             var hc = GetHaxeComplete(sci, expression, false, HaxeCompilerService.POSITION);
@@ -1691,10 +1804,12 @@ namespace HaXeContext
                 ErrorManager.ShowInfo(TextHelper.GetString("Info.InvalidHaXePath"));
                 return;
             }
-            if (Path.GetExtension(haxePath) == string.Empty) haxePath = Path.Combine(haxePath, "haxelib.exe");
-            nameToVersion.Select(it => $"{haxePath};install {it.Key} {it.Value}")
-                     .ToList()
-                     .ForEach(it => MainForm.CallCommand("RunProcessCaptured", it));
+            if (Directory.Exists(haxePath)) haxePath = Path.Combine(haxePath, "haxelib.exe");
+
+            var cwd = Directory.GetCurrentDirectory();
+            nameToVersion.Select(it => $"{haxePath};install {it.Key} {it.Value} -cwd \"{cwd}\"")
+                .ToList()
+                .ForEach(it => MainForm.CallCommand("RunProcessCaptured", it));
         }
 
         #endregion
