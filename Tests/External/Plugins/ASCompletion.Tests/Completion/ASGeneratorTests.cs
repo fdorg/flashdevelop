@@ -1058,6 +1058,11 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue1645_2"))
                                 .SetName("Issue1645. Case 2")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1645");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue1836"), GeneratorJobType.FunctionPublic)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue1836"))
+                                .SetName("Issue 1836. Case 1")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1836");
                     }
                 }
 
