@@ -2512,7 +2512,7 @@ namespace ASCompletion.Completion
                     sb.Append(c);
                     wasEscapeChar = false;
                 }
-                else if (c == ',' && subClosuresCount == 0)
+                else if (c == ',' && subClosuresCount == 0 && !isDoubleQuote && !isSingleQuote)
                 {
                     if (isFuncStarted)
                     {
