@@ -20,9 +20,9 @@ namespace HaXeContext
         private bool listening;
         private bool failure;
 
-        public CompletionServerCompletionHandler(Process haxeProcess, int port)
+        public CompletionServerCompletionHandler(ProcessStartInfo haxeProcessStartInfo, int port)
         {
-            this.haxeProcess = haxeProcess;
+            this.haxeProcess = new Process {StartInfo = haxeProcessStartInfo, EnableRaisingEvents = true};
             this.port = port;
             Environment.SetEnvironmentVariable("HAXE_SERVER_PORT", "" + port);
         }
