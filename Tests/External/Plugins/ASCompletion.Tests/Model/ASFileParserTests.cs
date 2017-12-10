@@ -2113,6 +2113,9 @@ namespace ASCompletion.Model
                     yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case18.hx"))
                         .Returns(7)
                         .SetName("Issue 1814. Case 18. try");
+                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case19.hx"))
+                        .Returns(7)
+                        .SetName("Issue 1814. Case 19. function():Void ~/regex/");
                 }
             }
 

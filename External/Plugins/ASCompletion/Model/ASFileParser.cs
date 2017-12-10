@@ -1710,9 +1710,8 @@ namespace ASCompletion.Model
                     || c == '+' || c == '-' || c == '*' || c == '/'
                     || c == '|' || c == '&' || c == '~' || c == '^'
                     || c == '>' || c == '<' || c == '!'
-                    || c == 'n' /* return ~/regex/ or in ~/regex/ */
-                    || c == 'h' /* switch ~/regex/ */
-                    || c == 'y' /* try ~/regex/ */)
+                    || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')
+                    || (c >= '0' && c <= '9'))
                 {
                     break;// ok
                 }
