@@ -2628,10 +2628,10 @@ namespace ASCompletion.Completion
                             {
                                 paramName = result.Member.Name.Trim('@');
                             }
-                            if (result.Member.Type == null || result.Member.Type.Equals("void", StringComparison.OrdinalIgnoreCase))
+                            if (result.Member.Type == null)
                             {
-                                paramType = result.Type.Name;
-                                paramQualType = result.Type.QualifiedName;
+                                paramType = ctx.Features.dynamicKey;
+                                paramQualType = ctx.Features.dynamicKey;
                             }
                             else
                             {
@@ -3545,7 +3545,8 @@ namespace ASCompletion.Completion
 
         private static string GetQualifiedType(string type, ClassModel aType)
         {
-            if (string.IsNullOrEmpty(type)) return "*";
+            var dynamicKey = ASContext.Context.Features.dynamicKey ?? "*";
+            if (string.IsNullOrEmpty(type)) return dynamicKey;
             if (ASContext.Context.DecomposeTypes(new [] {type}).Count() > 1) return type;
             if (type.IndexOf('<') > 0) // Vector.<Point>
             {
@@ -3561,10 +3562,9 @@ namespace ASCompletion.Completion
             ClassModel aClass = ASContext.Context.ResolveType(type, aType.InFile);
             if (!aClass.IsVoid())
             {
-                if (aClass.InFile.Package.Length != 0)
-                    return aClass.QualifiedName;
+                return aClass.QualifiedName;
             }
-            return "*";
+            return dynamicKey;
         }
 
         private static MemberModel NewMember(string contextToken, MemberModel calledFrom, FlagType kind, Visibility visi)
