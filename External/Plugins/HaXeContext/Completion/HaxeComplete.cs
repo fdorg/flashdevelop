@@ -141,10 +141,7 @@ namespace HaXeContext
             return hxmlArgs.ToArray();
         }
 
-        protected virtual string GetFileContent()
-        {
-            return null;
-        }
+        protected virtual string GetFileContent() => null;
 
         private string GetMode()
         {
@@ -191,14 +188,9 @@ namespace HaXeContext
                 {
                     Match m = reMacro.Match(arg);
                     if (m.Success)
-                        hxmlArgs[i] = m.Groups[1].Value + " \"" + m.Groups[2].Value.Trim() + "\"";
+                        hxmlArgs[i] = m.Groups[1].Value + " \"" + m.Groups[2].Value.Trim(' ', '"', '\'') + "\"";
                 }
             }
-        }
-
-        private string EscapeQuotes(string expr)
-        {
-            return reQuote.Replace(expr, "$1\\\"");
         }
 
         void QuotePath(List<string> hxmlArgs)
@@ -210,16 +202,9 @@ namespace HaXeContext
                 {
                     Match m = reArg.Match(arg);
                     if (m.Success)
-                        hxmlArgs[i] = m.Groups[1].Value + " \"" + m.Groups[2].Value.Trim() + "\"";
+                        hxmlArgs[i] = m.Groups[1].Value + " \"" + m.Groups[2].Value.Trim(' ', '"', '\'') + "\"";
                 }
             }
-        }
-
-        string GetMainClassName()
-        {
-            var start = FileName.LastIndexOf('\\') + 1;
-            var end = FileName.LastIndexOf('.');
-            return FileName.Substring(start, end - start);
         }
 
         int GetDisplayPosition()
