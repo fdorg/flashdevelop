@@ -804,7 +804,7 @@ namespace HaXeContext
                 foreach (ClassModel aClass in inFile.Classes)
                     if (aClass.Access != Visibility.Private) ResolveImport(aClass, imports);
             }
-
+            imports.Add(ResolveDefaults(inFile.Package));
             // haxe3: type resolution from bottom to top
             imports.Items.Reverse();
             if (inFile == cFile) completionCache.Imports = imports;
@@ -833,8 +833,7 @@ namespace HaXeContext
             foreach (PathModel aPath in classPath)
                 if (aPath.IsValid && !aPath.Updating)
                 {
-                    string path;
-                    path = aPath.Path + dirSeparator + fileName;
+                    var path = aPath.Path + dirSeparator + fileName;
 
                     FileModel file = null;
                     // cached file
@@ -878,20 +877,15 @@ namespace HaXeContext
                 member.Name = member.Name.Substring(0, p);
             }
 
-            FileModel cFile = Context.CurrentModel;
             string fullName = member.Type;
             string name = member.Name;
-            foreach (MemberModel import in cFile.Imports)
+            var curFile = Context.CurrentModel;
+            var imports = curFile.Imports.Items.Concat(ResolveDefaults(curFile.Package).Items).ToArray();
+            foreach (var import in imports)
             {
-                if (import.Name == name)
-                {
-                    //if (import.Type != fullName) throw new Exception(TextHelper.GetString("Info.AmbiguousType"));
-                    return true;
-                }
-                else if (import.Name == "*" && import.Type.Replace("*", name) == fullName)
-                    return true;
-                else if (fullName.StartsWithOrdinal(import.Type + "."))
-                    return true;
+                if (import.Name == name) return true;
+                if (import.Name == "*" && import.Type.Replace("*", name) == fullName) return true;
+                if (fullName.StartsWithOrdinal(import.Type + ".")) return true;
             }
             return false;
         }
@@ -1081,15 +1075,6 @@ namespace HaXeContext
             topLevel.Members.Sort();
             foreach (MemberModel member in topLevel.Members)
                 member.Flags |= FlagType.Intrinsic;
-            if (PluginBase.CurrentProject != null && GetCurrentSDKVersion() >= "3.3.0")
-            {
-                var path = Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath);
-                path = Path.Combine(path, "import.hx");
-                if (File.Exists(path))
-                {
-                    
-                }
-            }
         }
 
         /// <summary>
@@ -1100,9 +1085,37 @@ namespace HaXeContext
         /// <returns>Package folders and types</returns>
         public override FileModel ResolvePackage(string name, bool lazyMode)
         {
-            if ((settings.LazyClasspathExploration || lazyMode) && majorVersion >= 9 && name == "flash") 
+            if ((settings.LazyClasspathExploration || lazyMode) && majorVersion >= 9 && name == "flash")
                 name = "flash9";
             return base.ResolvePackage(name, lazyMode);
+        }
+
+        /// <summary>
+        /// https://haxe.org/blog/importhx-intro/
+        /// Since Haxe 3.3.0
+        /// </summary>
+        /// <param name="package">Package path</param>
+        /// <returns>Imported classes list (not null)</returns>
+        private MemberList ResolveDefaults(string package)
+        {
+            var result = new MemberList();
+            if (GetCurrentSDKVersion() < "3.3.0") return result;
+            var packagePath = string.IsNullOrEmpty(package) ? string.Empty : package.Replace('.', dirSeparatorChar);
+            while(true)
+            {
+                foreach (var it in classPath)
+                {
+                    if (!it.IsValid || it.Updating) continue;
+                    var path = Path.Combine(it.Path, packagePath, "import.hx");
+                    if (!File.Exists(path)) continue;
+                    var model = ASFileParser.ParseFile(new FileModel(path) {Context = this});
+                    result.Add(model.Imports);
+                    break;
+                }
+                if (string.IsNullOrEmpty(packagePath)) break;
+                packagePath = Path.GetDirectoryName(packagePath);
+            }
+            return result;
         }
 
         public override string GetDefaultValue(string type)
@@ -1425,8 +1438,7 @@ namespace HaXeContext
                         int p = package.LastIndexOf('.'); // parent package
                         if (p < 0) break;
                         package = package.Substring(0, p);
-                    }
-                    while (true);
+                    } while (true);
                 }
                 // other types in same file
                 if (cFile.Classes.Count > 1)
