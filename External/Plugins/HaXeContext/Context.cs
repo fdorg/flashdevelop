@@ -252,11 +252,7 @@ namespace HaXeContext
 
             LoadMetadata();
 
-            if (GetCurrentSDKVersion() >= "3.3.0")
-            {
-                features.SpecialPostfixOperators = new[] {'!'};
-                
-            }
+            if (GetCurrentSDKVersion() >= "3.3.0") features.SpecialPostfixOperators = new[] {'!'};
             else features.SpecialPostfixOperators = new char[0];
 
             UseGenericsShortNotationChange();
