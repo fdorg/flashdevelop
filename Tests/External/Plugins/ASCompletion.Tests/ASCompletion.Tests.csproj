@@ -719,6 +719,15 @@
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateClassTest_issue1762_1.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeContextualGeneratorTests_issue1767_1.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterContextualGeneratorTests_issue1767_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue1780_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue1780_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_Math.random.1.5.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue1780_2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue1780_2.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue1780_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue1780_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue1780_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue1780_2.as" />
     <EmbeddedResource Include="Test Files\parser\haxe\Issue1814.hx" />
     <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case1.hx" />
     <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case2.hx" />
@@ -738,6 +747,10 @@
     <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case16.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateFunction_issue1836.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateFunction_issue1836.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case17.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case18.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case19.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case20.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
