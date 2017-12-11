@@ -920,6 +920,16 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextAS3("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue1645_2"))
                                 .SetName("Issue 1645. Case 2")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1645");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction_issue1780_1"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextAS3("AfterGenerateFunction_issue1780_1"))
+                                .SetName("foo(Math.round(1.5))")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1780");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction_issue1780_2"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextAS3("AfterGenerateFunction_issue1780_2"))
+                                .SetName("foo(round(1.5))")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1780");
                     }
                 }
 
@@ -1058,6 +1068,16 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_MemberDefaultBodyStyle_UncompilableCode_issue1645_2"))
                                 .SetName("Issue1645. Case 2")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1645");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue1780_1"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue1780_1"))
+                                .SetName("foo(Math.round(1.5))")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1780");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue1780_2"), GeneratorJobType.Function)
+                                .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue1780_2"))
+                                .SetName("foo(round(1.5))")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1780");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeGenerateFunction_issue1836"), GeneratorJobType.FunctionPublic)
                                 .Returns(ReadAllTextHaxe("AfterGenerateFunction_issue1836"))
@@ -2689,6 +2709,10 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Function"))
                                 .Returns(new List<MemberModel> {new ClassModel {Name = "Function", InFile = FileModel.Ignore}})
                                 .SetName("Parse function parameters of foo(function() {})");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Math.random.1.5"))
+                                .Returns(new List<MemberModel> {new ClassModel {Name = "Function", InFile = FileModel.Ignore}})
+                                .SetName("Parse function parameters of foo(Math.random(1.5))");
                     }
                 }
 
