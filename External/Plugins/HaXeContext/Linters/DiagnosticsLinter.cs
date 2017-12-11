@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using ASCompletion.Completion;
 using ASCompletion.Context;
@@ -22,31 +23,25 @@ namespace HaXeContext.Linters
             fileQueue = new ProcessingQueue(settings.MaximumDiagnosticsProcesses <= 0 ? 5 : settings.MaximumDiagnosticsProcesses);
         }
 
-        public void LintAsync(string[] files, LintCallback callback)
+        public void LintAsync(IEnumerable<string> files, LintCallback callback)
         {
             var context = ASContext.GetLanguageContext("haxe") as Context;
 
             if (context == null || !CanContinue(context)) return;
-
-            var total = files.Length;
+            
+            var total = files.Count();
             var list = new List<LintingResult>();
 
+            String untitledFileStart = TextHelper.GetString("FlashDevelop.Info.UntitledFileStart");
             foreach (var file in files)
             {
-                ITabbedDocument document;
-                if (!File.Exists(file) || (document = DocumentManager.FindDocument(file)) != null && document.IsUntitled)
+                if (!File.Exists(file) || file.StartsWithOrdinal(untitledFileStart))
                 {
                     total--;
                     continue;
                 }
 
-                var sciCreated = false;
-                var sci = document?.SciControl;
-                if (sci == null)
-                {
-                    sci = GetStubSci(file);
-                    sciCreated = true;
-                }
+                var sci = GetStubSci(file);
 
                 var hc = context.GetHaxeComplete(sci, new ASExpr { Position = 0 }, true, HaxeCompilerService.DIAGNOSTICS);
 
@@ -56,8 +51,7 @@ namespace HaXeContext.Linters
                     {
                         total--;
 
-                        if (sciCreated)
-                            sci.Dispose();
+                        sci.Dispose();
 
                         AddDiagnosticsResults(list, status, results, hc);
 
@@ -91,7 +85,7 @@ namespace HaXeContext.Linters
 
         static bool CanContinue(Context context)
         {
-            var settings = ((HaXeSettings) context.Settings);
+            var settings = (HaXeSettings) context.Settings;
             var completionMode = settings.CompletionMode;
             if (completionMode == HaxeCompletionModeEnum.FlashDevelop) return false;
             if ((settings.EnabledFeatures & CompletionFeatures.Diagnostics) == 0) return false;

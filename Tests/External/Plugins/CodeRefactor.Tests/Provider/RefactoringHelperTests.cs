@@ -61,7 +61,7 @@ namespace CodeRefactor.Provider
             }
 
             [Test, TestCaseSource(nameof(HaxeTestCases))]
-            public Result Haxe(string sourceText)
+            public Result Common(string sourceText)
             {
                 ASContext.Context.SetHaxeFeatures();
                 Sci.ConfigurationLanguage = "haxe";
@@ -74,6 +74,36 @@ namespace CodeRefactor.Provider
                 ASContext.Context.CurrentMember.Returns(currentClass.Members.Items.FirstOrDefault());
                 var target = RefactoringHelper.GetDefaultRefactorTarget();
                 return new Result(target.IsPackage, target.Member, target.Type);
+            }
+        }
+
+        [TestFixture]
+        class GetDefaultRefactorTargetNameTests : RefactoringHelperTests
+        {
+            static IEnumerable<TestCaseData> HaxeTestCases
+            {
+                get
+                {
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("LocalVar_enum"))
+                            .Returns("v");
+                }
+            }
+
+            [Test, TestCaseSource(nameof(HaxeTestCases))]
+            public string Common(string sourceText)
+            {
+                ASContext.Context.SetHaxeFeatures();
+                Sci.ConfigurationLanguage = "haxe";
+                Sci.Text = sourceText;
+                SnippetHelper.PostProcessSnippets(Sci, 0);
+                var currentModel = ASContext.Context.CurrentModel;
+                new ASFileParser().ParseSrc(currentModel, Sci.Text);
+                var currentClass = currentModel.Classes.FirstOrDefault() ?? ClassModel.VoidClass;
+                ASContext.Context.CurrentClass.Returns(currentClass);
+                ASContext.Context.CurrentMember.Returns(currentClass.Members.Items.FirstOrDefault());
+                var target = RefactoringHelper.GetDefaultRefactorTarget();
+                return RefactoringHelper.GetRefactorTargetName(target);
             }
         }
 
