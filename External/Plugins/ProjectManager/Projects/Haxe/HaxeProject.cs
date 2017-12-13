@@ -24,7 +24,7 @@ namespace ProjectManager.Projects.Haxe
         public override string Language { get { return "haxe"; } }
         public override string LanguageDisplayName { get { return "Haxe"; } }
         public override bool IsCompilable { get { return true; } }
-        public override bool ReadOnly { get { return false; } }
+        public override bool ReadOnly { get { return IsFolderProject(); } }
         public override bool HasLibraries { get { return OutputType == OutputType.Application && IsFlashOutput; } }
         public override bool RequireLibrary { get { return IsFlashOutput; } }
         public override string DefaultSearchFilter { get { return "*.hx;*.hxp"; } }

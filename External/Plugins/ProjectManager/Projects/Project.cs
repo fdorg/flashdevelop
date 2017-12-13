@@ -59,6 +59,10 @@ namespace ProjectManager.Projects
 
         public Project(string path, CompilerOptions compilerOptions)
         {
+            if (IsDirectory(path))
+            {
+                path = Path.Combine(path, "Project.folder");
+            }
             this.path = path;
             this.compilerOptions = compilerOptions;
 
@@ -78,8 +82,8 @@ namespace ProjectManager.Projects
 
         public abstract string Language { get; }
         public abstract string LanguageDisplayName { get; }
+        public virtual bool ReadOnly { get { return IsFolderProject(); } }
         public virtual bool IsCompilable { get { return false; } }
-        public virtual bool ReadOnly { get { return false; } }
         public virtual bool UsesInjection { get { return false; } }
         public virtual bool HasLibraries { get { return false; } }
         public virtual bool RequireLibrary { get { return false; } }
@@ -92,9 +96,15 @@ namespace ProjectManager.Projects
 
         protected bool AllowedSaving(string fileName)
         {
+            if (IsFolderProject()) return false;
             if (ReadOnly && fileName == ProjectPath) return false;
             if (BeforeSave != null) return BeforeSave(this, fileName);
             else return true;
+        }
+
+        public bool IsFolderProject()
+        {
+            return path.EndsWith("Project.folder");
         }
 
         public virtual void PropertiesChanged() 
@@ -104,6 +114,7 @@ namespace ProjectManager.Projects
 
         public virtual PropertiesDialog CreatePropertiesDialog()
         {
+            if (IsFolderProject()) return null;
             return new PropertiesDialog();
         }
 
@@ -371,13 +382,16 @@ namespace ProjectManager.Projects
             return stringBuilder.ToString();
         }
 
-        #endregion
-
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public bool IsDirectory(string path)
         {
             return System.IO.Directory.Exists(path);
         }
+
+        #endregion
     }
 
     public enum OutputType

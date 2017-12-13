@@ -18,6 +18,7 @@ using ProjectManager.Helpers;
 using ProjectManager.Projects;
 using ProjectManager.Projects.AS3;
 using ProjectManager.Projects.Haxe;
+using ProjectManager.Projects.Generic;
 
 namespace ProjectManager.Actions
 {
@@ -96,6 +97,32 @@ namespace ProjectManager.Actions
             }
         }
 
+        public Project OpenFolder()
+        {
+            using (VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog())
+            {
+                if (dialog.ShowDialog(owner) == DialogResult.OK)
+                {
+                    return OpenFolderSilent(dialog.SelectedPath);
+                }
+            }
+            return null;
+        }
+
+        public Project OpenFolderSilent(string path)
+        {
+            String[] hxmlFiles = Directory.GetFiles(path, "*.hxml");
+            if (hxmlFiles.Length > 0)
+            {
+                var project = new HaxeProject(path);
+                project.RawHXML = File.ReadAllLines(hxmlFiles[0]);
+                PatchProject(project);
+                PatchHxmlProject(project);
+                return project;
+            }
+            else return new GenericProject(path);
+        }
+
         public string ImportProject() => ImportProject(null);
 
         internal string ImportProject(string importFrom)
@@ -135,7 +162,6 @@ namespace ProjectManager.Actions
                             PatchProject(imported);
                             PatchFbProject(imported);
                             imported.SaveAs(newPath);
-
                             return newPath;
                         }
                         ErrorManager.ShowInfo(TextHelper.GetString("Info.NotValidFlashBuilderProject"));

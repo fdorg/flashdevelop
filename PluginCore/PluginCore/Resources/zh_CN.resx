@@ -6241,4 +6241,8 @@ AND - All conditions are met.</value>
     <value>Sets the maximum number of processes for diagnostics (linting) that run at the same time. Defaults to 1.</value>
     <comment>Added after 5.2.1</comment>
   </data>
+  <data name="ProjectManager.Label.OpenFolder" xml:space="preserve">
+    <value>Open &amp;Folder...</value>
+    <comment>Added after 5.3.1</comment>
+  </data>
 </root>

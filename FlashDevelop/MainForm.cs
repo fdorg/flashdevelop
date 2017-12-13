@@ -1527,12 +1527,12 @@ namespace FlashDevelop
                 this.BeginInvoke((MethodInvoker)delegate { this.OnScintillaControlDropFiles(null, data); });
                 return;
             }
-            String[] files = Regex.Split(data.Substring(1, data.Length - 2), "\" \"");
-            foreach (String file in files)
+            String[] entries = Regex.Split(data.Substring(1, data.Length - 2), "\" \"");
+            foreach (String entry in entries)
             {
-                if (File.Exists(file))
+                if (File.Exists(entry))
                 {
-                    DockContent doc = this.OpenEditableDocument(file);
+                    DockContent doc = this.OpenEditableDocument(entry);
                     if (doc == null || Control.ModifierKeys == Keys.Control) return;
                     DockContent drop = DocumentManager.FindDocument(sci) as DockContent;
                     if (drop != null && drop.Pane != null)
@@ -1540,6 +1540,11 @@ namespace FlashDevelop
                         doc.DockTo(drop.Pane, DockStyle.Fill, -1);
                         doc.Activate();
                     }
+                }
+                else if (Directory.Exists(entry))
+                {
+                    TextEvent de = new TextEvent(EventType.FolderOpen, entry);
+                    EventManager.DispatchEvent(this, de);
                 }
             }
         }
