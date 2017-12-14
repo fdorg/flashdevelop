@@ -1026,7 +1026,10 @@ namespace ProjectManager
 
         public void UpdateUIStatus(ProjectManagerUIStatus status)
         {
-            if (activeProject.IsFolderProject()) return;
+            if (activeProject.IsFolderProject())
+            {
+                status = ProjectManagerUIStatus.Disabled;
+            }
 
             ToolStripMenuItem contextMenuItem = pluginUI.Menu.BuildProject;
             ToolStripMenuItem menuItem = menus.ProjectMenu.BuildProject;
