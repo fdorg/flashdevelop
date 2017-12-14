@@ -1,12 +1,13 @@
-﻿using CodeRefactor.Managers;
+﻿using System.Collections.Generic;
+using CodeRefactor.Managers;
 using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Managers;
 using PluginCore.Utilities;
 using System.ComponentModel;
-using System.Drawing;
 using System.IO;
+using LintingHelper.Helpers;
 using LintingHelper.Managers;
 using PluginCore.Localization;
 using ProjectManager;
@@ -15,11 +16,11 @@ namespace LintingHelper
 {
     public class PluginMain : IPlugin
     {
-        private string pluginName = "LintingHelper";
-        private string pluginGuid = "279C4926-5AC6-49E1-A0AC-66B7275C13DB";
-        private string pluginHelp = "www.flashdevelop.org/community/";
-        private string pluginDesc = "Plugin that adds a generic interface for linting / code analysis.";
-        private string pluginAuth = "FlashDevelop Team";
+        private const string pluginName = "LintingHelper";
+        private const string pluginGuid = "279C4926-5AC6-49E1-A0AC-66B7275C13DB";
+        private const string pluginHelp = "www.flashdevelop.org/community/";
+        private const string pluginDesc = "Plugin that adds a generic interface for linting / code analysis.";
+        private const string pluginAuth = "FlashDevelop Team";
         private Settings settingObject;
         private string settingFilename;
 
@@ -31,54 +32,18 @@ namespace LintingHelper
             }
         }
 
-        public string Author
-        {
-            get
-            {
-                return pluginAuth;
-            }
-        }
+        public string Author => pluginAuth;
 
-        public string Description
-        {
-            get
-            {
-                return pluginDesc;
-            }
-        }
+        public string Description => pluginDesc;
 
-        public string Guid
-        {
-            get
-            {
-                return pluginGuid;
-            }
-        }
+        public string Guid => pluginGuid;
 
-        public string Help
-        {
-            get
-            {
-                return pluginHelp;
-            }
-        }
+        public string Help => pluginHelp;
 
-        public string Name
-        {
-            get
-            {
-                return pluginName;
-            }
-        }
+        public string Name => pluginName;
 
         [Browsable(false)]
-        public object Settings
-        {
-            get
-            {
-                return settingObject;
-            }
-        }
+        public object Settings => settingObject;
 
         public void Initialize()
         {
@@ -148,16 +113,27 @@ namespace LintingHelper
                     break;
                 case EventType.Command:
                     var ev = (DataEvent) e;
-                    if (ev.Action == ProjectManagerEvents.BuildComplete || ev.Action == ProjectManagerEvents.Project)
+                    if (ev.Action == ProjectManagerEvents.BuildComplete || ev.Action == ProjectManagerEvents.ProjectSetUp)
                     {
                         LintingManager.Cache.RemoveAll();
                         LintingManager.UpdateLinterPanel();
-                        if (ev.Action == ProjectManagerEvents.Project)
+                        if (ev.Action == ProjectManagerEvents.ProjectSetUp)
                         {
+                            var groupedFiles = new Dictionary<string, List<string>>();
                             foreach (var doc in PluginBase.MainForm.Documents)
+                               /* if (!doc.IsUntitled && doc.SciControl != null)
+                                    LintingManager.LintDocument(doc);*/
                             {
-                                if (!doc.IsUntitled && doc.SciControl != null)
-                                    LintingManager.LintDocument(doc);
+                                ScintillaNet.ScintillaControl sci;
+                                if (doc.IsUntitled || (sci = doc.SciControl) == null) continue;
+
+                                var files = groupedFiles.GetOrCreate(sci.ConfigurationLanguage);
+                                files.Add(sci.FileName);
+                            }
+
+                            foreach (var languageFileGroup in groupedFiles)
+                            {
+                                LintingManager.LintFiles(languageFileGroup.Value, languageFileGroup.Key);
                             }
                         }
                     }

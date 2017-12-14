@@ -134,6 +134,9 @@
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_withElseIfDirective.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_withImportsFromSameModule.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue1849_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue1849_2.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue1849_3.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

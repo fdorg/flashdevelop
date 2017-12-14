@@ -217,6 +217,7 @@ namespace ASCompletion.Model
             MemberModel self = new MemberModel();
             //int p = Name.LastIndexOf(".");
             //self.Name = (p >= 0) ? Name.Substring(p + 1) : Name;
+            self.Comments = Comments;
             self.Name = Name;
             self.Type = QualifiedName;
             self.Flags = Flags;
