@@ -135,6 +135,9 @@
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_withElseIfDirective.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_withImportsFromSameModule.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue1849_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue1849_2.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue1849_3.hx" />
     <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1833_1.hx" />
     <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1833_1.hx" />
     <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1833_2.hx" />
