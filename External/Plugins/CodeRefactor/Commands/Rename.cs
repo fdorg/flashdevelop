@@ -254,20 +254,12 @@ namespace CodeRefactor.Commands
                             {
                                 var match = matches[i];
                                 var expr = ASComplete.GetExpressionType(sci, sci.MBSafePosition(match.Index) + sci.MBSafeTextLength(match.Value));
-                                if (expr.IsNull()) continue;
-                                var replacement = string.Empty;
+                                if (expr.IsNull() || expr.Context.Value != NewName) continue;
+                                string replacement;
                                 var flags = expr.Member.Flags;
-                                if ((flags & FlagType.Static) > 0)
-                                {
-                                    var classNameWithDot = ASContext.Context.CurrentClass.Name + ".";
-                                    if (!expr.Context.Value.StartsWith(classNameWithDot)) replacement = classNameWithDot + NewName;
-                                }
-                                else if((flags & FlagType.LocalVar) == 0)
-                                {
-                                    var decl = expr.Context.Value;
-                                    if (!decl.StartsWith("this.") && !decl.StartsWith("super.")) replacement = "this." + NewName;
-                                }
-                                if (string.IsNullOrEmpty(replacement)) continue;
+                                if ((flags & FlagType.Static) > 0) replacement = ASContext.Context.CurrentClass.Name + "." + NewName;
+                                else if((flags & FlagType.LocalVar) == 0) replacement = "this." + NewName;
+                                else continue;
                                 RefactoringHelper.SelectMatch(sci, match);
                                 sci.EnsureVisible(sci.LineFromPosition(sci.MBSafePosition(match.Index)));
                                 sci.ReplaceSel(replacement);
