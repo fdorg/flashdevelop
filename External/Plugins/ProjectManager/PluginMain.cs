@@ -230,6 +230,7 @@ namespace ProjectManager
 
             pluginUI = new PluginUI(this, menus, fileActions, projectActions);
             pluginUI.NewProject += delegate { NewProject(); };
+            pluginUI.OpenFolder += delegate { OpenFolder(); };
             pluginUI.OpenProject += delegate { OpenProject(); };
             pluginUI.ImportProject += ImportProject;
             pluginUI.Rename += fileActions.Rename;
