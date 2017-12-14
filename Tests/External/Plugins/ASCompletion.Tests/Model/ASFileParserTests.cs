@@ -1969,16 +1969,16 @@ namespace ASCompletion.Model
                     yield return new TestCaseData(ReadAllTextHaxe("Issue1814_case16"))
                         .Returns(8)
                         .SetName("Issue 1814. Case 16. !");
-                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case17.hx"))
+                    yield return new TestCaseData(ReadAllTextHaxe("Issue1814_case17"))
                         .Returns(9)
                         .SetName("Issue 1814. Case 17. switch");
-                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case18.hx"))
+                    yield return new TestCaseData(ReadAllTextHaxe("Issue1814_case18"))
                         .Returns(7)
                         .SetName("Issue 1814. Case 18. try");
-                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case19.hx"))
+                    yield return new TestCaseData(ReadAllTextHaxe("Issue1814_case19"))
                         .Returns(7)
                         .SetName("Issue 1814. Case 19. function():Bool ~/regex/ ? true : false");
-                    yield return new TestCaseData(new TestFile("ASCompletion.Test_Files.parser.haxe.Issue1814_case20.hx"))
+                    yield return new TestCaseData(ReadAllTextHaxe("Issue1814_case20"))
                         .Returns(7)
                         .SetName("Issue 1814. Case 20. function():{v:Bool} ~/regex/ ? {v:true} : {v:false}");
                 }
