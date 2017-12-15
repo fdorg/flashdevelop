@@ -18,7 +18,7 @@ using Keys = System.Windows.Forms.Keys;
 
 namespace FlashDevelop.Managers
 {
-    internal class ScintillaManager
+    class ScintillaManager
     {
         public static Bitmap Bookmark;
         private static bool initialized;
