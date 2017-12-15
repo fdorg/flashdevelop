@@ -72,7 +72,7 @@ namespace ASCompletion.Completion
             if (context.CodeGenerator.ContextualGenerator(Sci, options, resolve)) return;
 
             int line = Sci.LineFromPosition(position);
-            FoundDeclaration found = GetDeclarationAtLine(Sci, line);
+            FoundDeclaration found = GetDeclarationAtLine(line);
             bool isNotInterface = (context.CurrentClass.Flags & FlagType.Interface) == 0;
             if (isNotInterface && ASComplete.IsLiteralStyle(style))
             {
