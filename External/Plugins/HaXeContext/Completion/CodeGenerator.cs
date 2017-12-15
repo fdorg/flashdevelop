@@ -17,13 +17,17 @@ namespace HaXeContext.Completion
         public bool ContextualGenerator(ScintillaControl sci, List<ICompletionListItem> options, ASResult expr)
         {
             var member = expr.Member;
+            if ((ASContext.Context.CurrentClass.Flags & FlagType.Interface) != 0
+                && (expr.Member == null || (expr.Member.Flags & FlagType.Variable) != 0))
+            {
+                return true;
+            }
             if (member != null
                 && member.Parameters?.Count > 0
                 && (member.LineFrom != sci.CurrentLine || !expr.Context.BeforeBody)
                 && (member.Flags & (FlagType.Static | FlagType.Function)) != 0)
             {
                 ShowConvertToUsing(sci, options, expr);
-                return true;
             }
             return false;
         }

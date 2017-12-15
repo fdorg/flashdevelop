@@ -114,24 +114,24 @@ namespace ASCompletion.Completion
             var suggestItemDeclaration = false;
             if (contextToken != null && resolve.Member == null) // import declaration
             {
-                if ((resolve.Type == null || resolve.Type.IsVoid() || !ASContext.Context.IsImported(resolve.Type, line)) && CheckAutoImport(resolve, options)) return;
+                if ((resolve.Type == null || resolve.Type.IsVoid() || !context.IsImported(resolve.Type, line)) && CheckAutoImport(resolve, options)) return;
                 if (resolve.Type == null)
                 {
                     suggestItemDeclaration = ASComplete.IsTextStyle(Sci.BaseStyleAt(position - 1));
                 }
             }
-            var text = Sci.GetLine(line);
             if (isNotInterface && found.member != null)
             {
                 // private var -> property
                 if ((found.member.Flags & FlagType.Variable) > 0 && (found.member.Flags & FlagType.LocalVar) == 0)
                 {
+                    var text = Sci.GetLine(line);
                     // maybe we just want to import the member's non-imported type
                     Match m = Regex.Match(text, String.Format(patternVarDecl, found.member.Name, contextToken));
                     if (m.Success)
                     {
                         contextMatch = m;
-                        ClassModel type = ASContext.Context.ResolveType(contextToken, ASContext.Context.CurrentModel);
+                        ClassModel type = context.ResolveType(contextToken, context.CurrentModel);
                         if (type.IsVoid() && CheckAutoImport(resolve, options))
                             return;
                     }
@@ -155,6 +155,7 @@ namespace ASCompletion.Completion
                             return;
                         }
                     }
+                    var text = Sci.GetLine(line);
                     if (contextToken != null)
                     {
                         // "generate event handlers" suggestion
@@ -328,6 +329,7 @@ namespace ASCompletion.Completion
                 && found.inClass != ClassModel.VoidClass)
             {
                 int lineStartPos = Sci.PositionFromLine(Sci.CurrentLine);
+                var text = Sci.GetLine(line);
                 string lineStart = text.Substring(0, Sci.CurrentPos - lineStartPos);
                 Match m = Regex.Match(lineStart, String.Format(@"new\s+(?<event>\w+)\s*\(\s*\w+", lineStart));
                 if (m.Success)
@@ -357,6 +359,7 @@ namespace ASCompletion.Completion
             {
                 if (suggestItemDeclaration)
                 {
+                    var text = Sci.GetLine(line);
                     Match m = Regex.Match(text, String.Format(patternClass, contextToken));
                     if (m.Success)
                     {
@@ -383,6 +386,7 @@ namespace ASCompletion.Completion
                         && File.Exists(resolve.InClass.InFile.FileName)
                         && !resolve.InClass.InFile.FileName.StartsWithOrdinal(PathHelper.AppDir))
                     {
+                        var text = Sci.GetLine(line);
                         Match m = Regex.Match(text, String.Format(patternMethodDecl, contextToken));
                         Match m2 = Regex.Match(text, String.Format(patternMethod, contextToken));
                         if (!m.Success && m2.Success)
@@ -397,6 +401,7 @@ namespace ASCompletion.Completion
                         && File.Exists(resolve.Type.InFile.FileName)
                         && !resolve.Type.InFile.FileName.StartsWithOrdinal(PathHelper.AppDir))
                     {
+                        var text = Sci.GetLine(line);
                         Match m = Regex.Match(text, String.Format(patternClass, contextToken));
                         if (m.Success)
                         {
