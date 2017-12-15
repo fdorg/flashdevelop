@@ -18,7 +18,7 @@ namespace HaXeContext.Completion
         {
             var member = expr.Member;
             if ((ASContext.Context.CurrentClass.Flags & FlagType.Interface) != 0
-                && (expr.Member == null || (expr.Member.Flags & FlagType.Variable) != 0))
+                && (member == null || (member.Flags & FlagType.Variable) != 0))
             {
                 return true;
             }
