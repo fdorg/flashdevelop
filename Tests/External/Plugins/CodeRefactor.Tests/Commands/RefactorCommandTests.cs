@@ -14,7 +14,6 @@ using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
 using PluginCore.Helpers;
-using PluginCore.Managers;
 using ScintillaNet;
 
 namespace CodeRefactor.Commands
