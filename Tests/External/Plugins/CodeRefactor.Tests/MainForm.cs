@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
 using FlashDevelop.Managers;
 using FlashDevelop.Utilities;
-using NSubstitute;
 using PluginCore;
-using PluginCore.Helpers;
 using ScintillaNet;
 using ScintillaNet.Configuration;
 using WeifenLuo.WinFormsUI.Docking;
