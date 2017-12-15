@@ -1081,6 +1081,7 @@ namespace ProjectManager
 
         private void OpenProjectSilent(string projectPath)
         {
+            if (!Path.IsPathRooted(projectPath)) projectPath = Path.GetFullPath(projectPath);
             Project project = projectActions.OpenProjectSilent(projectPath);
             if (project != null) SetProject(project);
         }

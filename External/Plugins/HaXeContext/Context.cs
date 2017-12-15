@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using ProjectManager.Projects.Haxe;
 using ProjectManager.Projects;
 using AS3Context;
+using HaXeContext.Completion;
 using PluginCore.Utilities;
 using ScintillaNet;
 
@@ -149,6 +150,7 @@ namespace HaXeContext
             //OnCompletionModeChange(); // defered to first use
 
             haxelibsCache = new Dictionary<string, List<string>>();
+            CodeGenerator = new CodeGenerator();
             //BuildClassPath(); // defered to first use
         }
         #endregion
@@ -915,7 +917,7 @@ namespace HaXeContext
         /// Retrieves a class model from its name
         /// </summary>
         /// <param name="cname">Class (short or full) name</param>
-        /// <param name="inClass">Current file</param>
+        /// <param name="inFile">Current file</param>
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         public override ClassModel ResolveType(string cname, FileModel inFile)
         {
@@ -1002,7 +1004,10 @@ namespace HaXeContext
 
             if (aClass.QualifiedName == features.dynamicKey)
             {
-                return MakeCustomObjectClass(aClass, indexType);
+                var result = MakeCustomObjectClass(aClass, indexType);
+                result.Template = aClass.Template;
+                result.Type = aClass.Type;
+                return result;
             }
 
             FileModel aFile = aClass.InFile;
