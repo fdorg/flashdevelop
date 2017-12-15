@@ -505,7 +505,7 @@ namespace ASCompletion.Completion
             sci.SetSel(position, position);
         }
 
-        private static FoundDeclaration GetDeclarationAtLine(ScintillaControl sci, int line)
+        private static FoundDeclaration GetDeclarationAtLine(int line)
         {
             FoundDeclaration result = new FoundDeclaration();
             FileModel model = ASContext.Context.CurrentModel;
@@ -3071,61 +3071,66 @@ namespace ASCompletion.Completion
             SnippetHelper.InsertSnippetText(sci, sci.CurrentPos, snippet);
         }
 
-        public static void GenerateExtractMethod(ScintillaControl Sci, string NewName)
+        public static void GenerateExtractMethod(ScintillaControl sci, string newName)
         {
-            FileModel cFile;
-            IASContext context = ASContext.Context;
-
-            string selection = Sci.SelText;
+            string selection = sci.SelText;
             if (string.IsNullOrEmpty(selection))
             {
                 return;
             }
 
-            if (selection.TrimStart().Length == 0)
-            {
-                return;
-            }
+            var trimmedLength = selection.TrimStart().Length;
+            if (trimmedLength == 0) return;
 
-            Sci.SetSel(Sci.SelectionStart + selection.Length - selection.TrimStart().Length,
-                Sci.SelectionEnd);
-            Sci.CurrentPos = Sci.SelectionEnd;
+            sci.SetSel(sci.SelectionStart + selection.Length - trimmedLength, sci.SelectionEnd);
+            sci.CurrentPos = sci.SelectionEnd;
 
-            int lineStart = Sci.LineFromPosition(Sci.SelectionStart);
-            int lineEnd = Sci.LineFromPosition(Sci.SelectionEnd);
-            int firstLineIndent = Sci.GetLineIndentation(lineStart);
-            int entryPointIndent = Sci.Indent;
+            int lineStart = sci.LineFromPosition(sci.SelectionStart);
+            int lineEnd = sci.LineFromPosition(sci.SelectionEnd);
+            int firstLineIndent = sci.GetLineIndentation(lineStart);
+            int entryPointIndent = sci.Indent;
 
             for (int i = lineStart; i <= lineEnd; i++)
             {
-                int indent = Sci.GetLineIndentation(i);
+                int indent = sci.GetLineIndentation(i);
                 if (i > lineStart)
                 {
-                    Sci.SetLineIndentation(i, indent - firstLineIndent + entryPointIndent);
+                    sci.SetLineIndentation(i, indent - firstLineIndent + entryPointIndent);
                 }
             }
 
-            string selText = Sci.SelText;
+            string selText = sci.SelText;
             string template = TemplateUtils.GetTemplate("CallFunction");
-            template = TemplateUtils.ReplaceTemplateVariable(template, "Name", NewName);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Name", newName);
             template = TemplateUtils.ReplaceTemplateVariable(template, "Arguments", "");
-
-            InsertCode(Sci.CurrentPos, template + ";", Sci);
-
-            cFile = ASContext.Context.CurrentModel;
-            ASFileParser parser = new ASFileParser();
-            parser.ParseSrc(cFile, Sci.Text);
-
-            FoundDeclaration found = GetDeclarationAtLine(Sci, lineStart);
-            if (found == null || found.member == null)
+            sci.Colourise(0, -1);
+            var pos = sci.SelectionEnd - 1;
+            var endPos = sci.TextLength;
+            while (pos++ < endPos)
             {
-                return;
+                var style = sci.StyleAt(pos);
+                if (ASComplete.IsCommentStyle(style)) continue;
+                var c = (char) sci.CharAt(pos);
+                if (c == '\n' || c == '\r')
+                {
+                    template += ";";
+                    break;
+                }
+                if ((c == ';' || c == ',' || c == '.' || c == ')' || c == '}' || c == '{') && !ASComplete.IsStringStyle(style)) break;
             }
+            InsertCode(sci.CurrentPos, template, sci);
 
-            lookupPosition = Sci.CurrentPos;
+            var cFile = ASContext.Context.CurrentModel;
+            ASFileParser parser = new ASFileParser();
+            parser.ParseSrc(cFile, sci.Text);
+
+            FoundDeclaration found = GetDeclarationAtLine(lineStart);
+            if (found.member == null) return;
+
+            lookupPosition = sci.CurrentPos;
             AddLookupPosition();
 
-            MemberModel latest = TemplateUtils.GetTemplateBlockMember(Sci, TemplateUtils.GetBoundary("PrivateMethods"));
+            MemberModel latest = TemplateUtils.GetTemplateBlockMember(sci, TemplateUtils.GetBoundary("PrivateMethods"));
 
             if (latest == null)
                 latest = GetLatestMemberForFunction(found.inClass, GetDefaultVisibility(found.inClass), found.member);
@@ -3133,8 +3138,8 @@ namespace ASCompletion.Completion
             if (latest == null)
                 latest = found.member;
 
-            int position = Sci.PositionFromLine(latest.LineTo + 1) - ((Sci.EOLMode == 0) ? 2 : 1);
-            Sci.SetSel(position, position);
+            int position = sci.PositionFromLine(latest.LineTo + 1) - ((sci.EOLMode == 0) ? 2 : 1);
+            sci.SetSel(position, position);
 
             FlagType flags = FlagType.Function;
             if ((found.member.Flags & FlagType.Static) > 0)
@@ -3142,13 +3147,13 @@ namespace ASCompletion.Completion
                 flags |= FlagType.Static;
             }
 
-            MemberModel m = new MemberModel(NewName, context.Features.voidKey, flags, GetDefaultVisibility(found.inClass));
+            MemberModel m = new MemberModel(newName, ASContext.Context.Features.voidKey, flags, GetDefaultVisibility(found.inClass));
 
             template = NewLine + TemplateUtils.GetTemplate("Function");
             template = TemplateUtils.ToDeclarationWithModifiersString(m, template);
             template = TemplateUtils.ReplaceTemplateVariable(template, "Body", selText);
             template = TemplateUtils.ReplaceTemplateVariable(template, "BlankLine", NewLine);
-            InsertCode(position, template, Sci);
+            InsertCode(position, template, sci);
         }
 
         private static int FindNewVarPosition(ScintillaControl sci, ClassModel inClass, MemberModel latest)
