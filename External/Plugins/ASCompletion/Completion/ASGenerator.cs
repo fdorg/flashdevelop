@@ -411,7 +411,6 @@ namespace ASCompletion.Completion
                     }
                 }
             }
-            
             // TODO: Empty line, show generators list? yep
         }
 
@@ -2326,7 +2325,7 @@ namespace ASCompletion.Completion
                 if (pos != -1)
                 {
                     var expr = ASComplete.GetExpressionType(sci, pos);
-                    if (expr?.Member?.Parameters?.Count > 0) newMember.Type = expr.Member.Parameters[index].Type;
+                    if (expr?.Member?.Parameters.Count > 0) newMember.Type = expr.Member.Parameters[index].Type;
                 }
             }
             if (job == GeneratorJobType.Constant && returnType == null)
