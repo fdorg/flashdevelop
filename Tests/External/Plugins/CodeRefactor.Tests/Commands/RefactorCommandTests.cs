@@ -369,14 +369,14 @@ namespace CodeRefactor.Commands
                 get
                 {
                     yield return
-                        new TestCaseData("BeforeRenameLocalVariable", "newName")
+                        new TestCaseData("BeforeRenameLocalVariable", 126, "newName")
                             .Returns(ReadAllTextAS3("AfterRenameLocalVariable"))
                             .SetName("Rename local variable");
                 }
             }
 
             [Test, TestCaseSource(nameof(AS3TestCases))]
-            public string AS3(string fileName, string newName)
+            public string AS3(string fileName, int currentPos, string newName)
             {
                 ASContext.Context.SetAs3Features();
                 Sci.ConfigurationLanguage = "as3";
@@ -384,38 +384,37 @@ namespace CodeRefactor.Commands
                 fileName = GetFullPathAS3(fileName);
                 fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
                 fileName = Path.GetFullPath(fileName);
-                fileName = fileName.Replace("\\FlashDevelop\\Bin\\Debug\\CodeRefactor\\Test_Files\\", "\\Tests\\External\\Plugins\\CodeRefactor.Tests\\Test Files\\");
+                fileName = fileName.Replace($"\\FlashDevelop\\Bin\\Debug\\{nameof(CodeRefactor)}\\Test_Files\\", $"\\Tests\\External\\Plugins\\{nameof(CodeRefactor)}.Tests\\Test Files\\");
                 ASContext.Context.CurrentModel.FileName = fileName;
                 PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
-                return Common(Sci, sourceText, newName);
+                return Common(Sci, sourceText, currentPos, newName);
             }
 
-            static string Common(ScintillaControl sci, string sourceText, string newName)
+            static string Common(ScintillaControl sci, string sourceText, int currentPos, string newName)
             {
-                SetSrc(sci, sourceText);
+                SetSrc(sci, sourceText, currentPos);
+                var waitHandle = new AutoResetEvent(false);
                 CommandFactoryProvider.GetFactory(sci)
                         .CreateRenameCommandAndExecute(RefactoringHelper.GetDefaultRefactorTarget(), false, newName)
-                        .OnRefactorComplete += (sender, args) =>
-                        {
-                            TraceManager.Add("catch");
-                        };
-                var waitHandle = new AutoResetEvent(false);
-                var end = DateTime.Now.AddSeconds(10);
+                        .OnRefactorComplete += (sender, args) => waitHandle.Set();
+                const int waitTime = 2;
+                var end = DateTime.Now.AddSeconds(waitTime);
                 var result = false;
                 while ((!result) && (DateTime.Now < end))
                 {
                     Application.DoEvents();
                     result = waitHandle.WaitOne(0);
                 }
-                if (!result) Assert.Fail($"Timeout reached: {10} sec.");
+                if (!result) Assert.Fail($"Timeout reached: {waitTime} sec.");
                 return sci.Text;
             }
         }
 
-        protected static void SetSrc(ScintillaControl sci, string sourceText)
+        protected static void SetSrc(ScintillaControl sci, string sourceText, int currentPos)
         {
             sci.Text = sourceText;
             SnippetHelper.PostProcessSnippets(sci, 0);
+            sci.SetSel(currentPos, currentPos);
             var currentModel = ASContext.Context.CurrentModel;
             new ASFileParser().ParseSrc(currentModel, sci.Text);
             var line = sci.CurrentLine;

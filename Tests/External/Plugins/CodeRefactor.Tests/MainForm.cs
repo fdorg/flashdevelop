@@ -95,18 +95,7 @@ namespace FlashDevelop
 
         public DockContent OpenEditableDocument(string file, bool restoreFileState)
         {
-            var result = new TabbedDocument(file);
-            result.SciControl.Encoding = System.Text.Encoding.UTF8;
-            result.SciControl.CodePage = 65001;
-            result.SciControl.Indent = 4;
-            result.SciControl.Lexer = 3;
-            result.SciControl.StyleBits = 7;
-            result.SciControl.IsTabIndents = true;
-            result.SciControl.IsUseTabs = true;
-            result.SciControl.TabWidth = 4;
-            result.SciControl.Text = File.ReadAllText(file);
-            SnippetHelper.PostProcessSnippets(result.SciControl, 0);
-            return result;
+            return new TabbedDocument(CurrentDocument);
         }
 
         public DockContent CreateCustomDocument(Control ctrl)
@@ -489,10 +478,10 @@ class TabbedDocument : DockContent, ITabbedDocument
     public bool HasBookmarks { get; }
     public bool IsAloneInPane { get; }
 
-    public TabbedDocument(string fileName)
+    public TabbedDocument(ITabbedDocument mock)
     {
-        SciControl = new ScintillaControl();
-        FileName = fileName;
+        FileName = mock.FileName;
+        SciControl = mock.SciControl;
     }
 
     public void RefreshTexts()
@@ -512,16 +501,16 @@ class TabbedDocument : DockContent, ITabbedDocument
 
     public void Save(string file)
     {
-        throw new NotImplementedException();
+        // ignore
     }
 
     public void Save(string file, string reason)
     {
-        throw new NotImplementedException();
+        // ignore
     }
 
     public void Save()
     {
-        throw new NotImplementedException();
+        // ignore
     }
 }
