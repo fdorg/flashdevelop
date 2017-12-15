@@ -110,8 +110,7 @@ namespace FlashDevelop
             throw new NotImplementedException();
         }
 
-        public DockContent CreateDynamicPersistDockablePanel(Control ctrl, string guid, string id, Image image,
-            DockState defaultDockState)
+        public DockContent CreateDynamicPersistDockablePanel(Control ctrl, string guid, string id, Image image, DockState defaultDockState)
         {
             throw new NotImplementedException();
         }
