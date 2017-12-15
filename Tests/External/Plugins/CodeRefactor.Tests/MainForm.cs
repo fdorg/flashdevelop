@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
+using FlashDevelop.Managers;
 using FlashDevelop.Utilities;
+using NSubstitute;
 using PluginCore;
+using PluginCore.Helpers;
+using ScintillaNet;
 using ScintillaNet.Configuration;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -86,14 +91,22 @@ namespace FlashDevelop
             throw new NotImplementedException();
         }
 
+        public DockContent OpenEditableDocument(string file) => OpenEditableDocument(file, false);
+
         public DockContent OpenEditableDocument(string file, bool restoreFileState)
         {
-            throw new NotImplementedException();
-        }
-
-        public DockContent OpenEditableDocument(string file)
-        {
-            throw new NotImplementedException();
+            var result = new TabbedDocument(file);
+            result.SciControl.Encoding = System.Text.Encoding.UTF8;
+            result.SciControl.CodePage = 65001;
+            result.SciControl.Indent = 4;
+            result.SciControl.Lexer = 3;
+            result.SciControl.StyleBits = 7;
+            result.SciControl.IsTabIndents = true;
+            result.SciControl.IsUseTabs = true;
+            result.SciControl.TabWidth = 4;
+            result.SciControl.Text = File.ReadAllText(file);
+            SnippetHelper.PostProcessSnippets(result.SciControl, 0);
+            return result;
         }
 
         public DockContent CreateCustomDocument(Control ctrl)
@@ -111,7 +124,8 @@ namespace FlashDevelop
             throw new NotImplementedException();
         }
 
-        public DockContent CreateDynamicPersistDockablePanel(Control ctrl, string guid, string id, Image image, DockState defaultDockState)
+        public DockContent CreateDynamicPersistDockablePanel(Control ctrl, string guid, string id, Image image,
+            DockState defaultDockState)
         {
             throw new NotImplementedException();
         }
@@ -185,6 +199,7 @@ namespace FlashDevelop
         }
 
         public int getThemeColorCount;
+
         public Color GetThemeColor(string id, Color fallback)
         {
             getThemeColorCount++;
@@ -208,10 +223,11 @@ namespace FlashDevelop
         }
 
         public int imageSetAdjustCount;
+
         public Image ImageSetAdjust(Image image)
         {
             imageSetAdjustCount++;
-            return image;            
+            return image;
         }
 
         public Image GetAutoAdjustedImage(Image image)
@@ -291,10 +307,7 @@ namespace FlashDevelop
             get { throw new NotImplementedException(); }
         }
 
-        public Scintilla SciConfig
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public Scintilla SciConfig => ScintillaManager.SciConfig;
 
         public DockPanel DockPanel
         {
@@ -353,6 +366,7 @@ namespace FlashDevelop
         }
 
         private ITabbedDocument _currentDocument;
+
         public ITabbedDocument CurrentDocument
         {
             get { return _currentDocument; }
@@ -360,6 +374,7 @@ namespace FlashDevelop
         }
 
         ITabbedDocument[] tabbedDocuments;
+
         public ITabbedDocument[] Documents
         {
             get { return tabbedDocuments; }
@@ -412,6 +427,7 @@ namespace FlashDevelop
         }
 
         private bool _standaloneMode;
+
         public bool StandaloneMode
         {
             get { return _standaloneMode; }
@@ -454,5 +470,58 @@ namespace FlashDevelop
             get { throw new NotImplementedException(); }
         }
 
+    }
+}
+
+class TabbedDocument : DockContent, ITabbedDocument
+{
+    public string FileName { get; }
+    public bool UseCustomIcon { get; set; }
+    public SplitContainer SplitContainer { get; }
+    public ScintillaControl SciControl { get; }
+    public ScintillaControl SplitSci1 { get; }
+    public ScintillaControl SplitSci2 { get; }
+    public bool IsModified { get; set; }
+    public bool IsSplitted { get; set; }
+    public bool IsBrowsable { get; }
+    public bool IsUntitled { get; }
+    public bool IsEditable { get; }
+    public bool HasBookmarks { get; }
+    public bool IsAloneInPane { get; }
+
+    public TabbedDocument(string fileName)
+    {
+        SciControl = new ScintillaControl();
+        FileName = fileName;
+    }
+
+    public void RefreshTexts()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Reload(bool showQuestion)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Revert(bool showQuestion)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Save(string file)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Save(string file, string reason)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Save()
+    {
+        throw new NotImplementedException();
     }
 }

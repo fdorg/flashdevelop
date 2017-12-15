@@ -1,5 +1,9 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Windows.Forms;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
@@ -8,7 +12,9 @@ using CodeRefactor.Provider;
 using CodeRefactor.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
+using PluginCore;
 using PluginCore.Helpers;
+using PluginCore.Managers;
 using ScintillaNet;
 
 namespace CodeRefactor.Commands
@@ -349,6 +355,85 @@ namespace CodeRefactor.Commands
                     .Execute();
                 return sci.Text;
             }
+        }
+
+        [TestFixture]
+        public class RenameTests : RefactorCommandTests
+        {
+            static string ReadAllTextAS3(string fileName) => TestFile.ReadAllText(GetFullPathAS3(fileName));
+
+            static string GetFullPathAS3(string fileName) => $"{nameof(CodeRefactor)}.Test_Files.coderefactor.rename.as3.{fileName}.as";
+
+            public IEnumerable<TestCaseData> AS3TestCases
+            {
+                get
+                {
+                    yield return
+                        new TestCaseData("BeforeRenameLocalVariable", "newName")
+                            .Returns(ReadAllTextAS3("AfterRenameLocalVariable"))
+                            .SetName("Rename local variable");
+                }
+            }
+
+            [Test, TestCaseSource(nameof(AS3TestCases))]
+            public string AS3(string fileName, string newName)
+            {
+                ASContext.Context.SetAs3Features();
+                Sci.ConfigurationLanguage = "as3";
+                var sourceText = ReadAllTextAS3(fileName);
+                fileName = GetFullPathAS3(fileName);
+                fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
+                fileName = Path.GetFullPath(fileName);
+                fileName = fileName.Replace("\\FlashDevelop\\Bin\\Debug\\CodeRefactor\\Test_Files\\", "\\Tests\\External\\Plugins\\CodeRefactor.Tests\\Test Files\\");
+                ASContext.Context.CurrentModel.FileName = fileName;
+                PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
+                return Common(Sci, sourceText, newName);
+            }
+
+            static string Common(ScintillaControl sci, string sourceText, string newName)
+            {
+                SetSrc(sci, sourceText);
+                CommandFactoryProvider.GetFactory(sci)
+                        .CreateRenameCommandAndExecute(RefactoringHelper.GetDefaultRefactorTarget(), false, newName)
+                        .OnRefactorComplete += (sender, args) =>
+                        {
+                            TraceManager.Add("catch");
+                        };
+                var waitHandle = new AutoResetEvent(false);
+                var end = DateTime.Now.AddSeconds(10);
+                var result = false;
+                while ((!result) && (DateTime.Now < end))
+                {
+                    Application.DoEvents();
+                    result = waitHandle.WaitOne(0);
+                }
+                if (!result) Assert.Fail($"Timeout reached: {10} sec.");
+                return sci.Text;
+            }
+        }
+
+        protected static void SetSrc(ScintillaControl sci, string sourceText)
+        {
+            sci.Text = sourceText;
+            SnippetHelper.PostProcessSnippets(sci, 0);
+            var currentModel = ASContext.Context.CurrentModel;
+            new ASFileParser().ParseSrc(currentModel, sci.Text);
+            var line = sci.CurrentLine;
+            var currentClass = currentModel.Classes.FirstOrDefault(line);
+            ASContext.Context.CurrentClass.Returns(currentClass);
+            var currentMember = currentClass.Members.FirstOrDefault(line);
+            ASContext.Context.CurrentMember.Returns(currentMember);
+            ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
+        }
+    }
+
+    public static class CollectionExtensions
+    {
+        public static MemberModel FirstOrDefault(this MemberList list, int line) => list.Items.FirstOrDefault(line);
+
+        public static TSource FirstOrDefault<TSource>(this ICollection<TSource> items, int line) where TSource : MemberModel
+        {
+            return items.FirstOrDefault(it => it.LineFrom <= line && it.LineTo >= line);
         }
     }
 }
