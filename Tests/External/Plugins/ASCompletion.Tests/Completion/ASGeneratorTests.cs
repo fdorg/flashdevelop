@@ -1131,7 +1131,6 @@ namespace ASCompletion.Completion
                 {
                     get
                     {
-
                         yield return
                             new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction_issue103"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextAS3("AfterGenerateFunction_issue103"))
