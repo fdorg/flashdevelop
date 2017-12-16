@@ -406,7 +406,17 @@ namespace ASCompletion.Completion
                         if (m.Success)
                         {
                             contextMatch = m;
-                            ShowChangeConstructorDeclList(found, options);
+                            MemberModel constructor = null;
+                            var type = resolve.Type;
+                            while (!type.IsVoid())
+                            {
+                                constructor = type.Members.Search(type.Name, FlagType.Constructor, 0);
+                                if (constructor != null) break;
+                                type.ResolveExtends();
+                                type = type.Extends;
+                            }
+                            if (constructor == null) ShowConstructorAndToStringList(new FoundDeclaration {inClass = resolve.Type}, false, true, options);
+                            else ShowChangeConstructorDeclList(found, options);
                         }
                     }
                 }
@@ -708,7 +718,7 @@ namespace ASCompletion.Completion
             options.Add(new GeneratorItem(label, GeneratorJobType.ChangeMethodDecl, found.member, found.inClass));
         }
 
-        private static void ShowChangeConstructorDeclList(FoundDeclaration found, List<ICompletionListItem> options)
+        private static void ShowChangeConstructorDeclList(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             string label = TextHelper.GetString("ASCompletion.Label.ChangeConstructorDecl");
             options.Add(new GeneratorItem(label, GeneratorJobType.ChangeConstructorDecl, found.member, found.inClass));
@@ -751,21 +761,18 @@ namespace ASCompletion.Completion
             options.Add(new GeneratorItem(label, GeneratorJobType.Class, found.member, found.inClass, expr));
         }
 
-        private static void ShowConstructorAndToStringList(FoundDeclaration found, bool hasConstructor, bool hasToString, List<ICompletionListItem> options)
+        private static void ShowConstructorAndToStringList(FoundDeclaration found, bool hasConstructor, bool hasToString, ICollection<ICompletionListItem> options)
         {
-            if (GetLangIsValid())
+            if (!hasConstructor)
             {
-                if (!hasConstructor)
-                {
-                    string labelClass = TextHelper.GetString("ASCompletion.Label.GenerateConstructor");
-                    options.Add(new GeneratorItem(labelClass, GeneratorJobType.Constructor, found.member, found.inClass));
-                }
+                string label = TextHelper.GetString("ASCompletion.Label.GenerateConstructor");
+                options.Add(new GeneratorItem(label, GeneratorJobType.Constructor, found.member, found.inClass));
+            }
 
-                if (!hasToString)
-                {
-                    string labelClass = TextHelper.GetString("ASCompletion.Label.GenerateToString");
-                    options.Add(new GeneratorItem(labelClass, GeneratorJobType.ToString, found.member, found.inClass));
-                }
+            if (!hasToString)
+            {
+                string label = TextHelper.GetString("ASCompletion.Label.GenerateToString");
+                options.Add(new GeneratorItem(label, GeneratorJobType.ToString, found.member, found.inClass));
             }
         }
 
@@ -950,6 +957,18 @@ namespace ASCompletion.Completion
                     }
                     break;
 
+                case GeneratorJobType.Constructor:
+                    sci.BeginUndoAction();
+                    try
+                    {
+                        GenerateConstructorJob(sci, inClass);
+                    }
+                    finally
+                    {
+                        sci.EndUndoAction();
+                    }
+                    break;
+
                 case GeneratorJobType.Function:
                 case GeneratorJobType.FunctionPublic:
                     sci.BeginUndoAction();
@@ -1080,16 +1099,11 @@ namespace ASCompletion.Completion
                     else GenerateClass(sci, inClass, sci.GetWordFromPosition(sci.CurrentPos));
                     break;
 
-                case GeneratorJobType.Constructor:
-                    member = new MemberModel(inClass.Name, inClass.QualifiedName, FlagType.Constructor | FlagType.Function, Visibility.Public);
-                    GenerateFunction(member, sci.CurrentPos, false, inClass);
-                    break;
-
                 case GeneratorJobType.ToString:
                     sci.BeginUndoAction();
                     try
                     {
-                        GenerateToString(sci, member, inClass);
+                        GenerateToString(sci, inClass);
                     }
                     finally
                     {
@@ -2118,7 +2132,7 @@ namespace ASCompletion.Completion
             return startPos;
         }
 
-        private static void GenerateToString(ScintillaControl sci, MemberModel member, ClassModel inClass)
+        private static void GenerateToString(ScintillaControl sci, ClassModel inClass)
         {
             MemberModel resultMember = new MemberModel("toString", ASContext.Context.Features.stringKey, FlagType.Function, Visibility.Public);
 
@@ -2148,7 +2162,6 @@ namespace ASCompletion.Completion
             }
             MemberList members = inClass.Members;
             StringBuilder membersString = new StringBuilder();
-            StringBuilder oneMembersString;
             int len = 0;
             foreach (MemberModel m in members)
             {
@@ -2156,7 +2169,7 @@ namespace ASCompletion.Completion
                     && (m.Access & Visibility.Public) > 0
                     && (m.Flags & FlagType.Constant) == 0)
                 {
-                    oneMembersString = new StringBuilder();
+                    var oneMembersString = new StringBuilder();
                     oneMembersString.Append(" ").Append(m.Name).Append("=\" + ").Append(m.Name).Append(" + ");
                     membersString.Append(oneMembersString);
                     len += oneMembersString.Length;
@@ -2688,6 +2701,27 @@ namespace ASCompletion.Completion
             return prms;
         }
 
+        static void GenerateConstructorJob(ScintillaControl sci, ClassModel inClass)
+        {
+            var position = sci.WordEndPosition(sci.CurrentPos, true);
+            var parameters = ParseFunctionParameters(sci, position);
+            var member = new MemberModel(inClass.Name, inClass.QualifiedName, FlagType.Constructor | FlagType.Function, Visibility.Public)
+            {
+                Parameters = parameters.Select(it => new MemberModel(it.paramName, it.paramQualType, FlagType.ParameterVar, 0)).ToList()
+            };
+            var currentClass = ASContext.Context.CurrentClass;
+            if (currentClass != inClass)
+            {
+                AddLookupPosition();
+                lookupPosition = -1;
+                if (currentClass.InFile != inClass.InFile) sci = ((ITabbedDocument)PluginBase.MainForm.OpenEditableDocument(inClass.InFile.FileName, false)).SciControl;
+                ASContext.Context.UpdateContext(inClass.LineFrom);
+            }
+            position = GetBodyStart(inClass.LineFrom, inClass.LineTo, sci);
+            sci.SetSel(position, position);
+            GenerateFunction(member, position, inClass, false);
+        }
+
         private static void GenerateFunctionJob(GeneratorJobType job, ScintillaControl sci, MemberModel member, bool detach, ClassModel inClass)
         {
             Visibility visibility = job.Equals(GeneratorJobType.FunctionPublic) ? Visibility.Public : GetDefaultVisibility(inClass);
@@ -2911,10 +2945,10 @@ namespace ASCompletion.Completion
             var newMember = NewMember(contextToken, isStatic, FlagType.Function, visibility);
             newMember.Parameters = functionParameters.Select(parameter => new MemberModel(parameter.paramName, parameter.paramQualType, FlagType.ParameterVar, 0)).ToList();
             if (newMemberType != null) newMember.Type = newMemberType;
-            GenerateFunction(newMember, position, detach, inClass);
+            GenerateFunction(newMember, position, inClass, detach);
         }
 
-        static void GenerateFunction(MemberModel member, int position, bool detach, ClassModel inClass)
+        static void GenerateFunction(MemberModel member, int position, ClassModel inClass, bool detach)
         {
             string template;
             string decl;
@@ -4778,7 +4812,7 @@ namespace ASCompletion.Completion
     class GeneratorItem : ICompletionListItem
     {
         private string label;
-        private GeneratorJobType job;
+        internal GeneratorJobType job { get; }
         private MemberModel member;
         private ClassModel inClass;
         private Object data;
