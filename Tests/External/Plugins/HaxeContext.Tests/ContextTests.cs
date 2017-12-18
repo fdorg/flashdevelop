@@ -1,5 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using ASCompletion.Completion;
+using ASCompletion.Context;
+using ASCompletion.Model;
+using ASCompletion.TestUtils;
+using HaXeContext.TestUtils;
 using NUnit.Framework;
 
 namespace HaXeContext
@@ -7,6 +12,10 @@ namespace HaXeContext
     [TestFixture]
     class ContextTests : ASCompleteTests
     {
+        protected static string ReadAllTextHaxe(string fileName) => TestFile.ReadAllText(GetFullPathHaxe(fileName));
+
+        protected static string GetFullPathHaxe(string fileName) => $"{nameof(HaXeContext)}.Test_Files.parser.{fileName}.hx";
+
         Context context;
 
         [TestFixtureSetUp]
@@ -63,5 +72,34 @@ namespace HaXeContext
 
         [Test, TestCaseSource(nameof(DecomposeTypesTestCases))]
         public IEnumerable<string> DecomposeTypes(IEnumerable<string> types) => context.DecomposeTypes(types);
+
+        IEnumerable<TestCaseData> ParseFile_Issue1849TestCases
+        {
+            get
+            {
+                yield return new TestCaseData(ReadAllTextHaxe("Issue1849_1"))
+                    .Returns("Dynamic<T>")
+                    .SetName("implements Dynamic<T>")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1849");
+                yield return new TestCaseData(ReadAllTextHaxe("Issue1849_2"))
+                    .Returns("IStruct<T>")
+                    .SetName("implements IStruct<T>")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1849");
+                yield return new TestCaseData(ReadAllTextHaxe("Issue1849_3"))
+                    .Returns("IStruct<K,V>")
+                    .SetName("implements IStruct<K,V>")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1849");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(ParseFile_Issue1849TestCases))]
+        public string ParseFile_Issue1849(string sourceText)
+        {
+            ASContext.Context.SetHaxeFeatures();
+            var model = new FileModel {Context = ASContext.Context, haXe = true};
+            new ASFileParser().ParseSrc(model, sourceText);
+            var interfaceType = ASContext.Context.ResolveType(model.Classes.First().Implements.First(), model);
+            return interfaceType.Type;
+        }
     }
 }

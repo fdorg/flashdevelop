@@ -2,6 +2,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using ASCompletion.Context;
 using ASCompletion.Model;
@@ -1131,7 +1132,6 @@ namespace ASCompletion.Completion
                 {
                     get
                     {
-
                         yield return
                             new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction_issue103"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextAS3("AfterGenerateFunction_issue103"))
@@ -3335,6 +3335,66 @@ namespace ASCompletion.Completion
                     ASGenerator.GenerateJob(GeneratorJobType.Class, currentMember, currentClass, null, null);
                 }
             }
+
+            [TestFixture]
+            public class GeneratorJobTypeConstructorTests : GenerateJob
+            {
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return new TestCaseData("BeforeGenerateConstructor_issue1738_1", GeneratorJobType.Constructor, true)
+                            .Returns(ReadAllTextHaxe("AfterGenerateConstructor_issue1738_1"))
+                            .SetName("Generate constructor")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1738");
+                        yield return new TestCaseData("BeforeGenerateConstructor_issue1738_2", GeneratorJobType.Constructor, true)
+                            .Returns(ReadAllTextHaxe("AfterGenerateConstructor_issue1738_2"))
+                            .SetName("Generate constructor with parameters")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1738");
+                        yield return new TestCaseData("BeforeGenerateConstructor_issue1738_3", GeneratorJobType.ChangeConstructorDecl, true)
+                            .Returns(ReadAllTextHaxe("AfterGenerateConstructor_issue1738_3"))
+                            .SetName("Change constructor declaration")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1738");
+                        yield return new TestCaseData("BeforeGenerateConstructor_issue1738_4", GeneratorJobType.Constructor, false)
+                            .Returns(ReadAllTextHaxe("AfterGenerateConstructor_issue1738_4"))
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1738");
+                        yield return new TestCaseData("BeforeGenerateConstructor_issue1738_5", GeneratorJobType.ChangeConstructorDecl, false)
+                            .Returns(ReadAllTextHaxe("AfterGenerateConstructor_issue1738_5"))
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1738");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public string Haxe(string fileName, GeneratorJobType job, bool hasGenerator) => HaxeImpl(sci, fileName, job, hasGenerator);
+
+                internal static string HaxeImpl(ScintillaControl sci, string fileName, GeneratorJobType job, bool hasGenerator)
+                {
+                    SetHaxeFeatures(sci);
+                    var sourceText = ReadAllTextHaxe(fileName);
+                    fileName = GetFullPathHaxe(fileName);
+                    fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
+                    fileName = Path.GetFullPath(fileName);
+                    fileName = fileName.Replace($"\\FlashDevelop\\Bin\\Debug\\{nameof(ASCompletion)}\\Test_Files\\", $"\\Tests\\External\\Plugins\\{nameof(ASCompletion)}.Tests\\Test Files\\");
+                    ASContext.Context.CurrentModel.FileName = fileName;
+                    PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
+                    return Common(sci, sourceText, job, hasGenerator);
+                }
+
+                internal static string Common(ScintillaControl sci, string sourceText, GeneratorJobType job, bool hasGenerator)
+                {
+                    SetSrc(sci, sourceText);
+                    var options = new List<ICompletionListItem>();
+                    ASGenerator.ContextualGenerator(sci, options);
+                    var item = options.Find(it => it is GeneratorItem && ((GeneratorItem) it).job == job);
+                    if (hasGenerator)
+                    {
+                        Assert.NotNull(item);
+                        var value = item.Value;
+                    }
+                    else Assert.IsNull(item);
+                    return sci.Text;
+                }
+            }
         }
 
         protected static string ReadAllTextAS3(string fileName) => TestFile.ReadAllText(GetFullPathAS3(fileName));
@@ -3344,5 +3404,29 @@ namespace ASCompletion.Completion
         protected static string ReadAllTextHaxe(string fileName) => TestFile.ReadAllText(GetFullPathHaxe(fileName));
 
         protected static string GetFullPathHaxe(string fileName) => $"ASCompletion.Test_Files.generated.haxe.{fileName}.hx";
+
+        protected static void SetSrc(ScintillaControl sci, string sourceText)
+        {
+            sci.Text = sourceText;
+            SnippetHelper.PostProcessSnippets(sci, 0);
+            var currentModel = ASContext.Context.CurrentModel;
+            new ASFileParser().ParseSrc(currentModel, sci.Text);
+            var line = sci.CurrentLine;
+            var currentClass = currentModel.Classes.FirstOrDefault(line);
+            ASContext.Context.CurrentClass.Returns(currentClass);
+            var currentMember = currentClass.Members.FirstOrDefault(line);
+            ASContext.Context.CurrentMember.Returns(currentMember);
+            ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
+        }
+    }
+}
+
+public static class CollectionExtensions
+{
+    public static MemberModel FirstOrDefault(this MemberList list, int line) => list.Items.FirstOrDefault(line);
+
+    public static TSource FirstOrDefault<TSource>(this ICollection<TSource> items, int line) where TSource : MemberModel
+    {
+        return items.FirstOrDefault(it => it.LineFrom <= line && it.LineTo >= line);
     }
 }
