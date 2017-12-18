@@ -1705,8 +1705,17 @@ namespace ASCompletion.Model
             while (i0 > 0)
             {
                 c = ba[i0--];
-                if ("=(,[{;?:+-*/|&~^><n!".IndexOf(c) >= 0) break; // ok
-                if (" \t".IndexOf(c) >= 0) continue;
+                if (c == '=' || c == '(' || c == '[' || c == '{' || c == '}' || c == ',' || c == ';'
+                    || c == '?' || c == ':'
+                    || c == '+' || c == '-' || c == '*' || c == '/'
+                    || c == '|' || c == '&' || c == '~' || c == '^'
+                    || c == '>' || c == '<' || c == '!'
+                    || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')
+                    || (c >= '0' && c <= '9'))
+                {
+                    break;// ok
+                }
+                if (c == ' ' || c == '\t') continue;
                 return false; // anything else isn't expected before a regex
             }
             i0 = i;

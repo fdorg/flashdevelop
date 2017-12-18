@@ -22,7 +22,6 @@ namespace FlashDevelop.Dialogs
         public ClipboardHistoryDialog()
         {
             this.Owner = Globals.MainForm;
-            this.Font = Globals.Settings.DefaultFont;
             this.FormGuid = "9c9f995e-ea37-4359-8e3c-28a57f10f249";
             this.InitializeComponent();
             this.InitializeFont();
@@ -83,7 +82,7 @@ namespace FlashDevelop.Dialogs
             listBox.ItemHeight = 20;
             listBox.Location = new Point(6, 10);
             listBox.Name = "listBox";
-            listBox.Size = new Size(470, 132);
+            listBox.Size = new Size(470, 106);
             listBox.TabIndex = 0;
             listBox.DrawMode = DrawMode.OwnerDrawFixed;
             listBox.DrawItem += ListBox_DrawItem;
@@ -94,7 +93,7 @@ namespace FlashDevelop.Dialogs
             btnPaste.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnPaste.DialogResult = DialogResult.OK;
             btnPaste.Enabled = false;
-            btnPaste.Location = new Point(268, 232);
+            btnPaste.Location = new Point(269, 232);
             btnPaste.Name = "btnPaste";
             btnPaste.Size = new Size(100, 34);
             btnPaste.TabIndex = 0;
@@ -106,7 +105,7 @@ namespace FlashDevelop.Dialogs
             // 
             btnCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnCancel.DialogResult = DialogResult.Cancel;
-            btnCancel.Location = new Point(376, 232);
+            btnCancel.Location = new Point(377, 232);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(100, 34);
             btnCancel.TabIndex = 1;
@@ -118,7 +117,7 @@ namespace FlashDevelop.Dialogs
             // 
             btnCopy.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnCopy.Enabled = false;
-            btnCopy.Location = new Point(160, 232);
+            btnCopy.Location = new Point(161, 232);
             btnCopy.Name = "btnCopy";
             btnCopy.Size = new Size(100, 34);
             btnCopy.TabIndex = 2;
@@ -131,7 +130,7 @@ namespace FlashDevelop.Dialogs
             // 
             btnClear.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnClear.Enabled = false;
-            btnClear.Location = new Point(376, 124);
+            btnClear.Location = new Point(377, 124);
             btnClear.Name = "btnClear";
             btnClear.Size = new Size(100, 34);
             btnClear.TabIndex = 1;
@@ -149,7 +148,7 @@ namespace FlashDevelop.Dialogs
             previewBox.Multiline = true;
             previewBox.Name = "preview";
             previewBox.ReadOnly = true;
-            previewBox.Size = new Size(470, 291);
+            previewBox.Size = new Size(470, 224);
             previewBox.TabIndex = 3;
             previewBox.Text = "";
             previewBox.WordWrap = false;
@@ -196,8 +195,9 @@ namespace FlashDevelop.Dialogs
 
         private void InitializeFont()
         {
-            listBox.ItemHeight = Font.Height;
+            Font = Globals.Settings.DefaultFont;
             previewBox.Font = Globals.Settings.ConsoleFont;
+            listBox.ItemHeight = Font.Height;
         }
 
         private void InitializeLocalization()

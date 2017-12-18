@@ -1,8 +1,5 @@
 using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Text;
-using ProjectManager.Helpers;
 using ProjectManager.Projects.Haxe;
 using FDBuild.Building;
 
@@ -52,7 +49,7 @@ namespace ProjectManager.Building.Haxe
                 // if we have any resources, build our library file and run swfmill on it
                 libraryBuilder.BuildLibrarySwf(project, false);
             }
-
+            output = output.TrimEnd('\\', '/');
             string haxeArgs = connect + " " + String.Join(" ", project.BuildHXML(extraClasspaths, output, noTrace));
             
             Console.WriteLine("haxe " + haxeArgs);
