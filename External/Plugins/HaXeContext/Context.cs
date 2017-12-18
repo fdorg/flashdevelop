@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using ProjectManager.Projects.Haxe;
 using ProjectManager.Projects;
 using AS3Context;
+using HaXeContext.Completion;
 using PluginCore.Utilities;
 using ScintillaNet;
 
@@ -149,6 +150,7 @@ namespace HaXeContext
             //OnCompletionModeChange(); // defered to first use
 
             haxelibsCache = new Dictionary<string, List<string>>();
+            CodeGenerator = new CodeGenerator();
             //BuildClassPath(); // defered to first use
         }
         #endregion
