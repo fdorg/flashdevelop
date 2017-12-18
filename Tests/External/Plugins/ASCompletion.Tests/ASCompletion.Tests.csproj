@@ -751,6 +751,16 @@
     <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case18.hx" />
     <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case19.hx" />
     <EmbeddedResource Include="Test Files\parser\haxe\Issue1814_case20.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstructor_issue1738_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstructor_issue1738_2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstructor_issue1738_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstructor_issue1738_2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstructor_issue1738_3.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstructor_issue1738_3.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstructor_issue1738_4.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstructor_issue1738_4.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstructor_issue1738_5.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstructor_issue1738_5.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
