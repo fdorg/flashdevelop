@@ -246,9 +246,7 @@ namespace HaXeContext
             var form = PluginBase.MainForm as System.Windows.Forms.Form;
             if (form.InvokeRequired)
             {
-                form.BeginInvoke((System.Windows.Forms.MethodInvoker)delegate {
-                    UpdateProject();
-                });
+                form.BeginInvoke((Action)UpdateProject);
                 return;
             }
 
@@ -259,13 +257,10 @@ namespace HaXeContext
             string args = GetCommand(hxproj, "display");
             if (args == null)
             {
-                var msg = String.Format("No external 'display' command found for platform '{0}'", hxproj.MovieOptions.Platform);
+                var msg = $"No external 'display' command found for platform '{hxproj.MovieOptions.Platform}'";
                 TraceManager.Add(msg, -3);
                 return;
             }
-
-            string config = hxproj.TargetBuild;
-            if (String.IsNullOrEmpty(config)) config = "flash";
 
             ProcessStartInfo pi = new ProcessStartInfo();
             pi.FileName = Environment.ExpandEnvironmentVariables(exe);
@@ -303,7 +298,7 @@ namespace HaXeContext
                 args = GetCommand(hxproj, "build", false);
                 if (args == null)
                 {
-                    var msg = String.Format("No external 'build' command found for platform '{0}'", hxproj.MovieOptions.Platform);
+                    var msg = $"No external 'build' command found for platform '{hxproj.MovieOptions.Platform}'";
                     TraceManager.Add(msg, -3);
                 }
                 else if (string.IsNullOrEmpty(hxproj.PreBuildEvent))
@@ -381,8 +376,8 @@ namespace HaXeContext
             var version = platform.GetVersion(project.MovieOptions.Version);
             if (version.Commands == null)
             {
-                throw new Exception(String.Format("No external commands found for target {0} and version {1}",
-                    project.MovieOptions.Platform, project.MovieOptions.Version));
+                throw new Exception(
+                    $"No external commands found for target {project.MovieOptions.Platform} and version {project.MovieOptions.Version}");
             }
             if (version.Commands.ContainsKey(name))
             {

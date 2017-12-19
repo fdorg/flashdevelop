@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using ASCompletion.Context;
 using ASCompletion.Model;
@@ -16,12 +18,14 @@ namespace ASCompletion.Helpers
     {
         public event Action FinishedUpdate;
 
-        Dictionary<ClassModel, CachedClassModel> cache = new Dictionary<ClassModel, CachedClassModel>(new ClassModelComparer());
-        readonly List<ClassModel> outdatedModels = new List<ClassModel>();
+        Dictionary<ClassModel, CachedClassModel> cache = new Dictionary<ClassModel, CachedClassModel>(CacheHelper.classModelComparer);
+        readonly HashSet<ClassModel> outdatedModels = new HashSet<ClassModel>(CacheHelper.classModelComparer);
         /// <summary>
         /// A list of ClassModels that extend / implement something that does not exist yet
         /// </summary>
-        readonly HashSet<ClassModel> unfinishedModels = new HashSet<ClassModel>();
+        readonly HashSet<ClassModel> unfinishedModels = new HashSet<ClassModel>(CacheHelper.classModelComparer);
+
+        private int outdateUpdateCount;
 
         public CachedClassModel GetCachedModel(ClassModel cls)
         {
@@ -34,15 +38,18 @@ namespace ASCompletion.Helpers
         {
             lock (outdatedModels)
                 outdatedModels.Clear();
-            lock (cache)
-                cache.Clear();
+            lock (unfinishedModels)
+                unfinishedModels.Clear();
+            cache.Clear();
         }
 
         public void Remove(ClassModel cls)
         {
             lock (cache)
             {
-                var cachedClassModel = GetOrCreate(cache, cls);
+                var cachedClassModel = GetCachedModel(cls);
+
+                if (cachedClassModel == null) return;
 
                 var implementing = cachedClassModel.Implementing;
                 var overriding = cachedClassModel.Overriding;
@@ -71,72 +78,68 @@ namespace ASCompletion.Helpers
         public void MarkAsOutdated(ClassModel cls)
         {
             lock (outdatedModels)
-                if (!outdatedModels.Contains(cls))
-                    outdatedModels.Add(cls);
+                outdatedModels.Add(cls);
         }
 
         public void UpdateOutdatedModels()
         {
-            var action = new Action(() =>
-            {
-                var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-                if (context == null || context.Classpath == null)
-                    return;
+            var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
+            if (context?.Classpath == null)
+                return;
 
-                List<ClassModel> outdated;
-                lock (outdatedModels)
+            HashSet<ClassModel> outdated;
+            lock (outdatedModels)
+            {
+                outdated = new HashSet<ClassModel>(outdatedModels, outdatedModels.Comparer);
+                outdatedModels.Clear();
+            }
+
+            var newModels = outdated.Any(m => GetCachedModel(m) == null);
+
+            Interlocked.Increment(ref outdateUpdateCount);
+
+            foreach (var cls in outdated)
+            {
+                cls.ResolveExtends();
+
+                lock (cache)
                 {
-                    outdated = new List<ClassModel>(outdatedModels);
-                    outdatedModels.Clear();
+                    //get the old CachedClassModel
+                    var cachedClassModel = GetCachedModel(cls);
+                    var connectedClasses = cachedClassModel?.ConnectedClassModels;
+
+                    //remove old cls
+                    Remove(cls);
+
+                    UpdateClass(cls, cache);
+
+                    //also update all classes / interfaces that are connected to cls
+                    if (connectedClasses != null)
+                        foreach (var connection in connectedClasses)
+                            if (GetCachedModel(connection) != null) //only update existing connections, so a removed class is not reintroduced
+                                UpdateClass(connection, cache);
                 }
-                
-                foreach (var cls in outdated)
+            }
+
+            //for new ClassModels, we need to update everything in the list of classes that extend / implement something that does not exist
+            if (newModels)
+            {
+                HashSet<ClassModel> toUpdate;
+                lock (unfinishedModels)
+                    toUpdate = new HashSet<ClassModel>(unfinishedModels, unfinishedModels.Comparer);
+
+                foreach (var model in toUpdate)
                 {
-                    cls.ResolveExtends();
+                    lock (unfinishedModels)
+                        unfinishedModels.Remove(model); //will be added back by UpdateClass if needed
 
                     lock (cache)
-                    {
-                        //get the old CachedClassModel
-                        var cachedClassModel = GetCachedModel(cls);
-                        var connectedClasses = cachedClassModel?.ConnectedClassModels;
-
-                        //remove old cls
-                        Remove(cls);
-
-                        UpdateClass(cls, cache);
-
-                        //also update all classes / interfaces that are connected to cls
-                        if (connectedClasses != null)
-                            foreach (var connection in connectedClasses)
-                                if (GetCachedModel(connection) != null) //only update existing connections, so a removed class is not reintroduced
-                                    UpdateClass(connection, cache);
-                    }
+                        UpdateClass(model, cache);
                 }
+            }
 
-                var newModels = outdated.Any(m => GetCachedModel(m) == null);
-                //for new ClassModels, we need to update everything in the list of classes that extend / implement something that does not exist
-                if (newModels)
-                {
-                    HashSet<ClassModel> toUpdate;
-                    lock (unfinishedModels)
-                        toUpdate = new HashSet<ClassModel>(unfinishedModels);
-
-                    foreach (var model in toUpdate)
-                    {
-                        lock (unfinishedModels)
-                            unfinishedModels.Remove(model); //will be added back by UpdateClass if needed
-
-                        lock (cache)
-                            UpdateClass(model, cache);
-                    }
-                }
-                
-                if (FinishedUpdate != null)
-                    PluginBase.RunAsync(new MethodInvoker(FinishedUpdate));
-
-            });
-
-            action.BeginInvoke(null, null);
+            if (Interlocked.Decrement(ref outdateUpdateCount) == 0 && FinishedUpdate != null)
+                PluginBase.RunAsync(new MethodInvoker(FinishedUpdate));
         }
 
         /// <summary>
@@ -144,38 +147,34 @@ namespace ASCompletion.Helpers
         /// </summary>
         public void UpdateCompleteCache()
         {
-            var action = new Action(() =>
+            var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
+            if (context?.Classpath == null || PathExplorer.IsWorking)
             {
-                var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-                if (context == null || context.Classpath == null || PathExplorer.IsWorking)
-                {
-                    if (FinishedUpdate != null)
-                        PluginBase.RunAsync(new MethodInvoker(FinishedUpdate));
-                    return;
-                }
-
-                var c = new Dictionary<ClassModel, CachedClassModel>(cache.Comparer);
-
-                foreach (MemberModel memberModel in context.GetAllProjectClasses())
-                {
-                    if (PluginBase.MainForm.ClosingEntirely)
-                        return; //make sure we leave if the form is closing, so we do not block it
-
-                    var cls = GetClassModel(memberModel);
-                    UpdateClass(cls, c);
-                }
-
-                lock(cache)
-                    cache = c;
                 if (FinishedUpdate != null)
                     PluginBase.RunAsync(new MethodInvoker(FinishedUpdate));
-            });
-            action.BeginInvoke(null, null);
+                return;
+            }
+
+            var c = new Dictionary<ClassModel, CachedClassModel>(CacheHelper.classModelComparer);
+
+            foreach (MemberModel memberModel in context.GetAllProjectClasses())
+            {
+                if (PluginBase.MainForm.ClosingEntirely)
+                    return; //make sure we leave if the form is closing, so we do not block it
+
+                var cls = GetClassModel(memberModel);
+                UpdateClass(cls, c);
+            }
+
+            lock (cache)
+                cache = c;
+            if (FinishedUpdate != null)
+                PluginBase.RunAsync(new MethodInvoker(FinishedUpdate));
         }
 
         internal HashSet<ClassModel> ResolveInterfaces(ClassModel cls)
         {
-            if (cls == null || cls.IsVoid()) return new HashSet<ClassModel>();
+            if (cls == null || cls.IsVoid()) return new HashSet<ClassModel>(CacheHelper.classModelComparer);
             if (cls.Implements == null) return ResolveInterfaces(cls.Extends);
 
             var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
@@ -189,7 +188,7 @@ namespace ASCompletion.Helpers
                     set.Add(interf);
                     return set;
                 })
-                .Union(ResolveInterfaces(cls.Extends)).ToHashSet();
+                .Union(ResolveInterfaces(cls.Extends)).ToHashSet(CacheHelper.classModelComparer);
         }
 
         /// <summary>
@@ -244,7 +243,7 @@ namespace ASCompletion.Helpers
         /// Updates the given ClassModel in cache. This assumes that all existing references to cls in the cache are still correct.
         /// However they do not have to be complete, this function will add missing connections based on cls.
         /// </summary>
-        void UpdateClass(ClassModel cls, Dictionary<ClassModel, CachedClassModel> cache)
+        void UpdateClass(ClassModel cls, Dictionary<ClassModel, CachedClassModel> classModelCache)
         {
             var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
 
@@ -254,14 +253,14 @@ namespace ASCompletion.Helpers
                 return;
             }
             cls.ResolveExtends();
-            var cachedClassModel = GetOrCreate(cache, cls);
+            var cachedClassModel = GetOrCreate(classModelCache, cls);
 
             //look for functions / variables in cls that originate from interfaces of cls
             var interfaces = ResolveInterfaces(cls);
 
             foreach (var interf in interfaces)
             {
-                var cachedInterf = GetOrCreate(cache, interf);
+                var cachedInterf = GetOrCreate(classModelCache, interf);
                 cachedClassModel.ConnectedClassModels.Add(interf); //cachedClassModel is connected to interf.Key
                 cachedInterf.ConnectedClassModels.Add(cls); //the inverse is also true
 
@@ -277,12 +276,12 @@ namespace ASCompletion.Helpers
 
                     if (implementing.Count == 0) continue;
 
-                    cachedClassModel.Implementing.AddUnion(member, implementing.Keys);
+                    cachedClassModel.Implementing.AddUnion(member, implementing.Keys, CacheHelper.classModelComparer);
                     //now that we know member is implementing the interfaces in implementing, we can add cls as implementor for them
                     foreach (var interf in implementing)
                     {
-                        var cachedModel = GetOrCreate(cache, interf.Key);
-                        var set = CacheHelper.GetOrCreateSet(cachedModel.Implementors, interf.Value);
+                        var cachedModel = GetOrCreate(classModelCache, interf.Key);
+                        var set = CacheHelper.GetOrCreateSet(cachedModel.Implementors, interf.Value, CacheHelper.classModelComparer);
                         set.Add(cls);
                     }
                 }
@@ -294,7 +293,7 @@ namespace ASCompletion.Helpers
                 var currentParent = cls.Extends;
                 while (currentParent != null && !currentParent.IsVoid())
                 {
-                    var cachedParent = GetOrCreate(cache, currentParent);
+                    var cachedParent = GetOrCreate(classModelCache, currentParent);
                     cachedClassModel.ConnectedClassModels.Add(currentParent); //cachedClassModel is connected to currentParent
                     cachedParent.ConnectedClassModels.Add(cls); //the inverse is also true
 
@@ -310,12 +309,12 @@ namespace ASCompletion.Helpers
 
                         if (overridden == null || overridden.Count <= 0) continue;
 
-                        cachedClassModel.Overriding.AddUnion(member, overridden.Keys);
+                        cachedClassModel.Overriding.AddUnion(member, overridden.Keys, CacheHelper.classModelComparer);
                         //now that we know member is overriding the classes in overridden, we can add cls as overrider for them
                         foreach (var over in overridden)
                         {
-                            var cachedModel = GetOrCreate(cache, over.Key);
-                            var set = CacheHelper.GetOrCreateSet(cachedModel.Overriders, over.Value);
+                            var cachedModel = GetOrCreate(classModelCache, over.Key);
+                            var set = CacheHelper.GetOrCreateSet(cachedModel.Overriders, over.Value, CacheHelper.classModelComparer);
                             set.Add(cls);
                         }
                     }
@@ -326,7 +325,7 @@ namespace ASCompletion.Helpers
                 lock (unfinishedModels)
                     unfinishedModels.Add(cls);
         }
-        
+
         /// <summary>
         /// Gets all ClassModels from <paramref name="interfaces"/> and the interfaces they extend that contain a definition of <paramref name="member"/>
         /// </summary>
@@ -335,7 +334,7 @@ namespace ASCompletion.Helpers
         {
             //look for all ClassModels with variables / functions of the same name as member
             //this could give faulty results if there are variables / functions of the same name with different signature in the interface
-            var implementors = new Dictionary<ClassModel, MemberModel>();
+            var implementors = new Dictionary<ClassModel, MemberModel>(CacheHelper.classModelComparer);
 
             foreach (var interf in interfaces)
             {
@@ -357,7 +356,7 @@ namespace ASCompletion.Helpers
             if (cls.Extends == null || cls.Extends.IsVoid()) return null;
             if ((function.Flags & FlagType.Function) == 0 || (function.Flags & FlagType.Override) == 0) return null;
 
-            var parentFunctions = new Dictionary<ClassModel, MemberModel>();
+            var parentFunctions = new Dictionary<ClassModel, MemberModel>(CacheHelper.classModelComparer);
 
             var currentParent = cls.Extends;
             while (currentParent != null && !currentParent.IsVoid())
@@ -379,7 +378,7 @@ namespace ASCompletion.Helpers
         /// </summary>
         static HashSet<ClassModel> ResolveExtends(ClassModel cls)
         {
-            var set = new HashSet<ClassModel>();
+            var set = new HashSet<ClassModel>(CacheHelper.classModelComparer);
 
             var current = cls.Extends;
             while (current != null && !current.IsVoid())
@@ -399,7 +398,7 @@ namespace ASCompletion.Helpers
                 cached = new CachedClassModel();
                 cache.Add(cls, cached);
             }
-            
+
             return cached;
         }
 
@@ -416,29 +415,29 @@ namespace ASCompletion.Helpers
 
     class CachedClassModel
     {
-        public HashSet<ClassModel> ConnectedClassModels = new HashSet<ClassModel>();
+        public HashSet<ClassModel> ConnectedClassModels = new HashSet<ClassModel>(CacheHelper.classModelComparer);
 
         /// <summary>
         /// A set of ClassModels that extend this ClassModel
         /// </summary>
-        public HashSet<ClassModel> ChildClassModels = new HashSet<ClassModel>();
+        public HashSet<ClassModel> ChildClassModels = new HashSet<ClassModel>(CacheHelper.classModelComparer);
 
         /// <summary>
         /// If this ClassModel is an interface, this contains a set of classes that implement this interface
         /// </summary>
-        public HashSet<ClassModel> ImplementorClassModels = new HashSet<ClassModel>();
+        public HashSet<ClassModel> ImplementorClassModels = new HashSet<ClassModel>(CacheHelper.classModelComparer);
 
 
         /// <summary>
         /// If this ClassModel is an interface, this contains a set of classes - for each member - that implement the given members
         /// </summary>
         public CacheDictionary Implementors = new CacheDictionary();
-        
+
         /// <summary>
         /// Contains a set of interfaces - for each member - that contain the member.
         /// </summary>
         public CacheDictionary Implementing = new CacheDictionary();
-        
+
         /// <summary>
         /// Contains a set of classes - for each member - that override the member.
         /// </summary>
@@ -452,26 +451,28 @@ namespace ASCompletion.Helpers
 
     static class CacheHelper
     {
-        internal static HashSet<T> ToHashSet<T>(this IEnumerable<T> e)
-        {
-            if (e == null) return new HashSet<T>();
+        internal static ClassModelComparer classModelComparer = new ClassModelComparer();
 
-            return new HashSet<T>(e);
+        internal static HashSet<T> ToHashSet<T>(this IEnumerable<T> e, IEqualityComparer<T> comparer)
+        {
+            if (e == null) return new HashSet<T>(comparer);
+
+            return new HashSet<T>(e, comparer);
         }
 
-        internal static void AddUnion<S, T>(this Dictionary<S, HashSet<T>> dict, S key, IEnumerable<T> value)
+        internal static void AddUnion<S, T>(this Dictionary<S, HashSet<T>> dict, S key, IEnumerable<T> value, IEqualityComparer<T> comparer)
         {
-            var set = GetOrCreateSet(dict, key);
+            var set = GetOrCreateSet(dict, key, comparer);
 
             set.UnionWith(value);
         }
 
-        internal static ISet<T> GetOrCreateSet<S, T>(Dictionary<S, HashSet<T>> dict, S key)
+        internal static ISet<T> GetOrCreateSet<S, T>(Dictionary<S, HashSet<T>> dict, S key, IEqualityComparer<T> comparer)
         {
             HashSet<T> set;
             if (!dict.TryGetValue(key, out set))
             {
-                set = new HashSet<T>(); //TODO: maybe supply new ClassModelComparer()
+                set = new HashSet<T>(comparer);
                 dict.Add(key, set);
             }
             return set;
@@ -484,9 +485,12 @@ namespace ASCompletion.Helpers
         {
             if (x == null || y == null) return x == y;
 
-            return x.Type == y.Type;
+            return x.Type == y.Type && x.InFile?.FileName == y.InFile?.FileName;
         }
 
-        public int GetHashCode(ClassModel obj) => obj.BaseType.GetHashCode();
+        public int GetHashCode(ClassModel obj) =>
+            !string.IsNullOrEmpty(obj.InFile?.FileName)
+                ? obj.InFile.FileName.GetHashCode() ^ obj.BaseType.GetHashCode()
+                : obj.BaseType.GetHashCode();
     }
 }
