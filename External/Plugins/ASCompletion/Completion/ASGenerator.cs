@@ -733,7 +733,7 @@ namespace ASCompletion.Completion
             options.Add(new GeneratorItem(label, GeneratorJobType.ChangeMethodDecl, found.member, found.inClass));
         }
 
-        private static void ShowChangeConstructorDeclarationList(FoundDeclaration found, ICollection<ICompletionListItem> options, List<FunctionParameter> parameters)
+        private static void ShowChangeConstructorDeclarationList(FoundDeclaration found, ICollection<ICompletionListItem> options, IList<FunctionParameter> parameters)
         {
             var label = TextHelper.GetString("ASCompletion.Label.ChangeConstructorDecl");
             options.Add(new GeneratorItem(label, GeneratorJobType.ChangeConstructorDecl, found.member, found.inClass, parameters));
