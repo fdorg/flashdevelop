@@ -761,6 +761,14 @@
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstructor_issue1738_4.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstructor_issue1738_5.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstructor_issue1738_5.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstructor_issue1738_6.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstructor_issue1738_6.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstructor_issue1738_7.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstructor_issue1738_7.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstructor_issue1738_8.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstructor_issue1738_8.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstructor_issue1738_9.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstructor_issue1738_9.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

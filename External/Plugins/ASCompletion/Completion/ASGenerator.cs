@@ -402,7 +402,7 @@ namespace ASCompletion.Completion
                         && !resolve.Type.InFile.FileName.StartsWithOrdinal(PathHelper.AppDir))
                     {
                         var text = Sci.GetLine(line);
-                        Match m = Regex.Match(text, String.Format(patternClass, contextToken));
+                        var m = Regex.Match(text, string.Format(patternClass, contextToken));
                         if (m.Success)
                         {
                             contextMatch = m;
@@ -416,7 +416,22 @@ namespace ASCompletion.Completion
                                 type = type.Extends;
                             }
                             if (constructor == null) ShowConstructorAndToStringList(new FoundDeclaration {inClass = resolve.Type}, false, true, options);
-                            else ShowChangeConstructorDeclList(found, options);
+                            else
+                            {
+                                var constructorParametersCount = constructor.Parameters?.Count ?? 0;
+                                var wordEndPosition = Sci.WordEndPosition(Sci.CurrentPos, true);
+                                var parameters = ParseFunctionParameters(Sci, wordEndPosition);
+                                if (parameters.Count != constructorParametersCount) ShowChangeConstructorDeclarationList(found, options, parameters);
+                                else
+                                {
+                                    for (var i = 0; i < parameters.Count; i++)
+                                    {
+                                        if (parameters[i].paramType == constructor.Parameters[i].Type) continue;
+                                        ShowChangeConstructorDeclarationList(found, options, parameters);
+                                        break;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -718,10 +733,10 @@ namespace ASCompletion.Completion
             options.Add(new GeneratorItem(label, GeneratorJobType.ChangeMethodDecl, found.member, found.inClass));
         }
 
-        private static void ShowChangeConstructorDeclList(FoundDeclaration found, ICollection<ICompletionListItem> options)
+        private static void ShowChangeConstructorDeclarationList(FoundDeclaration found, ICollection<ICompletionListItem> options, List<FunctionParameter> parameters)
         {
-            string label = TextHelper.GetString("ASCompletion.Label.ChangeConstructorDecl");
-            options.Add(new GeneratorItem(label, GeneratorJobType.ChangeConstructorDecl, found.member, found.inClass));
+            var label = TextHelper.GetString("ASCompletion.Label.ChangeConstructorDecl");
+            options.Add(new GeneratorItem(label, GeneratorJobType.ChangeConstructorDecl, found.member, found.inClass, parameters));
         }
 
         private static void ShowNewMethodList(FoundDeclaration found, List<ICompletionListItem> options)
@@ -969,6 +984,20 @@ namespace ASCompletion.Completion
                     }
                     break;
 
+                case GeneratorJobType.ChangeConstructorDecl:
+                    sci.BeginUndoAction();
+                    try
+                    {
+                        var parameters = data as IList<FunctionParameter>;
+                        if (parameters == null) ChangeConstructorDecl(sci, inClass);
+                        else ChangeConstructorDecl(sci, inClass, parameters);
+                    }
+                    finally
+                    {
+                        sci.EndUndoAction();
+                    }
+                    break;
+
                 case GeneratorJobType.Function:
                 case GeneratorJobType.FunctionPublic:
                     sci.BeginUndoAction();
@@ -1152,18 +1181,6 @@ namespace ASCompletion.Completion
                     try
                     {
                         ChangeMethodDecl(sci, inClass);
-                    }
-                    finally
-                    {
-                        sci.EndUndoAction();
-                    }
-                    break;
-
-                case GeneratorJobType.ChangeConstructorDecl:
-                    sci.BeginUndoAction();
-                    try
-                    {
-                        ChangeConstructorDecl(sci, inClass);
                     }
                     finally
                     {
@@ -1519,10 +1536,14 @@ namespace ASCompletion.Completion
 
         private static void ChangeConstructorDecl(ScintillaControl sci, ClassModel inClass)
         {
-            int wordPos = sci.WordEndPosition(sci.CurrentPos, true);
-            List<FunctionParameter> functionParameters = ParseFunctionParameters(sci, wordPos);
-            ASResult funcResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
+            var position = sci.WordEndPosition(sci.CurrentPos, true);
+            var parameters = ParseFunctionParameters(sci, position);
+            ChangeConstructorDecl(sci, inClass, parameters);
+        }
 
+        private static void ChangeConstructorDecl(ScintillaControl sci, ClassModel inClass, IList<FunctionParameter> parameters)
+        {
+            var funcResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
             if (funcResult == null || funcResult.Type == null) return;
             if (!funcResult.Type.Equals(inClass))
             {
@@ -1562,7 +1583,7 @@ namespace ASCompletion.Completion
             if (funcResult.Member == null) return;
             if (!string.IsNullOrEmpty(ASContext.Context.Features.ConstructorKey)) funcResult.Member.Name = ASContext.Context.Features.ConstructorKey;
 
-            ChangeDecl(sci, inClass, funcResult.Member, functionParameters);
+            ChangeDecl(sci, inClass, funcResult.Member, parameters);
         }
 
         private static void ChangeDecl(ScintillaControl sci, ClassModel inClass, MemberModel memberModel, IList<FunctionParameter> functionParameters)
