@@ -11,10 +11,11 @@ using ASCompletion.Context;
 using ASCompletion.Model;
 using System.Reflection;
 using System.Diagnostics;
+using PluginCore.Controls;
 
 namespace ASClassWizard.Wizards
 {
-    public partial class AS3ClassWizard : Form
+    public partial class AS3ClassWizard : SmartForm, IThemeHandler
     {
         private string directoryPath;
         private Project project;
@@ -27,8 +28,18 @@ namespace ASClassWizard.Wizards
             InitializeComponent();
             LocalizeText();
             CenterToParent();
+            this.FormGuid = "eb444130-58ea-47bd-9751-ad78a59c711f";
             this.Font = PluginBase.Settings.DefaultFont;
             this.errorIcon.Image = PluginMain.MainForm.FindImage("197");
+        }
+
+        public void AfterTheming()
+        {
+            Color color = PluginBase.MainForm.GetThemeColor("ListBox.BackColor", SystemColors.Window);
+            Color color1 = PluginBase.MainForm.GetThemeColor("Control.BackColor", SystemColors.Control);
+            this.flowLayoutPanel1.BackColor = color1;
+            this.flowLayoutPanel9.BackColor = color;
+            this.titleLabel.BackColor = color;
         }
 
         private void LocalizeText()
@@ -321,7 +332,6 @@ namespace ASClassWizard.Wizards
         }
 
         #endregion
-
 
     }
 }
