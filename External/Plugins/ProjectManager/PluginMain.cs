@@ -1026,7 +1026,7 @@ namespace ProjectManager
 
         public void UpdateUIStatus(ProjectManagerUIStatus status)
         {
-            if (activeProject.IsFolderProject())
+            if (activeProject != null && activeProject.IsFolderProject())
             {
                 status = ProjectManagerUIStatus.Disabled;
             }
