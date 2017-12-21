@@ -476,6 +476,8 @@ namespace ASClassWizard.Wizards
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.flowLayoutPanel9);
             this.ShowIcon = false;
+            this.MinimizeBox = false;
+            this.MaximizeBox = false;
             this.ShowInTaskbar = false;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
