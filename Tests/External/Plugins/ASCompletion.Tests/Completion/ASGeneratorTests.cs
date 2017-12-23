@@ -31,7 +31,7 @@ namespace ASCompletion.Completion
         private ISettings settings;
         private ITabbedDocument doc;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void FixtureSetUp()
         {
 #pragma warning disable CS0436 // Type conflicts with imported type
@@ -51,7 +51,7 @@ namespace ASCompletion.Completion
             FlashDevelop.Managers.ScintillaManager.LoadConfiguration();
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void FixtureTearDown()
         {
             settings = null;
@@ -95,7 +95,7 @@ namespace ASCompletion.Completion
 
         public class GetBodyStart : ASGeneratorTests
         {
-            public IEnumerable<TestCaseData> GetBodyStartTestCases
+            public static IEnumerable<TestCaseData> GetBodyStartTestCases
             {
                 get
                 {
@@ -135,7 +135,7 @@ namespace ASCompletion.Completion
         [TestFixture]
         public class ContextualActions : ASGeneratorTests
         {
-            [TestFixtureSetUp]
+            [OneTimeSetUp]
             public void ContextualActionsSetup()
             {
                 var pluginMain = Substitute.For<PluginMain>();
@@ -153,7 +153,7 @@ namespace ASCompletion.Completion
                 ClassModel dataEventModel;
                 FoundDeclaration found;
 
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void ShowEventsListSetup()
                 {
                     ASContext.Context.SetAs3Features();
@@ -220,7 +220,7 @@ namespace ASCompletion.Completion
         {
             protected ScintillaControl sci;
 
-            [TestFixtureSetUp]
+            [OneTimeSetUp]
             public void GenerateJobSetup()
             {
                 var pluginMain = Substitute.For<PluginMain>();
@@ -238,7 +238,7 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class FieldFromParameter : GenerateJob
             {
-                public IEnumerable<TestCaseData> FieldFromParameterCommonTestCases
+                public static IEnumerable<TestCaseData> FieldFromParameterCommonTestCases
                 {
                     get
                     {
@@ -360,7 +360,7 @@ namespace ASCompletion.Completion
                     return sci.Text;
                 }
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -411,13 +411,13 @@ namespace ASCompletion.Completion
             {
                 internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
 
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void ImplementInterfaceSetup()
                 {
                     ASContext.CommonSettings.DeclarationModifierOrder = DeclarationModifierOrder;
                 }
 
-                private ClassModel GetAs3ImplementInterfaceModel()
+                private static ClassModel GetAs3ImplementInterfaceModel()
                 {
                     var interfaceModel = new ClassModel { InFile = new FileModel(), Name = "ITest", Type = "ITest" };
                     interfaceModel.Members.Add(new MemberList
@@ -445,7 +445,7 @@ namespace ASCompletion.Completion
                     return interfaceModel;
                 }
 
-                private ClassModel GetHaxeImplementInterfaceModel()
+                private static ClassModel GetHaxeImplementInterfaceModel()
                 {
                     var interfaceModel = new ClassModel { InFile = new FileModel(), Name = "ITest", Type = "ITest" };
                     interfaceModel.Members.Add(new MemberList
@@ -516,7 +516,7 @@ namespace ASCompletion.Completion
                     return interfaceModel;
                 }
 
-                public IEnumerable<TestCaseData> ImplementInterfaceAs3TestCases
+                public static IEnumerable<TestCaseData> ImplementInterfaceAs3TestCases
                 {
                     get
                     {
@@ -564,7 +564,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                public IEnumerable<TestCaseData> ImplementInterfaceHaxeTestCases
+                public static IEnumerable<TestCaseData> ImplementInterfaceHaxeTestCases
                 {
                     get
                     {
@@ -621,14 +621,14 @@ namespace ASCompletion.Completion
             {
                 internal static string[] DeclarationModifierOrder = {"public", "protected", "internal", "private", "static", "override"};
 
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void ImplementInterfaceSetup()
                 {
                     ASContext.CommonSettings.DeclarationModifierOrder = DeclarationModifierOrder;
                     ASContext.Context.Settings.GenerateImports.Returns(true);
                 }
 
-                public IEnumerable<TestCaseData> AS3TestCases
+                public static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -648,7 +648,7 @@ namespace ASCompletion.Completion
                     return Common(sourceText, job);
                 }
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -692,13 +692,13 @@ namespace ASCompletion.Completion
             {
                 internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
 
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void PromoteLocalWithSetup()
                 {
                     ASContext.CommonSettings.DeclarationModifierOrder = DeclarationModifierOrder;
                 }
 
-                public IEnumerable<TestCaseData> AS3TestCases
+                public static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -712,7 +712,7 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText) => AS3Impl(sourceText, sci);
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -758,14 +758,14 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class PromoteLocalWithExplicitScope : GenerateJob
             {
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void PromoteLocalWithSetup()
                 {
                     ASContext.CommonSettings.DeclarationModifierOrder = PromoteLocal.DeclarationModifierOrder;
                     ASContext.CommonSettings.GenerateScope = true;
                 }
 
-                public IEnumerable<TestCaseData> AS3TestCases
+                public static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -779,7 +779,7 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText) => PromoteLocal.AS3Impl(sourceText, sci);
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -797,14 +797,14 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class PromoteLocalWithDefaultModifierDeclaration : GenerateJob
             {
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void PromoteLocalWithSetup()
                 {
                     ASContext.CommonSettings.DeclarationModifierOrder = PromoteLocal.DeclarationModifierOrder;
                     ASContext.CommonSettings.GenerateDefaultModifierDeclaration = true;
                 }
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -824,13 +824,13 @@ namespace ASCompletion.Completion
             {
                 internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
 
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void GenerateFunctionSetup()
                 {
                     ASContext.CommonSettings.DeclarationModifierOrder = DeclarationModifierOrder;
                 }
 
-                public IEnumerable<TestCaseData> AS3TestCases
+                public static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -937,7 +937,7 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText, GeneratorJobType job) => AS3Impl(sourceText, job, sci);
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -1121,14 +1121,14 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateFunctionWithReturnDefaultValue : GenerateJob
             {
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void GenerateFunctionSetup()
                 {
                     ASContext.CommonSettings.DeclarationModifierOrder = GenerateFunction.DeclarationModifierOrder;
                     ASContext.CommonSettings.GeneratedMemberDefaultBodyStyle = GeneratedMemberBodyStyle.ReturnDefaultValue;
                 }
 
-                public IEnumerable<TestCaseData> AS3TestCases
+                public static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -1173,7 +1173,7 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText, GeneratorJobType job) => GenerateFunction.AS3Impl(sourceText, job, sci);
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -1222,14 +1222,14 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateFunctionWithExplicitScope : GenerateJob
             {
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void GenerateFunctionSetup()
                 {
                     ASContext.CommonSettings.DeclarationModifierOrder = GenerateFunction.DeclarationModifierOrder;
                     ASContext.CommonSettings.GenerateScope = true;
                 }
 
-                public IEnumerable<TestCaseData> AS3TestCases
+                public static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -1275,7 +1275,7 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText, GeneratorJobType job) => GenerateFunction.AS3Impl(sourceText, job, sci);
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -1297,14 +1297,14 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateFunctionWithDefaultModifierDeclaration : GenerateJob
             {
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void GenerateFunctionSetup()
                 {
                     ASContext.CommonSettings.DeclarationModifierOrder = GenerateFunction.DeclarationModifierOrder;
                     ASContext.CommonSettings.GenerateDefaultModifierDeclaration = true;
                 }
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -1326,14 +1326,14 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateFunctionWithProtectedDeclaration : GenerateJob
             {
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void GenerateFunctionSetup()
                 {
                     ASContext.CommonSettings.DeclarationModifierOrder = GenerateFunction.DeclarationModifierOrder;
                     ASContext.CommonSettings.GenerateProtectedDeclarations = true;
                 }
 
-                public IEnumerable<TestCaseData> AS3TestCases
+                public static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -1351,14 +1351,14 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateFunctionWithGenerateImports : GenerateJob
             {
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void GenerateFunctionSetup()
                 {
                     ASContext.CommonSettings.DeclarationModifierOrder = GenerateFunction.DeclarationModifierOrder;
                     ASContext.Context.Settings.GenerateImports.Returns(true);
                 }
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -1385,10 +1385,10 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class AssignStatementToVar : GenerateJob
             {
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void AssignStatementToVarSetUp() => ASContext.Context.Settings.GenerateImports = true;
 
-                public IEnumerable<TestCaseData> AS3TestCases
+                public static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -1526,7 +1526,7 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText, GeneratorJobType job, bool isUseTabs) => AS3Impl(sourceText, job, isUseTabs, sci);
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get {
                         yield return
@@ -1678,13 +1678,13 @@ namespace ASCompletion.Completion
             {
                 internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "inline", "override" };
 
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void GenerateVariableSetup()
                 {
                     ASContext.CommonSettings.DeclarationModifierOrder = DeclarationModifierOrder;
                 }
 
-                public IEnumerable<TestCaseData> AS3TestCases
+                public static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -1738,7 +1738,7 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText, GeneratorJobType job) => AS3Impl(sourceText, job, sci);
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -1824,14 +1824,14 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateVariableWithExplicitScope : GenerateJob
             {
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void GenerateVariableSetup()
                 {
                     ASContext.CommonSettings.DeclarationModifierOrder = GenerateVariable.DeclarationModifierOrder;
                     ASContext.CommonSettings.GenerateScope = true;
                 }
 
-                public IEnumerable<TestCaseData> AS3TestCases
+                public static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -1865,7 +1865,7 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText, GeneratorJobType job) => GenerateVariable.AS3Impl(sourceText, job, sci);
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -1899,14 +1899,14 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateVariableWithDefaultModifierDeclaration : GenerateJob
             {
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void GenerateVariableSetup()
                 {
                     ASContext.CommonSettings.DeclarationModifierOrder = GenerateVariable.DeclarationModifierOrder;
                     ASContext.CommonSettings.GenerateDefaultModifierDeclaration = true;
                 }
 
-                public IEnumerable<TestCaseData> AS3TestCases
+                public static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -1924,7 +1924,7 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText, GeneratorJobType job) => GenerateVariable.AS3Impl(sourceText, job, sci);
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -1946,14 +1946,14 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateVariableWithProtectedDeclaration : GenerateJob
             {
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void GenerateVariableSetup()
                 {
                     ASContext.CommonSettings.DeclarationModifierOrder = GenerateVariable.DeclarationModifierOrder;
                     ASContext.CommonSettings.GenerateProtectedDeclarations = true;
                 }
 
-                public IEnumerable<TestCaseData> AS3TestCases
+                public static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -1971,14 +1971,14 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateVariableWithGenerateImports : GenerateJob
             {
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void GenerateVariableSetup()
                 {
                     ASContext.CommonSettings.DeclarationModifierOrder = GenerateVariable.DeclarationModifierOrder;
                     ASContext.Context.Settings.GenerateImports.Returns(true);
                 }
 
-                public IEnumerable<TestCaseData> AS3TestCases
+                public static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -2006,7 +2006,7 @@ namespace ASCompletion.Completion
                     return GenerateVariable.Common(sourceText, job, sci);
                 }
                 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -2035,7 +2035,7 @@ namespace ASCompletion.Completion
             {
                 internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
 
-                public IEnumerable<TestCaseData> AS3TestCases
+                public static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -2053,7 +2053,7 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText, string[] autoRemove) => AS3Impl(sourceText, autoRemove, sci);
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -2109,13 +2109,13 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateEventHandlerWithExplicitScope : GenerateJob
             {
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void GenerateEventHandlerSetup()
                 {
                     ASContext.CommonSettings.GenerateScope = true;
                 }
 
-                public IEnumerable<TestCaseData> AS3TestCases
+                public static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -2129,7 +2129,7 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText, string[] autoRemove) => GenerateEventHandler.AS3Impl(sourceText, autoRemove, sci);
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -2147,14 +2147,14 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateEventHandlerWithDefaultModifierDeclaration : GenerateJob
             {
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void GenerateEventHandlerSetup()
                 {
                     ASContext.CommonSettings.DeclarationModifierOrder = GenerateEventHandler.DeclarationModifierOrder;
                     ASContext.CommonSettings.GenerateDefaultModifierDeclaration = true;
                 }
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -2178,7 +2178,7 @@ namespace ASCompletion.Completion
             {
                 internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
 
-                public IEnumerable<TestCaseData> AS3TestCases
+                public static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -2200,7 +2200,7 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText) => AS3Impl(sourceText, sci);
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -2248,14 +2248,14 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateGetterSetterWithDefaultModifierDeclaration : GenerateJob
             {
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void GenerateEventHandlerSetup()
                 {
                     ASContext.CommonSettings.DeclarationModifierOrder = GenerateGetterSetter.DeclarationModifierOrder;
                     ASContext.CommonSettings.GenerateDefaultModifierDeclaration = true;
                 }
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -2279,14 +2279,14 @@ namespace ASCompletion.Completion
             {
                 internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
 
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void GenerateOverrideSetUp()
                 {
                     ASContext.CommonSettings.DeclarationModifierOrder = DeclarationModifierOrder;
                     ASContext.Context.Settings.GenerateImports = true;
                 }
 
-                public IEnumerable<TestCaseData> AS3TestCases
+                public static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -2323,7 +2323,7 @@ namespace ASCompletion.Completion
                     return AS3Impl(sourceText, ofClassName, memberName, memberFlags, sci);
                 }
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -2478,7 +2478,7 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateOverrideWithDefaultModifierDeclaration : GenerateJob
             {
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void GenerateOverrideSetUp()
                 {
                     ASContext.Context.Settings.GenerateImports = true;
@@ -2486,7 +2486,7 @@ namespace ASCompletion.Completion
                     ASContext.CommonSettings.GenerateDefaultModifierDeclaration = true;
                 }
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -2519,7 +2519,7 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GetStatementReturnType : GenerateJob
             {
-                public IEnumerable<TestCaseData> AS3TestCases
+                public static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -2606,7 +2606,7 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class ParseFunctionParameters : GenerateJob
             {
-                public IEnumerable<TestCaseData> AS3TestCases
+                public static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -2665,7 +2665,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -2752,10 +2752,10 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class ChangeConstructorDeclaration : GenerateJob
             {
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void ChangeConstructorDeclarationSetup() => ASContext.Context.Settings.GenerateImports.Returns(true);
 
-                public IEnumerable<TestCaseData> AS3TestCases
+                public static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -2805,7 +2805,7 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText) => AS3Impl(sourceText, sci);
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -2885,7 +2885,7 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GetStartOfStatement : GenerateJob
             {
-                public IEnumerable<TestCaseData> AS3TestCases
+                public static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -2913,7 +2913,7 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(AS3TestCases))]
                 public int AS3(string sourceText) => AS3Impl(sourceText, sci);
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -2984,7 +2984,7 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class AvoidKeywordTests : GenerateJob
             {
-                public IEnumerable<TestCaseData> AS3TestCases
+                public static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -3041,7 +3041,7 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText) => AS3Impl(sourceText, sci);
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -3110,10 +3110,10 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateDelegateMethods : GenerateJob
             {
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void GenerateDelegateMethodsSetup() => ASContext.Context.Settings.GenerateImports.Returns(true);
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -3162,10 +3162,10 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class AddInterfaceDefTests : GenerateJob
             {
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void AddInterfaceDefTestsSetup() => ASContext.Context.Settings.GenerateImports.Returns(true);
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -3209,10 +3209,10 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class ContextualGeneratorTests : GenerateJob
             {
-                [TestFixtureSetUp]
+                [OneTimeSetUp]
                 public void AddInterfaceDefTestsSetup() => ASContext.Context.Settings.GenerateImports.Returns(true);
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -3277,7 +3277,7 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateClassTests : GenerateJob
             {
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -3339,7 +3339,7 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GeneratorJobTypeConstructorTests : GenerateJob
             {
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -3373,7 +3373,7 @@ namespace ASCompletion.Completion
                     var sourceText = ReadAllTextHaxe(fileName);
                     fileName = GetFullPathHaxe(fileName);
                     fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
-                    fileName = Path.GetFullPath(fileName);
+                    fileName = Path.Combine(PathHelper.AppDir, fileName);
                     fileName = fileName.Replace($"\\FlashDevelop\\Bin\\Debug\\{nameof(ASCompletion)}\\Test_Files\\", $"\\Tests\\External\\Plugins\\{nameof(ASCompletion)}.Tests\\Test Files\\");
                     ASContext.Context.CurrentModel.FileName = fileName;
                     PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);

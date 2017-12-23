@@ -27,7 +27,7 @@ namespace ASCompletion.Completion
         private ITabbedDocument doc;
         protected ScintillaControl sci;
 
-        [TestFixtureSetUp]
+        [OneTimeSetUp]
         public void FixtureSetUp()
         {
 #pragma warning disable CS0436 // Type conflicts with imported type
@@ -58,7 +58,7 @@ namespace ASCompletion.Completion
             doc.SciControl.Returns(sci);
         }
 
-        [TestFixtureTearDown]
+        [OneTimeTearDown]
         public void FixtureTearDown()
         {
             settings = null;
@@ -145,7 +145,7 @@ namespace ASCompletion.Completion
                 Assert.AreEqual(4, result.Context.LocalVars.Count);
             }
 
-            public IEnumerable<TestCaseData> AS3TestCases
+            public static IEnumerable<TestCaseData> AS3TestCases
             {
                 get
                 {
@@ -239,7 +239,7 @@ namespace ASCompletion.Completion
             [Test, TestCaseSource(nameof(AS3TestCases))]
             public MemberModel AS3(string sourceText) => AS3Impl(sourceText, sci);
 
-            public IEnumerable<TestCaseData> HaxeTestCases
+            public static IEnumerable<TestCaseData> HaxeTestCases
             {
                 get {
                     yield return
@@ -371,7 +371,7 @@ namespace ASCompletion.Completion
         [TestFixture]
         public class GetExpression : ASCompleteTests
         {
-            public IEnumerable<TestCaseData> AS3TestCases
+            public static IEnumerable<TestCaseData> AS3TestCases
             {
                 get
                 {
@@ -481,7 +481,7 @@ namespace ASCompletion.Completion
             [Test, TestCaseSource(nameof(AS3TestCases))]
             public string AS3(string text) => AS3Impl(text, sci);
 
-            public IEnumerable<TestCaseData> HaxeTestCases
+            public static IEnumerable<TestCaseData> HaxeTestCases
             {
                 get
                 {
@@ -555,7 +555,7 @@ namespace ASCompletion.Completion
         [TestFixture]
         public class DisambiguateComa : ASCompleteTests
         {
-            public IEnumerable<TestCaseData> DisambiguateComaAS3TestCases
+            public static IEnumerable<TestCaseData> DisambiguateComaAS3TestCases
             {
                 get
                 {
@@ -570,7 +570,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            public IEnumerable<TestCaseData> DisambiguateComaHaxeTestCases
+            public static IEnumerable<TestCaseData> DisambiguateComaHaxeTestCases
             {
                 get
                 {
@@ -598,7 +598,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            [TestFixtureSetUp]
+            [OneTimeSetUp]
             public void DisambiguateComaSetUp()
             {
                 var pluginMain = Substitute.For<PluginMain>();
@@ -641,13 +641,13 @@ namespace ASCompletion.Completion
         {
             private const string prefix = "AddClosingBraces: ";
 
-            [TestFixtureSetUp]
+            [OneTimeSetUp]
             public void AddClosingBracesSetUp()
             {
                 ASContext.CommonSettings.AddClosingBraces = true;
             }
             
-            public IEnumerable<TestCaseData> OpenBraceTestCases
+            public static IEnumerable<TestCaseData> OpenBraceTestCases
             {
                 get
                 {
@@ -711,7 +711,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            public IEnumerable<TestCaseData> CloseBraceTestCases
+            public static IEnumerable<TestCaseData> CloseBraceTestCases
             {
                 get
                 {
@@ -726,7 +726,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            public IEnumerable<TestCaseData> DeleteBraceTestCases
+            public static IEnumerable<TestCaseData> DeleteBraceTestCases
             {
                 get
                 {
@@ -739,7 +739,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            public IEnumerable<TestCaseData> AroundStringsTestCases
+            public static IEnumerable<TestCaseData> AroundStringsTestCases
             {
                 get
                 {
@@ -760,7 +760,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            public IEnumerable<TestCaseData> DeleteWhitespaceTestCases
+            public static IEnumerable<TestCaseData> DeleteWhitespaceTestCases
             {
                 get
                 {
@@ -777,7 +777,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            public IEnumerable<TestCaseData> InsideInterpolationTestCases
+            public static IEnumerable<TestCaseData> InsideInterpolationTestCases
             {
                 get
                 {
@@ -847,7 +847,7 @@ namespace ASCompletion.Completion
         [TestFixture]
         public class FindParameterIndexTests : ASCompleteTests
         {
-            public IEnumerable<TestCaseData> HaxeTestCases
+            public static IEnumerable<TestCaseData> HaxeTestCases
             {
                 get
                 {

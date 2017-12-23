@@ -19,10 +19,23 @@ namespace PluginCore.Helpers
         /// </summary>
         public static String BaseDir => PluginBase.MainForm.StandaloneMode ? AppDir : UserAppDir;
 
+        private static string appDir;
+
         /// <summary>
         /// Path to the main application directory
         /// </summary>
-        public static String AppDir => Path.GetDirectoryName(GetAssemblyPath(Assembly.GetExecutingAssembly()));
+        public static String AppDir
+        {
+            get
+            {
+                if (appDir == null)
+                {
+                    appDir = Path.GetDirectoryName(GetAssemblyPath(Assembly.GetExecutingAssembly()));
+                }
+
+                return appDir;
+            }
+        }
 
         /// <summary>
         /// Path to the user's application directory

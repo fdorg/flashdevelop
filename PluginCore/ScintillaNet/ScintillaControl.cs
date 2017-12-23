@@ -236,7 +236,7 @@ namespace ScintillaNet
 
         #region Scintilla Main
 
-        public ScintillaControl() : this(IntPtr.Size == 4 ? "SciLexer.dll" : "SciLexer64.dll")
+        public ScintillaControl() : this(Path.Combine(PathHelper.AppDir, IntPtr.Size == 4 ? "SciLexer.dll" : "SciLexer64.dll"))
         {
             if (Win32.ShouldUseWin32()) DragAcceptFiles(this.Handle, 1);
         }
