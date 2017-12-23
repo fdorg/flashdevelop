@@ -356,7 +356,7 @@ namespace CodeRefactor.Commands
             }
         }
 
-        [TestFixture]
+        [TestFixture, Ignore]
         public class RenameTests : RefactorCommandTests
         {
             static string ReadAllTextAS3(string fileName) => TestFile.ReadAllText(GetFullPathAS3(fileName));
