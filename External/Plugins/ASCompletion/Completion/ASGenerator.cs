@@ -1248,18 +1248,24 @@ namespace ASCompletion.Completion
                         if (RenameMember(sci, member, newName)) member.Name = newName;
                     }
                 }
-
+                var startsWithNewLine = true;
+                var endsWithNewLine = false;
                 int atLine;
                 if (location == PropertiesGenerationLocations.BeforeVariableDeclaration)
                     atLine = latest.LineTo;
                 else
                 {
                     if (job == GeneratorJobType.Getter && (latest.Flags & (FlagType.Dynamic | FlagType.Function)) != 0)
-                        atLine = latest.LineFrom - 1;
+                    {
+                        atLine = latest.LineFrom;
+                        var declaration = GetDeclarationAtLine(atLine - 1);
+                        startsWithNewLine = declaration.member != null;
+                        endsWithNewLine = true;
+                    }
                     else atLine = latest.LineTo + 1;
                 }
                 var position = sci.PositionFromLine(atLine) - ((sci.EOLMode == 0) ? 2 : 1);
-
+                sci.SetSel(position, position);
                 if (job == GeneratorJobType.GetterSetter)
                 {
                     sci.SetSel(position, position);
@@ -1267,15 +1273,15 @@ namespace ASCompletion.Completion
                 }
                 else
                 {
-                    if (job != GeneratorJobType.Getter)
+                    if (job == GeneratorJobType.Setter)
                     {
                         sci.SetSel(position, position);
                         GenerateSetter(name, member, position);
                     }
-                    if (job != GeneratorJobType.Setter)
+                    else if (job == GeneratorJobType.Getter)
                     {
                         sci.SetSel(position, position);
-                        GenerateGetter(name, member, position);
+                        GenerateGetter(name, member, position, startsWithNewLine, endsWithNewLine);
                     }
                 }
             }
@@ -3870,9 +3876,9 @@ namespace ASCompletion.Completion
             return null;
         }
 
-        private static void GenerateGetter(string name, MemberModel member, int position) => GenerateGetter(name, member, position, true);
+        private static void GenerateGetter(string name, MemberModel member, int position) => GenerateGetter(name, member, position, true, false);
 
-        private static void GenerateGetter(string name, MemberModel member, int position, bool newLineBefore)
+        private static void GenerateGetter(string name, MemberModel member, int position, bool startsWithNewLine, bool endsWithNewLine)
         {
             var newMember = new MemberModel
             {
@@ -3883,10 +3889,11 @@ namespace ASCompletion.Completion
             if ((member.Flags & FlagType.Static) > 0) newMember.Flags = FlagType.Static;
             string template = TemplateUtils.GetTemplate("Getter");
             string decl;
-            if (newLineBefore) decl = NewLine + TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
+            if (startsWithNewLine) decl = NewLine + TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
             else decl = TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Member", member.Name);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", NewLine);
+            if (endsWithNewLine) decl += NewLine + NewLine;
             InsertCode(position, decl);
         }
 

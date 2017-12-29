@@ -2219,7 +2219,19 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData("BeforeGenerateGetterSetter_issue_2", GeneratorJobType.Getter)
                                 .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter_issue_2"))
-                                .SetName("issue get");
+                                .SetName("issue get 1");
+                        yield return
+                            new TestCaseData("BeforeGenerateGetterSetter_issue_3", GeneratorJobType.Getter)
+                                .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter_issue_3"))
+                                .SetName("issue get 2");
+                        yield return
+                            new TestCaseData("BeforeGenerateGetterSetter_issue_4", GeneratorJobType.Getter)
+                                .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter_issue_4"))
+                                .SetName("issue get 3");
+                        yield return
+                            new TestCaseData("BeforeGenerateGetterSetter_issue_5", GeneratorJobType.Getter)
+                                .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter_issue_5"))
+                                .SetName("issue get 4");
                     }
                 }
 
