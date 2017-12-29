@@ -1202,7 +1202,6 @@ namespace ASCompletion.Completion
         {
             string name = GetPropertyNameFor(member);
             PropertiesGenerationLocations location = ASContext.CommonSettings.PropertiesGenerationLocation;
-
             var latest = TemplateUtils.GetTemplateBlockMember(sci, TemplateUtils.GetBoundary("AccessorsMethods"));
             if (latest != null)
             {
@@ -1212,7 +1211,12 @@ namespace ASCompletion.Completion
             {
                 if (location == PropertiesGenerationLocations.AfterLastPropertyDeclaration)
                 {
-                    if (IsHaxe) latest = FindLatest(FlagType.Function, 0, inClass, false, false);
+                    if (IsHaxe)
+                    {
+                        if (job == GeneratorJobType.Setter) latest = FindMember("get_" + member.Name, inClass);
+                        else if (job == GeneratorJobType.Getter) latest = FindMember("set_" + member.Name, inClass);
+                        if (latest == null) latest = FindLatest(FlagType.Function, 0, inClass, false, false);
+                    }
                     else latest = FindLatest(FlagType.Getter | FlagType.Setter, 0, inClass, false, false);
                 }
                 else latest = member;
@@ -1245,10 +1249,16 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                int atLine = latest.LineTo + 1;
+                int atLine;
                 if (location == PropertiesGenerationLocations.BeforeVariableDeclaration)
                     atLine = latest.LineTo;
-                int position = sci.PositionFromLine(atLine) - ((sci.EOLMode == 0) ? 2 : 1);
+                else
+                {
+                    if (job == GeneratorJobType.Getter && (latest.Flags & (FlagType.Dynamic | FlagType.Function)) != 0)
+                        atLine = latest.LineFrom - 1;
+                    else atLine = latest.LineTo + 1;
+                }
+                var position = sci.PositionFromLine(atLine) - ((sci.EOLMode == 0) ? 2 : 1);
 
                 if (job == GeneratorJobType.GetterSetter)
                 {
@@ -3860,7 +3870,9 @@ namespace ASCompletion.Completion
             return null;
         }
 
-        private static void GenerateGetter(string name, MemberModel member, int position)
+        private static void GenerateGetter(string name, MemberModel member, int position) => GenerateGetter(name, member, position, true);
+
+        private static void GenerateGetter(string name, MemberModel member, int position, bool newLineBefore)
         {
             var newMember = new MemberModel
             {
@@ -3870,7 +3882,9 @@ namespace ASCompletion.Completion
             };
             if ((member.Flags & FlagType.Static) > 0) newMember.Flags = FlagType.Static;
             string template = TemplateUtils.GetTemplate("Getter");
-            string decl = NewLine + TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
+            string decl;
+            if (newLineBefore) decl = NewLine + TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
+            else decl = TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Member", member.Name);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", NewLine);
             InsertCode(position, decl);
