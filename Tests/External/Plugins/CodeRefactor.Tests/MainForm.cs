@@ -277,7 +277,7 @@ namespace FlashDevelop
 
         public void SetUseTheme(Object parent, Boolean use)
         {
-            throw new NotImplementedException();
+            // Not implemented
         }
 
         public ISettings Settings { get; set; }
