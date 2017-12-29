@@ -1251,8 +1251,7 @@ namespace ASCompletion.Completion
                 var startsWithNewLine = true;
                 var endsWithNewLine = false;
                 int atLine;
-                if (location == PropertiesGenerationLocations.BeforeVariableDeclaration)
-                    atLine = latest.LineTo;
+                if (location == PropertiesGenerationLocations.BeforeVariableDeclaration) atLine = latest.LineTo;
                 else
                 {
                     if (job == GeneratorJobType.Getter && (latest.Flags & (FlagType.Dynamic | FlagType.Function)) != 0)
