@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Windows.Forms;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
@@ -356,9 +355,18 @@ namespace CodeRefactor.Commands
             }
         }
 
-        [TestFixture, Ignore]
+        [TestFixture]
         public class RenameTests : RefactorCommandTests
         {
+            static SynchronizationContext context;
+
+            [TestFixtureSetUp]
+            public void OrganizeImportsFixtureSetUp()
+            {
+                context = SynchronizationContext.Current;
+                if (context == null) Assert.Ignore("SynchronizationContext.Current is null");
+            }
+
             static string ReadAllTextAS3(string fileName) => TestFile.ReadAllText(GetFullPathAS3(fileName));
 
             static string GetFullPathAS3(string fileName) => $"{nameof(CodeRefactor)}.Test_Files.coderefactor.rename.as3.{fileName}.as";
@@ -396,15 +404,13 @@ namespace CodeRefactor.Commands
                 CommandFactoryProvider.GetFactory(sci)
                         .CreateRenameCommandAndExecute(RefactoringHelper.GetDefaultRefactorTarget(), false, newName)
                         .OnRefactorComplete += (sender, args) => waitHandle.Set();
-                const int waitTime = 2;
-                var end = DateTime.Now.AddSeconds(waitTime);
+                var end = DateTime.Now.AddSeconds(2);
                 var result = false;
                 while ((!result) && (DateTime.Now < end))
                 {
-                    Application.DoEvents();
+                    context.Send(state => {}, new {});
                     result = waitHandle.WaitOne(0);
                 }
-                if (!result) Assert.Fail($"Timeout reached: {waitTime} sec.");
                 return sci.Text;
             }
         }
@@ -422,16 +428,6 @@ namespace CodeRefactor.Commands
             var currentMember = currentClass.Members.FirstOrDefault(line);
             ASContext.Context.CurrentMember.Returns(currentMember);
             ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
-        }
-    }
-
-    public static class CollectionExtensions
-    {
-        public static MemberModel FirstOrDefault(this MemberList list, int line) => list.Items.FirstOrDefault(line);
-
-        public static TSource FirstOrDefault<TSource>(this ICollection<TSource> items, int line) where TSource : MemberModel
-        {
-            return items.FirstOrDefault(it => it.LineFrom <= line && it.LineTo >= line);
         }
     }
 }
