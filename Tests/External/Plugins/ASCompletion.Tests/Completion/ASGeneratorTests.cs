@@ -2194,6 +2194,26 @@ namespace ASCompletion.Completion
                             new TestCaseData("BeforeGenerateGetterSetter_fromPrivateField", GeneratorJobType.GetterSetter)
                                 .Returns(ReadAllTextAS3("AfterGenerateGetterSetter_fromPrivateField"))
                                 .SetName("Generate getter and setter from private field");
+                        yield return
+                            new TestCaseData("BeforeGenerateGetterSetter_issue_1", GeneratorJobType.Setter)
+                                .Returns(ReadAllTextAS3("AfterGenerateGetterSetter_issue_1"))
+                                .SetName("issue set");
+                        yield return
+                            new TestCaseData("BeforeGenerateGetterSetter_issue_2", GeneratorJobType.Getter)
+                                .Returns(ReadAllTextAS3("AfterGenerateGetterSetter_issue_2"))
+                                .SetName("issue get 1");
+                        yield return
+                            new TestCaseData("BeforeGenerateGetterSetter_issue_3", GeneratorJobType.Getter)
+                                .Returns(ReadAllTextAS3("AfterGenerateGetterSetter_issue_3"))
+                                .SetName("issue get 2");
+                        yield return
+                            new TestCaseData("BeforeGenerateGetterSetter_issue_4", GeneratorJobType.Getter)
+                                .Returns(ReadAllTextAS3("AfterGenerateGetterSetter_issue_4"))
+                                .SetName("issue get 3");
+                        yield return
+                            new TestCaseData("BeforeGenerateGetterSetter_issue_5", GeneratorJobType.Getter)
+                                .Returns(ReadAllTextAS3("AfterGenerateGetterSetter_issue_5"))
+                                .SetName("issue get 4");
                     }
                 }
 

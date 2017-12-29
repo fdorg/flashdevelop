@@ -1213,11 +1213,15 @@ namespace ASCompletion.Completion
                 {
                     if (IsHaxe)
                     {
-                        if (job == GeneratorJobType.Setter) latest = FindMember("get_" + member.Name, inClass);
-                        else if (job == GeneratorJobType.Getter) latest = FindMember("set_" + member.Name, inClass);
+                        if (job == GeneratorJobType.Setter) latest = FindMember("get_" + (name ?? member.Name), inClass);
+                        else if (job == GeneratorJobType.Getter) latest = FindMember("set_" + (name ?? member.Name), inClass);
                         if (latest == null) latest = FindLatest(FlagType.Function, 0, inClass, false, false);
                     }
-                    else latest = FindLatest(FlagType.Getter | FlagType.Setter, 0, inClass, false, false);
+                    else
+                    {
+                        if (job == GeneratorJobType.Getter || job == GeneratorJobType.Setter) latest = FindMember(name ?? member.Name, inClass);
+                        if (latest == null) latest = FindLatest(FlagType.Getter | FlagType.Setter, 0, inClass, false, false);
+                    }
                 }
                 else latest = member;
             }
