@@ -2027,15 +2027,21 @@ namespace ASCompletion.Completion
             int groupCount = 0;
             int brCount = 0;
             int statementEnd = startPos;
+            sci.Colourise(0, -1);
             while (statementEnd < endPos)
             {
-                char c = (char)sci.CharAt(statementEnd++);
-
+                if (sci.PositionIsOnComment(statementEnd))
+                {
+                    statementEnd++;
+                    continue;
+                }
                 bool endOfStatement = false;
+                char c = (char)sci.CharAt(statementEnd++);
                 switch (c)
                 {
                     case '\r':
                     case '\n':
+                    case ' ':
                         endOfStatement = groupCount == 0 && brCount == 0;
                         break;
                     case ';':
@@ -2056,10 +2062,8 @@ namespace ASCompletion.Completion
                         brCount--;
                         break;
                 }
-
                 if (endOfStatement) break;
             }
-
             return statementEnd;
         }
 
