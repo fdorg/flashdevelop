@@ -2982,6 +2982,36 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
+            public class GetEndOfStatement : GenerateJob
+            {
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData("foo(/*:)*/)\nbar()\n   ")
+                                .Returns("foo(/*:)*/)\n".Length);
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public int Haxe(string sourceText) => HaxeImpl(sourceText, sci);
+
+                internal static int HaxeImpl(string sourceText, ScintillaControl sci)
+                {
+                    SetHaxeFeatures(sci);
+                    return Common(sci, sourceText);
+                }
+
+                internal static int Common(ScintillaControl sci, string sourceText)
+                {
+                    sci.Text = sourceText;
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    return ASGenerator.GetEndOfStatement(0, sci.TextLength, sci);
+                }
+            }
+
+            [TestFixture]
             public class AvoidKeywordTests : GenerateJob
             {
                 public IEnumerable<TestCaseData> AS3TestCases
