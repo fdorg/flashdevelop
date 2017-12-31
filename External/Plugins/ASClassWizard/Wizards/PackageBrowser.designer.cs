@@ -39,7 +39,7 @@ namespace ASClassWizard.Wizards
             // inviteLabel
             // 
             this.inviteLabel.AutoSize = true;
-            this.inviteLabel.Location = new System.Drawing.Point(12, 9);
+            this.inviteLabel.Location = new System.Drawing.Point(11, 9);
             this.inviteLabel.Name = "inviteLabel";
             this.inviteLabel.Size = new System.Drawing.Size(82, 13);
             this.inviteLabel.TabIndex = 1;
@@ -48,15 +48,15 @@ namespace ASClassWizard.Wizards
             // browserView
             // 
             this.browserView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
-            this.browserView.Location = new System.Drawing.Point(12, 25);
+            this.browserView.Location = new System.Drawing.Point(12, 27);
             this.browserView.Name = "browserView";
-            this.browserView.Size = new System.Drawing.Size(260, 194);
+            this.browserView.Size = new System.Drawing.Size(260, 188);
             this.browserView.TabIndex = 2;
             // 
             // okButton
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.okButton.Location = new System.Drawing.Point(116, 226);
+            this.okButton.Location = new System.Drawing.Point(116, 224);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
             this.okButton.TabIndex = 3;
@@ -68,7 +68,7 @@ namespace ASClassWizard.Wizards
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(198, 226);
+            this.cancelButton.Location = new System.Drawing.Point(198, 224);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 4;

@@ -95,7 +95,7 @@
     <Compile Include="Wizards\ClassBrowser.designer.cs">
       <DependentUpon>ClassBrowser.cs</DependentUpon>
     </Compile>
-    <Compile Include="Wizards\GListBox.cs">
+    <Compile Include="Wizards\ListBox.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Wizards\PackageBrowser.cs">

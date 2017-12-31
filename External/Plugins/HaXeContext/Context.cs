@@ -272,11 +272,13 @@ namespace HaXeContext
 
             ProcessStartInfo processInfo = CreateHaxeProcessInfo("--help-metas");
             if (processInfo == null) return;
-            var process = new Process {StartInfo = processInfo, EnableRaisingEvents = true};
-            process.Start();
+            string metaList;
+            using (var process = new Process {StartInfo = processInfo, EnableRaisingEvents = true})
+            {
+                process.Start();
 
-            String metaList = process.StandardOutput.ReadToEnd();
-            process.Close();
+                metaList = process.StandardOutput.ReadToEnd();
+            }
 
             Regex regex = new Regex("@:([a-zA-Z]*)(?: : )(.*?)(?=( @:[a-zA-Z]* :|$))");
             metaList = Regex.Replace(metaList, "\\s+", " ");
