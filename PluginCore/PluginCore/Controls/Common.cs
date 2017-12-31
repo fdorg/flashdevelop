@@ -27,6 +27,7 @@ namespace System.Windows.Forms
         public static BorderPanel Attach(Control ctrl)
         {
             if (!UseCustomBorder) return null;
+            if (ctrl.Parent is TableLayoutPanel) return null;
             return Attach(ctrl, true);
         }
         public static BorderPanel Attach(Control ctrl, Boolean visible)
@@ -59,8 +60,7 @@ namespace System.Windows.Forms
         {
             if (this.Tag is Control)
             {
-                Type type = this.Tag.GetType();
-                String name = type.Name.EndsWithOrdinal("Ex") ? type.Name.Remove(type.Name.Length - 2) : type.Name;
+                String name = ThemeHelper.GetFilteredTypeName(this.Tag.GetType());
                 return PluginBase.MainForm.GetThemeColor(name + ".BorderColor", SystemColors.ControlDark);
             }
             else return SystemColors.ControlDark;
@@ -459,6 +459,38 @@ namespace System.Windows.Forms
     }
 
     public class ListBoxEx : ListBox
+    {
+        private Boolean themeBorder = false;
+        public Boolean UseTheme { get; set; } = true;
+        public Color BorderColor { get; set; } = SystemColors.ControlDark;
+
+        protected override void WndProc(ref Message message)
+        {
+            base.WndProc(ref message);
+            switch (message.Msg)
+            {
+                case Win32.WM_KEYUP:
+                case Win32.WM_KEYDOWN:
+                case Win32.WM_MOUSEWHEEL:
+                    this.OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));
+                    break;
+                case Win32.WM_PAINT:
+                    this.OnPaint(new PaintEventArgs(Graphics.FromHwnd(this.Handle), this.Bounds));
+                    if (this.UseTheme && this.BorderStyle == BorderStyle.FixedSingle)
+                    {
+                        this.themeBorder = true;
+                        this.BorderStyle = BorderStyle.None;
+                    }
+                    if (this.UseTheme && this.themeBorder)
+                    {
+                        BorderPanel.Attach(this);
+                    }
+                    break;
+            }
+        }
+    }
+
+    public class CheckedListBoxEx : CheckedListBox
     {
         private Boolean themeBorder = false;
         public Boolean UseTheme { get; set; } = true;
