@@ -2026,11 +2026,25 @@ namespace ASCompletion.Completion
         {
             int groupCount = 0;
             int brCount = 0;
+            var dQuotes = 0;
+            var sQuotes = 0;
             int statementEnd = startPos;
             while (statementEnd < endPos)
             {
-                char c = (char)sci.CharAt(statementEnd++);
-
+                var c = (char)sci.CharAt(statementEnd++);
+                if (c == '\"' && sQuotes == 0)
+                {
+                    if (statementEnd <= 1 || (char)sci.CharAt(statementEnd - 2) == '\\') continue;
+                    if (dQuotes == 0) dQuotes++;
+                    else dQuotes--;
+                }
+                else if (c == '\'' && dQuotes == 0)
+                {
+                    if (statementEnd <= 1 || (char)sci.CharAt(statementEnd - 2) == '\\') continue;
+                    if (sQuotes == 0) sQuotes++;
+                    else sQuotes--;
+                }
+                if (sQuotes > 0 || dQuotes > 0) continue;
                 bool endOfStatement = false;
                 switch (c)
                 {
