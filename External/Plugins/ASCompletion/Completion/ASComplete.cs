@@ -4492,6 +4492,11 @@ namespace ASCompletion.Completion
             }
             else if (result.Type != null)
             {
+                if (result.Context.WordBefore == "new")
+                {
+                    var member = result.Type.Members.Search(result.Type.Name, FlagType.Constructor, 0);
+                    if (member != null) return MemberTooltipText(member, result.Type) + GetToolTipDoc(member);
+                }
                 return ClassModel.ClassDeclaration(result.Type) + GetToolTipDoc(result.Type);
             }
             else return null;

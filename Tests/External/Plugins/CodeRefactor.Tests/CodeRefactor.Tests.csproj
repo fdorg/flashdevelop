@@ -191,6 +191,8 @@
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractMethod_issue1617_case10.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractMethod_issue1617_case11.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractMethod_issue1617_case11.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\BeforeRenameLocalVariable.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\AfterRenameLocalVariable.as" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
