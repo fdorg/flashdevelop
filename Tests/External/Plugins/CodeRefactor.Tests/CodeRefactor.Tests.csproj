@@ -194,6 +194,9 @@
     <EmbeddedResource Include="Test Files\coderefactor\rename\as3\BeforeRenameLocalVariable.as" />
     <EmbeddedResource Include="Test Files\coderefactor\rename\as3\AfterRenameLocalVariable.as" />
     <EmbeddedResource Include="Test Files\coderefactor\rename\as3\BeforeRenameLocalVariable_withoutEntryPoint.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\BeforeRename_issue1852.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\BeforeRename_issue1852_withoutEntryPoint.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\AfterRename_issue1852.as" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

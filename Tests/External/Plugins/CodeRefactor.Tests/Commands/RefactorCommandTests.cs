@@ -379,6 +379,10 @@ namespace CodeRefactor.Commands
                         new TestCaseData("BeforeRenameLocalVariable", "newName")
                             .Returns(ReadAllTextAS3("AfterRenameLocalVariable"))
                             .SetName("Rename local variable");
+                    yield return
+                        new TestCaseData("BeforeRename_issue1852", "b")
+                            .Returns(ReadAllTextAS3("AfterRename_issue1852"))
+                            .SetName("Issue 1852");
                 }
             }
 
