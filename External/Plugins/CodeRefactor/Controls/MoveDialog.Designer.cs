@@ -57,7 +57,7 @@ namespace CodeRefactor.Controls
             this.tree.FormattingEnabled = true;
             this.tree.Location = new System.Drawing.Point(12, 79);
             this.tree.Name = "tree";
-            this.tree.Size = new System.Drawing.Size(360, 108);
+            this.tree.Size = new System.Drawing.Size(360, 124);
             this.tree.TabIndex = 2;
             this.tree.MouseDoubleClick += new MouseEventHandler(this.OnTreeMouseDoubleClick);
             // 
@@ -65,7 +65,7 @@ namespace CodeRefactor.Controls
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(297, 226);
+            this.cancelButton.Location = new System.Drawing.Point(297, 224);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 5;
@@ -77,7 +77,7 @@ namespace CodeRefactor.Controls
             this.processButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.processButton.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.processButton.Enabled = false;
-            this.processButton.Location = new System.Drawing.Point(216, 226);
+            this.processButton.Location = new System.Drawing.Point(216, 224);
             this.processButton.Name = "processButton";
             this.processButton.Size = new System.Drawing.Size(75, 23);
             this.processButton.TabIndex = 4;
@@ -90,7 +90,7 @@ namespace CodeRefactor.Controls
             this.fixPackages.AutoSize = true;
             this.fixPackages.Checked = true;
             this.fixPackages.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.fixPackages.Location = new System.Drawing.Point(11, 203);
+            this.fixPackages.Location = new System.Drawing.Point(11, 205);
             this.fixPackages.Name = "fixPackages";
             this.fixPackages.Size = new System.Drawing.Size(119, 17);
             this.fixPackages.TabIndex = 3;

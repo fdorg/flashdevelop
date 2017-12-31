@@ -211,10 +211,6 @@ namespace ASCompletion
                         if (!doc.IsEditable) return;
                         timerPosition.Enabled = false;
                         timerPosition.Enabled = true;
-
-                        //Refresh from cache
-                        UpdateMarkersFromCache(PluginBase.MainForm.CurrentDocument.SplitSci1);
-                        UpdateMarkersFromCache(PluginBase.MainForm.CurrentDocument.SplitSci2);
                         return;
 
                     // key combinations
