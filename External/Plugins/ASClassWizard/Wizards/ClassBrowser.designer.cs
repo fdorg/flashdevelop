@@ -35,7 +35,7 @@ namespace ASClassWizard.Wizards
             this.components = new System.ComponentModel.Container();
             this.cancelButton = new System.Windows.Forms.ButtonEx();
             this.okButton = new System.Windows.Forms.ButtonEx();
-            this.itemList = new ASClassWizard.Wizards.GListBox();
+            this.itemList = new ASClassWizard.Wizards.ListBox();
             this.classBrowserBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.filterBox = new System.Windows.Forms.TextBoxEx();
             ((System.ComponentModel.ISupportInitialize)(this.classBrowserBindingSource)).BeginInit();
@@ -45,7 +45,7 @@ namespace ASClassWizard.Wizards
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(219, 270);
+            this.cancelButton.Location = new System.Drawing.Point(219, 267);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 23);
             this.cancelButton.TabIndex = 3;
@@ -57,7 +57,7 @@ namespace ASClassWizard.Wizards
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.okButton.Location = new System.Drawing.Point(137, 270);
+            this.okButton.Location = new System.Drawing.Point(137, 267);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
             this.okButton.TabIndex = 2;
@@ -70,9 +70,9 @@ namespace ASClassWizard.Wizards
             this.itemList.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.itemList.FormattingEnabled = true;
             this.itemList.ImageList = null;
-            this.itemList.Location = new System.Drawing.Point(12, 40);
+            this.itemList.Location = new System.Drawing.Point(12, 42);
             this.itemList.Name = "itemList";
-            this.itemList.Size = new System.Drawing.Size(282, 225);
+            this.itemList.Size = new System.Drawing.Size(282, 235);
             this.itemList.TabIndex = 1;
             this.itemList.DoubleClick += new System.EventHandler(this.itemList_DoubleClick);
             // 
@@ -115,7 +115,7 @@ namespace ASClassWizard.Wizards
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.BindingSource classBrowserBindingSource;
-        private GListBox itemList;
+        private ListBox itemList;
         private System.Windows.Forms.TextBox filterBox;
     }
 }
