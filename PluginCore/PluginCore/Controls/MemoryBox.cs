@@ -39,8 +39,6 @@ namespace PluginCore.PluginCore.Controls
             cancelButton.Text = TextHelper.GetString("Label.Cancel");
         }
 
-        public static MemoryBoxResult Show(string text, string caption) => new MemoryBox().ShowDialog(text, caption);
-
         public MemoryBoxResult ShowDialog(string text, string caption)
         {
             label.Text = text;
