@@ -320,6 +320,12 @@
     <Compile Include="PluginCore\Controls\FixedValuesCollectionEditor.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="PluginCore\Controls\MemoryBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PluginCore\Controls\MemoryBox.Designer.cs">
+      <DependentUpon>MemoryBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="PluginCore\Controls\MessageBoxManager.cs" />
     <Compile Include="PluginCore\Controls\ScrollBarEx.cs">
       <SubType>Component</SubType>
@@ -612,6 +618,9 @@
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PluginCore\Controls\MemoryBox.resx">
+      <DependentUpon>MemoryBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PluginCore\Resources\de_DE.resx">
       <SubType>Designer</SubType>
