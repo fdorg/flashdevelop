@@ -48,7 +48,7 @@ namespace PluginCore.PluginCore.Controls
             return ShowDialog();
         }
 
-        private new MemoryBoxResult ShowDialog()
+        public new MemoryBoxResult ShowDialog()
         {
             Result = MemoryBoxResult.Cancel;
             switch (lastResult)
