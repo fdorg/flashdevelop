@@ -2028,8 +2028,14 @@ namespace ASCompletion.Completion
             int groupCount = 0;
             int brCount = 0;
             int statementEnd = startPos;
+            sci.Colourise(0, -1);
             while (statementEnd < endPos)
             {
+                if (sci.PositionIsOnComment(statementEnd))
+                {
+                    statementEnd++;
+                    continue;
+                }
                 char c = (char)sci.CharAt(statementEnd++);
 
                 bool endOfStatement = false;
