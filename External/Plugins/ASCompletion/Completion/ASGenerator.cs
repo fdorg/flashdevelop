@@ -1950,6 +1950,7 @@ namespace ASCompletion.Completion
             var sQuotes = 0;
             var hasDot = false;
             var c = ' ';
+            sci.Colourise(0, -1);
             for (var i = statementEnd; i > 0; i--)
             {
                 if (sci.PositionIsOnComment(i - 1)) continue;
