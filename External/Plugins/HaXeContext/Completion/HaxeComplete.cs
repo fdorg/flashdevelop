@@ -89,7 +89,7 @@ namespace HaXeContext
             SaveFile();
             ThreadPool.QueueUserWorkItem(_ =>
             {
-                Status = ParseLines(handler.GetCompletion(BuildHxmlArgs(), GetFileContent()));
+                Status = ParseLines(handler?.GetCompletion(BuildHxmlArgs(), GetFileContent()));
                 Notify(callback, resultFunc());
             });
         }
