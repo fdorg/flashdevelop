@@ -619,9 +619,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="PluginCore\Controls\MemoryBox.resx">
-      <DependentUpon>MemoryBox.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="PluginCore\Resources\de_DE.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
