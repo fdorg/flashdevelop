@@ -1950,6 +1950,7 @@ namespace ASCompletion.Completion
             var sQuotes = 0;
             var hasDot = false;
             var c = ' ';
+            sci.Colourise(0, -1);
             for (var i = statementEnd; i > 0; i--)
             {
                 if (sci.PositionIsOnComment(i - 1)) continue;
@@ -2029,9 +2030,15 @@ namespace ASCompletion.Completion
             var dQuotes = 0;
             var sQuotes = 0;
             int statementEnd = startPos;
+            sci.Colourise(0, -1);
             while (statementEnd < endPos)
             {
-                var c = (char)sci.CharAt(statementEnd++);
+                char c = (char)sci.CharAt(statementEnd++);
+                if (sci.PositionIsOnComment(statementEnd))
+                {
+                    statementEnd++;
+                    continue;
+                }
                 if (c == '\"' && sQuotes == 0)
                 {
                     if (statementEnd <= 1 || (char)sci.CharAt(statementEnd - 2) == '\\') continue;

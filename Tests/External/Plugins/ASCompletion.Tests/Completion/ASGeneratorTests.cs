@@ -2907,6 +2907,9 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(" new Object()$(EntryPoint)")
                                 .Returns(1);
+                        yield return
+                            new TestCaseData(" new Object(/*:)*/)$(EntryPoint)")
+                                .Returns(1);
                     }
                 }
 
@@ -2988,6 +2991,9 @@ namespace ASCompletion.Completion
                 {
                     get
                     {
+                        yield return
+                            new TestCaseData("foo(/*:)*/)\nbar()\n   ")
+                                .Returns("foo(/*:)*/)\n".Length);
                         yield return
                             new TestCaseData("foo(\"(.)(.) <-- :)\")\nbar()\n   ")
                                 .Returns("foo(\"(.)(.) <-- :)\")\n".Length);
