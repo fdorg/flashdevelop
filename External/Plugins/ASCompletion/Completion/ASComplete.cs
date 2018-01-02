@@ -3362,18 +3362,15 @@ namespace ASCompletion.Completion
         private static List<string> ExtractedSubex;
 
         /// <summary>
-        /// Find Actionscript expression at cursor position
+        /// Find expression at cursor position
         /// </summary>
         /// <param name="sci">Scintilla Control</param>
         /// <param name="position">Cursor position</param>
         /// <returns></returns>
-        internal static ASExpr GetExpression(ScintillaControl sci, int position)
-        {
-            return GetExpression(sci, position, false);
-        }
+        internal static ASExpr GetExpression(ScintillaControl sci, int position) => GetExpression(sci, position, false);
 
         /// <summary>
-        /// Find Actionscript expression at cursor position
+        /// Find expression at cursor position
         /// </summary>
         /// <param name="sci">Scintilla Control</param>
         /// <param name="position">Cursor position</param>
@@ -3448,7 +3445,7 @@ namespace ASCompletion.Completion
             bool hadDot = ignoreWhiteSpace;
             int dotCount = 0;
             bool inRegex = false;
-            char dot = features.dot[features.dot.Length-1];
+            char dot = features.dot[features.dot.Length - 1];
             while (position > minPos)
             {
                 position--;
@@ -3460,14 +3457,7 @@ namespace ASCompletion.Completion
                 }
                 else if (!IsCommentStyle(style))
                 {
-                    var c2 = c;
-                    c = (char)sci.CharAt(position);
                     // end of regex literal
-                    if ((dQuotes > 0 && c != '\"') || (sQuotes > 0 && c != '\''))
-                    {
-                        sbSub.Insert(0, c);
-                        continue;
-                    }
                     if (inRegex)
                     {
                         inRegex = false;
@@ -3475,9 +3465,16 @@ namespace ASCompletion.Completion
                         expression.SubExpressions.Add("");
                         sb.Insert(0, "RegExp.#" + (subCount++) + "~");
                     }
+                    var c2 = c;
+                    c = (char)sci.CharAt(position);
+                    if ((dQuotes > 0 && c != '\"') || (sQuotes > 0 && c != '\''))
+                    {
+                        sbSub.Insert(0, c);
+                        continue;
+                    }
                     // array access
-                    else if (c == ']') arrCount++;
-                    if (c == '[')
+                    if (c == ']') arrCount++;
+                    else if (c == '[')
                     {
                         arrCount--;
                         if (arrCount == 0 && braCount == 0)
@@ -3782,6 +3779,12 @@ namespace ASCompletion.Completion
                     else if (c == '=')
                     {
                         expression.Separator = '=';
+                        break;
+                    }
+                    else if (features.ArithmeticOperators.Contains(c))
+                    {
+                        expression.Separator = c;
+                        expression.SeparatorPosition = position;
                         break;
                     }
                     else //if (hadWS && !hadDot)
@@ -5144,6 +5147,7 @@ namespace ASCompletion.Completion
         public string Value;
         public List<string> SubExpressions;
         public char Separator;
+        public int SeparatorPosition;
         public string WordBefore;
         public ComaExpression coma;
 
