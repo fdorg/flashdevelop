@@ -50,8 +50,8 @@ namespace ASCompletion.Context
         /// <summary>
         /// Retrieves a class model from its name
         /// </summary>
-        /// <param name="cname">Class (short or full) name</param>
-        /// <param name="inClass">Current file</param>
+        /// <param name="cname">Class (short or full) name or string token</param>
+        /// <param name="inFile">Current file</param>
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         ClassModel ResolveType(string cname, FileModel inFile);
 
@@ -73,7 +73,7 @@ namespace ASCompletion.Context
         void ExploreVirtualPath(PathModel path);
 
         /// <summary>
-        /// Called afer:
+        /// Called after:
         /// - a PathExplorer has finished exploring
         /// - a PathModel has some internal change
         /// - an import was generated
@@ -81,11 +81,11 @@ namespace ASCompletion.Context
         /// </summary>
         /// <param name="path">File or classname</param>
         void RefreshContextCache(string path);
-        
+
         /// <summary>
         /// Create a new file model using the default file parser
         /// </summary>
-        /// <param name="filename">Full path</param>
+        /// <param name="fileName">Full path</param>
         /// <returns>File model</returns>
         FileModel GetFileModel(string fileName);
 

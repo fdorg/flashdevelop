@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Context;
@@ -15,7 +16,7 @@ using PluginCore.Managers;
 namespace AS2Context
 {
     /// <summary>
-    /// Actionscript2 context
+    /// ActionScript2 context
     /// </summary>
     public class Context: ASContext
     {
@@ -471,7 +472,7 @@ namespace AS2Context
         /// <summary>
         /// Retrieves a class model from its name
         /// </summary>
-        /// <param name="cname">Class (short or full) name</param>
+        /// <param name="cname">Class (short or full) name or string token</param>
         /// <param name="inFile">Current file</param>
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         public override ClassModel ResolveType(string cname, FileModel inFile)
@@ -551,7 +552,8 @@ namespace AS2Context
                     }
                 }
             }
-
+            // token
+            if (cname.Length > 1 && cname.First() == '{' && cname.Last() == '}') return ResolveType(features.objectKey, inFile);
             // search in classpath
             return GetModel(package, cname, inPackage);
         }

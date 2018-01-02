@@ -873,7 +873,7 @@ namespace AS3Context
         /// <summary>
         /// Retrieves a class model from its name
         /// </summary>
-        /// <param name="cname">Class (short or full) name</param>
+        /// <param name="cname">Class (short or full) name or string token</param>
         /// <param name="inFile">Current file</param>
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         public override ClassModel ResolveType(string cname, FileModel inFile)
@@ -892,6 +892,8 @@ namespace AS3Context
                     return ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile);
                 else return ClassModel.VoidClass;
             }
+            // resolve token
+            if (cname == "</>") return ResolveType("XML", inFile);
             return base.ResolveType(cname, inFile);
         }
 

@@ -918,7 +918,7 @@ namespace HaXeContext
         /// <summary>
         /// Retrieves a class model from its name
         /// </summary>
-        /// <param name="cname">Class (short or full) name</param>
+        /// <param name="cname">Class (short or full) name or string token</param>
         /// <param name="inFile">Current file</param>
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         public override ClassModel ResolveType(string cname, FileModel inFile)
@@ -979,6 +979,45 @@ namespace HaXeContext
                 if (!found && cname == "Function") return stubFunctionClass;
             }
 
+            //resolve token
+            if (cname.Length > 1)
+            {
+                var first = cname.First();
+                var last = cname.Last();
+                if (first == '[' && last == ']')
+                {
+                    var dQuotes = 0;
+                    var sQuotes = 0;
+                    var length = cname.Length;
+                    var arrayComprehensionEnd = length - 3;
+                    for (var i = 1; i < length; i++)
+                    {
+                        var c = cname[i];
+                        if (c == '\"' && sQuotes == 0)
+                        {
+                            if (i <= 1 || cname[i - 2] == '\\') continue;
+                            if (dQuotes == 0) dQuotes++;
+                            else dQuotes--;
+                        }
+                        else if (c == '\'' && dQuotes == 0)
+                        {
+                            if (i <= 1 || cname[i - 2] == '\\') continue;
+                            if (sQuotes == 0) sQuotes++;
+                            else sQuotes--;
+                        }
+                        if (sQuotes > 0 || dQuotes > 0) continue;
+                        if (i <= arrayComprehensionEnd && c == '=' && cname[i + 1] == '>')
+                            // TODO: try parse K, V
+                            return ResolveType("Map<K, V>", inFile);
+                    }
+                    return ResolveType(features.arrayKey, inFile);
+                }
+                if (first == '{' && last == '}')
+                {
+                    //TODO: parse anonymous type
+                    return ResolveType(features.dynamicKey, inFile);
+                }
+            }
             return GetModel(package, cname, inPackage);
         }
 
