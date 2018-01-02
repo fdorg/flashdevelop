@@ -3493,7 +3493,7 @@ namespace ASCompletion.Completion
                             break;
                         }
                     }
-                    else if (c == '<' && hasGenerics)
+                    else if (c == '<' && hasGenerics/* && arrCount == 0*/)
                     {
                         genCount--;
                         if (genCount < 0)
@@ -3556,7 +3556,7 @@ namespace ASCompletion.Completion
                         }
                         parCount++;
                     }
-                    else if (c == '>')
+                    else if (c == '>'/* && arrCount == 0*/)
                     {
                         if (haXe && position - 1 > minPos && (char) sci.CharAt(position - 1) == '-')
                         {
