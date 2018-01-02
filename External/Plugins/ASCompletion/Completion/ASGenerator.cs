@@ -1290,23 +1290,23 @@ namespace ASCompletion.Completion
             var context = resolve.Context;
             if (context != null)
             {
-                expressions = new List<ASResult>();
                 var operators = ctx.Features.ArithmeticOperators
                     .Select(it => it.ToString())
                     .Concat(ctx.Features.IncrementDecrementOperators)
                     .ToHashSet();
-                if (operators.Contains(context.Separator) || operators.Contains(context.RightOperator ?? string.Empty))
+                if (operators.Contains(context.Separator) || operators.Contains(context.RightOperator))
                 {
                     var current = resolve;
-                    expressions.Add(current);
+                    expressions = new List<ASResult> {current};
                     context = current.Context;
                     var rop = false;
-                    while (operators.Contains(context.Separator) || (rop = operators.Contains(context.RightOperator ?? string.Empty)))
+                    while (operators.Contains(context.Separator) || (rop = operators.Contains(context.RightOperator)))
                     {
                         var position = rop ? context.PositionExpression : context.SeparatorPosition;
                         current = ASComplete.GetExpressionType(sci, position, false, true);
                         if (current == null || current.IsNull()) break;
                         expressions.Add(current);
+                        context = current.Context;
                     }
                 }
             }
@@ -1350,7 +1350,7 @@ namespace ASCompletion.Completion
             template = TemplateUtils.ReplaceTemplateVariable(template, "Type", cleanType);
 
             int pos;
-            if (expressions == null || expressions.Count == 0) pos = GetStartOfStatement(sci, sci.CurrentPos, resolve);
+            if (expressions == null) pos = GetStartOfStatement(sci, sci.CurrentPos, resolve);
             else
             {
                 var last = expressions.Last();

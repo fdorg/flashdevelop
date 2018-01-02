@@ -5169,7 +5169,7 @@ namespace ASCompletion.Completion
         public int SeparatorPosition;
         public string WordBefore;
         public ComaExpression coma;
-        public string RightOperator;
+        public string RightOperator = string.Empty;
 
         public ASExpr() { }
 
