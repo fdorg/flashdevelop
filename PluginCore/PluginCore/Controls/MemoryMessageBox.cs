@@ -5,7 +5,7 @@ using PluginCore.Localization;
 
 namespace PluginCore.PluginCore.Controls
 {
-    public enum MemoryBoxResult
+    public enum MemoryMessageBoxResult
     {
         Yes,
         YesToAll,
@@ -14,12 +14,12 @@ namespace PluginCore.PluginCore.Controls
         Cancel
     }
 
-    public partial class MemoryBox : SmartForm
+    public partial class MemoryMessageBox : /*Smart*/Form
     {
-        MemoryBoxResult lastResult = MemoryBoxResult.Cancel;
-        public MemoryBoxResult Result { get; set; } = MemoryBoxResult.Cancel;
+        MemoryMessageBoxResult lastResult = MemoryMessageBoxResult.Cancel;
+        public MemoryMessageBoxResult Result { get; set; } = MemoryMessageBoxResult.Cancel;
 
-        public MemoryBox()
+        public MemoryMessageBox()
         {
             Owner = (Form) PluginBase.MainForm;
             Font = PluginBase.MainForm.Settings.DefaultFont;
@@ -39,23 +39,23 @@ namespace PluginCore.PluginCore.Controls
             cancelButton.Text = TextHelper.GetString("Label.Cancel");
         }
 
-        public MemoryBoxResult ShowDialog(string text, string caption)
+        public MemoryMessageBoxResult ShowDialog(string text, string caption)
         {
             label.Text = text;
             Text = caption;
             return ShowDialog();
         }
 
-        public new MemoryBoxResult ShowDialog()
+        public new MemoryMessageBoxResult ShowDialog()
         {
-            Result = MemoryBoxResult.Cancel;
+            Result = MemoryMessageBoxResult.Cancel;
             switch (lastResult)
             {
-                case MemoryBoxResult.NoToAll:
-                    Result = MemoryBoxResult.No;
+                case MemoryMessageBoxResult.NoToAll:
+                    Result = MemoryMessageBoxResult.No;
                     break;
-                case MemoryBoxResult.YesToAll:
-                    Result = MemoryBoxResult.Yes;
+                case MemoryMessageBoxResult.YesToAll:
+                    Result = MemoryMessageBoxResult.Yes;
                     break;
                 default:
                     base.ShowDialog();
@@ -66,36 +66,36 @@ namespace PluginCore.PluginCore.Controls
 
         private void OnYesButtonClick(object sender, EventArgs e)
         {
-            Result = MemoryBoxResult.Yes;
-            lastResult = MemoryBoxResult.Yes;
+            Result = MemoryMessageBoxResult.Yes;
+            lastResult = MemoryMessageBoxResult.Yes;
             DialogResult = DialogResult.Yes;
         }
 
         private void OnYesToAllButtonClick(object sender, EventArgs e)
         {
-            Result = MemoryBoxResult.Yes;
-            lastResult = MemoryBoxResult.YesToAll;
+            Result = MemoryMessageBoxResult.Yes;
+            lastResult = MemoryMessageBoxResult.YesToAll;
             DialogResult = DialogResult.Yes;
         }
 
         private void OnNoButtonClick(object sender, EventArgs e)
         {
-            Result = MemoryBoxResult.No;
-            lastResult = MemoryBoxResult.No;
+            Result = MemoryMessageBoxResult.No;
+            lastResult = MemoryMessageBoxResult.No;
             DialogResult = DialogResult.No;
         }
 
         private void OnNoToAllButtonClick(object sender, EventArgs e)
         {
-            Result = MemoryBoxResult.No;
-            lastResult = MemoryBoxResult.NoToAll;
+            Result = MemoryMessageBoxResult.No;
+            lastResult = MemoryMessageBoxResult.NoToAll;
             DialogResult = DialogResult.No;
         }
 
         private void OnCancelButtonClick(object sender, EventArgs e)
         {
-            Result = MemoryBoxResult.Cancel;
-            lastResult = MemoryBoxResult.Cancel;
+            Result = MemoryMessageBoxResult.Cancel;
+            lastResult = MemoryMessageBoxResult.Cancel;
             DialogResult = DialogResult.Cancel;
         }
     }

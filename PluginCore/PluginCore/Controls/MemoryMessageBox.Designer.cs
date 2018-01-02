@@ -2,7 +2,7 @@
 
 namespace PluginCore.PluginCore.Controls
 {
-    partial class MemoryBox
+    partial class MemoryMessageBox
     {
         /// <summary>
         /// Required designer variable.
