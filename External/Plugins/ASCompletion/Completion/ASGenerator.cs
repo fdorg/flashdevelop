@@ -2053,13 +2053,12 @@ namespace ASCompletion.Completion
             sci.Colourise(0, -1);
             while (statementEnd < endPos)
             {
-                if (sci.PositionIsOnComment(statementEnd))
+                if (sci.PositionIsOnComment(statementEnd) || sci.PositionIsInString(statementEnd))
                 {
                     statementEnd++;
                     continue;
                 }
                 char c = (char)sci.CharAt(statementEnd++);
-
                 bool endOfStatement = false;
                 switch (c)
                 {

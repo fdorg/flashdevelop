@@ -3019,6 +3019,15 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData("foo(/*:)*/)\nbar()\n   ")
                                 .Returns("foo(/*:)*/)\n".Length);
+                        yield return
+                            new TestCaseData("foo(\"(.)(.) <-- :)\")\nbar()\n   ")
+                                .Returns("foo(\"(.)(.) <-- :)\")\n".Length);
+                        yield return
+                            new TestCaseData("foo('(.)(.) <-- :)')\nbar()\n   ")
+                                .Returns("foo('(.)(.) <-- :)')\n".Length);
+                        yield return
+                            new TestCaseData("foo('\\'(.)(.) <-- :)\\'')\nbar()\n   ")
+                                .Returns("foo('\\'(.)(.) <-- :)\\'')\n".Length);
                     }
                 }
 
