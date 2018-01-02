@@ -503,7 +503,7 @@ namespace ASCompletion.Completion
                             .SetName("From new Map<String, Array<Int->Int->Int>>|");
                     yield return
                         new TestCaseData(ReadAllTextHaxe("GetExpressionOfMapInitializer"))
-                            .Returns(" ")
+                            .Returns("['1' => 1, '2' => 2]")
                             .SetName("From ['1' => 1, '2' => 2]|");
                     yield return
                         new TestCaseData(ReadAllTextHaxe("GetExpressionOfRegex"))

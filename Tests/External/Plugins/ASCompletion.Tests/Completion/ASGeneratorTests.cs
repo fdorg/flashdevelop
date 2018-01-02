@@ -1626,6 +1626,11 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue_1704_4"))
                                 .SetName("from (function foo():haxe.Timer->{v:haxe.ds.Vector<Int>->Type.ValueType} ...)()")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue_1766"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue_1766"))
+                                .SetName("from [1 => '1', 2 = '2']")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704");
                     }
                 }
 
@@ -1634,41 +1639,32 @@ namespace ASCompletion.Completion
 
                 internal static string AS3Impl(string sourceText, GeneratorJobType job, bool isUseTabs, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "as3";
+                    SetAs3Features(sci);
                     sci.IsUseTabs = isUseTabs;
-                    ASContext.Context.SetAs3Features();
                     var context = new AS3Context.Context(new AS3Settings());
                     ((IASContext) context).BuildClassPath();
                     context.CurrentModel = ASContext.Context.CurrentModel;
+                    var visibleExternalElements = context.GetVisibleExternalElements();
+                    ASContext.Context.GetVisibleExternalElements().Returns(visibleExternalElements);
                     return Common(sourceText, job, context, sci);
                 }
 
                 internal static string HaxeImpl(string sourceText, GeneratorJobType job, bool isUseTabs, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "haxe";
+                    SetHaxeFeatures(sci);
                     sci.IsUseTabs = isUseTabs;
-                    ASContext.Context.SetHaxeFeatures();
                     var context = new HaXeContext.Context(new HaXeSettings());
                     ((IASContext) context).BuildClassPath();
                     context.CurrentModel = ASContext.Context.CurrentModel;
+                    var visibleExternalElements = context.GetVisibleExternalElements();
+                    ASContext.Context.GetVisibleExternalElements().Returns(visibleExternalElements);
                     return Common(sourceText, job, context, sci);
                 }
 
                 internal static string Common(string sourceText, GeneratorJobType job, IASContext context, ScintillaControl sci)
                 {
-                    sci.Text = sourceText;
-                    SnippetHelper.PostProcessSnippets(sci, 0);
-                    var currentModel = ASContext.Context.CurrentModel;
-                    new ASFileParser().ParseSrc(currentModel, sci.Text);
-                    var currentClass = currentModel.Classes[0];
-                    ASContext.Context.CurrentClass.Returns(currentClass);
-                    ASContext.Context.CurrentModel.Returns(currentModel);
-                    var currentMember = currentClass.Members[0];
-                    ASContext.Context.CurrentMember.Returns(currentMember);
-                    var visibleExternalElements = context.GetVisibleExternalElements();
-                    ASContext.Context.GetVisibleExternalElements().Returns(visibleExternalElements);
-                    ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
-                    ASGenerator.GenerateJob(job, currentMember, ASContext.Context.CurrentClass, null, null);
+                    SetSrc(sci, sourceText);
+                    ASGenerator.GenerateJob(job, ASContext.Context.CurrentMember, ASContext.Context.CurrentClass, null, null);
                     return sci.Text;
                 }
             }

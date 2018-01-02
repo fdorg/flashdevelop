@@ -3460,14 +3460,7 @@ namespace ASCompletion.Completion
                 }
                 else if (!IsCommentStyle(style))
                 {
-                    var c2 = c;
-                    c = (char)sci.CharAt(position);
                     // end of regex literal
-                    if ((dQuotes > 0 && c != '\"') || (sQuotes > 0 && c != '\''))
-                    {
-                        sbSub.Insert(0, c);
-                        continue;
-                    }
                     if (inRegex)
                     {
                         inRegex = false;
@@ -3475,9 +3468,16 @@ namespace ASCompletion.Completion
                         expression.SubExpressions.Add("");
                         sb.Insert(0, "RegExp.#" + (subCount++) + "~");
                     }
+                    var c2 = c;
+                    c = (char)sci.CharAt(position);
+                    if ((dQuotes > 0 && c != '\"') || (sQuotes > 0 && c != '\''))
+                    {
+                        sbSub.Insert(0, c);
+                        continue;
+                    }
                     // array access
-                    else if (c == ']') arrCount++;
-                    if (c == '[')
+                    if (c == ']') arrCount++;
+                    else if (c == '[')
                     {
                         arrCount--;
                         if (arrCount == 0 && braCount == 0)
