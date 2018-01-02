@@ -470,7 +470,7 @@ namespace AS2Context
         }
 
         /// <summary>
-        /// Retrieves a class model from its name
+        /// Retrieves a class model from its name or string token
         /// </summary>
         /// <param name="cname">Class (short or full) name or string token</param>
         /// <param name="inFile">Current file</param>
@@ -552,8 +552,13 @@ namespace AS2Context
                     }
                 }
             }
-            // token
-            if (cname.Length > 1 && cname.First() == '{' && cname.Last() == '}') return ResolveType(features.objectKey, inFile);
+            if (cname.Length > 1)
+            {
+                var first = cname.First();
+                var last = cname.Last();
+                if (first == '{' && last == '}') return ResolveType(features.objectKey, inFile);
+                if (first == '[' && last == ']') return ResolveType(features.arrayKey, inFile);
+            }
             // search in classpath
             return GetModel(package, cname, inPackage);
         }

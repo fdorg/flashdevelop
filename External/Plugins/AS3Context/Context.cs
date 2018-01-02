@@ -878,22 +878,23 @@ namespace AS3Context
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         public override ClassModel ResolveType(string cname, FileModel inFile)
         {
-            // handle generic types
-            if (cname != null && cname.IndexOf('<') >= 0)
+            if (cname != null)
             {
-                if (cname.StartsWith('<'))
+                if (cname == "</>") return ResolveType("XML", inFile);
+                if (cname.IndexOf('<') >= 0)
                 {
-                    //transform <T>[] to Vector.<T>
-                    cname = Regex.Replace(cname, @">\[.*", ">");
-                    cname = "Vector." + cname;
+                    if (cname.StartsWith('<'))
+                    {
+                        //transform <T>[] to Vector.<T>
+                        cname = Regex.Replace(cname, @">\[.*", ">");
+                        cname = "Vector." + cname;
+                    }
+                    Match genType = re_genericType.Match(cname);
+                    if (genType.Success)
+                        return ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile);
+                    else return ClassModel.VoidClass;
                 }
-                Match genType = re_genericType.Match(cname);
-                if (genType.Success)
-                    return ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile);
-                else return ClassModel.VoidClass;
             }
-            // resolve token
-            if (cname == "</>") return ResolveType("XML", inFile);
             return base.ResolveType(cname, inFile);
         }
 
