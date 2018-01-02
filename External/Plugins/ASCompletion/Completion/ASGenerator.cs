@@ -2033,25 +2033,12 @@ namespace ASCompletion.Completion
             sci.Colourise(0, -1);
             while (statementEnd < endPos)
             {
-                if (sci.PositionIsOnComment(statementEnd))
+                if (sci.PositionIsOnComment(statementEnd) || sci.PositionIsInString(statementEnd))
                 {
                     statementEnd++;
                     continue;
                 }
                 char c = (char)sci.CharAt(statementEnd++);
-                if (c == '\"' && sQuotes == 0)
-                {
-                    if (statementEnd <= 1 || (char)sci.CharAt(statementEnd - 2) == '\\') continue;
-                    if (dQuotes == 0) dQuotes++;
-                    else dQuotes--;
-                }
-                else if (c == '\'' && dQuotes == 0)
-                {
-                    if (statementEnd <= 1 || (char)sci.CharAt(statementEnd - 2) == '\\') continue;
-                    if (sQuotes == 0) sQuotes++;
-                    else sQuotes--;
-                }
-                if (sQuotes > 0 || dQuotes > 0) continue;
                 bool endOfStatement = false;
                 switch (c)
                 {
