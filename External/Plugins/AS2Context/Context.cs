@@ -470,9 +470,9 @@ namespace AS2Context
         }
 
         /// <summary>
-        /// Retrieves a class model from its name or string token
+        /// Retrieves a class model from its name
         /// </summary>
-        /// <param name="cname">Class (short or full) name or string token</param>
+        /// <param name="cname">Class (short or full) name</param>
         /// <param name="inFile">Current file</param>
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         public override ClassModel ResolveType(string cname, FileModel inFile)
@@ -552,15 +552,21 @@ namespace AS2Context
                     }
                 }
             }
-            if (cname.Length > 1)
+            
+            // search in classpath
+            return GetModel(package, cname, inPackage);
+        }
+
+        public override ClassModel ResolveToken(string token, FileModel inFile)
+        {
+            if (token?.Length > 1)
             {
-                var first = cname.First();
-                var last = cname.Last();
+                var first = token.First();
+                var last = token.Last();
                 if (first == '{' && last == '}') return ResolveType(features.objectKey, inFile);
                 if (first == '[' && last == ']') return ResolveType(features.arrayKey, inFile);
             }
-            // search in classpath
-            return GetModel(package, cname, inPackage);
+            return base.ResolveToken(token, inFile);
         }
 
         protected ClassModel ResolveTypeIndex(string cname, FileModel inFile)

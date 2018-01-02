@@ -873,29 +873,31 @@ namespace AS3Context
         /// <summary>
         /// Retrieves a class model from its name
         /// </summary>
-        /// <param name="cname">Class (short or full) name or string token</param>
+        /// <param name="cname">Class (short or full) name</param>
         /// <param name="inFile">Current file</param>
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         public override ClassModel ResolveType(string cname, FileModel inFile)
         {
-            if (cname != null)
+            if (cname?.IndexOf('<') >= 0)
             {
-                if (cname == "</>") return ResolveType("XML", inFile);
-                if (cname.IndexOf('<') >= 0)
+                if (cname.StartsWith('<'))
                 {
-                    if (cname.StartsWith('<'))
-                    {
-                        //transform <T>[] to Vector.<T>
-                        cname = Regex.Replace(cname, @">\[.*", ">");
-                        cname = "Vector." + cname;
-                    }
-                    Match genType = re_genericType.Match(cname);
-                    if (genType.Success)
-                        return ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile);
-                    else return ClassModel.VoidClass;
+                    //transform <T>[] to Vector.<T>
+                    cname = Regex.Replace(cname, @">\[.*", ">");
+                    cname = "Vector." + cname;
                 }
+                Match genType = re_genericType.Match(cname);
+                if (genType.Success)
+                    return ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile);
+                else return ClassModel.VoidClass;
             }
             return base.ResolveType(cname, inFile);
+        }
+
+        public override ClassModel ResolveToken(string token, FileModel inFile)
+        {
+            if (token == "</>") return ResolveType("XML", inFile);
+            return base.ResolveToken(token, inFile);
         }
 
         /// <summary>

@@ -56,6 +56,14 @@ namespace ASCompletion.Context
         ClassModel ResolveType(string cname, FileModel inFile);
 
         /// <summary>
+        /// Retrieves a class model from string token
+        /// </summary>
+        /// <param name="token">string</param>
+        /// <param name="inFile">Current file</param>
+        /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
+        ClassModel ResolveToken(string token, FileModel inFile);
+
+        /// <summary>
         /// Update model if needed and warn user if it has problems
         /// </summary>
         /// <param name="onFileOpen">Flag indicating it is the first model check</param>

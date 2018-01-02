@@ -1215,6 +1215,8 @@ namespace ASCompletion.Context
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         public virtual ClassModel ResolveType(string cname, FileModel inFile) => ClassModel.VoidClass;
 
+        public virtual ClassModel ResolveToken(string token, FileModel inFile) => ClassModel.VoidClass;
+
         /// <summary>
         /// Retrieves a package content
         /// </summary>
