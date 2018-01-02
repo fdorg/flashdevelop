@@ -1520,6 +1520,31 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1704_4"))
                                 .SetName("from function():flash.display.Sprite")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1749_1"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_1"))
+                                .SetName("from 1 + 1")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1749_2"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_2"))
+                                .SetName("from 1 +\n1")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1749_3"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_3"))
+                                .SetName("Issue 1749. Case 3")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1749_4"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_4"))
+                                .SetName("Issue 1749. Case 4")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1749_5"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_5"))
+                                .SetName("Issue 1749. Case 5")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
                     }
                 }
 
@@ -2907,6 +2932,9 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(" new Object()$(EntryPoint)")
                                 .Returns(1);
+                        yield return
+                            new TestCaseData(" new Object(/*:)*/)$(EntryPoint)")
+                                .Returns(1);
                     }
                 }
 
@@ -2978,6 +3006,36 @@ namespace ASCompletion.Completion
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
                     return ASGenerator.GetStartOfStatement(sci, sci.CurrentPos, expr);
+                }
+            }
+
+            [TestFixture]
+            public class GetEndOfStatement : GenerateJob
+            {
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData("foo(/*:)*/)\nbar()\n   ")
+                                .Returns("foo(/*:)*/)\n".Length);
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public int Haxe(string sourceText) => HaxeImpl(sourceText, sci);
+
+                internal static int HaxeImpl(string sourceText, ScintillaControl sci)
+                {
+                    SetHaxeFeatures(sci);
+                    return Common(sci, sourceText);
+                }
+
+                internal static int Common(ScintillaControl sci, string sourceText)
+                {
+                    sci.Text = sourceText;
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    return ASGenerator.GetEndOfStatement(0, sci.TextLength, sci);
                 }
             }
 
