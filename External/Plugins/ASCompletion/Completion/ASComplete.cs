@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -3788,13 +3789,39 @@ namespace ASCompletion.Completion
                         var curOp = c.ToString();
                         foreach (var op in features.IncrementDecrementOperators)
                         {
-                            while (op.StartsWithOrdinal(curOp))
+                            while (op.StartsWithOrdinal(curOp) && p > minPos)
                             {
-                                var cc = (char)sci.CharAt(p--);
-                                if (cc == c) curOp += c;
+                                var cc = (char)sci.CharAt(p);
+                                if (cc == c) curOp += cc;
                                 else break;
+                                p--;
                             }
-                            if (curOp.Length > 1) break;
+                            if (curOp.Length > 1)
+                            {
+                                var buf = string.Empty;
+                                while (p > minPos)
+                                {
+                                    if (sci.PositionIsOnComment(p))
+                                    {
+                                        p--;
+                                        continue;
+                                    }
+                                    var cc = (char)sci.CharAt(p--);
+                                    if (cc <= ' ') buf += cc;
+                                    else if (features.ArithmeticOperators.Contains(cc))
+                                    {
+                                        buf = cc + buf;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        buf = string.Empty;
+                                        break;
+                                    }
+                                }
+                                if (buf.Length > 0) curOp = buf + curOp;
+                                break;
+                            }
                         }
                         if (sb.Length != 0)
                         {

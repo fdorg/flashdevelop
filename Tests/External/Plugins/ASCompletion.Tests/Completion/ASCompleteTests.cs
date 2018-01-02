@@ -533,6 +533,14 @@ namespace ASCompletion.Completion
                         new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_decrement5"))
                             .Returns("=getId.#0~--")
                             .SetName("var id = getId()--");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_decrement6"))
+                            .Returns("* ++1")
+                            .SetName("5 * ++1");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_decrement7"))
+                            .Returns("*1++")
+                            .SetName("5 * 1++");
                 }
             }
 
