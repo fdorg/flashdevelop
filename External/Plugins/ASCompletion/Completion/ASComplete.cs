@@ -3784,7 +3784,7 @@ namespace ASCompletion.Completion
                     else if (features.ArithmeticOperators.Contains(c))
                     {
                         expression.Separator = c;
-                        expression.SepparatorPosition = position;
+                        expression.SeparatorPosition = position;
                         break;
                     }
                     else //if (hadWS && !hadDot)
@@ -5147,7 +5147,7 @@ namespace ASCompletion.Completion
         public string Value;
         public List<string> SubExpressions;
         public char Separator;
-        public int SepparatorPosition;
+        public int SeparatorPosition;
         public string WordBefore;
         public ComaExpression coma;
 
