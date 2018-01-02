@@ -38,6 +38,7 @@ namespace PluginCore.PluginCore.Controls
             this.label = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.dontAsk = new System.Windows.Forms.CheckBoxEx();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
@@ -121,10 +122,10 @@ namespace PluginCore.PluginCore.Controls
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label.AutoSize = true;
             this.label.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.label.Location = new System.Drawing.Point(3, 17);
+            this.label.Location = new System.Drawing.Point(3, 20);
             this.label.Margin = new System.Windows.Forms.Padding(3, 20, 3, 20);
             this.label.Name = "label";
-            this.label.Size = new System.Drawing.Size(55, 16);
+            this.label.Size = new System.Drawing.Size(405, 13);
             this.label.TabIndex = 7;
             this.label.Text = "label1";
             this.label.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -147,8 +148,8 @@ namespace PluginCore.PluginCore.Controls
             // 
             // tableLayoutPanel2
             // 
-            this.tableLayoutPanel2.AutoSize = true;
             this.tableLayoutPanel2.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.tableLayoutPanel2.AutoSize = true;
             this.tableLayoutPanel2.ColumnCount = 5;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -167,19 +168,32 @@ namespace PluginCore.PluginCore.Controls
             this.tableLayoutPanel2.Size = new System.Drawing.Size(405, 29);
             this.tableLayoutPanel2.TabIndex = 9;
             // 
-            // MemoryBox
+            // dontAsk
+            // 
+            this.dontAsk.AutoSize = true;
+            this.dontAsk.BorderColor = System.Drawing.SystemColors.ControlDark;
+            this.dontAsk.DisabledTextColor = System.Drawing.SystemColors.ControlDark;
+            this.dontAsk.Location = new System.Drawing.Point(8, 111);
+            this.dontAsk.Name = "dontAsk";
+            this.dontAsk.Size = new System.Drawing.Size(15, 14);
+            this.dontAsk.TabIndex = 9;
+            this.dontAsk.UseTheme = true;
+            this.dontAsk.UseVisualStyleBackColor = true;
+            // 
+            // MemoryMessageBox
             // 
             this.AcceptButton = this.yesButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(448, 120);
+            this.ClientSize = new System.Drawing.Size(448, 131);
+            this.Controls.Add(this.dontAsk);
             this.Controls.Add(this.tableLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "MemoryBox";
+            this.Name = "MemoryMessageBox";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
@@ -201,5 +215,6 @@ namespace PluginCore.PluginCore.Controls
         private Label label;
         private TableLayoutPanel tableLayoutPanel1;
         private TableLayoutPanel tableLayoutPanel2;
+        private CheckBoxEx dontAsk;
     }
 }

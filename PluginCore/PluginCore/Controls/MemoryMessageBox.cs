@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using PluginCore.Controls;
 using PluginCore.Localization;
@@ -14,8 +15,9 @@ namespace PluginCore.PluginCore.Controls
         Cancel
     }
 
-    public partial class MemoryMessageBox : /*Smart*/Form
+    public partial class MemoryMessageBox : SmartForm
     {
+        readonly Dictionary<MemoryMessageBoxResult, Button> resultToButton;
         MemoryMessageBoxResult lastResult = MemoryMessageBoxResult.Cancel;
         public MemoryMessageBoxResult Result { get; set; } = MemoryMessageBoxResult.Cancel;
 
@@ -25,6 +27,14 @@ namespace PluginCore.PluginCore.Controls
             Font = PluginBase.MainForm.Settings.DefaultFont;
             InitializeComponent();
             ApplyLocalizedTexts();
+            resultToButton = new Dictionary<MemoryMessageBoxResult, Button>
+            {
+                {MemoryMessageBoxResult.Yes, yesButton},
+                {MemoryMessageBoxResult.YesToAll, yesToAllButton},
+                {MemoryMessageBoxResult.No, noButton},
+                {MemoryMessageBoxResult.NoToAll, noToAllButton},
+                {MemoryMessageBoxResult.Cancel, cancelButton}
+            };
         }
 
         /// <summary>
@@ -37,6 +47,7 @@ namespace PluginCore.PluginCore.Controls
             noButton.Text = TextHelper.GetString("Label.No");
             noToAllButton.Text = TextHelper.GetString("Label.NoToAll");
             cancelButton.Text = TextHelper.GetString("Label.Cancel");
+            dontAsk.Text = TextHelper.GetString("Label.DontAskAgain");
         }
 
         public MemoryMessageBoxResult ShowDialog(string text, string caption)
@@ -49,19 +60,30 @@ namespace PluginCore.PluginCore.Controls
         public new MemoryMessageBoxResult ShowDialog()
         {
             Result = MemoryMessageBoxResult.Cancel;
-            switch (lastResult)
+            if (dontAsk.Checked)
             {
-                case MemoryMessageBoxResult.NoToAll:
-                    Result = MemoryMessageBoxResult.No;
-                    break;
-                case MemoryMessageBoxResult.YesToAll:
-                    Result = MemoryMessageBoxResult.Yes;
-                    break;
-                default:
-                    base.ShowDialog();
-                    break;
+                switch (lastResult)
+                {
+                    case MemoryMessageBoxResult.NoToAll:
+                        Result = MemoryMessageBoxResult.No;
+                        break;
+                    case MemoryMessageBoxResult.YesToAll:
+                        Result = MemoryMessageBoxResult.Yes;
+                        break;
+                    default:
+                        base.ShowDialog();
+                        break;
+                }
             }
+            else base.ShowDialog();
             return Result;
+        }
+
+        protected override void OnShown(EventArgs e)
+        {
+            if (lastResult != MemoryMessageBoxResult.Cancel) resultToButton[lastResult].Select();
+            else resultToButton[MemoryMessageBoxResult.NoToAll].Select();
+            base.OnShown(e);
         }
 
         private void OnYesButtonClick(object sender, EventArgs e)

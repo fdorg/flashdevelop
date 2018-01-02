@@ -6309,4 +6309,8 @@ AND - All conditions are met.</value>
     <value>Yes To All</value>
     <comment>Added after 5.3.0</comment>
   </data>
+  <data name="PluginCore.Label.DontAskAgain" xml:space="preserve">
+    <value>Don't ask again</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
 </root>
