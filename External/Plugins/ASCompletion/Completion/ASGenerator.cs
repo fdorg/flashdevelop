@@ -1307,6 +1307,7 @@ namespace ASCompletion.Completion
                         if (current == null || current.IsNull()) break;
                         expressions.Add(current);
                         context = current.Context;
+                        rop = false;
                     }
                 }
             }
