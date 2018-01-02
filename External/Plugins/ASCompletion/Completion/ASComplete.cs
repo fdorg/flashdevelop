@@ -2636,8 +2636,9 @@ namespace ASCompletion.Completion
             if (token.Length == 0) return notFound;
             if (asFunction && tokens.Length == 1) token += "(";
 
-            var head = new ASResult {Type = ctx.ResolveToken(token, inClass.InFile)};
-            if (head.Type != ClassModel.VoidClass) return EvalTail(context, inFile, head, tokens, complete, filterVisibility) ?? notFound;
+            var type = ctx.ResolveToken(token, inClass.InFile);
+            if (type != ClassModel.VoidClass) return EvalTail(context, inFile, new ASResult {Type = type}, tokens, complete, filterVisibility) ?? notFound;
+            ASResult head = null;
             if (token.StartsWith('#'))
             {
                 Match mSub = re_sub.Match(token);
