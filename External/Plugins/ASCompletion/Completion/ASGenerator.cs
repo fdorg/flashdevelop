@@ -1296,7 +1296,7 @@ namespace ASCompletion.Completion
                     expressions.Add(current);
                     while (current != null && !current.IsNull() && arithmeticOperators.Contains(current.Context.Separator))
                     {
-                        current = ASComplete.GetExpressionType(sci, current.Context.SepparatorPosition, false, true);
+                        current = ASComplete.GetExpressionType(sci, current.Context.SeparatorPosition, false, true);
                         if (current != null) expressions.Add(current);
                     }
                 }
@@ -1345,7 +1345,7 @@ namespace ASCompletion.Completion
             else
             {
                 var last = expressions.Last();
-                pos = last.Context.Separator != ';' ? last.Context.SepparatorPosition : last.Context.PositionExpression;
+                pos = last.Context.Separator != ';' ? last.Context.SeparatorPosition : last.Context.PositionExpression;
             }
             sci.SetSel(pos, pos);
             InsertCode(pos, template, sci);
