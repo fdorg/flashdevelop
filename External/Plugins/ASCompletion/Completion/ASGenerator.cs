@@ -1969,6 +1969,7 @@ namespace ASCompletion.Completion
             var sQuotes = 0;
             var hasDot = false;
             var c = ' ';
+            sci.Colourise(0, -1);
             for (var i = statementEnd; i > 0; i--)
             {
                 if (sci.PositionIsOnComment(i - 1)) continue;
@@ -2046,8 +2047,14 @@ namespace ASCompletion.Completion
             int groupCount = 0;
             int brCount = 0;
             int statementEnd = startPos;
+            sci.Colourise(0, -1);
             while (statementEnd < endPos)
             {
+                if (sci.PositionIsOnComment(statementEnd))
+                {
+                    statementEnd++;
+                    continue;
+                }
                 char c = (char)sci.CharAt(statementEnd++);
 
                 bool endOfStatement = false;

@@ -2952,6 +2952,9 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(" new Object()$(EntryPoint)")
                                 .Returns(1);
+                        yield return
+                            new TestCaseData(" new Object(/*:)*/)$(EntryPoint)")
+                                .Returns(1);
                     }
                 }
 
@@ -3023,6 +3026,36 @@ namespace ASCompletion.Completion
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
                     return ASGenerator.GetStartOfStatement(sci, sci.CurrentPos, expr);
+                }
+            }
+
+            [TestFixture]
+            public class GetEndOfStatement : GenerateJob
+            {
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData("foo(/*:)*/)\nbar()\n   ")
+                                .Returns("foo(/*:)*/)\n".Length);
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public int Haxe(string sourceText) => HaxeImpl(sourceText, sci);
+
+                internal static int HaxeImpl(string sourceText, ScintillaControl sci)
+                {
+                    SetHaxeFeatures(sci);
+                    return Common(sci, sourceText);
+                }
+
+                internal static int Common(ScintillaControl sci, string sourceText)
+                {
+                    sci.Text = sourceText;
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    return ASGenerator.GetEndOfStatement(0, sci.TextLength, sci);
                 }
             }
 
