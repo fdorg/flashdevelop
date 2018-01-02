@@ -173,7 +173,7 @@ namespace PluginCore.PluginCore.Controls
             this.dontAsk.AutoSize = true;
             this.dontAsk.BorderColor = System.Drawing.SystemColors.ControlDark;
             this.dontAsk.DisabledTextColor = System.Drawing.SystemColors.ControlDark;
-            this.dontAsk.Location = new System.Drawing.Point(8, 111);
+            this.dontAsk.Location = new System.Drawing.Point(19, 109);
             this.dontAsk.Name = "dontAsk";
             this.dontAsk.Size = new System.Drawing.Size(15, 14);
             this.dontAsk.TabIndex = 9;
