@@ -2987,6 +2987,12 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(" {v:1 > 2 ? 1 : 2}$(EntryPoint)", new ASResult {Type = ClassModel.VoidClass})
                                 .Returns(1);
+                        yield return
+                            new TestCaseData(" [new Array<String>()]$(EntryPoint)", new ASResult {Type = ClassModel.VoidClass})
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" test(type:Class<Dynamic>)", new ASResult {Type = ClassModel.VoidClass})
+                                .Returns(1);
                     }
                 }
 
