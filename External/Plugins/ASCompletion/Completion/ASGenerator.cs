@@ -2027,8 +2027,6 @@ namespace ASCompletion.Completion
         {
             int groupCount = 0;
             int brCount = 0;
-            var dQuotes = 0;
-            var sQuotes = 0;
             int statementEnd = startPos;
             sci.Colourise(0, -1);
             while (statementEnd < endPos)
