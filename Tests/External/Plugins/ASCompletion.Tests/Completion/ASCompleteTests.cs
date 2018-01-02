@@ -455,7 +455,7 @@ namespace ASCompletion.Completion
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfRegex"))
                             .Returns(";g")
                             .SetName("From /regex/g|")
-                            .Ignore();
+                            .Ignore("https://github.com/fdorg/flashdevelop/issues/1880");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfDigit"))
                             .Returns(";1")
@@ -489,7 +489,7 @@ namespace ASCompletion.Completion
                             .Returns("*1")
                             .SetName("1 * 1");
                     yield return
-                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_del"))
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_division"))
                             .Returns("/1")
                             .SetName("1 / 1");
                 }
@@ -526,7 +526,7 @@ namespace ASCompletion.Completion
                         new TestCaseData(ReadAllTextHaxe("GetExpressionOfRegex"))
                             .Returns(";g")
                             .SetName("~/regex/g|")
-                            .Ignore();
+                            .Ignore("https://github.com/fdorg/flashdevelop/issues/1880");
                     yield return
                         new TestCaseData(ReadAllTextHaxe("GetExpressionOfNewArray"))
                             .Returns("new Array<Int>")
@@ -556,7 +556,7 @@ namespace ASCompletion.Completion
                             .Returns("*1")
                             .SetName("1 * 1");
                     yield return
-                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_del"))
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_division"))
                             .Returns("/1")
                             .SetName("1 / 1");
                 }
