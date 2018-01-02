@@ -170,12 +170,14 @@ namespace PluginCore.PluginCore.Controls
             // 
             // dontAsk
             // 
+            this.dontAsk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.dontAsk.AutoSize = true;
             this.dontAsk.BorderColor = System.Drawing.SystemColors.ControlDark;
             this.dontAsk.DisabledTextColor = System.Drawing.SystemColors.ControlDark;
-            this.dontAsk.Location = new System.Drawing.Point(19, 109);
+            this.dontAsk.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.dontAsk.Location = new System.Drawing.Point(10, 117);
             this.dontAsk.Name = "dontAsk";
-            this.dontAsk.Size = new System.Drawing.Size(15, 14);
+            this.dontAsk.Size = new System.Drawing.Size(25, 5);
             this.dontAsk.TabIndex = 9;
             this.dontAsk.UseTheme = true;
             this.dontAsk.UseVisualStyleBackColor = true;

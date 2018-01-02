@@ -82,7 +82,7 @@ namespace PluginCore.PluginCore.Controls
         protected override void OnShown(EventArgs e)
         {
             if (lastResult != MemoryMessageBoxResult.Cancel) resultToButton[lastResult].Select();
-            else resultToButton[MemoryMessageBoxResult.NoToAll].Select();
+            else resultToButton[MemoryMessageBoxResult.Yes].Select();
             base.OnShown(e);
         }
 
