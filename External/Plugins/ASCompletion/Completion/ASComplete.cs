@@ -2901,7 +2901,7 @@ namespace ASCompletion.Completion
                                 InferVariableType(local, var);
 
                             if ((var.Flags & FlagType.Function) > 0)
-                                result.Type = ResolveType("Function", null);
+                                result.Type = context.ResolveType("Function", null);
                             else
                                 result.Type = ResolveType(var.Type, inFile);
 

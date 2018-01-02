@@ -761,6 +761,7 @@
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstructor_issue1738_4.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstructor_issue1738_5.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstructor_issue1738_5.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionTypeOfFunction_Issue1867_1.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_plus.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_minus.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_mul.hx" />

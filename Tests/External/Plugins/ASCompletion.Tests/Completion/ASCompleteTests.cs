@@ -237,7 +237,7 @@ namespace ASCompletion.Completion
             }
 
             [Test, TestCaseSource(nameof(AS3TestCases))]
-            public MemberModel AS3(string sourceText) => AS3Impl(sourceText, sci);
+            public MemberModel AS3(string sourceText) => AS3Impl(sci, sourceText);
 
             public IEnumerable<TestCaseData> HaxeTestCases
             {
@@ -338,33 +338,34 @@ namespace ASCompletion.Completion
             }
 
             [Test, TestCaseSource(nameof(HaxeTestCases))]
-            public MemberModel Haxe(string sourceText) => HaxeImpl(sourceText, sci);
+            public MemberModel Haxe(string sourceText) => HaxeImpl(sci, sourceText);
 
-            internal static MemberModel AS3Impl(string sourceText, ScintillaControl sci)
+            internal static MemberModel AS3Impl(ScintillaControl sci, string sourceText)
             {
                 SetAs3Features(sci);
-                return Common(sourceText, sci);
+                return Common(sci, sourceText);
             }
 
-            internal static MemberModel HaxeImpl(string sourceText, ScintillaControl sci)
+            internal static MemberModel HaxeImpl(ScintillaControl sci, string sourceText)
             {
                 SetHaxeFeatures(sci);
-                return Common(sourceText, sci);
+                return Common(sci, sourceText);
             }
 
-            internal static MemberModel Common(string sourceText, ScintillaControl sci)
+            internal static MemberModel Common(ScintillaControl sci, string sourceText)
             {
-                sci.Text = sourceText;
-                SnippetHelper.PostProcessSnippets(sci, 0);
-                var currentModel = ASContext.Context.CurrentModel;
-                new ASFileParser().ParseSrc(currentModel, sci.Text);
-                var currentClass = currentModel.Classes[0];
-                ASContext.Context.CurrentClass.Returns(currentClass);
-                var currentMember = currentClass.Members[0];
-                ASContext.Context.CurrentMember.Returns(currentMember);
-                var position = sci.WordEndPosition(sci.CurrentPos, true);
-                var result = ASComplete.GetExpressionType(sci, position).Member;
+                SetSrc(sci, sourceText);
+                var result = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true)).Member;
                 return result;
+            }
+
+            [Test]
+            public void Issue1867()
+            {
+                SetHaxeFeatures(sci);
+                SetSrc(sci, ReadAllTextHaxe("GetExpressionTypeOfFunction_Issue1867_1"));
+                var expr = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
+                Assert.AreEqual(new ClassModel {Name = "Function", InFile = new FileModel{Package = "haxe.Constraints"}}, expr.Type);
             }
         }
 
@@ -983,14 +984,26 @@ namespace ASCompletion.Completion
             }
         }
 
-        internal static string ReadAllTextAS3(string fileName)
-        {
-            return TestFile.ReadAllText($"ASCompletion.Test_Files.completion.as3.{fileName}.as");
-        }
+        protected static string ReadAllTextAS3(string fileName) => TestFile.ReadAllText(GetFullPathAS3(fileName));
 
-        internal static string ReadAllTextHaxe(string fileName)
+        protected static string GetFullPathAS3(string fileName) => $"ASCompletion.Test_Files.completion.as3.{fileName}.as";
+
+        protected static string ReadAllTextHaxe(string fileName) => TestFile.ReadAllText(GetFullPathHaxe(fileName));
+
+        protected static string GetFullPathHaxe(string fileName) => $"ASCompletion.Test_Files.completion.haxe.{fileName}.hx";
+
+        protected static void SetSrc(ScintillaControl sci, string sourceText)
         {
-            return TestFile.ReadAllText($"ASCompletion.Test_Files.completion.haxe.{fileName}.hx");
+            sci.Text = sourceText;
+            SnippetHelper.PostProcessSnippets(sci, 0);
+            var currentModel = ASContext.Context.CurrentModel;
+            new ASFileParser().ParseSrc(currentModel, sci.Text);
+            var line = sci.CurrentLine;
+            var currentClass = currentModel.Classes.FirstOrDefault(line);
+            ASContext.Context.CurrentClass.Returns(currentClass);
+            var currentMember = currentClass.Members.FirstOrDefault(line);
+            ASContext.Context.CurrentMember.Returns(currentMember);
+            ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
         }
     }
 }
