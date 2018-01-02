@@ -140,6 +140,7 @@ namespace HaXeContext
             features.stringInterpolationQuotes = "'";
             features.ConstructorKey = "new";
             features.ArithmeticOperators = new HashSet<char> {'+', '-', '*', '/'};
+            features.IncrementDecrementOperators = new[] {"++", "--"};
             /* INITIALIZATION */
 
             settings = initSettings;

@@ -1290,14 +1290,19 @@ namespace ASCompletion.Completion
             {
                 expressions = new List<ASResult>();
                 var arithmeticOperators = ctx.Features.ArithmeticOperators;
-                if (arithmeticOperators.Contains(resolve.Context.Separator))
+                var c = ' ';
+                if (resolve.Context.Separator.Length == 1) c = resolve.Context.Separator[0];
+                if (arithmeticOperators.Contains(c))
                 {
                     var current = resolve;
                     expressions.Add(current);
-                    while (current != null && !current.IsNull() && arithmeticOperators.Contains(current.Context.Separator))
+                    while (arithmeticOperators.Contains(c))
                     {
                         current = ASComplete.GetExpressionType(sci, current.Context.SeparatorPosition, false, true);
-                        if (current != null) expressions.Add(current);
+                        if (current == null || current.IsNull()) break;
+                        expressions.Add(current);
+                        if (current.Context.Separator.Length == 1) c = current.Context.Separator[0];
+                        else break;
                     }
                 }
             }
@@ -1345,7 +1350,7 @@ namespace ASCompletion.Completion
             else
             {
                 var last = expressions.Last();
-                pos = last.Context.Separator != ';' ? last.Context.SeparatorPosition : last.Context.PositionExpression;
+                pos = last.Context.Separator != ";" ? last.Context.SeparatorPosition : last.Context.PositionExpression;
             }
             sci.SetSel(pos, pos);
             InsertCode(pos, template, sci);

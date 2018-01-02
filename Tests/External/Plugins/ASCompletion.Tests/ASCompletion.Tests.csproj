@@ -782,6 +782,11 @@
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1749_5.as" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue_1749.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue_1749.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_increment.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_increment2.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_increment3.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_increment4.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_increment5.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
