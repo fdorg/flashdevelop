@@ -802,6 +802,10 @@
     <EmbeddedResource Include="Test Files\completion\as3\GetExpression_issue1749_decrement3.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpression_issue1749_decrement4.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpression_issue1749_decrement5.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_increment.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_increment.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_increment2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_increment2.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

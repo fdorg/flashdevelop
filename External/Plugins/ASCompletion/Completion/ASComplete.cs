@@ -3790,7 +3790,7 @@ namespace ASCompletion.Completion
                         {
                             while (op.StartsWithOrdinal(curOp))
                             {
-                                var cc = sci.CharAt(p--);
+                                var cc = (char)sci.CharAt(p--);
                                 if (cc == c) curOp += c;
                                 else break;
                             }

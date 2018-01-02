@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using ASCompletion.Context;
+using ASCompletion.Helpers;
 using ASCompletion.Model;
 using ASCompletion.Settings;
 using PluginCore;
@@ -1286,23 +1287,26 @@ namespace ASCompletion.Completion
             var ctx = inClass.InFile.Context;
             var resolve = returnType.resolve;
             List<ASResult> expressions = null;
-            if (resolve.Context != null)
+            var context = resolve.Context;
+            if (context != null)
             {
                 expressions = new List<ASResult>();
-                var arithmeticOperators = ctx.Features.ArithmeticOperators;
-                var c = ' ';
-                if (resolve.Context.Separator.Length == 1) c = resolve.Context.Separator[0];
-                if (arithmeticOperators.Contains(c))
+                var operators = ctx.Features.ArithmeticOperators
+                    .Select(it => it.ToString())
+                    .Concat(ctx.Features.IncrementDecrementOperators)
+                    .ToHashSet();
+                if (operators.Contains(context.Separator) || operators.Contains(context.RightOperator ?? string.Empty))
                 {
                     var current = resolve;
                     expressions.Add(current);
-                    while (arithmeticOperators.Contains(c))
+                    context = current.Context;
+                    var rop = false;
+                    while (operators.Contains(context.Separator) || (rop = operators.Contains(context.RightOperator ?? string.Empty)))
                     {
-                        current = ASComplete.GetExpressionType(sci, current.Context.SeparatorPosition, false, true);
+                        var position = rop ? context.PositionExpression : context.SeparatorPosition;
+                        current = ASComplete.GetExpressionType(sci, position, false, true);
                         if (current == null || current.IsNull()) break;
                         expressions.Add(current);
-                        if (current.Context.Separator.Length == 1) c = current.Context.Separator[0];
-                        else break;
                     }
                 }
             }
@@ -3360,7 +3364,9 @@ namespace ASCompletion.Completion
             {
                 pos = sci.WordEndPosition(pos, true);
                 c = line.TrimEnd().Last();
-                resolve = ASComplete.GetExpressionType(sci, "]}\"'".Contains(c) || (c == '>' && !bracesRemoved) ? pos + 1 : pos, true, true);
+                var startPosition = pos;
+                if ("]}\"'".Contains(c) || ((c == '>' || features.ArithmeticOperators.Contains(c)) && !bracesRemoved)) startPosition++;
+                resolve = ASComplete.GetExpressionType(sci, startPosition, true, true);
                 if (resolve.Type != null && !resolve.IsPackage)
                 {
                     if (resolve.Type.Name == "Function" && !bracesRemoved)
