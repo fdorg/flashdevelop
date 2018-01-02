@@ -787,6 +787,11 @@
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_increment3.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_increment4.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_increment5.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_decrement.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_decrement2.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_decrement3.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_decrement4.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpression_issue1749_decrement5.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
