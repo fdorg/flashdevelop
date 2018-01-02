@@ -559,12 +559,15 @@ namespace AS2Context
 
         public override ClassModel ResolveToken(string token, FileModel inFile)
         {
-            if (token?.Length > 1)
+            if (token?.Length > 0)
             {
                 var first = token.First();
                 var last = token.Last();
                 if (first == '{' && last == '}') return ResolveType(features.objectKey, inFile);
                 if (first == '[' && last == ']') return ResolveType(features.arrayKey, inFile);
+                if (first == '"' || first == '\'') return ResolveType(features.stringKey, inFile);
+                if (token == "true" || token == "false") return ResolveType(features.booleanKey, inFile);
+                if (char.IsDigit(token, 0)) return ResolveType(features.numberKey, inFile);
             }
             return base.ResolveToken(token, inFile);
         }
