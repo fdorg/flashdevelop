@@ -1295,16 +1295,15 @@ namespace ASCompletion.Completion
                     .Concat(ctx.Features.IncrementDecrementOperators)
                     .ToHashSet();
                 var sep = new[] {' '};
-                var isMultiOperator = new Func<ASExpr, bool>((c) => operators.Contains(c.Separator) || operators.Contains(c.RightOperator)
-                    || (c.Separator.Contains(' ') && c.Separator.Split(sep, StringSplitOptions.RemoveEmptyEntries)
-                                                                .Any(it => operators.Contains(it.Trim()))));
-                if (operators.Contains(context.Separator) || operators.Contains(context.RightOperator) || isMultiOperator(context))
+                var isValid = new Func<ASExpr, bool>((c) => c.Separator.Contains(' ') 
+                    && c.Separator.Split(sep, StringSplitOptions.RemoveEmptyEntries).Any(it => operators.Contains(it.Trim())));
+                if (operators.Contains(context.Separator) || operators.Contains(context.RightOperator) || isValid(context))
                 {
                     var current = resolve;
                     context = current.Context;
                     expressions = new List<ASResult> {current};
                     var rop = false;
-                    while (operators.Contains(context.Separator) || (rop = operators.Contains(context.RightOperator)) || isMultiOperator(context))
+                    while (operators.Contains(context.Separator) || (rop = operators.Contains(context.RightOperator)) || isValid(context))
                     {
                         var position = rop ? context.PositionExpression : context.SeparatorPosition;
                         current = ASComplete.GetExpressionType(sci, position, false, true);
