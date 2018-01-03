@@ -896,7 +896,11 @@ namespace AS3Context
 
         public override ClassModel ResolveToken(string token, FileModel inFile)
         {
-            if (token == "</>") return ResolveType("XML", inFile);
+            if (token?.Length > 0)
+            {
+                if (token == "</>") return ResolveType("XML", inFile);
+                if (token.StartsWithOrdinal("0x")) return ResolveType("uint", inFile);
+            }
             return base.ResolveToken(token, inFile);
         }
 
