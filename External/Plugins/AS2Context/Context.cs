@@ -552,7 +552,6 @@ namespace AS2Context
                     }
                 }
             }
-            
             // search in classpath
             return GetModel(package, cname, inPackage);
         }
