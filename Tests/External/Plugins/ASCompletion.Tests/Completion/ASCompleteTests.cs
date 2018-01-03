@@ -962,7 +962,9 @@ namespace ASCompletion.Completion
                 sci.Text = text;
                 SnippetHelper.PostProcessSnippets(sci, 0);
                 var pos = sci.CurrentPos - 1;
-                return ASComplete.FindParameterIndex(sci, ref pos);
+                var result = ASComplete.FindParameterIndex(sci, ref pos);
+                Assert.AreNotEqual(-1, pos);
+                return result;
             }
         }
 
