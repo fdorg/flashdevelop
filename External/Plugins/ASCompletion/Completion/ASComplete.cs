@@ -1782,65 +1782,37 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Locate beginning of function call parameters and return index of current parameter
         /// </summary>
-        internal static int FindParameterIndex(ScintillaControl Sci, ref int position)
+        internal static int FindParameterIndex(ScintillaControl sci, ref int position)
         {
             int parCount = 0;
             int braCount = 0;
             int comaCount = 0;
             int arrCount = 0;
             var genCount = 0;
-            var dquCount = 0;
-            var squCount = 0;
+            sci.Colourise(0, -1);
             while (position >= 0)
             {
-                var style = Sci.BaseStyleAt(position);
-                if (style == 19)
+                var style = sci.BaseStyleAt(position);
+                if ((!IsLiteralStyle(style) && IsTextStyleEx(style)) || IsInterpolationExpr(sci, position))
                 {
-                    string keyword = GetWordLeft(Sci, ref position);
-                    if (!ASContext.Context.Features.HasTypePreKey(keyword))
-                    {
-                        position = -1;
-                        break;
-                    }
-                }
-                if ((!IsLiteralStyle(style) && IsTextStyleEx(style)) || IsInterpolationExpr(Sci, position))
-                {
-                    var c = (char)Sci.CharAt(position);
+                    var c = (char)sci.CharAt(position);
                     if (c <= ' ')
                     {
                         position--;
                         continue;
                     }
-                    if (dquCount > 0)
-                    {
-                        if (c != '"' || Sci.CharAt(position - 1) == '\\')
-                        {
-                            position--;
-                            continue;
-                        }
-                        if (Sci.CharAt(position - 1) != '\\') dquCount--;
-                    }
-                    else if (squCount > 0)
-                    {
-                        if (c != '\'' || Sci.CharAt(position - 1) == '\\')
-                        {
-                            position--;
-                            continue;
-                        }
-                        if (Sci.CharAt(position - 1) != '\\') squCount--;
-                    }
-                    else if (c == ';' && braCount == 0)
-                    {
-                        position = -1;
-                        break;
-                    }
                     // skip {} () [] blocks
-                    else if ((braCount > 0 && c != '{' && c != '}')
-                            || (parCount > 0 && c != '(' && c != ')')
-                            || (arrCount > 0 && c != '[' && c != ']'))
+                    if ((braCount > 0 && c != '{' && c != '}')
+                        || (parCount > 0 && c != '(' && c != ')')
+                        || (arrCount > 0 && c != '[' && c != ']'))
                     {
                         position--;
                         continue;
+                    }
+                    if (c == ';' && braCount == 0)
+                    {
+                        position = -1;
+                        break;
                     }
                     // new block
                     else if (c == '}') braCount++;
@@ -1865,8 +1837,6 @@ namespace ASCompletion.Completion
                     }
                     else if (c == '>') genCount++;
                     else if (c == '<') genCount--;
-                    else if (c == '"' && (Sci.CharAt(position - 1) != '\\' || IsEscapedCharacter(Sci, position - 1))) dquCount++;
-                    else if (c == '\'' && (Sci.CharAt(position - 1) != '\\' || IsEscapedCharacter(Sci, position - 1))) squCount++;
                     // new parameter reached
                     else if (c == ',' && parCount == 0 && genCount == 0)
                         comaCount++;
