@@ -24,6 +24,7 @@ namespace HaXeContext
             context = new Context(new HaXeSettings());
             ContextExtensions.BuildClassPath(context);
             context.CurrentModel = new FileModel {Context = context, Version = 4, haXe = true};
+            ASContext.Context.SetHaxeFeatures();
         }
 
         IEnumerable<TestCaseData> DecomposeTypesTestCases
