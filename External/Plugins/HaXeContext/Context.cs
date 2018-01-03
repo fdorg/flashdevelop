@@ -983,8 +983,9 @@ namespace HaXeContext
 
         public override ClassModel ResolveToken(string token, FileModel inFile)
         {
-            if (token?.Length > 1)
+            if (token?.Length > 0)
             {
+                if (token.StartsWithOrdinal("0x")) return ResolveType("Int", inFile);
                 var first = token.First();
                 var last = token.Last();
                 if (first == '[' && last == ']')

@@ -19,7 +19,12 @@ namespace HaXeContext
         Context context;
 
         [TestFixtureSetUp]
-        public void ContextTestsSetUp() => context = new Context(new HaXeSettings());
+        public void ContextTestsSetUp()
+        {
+            context = new Context(new HaXeSettings());
+            ContextExtensions.BuildClassPath(context);
+            context.CurrentModel = new FileModel {Context = context, Version = 4, haXe = true};
+        }
 
         IEnumerable<TestCaseData> DecomposeTypesTestCases
         {
@@ -95,11 +100,47 @@ namespace HaXeContext
         [Test, TestCaseSource(nameof(ParseFile_Issue1849TestCases))]
         public string ParseFile_Issue1849(string sourceText)
         {
-            ASContext.Context.SetHaxeFeatures();
             var model = new FileModel {Context = ASContext.Context, haXe = true};
             new ASFileParser().ParseSrc(model, sourceText);
             var interfaceType = ASContext.Context.ResolveType(model.Classes.First().Implements.First(), model);
             return interfaceType.Type;
         }
+
+        IEnumerable<TestCaseData> ResolveTokenTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("true")
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
+                    .SetName("true");
+                yield return new TestCaseData("false")
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
+                    .SetName("false");
+                yield return new TestCaseData("{}")
+                    .Returns(new ClassModel {Name = "Dynamic", Type = "Dynamic", InFile = FileModel.Ignore})
+                    .SetName("{}");
+                yield return new TestCaseData("10")
+                    .Returns(new ClassModel {Name = "Float", Type = "Float", InFile = FileModel.Ignore})
+                    .SetName("10");
+                yield return new TestCaseData("\"\"")
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore})
+                    .SetName("\"\"");
+                yield return new TestCaseData("''")
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore})
+                    .SetName("''");
+                yield return new TestCaseData("0xFF0000")
+                    .Returns(new ClassModel {Name = "Int", Type = "Int", InFile = FileModel.Ignore})
+                    .SetName("0xFF0000");
+                yield return new TestCaseData("[]")
+                    .Returns(new ClassModel {Name = "Array<T>", Type = "Array<T>", InFile = FileModel.Ignore})
+                    .SetName("[]");
+                yield return new TestCaseData("[1 => 1]")
+                    .Returns(new ClassModel {Name = "Map<K, V>", Type = "Map<K, V>", InFile = FileModel.Ignore})
+                    .SetName("[1 => 1]");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(ResolveTokenTestCases))]
+        public ClassModel ResolveToken(string token) => context.ResolveToken(token, null);
     }
 }
