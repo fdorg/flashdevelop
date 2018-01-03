@@ -2,13 +2,14 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Localization;
+using PluginCore.Controls;
 
 namespace ProjectManager.Helpers
 {
     /// <summary>
     /// A simple form where a user can enter a text string.
     /// </summary>
-    public class LineEntryDialog : Form
+    public class LineEntryDialog : SmartForm
     {
         string line;
 
