@@ -567,7 +567,7 @@ namespace AS2Context
                 if (first == '[' && last == ']') return ResolveType(features.arrayKey, inFile);
                 if (first == '"' || first == '\'') return ResolveType(features.stringKey, inFile);
                 if (token == "true" || token == "false") return ResolveType(features.booleanKey, inFile);
-                if (char.IsDigit(token, 0)) return ResolveType(features.numberKey, inFile);
+                if (char.IsDigit(token, 0) || (token.Length > 1 && token[0] == '-' && char.IsDigit(token, 1))) return ResolveType(features.numberKey, inFile);
             }
             return base.ResolveToken(token, inFile);
         }

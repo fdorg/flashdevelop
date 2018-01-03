@@ -122,6 +122,9 @@ namespace HaXeContext
                 yield return new TestCaseData("10")
                     .Returns(new ClassModel {Name = "Float", Type = "Float", InFile = FileModel.Ignore})
                     .SetName("10");
+                yield return new TestCaseData("-10")
+                    .Returns(new ClassModel {Name = "Float", Type = "Float", InFile = FileModel.Ignore})
+                    .SetName("-10");
                 yield return new TestCaseData("\"\"")
                     .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore})
                     .SetName("\"\"");

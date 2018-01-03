@@ -50,7 +50,7 @@ namespace ASCompletion.Context
         /// <summary>
         /// Retrieves a class model from its name
         /// </summary>
-        /// <param name="cname">Class (short or full) name or string token</param>
+        /// <param name="cname">Class (short or full) name</param>
         /// <param name="inFile">Current file</param>
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         ClassModel ResolveType(string cname, FileModel inFile);

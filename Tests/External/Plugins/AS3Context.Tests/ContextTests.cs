@@ -63,6 +63,9 @@ namespace AS3Context
                 yield return new TestCaseData("10")
                     .Returns(new ClassModel {Name = "Number", Type = "Number", InFile = FileModel.Ignore})
                     .SetName("10");
+                yield return new TestCaseData("-10")
+                    .Returns(new ClassModel {Name = "Number", Type = "Number", InFile = FileModel.Ignore})
+                    .SetName("-10");
                 yield return new TestCaseData("\"\"")
                     .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore})
                     .SetName("\"\"");
