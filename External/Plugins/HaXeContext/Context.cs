@@ -978,6 +978,7 @@ namespace HaXeContext
                 }
                 if (!found && cname == "Function") return stubFunctionClass;
             }
+
             return GetModel(package, cname, inPackage);
         }
 
