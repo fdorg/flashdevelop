@@ -1982,11 +1982,11 @@ namespace ASCompletion.Completion
                 else if (c == '[' && arrCount > 0) arrCount--;
                 else if (c == ')') parCount++;
                 else if (c == '(' && parCount > 0) parCount--;
-                else if (c == '>')
+                else if (c == '>' && arrCount == 0 && parCount == 0 && braCount == 0)
                 {
                     if (i > 1 && (char)sci.CharAt(i - 2) != '-') genCount++;
                 }
-                else if (c == '<' && genCount > 0) genCount--;
+                else if (c == '<' && genCount > 0 && arrCount == 0 && parCount == 0 && braCount == 0) genCount--;
                 else if (c == '}') braCount++;
                 else if (c == '{' && braCount > 0) braCount--;
                 else if (c == '\"' && sQuotes == 0)
