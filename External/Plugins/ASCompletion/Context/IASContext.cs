@@ -56,7 +56,7 @@ namespace ASCompletion.Context
         ClassModel ResolveType(string cname, FileModel inFile);
 
         /// <summary>
-        /// Retrieves a class model from string token
+        /// Retrieves a class model from string
         /// </summary>
         /// <param name="token">string</param>
         /// <param name="inFile">Current file</param>
