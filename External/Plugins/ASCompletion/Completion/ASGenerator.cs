@@ -2058,8 +2058,8 @@ namespace ASCompletion.Completion
                     statementEnd++;
                     continue;
                 }
-                bool endOfStatement = false;
                 char c = (char)sci.CharAt(statementEnd++);
+                bool endOfStatement = false;
                 switch (c)
                 {
                     case '\r':
