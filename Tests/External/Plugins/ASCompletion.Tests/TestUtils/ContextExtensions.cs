@@ -55,6 +55,7 @@ namespace ASCompletion.TestUtils
             mock.CreateFileModel(null).ReturnsForAnyArgs(it => context.CreateFileModel(it.ArgAt<string>(0)));
             var allProjectClasses = context.GetAllProjectClasses();
             mock.GetAllProjectClasses().Returns(allProjectClasses);
+            mock.GetCodeModel(null).Returns(it => context.GetCodeModel(it.ArgAt<string>(0)));
         }
 
         public static void BuildClassPath(this IASContext context)

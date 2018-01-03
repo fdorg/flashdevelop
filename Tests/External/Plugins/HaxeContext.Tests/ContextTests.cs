@@ -16,16 +16,8 @@ namespace HaXeContext
 
         protected static string GetFullPathHaxe(string fileName) => $"{nameof(HaXeContext)}.Test_Files.parser.{fileName}.hx";
 
-        Context context;
-
         [TestFixtureSetUp]
-        public void ContextTestsSetUp()
-        {
-            context = new Context(new HaXeSettings());
-            ContextExtensions.BuildClassPath(context);
-            context.CurrentModel = new FileModel {Context = context, Version = 4, haXe = true};
-            ASContext.Context.SetHaxeFeatures();
-        }
+        public void ContextTestsSetUp() => ASContext.Context.SetHaxeFeatures();
 
         IEnumerable<TestCaseData> DecomposeTypesTestCases
         {
@@ -77,7 +69,7 @@ namespace HaXeContext
         }
 
         [Test, TestCaseSource(nameof(DecomposeTypesTestCases))]
-        public IEnumerable<string> DecomposeTypes(IEnumerable<string> types) => context.DecomposeTypes(types);
+        public IEnumerable<string> DecomposeTypes(IEnumerable<string> types) => ASContext.Context.DecomposeTypes(types);
 
         IEnumerable<TestCaseData> ParseFile_Issue1849TestCases
         {
@@ -101,8 +93,7 @@ namespace HaXeContext
         [Test, TestCaseSource(nameof(ParseFile_Issue1849TestCases))]
         public string ParseFile_Issue1849(string sourceText)
         {
-            var model = new FileModel {Context = ASContext.Context, haXe = true};
-            new ASFileParser().ParseSrc(model, sourceText);
+            var model = ASContext.Context.GetCodeModel(sourceText);
             var interfaceType = ASContext.Context.ResolveType(model.Classes.First().Implements.First(), model);
             return interfaceType.Type;
         }
@@ -145,6 +136,6 @@ namespace HaXeContext
         }
 
         [Test, TestCaseSource(nameof(ResolveTokenTestCases))]
-        public ClassModel ResolveToken(string token) => context.ResolveToken(token, null);
+        public ClassModel ResolveToken(string token) => ASContext.Context.ResolveToken(token, null);
     }
 }
