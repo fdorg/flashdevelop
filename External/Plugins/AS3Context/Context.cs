@@ -878,7 +878,7 @@ namespace AS3Context
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         public override ClassModel ResolveType(string cname, FileModel inFile)
         {
-            if (cname?.IndexOf('<') >= 0)
+            if (cname != null && cname.IndexOf('<') >= 0)
             {
                 if (cname.StartsWith('<'))
                 {
