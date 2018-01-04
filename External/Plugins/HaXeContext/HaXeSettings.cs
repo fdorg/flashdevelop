@@ -1,7 +1,6 @@
 using System;
 using System.ComponentModel;
 using System.Drawing.Design;
-using ASCompletion.Generators;
 using PluginCore.Localization;
 using ProjectManager.Projects.Haxe;
 using PluginCore;
