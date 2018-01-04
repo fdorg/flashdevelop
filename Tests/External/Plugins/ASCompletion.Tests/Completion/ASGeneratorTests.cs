@@ -20,6 +20,7 @@ using PluginCore.Managers;
 
 namespace ASCompletion.Completion
 {
+    [TestFixture]
     public class ASGeneratorTests : ASCompletionTests
     {
         public class GetBodyStart : ASGeneratorTests

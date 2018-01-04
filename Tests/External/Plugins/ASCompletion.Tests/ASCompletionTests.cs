@@ -15,7 +15,6 @@ using ScintillaNet.Enums;
 
 namespace ASCompletion
 {
-    [TestFixture]
     public class ASCompletionTests
     {
 #pragma warning disable CS0436 // Type conflicts with imported type
@@ -79,6 +78,7 @@ namespace ASCompletion
                 TabWidth = settings.TabWidth
             };
         }
+
         protected static void SetAs3Features(ScintillaControl sci)
         {
             if (sci.ConfigurationLanguage != "as3")

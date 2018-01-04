@@ -10,15 +10,16 @@ using PluginCore.Controls;
 using PluginCore.Localization;
 using PluginCore.Utilities;
 using ScintillaNet;
+using static ASCompletion.Generators.DocumentationGeneratorJobType;
 
 namespace ASCompletion.Generators
 {
     public class DocumentationGenerator : IContextualGenerator
     {
-        private static Regex re_functionDeclaration = new Regex("[\\s\\w]*[\\s]function[\\s][\\s\\w$]+\\($", ASFileParserRegexOptions.SinglelineComment);
-        private static Regex re_splitFunction = new Regex("(?<keys>[\\w\\s]*)[\\s]function[\\s]*(?<fname>[^(]*)\\((?<params>[^()]*)\\)(?<type>.*)", ASFileParserRegexOptions.SinglelineComment);
-        private static Regex re_property = new Regex("^(get|set)\\s", RegexOptions.Compiled);
-        private static Regex re_variableType = new Regex("[\\s]*:[\\s]*(?<type>[\\w.?*]+)", ASFileParserRegexOptions.SinglelineComment);
+        protected static Regex re_functionDeclaration = new Regex("[\\s\\w]*[\\s]function[\\s][\\s\\w$]+\\($", ASFileParserRegexOptions.SinglelineComment);
+        protected static Regex re_splitFunction = new Regex("(?<keys>[\\w\\s]*)[\\s]function[\\s]*(?<fname>[^(]*)\\((?<params>[^()]*)\\)(?<type>.*)", ASFileParserRegexOptions.SinglelineComment);
+        protected static Regex re_property = new Regex("^(get|set)\\s", RegexOptions.Compiled);
+        protected static Regex re_variableType = new Regex("[\\s]*:[\\s]*(?<type>[\\w.?*]+)", ASFileParserRegexOptions.SinglelineComment);
 
         public bool ContextualGenerator(ScintillaControl sci, int position, List<ICompletionListItem> options)
         {
@@ -73,8 +74,8 @@ namespace ASCompletion.Generators
                 signature = sb.ToString();
             }
             else signature = null;
-            if (signature != null) options.Add(new GeneratorItem(TextHelper.GetString("Label.CompleteDocDetails"), DocumentationGeneratorJobType.MethodDetails) {Context = signature});
-            options.Add(new GeneratorItem(TextHelper.GetString("Label.CompleteDocEmpty"), DocumentationGeneratorJobType.Empty));
+            if (signature != null) options.Add(new GeneratorItem(TextHelper.GetString("Label.CompleteDocDetails"), MethodDetails, () => GenerateJob(MethodDetails, signature)));
+            options.Add(new GeneratorItem(TextHelper.GetString("Label.CompleteDocEmpty"), Empty, () => GenerateJob(Empty, string.Empty)));
             CompletionList.Show(options, true, "");
             return true;
         }
@@ -90,7 +91,27 @@ namespace ASCompletion.Generators
             return escaped;
         }
 
-        private static void GenerateDocumentation(string context)
+        private void GenerateJob(DocumentationGeneratorJobType job, string context)
+        {
+            switch (job)
+            {
+                case Empty:
+                case MethodDetails:
+                    var sci = ASContext.CurSciControl;
+                    sci.BeginUndoAction();
+                    try
+                    {
+                        GenerateDocumentation(context);
+                    }
+                    finally
+                    {
+                        sci.EndUndoAction();
+                    }
+                    break;
+            }
+        }
+
+        protected virtual void GenerateDocumentation(string context)
         {
             // get indentation
             var sci = ASContext.CurSciControl;
@@ -169,11 +190,12 @@ namespace ASCompletion.Generators
         internal class GeneratorItem : ICompletionListItem
         {
             internal readonly DocumentationGeneratorJobType Job;
-            public string Context;
+            readonly Action action;
 
-            public GeneratorItem(string label, DocumentationGeneratorJobType job)
+            public GeneratorItem(string label, DocumentationGeneratorJobType job, Action action)
             {
                 Job = job;
+                this.action = action;
                 Label = label;
             }
 
@@ -187,7 +209,7 @@ namespace ASCompletion.Generators
             {
                 get
                 {
-                    GenerateDocumentation(Context);
+                    action();
                     return null;
                 }
             }

@@ -17,6 +17,7 @@ using ProjectManager.Projects.Haxe;
 using ProjectManager.Projects;
 using AS3Context;
 using HaXeContext.Completion;
+using HaXeContext.Generators;
 using PluginCore.Utilities;
 using ScintillaNet;
 
@@ -151,6 +152,7 @@ namespace HaXeContext
 
             haxelibsCache = new Dictionary<string, List<string>>();
             CodeGenerator = new CodeGenerator();
+            DocumentationGenerator = new DocumentationGenerator();
             //BuildClassPath(); // defered to first use
         }
         #endregion

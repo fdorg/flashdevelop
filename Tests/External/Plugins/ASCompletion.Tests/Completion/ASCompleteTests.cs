@@ -14,6 +14,7 @@ using ScintillaNet;
 
 namespace ASCompletion.Completion
 {
+    [TestFixture]
     public class ASCompleteTests : ASCompletionTests
     {
         // TODO: Add more tests!
