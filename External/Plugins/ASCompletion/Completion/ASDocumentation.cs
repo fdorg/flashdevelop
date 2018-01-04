@@ -69,11 +69,9 @@ namespace ASCompletion.Completion
             if (docVariables == null)
             {
                 docVariables = new List<ICompletionListItem>();
-                TagItem item;
                 foreach (string tag in ASContext.CommonSettings.JavadocTags)
                 {
-                    item = new TagItem(tag);
-                    docVariables.Add(item);
+                    docVariables.Add(new TagItem(tag));
                 }               
             }
             

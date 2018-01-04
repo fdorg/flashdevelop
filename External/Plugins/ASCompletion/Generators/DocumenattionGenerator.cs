@@ -66,9 +66,7 @@ namespace ASCompletion.Generators
             var line = sci.LineFromPosition(position);
             var indent = sci.LineIndentPosition(line) - sci.PositionFromLine(line);
             var tab = sci.GetLine(line).Substring(0, indent);
-            // get EOL
-            var eolMode = sci.EOLMode;
-            var newline = LineEndDetector.GetNewLineMarker(eolMode);
+            var newline = LineEndDetector.GetNewLineMarker(sci.EOLMode);
 
             var cbs = PluginBase.Settings.CommentBlockStyle;
             var star = cbs == CommentBlockStyle.Indented ? " *" : "*";
