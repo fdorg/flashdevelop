@@ -1285,6 +1285,22 @@ namespace ASCompletion.Completion
         {
             var ctx = inClass.InFile.Context;
             var resolve = returnType.resolve;
+            List<ASResult> expressions = null;
+            if (resolve.Context != null)
+            {
+                expressions = new List<ASResult>();
+                var arithmeticOperators = ctx.Features.ArithmeticOperators;
+                if (arithmeticOperators.Contains(resolve.Context.Separator))
+                {
+                    var current = resolve;
+                    expressions.Add(current);
+                    while (current != null && !current.IsNull() && arithmeticOperators.Contains(current.Context.Separator))
+                    {
+                        current = ASComplete.GetExpressionType(sci, current.Context.SeparatorPosition, false, true);
+                        if (current != null) expressions.Add(current);
+                    }
+                }
+            }
             string type = null;
             if (resolve.Member == null && (resolve.Type.Flags & FlagType.Class) != 0
                 && resolve.Type.Name != ctx.Features.booleanKey
@@ -1324,7 +1340,13 @@ namespace ASCompletion.Completion
             template = TemplateUtils.ReplaceTemplateVariable(template, "Name", varname);
             template = TemplateUtils.ReplaceTemplateVariable(template, "Type", cleanType);
 
-            var pos = GetStartOfStatement(sci, sci.CurrentPos, resolve);
+            int pos;
+            if (expressions == null || expressions.Count == 0) pos = GetStartOfStatement(sci, sci.CurrentPos, resolve);
+            else
+            {
+                var last = expressions.Last();
+                pos = last.Context.Separator != ';' ? last.Context.SeparatorPosition : last.Context.PositionExpression;
+            }
             sci.SetSel(pos, pos);
             InsertCode(pos, template, sci);
 
@@ -1950,6 +1972,7 @@ namespace ASCompletion.Completion
             var sQuotes = 0;
             var hasDot = false;
             var c = ' ';
+            sci.Colourise(0, -1);
             for (var i = statementEnd; i > 0; i--)
             {
                 if (sci.PositionIsOnComment(i - 1)) continue;
@@ -1959,11 +1982,11 @@ namespace ASCompletion.Completion
                 else if (c == '[' && arrCount > 0) arrCount--;
                 else if (c == ')') parCount++;
                 else if (c == '(' && parCount > 0) parCount--;
-                else if (c == '>')
+                else if (c == '>' && arrCount == 0 && parCount == 0 && braCount == 0)
                 {
                     if (i > 1 && (char)sci.CharAt(i - 2) != '-') genCount++;
                 }
-                else if (c == '<' && genCount > 0) genCount--;
+                else if (c == '<' && genCount > 0 && arrCount == 0 && parCount == 0 && braCount == 0) genCount--;
                 else if (c == '}') braCount++;
                 else if (c == '{' && braCount > 0) braCount--;
                 else if (c == '\"' && sQuotes == 0)
@@ -2027,10 +2050,15 @@ namespace ASCompletion.Completion
             int groupCount = 0;
             int brCount = 0;
             int statementEnd = startPos;
+            sci.Colourise(0, -1);
             while (statementEnd < endPos)
             {
+                if (sci.PositionIsOnComment(statementEnd) || sci.PositionIsInString(statementEnd))
+                {
+                    statementEnd++;
+                    continue;
+                }
                 char c = (char)sci.CharAt(statementEnd++);
-
                 bool endOfStatement = false;
                 switch (c)
                 {

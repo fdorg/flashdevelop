@@ -1520,6 +1520,31 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1704_4"))
                                 .SetName("from function():flash.display.Sprite")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1749_1"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_1"))
+                                .SetName("from 1 + 1")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1749_2"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_2"))
+                                .SetName("from 1 +\n1")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1749_3"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_3"))
+                                .SetName("Issue 1749. Case 3")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1749_4"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_4"))
+                                .SetName("Issue 1749. Case 4")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1749_5"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_5"))
+                                .SetName("Issue 1749. Case 5")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
                     }
                 }
 
@@ -2890,94 +2915,146 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(" new Vector.<int>()$(EntryPoint)")
+                            new TestCaseData(" new Vector.<int>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new <int>[]$(EntryPoint)")
+                            new TestCaseData(" new <int>[]$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new <Object>[{}]$(EntryPoint)")
+                            new TestCaseData(" new <Object>[{}]$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new <Vector.<Object>>[new <Object>[{}]]$(EntryPoint)")
+                            new TestCaseData(" new <Vector.<Object>>[new <Object>[{}]]$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new <Object>[{a:[new Number('10.0')]}]$(EntryPoint)")
+                            new TestCaseData(" new <Object>[{a:[new Number('10.0')]}]$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new Object()$(EntryPoint)")
+                            new TestCaseData(" new Object()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" new Object(/*:)*/)$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
                                 .Returns(1);
                     }
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public int AS3(string sourceText) => AS3Impl(sourceText, sci);
+                public int AS3(string sourceText, ASResult expr) => AS3Impl(sci, sourceText, expr);
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
                         yield return
-                            new TestCaseData(" new Array<Int>()$(EntryPoint)")
+                            new TestCaseData(" new Array<Int>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new Map<String, Int>()$(EntryPoint)")
+                            new TestCaseData(" new Map<String, Int>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new Map<String, Map<String, Int>>()$(EntryPoint)")
+                            new TestCaseData(" new Map<String, Map<String, Int>>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new Map<String, Map<String, Void->Int>>()$(EntryPoint)")
+                            new TestCaseData(" new Map<String, Map<String, Void->Int>>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new Map<String, Map<String, String->Int->Void>>()$(EntryPoint)")
+                            new TestCaseData(" new Map<String, Map<String, String->Int->Void>>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new Array<Int->Int->String>()$(EntryPoint)")
+                            new TestCaseData(" new Array<Int->Int->String>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new Array<{x:Int, y:Int}>()$(EntryPoint)")
+                            new TestCaseData(" new Array<{x:Int, y:Int}>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new Array<{name:String, params:Array<Dynamic>}>()$(EntryPoint)")
+                            new TestCaseData(" new Array<{name:String, params:Array<Dynamic>}>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new Array<{name:String, factory:String->Dynamic}>()$(EntryPoint)")
+                            new TestCaseData(" new Array<{name:String, factory:String->Dynamic}>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new Array<{name:String, factory:String->Array<String>}>()$(EntryPoint)")
+                            new TestCaseData(" new Array<{name:String, factory:String->Array<String>}>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new Array<{name:String, factory:String->{x:Int, y:Int}}>()$(EntryPoint)")
+                            new TestCaseData(" new Array<{name:String, factory:String->{x:Int, y:Int}}>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
                                 .Returns(1);
+                        yield return
+                            new TestCaseData(" [1 => 1, 2 => 2]$(EntryPoint)", new ASResult {Type = ClassModel.VoidClass})
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" (1 > 2 ? 1 : 2)$(EntryPoint)", new ASResult {Type = ClassModel.VoidClass})
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" {v:1 > 2 ? 1 : 2}$(EntryPoint)", new ASResult {Type = ClassModel.VoidClass})
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" [new Array<String>()]$(EntryPoint)", new ASResult {Type = ClassModel.VoidClass})
+                                .Returns(1);
+                        yield return
+                            new TestCaseData(" test(type:Class<Dynamic>)$(EntryPoint)", new ASResult {Type = ClassModel.VoidClass})
+                                .Returns(1);
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCases))]
+                public int Haxe(string sourceText, ASResult expr) => HaxeImpl(sci, sourceText, expr);
+
+                internal static int AS3Impl(ScintillaControl sci, string sourceText, ASResult expr)
+                {
+                    SetAs3Features(sci);
+                    return Common(sci, sourceText, expr);
+                }
+
+                internal static int HaxeImpl(ScintillaControl sci, string sourceText, ASResult expr)
+                {
+                    SetHaxeFeatures(sci);
+                    return Common(sci, sourceText, expr);
+                }
+
+                internal static int Common(ScintillaControl sci, string sourceText, ASResult expr)
+                {
+                    sci.Text = sourceText;
+                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    return ASGenerator.GetStartOfStatement(sci, sci.CurrentPos, expr);
+                }
+            }
+
+            [TestFixture]
+            public class GetEndOfStatement : GenerateJob
+            {
+                public IEnumerable<TestCaseData> HaxeTestCases
+                {
+                    get
+                    {
+                        yield return
+                            new TestCaseData("foo(/*:)*/)\nbar()\n   ")
+                                .Returns("foo(/*:)*/)\n".Length);
+                        yield return
+                            new TestCaseData("foo(\"(.)(.) <-- :)\")\nbar()\n   ")
+                                .Returns("foo(\"(.)(.) <-- :)\")\n".Length);
+                        yield return
+                            new TestCaseData("foo('(.)(.) <-- :)')\nbar()\n   ")
+                                .Returns("foo('(.)(.) <-- :)')\n".Length);
+                        yield return
+                            new TestCaseData("foo('\\'(.)(.) <-- :)\\'')\nbar()\n   ")
+                                .Returns("foo('\\'(.)(.) <-- :)\\'')\n".Length);
                     }
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
                 public int Haxe(string sourceText) => HaxeImpl(sourceText, sci);
 
-                internal static int AS3Impl(string sourceText, ScintillaControl sci)
-                {
-                    SetAs3Features(sci);
-                    return Common(sourceText, sci);
-                }
-
                 internal static int HaxeImpl(string sourceText, ScintillaControl sci)
                 {
                     SetHaxeFeatures(sci);
-                    return Common(sourceText, sci);
+                    return Common(sci, sourceText);
                 }
 
-                internal static int Common(string sourceText, ScintillaControl sci)
+                internal static int Common(ScintillaControl sci, string sourceText)
                 {
-                    var expr = new ASResult
-                    {
-                        Type = new ClassModel {Flags = FlagType.Class},
-                        Context = new ASExpr {WordBefore = "new"}
-                    };
                     sci.Text = sourceText;
                     SnippetHelper.PostProcessSnippets(sci, 0);
-                    return ASGenerator.GetStartOfStatement(sci, sci.CurrentPos, expr);
+                    return ASGenerator.GetEndOfStatement(0, sci.TextLength, sci);
                 }
             }
 
