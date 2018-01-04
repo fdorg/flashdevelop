@@ -37,24 +37,57 @@ namespace ASCompletion.Generators
             if (re_functionDeclaration.IsMatch(signature))
             {
                 // get method signature
-                var parCount = c == '(' ? 1 : 0;
                 position++;
+                var dquCount = 0;
+                var squCount = 0;
+                var parCount = c == '(' ? 1 : 0;
                 while (position < len)
                 {
                     c = (char)sci.CharAt(position);
                     sb.Append(c);
-                    if (c == '(') parCount++;
+                    if (dquCount > 0)
+                    {
+                        if (c != '"' || sci.CharAt(position - 1) == '\\')
+                        {
+                            position++;
+                            continue;
+                        }
+                        if (sci.CharAt(position - 1) != '\\') dquCount--;
+                    }
+                    else if (squCount > 0)
+                    {
+                        if (c != '\'' || sci.CharAt(position - 1) == '\\')
+                        {
+                            position++;
+                            continue;
+                        }
+                        if (sci.CharAt(position - 1) != '\\') squCount--;
+                    }
+                    else if (c == '"' && (sci.CharAt(position - 1) != '\\' || IsEscapedCharacter(sci, position - 1))) dquCount++;
+                    else if (c == '\'' && (sci.CharAt(position - 1) != '\\' || IsEscapedCharacter(sci, position - 1))) squCount++;
+                    else if (c == '(') parCount++;
                     else if (c == ')') parCount--;
-                    else if (c == ';' || (parCount == 0 && c == '{')) break;
+                    else if (parCount == 0 && (c == ';' || c == '{')) break;
                     position++;
                 }
                 signature = sb.ToString();
             }
             else signature = null;
-            if (signature != null) options.Add(new GeneratorItem(TextHelper.GetString("Label.CompleteDocDetails")) {Context = signature});
-            options.Add(new GeneratorItem(TextHelper.GetString("Label.CompleteDocEmpty")));
+            if (signature != null) options.Add(new GeneratorItem(TextHelper.GetString("Label.CompleteDocDetails"), DocumentationGeneratorJobType.MethodDetails) {Context = signature});
+            options.Add(new GeneratorItem(TextHelper.GetString("Label.CompleteDocEmpty"), DocumentationGeneratorJobType.Empty));
             CompletionList.Show(options, true, "");
             return true;
+        }
+
+        private static bool IsEscapedCharacter(ScintillaControl sci, int position, char escapeChar = '\\')
+        {
+            var escaped = false;
+            for (var i = position - 1; i >= 0; i--)
+            {
+                if (sci.CharAt(i) != escapeChar) break;
+                escaped = !escaped;
+            }
+            return escaped;
         }
 
         private static void GenerateDocumentation(string context)
@@ -133,12 +166,14 @@ namespace ASCompletion.Generators
         /// <summary>
         /// Box template completion list item
         /// </summary>
-        private class GeneratorItem : ICompletionListItem
+        internal class GeneratorItem : ICompletionListItem
         {
+            internal readonly DocumentationGeneratorJobType Job;
             public string Context;
 
-            public GeneratorItem(string label)
+            public GeneratorItem(string label, DocumentationGeneratorJobType job)
             {
+                Job = job;
                 Label = label;
             }
 
@@ -157,5 +192,11 @@ namespace ASCompletion.Generators
                 }
             }
         }
+    }
+
+    public enum DocumentationGeneratorJobType
+    {
+        Empty,
+        MethodDetails
     }
 }
