@@ -2040,7 +2040,10 @@ namespace ASCompletion.Completion
                 else if (cMember != null && line == cMember.LineFrom)
                 {
                     string text = Sci.GetLine(line);
-                    int p = text.IndexOfOrdinal(cMember.Name);
+                    int p;
+                    if ((cMember.Flags & FlagType.Constructor) != 0 && !string.IsNullOrEmpty(features.ConstructorKey))
+                        p = text.IndexOfOrdinal(features.ConstructorKey);
+                    else p = text.IndexOfOrdinal(cMember.Name);
                     if (p < 0 || position < Sci.PositionFromLine(line) + p)
                         return HandleDeclarationCompletion(Sci, expr.Value, autoHide);
                 }
