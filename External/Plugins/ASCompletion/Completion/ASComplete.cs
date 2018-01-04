@@ -166,12 +166,14 @@ namespace ASCompletion.Completion
                         }
                         if (word == "package" || Array.IndexOf(features.typesKeywords, word) >= 0) 
                             return false;
-                        // override
-                        if (word == features.overrideKey)
-                            return ASGenerator.HandleGeneratorCompletion(Sci, autoHide, word);
                         // new/extends/instanceof/...
-                        if (features.HasTypePreKey(word))
-                            return HandleNewCompletion(Sci, "", autoHide, word);
+                        if (features.HasTypePreKey(word)) return HandleNewCompletion(Sci, "", autoHide, word);
+                        var beforeBody = true;
+                        var expr = CurrentResolvedContext?.Result?.Context;
+                        if (expr != null) beforeBody = expr.ContextFunction == null || expr.BeforeBody;
+                        if (!beforeBody && features.codeKeywords.Contains(word)) return false;
+                        // override
+                        if (word == features.overrideKey) return ASGenerator.HandleGeneratorCompletion(Sci, autoHide, word);
                         // import
                         if (features.hasImports && (word == features.importKey || word == features.importKeyAlt))
                             return HandleImportCompletion(Sci, "", autoHide);
