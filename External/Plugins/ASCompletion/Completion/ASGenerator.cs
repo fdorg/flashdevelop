@@ -69,8 +69,8 @@ namespace ASCompletion.Completion
 
             contextMatch = null;
             contextToken = Sci.GetWordFromPosition(position);
+            if (context.CodeGenerator != null && context.CodeGenerator.ContextualGenerator(Sci, position, options)) return;
             ASResult resolve = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(position, true));
-            if (context.CodeGenerator != null && context.CodeGenerator.ContextualGenerator(Sci, options, resolve)) return;
 
             int line = Sci.LineFromPosition(position);
             FoundDeclaration found = GetDeclarationAtLine(line);

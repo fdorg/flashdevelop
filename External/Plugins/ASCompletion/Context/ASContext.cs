@@ -1,7 +1,3 @@
-/**
-* Autocompletion context manager
-*/
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,6 +6,7 @@ using System.Text;
 using System.Windows.Forms;
 using ASCompletion.Commands;
 using ASCompletion.Completion;
+using ASCompletion.Generators;
 using ASCompletion.Model;
 using ASCompletion.Settings;
 using PluginCore;
@@ -134,6 +131,7 @@ namespace ASCompletion.Context
         #endregion
 
         #region context properties
+        
         public virtual IContextSettings Settings
         {
             get { return null; }
@@ -1357,6 +1355,8 @@ namespace ASCompletion.Context
         }
 
         public IContextualGenerator CodeGenerator { get; protected set; } = null;
+
+        public IContextualGenerator DocumentationGenerator { get; protected set; } = new DocumentationGenerator();
         #endregion
 
         #region plugin commands

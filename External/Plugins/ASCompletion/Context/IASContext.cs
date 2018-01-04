@@ -6,6 +6,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using ASCompletion.Completion;
+using ASCompletion.Generators;
 using ASCompletion.Model;
 using ASCompletion.Settings;
 using ScintillaNet;
@@ -310,6 +311,7 @@ namespace ASCompletion.Context
         bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression);
 
         IContextualGenerator CodeGenerator { get; }
+        IContextualGenerator DocumentationGenerator { get; }
         #endregion
 
         #region Properties

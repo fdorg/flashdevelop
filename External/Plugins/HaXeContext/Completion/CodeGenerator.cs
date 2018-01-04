@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using ASCompletion.Completion;
 using ASCompletion.Context;
+using ASCompletion.Generators;
 using ASCompletion.Model;
 using PluginCore;
 using PluginCore.Localization;
@@ -12,8 +13,9 @@ namespace HaXeContext.Completion
 {
     internal class CodeGenerator : IContextualGenerator
     {
-        public bool ContextualGenerator(ScintillaControl sci, List<ICompletionListItem> options, ASResult expr)
+        public bool ContextualGenerator(ScintillaControl sci, int position, List<ICompletionListItem> options)
         {
+            var expr = ASComplete.GetExpressionType(sci, sci.WordEndPosition(position, true));
             if ((ASContext.Context.CurrentClass.Flags & FlagType.Interface) != 0
                 && (expr.Member == null || (expr.Member.Flags & FlagType.Variable) != 0))
             {
