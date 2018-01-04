@@ -168,7 +168,9 @@ namespace ASCompletion.Completion
                             return false;
                         // new/extends/instanceof/...
                         if (features.HasTypePreKey(word)) return HandleNewCompletion(Sci, "", autoHide, word);
-                        var beforeBody = CurrentResolvedContext?.Result?.Context?.BeforeBody ?? true;
+                        var beforeBody = true;
+                        var expr = CurrentResolvedContext?.Result?.Context;
+                        if (expr != null) beforeBody = expr.ContextFunction == null || expr.BeforeBody;
                         if (!beforeBody && features.codeKeywords.Contains(word)) return false;
                         // override
                         if (word == features.overrideKey) return ASGenerator.HandleGeneratorCompletion(Sci, autoHide, word);
