@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using ASCompletion.Context;
 using ASCompletion.Model;
@@ -12,7 +13,6 @@ namespace HaXeContext.Generators
     {
         protected override void GenerateDocumentation(string context)
         {
-            // get indentation
             var sci = ASContext.CurSciControl;
             if (sci == null) return;
             var position = sci.CurrentPos;
@@ -20,38 +20,41 @@ namespace HaXeContext.Generators
             var indent = sci.LineIndentPosition(line) - sci.PositionFromLine(line);
             var tab = sci.GetLine(line).Substring(0, indent);
             var newline = LineEndDetector.GetNewLineMarker(sci.EOLMode);
-
             var cbs = PluginBase.Settings.CommentBlockStyle;
-            var star = cbs == CommentBlockStyle.Indented ? " *" : "*";
+            var headerStar = cbs == CommentBlockStyle.Indented ? " *" : "*";
+            string bodyStar;
+            var enableLeadingAsterisks = ((HaXeSettings) ASContext.Context.Settings).EnableLeadingAsterisks;
+            if (enableLeadingAsterisks) bodyStar = headerStar;
+            else bodyStar = cbs == CommentBlockStyle.Indented ? "  " : " ";
             var parInd = cbs == CommentBlockStyle.Indented ? "\t" : " ";
             if (!PluginBase.MainForm.Settings.UseTabs) parInd = " ";
 
             // empty box
             if (context == null)
             {
-                sci.ReplaceSel(newline + tab + star + " " + newline + tab + star + "/");
-                position += newline.Length + tab.Length + 1 + star.Length;
+                sci.ReplaceSel(newline + tab + headerStar + " " + newline + tab + headerStar + "/");
+                position += newline.Length + tab.Length + 1 + headerStar.Length;
                 sci.SetSel(position, position);
             }
             // method details
             else
             {
-                var box = newline + tab + star + " ";
+                var box = newline + tab + bodyStar + " ";
                 var mFun = re_splitFunction.Match(context);
                 if (mFun.Success && !re_property.IsMatch(mFun.Groups["fname"].Value))
                 {
                     // parameters
                     var list = ParseMethodParameters(mFun.Groups["params"].Value);
-                    foreach (var param in list)
-                        box += newline + tab + star + " @param" + parInd + param.Name;
+                    box = list.Aggregate(box, (current, param) => current + (newline + tab + bodyStar + " @param" + parInd + param.Name));
                     // return type
                     var mType = re_variableType.Match(mFun.Groups["type"].Value);
                     if (mType.Success && !mType.Groups["type"].Value.Equals("void", StringComparison.OrdinalIgnoreCase))
-                        box += newline + tab + star + " @return"; //+mType.Groups["type"].Value;
+                        box += newline + tab + bodyStar + " @return";
                 }
-                box += newline + tab + star + "/";
+                if (enableLeadingAsterisks) box += newline + tab + headerStar + "/";
+                else box += newline + tab + "**" + "/";
                 sci.ReplaceSel(box);
-                position += newline.Length + tab.Length + 1 + star.Length;
+                position += newline.Length + tab.Length + 1 + headerStar.Length;
                 sci.SetSel(position, position);
             }
         }

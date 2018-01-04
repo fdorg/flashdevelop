@@ -152,6 +152,13 @@
     <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_methodDetails_5.hx" />
     <EmbeddedResource Include="Test Files\generators\documentation\BeforeGenerateDocumentation_methodDetails_6.hx" />
     <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_methodDetails_6.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_6.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_empty.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_5.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

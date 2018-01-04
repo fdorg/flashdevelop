@@ -31,7 +31,7 @@ namespace ASCompletion.TestUtils
 
         static void SetFeatures(IASContext mock, IASContext context)
         {
-            mock.Settings.LanguageId.Returns(context.Settings.LanguageId);
+            mock.Settings.Returns(context.Settings);
             mock.Features.Returns(context.Features);
             mock.CurrentModel.Returns(context.CurrentModel);
             var visibleExternalElements = context.GetVisibleExternalElements();
