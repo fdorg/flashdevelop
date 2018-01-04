@@ -794,6 +794,8 @@
     <EmbeddedResource Include="Test Files\generated\as3\documentation\AfterGenerateDocumentation_methodDetails_3.as" />
     <EmbeddedResource Include="Test Files\generated\as3\documentation\BeforeGenerateDocumentation_methodDetails_4.as" />
     <EmbeddedResource Include="Test Files\generated\as3\documentation\AfterGenerateDocumentation_methodDetails_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\documentation\AfterGenerateDocumentation_none.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\documentation\BeforeGenerateDocumentation_none.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

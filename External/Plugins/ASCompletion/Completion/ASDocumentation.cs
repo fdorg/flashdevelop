@@ -42,15 +42,10 @@ namespace ASCompletion.Completion
                 switch (Value)
                 {
                     // documentation tag
-                    case '@':
-                        return HandleDocTagCompletion(Sci);
+                    case '@': return HandleDocTagCompletion(Sci);
                     
                     // documentation bloc
-                    case '*':
-                        if ((position > 2) && (Sci.CharAt(position - 3) == '/') && (Sci.CharAt(position - 2) == '*')
-                            && ((position == 3) || (Sci.BaseStyleAt(position - 4) != 3)))
-                            ASContext.Context.DocumentationGenerator.ContextualGenerator(Sci, position, new List<ICompletionListItem>());
-                        break;
+                    case '*': return ASContext.Context.DocumentationGenerator.ContextualGenerator(Sci, position, new List<ICompletionListItem>());
                 }
             }
             return false;

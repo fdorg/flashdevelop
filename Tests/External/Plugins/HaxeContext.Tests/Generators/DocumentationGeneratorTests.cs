@@ -16,7 +16,6 @@ namespace HaXeContext.Generators
 {
     using GeneratorItem = ASCompletion.Generators.DocumentationGenerator.GeneratorItem;
 
-    [TestFixture]
     public class DocumentationGeneratorTests : ASCompletionTests
     {
         [TestFixtureSetUp]
@@ -24,7 +23,7 @@ namespace HaXeContext.Generators
 
         public class ContextualGeneratorTests : DocumentationGeneratorTests
         {
-            internal static string Impl(ScintillaControl sci, string fileName, DocumentationGeneratorJobType job, bool enableLeadingAsterisks)
+            internal static string Impl(ScintillaControl sci, string fileName, DocumentationGeneratorJobType job, bool enableLeadingAsterisks, bool hasGenerator)
             {
                 SetHaxeFeatures(sci);
                 var sourceText = ReadAllText(fileName);
@@ -34,52 +33,60 @@ namespace HaXeContext.Generators
                 fileName = fileName.Replace($"\\FlashDevelop\\Bin\\Debug\\{nameof(HaXeContext)}\\Test_Files\\", $"\\Tests\\External\\Plugins\\{nameof(HaXeContext)}.Tests\\Test Files\\");
                 ASContext.Context.CurrentModel.FileName = fileName;
                 PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
-                return Common(sci, sourceText, job, enableLeadingAsterisks);
+                return Common(sci, sourceText, job, enableLeadingAsterisks, hasGenerator);
             }
 
-            internal static string Common(ScintillaControl sci, string sourceText, DocumentationGeneratorJobType job, bool enableLeadingAsterisks)
+            internal static string Common(ScintillaControl sci, string sourceText, DocumentationGeneratorJobType job, bool enableLeadingAsterisks, bool hasGenerator)
             {
                 SetSrc(sci, sourceText);
                 var options = new List<ICompletionListItem>();
                 ((HaXeSettings) ASContext.Context.Settings).EnableLeadingAsterisks = enableLeadingAsterisks;
                 ASContext.Context.DocumentationGenerator.ContextualGenerator(sci, sci.CurrentPos, options);
                 var item = options.Find(it => it is GeneratorItem && ((GeneratorItem)it).Job == job);
-                Assert.NotNull(item);
-                var value = item.Value;
+                if (hasGenerator)
+                {
+                    Assert.NotNull(item);
+                    var value = item.Value;
+                }
+                else Assert.IsNull(item);
                 return sci.Text;
             }
+
             public class ContextualGeneratorTestsEnableLeadingAsterisks : ContextualGeneratorTests
             {
                 public IEnumerable<TestCaseData> TestCases
                 {
                     get
                     {
-                        yield return new TestCaseData("BeforeGenerateDocumentation_empty", DocumentationGeneratorJobType.Empty)
+                        yield return new TestCaseData("BeforeGenerateDocumentation_none", DocumentationGeneratorJobType.Empty, false)
+                            .Returns(ReadAllText("AfterGenerateDocumentation_none"))
+                            .SetName("None");
+                        yield return new TestCaseData("BeforeGenerateDocumentation_empty", DocumentationGeneratorJobType.Empty, true)
                             .Returns(ReadAllText("AfterGenerateDocumentation_empty"))
                             .SetName("Empty");
-                        yield return new TestCaseData("BeforeGenerateDocumentation_methodDetails", DocumentationGeneratorJobType.MethodDetails)
+                        yield return new TestCaseData("BeforeGenerateDocumentation_methodDetails", DocumentationGeneratorJobType.MethodDetails, true)
                             .Returns(ReadAllText("AfterGenerateDocumentation_methodDetails"))
                             .SetName("MethodDetails");
-                        yield return new TestCaseData("BeforeGenerateDocumentation_methodDetails_2", DocumentationGeneratorJobType.MethodDetails)
+                        yield return new TestCaseData("BeforeGenerateDocumentation_methodDetails_2", DocumentationGeneratorJobType.MethodDetails, true)
                             .Returns(ReadAllText("AfterGenerateDocumentation_methodDetails_2"))
                             .SetName("MethodDetails. Case 2");
-                        yield return new TestCaseData("BeforeGenerateDocumentation_methodDetails_3", DocumentationGeneratorJobType.MethodDetails)
+                        yield return new TestCaseData("BeforeGenerateDocumentation_methodDetails_3", DocumentationGeneratorJobType.MethodDetails, true)
                             .Returns(ReadAllText("AfterGenerateDocumentation_methodDetails_3"))
                             .SetName("MethodDetails. Case 3");
-                        yield return new TestCaseData("BeforeGenerateDocumentation_methodDetails_4", DocumentationGeneratorJobType.MethodDetails)
+                        yield return new TestCaseData("BeforeGenerateDocumentation_methodDetails_4", DocumentationGeneratorJobType.MethodDetails, true)
                             .Returns(ReadAllText("AfterGenerateDocumentation_methodDetails_4"))
                             .SetName("MethodDetails. Case 4");
-                        yield return new TestCaseData("BeforeGenerateDocumentation_methodDetails_5", DocumentationGeneratorJobType.MethodDetails)
+                        yield return new TestCaseData("BeforeGenerateDocumentation_methodDetails_5", DocumentationGeneratorJobType.MethodDetails, true)
                             .Returns(ReadAllText("AfterGenerateDocumentation_methodDetails_5"))
                             .SetName("MethodDetails. Case 5");
-                        yield return new TestCaseData("BeforeGenerateDocumentation_methodDetails_6", DocumentationGeneratorJobType.MethodDetails)
+                        yield return new TestCaseData("BeforeGenerateDocumentation_methodDetails_6", DocumentationGeneratorJobType.MethodDetails, true)
                             .Returns(ReadAllText("AfterGenerateDocumentation_methodDetails_6"))
                             .SetName("MethodDetails. Case 6");
                     }
                 }
 
                 [Test, TestCaseSource(nameof(TestCases))]
-                public string Haxe(string fileName, DocumentationGeneratorJobType job) => Impl(sci, fileName, job, true);
+                public string Haxe(string fileName, DocumentationGeneratorJobType job, bool hasGenerator) => Impl(sci, fileName, job, true, hasGenerator);
             }
 
             public class ContextualGeneratorTestsDisableLeadingAsterisks : ContextualGeneratorTests
@@ -113,7 +120,7 @@ namespace HaXeContext.Generators
                 }
 
                 [Test, TestCaseSource(nameof(TestCases))]
-                public string Haxe(string fileName, DocumentationGeneratorJobType job) => Impl(sci, fileName, job, false);
+                public string Haxe(string fileName, DocumentationGeneratorJobType job) => Impl(sci, fileName, job, false, true);
             }
         }
 

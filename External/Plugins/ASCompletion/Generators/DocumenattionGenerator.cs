@@ -23,13 +23,15 @@ namespace ASCompletion.Generators
 
         public bool ContextualGenerator(ScintillaControl sci, int position, List<ICompletionListItem> options)
         {
+            if ((position <= 2) || (sci.CharAt(position - 3) != '/') || (sci.CharAt(position - 2) != '*') || ((position != 3) && (sci.BaseStyleAt(position - 4) == 3))) return false;
+
             // is the block before a function declaration?
             var len = sci.TextLength - 1;
             var c = ' ';
             var sb = new StringBuilder();
             while (position < len)
             {
-                c = (char)sci.CharAt(position);
+                c = (char) sci.CharAt(position);
                 sb.Append(c);
                 if (c == '(' || c == ';' || c == '{' || c == '}') break;
                 position++;
@@ -44,7 +46,7 @@ namespace ASCompletion.Generators
                 var parCount = c == '(' ? 1 : 0;
                 while (position < len)
                 {
-                    c = (char)sci.CharAt(position);
+                    c = (char) sci.CharAt(position);
                     sb.Append(c);
                     if (dquCount > 0)
                     {
