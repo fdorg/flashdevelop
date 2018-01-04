@@ -420,22 +420,23 @@ namespace PluginCore.Controls
                 ignoreKeys = false;
                 if (!ke.Handled && PluginBase.MainForm.CurrentDocument.IsEditable)
                 {
-                    PluginBase.MainForm.CurrentDocument.SciControl.BeginUndoAction();
+                    sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                    sci.BeginUndoAction();
                     try
                     {
-                        sci = PluginBase.MainForm.CurrentDocument.SciControl;
+                        var line = sci.CurrentLine;
+                        var indentSize = sci.GetLineIndentation(line);
+                        if (line + 1 < sci.LineCount) indentSize = Math.Max(indentSize, sci.GetLineIndentation(line + 1));
                         sci.LineEnd();
                         sci.SetSel(sci.CurrentPos, sci.CurrentPos);
                         sci.ReplaceSel(sci.NewLineMarker);
-                        var line = sci.CurrentLine;
-                        var indentSize = sci.GetLineIndentation(line - 1);
+                        line = sci.CurrentLine;
                         sci.SetLineIndentation(line, indentSize);
-                        var pos = sci.CurrentPos + indentSize;
-                        sci.SetSel(pos, pos);
+                        sci.GotoLineIndent(line);
                     }
                     finally
                     {
-                        PluginBase.MainForm.CurrentDocument.SciControl.EndUndoAction();
+                        sci.EndUndoAction();
                     }
                 }
                 return true;
