@@ -1958,6 +1958,8 @@ namespace ASCompletion.Completion
 
         public static int GetStartOfStatement(ScintillaControl sci, int statementEnd, ASResult expr)
         {
+            var wordBefore = expr.Context?.WordBefore;
+            if ((expr.Type != null && wordBefore == "new") || (IsHaxe && wordBefore == "cast")) return expr.Context.WordBeforePosition;
             var line = sci.LineFromPosition(statementEnd);
             var text = sci.GetLine(line);
             var match = Regex.Match(text, @"[;\s\n\r]*", RegexOptions.RightToLeft);
@@ -2030,10 +2032,6 @@ namespace ASCompletion.Completion
                     hasDot = false;
                 }
             }
-            if (expr.Type != null && (expr.Type.Flags & FlagType.Class) > 0 && expr.Context?.WordBefore == "new")
-                result = sci.WordStartPosition(result - 1, false);
-            else if (IsHaxe && expr.Context?.WordBefore == "cast" && (char)sci.CharAt(result) == '(')
-                result = sci.WordStartPosition(result - 1, true);
             return result;
         }
 
