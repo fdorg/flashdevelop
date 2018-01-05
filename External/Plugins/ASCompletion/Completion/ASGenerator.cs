@@ -633,7 +633,7 @@ namespace ASCompletion.Completion
 
         private static void ShowNewVarList(FoundDeclaration found, List<ICompletionListItem> options)
         {
-            bool generateClass = GetLangIsValid();
+            bool generateClass = true;
             ScintillaControl sci = ASContext.CurSciControl;
             int currentPos = sci.CurrentPos;
             ASResult exprAtCursor = ASComplete.GetExpressionType(sci, sci.WordEndPosition(currentPos, true));
@@ -784,25 +784,21 @@ namespace ASCompletion.Completion
 
         private static void ShowFieldFromParameter(FoundDeclaration found, List<ICompletionListItem> options)
         {
-            if (GetLangIsValid())
-            {
-                Hashtable parameters = new Hashtable();
-                parameters["scope"] = GetDefaultVisibility(found.inClass);
-                string label;
-                if (GetDefaultVisibility(found.inClass) == Visibility.Protected)
-                    label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedFieldFromParameter");
-                else label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFieldFromParameter");
-                options.Add(new GeneratorItem(label, GeneratorJobType.FieldFromParameter, found.member, found.inClass, parameters));
-                parameters = new Hashtable();
-                parameters["scope"] = Visibility.Public;
-                label = TextHelper.GetString("ASCompletion.Label.GeneratePublicFieldFromParameter");
-                options.Add(new GeneratorItem(label, GeneratorJobType.FieldFromParameter, found.member, found.inClass, parameters));
-            }
+            Hashtable parameters = new Hashtable();
+            parameters["scope"] = GetDefaultVisibility(found.inClass);
+            string label;
+            if (GetDefaultVisibility(found.inClass) == Visibility.Protected)
+                label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedFieldFromParameter");
+            else label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFieldFromParameter");
+            options.Add(new GeneratorItem(label, GeneratorJobType.FieldFromParameter, found.member, found.inClass, parameters));
+            parameters = new Hashtable();
+            parameters["scope"] = Visibility.Public;
+            label = TextHelper.GetString("ASCompletion.Label.GeneratePublicFieldFromParameter");
+            options.Add(new GeneratorItem(label, GeneratorJobType.FieldFromParameter, found.member, found.inClass, parameters));
         }
 
         static void ShowAddInterfaceDefList(FoundDeclaration found, IEnumerable<string> interfaces, ICollection<ICompletionListItem> options)
         {
-            if (!GetLangIsValid()) return;
             var label = TextHelper.GetString("ASCompletion.Label.AddInterfaceDef");
             foreach (var interf in interfaces)
             {
@@ -877,17 +873,6 @@ namespace ASCompletion.Completion
             if (!result.IsNull()) return;
             var label = TextHelper.GetString("ASCompletion.Label.GenerateSet");
             options.Add(new GeneratorItem(label, GeneratorJobType.Setter, found.member, found.inClass));
-        }
-
-        private static bool GetLangIsValid()
-        {
-            IProject project = PluginBase.CurrentProject;
-            if (project == null)
-                return false;
-
-            return project.Language.StartsWithOrdinal("as")
-                || project.Language.StartsWithOrdinal("haxe")
-                || project.Language.StartsWithOrdinal("loom");
         }
 
         #endregion
