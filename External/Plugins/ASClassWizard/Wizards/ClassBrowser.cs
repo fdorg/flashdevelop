@@ -11,7 +11,7 @@ namespace ASClassWizard.Wizards
     public partial class ClassBrowser : SmartForm
     {
         private MemberList all;
-        private List<GListBox.GListBoxItem> dataProvider;
+        private List<ListBox.ListBoxItem> dataProvider;
         private FlagType invalidFlag;
         private FlagType validFlag;
         private int resultCount;
@@ -26,7 +26,7 @@ namespace ASClassWizard.Wizards
             set { this.all = value; }
         }
 
-        public List<GListBox.GListBoxItem> DataProvider
+        public List<ListBox.ListBoxItem> DataProvider
         {
             get { return this.dataProvider; }
             set { this.dataProvider = value; }
@@ -52,7 +52,7 @@ namespace ASClassWizard.Wizards
         public ClassBrowser()
         {
             this.FormGuid = "a076f763-e85e-49a2-8688-a6d35b39e7c6";
-            this.DataProvider = new List<GListBox.GListBoxItem>();
+            this.DataProvider = new List<ListBox.ListBoxItem>();
             InitializeComponent();
             InitializeLocalization();
             this.Font = PluginBase.Settings.DefaultFont;
@@ -70,7 +70,7 @@ namespace ASClassWizard.Wizards
 
         private void ClassBrowser_Load(object sender, EventArgs e)
         {
-            GListBox.GListBoxItem node;
+            ListBox.ListBoxItem node;
             this.itemList.BeginUpdate();
             this.itemList.Items.Clear();
             if (this.ClassList != null)
@@ -85,7 +85,7 @@ namespace ASClassWizard.Wizards
                         if (!((item.Flags & IncludeFlag) > 0)) continue;
                     }
                     if (this.itemList.Items.Count > 0 && item.Name == this.itemList.Items[this.itemList.Items.Count - 1].ToString()) continue;
-                    node = new GListBox.GListBoxItem(item.Name, (item.Flags & FlagType.Interface) > 0 ? 6 : 8);
+                    node = new ListBox.ListBoxItem(item.Name, (item.Flags & FlagType.Interface) > 0 ? 6 : 8);
                     this.itemList.Items.Add(node);
                     this.DataProvider.Add(node);
                 }
@@ -108,7 +108,7 @@ namespace ASClassWizard.Wizards
             this.itemList.Items.Clear();
 
             topIndex = 0;
-            List<GListBox.GListBoxItem> result = this.FilterSmart();
+            List<ListBox.ListBoxItem> result = this.FilterSmart();
                 
             this.itemList.Items.AddRange(result.ToArray());
             this.itemList.EndUpdate();
@@ -121,7 +121,7 @@ namespace ASClassWizard.Wizards
         /// <summary>
         /// Filter using CompletionList smart comparison
         /// </summary>
-        private List<GListBox.GListBoxItem> FilterSmart()
+        private List<ListBox.ListBoxItem> FilterSmart()
         {
             lastScore = 99;
             resultCount = 0;
@@ -133,7 +133,7 @@ namespace ASClassWizard.Wizards
         /// <summary>
         /// Filter the results
         /// </summary>
-        private bool FindAllItems(GListBox.GListBoxItem item)
+        private bool FindAllItems(ListBox.ListBoxItem item)
         {
             if (matchLen == 0) return true;
             int score = PluginCore.Controls.CompletionList.SmartMatch(item.Text, matchToken, matchLen);

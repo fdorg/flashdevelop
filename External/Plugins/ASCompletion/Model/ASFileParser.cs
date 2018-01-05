@@ -2584,9 +2584,10 @@ namespace ASCompletion.Model
                         //
                         if (curClass != null)
                         {
-                            if (token == curClass.Constructor)
+                            var constructorKey = features.ConstructorKey;
+                            if (token == curClass.Constructor || (!string.IsNullOrEmpty(constructorKey) && token == constructorKey))
                             {
-                                if (haXe) // constructor is: new()
+                                if (token == constructorKey)
                                 {
                                     member.Name = curClass.Name;
                                     curClass.Constructor = curClass.Name;

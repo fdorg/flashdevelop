@@ -1,33 +1,45 @@
-﻿using System.Drawing;
+﻿using PluginCore;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace ASClassWizard.Wizards
 {
-    public class GListBox : ListBox
+    public class ListBox : ListBoxEx, IThemeHandler
     {
         private ImageList _myImageList;
-        public ImageList ImageList
-        {
-            get { return _myImageList; }
-            set { _myImageList = value; }
-        }
-        public GListBox()
+
+        public ListBox()
         {
             // Set owner draw mode
             this.ItemHeight = this.Font.Height + 2;
             this.DrawMode = DrawMode.OwnerDrawFixed;
         }
 
+        public ImageList ImageList
+        {
+            get { return _myImageList; }
+            set { _myImageList = value; }
+        }
+
+        public void AfterTheming()
+        {
+            this.BorderStyle = BorderStyle.FixedSingle;
+            this.BorderColor = PluginBase.MainForm.GetThemeColor("ListBox.BorderColor", SystemColors.ControlText);
+            this.ForeColor = PluginBase.MainForm.GetThemeColor("ListBox.ForeColor", SystemColors.ControlText);
+            this.BackColor = PluginBase.MainForm.GetThemeColor("ListBox.BackColor", SystemColors.Window);
+            this.Refresh();
+        }
+
         protected override void OnDrawItem( System.Windows.Forms.DrawItemEventArgs e )
         {
             e.DrawBackground();
             e.DrawFocusRectangle();
-            GListBoxItem item;
+            ListBoxItem item;
             Rectangle bounds = e.Bounds;
             Size imageSize = _myImageList.ImageSize;
             try
             {
-                item = (GListBoxItem)Items[e.Index];
+                item = (ListBoxItem)Items[e.Index];
                 if (item.ImageIndex != -1)
                 {
                     ImageList.Draw(e.Graphics, bounds.Left, bounds.Top, item.ImageIndex);
@@ -56,7 +68,7 @@ namespace ASClassWizard.Wizards
             base.OnDrawItem(e);
         }
 
-        public class GListBoxItem
+        public class ListBoxItem
         {
             public int matchScore;
         
@@ -75,13 +87,13 @@ namespace ASClassWizard.Wizards
                 set { _myImageIndex = value; }
             }
         
-            public GListBoxItem(string text, int index)
+            public ListBoxItem(string text, int index)
             {
                 _myText = text;
                 _myImageIndex = index;
             }
-            public GListBoxItem(string text) : this(text, -1) { }
-            public GListBoxItem() : this("") { }
+            public ListBoxItem(string text) : this(text, -1) { }
+            public ListBoxItem() : this("") { }
             public override string ToString()
             {
              return _myText;
