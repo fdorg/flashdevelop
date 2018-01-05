@@ -4498,16 +4498,18 @@ namespace ASCompletion.Completion
             {
                 return ClassModel.ClassDeclaration(result.InClass) + GetToolTipDoc(result.InClass);
             }
-            else if (result.Type != null)
+            if (result.Type != null)
             {
                 if (result.Context.WordBefore == "new")
                 {
-                    var member = result.Type.Members.Search(result.Type.Name, FlagType.Constructor, 0);
+                    var constructorKey = result.Type.InFile.Context.Features.ConstructorKey;
+                    var name = string.IsNullOrEmpty(constructorKey) ? result.Type.Name : constructorKey;
+                    var member = result.Type.Members.Search(name, 0, 0);
                     if (member != null) return MemberTooltipText(member, result.Type) + GetToolTipDoc(member);
                 }
                 return ClassModel.ClassDeclaration(result.Type) + GetToolTipDoc(result.Type);
             }
-            else return null;
+            return null;
         }
 
         private static string GetToolTipDoc(MemberModel model)
