@@ -3068,9 +3068,7 @@ namespace ASCompletion.Completion
             string paramsString = TemplateUtils.ParametersString(paramMember, true);
             Hashtable info = new Hashtable();
             info["className"] = className;
-            if (project.Language.StartsWithOrdinal("as")) info["templatePath"] = Path.Combine(projTemplateDir, "Class.as.fdt");
-            else if (project.Language.StartsWithOrdinal("haxe")) info["templatePath"] = Path.Combine(projTemplateDir, "Class.hx.fdt");
-            else if (project.Language.StartsWithOrdinal("loom")) info["templatePath"] = Path.Combine(projTemplateDir, "Class.ls.fdt");
+            info["templatePath"] = Path.Combine(projTemplateDir, $"Class{ASContext.Context.Settings.DefaultExtension}.fdt");
             info["inDirectory"] = Path.GetDirectoryName(inClass.InFile.FileName);
             info["constructorArgs"] = paramsString.Length > 0 ? paramsString : null;
             info["constructorArgTypes"] = constructorArgTypes;
