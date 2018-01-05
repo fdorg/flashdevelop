@@ -3708,8 +3708,6 @@ namespace ASCompletion.Completion
                             }
                         }
                         sb.Insert(0, c);
-                        expression.WordBefore = null;
-                        expression.WordBeforePosition = 0;
                     }
                     else if (characterClass.IndexOf(c) >= 0)
                     {
