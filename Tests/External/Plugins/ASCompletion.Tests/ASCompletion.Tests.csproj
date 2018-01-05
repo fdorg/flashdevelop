@@ -804,6 +804,10 @@
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateGetterSetter_issue_3.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateGetterSetter_issue_4.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateGetterSetter_issue_5.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1749_6.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1749_6.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue1749_6.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue1749_6.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\documentation\AfterGenerateDocumentation_empty.as" />
     <EmbeddedResource Include="Test Files\generated\as3\documentation\BeforeGenerateDocumentation_empty.as" />
     <EmbeddedResource Include="Test Files\generated\as3\documentation\BeforeGenerateDocumentation_methodDetails.as" />
