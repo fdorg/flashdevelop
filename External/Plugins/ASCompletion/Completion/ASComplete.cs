@@ -4439,6 +4439,71 @@ namespace ASCompletion.Completion
                 && (model.QualifiedName == "XML" || model.QualifiedName == "XMLList");
         }
 
+        public static int ExpressionEndPosition(ScintillaControl sci, int startPos, int endPos)
+        {
+            var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
+            var groupCount = 0;
+            var brCount = 0;
+            var genCount = 0;
+            var spacesCount = 0;
+            var statementEnd = startPos;
+            var hadWS = false;
+            var hadDot = true;
+            sci.Colourise(0, -1);
+            while (statementEnd < endPos)
+            {
+                if (sci.PositionIsOnComment(statementEnd) || sci.PositionIsInString(statementEnd))
+                {
+                    spacesCount++;
+                    statementEnd++;
+                    continue;
+                }
+                var c = (char) sci.CharAt(statementEnd++);
+                if (c == ';')
+                {
+                    if (brCount == 0) break;
+                }
+                else if (c == '(' || c == '[') groupCount++;
+                else if (c == '{') brCount++;
+                else if (c == ')' || c == ']')
+                {
+                    groupCount--;
+                    if (groupCount < 0) break;
+                }
+                else if (c == '}')
+                {
+                    brCount--;
+                    if (brCount < 0) break;
+                }
+                if (groupCount > 0 || brCount > 0) continue;
+                if (c == ',') break;
+                if (c == '<') genCount++;
+                else if (c == '>' && genCount > 0) genCount--;
+                else if (c == '.' && genCount == 0)
+                {
+                    hadWS = false;
+                    hadDot = true;
+                    spacesCount = 0;
+                }
+                else if (characterClass.Contains(c))
+                {
+                    if (!hadDot) break;
+                    hadWS = false;
+                }
+                else if (c <= ' ')
+                {
+                    if (groupCount == 0 && brCount == 0)
+                    {
+                        if (!hadWS) hadDot = false;
+                        hadWS = true;
+                    }
+                    spacesCount++;
+                }
+                else spacesCount = 0;
+            }
+            return statementEnd - 1 - spacesCount;
+        }
+
         #endregion
 
         #region tooltips formatting
