@@ -2953,7 +2953,6 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
-
             public class GetStartOfStatement : GenerateJob
             {
                 public IEnumerable<TestCaseData> AS3TestCases
