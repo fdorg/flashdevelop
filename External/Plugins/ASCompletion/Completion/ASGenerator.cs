@@ -648,7 +648,7 @@ namespace ASCompletion.Completion
 
         private static void ShowNewVarList(FoundDeclaration found, List<ICompletionListItem> options)
         {
-            bool generateClass = GetLangIsValid();
+            bool generateClass = true;
             ScintillaControl sci = ASContext.CurSciControl;
             int currentPos = sci.CurrentPos;
             ASResult exprAtCursor = ASComplete.GetExpressionType(sci, sci.WordEndPosition(currentPos, true));
@@ -799,25 +799,21 @@ namespace ASCompletion.Completion
 
         private static void ShowFieldFromParameter(FoundDeclaration found, List<ICompletionListItem> options)
         {
-            if (GetLangIsValid())
-            {
-                Hashtable parameters = new Hashtable();
-                parameters["scope"] = GetDefaultVisibility(found.inClass);
-                string label;
-                if (GetDefaultVisibility(found.inClass) == Visibility.Protected)
-                    label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedFieldFromParameter");
-                else label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFieldFromParameter");
-                options.Add(new GeneratorItem(label, GeneratorJobType.FieldFromParameter, found.member, found.inClass, parameters));
-                parameters = new Hashtable();
-                parameters["scope"] = Visibility.Public;
-                label = TextHelper.GetString("ASCompletion.Label.GeneratePublicFieldFromParameter");
-                options.Add(new GeneratorItem(label, GeneratorJobType.FieldFromParameter, found.member, found.inClass, parameters));
-            }
+            Hashtable parameters = new Hashtable();
+            parameters["scope"] = GetDefaultVisibility(found.inClass);
+            string label;
+            if (GetDefaultVisibility(found.inClass) == Visibility.Protected)
+                label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedFieldFromParameter");
+            else label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFieldFromParameter");
+            options.Add(new GeneratorItem(label, GeneratorJobType.FieldFromParameter, found.member, found.inClass, parameters));
+            parameters = new Hashtable();
+            parameters["scope"] = Visibility.Public;
+            label = TextHelper.GetString("ASCompletion.Label.GeneratePublicFieldFromParameter");
+            options.Add(new GeneratorItem(label, GeneratorJobType.FieldFromParameter, found.member, found.inClass, parameters));
         }
 
         static void ShowAddInterfaceDefList(FoundDeclaration found, IEnumerable<string> interfaces, ICollection<ICompletionListItem> options)
         {
-            if (!GetLangIsValid()) return;
             var label = TextHelper.GetString("ASCompletion.Label.AddInterfaceDef");
             foreach (var interf in interfaces)
             {
@@ -892,17 +888,6 @@ namespace ASCompletion.Completion
             if (!result.IsNull()) return;
             var label = TextHelper.GetString("ASCompletion.Label.GenerateSet");
             options.Add(new GeneratorItem(label, GeneratorJobType.Setter, found.member, found.inClass));
-        }
-
-        private static bool GetLangIsValid()
-        {
-            IProject project = PluginBase.CurrentProject;
-            if (project == null)
-                return false;
-
-            return project.Language.StartsWithOrdinal("as")
-                || project.Language.StartsWithOrdinal("haxe")
-                || project.Language.StartsWithOrdinal("loom");
         }
 
         #endregion
@@ -1219,7 +1204,6 @@ namespace ASCompletion.Completion
         {
             string name = GetPropertyNameFor(member);
             PropertiesGenerationLocations location = ASContext.CommonSettings.PropertiesGenerationLocation;
-
             var latest = TemplateUtils.GetTemplateBlockMember(sci, TemplateUtils.GetBoundary("AccessorsMethods"));
             if (latest != null)
             {
@@ -1229,8 +1213,17 @@ namespace ASCompletion.Completion
             {
                 if (location == PropertiesGenerationLocations.AfterLastPropertyDeclaration)
                 {
-                    if (IsHaxe) latest = FindLatest(FlagType.Function, 0, inClass, false, false);
-                    else latest = FindLatest(FlagType.Getter | FlagType.Setter, 0, inClass, false, false);
+                    if (IsHaxe)
+                    {
+                        if (job == GeneratorJobType.Setter) latest = FindMember("get_" + (name ?? member.Name), inClass);
+                        else if (job == GeneratorJobType.Getter) latest = FindMember("set_" + (name ?? member.Name), inClass);
+                        if (latest == null) latest = FindLatest(FlagType.Function, 0, inClass, false, false);
+                    }
+                    else
+                    {
+                        if (job == GeneratorJobType.Getter || job == GeneratorJobType.Setter) latest = FindMember(name ?? member.Name, inClass);
+                        if (latest == null) latest = FindLatest(FlagType.Getter | FlagType.Setter, 0, inClass, false, false);
+                    }
                 }
                 else latest = member;
             }
@@ -1261,12 +1254,23 @@ namespace ASCompletion.Completion
                         if (RenameMember(sci, member, newName)) member.Name = newName;
                     }
                 }
-
-                int atLine = latest.LineTo + 1;
-                if (location == PropertiesGenerationLocations.BeforeVariableDeclaration)
-                    atLine = latest.LineTo;
-                int position = sci.PositionFromLine(atLine) - ((sci.EOLMode == 0) ? 2 : 1);
-
+                var startsWithNewLine = true;
+                var endsWithNewLine = false;
+                int atLine;
+                if (location == PropertiesGenerationLocations.BeforeVariableDeclaration) atLine = latest.LineTo;
+                else
+                {
+                    if (job == GeneratorJobType.Getter && (latest.Flags & (FlagType.Dynamic | FlagType.Function)) != 0)
+                    {
+                        atLine = latest.LineFrom;
+                        var declaration = GetDeclarationAtLine(atLine - 1);
+                        startsWithNewLine = declaration.member != null;
+                        endsWithNewLine = true;
+                    }
+                    else atLine = latest.LineTo + 1;
+                }
+                var position = sci.PositionFromLine(atLine) - ((sci.EOLMode == 0) ? 2 : 1);
+                sci.SetSel(position, position);
                 if (job == GeneratorJobType.GetterSetter)
                 {
                     sci.SetSel(position, position);
@@ -1274,15 +1278,15 @@ namespace ASCompletion.Completion
                 }
                 else
                 {
-                    if (job != GeneratorJobType.Getter)
+                    if (job == GeneratorJobType.Setter)
                     {
                         sci.SetSel(position, position);
                         GenerateSetter(name, member, position);
                     }
-                    if (job != GeneratorJobType.Setter)
+                    else if (job == GeneratorJobType.Getter)
                     {
                         sci.SetSel(position, position);
-                        GenerateGetter(name, member, position);
+                        GenerateGetter(name, member, position, startsWithNewLine, endsWithNewLine);
                     }
                 }
             }
@@ -2003,11 +2007,11 @@ namespace ASCompletion.Completion
                 else if (c == '[' && arrCount > 0) arrCount--;
                 else if (c == ')') parCount++;
                 else if (c == '(' && parCount > 0) parCount--;
-                else if (c == '>')
+                else if (c == '>' && arrCount == 0 && parCount == 0 && braCount == 0)
                 {
                     if (i > 1 && (char)sci.CharAt(i - 2) != '-') genCount++;
                 }
-                else if (c == '<' && genCount > 0) genCount--;
+                else if (c == '<' && genCount > 0 && arrCount == 0 && parCount == 0 && braCount == 0) genCount--;
                 else if (c == '}') braCount++;
                 else if (c == '{' && braCount > 0) braCount--;
                 else if (c == '\"' && sQuotes == 0)
@@ -2074,13 +2078,12 @@ namespace ASCompletion.Completion
             sci.Colourise(0, -1);
             while (statementEnd < endPos)
             {
-                if (sci.PositionIsOnComment(statementEnd))
+                if (sci.PositionIsOnComment(statementEnd) || sci.PositionIsInString(statementEnd))
                 {
                     statementEnd++;
                     continue;
                 }
                 char c = (char)sci.CharAt(statementEnd++);
-
                 bool endOfStatement = false;
                 switch (c)
                 {
@@ -3910,7 +3913,9 @@ namespace ASCompletion.Completion
             return null;
         }
 
-        private static void GenerateGetter(string name, MemberModel member, int position)
+        private static void GenerateGetter(string name, MemberModel member, int position) => GenerateGetter(name, member, position, true, false);
+
+        private static void GenerateGetter(string name, MemberModel member, int position, bool startsWithNewLine, bool endsWithNewLine)
         {
             var newMember = new MemberModel
             {
@@ -3920,9 +3925,12 @@ namespace ASCompletion.Completion
             };
             if ((member.Flags & FlagType.Static) > 0) newMember.Flags = FlagType.Static;
             string template = TemplateUtils.GetTemplate("Getter");
-            string decl = NewLine + TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
+            string decl;
+            if (startsWithNewLine) decl = NewLine + TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
+            else decl = TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "Member", member.Name);
             decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", NewLine);
+            if (endsWithNewLine) decl += NewLine + NewLine;
             InsertCode(position, decl);
         }
 
