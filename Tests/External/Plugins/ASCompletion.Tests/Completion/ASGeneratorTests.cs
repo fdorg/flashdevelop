@@ -1545,6 +1545,11 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_5"))
                                 .SetName("Issue 1749. Case 5")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1749_6"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_6"))
+                                .SetName("Issue 1749. Modulo")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
                     }
                 }
 
@@ -1651,6 +1656,11 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue_1704_4"))
                                 .SetName("from (function foo():haxe.Timer->{v:haxe.ds.Vector<Int>->Type.ValueType} ...)()")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1749_6"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1749_6"))
+                                .SetName("Issue 1749. Modulo")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
                     }
                 }
 
