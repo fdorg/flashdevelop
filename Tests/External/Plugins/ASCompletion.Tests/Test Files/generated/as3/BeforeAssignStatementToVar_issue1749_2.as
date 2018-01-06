@@ -1,8 +1,8 @@
-package {
+﻿package {
 	public class Main {
 		public function Main() {
-			var newName:String;
-			trace(newName);
+			1 +
+			1$(EntryPoint)
 		}
 	}
 }

@@ -478,7 +478,7 @@ namespace ASCompletion.Model
                 Assert.AreEqual("Float", member.Parameters[2].Type);
             }
 
-            [Test(Description = "Constructors doesn't seem to be identified correctly?")]
+            [Test]
             public void ParseFile_Abstracts()
             {
                 var model = new FileModel {Context = new HaXeContext.Context(new HaXeContext.HaXeSettings()), haXe = true};
@@ -495,9 +495,8 @@ namespace ASCompletion.Model
                 var member = plainAbstract.Members[0];
                 Assert.AreEqual(3, member.LineFrom);
                 Assert.AreEqual(5, member.LineTo);
-                // Is this one right?
-                Assert.AreEqual("new", member.Name);
-                Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
+                Assert.AreEqual("AbstractInt", member.Name);
+                Assert.AreEqual(FlagType.Constructor, member.Flags & FlagType.Constructor);
                 Assert.AreEqual(1, member.Parameters.Count);
                 Assert.AreEqual("i", member.Parameters[0].Name);
                 Assert.AreEqual("Int", member.Parameters[0].Type);
@@ -512,9 +511,8 @@ namespace ASCompletion.Model
                 member = implicitCastAbstract.Members[0];
                 Assert.AreEqual(9, member.LineFrom);
                 Assert.AreEqual(11, member.LineTo);
-                // Is this one right?
-                Assert.AreEqual("new", member.Name);
-                Assert.AreEqual(FlagType.Function, member.Flags & FlagType.Function);
+                Assert.AreEqual("MyAbstract", member.Name);
+                Assert.AreEqual(FlagType.Constructor, member.Flags & FlagType.Constructor);
                 Assert.AreEqual(1, member.Parameters.Count);
                 Assert.AreEqual("i", member.Parameters[0].Name);
                 Assert.AreEqual("Int", member.Parameters[0].Type);
@@ -915,7 +913,7 @@ namespace ASCompletion.Model
                 member = classModel.Members[0];
                 Assert.AreEqual(31, member.LineFrom);
                 Assert.AreEqual(33, member.LineTo);
-                Assert.AreEqual("new", member.Name);
+                Assert.AreEqual("AbstractInt", member.Name);
                 Assert.AreEqual("Java Style comments", member.Comments);
             }
 
@@ -1990,6 +1988,33 @@ namespace ASCompletion.Model
                 var model = new FileModel {Context = new HaXeContext.Context(new HaXeContext.HaXeSettings()), haXe = true};
                 new ASFileParser().ParseSrc(model, sourceText);
                 return model.Classes[0].LineTo;
+            }
+
+            static IEnumerable<TestCaseData> ParseClassTestCases_issue1921
+            {
+                get
+                {
+                    yield return new TestCaseData(ReadAllTextHaxe("Issue1921_case1"))
+                        .Returns(11)
+                        .SetName("Issue 1921. Case 1")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1921");
+                    yield return new TestCaseData(ReadAllTextHaxe("Issue1921_case2"))
+                        .Returns(11)
+                        .SetName("Issue 1921. Case 2")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1921");
+                    yield return new TestCaseData(ReadAllTextHaxe("Issue1921_case3"))
+                        .Returns(11)
+                        .SetName("Issue 1921. Case 3")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1921");
+                }
+            }
+
+            [Test, TestCaseSource(nameof(ParseClassTestCases_issue1921))]
+            public int ParseFile_Issue1921(string sourceText)
+            {
+                var model = new FileModel {Context = new HaXeContext.Context(new HaXeContext.HaXeSettings()), haXe = true};
+                new ASFileParser().ParseSrc(model, sourceText);
+                return model.Classes.First().LineTo;
             }
         }
     }
