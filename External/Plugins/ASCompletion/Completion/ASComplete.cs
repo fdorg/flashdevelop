@@ -2641,10 +2641,14 @@ namespace ASCompletion.Completion
             if (token.Length == 0) return notFound;
             if (asFunction && tokens.Length == 1) token += "(";
 
-            var type = ctx.ResolveToken(token, inClass.InFile);
+            var isFunction = token.StartsWith('#');
+            ClassModel type;
+            if (isFunction && string.IsNullOrEmpty(context.WordBefore) && context.SubExpressions != null && context.SubExpressions.Count == 1)
+                type = ctx.ResolveToken(context.SubExpressions.First(), inClass.InFile);
+            else type = ctx.ResolveToken(token, inClass.InFile);
             if (type != ClassModel.VoidClass) return EvalTail(context, inFile, new ASResult {Type = type}, tokens, complete, filterVisibility) ?? notFound;
             ASResult head = null;
-            if (token.StartsWith('#'))
+            if (isFunction)
             {
                 Match mSub = re_sub.Match(token);
                 if (mSub.Success)

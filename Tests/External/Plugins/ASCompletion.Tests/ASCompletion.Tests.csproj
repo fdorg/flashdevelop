@@ -806,6 +806,8 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1749_6.as" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue1749_6.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue1749_6.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_operator_is.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_operator_is.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
