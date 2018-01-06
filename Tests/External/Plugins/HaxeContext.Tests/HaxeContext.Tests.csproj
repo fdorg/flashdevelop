@@ -113,7 +113,6 @@
     <ProjectReference Include="..\ASCompletion.Tests\ASCompletion.Tests.csproj">
       <Project>{ABC71D26-295C-4C6C-B6DE-320AD49EEF79}</Project>
       <Name>ASCompletion.Tests</Name>
-      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\CodeRefactor.Tests\CodeRefactor.Tests.csproj">
       <Project>{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}</Project>
@@ -137,6 +136,7 @@
     <EmbeddedResource Include="Test Files\parser\Issue1849_1.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue1849_2.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue1849_3.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1916_1.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
