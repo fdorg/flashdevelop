@@ -292,7 +292,7 @@ namespace HaXeContext
         }
 
         /// <summary>
-        /// Classpathes & classes cache initialisation
+        /// Classpathes & classes cache initialization
         /// </summary>
         public override void BuildClassPath()
         {
