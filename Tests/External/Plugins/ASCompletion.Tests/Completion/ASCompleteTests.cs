@@ -997,7 +997,21 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("test ( [1,2,3,4,5,6,7,8] )  /*some comment*/, 1)")
                         .Returns("test ( [1,2,3,4,5,6,7,8] )".Length);
                     yield return new TestCaseData("test.apply(null, [1,2,3,4,5,6,7,8] )  /*some comment*/, 1)")
-                        .Returns("test.apply(null, [1,2,3,4,5,6,7,8] )".Length);
+                        .Returns("test".Length);
+                    yield return new TestCaseData("test( <int>[1,2,3,4] ); //")
+                        .Returns("test( <int>[1,2,3,4] )".Length);
+                    yield return new TestCaseData("a > b")
+                        .Returns("a".Length);
+                    yield return new TestCaseData("a ? b : c")
+                        .Returns("a".Length);
+                    yield return new TestCaseData("a:Boolean")
+                        .Returns("a".Length);
+                    yield return new TestCaseData("a = b")
+                        .Returns("a".Length);
+                    yield return new TestCaseData("a += b")
+                        .Returns("a".Length);
+                    yield return new TestCaseData("a << b")
+                        .Returns("a".Length);
                 }
             }
 
@@ -1015,11 +1029,11 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("test(); //")
                         .Returns("test()".Length);
                     yield return new TestCaseData("test[1]; //")
-                        .Returns("test[1]".Length);
+                        .Returns("test".Length);
                     yield return new TestCaseData("test['1']; //")
-                        .Returns("test['1']".Length);
-                    yield return new TestCaseData("{x:10, y:10}; //")
-                        .Returns("{x:10, y:10}".Length);
+                        .Returns("test".Length);
+                    yield return new TestCaseData("x:10, y:10}; //")
+                        .Returns("x".Length);
                     yield return new TestCaseData("test()); //")
                         .Returns("test()".Length);
                     yield return new TestCaseData("test()]; //")
@@ -1027,25 +1041,29 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("test()}; //")
                         .Returns("test()".Length);
                     yield return new TestCaseData("test[1]); //")
-                        .Returns("test[1]".Length);
-                    yield return new TestCaseData("test[1]]; //")
-                        .Returns("test[1]".Length);
-                    yield return new TestCaseData("test[1]}; //")
-                        .Returns("test[1]".Length);
+                        .Returns("test".Length);
                     yield return new TestCaseData("test(), 1, 2); //")
                         .Returns("test()".Length);
                     yield return new TestCaseData("test().test().test().test; //")
-                        .Returns("test().test().test().test".Length);
+                        .Returns("test()".Length);
                     yield return new TestCaseData("test(')))))').test(']]]]]]]]').test('}}}}}}}}}}').test; //")
-                        .Returns("test(')))))').test(']]]]]]]]').test('}}}}}}}}}}').test".Length);
-                    yield return new TestCaseData("test(')))))')\n.test(']]]]]]]]')\n.test('}}}}}}}}}}')\n.test; //")
-                        .Returns("test(')))))')\n.test(']]]]]]]]')\n.test('}}}}}}}}}}')\n.test".Length);
+                        .Returns("test(')))))')".Length);
+                    yield return new TestCaseData("test.test(')))))')\n.test(']]]]]]]]')\n.test('}}}}}}}}}}')\n.test; //")
+                        .Returns("test".Length);
                     yield return new TestCaseData("test(function() return 10); //")
                         .Returns("test(function() return 10)".Length);
                     yield return new TestCaseData("test(1, 2, 3); //")
                         .Returns("test(1, 2, 3)".Length);
                     yield return new TestCaseData("test( new Map<K,V> ); //")
                         .Returns("test( new Map<K,V> )".Length);
+                    yield return new TestCaseData("Map<K,V> ; //")
+                        .Returns("Map".Length);
+                    yield return new TestCaseData("test; //")
+                        .Returns("test".Length);
+                    yield return new TestCaseData("test.a.b.c.d().e(1).f('${g}').h([1 => {x:1}]); //")
+                        .Returns("test".Length);
+                    yield return new TestCaseData("test(/*12345*/); //")
+                        .Returns("test(/*12345*/)".Length);
                 }
             }
 
@@ -1059,7 +1077,7 @@ namespace ASCompletion.Completion
             static int Common(ScintillaControl sci, string sourceText)
             {
                 sci.SetText(sourceText);
-                return ASComplete.ExpressionEndPosition(sci, 0, sourceText.Length);
+                return ASComplete.ExpressionEndPosition(sci, 0);
             }
         }
 
