@@ -132,6 +132,14 @@ namespace HaXeContext
                 yield return new TestCaseData("[1 => 1]")
                     .Returns(new ClassModel {Name = "Map<K, V>", Type = "Map<K, V>", InFile = FileModel.Ignore})
                     .SetName("[1 => 1]");
+                yield return new TestCaseData("(v is String)")
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore});
+                yield return new TestCaseData("(['is'] is Array)")
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore});
+                yield return new TestCaseData("(' is string' is String)")
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore});
+                yield return new TestCaseData("({x:Int, y:Int} is Point)")
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore});
             }
         }
 
