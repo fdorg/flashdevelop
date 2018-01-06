@@ -50,7 +50,12 @@ namespace ASCompletion.TestUtils
             });
             mock.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
             mock.ResolveToken(null, null).ReturnsForAnyArgs(x => context.ResolveToken(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
-            mock.ResolveDotContext(null, null, false).ReturnsForAnyArgs(it => context.ResolveDotContext(it.ArgAt<ScintillaControl>(0), it.ArgAt<ASExpr>(1), it.ArgAt<bool>(2)));
+            mock.ResolveDotContext(null, null, false).ReturnsForAnyArgs(it =>
+            {
+                var expr = it.ArgAt<ASExpr>(1);
+                if (expr == null) return null;
+                return context.ResolveDotContext(it.ArgAt<ScintillaControl>(0), expr, it.ArgAt<bool>(2));
+            });
             mock.IsFileValid.Returns(context.IsFileValid);
             mock.GetDefaultValue(null).ReturnsForAnyArgs(it => context.GetDefaultValue(it.ArgAt<string>(0)));
             mock.DecomposeTypes(null).ReturnsForAnyArgs(it => context.DecomposeTypes(it.ArgAt<IEnumerable<string>>(0) ?? new string[0]));
