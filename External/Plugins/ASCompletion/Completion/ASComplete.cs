@@ -166,12 +166,14 @@ namespace ASCompletion.Completion
                         }
                         if (word == "package" || Array.IndexOf(features.typesKeywords, word) >= 0) 
                             return false;
-                        // override
-                        if (word == features.overrideKey)
-                            return ASGenerator.HandleGeneratorCompletion(Sci, autoHide, word);
                         // new/extends/instanceof/...
-                        if (features.HasTypePreKey(word))
-                            return HandleNewCompletion(Sci, "", autoHide, word);
+                        if (features.HasTypePreKey(word)) return HandleNewCompletion(Sci, "", autoHide, word);
+                        var beforeBody = true;
+                        var expr = CurrentResolvedContext?.Result?.Context;
+                        if (expr != null) beforeBody = expr.ContextFunction == null || expr.BeforeBody;
+                        if (!beforeBody && features.codeKeywords.Contains(word)) return false;
+                        // override
+                        if (word == features.overrideKey) return ASGenerator.HandleGeneratorCompletion(Sci, autoHide, word);
                         // import
                         if (features.hasImports && (word == features.importKey || word == features.importKeyAlt))
                             return HandleImportCompletion(Sci, "", autoHide);
@@ -2040,7 +2042,10 @@ namespace ASCompletion.Completion
                 else if (cMember != null && line == cMember.LineFrom)
                 {
                     string text = Sci.GetLine(line);
-                    int p = text.IndexOfOrdinal(cMember.Name);
+                    int p;
+                    if ((cMember.Flags & FlagType.Constructor) != 0 && !string.IsNullOrEmpty(features.ConstructorKey))
+                        p = text.IndexOfOrdinal(features.ConstructorKey);
+                    else p = text.IndexOfOrdinal(cMember.Name);
                     if (p < 0 || position < Sci.PositionFromLine(line) + p)
                         return HandleDeclarationCompletion(Sci, expr.Value, autoHide);
                 }
@@ -2901,7 +2906,7 @@ namespace ASCompletion.Completion
                                 InferVariableType(local, var);
 
                             if ((var.Flags & FlagType.Function) > 0)
-                                result.Type = ResolveType("Function", null);
+                                result.Type = context.ResolveType("Function", null);
                             else
                                 result.Type = ResolveType(var.Type, inFile);
 
@@ -3362,18 +3367,15 @@ namespace ASCompletion.Completion
         private static List<string> ExtractedSubex;
 
         /// <summary>
-        /// Find Actionscript expression at cursor position
+        /// Find expression at cursor position
         /// </summary>
         /// <param name="sci">Scintilla Control</param>
         /// <param name="position">Cursor position</param>
         /// <returns></returns>
-        internal static ASExpr GetExpression(ScintillaControl sci, int position)
-        {
-            return GetExpression(sci, position, false);
-        }
+        internal static ASExpr GetExpression(ScintillaControl sci, int position) => GetExpression(sci, position, false);
 
         /// <summary>
-        /// Find Actionscript expression at cursor position
+        /// Find expression at cursor position
         /// </summary>
         /// <param name="sci">Scintilla Control</param>
         /// <param name="position">Cursor position</param>
@@ -3448,7 +3450,7 @@ namespace ASCompletion.Completion
             bool hadDot = ignoreWhiteSpace;
             int dotCount = 0;
             bool inRegex = false;
-            char dot = features.dot[features.dot.Length-1];
+            char dot = features.dot[features.dot.Length - 1];
             while (position > minPos)
             {
                 position--;
@@ -3460,14 +3462,7 @@ namespace ASCompletion.Completion
                 }
                 else if (!IsCommentStyle(style))
                 {
-                    var c2 = c;
-                    c = (char)sci.CharAt(position);
                     // end of regex literal
-                    if ((dQuotes > 0 && c != '\"') || (sQuotes > 0 && c != '\''))
-                    {
-                        sbSub.Insert(0, c);
-                        continue;
-                    }
                     if (inRegex)
                     {
                         inRegex = false;
@@ -3475,9 +3470,16 @@ namespace ASCompletion.Completion
                         expression.SubExpressions.Add("");
                         sb.Insert(0, "RegExp.#" + (subCount++) + "~");
                     }
+                    var c2 = c;
+                    c = (char)sci.CharAt(position);
+                    if ((dQuotes > 0 && c != '\"') || (sQuotes > 0 && c != '\''))
+                    {
+                        sbSub.Insert(0, c);
+                        continue;
+                    }
                     // array access
-                    else if (c == ']') arrCount++;
-                    if (c == '[')
+                    if (c == ']') arrCount++;
+                    else if (c == '[')
                     {
                         arrCount--;
                         if (arrCount == 0 && braCount == 0)
@@ -3782,6 +3784,12 @@ namespace ASCompletion.Completion
                     else if (c == '=')
                     {
                         expression.Separator = '=';
+                        break;
+                    }
+                    else if (features.ArithmeticOperators.Contains(c))
+                    {
+                        expression.Separator = c;
+                        expression.SeparatorPosition = position;
                         break;
                     }
                     else //if (hadWS && !hadDot)
@@ -5144,6 +5152,7 @@ namespace ASCompletion.Completion
         public string Value;
         public List<string> SubExpressions;
         public char Separator;
+        public int SeparatorPosition;
         public string WordBefore;
         public ComaExpression coma;
 
