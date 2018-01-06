@@ -132,6 +132,8 @@ namespace HaXeContext
                 yield return new TestCaseData("[1 => 1]")
                     .Returns(new ClassModel {Name = "Map<K, V>", Type = "Map<K, V>", InFile = FileModel.Ignore})
                     .SetName("[1 => 1]");
+                yield return new TestCaseData("(v:String)")
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
             }
         }
 

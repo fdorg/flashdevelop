@@ -12,6 +12,7 @@ using PluginCore.Helpers;
 using PluginCore;
 using ASCompletion.Completion;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using ProjectManager.Projects.Haxe;
 using ProjectManager.Projects;
@@ -1021,6 +1022,20 @@ namespace HaXeContext
                 {
                     //TODO: parse anonymous type
                     return ResolveType(features.dynamicKey, inFile);
+                }
+                if (first == '(' && last == ')')
+                {
+                    var groupCount = 0;
+                    var sb = new StringBuilder(token.Length - 2);
+                    for (var i = token.Length - 2; i >= 1; i--)
+                    {
+                        var c = token[i];
+                        if (c == '}' || c == ')') groupCount++;
+                        else if (c == '{' || c == '(') groupCount--;
+                        else if (c == ':' && groupCount == 0) break;
+                        sb.Insert(0, c);
+                    }
+                    return ResolveType(sb.ToString(), inFile);
                 }
             }
             return base.ResolveToken(token, inFile);
