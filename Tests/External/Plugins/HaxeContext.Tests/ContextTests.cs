@@ -107,37 +107,37 @@ namespace HaXeContext
             get
             {
                 yield return new TestCaseData("true")
-                    .Returns(new ClassModel { Name = "Bool", Type = "Bool", InFile = FileModel.Ignore })
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
                     .SetName("true");
                 yield return new TestCaseData("false")
-                    .Returns(new ClassModel { Name = "Bool", Type = "Bool", InFile = FileModel.Ignore })
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
                     .SetName("false");
                 yield return new TestCaseData("{}")
-                    .Returns(new ClassModel { Name = "Dynamic", Type = "Dynamic", InFile = FileModel.Ignore })
+                    .Returns(new ClassModel {Name = "Dynamic", Type = "Dynamic", InFile = FileModel.Ignore})
                     .SetName("{}");
                 yield return new TestCaseData("10")
-                    .Returns(new ClassModel { Name = "Float", Type = "Float", InFile = FileModel.Ignore })
+                    .Returns(new ClassModel {Name = "Float", Type = "Float", InFile = FileModel.Ignore})
                     .SetName("10");
                 yield return new TestCaseData("-10")
-                    .Returns(new ClassModel { Name = "Float", Type = "Float", InFile = FileModel.Ignore })
+                    .Returns(new ClassModel {Name = "Float", Type = "Float", InFile = FileModel.Ignore})
                     .SetName("-10");
                 yield return new TestCaseData("\"\"")
-                    .Returns(new ClassModel { Name = "String", Type = "String", InFile = FileModel.Ignore })
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore})
                     .SetName("\"\"");
                 yield return new TestCaseData("''")
-                    .Returns(new ClassModel { Name = "String", Type = "String", InFile = FileModel.Ignore })
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore})
                     .SetName("''");
                 yield return new TestCaseData("0xFF0000")
-                    .Returns(new ClassModel { Name = "Int", Type = "Int", InFile = FileModel.Ignore })
+                    .Returns(new ClassModel {Name = "Int", Type = "Int", InFile = FileModel.Ignore})
                     .SetName("0xFF0000");
                 yield return new TestCaseData("[]")
-                    .Returns(new ClassModel { Name = "Array<T>", Type = "Array<T>", InFile = FileModel.Ignore })
+                    .Returns(new ClassModel {Name = "Array<T>", Type = "Array<T>", InFile = FileModel.Ignore})
                     .SetName("[]");
                 yield return new TestCaseData("[1 => 1]")
-                    .Returns(new ClassModel { Name = "Map<K, V>", Type = "Map<K, V>", InFile = FileModel.Ignore })
+                    .Returns(new ClassModel {Name = "Map<K, V>", Type = "Map<K, V>", InFile = FileModel.Ignore})
                     .SetName("[1 => 1]");
                 yield return new TestCaseData("(v:String)")
-                    .Returns(new ClassModel { Name = "String", Type = "String", InFile = FileModel.Ignore });
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
             }
         }
 
