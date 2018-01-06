@@ -422,15 +422,15 @@ namespace ASCompletion.Completion
                             .SetName("From {}|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfArrayInitializer"))
-                            .Returns(";.[]")
+                            .Returns(";[]")
                             .SetName("From []|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfArrayInitializer.push"))
-                            .Returns(";.[].push")
+                            .Returns(";[].push")
                             .SetName("From [].push|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfTwoDimensionalArrayInitializer"))
-                            .Returns(";.[[], []]")
+                            .Returns(";[[], []]")
                             .SetName("From [[], []]|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfVectorInitializer"))
@@ -442,7 +442,7 @@ namespace ASCompletion.Completion
                             .SetName("From new <Vector.<int>>[new <int>[]]|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfArrayAccess"))
-                            .Returns(",.[4,5,6].[0].[2]")
+                            .Returns(",[4,5,6].[0].[2]")
                             .SetName("From [[1,2,3], [4,5,6][0][2]|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfNewVector"))
@@ -521,8 +521,8 @@ namespace ASCompletion.Completion
                             .SetName("From new Map<String, Array<Int->Int->Int>>|");
                     yield return
                         new TestCaseData(ReadAllTextHaxe("GetExpressionOfMapInitializer"))
-                            .Returns(" ")
-                            .SetName("From ['1' => 1, '2' => 2]|");
+                            .Returns(";[\"1\" => 1, \"2\" => 2]")
+                            .SetName("From [\"1\" => 1, \"2\" => 2]|");
                     yield return
                         new TestCaseData(ReadAllTextHaxe("GetExpressionOfRegex"))
                             .Returns(";g")
