@@ -5,7 +5,6 @@ using ASCompletion.Context;
 using ASCompletion.Model;
 using ASCompletion.TestUtils;
 using HaXeContext.TestUtils;
-using NSubstitute;
 using NUnit.Framework;
 
 namespace HaXeContext
