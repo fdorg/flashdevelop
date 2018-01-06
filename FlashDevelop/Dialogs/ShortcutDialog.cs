@@ -614,7 +614,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void CloseButtonClick(object sender, EventArgs e)
         {
-            //this.Close();
+            this.Close();
         }
 
         /// <summary>
