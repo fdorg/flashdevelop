@@ -15,7 +15,12 @@ namespace HaXeContext.Completion
         public override bool ContextualGenerator(ScintillaControl sci, List<ICompletionListItem> options, ASResult expr)
         {
             var context = ASContext.Context;
-            if ((context.CurrentClass.Flags & (FlagType.Enum | FlagType.TypeDef)) > 0)
+            if (context.CurrentClass.Flags.HasFlag(FlagType.Interface)
+                && (expr.Member == null || expr.Member.Flags.HasFlag(FlagType.Variable)))
+            {
+                return true;
+            }
+            if (context.CurrentClass.Flags.HasFlag(FlagType.Enum | FlagType.TypeDef))
             {
                 if (contextToken != null && expr.Member == null)
                 {
