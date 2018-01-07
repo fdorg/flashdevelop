@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using ASCompletion.Context;
+using ASCompletion.Helpers;
 using ASCompletion.Model;
 using ASCompletion.Settings;
 using PluginCore;
@@ -1290,18 +1291,30 @@ namespace ASCompletion.Completion
             var ctx = inClass.InFile.Context;
             var resolve = returnType.resolve;
             List<ASResult> expressions = null;
-            if (resolve.Context != null)
+            var context = resolve.Context;
+            if (context != null)
             {
-                expressions = new List<ASResult>();
-                var arithmeticOperators = ctx.Features.ArithmeticOperators;
-                if (arithmeticOperators.Contains(resolve.Context.Separator))
+                var operators = ctx.Features.ArithmeticOperators
+                    .Select(it => it.ToString())
+                    .Concat(ctx.Features.IncrementDecrementOperators)
+                    .ToHashSet();
+                var sep = new[] {' '};
+                var isValid = new Func<ASExpr, bool>((c) => c.Separator.Contains(' ') 
+                    && c.Separator.Split(sep, StringSplitOptions.RemoveEmptyEntries).Any(it => operators.Contains(it.Trim())));
+                if (operators.Contains(context.Separator) || operators.Contains(context.RightOperator) || isValid(context))
                 {
                     var current = resolve;
-                    expressions.Add(current);
-                    while (current != null && !current.IsNull() && arithmeticOperators.Contains(current.Context.Separator))
+                    context = current.Context;
+                    expressions = new List<ASResult> {current};
+                    var rop = false;
+                    while (operators.Contains(context.Separator) || (rop = operators.Contains(context.RightOperator)) || isValid(context))
                     {
-                        current = ASComplete.GetExpressionType(sci, current.Context.SeparatorPosition, false, true);
-                        if (current != null) expressions.Add(current);
+                        var position = rop ? context.PositionExpression : context.SeparatorPosition;
+                        current = ASComplete.GetExpressionType(sci, position, false, true);
+                        if (current == null || current.IsNull()) break;
+                        expressions.Add(current);
+                        context = current.Context;
+                        rop = false;
                     }
                 }
             }
@@ -1345,11 +1358,11 @@ namespace ASCompletion.Completion
             template = TemplateUtils.ReplaceTemplateVariable(template, "Type", cleanType);
 
             int pos;
-            if (expressions == null || expressions.Count == 0) pos = GetStartOfStatement(sci, sci.CurrentPos, resolve);
+            if (expressions == null) pos = GetStartOfStatement(sci, sci.CurrentPos, resolve);
             else
             {
                 var last = expressions.Last();
-                pos = last.Context.Separator != ';' ? last.Context.SeparatorPosition : last.Context.PositionExpression;
+                pos = last.Context.Separator != ";" ? last.Context.SeparatorPosition : last.Context.PositionExpression;
             }
             sci.SetSel(pos, pos);
             InsertCode(pos, template, sci);
@@ -3053,9 +3066,7 @@ namespace ASCompletion.Completion
             string paramsString = TemplateUtils.ParametersString(paramMember, true);
             Hashtable info = new Hashtable();
             info["className"] = className;
-            if (project.Language.StartsWithOrdinal("as")) info["templatePath"] = Path.Combine(projTemplateDir, "Class.as.fdt");
-            else if (project.Language.StartsWithOrdinal("haxe")) info["templatePath"] = Path.Combine(projTemplateDir, "Class.hx.fdt");
-            else if (project.Language.StartsWithOrdinal("loom")) info["templatePath"] = Path.Combine(projTemplateDir, "Class.ls.fdt");
+            info["templatePath"] = Path.Combine(projTemplateDir, $"Class{ASContext.Context.Settings.DefaultExtension}.fdt");
             info["inDirectory"] = Path.GetDirectoryName(inClass.InFile.FileName);
             info["constructorArgs"] = paramsString.Length > 0 ? paramsString : null;
             info["constructorArgTypes"] = constructorArgTypes;
@@ -3357,7 +3368,9 @@ namespace ASCompletion.Completion
             {
                 pos = sci.WordEndPosition(pos, true);
                 c = line.TrimEnd().Last();
-                resolve = ASComplete.GetExpressionType(sci, "]}\"'".Contains(c) || (c == '>' && !bracesRemoved) ? pos + 1 : pos, true, true);
+                var startPosition = pos;
+                if ("]}\"'".Contains(c) || ((c == '>' || features.ArithmeticOperators.Contains(c)) && !bracesRemoved)) startPosition++;
+                resolve = ASComplete.GetExpressionType(sci, startPosition, true, true);
                 if (resolve.Type != null && !resolve.IsPackage)
                 {
                     if (resolve.Type.Name == "Function" && !bracesRemoved)

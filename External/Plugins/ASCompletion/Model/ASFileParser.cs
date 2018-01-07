@@ -1834,13 +1834,13 @@ namespace ASCompletion.Model
                         break;
                     }
                 }
-                else if (c == 10 || c == 13)
+                else if (inString == 1 && c == '"') inString = 0;
+                else if (inString == 2 && c == '\'') inString = 0;
+                if (c == 10 || c == 13)
                 {
                     line++;
                     if (c == 13 && i < len && ba[i + 1] == 10) i++;
                 }
-                else if (inString == 1 && c == '"') inString = 0;
-                else if (inString == 2 && c == '\'') inString = 0;
                 i++;
             }
 
