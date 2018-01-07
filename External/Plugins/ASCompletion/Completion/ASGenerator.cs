@@ -21,7 +21,7 @@ using ScintillaNet;
 
 namespace ASCompletion.Completion
 {
-    public class ASGenerator
+    public class ASGenerator : IContextualGenerator
     {
         #region context detection (ie. entry points)
 
@@ -36,7 +36,7 @@ namespace ASCompletion.Completion
         static private Regex reModifiers = new Regex("^\\s*(\\$\\(Boundary\\))?([a-z ]+)(function|var|const)", RegexOptions.Compiled);
         static private Regex reSuperCall = new Regex("^super\\s*\\(", RegexOptions.Compiled);
 
-        static internal string contextToken;
+        protected internal static string contextToken;
         static internal string contextParam;
         static internal Match contextMatch;
         static internal ASResult contextResolved;
@@ -60,7 +60,6 @@ namespace ASCompletion.Completion
         {
             var context = ASContext.Context;
             if (context is ASContext) ((ASContext) context).UpdateCurrentFile(false); // update model
-            if ((context.CurrentClass.Flags & (FlagType.Enum | FlagType.TypeDef)) > 0) return;
 
             lookupPosition = -1;
             int position = Sci.CurrentPos;
@@ -71,7 +70,7 @@ namespace ASCompletion.Completion
             contextMatch = null;
             contextToken = Sci.GetWordFromPosition(position);
             ASResult resolve = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(position, true));
-            if (context.CodeGenerator != null && context.CodeGenerator.ContextualGenerator(Sci, options, resolve)) return;
+            if (context.CodeGenerator.ContextualGenerator(Sci, options, resolve)) return;
 
             int line = Sci.LineFromPosition(position);
             FoundDeclaration found = GetDeclarationAtLine(line);
@@ -115,7 +114,7 @@ namespace ASCompletion.Completion
             var suggestItemDeclaration = false;
             if (contextToken != null && resolve.Member == null) // import declaration
             {
-                if ((resolve.Type == null || resolve.Type.IsVoid() || !context.IsImported(resolve.Type, line)) && CheckAutoImport(resolve, options)) return;
+                if ((resolve.Type == null || resolve.Type.IsVoid() || !context.IsImported(resolve.Type, line)) && context.CodeGenerator.CheckAutoImport(resolve, options)) return;
                 if (resolve.Type == null)
                 {
                     suggestItemDeclaration = ASComplete.IsTextStyle(Sci.BaseStyleAt(position - 1));
@@ -133,7 +132,7 @@ namespace ASCompletion.Completion
                     {
                         contextMatch = m;
                         ClassModel type = context.ResolveType(contextToken, context.CurrentModel);
-                        if (type.IsVoid() && CheckAutoImport(resolve, options))
+                        if (type.IsVoid() && context.CodeGenerator.CheckAutoImport(resolve, options))
                             return;
                     }
                     ShowGetSetList(found, options);
@@ -425,6 +424,8 @@ namespace ASCompletion.Completion
             // TODO: Empty line, show generators list? yep
         }
 
+        public virtual bool ContextualGenerator(ScintillaControl sci, List<ICompletionListItem> options, ASResult expr) => false;
+
         private static MemberModel ResolveDelegate(string type, FileModel inFile)
         {
             foreach (MemberModel def in inFile.Members)
@@ -549,7 +550,7 @@ namespace ASCompletion.Completion
             return result;
         }
 
-        static bool CheckAutoImport(ASResult expr, List<ICompletionListItem> options)
+        public bool CheckAutoImport(ASResult expr, List<ICompletionListItem> options)
         {
             if (ASContext.Context.CurrentClass.Equals(expr.RelClass)) return false;
             MemberList allClasses = ASContext.Context.GetAllProjectClasses();
