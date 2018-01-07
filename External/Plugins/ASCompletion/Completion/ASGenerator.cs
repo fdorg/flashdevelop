@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using ASCompletion.Context;
+using ASCompletion.Helpers;
 using ASCompletion.Model;
 using ASCompletion.Settings;
 using PluginCore;
@@ -20,7 +21,7 @@ using ScintillaNet;
 
 namespace ASCompletion.Completion
 {
-    public class ASGenerator
+    public class ASGenerator : IContextualGenerator
     {
         #region context detection (ie. entry points)
 
@@ -35,7 +36,7 @@ namespace ASCompletion.Completion
         static private Regex reModifiers = new Regex("^\\s*(\\$\\(Boundary\\))?([a-z ]+)(function|var|const)", RegexOptions.Compiled);
         static private Regex reSuperCall = new Regex("^super\\s*\\(", RegexOptions.Compiled);
 
-        static internal string contextToken;
+        protected internal static string contextToken;
         static internal string contextParam;
         static internal Match contextMatch;
         static internal ASResult contextResolved;
@@ -59,7 +60,6 @@ namespace ASCompletion.Completion
         {
             var context = ASContext.Context;
             if (context is ASContext) ((ASContext) context).UpdateCurrentFile(false); // update model
-            if ((context.CurrentClass.Flags & (FlagType.Enum | FlagType.TypeDef)) > 0) return;
 
             lookupPosition = -1;
             int position = Sci.CurrentPos;
@@ -70,7 +70,7 @@ namespace ASCompletion.Completion
             contextMatch = null;
             contextToken = Sci.GetWordFromPosition(position);
             ASResult resolve = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(position, true));
-            if (context.CodeGenerator != null && context.CodeGenerator.ContextualGenerator(Sci, options, resolve)) return;
+            if (context.CodeGenerator.ContextualGenerator(Sci, options, resolve)) return;
 
             int line = Sci.LineFromPosition(position);
             FoundDeclaration found = GetDeclarationAtLine(line);
@@ -114,7 +114,7 @@ namespace ASCompletion.Completion
             var suggestItemDeclaration = false;
             if (contextToken != null && resolve.Member == null) // import declaration
             {
-                if ((resolve.Type == null || resolve.Type.IsVoid() || !context.IsImported(resolve.Type, line)) && CheckAutoImport(resolve, options)) return;
+                if ((resolve.Type == null || resolve.Type.IsVoid() || !context.IsImported(resolve.Type, line)) && context.CodeGenerator.CheckAutoImport(resolve, options)) return;
                 if (resolve.Type == null)
                 {
                     suggestItemDeclaration = ASComplete.IsTextStyle(Sci.BaseStyleAt(position - 1));
@@ -132,7 +132,7 @@ namespace ASCompletion.Completion
                     {
                         contextMatch = m;
                         ClassModel type = context.ResolveType(contextToken, context.CurrentModel);
-                        if (type.IsVoid() && CheckAutoImport(resolve, options))
+                        if (type.IsVoid() && context.CodeGenerator.CheckAutoImport(resolve, options))
                             return;
                     }
                     ShowGetSetList(found, options);
@@ -424,6 +424,8 @@ namespace ASCompletion.Completion
             // TODO: Empty line, show generators list? yep
         }
 
+        public virtual bool ContextualGenerator(ScintillaControl sci, List<ICompletionListItem> options, ASResult expr) => false;
+
         private static MemberModel ResolveDelegate(string type, FileModel inFile)
         {
             foreach (MemberModel def in inFile.Members)
@@ -548,7 +550,7 @@ namespace ASCompletion.Completion
             return result;
         }
 
-        static bool CheckAutoImport(ASResult expr, List<ICompletionListItem> options)
+        public bool CheckAutoImport(ASResult expr, List<ICompletionListItem> options)
         {
             if (ASContext.Context.CurrentClass.Equals(expr.RelClass)) return false;
             MemberList allClasses = ASContext.Context.GetAllProjectClasses();
@@ -1290,18 +1292,30 @@ namespace ASCompletion.Completion
             var ctx = inClass.InFile.Context;
             var resolve = returnType.resolve;
             List<ASResult> expressions = null;
-            if (resolve.Context != null)
+            var context = resolve.Context;
+            if (context != null)
             {
-                expressions = new List<ASResult>();
-                var arithmeticOperators = ctx.Features.ArithmeticOperators;
-                if (arithmeticOperators.Contains(resolve.Context.Separator))
+                var operators = ctx.Features.ArithmeticOperators
+                    .Select(it => it.ToString())
+                    .Concat(ctx.Features.IncrementDecrementOperators)
+                    .ToHashSet();
+                var sep = new[] {' '};
+                var isValid = new Func<ASExpr, bool>((c) => c.Separator.Contains(' ') 
+                    && c.Separator.Split(sep, StringSplitOptions.RemoveEmptyEntries).Any(it => operators.Contains(it.Trim())));
+                if (operators.Contains(context.Separator) || operators.Contains(context.RightOperator) || isValid(context))
                 {
                     var current = resolve;
-                    expressions.Add(current);
-                    while (current != null && !current.IsNull() && arithmeticOperators.Contains(current.Context.Separator))
+                    context = current.Context;
+                    expressions = new List<ASResult> {current};
+                    var rop = false;
+                    while (operators.Contains(context.Separator) || (rop = operators.Contains(context.RightOperator)) || isValid(context))
                     {
-                        current = ASComplete.GetExpressionType(sci, current.Context.SeparatorPosition, false, true);
-                        if (current != null) expressions.Add(current);
+                        var position = rop ? context.PositionExpression : context.SeparatorPosition;
+                        current = ASComplete.GetExpressionType(sci, position, false, true);
+                        if (current == null || current.IsNull()) break;
+                        expressions.Add(current);
+                        context = current.Context;
+                        rop = false;
                     }
                 }
             }
@@ -1345,11 +1359,11 @@ namespace ASCompletion.Completion
             template = TemplateUtils.ReplaceTemplateVariable(template, "Type", cleanType);
 
             int pos;
-            if (expressions == null || expressions.Count == 0) pos = GetStartOfStatement(sci, sci.CurrentPos, resolve);
+            if (expressions == null) pos = GetStartOfStatement(sci, sci.CurrentPos, resolve);
             else
             {
                 var last = expressions.Last();
-                pos = last.Context.Separator != ';' ? last.Context.SeparatorPosition : last.Context.PositionExpression;
+                pos = last.Context.Separator != ";" ? last.Context.SeparatorPosition : last.Context.PositionExpression;
             }
             sci.SetSel(pos, pos);
             InsertCode(pos, template, sci);
@@ -3357,7 +3371,9 @@ namespace ASCompletion.Completion
             {
                 pos = sci.WordEndPosition(pos, true);
                 c = line.TrimEnd().Last();
-                resolve = ASComplete.GetExpressionType(sci, "]}\"'".Contains(c) || (c == '>' && !bracesRemoved) ? pos + 1 : pos, true, true);
+                var startPosition = pos;
+                if ("]}\"'".Contains(c) || ((c == '>' || features.ArithmeticOperators.Contains(c)) && !bracesRemoved)) startPosition++;
+                resolve = ASComplete.GetExpressionType(sci, startPosition, true, true);
                 if (resolve.Type != null && !resolve.IsPackage)
                 {
                     if (resolve.Type.Name == "Function" && !bracesRemoved)
