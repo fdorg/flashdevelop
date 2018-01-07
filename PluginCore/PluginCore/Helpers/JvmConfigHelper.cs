@@ -10,7 +10,7 @@ namespace PluginCore.Helpers
         static public Dictionary<string, Dictionary<string, string>> Cache = new Dictionary<string, Dictionary<string, string>>();
 
         /// <summary>
-        /// Read a jvm.config file and returns its variables as a Dictionnary.
+        /// Read a jvm.config file and returns its variables as a Dictionary.
         /// </summary>
         public static Dictionary<string, string> ReadConfig(string configPath)
         {
