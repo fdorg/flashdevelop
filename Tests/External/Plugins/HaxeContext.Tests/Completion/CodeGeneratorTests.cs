@@ -1,14 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Xml.Serialization;
 using ASCompletion.Completion;
 using ASCompletion.Context;
-using ASCompletion.Model;
 using ASCompletion.TestUtils;
 using HaXeContext.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
-using PluginCore.Helpers;
 using ScintillaNet;
 
 namespace HaXeContext.Completion
