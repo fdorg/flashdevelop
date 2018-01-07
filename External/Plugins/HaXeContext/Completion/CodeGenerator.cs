@@ -17,14 +17,14 @@ namespace HaXeContext.Completion
         public override bool ContextualGenerator(ScintillaControl sci, List<ICompletionListItem> options, ASResult expr)
         {
             var context = ASContext.Context;
-            if (context.CurrentClass.Flags.HasFlag(FlagType.Interface)
-                && (expr.Member == null || expr.Member.Flags.HasFlag(FlagType.Variable)))
+            var member = expr.Member;
+            if (context.CurrentClass.Flags.HasFlag(FlagType.Interface) && (member == null || member.Flags.HasFlag(FlagType.Variable)))
             {
                 return true;
             }
             if (context.CurrentClass.Flags.HasFlag(FlagType.Enum | FlagType.TypeDef))
             {
-                if (contextToken != null && expr.Member == null)
+                if (contextToken != null && member == null)
                 {
                     var type = expr.Type ?? ClassModel.VoidClass;
                     if (!context.IsImported(type, sci.CurrentLine)) CheckAutoImport(expr, options);
@@ -34,7 +34,7 @@ namespace HaXeContext.Completion
             if (member != null
                 && member.Parameters?.Count > 0
                 && (member.LineFrom != sci.CurrentLine || !expr.Context.BeforeBody)
-                && (member.Flags & (FlagType.Static | FlagType.Function)) != 0)
+                && member.Flags.HasFlag(FlagType.Static | FlagType.Function))
             {
                 ShowConvertToUsing(sci, options, expr);
             }
