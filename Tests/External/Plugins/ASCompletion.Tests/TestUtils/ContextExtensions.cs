@@ -47,6 +47,7 @@ namespace ASCompletion.TestUtils
                 return member != null && context.IsImported(member, it.ArgAt<int>(1));
             });
             mock.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
+            mock.ResolveToken(null, null).ReturnsForAnyArgs(x => context.ResolveToken(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
             mock.IsFileValid.Returns(context.IsFileValid);
             mock.GetDefaultValue(null).ReturnsForAnyArgs(it => context.GetDefaultValue(it.ArgAt<string>(0)));
             mock.DecomposeTypes(null).ReturnsForAnyArgs(it => context.DecomposeTypes(it.ArgAt<IEnumerable<string>>(0) ?? new string[0]));
