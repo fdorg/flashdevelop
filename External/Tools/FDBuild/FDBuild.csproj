@@ -198,6 +198,7 @@
     <Compile Include="Building\AS2\AS2ProjectBuilder.cs" />
     <Compile Include="Building\AS2\MtascArgumentBuilder.cs" />
     <Compile Include="Building\AS3\FlexConfigWriter.cs" />
+    <Compile Include="Building\AS3\FlexJSProjectBuilder.cs" />
     <Compile Include="Building\Generic\GenericProjectBuilder.cs" />
     <Compile Include="Building\SwfmillLibraryBuilder.cs" />
     <Compile Include="Building\SwfmillLibraryWriter.cs" />

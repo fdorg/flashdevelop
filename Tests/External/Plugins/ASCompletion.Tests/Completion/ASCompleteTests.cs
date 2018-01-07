@@ -237,7 +237,7 @@ namespace ASCompletion.Completion
             }
 
             [Test, TestCaseSource(nameof(AS3TestCases))]
-            public MemberModel AS3(string sourceText) => AS3Impl(sourceText, sci);
+            public MemberModel AS3(string sourceText) => AS3Impl(sci, sourceText);
 
             public IEnumerable<TestCaseData> HaxeTestCases
             {
@@ -338,33 +338,34 @@ namespace ASCompletion.Completion
             }
 
             [Test, TestCaseSource(nameof(HaxeTestCases))]
-            public MemberModel Haxe(string sourceText) => HaxeImpl(sourceText, sci);
+            public MemberModel Haxe(string sourceText) => HaxeImpl(sci, sourceText);
 
-            internal static MemberModel AS3Impl(string sourceText, ScintillaControl sci)
+            internal static MemberModel AS3Impl(ScintillaControl sci, string sourceText)
             {
                 SetAs3Features(sci);
-                return Common(sourceText, sci);
+                return Common(sci, sourceText);
             }
 
-            internal static MemberModel HaxeImpl(string sourceText, ScintillaControl sci)
+            internal static MemberModel HaxeImpl(ScintillaControl sci, string sourceText)
             {
                 SetHaxeFeatures(sci);
-                return Common(sourceText, sci);
+                return Common(sci, sourceText);
             }
 
-            internal static MemberModel Common(string sourceText, ScintillaControl sci)
+            internal static MemberModel Common(ScintillaControl sci, string sourceText)
             {
-                sci.Text = sourceText;
-                SnippetHelper.PostProcessSnippets(sci, 0);
-                var currentModel = ASContext.Context.CurrentModel;
-                new ASFileParser().ParseSrc(currentModel, sci.Text);
-                var currentClass = currentModel.Classes[0];
-                ASContext.Context.CurrentClass.Returns(currentClass);
-                var currentMember = currentClass.Members[0];
-                ASContext.Context.CurrentMember.Returns(currentMember);
-                var position = sci.WordEndPosition(sci.CurrentPos, true);
-                var result = ASComplete.GetExpressionType(sci, position).Member;
+                SetSrc(sci, sourceText);
+                var result = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true)).Member;
                 return result;
+            }
+
+            [Test]
+            public void Issue1867()
+            {
+                SetHaxeFeatures(sci);
+                SetSrc(sci, ReadAllTextHaxe("GetExpressionTypeOfFunction_Issue1867_1"));
+                var expr = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
+                Assert.AreEqual(new ClassModel {Name = "Function", InFile = new FileModel{Package = "haxe.Constraints"}}, expr.Type);
             }
         }
 
@@ -454,7 +455,8 @@ namespace ASCompletion.Completion
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfRegex"))
                             .Returns(";g")
-                            .SetName("From /regex/g|");
+                            .SetName("From /regex/g|")
+                            .Ignore("https://github.com/fdorg/flashdevelop/issues/1880");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfDigit"))
                             .Returns(";1")
@@ -465,7 +467,7 @@ namespace ASCompletion.Completion
                             .SetName("From 10.0|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfInt"))
-                            .Returns(";1")
+                            .Returns("-1")
                             .SetName("From -1|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfBoolean"))
@@ -475,6 +477,70 @@ namespace ASCompletion.Completion
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfXML"))
                             .Returns(";</>")
                             .SetName("<xml/>|");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_plus"))
+                            .Returns("+1")
+                            .SetName("1 + 1");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_minus"))
+                            .Returns("-1")
+                            .SetName("1 - 1");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_mul"))
+                            .Returns("*1")
+                            .SetName("1 * 1");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_division"))
+                            .Returns("/1")
+                            .SetName("1 / 1");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_increment"))
+                            .Returns("++1")
+                            .SetName("++1");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_increment2"))
+                            .Returns(";1++")
+                            .SetName("1++. case 1");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_increment3"))
+                            .Returns(";1++")
+                            .SetName("1++. case 2");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_increment4"))
+                            .Returns(";a++")
+                            .SetName("a++");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_increment5"))
+                            .Returns("=getId.#0~++")
+                            .SetName("var id = getId()++");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_decrement"))
+                            .Returns("--1")
+                            .SetName("--1");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_decrement2"))
+                            .Returns(";1--")
+                            .SetName("1--. case 1");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_decrement3"))
+                            .Returns(";1--")
+                            .SetName("1--. case 2");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_decrement4"))
+                            .Returns(";a--")
+                            .SetName("a--");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_decrement5"))
+                            .Returns("=getId.#0~--")
+                            .SetName("var id = getId()--");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_decrement6"))
+                            .Returns("* ++1")
+                            .SetName("5 * ++1");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_decrement7"))
+                            .Returns("*1++")
+                            .SetName("5 * 1++");
                 }
             }
 
@@ -508,7 +574,8 @@ namespace ASCompletion.Completion
                     yield return
                         new TestCaseData(ReadAllTextHaxe("GetExpressionOfRegex"))
                             .Returns(";g")
-                            .SetName("~/regex/g|");
+                            .SetName("~/regex/g|")
+                            .Ignore("https://github.com/fdorg/flashdevelop/issues/1880");
                     yield return
                         new TestCaseData(ReadAllTextHaxe("GetExpressionOfNewArray"))
                             .Returns("new Array<Int>")
@@ -525,6 +592,62 @@ namespace ASCompletion.Completion
                         new TestCaseData(ReadAllTextHaxe("GetExpressionOfStringInterpolation.charAt"))
                             .Returns(";'result: ${1 + 2}'.#0~.charAt")
                             .SetName("'result: ${1 + 2}'.charAt");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_plus"))
+                            .Returns("+1")
+                            .SetName("1 + 1");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_minus"))
+                            .Returns("-1")
+                            .SetName("1 - 1");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_mul"))
+                            .Returns("*1")
+                            .SetName("1 * 1");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_division"))
+                            .Returns("/1")
+                            .SetName("1 / 1");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_increment"))
+                            .Returns("++1")
+                            .SetName("++1");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_increment2"))
+                            .Returns(";1++")
+                            .SetName("1++. case 1");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_increment3"))
+                            .Returns(";1++")
+                            .SetName("1++. case 2");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_increment4"))
+                            .Returns(";a++")
+                            .SetName("a++");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_increment5"))
+                            .Returns("=getId.#0~++")
+                            .SetName("var id = getId()++");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_decrement"))
+                            .Returns("--1")
+                            .SetName("--1");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_decrement2"))
+                            .Returns(";1--")
+                            .SetName("1--. case 1");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_decrement3"))
+                            .Returns(";1--")
+                            .SetName("1--. case 2");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_decrement4"))
+                            .Returns(";a--")
+                            .SetName("a--");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_decrement5"))
+                            .Returns("=getId.#0~--")
+                            .SetName("var id = getId()--");
                 }
             }
 
@@ -548,7 +671,7 @@ namespace ASCompletion.Completion
                 sci.Text = text;
                 SnippetHelper.PostProcessSnippets(sci, 0);
                 var expr = ASComplete.GetExpression(sci, sci.CurrentPos);
-                return $"{expr.WordBefore}{expr.Separator}{expr.Value}";
+                return $"{expr.WordBefore}{expr.Separator}{expr.Value}{expr.RightOperator}";
             }
         }
 
@@ -949,14 +1072,26 @@ namespace ASCompletion.Completion
             }
         }
 
-        internal static string ReadAllTextAS3(string fileName)
-        {
-            return TestFile.ReadAllText($"ASCompletion.Test_Files.completion.as3.{fileName}.as");
-        }
+        protected static string ReadAllTextAS3(string fileName) => TestFile.ReadAllText(GetFullPathAS3(fileName));
 
-        internal static string ReadAllTextHaxe(string fileName)
+        protected static string GetFullPathAS3(string fileName) => $"ASCompletion.Test_Files.completion.as3.{fileName}.as";
+
+        protected static string ReadAllTextHaxe(string fileName) => TestFile.ReadAllText(GetFullPathHaxe(fileName));
+
+        protected static string GetFullPathHaxe(string fileName) => $"ASCompletion.Test_Files.completion.haxe.{fileName}.hx";
+
+        protected static void SetSrc(ScintillaControl sci, string sourceText)
         {
-            return TestFile.ReadAllText($"ASCompletion.Test_Files.completion.haxe.{fileName}.hx");
+            sci.Text = sourceText;
+            SnippetHelper.PostProcessSnippets(sci, 0);
+            var currentModel = ASContext.Context.CurrentModel;
+            new ASFileParser().ParseSrc(currentModel, sci.Text);
+            var line = sci.CurrentLine;
+            var currentClass = currentModel.Classes.FirstOrDefault(line);
+            ASContext.Context.CurrentClass.Returns(currentClass);
+            var currentMember = currentClass.Members.FirstOrDefault(line);
+            ASContext.Context.CurrentMember.Returns(currentMember);
+            ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
         }
     }
 }

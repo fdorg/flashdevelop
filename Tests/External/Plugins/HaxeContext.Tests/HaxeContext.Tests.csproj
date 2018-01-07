@@ -138,6 +138,10 @@
     <EmbeddedResource Include="Test Files\parser\Issue1849_1.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue1849_2.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue1849_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1833_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1833_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1833_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1833_2.hx" />
     <EmbeddedResource Include="Test Files\completion\generated\BeforeConvertStaticMethodCallIntoStaticExtensionsCall.hx" />
     <EmbeddedResource Include="Test Files\completion\generated\AfterConvertStaticMethodCallIntoStaticExtensionsCall.hx" />
     <EmbeddedResource Include="Test Files\completion\generated\BeforeConvertStaticMethodCallIntoStaticExtensionsCall2.hx" />

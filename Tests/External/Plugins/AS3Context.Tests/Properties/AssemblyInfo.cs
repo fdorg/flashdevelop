@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using PluginCore;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("AS3Context.Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("DistroConfig.DISTRIBUTION_COMPANY")]
+[assembly: AssemblyCompany(DistroConfig.DISTRIBUTION_COMPANY)]
 [assembly: AssemblyProduct("AS3Context.Tests")]
-[assembly: AssemblyCopyright("DistroConfig.DISTRIBUTION_COPYRIGHT")]
+[assembly: AssemblyCopyright(DistroConfig.DISTRIBUTION_COPYRIGHT)]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
