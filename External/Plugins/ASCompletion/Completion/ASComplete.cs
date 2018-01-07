@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -1643,7 +1644,7 @@ namespace ASCompletion.Completion
             // get expression at cursor position
             ASExpr expr = GetExpression(Sci, position, true);
             if (string.IsNullOrEmpty(expr.Value)
-                || (expr.WordBefore == "function" && expr.Separator == ' '))
+                || (expr.WordBefore == "function" && expr.Separator == " "))
                 return false;
 
             // Context
@@ -1985,7 +1986,7 @@ namespace ASCompletion.Completion
             IASContext ctx = ASContext.Context;
             ContextFeatures features = ctx.Features;
             int dotIndex = expr.Value.LastIndexOfOrdinal(features.dot);
-            if (dotIndex == 0 && expr.Separator != '"')
+            if (dotIndex == 0 && expr.Separator != "\"")
                 return true;
 
             // complete keyword
@@ -2009,12 +2010,12 @@ namespace ASCompletion.Completion
                         return HandleImportCompletion(Sci, expr.Value, autoHide);
                 }
                 // type
-                else if (features.hasEcmaTyping && expr.Separator == ':'
+                else if (features.hasEcmaTyping && expr.Separator == ":"
                     && HandleColonCompletion(Sci, expr.Value, autoHide))
                     return true;
 
                 // no completion
-                if ((expr.BeforeBody && expr.Separator != '=')
+                if ((expr.BeforeBody && expr.Separator != "=")
                     || expr.coma == ComaExpression.AnonymousObject
                     || expr.coma == ComaExpression.FunctionDeclaration)
                     return false;
@@ -2069,7 +2070,7 @@ namespace ASCompletion.Completion
             // Context
             ASResult result;
             ClassModel tmpClass;
-            bool outOfDate = (expr.Separator == ':') && ctx.UnsetOutOfDate();
+            bool outOfDate = (expr.Separator == ":") && ctx.UnsetOutOfDate();
             FileModel cFile = ctx.CurrentModel;
             ClassModel cClass = ctx.CurrentClass;
 
@@ -2096,7 +2097,7 @@ namespace ASCompletion.Completion
             else
             {
                 result = new ASResult();
-                if (expr.Separator == '"')
+                if (expr.Separator == "\"")
                 {
                     tmpClass = ctx.ResolveType(ctx.Features.stringKey, null);
                     result.Type = tmpClass;
@@ -2127,7 +2128,7 @@ namespace ASCompletion.Completion
                 mix.Merge(result.InFile.Members);
             }
             // list instance members
-            else if (expr.ContextFunction != null || expr.Separator != ':' || (dotIndex > 0 && !result.IsNull()))
+            else if (expr.ContextFunction != null || expr.Separator != ":" || (dotIndex > 0 && !result.IsNull()))
             {
                 // user setting may ask to hide some members
                 bool limitMembers = autoHide; // ASContext.Context.HideIntrinsicMembers || (autoHide && !ASContext.Context.AlwaysShowIntrinsicMembers);
@@ -2630,7 +2631,7 @@ namespace ASCompletion.Completion
             if (expression.StartsWithOrdinal(features.dot))
             {
                 if (expression.StartsWithOrdinal(features.dot + "#")) expression = expression.Substring(1);
-                else if (context.Separator == '"') expression = '"' + expression;
+                else if (context.Separator == "\"") expression = "\"" + expression;
                 else return notFound;
             }
 
@@ -3386,7 +3387,7 @@ namespace ASCompletion.Completion
             bool haXe = ASContext.Context.CurrentModel.haXe;
             ASExpr expression = new ASExpr();
             expression.Position = position;
-            expression.Separator = ' ';
+            expression.Separator = " ";
 
             // file's member declared at this position
             expression.ContextMember = ASContext.Context.CurrentMember;
@@ -3494,7 +3495,7 @@ namespace ASCompletion.Completion
                         }
                         if (arrCount < 0)
                         {
-                            expression.Separator = ';';
+                            expression.Separator = ";";
                             break;
                         }
                     }
@@ -3503,7 +3504,7 @@ namespace ASCompletion.Completion
                         genCount--;
                         if (genCount < 0)
                         {
-                            expression.Separator = ';';
+                            expression.Separator = ";";
                             break;
                         }
                     }
@@ -3524,7 +3525,7 @@ namespace ASCompletion.Completion
                             {
                                 // AS3, AS2, Loom ex: return (a as B).<complete>
                                 // Haxe ex: return cast(a, B).<complete>
-                                expression.Separator = ';';
+                                expression.Separator = ";";
                                 expression.WordBefore = testWord;
                                 break;
                             }
@@ -3532,7 +3533,7 @@ namespace ASCompletion.Completion
                         }
                         if (parCount < 0)
                         {
-                            expression.Separator = ';';
+                            expression.Separator = ";";
                             int testPos = position - 1;
                             string testWord = GetWordLeft(sci, ref testPos); // anonymous function
                             string testWord2 = GetWordLeft(sci, ref testPos) ?? "null"; // regular function
@@ -3540,7 +3541,7 @@ namespace ASCompletion.Completion
                                 || testWord2 == features.functionKey
                                 || testWord2 == features.getKey || testWord2 == features.setKey)
                             {
-                                expression.Separator = ',';
+                                expression.Separator = ",";
                                 expression.coma = ComaExpression.FunctionDeclaration;
                             }
                             else expression.WordBefore = testWord;
@@ -3551,7 +3552,7 @@ namespace ASCompletion.Completion
                     {
                         if (!hadDot)
                         {
-                            expression.Separator = ';';
+                            expression.Separator = ";";
                             break;
                         }
                         if (parCount == 0) // start sub-expression
@@ -3586,7 +3587,7 @@ namespace ASCompletion.Completion
                         {
                             if (!ignoreWhiteSpace && hadWS)
                             {
-                                expression.Separator = ';';
+                                expression.Separator = ";";
                                 break;
                             }
                             braCount++;
@@ -3597,7 +3598,7 @@ namespace ASCompletion.Completion
                             if (braCount == 0)
                             {
                                 sb.Insert(0, "{}");
-                                expression.Separator = ';';
+                                expression.Separator = ";";
                                 continue;
                             }
                         }
@@ -3610,7 +3611,7 @@ namespace ASCompletion.Completion
                                 dQuotes--;
                                 if (dQuotes == 0)
                                 {
-                                    expression.Separator = ';';
+                                    expression.Separator = ";";
                                     if (expression.SubExpressions != null)
                                     {
                                         sbSub.Insert(0, "\"");
@@ -3642,7 +3643,7 @@ namespace ASCompletion.Completion
                                 sQuotes--;
                                 if (sQuotes == 0)
                                 {
-                                    expression.Separator = ';';
+                                    expression.Separator = ";";
                                     if (expression.SubExpressions != null)
                                     {
                                         sbSub.Insert(0, "'");
@@ -3670,7 +3671,7 @@ namespace ASCompletion.Completion
                     {
                         if (c == ';') // not expected: something's wrong
                         {
-                            expression.Separator = ';';
+                            expression.Separator = ";";
                             break;
                         }
                         // build sub expression
@@ -3684,7 +3685,7 @@ namespace ASCompletion.Completion
                         else
                         {
                             sb.Insert(sb.Length, sbSub.ToString().ToCharArray());
-                            expression.Separator = ' ';
+                            expression.Separator = " ";
                             break;
                         }
                     }
@@ -3707,7 +3708,7 @@ namespace ASCompletion.Completion
                     {
                         if (hadWS && !hadDot)
                         {
-                            expression.Separator = ' ';
+                            expression.Separator = " ";
                             break;
                         }
                         hadWS = false;
@@ -3718,7 +3719,7 @@ namespace ASCompletion.Completion
                     }
                     else if (c == ';')
                     {
-                        expression.Separator = ';';
+                        if(expression.Separator == " ") expression.Separator = ";";
                         break;
                     }
                     else if (hasGenerics && c == '<')
@@ -3729,7 +3730,7 @@ namespace ASCompletion.Completion
                             && position > minPos && sci.CharAt(position - 1) != '.')
                         {
                             position--;
-                            expression.Separator = ' ';
+                            expression.Separator = " ";
                             break;
                         }
                         if (subCount > 0)
@@ -3742,7 +3743,7 @@ namespace ASCompletion.Completion
                     else if (c == '{')
                     {
                         expression.coma = DisambiguateComa(sci, position, minPos);
-                        expression.Separator = (expression.coma == ComaExpression.None) ? ';' : ',';
+                        if (expression.Separator == " ") expression.Separator = (expression.coma == ComaExpression.None) ? ";" : ",";
                         if (expression.coma == ComaExpression.AnonymousObjectParam)
                         {
                             positionExpression = position;
@@ -3773,24 +3774,69 @@ namespace ASCompletion.Completion
                     else if (c == ',')
                     {
                         expression.coma = DisambiguateComa(sci, position, minPos);
-                        expression.Separator = (expression.coma == ComaExpression.None) ? ';' : ',';
+                        expression.Separator = (expression.coma == ComaExpression.None) ? ";" : ",";
                         break;
                     }
                     else if (c == ':')
                     {
-                        expression.Separator = ':';
+                        expression.Separator = ":";
                         break;
                     }
                     else if (c == '=')
                     {
-                        expression.Separator = '=';
+                        expression.Separator = "=";
                         break;
                     }
                     else if (features.ArithmeticOperators.Contains(c))
                     {
-                        expression.Separator = c;
                         expression.SeparatorPosition = position;
-                        break;
+                        var p = position - 1;
+                        var curOp = c.ToString();
+                        foreach (var op in features.IncrementDecrementOperators)
+                        {
+                            while (op.StartsWithOrdinal(curOp) && p > minPos)
+                            {
+                                var cc = (char)sci.CharAt(p);
+                                if (cc == c) curOp += cc;
+                                else break;
+                                p--;
+                            }
+                            if (curOp.Length > 1)
+                            {
+                                var buf = string.Empty;
+                                while (p > minPos)
+                                {
+                                    if (sci.PositionIsOnComment(p))
+                                    {
+                                        p--;
+                                        continue;
+                                    }
+                                    var cc = (char)sci.CharAt(p--);
+                                    if (cc <= ' ') buf += cc;
+                                    else if (features.ArithmeticOperators.Contains(cc))
+                                    {
+                                        buf = cc + buf;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        buf = string.Empty;
+                                        break;
+                                    }
+                                }
+                                if (buf.Length > 0) curOp = buf + curOp;
+                                break;
+                            }
+                        }
+                        if (sb.Length != 0)
+                        {
+                            expression.Separator = curOp;
+                            expression.SeparatorPosition -= curOp.Length - 1;
+                            break;
+                        }
+                        position -= curOp.Length - 1;
+                        expression.RightOperator = curOp;
+                        hadDot = true;
                     }
                     else //if (hadWS && !hadDot)
                     {
@@ -3799,8 +3845,8 @@ namespace ASCompletion.Completion
                             sb.Insert(0, $".{c}");
                             continue;
                         }
-                        if (c == '\'' || c == '"') expression.Separator = '"';
-                        else expression.Separator = ';';
+                        if (c == '\'' || c == '"') expression.Separator = "\"";
+                        else expression.Separator = ";";
                         break;
                     }
                 }
@@ -3809,14 +3855,14 @@ namespace ASCompletion.Completion
                 {
                     if (parCount == 0 && !hadDot) // not expected: something's wrong
                     {
-                        expression.Separator = ';';
+                        expression.Separator = ";";
                         break;
                     }
                 }
             }
 
             // check if there is a particular keyword
-            if (expression.Separator == ' ') expression.WordBefore = GetWordLeft(sci, ref position);
+            if (expression.Separator == " ") expression.WordBefore = GetWordLeft(sci, ref position);
 
             // result
             var value = sb.ToString();
@@ -3826,7 +3872,7 @@ namespace ASCompletion.Completion
                     value = Regex.Replace(value, @"\[.*", string.Empty);
                 else if (features.hasE4X && value.EndsWith('>'))
                 {
-                    expression.Separator = ';';
+                    expression.Separator = ";";
                     value = "</>";
                 }
             } 
@@ -4684,7 +4730,7 @@ namespace ASCompletion.Completion
                 || (context.Type.Type != null && context.Type.Type.IndexOfOrdinal(features.dot) < 0)
                 || context.Type.IsVoid())
             {
-                if (context.Member != null && expr.Separator == ' '
+                if (context.Member != null && expr.Separator == " "
                     && expr.WordBefore == features.overrideKey)
                 {
                     ASGenerator.GenerateOverride(sci, context.InClass, context.Member, position);
@@ -4718,7 +4764,7 @@ namespace ASCompletion.Completion
             if (inFile == null || import == null)
                 return false;
 
-            if (expr.Separator == ' ' && !string.IsNullOrEmpty(expr.WordBefore))
+            if (expr.Separator == " " && !string.IsNullOrEmpty(expr.WordBefore))
             {
                 if (expr.WordBefore == features.importKey || expr.WordBefore == features.importKeyAlt
                     /*|| (!features.HasTypePreKey(expr.WordBefore) && expr.WordBefore != "case" && expr.WordBefore != "return")*/)
@@ -4849,7 +4895,7 @@ namespace ASCompletion.Completion
         {
             // validate context
             var context = ASContext.Context;
-            if (expr.Separator == ' ' && expr.WordBefore != null
+            if (expr.Separator == " " && expr.WordBefore != null
                 && context.Features.HasTypePreKey(expr.WordBefore))
                 return false;
 
@@ -5138,7 +5184,7 @@ namespace ASCompletion.Completion
     /// <summary>
     /// Parsed expression with it's function context
     /// </summary>
-    sealed public class ASExpr
+    public sealed class ASExpr
     {
         public int Position;
         public MemberModel ContextMember;
@@ -5151,10 +5197,11 @@ namespace ASCompletion.Completion
         public int PositionExpression;
         public string Value;
         public List<string> SubExpressions;
-        public char Separator;
+        public string Separator;
         public int SeparatorPosition;
         public string WordBefore;
         public ComaExpression coma;
+        public string RightOperator = string.Empty;
 
         public ASExpr() { }
 

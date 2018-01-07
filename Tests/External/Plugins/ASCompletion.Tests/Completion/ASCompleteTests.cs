@@ -410,6 +410,54 @@ namespace ASCompletion.Completion
                         new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_division"))
                             .Returns("/1")
                             .SetName("1 / 1");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_increment"))
+                            .Returns("++1")
+                            .SetName("++1");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_increment2"))
+                            .Returns(";1++")
+                            .SetName("1++. case 1");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_increment3"))
+                            .Returns(";1++")
+                            .SetName("1++. case 2");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_increment4"))
+                            .Returns(";a++")
+                            .SetName("a++");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_increment5"))
+                            .Returns("=getId.#0~++")
+                            .SetName("var id = getId()++");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_decrement"))
+                            .Returns("--1")
+                            .SetName("--1");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_decrement2"))
+                            .Returns(";1--")
+                            .SetName("1--. case 1");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_decrement3"))
+                            .Returns(";1--")
+                            .SetName("1--. case 2");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_decrement4"))
+                            .Returns(";a--")
+                            .SetName("a--");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_decrement5"))
+                            .Returns("=getId.#0~--")
+                            .SetName("var id = getId()--");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_decrement6"))
+                            .Returns("* ++1")
+                            .SetName("5 * ++1");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_decrement7"))
+                            .Returns("*1++")
+                            .SetName("5 * 1++");
                 }
             }
 
@@ -477,6 +525,46 @@ namespace ASCompletion.Completion
                         new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_division"))
                             .Returns("/1")
                             .SetName("1 / 1");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_increment"))
+                            .Returns("++1")
+                            .SetName("++1");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_increment2"))
+                            .Returns(";1++")
+                            .SetName("1++. case 1");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_increment3"))
+                            .Returns(";1++")
+                            .SetName("1++. case 2");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_increment4"))
+                            .Returns(";a++")
+                            .SetName("a++");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_increment5"))
+                            .Returns("=getId.#0~++")
+                            .SetName("var id = getId()++");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_decrement"))
+                            .Returns("--1")
+                            .SetName("--1");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_decrement2"))
+                            .Returns(";1--")
+                            .SetName("1--. case 1");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_decrement3"))
+                            .Returns(";1--")
+                            .SetName("1--. case 2");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_decrement4"))
+                            .Returns(";a--")
+                            .SetName("a--");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_decrement5"))
+                            .Returns("=getId.#0~--")
+                            .SetName("var id = getId()--");
                 }
             }
 
@@ -500,7 +588,7 @@ namespace ASCompletion.Completion
                 sci.Text = text;
                 SnippetHelper.PostProcessSnippets(sci, 0);
                 var expr = ASComplete.GetExpression(sci, sci.CurrentPos);
-                return $"{expr.WordBefore}{expr.Separator}{expr.Value}";
+                return $"{expr.WordBefore}{expr.Separator}{expr.Value}{expr.RightOperator}";
             }
         }
 
