@@ -806,6 +806,9 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1749_6.as" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue1749_6.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue1749_6.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\Issue1921_case1.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\Issue1921_case2.hx" />
+    <EmbeddedResource Include="Test Files\parser\haxe\Issue1921_case3.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue_1766.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue_1766.hx" />
   </ItemGroup>

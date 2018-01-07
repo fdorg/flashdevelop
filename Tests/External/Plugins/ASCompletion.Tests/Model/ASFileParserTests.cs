@@ -1989,6 +1989,33 @@ namespace ASCompletion.Model
                 new ASFileParser().ParseSrc(model, sourceText);
                 return model.Classes[0].LineTo;
             }
+
+            static IEnumerable<TestCaseData> ParseClassTestCases_issue1921
+            {
+                get
+                {
+                    yield return new TestCaseData(ReadAllTextHaxe("Issue1921_case1"))
+                        .Returns(11)
+                        .SetName("Issue 1921. Case 1")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1921");
+                    yield return new TestCaseData(ReadAllTextHaxe("Issue1921_case2"))
+                        .Returns(11)
+                        .SetName("Issue 1921. Case 2")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1921");
+                    yield return new TestCaseData(ReadAllTextHaxe("Issue1921_case3"))
+                        .Returns(11)
+                        .SetName("Issue 1921. Case 3")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1921");
+                }
+            }
+
+            [Test, TestCaseSource(nameof(ParseClassTestCases_issue1921))]
+            public int ParseFile_Issue1921(string sourceText)
+            {
+                var model = new FileModel {Context = new HaXeContext.Context(new HaXeContext.HaXeSettings()), haXe = true};
+                new ASFileParser().ParseSrc(model, sourceText);
+                return model.Classes.First().LineTo;
+            }
         }
     }
 }
