@@ -124,7 +124,8 @@ namespace AS2Context
             features.intrinsicKey = "intrinsic";
 
             features.functionArguments = new MemberModel("arguments", "FunctionArguments", FlagType.Variable | FlagType.LocalVar, 0);
-
+            features.ArithmeticOperators = new HashSet<char> { '+', '-', '*', '/' };
+            features.IncrementDecrementOperators = new[] {"++", "--"};
             /* INITIALIZATION */
 
             settings = initSettings;
