@@ -244,7 +244,7 @@ namespace ProjectManager.Building.AS3
             return args;
         }
 
-        static public double ParseVersion(string version)
+        public static double ParseVersion(string version)
         {
             string[] p = version.Split('.');
             if (p.Length == 0) return 0;
@@ -298,7 +298,7 @@ namespace ProjectManager.Building.AS3
         // between builds.  This is necessary because the arguments to the FlexCompilerShell
         // (if you're using it) have to be identical between builds to enable incremental compiling.
         //private string GetTempProjectFile(AS3Project project)
-        private string GetTempProjectFile(AS3Project project)
+        internal static string GetTempProjectFile(AS3Project project)
         {
             // this serves two purposes - randomize the filename, so two identically-named
             // projects don't get the same temp build target, and also provide an extra
