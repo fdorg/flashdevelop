@@ -347,7 +347,7 @@ namespace HaXeContext
             // Class pathes
             //
             classPath = new List<PathModel>();
-            // haXe std
+            // Haxe std
             string hxPath = PluginBase.CurrentProject is HaxeProject
                     ? PluginBase.CurrentProject.CurrentSDK
                     : PathHelper.ResolvePath(hxsettings.GetDefaultSDK().Path);
@@ -1109,10 +1109,10 @@ namespace HaXeContext
             {
                 foreach (var it in classPath)
                 {
-                    if (!it.IsValid || it.Updating) continue;
+                    if (!it.IsValid || it.Updating || it.FilesCount == 0) continue;
                     var path = Path.Combine(it.Path, packagePath, "import.hx");
-                    if (!File.Exists(path)) continue;
-                    var model = ASFileParser.ParseFile(new FileModel(path) {Context = this});
+                    if (!it.HasFile(path)) continue;
+                    var model = it.GetFile(path);
                     result.Add(model.Imports);
                     break;
                 }
