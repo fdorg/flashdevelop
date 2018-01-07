@@ -11,9 +11,9 @@ using ScintillaNet;
 
 namespace ASCompletion.Generators
 {
+    [TestFixture]
     public class DocumentationGeneratorTests : ASCompletionTests
     {
-        [TestFixture]
         public class ContextualGeneratorTests : DocumentationGeneratorTests
         {
             [TestFixtureSetUp]

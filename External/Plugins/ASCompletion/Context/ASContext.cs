@@ -66,6 +66,7 @@ namespace ASCompletion.Context
             cacheRefreshTimer = new Timer();
             cacheRefreshTimer.Interval = 1500; // delay initial refresh
             cacheRefreshTimer.Tick += new EventHandler(cacheRefreshTimer_Tick);
+            CodeGenerator = new ASGenerator();
         }
         #endregion
 

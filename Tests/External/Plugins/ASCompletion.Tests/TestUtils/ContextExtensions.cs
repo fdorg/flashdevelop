@@ -54,6 +54,7 @@ namespace ASCompletion.TestUtils
             mock.CreateFileModel(null).ReturnsForAnyArgs(it => context.CreateFileModel(it.ArgAt<string>(0)));
             var allProjectClasses = context.GetAllProjectClasses();
             mock.GetAllProjectClasses().Returns(allProjectClasses);
+            mock.CodeGenerator.Returns(context.CodeGenerator);
             mock.DocumentationGenerator.Returns(context.DocumentationGenerator);
         }
 
