@@ -2180,6 +2180,7 @@ namespace ASCompletion.Completion
                 else
                     list.Add(new MemberItem(member));
             }
+            EventManager.DispatchEvent(null, new DataEvent(EventType.Command, "ASCompletion.DotCompletion", list));
             CompletionList.Show(list, autoHide, tail);
 
             // smart focus token
@@ -2258,15 +2259,16 @@ namespace ASCompletion.Completion
             if (CompletionList.Active) reSelect = CompletionList.SelectedLabel;
 
             // show completion
-            List<ICompletionListItem> customList = new List<ICompletionListItem>();
+            List<ICompletionListItem> list = new List<ICompletionListItem>();
             bool testActive = !CompletionList.Active && expr.Position != position;
             foreach (MemberModel member in items)
             {
-                if (testActive && member.Name == word) 
+                if (testActive && member.Name == word)
                     return;
-                customList.Add(new MemberItem(member));
+                list.Add(new MemberItem(member));
             }
-            CompletionList.Show(customList, autoHide, word);
+            EventManager.DispatchEvent(null, new DataEvent(EventType.Command, "ASCompletion.DotCompletion", list));
+            CompletionList.Show(list, autoHide, word);
 
             if (reSelect != null) CompletionList.SelectItem(reSelect);
         }
