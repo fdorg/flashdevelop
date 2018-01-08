@@ -17,7 +17,11 @@ namespace HaXeContext
         protected static string GetFullPathHaxe(string fileName) => $"{nameof(HaXeContext)}.Test_Files.parser.{fileName}.hx";
 
         [TestFixtureSetUp]
-        public void ContextTestsSetUp() => ASContext.Context.SetHaxeFeatures();
+        public void ContextTestsSetUp()
+        {
+            ASContext.Context.SetHaxeFeatures();
+            sci.ConfigurationLanguage = "haxe";
+        }
 
         IEnumerable<TestCaseData> DecomposeTypesTestCases
         {
@@ -96,6 +100,41 @@ namespace HaXeContext
             var model = ASContext.Context.GetCodeModel(sourceText);
             var interfaceType = ASContext.Context.ResolveType(model.Classes.First().Implements.First(), model);
             return interfaceType.Type;
+        }
+
+        IEnumerable<TestCaseData> ResolveDotContext_issue750TestCases
+        {
+            get
+            {
+                yield return new TestCaseData(ReadAllTextHaxe("ResolveDotContext_Issue1916_1"))
+                    .Returns(null)
+                    .SetName("case 1");
+                yield return new TestCaseData(ReadAllTextHaxe("ResolveDotContext_Issue1916_2"))
+                    .Returns(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
+                    .SetName("case 2");
+                yield return new TestCaseData(ReadAllTextHaxe("ResolveDotContext_Issue1916_3"))
+                    .Returns(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
+                    .SetName("case 3");
+                yield return new TestCaseData(ReadAllTextHaxe("ResolveDotContext_Issue1916_4"))
+                    .Returns(null)
+                    .SetName("case 4");
+                yield return new TestCaseData(ReadAllTextHaxe("ResolveDotContext_Issue1916_5"))
+                    .Returns(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
+                    .SetName("case 5");
+                yield return new TestCaseData(ReadAllTextHaxe("ResolveDotContext_Issue1916_6"))
+                    .Returns(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
+                    .SetName("case 6");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(ResolveDotContext_issue750TestCases))]
+        public MemberModel ResolveDotContext_issue750(string sourceText)
+        {
+            ((HaXeSettings)ASContext.Context.Settings).CompletionMode = HaxeCompletionModeEnum.FlashDevelop;
+            SetSrc(sci, sourceText);
+            var expr = ASComplete.GetExpression(sci, sci.CurrentPos);
+            var list = ASContext.Context.ResolveDotContext(sci, expr, false);
+            return list?.Search("code", FlagType.Getter, Visibility.Public);
         }
 
         IEnumerable<TestCaseData> ResolveTokenTestCases
