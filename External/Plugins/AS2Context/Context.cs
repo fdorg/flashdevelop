@@ -451,6 +451,7 @@ namespace AS2Context
         /// <param name="atLine">Position in the file</param>
         public override bool IsImported(MemberModel member, int atLine)
         {
+            if (member == ClassModel.VoidClass) return false;
             FileModel cFile = Context.CurrentModel;
             string fullName = member.Type;
             string name = member.Name;
