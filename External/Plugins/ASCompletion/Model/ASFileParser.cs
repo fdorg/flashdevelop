@@ -421,17 +421,15 @@ namespace ASCompletion.Model
 
         #region public methods
 
-        static public FileModel ParseFile(FileModel fileModel)
+        public static FileModel ParseFile(FileModel fileModel)
         {
             // parse file
             if (fileModel.FileName.Length > 0)
             {
                 if (File.Exists(fileModel.FileName))
                 {
-                    var src = FileHelper.ReadFile(fileModel.FileName);
                     ASFileParser parser = new ASFileParser();
-                    fileModel.LastWriteTime = File.GetLastWriteTime(fileModel.FileName);
-                    parser.ParseSrc(fileModel, src);
+                    parser.Parse(fileModel);
                 }
                 // the file is not available (for the moment?)
                 else if (Path.GetExtension(fileModel.FileName).Length > 0)
@@ -446,6 +444,7 @@ namespace ASCompletion.Model
             }
             return fileModel;
         }
+
         #endregion
 
         #region parser context
@@ -454,7 +453,7 @@ namespace ASCompletion.Model
         const int VALUE_BUFFER = 1024;
 
         // parser context
-        private FileModel model;
+        protected FileModel model;
         private int version;
         private bool haXe;
         private bool tryPackage;
@@ -499,14 +498,19 @@ namespace ASCompletion.Model
 
         public bool ScriptMode;
 
-        public ContextFeatures Features
-        {
-            get { return features; }
-        }
+        public ContextFeatures Features => features;
 
         public ASFileParser()
         {
             features = new ContextFeatures();
+        }
+
+        public FileModel Parse(FileModel fileModel)
+        {
+            fileModel.LastWriteTime = File.GetLastWriteTime(fileModel.FileName);
+            var src = FileHelper.ReadFile(fileModel.FileName);
+            ParseSrc(fileModel, src);
+            return fileModel;
         }
 
         /// <summary>
@@ -1857,7 +1861,7 @@ namespace ASCompletion.Model
             return md;
         }
 
-        private void FinalizeModel()
+        protected virtual void FinalizeModel()
         {
             model.Version = version;
             model.HasPackage = hasPackageSection || haXe;

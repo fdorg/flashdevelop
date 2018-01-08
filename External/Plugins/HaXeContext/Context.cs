@@ -17,6 +17,7 @@ using ProjectManager.Projects.Haxe;
 using ProjectManager.Projects;
 using AS3Context;
 using HaXeContext.Completion;
+using HaXeContext.Model;
 using PluginCore.Utilities;
 using ScintillaNet;
 
@@ -583,6 +584,28 @@ namespace HaXeContext
         }
         #endregion
 
+        #region model caching
+
+        public override FileModel GetCodeModel(string src) => base.GetCodeModel(new FileModel{haXe = true}, src, true);
+
+        public override ASFileParser GetCodeParser()
+        {
+            var result = new FileParser();
+            result.Features.varKey = Features.varKey;
+            result.Features.constKey = Features.constKey;
+            result.Features.functionKey = Features.functionKey;
+            result.Features.hasEcmaTyping = Features.hasEcmaTyping;
+            result.Features.hasConsts = Features.hasConsts;
+            result.Features.hasVars = Features.hasVars;
+            result.Features.hasMethods = Features.hasMethods;
+            result.Features.hasGenerics = Features.hasGenerics;
+            result.Features.hasCArrays = Features.hasCArrays;
+            result.Features.CArrayTemplate = Features.CArrayTemplate;
+            return result;
+        }
+
+        #endregion
+
         #region SDK
         private InstalledSDK GetCurrentSDK()
         {
@@ -814,7 +837,7 @@ namespace HaXeContext
 
         private void ResolveImport(MemberModel item, MemberList imports)
         {
-            if (settings.LazyClasspathExploration)
+            if (settings.LazyClasspathExploration || string.IsNullOrEmpty(item.Type))
             {
                 imports.Add(item);
                 return;
@@ -859,7 +882,7 @@ namespace HaXeContext
                 }
 
             if (!matched) // add anyway
-                imports.Add(new MemberModel(item.Name, item.Type, FlagType.Class, Visibility.Public));
+                imports.Add(item);
         }
 
         /// <summary>

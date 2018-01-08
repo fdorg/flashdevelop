@@ -846,7 +846,7 @@ namespace ASCompletion.Context
             }
 
             // parse and add to cache
-            nFile = ASFileParser.ParseFile(CreateFileModel(fileName));
+            nFile = GetFileModel(fileName);
             if (classPath != null)
             {
                 string upName = fileName.ToUpper();
@@ -910,11 +910,12 @@ namespace ASCompletion.Context
         /// <summary>
         /// Create a new file model using the default file parser
         /// </summary>
-        /// <param name="filename">Full path</param>
+        /// <param name="fileName">Full path</param>
         /// <returns>File model</returns>
         public virtual FileModel GetFileModel(string fileName)
         {
-            return ASFileParser.ParseFile(CreateFileModel(fileName));
+            var parser = GetCodeParser();
+            return parser.Parse(CreateFileModel(fileName));
         }
 
         /// <summary>
@@ -959,24 +960,32 @@ namespace ASCompletion.Context
         /// <summary>
         /// Parse a raw source code
         /// </summary>
-        /// <param name="src"></param>
+        /// <param name="src">Source code</param>
         /// <returns></returns>
-        public virtual FileModel GetCodeModel(string src)
+        public virtual FileModel GetCodeModel(string src) => GetCodeModel(src, true);
+
+        public virtual FileModel GetCodeModel(string src, bool scriptMode) => GetCodeModel(new FileModel(), src, scriptMode);
+
+        /// <summary>
+        /// Parse a raw source code
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="src">Source code</param>
+        /// <param name="scriptMode"></param>
+        /// <returns></returns>
+        public virtual FileModel GetCodeModel(FileModel model, string src, bool scriptMode)
         {
-            ASFileParser parser = GetCodeParser();
-            parser.ScriptMode = true;
-            // parse
-            FileModel temp = new FileModel();
-            temp.haXe = Context.Settings.LanguageId == "HAXE";
-            if (!string.IsNullOrEmpty(src)) parser.ParseSrc(temp, src);
-            return temp;
+            var parser = GetCodeParser();
+            parser.ScriptMode = scriptMode;
+            if (!string.IsNullOrEmpty(src)) parser.ParseSrc(model, src);
+            return model;
         }
 
         /// <summary>
         /// Set local code parser features
         /// </summary>
         /// <returns></returns>
-        protected virtual ASFileParser GetCodeParser()
+        public virtual ASFileParser GetCodeParser()
         {
             ASFileParser parser = new ASFileParser();
             parser.Features.varKey = Context.Features.varKey;
@@ -995,7 +1004,7 @@ namespace ASCompletion.Context
         /// <summary>
         /// Build the file DOM
         /// </summary>
-        /// <param name="filename">File path</param>
+        /// <param name="fileName">File path</param>
         protected virtual void GetCurrentFileModel(string fileName)
         {
             cFile = GetCachedFileModel(fileName);
@@ -1020,9 +1029,8 @@ namespace ASCompletion.Context
         /// <param name="updateUI">Update outline view</param>
         public virtual void UpdateCurrentFile(bool updateUI)
         {
-            if (cFile == null || CurSciControl == null)
-                return;
-            ASFileParser parser = new ASFileParser();
+            if (cFile == null || CurSciControl == null) return;
+            var parser = GetCodeParser();
             parser.ParseSrc(cFile, CurSciControl.Text);
             cLine = CurSciControl.CurrentLine;
             UpdateContext(cLine);
@@ -1500,7 +1508,12 @@ namespace ASCompletion.Context
             }
             FileModel aFile;
             if (src == null) aFile = cFile;
-            else aFile = ASFileParser.ParseFile(CreateFileModel(src));
+            else
+            {
+                var parser = GetCodeParser();
+                aFile = parser.Parse(CreateFileModel(src));
+            }
+
             if (aFile.Version == 0) return;
             //
             string code = aFile.GenerateIntrinsic(false);

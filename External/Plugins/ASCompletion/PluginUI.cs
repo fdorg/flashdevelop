@@ -638,15 +638,12 @@ namespace ASCompletion
                     nodes = node.Nodes;
                     foreach (MemberModel import in aFile.Imports)
                     {
-                        if (import.Type.EndsWithOrdinal(".*"))
-                            nodes.Add(new TreeNode(import.Type, ICON_PACKAGE, ICON_PACKAGE));
+                        var type = (import.Flags & FlagType.Class) == 0 ? import.InFile.FullPackage + "." + import.Name : import.Type;
+                        if (type.EndsWithOrdinal(".*")) nodes.Add(new TreeNode(type, ICON_PACKAGE, ICON_PACKAGE));
                         else
                         {
-                            img = GetIcon(import.Flags, import.Access); 
-                            //((import.Flags & FlagType.Intrinsic) > 0) ? ICON_INTRINSIC_TYPE : ICON_TYPE;
-                            node = new TreeNode(import.Type, img, img);
-                            node.Tag = "import";
-                            nodes.Add(node);
+                            img = GetIcon(import.Flags, import.Access);
+                            nodes.Add(new TreeNode(type, img, img) {Tag = "import"});
                         }
                     }
                 }
@@ -816,18 +813,15 @@ namespace ASCompletion
 
         private void AddRegionsExtended(TreeNodeCollection tree, FileModel aFile)
         {
-            int endRegion = 0;
-            int index = 0;
-            MemberModel region = null;
             MemberList regions = aFile.Regions;
             int count = regions.Count;
-            for (index = 0; index < count; ++index)
+            for (var index = 0; index < count; ++index)
             {
-                region = regions[index];
+                var region = regions[index];
                 MemberTreeNode node = new MemberTreeNode(region, ICON_PACKAGE);
                 tree.Add(node);
 
-                endRegion = region.LineTo;
+                var endRegion = region.LineTo;
                 if (endRegion == 0)
                 {
                     endRegion = (index + 1 < count) ? regions[index + 1].LineFrom : int.MaxValue;

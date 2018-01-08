@@ -1758,8 +1758,8 @@ namespace ASCompletion.Completion
             var context = ASContext.Context;
             ClassModel aType = context.ResolveType(interf, context.CurrentModel);
             if (aType.IsVoid()) return;
-
-            FileModel fileModel = ASFileParser.ParseFile(context.CreateFileModel(aType.InFile.FileName));
+            var parser = ASContext.Context.GetCodeParser();
+            FileModel fileModel = parser.Parse(context.CreateFileModel(aType.InFile.FileName));
             foreach (ClassModel cm in fileModel.Classes)
             {
                 if (cm.QualifiedName.Equals(aType.QualifiedName))

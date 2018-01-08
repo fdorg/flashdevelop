@@ -73,6 +73,7 @@
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Model\FileParserTests.cs" />
     <Compile Include="PluginUIMock.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -156,6 +157,8 @@
     <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1916_4.hx" />
     <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1916_5.hx" />
     <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1916_6.hx" />
+    <EmbeddedResource Include="Test Files\parser\ImportStaticMembers_Issue1150_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\ImportStaticMembers_Issue1150_2.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
