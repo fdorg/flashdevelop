@@ -15,21 +15,19 @@ namespace HaXeContext.Completion
         public override bool ContextualGenerator(ScintillaControl sci, List<ICompletionListItem> options, ASResult expr)
         {
             var context = ASContext.Context;
-            if (context.CurrentClass.Flags.HasFlag(FlagType.Interface)
-                && (expr.Member == null || expr.Member.Flags.HasFlag(FlagType.Variable)))
+            var member = expr.Member;
+            var type = expr.Type;
+            if (context.CurrentClass.Flags.HasFlag(FlagType.Interface))
             {
-                return true;
+                if (member != null && member.Flags.HasFlag(FlagType.Variable)) return true;
+                if (type != null && !context.IsImported(type, sci.CurrentLine) && CheckAutoImport(expr, options)) return true;
             }
             if (context.CurrentClass.Flags.HasFlag(FlagType.Enum | FlagType.TypeDef))
             {
-                if (contextToken != null && expr.Member == null)
-                {
-                    var type = expr.Type ?? ClassModel.VoidClass;
-                    if (!context.IsImported(type, sci.CurrentLine)) CheckAutoImport(expr, options);
-                }
+                if (contextToken != null && member == null && !context.IsImported(type ?? ClassModel.VoidClass, sci.CurrentLine)) CheckAutoImport(expr, options);
                 return true;
             }
-            return false;
+            return base.ContextualGenerator(sci, options, expr);
         }
     }
 

@@ -39,13 +39,18 @@ namespace HaXeContext.Completion
                         .Returns(ReadAllTextHaxe("AfterContextualGeneratorTests_issue1833_2"))
                         .SetName("Issue1833. Case 2")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/1833");
+                yield return
+                    new TestCaseData("BeforeContextualGeneratorTests_issue1927_1")
+                        .Returns(ReadAllTextHaxe("AfterContextualGeneratorTests_issue1927_1"))
+                        .SetName("Issue1927. Case 1")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1927");
             }
         }
 
         [Test, TestCaseSource(nameof(HaxeTestCases))]
-        public string Haxe(string fileName) => HaxeImpl(fileName, sci);
+        public string Haxe(string fileName) => Impl(fileName, sci);
 
-        internal static string HaxeImpl(string fileName, ScintillaControl sci)
+        internal static string Impl(string fileName, ScintillaControl sci)
         {
             var sourceText = ReadAllTextHaxe(fileName);
             fileName = GetFullPathHaxe(fileName);
@@ -56,16 +61,7 @@ namespace HaXeContext.Completion
 
         internal static string Common(string sourceText, ScintillaControl sci)
         {
-            sci.Text = sourceText;
-            SnippetHelper.PostProcessSnippets(sci, 0);
-            var currentModel = ASContext.Context.CurrentModel;
-            new ASFileParser().ParseSrc(currentModel, sci.Text);
-            var line = sci.CurrentLine;
-            var currentClass = currentModel.Classes.Find(it => it.LineFrom <= line && it.LineTo >= line);
-            ASContext.Context.CurrentClass.Returns(currentClass);
-            var currentMember = currentClass.Members.Items.Find(it => it.LineFrom <= line && it.LineTo >= line);
-            ASContext.Context.CurrentMember.Returns(currentMember);
-            ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
+            SetSrc(sci, sourceText);
             ASGenerator.ContextualGenerator(sci, new List<ICompletionListItem>());
             return sci.Text;
         }
