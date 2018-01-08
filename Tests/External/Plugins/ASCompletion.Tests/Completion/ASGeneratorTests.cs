@@ -2986,25 +2986,25 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(" new Vector.<int>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
+                            new TestCaseData(" new Vector.<int>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new <int>[]$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
+                            new TestCaseData(" new <int>[]$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new <Object>[{}]$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
+                            new TestCaseData(" new <Object>[{}]$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new <Vector.<Object>>[new <Object>[{}]]$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
+                            new TestCaseData(" new <Vector.<Object>>[new <Object>[{}]]$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new <Object>[{a:[new Number('10.0')]}]$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
+                            new TestCaseData(" new <Object>[{a:[new Number('10.0')]}]$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new Object()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
+                            new TestCaseData(" new Object()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new Object(/*:)*/)$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
+                            new TestCaseData(" new Object(/*:)*/)$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
                                 .Returns(1);
                     }
                 }
@@ -3017,37 +3017,37 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(" new Array<Int>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
+                            new TestCaseData(" new Array<Int>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new Map<String, Int>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
+                            new TestCaseData(" new Map<String, Int>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new Map<String, Map<String, Int>>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
+                            new TestCaseData(" new Map<String, Map<String, Int>>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new Map<String, Map<String, Void->Int>>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
+                            new TestCaseData(" new Map<String, Map<String, Void->Int>>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new Map<String, Map<String, String->Int->Void>>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
+                            new TestCaseData(" new Map<String, Map<String, String->Int->Void>>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new Array<Int->Int->String>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
+                            new TestCaseData(" new Array<Int->Int->String>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new Array<{x:Int, y:Int}>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
+                            new TestCaseData(" new Array<{x:Int, y:Int}>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new Array<{name:String, params:Array<Dynamic>}>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
+                            new TestCaseData(" new Array<{name:String, params:Array<Dynamic>}>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new Array<{name:String, factory:String->Dynamic}>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
+                            new TestCaseData(" new Array<{name:String, factory:String->Dynamic}>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new Array<{name:String, factory:String->Array<String>}>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
+                            new TestCaseData(" new Array<{name:String, factory:String->Array<String>}>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" new Array<{name:String, factory:String->{x:Int, y:Int}}>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new" }})
+                            new TestCaseData(" new Array<{name:String, factory:String->{x:Int, y:Int}}>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
                                 .Returns(1);
                         yield return
                             new TestCaseData(" [1 => 1, 2 => 2]$(EntryPoint)", new ASResult {Type = ClassModel.VoidClass})
