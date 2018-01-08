@@ -10,7 +10,6 @@ using ScintillaNet.Enums;
 
 namespace CodeRefactor
 {
-    [TestFixture]
     public class CodeRefactorTests
     {
 #pragma warning disable CS0436 // Type conflicts with imported type
