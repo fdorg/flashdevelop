@@ -106,6 +106,7 @@ namespace ASCompletion.Completion
         public string ConstructorKey;
         public bool HasGenericsShortNotation;
         public HashSet<char> ArithmeticOperators = new HashSet<char>();
+        public string[] IncrementDecrementOperators = {};
 
         /// <summary>
         /// Tells if a word is a keyword which precedes a type (like 'new')

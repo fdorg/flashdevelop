@@ -10,13 +10,23 @@ using ScintillaNet;
 
 namespace HaXeContext.Completion
 {
-    internal class CodeGenerator : IContextualGenerator
+    internal class CodeGenerator : ASGenerator
     {
-        public bool ContextualGenerator(ScintillaControl sci, List<ICompletionListItem> options, ASResult expr)
+        public override bool ContextualGenerator(ScintillaControl sci, List<ICompletionListItem> options, ASResult expr)
         {
-            if ((ASContext.Context.CurrentClass.Flags & FlagType.Interface) != 0
-                && (expr.Member == null || (expr.Member.Flags & FlagType.Variable) != 0))
+            var context = ASContext.Context;
+            if (context.CurrentClass.Flags.HasFlag(FlagType.Interface)
+                && (expr.Member == null || expr.Member.Flags.HasFlag(FlagType.Variable)))
             {
+                return true;
+            }
+            if (context.CurrentClass.Flags.HasFlag(FlagType.Enum | FlagType.TypeDef))
+            {
+                if (contextToken != null && expr.Member == null)
+                {
+                    var type = expr.Type ?? ClassModel.VoidClass;
+                    if (!context.IsImported(type, sci.CurrentLine)) CheckAutoImport(expr, options);
+                }
                 return true;
             }
             return false;
