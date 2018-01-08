@@ -1319,19 +1319,27 @@ namespace HaXeContext
         /// <param name="expression">Completion context</param>
         /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
         /// <returns>Null (not handled) or member list</returns>
-        public override MemberList ResolveDotContext(ScintillaNet.ScintillaControl sci, ASExpr expression, bool autoHide)
+        public override MemberList ResolveDotContext(ScintillaControl sci, ASExpr expression, bool autoHide)
         {
-            if (resolvingDot || hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop
-                || PluginBase.MainForm.CurrentDocument.IsUntitled)
-                return null;
+            if (resolvingDot || PluginBase.MainForm.CurrentDocument.IsUntitled) return null;
+            if (autoHide && !hxsettings.DisableCompletionOnDemand) return null;
+            var result = hxsettings.DisableMixedCompletion ? new MemberList() : null;
+            if (!hxsettings.DisableMixedCompletion || hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop)
+            {
+                var first = expression.Value.First();
+                if ((first == '\"' || first == '\'') && expression.SubExpressions != null && expression.SubExpressions.Count == 1)
+                {
+                    if (result == null) result = new MemberList();
 
-            if (autoHide && !hxsettings.DisableCompletionOnDemand)
-                return null;
+                }
+                if (result != null && result.Count == 0) result = null;
+                if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop) return result;
+            }
 
             // auto-started completion, can be ignored for performance (show default completion tooltip)
             if (expression.Value.IndexOfOrdinal(".") < 0 || (autoHide && !expression.Value.EndsWith('.')))
-                if (hxsettings.DisableMixedCompletion && expression.Value.Length > 0 && autoHide) return new MemberList();
-                else return null;
+            if (hxsettings.DisableMixedCompletion && expression.Value.Length > 0 && autoHide) return new MemberList();
+            else return null;
 
             // empty expression
             if (expression.Value != "")
@@ -1342,7 +1350,7 @@ namespace HaXeContext
                 resolvingDot = true;
             }
 
-            return hxsettings.DisableMixedCompletion ? new MemberList() : null;
+            return result;
         }
 
         internal void OnDotCompletionResult(HaxeComplete hc,  HaxeCompleteResult result, HaxeCompleteStatus status)
