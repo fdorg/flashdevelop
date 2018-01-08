@@ -1401,8 +1401,8 @@ namespace HaXeContext
                         model.ResolveExtends();
                         model = model.Extends;
                     }
+                    if (result.Count == 0) result = null;
                 }
-                if (result != null && result.Count == 0) result = null;
                 if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop) return result;
             }
 
