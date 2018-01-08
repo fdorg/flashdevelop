@@ -143,6 +143,12 @@
     <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1833_1.hx" />
     <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1833_2.hx" />
     <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1833_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1743_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1743_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1743_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1743_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1743_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1743_3.hx" />
     <EmbeddedResource Include="Test Files\parser\ImportStaticMembers_Issue1150_1.hx" />
     <EmbeddedResource Include="Test Files\parser\ImportStaticMembers_Issue1150_2.hx" />
   </ItemGroup>
