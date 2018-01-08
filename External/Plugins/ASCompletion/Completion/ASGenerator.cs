@@ -425,7 +425,7 @@ namespace ASCompletion.Completion
             // TODO: Empty line, show generators list? yep
         }
 
-        public bool ContextualGenerator(ScintillaControl sci, int position, List<ICompletionListItem> options) => false;
+        public virtual bool ContextualGenerator(ScintillaControl sci, int position, List<ICompletionListItem> options) => false;
 
         private static MemberModel ResolveDelegate(string type, FileModel inFile)
         {
