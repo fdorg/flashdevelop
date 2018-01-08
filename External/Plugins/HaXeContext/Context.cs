@@ -140,6 +140,7 @@ namespace HaXeContext
             features.stringInterpolationQuotes = "'";
             features.ConstructorKey = "new";
             features.ArithmeticOperators = new HashSet<char> {'+', '-', '*', '/', '%'};
+            features.IncrementDecrementOperators = new[] {"++", "--"};
             /* INITIALIZATION */
 
             settings = initSettings;
@@ -292,7 +293,7 @@ namespace HaXeContext
         }
 
         /// <summary>
-        /// Classpathes & classes cache initialisation
+        /// Classpathes & classes cache initialization
         /// </summary>
         public override void BuildClassPath()
         {
@@ -346,7 +347,7 @@ namespace HaXeContext
             // Class pathes
             //
             classPath = new List<PathModel>();
-            // haXe std
+            // Haxe std
             string hxPath = PluginBase.CurrentProject is HaxeProject
                     ? PluginBase.CurrentProject.CurrentSDK
                     : PathHelper.ResolvePath(hxsettings.GetDefaultSDK().Path);
@@ -555,25 +556,6 @@ namespace HaXeContext
         }
 
         /// <summary>
-        /// Create a new file model using the default file parser
-        /// </summary>
-        /// <param name="filename">Full path</param>
-        /// <returns>File model</returns>
-        public override FileModel GetFileModel(string fileName)
-        {
-            return base.GetFileModel(fileName);
-        }
-
-        /// <summary>
-        /// Refresh the file model
-        /// </summary>
-        /// <param name="updateUI">Update outline view</param>
-        public override void UpdateCurrentFile(bool updateUI)
-        {
-            base.UpdateCurrentFile(updateUI);
-        }
-
-        /// <summary>
         /// Confirms that the FileModel should be added to the PathModel
         /// - typically classes whose context do not patch the classpath should be ignored
         /// </summary>
@@ -722,7 +704,7 @@ namespace HaXeContext
             return fullList;
         }
 
-        public override bool OnCompletionInsert(ScintillaNet.ScintillaControl sci, int position, string text, char trigger)
+        public override bool OnCompletionInsert(ScintillaControl sci, int position, string text, char trigger)
         {
             // Commented out: the consensus is to not detect and add the type index type.
 
@@ -823,7 +805,7 @@ namespace HaXeContext
                 foreach (ClassModel aClass in inFile.Classes)
                     if (aClass.Access != Visibility.Private) ResolveImport(aClass, imports);
             }
-
+            imports.Add(ResolveDefaults(inFile.Package));
             // haxe3: type resolution from bottom to top
             imports.Items.Reverse();
             if (inFile == cFile) completionCache.Imports = imports;
@@ -852,8 +834,7 @@ namespace HaXeContext
             foreach (PathModel aPath in classPath)
                 if (aPath.IsValid && !aPath.Updating)
                 {
-                    string path;
-                    path = aPath.Path + dirSeparator + fileName;
+                    var path = aPath.Path + dirSeparator + fileName;
 
                     FileModel file = null;
                     // cached file
@@ -897,20 +878,15 @@ namespace HaXeContext
                 member.Name = member.Name.Substring(0, p);
             }
 
-            FileModel cFile = ASContext.Context.CurrentModel;
             string fullName = member.Type;
             string name = member.Name;
-            foreach (MemberModel import in cFile.Imports)
+            var curFile = Context.CurrentModel;
+            var imports = curFile.Imports.Items.Concat(ResolveDefaults(curFile.Package).Items).ToArray();
+            foreach (var import in imports)
             {
-                if (import.Name == name)
-                {
-                    //if (import.Type != fullName) throw new Exception(TextHelper.GetString("Info.AmbiguousType"));
-                    return true;
-                }
-                else if (import.Name == "*" && import.Type.Replace("*", name) == fullName)
-                    return true;
-                else if (fullName.StartsWithOrdinal(import.Type + "."))
-                    return true;
+                if (import.Name == name) return true;
+                if (import.Name == "*" && import.Type.Replace("*", name) == fullName) return true;
+                if (fullName.StartsWithOrdinal(import.Type + ".")) return true;
             }
             return false;
         }
@@ -1113,9 +1089,37 @@ namespace HaXeContext
         /// <returns>Package folders and types</returns>
         public override FileModel ResolvePackage(string name, bool lazyMode)
         {
-            if ((settings.LazyClasspathExploration || lazyMode) && majorVersion >= 9 && name == "flash") 
+            if ((settings.LazyClasspathExploration || lazyMode) && majorVersion >= 9 && name == "flash")
                 name = "flash9";
             return base.ResolvePackage(name, lazyMode);
+        }
+
+        /// <summary>
+        /// https://haxe.org/blog/importhx-intro/
+        /// Since Haxe 3.3.0
+        /// </summary>
+        /// <param name="package">Package path</param>
+        /// <returns>Imported classes list (not null)</returns>
+        private MemberList ResolveDefaults(string package)
+        {
+            var result = new MemberList();
+            if (GetCurrentSDKVersion() < "3.3.0") return result;
+            var packagePath = string.IsNullOrEmpty(package) ? string.Empty : package.Replace('.', dirSeparatorChar);
+            while(true)
+            {
+                foreach (var it in classPath)
+                {
+                    if (!it.IsValid || it.Updating || it.FilesCount == 0) continue;
+                    var path = Path.Combine(it.Path, packagePath, "import.hx");
+                    if (!it.HasFile(path)) continue;
+                    var model = it.GetFile(path);
+                    result.Add(model.Imports);
+                    break;
+                }
+                if (string.IsNullOrEmpty(packagePath)) break;
+                packagePath = Path.GetDirectoryName(packagePath);
+            }
+            return result;
         }
 
         public override string GetDefaultValue(string type)
@@ -1318,7 +1322,7 @@ namespace HaXeContext
         /// <param name="expression">Completion context</param>
         /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
         /// <returns>Null (not handled) or member list</returns>
-        public override MemberList ResolveDotContext(ScintillaNet.ScintillaControl sci, ASExpr expression, bool autoHide)
+        public override MemberList ResolveDotContext(ScintillaControl sci, ASExpr expression, bool autoHide)
         {
             if (resolvingDot || hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop
                 || PluginBase.MainForm.CurrentDocument.IsUntitled)
@@ -1438,8 +1442,7 @@ namespace HaXeContext
                         int p = package.LastIndexOf('.'); // parent package
                         if (p < 0) break;
                         package = package.Substring(0, p);
-                    }
-                    while (true);
+                    } while (true);
                 }
                 // other types in same file
                 if (cFile.Classes.Count > 1)
@@ -1493,7 +1496,7 @@ namespace HaXeContext
         /// <param name="sci">Scintilla control</param>
         /// <param name="expression">Completion context</param>
         /// <returns>Null (not handled) or function signature</returns>
-        public override MemberModel ResolveFunctionContext(ScintillaNet.ScintillaControl sci, ASExpr expression, bool autoHide)
+        public override MemberModel ResolveFunctionContext(ScintillaControl sci, ASExpr expression, bool autoHide)
         {
             if (resolvingFunction || hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop
                 || PluginBase.MainForm.CurrentDocument.IsUntitled)
@@ -1603,7 +1606,7 @@ namespace HaXeContext
             if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop || PluginBase.MainForm.CurrentDocument.IsUntitled) return;
 
             EventManager.DispatchEvent(this, new NotifyEvent(EventType.ProcessStart));
-            var hc = GetHaxeComplete(ASContext.CurSciControl, new ASExpr(), false, HaxeCompilerService.COMPLETION);
+            var hc = GetHaxeComplete(CurSciControl, new ASExpr(), false, HaxeCompilerService.COMPLETION);
             hc.GetList(OnCheckSyntaxResult);
         }
 
@@ -1647,10 +1650,10 @@ namespace HaXeContext
                 else MainForm.CallCommand("SaveAllModified", ".hx");
 
                 // change current directory
-                string currentPath = System.IO.Directory.GetCurrentDirectory();
+                string currentPath = Directory.GetCurrentDirectory();
                 string filePath = (temporaryPath == null) ? Path.GetDirectoryName(cFile.FileName) : temporaryPath;
                 filePath = NormalizePath(filePath);
-                System.IO.Directory.SetCurrentDirectory(filePath);
+                Directory.SetCurrentDirectory(filePath);
                 
                 // prepare command
                 string command = haxePath;
@@ -1675,8 +1678,8 @@ namespace HaXeContext
                 // run
                 MainForm.CallCommand("RunProcessCaptured", command + " " + append);
                 // restaure current directory
-                if (System.IO.Directory.GetCurrentDirectory() == filePath)
-                    System.IO.Directory.SetCurrentDirectory(currentPath);
+                if (Directory.GetCurrentDirectory() == filePath)
+                    Directory.SetCurrentDirectory(currentPath);
             }
             catch (Exception ex)
             {

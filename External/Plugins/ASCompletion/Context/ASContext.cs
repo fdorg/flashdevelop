@@ -69,6 +69,7 @@ namespace ASCompletion.Context
             cacheRefreshTimer = new Timer();
             cacheRefreshTimer.Interval = 1500; // delay initial refresh
             cacheRefreshTimer.Tick += new EventHandler(cacheRefreshTimer_Tick);
+            CodeGenerator = new ASGenerator();
         }
         #endregion
 
@@ -1356,7 +1357,7 @@ namespace ASCompletion.Context
             return false;
         }
 
-        public IContextualGenerator CodeGenerator { get; protected set; } = null;
+        public IContextualGenerator CodeGenerator { get; protected set; }
         #endregion
 
         #region plugin commands
