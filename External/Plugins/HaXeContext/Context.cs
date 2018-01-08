@@ -964,7 +964,7 @@ namespace HaXeContext
             {
                 if (token.StartsWithOrdinal("0x")) return ResolveType("Int", inFile);
                 var first = token[0];
-                var last = token[token.Length - 1]
+                var last = token[token.Length - 1];
                 if (first == '[' && last == ']')
                 {
                     var dQuotes = 0;
