@@ -1329,7 +1329,7 @@ namespace HaXeContext
             {
                 if (exprValue.Length >= 3)
                 {
-                    var first = exprValue.First();
+                    var first = exprValue[0];
                     if ((first == '\"' || first == '\'') && expression.SubExpressions != null && expression.SubExpressions.Count == 1)
                     {
                         var s = exprValue.Replace(".#0~.", string.Empty);
