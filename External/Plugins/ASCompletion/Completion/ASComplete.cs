@@ -2180,6 +2180,7 @@ namespace ASCompletion.Completion
                 else
                     list.Add(new MemberItem(member));
             }
+            EventManager.DispatchEvent(null, new DataEvent(EventType.Command, "ASCompletion.DotCompletion", list));
             CompletionList.Show(list, autoHide, tail);
 
             // smart focus token
@@ -2258,15 +2259,16 @@ namespace ASCompletion.Completion
             if (CompletionList.Active) reSelect = CompletionList.SelectedLabel;
 
             // show completion
-            List<ICompletionListItem> customList = new List<ICompletionListItem>();
+            List<ICompletionListItem> list = new List<ICompletionListItem>();
             bool testActive = !CompletionList.Active && expr.Position != position;
             foreach (MemberModel member in items)
             {
-                if (testActive && member.Name == word) 
+                if (testActive && member.Name == word)
                     return;
-                customList.Add(new MemberItem(member));
+                list.Add(new MemberItem(member));
             }
-            CompletionList.Show(customList, autoHide, word);
+            EventManager.DispatchEvent(null, new DataEvent(EventType.Command, "ASCompletion.DotCompletion", list));
+            CompletionList.Show(list, autoHide, word);
 
             if (reSelect != null) CompletionList.SelectItem(reSelect);
         }
@@ -3527,6 +3529,7 @@ namespace ASCompletion.Completion
                                 // Haxe ex: return cast(a, B).<complete>
                                 expression.Separator = ";";
                                 expression.WordBefore = testWord;
+                                expression.WordBeforePosition = testPos + 1;
                                 break;
                             }
                             continue;
@@ -3536,7 +3539,8 @@ namespace ASCompletion.Completion
                             expression.Separator = ";";
                             int testPos = position - 1;
                             string testWord = GetWordLeft(sci, ref testPos); // anonymous function
-                            string testWord2 = GetWordLeft(sci, ref testPos) ?? "null"; // regular function
+                            var pos = testPos;
+                            string testWord2 = GetWordLeft(sci, ref pos) ?? "null"; // regular function
                             if (testWord == features.functionKey || testWord == "catch"
                                 || testWord2 == features.functionKey
                                 || testWord2 == features.getKey || testWord2 == features.setKey)
@@ -3544,7 +3548,11 @@ namespace ASCompletion.Completion
                                 expression.Separator = ",";
                                 expression.coma = ComaExpression.FunctionDeclaration;
                             }
-                            else expression.WordBefore = testWord;
+                            else
+                            {
+                                expression.WordBefore = testWord;
+                                expression.WordBeforePosition = testPos + 1;
+                            }
                             break;
                         }
                     }
@@ -3862,7 +3870,11 @@ namespace ASCompletion.Completion
             }
 
             // check if there is a particular keyword
-            if (expression.Separator == " ") expression.WordBefore = GetWordLeft(sci, ref position);
+            if (expression.Separator == " ")
+            {
+                expression.WordBefore = GetWordLeft(sci, ref position);
+                expression.WordBeforePosition = position + 1;
+            }
 
             // result
             var value = sb.ToString().TrimStart('.');
@@ -5200,6 +5212,7 @@ namespace ASCompletion.Completion
         public string Separator;
         public int SeparatorPosition;
         public string WordBefore;
+        public int WordBeforePosition;
         public ComaExpression coma;
         public string RightOperator = string.Empty;
 
