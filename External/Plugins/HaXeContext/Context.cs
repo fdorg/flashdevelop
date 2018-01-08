@@ -1324,20 +1324,35 @@ namespace HaXeContext
         /// <returns>Null (not handled) or member list</returns>
         public override MemberList ResolveDotContext(ScintillaControl sci, ASExpr expression, bool autoHide)
         {
-            if (resolvingDot || hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop
-                || PluginBase.MainForm.CurrentDocument.IsUntitled)
-                return null;
-
-            if (autoHide && !hxsettings.DisableCompletionOnDemand)
-                return null;
+            if (resolvingDot || PluginBase.MainForm.CurrentDocument.IsUntitled) return null;
+            if (autoHide && !hxsettings.DisableCompletionOnDemand) return null;
+            var result = hxsettings.DisableMixedCompletion ? new MemberList() : null;
+            var exprValue = expression.Value;
+            if (!hxsettings.DisableMixedCompletion || hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop)
+            {
+                if (exprValue.Length >= 3)
+                {
+                    var first = exprValue[0];
+                    if ((first == '\"' || first == '\'') && expression.SubExpressions != null && expression.SubExpressions.Count == 1)
+                    {
+                        var s = exprValue.Replace(".#0~.", string.Empty);
+                        if (s.Length == 3 || (s.Length == 4 && s[1] == '\\'))
+                        {
+                            if (result == null) result = new MemberList();
+                            result.Add(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public) {Comments = "The character code of this character(inlined at compile-time)"});
+                        }
+                    }
+                }
+                if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop) return result;
+            }
 
             // auto-started completion, can be ignored for performance (show default completion tooltip)
-            if (expression.Value.IndexOfOrdinal(".") < 0 || (autoHide && !expression.Value.EndsWith('.')))
-                if (hxsettings.DisableMixedCompletion && expression.Value.Length > 0 && autoHide) return new MemberList();
-                else return null;
+            if (exprValue.IndexOfOrdinal(".") < 0 || (autoHide && !exprValue.EndsWith('.')))
+            if (hxsettings.DisableMixedCompletion && exprValue.Length > 0 && autoHide) return new MemberList();
+            else return null;
 
             // empty expression
-            if (expression.Value != "")
+            if (exprValue != "")
             {
                 // async processing
                 var hc = GetHaxeComplete(sci, expression, autoHide, HaxeCompilerService.COMPLETION);
@@ -1345,7 +1360,7 @@ namespace HaXeContext
                 resolvingDot = true;
             }
 
-            return hxsettings.DisableMixedCompletion ? new MemberList() : null;
+            return result;
         }
 
         internal void OnDotCompletionResult(HaxeComplete hc,  HaxeCompleteResult result, HaxeCompleteStatus status)
