@@ -18,17 +18,9 @@ namespace HaXeContext.Completion
         {
             var context = ASContext.Context;
             var member = expr.Member;
-            if (context.CurrentClass.Flags.HasFlag(FlagType.Interface) && (member == null || member.Flags.HasFlag(FlagType.Variable)))
+            if (context.CurrentClass.Flags.HasFlag(FlagType.Enum | FlagType.TypeDef) || context.CurrentClass.Flags.HasFlag(FlagType.Interface))
             {
-                return true;
-            }
-            if (context.CurrentClass.Flags.HasFlag(FlagType.Enum | FlagType.TypeDef))
-            {
-                if (contextToken != null && member == null)
-                {
-                    var type = expr.Type ?? ClassModel.VoidClass;
-                    if (!context.IsImported(type, sci.CurrentLine)) CheckAutoImport(expr, options);
-                }
+                if (contextToken != null && expr.Member == null && !context.IsImported(expr.Type ?? ClassModel.VoidClass, sci.CurrentLine)) CheckAutoImport(expr, options);
                 return true;
             }
             if (member != null
@@ -38,7 +30,7 @@ namespace HaXeContext.Completion
             {
                 ShowConvertToUsing(sci, options, expr);
             }
-            return false;
+            return base.ContextualGenerator(sci, options, expr);
         }
 
         static void ShowConvertToUsing(ScintillaControl sci, ICollection<ICompletionListItem> options, ASResult expr)
@@ -68,8 +60,8 @@ namespace HaXeContext.Completion
             int endPos;
             if (expr.Context.ContextFunction != null) endPos = sci.LineEndPosition(expr.Context.ContextFunction.LineTo);
             else endPos = sci.LineEndPosition(expr.Context.ContextMember.LineFrom);
-            endPos = ASGenerator.GetEndOfStatement(startPos, endPos, sci);
-            var parameters = ASGenerator.ParseFunctionParameters(sci, sci.WordEndPosition(caretPos, true));
+            endPos = GetEndOfStatement(startPos, endPos, sci);
+            var parameters = ParseFunctionParameters(sci, sci.WordEndPosition(caretPos, true));
             var ctx = parameters[0].result.Context;
             var value = ctx.Value;
             if (ctx.SubExpressions != null)
