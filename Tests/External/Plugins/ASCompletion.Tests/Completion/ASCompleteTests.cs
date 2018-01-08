@@ -1100,6 +1100,8 @@ namespace ASCompletion.Completion
                         .Returns("a".Length);
                     yield return new TestCaseData("a << b")
                         .Returns("a".Length);
+                    yield return new TestCaseData("a+b")
+                        .Returns("a".Length);
                 }
             }
 
