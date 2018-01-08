@@ -149,6 +149,8 @@
     <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1743_2.hx" />
     <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1743_3.hx" />
     <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1743_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1927_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1927_1.hx" />
     <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_empty.hx" />
     <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_methodDetails.hx" />
     <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_methodDetails_2.hx" />
