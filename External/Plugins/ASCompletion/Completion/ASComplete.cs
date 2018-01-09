@@ -2644,13 +2644,9 @@ namespace ASCompletion.Completion
             if (token.Length == 0) return notFound;
             if (asFunction && tokens.Length == 1) token += "(";
 
+            var type = ctx.ResolveToken(token, inClass.InFile);
+            if (type != ClassModel.VoidClass) return EvalTail(context, inFile, new ASResult {Type = type}, tokens, complete, filterVisibility) ?? notFound;
             ASResult head = null;
-            if (token.StartsWith('"') || token.StartsWith("'")) head = new ASResult {Type = ctx.ResolveType(features.stringKey, null)};
-            else if (token.Length > 1 && token.First() == '{' && token.Last() == '}') head = new ASResult {Type = ctx.ResolveType(features.objectKey, inFile)};
-            else if (token == "true" || token == "false") head = new ASResult {Type = ctx.ResolveType(features.booleanKey, inFile)};
-            else if (features.hasE4X && token == "</>") head = new ASResult {Type = ctx.ResolveType("XML", inFile)};
-            else if (char.IsDigit(token, 0)) head = new ASResult {Type = ctx.ResolveType(features.numberKey, inClass.InFile)};
-            if (head?.Type != null) return EvalTail(context, inFile, head, tokens, complete, filterVisibility) ?? notFound;
             if (token.StartsWith('#'))
             {
                 Match mSub = re_sub.Match(token);
@@ -3501,7 +3497,7 @@ namespace ASCompletion.Completion
                             break;
                         }
                     }
-                    else if (c == '<' && hasGenerics)
+                    else if (c == '<' && hasGenerics && arrCount == 0)
                     {
                         genCount--;
                         if (genCount < 0)
@@ -3570,7 +3566,7 @@ namespace ASCompletion.Completion
                         }
                         parCount++;
                     }
-                    else if (c == '>')
+                    else if (c == '>' && arrCount == 0)
                     {
                         if (haXe && position - 1 > minPos && (char) sci.CharAt(position - 1) == '-')
                         {
@@ -3877,7 +3873,7 @@ namespace ASCompletion.Completion
             }
 
             // result
-            var value = sb.ToString();
+            var value = sb.ToString().TrimStart('.');
             if (value.StartsWith('<'))
             {
                 if (sci.ConfigurationLanguage == "as3" && expression.WordBefore == "new")
