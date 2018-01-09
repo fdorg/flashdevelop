@@ -871,6 +871,7 @@ namespace HaXeContext
         /// <param name="atLine">Position in the file</param>
         public override bool IsImported(MemberModel member, int atLine)
         {
+            if (member == ClassModel.VoidClass) return false;
             int p = member.Name.IndexOf('#');
             if (p > 0)
             {
