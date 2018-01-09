@@ -157,6 +157,8 @@
     <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1916_4.hx" />
     <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1916_5.hx" />
     <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1916_6.hx" />
+    <EmbeddedResource Include="Test Files\parser\IsImported_case1.hx" />
+    <EmbeddedResource Include="Test Files\parser\IsImported_case2.hx" />
     <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_empty.hx" />
     <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_methodDetails.hx" />
     <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_methodDetails_2.hx" />

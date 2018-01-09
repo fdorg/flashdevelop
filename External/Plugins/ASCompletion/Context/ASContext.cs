@@ -1212,11 +1212,9 @@ namespace ASCompletion.Context
         /// <param name="cname">Class (short or full) name</param>
         /// <param name="inFile">Current file</param>
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
-        public virtual ClassModel ResolveType(string cname, FileModel inFile)
-        {
-            // to be implemented
-            return null;
-        }
+        public virtual ClassModel ResolveType(string cname, FileModel inFile) => ClassModel.VoidClass;
+
+        public virtual ClassModel ResolveToken(string token, FileModel inFile) => ClassModel.VoidClass;
 
         /// <summary>
         /// Retrieves a package content

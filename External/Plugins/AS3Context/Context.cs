@@ -862,6 +862,7 @@ namespace AS3Context
         /// <param name="atLine">Position in the file</param>
         public override bool IsImported(MemberModel member, int atLine)
         {
+            if (member == ClassModel.VoidClass) return false;
             FileModel cFile = Context.CurrentModel;
             // same package is auto-imported
             string package = member.Type.Length > member.Name.Length 
@@ -894,6 +895,16 @@ namespace AS3Context
                 else return ClassModel.VoidClass;
             }
             return base.ResolveType(cname, inFile);
+        }
+
+        public override ClassModel ResolveToken(string token, FileModel inFile)
+        {
+            if (token?.Length > 0)
+            {
+                if (token == "</>") return ResolveType("XML", inFile);
+                if (token.StartsWithOrdinal("0x")) return ResolveType("uint", inFile);
+            }
+            return base.ResolveToken(token, inFile);
         }
 
         /// <summary>
