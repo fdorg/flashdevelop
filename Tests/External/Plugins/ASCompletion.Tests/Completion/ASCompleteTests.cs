@@ -1102,6 +1102,14 @@ namespace ASCompletion.Completion
                         .Returns("a".Length);
                     yield return new TestCaseData("a+b")
                         .Returns("a".Length);
+                    yield return new TestCaseData("test(1, 2, 3 ;")
+                        .Returns("test".Length);
+                    yield return new TestCaseData("test(1, 2, 3 \n}")
+                        .Returns("test".Length);
+                    yield return new TestCaseData("test(1, 2, 3 ]")
+                        .Returns("test".Length);
+                    yield return new TestCaseData("test }")
+                        .Returns("test".Length);
                 }
             }
 
