@@ -2627,8 +2627,13 @@ namespace ASCompletion.Completion
         {
             ASResult notFound = new ASResult {Context = context};
             if (string.IsNullOrEmpty(expression)) return notFound;
-
             var ctx = ASContext.Context;
+            ClassModel type;
+            if (!string.IsNullOrEmpty(context.WordBefore))
+            {
+                type = ctx.ResolveToken(context.WordBefore + " " + context.Value, inClass.InFile);
+                if (type != ClassModel.VoidClass) return new ASResult {Type = type, Context = context, InClass = inClass, InFile = inFile, Path = context.Value};
+            }
             var features = ctx.Features;
             if (expression.StartsWithOrdinal(features.dot))
             {
@@ -2643,8 +2648,8 @@ namespace ASCompletion.Completion
             string token = tokens[0];
             if (token.Length == 0) return notFound;
             if (asFunction && tokens.Length == 1) token += "(";
-
-            var type = ctx.ResolveToken(token, inClass.InFile);
+            
+            type = ctx.ResolveToken(token, inClass.InFile);
             if (type != ClassModel.VoidClass) return EvalTail(context, inFile, new ASResult {Type = type}, tokens, complete, filterVisibility) ?? notFound;
             ASResult head = null;
             if (token.StartsWith('#'))

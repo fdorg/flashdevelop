@@ -1566,6 +1566,16 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_increment4"), GeneratorJobType.AssignStatementToVar, true)
                                 .Returns(ReadAllTextAS3("AfterAssignStatementToVar_increment4"))
                                 .SetName("From ++1 * ++1");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_typeof"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_typeof"))
+                                .SetName("Issue 1908. typeof")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_delete"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_delete"))
+                                .SetName("Issue 1908. delete")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
                     }
                 }
 
