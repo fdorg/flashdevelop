@@ -1677,6 +1677,16 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1749_6"))
                                 .SetName("Issue 1749. Modulo")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1908_unsafecast"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1908_unsafecast"))
+                                .SetName("Issue 1908. Unsafe cast")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1908_untyped"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1908_untyped"))
+                                .SetName("Issue 1908. untyped")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
                     }
                 }
 
@@ -1707,19 +1717,10 @@ namespace ASCompletion.Completion
 
                 internal static string Common(string sourceText, GeneratorJobType job, IASContext context, ScintillaControl sci)
                 {
-                    sci.Text = sourceText;
-                    SnippetHelper.PostProcessSnippets(sci, 0);
-                    var currentModel = ASContext.Context.CurrentModel;
-                    new ASFileParser().ParseSrc(currentModel, sci.Text);
-                    var currentClass = currentModel.Classes[0];
-                    ASContext.Context.CurrentClass.Returns(currentClass);
-                    ASContext.Context.CurrentModel.Returns(currentModel);
-                    var currentMember = currentClass.Members[0];
-                    ASContext.Context.CurrentMember.Returns(currentMember);
+                    SetSrc(sci, sourceText);
                     var visibleExternalElements = context.GetVisibleExternalElements();
                     ASContext.Context.GetVisibleExternalElements().Returns(visibleExternalElements);
-                    ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
-                    ASGenerator.GenerateJob(job, currentMember, ASContext.Context.CurrentClass, null, null);
+                    ASGenerator.GenerateJob(job, ASContext.Context.CurrentMember, ASContext.Context.CurrentClass, null, null);
                     return sci.Text;
                 }
             }
