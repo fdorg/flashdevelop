@@ -157,6 +157,8 @@
     <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1926_5.hx" />
     <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1926_6.hx" />
     <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1916_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\IsImported_case1.hx" />
+    <EmbeddedResource Include="Test Files\parser\IsImported_case2.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

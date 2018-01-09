@@ -3500,6 +3500,18 @@ namespace ASCompletion.Completion
                         yield return new TestCaseData("BeforeGenerateConstructor_issue1738_5", GeneratorJobType.ChangeConstructorDecl, false)
                             .Returns(ReadAllTextHaxe("AfterGenerateConstructor_issue1738_5"))
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/1738");
+                        yield return new TestCaseData("BeforeGenerateConstructor_issue1738_6", GeneratorJobType.ChangeConstructorDecl, false)
+                            .Returns(ReadAllTextHaxe("AfterGenerateConstructor_issue1738_6"))
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1738");
+                        yield return new TestCaseData("BeforeGenerateConstructor_issue1738_7", GeneratorJobType.ChangeConstructorDecl, true)
+                            .Returns(ReadAllTextHaxe("AfterGenerateConstructor_issue1738_7"))
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1738");
+                        yield return new TestCaseData("BeforeGenerateConstructor_issue1738_8", GeneratorJobType.ChangeConstructorDecl, false)
+                            .Returns(ReadAllTextHaxe("AfterGenerateConstructor_issue1738_8"))
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1738");
+                        yield return new TestCaseData("BeforeGenerateConstructor_issue1738_9", GeneratorJobType.ChangeConstructorDecl, true)
+                            .Returns(ReadAllTextHaxe("AfterGenerateConstructor_issue1738_9"))
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1738");
                     }
                 }
 

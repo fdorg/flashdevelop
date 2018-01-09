@@ -12,9 +12,9 @@ namespace HaXeContext
     [TestFixture]
     class ContextTests : ASCompleteTests
     {
-        protected new static string ReadAllTextHaxe(string fileName) => TestFile.ReadAllText(GetFullPathHaxe(fileName));
+        protected static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
-        protected new static string GetFullPathHaxe(string fileName) => $"{nameof(HaXeContext)}.Test_Files.parser.{fileName}.hx";
+        protected static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.parser.{fileName}.hx";
 
         [TestFixtureSetUp]
         public void ContextTestsSetUp()
@@ -75,19 +75,19 @@ namespace HaXeContext
         [Test, TestCaseSource(nameof(DecomposeTypesTestCases))]
         public IEnumerable<string> DecomposeTypes(IEnumerable<string> types) => ASContext.Context.DecomposeTypes(types);
 
-        IEnumerable<TestCaseData> ParseFile_Issue1849TestCases
+        static IEnumerable<TestCaseData> ParseFile_Issue1849TestCases
         {
             get
             {
-                yield return new TestCaseData(ReadAllTextHaxe("Issue1849_1"))
+                yield return new TestCaseData(ReadAllText("Issue1849_1"))
                     .Returns("Dynamic<T>")
                     .SetName("implements Dynamic<T>")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1849");
-                yield return new TestCaseData(ReadAllTextHaxe("Issue1849_2"))
+                yield return new TestCaseData(ReadAllText("Issue1849_2"))
                     .Returns("IStruct<T>")
                     .SetName("implements IStruct<T>")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1849");
-                yield return new TestCaseData(ReadAllTextHaxe("Issue1849_3"))
+                yield return new TestCaseData(ReadAllText("Issue1849_3"))
                     .Returns("IStruct<K,V>")
                     .SetName("implements IStruct<K,V>")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1849");
@@ -102,26 +102,26 @@ namespace HaXeContext
             return interfaceType.Type;
         }
 
-        IEnumerable<TestCaseData> ResolveDotContext_issue750TestCases
+        static IEnumerable<TestCaseData> ResolveDotContext_issue750TestCases
         {
             get
             {
-                yield return new TestCaseData(ReadAllTextHaxe("ResolveDotContext_Issue1926_1"))
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_1"))
                     .Returns(null)
                     .SetName("case 1");
-                yield return new TestCaseData(ReadAllTextHaxe("ResolveDotContext_Issue1926_2"))
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_2"))
                     .Returns(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
                     .SetName("case 2");
-                yield return new TestCaseData(ReadAllTextHaxe("ResolveDotContext_Issue1926_3"))
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_3"))
                     .Returns(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
                     .SetName("case 3");
-                yield return new TestCaseData(ReadAllTextHaxe("ResolveDotContext_Issue1926_4"))
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_4"))
                     .Returns(null)
                     .SetName("case 4");
-                yield return new TestCaseData(ReadAllTextHaxe("ResolveDotContext_Issue1926_5"))
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_5"))
                     .Returns(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
                     .SetName("case 5");
-                yield return new TestCaseData(ReadAllTextHaxe("ResolveDotContext_Issue1926_6"))
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_6"))
                     .Returns(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
                     .SetName("case 6");
             }
@@ -135,6 +135,35 @@ namespace HaXeContext
             var expr = ASComplete.GetExpression(sci, sci.CurrentPos);
             var list = ASContext.Context.ResolveDotContext(sci, expr, false);
             return list?.Search("code", FlagType.Getter, Visibility.Public);
+        }
+
+        static IEnumerable<TestCaseData> IsImportedTestCases
+        {
+            get
+            {
+                yield return new TestCaseData(ReadAllText("IsImported_case1"))
+                    .Returns(true);
+                yield return new TestCaseData(ReadAllText("IsImported_case2"))
+                    .Returns(false);
+                yield return new TestCaseData(null)
+                    .Returns(false)
+                    .SetName("ClassModel.VoidClass")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1930");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(IsImportedTestCases))]
+        public bool IsImported(string sourceText)
+        {
+            MemberModel member;
+            if (sourceText != null)
+            {
+                SetSrc(sci, sourceText);
+                var type = sci.GetWordFromPosition(sci.CurrentPos);
+                member = new MemberModel(type, type, FlagType.Class, Visibility.Public);
+            }
+            else member = ClassModel.VoidClass;
+            return ASContext.Context.IsImported(member, sci.CurrentLine);
         }
 
         IEnumerable<TestCaseData> ResolveTokenTestCases
@@ -181,7 +210,7 @@ namespace HaXeContext
 
         IEnumerable<TestCaseData> ResolveDotContextIssue1916TestCases
         {
-            get { yield return new TestCaseData(ReadAllTextHaxe("ResolveDotContext_Issue1916_1"), "String"); }
+            get { yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_1"), "String"); }
         }
 
         [Test, TestCaseSource(nameof(ResolveDotContextIssue1916TestCases))]
