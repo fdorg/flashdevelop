@@ -150,6 +150,14 @@
     <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1743_3.hx" />
     <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1927_1.hx" />
     <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1927_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1916_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1916_2.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1916_3.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1916_4.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1916_5.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1916_6.hx" />
+    <EmbeddedResource Include="Test Files\parser\IsImported_case1.hx" />
+    <EmbeddedResource Include="Test Files\parser\IsImported_case2.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
