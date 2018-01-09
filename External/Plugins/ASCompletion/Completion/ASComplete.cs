@@ -2647,7 +2647,7 @@ namespace ASCompletion.Completion
             var isFunction = token.StartsWith('#');
             ClassModel type;
             if (isFunction && string.IsNullOrEmpty(context.WordBefore) && context.SubExpressions != null && context.SubExpressions.Count == 1)
-                type = ctx.ResolveToken(context.Value.Replace(".#0~", context.SubExpressions.First()), inClass.InFile);
+                type = ctx.ResolveToken(context.Value.Replace("#0~", context.SubExpressions.First()), inClass.InFile);
             else type = ctx.ResolveToken(token, inClass.InFile);
             if (type != ClassModel.VoidClass) return EvalTail(context, inFile, new ASResult {Type = type}, tokens, complete, filterVisibility) ?? notFound;
             ASResult head = null;
