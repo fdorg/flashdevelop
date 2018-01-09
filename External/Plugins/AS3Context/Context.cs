@@ -862,6 +862,7 @@ namespace AS3Context
         /// <param name="atLine">Position in the file</param>
         public override bool IsImported(MemberModel member, int atLine)
         {
+            if (member == ClassModel.VoidClass) return false;
             FileModel cFile = Context.CurrentModel;
             // same package is auto-imported
             string package = member.Type.Length > member.Name.Length 
