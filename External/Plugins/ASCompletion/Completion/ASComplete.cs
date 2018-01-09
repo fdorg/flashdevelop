@@ -4504,17 +4504,17 @@ namespace ASCompletion.Completion
 
         public static int ExpressionEndPosition(ScintillaControl sci, int startPos, int endPos)
         {
+            var result = startPos;
+            var statementEnd = startPos;
             var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
             var groupCount = 0;
-            var spacesCount = 0;
-            var statementEnd = startPos;
+            var brCount = 0;
             var hadWS = false;
             sci.Colourise(0, -1);
             while (statementEnd < endPos)
             {
                 if (sci.PositionIsOnComment(statementEnd) || sci.PositionIsInString(statementEnd))
                 {
-                    if (groupCount == 0) spacesCount++;
                     statementEnd++;
                     continue;
                 }
@@ -4523,28 +4523,25 @@ namespace ASCompletion.Completion
                 {
                     groupCount++;
                     hadWS = false;
-                    spacesCount = 0;
                 }
                 else if (c == ')')
                 {
                     groupCount--;
-                    if (groupCount < 0) break;
+                    if (groupCount == 0) result = statementEnd;
+                    if (groupCount <= 0) break;
                 }
                 else if (groupCount == 0)
                 {
                     if (characterClass.Contains(c))
                     {
                         if (hadWS) break;
+                        result = statementEnd;
                     }
-                    else if (c <= ' ')
-                    {
-                        hadWS = true;
-                        spacesCount++;
-                    }
+                    else if (c <= ' ') hadWS = true;
                     else break;
                 }
             }
-            return statementEnd - 1 - spacesCount;
+            return result;
         }
 
         #endregion
