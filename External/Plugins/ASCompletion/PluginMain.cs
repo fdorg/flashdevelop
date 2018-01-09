@@ -1108,18 +1108,25 @@ namespace ASCompletion
         {
             ThreadPool.QueueUserWorkItem(s =>
             {
-                astCacheTimer.Stop();
-
-                foreach (var cls in obj.Classes)
+                try
                 {
-                    var cached = astCache.GetCachedModel(cls);
-                    astCache.Remove(cls);
-                    if (cached != null)
-                        foreach (var c in cached.ConnectedClassModels) //need to update all connected stuff
-                            astCache.MarkAsOutdated(c);
-                }
+                    astCacheTimer.Stop();
 
-                if (initializedCache) astCacheTimer.Start();
+                    foreach (var cls in obj.Classes)
+                    {
+                        var cached = astCache.GetCachedModel(cls);
+                        astCache.Remove(cls);
+                        if (cached != null)
+                            foreach (var c in cached.ConnectedClassModels) //need to update all connected stuff
+                                astCache.MarkAsOutdated(c);
+                    }
+
+                    if (initializedCache) astCacheTimer.Start();
+                }
+                catch
+                {
+                    //TODO: Look into Timer problem
+                }
 
                 PluginBase.RunAsync(() =>
                 {
@@ -1129,18 +1136,18 @@ namespace ASCompletion
                         var sci1 = doc.SplitSci1;
                         var sci2 = doc.SplitSci2;
 
-                if (sci1 != null)
-                {
-                    sci1.MarkerDeleteAll(MarkerUp);
-                    sci1.MarkerDeleteAll(MarkerDown);
-                    sci1.MarkerDeleteAll(MarkerUpDown);
-                }
-                if (sci2 != null)
-                {
-                    sci2.MarkerDeleteAll(MarkerUp);
-                    sci2.MarkerDeleteAll(MarkerDown);
-                    sci2.MarkerDeleteAll(MarkerUpDown);
-                }
+                        if (sci1 != null)
+                        {
+                            sci1.MarkerDeleteAll(MarkerUp);
+                            sci1.MarkerDeleteAll(MarkerDown);
+                            sci1.MarkerDeleteAll(MarkerUpDown);
+                        }
+                        if (sci2 != null)
+                        {
+                            sci2.MarkerDeleteAll(MarkerUp);
+                            sci2.MarkerDeleteAll(MarkerDown);
+                            sci2.MarkerDeleteAll(MarkerUpDown);
+                        }
                     }
                 });
 
@@ -1158,14 +1165,21 @@ namespace ASCompletion
             {
                 if (PluginBase.CurrentProject == null) return;
 
-                astCacheTimer.Stop();
-
-                foreach (var cls in obj.Classes)
+                try
                 {
-                    astCache.MarkAsOutdated(cls);
-                }
+                    astCacheTimer.Stop();
 
-                if (initializedCache) astCacheTimer.Start();
+                    foreach (var cls in obj.Classes)
+                    {
+                        astCache.MarkAsOutdated(cls);
+                    }
+
+                    if (initializedCache) astCacheTimer.Start();
+                }
+                catch
+                {
+                    //TODO: Possible multi-threaded problem with timer
+                }
 
                 EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "ASCompletion.FileModelUpdated", obj));
             });
@@ -1173,13 +1187,27 @@ namespace ASCompletion
 
         void AstCacheTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            astCache.UpdateOutdatedModels();
+            try
+            {
+                astCache.UpdateOutdatedModels();
+            }
+            catch
+            {
+                //TODO: Handle some inner cases more properly
+            }
         }
 
         void Project_ClassPathChanged(Project project)
         {
-            astCacheTimer.Stop();
-            if (initializedCache) astCacheTimer.Start();
+            try
+            {
+                astCacheTimer.Stop();
+                if (initializedCache) astCacheTimer.Start();
+            }
+            catch
+            {
+                //TODO: Potential timer problem
+            }
         }
 
         void Sci_MarginClick(ScintillaControl sender, int modifiers, int position, int margin)
