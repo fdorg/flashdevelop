@@ -871,6 +871,7 @@ namespace HaXeContext
         /// <param name="atLine">Position in the file</param>
         public override bool IsImported(MemberModel member, int atLine)
         {
+            if (member == ClassModel.VoidClass) return false;
             int p = member.Name.IndexOf('#');
             if (p > 0)
             {
@@ -956,6 +957,50 @@ namespace HaXeContext
             }
 
             return GetModel(package, cname, inPackage);
+        }
+
+        public override ClassModel ResolveToken(string token, FileModel inFile)
+        {
+            if (token?.Length > 0)
+            {
+                if (token.StartsWithOrdinal("0x")) return ResolveType("Int", inFile);
+                var first = token.First();
+                var last = token.Last();
+                if (first == '[' && last == ']')
+                {
+                    var dQuotes = 0;
+                    var sQuotes = 0;
+                    var length = token.Length;
+                    var arrayComprehensionEnd = length - 3;
+                    for (var i = 1; i < length; i++)
+                    {
+                        var c = token[i];
+                        if (c == '\"' && sQuotes == 0)
+                        {
+                            if (i <= 1 || token[i - 2] == '\\') continue;
+                            if (dQuotes == 0) dQuotes++;
+                            else dQuotes--;
+                        }
+                        else if (c == '\'' && dQuotes == 0)
+                        {
+                            if (i <= 1 || token[i - 2] == '\\') continue;
+                            if (sQuotes == 0) sQuotes++;
+                            else sQuotes--;
+                        }
+                        if (sQuotes > 0 || dQuotes > 0) continue;
+                        if (i <= arrayComprehensionEnd && c == '=' && token[i + 1] == '>')
+                            // TODO: try parse K, V
+                            return ResolveType("Map<K, V>", inFile);
+                    }
+                    return ResolveType(features.arrayKey, inFile);
+                }
+                if (first == '{' && last == '}')
+                {
+                    //TODO: parse anonymous type
+                    return ResolveType(features.dynamicKey, inFile);
+                }
+            }
+            return base.ResolveToken(token, inFile);
         }
 
         ClassModel ResolveTypeByPackage(string package, string cname, FileModel inFile, string inPackage)

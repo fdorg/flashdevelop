@@ -156,6 +156,8 @@
     <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1916_4.hx" />
     <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1916_5.hx" />
     <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1916_6.hx" />
+    <EmbeddedResource Include="Test Files\parser\IsImported_case1.hx" />
+    <EmbeddedResource Include="Test Files\parser\IsImported_case2.hx" />
     <EmbeddedResource Include="Test Files\completion\generated\BeforeConvertStaticMethodCallIntoStaticExtensionsCall.hx" />
     <EmbeddedResource Include="Test Files\completion\generated\AfterConvertStaticMethodCallIntoStaticExtensionsCall.hx" />
     <EmbeddedResource Include="Test Files\completion\generated\BeforeConvertStaticMethodCallIntoStaticExtensionsCall2.hx" />
