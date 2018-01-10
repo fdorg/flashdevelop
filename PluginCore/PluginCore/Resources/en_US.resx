@@ -6246,4 +6246,7 @@ AND - All conditions are met.</value>
     <value>Inheritance Navigation</value>
     <comment>Added after 5.2.1</comment>
   </data>
+  <data name="HaXeContext.Label.ConvertStaticCallToUsingCall" xml:space="preserve">
+    <value>Convert to usgin</value>
+  </data>
 </root>

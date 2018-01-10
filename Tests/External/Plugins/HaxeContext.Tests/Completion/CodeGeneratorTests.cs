@@ -23,7 +23,7 @@ namespace HaXeContext.Completion
             sci.ConfigurationLanguage = "haxe";
         }
 
-        public IEnumerable<TestCaseData> HaxeTestCases
+        public IEnumerable<TestCaseData> ContextualGeneratorTestCases
         {
             get
             {
@@ -60,7 +60,7 @@ namespace HaXeContext.Completion
             }
         }
 
-        [Test, TestCaseSource(nameof(HaxeTestCases))]
+        [Test, TestCaseSource(nameof(ContextualGeneratorTestCases))]
         public string Haxe(string fileName, bool hasGenerator) => Impl(sci, fileName, hasGenerator);
 
         internal static string Impl(ScintillaControl sci, string fileName, bool hasGenerator)
@@ -69,15 +69,75 @@ namespace HaXeContext.Completion
             fileName = GetFullPathHaxe(fileName);
             ASContext.Context.CurrentModel.FileName = fileName;
             PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
-            return Common(sci, sourceText, hasGenerator);
+            return ContextualGenerator(sci, sourceText, hasGenerator);
         }
 
-        internal static string Common(ScintillaControl sci, string sourceText, bool hasGenerator)
+        internal static string ContextualGenerator(ScintillaControl sci, string sourceText, bool hasGenerator)
         {
             SetSrc(sci, sourceText);
             var options = new List<ICompletionListItem>();
             ASGenerator.ContextualGenerator(sci, options);
             if (!hasGenerator) Assert.AreEqual(0, options.Count);
+            return sci.Text;
+        }
+
+        static IEnumerable<TestCaseData> ConvertStaticMethodCallToStaticExtensionCallTestCases
+        {
+            get
+            {
+                yield return
+                    new TestCaseData(ReadAllTextHaxe("BeforeConvertStaticMethodCallIntoStaticExtensionsCall"))
+                        .Returns(ReadAllTextHaxe("AfterConvertStaticMethodCallIntoStaticExtensionsCall"))
+                        .SetName("var v = StringTools.trim(' string ') -> var v = ' string '.trim()");
+                yield return
+                    new TestCaseData(ReadAllTextHaxe("BeforeConvertStaticMethodCallIntoStaticExtensionsCall2"))
+                        .Returns(ReadAllTextHaxe("AfterConvertStaticMethodCallIntoStaticExtensionsCall2"))
+                        .SetName("var v = StringTools.lpad('10' , 8, 0) -> var v = '10'.lpad(8, 0)");
+                yield return
+                    new TestCaseData(ReadAllTextHaxe("BeforeConvertStaticMethodCallIntoStaticExtensionsCall3"))
+                        .Returns(ReadAllTextHaxe("AfterConvertStaticMethodCallIntoStaticExtensionsCall3"))
+                        .SetName("var v = Lambda.count([1, 2, 3]) -> var s = [1, 2, 3].count()");
+                yield return
+                    new TestCaseData(ReadAllTextHaxe("BeforeConvertStaticMethodCallIntoStaticExtensionsCall4"))
+                        .Returns(ReadAllTextHaxe("AfterConvertStaticMethodCallIntoStaticExtensionsCall4"))
+                        .SetName("var v = Reflect.isObject({x:0, y:1}) -> var v = {x:0, y:1}.isObject()");
+                yield return
+                    new TestCaseData(ReadAllTextHaxe("BeforeConvertStaticMethodCallIntoStaticExtensionsCall5"))
+                        .Returns(ReadAllTextHaxe("AfterConvertStaticMethodCallIntoStaticExtensionsCall5"))
+                        .SetName("private var v = Reflect.isObject({x:0, y:1}) -> private var v = {x:0, y:1}.isObject()");
+                yield return
+                    new TestCaseData(ReadAllTextHaxe("BeforeConvertStaticMethodCallIntoStaticExtensionsCall6"))
+                        .Returns(ReadAllTextHaxe("AfterConvertStaticMethodCallIntoStaticExtensionsCall6"))
+                        .SetName("private function foo() return Reflect.isObject({x:0, y:1}) -> private function foo() return {x:0, y:1}.isObject()");
+                yield return
+                    new TestCaseData(ReadAllTextHaxe("BeforeConvertStaticMethodCallIntoStaticExtensionsCall7"))
+                        .Returns(ReadAllTextHaxe("AfterConvertStaticMethodCallIntoStaticExtensionsCall7"))
+                        .SetName("var v = StringTools.lpad(Std.string(1), '0', 2) -> var v = Std.string(1).lpad('0', 2)");
+                yield return
+                    new TestCaseData(ReadAllTextHaxe("BeforeConvertStaticMethodCallIntoStaticExtensionsCall8"))
+                        .Returns(ReadAllTextHaxe("AfterConvertStaticMethodCallIntoStaticExtensionsCall8"))
+                        .SetName("var v = StringTools.lpad(someVar, '0', 2) -> var v = someVar.lpad('0', 2)");
+                yield return
+                    new TestCaseData(ReadAllTextHaxe("BeforeConvertStaticMethodCallIntoStaticExtensionsCall9"))
+                        .Returns(ReadAllTextHaxe("AfterConvertStaticMethodCallIntoStaticExtensionsCall9"))
+                        .SetName("var v = StringTools.lpad('-${someVar}', '0', 20) -> var v = '-${someVar}'.lpad('0', 20)");
+                yield return
+                    new TestCaseData(ReadAllTextHaxe("BeforeConvertStaticMethodCallIntoStaticExtensionsCall10"))
+                        .Returns(ReadAllTextHaxe("AfterConvertStaticMethodCallIntoStaticExtensionsCall10"))
+                        .SetName("var v = StringTools.lpad('12345'.split('')[0].charCodeAt(0), '0', 20) -> var v = '12345'.split('')[0].charCodeAt(0).lpad('0', 20)");
+                yield return
+                    new TestCaseData(ReadAllTextHaxe("BeforeConvertStaticMethodCallIntoStaticExtensionsCall11"))
+                        .Returns(ReadAllTextHaxe("AfterConvertStaticMethodCallIntoStaticExtensionsCall11"))
+                        .SetName("var v = Lambda.count(new Array<Int>()) -> var v = new Array<Int>().count()");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(ConvertStaticMethodCallToStaticExtensionCallTestCases))]
+        public string ConvertStaticMethodCallToStaticExtensionCall(string sourceText)
+        {
+            SetSrc(sci, sourceText);
+            var expr = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
+            CodeGenerator.ConvertStaticMethodCallIntoStaticExtensionCall(sci, expr);
             return sci.Text;
         }
     }

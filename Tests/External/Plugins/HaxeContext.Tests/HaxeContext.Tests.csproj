@@ -158,6 +158,28 @@
     <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1916_6.hx" />
     <EmbeddedResource Include="Test Files\parser\IsImported_case1.hx" />
     <EmbeddedResource Include="Test Files\parser\IsImported_case2.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeConvertStaticMethodCallIntoStaticExtensionsCall.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterConvertStaticMethodCallIntoStaticExtensionsCall.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeConvertStaticMethodCallIntoStaticExtensionsCall2.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterConvertStaticMethodCallIntoStaticExtensionsCall2.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeConvertStaticMethodCallIntoStaticExtensionsCall3.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterConvertStaticMethodCallIntoStaticExtensionsCall3.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeConvertStaticMethodCallIntoStaticExtensionsCall4.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterConvertStaticMethodCallIntoStaticExtensionsCall4.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeConvertStaticMethodCallIntoStaticExtensionsCall5.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterConvertStaticMethodCallIntoStaticExtensionsCall5.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeConvertStaticMethodCallIntoStaticExtensionsCall6.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterConvertStaticMethodCallIntoStaticExtensionsCall6.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeConvertStaticMethodCallIntoStaticExtensionsCall7.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterConvertStaticMethodCallIntoStaticExtensionsCall7.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeConvertStaticMethodCallIntoStaticExtensionsCall8.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterConvertStaticMethodCallIntoStaticExtensionsCall8.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeConvertStaticMethodCallIntoStaticExtensionsCall9.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterConvertStaticMethodCallIntoStaticExtensionsCall9.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeConvertStaticMethodCallIntoStaticExtensionsCall10.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterConvertStaticMethodCallIntoStaticExtensionsCall10.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeConvertStaticMethodCallIntoStaticExtensionsCall11.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterConvertStaticMethodCallIntoStaticExtensionsCall11.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

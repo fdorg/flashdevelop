@@ -6289,4 +6289,8 @@ AND - All conditions are met.</value>
     <value>Sets the maximum number of processes for diagnostics (linting) that run at the same time. Defaults to 1.</value>
     <comment>Added after 5.2.1</comment>
   </data>
+  <data name="HaXeContext.Label.ConvertStaticCallToUsingCall" xml:space="preserve">
+    <value>Convert to usgin</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
 </root>
