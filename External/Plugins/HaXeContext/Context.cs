@@ -1388,7 +1388,7 @@ namespace HaXeContext
                             var type = ResolveType(features.stringKey, CurrentModel);
                             foreach (MemberModel member in type.Members)
                             {
-                                if (member.Flags.HasFlag(FlagType.Static) || !member.Access.HasFlag(Visibility.Public)) continue;
+                                if (!member.Flags.HasFlag(FlagType.Static) || member.Access.HasFlag(Visibility.Public)) continue;
                                 result.Add(member);
                             }
                             result.Sort();
