@@ -12,6 +12,7 @@ using PluginCore.Helpers;
 using PluginCore;
 using ASCompletion.Completion;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using ProjectManager.Projects.Haxe;
 using ProjectManager.Projects;
@@ -964,8 +965,8 @@ namespace HaXeContext
             if (token?.Length > 0)
             {
                 if (token.StartsWithOrdinal("0x")) return ResolveType("Int", inFile);
-                var first = token.First();
-                var last = token.Last();
+                var first = token[0];
+                var last = token[token.Length - 1];
                 if (first == '[' && last == ']')
                 {
                     var dQuotes = 0;
@@ -998,6 +999,20 @@ namespace HaXeContext
                 {
                     //TODO: parse anonymous type
                     return ResolveType(features.dynamicKey, inFile);
+                }
+                if (first == '(' && last == ')')
+                {
+                    var groupCount = 0;
+                    var sb = new StringBuilder(token.Length - 2);
+                    for (var i = token.Length - 2; i >= 1; i--)
+                    {
+                        var c = token[i];
+                        if (c == '}' || c == ')') groupCount++;
+                        else if (c == '{' || c == '(') groupCount--;
+                        else if (c == ':' && groupCount == 0) break;
+                        sb.Insert(0, c);
+                    }
+                    return ResolveType(sb.ToString(), inFile);
                 }
             }
             return base.ResolveToken(token, inFile);
@@ -1387,6 +1402,24 @@ namespace HaXeContext
                             result.Add(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public) {Comments = "The character code of this character(inlined at compile-time)"});
                         }
                     }
+                }
+                if (expression.SubExpressions != null && expression.SubExpressions.Count == 1)
+                {
+                    if (result == null) result = new MemberList();
+                    var model = ResolveToken(expression.SubExpressions.First(), CurrentModel);
+                    while (!model.IsVoid())
+                    {
+                        foreach (MemberModel it in model.Members)
+                        {
+                            if (!it.Flags.HasFlag(FlagType.Static) && it.Access.HasFlag(Visibility.Public))
+                            {
+                                result.Add(it);
+                            }
+                        }
+                        model.ResolveExtends();
+                        model = model.Extends;
+                    }
+                    if (result.Count == 0) result = null;
                 }
                 if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop) return result;
             }

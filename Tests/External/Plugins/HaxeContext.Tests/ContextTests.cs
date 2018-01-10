@@ -106,22 +106,22 @@ namespace HaXeContext
         {
             get
             {
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_1"))
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_1"))
                     .Returns(null)
                     .SetName("case 1");
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_2"))
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_2"))
                     .Returns(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
                     .SetName("case 2");
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_3"))
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_3"))
                     .Returns(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
                     .SetName("case 3");
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_4"))
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_4"))
                     .Returns(null)
                     .SetName("case 4");
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_5"))
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_5"))
                     .Returns(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
                     .SetName("case 5");
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_6"))
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_6"))
                     .Returns(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
                     .SetName("case 6");
             }
@@ -200,10 +200,30 @@ namespace HaXeContext
                 yield return new TestCaseData("[1 => 1]")
                     .Returns(new ClassModel {Name = "Map<K, V>", Type = "Map<K, V>", InFile = FileModel.Ignore})
                     .SetName("[1 => 1]");
+                yield return new TestCaseData("(v:String)")
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
             }
         }
 
         [Test, TestCaseSource(nameof(ResolveTokenTestCases))]
         public ClassModel ResolveToken(string token) => ASContext.Context.ResolveToken(token, null);
+
+        IEnumerable<TestCaseData> ResolveDotContextIssue1916TestCases
+        {
+            get { yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_1"), "String"); }
+        }
+
+        [Test, TestCaseSource(nameof(ResolveDotContextIssue1916TestCases))]
+        public void ResolveDotContext_issue1916(string sourceText, string type)
+        {
+            ((HaXeSettings) ASContext.Context.Settings).CompletionMode = HaxeCompletionModeEnum.FlashDevelop;
+            var model = ASContext.Context.ResolveType(type, null);
+            var expectedList = new MemberList();
+            expectedList.Items.AddRange(model.Members.Items.Where(it => !it.Flags.HasFlag(FlagType.Static) && it.Access.HasFlag(Visibility.Public)));
+            SetSrc(sci, sourceText);
+            var expr = ASComplete.GetExpression(sci, sci.CurrentPos);
+            var list = ASContext.Context.ResolveDotContext(sci, expr, false);
+            Assert.AreEqual(expectedList, list);
+        }
     }
 }
