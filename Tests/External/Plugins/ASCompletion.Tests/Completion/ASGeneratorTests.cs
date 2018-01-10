@@ -1646,6 +1646,11 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1749_6"))
                                 .SetName("Issue 1749. Modulo")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue_1766"), GeneratorJobType.AssignStatementToVar, false)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue_1766"))
+                                .SetName("from [1 => '1', 2 = '2']")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704");
                     }
                 }
 
