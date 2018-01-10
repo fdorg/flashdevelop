@@ -2059,14 +2059,6 @@ namespace ASCompletion.Completion
 
             string tail = (dotIndex >= 0) ? expr.Value.Substring(dotIndex + features.dot.Length) : expr.Value;
             
-            // custom completion
-            MemberList items = ASContext.Context.ResolveDotContext(Sci, expr, autoHide);
-            if (items != null)
-            {
-                DotContextResolved(Sci, expr, items, autoHide);
-                return true;
-            }
-
             // Context
             ASResult result;
             ClassModel tmpClass;
@@ -2110,12 +2102,13 @@ namespace ASCompletion.Completion
             ClassModel classScope = tmpClass;
 
             MemberList mix = new MemberList();
+            MemberList items = ASContext.Context.ResolveDotContext(Sci, expr, autoHide);
+            if (items != null) mix.Add(items);
             // local vars are the first thing to try
             if ((result.IsNull() || (dotIndex < 0)) && expr.ContextFunction != null)
                 mix.Merge(expr.LocalVars);
 
             // get all members
-            FlagType mask = 0;
             // members visibility
             ClassModel curClass = cClass;
             curClass.ResolveExtends();
@@ -2134,6 +2127,7 @@ namespace ASCompletion.Completion
                 bool limitMembers = autoHide; // ASContext.Context.HideIntrinsicMembers || (autoHide && !ASContext.Context.AlwaysShowIntrinsicMembers);
 
                 // static or instance members?
+                FlagType mask = 0;
                 if (!result.IsNull()) mask = result.IsStatic ? FlagType.Static : FlagType.Dynamic;
                 else if (expr.ContextFunction == null || IsStatic(expr.ContextFunction)) mask = FlagType.Static;
                 else mask = 0;
