@@ -106,35 +106,40 @@ namespace HaXeContext
         {
             get
             {
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_1"))
-                    .Returns(null)
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_1"), null)
                     .SetName("case 1");
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_2"))
-                    .Returns(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_2"), new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
                     .SetName("case 2");
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_3"))
-                    .Returns(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_3"), new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
                     .SetName("case 3");
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_4"))
-                    .Returns(null)
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_4"), null)
                     .SetName("case 4");
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_5"))
-                    .Returns(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_5"), new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
                     .SetName("case 5");
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_6"))
-                    .Returns(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_6"), new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
                     .SetName("case 6");
             }
         }
 
         [Test, TestCaseSource(nameof(ResolveDotContext_issue750TestCases))]
-        public MemberModel ResolveDotContext_issue750(string sourceText)
+        public void ResolveDotContext_issue750(string sourceText, MemberModel code)
         {
             ((HaXeSettings)ASContext.Context.Settings).CompletionMode = HaxeCompletionModeEnum.FlashDevelop;
             SetSrc(sci, sourceText);
             var expr = ASComplete.GetExpression(sci, sci.CurrentPos);
             var list = ASContext.Context.ResolveDotContext(sci, expr, false);
-            return list?.Search("code", FlagType.Getter, Visibility.Public);
+            if (code == null) Assert.IsNull(list);
+            else
+            {
+                var members = ASContext.Context.ResolveType(ASContext.Context.Features.stringKey, ASContext.Context.CurrentModel)
+                    .Members.Items.Where(it => !it.Flags.HasFlag(FlagType.Static) && it.Access.HasFlag(Visibility.Public))
+                    .ToArray();
+                var expectedList = new MemberList();
+                foreach (var member in members) expectedList.Add(member);
+                expectedList.Add(code);
+                expectedList.Sort();
+                Assert.AreEqual(expectedList, list);
+            }
         }
 
         static IEnumerable<TestCaseData> IsImportedTestCases
