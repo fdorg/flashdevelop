@@ -118,7 +118,12 @@ namespace SourceControl.Sources.Subversion
 
         public void Commit(string[] files, string message)
         {
-            new Git.CommitCommand(files, message, Path.GetDirectoryName(files[0]));
+            new CommitCommand(files, message, Path.GetDirectoryName(files[0]));
+        }
+
+        public void Unstage(string file)
+        {
+            //Not sure what to do here, ignore for now
         }
     }
 }

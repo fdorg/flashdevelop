@@ -105,6 +105,7 @@
     <Compile Include="Sources\Git\Status.cs" />
     <Compile Include="Sources\Git\GitManager.cs" />
     <Compile Include="Sources\Git\TortoiseProc.cs" />
+    <Compile Include="Sources\Git\UnstageCommand.cs" />
     <Compile Include="Sources\Ignores.cs" />
     <Compile Include="Sources\Mercurial\AddCommand.cs" />
     <Compile Include="Sources\Mercurial\BaseCommand.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="Sources\Mercurial\RenameCommand.cs" />
     <Compile Include="Sources\Mercurial\Status.cs" />
     <Compile Include="Sources\Mercurial\TortoiseProc.cs" />
+    <Compile Include="Sources\Mercurial\UnstageCommand.cs" />
     <Compile Include="Sources\Subversion\AddCommand.cs" />
     <Compile Include="Sources\Subversion\BaseCommand.cs" />
     <Compile Include="Sources\Subversion\CommitCommand.cs" />

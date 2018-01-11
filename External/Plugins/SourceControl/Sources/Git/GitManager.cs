@@ -118,5 +118,10 @@ namespace SourceControl.Sources.Git
         {
             new CommitCommand(files, message, Path.GetDirectoryName(files[0]));
         }
+
+        public void Unstage(string file)
+        {
+            new UnstageCommand(file);
+        }
     }
 }
