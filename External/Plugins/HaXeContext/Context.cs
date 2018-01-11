@@ -1001,6 +1001,10 @@ namespace HaXeContext
                     //TODO: parse anonymous type
                     return ResolveType(features.dynamicKey, inFile);
                 }
+                if (first == '(' && last == ')')
+                {
+                    if (Regex.IsMatch(token, @"\((?<lv>\D+)(?<op>\sis\s)(?<rv>\w+)\)")) return ResolveType("Bool", inFile);
+                }
             }
             return base.ResolveToken(token, inFile);
         }
@@ -1387,6 +1391,13 @@ namespace HaXeContext
                         {
                             if (result == null) result = new MemberList();
                             result.Add(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public) {Comments = "The character code of this character(inlined at compile-time)"});
+                            var type = ResolveType(features.stringKey, CurrentModel);
+                            foreach (MemberModel member in type.Members)
+                            {
+                                if (member.Flags.HasFlag(FlagType.Static) || !member.Access.HasFlag(Visibility.Public)) continue;
+                                result.Add(member);
+                            }
+                            result.Sort();
                         }
                     }
                 }
