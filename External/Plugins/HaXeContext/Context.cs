@@ -999,6 +999,10 @@ namespace HaXeContext
                     //TODO: parse anonymous type
                     return ResolveType(features.dynamicKey, inFile);
                 }
+                if (first == '(' && last == ')')
+                {
+                    if (Regex.IsMatch(token, @"\((?<lv>\D+)(?<op>\sis\s)(?<rv>\w+)\)")) return ResolveType("Bool", inFile);
+                }
             }
             return base.ResolveToken(token, inFile);
         }
