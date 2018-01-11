@@ -1435,6 +1435,16 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_increment4"), GeneratorJobType.AssignStatementToVar, true)
                                 .Returns(ReadAllTextAS3("AfterAssignStatementToVar_increment4"))
                                 .SetName("From ++1 * ++1");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_typeof"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_typeof"))
+                                .SetName("Issue 1908. typeof")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
+                        yield return
+                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_delete"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_delete"))
+                                .SetName("Issue 1908. delete")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
                     }
                 }
 
@@ -1556,6 +1566,16 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_operator_is"))
                                 .SetName("Issue 1918. (v is String)")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1918");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1908_unsafecast"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1908_unsafecast"))
+                                .SetName("Issue 1908. Unsafe cast")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1908_untyped"), GeneratorJobType.AssignStatementToVar, true)
+                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1908_untyped"))
+                                .SetName("Issue 1908. untyped")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
                     }
                 }
 
@@ -1586,18 +1606,9 @@ namespace ASCompletion.Completion
 
                 internal static string Common(string sourceText, GeneratorJobType job, IASContext context, ScintillaControl sci)
                 {
-                    sci.Text = sourceText;
-                    SnippetHelper.PostProcessSnippets(sci, 0);
-                    var currentModel = ASContext.Context.CurrentModel;
-                    new ASFileParser().ParseSrc(currentModel, sci.Text);
-                    var currentClass = currentModel.Classes[0];
-                    ASContext.Context.CurrentClass.Returns(currentClass);
-                    ASContext.Context.CurrentModel.Returns(currentModel);
-                    var currentMember = currentClass.Members[0];
-                    ASContext.Context.CurrentMember.Returns(currentMember);
+                    SetSrc(sci, sourceText);
                     var visibleExternalElements = context.GetVisibleExternalElements();
                     ASContext.Context.GetVisibleExternalElements().Returns(visibleExternalElements);
-                    ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
                     ASGenerator.GenerateJob(job, ASContext.Context.CurrentMember, ASContext.Context.CurrentClass, null, null);
                     return sci.Text;
                 }

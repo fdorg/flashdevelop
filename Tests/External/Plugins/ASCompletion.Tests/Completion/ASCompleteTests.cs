@@ -458,6 +458,14 @@ namespace ASCompletion.Completion
                         new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_decrement7"))
                             .Returns("*1++")
                             .SetName("5 * 1++");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1908_typeof"))
+                            .Returns("typeof 1")
+                            .SetName("typeof 1");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1908_delete"))
+                            .Returns("delete o.[k]")
+                            .SetName("delete o[k]");
                 }
             }
 

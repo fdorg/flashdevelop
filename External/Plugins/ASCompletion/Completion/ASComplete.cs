@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -2627,8 +2626,13 @@ namespace ASCompletion.Completion
         {
             ASResult notFound = new ASResult {Context = context};
             if (string.IsNullOrEmpty(expression)) return notFound;
-
             var ctx = ASContext.Context;
+            ClassModel type;
+            if (!string.IsNullOrEmpty(context.WordBefore) && ASContext.Context.Features.OtherOperators.Contains(context.WordBefore))
+            {
+                type = ctx.ResolveToken(context.WordBefore + " " + context.Value, inClass.InFile);
+                if (type != ClassModel.VoidClass) return new ASResult {Type = type, Context = context, InClass = inClass, InFile = inFile, Path = context.Value};
+            }
             var features = ctx.Features;
             if (expression.StartsWithOrdinal(features.dot))
             {
@@ -2645,7 +2649,6 @@ namespace ASCompletion.Completion
             if (asFunction && tokens.Length == 1) token += "(";
 
             var isFunction = token.StartsWith('#');
-            ClassModel type;
             if (isFunction && string.IsNullOrEmpty(context.WordBefore) && context.SubExpressions != null && context.SubExpressions.Count == 1)
                 type = ctx.ResolveToken(context.Value.Replace("#0~", context.SubExpressions.First()), inClass.InFile);
             else type = ctx.ResolveToken(token, inClass.InFile);

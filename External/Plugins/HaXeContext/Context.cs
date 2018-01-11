@@ -142,6 +142,7 @@ namespace HaXeContext
             features.ConstructorKey = "new";
             features.ArithmeticOperators = new HashSet<char> {'+', '-', '*', '/', '%'};
             features.IncrementDecrementOperators = new[] {"++", "--"};
+            features.OtherOperators = new HashSet<string> {"untyped", "cast", "new"};
             /* INITIALIZATION */
 
             settings = initSettings;
