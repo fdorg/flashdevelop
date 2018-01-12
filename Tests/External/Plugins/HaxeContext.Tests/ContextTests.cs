@@ -106,17 +106,17 @@ namespace HaXeContext
         {
             get
             {
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_1"), null)
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_1"), null)
                     .SetName("case 1");
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_2"), new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_2"), new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
                     .SetName("case 2");
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_3"), new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_3"), new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
                     .SetName("case 3");
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_4"), null)
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_4"), null)
                     .SetName("case 4");
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_5"), new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_5"), new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
                     .SetName("case 5");
-                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_6"), new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
+                yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1926_6"), new MemberModel("code", "Int", FlagType.Getter, Visibility.Public))
                     .SetName("case 6");
             }
         }
@@ -213,6 +213,10 @@ namespace HaXeContext
                     .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore});
                 yield return new TestCaseData("({x:Int, y:Int} is Point)")
                     .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore});
+                yield return new TestCaseData("('   is  ' is Array)")
+                    .Returns(new ClassModel { Name = "Bool", Type = "Bool", InFile = FileModel.Ignore });
+                yield return new TestCaseData("('   is  '   is  Array)")
+                    .Returns(new ClassModel { Name = "Bool", Type = "Bool", InFile = FileModel.Ignore });
                 yield return new TestCaseData("(v:String)")
                     .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
             }

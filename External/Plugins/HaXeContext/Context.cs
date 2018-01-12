@@ -1003,10 +1003,7 @@ namespace HaXeContext
                 }
                 if (first == '(' && last == ')')
                 {
-                    if (Regex.IsMatch(token, @"\((?<lv>\D+)(?<op>\sis\s)(?<rv>\w+)\)")) return ResolveType("Bool", inFile);
-                }
-                if (first == '(' && last == ')')
-                {
+                    if (Regex.IsMatch(token, @"\((?<lv>.+)\s(?<op>is)\s+(?<rv>\w+)\)")) return ResolveType(features.booleanKey, inFile);
                     var groupCount = 0;
                     var sb = new StringBuilder(token.Length - 2);
                     for (var i = token.Length - 2; i >= 1; i--)
@@ -1420,8 +1417,10 @@ namespace HaXeContext
 
             // auto-started completion, can be ignored for performance (show default completion tooltip)
             if (exprValue.IndexOfOrdinal(".") < 0 || (autoHide && !exprValue.EndsWith('.')))
-            if (hxsettings.DisableMixedCompletion && exprValue.Length > 0 && autoHide) return new MemberList();
-            else return null;
+            {
+                if (hxsettings.DisableMixedCompletion && exprValue.Length > 0 && autoHide) return new MemberList();
+                return null;
+            }
 
             // empty expression
             if (exprValue != "")
