@@ -863,6 +863,9 @@
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_typeof.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpression_issue1908_typeof.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpression_issue1908_delete.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpression_operator_is.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpression_operator_as.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpression_return_operator_as.as" />
     <EmbeddedResource Include="Test Files\generated\as3\documentation\AfterGenerateDocumentation_empty.as" />
     <EmbeddedResource Include="Test Files\generated\as3\documentation\BeforeGenerateDocumentation_empty.as" />
     <EmbeddedResource Include="Test Files\generated\as3\documentation\BeforeGenerateDocumentation_methodDetails.as" />
