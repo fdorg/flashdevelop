@@ -220,23 +220,5 @@ namespace HaXeContext
 
         [Test, TestCaseSource(nameof(ResolveTokenTestCases))]
         public ClassModel ResolveToken(string token) => ASContext.Context.ResolveToken(token, null);
-
-        IEnumerable<TestCaseData> ResolveDotContextIssue1916TestCases
-        {
-            get { yield return new TestCaseData(ReadAllText("ResolveDotContext_Issue1916_1"), "String"); }
-        }
-
-        [Test, TestCaseSource(nameof(ResolveDotContextIssue1916TestCases))]
-        public void ResolveDotContext_issue1916(string sourceText, string type)
-        {
-            ((HaXeSettings) ASContext.Context.Settings).CompletionMode = HaxeCompletionModeEnum.FlashDevelop;
-            var model = ASContext.Context.ResolveType(type, null);
-            var expectedList = new MemberList();
-            expectedList.Items.AddRange(model.Members.Items.Where(it => !it.Flags.HasFlag(FlagType.Static) && it.Access.HasFlag(Visibility.Public)));
-            SetSrc(sci, sourceText);
-            var expr = ASComplete.GetExpression(sci, sci.CurrentPos);
-            var list = ASContext.Context.ResolveDotContext(sci, expr, false);
-            Assert.AreEqual(expectedList, list);
-        }
     }
 }

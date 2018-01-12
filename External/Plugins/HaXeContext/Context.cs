@@ -1415,24 +1415,6 @@ namespace HaXeContext
                         }
                     }
                 }
-                if (expression.SubExpressions != null && expression.SubExpressions.Count == 1)
-                {
-                    if (result == null) result = new MemberList();
-                    var model = ResolveToken(expression.SubExpressions.First(), CurrentModel);
-                    while (!model.IsVoid())
-                    {
-                        foreach (MemberModel it in model.Members)
-                        {
-                            if (!it.Flags.HasFlag(FlagType.Static) && it.Access.HasFlag(Visibility.Public))
-                            {
-                                result.Add(it);
-                            }
-                        }
-                        model.ResolveExtends();
-                        model = model.Extends;
-                    }
-                    if (result.Count == 0) result = null;
-                }
                 if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop) return result;
             }
 
