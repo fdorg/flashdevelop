@@ -915,7 +915,7 @@ namespace AS3Context
                         if (word == "typeof") return ResolveType(features.stringKey, inFile);
                     }
                 }
-                else if (first == '(' && token.Length > 8/*"(v as T)".Length*/)
+                else if (first == '(' && token.Length >= 8/*"(v as T)".Length*/)
                 {
                     var m = Regex.Match(token, @"\((?<lv>.+)\s(?<op>as)\s+(?<rv>\w+)\)");
                     if (m.Success) return ResolveType(m.Groups["rv"].Value.Trim(), inFile);
