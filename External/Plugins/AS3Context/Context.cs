@@ -133,6 +133,7 @@ namespace AS3Context
             features.namespaceKey = "namespace";
             features.ArithmeticOperators = new HashSet<char>{'+', '-', '*', '/', '%'};
             features.IncrementDecrementOperators = new[] {"++", "--"};
+            features.OtherOperators = new HashSet<string> {"delete", "typeof", "new"};
             /* INITIALIZATION */
 
             settings = initSettings;
@@ -895,6 +896,27 @@ namespace AS3Context
                 else return ClassModel.VoidClass;
             }
             return base.ResolveType(cname, inFile);
+        }
+
+        public override ClassModel ResolveToken(string token, FileModel inFile)
+        {
+            if (token?.Length > 0)
+            {
+                if (token == "</>") return ResolveType("XML", inFile);
+                if (token.StartsWithOrdinal("0x")) return ResolveType("uint", inFile);
+                var first = token[0];
+                if (char.IsLetter(first))
+                {
+                    var index = token.IndexOfOrdinal(" ");
+                    if (index != -1)
+                    {
+                        var word = token.Substring(0, index);
+                        if (word == "delete") return ResolveType(features.booleanKey, inFile);
+                        if (word == "typeof") return ResolveType(features.stringKey, inFile);
+                    }
+                }
+            }
+            return base.ResolveToken(token, inFile);
         }
 
         /// <summary>

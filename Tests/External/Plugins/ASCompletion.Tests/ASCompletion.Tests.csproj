@@ -847,6 +847,20 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstructor_issue1738_8.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateConstructor_issue1738_9.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterGenerateConstructor_issue1738_9.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue_1766.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue_1766.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_operator_is.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_operator_is.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue1908_unsafecast.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue1908_unsafecast.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue1908_untyped.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue1908_untyped.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_delete.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_delete.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_typeof.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_typeof.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpression_issue1908_typeof.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpression_issue1908_delete.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

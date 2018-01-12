@@ -422,15 +422,15 @@ namespace ASCompletion.Completion
                             .SetName("From {}|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfArrayInitializer"))
-                            .Returns(";.[]")
+                            .Returns(";[]")
                             .SetName("From []|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfArrayInitializer.push"))
-                            .Returns(";.[].push")
+                            .Returns(";[].push")
                             .SetName("From [].push|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfTwoDimensionalArrayInitializer"))
-                            .Returns(";.[[], []]")
+                            .Returns(";[[], []]")
                             .SetName("From [[], []]|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfVectorInitializer"))
@@ -442,7 +442,7 @@ namespace ASCompletion.Completion
                             .SetName("From new <Vector.<int>>[new <int>[]]|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfArrayAccess"))
-                            .Returns(",.[4,5,6].[0].[2]")
+                            .Returns(",[4,5,6].[0].[2]")
                             .SetName("From [[1,2,3], [4,5,6][0][2]|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfNewVector"))
@@ -541,6 +541,14 @@ namespace ASCompletion.Completion
                         new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_decrement7"))
                             .Returns("*1++")
                             .SetName("5 * 1++");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1908_typeof"))
+                            .Returns("typeof 1")
+                            .SetName("typeof 1");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1908_delete"))
+                            .Returns("delete o.[k]")
+                            .SetName("delete o[k]");
                 }
             }
 
@@ -569,8 +577,8 @@ namespace ASCompletion.Completion
                             .SetName("From new Map<String, Array<Int->Int->Int>>|");
                     yield return
                         new TestCaseData(ReadAllTextHaxe("GetExpressionOfMapInitializer"))
-                            .Returns(" ")
-                            .SetName("From ['1' => 1, '2' => 2]|");
+                            .Returns(";[\"1\" => 1, \"2\" => 2]")
+                            .SetName("From [\"1\" => 1, \"2\" => 2]|");
                     yield return
                         new TestCaseData(ReadAllTextHaxe("GetExpressionOfRegex"))
                             .Returns(";g")
@@ -754,7 +762,6 @@ namespace ASCompletion.Completion
                 sci.ConfigurationLanguage = "haxe";
 
                 var coma = ASComplete.DisambiguateComa(sci, text.Length, 0);
-
                 return coma;
             }
         }
@@ -1069,6 +1076,114 @@ namespace ASCompletion.Completion
                 var visibleExternalElements = ASContext.Context.GetVisibleExternalElements();
                 var result = visibleExternalElements.Search(name, flags, 0);
                 return result.Comments;
+            }
+        }
+
+        [TestFixture]
+        public class ExpressionEndPositionTests : ASCompleteTests
+        {
+            public IEnumerable<TestCaseData> AS3TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("test()\ntest()")
+                        .Returns("test()".Length);
+                    yield return new TestCaseData("test()  /*some comment*/, 1)")
+                        .Returns("test()".Length);
+                    yield return new TestCaseData("test ( [1,2,3,4,5,6,7,8] )  /*some comment*/, 1)")
+                        .Returns("test ( [1,2,3,4,5,6,7,8] )".Length);
+                    yield return new TestCaseData("test.apply(null, [1,2,3,4,5,6,7,8] )  /*some comment*/, 1)")
+                        .Returns("test".Length);
+                    yield return new TestCaseData("test( <int>[1,2,3,4] ); //")
+                        .Returns("test( <int>[1,2,3,4] )".Length);
+                    yield return new TestCaseData("a > b")
+                        .Returns("a".Length);
+                    yield return new TestCaseData("a ? b : c")
+                        .Returns("a".Length);
+                    yield return new TestCaseData("a:Boolean")
+                        .Returns("a".Length);
+                    yield return new TestCaseData("a = b")
+                        .Returns("a".Length);
+                    yield return new TestCaseData("a += b")
+                        .Returns("a".Length);
+                    yield return new TestCaseData("a << b")
+                        .Returns("a".Length);
+                    yield return new TestCaseData("a+b")
+                        .Returns("a".Length);
+                    yield return new TestCaseData("test(1, 2, 3 ;")
+                        .Returns("test".Length);
+                    yield return new TestCaseData("test(1, 2, 3 \n}")
+                        .Returns("test".Length);
+                    yield return new TestCaseData("test(1, 2, 3 ]")
+                        .Returns("test".Length);
+                    yield return new TestCaseData("test }")
+                        .Returns("test".Length);
+                }
+            }
+
+            [Test, TestCaseSource(nameof(AS3TestCases))]
+            public int AS3(string sourceText)
+            {
+                SetAs3Features(sci);
+                return Common(sci, sourceText);
+            }
+
+            public IEnumerable<TestCaseData> HaxeTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("test(); //")
+                        .Returns("test()".Length);
+                    yield return new TestCaseData("test[1]; //")
+                        .Returns("test".Length);
+                    yield return new TestCaseData("test['1']; //")
+                        .Returns("test".Length);
+                    yield return new TestCaseData("x:10, y:10}; //")
+                        .Returns("x".Length);
+                    yield return new TestCaseData("test()); //")
+                        .Returns("test()".Length);
+                    yield return new TestCaseData("test()]; //")
+                        .Returns("test()".Length);
+                    yield return new TestCaseData("test()}; //")
+                        .Returns("test()".Length);
+                    yield return new TestCaseData("test[1]); //")
+                        .Returns("test".Length);
+                    yield return new TestCaseData("test(), 1, 2); //")
+                        .Returns("test()".Length);
+                    yield return new TestCaseData("test().test().test().test; //")
+                        .Returns("test()".Length);
+                    yield return new TestCaseData("test(')))))').test(']]]]]]]]').test('}}}}}}}}}}').test; //")
+                        .Returns("test(')))))')".Length);
+                    yield return new TestCaseData("test.test(')))))')\n.test(']]]]]]]]')\n.test('}}}}}}}}}}')\n.test; //")
+                        .Returns("test".Length);
+                    yield return new TestCaseData("test(function() return 10); //")
+                        .Returns("test(function() return 10)".Length);
+                    yield return new TestCaseData("test(1, 2, 3); //")
+                        .Returns("test(1, 2, 3)".Length);
+                    yield return new TestCaseData("test( new Map<K,V> ); //")
+                        .Returns("test( new Map<K,V> )".Length);
+                    yield return new TestCaseData("Map<K,V> ; //")
+                        .Returns("Map".Length);
+                    yield return new TestCaseData("test; //")
+                        .Returns("test".Length);
+                    yield return new TestCaseData("test.a.b.c.d().e(1).f('${g}').h([1 => {x:1}]); //")
+                        .Returns("test".Length);
+                    yield return new TestCaseData("test(/*12345*/); //")
+                        .Returns("test(/*12345*/)".Length);
+                }
+            }
+
+            [Test, TestCaseSource(nameof(HaxeTestCases))]
+            public int Haxe(string sourceText)
+            {
+                SetHaxeFeatures(sci);
+                return Common(sci, sourceText);
+            } 
+
+            static int Common(ScintillaControl sci, string sourceText)
+            {
+                sci.SetText(sourceText);
+                return ASComplete.ExpressionEndPosition(sci, 0);
             }
         }
 

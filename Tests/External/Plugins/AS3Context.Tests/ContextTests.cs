@@ -4,6 +4,7 @@ using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using ASCompletion.TestUtils;
+using NSubstitute;
 using NUnit.Framework;
 
 namespace AS3Context
@@ -74,5 +75,45 @@ namespace AS3Context
             else member = ClassModel.VoidClass;
             return ASContext.Context.IsImported(member, sci.CurrentLine);
         }
+
+        IEnumerable<TestCaseData> ResolveTokenTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("true")
+                    .Returns(new ClassModel {Name = "Boolean", Type = "Boolean", InFile = FileModel.Ignore})
+                    .SetName("true");
+                yield return new TestCaseData("false")
+                    .Returns(new ClassModel {Name = "Boolean", Type = "Boolean", InFile = FileModel.Ignore})
+                    .SetName("false");
+                yield return new TestCaseData("[]")
+                    .Returns(new ClassModel {Name = "Array", Type = "Array", InFile = FileModel.Ignore})
+                    .SetName("[]");
+                yield return new TestCaseData("{}")
+                    .Returns(new ClassModel {Name = "Object", Type = "Object", InFile = FileModel.Ignore})
+                    .SetName("{}");
+                yield return new TestCaseData("10")
+                    .Returns(new ClassModel {Name = "Number", Type = "Number", InFile = FileModel.Ignore})
+                    .SetName("10");
+                yield return new TestCaseData("-10")
+                    .Returns(new ClassModel {Name = "Number", Type = "Number", InFile = FileModel.Ignore})
+                    .SetName("-10");
+                yield return new TestCaseData("\"\"")
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore})
+                    .SetName("\"\"");
+                yield return new TestCaseData("''")
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore})
+                    .SetName("''");
+                yield return new TestCaseData("</>")
+                    .Returns(new ClassModel {Name = "XML", Type = "XML", InFile = FileModel.Ignore})
+                    .SetName("</>");
+                yield return new TestCaseData("0xFF0000")
+                    .Returns(new ClassModel {Name = "uint", Type = "uint", InFile = FileModel.Ignore})
+                    .SetName("0xFF0000");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(ResolveTokenTestCases))]
+        public ClassModel ResolveToken(string token) => ASContext.Context.ResolveToken(token, null);
     }
 }

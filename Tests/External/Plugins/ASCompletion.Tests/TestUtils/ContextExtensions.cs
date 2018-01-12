@@ -49,6 +49,7 @@ namespace ASCompletion.TestUtils
                 return context.IsImported(member, it.ArgAt<int>(1));
             });
             mock.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
+            mock.ResolveToken(null, null).ReturnsForAnyArgs(x => context.ResolveToken(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
             mock.ResolveDotContext(null, null, false).ReturnsForAnyArgs(it =>
             {
                 var expr = it.ArgAt<ASExpr>(1);

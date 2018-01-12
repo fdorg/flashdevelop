@@ -141,6 +141,7 @@ namespace HaXeContext
             features.ConstructorKey = "new";
             features.ArithmeticOperators = new HashSet<char> {'+', '-', '*', '/', '%'};
             features.IncrementDecrementOperators = new[] {"++", "--"};
+            features.OtherOperators = new HashSet<string> {"untyped", "cast", "new"};
             /* INITIALIZATION */
 
             settings = initSettings;
@@ -959,6 +960,54 @@ namespace HaXeContext
             return GetModel(package, cname, inPackage);
         }
 
+        public override ClassModel ResolveToken(string token, FileModel inFile)
+        {
+            if (token?.Length > 0)
+            {
+                if (token.StartsWithOrdinal("0x")) return ResolveType("Int", inFile);
+                var first = token[0];
+                var last = token[token.Length - 1];
+                if (first == '[' && last == ']')
+                {
+                    var dQuotes = 0;
+                    var sQuotes = 0;
+                    var length = token.Length;
+                    var arrayComprehensionEnd = length - 3;
+                    for (var i = 1; i < length; i++)
+                    {
+                        var c = token[i];
+                        if (c == '\"' && sQuotes == 0)
+                        {
+                            if (i <= 1 || token[i - 2] == '\\') continue;
+                            if (dQuotes == 0) dQuotes++;
+                            else dQuotes--;
+                        }
+                        else if (c == '\'' && dQuotes == 0)
+                        {
+                            if (i <= 1 || token[i - 2] == '\\') continue;
+                            if (sQuotes == 0) sQuotes++;
+                            else sQuotes--;
+                        }
+                        if (sQuotes > 0 || dQuotes > 0) continue;
+                        if (i <= arrayComprehensionEnd && c == '=' && token[i + 1] == '>')
+                            // TODO: try parse K, V
+                            return ResolveType("Map<K, V>", inFile);
+                    }
+                    return ResolveType(features.arrayKey, inFile);
+                }
+                if (first == '{' && last == '}')
+                {
+                    //TODO: parse anonymous type
+                    return ResolveType(features.dynamicKey, inFile);
+                }
+                if (first == '(' && last == ')')
+                {
+                    if (Regex.IsMatch(token, @"\((?<lv>\D+)(?<op>\sis\s)(?<rv>\w+)\)")) return ResolveType("Bool", inFile);
+                }
+            }
+            return base.ResolveToken(token, inFile);
+        }
+
         ClassModel ResolveTypeByPackage(string package, string cname, FileModel inFile, string inPackage)
         {
             // quick check in current file
@@ -1341,6 +1390,13 @@ namespace HaXeContext
                         {
                             if (result == null) result = new MemberList();
                             result.Add(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public) {Comments = "The character code of this character(inlined at compile-time)"});
+                            var type = ResolveType(features.stringKey, CurrentModel);
+                            foreach (MemberModel member in type.Members)
+                            {
+                                if (member.Flags.HasFlag(FlagType.Static) || !member.Access.HasFlag(Visibility.Public)) continue;
+                                result.Add(member);
+                            }
+                            result.Sort();
                         }
                     }
                 }
