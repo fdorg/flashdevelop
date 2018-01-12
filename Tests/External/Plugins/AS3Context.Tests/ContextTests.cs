@@ -81,35 +81,29 @@ namespace AS3Context
             get
             {
                 yield return new TestCaseData("true")
-                    .Returns(new ClassModel {Name = "Boolean", Type = "Boolean", InFile = FileModel.Ignore})
-                    .SetName("true");
+                    .Returns(new ClassModel {Name = "Boolean", Type = "Boolean", InFile = FileModel.Ignore});
                 yield return new TestCaseData("false")
-                    .Returns(new ClassModel {Name = "Boolean", Type = "Boolean", InFile = FileModel.Ignore})
-                    .SetName("false");
+                    .Returns(new ClassModel {Name = "Boolean", Type = "Boolean", InFile = FileModel.Ignore});
                 yield return new TestCaseData("[]")
-                    .Returns(new ClassModel {Name = "Array", Type = "Array", InFile = FileModel.Ignore})
-                    .SetName("[]");
+                    .Returns(new ClassModel {Name = "Array", Type = "Array", InFile = FileModel.Ignore});
                 yield return new TestCaseData("{}")
-                    .Returns(new ClassModel {Name = "Object", Type = "Object", InFile = FileModel.Ignore})
-                    .SetName("{}");
+                    .Returns(new ClassModel {Name = "Object", Type = "Object", InFile = FileModel.Ignore});
                 yield return new TestCaseData("10")
-                    .Returns(new ClassModel {Name = "Number", Type = "Number", InFile = FileModel.Ignore})
-                    .SetName("10");
+                    .Returns(new ClassModel {Name = "Number", Type = "Number", InFile = FileModel.Ignore});
                 yield return new TestCaseData("-10")
-                    .Returns(new ClassModel {Name = "Number", Type = "Number", InFile = FileModel.Ignore})
-                    .SetName("-10");
+                    .Returns(new ClassModel {Name = "Number", Type = "Number", InFile = FileModel.Ignore});
                 yield return new TestCaseData("\"\"")
-                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore})
-                    .SetName("\"\"");
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
                 yield return new TestCaseData("''")
-                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore})
-                    .SetName("''");
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
                 yield return new TestCaseData("</>")
-                    .Returns(new ClassModel {Name = "XML", Type = "XML", InFile = FileModel.Ignore})
-                    .SetName("</>");
+                    .Returns(new ClassModel {Name = "XML", Type = "XML", InFile = FileModel.Ignore});
                 yield return new TestCaseData("0xFF0000")
-                    .Returns(new ClassModel {Name = "uint", Type = "uint", InFile = FileModel.Ignore})
-                    .SetName("0xFF0000");
+                    .Returns(new ClassModel {Name = "uint", Type = "uint", InFile = FileModel.Ignore});
+                yield return new TestCaseData("(' 1 '   is String)")
+                    .Returns(new ClassModel {Name = "Boolean", Type = "Boolean", InFile = FileModel.Ignore});
+                yield return new TestCaseData("(' 1 '   as String)")
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
             }
         }
 

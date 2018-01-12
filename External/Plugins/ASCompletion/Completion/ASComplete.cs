@@ -2647,14 +2647,16 @@ namespace ASCompletion.Completion
             string token = tokens[0];
             if (token.Length == 0) return notFound;
             if (asFunction && tokens.Length == 1) token += "(";
-
-            var isFunction = token.StartsWith('#');
-            if (isFunction && string.IsNullOrEmpty(context.WordBefore) && context.SubExpressions != null && context.SubExpressions.Count == 1)
-                type = ctx.ResolveToken(context.Value.Replace("#0~", context.SubExpressions.First()), inClass.InFile);
+            if (context.SubExpressions != null && context.SubExpressions.Count == 1)
+            {
+                var value = context.Value;
+                value = value.Replace(char.IsLetter(value[0]) ? ".#0~" : "#0~", context.SubExpressions.First());
+                type = ctx.ResolveToken(value, inClass.InFile);
+            }
             else type = ctx.ResolveToken(token, inClass.InFile);
             if (type != ClassModel.VoidClass) return EvalTail(context, inFile, new ASResult {Type = type}, tokens, complete, filterVisibility) ?? notFound;
             ASResult head = null;
-            if (isFunction)
+            if (token[0] == '#')
             {
                 Match mSub = re_sub.Match(token);
                 if (mSub.Success)
