@@ -1209,10 +1209,9 @@ namespace ASCompletion
 
             // get word at mouse position
             int style = sci.BaseStyleAt(position);
-            if (!ASComplete.IsTextStyle(style))
-                return;
-            position = sci.WordEndPosition(position, true);
-            ASResult result = ASComplete.GetExpressionType(sci, position);
+            if (!ASComplete.IsTextStyle(style)) return;
+            position = ASComplete.ExpressionEndPosition(sci, position);
+            var result = ASComplete.GetExpressionType(sci, position, false, true);
 
             // set tooltip
             if (!result.IsNull())

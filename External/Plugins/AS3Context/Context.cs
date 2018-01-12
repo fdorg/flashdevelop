@@ -133,6 +133,7 @@ namespace AS3Context
             features.namespaceKey = "namespace";
             features.ArithmeticOperators = new HashSet<char>{'+', '-', '*', '/', '%'};
             features.IncrementDecrementOperators = new[] {"++", "--"};
+            features.OtherOperators = new HashSet<string> {"delete", "typeof", "new"};
             /* INITIALIZATION */
 
             settings = initSettings;
@@ -903,6 +904,17 @@ namespace AS3Context
             {
                 if (token == "</>") return ResolveType("XML", inFile);
                 if (token.StartsWithOrdinal("0x")) return ResolveType("uint", inFile);
+                var first = token[0];
+                if (char.IsLetter(first))
+                {
+                    var index = token.IndexOfOrdinal(" ");
+                    if (index != -1)
+                    {
+                        var word = token.Substring(0, index);
+                        if (word == "delete") return ResolveType(features.booleanKey, inFile);
+                        if (word == "typeof") return ResolveType(features.stringKey, inFile);
+                    }
+                }
             }
             return base.ResolveToken(token, inFile);
         }

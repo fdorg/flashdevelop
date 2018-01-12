@@ -142,6 +142,7 @@ namespace HaXeContext
             features.ConstructorKey = "new";
             features.ArithmeticOperators = new HashSet<char> {'+', '-', '*', '/', '%'};
             features.IncrementDecrementOperators = new[] {"++", "--"};
+            features.OtherOperators = new HashSet<string> {"untyped", "cast", "new"};
             /* INITIALIZATION */
 
             settings = initSettings;
@@ -1002,6 +1003,10 @@ namespace HaXeContext
                 }
                 if (first == '(' && last == ')')
                 {
+                    if (Regex.IsMatch(token, @"\((?<lv>\D+)(?<op>\sis\s)(?<rv>\w+)\)")) return ResolveType("Bool", inFile);
+                }
+                if (first == '(' && last == ')')
+                {
                     var groupCount = 0;
                     var sb = new StringBuilder(token.Length - 2);
                     for (var i = token.Length - 2; i >= 1; i--)
@@ -1400,6 +1405,13 @@ namespace HaXeContext
                         {
                             if (result == null) result = new MemberList();
                             result.Add(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public) {Comments = "The character code of this character(inlined at compile-time)"});
+                            var type = ResolveType(features.stringKey, CurrentModel);
+                            foreach (MemberModel member in type.Members)
+                            {
+                                if (member.Flags.HasFlag(FlagType.Static) || !member.Access.HasFlag(Visibility.Public)) continue;
+                                result.Add(member);
+                            }
+                            result.Sort();
                         }
                     }
                 }
