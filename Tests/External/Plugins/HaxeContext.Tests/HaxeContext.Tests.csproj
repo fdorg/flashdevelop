@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\RefactorCommandTests.cs" />
+    <Compile Include="Completion\CodeGeneratorTests.cs" />
     <Compile Include="ContextTests.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -137,6 +138,26 @@
     <EmbeddedResource Include="Test Files\parser\Issue1849_1.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue1849_2.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue1849_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1833_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1833_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1833_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1833_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1743_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1743_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1743_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1743_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1743_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1743_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1927_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1927_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1926_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1926_2.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1926_3.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1926_4.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1926_5.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1926_6.hx" />
+    <EmbeddedResource Include="Test Files\parser\IsImported_case1.hx" />
+    <EmbeddedResource Include="Test Files\parser\IsImported_case2.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
