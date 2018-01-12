@@ -108,6 +108,8 @@ namespace HaXeContext.Linters
                 {
                     var range = res.Range ?? res.Args.Range;
 
+                    if (range == null) continue;
+
                     var result = new LintingResult
                     {
                         File = range.Path,

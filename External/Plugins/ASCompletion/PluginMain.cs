@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
 using ASCompletion.Commands;
@@ -23,13 +24,14 @@ using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Utilities;
+using ProjectManager.Projects;
 using ScintillaNet;
 using WeifenLuo.WinFormsUI.Docking;
 using Timer = System.Timers.Timer;
 
 namespace ASCompletion
 {
-    public class PluginMain: IPlugin
+    public class PluginMain : IPlugin
     {
         private string pluginName = "ASCompletion";
         private string pluginGuid = "078c7c1a-c667-4f54-9e47-d45c0e835c4e";
@@ -81,7 +83,8 @@ namespace ASCompletion
         Bitmap upDownArrow;
 
         readonly ASTCache astCache = new ASTCache();
-        bool initializedCache = true;
+        bool initializedCache;
+        bool cacheNeedsRecheck;
         IProject lastProject;
         Timer astCacheTimer;
 
@@ -157,7 +160,7 @@ namespace ASCompletion
                 ASContext.GlobalInit(this);
                 ModelsExplorer.CreatePanel();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ErrorManager.ShowError(/*"Failed to initialize the completion engine.\n"+ex.Message,*/ ex);
             }
@@ -276,6 +279,8 @@ namespace ASCompletion
                             astCache.Clear();
                             foreach (var document in PluginBase.MainForm.Documents)
                             {
+                                if (!document.IsEditable) continue;
+
                                 //remove the markers
                                 UpdateMarkersFromCache(document.SplitSci1);
                                 UpdateMarkersFromCache(document.SplitSci2);
@@ -338,7 +343,7 @@ namespace ASCompletion
                                 if (info != null && info.ContainsKey("language"))
                                 {
                                     IASContext context = ASContext.GetLanguageContext(info["language"] as string);
-                                    if (context != null && context.Settings != null 
+                                    if (context != null && context.Settings != null
                                         && context.Settings.UserClasspath != null)
                                         info["cp"] = new List<string>(context.Settings.UserClasspath);
                                 }
@@ -385,7 +390,7 @@ namespace ASCompletion
                                 {
                                     case "AS2": name = "AS2Context"; break;
                                     case "AS3": name = "AS3Context"; break;
-                                    default: 
+                                    default:
                                         name = cmdData.Substring(0, 1).ToUpper() + cmdData.Substring(1) + "Context";
                                         break;
                                 }
@@ -482,16 +487,31 @@ namespace ASCompletion
                         {
                             if (lastProject != PluginBase.CurrentProject)
                             {
+                                if (lastProject is Project)
+                                    ((Project) lastProject).ClasspathChanged -= Project_ClassPathChanged;
                                 lastProject = PluginBase.CurrentProject;
+                                if (lastProject is Project)
+                                    ((Project) lastProject).ClasspathChanged += Project_ClassPathChanged;
                                 initializedCache = false;
+                                astCacheTimer.Stop();
+                                astCache.Clear();
+                                foreach (var document in PluginBase.MainForm.Documents)
+                                {
+                                    if (!document.IsEditable) continue;
+
+                                    //remove the markers
+                                    ClearMarkersFromCache(document.SplitSci1);
+                                    ClearMarkersFromCache(document.SplitSci2);
+                                }
                             }
-                        }
-                        else if (command == "ProjectManager.Menu")
-                        {
-                            var image = PluginBase.MainForm.FindImage("202");
-                            var item = new ToolStripMenuItem(TextHelper.GetString("Label.TypesExplorer"), image, TypesExplorer, Keys.Control | Keys.J);
-                            PluginBase.MainForm.RegisterShortcutItem("FlashToolsMenu.TypeExplorer", item);
-                            ((ToolStripMenuItem)de.Data).DropDownItems.Insert(6, item);
+                            else if (command == "ProjectManager.Menu")
+                            {
+                                var image = PluginBase.MainForm.FindImage("202");
+                                var item = new ToolStripMenuItem(TextHelper.GetString("Label.TypesExplorer"), image,
+                                    TypesExplorer, Keys.Control | Keys.J);
+                                PluginBase.MainForm.RegisterShortcutItem("FlashToolsMenu.TypeExplorer", item);
+                                ((ToolStripMenuItem) de.Data).DropDownItems.Insert(6, item);
+                            }
                         }
                         break;
                 }
@@ -504,7 +524,7 @@ namespace ASCompletion
                     switch (e.Type)
                     {
                         case EventType.ProcessArgs:
-                            TextEvent te = (TextEvent) e;
+                            TextEvent te = (TextEvent)e;
                             if (reArgs.IsMatch(te.Value))
                             {
                                 // resolve current element
@@ -607,7 +627,7 @@ namespace ASCompletion
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ErrorManager.ShowError(ex);
             }
@@ -835,18 +855,17 @@ namespace ASCompletion
             // application events
             EventManager.AddEventHandler(this, eventMask);
             EventManager.AddEventHandler(this, EventType.UIStarted, HandlingPriority.Low);
-            
+
             // cursor position changes tracking
             timerPosition = new Timer();
             timerPosition.SynchronizingObject = PluginBase.MainForm as Form;
             timerPosition.Interval = 200;
-            timerPosition.Elapsed += new ElapsedEventHandler(timerPosition_Elapsed);
+            timerPosition.Elapsed += TimerPosition_Elapsed;
 
             //Cache update
             astCache.FinishedUpdate += UpdateOpenDocumentMarkers;
             astCacheTimer = new Timer
             {
-                SynchronizingObject = PluginBase.MainForm as Form,
                 AutoReset = false,
                 Enabled = false
             };
@@ -861,7 +880,7 @@ namespace ASCompletion
         {
             if (PluginBase.CurrentProject == null) return;
 
-            astCache.UpdateCompleteCache();
+            ThreadPool.QueueUserWorkItem(s => astCache.UpdateCompleteCache());
         }
 
         void UpdateOpenDocumentMarkers()
@@ -878,7 +897,7 @@ namespace ASCompletion
         void ApplyMarkers(ScintillaControl sci)
         {
             if (settingObject.DisableInheritanceNavigation || sci == null) return;
-            
+
             //Register marker
             sci.MarkerDefineRGBAImage(MarkerDown, downArrow);
             sci.MarkerDefineRGBAImage(MarkerUp, upArrow);
@@ -894,18 +913,24 @@ namespace ASCompletion
             UpdateMarkersFromCache(sci);
         }
 
-        void UpdateMarkersFromCache(ScintillaControl sci)
+        void ClearMarkersFromCache(ScintillaControl sci)
         {
-            var marginWidth = 16;
             sci.SetMarginWidthN(Margin, 0); //margin is only made visible if something is found
 
             sci.MarkerDeleteAll(MarkerUp);
             sci.MarkerDeleteAll(MarkerDown);
             sci.MarkerDeleteAll(MarkerUpDown);
+        }
+
+        void UpdateMarkersFromCache(ScintillaControl sci)
+        {
+            ClearMarkersFromCache(sci);
 
             if (settingObject.DisableInheritanceNavigation) return;
 
             if (PluginBase.CurrentProject == null) return;
+
+            const int marginWidth = 16;
             var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language) as ASContext;
             if (context == null) return;
 
@@ -1081,36 +1106,50 @@ namespace ASCompletion
 
         void OnFileRemove(FileModel obj)
         {
-            PluginBase.RunAsync(() =>
+            ThreadPool.QueueUserWorkItem(s =>
             {
-
-                foreach (var cls in obj.Classes)
+                try
                 {
-                    var cached = astCache.GetCachedModel(cls);
-                    astCache.Remove(cls);
-                    if (cached != null)
-                        foreach (var c in cached.ConnectedClassModels) //need to update all connected stuff
-                            astCache.MarkAsOutdated(c);
+                    astCacheTimer.Stop();
+
+                    foreach (var cls in obj.Classes)
+                    {
+                        var cached = astCache.GetCachedModel(cls);
+                        astCache.Remove(cls);
+                        if (cached != null)
+                            foreach (var c in cached.ConnectedClassModels) //need to update all connected stuff
+                                astCache.MarkAsOutdated(c);
+                    }
+
+                    if (initializedCache) astCacheTimer.Start();
+                }
+                catch
+                {
+                    //TODO: Look into Timer problem
                 }
 
-                astCacheTimer.Stop();
-                astCacheTimer.Start();
-
-                var sci1 = DocumentManager.FindDocument(obj.FileName)?.SplitSci1;
-                var sci2 = DocumentManager.FindDocument(obj.FileName)?.SplitSci2;
-
-                if (sci1 != null)
+                PluginBase.RunAsync(() =>
                 {
-                    sci1.MarkerDeleteAll(MarkerUp);
-                    sci1.MarkerDeleteAll(MarkerDown);
-                    sci1.MarkerDeleteAll(MarkerUpDown);
-                }
-                if (sci2 != null)
-                {
-                    sci2.MarkerDeleteAll(MarkerUp);
-                    sci2.MarkerDeleteAll(MarkerDown);
-                    sci2.MarkerDeleteAll(MarkerUpDown);
-                }
+                    var doc = DocumentManager.FindDocument(obj.FileName);
+                    if (doc != null)
+                    {
+                        var sci1 = doc.SplitSci1;
+                        var sci2 = doc.SplitSci2;
+
+                        if (sci1 != null)
+                        {
+                            sci1.MarkerDeleteAll(MarkerUp);
+                            sci1.MarkerDeleteAll(MarkerDown);
+                            sci1.MarkerDeleteAll(MarkerUpDown);
+                        }
+                        if (sci2 != null)
+                        {
+                            sci2.MarkerDeleteAll(MarkerUp);
+                            sci2.MarkerDeleteAll(MarkerDown);
+                            sci2.MarkerDeleteAll(MarkerUpDown);
+                        }
+                    }
+                });
 
                 EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "ASCompletion.FileModelUpdated", obj));
             });
@@ -1122,17 +1161,25 @@ namespace ASCompletion
         /// <param name="obj"></param>
         void OnFileUpdate(FileModel obj)
         {
-            PluginBase.RunAsync(() =>
+            ThreadPool.QueueUserWorkItem(s =>
             {
                 if (PluginBase.CurrentProject == null) return;
 
-                foreach (var cls in obj.Classes)
+                try
                 {
-                    astCache.MarkAsOutdated(cls);
-                }
+                    astCacheTimer.Stop();
 
-                astCacheTimer.Stop();
-                astCacheTimer.Start();
+                    foreach (var cls in obj.Classes)
+                    {
+                        astCache.MarkAsOutdated(cls);
+                    }
+
+                    if (initializedCache) astCacheTimer.Start();
+                }
+                catch
+                {
+                    //TODO: Possible multi-threaded problem with timer
+                }
 
                 EventManager.DispatchEvent(this, new DataEvent(EventType.Command, "ASCompletion.FileModelUpdated", obj));
             });
@@ -1140,7 +1187,27 @@ namespace ASCompletion
 
         void AstCacheTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            astCache.UpdateOutdatedModels();
+            try
+            {
+                astCache.UpdateOutdatedModels();
+            }
+            catch
+            {
+                //TODO: Handle some inner cases more properly
+            }
+        }
+
+        void Project_ClassPathChanged(Project project)
+        {
+            try
+            {
+                astCacheTimer.Stop();
+                if (initializedCache) astCacheTimer.Start();
+            }
+            catch
+            {
+                //TODO: Potential timer problem
+            }
         }
 
         void Sci_MarginClick(ScintillaControl sender, int modifiers, int position, int margin)
@@ -1156,12 +1223,11 @@ namespace ASCompletion
 
                 if (cached == null) return;
 
-                
                 if (declaration.InClass.LineFrom == line)
                 {
                     ReferenceList.Show(
                         ReferenceList.ConvertClassCache(cached.ImplementorClassModels).ToList(),
-                        new List<Reference>(0), 
+                        new List<Reference>(0),
                         ReferenceList.ConvertClassCache(cached.ChildClassModels).ToList(),
                         new List<Reference>(0)
                     );
@@ -1256,7 +1322,7 @@ namespace ASCompletion
                     sender.MarkerDelete(i, MarkerUpDown);
                 }
             }
-            
+
         }
 
         private void OnUpdateCallTip(ScintillaControl sci, int position)
@@ -1277,7 +1343,7 @@ namespace ASCompletion
                 OnMouseHover(sci, lastHoverPosition);
         }
 
-        void timerPosition_Elapsed(object sender, ElapsedEventArgs e)
+        void TimerPosition_Elapsed(object sender, ElapsedEventArgs e)
         {
             ScintillaControl sci = ASContext.CurSciControl;
             if (sci == null) return;
@@ -1308,7 +1374,7 @@ namespace ASCompletion
                 if (isValid) ASComplete.ResolveContext(sci);
             }
             else ASComplete.ResolveContext(null);
-            
+
             bool enableItems = isValid && !doc.IsUntitled;
             pluginUI.OutlineTree.Enabled = ASContext.Context.CurrentModel != null;
             SetItemsEnabled(enableItems, ASContext.Context.CanBuild);
