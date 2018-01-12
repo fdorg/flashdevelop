@@ -1004,17 +1004,20 @@ namespace HaXeContext
                 if (first == '(' && last == ')')
                 {
                     if (Regex.IsMatch(token, @"\((?<lv>.+)\s(?<op>is)\s+(?<rv>\w+)\)")) return ResolveType(features.booleanKey, inFile);
-                    var groupCount = 0;
-                    var sb = new StringBuilder(token.Length - 2);
-                    for (var i = token.Length - 2; i >= 1; i--)
+                    if (GetCurrentSDKVersion() >= "3.1.0")
                     {
-                        var c = token[i];
-                        if (c == '}' || c == ')') groupCount++;
-                        else if (c == '{' || c == '(') groupCount--;
-                        else if (c == ':' && groupCount == 0) break;
-                        sb.Insert(0, c);
+                        var groupCount = 0;
+                        var sb = new StringBuilder(token.Length - 2);
+                        for (var i = token.Length - 2; i >= 1; i--)
+                        {
+                            var c = token[i];
+                            if (c == '}' || c == ')') groupCount++;
+                            else if (c == '{' || c == '(') groupCount--;
+                            else if (c == ':' && groupCount == 0) break;
+                            sb.Insert(0, c);
+                        }
+                        return ResolveType(sb.ToString(), inFile);
                     }
-                    return ResolveType(sb.ToString(), inFile);
                 }
             }
             return base.ResolveToken(token, inFile);
