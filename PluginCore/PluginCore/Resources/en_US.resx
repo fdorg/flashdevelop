@@ -6246,4 +6246,120 @@ AND - All conditions are met.</value>
     <value>Inheritance Navigation</value>
     <comment>Added after 5.2.1</comment>
   </data>
+  <data name="CodeFormatter.Title.AStyleFormatterSettings" xml:space="preserve">
+    <value>Haxe Formatter Settings</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.AddBrackets" xml:space="preserve">
+    <value>Add brackets to one line conditionals</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.AttachClasses" xml:space="preserve">
+    <value>Attach classes</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.BreakClosing" xml:space="preserve">
+    <value>Break closing braces</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.BreakElseifs" xml:space="preserve">
+    <value>Break else ifs</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.DeleteEmptyLines" xml:space="preserve">
+    <value>Delete empty lines</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.FillEmptyLines" xml:space="preserve">
+    <value>Fill empty lines</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.ForceTabs" xml:space="preserve">
+    <value>Force Tabs</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.IndentCases" xml:space="preserve">
+    <value>Indent case blocks</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.IndentConditionals" xml:space="preserve">
+    <value>Indent conditional compilation</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.IndentSwitches" xml:space="preserve">
+    <value>Indent switches</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.KeepOneLineBlocks" xml:space="preserve">
+    <value>Keep one line blocks</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.KeepOneLineStatements" xml:space="preserve">
+    <value>Keep one line statements</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.PadCommas" xml:space="preserve">
+    <value>Pad commas</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.AddOneLineBrackets" xml:space="preserve">
+    <value>Add braces on the same line</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.PadAllBlocks" xml:space="preserve">
+    <value>Pad all blocks</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.PadBlocks" xml:space="preserve">
+    <value>Pad blocks</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.PadHeaders" xml:space="preserve">
+    <value>Pad headers</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.RemoveBracketsFromContitionals" xml:space="preserve">
+    <value>Remove braces from conditionals</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.UseTabs" xml:space="preserve">
+    <value>Use Tabs</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.BracketStyle" xml:space="preserve">
+    <value>Brace style:</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.IndentSize" xml:space="preserve">
+    <value>Width:</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.PadParensIn" xml:space="preserve">
+    <value>Pad inside of parentheses</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.PadParensOut" xml:space="preserve">
+    <value>Pad outside of parentheses</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Info.Brackets" xml:space="preserve">
+    <value>Braces</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Info.Formatting" xml:space="preserve">
+    <value>Formatting</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Info.Indentation" xml:space="preserve">
+    <value>Tabs / Indents</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Info.Padding" xml:space="preserve">
+    <value>Padding</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.ShowCurrentFile" xml:space="preserve">
+    <value>Show current file</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
 </root>

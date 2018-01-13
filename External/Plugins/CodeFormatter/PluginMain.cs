@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ASCompletion.Context;
 using CodeFormatter.Handlers;
@@ -234,7 +233,7 @@ namespace CodeFormatter
         private const int TYPE_XML = 2;
         private const int TYPE_CPP = 3;
         private const int TYPE_UNKNOWN = 4;
-        
+
         /// <summary>
         /// Formats the current document
         /// </summary>
@@ -292,7 +291,15 @@ namespace CodeFormatter
 
                         case TYPE_CPP:
                             AStyleInterface asi = new AStyleInterface();
-                            String optionData = this.GetOptionData(doc.SciControl.ConfigurationLanguage.ToLower());
+                            String optionData;
+                            if (doc.SciControl.ConfigurationLanguage == "haxe")
+                            {
+                                optionData = HaxeAStyleHelper.GetAStyleArguments(this.settingObject);
+                            }
+                            else
+                            {
+                                optionData = this.GetOptionData(doc.SciControl.ConfigurationLanguage.ToLower());
+                            }
                             String resultData = asi.FormatSource(source, optionData);
                             if (String.IsNullOrEmpty(resultData))
                             {
@@ -302,10 +309,11 @@ namespace CodeFormatter
                             else
                             {
                                 // Remove all empty lines if not specified for astyle
-                                if (!optionData.Contains("--delete-empty-lines"))
-                                {
-                                    resultData = Regex.Replace(resultData, @"^\s+$[\r\n]*", Environment.NewLine, RegexOptions.Multiline);
-                                }
+                                // Why? Commented out for now, as it conflicts with HaxeAStyleDialog
+                                //if (!optionData.Contains("--delete-empty-lines"))
+                                //{
+                                //    resultData = Regex.Replace(resultData, @"^\s+$[\r\n]*", Environment.NewLine, RegexOptions.Multiline);
+                                //}
                                 doc.SciControl.Text = resultData;
                                 doc.SciControl.ConvertEOLs(doc.SciControl.EOLMode);
                             }

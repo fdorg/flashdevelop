@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Text;
 using CodeFormatter.Handlers;
 using CodeFormatter.Preferences;
+using CodeFormatter.Utilities;
 using PluginCore.Localization;
 
 namespace CodeFormatter
@@ -182,6 +184,7 @@ namespace CodeFormatter
         ////////////////// Others ///////////////////////////////////////
 
         private string pref_AStyle_CPP = "";
+        private HaxeAStyleOptions pref_AStyle_Haxe = new HaxeAStyleOptions();
         private string pref_AStyle_Others = "";
 
         [DefaultValue("")]
@@ -202,6 +205,16 @@ namespace CodeFormatter
         {
             get { return this.pref_AStyle_Others; }
             set { this.pref_AStyle_Others = value; }
+        }
+
+        [Category("Others")]
+        [DisplayName("Haxe Options")]
+        //[LocalizedDescription("CodeFormatter.Description.AStyle.OptionsHaxe")]
+        [Editor(typeof(HaxeAStyleEditor), typeof(UITypeEditor))]
+        public HaxeAStyleOptions Pref_AStyle_Haxe
+        {
+            get { return this.pref_AStyle_Haxe; }
+            set { this.pref_AStyle_Haxe = value; }
         }
 
         ////////////////// AS3 ///////////////////////////////////////
@@ -2224,6 +2237,11 @@ namespace CodeFormatter
             attrs.Add("valid");
             attrs.Add("valueCommit");
             return attrs;
+        }
+
+        public Settings()
+        {
+            Pref_AStyle_Haxe = HaxeAStyleHelper.GetDefaultOptions();
         }
     }
 

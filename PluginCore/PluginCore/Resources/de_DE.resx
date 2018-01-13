@@ -6231,4 +6231,120 @@ AND - All conditions are met.</value>
     <value>Vererbungsnavigation</value>
     <comment>Added after 5.2.1</comment>
   </data>
+  <data name="CodeFormatter.Title.AStyleFormatterSettings" xml:space="preserve">
+    <value>Haxe-Formatierungseinstellungen</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.AddBrackets" xml:space="preserve">
+    <value>Klammern um Einzeiler hinzufügen</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.AttachClasses" xml:space="preserve">
+    <value>An Klassen befestigen</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.BreakClosing" xml:space="preserve">
+    <value>Schließende Klammern umbrechen</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.BreakElseifs" xml:space="preserve">
+    <value>Elseifs umbrechen</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.DeleteEmptyLines" xml:space="preserve">
+    <value>Leere Zeilen löschen</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.FillEmptyLines" xml:space="preserve">
+    <value>Leere Zeilen auffüllen</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.ForceTabs" xml:space="preserve">
+    <value>Tabs erzwingen</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.IndentCases" xml:space="preserve">
+    <value>Case-Blöcke einrücken</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.IndentConditionals" xml:space="preserve">
+    <value>Conditional Compilation einrücken</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.IndentSwitches" xml:space="preserve">
+    <value>Switches einrücken</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.KeepOneLineBlocks" xml:space="preserve">
+    <value>Einzeilige Blöcke erhalten</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.KeepOneLineStatements" xml:space="preserve">
+    <value>Einzeilige Statements erhalten</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.PadCommas" xml:space="preserve">
+    <value>Kommas mit Leerzeichen</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.AddOneLineBrackets" xml:space="preserve">
+    <value>Klammern in der selben Zeile hinzufügen</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.PadAllBlocks" xml:space="preserve">
+    <value>Leerzeilen um alle Blöcke herum einfügen</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.PadBlocks" xml:space="preserve">
+    <value>Leerzeilen um Blöcke herum einfügen</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.PadHeaders" xml:space="preserve">
+    <value>Leerzeichen zwischen Header und öffnender Klammer</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.RemoveBracketsFromContitionals" xml:space="preserve">
+    <value>Klammern bei bedingten Anweisungen entfernen</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.UseTabs" xml:space="preserve">
+    <value>Tabs benutzen</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.BracketStyle" xml:space="preserve">
+    <value>Klammerstil:</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.IndentSize" xml:space="preserve">
+    <value>Breite:</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.PadParensIn" xml:space="preserve">
+    <value>Leerzeichen innerhalb von Klammern einfügen</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.PadParensOut" xml:space="preserve">
+    <value>Leerzeichen um Klammern herum einfügen</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Info.Brackets" xml:space="preserve">
+    <value>Klammern</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Info.Formatting" xml:space="preserve">
+    <value>Formatierung</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Info.Indentation" xml:space="preserve">
+    <value>Tabs / Einrückung</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Info.Padding" xml:space="preserve">
+    <value>Padding</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
+  <data name="CodeFormatter.Label.ShowCurrentFile" xml:space="preserve">
+    <value>Aktuelle Datei zeigen</value>
+    <comment>Added after 5.2.0</comment>
+  </data>
 </root>
