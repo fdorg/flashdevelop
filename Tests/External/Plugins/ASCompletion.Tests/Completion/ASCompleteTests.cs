@@ -1053,6 +1053,14 @@ namespace ASCompletion.Completion
                     yield return
                         new TestCaseData("foo(0, function() {var i = 1, j = 2; return i + j;}, $(EntryPoint));function foo(i:Int, s:Dynamic, y:Int);")
                             .Returns(2);
+                    yield return
+                        new TestCaseData("foo([1 => 1], $(EntryPoint));")
+                            .Returns(1)
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/764");
+                    yield return
+                        new TestCaseData("foo([for(i in 0...10) i], $(EntryPoint)")
+                            .Returns(1)
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/764");
                 }
             }
 
@@ -1070,7 +1078,9 @@ namespace ASCompletion.Completion
                 sci.Text = text;
                 SnippetHelper.PostProcessSnippets(sci, 0);
                 var pos = sci.CurrentPos - 1;
-                return ASComplete.FindParameterIndex(sci, ref pos);
+                var result = ASComplete.FindParameterIndex(sci, ref pos);
+                Assert.AreNotEqual(-1, pos);
+                return result;
             }
         }
 
