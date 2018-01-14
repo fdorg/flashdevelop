@@ -1076,6 +1076,7 @@ namespace ASCompletion.Completion
             internal static int Common(string text, ScintillaControl sci)
             {
                 sci.Text = text;
+                sci.Colourise(0, -1);
                 SnippetHelper.PostProcessSnippets(sci, 0);
                 var pos = sci.CurrentPos - 1;
                 var result = ASComplete.FindParameterIndex(sci, ref pos);

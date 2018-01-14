@@ -1446,12 +1446,12 @@ namespace ASCompletion.Completion
         /// </summary>
         /// <param name="Sci">Scintilla control</param>
         /// <param name="paramNumber">Highlight param number</param>
-        static private void ShowCalltip(ScintillaControl Sci, int paramNumber)
+        static private void ShowCalltip(ScintillaControl sci, int paramNumber)
         {
-            ShowCalltip(Sci, paramNumber, false);
+            ShowCalltip(sci, paramNumber, false);
         }
 
-        static private void ShowCalltip(ScintillaControl Sci, int paramIndex, bool forceRedraw)
+        static private void ShowCalltip(ScintillaControl sci, int paramIndex, bool forceRedraw)
         {
             // measure highlighting
             int start = calltipDef.IndexOf('(');
@@ -1495,7 +1495,7 @@ namespace ASCompletion.Completion
                 prevParam = paramName;
                 calltipDetails = UITools.Manager.ShowDetails;
                 string text = calltipDef + ASDocumentation.GetTipDetails(calltipMember, paramName);
-                UITools.CallTip.CallTipShow(Sci, calltipPos - calltipOffset, text, forceRedraw);
+                UITools.CallTip.CallTipShow(sci, calltipPos - calltipOffset, text, forceRedraw);
             }
 
             // highlight
@@ -1730,9 +1730,9 @@ namespace ASCompletion.Completion
             return true;
         }
 
-        public static void FunctionContextResolved(ScintillaControl Sci, ASExpr expr, MemberModel method, ClassModel inClass, bool showTip)
+        public static void FunctionContextResolved(ScintillaControl sci, ASExpr expr, MemberModel method, ClassModel inClass, bool showTip)
         {
-            if (method == null || string.IsNullOrEmpty(method.Name)) 
+            if (string.IsNullOrEmpty(method?.Name)) 
                 return;
             if (calltipMember != null && calltipMember.Name == method.Name)
             {
@@ -1752,10 +1752,11 @@ namespace ASCompletion.Completion
 
             if (showTip)
             {
-                position = Sci.CurrentPos - 1;
-                int paramIndex = FindParameterIndex(Sci, ref position);
+                position = sci.CurrentPos - 1;
+                sci.Colourise(0, -1);
+                int paramIndex = FindParameterIndex(sci, ref position);
                 if (position < 0) return;
-                ShowCalltip(Sci, paramIndex, true);
+                ShowCalltip(sci, paramIndex, true);
             }
         }
 
@@ -1791,7 +1792,6 @@ namespace ASCompletion.Completion
             int comaCount = 0;
             int arrCount = 0;
             var genCount = 0;
-            sci.Colourise(0, -1);
             while (position >= 0)
             {
                 var style = sci.BaseStyleAt(position);

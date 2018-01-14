@@ -1093,8 +1093,14 @@ namespace ASCompletion
                             astCache.MarkAsOutdated(c);
                 }
 
-                astCacheTimer.Stop();
-                astCacheTimer.Start();
+                try
+                {
+                    astCacheTimer.Stop();
+                    astCacheTimer.Start();
+                }
+                catch
+                {
+                }
 
                 var sci1 = DocumentManager.FindDocument(obj.FileName)?.SplitSci1;
                 var sci2 = DocumentManager.FindDocument(obj.FileName)?.SplitSci2;
