@@ -24,8 +24,6 @@ namespace HaXeContext
             new Regex("^(-cp|-resource|-cmd)\\s*([^\"'].*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         static readonly Regex reMacro =
             new Regex("^(--macro)\\s*([^\"'].*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        static readonly Regex reQuote =
-            new Regex("([^\"])\"", RegexOptions.Compiled);
 
         static readonly Regex rePosition =
             new Regex("(?<path>.*?):(?<line>[0-9]*): (?<range>characters|lines) (?<start>[0-9]*)-(?<end>[0-9]*)",
@@ -188,7 +186,7 @@ namespace HaXeContext
                 {
                     Match m = reMacro.Match(arg);
                     if (m.Success)
-                        hxmlArgs[i] = m.Groups[1].Value + " \"" + m.Groups[2].Value.Trim(' ', '"', '\'') + "\"";
+                        hxmlArgs[i] = m.Groups[1].Value + " \"" + m.Groups[2].Value.Trim(' ', '"', '\'').Replace("\"", "\\\"") + "\"";
                 }
             }
         }

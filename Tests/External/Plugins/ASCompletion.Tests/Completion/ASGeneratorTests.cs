@@ -985,6 +985,7 @@ namespace ASCompletion.Completion
                 internal static string Common(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     SetSrc(sci, sourceText);
+                    sci.Colourise(0, -1);
                     ASGenerator.GenerateJob(job, ASContext.Context.CurrentMember, ASContext.Context.CurrentClass, null, null);
                     return sci.Text;
                 }
