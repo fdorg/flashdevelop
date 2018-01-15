@@ -386,19 +386,19 @@ namespace ASCompletion.Completion
                             .SetName("From new String|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfNewString.charCodeAt"))
-                            .Returns("new String.#0~.charCodeAt")
+                            .Returns("new String().charCodeAt")
                             .SetName("From new String().charCodeAt|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfNewString.charCodeAt0.toString"))
-                            .Returns("new String.#1~.charCodeAt.#0~.toString")
+                            .Returns("new String().charCodeAt(0).toString")
                             .SetName("From new String().charCodeAt(0).toString|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfStringInitializer.charCodeAt0.toString"))
-                            .Returns(";\"string\".#1~.charCodeAt.#0~.toString")
+                            .Returns(";\"string\".charCodeAt(0).toString")
                             .SetName("From \"string\".charCodeAt(0).toString|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfStringInitializer2.charCodeAt0.toString"))
-                            .Returns(";'string'.#1~.charCodeAt.#0~.toString")
+                            .Returns(";'string'.charCodeAt(0).toString")
                             .SetName("From 'string'.charCodeAt(0).toString|");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpressionOfEmptyStringInitializer"))
@@ -511,7 +511,7 @@ namespace ASCompletion.Completion
                             .SetName("a++");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_increment5"))
-                            .Returns("=getId.#0~++")
+                            .Returns("=getId()++")
                             .SetName("var id = getId()++");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_decrement"))
@@ -531,7 +531,7 @@ namespace ASCompletion.Completion
                             .SetName("a--");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_decrement5"))
-                            .Returns("=getId.#0~--")
+                            .Returns("=getId()--")
                             .SetName("var id = getId()--");
                     yield return
                         new TestCaseData(ReadAllTextAS3("GetExpression_issue1749_decrement6"))
@@ -549,6 +549,18 @@ namespace ASCompletion.Completion
                         new TestCaseData(ReadAllTextAS3("GetExpression_issue1908_delete"))
                             .Returns("delete o.[k]")
                             .SetName("delete o[k]");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_operator_is"))
+                            .Returns(";(\"s\" is String).")
+                            .SetName("(\"s\" is String)");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_operator_as"))
+                            .Returns(";(\"s\" as String).")
+                            .SetName("(\"s\" as String)");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_return_operator_as"))
+                            .Returns("return;(\"s\" as String).")
+                            .SetName("return (\"s\" as String)");
                 }
             }
 
@@ -598,7 +610,7 @@ namespace ASCompletion.Completion
                             .SetName("From new Array<{name:String, params:Array<Dynamic>}>|");
                     yield return
                         new TestCaseData(ReadAllTextHaxe("GetExpressionOfStringInterpolation.charAt"))
-                            .Returns(";'result: ${1 + 2}'.#0~.charAt")
+                            .Returns(";'result: ${1 + 2}'.charAt")
                             .SetName("'result: ${1 + 2}'.charAt");
                     yield return
                         new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_plus"))
@@ -634,7 +646,7 @@ namespace ASCompletion.Completion
                             .SetName("a++");
                     yield return
                         new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_increment5"))
-                            .Returns("=getId.#0~++")
+                            .Returns("=getId()++")
                             .SetName("var id = getId()++");
                     yield return
                         new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_decrement"))
@@ -654,7 +666,7 @@ namespace ASCompletion.Completion
                             .SetName("a--");
                     yield return
                         new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_decrement5"))
-                            .Returns("=getId.#0~--")
+                            .Returns("=getId()--")
                             .SetName("var id = getId()--");
                 }
             }
@@ -679,7 +691,16 @@ namespace ASCompletion.Completion
                 sci.Text = text;
                 SnippetHelper.PostProcessSnippets(sci, 0);
                 var expr = ASComplete.GetExpression(sci, sci.CurrentPos);
-                return $"{expr.WordBefore}{expr.Separator}{expr.Value}{expr.RightOperator}";
+                var value = expr.Value;
+                if (!string.IsNullOrEmpty(value) && expr.SubExpressions != null)
+                {
+                    for (var i = 0; i < expr.SubExpressions.Count; i++)
+                    {
+                        var subExpr = expr.SubExpressions[i];
+                        value = value.Replace($".#{i}~", subExpr).Replace($"#{i}~", subExpr);
+                    }
+                }
+                return $"{expr.WordBefore}{expr.Separator}{value}{expr.RightOperator}";
             }
         }
 
@@ -1032,6 +1053,14 @@ namespace ASCompletion.Completion
                     yield return
                         new TestCaseData("foo(0, function() {var i = 1, j = 2; return i + j;}, $(EntryPoint));function foo(i:Int, s:Dynamic, y:Int);")
                             .Returns(2);
+                    yield return
+                        new TestCaseData("foo([1 => 1], $(EntryPoint));")
+                            .Returns(1)
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/764");
+                    yield return
+                        new TestCaseData("foo([for(i in 0...10) i], $(EntryPoint)")
+                            .Returns(1)
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/764");
                 }
             }
 
@@ -1047,9 +1076,12 @@ namespace ASCompletion.Completion
             internal static int Common(string text, ScintillaControl sci)
             {
                 sci.Text = text;
+                sci.Colourise(0, -1);
                 SnippetHelper.PostProcessSnippets(sci, 0);
                 var pos = sci.CurrentPos - 1;
-                return ASComplete.FindParameterIndex(sci, ref pos);
+                var result = ASComplete.FindParameterIndex(sci, ref pos);
+                Assert.AreNotEqual(-1, pos);
+                return result;
             }
         }
 

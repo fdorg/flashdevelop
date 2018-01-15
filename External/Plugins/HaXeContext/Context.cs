@@ -12,6 +12,7 @@ using PluginCore.Helpers;
 using PluginCore;
 using ASCompletion.Completion;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using ProjectManager.Projects.Haxe;
 using ProjectManager.Projects;
@@ -1002,7 +1003,21 @@ namespace HaXeContext
                 }
                 if (first == '(' && last == ')')
                 {
-                    if (Regex.IsMatch(token, @"\((?<lv>\D+)(?<op>\sis\s)(?<rv>\w+)\)")) return ResolveType("Bool", inFile);
+                    if (Regex.IsMatch(token, @"\((?<lv>.+)\s(?<op>is)\s+(?<rv>\w+)\)")) return ResolveType(features.booleanKey, inFile);
+                    if (GetCurrentSDKVersion() >= "3.1.0")
+                    {
+                        var groupCount = 0;
+                        var sb = new StringBuilder(token.Length - 2);
+                        for (var i = token.Length - 2; i >= 1; i--)
+                        {
+                            var c = token[i];
+                            if (c == '}' || c == ')') groupCount++;
+                            else if (c == '{' || c == '(') groupCount--;
+                            else if (c == ':' && groupCount == 0) break;
+                            sb.Insert(0, c);
+                        }
+                        return ResolveType(sb.ToString(), inFile);
+                    }
                 }
             }
             return base.ResolveToken(token, inFile);
@@ -1405,8 +1420,10 @@ namespace HaXeContext
 
             // auto-started completion, can be ignored for performance (show default completion tooltip)
             if (exprValue.IndexOfOrdinal(".") < 0 || (autoHide && !exprValue.EndsWith('.')))
-            if (hxsettings.DisableMixedCompletion && exprValue.Length > 0 && autoHide) return new MemberList();
-            else return null;
+            {
+                if (hxsettings.DisableMixedCompletion && exprValue.Length > 0 && autoHide) return new MemberList();
+                return null;
+            }
 
             // empty expression
             if (exprValue != "")
