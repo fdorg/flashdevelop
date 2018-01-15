@@ -16,8 +16,11 @@ namespace ASCompletion.Helpers
     {
         public event Action FinishedUpdate;
 
-        Dictionary<ClassModel, CachedClassModel> cache = new Dictionary<ClassModel, CachedClassModel>(new ClassModelComparer());
+        Dictionary<ClassModel, CachedClassModel> cache =
+            new Dictionary<ClassModel, CachedClassModel>(new ClassModelComparer());
+
         readonly List<ClassModel> outdatedModels = new List<ClassModel>();
+
         /// <summary>
         /// A list of ClassModels that extend / implement something that does not exist yet
         /// </summary>
@@ -79,61 +82,67 @@ namespace ASCompletion.Helpers
         {
             var action = new Action(() =>
             {
-                var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-                if (context == null || context.Classpath == null)
-                    return;
-
-                List<ClassModel> outdated;
-                lock (outdatedModels)
+                try
                 {
-                    outdated = new List<ClassModel>(outdatedModels);
-                    outdatedModels.Clear();
-                }
-                
-                foreach (var cls in outdated)
-                {
-                    cls.ResolveExtends();
+                    var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
+                    if (context == null || context.Classpath == null)
+                        return;
 
-                    lock (cache)
+                    List<ClassModel> outdated;
+                    lock (outdatedModels)
                     {
-                        //get the old CachedClassModel
-                        var cachedClassModel = GetCachedModel(cls);
-                        var connectedClasses = cachedClassModel?.ConnectedClassModels;
-
-                        //remove old cls
-                        Remove(cls);
-
-                        UpdateClass(cls, cache);
-
-                        //also update all classes / interfaces that are connected to cls
-                        if (connectedClasses != null)
-                            foreach (var connection in connectedClasses)
-                                if (GetCachedModel(connection) != null) //only update existing connections, so a removed class is not reintroduced
-                                    UpdateClass(connection, cache);
+                        outdated = new List<ClassModel>(outdatedModels);
+                        outdatedModels.Clear();
                     }
-                }
 
-                var newModels = outdated.Any(m => GetCachedModel(m) == null);
-                //for new ClassModels, we need to update everything in the list of classes that extend / implement something that does not exist
-                if (newModels)
-                {
-                    HashSet<ClassModel> toUpdate;
-                    lock (unfinishedModels)
-                        toUpdate = new HashSet<ClassModel>(unfinishedModels);
-
-                    foreach (var model in toUpdate)
+                    foreach (var cls in outdated)
                     {
-                        lock (unfinishedModels)
-                            unfinishedModels.Remove(model); //will be added back by UpdateClass if needed
+                        cls.ResolveExtends();
 
                         lock (cache)
-                            UpdateClass(model, cache);
-                    }
-                }
-                
-                if (FinishedUpdate != null)
-                    PluginBase.RunAsync(new MethodInvoker(FinishedUpdate));
+                        {
+                            //get the old CachedClassModel
+                            var cachedClassModel = GetCachedModel(cls);
+                            var connectedClasses = cachedClassModel?.ConnectedClassModels;
 
+                            //remove old cls
+                            Remove(cls);
+
+                            UpdateClass(cls, cache);
+
+                            //also update all classes / interfaces that are connected to cls
+                            if (connectedClasses != null)
+                                foreach (var connection in connectedClasses)
+                                    if (GetCachedModel(connection) != null)
+                                        //only update existing connections, so a removed class is not reintroduced
+                                        UpdateClass(connection, cache);
+                        }
+                    }
+
+                    var newModels = outdated.Any(m => GetCachedModel(m) == null);
+                    //for new ClassModels, we need to update everything in the list of classes that extend / implement something that does not exist
+                    if (newModels)
+                    {
+                        HashSet<ClassModel> toUpdate;
+                        lock (unfinishedModels)
+                            toUpdate = new HashSet<ClassModel>(unfinishedModels);
+
+                        foreach (var model in toUpdate)
+                        {
+                            lock (unfinishedModels)
+                                unfinishedModels.Remove(model); //will be added back by UpdateClass if needed
+
+                            lock (cache)
+                                UpdateClass(model, cache);
+                        }
+                    }
+
+                    if (FinishedUpdate != null)
+                        PluginBase.RunAsync(new MethodInvoker(FinishedUpdate));
+                }
+                catch (Exception)
+                {
+                }
             });
 
             action.BeginInvoke(null, null);
@@ -146,29 +155,36 @@ namespace ASCompletion.Helpers
         {
             var action = new Action(() =>
             {
-                var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-                if (context == null || context.Classpath == null || PathExplorer.IsWorking)
+                try
                 {
+                    var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
+                    if (context == null || context.Classpath == null || PathExplorer.IsWorking)
+                    {
+                        if (FinishedUpdate != null)
+                            PluginBase.RunAsync(new MethodInvoker(FinishedUpdate));
+                        return;
+                    }
+
+                    var c = new Dictionary<ClassModel, CachedClassModel>(cache.Comparer);
+
+                    foreach (MemberModel memberModel in context.GetAllProjectClasses())
+                    {
+                        if (PluginBase.MainForm.ClosingEntirely)
+                            return; //make sure we leave if the form is closing, so we do not block it
+
+                        var cls = GetClassModel(memberModel);
+                        UpdateClass(cls, c);
+                    }
+
+                    lock (cache)
+                        cache = c;
+
                     if (FinishedUpdate != null)
                         PluginBase.RunAsync(new MethodInvoker(FinishedUpdate));
-                    return;
                 }
-
-                var c = new Dictionary<ClassModel, CachedClassModel>(cache.Comparer);
-
-                foreach (MemberModel memberModel in context.GetAllProjectClasses())
+                catch (Exception)
                 {
-                    if (PluginBase.MainForm.ClosingEntirely)
-                        return; //make sure we leave if the form is closing, so we do not block it
-
-                    var cls = GetClassModel(memberModel);
-                    UpdateClass(cls, c);
                 }
-
-                lock(cache)
-                    cache = c;
-                if (FinishedUpdate != null)
-                    PluginBase.RunAsync(new MethodInvoker(FinishedUpdate));
             });
             action.BeginInvoke(null, null);
         }
