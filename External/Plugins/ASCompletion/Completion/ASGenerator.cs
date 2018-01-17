@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using ASCompletion.Context;
+using ASCompletion.Generators;
 using ASCompletion.Helpers;
 using ASCompletion.Model;
 using ASCompletion.Settings;
@@ -69,9 +70,8 @@ namespace ASCompletion.Completion
 
             contextMatch = null;
             contextToken = Sci.GetWordFromPosition(position);
+            if (context.CodeGenerator.ContextualGenerator(Sci, position, options)) return;
             ASResult resolve = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(position, true));
-            if (context.CodeGenerator.ContextualGenerator(Sci, options, resolve)) return;
-
             int line = Sci.LineFromPosition(position);
             FoundDeclaration found = GetDeclarationAtLine(line);
             bool isNotInterface = (context.CurrentClass.Flags & FlagType.Interface) == 0;
@@ -114,7 +114,8 @@ namespace ASCompletion.Completion
             var suggestItemDeclaration = false;
             if (contextToken != null && resolve.Member == null) // import declaration
             {
-                if ((resolve.Type == null || resolve.Type.IsVoid() || !context.IsImported(resolve.Type, line)) && context.CodeGenerator.CheckAutoImport(resolve, options)) return;
+                if ((resolve.Type == null || resolve.Type.IsVoid() || !context.IsImported(resolve.Type, line)) 
+                    && context.CodeGenerator is ASGenerator && ((ASGenerator)context.CodeGenerator).CheckAutoImport(resolve, options)) return;
                 if (resolve.Type == null)
                 {
                     suggestItemDeclaration = ASComplete.IsTextStyle(Sci.BaseStyleAt(position - 1));
@@ -132,7 +133,7 @@ namespace ASCompletion.Completion
                     {
                         contextMatch = m;
                         ClassModel type = context.ResolveType(contextToken, context.CurrentModel);
-                        if (type.IsVoid() && context.CodeGenerator.CheckAutoImport(resolve, options))
+                        if (type.IsVoid() && context.CodeGenerator is ASGenerator && ((ASGenerator)context.CodeGenerator).CheckAutoImport(resolve, options))
                             return;
                     }
                     ShowGetSetList(found, options);
@@ -439,7 +440,7 @@ namespace ASCompletion.Completion
             // TODO: Empty line, show generators list? yep
         }
 
-        public virtual bool ContextualGenerator(ScintillaControl sci, List<ICompletionListItem> options, ASResult expr) => false;
+        public virtual bool ContextualGenerator(ScintillaControl sci, int position, List<ICompletionListItem> options) => false;
 
         private static MemberModel ResolveDelegate(string type, FileModel inFile)
         {
@@ -4839,7 +4840,8 @@ namespace ASCompletion.Completion
                 ASContext.Panel.SetLastLookupPosition(sci.FileName, lookupLine, lookupCol);
             }
         }
-        #endregion     
+
+        #endregion
     }
 
     #region related structures

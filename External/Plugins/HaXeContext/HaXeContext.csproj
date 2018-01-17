@@ -129,6 +129,7 @@
     <Compile Include="Completion\CompilerCompletionHandler.cs" />
     <Compile Include="Completion\CompletionServerCompletionHandler.cs" />
     <Compile Include="Completion\HaxeComplete330.cs" />
+    <Compile Include="Generators\DocumentationGenerator.cs" />
     <Compile Include="HaXeSettings.cs" />
     <Compile Include="ExternalToolchain.cs" />
     <Compile Include="Helpers\FlagEnumEditor.cs" />

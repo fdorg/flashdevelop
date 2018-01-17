@@ -70,6 +70,7 @@
     <Compile Include="Commands\RefactorCommandTests.cs" />
     <Compile Include="Completion\CodeGeneratorTests.cs" />
     <Compile Include="ContextTests.cs" />
+    <Compile Include="Generators\DocumentationGeneratorTests.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -158,6 +159,29 @@
     <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1926_6.hx" />
     <EmbeddedResource Include="Test Files\parser\IsImported_case1.hx" />
     <EmbeddedResource Include="Test Files\parser\IsImported_case2.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_empty.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_methodDetails.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_methodDetails_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_methodDetails_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_methodDetails_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\BeforeGenerateDocumentation_empty.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\BeforeGenerateDocumentation_methodDetails.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\BeforeGenerateDocumentation_methodDetails_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\BeforeGenerateDocumentation_methodDetails_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\BeforeGenerateDocumentation_methodDetails_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\BeforeGenerateDocumentation_methodDetails_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_methodDetails_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\BeforeGenerateDocumentation_methodDetails_6.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_methodDetails_6.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_6.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_empty.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_none.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\BeforeGenerateDocumentation_none.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

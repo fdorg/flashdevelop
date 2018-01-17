@@ -30,6 +30,18 @@ namespace HaXeContext
             set { documentationCommandLine = value; }
         }
 
+
+        private bool enableLeadingAsterisks = true;
+
+        [DisplayName("Enable Leading Asterisks")]
+        [Category("Documentation Generator")]
+        [DefaultValue(true)]
+        public bool EnableLeadingAsterisks
+        {
+            get { return enableLeadingAsterisks; }
+            set { enableLeadingAsterisks = value; }
+        }
+
         #endregion
 
         #region IContextSettings Members

@@ -12,15 +12,16 @@ namespace HaXeContext.Completion
 {
     internal class CodeGenerator : ASGenerator
     {
-        public override bool ContextualGenerator(ScintillaControl sci, List<ICompletionListItem> options, ASResult expr)
+        public override bool ContextualGenerator(ScintillaControl sci, int position, List<ICompletionListItem> options)
         {
+            var expr = ASComplete.GetExpressionType(sci, sci.WordEndPosition(position, true));
             var context = ASContext.Context;
             if (context.CurrentClass.Flags.HasFlag(FlagType.Enum | FlagType.TypeDef) || context.CurrentClass.Flags.HasFlag(FlagType.Interface))
             {
                 if (contextToken != null && expr.Member == null && !context.IsImported(expr.Type ?? ClassModel.VoidClass, sci.CurrentLine)) CheckAutoImport(expr, options);
                 return true;
             }
-            return base.ContextualGenerator(sci, options, expr);
+            return base.ContextualGenerator(sci, position, options);
         }
     }
 
