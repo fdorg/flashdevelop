@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Context;
@@ -15,7 +16,7 @@ using PluginCore.Managers;
 namespace AS2Context
 {
     /// <summary>
-    /// Actionscript2 context
+    /// ActionScript2 context
     /// </summary>
     public class Context: ASContext
     {
@@ -123,7 +124,8 @@ namespace AS2Context
             features.intrinsicKey = "intrinsic";
 
             features.functionArguments = new MemberModel("arguments", "FunctionArguments", FlagType.Variable | FlagType.LocalVar, 0);
-
+            features.ArithmeticOperators = new HashSet<char> { '+', '-', '*', '/' };
+            features.IncrementDecrementOperators = new[] {"++", "--"};
             /* INITIALIZATION */
 
             settings = initSettings;
@@ -450,6 +452,7 @@ namespace AS2Context
         /// <param name="atLine">Position in the file</param>
         public override bool IsImported(MemberModel member, int atLine)
         {
+            if (member == ClassModel.VoidClass) return false;
             FileModel cFile = Context.CurrentModel;
             string fullName = member.Type;
             string name = member.Name;
@@ -554,6 +557,21 @@ namespace AS2Context
 
             // search in classpath
             return GetModel(package, cname, inPackage);
+        }
+
+        public override ClassModel ResolveToken(string token, FileModel inFile)
+        {
+            if (token?.Length > 0)
+            {
+                if (token == "true" || token == "false") return ResolveType(features.booleanKey, inFile);
+                if (char.IsDigit(token, 0) || (token.Length > 1 && token[0] == '-' && char.IsDigit(token, 1))) return ResolveType(features.numberKey, inFile);
+                var first = token[0];
+                var last = token[token.Length - 1];
+                if (first == '{' && last == '}') return ResolveType(features.objectKey, inFile);
+                if (first == '[' && last == ']') return ResolveType(features.arrayKey, inFile);
+                if (first == '"' || first == '\'') return ResolveType(features.stringKey, inFile);
+            }
+            return base.ResolveToken(token, inFile);
         }
 
         protected ClassModel ResolveTypeIndex(string cname, FileModel inFile)

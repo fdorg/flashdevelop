@@ -10,16 +10,18 @@ using ScintillaNet;
 
 namespace HaXeContext.Completion
 {
-    internal class CodeGenerator : IContextualGenerator
+    internal class CodeGenerator : ASGenerator
     {
-        public bool ContextualGenerator(ScintillaControl sci, List<ICompletionListItem> options, ASResult expr)
+        public override bool ContextualGenerator(ScintillaControl sci, int position, List<ICompletionListItem> options)
         {
-            if ((ASContext.Context.CurrentClass.Flags & FlagType.Interface) != 0
-                && (expr.Member == null || (expr.Member.Flags & FlagType.Variable) != 0))
+            var expr = ASComplete.GetExpressionType(sci, sci.WordEndPosition(position, true));
+            var context = ASContext.Context;
+            if (context.CurrentClass.Flags.HasFlag(FlagType.Enum | FlagType.TypeDef) || context.CurrentClass.Flags.HasFlag(FlagType.Interface))
             {
+                if (contextToken != null && expr.Member == null && !context.IsImported(expr.Type ?? ClassModel.VoidClass, sci.CurrentLine)) CheckAutoImport(expr, options);
                 return true;
             }
-            return false;
+            return base.ContextualGenerator(sci, position, options);
         }
     }
 
