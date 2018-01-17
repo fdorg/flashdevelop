@@ -330,7 +330,15 @@ namespace ASCompletion.Completion
                             .Returns(";\"string\"")
                             .SetName("From \"string\"|");
                     yield return
-                        new TestCaseData(ReadAllTextAS3("GetExpressionOfGlogalFunctionString"))
+                        new TestCaseData(ReadAllTextAS3("GetExpressionOfStringInitializer2"))
+                            .Returns(";\"{[(<string\"")
+                            .SetName("From \"{[(<string\"|");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpressionOfStringInitializer3"))
+                            .Returns(";\"string>}])\"")
+                            .SetName("From \"string>}])\"|");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpressionOfGlobalFunctionString"))
                             .Returns(";")
                             .SetName("From String(\"string\")|");
                     yield return
