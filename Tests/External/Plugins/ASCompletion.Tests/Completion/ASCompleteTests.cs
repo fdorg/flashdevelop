@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
-using AS3Context;
 using ASCompletion.Context;
 using ASCompletion.Model;
-using ASCompletion.Settings;
 using ASCompletion.TestUtils;
-using HaXeContext;
 using NSubstitute;
 using NUnit.Framework;
 using PluginCore.Helpers;
@@ -24,9 +21,9 @@ namespace ASCompletion.Completion
             return result;
         }
 
-        internal static string GetExpression(string text, ScintillaControl sci)
+        internal static string GetExpression(ScintillaControl sci, string sourceText)
         {
-            sci.Text = text;
+            sci.Text = sourceText;
             SnippetHelper.PostProcessSnippets(sci, 0);
             var expr = ASComplete.GetExpression(sci, sci.CurrentPos);
             var value = expr.Value;
@@ -41,9 +38,15 @@ namespace ASCompletion.Completion
             return $"{expr.WordBefore}{expr.Separator}{value}{expr.RightOperator}";
         }
 
-        internal static int FindParameterIndex(string text, ScintillaControl sci)
+        internal static ComaExpression DisambiguateComa(ScintillaControl sci, string sourceText)
         {
-            sci.Text = text;
+            sci.Text = sourceText;
+            return ASComplete.DisambiguateComa(sci, sourceText.Length, 0);
+        }
+
+        internal static int FindParameterIndex(ScintillaControl sci, string sourceText)
+        {
+            sci.Text = sourceText;
             sci.Colourise(0, -1);
             SnippetHelper.PostProcessSnippets(sci, 0);
             var pos = sci.CurrentPos - 1;
@@ -52,7 +55,7 @@ namespace ASCompletion.Completion
             return result;
         }
 
-        static int ExpressionEndPosition(ScintillaControl sci, string sourceText)
+        internal static int ExpressionEndPosition(ScintillaControl sci, string sourceText)
         {
             sci.SetText(sourceText);
             return ASComplete.ExpressionEndPosition(sci, 0);
@@ -627,13 +630,13 @@ namespace ASCompletion.Completion
             internal static string AS3Impl(string text, ScintillaControl sci)
             {
                 SetAs3Features(sci);
-                return GetExpression(text, sci);
+                return GetExpression(sci, text);
             }
 
             internal static string HaxeImpl(string text, ScintillaControl sci)
             {
                 SetHaxeFeatures(sci);
-                return GetExpression(text, sci);
+                return GetExpression(sci, text);
             }
         }
 
@@ -683,40 +686,18 @@ namespace ASCompletion.Completion
                 }
             }
 
-            [TestFixtureSetUp]
-            public void DisambiguateComaSetUp()
-            {
-                var pluginMain = Substitute.For<PluginMain>();
-                var pluginUiMock = new PluginUIMock(pluginMain);
-                pluginMain.MenuItems.Returns(new List<System.Windows.Forms.ToolStripItem>());
-                pluginMain.Settings.Returns(new GeneralSettings());
-                pluginMain.Panel.Returns(pluginUiMock);
-                ASContext.GlobalInit(pluginMain);
-            }
-
             [Test, TestCaseSource(nameof(DisambiguateComaAS3TestCases))]
             public ComaExpression AS3(string text)
             {
-                ASContext.Context = new AS3Context.Context(new AS3Settings());
-
-                sci.Text = text;
-                sci.ConfigurationLanguage = "as3";
-
-                var coma = ASComplete.DisambiguateComa(sci, text.Length, 0);
-
-                return coma;
+                SetAs3Features(sci);
+                return DisambiguateComa(sci, text);
             }
 
             [Test, TestCaseSource(nameof(DisambiguateComaHaxeTestCases))]
             public ComaExpression Haxe(string text)
             {
-                ASContext.Context = new HaXeContext.Context(new HaXeSettings());
-
-                sci.Text = text;
-                sci.ConfigurationLanguage = "haxe";
-
-                var coma = ASComplete.DisambiguateComa(sci, text.Length, 0);
-                return coma;
+                SetHaxeFeatures(sci);
+                return DisambiguateComa(sci, text);
             }
         }
 
@@ -1003,7 +984,7 @@ namespace ASCompletion.Completion
             internal static int HaxeImpl(string text, ScintillaControl sci)
             {
                 SetHaxeFeatures(sci);
-                return FindParameterIndex(text, sci);
+                return FindParameterIndex(sci, text);
             }
         }
 
