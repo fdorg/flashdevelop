@@ -478,6 +478,10 @@ namespace ASCompletion.Completion
                         new TestCaseData(ReadAllTextAS3("GetExpression_return_operator_as"))
                             .Returns("return;(\"s\" as String).")
                             .SetName("return (\"s\" as String)");
+                    yield return
+                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1954"))
+                            .Returns(";re")
+                            .SetName("function foo():Vector.<int> { re");
                 }
             }
 
@@ -585,6 +589,10 @@ namespace ASCompletion.Completion
                         new TestCaseData(ReadAllTextHaxe("GetExpression_issue1749_decrement5"))
                             .Returns("=getId()--")
                             .SetName("var id = getId()--");
+                    yield return
+                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1954"))
+                            .Returns(";re")
+                            .SetName("function foo():Array<Int> { re");
                 }
             }
 
