@@ -1,8 +1,8 @@
 package {
-	public class ExtractLocalVariable {
-		public function ExtractLocalVariable() {
+	public class Main {
+		public function Main() {
 			var name:String;
-			trace(name);
+			trace(na$(EntryPoint)me);
 		}
 	}
 }
