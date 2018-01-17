@@ -17,6 +17,47 @@ namespace ASCompletion.Completion
     [TestFixture]
     public class ASCompleteTests : ASCompletionTests
     {
+        internal static MemberModel GetExpressionType(ScintillaControl sci, string sourceText)
+        {
+            SetSrc(sci, sourceText);
+            var result = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true)).Member;
+            return result;
+        }
+
+        internal static string GetExpression(string text, ScintillaControl sci)
+        {
+            sci.Text = text;
+            SnippetHelper.PostProcessSnippets(sci, 0);
+            var expr = ASComplete.GetExpression(sci, sci.CurrentPos);
+            var value = expr.Value;
+            if (!string.IsNullOrEmpty(value) && expr.SubExpressions != null)
+            {
+                for (var i = 0; i < expr.SubExpressions.Count; i++)
+                {
+                    var subExpr = expr.SubExpressions[i];
+                    value = value.Replace($".#{i}~", subExpr).Replace($"#{i}~", subExpr);
+                }
+            }
+            return $"{expr.WordBefore}{expr.Separator}{value}{expr.RightOperator}";
+        }
+
+        internal static int FindParameterIndex(string text, ScintillaControl sci)
+        {
+            sci.Text = text;
+            sci.Colourise(0, -1);
+            SnippetHelper.PostProcessSnippets(sci, 0);
+            var pos = sci.CurrentPos - 1;
+            var result = ASComplete.FindParameterIndex(sci, ref pos);
+            Assert.AreNotEqual(-1, pos);
+            return result;
+        }
+
+        static int ExpressionEndPosition(ScintillaControl sci, string sourceText)
+        {
+            sci.SetText(sourceText);
+            return ASComplete.ExpressionEndPosition(sci, 0);
+        }
+
         public class GetExpressionTypeTests : ASCompleteTests
         {
             [Test]
@@ -259,20 +300,13 @@ namespace ASCompletion.Completion
             internal static MemberModel AS3Impl(ScintillaControl sci, string sourceText)
             {
                 SetAs3Features(sci);
-                return Common(sci, sourceText);
+                return GetExpressionType(sci, sourceText);
             }
 
             internal static MemberModel HaxeImpl(ScintillaControl sci, string sourceText)
             {
                 SetHaxeFeatures(sci);
-                return Common(sci, sourceText);
-            }
-
-            internal static MemberModel Common(ScintillaControl sci, string sourceText)
-            {
-                SetSrc(sci, sourceText);
-                var result = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true)).Member;
-                return result;
+                return GetExpressionType(sci, sourceText);
             }
 
             [Test]
@@ -593,30 +627,13 @@ namespace ASCompletion.Completion
             internal static string AS3Impl(string text, ScintillaControl sci)
             {
                 SetAs3Features(sci);
-                return Common(text, sci);
+                return GetExpression(text, sci);
             }
 
             internal static string HaxeImpl(string text, ScintillaControl sci)
             {
                 SetHaxeFeatures(sci);
-                return Common(text, sci);
-            }
-
-            internal static string Common(string text, ScintillaControl sci)
-            {
-                sci.Text = text;
-                SnippetHelper.PostProcessSnippets(sci, 0);
-                var expr = ASComplete.GetExpression(sci, sci.CurrentPos);
-                var value = expr.Value;
-                if (!string.IsNullOrEmpty(value) && expr.SubExpressions != null)
-                {
-                    for (var i = 0; i < expr.SubExpressions.Count; i++)
-                    {
-                        var subExpr = expr.SubExpressions[i];
-                        value = value.Replace($".#{i}~", subExpr).Replace($"#{i}~", subExpr);
-                    }
-                }
-                return $"{expr.WordBefore}{expr.Separator}{value}{expr.RightOperator}";
+                return GetExpression(text, sci);
             }
         }
 
@@ -704,7 +721,7 @@ namespace ASCompletion.Completion
         }
 
         [TestFixture]
-        public class AddClosingBracesTests : ASCompleteTests
+        public class AddClosingBraces : ASCompleteTests
         {
             private const string prefix = "AddClosingBraces: ";
 
@@ -986,18 +1003,7 @@ namespace ASCompletion.Completion
             internal static int HaxeImpl(string text, ScintillaControl sci)
             {
                 SetHaxeFeatures(sci);
-                return Common(text, sci);
-            }
-
-            internal static int Common(string text, ScintillaControl sci)
-            {
-                sci.Text = text;
-                sci.Colourise(0, -1);
-                SnippetHelper.PostProcessSnippets(sci, 0);
-                var pos = sci.CurrentPos - 1;
-                var result = ASComplete.FindParameterIndex(sci, ref pos);
-                Assert.AreNotEqual(-1, pos);
-                return result;
+                return FindParameterIndex(text, sci);
             }
         }
 
@@ -1073,7 +1079,7 @@ namespace ASCompletion.Completion
             public int AS3(string sourceText)
             {
                 SetAs3Features(sci);
-                return Common(sci, sourceText);
+                return ExpressionEndPosition(sci, sourceText);
             }
 
             public IEnumerable<TestCaseData> HaxeTestCases
@@ -1125,13 +1131,7 @@ namespace ASCompletion.Completion
             public int Haxe(string sourceText)
             {
                 SetHaxeFeatures(sci);
-                return Common(sci, sourceText);
-            } 
-
-            static int Common(ScintillaControl sci, string sourceText)
-            {
-                sci.SetText(sourceText);
-                return ASComplete.ExpressionEndPosition(sci, 0);
+                return ExpressionEndPosition(sci, sourceText);
             }
         }
 
