@@ -17,8 +17,7 @@ namespace ASCompletion.Completion
     [TestFixture]
     public class ASCompleteTests : ASCompletionTests
     {
-        // TODO: Add more tests!
-        public class GetExpressionType : ASCompleteTests
+        public class GetExpressionTypeTests : ASCompleteTests
         {
             [Test]
             public void SimpleTest()
@@ -287,7 +286,7 @@ namespace ASCompletion.Completion
         }
 
         [TestFixture]
-        public class GetExpression : ASCompleteTests
+        public class GetExpressionTests : ASCompleteTests
         {
             public IEnumerable<TestCaseData> AS3TestCases
             {
@@ -622,7 +621,7 @@ namespace ASCompletion.Completion
         }
 
         [TestFixture]
-        public class DisambiguateComa : ASCompleteTests
+        public class DisambiguateComaTests : ASCompleteTests
         {
             public IEnumerable<TestCaseData> DisambiguateComaAS3TestCases
             {
@@ -705,7 +704,7 @@ namespace ASCompletion.Completion
         }
 
         [TestFixture]
-        public class AddClosingBraces : ASCompleteTests
+        public class AddClosingBracesTests : ASCompleteTests
         {
             private const string prefix = "AddClosingBraces: ";
 
