@@ -6259,7 +6259,7 @@ AND - 모든 조건을 만족할때.</value>
     <comment>Added after 5.3.0</comment>
   </data>
   <data name="PluginCore.Label.NoToAll" xml:space="preserve">
-    <value>Not to All</value>
+    <value>No to All</value>
     <comment>Added after 5.3.0</comment>
   </data>
   <data name="PluginCore.Label.Yes" xml:space="preserve">
