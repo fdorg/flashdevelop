@@ -406,7 +406,7 @@ namespace ASCompletion.Completion
                             .Returns("return;(\"s\" as String).")
                             .SetName("return (\"s\" as String)");
                     yield return
-                        new TestCaseData(ReadAllTextAS3("GetExpression_issue1954"))
+                        new TestCaseData(ReadAllText("GetExpression_issue1954"))
                             .Returns(";re")
                             .SetName("function foo():Vector.<int> { re");
                 }
@@ -701,7 +701,7 @@ namespace ASCompletion.Completion
                             .Returns("=getId()--")
                             .SetName("var id = getId()--");
                     yield return
-                        new TestCaseData(ReadAllTextHaxe("GetExpression_issue1954"))
+                        new TestCaseData(ReadAllText("GetExpression_issue1954"))
                             .Returns(";re")
                             .SetName("function foo():Array<Int> { re");
                 }
