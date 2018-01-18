@@ -2640,6 +2640,10 @@ namespace ASCompletion.Completion
                                 .Returns(new List<MemberModel> {new ClassModel {Name = "String", InFile = FileModel.Ignore}})
                                 .SetName("Parse function parameters of foo(\"string\")");
                         yield return
+                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_String_2"))
+                                .Returns(new List<MemberModel> {new ClassModel {Name = "String", InFile = FileModel.Ignore}})
+                                .SetName("Parse function parameters of foo('string')");
+                        yield return
                             new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Boolean"))
                                 .Returns(new List<MemberModel> {new ClassModel {Name = "Bool", InFile = FileModel.Ignore}})
                                 .SetName("Parse function parameters of foo(true)");
@@ -2660,13 +2664,29 @@ namespace ASCompletion.Completion
                                 .Returns(new List<MemberModel> {new ClassModel {Name = "Array<Int>", InFile = FileModel.Ignore}})
                                 .SetName("Parse function parameters of foo(new Array<Int>())");
                         yield return
+                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_TypedArray_2"))
+                                .Returns(new List<MemberModel> {new ClassModel {Name = "Array<Int->{x:Int, y:Int}>", InFile = FileModel.Ignore}})
+                                .SetName("Parse function parameters of foo(new Array<Int->{x:Int, y:Int}>())");
+                        yield return
                             new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_ArrayInitializer"))
                                 .Returns(new List<MemberModel> {new ClassModel {Name = "Array<T>", InFile = FileModel.Ignore}})
                                 .SetName("Parse function parameters of foo([])");
                         yield return
+                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_ArrayInitializer_2"))
+                                .Returns(new List<MemberModel> {new ClassModel {Name = "Array<T>", InFile = FileModel.Ignore}})
+                                .SetName("Parse function parameters of foo([{v:[1,2,3,4]}])");
+                        yield return
                             new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_ObjectInitializer"))
                                 .Returns(new List<MemberModel> {new ClassModel {Name = "Dynamic", InFile = FileModel.Ignore}})
                                 .SetName("Parse function parameters of foo({})");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_ObjectInitializer_2"))
+                                .Returns(new List<MemberModel> {new ClassModel {Name = "Dynamic", InFile = FileModel.Ignore}})
+                                .SetName("Parse function parameters of foo({key:'value'})");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_ObjectInitializer_3"))
+                                .Returns(new List<MemberModel> {new ClassModel {Name = "Dynamic", InFile = FileModel.Ignore}})
+                                .SetName("Parse function parameters of foo({v:[{key:'value'}]})");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_ArrayAccess"))
                                 .Returns(new List<MemberModel> {new ClassModel {Name = "Int", InFile = FileModel.Ignore}})
