@@ -4481,7 +4481,7 @@ namespace ASCompletion.Completion
         public static int ExpressionEndPosition(ScintillaControl sci, int position)
         {
             var member = ASContext.Context.CurrentMember;
-            var endPosition = member != null ? sci.PositionFromLine(member.LineTo) : sci.TextLength;
+            var endPosition = member != null ? sci.LineEndPosition(member.LineTo) : sci.TextLength;
             return ExpressionEndPosition(sci, position, endPosition);
         }
 

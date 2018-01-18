@@ -23,8 +23,7 @@ namespace ASCompletion.Completion
 
         internal static string GetExpression(ScintillaControl sci, string sourceText)
         {
-            sci.Text = sourceText;
-            SnippetHelper.PostProcessSnippets(sci, 0);
+            SetSrc(sci, sourceText);
             var expr = ASComplete.GetExpression(sci, sci.CurrentPos);
             var value = expr.Value;
             if (!string.IsNullOrEmpty(value) && expr.SubExpressions != null)
@@ -57,8 +56,8 @@ namespace ASCompletion.Completion
 
         internal static int ExpressionEndPosition(ScintillaControl sci, string sourceText)
         {
-            sci.SetText(sourceText);
-            return ASComplete.ExpressionEndPosition(sci, 0);
+            SetSrc(sci, sourceText);
+            return ASComplete.ExpressionEndPosition(sci, sci.CurrentPos);
         }
 
         public class ActonScript3 : ASCompleteTests
@@ -469,6 +468,8 @@ namespace ASCompletion.Completion
                         .Returns("test".Length);
                     yield return new TestCaseData("test }")
                         .Returns("test".Length);
+                    yield return new TestCaseData(ReadAllText("ExpressionEndPosition_TypeOfVariable"))
+                        .Returns(94);
                 }
             }
 
