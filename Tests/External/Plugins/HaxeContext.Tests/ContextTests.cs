@@ -24,7 +24,7 @@ namespace HaXeContext
             sci.ConfigurationLanguage = "haxe";
         }
 
-        IEnumerable<TestCaseData> DecomposeTypesTestCases
+        static IEnumerable<TestCaseData> DecomposeTypesTestCases
         {
             get
             {
@@ -172,7 +172,7 @@ namespace HaXeContext
             return ASContext.Context.IsImported(member, sci.CurrentLine);
         }
 
-        IEnumerable<TestCaseData> ResolveTokenTestCases
+        static IEnumerable<TestCaseData> ResolveTokenTestCases
         {
             get
             {
