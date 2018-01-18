@@ -106,7 +106,7 @@ namespace ASCompletion
             var line = sci.CurrentLine;
             var currentClass = currentModel.Classes.FirstOrDefault(line);
             ASContext.Context.CurrentClass.Returns(currentClass);
-            var currentMember = currentClass.Members.FirstOrDefault(line);
+            var currentMember = currentClass?.Members.FirstOrDefault(line);
             ASContext.Context.CurrentMember.Returns(currentMember);
             ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
         }
