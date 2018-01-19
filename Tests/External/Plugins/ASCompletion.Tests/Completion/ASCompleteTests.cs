@@ -720,6 +720,38 @@ namespace ASCompletion.Completion
                                 Flags = FlagType.Class
                             })
                             .SetName("('s' is String).");
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "Array<T>",
+                                Flags = FlagType.Class
+                            })
+                            .SetName("[].");
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_mapInitializer"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "Map<K, V>",
+                                Flags = FlagType.Class
+                            })
+                            .SetName("[1=>1].");
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "String",
+                                Flags = FlagType.Class
+                            })
+                            .SetName("\"\".");
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_2"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "String",
+                                Flags = FlagType.Class
+                            })
+                            .SetName("''.");
                 }
             }
 
