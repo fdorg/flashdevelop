@@ -357,11 +357,11 @@ namespace ASCompletion.Completion
                             .SetName("From [[], []]|");
                     yield return
                         new TestCaseData(ReadAllText("GetExpressionOfVectorInitializer"))
-                            .Returns("new <int>")
+                            .Returns("new <int>[]")
                             .SetName("From new <int>[]|");
                     yield return
                         new TestCaseData(ReadAllText("GetExpressionOfTwoDimensionalVectorInitializer"))
-                            .Returns("new <Vector.<int>>")
+                            .Returns("new <Vector.<int>>[new <int>[]]")
                             .SetName("From new <Vector.<int>>[new <int>[]]|");
                     yield return
                         new TestCaseData(ReadAllText("GetExpressionOfArrayAccess"))
@@ -494,8 +494,12 @@ namespace ASCompletion.Completion
                             .SetName("From [].|");
                     yield return
                         new TestCaseData("new <int>[].$(EntryPoint)")
-                            .Returns("new <int>")
+                            .Returns("new <int>[].")
                             .SetName("From new <int>[].|");
+                    yield return
+                        new TestCaseData("new <int>[1,2,3,4].$(EntryPoint)")
+                            .Returns("new <int>[1,2,3,4].")
+                            .SetName("From new <int>[1,2,3,4].|");
                 }
             }
 

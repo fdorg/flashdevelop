@@ -3864,18 +3864,13 @@ namespace ASCompletion.Completion
                 expression.WordBeforePosition = position + 1;
             }
 
-            // result
             var value = sb.ToString().TrimStart('.');
-            if (value.StartsWith('<'))
+            if (features.hasE4X && value.Length >= 2 && value[0] == '<' && value[value.Length - 1]  == '>')
             {
-                if (sci.ConfigurationLanguage == "as3" && expression.WordBefore == "new")
-                    value = Regex.Replace(value, @"\[.*", string.Empty);
-                else if (features.hasE4X && value.EndsWith('>'))
-                {
-                    expression.Separator = ";";
-                    value = "</>";
-                }
-            } 
+                expression.Separator = ";";
+                value = "</>";
+            }
+
             expression.Value = value;
             expression.PositionExpression = positionExpression;
             LastExpression = expression;
