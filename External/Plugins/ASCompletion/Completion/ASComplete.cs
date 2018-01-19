@@ -3555,10 +3555,17 @@ namespace ASCompletion.Completion
                             if (c2 == '.' || c2 == ',' || c2 == '(' || c2 == '[' || c2 == '>' || c2 == '}' || position + 1 == startPosition)
                             {
                                 genCount++;
-                                if (sb.Length >= 3 && sb[0] == '.' && sb[1] == '[' && sb[sb.Length - 1] == ']')
+                                var length = sb.Length;
+                                if (length >= 3)
                                 {
-                                    sbSub.Insert(0, sb.ToString(1, sb.Length - 1));
-                                    sb.Clear();
+                                    var fc = sb[0];
+                                    var sc = sb[1];
+                                    var lc = sb[length - 1];
+                                    if (fc == '.' && sc == '[' && (lc == ']' || (length >= 4 && sb[length - 2] == ']' && lc == '.')))
+                                    {
+                                        sbSub.Insert(0, sb.ToString(1, length - 1));
+                                        sb.Clear();
+                                    }
                                 }
                             }
                             else break;

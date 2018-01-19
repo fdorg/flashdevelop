@@ -488,6 +488,14 @@ namespace ASCompletion.Completion
                         new TestCaseData(ReadAllText("GetExpression_issue1954"))
                             .Returns(";re")
                             .SetName("function foo():Vector.<int> { re");
+                    yield return
+                        new TestCaseData("[].$(EntryPoint)")
+                            .Returns(" [].")
+                            .SetName("From [].|");
+                    yield return
+                        new TestCaseData("new <int>[].$(EntryPoint)")
+                            .Returns("new <int>")
+                            .SetName("From new <int>[].|");
                 }
             }
 
