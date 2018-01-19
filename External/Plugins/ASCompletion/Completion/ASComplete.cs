@@ -2619,7 +2619,7 @@ namespace ASCompletion.Completion
             if (asFunction && tokens.Length == 1) token += "(";
             if (context.SubExpressions != null && context.SubExpressions.Count == 1)
             {
-                var value = context.Value;
+                var value = token;
                 value = value.Replace(char.IsLetter(value[0]) ? ".#0~" : "#0~", context.SubExpressions.First());
                 type = ctx.ResolveToken(value, inClass.InFile);
             }
