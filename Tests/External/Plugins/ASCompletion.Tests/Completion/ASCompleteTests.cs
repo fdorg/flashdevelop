@@ -14,11 +14,10 @@ namespace ASCompletion.Completion
     [TestFixture]
     public class ASCompleteTests : ASCompletionTests
     {
-        internal static MemberModel GetExpressionType(ScintillaControl sci, string sourceText)
+        internal static ASResult GetExpressionType(ScintillaControl sci, string sourceText)
         {
             SetSrc(sci, sourceText);
-            var result = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true)).Member;
-            return result;
+            return ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
         }
 
         internal static string GetExpression(ScintillaControl sci, string sourceText)
@@ -113,7 +112,7 @@ namespace ASCompletion.Completion
                 Assert.AreEqual(4, result.Context.LocalVars.Count);
             }
 
-            public IEnumerable<TestCaseData> GetExpressionTypeTestCases
+            static IEnumerable<TestCaseData> GetExpressionTypeTestCases
             {
                 get
                 {
@@ -205,9 +204,90 @@ namespace ASCompletion.Completion
             }
 
             [Test, TestCaseSource(nameof(GetExpressionTypeTestCases))]
-            public MemberModel GetExpressionType(string sourceText) => GetExpressionType(sci, sourceText);
+            public MemberModel GetExpressionType_Member(string sourceText)
+            {
+                var expr = GetExpressionType(sci, sourceText);
+                return expr.Member;
+            }
 
-            public IEnumerable<TestCaseData> GetExpressionTestCases
+            static IEnumerable<TestCaseData> GetExpressionType_TypeTestCases
+            {
+                get
+                {
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_as"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "String",
+                                Flags = FlagType.Class,
+                                Access = Visibility.Public
+                            })
+                            .SetName("('s' as String).");
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_as_2"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "String",
+                                Flags = FlagType.Class,
+                                Access = Visibility.Public
+                            })
+                            .SetName("return ('s' as String).");
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_is"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "Boolean",
+                                Flags = FlagType.Class,
+                                Access = Visibility.Public
+                            })
+                            .SetName("('s' is String).");
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "Array",
+                                Flags = FlagType.Class,
+                                Access = Visibility.Public
+                            })
+                            .SetName("[].");
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "String",
+                                Flags = FlagType.Class,
+                                Access = Visibility.Public
+                            })
+                            .SetName("\"\".");
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_2"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "String",
+                                Flags = FlagType.Class,
+                                Access = Visibility.Public
+                            })
+                            .SetName("''.");
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_objectInitializer"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "Object",
+                                Flags = FlagType.Class,
+                                Access = Visibility.Public
+                            })
+                            .SetName("{}.");
+                }
+            }
+
+            [Test, TestCaseSource(nameof(GetExpressionType_TypeTestCases))]
+            public ClassModel GetExpressionType_Type(string sourceText)
+            {
+                var expr = GetExpressionType(sci, sourceText);
+                return expr.Type;
+            }
+
+            static IEnumerable<TestCaseData> GetExpressionTestCases
             {
                 get
                 {
@@ -414,7 +494,7 @@ namespace ASCompletion.Completion
             [Test, TestCaseSource(nameof(GetExpressionTestCases))]
             public string GetExpression(string sourceText) => GetExpression(sci, sourceText);
 
-            public IEnumerable<TestCaseData> DisambiguateComaTestCases
+            static IEnumerable<TestCaseData> DisambiguateComaTestCases
             {
                 get
                 {
@@ -432,7 +512,7 @@ namespace ASCompletion.Completion
             [Test, TestCaseSource(nameof(DisambiguateComaTestCases))]
             public ComaExpression DisambiguateComa(string sourceText) => DisambiguateComa(sci, sourceText);
 
-            public IEnumerable<TestCaseData> ExpressionEndPositionTestCases
+            static IEnumerable<TestCaseData> ExpressionEndPositionTestCases
             {
                 get
                 {
@@ -490,7 +570,7 @@ namespace ASCompletion.Completion
                 sci.ConfigurationLanguage = "haxe";
             }
 
-            public IEnumerable<TestCaseData> GetExpressionTypeTestCases
+            static IEnumerable<TestCaseData> GetExpressionTypeTestCases
             {
                 get
                 {
@@ -590,7 +670,97 @@ namespace ASCompletion.Completion
             }
 
             [Test, TestCaseSource(nameof(GetExpressionTypeTestCases))]
-            public MemberModel GetExpressionType(string sourceText) => GetExpressionType(sci, sourceText);
+            public MemberModel GetExpressionType_Member(string sourceText)
+            {
+                var expr = GetExpressionType(sci, sourceText);
+                return expr.Member;
+            }
+
+            static IEnumerable<TestCaseData> GetExpressionType_TypeTestCases
+            {
+                get
+                {
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_typecheck"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "String",
+                                Flags = FlagType.Class
+                            })
+                            .SetName("('s':String).");
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_typecheck_2"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "String",
+                                Flags = FlagType.Class
+                            })
+                            .SetName("return ('s':String).");
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_cast"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "String",
+                                Flags = FlagType.Class
+                            })
+                            .SetName("cast('s', String).");
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_cast"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "String",
+                                Flags = FlagType.Class
+                            })
+                            .SetName("return cast('s', String).");
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_is"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "Bool",
+                                Flags = FlagType.Class
+                            })
+                            .SetName("('s' is String).");
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "Array<T>",
+                                Flags = FlagType.Class
+                            })
+                            .SetName("[].");
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_mapInitializer"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "Map<K, V>",
+                                Flags = FlagType.Class
+                            })
+                            .SetName("[1=>1].");
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "String",
+                                Flags = FlagType.Class
+                            })
+                            .SetName("\"\".");
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_2"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "String",
+                                Flags = FlagType.Class
+                            })
+                            .SetName("''.");
+                }
+            }
+
+            [Test, TestCaseSource(nameof(GetExpressionType_TypeTestCases))]
+            public ClassModel GetExpressionType_Type(string sourceText)
+            {
+                var expr = GetExpressionType(sci, sourceText);
+                return expr.Type;
+            }
 
             [Test]
             public void Issue1867()
@@ -600,7 +770,7 @@ namespace ASCompletion.Completion
                 Assert.AreEqual(new ClassModel {Name = "Function", InFile = new FileModel {Package = "haxe.Constraints"}}, expr.Type);
             }
 
-            public IEnumerable<TestCaseData> GetExpressionTestCases
+            static IEnumerable<TestCaseData> GetExpressionTestCases
             {
                 get
                 {
@@ -711,7 +881,7 @@ namespace ASCompletion.Completion
             [Test, TestCaseSource(nameof(GetExpressionTestCases))]
             public string GetExpression(string sourceText) => GetExpression(sci, sourceText);
 
-            public IEnumerable<TestCaseData> DisambiguateComaHaxeTestCases
+            static IEnumerable<TestCaseData> DisambiguateComaHaxeTestCases
             {
                 get
                 {
@@ -742,7 +912,7 @@ namespace ASCompletion.Completion
             [Test, TestCaseSource(nameof(DisambiguateComaHaxeTestCases))]
             public ComaExpression DisambiguateComa(string sourceText) => DisambiguateComa(sci, sourceText);
 
-            public IEnumerable<TestCaseData> FindParameterIndexTestCases
+            static IEnumerable<TestCaseData> FindParameterIndexTestCases
             {
                 get
                 {
@@ -832,7 +1002,7 @@ namespace ASCompletion.Completion
                 return result.Comments;
             }
 
-            public IEnumerable<TestCaseData> ExpressionEndPositionTestCases
+            static IEnumerable<TestCaseData> ExpressionEndPositionTestCases
             {
                 get
                 {
