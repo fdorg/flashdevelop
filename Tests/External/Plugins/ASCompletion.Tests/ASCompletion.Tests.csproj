@@ -896,6 +896,10 @@
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_typecheck_2.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_cast_2.hx" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_as_2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_arrayInitializer.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_stringInitializer.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_stringInitializer_2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_objectInitializer.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

@@ -241,6 +241,42 @@ namespace ASCompletion.Completion
                                 Access = Visibility.Public
                             })
                             .SetName("('s' is String).");
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "Array",
+                                Flags = FlagType.Class,
+                                Access = Visibility.Public
+                            })
+                            .SetName("[].");
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "String",
+                                Flags = FlagType.Class,
+                                Access = Visibility.Public
+                            })
+                            .SetName("\"\".");
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_2"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "String",
+                                Flags = FlagType.Class,
+                                Access = Visibility.Public
+                            })
+                            .SetName("''.");
+                    yield return
+                        new TestCaseData(ReadAllText("GetExpressionType_Type_objectInitializer"))
+                            .Returns(new ClassModel
+                            {
+                                Name = "Object",
+                                Flags = FlagType.Class,
+                                Access = Visibility.Public
+                            })
+                            .SetName("{}.");
                 }
             }
 
