@@ -2065,14 +2065,9 @@ namespace ASCompletion.Completion
                     }
                 }
                 else if (!hasDot && c == '.') hasDot = pc != '<' && parCount == 0;
-                else if (hasDot && characters.Contains(c))
-                {
-                    var exprType = ASComplete.GetExpressionType(sci, i);
-                    if (!exprType.IsNull()) expr = exprType;
-                    hasDot = false;
-                }
+                else if (hasDot && characters.Contains(c)) hasDot = false;
             }
-            return result;
+            return expr.Context == null ? result : Math.Min(result, expr.Context.PositionExpression);
         }
 
         /// <summary>

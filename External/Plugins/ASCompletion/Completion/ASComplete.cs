@@ -2619,7 +2619,7 @@ namespace ASCompletion.Completion
             if (asFunction && tokens.Length == 1) token += "(";
             if (context.SubExpressions != null && context.SubExpressions.Count == 1)
             {
-                var value = token;
+                var value = expression.TrimEnd('.');
                 value = value.Replace(char.IsLetter(value[0]) ? ".#0~" : "#0~", context.SubExpressions.First());
                 type = ctx.ResolveToken(value, inClass.InFile);
             }
@@ -2631,19 +2631,12 @@ namespace ASCompletion.Completion
                 Match mSub = re_sub.Match(token);
                 if (mSub.Success)
                 {
-                    bool haxeCast = false;
-                    if (ctx.CurrentModel.haXe && context.SubExpressions.Contains("cast"))
-                    {
-                        haxeCast = true;
-                        context.SubExpressions.Remove("cast");
-                    }
                     string subExpr = context.SubExpressions[Convert.ToInt16(mSub.Groups["index"].Value)];
-                    if (haxeCast) subExpr = subExpr.Replace(" ", "").Replace(",", " as ");
                     // parse sub expression
                     subExpr = subExpr.Substring(1, subExpr.Length - 2).Trim();
                     ASExpr subContext = new ASExpr(context);
                     subContext.SubExpressions = ExtractedSubex = new List<string>();
-                    subExpr = re_balancedParenthesis.Replace(subExpr, new MatchEvaluator(ExtractSubex));
+                    subExpr = re_balancedParenthesis.Replace(subExpr, ExtractSubex);
                     Match m = re_refineExpression.Match(subExpr);
                     if (!m.Success) return notFound;
                     Regex re_dot = new Regex("[\\s]*" + Regex.Escape(features.dot) + "[\\s]*");
@@ -3494,14 +3487,12 @@ namespace ASCompletion.Completion
                             sbSub.Insert(0, c);
                             int testPos = position - 1;
                             string testWord = GetWordLeft(sci, ref testPos);
-                            if (haXe && testWord == "cast") expression.SubExpressions.Add(testWord);
                             expression.SubExpressions.Add(sbSub.ToString());
                             sbSub.Clear();
                             sb.Insert(0, ".#" + (subCount++) + "~"); // method call or sub expression
-                            if (testWord == "return" || testWord == "case" || testWord == "default" || (haXe && testWord == "cast"))
+                            if (testWord == "return" || testWord == "case" || testWord == "default")
                             {
                                 // AS3, AS2, Loom ex: return (a as B).<complete>
-                                // Haxe ex: return cast(a, B).<complete>
                                 expression.Separator = ";";
                                 expression.WordBefore = testWord;
                                 expression.WordBeforePosition = testPos + 1;
