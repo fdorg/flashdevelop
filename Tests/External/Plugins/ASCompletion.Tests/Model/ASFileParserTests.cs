@@ -2016,6 +2016,14 @@ namespace ASCompletion.Model
                 new ASFileParser().ParseSrc(model, sourceText);
                 return model.Classes.First().LineTo;
             }
+
+            [Test]
+            public void ParseFile_Issue1964()
+            {
+                var model = new FileModel {Context = new HaXeContext.Context(new HaXeContext.HaXeSettings()), haXe = true};
+                new ASFileParser().ParseSrc(model, ReadAllTextHaxe("Issue1964_package_test.extern"));
+                Assert.AreEqual("test.extern", model.Package);
+            }
         }
     }
 }
