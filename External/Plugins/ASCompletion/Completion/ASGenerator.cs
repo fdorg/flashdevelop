@@ -57,22 +57,32 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        public static void ContextualGenerator(ScintillaControl Sci, List<ICompletionListItem> options)
+        public static void ContextualGenerator(ScintillaControl sci, List<ICompletionListItem> options)
+        {
+            ASContext.Context.CodeGenerator.ContextualGenerator(sci, sci.CurrentPos, options);
+        }
+
+        public bool ContextualGenerator(ScintillaControl sci, int position, List<ICompletionListItem> options)
         {
             var context = ASContext.Context;
-            if (context is ASContext) ((ASContext) context).UpdateCurrentFile(false); // update model
+            if (context is ASContext) ((ASContext)context).UpdateCurrentFile(false); // update model
 
             lookupPosition = -1;
-            int position = Sci.CurrentPos;
-            int style = Sci.BaseStyleAt(position);
+            int style = sci.BaseStyleAt(position);
             if (style == 19) // on keyword
-                return;
-
+                return false;
             contextMatch = null;
-            contextToken = Sci.GetWordFromPosition(position);
-            if (context.CodeGenerator.ContextualGenerator(Sci, position, options)) return;
-            ASResult resolve = ASComplete.GetExpressionType(Sci, Sci.WordEndPosition(position, true));
-            int line = Sci.LineFromPosition(position);
+            contextToken = sci.GetWordFromPosition(position);
+            var expr = ASComplete.GetExpressionType(sci, sci.WordEndPosition(position, true));
+            ContextualGenerator(sci, position, expr, options);
+            return true;
+        }
+
+        protected virtual void ContextualGenerator(ScintillaControl sci, int position, ASResult resolve, List<ICompletionListItem> options)
+        {
+            var context = ASContext.Context;
+            int style = sci.BaseStyleAt(position);
+            int line = sci.LineFromPosition(position);
             FoundDeclaration found = GetDeclarationAtLine(line);
             bool isNotInterface = (context.CurrentClass.Flags & FlagType.Interface) == 0;
             if (isNotInterface && ASComplete.IsLiteralStyle(style))
@@ -80,9 +90,9 @@ namespace ASCompletion.Completion
                 ShowConvertToConst(found, options);
                 return;
             }
-            
+
             contextResolved = resolve;
-            
+
             // ignore automatic vars (MovieClip members)
             if (isNotInterface
                 && resolve.Member != null
@@ -114,11 +124,10 @@ namespace ASCompletion.Completion
             var suggestItemDeclaration = false;
             if (contextToken != null && resolve.Member == null) // import declaration
             {
-                if ((resolve.Type == null || resolve.Type.IsVoid() || !context.IsImported(resolve.Type, line)) 
-                    && context.CodeGenerator is ASGenerator && ((ASGenerator)context.CodeGenerator).CheckAutoImport(resolve, options)) return;
+                if ((resolve.Type == null || resolve.Type.IsVoid() || !context.IsImported(resolve.Type, line)) && CheckAutoImport(resolve, options)) return;
                 if (resolve.Type == null)
                 {
-                    suggestItemDeclaration = ASComplete.IsTextStyle(Sci.BaseStyleAt(position - 1));
+                    suggestItemDeclaration = ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1));
                 }
             }
             if (isNotInterface && found.member != null)
@@ -126,14 +135,14 @@ namespace ASCompletion.Completion
                 // private var -> property
                 if ((found.member.Flags & FlagType.Variable) > 0 && (found.member.Flags & FlagType.LocalVar) == 0)
                 {
-                    var text = Sci.GetLine(line);
+                    var text = sci.GetLine(line);
                     // maybe we just want to import the member's non-imported type
                     Match m = Regex.Match(text, String.Format(patternVarDecl, found.member.Name, contextToken));
                     if (m.Success)
                     {
                         contextMatch = m;
                         ClassModel type = context.ResolveType(contextToken, context.CurrentModel);
-                        if (type.IsVoid() && context.CodeGenerator is ASGenerator && ((ASGenerator)context.CodeGenerator).CheckAutoImport(resolve, options))
+                        if (type.IsVoid() && CheckAutoImport(resolve, options))
                             return;
                     }
                     ShowGetSetList(found, options);
@@ -156,7 +165,7 @@ namespace ASCompletion.Completion
                             return;
                         }
                     }
-                    var text = Sci.GetLine(line);
+                    var text = sci.GetLine(line);
                     if (contextToken != null)
                     {
                         // "generate event handlers" suggestion
@@ -182,9 +191,9 @@ namespace ASCompletion.Completion
                             m = Regex.Match(text, @"([a-z0-9_.]+)\s*\+=\s*" + contextToken, RegexOptions.IgnoreCase);
                             if (m.Success)
                             {
-                                int offset = Sci.PositionFromLine(Sci.LineFromPosition(position))
+                                int offset = sci.PositionFromLine(sci.LineFromPosition(position))
                                     + m.Groups[1].Index + m.Groups[1].Length;
-                                resolve = ASComplete.GetExpressionType(Sci, offset);
+                                resolve = ASComplete.GetExpressionType(sci, offset);
                                 if (resolve.Member != null)
                                     contextMember = ResolveDelegate(resolve.Member.Type, resolve.InFile);
                                 contextMatch = m;
@@ -199,9 +208,9 @@ namespace ASCompletion.Completion
                         Match m = Regex.Match(text, String.Format(patternEvent, ""), RegexOptions.IgnoreCase);
                         if (m.Success)
                         {
-                            int regexIndex = m.Index + Sci.PositionFromLine(Sci.CurrentLine);
-                            GenerateDefaultHandlerName(Sci, position, regexIndex, m.Groups["event"].Value, true);
-                            resolve = ASComplete.GetExpressionType(Sci, Sci.CurrentPos);
+                            int regexIndex = m.Index + sci.PositionFromLine(sci.CurrentLine);
+                            GenerateDefaultHandlerName(sci, position, regexIndex, m.Groups["event"].Value, true);
+                            resolve = ASComplete.GetExpressionType(sci, sci.CurrentPos);
                             if (resolve.Member == null || (resolve.Member.Flags & FlagType.AutomaticVar) > 0)
                             {
                                 contextMatch = m;
@@ -217,16 +226,16 @@ namespace ASCompletion.Completion
                             m = Regex.Match(text, @"([a-z0-9_.]+)\s*\+=\s*", RegexOptions.IgnoreCase);
                             if (m.Success)
                             {
-                                int offset = Sci.PositionFromLine(Sci.LineFromPosition(position))
+                                int offset = sci.PositionFromLine(sci.LineFromPosition(position))
                                         + m.Groups[1].Index + m.Groups[1].Length;
-                                resolve = ASComplete.GetExpressionType(Sci, offset);
+                                resolve = ASComplete.GetExpressionType(sci, offset);
                                 if (resolve.Member != null)
                                 {
                                     contextMember = ResolveDelegate(resolve.Member.Type, resolve.InFile);
                                     string delegateName = resolve.Member.Name;
                                     if (delegateName.StartsWithOrdinal("on")) delegateName = delegateName.Substring(2);
-                                    GenerateDefaultHandlerName(Sci, position, offset, delegateName, false);
-                                    resolve = ASComplete.GetExpressionType(Sci, Sci.CurrentPos);
+                                    GenerateDefaultHandlerName(sci, position, offset, delegateName, false);
+                                    resolve = ASComplete.GetExpressionType(sci, sci.CurrentPos);
                                     if (resolve.Member == null || (resolve.Member.Flags & FlagType.AutomaticVar) > 0)
                                     {
                                         contextMatch = m;
@@ -262,7 +271,7 @@ namespace ASCompletion.Completion
                 {
                     string funcName = found.member.Name;
                     FlagType flags = found.member.Flags & ~FlagType.Access;
-                    
+
                     List<string> interfaces = new List<string>();
                     foreach (string interf in found.inClass.Implements)
                     {
@@ -289,19 +298,19 @@ namespace ASCompletion.Completion
                 }
 
                 // "assign var to statement" suggestion
-                int curLine = Sci.CurrentLine;
-                string ln = Sci.GetLine(curLine).TrimEnd();
+                int curLine = sci.CurrentLine;
+                string ln = sci.GetLine(curLine).TrimEnd();
                 if (ln.Length > 0 && !ln.Contains('=')
-                    && ln.Length <= Sci.CurrentPos - Sci.PositionFromLine(curLine)) // cursor at end of line
+                    && ln.Length <= sci.CurrentPos - sci.PositionFromLine(curLine)) // cursor at end of line
                 {
-                    var returnType = GetStatementReturnType(Sci, found.inClass, Sci.GetLine(curLine), Sci.PositionFromLine(curLine));
+                    var returnType = GetStatementReturnType(sci, found.inClass, sci.GetLine(curLine), sci.PositionFromLine(curLine));
                     if (returnType.resolve.Member?.Type == ASContext.Context.Features.voidKey) return;
                     if (returnType.resolve.Type == null && returnType.resolve.Context?.WordBefore == "new") ShowNewClassList(found, options, returnType.resolve.Context);
                     else ShowAssignStatementToVarList(found, options, returnType);
                     return;
                 }
             }
-            
+
             // suggest generate constructor / toString
             if (isNotInterface && found.member == null && found.inClass != ClassModel.VoidClass && contextToken == null)
             {
@@ -323,20 +332,20 @@ namespace ASCompletion.Completion
                 }
             }
 
-            if (isNotInterface 
+            if (isNotInterface
                 && resolve.Member != null
                 && resolve.Type != null
                 && resolve.Type.QualifiedName == context.Features.stringKey
                 && found.inClass != ClassModel.VoidClass)
             {
-                int lineStartPos = Sci.PositionFromLine(Sci.CurrentLine);
-                var text = Sci.GetLine(line);
-                string lineStart = text.Substring(0, Sci.CurrentPos - lineStartPos);
+                int lineStartPos = sci.PositionFromLine(sci.CurrentLine);
+                var text = sci.GetLine(line);
+                string lineStart = text.Substring(0, sci.CurrentPos - lineStartPos);
                 Match m = Regex.Match(lineStart, String.Format(@"new\s+(?<event>\w+)\s*\(\s*\w+", lineStart));
                 if (m.Success)
                 {
                     Group g = m.Groups["event"];
-                    ASResult eventResolve = ASComplete.GetExpressionType(Sci, lineStartPos + g.Index + g.Length);
+                    ASResult eventResolve = ASComplete.GetExpressionType(sci, lineStartPos + g.Index + g.Length);
                     if (eventResolve != null && eventResolve.Type != null)
                     {
                         ClassModel aType = eventResolve.Type;
@@ -354,13 +363,13 @@ namespace ASCompletion.Completion
                     }
                 }
             }
-            
+
             // suggest declaration
             if (contextToken != null)
             {
                 if (suggestItemDeclaration)
                 {
-                    var text = Sci.GetLine(line);
+                    var text = sci.GetLine(line);
                     Match m = Regex.Match(text, String.Format(patternClass, contextToken));
                     if (m.Success)
                     {
@@ -387,7 +396,7 @@ namespace ASCompletion.Completion
                         && File.Exists(resolve.InClass.InFile.FileName)
                         && !resolve.InClass.InFile.FileName.StartsWithOrdinal(PathHelper.AppDir))
                     {
-                        var text = Sci.GetLine(line);
+                        var text = sci.GetLine(line);
                         Match m = Regex.Match(text, String.Format(patternMethodDecl, contextToken));
                         Match m2 = Regex.Match(text, String.Format(patternMethod, contextToken));
                         if (!m.Success && m2.Success)
@@ -402,7 +411,7 @@ namespace ASCompletion.Completion
                         && File.Exists(resolve.Type.InFile.FileName)
                         && !resolve.Type.InFile.FileName.StartsWithOrdinal(PathHelper.AppDir))
                     {
-                        var text = Sci.GetLine(line);
+                        var text = sci.GetLine(line);
                         var m = Regex.Match(text, string.Format(patternClass, contextToken));
                         if (m.Success)
                         {
@@ -420,8 +429,8 @@ namespace ASCompletion.Completion
                             else
                             {
                                 var constructorParametersCount = constructor.Parameters?.Count ?? 0;
-                                var wordEndPosition = Sci.WordEndPosition(Sci.CurrentPos, true);
-                                var parameters = ParseFunctionParameters(Sci, wordEndPosition);
+                                var wordEndPosition = sci.WordEndPosition(sci.CurrentPos, true);
+                                var parameters = ParseFunctionParameters(sci, wordEndPosition);
                                 if (parameters.Count != constructorParametersCount) ShowChangeConstructorDeclarationList(found, options, parameters);
                                 else
                                 {
@@ -439,8 +448,6 @@ namespace ASCompletion.Completion
             }
             // TODO: Empty line, show generators list? yep
         }
-
-        public virtual bool ContextualGenerator(ScintillaControl sci, int position, List<ICompletionListItem> options) => false;
 
         private static MemberModel ResolveDelegate(string type, FileModel inFile)
         {
