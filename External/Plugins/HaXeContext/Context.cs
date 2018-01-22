@@ -1021,6 +1021,22 @@ namespace HaXeContext
                         return ResolveType(sb.ToString(), inFile);
                     }
                 }
+                else if (token.StartsWithOrdinal("cast("))
+                {
+                    var groupCount = 0;
+                    var length = token.Length - 1;
+                    for (var i = "cast(".Length; i < length; i++)
+                    {
+                        var c = token[i];
+                        if (c == '{' || c == '(') groupCount++;
+                        else if (c == '}' || c == ')') groupCount--;
+                        else if (c == ',' && groupCount == 0)
+                        {
+                            i++;
+                            return ResolveType(token.Substring(i, length - i).Trim(), inFile);
+                        }
+                    }
+                }
             }
             return base.ResolveToken(token, inFile);
         }
