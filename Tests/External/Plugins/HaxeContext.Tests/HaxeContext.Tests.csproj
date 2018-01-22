@@ -176,6 +176,8 @@
     <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_5.hx" />
     <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_none.hx" />
     <EmbeddedResource Include="Test Files\generators\documentation\BeforeGenerateDocumentation_none.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1964_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1964_1.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -2087,7 +2087,7 @@ namespace ASCompletion.Model
                         {
                             foundModifier = FlagType.Intrinsic | FlagType.Native;
                         }
-                        else if (version == 4 && token == "extern")
+                        else if (version == 4 && token == "extern" && context != FlagType.Package)
                         {
                             foundModifier = FlagType.Intrinsic | FlagType.Extern;
                         }
