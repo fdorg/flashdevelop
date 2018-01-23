@@ -12,7 +12,6 @@ using PluginCore;
 using ScintillaNet;
 using System.Text.RegularExpressions;
 using AS3Context;
-using HaXeContext;
 using PluginCore.Helpers;
 using PluginCore.Managers;
 
@@ -241,22 +240,15 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(FieldFromParameterCommonTestCases))]
-                public string Common(Visibility scope, string sourceText, ClassModel sourceClassModel,
-                    int memberPos, int parameterPos)
+                public string Common(Visibility scope, string sourceText, ClassModel inClass, int memberPos, int parameterPos)
                 {
                     SetAs3Features(sci);
-
                     var table = new Hashtable();
                     table["scope"] = scope;
-
                     sci.Text = sourceText;
-
-                    var inClass = sourceClassModel;
-                    var sourceMember = sourceClassModel.Members[memberPos];
-
+                    var sourceMember = inClass.Members[memberPos];
                     ASGenerator.SetJobContext(null, null, sourceMember.Parameters[parameterPos], null);
                     ASGenerator.GenerateJob(GeneratorJobType.FieldFromParameter, sourceMember, inClass, null, table);
-
                     return sci.Text;
                 }
 
@@ -534,8 +526,7 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText, GeneratorJobType job)
                 {
-                    sci.ConfigurationLanguage = "as3";
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     return Common(sourceText, job);
                 }
 
@@ -559,8 +550,7 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
                 public string Haxe(string sourceText, GeneratorJobType job)
                 {
-                    sci.ConfigurationLanguage = "haxe";
-                    ASContext.Context.SetHaxeFeatures();
+                    SetHaxeFeatures(sci);
                     return Common(sourceText, job);
                 }
 
@@ -1585,9 +1575,8 @@ namespace ASCompletion.Completion
 
                 internal static string AS3Impl(string sourceText, GeneratorJobType job, bool isUseTabs, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "as3";
                     sci.IsUseTabs = isUseTabs;
-                    ASContext.Context.SetAs3Features();
+                    SetAs3Features(sci);
                     var context = new AS3Context.Context(new AS3Settings());
                     ((IASContext)context).BuildClassPath();
                     context.CurrentModel = ASContext.Context.CurrentModel;
@@ -1596,13 +1585,10 @@ namespace ASCompletion.Completion
 
                 internal static string HaxeImpl(string sourceText, GeneratorJobType job, bool isUseTabs, ScintillaControl sci)
                 {
-                    sci.ConfigurationLanguage = "haxe";
                     sci.IsUseTabs = isUseTabs;
-                    ASContext.Context.SetHaxeFeatures();
-                    var context = new HaXeContext.Context(new HaXeSettings());
-                    ((IASContext)context).BuildClassPath();
-                    context.CurrentModel = ASContext.Context.CurrentModel;
-                    return Common(sourceText, job, context, sci);
+                    SetHaxeFeatures(sci);
+                    SetSrc(sci, sourceText);
+                    return Common(sourceText, job, ASContext.Context, sci);
                 }
 
                 internal static string Common(string sourceText, GeneratorJobType job, IASContext context, ScintillaControl sci)
@@ -2188,21 +2174,15 @@ namespace ASCompletion.Completion
                 internal static string AS3Impl(string fileName, ScintillaControl sci, GeneratorJobType job)
                 {
                     SetAs3Features(sci);
-                    var sourceText = ReadAllTextAS3(fileName);
-                    fileName = GetFullPathHaxe(fileName);
-                    ASContext.Context.CurrentModel.FileName = fileName;
-                    PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
-                    return Common(sourceText, sci, job);
+                    SetCurrentFileName(GetFullPathAS3(fileName));
+                    return Common(ReadAllTextAS3(fileName), sci, job);
                 }
 
                 internal static string HaxeImpl(string fileName, ScintillaControl sci, GeneratorJobType job)
                 {
                     SetHaxeFeatures(sci);
-                    var sourceText = ReadAllTextHaxe(fileName);
-                    fileName = GetFullPathHaxe(fileName);
-                    ASContext.Context.CurrentModel.FileName = fileName;
-                    PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
-                    return Common(sourceText, sci, job);
+                    SetCurrentFileName(GetFullPathHaxe(fileName));
+                    return Common(ReadAllTextHaxe(fileName), sci, job);
                 }
 
                 static string Common(string sourceText, ScintillaControl sci, GeneratorJobType job)
@@ -2955,8 +2935,7 @@ namespace ASCompletion.Completion
 
                 internal static int Common(ScintillaControl sci, string sourceText, ASResult expr)
                 {
-                    sci.Text = sourceText;
-                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    SetSrc(sci, sourceText);
                     return ASGenerator.GetStartOfStatement(sci, sci.CurrentPos, expr);
                 }
             }
@@ -2994,8 +2973,7 @@ namespace ASCompletion.Completion
 
                 internal static int Common(ScintillaControl sci, string sourceText)
                 {
-                    sci.Text = sourceText;
-                    SnippetHelper.PostProcessSnippets(sci, 0);
+                    SetSrc(sci, sourceText);
                     return ASGenerator.GetEndOfStatement(0, sci.TextLength, sci);
                 }
             }
@@ -3283,7 +3261,6 @@ namespace ASCompletion.Completion
 
                 internal static void Common(string sourceText, string constructorArgs, ScintillaControl sci)
                 {
-                    SetSrc(sci, sourceText);
                     var handler = Substitute.For<IEventHandler>();
                     handler
                         .When(it => it.HandleEvent(Arg.Any<object>(), Arg.Any<NotifyEvent>(), Arg.Any<HandlingPriority>()))
@@ -3303,6 +3280,7 @@ namespace ASCompletion.Completion
                             }
                         });
                     EventManager.AddEventHandler(handler, EventType.Command);
+                    SetSrc(sci, sourceText);
                     ASGenerator.GenerateJob(GeneratorJobType.Class, ASContext.Context.CurrentMember, ASContext.Context.CurrentClass, null, null);
                 }
             }
