@@ -618,9 +618,11 @@ namespace ASCompletion.Completion
                 {
                     SetSrc(sci, sourceText);
                     var expr = ASComplete.GetExpressionType(sci, sci.CurrentPos);
-                    var currentMember = expr.Context.LocalVars[0];
-                    ASGenerator.contextMember = currentMember;
-                    ASGenerator.GenerateJob(GeneratorJobType.PromoteLocal, currentMember, ASContext.Context.CurrentClass, null, null);
+                    ASGenerator.contextMember = expr.Context.LocalVars[0];
+                    var options = new List<ICompletionListItem>();
+                    ASGenerator.ContextualGenerator(sci, options);
+                    var item = options.Find(it => ((GeneratorItem)it).job == GeneratorJobType.PromoteLocal);
+                    var value = item.Value;
                     return sci.Text;
                 }
             }
@@ -976,7 +978,10 @@ namespace ASCompletion.Completion
                 {
                     SetSrc(sci, sourceText);
                     sci.Colourise(0, -1);
-                    ASGenerator.GenerateJob(job, ASContext.Context.CurrentMember, ASContext.Context.CurrentClass, null, null);
+                    var options = new List<ICompletionListItem>();
+                    ASGenerator.ContextualGenerator(sci, options);
+                    var item = options.Find(it => ((GeneratorItem) it).job == job);
+                    var value = item.Value;
                     return sci.Text;
                 }
             }
@@ -1203,7 +1208,7 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(ReadAllTextAS3("BeforeGenerateFunction"), GeneratorJobType.Function)
                                 .Returns(ReadAllTextAS3("AfterGenerateProtectedFunction"))
-                                .SetName("Generate private function with protected modifier declration");
+                                .SetName("Generate private function with protected modifier declaration");
                     }
                 }
 
