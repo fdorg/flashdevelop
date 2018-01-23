@@ -103,7 +103,7 @@ namespace HaXeContext
             return interfaceType.Type;
         }
 
-        static IEnumerable<TestCaseData> ResolveDotContext_issue750TestCases
+        static IEnumerable<TestCaseData> ResolveDotContext_Issue750TestCases
         {
             get
             {
@@ -122,7 +122,7 @@ namespace HaXeContext
             }
         }
 
-        [Test, TestCaseSource(nameof(ResolveDotContext_issue750TestCases))]
+        [Test, TestCaseSource(nameof(ResolveDotContext_Issue750TestCases))]
         public void ResolveDotContext_issue750(string sourceText, MemberModel code)
         {
             ((HaXeSettings)ASContext.Context.Settings).CompletionMode = HaxeCompletionModeEnum.FlashDevelop;
