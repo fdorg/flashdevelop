@@ -4879,7 +4879,7 @@ namespace ASCompletion.Completion
             }
 
             // insert import
-            if (ASContext.Context.Settings.GenerateImports && ASContext.Context.CurrentModel.Package != import.InFile.Package)
+            if (ASContext.Context.Settings.GenerateImports)
             {
                 sci.BeginUndoAction();
                 try

@@ -148,13 +148,23 @@ namespace HaXeContext
             get
             {
                 yield return new TestCaseData(ReadAllText("IsImported_case1"))
-                    .Returns(true);
+                    .Returns(true)
+                    .SetName("Case 1");
                 yield return new TestCaseData(ReadAllText("IsImported_case2"))
-                    .Returns(false);
+                    .Returns(false)
+                    .SetName("Case 2");
                 yield return new TestCaseData(null)
                     .Returns(false)
                     .SetName("ClassModel.VoidClass")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1930");
+                yield return new TestCaseData(ReadAllText("IsImported_issue1969_1"))
+                    .Returns(true)
+                    .SetName("Issue 1969. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1969");
+                yield return new TestCaseData(ReadAllText("IsImported_issue1969_2"))
+                    .Returns(true)
+                    .SetName("Issue 1969. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1969");
             }
         }
 
@@ -165,8 +175,13 @@ namespace HaXeContext
             if (sourceText != null)
             {
                 SetSrc(sci, sourceText);
-                var type = sci.GetWordFromPosition(sci.CurrentPos);
-                member = new MemberModel(type, type, FlagType.Class, Visibility.Public);
+                var expr = ASComplete.GetExpressionType(sci, ASComplete.ExpressionEndPosition(sci, sci.CurrentPos), false, true);
+                if (expr.Type != null) member = expr.Type;
+                else
+                {
+                    var type = sci.GetWordFromPosition(sci.CurrentPos);
+                    member = new MemberModel(type, type, FlagType.Class, Visibility.Public);
+                }
             }
             else member = ClassModel.VoidClass;
             return ASContext.Context.IsImported(member, sci.CurrentLine);
