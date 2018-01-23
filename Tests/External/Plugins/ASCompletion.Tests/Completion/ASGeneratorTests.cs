@@ -3179,7 +3179,10 @@ namespace ASCompletion.Completion
                 internal static string Common(string sourceText, ScintillaControl sci)
                 {
                     SetSrc(sci, sourceText);
-                    ASGenerator.GenerateJob(GeneratorJobType.AddInterfaceDef, ASContext.Context.CurrentMember, ASContext.Context.CurrentClass, null, ASContext.Context.CurrentClass.Implements[0]);
+                    var options = new List<ICompletionListItem>();
+                    ASGenerator.ContextualGenerator(sci, options);
+                    var item = options.Find(it => ((GeneratorItem)it).job == GeneratorJobType.AddInterfaceDef);
+                    var value = item.Value;
                     return sci.Text;
                 }
             }
