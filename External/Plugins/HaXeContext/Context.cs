@@ -876,6 +876,7 @@ namespace HaXeContext
         public override bool IsImported(MemberModel member, int atLine)
         {
             if (member == ClassModel.VoidClass) return false;
+            if (member.InFile?.Package == CurrentModel.Package) return true;
             int p = member.Name.IndexOf('#');
             if (p > 0)
             {
