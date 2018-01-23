@@ -2003,23 +2003,15 @@ namespace ASCompletion.Completion
 
                 static string Common(string sourceText, string[] autoRemove, ScintillaControl sci)
                 {
-                    sci.Text = sourceText;
-                    SnippetHelper.PostProcessSnippets(sci, 0);
                     ASContext.CommonSettings.EventListenersAutoRemove = autoRemove;
-                    var currentModel = ASContext.Context.CurrentModel;
-                    new ASFileParser().ParseSrc(currentModel, sci.Text);
-                    var currentClass = currentModel.Classes[0];
-                    ASContext.Context.CurrentClass.Returns(currentClass);
-                    var currentMember = currentClass.Members[0];
-                    ASContext.Context.CurrentMember.Returns(currentMember);
+                    SetSrc(sci, sourceText);
                     var eventModel = new ClassModel {Name = "Event", Type = "flash.events.Event"};
                     ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => eventModel);
-                    ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
                     var re = string.Format(ASGenerator.patternEvent, ASGenerator.contextToken);
                     var m = Regex.Match(sci.GetLine(sci.CurrentLine), re, RegexOptions.IgnoreCase);
                     ASGenerator.contextMatch = m;
                     ASGenerator.contextParam = ASGenerator.CheckEventType(m.Groups["event"].Value);
-                    ASGenerator.GenerateJob(GeneratorJobType.ComplexEvent, currentMember, ASContext.Context.CurrentClass, null, null);
+                    ASGenerator.GenerateJob(GeneratorJobType.ComplexEvent, ASContext.Context.CurrentMember, ASContext.Context.CurrentClass, null, null);
                     return sci.Text;
                 }
             }
@@ -3289,7 +3281,10 @@ namespace ASCompletion.Completion
                         });
                     EventManager.AddEventHandler(handler, EventType.Command);
                     SetSrc(sci, sourceText);
-                    ASGenerator.GenerateJob(GeneratorJobType.Class, ASContext.Context.CurrentMember, ASContext.Context.CurrentClass, null, null);
+                    var options = new List<ICompletionListItem>();
+                    ASGenerator.ContextualGenerator(sci, options);
+                    var item = options.Find(it => ((GeneratorItem)it).job == GeneratorJobType.Class);
+                    var value = item.Value;
                 }
             }
 
