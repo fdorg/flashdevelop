@@ -573,7 +573,7 @@ namespace ASCompletion.Completion
             return result;
         }
 
-        public bool CheckAutoImport(ASResult expr, List<ICompletionListItem> options)
+        protected bool CheckAutoImport(ASResult expr, List<ICompletionListItem> options)
         {
             if (ASContext.Context.CurrentClass.Equals(expr.RelClass)) return false;
             MemberList allClasses = ASContext.Context.GetAllProjectClasses();
