@@ -271,8 +271,7 @@ namespace SourceControl.Actions
 
             if (fResult.Status == VCItemStatus.Added) //when moving / renaming a staged file, unstage it
             {
-                fResult.Manager.Unstage(fromFile); //TODO: sometimes the second process starts while the first is still running, so it fails
-                fResult.Manager.FileActions.FileNew(toFile);
+                fResult.Manager.FileActions.FileAfterMove(fromFile, fResult.Status, toFile);
                 ForceRefresh();
                 return;
             }

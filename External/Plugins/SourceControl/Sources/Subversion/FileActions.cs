@@ -29,6 +29,11 @@
             return true;
         }
 
+        public void FileAfterMove(string fromPath, VCItemStatus status, string toPath)
+        {
+            //TODO: what to do here
+        }
+
         public bool FileNew(string path)
         {
             return false;

@@ -116,6 +116,7 @@ namespace SourceControl.Sources
         bool FileRename(string path, string newName);
         bool FileDelete(string[] paths, bool confirm);
         bool FileMove(string fromPath, string toPath);
+        void FileAfterMove(string fromPath, VCItemStatus status, string toPath);
 
         bool BuildProject();
         bool TestProject();

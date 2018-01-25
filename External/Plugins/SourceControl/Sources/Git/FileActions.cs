@@ -31,6 +31,15 @@
             return true;*/
         }
 
+        public void FileAfterMove(string fromPath, VCItemStatus status, string toPath)
+        {
+            if (status == VCItemStatus.Added)
+            {
+                new UnstageCommand(fromPath); //TODO: this will not work, since the commands are started simultaniously
+                new AddCommand(toPath);
+            }
+        }
+
         public bool FileNew(string path)
         {
             new AddCommand(path);
