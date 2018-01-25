@@ -18,11 +18,15 @@ namespace SourceControl.Sources.Git
         
         protected ProcessRunner runner;
         protected List<string> errors = new List<string>();
-        protected IVCCommand nextCommand; //using Func for lazy evaluation
+        protected IVCCommand nextCommand;
 
-        public void ContinueWith(IVCCommand command)
+        public IVCCommand ContinueWith(IVCCommand command)
         {
-            nextCommand = command;
+            if (nextCommand == null)
+                nextCommand = command;
+            else
+                nextCommand.ContinueWith(command);
+            return this;
         }
 
         public abstract void Run();

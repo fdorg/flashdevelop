@@ -71,7 +71,7 @@ namespace LintingHelper.Managers
         /// </summary>
         /// <param name="files">the files to lint</param>
         /// <param name="language">the language to use</param>
-        public static void LintFiles(string[] files, string language)
+        public static void LintFiles(IEnumerable<string> files, string language)
         {
             language = language.ToLower();
 
@@ -88,7 +88,7 @@ namespace LintingHelper.Managers
         /// <summary>
         /// Lint <paramref name="files"/> trying to autodetect the language(s).
         /// </summary>
-        public static void LintFiles(string[] files)
+        public static void LintFiles(IEnumerable<string> files)
         {
             //detect languages
             var filesByLang = new Dictionary<string, List<string>>();
@@ -102,7 +102,7 @@ namespace LintingHelper.Managers
             
             foreach (var lang in filesByLang.Keys)
             {
-                LintFiles(filesByLang[lang].ToArray(), lang);
+                LintFiles(filesByLang[lang], lang);
             }
         }
 
@@ -128,7 +128,7 @@ namespace LintingHelper.Managers
 
         public static void LintDocument(ITabbedDocument doc)
         {
-            var files = new string[] { doc.FileName };
+            var files = new [] { doc.FileName };
             var language = doc.SciControl.ConfigurationLanguage;
 
             LintFiles(files, language);

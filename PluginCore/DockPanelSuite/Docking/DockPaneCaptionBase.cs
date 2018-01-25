@@ -83,11 +83,11 @@ namespace WeifenLuo.WinFormsUI.Docking
                     DockPane.DockPanel.ActiveAutoHideContent = null;
                     return;
                 }
-
-                if (DockPane.IsFloat)
-                    DockPane.RestoreToPanel();
-                else
-                    DockPane.Float();
+                if (DockPane.DockPanel.AllowEndUserFloatChange)
+                {
+                    if (DockPane.IsFloat) DockPane.RestoreToPanel();
+                    else DockPane.Float();
+                }
             }
             base.WndProc(ref m);
         }

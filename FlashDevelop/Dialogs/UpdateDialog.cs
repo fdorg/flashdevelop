@@ -1,20 +1,17 @@
 using System;
 using System.IO;
 using System.Net;
-using System.Text;
-using System.Timers;
-using System.Drawing;
-using System.Diagnostics;
 using System.Windows.Forms;
 using System.ComponentModel;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Helpers;
+using PluginCore.Controls;
 using PluginCore;
 
 namespace FlashDevelop.Dialogs
 {
-    public class UpdateDialog : Form
+    public class UpdateDialog : SmartForm
     {
         private UpdateInfo updateInfo = null;
         private System.Windows.Forms.Label infoLabel;
@@ -28,10 +25,10 @@ namespace FlashDevelop.Dialogs
         {
             this.Owner = Globals.MainForm;
             this.Font = Globals.Settings.DefaultFont;
+            this.FormGuid = "4d5fdc1c-2698-46e9-b22d-fa9a42ba8d26";
             this.InitializeComponent();
             this.ApplyLocalizedTexts();
             this.InitializeUpdating();
-            ScaleHelper.AdjustForHighDPI(this);
         }
 
         #region Windows Form Designer Generated Code
@@ -42,13 +39,14 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
-            this.downloadButton = new System.Windows.Forms.Button();
+            this.downloadButton = new System.Windows.Forms.ButtonEx();
             this.infoLabel = new System.Windows.Forms.Label();
-            this.closeButton = new System.Windows.Forms.Button();
+            this.closeButton = new System.Windows.Forms.ButtonEx();
             this.SuspendLayout();
             // 
             // downloadButton
-            // 
+            //
+            this.downloadButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.downloadButton.Enabled = false;
             this.downloadButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.downloadButton.Location = new System.Drawing.Point(72, 69);
@@ -72,6 +70,7 @@ namespace FlashDevelop.Dialogs
             // 
             // closeButton
             //
+            this.closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.closeButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.closeButton.Location = new System.Drawing.Point(194, 69);
             this.closeButton.Name = "closeButton";

@@ -39,16 +39,16 @@ namespace ProjectManager.Controls
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.statusBar = new System.Windows.Forms.StatusBar();
+            this.statusBar = new System.Windows.Forms.StatusBarEx();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.insertButton = new System.Windows.Forms.Button();
-            this.textBox = new System.Windows.Forms.TextBox();
+            this.insertButton = new System.Windows.Forms.ButtonEx();
+            this.textBox = new System.Windows.Forms.TextBoxEx();
             this.splitter1 = new System.Windows.Forms.Splitter();
-            this.okButton = new System.Windows.Forms.Button();
-            this.listView = new System.Windows.Forms.ListView();
+            this.okButton = new System.Windows.Forms.ButtonEx();
+            this.listView = new System.Windows.Forms.ListViewEx();
             this.nameColumn = new System.Windows.Forms.ColumnHeader();
             this.valueColumn = new System.Windows.Forms.ColumnHeader();
-            this.cancelButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.ButtonEx();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.panel1.SuspendLayout();
             this.SuspendLayout();

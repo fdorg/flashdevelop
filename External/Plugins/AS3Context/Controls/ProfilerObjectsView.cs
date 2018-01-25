@@ -18,6 +18,11 @@ namespace AS3Context.Controls
         int lineToOpen;
         Timer delayOpen;
 
+        public ObjectRefsGrid ObjectsGrid
+        {
+            get { return objectsGrid; }
+        }
+
         public ProfilerObjectsView(ObjectRefsGrid grid)
         {
             objectsGrid = grid;

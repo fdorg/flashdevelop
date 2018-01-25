@@ -8,7 +8,6 @@ using FlashDevelop.Utilities;
 using PluginCore.FRService;
 using PluginCore.Managers;
 using PluginCore.Controls;
-using PluginCore.Helpers;
 using ScintillaNet;
 
 namespace FlashDevelop.Dialogs
@@ -45,9 +44,8 @@ namespace FlashDevelop.Dialogs
             this.InitializeComponent();
             this.InitializeProperties();
             this.ApplyLocalizedTexts();
-            ScaleHelper.AdjustForHighDPI(this);
         }
-        
+
         #region Windows Forms Designer Generated Code
 
         /// <summary>
@@ -57,25 +55,25 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeComponent() 
         {
-            this.replaceButton = new System.Windows.Forms.Button();
-            this.findNextButton = new System.Windows.Forms.Button();
-            this.wholeWordCheckBox = new System.Windows.Forms.CheckBox();
-            this.matchCaseCheckBox = new System.Windows.Forms.CheckBox();
-            this.closeButton = new System.Windows.Forms.Button();
-            this.findPrevButton = new System.Windows.Forms.Button();
-            this.findComboBox = new System.Windows.Forms.ComboBox();
+            this.replaceButton = new System.Windows.Forms.ButtonEx();
+            this.findNextButton = new System.Windows.Forms.ButtonEx();
+            this.wholeWordCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.matchCaseCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.closeButton = new System.Windows.Forms.ButtonEx();
+            this.findPrevButton = new System.Windows.Forms.ButtonEx();
+            this.findComboBox = new System.Windows.Forms.FlatCombo();
             this.findLabel = new System.Windows.Forms.Label();
-            this.escapedCheckBox = new System.Windows.Forms.CheckBox();
-            this.useRegexCheckBox = new System.Windows.Forms.CheckBox();
+            this.escapedCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.useRegexCheckBox = new System.Windows.Forms.CheckBoxEx();
             this.infoPictureBox = new System.Windows.Forms.PictureBox();
             this.infoLabel = new System.Windows.Forms.Label();
-            this.optionsGroupBox = new System.Windows.Forms.GroupBox();
-            this.replaceComboBox = new System.Windows.Forms.ComboBox();
+            this.optionsGroupBox = new System.Windows.Forms.GroupBoxEx();
+            this.replaceComboBox = new System.Windows.Forms.FlatCombo();
             this.replaceLabel = new System.Windows.Forms.Label();
-            this.replaceAllButton = new System.Windows.Forms.Button();
-            this.lookComboBox = new System.Windows.Forms.ComboBox();
+            this.replaceAllButton = new System.Windows.Forms.ButtonEx();
+            this.lookComboBox = new System.Windows.Forms.FlatCombo();
             this.lookLabel = new System.Windows.Forms.Label();
-            this.bookmarkAllButton = new System.Windows.Forms.Button();
+            this.bookmarkAllButton = new System.Windows.Forms.ButtonEx();
             ((System.ComponentModel.ISupportInitialize)(this.infoPictureBox)).BeginInit();
             this.optionsGroupBox.SuspendLayout();
             this.SuspendLayout();
@@ -192,7 +190,6 @@ namespace FlashDevelop.Dialogs
             // infoPictureBox
             //
             this.infoPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.infoPictureBox.BackColor = System.Drawing.SystemColors.Control;
             this.infoPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.infoPictureBox.Location = new System.Drawing.Point(14, 202);
             this.infoPictureBox.Name = "infoPictureBox";
@@ -377,6 +374,7 @@ namespace FlashDevelop.Dialogs
             this.escapedCheckBox.Text = " " + TextHelper.GetString("Label.EscapedCharacters");
             this.useRegexCheckBox.Text = " " + TextHelper.GetString("Label.RegularExpressions");
             this.Text = " " + TextHelper.GetString("Title.FindAndReplaceDialog");
+            this.lookComboBox.FlatStyle = Globals.Settings.ComboBoxFlatStyle;
         }
 
         /// <summary>
@@ -575,16 +573,23 @@ namespace FlashDevelop.Dialogs
                 sci.BeginUndoAction();
                 try
                 {
-                    for (Int32 i = 0, count = matches.Count; i < count; i++)
+                    var firstVisibleLine = sci.FirstVisibleLine;
+                    var pos = sci.CurrentPos;
+                    for (int i = 0, count = matches.Count; i < count; i++)
                     {
-                        if (!selectionOnly) FRDialogGenerics.SelectMatch(sci, matches[i]);
-                        else FRDialogGenerics.SelectMatchInTarget(sci, matches[i]);
-                        String replaceWith = this.GetReplaceText(matches[i]);
-                        FRSearch.PadIndexes(matches, i, matches[i].Value, replaceWith);
+                        var match = matches[i];
+                        var replacement = GetReplaceText(match);
+                        var replacementLenght = sci.MBSafeTextLength(replacement);
+                        if (sci.MBSafePosition(match.Index) < pos) pos += replacementLenght - sci.MBSafeTextLength(match.Value);
+                        if (selectionOnly) FRDialogGenerics.SelectMatchInTarget(sci, match);
+                        else FRDialogGenerics.SelectMatch(sci, match);
+                        FRSearch.PadIndexes(matches, i, match.Value, replacement);
                         sci.EnsureVisible(sci.CurrentLine);
-                        if (!selectionOnly) sci.ReplaceSel(replaceWith);
-                        else sci.ReplaceTarget(sci.MBSafeTextLength(replaceWith), replaceWith);
+                        if (selectionOnly) sci.ReplaceTarget(replacementLenght, replacement);
+                        else sci.ReplaceSel(replacement);
                     }
+                    sci.FirstVisibleLine = firstVisibleLine;
+                    sci.SetSel(pos, pos);
                 }
                 finally
                 {

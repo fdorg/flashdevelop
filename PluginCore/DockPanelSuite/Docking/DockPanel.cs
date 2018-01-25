@@ -142,6 +142,29 @@ namespace WeifenLuo.WinFormsUI.Docking
             set {   AutoHideWindow.ActiveContent = value;   }
         }
 
+        private bool m_allowEndUserFloatChange = NativeMethods.ShouldUseWin32();
+        [LocalizedCategory("Category_Docking")]
+        [DefaultValue(true)]
+        public bool AllowEndUserFloatChange
+        {
+            get
+            {
+                if (!NativeMethods.ShouldUseWin32() && m_allowEndUserFloatChange)
+                    m_allowEndUserFloatChange = false;
+
+                return m_allowEndUserFloatChange;
+            }
+            set
+            {
+                if (!NativeMethods.ShouldUseWin32() && value)
+                {
+                    Console.Write("AllowEndUserFloatChange can only be false if running on Mono");
+                    return;
+                }
+                m_allowEndUserFloatChange = value;
+            }
+        }
+
         private bool m_allowEndUserDocking = NativeMethods.ShouldUseWin32();
         [LocalizedCategory("Category_Docking")]
         [LocalizedDescription("DockPanel_AllowEndUserDocking_Description")]

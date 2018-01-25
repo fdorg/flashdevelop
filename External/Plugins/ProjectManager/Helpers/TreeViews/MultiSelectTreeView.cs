@@ -12,7 +12,7 @@ namespace System.Windows.Forms
     ///
     /// This was challenging!  -nick
     /// </summary>
-    public class MultiSelectTreeView : TreeView
+    public class MultiSelectTreeView : TreeViewEx
     {
         bool multiSelect;
         bool ignoreNextMultiSelect;

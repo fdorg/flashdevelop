@@ -44,11 +44,11 @@ namespace ProjectManager.Controls
         /// </summary>
         private void InitializeComponent()
         {
-            this.textBox = new System.Windows.Forms.TextBox();
-            this.listBox = new System.Windows.Forms.ListBox();
-            this.cbInClasspathsOnly = new System.Windows.Forms.CheckBox();
-            this.checkBox = new System.Windows.Forms.CheckBox();
-            this.refreshButton = new System.Windows.Forms.Button();
+            this.textBox = new System.Windows.Forms.TextBoxEx();
+            this.listBox = new System.Windows.Forms.ListBoxEx();
+            this.cbInClasspathsOnly = new System.Windows.Forms.CheckBoxEx();
+            this.checkBox = new System.Windows.Forms.CheckBoxEx();
+            this.refreshButton = new System.Windows.Forms.ButtonEx();
             this.SuspendLayout();
             // 
             // textBox
@@ -98,10 +98,11 @@ namespace ProjectManager.Controls
             // 
             this.listBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.listBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.listBox.IntegralHeight = false;
             this.listBox.FormattingEnabled = true;
             this.listBox.Location = new System.Drawing.Point(12, 62);
             this.listBox.Name = "listBox";
-            this.listBox.Size = new System.Drawing.Size(498, 276);
+            this.listBox.Size = new System.Drawing.Size(498, 264);
             this.listBox.TabIndex = 5;
             this.listBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.ListBoxDrawItem);
             this.listBox.Resize += new System.EventHandler(this.ListBoxResize);
@@ -128,6 +129,7 @@ namespace ProjectManager.Controls
             this.Text = "Open Resource";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OpenResourceKeyDown);
             this.Load += new EventHandler(OpenResourceFormLoad);
+            this.Activated += new EventHandler(OpenResourceFormActivated);
             this.ResumeLayout(false);
             this.PerformLayout();
         }
@@ -136,9 +138,6 @@ namespace ProjectManager.Controls
 
         #region Methods And Event Handlers
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void InitializeGraphics()
         {
             ImageList imageList = new ImageList();
@@ -149,9 +148,6 @@ namespace ProjectManager.Controls
             this.refreshButton.ImageIndex = 0;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void InitializeLocalization()
         {
             this.cbInClasspathsOnly.Text = TextHelper.GetString("Label.InClasspathsOnly");
@@ -159,53 +155,42 @@ namespace ProjectManager.Controls
             this.Text = " " + TextHelper.GetString("Title.OpenResource");
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void RefreshButtonClick(Object sender, EventArgs e)
         {
             this.CreateFileList();
             this.RefreshListBox();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void CbInClasspathsOnlyCheckedChanged(Object sender, EventArgs e)
         {
             this.CreateFileList();
             this.RefreshListBox();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void CheckBoxCheckedChanged(Object sender, EventArgs e)
         {
             this.CreateFileList();
             this.RefreshListBox();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void OpenResourceFormLoad(Object sender, EventArgs e)
         {
-            if (openedFiles == null) this.CreateFileList();
-            else
-            {
-                this.textBox.Focus();
-                this.textBox.Text = previousSearch;
-                this.textBox.SelectAll();
-                this.UpdateOpenFiles();
-                this.textBox.Focus();
-            }
+            this.CreateFileList();
             this.RefreshListBox();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
+        private void OpenResourceFormActivated(Object sender, EventArgs e)
+        {
+            this.textBox.Focus();
+            this.textBox.SelectAll();
+            if (previousSearch != null)
+            {
+                previousSearch = null;
+                this.UpdateOpenFiles();
+                this.textBox.Focus();
+            }
+        }
+
         private void ListBoxDrawItem(Object sender, DrawItemEventArgs e)
         {
             Boolean selected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
@@ -238,9 +223,6 @@ namespace ProjectManager.Controls
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void RefreshListBox()
         {
             this.listBox.BeginUpdate();
@@ -253,9 +235,6 @@ namespace ProjectManager.Controls
             this.listBox.EndUpdate();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void FillListBox()
         {
             List<String> matchedFiles;
@@ -303,9 +282,6 @@ namespace ProjectManager.Controls
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void CreateFileList()
         {
             List<String> open = this.GetOpenFiles();
@@ -418,9 +394,6 @@ namespace ProjectManager.Controls
             return (info.Attributes & FileAttributes.Hidden) > 0;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void Navigate()
         {
             if (this.listBox.SelectedItem != null)
@@ -434,9 +407,6 @@ namespace ProjectManager.Controls
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void OpenResourceKeyDown(Object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape) this.Close();
@@ -445,11 +415,14 @@ namespace ProjectManager.Controls
                 e.Handled = true;
                 this.Navigate();
             }
+            else if (e.KeyData == (Keys.Control | Keys.R))
+            {
+                e.SuppressKeyPress = true;
+                this.CreateFileList();
+                this.RefreshListBox();
+            }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void TextBoxKeyDown(Object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Down && this.listBox.SelectedIndex < this.listBox.Items.Count - 1)
@@ -474,37 +447,28 @@ namespace ProjectManager.Controls
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void TextBoxTextChanged(Object sender, EventArgs e)
         {
             this.RefreshListBox();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void ListBoxDoubleClick(Object sender, EventArgs e)
         {
             this.Navigate();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         private void ListBoxResize(Object sender, EventArgs e)
         {
             this.listBox.Refresh();
         }
-
-        #endregion
 
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
             previousSearch = this.textBox.Text;
         }
+
+        #endregion
 
     }
 

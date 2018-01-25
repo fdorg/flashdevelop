@@ -457,6 +457,7 @@ namespace ProjectManager.Projects.Haxe
 
         private string CleanPath(string path)
         {
+            path = path.Replace("\"", string.Empty);
             path = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar).TrimEnd(Path.DirectorySeparatorChar);
             // handle if NME/OpenFL config file is not at the root of the project directory
             if (Path.IsPathRooted(path)) return path;

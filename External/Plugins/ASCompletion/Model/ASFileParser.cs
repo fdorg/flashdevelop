@@ -1327,7 +1327,6 @@ namespace ASCompletion.Model
                         }
                         else shortcut = false;
                     }
-
                     // eval this word
                     if (evalToken > 0)
                     {
@@ -1417,7 +1416,6 @@ namespace ASCompletion.Model
                             }
                             else braceCount++; // ignore block
                         }
-
                         // end of block
                         else if (c1 == '}')
                         {
@@ -1444,7 +1442,6 @@ namespace ASCompletion.Model
                                 if (hasPackageSection && model.PrivateSectionIndex == 0) model.PrivateSectionIndex = line + 1;
                             }
                         }
-
                         // member type declaration
                         else if (c1 == ':' && !inValue && !inGeneric)
                         {
@@ -1454,7 +1451,6 @@ namespace ASCompletion.Model
                                 && i < len - 2 && ba[i] == ':' && Char.IsLetter(ba[i + 1]))
                                 foundConstant = true;
                         }
-
                         // next variable declaration
                         else if (c1 == ',')
                         {
@@ -1471,7 +1467,6 @@ namespace ASCompletion.Model
                                 foundKeyword = FlagType.Implements;
                             }
                         }
-
                         else if (c1 == '(')
                         {
                             if (!inValue && context == FlagType.Variable && curToken.Text != "catch" && (!haXe || curToken.Text != "for"))
@@ -1576,7 +1571,6 @@ namespace ASCompletion.Model
                                 inGeneric = false;
                             }
                         }
-
                         // end of statement
                         else if (c1 == ';')
                         {
@@ -1587,7 +1581,6 @@ namespace ASCompletion.Model
                             inParams = false;
                             curMember = null;
                         }
-
                         // end of method parameters
                         else if (c1 == ')' && inParams)
                         {
@@ -1701,8 +1694,7 @@ namespace ASCompletion.Model
             char c;
             // regex in valid context
 
-            if (!haXe)
-                i0 = i - 2;
+            if (!haXe) i0 = i - 2;
             else
             {
                 if (ba[i - 2] != '~')
@@ -1713,8 +1705,17 @@ namespace ASCompletion.Model
             while (i0 > 0)
             {
                 c = ba[i0--];
-                if ("=(,[{;:".IndexOf(c) >= 0) break; // ok
-                if (" \t".IndexOf(c) >= 0) continue;
+                if (c == '=' || c == '(' || c == '[' || c == '{' || c == '}' || c == ',' || c == ';'
+                    || c == '?' || c == ':'
+                    || c == '+' || c == '-' || c == '*' || c == '/'
+                    || c == '|' || c == '&' || c == '~' || c == '^'
+                    || c == '>' || c == '<' || c == '!'
+                    || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')
+                    || (c >= '0' && c <= '9'))
+                {
+                    break;// ok
+                }
+                if (c == ' ' || c == '\t') continue;
                 return false; // anything else isn't expected before a regex
             }
             i0 = i;
@@ -1833,13 +1834,13 @@ namespace ASCompletion.Model
                         break;
                     }
                 }
-                else if (c == 10 || c == 13)
+                else if (inString == 1 && c == '"') inString = 0;
+                else if (inString == 2 && c == '\'') inString = 0;
+                if (c == 10 || c == 13)
                 {
                     line++;
                     if (c == 13 && i < len && ba[i + 1] == 10) i++;
                 }
-                else if (inString == 1 && c == '"') inString = 0;
-                else if (inString == 2 && c == '\'') inString = 0;
                 i++;
             }
 
@@ -2086,7 +2087,7 @@ namespace ASCompletion.Model
                         {
                             foundModifier = FlagType.Intrinsic | FlagType.Native;
                         }
-                        else if (version == 4 && token == "extern")
+                        else if (version == 4 && token == "extern" && context != FlagType.Package)
                         {
                             foundModifier = FlagType.Intrinsic | FlagType.Extern;
                         }
@@ -2583,9 +2584,10 @@ namespace ASCompletion.Model
                         //
                         if (curClass != null)
                         {
-                            if (token == curClass.Constructor)
+                            var constructorKey = features.ConstructorKey;
+                            if (token == curClass.Constructor || (!string.IsNullOrEmpty(constructorKey) && token == constructorKey))
                             {
-                                if (haXe) // constructor is: new()
+                                if (token == constructorKey)
                                 {
                                     member.Name = curClass.Name;
                                     curClass.Constructor = curClass.Name;

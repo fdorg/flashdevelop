@@ -78,6 +78,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
   </ItemGroup>
@@ -119,15 +120,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CodeRefactor\Commands\HaxeFindAllReferences.cs" />
+    <Compile Include="CodeRefactor\Commands\HaxeOrganizeImports.cs" />
     <Compile Include="CodeRefactor\Provider\HaxeCommandFactory.cs" />
+    <Compile Include="Completion\CodeGenerator.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="Completion\HaxeComplete.cs" />
     <Compile Include="Completion\IHaxeCompletionHandler.cs" />
     <Compile Include="Completion\CompilerCompletionHandler.cs" />
     <Compile Include="Completion\CompletionServerCompletionHandler.cs" />
     <Compile Include="Completion\HaxeComplete330.cs" />
+    <Compile Include="Generators\DocumentationGenerator.cs" />
     <Compile Include="HaXeSettings.cs" />
     <Compile Include="ExternalToolchain.cs" />
+    <Compile Include="Helpers\FlagEnumEditor.cs" />
+    <Compile Include="Helpers\ProcessExtensions.cs" />
     <Compile Include="Linters\DiagnosticsLinter.cs" />
     <Compile Include="PluginMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

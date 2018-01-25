@@ -58,7 +58,7 @@ namespace OutputPanel
         private void InitializeComponent()
         {
             this.scrollTimer = new System.Timers.Timer();
-            this.textLog = new OutputPanel.PluginUI.RichTextBoxEx();
+            this.textLog = new System.Windows.Forms.RichTextBoxEx();
             this.toolStrip = new PluginCore.Controls.ToolStripEx();
             this.toggleButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -670,13 +670,6 @@ namespace OutputPanel
 
         #endregion
 
-        private class RichTextBoxEx : RichTextBox
-        {
-            public void Recreate()
-            {
-                this.RecreateHandle();
-            }
-        }
     }
 
 }

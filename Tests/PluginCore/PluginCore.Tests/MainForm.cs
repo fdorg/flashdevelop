@@ -245,6 +245,11 @@ namespace FlashDevelop
             throw new NotImplementedException();
         }
 
+        public void SetUseTheme(Object parent, Boolean use)
+        {
+            throw new NotImplementedException();
+        }
+
         public ISettings Settings { get; set; }
 
         public ToolStrip ToolStrip

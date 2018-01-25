@@ -7,7 +7,7 @@ namespace SourceControl.Sources
 {
     public interface IVCCommand
     {
-        void ContinueWith(IVCCommand command);
+        IVCCommand ContinueWith(IVCCommand command);
 
         void Run();
     }

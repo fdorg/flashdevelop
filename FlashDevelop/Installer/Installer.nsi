@@ -10,7 +10,7 @@
 ;--------------------------------
 
 ; Define version info
-!define VERSION "5.3.0"
+!define VERSION "5.3.1"
 
 ; Installer details
 VIAddVersionKey "CompanyName" "${DIST_COMP}"
@@ -122,7 +122,7 @@ Function GetDotNETVersion
 	
 	Push $0
 	ClearErrors
-	ReadRegStr $0 HKLM "Software\Microsoft\NET Framework Setup\NDP\v3.5" "Version"
+	ReadRegStr $0 HKLM "Software\Microsoft\NET Framework Setup\NDP\v4\Client" "Version"
 	IfErrors 0 +2
 	StrCpy $0 "not_found"
 	Exch $0

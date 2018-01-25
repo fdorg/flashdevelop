@@ -25,7 +25,7 @@ namespace SourceControl.Sources.Mercurial
                     // directly delete empty dirs
                     if (Directory.GetFiles(path).Length == 0)
                     {
-                        try { Directory.Delete(path); }
+                        try { Directory.Delete(path, Directory.GetDirectories(path).Length > 0); }
                         catch (Exception ex) { ErrorManager.ShowInfo(ex.Message); }
                         continue;
                     }
@@ -34,14 +34,13 @@ namespace SourceControl.Sources.Mercurial
                 args += " \"" + Path.GetFileName(path) + "\"";
                 count++;
             }
-
+            this.paths = paths;
             if (count > 0) Run(args, Path.GetDirectoryName(paths[0]));
         }
 
         protected override void Runner_ProcessEnded(object sender, int exitCode)
         {
             base.Runner_ProcessEnded(sender, exitCode);
-
             ProjectWatcher.HandleFilesDeleted(paths);
         }
     }

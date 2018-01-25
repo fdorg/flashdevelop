@@ -23,6 +23,7 @@ namespace HaXeContext
         protected override string[] BuildHxmlArgs()
         {
             var args = base.BuildHxmlArgs();
+
             if (args == null) return null;
             var list = new List<string>(args) {"-D display-stdin"};
             var result = list.ToArray();

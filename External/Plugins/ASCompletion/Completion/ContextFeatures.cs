@@ -105,6 +105,9 @@ namespace ASCompletion.Completion
         public char[] SpecialPostfixOperators = {};
         public string ConstructorKey;
         public bool HasGenericsShortNotation;
+        public HashSet<char> ArithmeticOperators = new HashSet<char>();
+        public string[] IncrementDecrementOperators = {};
+        public HashSet<string> OtherOperators = new HashSet<string>();
 
         /// <summary>
         /// Tells if a word is a keyword which precedes a type (like 'new')

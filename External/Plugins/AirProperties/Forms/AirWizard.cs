@@ -587,8 +587,8 @@ namespace AirProperties
                 if (icon.MinVersion <= PropertyManager.MajorVersion)
                 {
                     Label appIconLabel = new Label();
-                    TextBox appIconField = new TextBox();
-                    Button appIconButton = new Button();
+                    TextBox appIconField = new TextBoxEx();
+                    Button appIconButton = new ButtonEx();
 
                     icon.Field = appIconField;
 

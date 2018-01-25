@@ -1,12 +1,12 @@
-﻿using System;
+﻿using PluginCore;
+using PluginCore.Helpers;
+using PluginCore.Managers;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using PluginCore;
-using PluginCore.Helpers;
-using PluginCore.Managers;
 
 namespace FlashDevelop.Managers
 {
@@ -66,6 +66,65 @@ namespace FlashDevelop.Managers
         }
 
         /// <summary>
+        /// Sets the use theme setting also to children
+        /// </summary>
+        public static void SetUseTheme(Object obj, Boolean use)
+        {
+            try
+            {
+                if (obj is ListView)
+                {
+                    ListView parent = obj as ListView;
+                    foreach (ListViewItem item in parent.Items)
+                    {
+                        SetUseTheme(item, use);
+                    }
+                }
+                else if (obj is TreeView)
+                {
+                    TreeView parent = obj as TreeView;
+                    foreach (TreeNode item in parent.Nodes)
+                    {
+                        SetUseTheme(item, use);
+                    }
+                }
+                else if (obj is MenuStrip)
+                {
+                    MenuStrip parent = obj as MenuStrip;
+                    foreach (ToolStripItem item in parent.Items)
+                    {
+                        SetUseTheme(item, use);
+                    }
+                }
+                else if (obj is ToolStripMenuItem)
+                {
+                    ToolStripMenuItem parent = obj as ToolStripMenuItem;
+                    foreach (ToolStripItem item in parent.DropDownItems)
+                    {
+                        SetUseTheme(item, use);
+                    }
+                }
+                else if (obj is Control)
+                {
+                    Control parent = obj as Control;
+                    foreach (Control item in parent.Controls)
+                    {
+                        SetUseTheme(item, use);
+                    }
+                }
+                PropertyInfo info = obj.GetType().GetProperty("UseTheme");
+                if (info != null && info.CanWrite)
+                {
+                    info.SetValue(obj, use, null);
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowError(ex);
+            }
+        }
+
+        /// <summary>
         /// Walks the control tree down and themes all controls.
         /// </summary>
         public static void WalkControls(Object obj)
@@ -107,12 +166,17 @@ namespace FlashDevelop.Managers
                 else if (obj is Control)
                 {
                     Control parent = obj as Control;
-                    foreach (Control control in parent.Controls)
+                    foreach (Control item in parent.Controls)
                     {
-                        WalkControls(control);
+                        WalkControls(item);
                     }
                 }
                 ThemeControl(obj);
+                if (obj is IThemeHandler)
+                {
+                    var th = obj as IThemeHandler;
+                    th.AfterTheming();
+                }
                 if (obj is MainForm)
                 {
                     NotifyEvent ne = new NotifyEvent(EventType.ApplyTheme);
@@ -142,165 +206,145 @@ namespace FlashDevelop.Managers
         {
             try
             {
+                dynamic cast = obj;
                 // Apply colors of base type before applying for this type
                 Boolean useIn = GetThemeValue("ThemeManager.UseInheritance") == "True";
                 if (useIn && type.BaseType != null) ThemeControl(obj, type.BaseType);
-                // Handle type with full name, with or without suffix 'Ex'
-                String name = type.Name.EndsWithOrdinal("Ex") ? type.Name.Remove(type.Name.Length - 2) : type.Name;
-                PropertyInfo ground = type.GetProperty("BackgroundColor");
-                PropertyInfo alink = type.GetProperty("ActiveLinkColor");
-                PropertyInfo dlink = type.GetProperty("DisabledLinkColor");
-                PropertyInfo dborder = type.GetProperty("DisabledBorderColor");
-                PropertyInfo curpos = type.GetProperty("CurrentPositionColor");
-                PropertyInfo dback = type.GetProperty("DisabledBackColor");
-                PropertyInfo afore = type.GetProperty("ActiveForeColor");
-                PropertyInfo border = type.GetProperty("BorderColor");
-                PropertyInfo hfore = type.GetProperty("HotForeColor");
-                PropertyInfo harrow = type.GetProperty("HotArrowColor");
-                PropertyInfo aarrow = type.GetProperty("ActiveArrowColor");
-                PropertyInfo arrow = type.GetProperty("ArrowColor");
-                PropertyInfo link = type.GetProperty("LinkColor");
-                PropertyInfo back = type.GetProperty("BackColor");
-                PropertyInfo fore = type.GetProperty("ForeColor");
-                if (back != null)
+                String name = ThemeHelper.GetFilteredTypeName(type);
+                // Apply all basic style settings
+                ApplyPropColor(obj, name + ".BackColor");
+                ApplyPropColor(obj, name + ".ForeColor");
+                ApplyPropColor(obj, name + ".BackgroundColor");
+                ApplyPropColor(obj, name + ".ActiveLinkColor");
+                ApplyPropColor(obj, name + ".DisabledLinkColor");
+                ApplyPropColor(obj, name + ".LinkColor");
+                ApplyPropColor(obj, name + ".BorderColor");
+                ApplyPropColor(obj, name + ".ActiveForeColor");
+                ApplyPropColor(obj, name + ".DisabledTextColor");
+                ApplyPropColor(obj, name + ".DisabledBorderColor");
+                ApplyPropColor(obj, name + ".CurrentPositionColor");
+                ApplyPropColor(obj, name + ".DisabledBackColor");
+                ApplyPropColor(obj, name + ".GridLineColor");
+                ApplyPropColor(obj, name + ".HotForeColor");
+                ApplyPropColor(obj, name + ".HotArrowColor");
+                ApplyPropColor(obj, name + ".ActiveArrowColor");
+                ApplyPropColor(obj, name + ".ArrowColor");
+                // Set border style from border style key
+                PropertyInfo bstyle = type.GetProperty("BorderStyle");
+                Boolean force = GetThemeValue("ThemeManager.ForceBorderStyle") == "True";
+                if (bstyle != null && bstyle.CanWrite && (force || cast.BorderStyle != BorderStyle.None))
                 {
-                    String key = name + ".BackColor";
-                    Color color = GetThemeColor(key);
-                    if (color != Color.Empty)
+                    String key = name + ".BorderStyle";
+                    String style = GetThemeValue(key);
+                    switch (style)
                     {
-                        back.SetValue(obj, color, null);
+                        case "None":
+                            bstyle.SetValue(obj, BorderStyle.None, null);
+                            break;
+                        case "Fixed3D":
+                            bstyle.SetValue(obj, BorderStyle.Fixed3D, null);
+                            break;
+                        case "FixedSingle":
+                            bstyle.SetValue(obj, BorderStyle.FixedSingle, null);
+                            break;
+                        default:
+                            break;
                     }
                 }
-                if (fore != null)
+                // Set flat style from flat style key
+                PropertyInfo fstyle = type.GetProperty("FlatStyle");
+                if (fstyle != null && fstyle.CanWrite)
                 {
-                    String key = name + ".ForeColor";
-                    Color color = GetThemeColor(key);
-                    if (color != Color.Empty)
+                    String key = name + ".FlatStyle";
+                    String style = GetThemeValue(key);
+                    switch (style)
                     {
-                        fore.SetValue(obj, color, null);
+                        case "Flat":
+                            fstyle.SetValue(obj, FlatStyle.Flat, null);
+                            break;
+                        case "Popup":
+                            fstyle.SetValue(obj, FlatStyle.Popup, null);
+                            break;
+                        case "System":
+                            fstyle.SetValue(obj, FlatStyle.System, null);
+                            break;
+                        case "Standard":
+                            fstyle.SetValue(obj, FlatStyle.Standard, null);
+                            break;
+                        default:
+                            break;
                     }
                 }
-                if (ground != null)
+                // Control specific style assignments
+                if (obj is Button)
                 {
-                    String key = name + ".BackgroundColor";
-                    Color color = GetThemeColor(key);
-                    if (color != Color.Empty)
+                    Color color = Color.Empty;
+                    Button parent = obj as Button;
+                    Boolean flat = GetThemeValue("Button.FlatStyle") == "Flat";
+                    if (flat)
                     {
-                        ground.SetValue(obj, color, null);
+                        color = GetThemeColor("Button.BorderColor");
+                        if (color != Color.Empty) parent.FlatAppearance.BorderColor = color;
+                        color = GetThemeColor("Button.CheckedBackColor");
+                        if (color != Color.Empty) parent.FlatAppearance.CheckedBackColor = color;
+                        color = GetThemeColor("Button.MouseDownBackColor");
+                        if (color != Color.Empty) parent.FlatAppearance.MouseDownBackColor = color;
+                        color = GetThemeColor("Button.MouseOverBackColor");
+                        if (color != Color.Empty) parent.FlatAppearance.MouseOverBackColor = color;
                     }
                 }
-                if (alink != null)
+                else if (obj is CheckBox)
                 {
-                    String key = name + ".ActiveLinkColor";
-                    Color color = GetThemeColor(key);
-                    if (color != Color.Empty)
+                    Color color = Color.Empty;
+                    CheckBox parent = obj as CheckBox;
+                    Boolean flat = GetThemeValue("CheckBox.FlatStyle") == "Flat";
+                    if (flat)
                     {
-                        alink.SetValue(obj, color, null);
+                        color = GetThemeColor("CheckBox.BorderColor");
+                        if (color != Color.Empty) parent.FlatAppearance.BorderColor = color;
+                        color = GetThemeColor("CheckBox.CheckedBackColor");
+                        if (color != Color.Empty) parent.FlatAppearance.CheckedBackColor = color;
+                        color = GetThemeColor("CheckBox.MouseDownBackColor");
+                        if (color != Color.Empty) parent.FlatAppearance.MouseDownBackColor = color;
+                        color = GetThemeColor("CheckBox.MouseOverBackColor");
+                        if (color != Color.Empty) parent.FlatAppearance.MouseOverBackColor = color;
                     }
                 }
-                if (dlink != null)
+                else if (obj is PropertyGrid)
                 {
-                    String key = name + ".DisabledLinkColor";
-                    Color color = GetThemeColor(key);
-                    if (color != Color.Empty)
-                    {
-                        dlink.SetValue(obj, color, null);
-                    }
-                }
-                if (link != null)
-                {
-                    String key = name + ".LinkColor";
-                    Color color = GetThemeColor(key);
-                    if (color != Color.Empty)
-                    {
-                        link.SetValue(obj, color, null);
-                    }
-                }
-                if (border != null)
-                {
-                    String key = name + ".BorderColor";
-                    Color color = GetThemeColor(key);
-                    if (color != Color.Empty)
-                    {
-                        border.SetValue(obj, color, null);
-                    }
-                }
-                if (afore != null)
-                {
-                    String key = name + ".ActiveForeColor";
-                    Color color = GetThemeColor(key);
-                    if (color != Color.Empty)
-                    {
-                        afore.SetValue(obj, color, null);
-                    }
-                }
-                if (dborder != null)
-                {
-                    String key = name + ".DisabledBorderColor";
-                    Color color = GetThemeColor(key);
-                    if (color != Color.Empty)
-                    {
-                        dborder.SetValue(obj, color, null);
-                    }
-                }
-                if (curpos != null)
-                {
-                    String key = name + ".CurrentPositionColor";
-                    Color color = GetThemeColor(key);
-                    if (color != Color.Empty)
-                    {
-                        curpos.SetValue(obj, color, null);
-                    }
-                }
-                if (dback != null)
-                {
-                    String key = name + ".DisabledBackColor";
-                    Color color = GetThemeColor(key);
-                    if (color != Color.Empty)
-                    {
-                        dback.SetValue(obj, color, null);
-                    }
-                }
-                if (hfore != null)
-                {
-                    String key = name + ".HotForeColor";
-                    Color color = GetThemeColor(key);
-                    if (color != Color.Empty)
-                    {
-                        hfore.SetValue(obj, color, null);
-                    }
-                }
-                if (harrow != null)
-                {
-                    String key = name + ".HotArrowColor";
-                    Color color = GetThemeColor(key);
-                    if (color != Color.Empty)
-                    {
-                        harrow.SetValue(obj, color, null);
-                    }
-                }
-                if (aarrow != null)
-                {
-                    String key = name + ".ActiveArrowColor";
-                    Color color = GetThemeColor(key);
-                    if (color != Color.Empty)
-                    {
-                        aarrow.SetValue(obj, color, null);
-                    }
-                }
-                if (arrow != null)
-                {
-                    String key = name + ".ArrowColor";
-                    Color color = GetThemeColor(key);
-                    if (color != Color.Empty)
-                    {
-                        arrow.SetValue(obj, color, null);
-                    }
+                    PropertyGrid grid = obj as PropertyGrid;
+                    ApplyPropColor(grid, "PropertyGrid.ViewBackColor");
+                    ApplyPropColor(grid, "PropertyGrid.ViewForeColor");
+                    ApplyPropColor(grid, "PropertyGrid.ViewBorderColor");
+                    ApplyPropColor(grid, "PropertyGrid.HelpBackColor");
+                    ApplyPropColor(grid, "PropertyGrid.HelpForeColor");
+                    ApplyPropColor(grid, "PropertyGrid.HelpBorderColor");
+                    ApplyPropColor(grid, "PropertyGrid.CategoryForeColor");
+                    ApplyPropColor(grid, "PropertyGrid.CategorySplitterColor");
+                    ApplyPropColor(grid, "PropertyGrid.CommandsBackColor");
+                    ApplyPropColor(grid, "PropertyGrid.CommandsActiveLinkColor");
+                    ApplyPropColor(grid, "PropertyGrid.CommandsDisabledLinkColor");
+                    ApplyPropColor(grid, "PropertyGrid.CommandsForeColor");
+                    ApplyPropColor(grid, "PropertyGrid.CommandsLinkColor");
+                    ApplyPropColor(grid, "PropertyGrid.LineColor");
                 }
             }
             catch (Exception ex)
             {
                 ErrorManager.ShowError(ex);
+            }
+        }
+
+        /// <summary>
+        /// Apply property color if defined and property is available
+        /// </summary>
+        private static void ApplyPropColor(Object targObj, String propId)
+        {
+            Color color = GetThemeColor(propId);
+            PropertyInfo prop = targObj.GetType().GetProperty(propId.Split('.')[1]);
+            if (prop != null && prop.CanWrite && color != Color.Empty)
+            {
+                prop.SetValue(targObj, color, null);
             }
         }
 

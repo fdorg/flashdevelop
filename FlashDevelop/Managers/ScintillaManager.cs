@@ -27,6 +27,10 @@ namespace FlashDevelop.Managers
         private static readonly Object initializationLock = new Object();
         public static event Action ConfigurationLoaded;
 
+        internal const int LineMargin = 2;
+        internal const int BookmarksMargin = 0;
+        internal const int FoldingMargin = 3;
+
         static ScintillaManager()
         {
             Bookmark = ScaleHelper.Scale(new Bitmap(ResourceHelper.GetStream("BookmarkIcon.png")));
@@ -274,28 +278,30 @@ namespace FlashDevelop.Managers
                 if (language != null && language.editorstyle != null)
                 {
                     Boolean colorizeMarkerBack = language.editorstyle.ColorizeMarkerBack;
-                    if (colorizeMarkerBack) sci.SetMarginTypeN(0, (Int32)MarginType.Fore);
-                    else sci.SetMarginTypeN(0, (Int32)MarginType.Symbol);
+                    if (colorizeMarkerBack) sci.SetMarginTypeN(BookmarksMargin, (Int32)MarginType.Fore);
+                    else sci.SetMarginTypeN(BookmarksMargin, (Int32)MarginType.Symbol);
                 }
                 /**
                 * Set correct line number margin width
                 */
                 Boolean viewLineNumbers = settings.ViewLineNumbers;
-                if (viewLineNumbers) sci.SetMarginWidthN(1, ScaleArea(sci, 36));
-                else sci.SetMarginWidthN(1, 0);
+                if (viewLineNumbers) sci.SetMarginWidthN(LineMargin, ScaleArea(sci, 36));
+                else sci.SetMarginWidthN(LineMargin, 0);
                 /**
                 * Set correct bookmark margin width
                 */
                 Boolean viewBookmarks = settings.ViewBookmarks;
-                if (viewBookmarks) sci.SetMarginWidthN(0, ScaleArea(sci, 14));
-                else sci.SetMarginWidthN(0, 0);
+                if (viewBookmarks) sci.SetMarginWidthN(BookmarksMargin, ScaleArea(sci, 14));
+                else sci.SetMarginWidthN(BookmarksMargin, 0);
                 /**
                 * Set correct folding margin width
                 */
                 Boolean useFolding = settings.UseFolding;
-                if (!useFolding && !viewBookmarks && !viewLineNumbers) sci.SetMarginWidthN(2, 0);
-                else if (useFolding) sci.SetMarginWidthN(2, ScaleArea(sci, 15));
-                else sci.SetMarginWidthN(2, ScaleArea(sci, 2));
+                if (!useFolding && !viewBookmarks && !viewLineNumbers) sci.SetMarginWidthN(FoldingMargin, 0);
+                else if (useFolding) sci.SetMarginWidthN(FoldingMargin, ScaleArea(sci, 15));
+                else sci.SetMarginWidthN(FoldingMargin, ScaleArea(sci, 2));
+
+                sci.SetMarginWidthN(1, 0); //Inheritance Margin (see ASCompletion.PluginMain.Margin)
                 /**
                 * Adjust caret policy based on settings
                 */
@@ -417,14 +423,14 @@ namespace FlashDevelop.Managers
             sci.XOffset = 0;
             sci.ZoomLevel = 0;
             sci.UsePopUp(false);
-            sci.SetMarginTypeN(0, (Int32)MarginType.Symbol);
-            sci.SetMarginMaskN(0, MarkerManager.MARKERS);
-            sci.SetMarginWidthN(0, ScaleHelper.Scale(14));
-            sci.SetMarginTypeN(1, (Int32)MarginType.Number);
-            sci.SetMarginMaskN(1, (Int32)MarginType.Symbol);
-            sci.SetMarginTypeN(2, (Int32)MarginType.Symbol);
-            sci.SetMarginMaskN(2, -33554432 | 1 << 2);
-            sci.MarginSensitiveN(2, true);
+            sci.SetMarginTypeN(BookmarksMargin, (Int32)MarginType.Symbol);
+            sci.SetMarginMaskN(BookmarksMargin, MarkerManager.MARKERS);
+            sci.SetMarginWidthN(BookmarksMargin, ScaleHelper.Scale(14));
+            sci.SetMarginTypeN(LineMargin, (Int32)MarginType.Number);
+            sci.SetMarginMaskN(LineMargin, (Int32)MarginType.Symbol);
+            sci.SetMarginTypeN(FoldingMargin, (Int32)MarginType.Symbol);
+            sci.SetMarginMaskN(FoldingMargin, -33554432 | 1 << 2);
+            sci.MarginSensitiveN(FoldingMargin, true);
             sci.SetMultiSelectionTyping(true);
             sci.MarkerDefineRGBAImage(0, Bookmark);
             sci.MarkerDefine(2, MarkerSymbol.Fullrect);

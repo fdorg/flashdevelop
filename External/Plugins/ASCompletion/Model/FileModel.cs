@@ -99,6 +99,7 @@ namespace ASCompletion.Model
     public class FileModel
     {
         static public FileModel Ignore = new FileModel();
+        static internal event Action<FileModel> OnFileUpdate;
 
         [NonSerialized]
         public TreeState OutlineState;
@@ -202,6 +203,7 @@ namespace ASCompletion.Model
                     try
                     {
                         ASFileParser.ParseFile(this);
+                        OnFileUpdate?.Invoke(this);
                     }
                     catch
                     {

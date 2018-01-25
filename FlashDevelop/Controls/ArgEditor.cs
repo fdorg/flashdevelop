@@ -33,7 +33,7 @@ namespace FlashDevelop.Controls
         private void InitializeComponent()
         {
             this.argLabel = new System.Windows.Forms.Label();
-            this.argValues = new System.Windows.Forms.ComboBox();
+            this.argValues = new System.Windows.Forms.FlatCombo();
             this.SuspendLayout();
             // 
             // argLabel

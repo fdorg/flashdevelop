@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ASCompletion.Title.ConvertToConst" xml:space="preserve">
     <value>In Konstante konvertieren</value>
@@ -358,6 +358,7 @@ Ansonsten kann Adobe Flash Professional auch zum Überprüfen der Syntax verwend
   </data>
   <data name="ASCompletion.Label.TypesExplorer" xml:space="preserve">
     <value>Typ B&amp;rowser...</value>
+    <comment>Modified after 5.3.0</comment>
   </data>
   <data name="ASCompletion.Label.ViewMenuItem" xml:space="preserve">
     <value>&amp;Gliederung</value>
@@ -6154,8 +6155,8 @@ AND - All conditions are met.</value>
     <value>&amp;Clear</value>
     <comment>Added after 5.2.0</comment>
   </data>
-  <data name="FlashDevelop.Label.PasteHistory" xml:space="preserve">
-    <value>Paste History</value>
+  <data name="FlashDevelop.Label.ClipboardHistory" xml:space="preserve">
+    <value>Clipboard History</value>
     <comment>Added after 5.2.0</comment>
   </data>
   <data name="FlashDevelop.Description.ClipboardHistorySize" xml:space="preserve">
@@ -6207,7 +6208,51 @@ AND - All conditions are met.</value>
     <comment>Added after 5.2.1</comment>
   </data>
   <data name="HaXeContext.Description.MaximumDiagnosticsProcesses" xml:space="preserve">
-    <value>Die maximale Anzahl an Prozessen für Diagnostics (Linting), die gleichzeitig laufen. Standardmäßig 5.</value>
+    <value>Die maximale Anzahl an Prozessen für Diagnostics (Linting), die gleichzeitig laufen. Standardmäßig 1.</value>
     <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Label.ImplementedBy" xml:space="preserve">
+    <value>Implementiert von...</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Label.Implements" xml:space="preserve">
+    <value>Implementiert...</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Label.OverriddenBy" xml:space="preserve">
+    <value>Überschrieben von...</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Label.Overrides" xml:space="preserve">
+    <value>Überschreibt...</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Category.InheritanceNavigation" xml:space="preserve">
+    <value>Vererbungsnavigation</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="PluginCore.Label.Cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.No" xml:space="preserve">
+    <value>No</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.NoToAll" xml:space="preserve">
+    <value>No to All</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.Yes" xml:space="preserve">
+    <value>Yes</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.YesToAll" xml:space="preserve">
+    <value>Yes To All</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.DontAskAgain" xml:space="preserve">
+    <value>Remember, don't ask again</value>
+    <comment>Added after 5.3.0</comment>
   </data>
 </root>

@@ -24,8 +24,6 @@ namespace HaXeContext
             new Regex("^(-cp|-resource|-cmd)\\s*([^\"'].*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         static readonly Regex reMacro =
             new Regex("^(--macro)\\s*([^\"'].*)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        static readonly Regex reQuote =
-            new Regex("([^\"])\"", RegexOptions.Compiled);
 
         static readonly Regex rePosition =
             new Regex("(?<path>.*?):(?<line>[0-9]*): (?<range>characters|lines) (?<start>[0-9]*)-(?<end>[0-9]*)",
@@ -141,10 +139,7 @@ namespace HaXeContext
             return hxmlArgs.ToArray();
         }
 
-        protected virtual string GetFileContent()
-        {
-            return null;
-        }
+        protected virtual string GetFileContent() => null;
 
         private string GetMode()
         {
@@ -191,14 +186,9 @@ namespace HaXeContext
                 {
                     Match m = reMacro.Match(arg);
                     if (m.Success)
-                        hxmlArgs[i] = m.Groups[1].Value + " \"" + m.Groups[2].Value.Trim() + "\"";
+                        hxmlArgs[i] = m.Groups[1].Value + " \"" + m.Groups[2].Value.Trim(' ', '"', '\'').Replace("\"", "\\\"") + "\"";
                 }
             }
-        }
-
-        private string EscapeQuotes(string expr)
-        {
-            return reQuote.Replace(expr, "$1\\\"");
         }
 
         void QuotePath(List<string> hxmlArgs)
@@ -210,16 +200,9 @@ namespace HaXeContext
                 {
                     Match m = reArg.Match(arg);
                     if (m.Success)
-                        hxmlArgs[i] = m.Groups[1].Value + " \"" + m.Groups[2].Value.Trim() + "\"";
+                        hxmlArgs[i] = m.Groups[1].Value + " \"" + m.Groups[2].Value.Trim(' ', '"', '\'') + "\"";
                 }
             }
-        }
-
-        string GetMainClassName()
-        {
-            var start = FileName.LastIndexOf('\\') + 1;
-            var end = FileName.LastIndexOf('.');
-            return FileName.Substring(start, end - start);
         }
 
         int GetDisplayPosition()
@@ -263,7 +246,7 @@ namespace HaXeContext
                     {
                         return ProcessResponse(JsonMapper.ToObject(lines));
                     }
-                    catch (JsonException)
+                    catch (Exception)
                     {
                         Errors = lines;
                         return HaxeCompleteStatus.ERROR;
@@ -389,6 +372,7 @@ namespace HaXeContext
 
             var type = new MemberModel();
             type.Name = name;
+            type.Comments = reader.GetAttribute("d");
             ExtractType(reader, type);
             result = new HaxeCompleteResult();
             result.Type = type;

@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AS2Context.Description.DefaultFlashVersion" xml:space="preserve">
     <value>Default Flash Player target version when no project is defined.</value>
@@ -336,7 +336,8 @@ Alternatively, Adobe Flash Professional can also be used for syntax checking - p
     <value>Rebuild Classpath Cache</value>
   </data>
   <data name="ASCompletion.Label.TypesExplorer" xml:space="preserve">
-    <value>Project Type E&amp;xplorer...</value>
+    <value>Type E&amp;xplorer...</value>
+    <comment>Modified after 5.3.0</comment>
   </data>
   <data name="ASCompletion.Label.ViewMenuItem" xml:space="preserve">
     <value>Outline Panel</value>
@@ -6169,8 +6170,8 @@ AND - All conditions are met.</value>
     <value>&amp;Clear</value>
     <comment>Added after 5.2.0</comment>
   </data>
-  <data name="FlashDevelop.Label.PasteHistory" xml:space="preserve">
-    <value>Paste History</value>
+  <data name="FlashDevelop.Label.ClipboardHistory" xml:space="preserve">
+    <value>Clipboard History</value>
     <comment>Added after 5.2.0</comment>
   </data>
   <data name="FlashDevelop.Description.ClipboardHistorySize" xml:space="preserve">
@@ -6222,7 +6223,51 @@ AND - All conditions are met.</value>
     <comment>Added after 5.2.1</comment>
   </data>
   <data name="HaXeContext.Description.MaximumDiagnosticsProcesses" xml:space="preserve">
-    <value>Sets the maximum number of processes for diagnostics (linting) that run at the same time. Defaults to 5.</value>
+    <value>Sets the maximum number of processes for diagnostics (linting) that run at the same time. Defaults to 1.</value>
     <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Label.ImplementedBy" xml:space="preserve">
+    <value>Implemented by...</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Label.Implements" xml:space="preserve">
+    <value>Implements...</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Label.OverriddenBy" xml:space="preserve">
+    <value>Overridden by...</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Label.Overrides" xml:space="preserve">
+    <value>Overrides...</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="ASCompletion.Category.InheritanceNavigation" xml:space="preserve">
+    <value>Inheritance Navigation</value>
+    <comment>Added after 5.2.1</comment>
+  </data>
+  <data name="PluginCore.Label.Cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.No" xml:space="preserve">
+    <value>No</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.NoToAll" xml:space="preserve">
+    <value>No to All</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.Yes" xml:space="preserve">
+    <value>Yes</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.YesToAll" xml:space="preserve">
+    <value>Yes To All</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.DontAskAgain" xml:space="preserve">
+    <value>Remember, don't ask again</value>
+    <comment>Added after 5.3.0</comment>
   </data>
 </root>

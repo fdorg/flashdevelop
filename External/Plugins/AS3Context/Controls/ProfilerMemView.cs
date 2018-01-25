@@ -16,6 +16,11 @@ namespace AS3Context.Controls
         const int MAX_HEIGHT = 400;
         private MemGraph graph;
 
+        public MemGraph Graph
+        {
+            get { return graph; }
+        }
+
         public ProfilerMemView(ToolStripLabel label, Label stats, ComboBox scale, TabPage memoryPage)
         {
             graph = new MemGraph();
@@ -77,13 +82,25 @@ namespace AS3Context.Controls
         public List<float> Values = new List<float>();
         public float MaxValue = 1;
         public int TimeScale = 4;
+        private Color back;
+        private Color rect;
+        private Color norm;
+        private Color peak;
+        private Color cur;
 
         public MemGraph()
         {
-            this.SetStyle(
-                ControlStyles.UserPaint |
-                ControlStyles.AllPaintingInWmPaint |
-                ControlStyles.OptimizedDoubleBuffer, true);
+            this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
+            this.UpdateColors();
+        }
+
+        public void UpdateColors()
+        {
+            rect = PluginCore.PluginBase.MainForm.GetThemeColor("MemGraph.ForeColor", Color.Gray);
+            back = PluginCore.PluginBase.MainForm.GetThemeColor("MemGraph.BackColor", Color.White);
+            norm = PluginCore.PluginBase.MainForm.GetThemeColor("MemGraph.NormalColor", Color.LightGray);
+            peak = PluginCore.PluginBase.MainForm.GetThemeColor("MemGraph.PeakColor", Color.Red);
+            cur = PluginCore.PluginBase.MainForm.GetThemeColor("MemGraph.CurrentColor", Color.Blue);
         }
 
         protected override void OnPaint(PaintEventArgs pe)
@@ -91,8 +108,8 @@ namespace AS3Context.Controls
             Graphics g = pe.Graphics;
             Rectangle r = pe.ClipRectangle;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-            g.FillRectangle(Brushes.White, r);
-            g.DrawRectangle(Pens.Gray, 0, 0, Width - 1, Height - 1);
+            g.FillRectangle(new SolidBrush(back), r);
+            g.DrawRectangle(new Pen(rect), 0, 0, Width - 1, Height - 1);
 
             if (Width < 8 || Height < 8) return;
 
@@ -107,7 +124,7 @@ namespace AS3Context.Controls
             Pen line;
 
             // peak
-            line = new Pen(Brushes.LightGray, 1);
+            line = new Pen(norm, 1);
             float step = 25000000f;
             while (step * 4 < MaxValue) step *= 2;
             float top = step;
@@ -118,7 +135,7 @@ namespace AS3Context.Controls
                 g.DrawLine(line, 1f, y, Width - 2, y);
                 top += step;
             }
-            line = new Pen(Brushes.Red, 1);
+            line = new Pen(peak, 1);
             y = (float)Math.Round(h * 0.1f);
             g.DrawLine(line, 0f, y, Width - 1, y);
 
@@ -130,9 +147,11 @@ namespace AS3Context.Controls
                 i++;
                 x0 += TimeScale;
             }
-            line = new Pen(Brushes.Blue, 2);
+            line = new Pen(cur, 2);
             line.LineJoin = System.Drawing.Drawing2D.LineJoin.Round;
             g.DrawLines(line, points.ToArray());
         }
+
     }
+
 }

@@ -35,8 +35,8 @@
         {
             if (status == VCItemStatus.Added)
             {
-                new UnstageCommand(fromPath); //TODO: this will not work, since the commands are started simultaniously
-                new AddCommand(toPath);
+
+                new UnstageCommand(fromPath).ContinueWith(new AddCommand(toPath)).Run();
             }
         }
 

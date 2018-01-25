@@ -80,6 +80,8 @@
     <Compile Include="Completion\ASGenerator.cs" />
     <Compile Include="Completion\Brace.cs" />
     <Compile Include="Completion\CodeUtils.cs" />
+    <Compile Include="Generators\DocumenattionGenerator.cs" />
+    <Compile Include="Generators\IContextualGenerator.cs" />
     <Compile Include="Completion\Reformater.cs" />
     <Compile Include="Completion\TemplateUtils.cs" />
     <Compile Include="Context\ASContext.cs" />
@@ -89,6 +91,7 @@
     <Compile Include="Controls\AddClosingBracesRulesEditorForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Controls\ReferenceList.cs" />
     <Compile Include="CustomControls\StateSavingTreeView.cs" />
     <Compile Include="CustomControls\ModelsExplorer.cs">
       <SubType>UserControl</SubType>
@@ -97,6 +100,7 @@
       <DependentUpon>ModelsExplorer.cs</DependentUpon>
     </Compile>
     <Compile Include="Helpers\AddClosingBracesRulesEditor.cs" />
+    <Compile Include="Helpers\ASTCache.cs" />
     <Compile Include="Helpers\FlashErrorsWatcher.cs" />
     <Compile Include="Helpers\ModifierOrderEditor.cs" />
     <Compile Include="Model\ASFileParser.cs" />
@@ -148,7 +152,9 @@
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\UpDownArrow.png" />
+  </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
       <Visible>False</Visible>

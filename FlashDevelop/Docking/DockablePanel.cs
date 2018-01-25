@@ -1,9 +1,9 @@
+using PluginCore.Helpers;
+using PluginCore.Utilities;
 using System;
-using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
-using PluginCore.Utilities;
 
 namespace FlashDevelop.Docking
 {
@@ -19,6 +19,9 @@ namespace FlashDevelop.Docking
             this.DockPanel = Globals.MainForm.DockPanel;
             if (ctrl.Tag != null) this.TabText = ctrl.Tag.ToString();
             this.DockAreas = DockAreas.DockBottom | DockAreas.DockLeft | DockAreas.DockRight | DockAreas.DockTop | DockAreas.Float;
+            // Restrict docking on Wine/CrossOver as you can't dock panels back if undocked...
+            this.DockPanel.AllowEndUserFloatChange = !PlatformHelper.isRunningOnWine();
+            this.DockPanel.AllowEndUserDocking = !PlatformHelper.isRunningOnWine();
             this.Font = Globals.Settings.DefaultFont;
             this.pluginGuid = pluginGuid;
             this.HideOnClose = true;
@@ -55,6 +58,9 @@ namespace FlashDevelop.Docking
             return this.pluginGuid;
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
         internal class Template : DockContent
         {
             private string persistString;
@@ -68,7 +74,9 @@ namespace FlashDevelop.Docking
             {
                 return persistString;
             }
+
         }
+
     }
 
 }

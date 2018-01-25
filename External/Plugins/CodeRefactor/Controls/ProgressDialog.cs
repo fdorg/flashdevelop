@@ -2,11 +2,12 @@ using System;
 using System.Windows.Forms;
 using System.ComponentModel;
 using PluginCore.Localization;
+using PluginCore.Controls;
 using PluginCore;
 
 namespace CodeRefactor.Controls
 {
-    public class ProgressDialog : Form
+    public class ProgressDialog : SmartForm
     {
         private System.Windows.Forms.Label labelStatus;
         private System.Windows.Forms.Button closeButton;
@@ -27,8 +28,8 @@ namespace CodeRefactor.Controls
         /// </summary>
         private void InitializeComponent()
         {
-            this.progressBar = new System.Windows.Forms.ProgressBar();
-            this.closeButton = new System.Windows.Forms.Button();
+            this.progressBar = new System.Windows.Forms.ProgressBarEx();
+            this.closeButton = new System.Windows.Forms.ButtonEx();
             this.labelStatus = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 

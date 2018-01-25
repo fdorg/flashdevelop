@@ -1,12 +1,10 @@
 using System;
 using System.IO;
-using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using FlashDevelop.Managers;
 using PluginCore.Localization;
 using FlashDevelop.Utilities;
 using PluginCore.Utilities;
@@ -15,7 +13,6 @@ using PluginCore.FRService;
 using PluginCore.Managers;
 using PluginCore.Helpers;
 using Ookii.Dialogs;
-using ScintillaNet;
 using PluginCore;
 
 namespace FlashDevelop.Dialogs
@@ -78,36 +75,36 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         private void InitializeComponent()
         {
-            this.replaceButton = new System.Windows.Forms.Button();
-            this.redirectCheckBox = new System.Windows.Forms.CheckBox();
-            this.regexCheckBox = new System.Windows.Forms.CheckBox();
-            this.optionsGroupBox = new System.Windows.Forms.GroupBox();
-            this.stringsCheckBox = new System.Windows.Forms.CheckBox();
-            this.commentsCheckBox = new System.Windows.Forms.CheckBox();
-            this.escapedCheckBox = new System.Windows.Forms.CheckBox();
-            this.wholeWordCheckBox = new System.Windows.Forms.CheckBox();
-            this.matchCaseCheckBox = new System.Windows.Forms.CheckBox();
-            this.subDirectoriesCheckBox = new System.Windows.Forms.CheckBox();
-            this.replaceComboBox = new System.Windows.Forms.ComboBox();
+            this.replaceButton = new System.Windows.Forms.ButtonEx();
+            this.redirectCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.regexCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.optionsGroupBox = new System.Windows.Forms.GroupBoxEx();
+            this.stringsCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.commentsCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.escapedCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.wholeWordCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.matchCaseCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.subDirectoriesCheckBox = new System.Windows.Forms.CheckBoxEx();
+            this.replaceComboBox = new System.Windows.Forms.FlatCombo();
             this.replaceLabel = new System.Windows.Forms.Label();
-            this.findComboBox = new System.Windows.Forms.ComboBox();
+            this.findComboBox = new System.Windows.Forms.FlatCombo();
             this.findLabel = new System.Windows.Forms.Label();
-            this.findButton = new System.Windows.Forms.Button();
-            this.folderComboBox = new System.Windows.Forms.ComboBox();
+            this.findButton = new System.Windows.Forms.ButtonEx();
+            this.folderComboBox = new System.Windows.Forms.FlatCombo();
             this.folderLabel = new System.Windows.Forms.Label();
-            this.extensionComboBox = new System.Windows.Forms.ComboBox();
+            this.extensionComboBox = new System.Windows.Forms.FlatCombo();
             this.extensionLabel = new System.Windows.Forms.Label();
-            this.browseButton = new System.Windows.Forms.Button();
+            this.browseButton = new System.Windows.Forms.ButtonEx();
             this.replacedHeader = new System.Windows.Forms.ColumnHeader();
-            this.cancelButton = new System.Windows.Forms.Button();
+            this.cancelButton = new System.Windows.Forms.ButtonEx();
             this.infoLabel = new System.Windows.Forms.Label();
             this.lineHeader = new System.Windows.Forms.ColumnHeader();
             this.descHeader = new System.Windows.Forms.ColumnHeader();
             this.pathHeader = new System.Windows.Forms.ColumnHeader();
             this.fileHeader = new System.Windows.Forms.ColumnHeader();
-            this.resultsView = new System.Windows.Forms.ListView();
-            this.progressBar = new System.Windows.Forms.ProgressBar();
-            this.closeButton = new System.Windows.Forms.Button();
+            this.resultsView = new System.Windows.Forms.ListViewEx();
+            this.progressBar = new System.Windows.Forms.ProgressBarEx();
+            this.closeButton = new System.Windows.Forms.ButtonEx();
             this.optionsGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 

@@ -57,16 +57,16 @@ namespace PluginCore.Controls
         {
             this.lblAvailable = new System.Windows.Forms.Label();
             this.lblUsed = new System.Windows.Forms.Label();
-            this.availableItems = new System.Windows.Forms.ListView();
-            this.usedItems = new System.Windows.Forms.ListView();
+            this.availableItems = new System.Windows.Forms.ListViewEx();
+            this.usedItems = new System.Windows.Forms.ListViewEx();
             this.availableItemsHeader = ((System.Windows.Forms.ColumnHeader) (new System.Windows.Forms.ColumnHeader()));
             this.usedItemsHeader = ((System.Windows.Forms.ColumnHeader) (new System.Windows.Forms.ColumnHeader()));
-            this.btnAdd = new System.Windows.Forms.Button();
-            this.btnRemove = new System.Windows.Forms.Button();
-            this.btnUp = new System.Windows.Forms.Button();
-            this.btnDown = new System.Windows.Forms.Button();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.btnOK = new System.Windows.Forms.Button();
+            this.btnAdd = new System.Windows.Forms.ButtonEx();
+            this.btnRemove = new System.Windows.Forms.ButtonEx();
+            this.btnUp = new System.Windows.Forms.ButtonEx();
+            this.btnDown = new System.Windows.Forms.ButtonEx();
+            this.btnCancel = new System.Windows.Forms.ButtonEx();
+            this.btnOK = new System.Windows.Forms.ButtonEx();
             this.SuspendLayout();
             // 
             // availableItemsHeader

@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Data;
-using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections.Generic;
 using PluginCore.Localization;
 using PluginCore.Utilities;
+using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore;
 
 namespace MacroManager
 {
-    public class ManagerDialog : Form
+    public class ManagerDialog : SmartForm
     {
         private Label infoLabel;
         private ListView listView;
@@ -30,6 +29,7 @@ namespace MacroManager
         {
             this.pluginMain = pluginMain;
             this.Font = PluginBase.Settings.DefaultFont;
+            this.FormGuid = "2c8745c8-8f17-4b79-b663-afacc76abfe5";
             this.InitializeComponent();
             this.InitializeItemGroups();
             this.InitializeContextMenu();
@@ -46,10 +46,10 @@ namespace MacroManager
         private void InitializeComponent()
         {
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
-            this.listView = new System.Windows.Forms.ListView();
-            this.addButton = new System.Windows.Forms.Button();
-            this.deleteButton = new System.Windows.Forms.Button();
-            this.closeButton = new System.Windows.Forms.Button();
+            this.listView = new System.Windows.Forms.ListViewEx();
+            this.addButton = new System.Windows.Forms.ButtonEx();
+            this.deleteButton = new System.Windows.Forms.ButtonEx();
+            this.closeButton = new System.Windows.Forms.ButtonEx();
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.columnHeader = new System.Windows.Forms.ColumnHeader();
             this.infoLabel = new System.Windows.Forms.Label();
@@ -148,6 +148,7 @@ namespace MacroManager
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(549, 353);
+            this.MinimumSize = new System.Drawing.Size(449, 253);
             this.Controls.Add(this.infoLabel);
             this.Controls.Add(this.pictureBox);
             this.Controls.Add(this.closeButton);
@@ -161,7 +162,7 @@ namespace MacroManager
             this.Load += new System.EventHandler(this.DialogLoad);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.DialogClosed);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.Text = "Macros";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.ResumeLayout(false);

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashDevelop", "FlashDevelop\FlashDevelop.csproj", "{EFD07485-9A64-4EEC-94E7-ACBD4DA5CA93}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -630,7 +630,7 @@ Global
 		{ABC71D26-295C-4C6C-B6DE-320AD49EEF79}.Release+Tests|x86.ActiveCfg = Release|x86
 		{ABC71D26-295C-4C6C-B6DE-320AD49EEF79}.Release+Tests|x86.Build.0 = Release|x86
 		{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}.Debug|x86.ActiveCfg = Debug|x86
 		{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}.Debug+Tests|Any CPU.ActiveCfg = Debug|Any CPU
 		{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}.Debug+Tests|Any CPU.Build.0 = Debug|Any CPU
 		{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}.Debug+Tests|x86.ActiveCfg = Debug|Any CPU
@@ -670,7 +670,7 @@ Global
 		{8B5A1C53-AF20-4379-A8D1-31822ACC6AD8}.Release+Tests|x86.ActiveCfg = Release|Any CPU
 		{8B5A1C53-AF20-4379-A8D1-31822ACC6AD8}.Release+Tests|x86.Build.0 = Release|Any CPU
 		{F616101E-6103-4788-9382-964D0A1D0A09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F616101E-6103-4788-9382-964D0A1D0A09}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F616101E-6103-4788-9382-964D0A1D0A09}.Debug|x86.ActiveCfg = Debug|x86
 		{F616101E-6103-4788-9382-964D0A1D0A09}.Debug+Tests|Any CPU.ActiveCfg = Debug|Any CPU
 		{F616101E-6103-4788-9382-964D0A1D0A09}.Debug+Tests|Any CPU.Build.0 = Debug|Any CPU
 		{F616101E-6103-4788-9382-964D0A1D0A09}.Debug+Tests|x86.ActiveCfg = Debug|Any CPU
@@ -682,7 +682,7 @@ Global
 		{F616101E-6103-4788-9382-964D0A1D0A09}.Release+Tests|x86.ActiveCfg = Release|Any CPU
 		{F616101E-6103-4788-9382-964D0A1D0A09}.Release+Tests|x86.Build.0 = Release|Any CPU
 		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Debug|x86.ActiveCfg = Debug|x86
 		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Debug+Tests|Any CPU.ActiveCfg = Debug|Any CPU
 		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Debug+Tests|Any CPU.Build.0 = Debug|Any CPU
 		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Debug+Tests|x86.ActiveCfg = Debug|Any CPU
@@ -694,7 +694,7 @@ Global
 		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Release+Tests|x86.ActiveCfg = Release|Any CPU
 		{B7E7E6B5-F1B1-4A44-9966-89AAA7579514}.Release+Tests|x86.Build.0 = Release|Any CPU
 		{536FDE15-CA93-4F84-B1FF-08126C3C443A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{536FDE15-CA93-4F84-B1FF-08126C3C443A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{536FDE15-CA93-4F84-B1FF-08126C3C443A}.Debug|x86.ActiveCfg = Debug|x86
 		{536FDE15-CA93-4F84-B1FF-08126C3C443A}.Debug+Tests|Any CPU.ActiveCfg = Debug|Any CPU
 		{536FDE15-CA93-4F84-B1FF-08126C3C443A}.Debug+Tests|Any CPU.Build.0 = Debug|Any CPU
 		{536FDE15-CA93-4F84-B1FF-08126C3C443A}.Debug+Tests|x86.ActiveCfg = Debug|Any CPU

@@ -67,19 +67,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\RefactorCommandTests.cs" />
+    <Compile Include="Completion\CodeGeneratorTests.cs" />
     <Compile Include="ContextTests.cs" />
-    <Compile Include="MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="PluginUIMock.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="Generators\DocumentationGeneratorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestUtils\TestFile.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Test Files\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
       <Project>{74ad0487-cef9-43fe-9283-bc6f79539ade}</Project>
@@ -89,6 +84,11 @@
     <ProjectReference Include="..\..\..\..\External\Plugins\ASCompletion\ASCompletion.csproj">
       <Project>{4EBF2653-9654-4E40-880E-0046B3D6210E}</Project>
       <Name>ASCompletion</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\External\Plugins\CodeRefactor\CodeRefactor.csproj">
+      <Project>{1F6DF858-6011-4CAC-B33E-7000EE90FFBE}</Project>
+      <Name>CodeRefactor</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\External\Plugins\HaXeContext\HaXeContext.csproj">
@@ -111,10 +111,75 @@
       <Name>ASCompletion.Tests</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\CodeRefactor.Tests\CodeRefactor.Tests.csproj">
+      <Project>{19C1FEE5-CEC3-442B-99B2-3F3FC955CAB4}</Project>
+      <Name>CodeRefactor.Tests</Name>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_issue191_1.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports_issue191_1.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_withImportsFromSameModule2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports_withElseIfDirective.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports_withImportsFromSameModule.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports_withImportsFromSameModule2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_withElseIfDirective.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_withImportsFromSameModule.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue1849_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue1849_2.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue1849_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1833_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1833_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1833_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1833_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1743_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1743_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1743_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1743_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1743_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1743_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1927_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1927_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1926_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1926_2.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1926_3.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1926_4.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1926_5.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1926_6.hx" />
+    <EmbeddedResource Include="Test Files\parser\IsImported_case1.hx" />
+    <EmbeddedResource Include="Test Files\parser\IsImported_case2.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_empty.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_methodDetails.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_methodDetails_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_methodDetails_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_methodDetails_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\BeforeGenerateDocumentation_empty.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\BeforeGenerateDocumentation_methodDetails.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\BeforeGenerateDocumentation_methodDetails_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\BeforeGenerateDocumentation_methodDetails_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\BeforeGenerateDocumentation_methodDetails_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\BeforeGenerateDocumentation_methodDetails_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_methodDetails_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\BeforeGenerateDocumentation_methodDetails_6.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_methodDetails_6.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_6.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_empty.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_none.hx" />
+    <EmbeddedResource Include="Test Files\generators\documentation\BeforeGenerateDocumentation_none.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1964_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1964_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\IsImported_issue1969_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\IsImported_issue1969_2.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

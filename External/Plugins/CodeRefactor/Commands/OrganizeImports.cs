@@ -208,26 +208,26 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Gets the unique string list of imports
         /// </summary>
-        private List<String> GetUniqueImports(List<MemberModel> imports, String searchInText, String sourceFile)
+        protected virtual List<string> GetUniqueImports(List<MemberModel> imports, string searchInText, string sourceFile)
         {
-            List<String> results = new List<String>();
-            foreach (MemberModel import in imports)
+            var result = new List<string>();
+            foreach (var import in imports)
             {
-                if (!results.Contains(import.Type) && MemberTypeImported(import.Name, searchInText, sourceFile))
+                if (!result.Contains(import.Type) && MemberTypeImported(import.Name, searchInText, sourceFile))
                 {
-                    results.Add(import.Type);
+                    result.Add(import.Type);
                 }
             }
-            return results;
+            return result;
         }
 
         /// <summary>
         /// Checks if the member type is imported
         /// </summary>
-        private Boolean MemberTypeImported(String type, String searchInText, String sourceFile)
+        protected bool MemberTypeImported(string type, string searchInText, string sourceFile)
         {
             if (type == "*") return true;
-            FRSearch search = new FRSearch(type);
+            var search = new FRSearch(type);
             search.Filter = SearchFilter.OutsideCodeComments | SearchFilter.OutsideStringLiterals;
             search.NoCase = false;
             search.WholeWord = true;
@@ -238,11 +238,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Indicates if the current settings for the refactoring are valid.
         /// </summary>
-        public override Boolean IsValid()
-        {
-            return true;
-        }
-
+        public override Boolean IsValid() => true;
     }
 
     /// <summary>

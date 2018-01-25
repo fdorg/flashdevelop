@@ -5,6 +5,7 @@ using Aga.Controls.Tree;
 using Aga.Controls.Tree.NodeControls;
 using PluginCore;
 using PluginCore.Helpers;
+using System.Drawing;
 
 namespace AS3Context.Controls
 {
@@ -16,7 +17,7 @@ namespace AS3Context.Controls
 
         public ObjectRefsGrid()
         {
-            BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            BorderStyle = System.Windows.Forms.BorderStyle.None;
             Dock = System.Windows.Forms.DockStyle.Fill;
             GridLineStyle = GridLineStyle.HorizontalAndVertical;
             Font = PluginBase.Settings.DefaultFont;
@@ -46,6 +47,16 @@ namespace AS3Context.Controls
             NodeControls.Add(methodTB);
             NodeControls.Add(fileTB);
             NodeControls.Add(lineTB);
+
+            this.CustomDrawHeaders = PluginBase.MainForm.GetThemeColor("ColumnHeader.BorderColor") != Color.Empty;
+            this.ColumnHeaderBackColor = PluginBase.MainForm.GetThemeColor("ColumnHeader.BackColor", SystemColors.Control);
+            this.ColumnHeaderTextColor = PluginBase.MainForm.GetThemeColor("ColumnHeader.TextColor", SystemColors.ControlText);
+            this.ColumnHeaderBorderColor = PluginBase.MainForm.GetThemeColor("ColumnHeader.BorderColor", SystemColors.ActiveBorder);
+            this.LineColor = PluginBase.MainForm.GetThemeColor("DataTreeControl.LineColor", SystemColors.ActiveBorder);
+            this.LineColor2 = PluginBase.MainForm.GetThemeColor("DataTreeControl.LineColor", SystemColors.ActiveBorder);
+            this.DragDropMarkColor = PluginBase.MainForm.GetThemeColor("DataTreeControl.ForeColor", SystemColors.WindowText);
+            this.ForeColor = PluginBase.MainForm.GetThemeColor("TreeViewAdv.ForeColor", SystemColors.ControlText);
+            this.BackColor = PluginBase.MainForm.GetThemeColor("TreeViewAdv.BackColor", SystemColors.Control);
         }
     }
 

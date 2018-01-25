@@ -2,13 +2,14 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Localization;
+using PluginCore.Controls;
 
 namespace ProjectManager.Helpers
 {
     /// <summary>
     /// A simple form where a user can enter a text string.
     /// </summary>
-    public class LineEntryDialog : Form
+    public class LineEntryDialog : SmartForm
     {
         string line;
 
@@ -74,9 +75,9 @@ namespace ProjectManager.Helpers
         private void InitializeComponent()
         {
             this.titleLabel = new System.Windows.Forms.Label();
-            this.lineBox = new System.Windows.Forms.TextBox();
-            this.btnOK = new System.Windows.Forms.Button();
-            this.btnCancel = new System.Windows.Forms.Button();
+            this.lineBox = new System.Windows.Forms.TextBoxEx();
+            this.btnOK = new System.Windows.Forms.ButtonEx();
+            this.btnCancel = new System.Windows.Forms.ButtonEx();
             this.SuspendLayout();
             // 
             // titleLabel

@@ -56,16 +56,16 @@ namespace FlashDevelop.Dialogs
         private void InitializeComponent()
         {
             this.searchLabel = new System.Windows.Forms.Label();
-            this.filterTextBox = new System.Windows.Forms.TextBox();
-            this.clearButton = new System.Windows.Forms.Button();
+            this.filterTextBox = new System.Windows.Forms.TextBoxEx();
+            this.clearButton = new System.Windows.Forms.ButtonEx();
             this.idHeader = new System.Windows.Forms.ColumnHeader();
             this.keyHeader = new System.Windows.Forms.ColumnHeader();
-            this.listView = new System.Windows.Forms.ListView();
+            this.listView = new System.Windows.Forms.ListViewEx();
             this.pictureBox = new System.Windows.Forms.PictureBox();
             this.infoLabel = new System.Windows.Forms.Label();
-            this.importButton = new System.Windows.Forms.Button();
-            this.exportButton = new System.Windows.Forms.Button();
-            this.closeButton = new System.Windows.Forms.Button();
+            this.importButton = new System.Windows.Forms.ButtonEx();
+            this.exportButton = new System.Windows.Forms.ButtonEx();
+            this.closeButton = new System.Windows.Forms.ButtonEx();
             ((System.ComponentModel.ISupportInitialize)this.pictureBox).BeginInit();
             this.SuspendLayout();
             // 
@@ -112,7 +112,7 @@ namespace FlashDevelop.Dialogs
             this.listView.FullRowSelect = true;
             this.listView.Location = new System.Drawing.Point(12, 62);
             this.listView.MultiSelect = false;
-            this.listView.Name = "listView";
+            this.listView.Name = "listView222";
             this.listView.Size = new System.Drawing.Size(592, 312);
             this.listView.TabIndex = 2;
             this.listView.UseCompatibleStateImageBehavior = false;

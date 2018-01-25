@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Runtime.Remoting.Messaging;
 using PluginCore.Managers;
 
 namespace PluginCore.Helpers
@@ -11,8 +12,18 @@ namespace PluginCore.Helpers
         /// </summary>
         public static void StartAsync(String path)
         {
-            StartDelegate1 dlgt = new StartDelegate1(Start);
-            dlgt.BeginInvoke(path, null, null);
+            StartDelegate1 dlgt = Start;
+            dlgt.BeginInvoke(path, ar =>
+            {
+                try
+                {
+                    dlgt.EndInvoke(ar);
+                }
+                catch (Exception ex)
+                {
+                    // Something wrong, handling for possible leaks
+                }
+            }, null);
         }
         
         /// <summary>
@@ -20,8 +31,18 @@ namespace PluginCore.Helpers
         /// </summary>
         public static void StartAsync(String path, String arguments)
         {
-            StartDelegate2 dlgt = new StartDelegate2(Start);
-            dlgt.BeginInvoke(path, arguments, null, null);
+            StartDelegate2 dlgt = Start;
+            dlgt.BeginInvoke(path, arguments, ar =>
+            {
+                try
+                {
+                    dlgt.EndInvoke(ar);
+                }
+                catch (Exception ex)
+                {
+                    // Something wrong, handling for possible leaks
+                }
+            }, null);
         }
 
         /// <summary>
@@ -30,7 +51,18 @@ namespace PluginCore.Helpers
         public static void StartAsync(ProcessStartInfo psi)
         {
             StartDelegate3 dlgt = new StartDelegate3(Start);
-            dlgt.BeginInvoke(psi, null, null);
+            dlgt.BeginInvoke(psi, ar =>
+                {
+                    try
+                    {
+                        dlgt.EndInvoke(ar);
+                    }
+                    catch (Exception ex)
+                    {
+                        // Something wrong, handling for possible leaks
+                    }
+                },
+            null);
         }
 
         /// <summary>

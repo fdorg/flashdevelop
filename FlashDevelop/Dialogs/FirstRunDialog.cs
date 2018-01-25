@@ -1,7 +1,5 @@
 using System;
 using System.IO;
-using System.Text;
-using System.Drawing;
 using System.Collections.Generic;
 using PluginCore.Localization;
 using System.ComponentModel;
@@ -40,7 +38,7 @@ namespace FlashDevelop.Dialogs
         private void InitializeComponent()
         {
             this.infoLabel = new System.Windows.Forms.Label();
-            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.progressBar = new System.Windows.Forms.ProgressBarEx();
             this.pictureBox = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.SuspendLayout();

@@ -18,8 +18,8 @@ namespace ProjectManager.Projects
         }
 
         // SendKeys requires brackets around certain characters which have meaning
-        public string SendKeysName { get { return "${(}" + Name + "{)}"; } }
-        public string FormattedName { get { return "$(" + Name + ")"; } }
+        public string SendKeysName => "${(}" + Name + "{)}";
+        public string FormattedName => "$(" + Name + ")";
     }
 
     public class BuildEventVars
@@ -39,11 +39,13 @@ namespace ProjectManager.Projects
 
         public BuildEventInfo[] GetVars()
         {
-            List<BuildEventInfo> infos = new List<BuildEventInfo>();
-            infos.Add(new BuildEventInfo("BaseDir", BaseDir));
-            infos.Add(new BuildEventInfo("FDBuild", FDBuild));
-            infos.Add(new BuildEventInfo("ToolsDir", ToolsDir));
-            infos.Add(new BuildEventInfo("TimeStamp", DateTime.Now.ToString("g")));
+            List<BuildEventInfo> infos = new List<BuildEventInfo>
+            {
+                new BuildEventInfo("BaseDir", BaseDir),
+                new BuildEventInfo("FDBuild", FDBuild),
+                new BuildEventInfo("ToolsDir", ToolsDir),
+                new BuildEventInfo("TimeStamp", DateTime.Now.ToString("g"))
+            };
             if (project != null)
             {
                 infos.Add(new BuildEventInfo("OutputFile", project.OutputPath));
@@ -63,24 +65,19 @@ namespace ProjectManager.Projects
             return infos.ToArray();
         }
 
-        public string FDBuildDir { get { return Path.GetDirectoryName(FDBuild); } }
-        public string ToolsDir { get { return Path.GetDirectoryName(FDBuildDir); } }
+        public string FDBuildDir => Path.GetDirectoryName(FDBuild);
+        public string ToolsDir => Path.GetDirectoryName(FDBuildDir);
 
         public string BaseDir
         {
             get
             {
                 string localPath = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase).LocalPath;
-                string entry = Path.GetFileName(localPath);
-                string flashdevelop = DistroConfig.DISTRIBUTION_NAME + ".exe";
-
                 string appDir = Path.GetDirectoryName(localPath);
-                if (!entry.Equals(flashdevelop, StringComparison.OrdinalIgnoreCase))
-                {
-                    // assume we're running in fdbuild.exe - appDir is fdbuildDir
-                    string toolsDir = Path.GetDirectoryName(appDir);
-                    appDir = Path.GetDirectoryName(toolsDir);
-                }
+#if FDBUILD
+                string toolsDir = Path.GetDirectoryName(appDir);
+                appDir = Path.GetDirectoryName(toolsDir);
+#endif
 
                 string local = Path.Combine(appDir, ".local");
                 if (File.Exists(local)) return appDir;
@@ -95,18 +92,15 @@ namespace ProjectManager.Projects
             get
             {
                 string localPath = new Uri(Assembly.GetEntryAssembly().GetName().CodeBase).LocalPath;
-                string entry = Path.GetFileName(localPath);
-                string flashdevelop = DistroConfig.DISTRIBUTION_NAME + ".exe";
 
-                // special behavior if we're running in flashdevelop.exe
-                if (entry.Equals(flashdevelop, StringComparison.OrdinalIgnoreCase))
-                {
-                    string appDir = Path.GetDirectoryName(localPath);
-                    string toolsDir = Path.Combine(appDir, "Tools");
-                    string fdbuildDir = Path.Combine(toolsDir, "fdbuild");
-                    return Path.Combine(fdbuildDir, "fdbuild.exe");
-                }
-                else return localPath;
+#if !FDBUILD
+                string appDir = Path.GetDirectoryName(localPath);
+                string toolsDir = Path.Combine(appDir, "Tools");
+                string fdbuildDir = Path.Combine(toolsDir, "fdbuild");
+                return Path.Combine(fdbuildDir, "fdbuild.exe");
+#else
+                return localPath;
+#endif
             }
         }
 

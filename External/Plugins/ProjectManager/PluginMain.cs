@@ -45,6 +45,7 @@ namespace ProjectManager
         public const string Menu = "ProjectManager.Menu";
         public const string ToolBar = "ProjectManager.ToolBar";
         public const string Project = "ProjectManager.Project";
+        public const string ProjectSetUp = "ProjectManager.ProjectSetUp";
         public const string CleanProject = "ProjectManager.CleanProject";
         public const string TestProject = "ProjectManager.TestingProject";
         public const string BuildProject = "ProjectManager.BuildingProject";
@@ -679,6 +680,7 @@ namespace ProjectManager
             BuildActions.GetCompilerPath(project); // detect project's SDK
             BroadcastProjectInfo(project);
             projectActions.UpdateASCompletion(MainForm, project);
+            BroadcastProjectSetUp(project);
 
             // ui
             pluginUI.SetProject(project);
@@ -1079,6 +1081,7 @@ namespace ProjectManager
 
         private void OpenProjectSilent(string projectPath)
         {
+            if (!Path.IsPathRooted(projectPath)) projectPath = Path.GetFullPath(projectPath);
             Project project = projectActions.OpenProjectSilent(projectPath);
             if (project != null) SetProject(project);
         }
@@ -1217,31 +1220,37 @@ namespace ProjectManager
 
         #region Event Broadcasting
 
-        public void BroadcastMenuInfo()
+        private void BroadcastMenuInfo()
         {
             DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.Menu, this.menus.ProjectMenu);
             EventManager.DispatchEvent(this, de);
         }
 
-        public void BroadcastToolBarInfo()
+        private void BroadcastToolBarInfo()
         {
             DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.ToolBar, this.pluginUI.TreeBar);
             EventManager.DispatchEvent(this, de);
         }
 
-        public void BroadcastProjectInfo(Project project)
+        private void BroadcastProjectInfo(Project project)
         {
             DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.Project, project);
             EventManager.DispatchEvent(this, de);
         }
 
-        public void BroadcastBuildComplete(IProject project)
+        private void BroadcastProjectSetUp(Project project)
+        {
+            DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.ProjectSetUp, project);
+            EventManager.DispatchEvent(this, de);
+        }
+
+        private void BroadcastBuildComplete(IProject project)
         {
             DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.BuildComplete, project);
             EventManager.DispatchEvent(this, de);
         }
 
-        public void BroadcastBuildFailed(IProject project)
+        private void BroadcastBuildFailed(IProject project)
         {
             DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.BuildFailed, project);
             EventManager.DispatchEvent(this, de);

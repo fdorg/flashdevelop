@@ -92,9 +92,6 @@
     <Compile Include="Controls\ObjectRefsGrid.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\Win32.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="MxmlComplete.cs" />
     <Compile Include="MxmlFilter.cs" />
     <Compile Include="PluginMain.cs" />

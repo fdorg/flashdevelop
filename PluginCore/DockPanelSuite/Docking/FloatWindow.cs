@@ -235,20 +235,21 @@ namespace WeifenLuo.WinFormsUI.Docking
                     base.WndProc(ref m);
                     return;
                 }
-
-                DockPanel.SuspendLayout(true);
-
-                // Restore to panel
-                foreach (DockPane pane in NestedPanes)
+                if (DockPanel.AllowEndUserFloatChange)
                 {
-                    if (pane.DockState != DockState.Float)
-                        continue;
-                    pane.RestoreToPanel();
+                    DockPanel.SuspendLayout(true);
+
+                    // Restore to panel
+                    foreach (DockPane pane in NestedPanes)
+                    {
+                        if (pane.DockState != DockState.Float)
+                            continue;
+                        pane.RestoreToPanel();
+                    }
+
+                    DockPanel.ResumeLayout(true, true);
+                    return;
                 }
-
-
-                DockPanel.ResumeLayout(true, true);
-                return;
             }
             else if (m.Msg == WM_CHECKDISPOSE)
             {

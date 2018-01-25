@@ -29,14 +29,14 @@
         private void InitializeComponent()
         {
             this.container = new System.Windows.Forms.Panel();
-            this.tabControl = new System.Windows.Forms.TabControl();
+            this.tabControl = new System.Windows.Forms.TabControlEx();
             this.memoryPage = new System.Windows.Forms.TabPage();
             this.memStatsPanel = new System.Windows.Forms.Panel();
             this.memStatsLabel = new System.Windows.Forms.Label();
             this.memScaleLabel = new System.Windows.Forms.Label();
-            this.memScaleCombo = new System.Windows.Forms.ComboBox();
+            this.memScaleCombo = new System.Windows.Forms.FlatCombo();
             this.liveObjectsPage = new System.Windows.Forms.TabPage();
-            this.listView = new AS3Context.Controls.ListViewXP();
+            this.listView = new System.Windows.Forms.ListViewEx();
             this.typeColumn = new System.Windows.Forms.ColumnHeader();
             this.pkgColumn = new System.Windows.Forms.ColumnHeader();
             this.maxColumn = new System.Windows.Forms.ColumnHeader();
@@ -67,7 +67,7 @@
             this.container.Dock = System.Windows.Forms.DockStyle.Fill;
             this.container.Location = new System.Drawing.Point(1, 26);
             this.container.Name = "container";
-            this.container.Padding = new System.Windows.Forms.Padding(3, 3, 2, 2);
+            this.container.Padding = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.container.Size = new System.Drawing.Size(488, 338);
             this.container.TabIndex = 0;
             // 
@@ -88,7 +88,7 @@
             this.memoryPage.Controls.Add(this.memStatsPanel);
             this.memoryPage.Location = new System.Drawing.Point(4, 22);
             this.memoryPage.Name = "memoryPage";
-            this.memoryPage.Padding = new System.Windows.Forms.Padding(3);
+            this.memoryPage.Padding = new System.Windows.Forms.Padding(5);
             this.memoryPage.Size = new System.Drawing.Size(475, 307);
             this.memoryPage.TabIndex = 2;
             this.memoryPage.Text = "Memory";
@@ -144,7 +144,7 @@
             this.liveObjectsPage.Controls.Add(this.listView);
             this.liveObjectsPage.Location = new System.Drawing.Point(4, 22);
             this.liveObjectsPage.Name = "liveObjectsPage";
-            this.liveObjectsPage.Padding = new System.Windows.Forms.Padding(2, 3, 3, 2);
+            this.liveObjectsPage.Padding = new System.Windows.Forms.Padding(0);
             this.liveObjectsPage.Size = new System.Drawing.Size(475, 307);
             this.liveObjectsPage.TabIndex = 0;
             this.liveObjectsPage.Text = "Live Objects Count";
@@ -152,7 +152,7 @@
             // 
             // listView
             // 
-            this.listView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.listView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.typeColumn,
             this.pkgColumn,
@@ -201,7 +201,7 @@
             // 
             this.objectsPage.Location = new System.Drawing.Point(4, 22);
             this.objectsPage.Name = "objectsPage";
-            this.objectsPage.Padding = new System.Windows.Forms.Padding(2, 3, 3, 2);
+            this.objectsPage.Padding = new System.Windows.Forms.Padding(0);
             this.objectsPage.Size = new System.Drawing.Size(475, 307);
             this.objectsPage.TabIndex = 1;
             this.objectsPage.Text = "Objects";
@@ -318,7 +318,7 @@
 
         #endregion
 
-        private ListViewXP listView;
+        private System.Windows.Forms.ListView listView;
         private System.Windows.Forms.Panel container;
         private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripLabel memLabel;
