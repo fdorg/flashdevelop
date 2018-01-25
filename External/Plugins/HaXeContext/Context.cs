@@ -911,7 +911,7 @@ namespace HaXeContext
             if (!string.IsNullOrEmpty(cname) && cname != features.voidKey && classPath != null)
             {
                 // handle generic types
-                if (cname.IndexOf('<') > 0)
+                if (cname.Contains('<'))
                 {
                     Match genType = re_genericType.Match(cname);
                     if (genType.Success) result = ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile);
@@ -919,7 +919,7 @@ namespace HaXeContext
                 else
                 {
                     // typed array
-                    if (cname.IndexOf('@') > 0) result = ResolveTypeIndex(cname, inFile);
+                    if (cname.Contains('@')) result = ResolveTypeIndex(cname, inFile);
                     else
                     {
                         string package = "";
