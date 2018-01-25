@@ -91,7 +91,7 @@ namespace SourceControl.Sources.Git
 
         void UndoAdd_Click(object sender, EventArgs e)
         {
-            new ResetCommand(GetPathsArray());
+            new ResetCommand(GetPathsArray()).Run();
         }
 
         void Add_Click(object sender, EventArgs e)
@@ -108,7 +108,7 @@ namespace SourceControl.Sources.Git
         {
             if (currentNodes != null)
             {
-                new BlameCommand((currentNodes[0] as GenericNode).BackingPath);
+                new BlameCommand((currentNodes[0] as GenericNode).BackingPath).Run();
             }
         }
 
@@ -145,7 +145,7 @@ namespace SourceControl.Sources.Git
                 if (led.ShowDialog() != DialogResult.OK || led.Line == "")
                     return;
 
-                new CommitCommand(GetPathsArray(), led.Line);
+                new CommitCommand(GetPathsArray(), led.Line).Run();
             }
         }
 

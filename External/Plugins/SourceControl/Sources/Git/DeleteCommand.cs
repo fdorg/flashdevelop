@@ -12,7 +12,10 @@ namespace SourceControl.Sources.Git
         public DeleteCommand(string[] paths)
         {
             this.paths = paths;
-
+        }
+        
+        public override void Run()
+        {
             string args = "rm -f";
             int count = 0;
             foreach (string path in paths)

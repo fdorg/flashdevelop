@@ -7,9 +7,14 @@ namespace SourceControl.Sources.Mercurial
 {
     class DeleteCommand : BaseCommand
     {
-        string[] paths;
+        readonly string[] paths;
 
         public DeleteCommand(string[] paths)
+        {
+            this.paths = paths;
+        }
+
+        public override void Run()
         {
             string args = "rm -f";
             int count = 0;
@@ -30,12 +35,10 @@ namespace SourceControl.Sources.Mercurial
                 count++;
             }
 
-            this.paths = paths;
-
             if (count > 0) Run(args, Path.GetDirectoryName(paths[0]));
         }
 
-        override protected void Runner_ProcessEnded(object sender, int exitCode)
+        protected override void Runner_ProcessEnded(object sender, int exitCode)
         {
             base.Runner_ProcessEnded(sender, exitCode);
 

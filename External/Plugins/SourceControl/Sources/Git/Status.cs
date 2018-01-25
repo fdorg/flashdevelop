@@ -79,6 +79,11 @@ namespace SourceControl.Sources.Git
             return true;
         }
 
+        public override void Run()
+        {
+            throw new NotImplementedException();
+        }
+
         override protected void Runner_ProcessEnded(object sender, int exitCode)
         {
             runner = null;

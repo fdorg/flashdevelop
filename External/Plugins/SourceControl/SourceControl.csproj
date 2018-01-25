@@ -107,6 +107,7 @@
     <Compile Include="Sources\Git\TortoiseProc.cs" />
     <Compile Include="Sources\Git\UnstageCommand.cs" />
     <Compile Include="Sources\Ignores.cs" />
+    <Compile Include="Sources\IVCCommand.cs" />
     <Compile Include="Sources\Mercurial\AddCommand.cs" />
     <Compile Include="Sources\Mercurial\BaseCommand.cs" />
     <Compile Include="Sources\Mercurial\CommitCommand.cs" />

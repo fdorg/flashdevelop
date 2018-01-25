@@ -8,9 +8,12 @@ namespace SourceControl.Sources.Git
 {
     class UnstageCommand : BaseCommand
     {
+        readonly string path;
         public UnstageCommand(string path)
         {
-            Run($"reset HEAD \"{Path.GetFileName(path)}\"", Path.GetDirectoryName(path));
+            this.path = path;
         }
+
+        public override void Run() => Run($"reset HEAD \"{Path.GetFileName(path)}\"", Path.GetDirectoryName(path));
     }
 }

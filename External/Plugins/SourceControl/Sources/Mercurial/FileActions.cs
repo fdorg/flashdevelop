@@ -10,7 +10,7 @@
         public bool FileRename(string path, string newName)
         {
             return false;
-            /*new RenameCommand(path, newName);
+            /*new RenameCommand(path, newName).Run();
             return true; // operation handled*/
         }
 
@@ -18,7 +18,7 @@
         {
             if (confirm)
             {
-                new DeleteCommand(paths);
+                new DeleteCommand(paths).Run();
                 return true; // operation handled
             }
             else return false; // let cut/paste files
@@ -27,12 +27,12 @@
         public bool FileMove(string fromPath, string toPath)
         {
             return false;
-            /*new MoveCommand(fromPath, toPath);
+            /*new MoveCommand(fromPath, toPath).Run();
             return true;*/
         }
 
         public bool FileNew(string path) {
-            new AddCommand(path);
+            new AddCommand(path).Run();
             return false;
         }
         public bool FileOpen(string path) { return false; }

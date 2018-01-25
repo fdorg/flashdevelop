@@ -9,11 +9,14 @@ namespace SourceControl.Sources.Subversion
 
         public DeleteCommand(string[] paths)
         {
+            this.paths = paths;
+        }
+
+        public override void Run()
+        {
             string args = "delete --force";
             foreach (string path in paths)
                 args += " \"" + Path.GetFileName(path) + "\"";
-
-            this.paths = paths;
 
             Run(args, Path.GetDirectoryName(paths[0]));
         }
