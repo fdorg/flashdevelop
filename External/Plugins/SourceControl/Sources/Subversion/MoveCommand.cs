@@ -5,11 +5,15 @@ namespace SourceControl.Sources.Subversion
 {
     class MoveCommand : BaseCommand
     {
+        private readonly string args;
+        private readonly string directory;
+
         public MoveCommand(string fromPath, string toPath)
         {
-            string args = String.Format("move \"{0}\" \"{1}\"", Path.GetFileName(fromPath), toPath);
-
-            Run(args, Path.GetDirectoryName(fromPath));
+            args = $"move \"{Path.GetFileName(fromPath)}\" \"{toPath}\"";
+            directory = Path.GetDirectoryName(fromPath);
         }
+
+        public override void Run() => Run(args, directory);
     }
 }

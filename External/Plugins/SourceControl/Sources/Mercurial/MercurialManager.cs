@@ -90,6 +90,7 @@ namespace SourceControl.Sources.Mercurial
             {
                 status = new Status(rootPath);
                 status.OnResult += new StatusResult(Status_OnResult);
+                status.Run();
                 statusCache[rootPath] = status;
             }
             else status = statusCache[rootPath];
@@ -114,14 +115,8 @@ namespace SourceControl.Sources.Mercurial
             return false;
         }
 
-        public void Commit(string[] files, string message)
-        {
-            new CommitCommand(files, message, Path.GetDirectoryName(files[0]));
-        }
+        public IVCCommand Commit(string[] files, string message) => new CommitCommand(files, message, Path.GetDirectoryName(files[0]));
 
-        public void Unstage(string file)
-        {
-            new UnstageCommand(file);
-        }
+        public IVCCommand Unstage(string file) => new UnstageCommand(file);
     }
 }

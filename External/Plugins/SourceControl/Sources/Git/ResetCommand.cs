@@ -4,13 +4,18 @@ namespace SourceControl.Sources.Git
 {
     class ResetCommand : BaseCommand
     {
+        readonly string args;
+        readonly string dir;
+
         public ResetCommand(string[] paths)
         {
-            string args = "reset ";
+            args = "reset ";
             foreach (string path in paths)
                 args += " \"" + Path.GetFileName(path) + "\"";
 
-            Run(args, Path.GetDirectoryName(paths[0]));
+            dir = Path.GetDirectoryName(paths[0]);
         }
+
+        public override void Run() => Run(args, dir);
     }
 }

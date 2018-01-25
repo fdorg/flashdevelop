@@ -10,10 +10,18 @@ using SourceControl.Actions;
 
 namespace SourceControl.Sources.Subversion
 {
-    class BaseCommand
+    abstract class BaseCommand : IVCCommand
     {
         protected ProcessRunner runner;
         protected List<string> errors = new List<string>();
+        protected IVCCommand nextCommand; //using Func for lazy evaluation
+
+        public void ContinueWith(IVCCommand command)
+        {
+            nextCommand = command;
+        }
+
+        public abstract void Run();
 
         protected virtual void Run(string args, string workingDirectory)
         {
@@ -55,6 +63,8 @@ namespace SourceControl.Sources.Subversion
         {
             runner = null;
             DisplayErrors();
+
+            nextCommand?.Run();
 
             ProjectWatcher.ForceRefresh();
         }

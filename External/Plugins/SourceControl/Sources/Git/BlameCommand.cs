@@ -15,13 +15,17 @@ namespace SourceControl.Sources.Git
 
         public BlameCommand(string file)
         {
-            if (string.IsNullOrEmpty(file))
+            fileName = file;
+        }
+
+        public override void Run()
+        {
+            if (string.IsNullOrEmpty(fileName))
             {
                 Dispose();
             }
             else
             {
-                fileName = file;
                 running = false;
                 CheckExisting();
                 OpenAnnotatedDocument();
