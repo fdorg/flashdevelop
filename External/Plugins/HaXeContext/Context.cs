@@ -905,7 +905,7 @@ namespace HaXeContext
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         public override ClassModel ResolveType(string cname, FileModel inFile) => ResolveType(cname, inFile, true);
 
-        ClassModel ResolveType(string className, FileModel inFile, bool resolveStaticExtensions)
+        public ClassModel ResolveType(string className, FileModel inFile, bool resolveStaticExtensions)
         {
             var result = ClassModel.VoidClass;
             if (!string.IsNullOrEmpty(className) && className != features.voidKey && classPath != null)
@@ -970,7 +970,15 @@ namespace HaXeContext
                     }
                 }
             }
-            if (!result.IsVoid() && resolveStaticExtensions && inFile?.Imports.Count > 0) result.Members.Merge(ResolveStaticExtensions(result, inFile));
+            if (!result.IsVoid() && resolveStaticExtensions && inFile?.Imports.Count > 0)
+            {
+                var extensions = ResolveStaticExtensions(result, inFile);
+                if (extensions.Count > 0)
+                {
+                    result = (ClassModel) result.Clone();
+                    result.Members.Merge(extensions);
+                }
+            }
             return result;
         }
 
@@ -990,9 +998,8 @@ namespace HaXeContext
             {
                 var import = importModels[i];
                 var type = ResolveType(import.Name, inFile, false);
+                if (type.IsVoid() || type.Members.Count == 0) continue;
                 var access = TypesAffinity(target, type);
-                if (type.IsVoid() || type.Members.Count <= 0) continue;
-                target = (ClassModel)target.Clone();
                 var extends = target;
                 while (!extends.IsVoid())
                 {
@@ -1010,12 +1017,27 @@ namespace HaXeContext
                             var newMember = (MemberModel)member.Clone();
                             newMember.Parameters.RemoveAt(0);
                             newMember.Flags = FlagType.Dynamic | FlagType.Function;
+                            newMember.InFile = type.InFile;
                             result.Add(newMember);
                         }
                     }
                     extends.ResolveExtends();
                     extends = extends.Extends;
                 }
+            }
+            if (result.Count > 0)
+            {
+                result.Items.RemoveAll(extension =>
+                {
+                    var extends = target;
+                    while (!extends.IsVoid())
+                    {
+                        if (extends.Members.Items.Any(m => !m.Flags.HasFlag(FlagType.Static) && m.Name == extension.Name)) return true;
+                        extends.ResolveExtends();
+                        extends = extends.Extends;
+                    }
+                    return false;
+                });
             }
             return result;
         }

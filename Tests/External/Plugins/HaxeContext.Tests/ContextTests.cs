@@ -13,9 +13,9 @@ namespace HaXeContext
     [TestFixture]
     class ContextTests : ASCompleteTests
     {
-        protected static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
+        internal static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
-        protected static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.parser.{fileName}.hx";
+        internal static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.parser.{fileName}.hx";
 
         [TestFixtureSetUp]
         public void ContextTestsSetUp()
@@ -246,39 +246,46 @@ namespace HaXeContext
             ASContext.Context.Settings.InstalledSDKs = new[] {new InstalledSDK {Path = PluginBase.CurrentProject.CurrentSDK, Version = sdkVersion}};
             return ASContext.Context.ResolveToken(token, null);
         }
+    }
+
+    class ResolveStaticExtensionsTests : ASCompleteTests
+    {
+        Context context;
+
+        [TestFixtureSetUp]
+        public void SetUp()
+        {
+            ASContext.Context.SetHaxeFeatures();
+            sci.ConfigurationLanguage = "haxe";
+            context = new Context(new HaXeSettings()) {Classpath = ASContext.Context.Classpath};
+        }
 
         static IEnumerable<TestCaseData> ResolveStaticExtensionsTestCases
         {
             get
             {
-                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_1");
-                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_2");
-                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_3");
-                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_4");
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_1", true);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_2", true);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_3", true);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_4", true);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_5", false);
             }
         }
 
         [Test, TestCaseSource(nameof(ResolveStaticExtensionsTestCases))]
-        public void ResolveStaticExtensions(string fileName)
+        public void ResolveStaticExtensions(string fileName, bool hasExtensions)
         {
-            SetSrc(sci, ReadAllText(fileName));
+            SetSrc(sci, ContextTests.ReadAllText(fileName));
             var expr = ASComplete.GetExpressionType(sci, sci.CurrentPos);
-            var exprType = expr.Type;
-            var expectedExtensions = new List<MemberModel>();
-            foreach (var import in ASContext.Context.CurrentModel.Imports.Items.Where(it => it.Flags.HasFlag(FlagType.Using)).Reverse())
+            var relType = context.ResolveType(expr.Type.Name, ASContext.Context.CurrentModel, false);
+            var expectedExtensions = context.ResolveStaticExtensions(relType, ASContext.Context.CurrentModel).Items;
+            if (hasExtensions)
             {
-                var type = ASContext.Context.ResolveType(import.Name, ASContext.Context.CurrentModel);
-                var access = ASContext.Context.TypesAffinity(exprType, type);
-                expectedExtensions.AddRange(type.Members.Items.Where(it =>
-                {
-                    return (it.Access & access) > 0
-                           && it.Flags.HasFlag(FlagType.Static | FlagType.Function)
-                           && it.Parameters?.Count > 0
-                           && it.Parameters[0].Type == exprType.Type;
-                }));
+                Assert.IsNotEmpty(expectedExtensions);
+                var exprType = expr.Type;
+                Assert.IsTrue(expectedExtensions.All(it => exprType.Members.Items.Any(m => m.Name == it.Name)));
             }
-            Assert.IsNotEmpty(expectedExtensions);
-            Assert.IsTrue(expectedExtensions.All(it => exprType.Members.Items.Any(m => m.Name == it.Name)));
+            else Assert.IsEmpty(expectedExtensions);
         }
     }
 }
