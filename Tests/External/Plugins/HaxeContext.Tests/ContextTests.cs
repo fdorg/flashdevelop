@@ -246,5 +246,34 @@ namespace HaXeContext
             ASContext.Context.Settings.InstalledSDKs = new[] {new InstalledSDK {Path = PluginBase.CurrentProject.CurrentSDK, Version = sdkVersion}};
             return ASContext.Context.ResolveToken(token, null);
         }
+
+        static IEnumerable<TestCaseData> ResolveStaticExtensionsTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_1");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(ResolveStaticExtensionsTestCases))]
+        public void ResolveStaticExtensions(string fileName)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            var expr = ASComplete.GetExpressionType(sci, sci.CurrentPos);
+            var exprType = expr.Type;
+            var expectedExtensions = new List<MemberModel>();
+            foreach (var import in ASContext.Context.CurrentModel.Imports.Items.Where(it => it.Flags.HasFlag(FlagType.Using)).Reverse())
+            {
+                var type = ASContext.Context.ResolveType(import.Name, null);
+                expectedExtensions.AddRange(type.Members.Items.Where(it =>
+                {
+                    return it.Access.HasFlag(Visibility.Public)
+                           && it.Flags.HasFlag(FlagType.Static | FlagType.Function)
+                           && it.Parameters?.Count > 0
+                           && it.Parameters[0].Type == exprType.Type;
+                }));
+            }
+            Assert.IsTrue(expectedExtensions.All(it => exprType.Members.Items.Any(m => m.Name == it.Name)));
+        }
     }
 }

@@ -905,30 +905,30 @@ namespace HaXeContext
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         public override ClassModel ResolveType(string cname, FileModel inFile) => ResolveType(cname, inFile, true);
 
-        ClassModel ResolveType(string cname, FileModel inFile, bool resolveUsings)
+        ClassModel ResolveType(string className, FileModel inFile, bool resolveStaticExtensions)
         {
             var result = ClassModel.VoidClass;
-            if (!string.IsNullOrEmpty(cname) && cname != features.voidKey && classPath != null)
+            if (!string.IsNullOrEmpty(className) && className != features.voidKey && classPath != null)
             {
                 // handle generic types
-                if (cname.Contains('<'))
+                if (className.Contains('<'))
                 {
-                    Match genType = re_genericType.Match(cname);
+                    Match genType = re_genericType.Match(className);
                     if (genType.Success) result = ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile);
                 }
                 else
                 {
                     // typed array
-                    if (cname.Contains('@')) result = ResolveTypeIndex(cname, inFile);
+                    if (className.Contains('@')) result = ResolveTypeIndex(className, inFile);
                     else
                     {
                         string package = "";
                         string inPackage = (features.hasPackages && inFile != null) ? inFile.Package : "";
-                        int p = cname.LastIndexOf('.');
+                        int p = className.LastIndexOf('.');
                         if (p > 0)
                         {
-                            package = cname.Substring(0, p);
-                            cname = cname.Substring(p + 1);
+                            package = className.Substring(0, p);
+                            className = className.Substring(p + 1);
                         }
                         else
                         {
@@ -936,7 +936,7 @@ namespace HaXeContext
                             if (inFile != null)
                             {
                                 foreach (ClassModel aClass in inFile.Classes)
-                                    if (aClass.Name == cname)
+                                    if (aClass.Name == className)
                                     {
                                         result = aClass;
                                         break;
@@ -949,7 +949,7 @@ namespace HaXeContext
                                 var imports = ResolveImports(inFile);
                                 foreach (MemberModel import in imports)
                                 {
-                                    if (import.Name == cname)
+                                    if (import.Name == className)
                                     {
                                         if (import.Type.Length > import.Name.Length)
                                         {
@@ -963,48 +963,57 @@ namespace HaXeContext
                                         break;
                                     }
                                 }
-                                if (!found && cname == "Function") result = stubFunctionClass;
+                                if (!found && className == "Function") result = stubFunctionClass;
                             }
                         }
-                        if (result.IsVoid()) result = GetModel(package, cname, inPackage);
+                        if (result.IsVoid()) result = GetModel(package, className, inPackage);
                     }
                 }
             }
-            if (resolveUsings && inFile?.Imports.Count > 0 && !result.IsVoid())
+            if (resolveStaticExtensions && inFile?.Imports.Count > 0 && !result.IsVoid()) result.Members.Merge(ResolveStaticExtensions(result, inFile));
+            return result;
+        }
+
+        /// <summary>
+        /// https://haxe.org/manual/lf-static-extension.html
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="inFile">Current file</param>
+        /// <returns></returns>
+        public MemberList ResolveStaticExtensions(ClassModel target, FileModel inFile)
+        {
+            var result = new MemberList();
+            IEnumerable<MemberModel> imports = inFile.Imports.Items;
+            if (GetCurrentSDKVersion() >= "3.3.0") imports = ResolveDefaults(inFile.Package).Items.Concat(imports);
+            var importModels = imports.Where(it => it.Flags.HasFlag(FlagType.Using)).ToArray();
+            for (var i = importModels.Length - 1; i >= 0; i--)
             {
-                var importModels = inFile.Imports.Items
-                    .Concat(ResolveDefaults(inFile.Package).Items)
-                    .Where(it => it.Flags.HasFlag(FlagType.Using))
-                    .ToArray();
-                for (var i = importModels.Length - 1; i >= 0; i--)
+                var import = importModels[i];
+                var type = ResolveType(import.Name, inFile, false);
+                if (type.IsVoid() || type.Members.Count <= 0) continue;
+                target = (ClassModel)target.Clone();
+                var extends = target;
+                while (!extends.IsVoid())
                 {
-                    var import = importModels[i];
-                    var type = ResolveType(import.Name, inFile, false);
-                    if (type.IsVoid() || type.Members.Count <= 0) continue;
-                    result = (ClassModel) result.Clone();
-                    var extends = result;
-                    while (!extends.IsVoid())
+                    foreach (MemberModel member in type.Members)
                     {
-                        foreach (MemberModel member in type.Members)
+                        if (member.Access.HasFlag(Visibility.Public) && member.Flags.HasFlag(FlagType.Static | FlagType.Function) && member.Parameters?.Count > 0)
                         {
-                            if (member.Flags.HasFlag(FlagType.Static) && member.Access.HasFlag(Visibility.Public) && member.Parameters?.Count > 0)
-                            {
-                                var extendsType = extends.Type;
-                                var firstParamType = member.Parameters[0].Type;
-                                var index = extendsType.IndexOf('<');
-                                if (index != -1) extendsType = extendsType.Remove(index);
-                                index = firstParamType.IndexOf('<');
-                                if (index != -1) firstParamType = firstParamType.Remove(index);
-                                if (firstParamType != extendsType) continue;
-                                var newMember = (MemberModel) member.Clone();
-                                newMember.Parameters.RemoveAt(0);
-                                newMember.Flags = FlagType.Dynamic | FlagType.Function;
-                                result.Members.Add(newMember);
-                            }
+                            var extendsType = extends.Type;
+                            var firstParamType = member.Parameters[0].Type;
+                            var index = extendsType.IndexOf('<');
+                            if (index != -1) extendsType = extendsType.Remove(index);
+                            index = firstParamType.IndexOf('<');
+                            if (index != -1) firstParamType = firstParamType.Remove(index);
+                            if (firstParamType != extendsType) continue;
+                            var newMember = (MemberModel)member.Clone();
+                            newMember.Parameters.RemoveAt(0);
+                            newMember.Flags = FlagType.Dynamic | FlagType.Function;
+                            result.Add(newMember);
                         }
-                        extends.ResolveExtends();
-                        extends = extends.Extends;
                     }
+                    extends.ResolveExtends();
+                    extends = extends.Extends;
                 }
             }
             return result;
