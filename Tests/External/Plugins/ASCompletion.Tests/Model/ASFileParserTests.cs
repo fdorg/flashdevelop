@@ -516,6 +516,10 @@ namespace ASCompletion.Model
                 Assert.AreEqual(1, member.Parameters.Count);
                 Assert.AreEqual("i", member.Parameters[0].Name);
                 Assert.AreEqual("Int", member.Parameters[0].Type);
+                Assert.IsNotNull(implicitCastAbstract.MetaDatas);
+                Assert.IsNotEmpty(implicitCastAbstract.MetaDatas);
+                Assert.AreEqual("Int", implicitCastAbstract.MetaDatas.Find(it => it.Name == "from").RawParams);
+                Assert.AreEqual("Int", implicitCastAbstract.MetaDatas.Find(it => it.Name == "to").RawParams);
             }
 
             [Test(Description = "Includes Commit 51938e0")]
