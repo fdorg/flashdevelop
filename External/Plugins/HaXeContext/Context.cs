@@ -970,7 +970,7 @@ namespace HaXeContext
                     }
                 }
             }
-            if (resolveStaticExtensions && inFile?.Imports.Count > 0 && !result.IsVoid()) result.Members.Merge(ResolveStaticExtensions(result, inFile));
+            if (!result.IsVoid() && resolveStaticExtensions && inFile?.Imports.Count > 0) result.Members.Merge(ResolveStaticExtensions(result, inFile));
             return result;
         }
 
@@ -990,6 +990,7 @@ namespace HaXeContext
             {
                 var import = importModels[i];
                 var type = ResolveType(import.Name, inFile, false);
+                var access = TypesAffinity(target, type);
                 if (type.IsVoid() || type.Members.Count <= 0) continue;
                 target = (ClassModel)target.Clone();
                 var extends = target;
@@ -997,7 +998,7 @@ namespace HaXeContext
                 {
                     foreach (MemberModel member in type.Members)
                     {
-                        if (member.Access.HasFlag(Visibility.Public) && member.Flags.HasFlag(FlagType.Static | FlagType.Function) && member.Parameters?.Count > 0)
+                        if ((member.Access & access) > 0 && member.Flags.HasFlag(FlagType.Static | FlagType.Function) && member.Parameters?.Count > 0)
                         {
                             var extendsType = extends.Type;
                             var firstParamType = member.Parameters[0].Type;

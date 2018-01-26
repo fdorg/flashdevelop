@@ -253,6 +253,8 @@ namespace HaXeContext
             {
                 yield return new TestCaseData("ResolveStaticExtensions_Issue1900_1");
                 yield return new TestCaseData("ResolveStaticExtensions_Issue1900_2");
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_3");
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_4");
             }
         }
 
@@ -265,15 +267,17 @@ namespace HaXeContext
             var expectedExtensions = new List<MemberModel>();
             foreach (var import in ASContext.Context.CurrentModel.Imports.Items.Where(it => it.Flags.HasFlag(FlagType.Using)).Reverse())
             {
-                var type = ASContext.Context.ResolveType(import.Name, null);
+                var type = ASContext.Context.ResolveType(import.Name, ASContext.Context.CurrentModel);
+                var access = ASContext.Context.TypesAffinity(exprType, type);
                 expectedExtensions.AddRange(type.Members.Items.Where(it =>
                 {
-                    return it.Access.HasFlag(Visibility.Public)
+                    return (it.Access & access) > 0
                            && it.Flags.HasFlag(FlagType.Static | FlagType.Function)
                            && it.Parameters?.Count > 0
                            && it.Parameters[0].Type == exprType.Type;
                 }));
             }
+            Assert.IsNotEmpty(expectedExtensions);
             Assert.IsTrue(expectedExtensions.All(it => exprType.Members.Items.Any(m => m.Name == it.Name)));
         }
     }

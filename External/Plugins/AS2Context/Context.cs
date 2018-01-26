@@ -570,6 +570,14 @@ namespace AS2Context
                 if (first == '{' && last == '}') return ResolveType(features.objectKey, inFile);
                 if (first == '[' && last == ']') return ResolveType(features.arrayKey, inFile);
                 if (first == '"' || first == '\'') return ResolveType(features.stringKey, inFile);
+                var m = Regex.Match(token, "^new\\s");
+                if (m.Success)
+                {
+                    var index = token.IndexOfOrdinal("(");
+                    var startIndex = m.Index + m.Length;
+                    if (index != -1) return ResolveType(token.Substring(startIndex, index - startIndex), inFile);
+                    return ResolveType(token.Substring(startIndex), inFile);
+                }
             }
             return base.ResolveToken(token, inFile);
         }
