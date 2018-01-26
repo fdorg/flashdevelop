@@ -181,6 +181,7 @@
     <EmbeddedResource Include="Test Files\parser\IsImported_issue1969_1.hx" />
     <EmbeddedResource Include="Test Files\parser\IsImported_issue1969_2.hx" />
     <EmbeddedResource Include="Test Files\parser\ResolveStaticExtensions_Issue1900_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveStaticExtensions_Issue1900_2.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

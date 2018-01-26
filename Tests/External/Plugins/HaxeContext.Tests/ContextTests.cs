@@ -252,6 +252,7 @@ namespace HaXeContext
             get
             {
                 yield return new TestCaseData("ResolveStaticExtensions_Issue1900_1");
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_2");
             }
         }
 
