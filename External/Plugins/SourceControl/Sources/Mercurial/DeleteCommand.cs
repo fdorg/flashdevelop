@@ -34,7 +34,7 @@ namespace SourceControl.Sources.Mercurial
                 args += " \"" + Path.GetFileName(path) + "\"";
                 count++;
             }
-            this.paths = paths;
+
             if (count > 0) Run(args, Path.GetDirectoryName(paths[0]));
         }
 

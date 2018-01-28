@@ -11,25 +11,13 @@ using SourceControl.Actions;
 
 namespace SourceControl.Sources.Git
 {
-    internal abstract class BaseCommand : IVCCommand
+    internal abstract class BaseCommand : VCCommand
     {
         private static string resolvedCmd;
         private static string qualifiedCmd;
         
         protected ProcessRunner runner;
         protected List<string> errors = new List<string>();
-        protected IVCCommand nextCommand;
-
-        public IVCCommand ContinueWith(IVCCommand command)
-        {
-            if (nextCommand == null)
-                nextCommand = command;
-            else
-                nextCommand.ContinueWith(command);
-            return this;
-        }
-
-        public abstract void Run();
 
         protected virtual void Run(string args, string workingDirectory)
         {

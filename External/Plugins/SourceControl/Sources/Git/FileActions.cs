@@ -34,10 +34,7 @@
         public void FileAfterMove(string fromPath, VCItemStatus status, string toPath)
         {
             if (status == VCItemStatus.Added)
-            {
-
                 new UnstageCommand(fromPath).ContinueWith(new AddCommand(toPath)).Run();
-            }
         }
 
         public bool FileNew(string path)

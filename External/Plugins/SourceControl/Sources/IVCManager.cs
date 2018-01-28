@@ -45,13 +45,13 @@ namespace SourceControl.Sources
         /// <summary>
         /// Commits the given files with the given message
         /// </summary>
-        IVCCommand Commit(string[] files, string message);
+        VCCommand Commit(string[] files, string message);
 
         /// <summary>
         /// Removes a file from the staging area
         /// </summary>
         /// <param name="file"></param>
-        IVCCommand Unstage(string file);
+        VCCommand Unstage(string file);
     }
 
     /// <summary>

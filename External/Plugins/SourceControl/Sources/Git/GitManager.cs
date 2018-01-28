@@ -114,8 +114,8 @@ namespace SourceControl.Sources.Git
             return false;
         }
 
-        public IVCCommand Commit(string[] files, string message) => new CommitCommand(files, message, Path.GetDirectoryName(files[0]));
+        public VCCommand Commit(string[] files, string message) => new CommitCommand(files, message, Path.GetDirectoryName(files[0]));
 
-        public IVCCommand Unstage(string file) => new UnstageCommand(file);
+        public VCCommand Unstage(string file) => new UnstageCommand(file);
     }
 }

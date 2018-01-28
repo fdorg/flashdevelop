@@ -116,8 +116,8 @@ namespace SourceControl.Sources.Subversion
             return false;
         }
 
-        public IVCCommand Commit(string[] files, string message) => new CommitCommand(files, message, Path.GetDirectoryName(files[0]));
+        public VCCommand Commit(string[] files, string message) => new CommitCommand(files, message, Path.GetDirectoryName(files[0]));
 
-        public IVCCommand Unstage(string file) => null; //Not sure what to do here, ignore for now
+        public VCCommand Unstage(string file) => null; //Not sure what to do here, ignore for now
     }
 }
