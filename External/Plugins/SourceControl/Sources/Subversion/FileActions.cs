@@ -31,7 +31,7 @@
 
         public void FileAfterMove(string fromPath, VCItemStatus status, string toPath)
         {
-            //TODO: what to do here
+            new AddCommand(toPath).ContinueWith(new DeleteCommand(new []{fromPath})).Run();
         }
 
         public bool FileNew(string path)
