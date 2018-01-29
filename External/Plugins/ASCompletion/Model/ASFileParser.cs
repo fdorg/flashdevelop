@@ -1895,7 +1895,8 @@ namespace ASCompletion.Model
 
             string token = curToken.Text;
             int dotIndex = token.LastIndexOf('.');
-            if (evalKeyword && (token.Length > 2 || (haXe && token.Length >= 2)))
+            var minTokenLength = haXe ? 2 : 3;
+            if (evalKeyword && token.Length >= minTokenLength)
             {
                 if (dotIndex > 0) token = token.Substring(dotIndex + 1);
 
@@ -2037,7 +2038,7 @@ namespace ASCompletion.Model
                             curModifiers |= FlagType.Getter;
                             return true;
                         }
-                        else if (token == "set")
+                        if (token == "set")
                         {
                             foundKeyword = FlagType.Function;
                             curModifiers |= FlagType.Setter;
@@ -2393,8 +2394,7 @@ namespace ASCompletion.Model
                         {
                             if (curClass.MetaDatas == null)
                                 curClass.MetaDatas = carriedMetaData;
-                            else
-                                foreach (var meta in carriedMetaData) curClass.MetaDatas.Add(meta);
+                            else curClass.MetaDatas.AddRange(carriedMetaData);
 
                             carriedMetaData = null;
                         }
