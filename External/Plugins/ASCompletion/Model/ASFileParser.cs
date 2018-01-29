@@ -1895,7 +1895,8 @@ namespace ASCompletion.Model
 
             string token = curToken.Text;
             int dotIndex = token.LastIndexOf('.');
-            if (evalKeyword && (token.Length > 2))
+            var minTokenLength = haXe ? 2 : 3;
+            if (evalKeyword && token.Length >= minTokenLength)
             {
                 if (dotIndex > 0) token = token.Substring(dotIndex + 1);
 
@@ -2001,14 +2002,30 @@ namespace ASCompletion.Model
                             return true;
                         }
                     }
-
-                    else if (context == FlagType.Abstract) 
+                    else if (context == FlagType.Abstract)
                     {
-                        if (features.hasTypeDefs && token == "from")
+                        if (features.hasTypeDefs)
                         {
-                            foundKeyword = FlagType.Class;
-                            curModifiers = FlagType.Extends;
-                            return true;
+                            if (token == "from")
+                            {
+                                foundKeyword = FlagType.Class;
+                                curModifiers = FlagType.Extends;
+                                if (curClass != null)
+                                {
+                                    if (curClass.MetaDatas == null) curClass.MetaDatas = new List<ASMetaData>();
+                                    curClass.MetaDatas.Add(new ASMetaData(token) {RawParams = prevToken.Text});
+                                }
+                                return true;
+                            }
+                            if (token == "to")
+                            {
+                                if (curClass != null)
+                                {
+                                    if (curClass.MetaDatas == null) curClass.MetaDatas = new List<ASMetaData>();
+                                    curClass.MetaDatas.Add(new ASMetaData(token) {RawParams = prevToken.Text});
+                                }
+                                return true;
+                            }
                         }
                     }
 
@@ -2021,7 +2038,7 @@ namespace ASCompletion.Model
                             curModifiers |= FlagType.Getter;
                             return true;
                         }
-                        else if (token == "set")
+                        if (token == "set")
                         {
                             foundKeyword = FlagType.Function;
                             curModifiers |= FlagType.Setter;
@@ -2377,8 +2394,7 @@ namespace ASCompletion.Model
                         {
                             if (curClass.MetaDatas == null)
                                 curClass.MetaDatas = carriedMetaData;
-                            else
-                                foreach (var meta in carriedMetaData) curClass.MetaDatas.Add(meta);
+                            else curClass.MetaDatas.AddRange(carriedMetaData);
 
                             carriedMetaData = null;
                         }
@@ -2553,8 +2569,7 @@ namespace ASCompletion.Model
                             {
                                 if (member.MetaDatas == null)
                                     member.MetaDatas = carriedMetaData;
-                                else
-                                    foreach (var meta in carriedMetaData) member.MetaDatas.Add(meta);
+                                else member.MetaDatas.AddRange(carriedMetaData);
 
                                 carriedMetaData = null;
                             }
@@ -2618,8 +2633,7 @@ namespace ASCompletion.Model
                         {
                             if (member.MetaDatas == null)
                                 member.MetaDatas = carriedMetaData;
-                            else
-                                foreach (var meta in carriedMetaData) member.MetaDatas.Add(meta);
+                            else member.MetaDatas.AddRange(carriedMetaData);
 
                             carriedMetaData = null;
                         }
