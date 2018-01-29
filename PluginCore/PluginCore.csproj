@@ -320,6 +320,12 @@
     <Compile Include="PluginCore\Controls\FixedValuesCollectionEditor.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="PluginCore\Controls\MemoryMessageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PluginCore\Controls\MemoryMessageBox.Designer.cs">
+      <DependentUpon>MemoryMessageBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="PluginCore\Controls\MessageBoxManager.cs" />
     <Compile Include="PluginCore\Controls\ScrollBarEx.cs">
       <SubType>Component</SubType>

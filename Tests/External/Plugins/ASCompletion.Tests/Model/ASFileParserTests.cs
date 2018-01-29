@@ -516,6 +516,10 @@ namespace ASCompletion.Model
                 Assert.AreEqual(1, member.Parameters.Count);
                 Assert.AreEqual("i", member.Parameters[0].Name);
                 Assert.AreEqual("Int", member.Parameters[0].Type);
+                Assert.IsNotNull(implicitCastAbstract.MetaDatas);
+                Assert.IsNotEmpty(implicitCastAbstract.MetaDatas);
+                Assert.AreEqual("Int", implicitCastAbstract.MetaDatas.Find(it => it.Name == "from").RawParams);
+                Assert.AreEqual("Int", implicitCastAbstract.MetaDatas.Find(it => it.Name == "to").RawParams);
             }
 
             [Test(Description = "Includes Commit 51938e0")]
@@ -2015,6 +2019,14 @@ namespace ASCompletion.Model
                 var model = new FileModel {Context = new HaXeContext.Context(new HaXeContext.HaXeSettings()), haXe = true};
                 new ASFileParser().ParseSrc(model, sourceText);
                 return model.Classes.First().LineTo;
+            }
+
+            [Test]
+            public void ParseFile_Issue1964()
+            {
+                var model = new FileModel {Context = new HaXeContext.Context(new HaXeContext.HaXeSettings()), haXe = true};
+                new ASFileParser().ParseSrc(model, ReadAllTextHaxe("Issue1964_package_test.extern"));
+                Assert.AreEqual("test.extern", model.Package);
             }
         }
     }

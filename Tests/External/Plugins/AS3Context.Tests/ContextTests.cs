@@ -4,7 +4,6 @@ using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using ASCompletion.TestUtils;
-using NSubstitute;
 using NUnit.Framework;
 
 namespace AS3Context

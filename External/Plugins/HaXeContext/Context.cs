@@ -18,6 +18,7 @@ using ProjectManager.Projects.Haxe;
 using ProjectManager.Projects;
 using AS3Context;
 using HaXeContext.Completion;
+using HaXeContext.Generators;
 using PluginCore.Utilities;
 using ScintillaNet;
 
@@ -154,6 +155,7 @@ namespace HaXeContext
 
             haxelibsCache = new Dictionary<string, List<string>>();
             CodeGenerator = new CodeGenerator();
+            DocumentationGenerator = new DocumentationGenerator();
             //BuildClassPath(); // defered to first use
         }
         #endregion
@@ -874,6 +876,7 @@ namespace HaXeContext
         public override bool IsImported(MemberModel member, int atLine)
         {
             if (member == ClassModel.VoidClass) return false;
+            if (member.InFile?.Package == CurrentModel.Package) return true;
             int p = member.Name.IndexOf('#');
             if (p > 0)
             {
@@ -1017,6 +1020,22 @@ namespace HaXeContext
                             sb.Insert(0, c);
                         }
                         return ResolveType(sb.ToString(), inFile);
+                    }
+                }
+                else if (token.StartsWithOrdinal("cast("))
+                {
+                    var groupCount = 0;
+                    var length = token.Length - 1;
+                    for (var i = "cast(".Length; i < length; i++)
+                    {
+                        var c = token[i];
+                        if (c == '{' || c == '(') groupCount++;
+                        else if (c == '}' || c == ')') groupCount--;
+                        else if (c == ',' && groupCount == 0)
+                        {
+                            i++;
+                            return ResolveType(token.Substring(i, length - i).Trim(), inFile);
+                        }
                     }
                 }
             }
