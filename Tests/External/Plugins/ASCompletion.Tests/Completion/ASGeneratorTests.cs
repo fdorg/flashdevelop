@@ -537,12 +537,17 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeImplementInterface_issue1696_1"), GeneratorJobType.ImplementInterface)
                                 .Returns(ReadAllTextHaxe("AfterImplementInterface_issue1696_1"))
-                                .SetName("Implement interface methods. Issue 1696")
+                                .SetName("Implement interface methods. Issue 1696. Case 1")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeImplementInterface_issue1696_2"), GeneratorJobType.ImplementInterface)
                                 .Returns(ReadAllTextHaxe("AfterImplementInterface_issue1696_2"))
-                                .SetName("Implement interface properties. Issue 1696")
+                                .SetName("Implement interface properties. Issue 1696. Case 2")
+                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
+                        yield return
+                            new TestCaseData(ReadAllTextHaxe("BeforeImplementInterface_issue1696_3"), GeneratorJobType.ImplementInterface)
+                                .Returns(ReadAllTextHaxe("AfterImplementInterface_issue1696_3"))
+                                .SetName("Implement interface properties. Issue 1696. Case 3")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
                     }
                 }
@@ -557,8 +562,10 @@ namespace ASCompletion.Completion
                 string Common(string sourceText, GeneratorJobType job)
                 {
                     SetSrc(sci, sourceText);
-                    ASGenerator.contextParam = ASContext.Context.CurrentClass.Implements.First();
-                    ASGenerator.GenerateJob(job, null, ASContext.Context.CurrentClass, null, null);
+                    var options = new List<ICompletionListItem>();
+                    ASGenerator.ContextualGenerator(sci, options);
+                    var item = options.Find(it => ((GeneratorItem)it).job == job);
+                    var value = item.Value;
                     return sci.Text;
                 }
             }

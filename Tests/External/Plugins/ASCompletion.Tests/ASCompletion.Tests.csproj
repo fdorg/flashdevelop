@@ -918,6 +918,8 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterImplementInterface_issue1982_5.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeImplementInterface_issue1982_6.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterImplementInterface_issue1982_6.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeImplementInterface_issue1696_3.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterImplementInterface_issue1696_3.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
