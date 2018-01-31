@@ -3233,7 +3233,7 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
-            public class GeneratorJobTypeConstructorTests : GenerateJob
+            public class ContextualGeneratorTests : GenerateJob
             {
                 [TestFixtureSetUp]
                 public void Setup() => ASContext.Context.Settings.GenerateImports.Returns(true);
@@ -3292,6 +3292,30 @@ namespace ASCompletion.Completion
                         yield return new TestCaseData("BeforeGenerateConstructor_issue1738_9", GeneratorJobType.ChangeConstructorDecl, true)
                             .Returns(ReadAllTextHaxe("AfterGenerateConstructor_issue1738_9"))
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/1738");
+                        yield return new TestCaseData("BeforeImplementInterface_issue1982_1", GeneratorJobType.ImplementInterface, true)
+                            .Returns(ReadAllTextHaxe("AfterImplementInterface_issue1982_1"))
+                            .SetName("Issue1982. Case 1")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1982");
+                        yield return new TestCaseData("BeforeImplementInterface_issue1982_2", GeneratorJobType.ImplementInterface, false)
+                            .Returns(ReadAllTextHaxe("AfterImplementInterface_issue1982_2"))
+                            .SetName("Issue1982. Case 2")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1982");
+                        yield return new TestCaseData("BeforeImplementInterface_issue1982_3", GeneratorJobType.ImplementInterface, false)
+                            .Returns(ReadAllTextHaxe("AfterImplementInterface_issue1982_3"))
+                            .SetName("Issue1982. Case 3")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1982");
+                        yield return new TestCaseData("BeforeImplementInterface_issue1982_4", GeneratorJobType.ImplementInterface, false)
+                            .Returns(ReadAllTextHaxe("AfterImplementInterface_issue1982_4"))
+                            .SetName("Issue1982. Case 4")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1982");
+                        yield return new TestCaseData("BeforeImplementInterface_issue1982_5", GeneratorJobType.ImplementInterface, false)
+                            .Returns(ReadAllTextHaxe("AfterImplementInterface_issue1982_5"))
+                            .SetName("Issue1982. Case 5")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1982");
+                        yield return new TestCaseData("BeforeImplementInterface_issue1982_6", GeneratorJobType.ImplementInterface, false)
+                            .Returns(ReadAllTextHaxe("AfterImplementInterface_issue1982_6"))
+                            .SetName("Issue1982. Case 6")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1982");
                     }
                 }
 

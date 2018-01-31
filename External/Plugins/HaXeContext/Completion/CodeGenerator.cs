@@ -22,6 +22,11 @@ namespace HaXeContext.Completion
             }
             base.ContextualGenerator(sci, position, expr, options);
         }
+
+        protected override bool CanShowImplementInterfaceList(ASResult resolve)
+        {
+            return resolve.Context.Separator != "=" && base.CanShowImplementInterfaceList(resolve);
+        }
     }
 
     class GeneratorItem : ICompletionListItem
