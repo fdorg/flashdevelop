@@ -3180,62 +3180,6 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
-            public class ContextualGeneratorTests : GenerateJob
-            {
-                [TestFixtureSetUp]
-                public void AddInterfaceDefTestsSetup() => ASContext.Context.Settings.GenerateImports.Returns(true);
-
-                public IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData("BeforeContextualGeneratorTests_issue1747_1")
-                                .Returns(ReadAllTextHaxe("AfterContextualGeneratorTests_issue1747_1"))
-                                .SetName("Issue1747. Case 1")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1747");
-                        yield return
-                            new TestCaseData("BeforeContextualGeneratorTests_issue1747_2")
-                                .Returns(ReadAllTextHaxe("AfterContextualGeneratorTests_issue1747_2"))
-                                .SetName("Issue1747. Case 2")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1747");
-                        yield return
-                            new TestCaseData("BeforeContextualGeneratorTests_issue1747_3")
-                                .Returns(ReadAllTextHaxe("AfterContextualGeneratorTests_issue1747_3"))
-                                .SetName("Issue1747. Case 3")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1747");
-                        yield return
-                            new TestCaseData("BeforeContextualGeneratorTests_issue1747_4")
-                                .Returns(ReadAllTextHaxe("AfterContextualGeneratorTests_issue1747_4"))
-                                .SetName("Issue1747. Case 4")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1747");
-                        yield return
-                            new TestCaseData("BeforeContextualGeneratorTests_issue1767_1")
-                                .Returns(ReadAllTextHaxe("AfterContextualGeneratorTests_issue1767_1"))
-                                .SetName("Issue1767. Case 1")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1767");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string fileName) => HaxeImpl(fileName, sci);
-
-                internal static string HaxeImpl(string fileName, ScintillaControl sci)
-                {
-                    SetHaxeFeatures(sci);
-                    SetCurrentFileName(GetFullPathHaxe(fileName));
-                    return Common(ReadAllTextHaxe(fileName), sci);
-                }
-
-                internal static string Common(string sourceText, ScintillaControl sci)
-                {
-                    SetSrc(sci, sourceText);
-                    ASGenerator.ContextualGenerator(sci, new List<ICompletionListItem>());
-                    return sci.Text;
-                }
-            }
-
-            [TestFixture]
             public class GenerateClassTests : GenerateJob
             {
                 public IEnumerable<TestCaseData> HaxeTestCases
@@ -3291,10 +3235,33 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GeneratorJobTypeConstructorTests : GenerateJob
             {
+                [TestFixtureSetUp]
+                public void Setup() => ASContext.Context.Settings.GenerateImports.Returns(true);
+
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
+                        yield return new TestCaseData("BeforeContextualGeneratorTests_issue1747_1", 0, false)
+                            .Returns(ReadAllTextHaxe("AfterContextualGeneratorTests_issue1747_1"))
+                            .SetName("Issue1747. Case 1")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1747");
+                        yield return new TestCaseData("BeforeContextualGeneratorTests_issue1747_2", 0, false)
+                            .Returns(ReadAllTextHaxe("AfterContextualGeneratorTests_issue1747_2"))
+                            .SetName("Issue1747. Case 2")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1747");
+                        yield return new TestCaseData("BeforeContextualGeneratorTests_issue1747_3", 0, false)
+                            .Returns(ReadAllTextHaxe("AfterContextualGeneratorTests_issue1747_3"))
+                            .SetName("Issue1747. Case 3")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1747");
+                        yield return new TestCaseData("BeforeContextualGeneratorTests_issue1747_4", 0, false)
+                            .Returns(ReadAllTextHaxe("AfterContextualGeneratorTests_issue1747_4"))
+                            .SetName("Issue1747. Case 4")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1747");
+                        yield return new TestCaseData("BeforeContextualGeneratorTests_issue1767_1", 0, false)
+                            .Returns(ReadAllTextHaxe("AfterContextualGeneratorTests_issue1767_1"))
+                            .SetName("Issue1767. Case 1")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1767");
                         yield return new TestCaseData("BeforeGenerateConstructor_issue1738_1", GeneratorJobType.Constructor, true)
                             .Returns(ReadAllTextHaxe("AfterGenerateConstructor_issue1738_1"))
                             .SetName("Generate constructor")
