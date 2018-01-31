@@ -529,7 +529,7 @@ namespace ASCompletion.Model
                 new ASFileParser().ParseSrc(model, ReadAllText("AbstractsTest2"));
                 var classModel = model.Classes.First();
                 Assert.IsNotNull(classModel.MetaDatas);
-                Assert.IsNotEmpty(classModel.MetaDatas);
+                Assert.AreEqual(2, classModel.MetaDatas.Count);
                 Assert.IsTrue(classModel.MetaDatas.Any(it => it.Name == ":forwardStatic"));
                 Assert.AreEqual("length, get, set", classModel.MetaDatas.Find(it => it.Name == ":forward").Params["Default"]);
             }
