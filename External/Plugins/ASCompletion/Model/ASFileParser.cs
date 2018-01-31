@@ -2511,12 +2511,17 @@ namespace ASCompletion.Model
                             curClass.LineTo = curToken.Line;
                             AddClass(model, curClass);
                         }
+                        if (carriedMetaData != null)
+                        {
+                            if (curClass.MetaDatas == null) curClass.MetaDatas = carriedMetaData;
+                            else curClass.MetaDatas.AddRange(carriedMetaData);
+                            carriedMetaData = null;
+                        }
                         break;
 
                     case FlagType.Variable:
                         // Haxe signatures: T -> T
-                        if (haXe && curMember != null && curMember.Type != null
-                            && curMember.Type.EndsWithOrdinal("->"))
+                        if (haXe && curMember?.Type != null && curMember.Type.EndsWithOrdinal("->"))
                         {
                             curMember.Type += token;
                             curMember.Type = ASFileParserRegexes.Spaces.Replace(curMember.Type, string.Empty).Replace(",", ", ");
