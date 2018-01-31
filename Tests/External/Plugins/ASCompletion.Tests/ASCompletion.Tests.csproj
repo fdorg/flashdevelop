@@ -906,6 +906,20 @@
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_stringInitializer_2.hx" />
     <EmbeddedResource Include="Test Files\parser\haxe\Issue1964_package_test.extern.hx" />
     <EmbeddedResource Include="Test Files\parser\haxe\AbstractsTest2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeImplementInterface_issue1982_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterImplementInterface_issue1982_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeImplementInterface_issue1982_2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterImplementInterface_issue1982_2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeImplementInterface_issue1982_3.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterImplementInterface_issue1982_3.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeImplementInterface_issue1982_4.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterImplementInterface_issue1982_4.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeImplementInterface_issue1982_5.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterImplementInterface_issue1982_5.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeImplementInterface_issue1982_6.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterImplementInterface_issue1982_6.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeImplementInterface_issue1696_3.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterImplementInterface_issue1696_3.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
