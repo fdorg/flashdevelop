@@ -69,7 +69,7 @@ namespace ASCompletion.Completion
 
             lookupPosition = -1;
             int style = sci.BaseStyleAt(position);
-            if (style == 19) // on keyword
+            if (style == 19 || style == 24) // on keyword
                 return false;
             contextMatch = null;
             contextToken = sci.GetWordFromPosition(position);
