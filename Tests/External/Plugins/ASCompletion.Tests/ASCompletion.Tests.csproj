@@ -928,6 +928,8 @@
     <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1984_6.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1984_7.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1984_8.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1984_9.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1984_10.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
