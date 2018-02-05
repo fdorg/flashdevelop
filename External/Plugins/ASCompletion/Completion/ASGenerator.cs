@@ -102,18 +102,17 @@ namespace ASCompletion.Completion
                 resolve.Type = null;
             }
 
-            if (isNotInterface && found.inClass != ClassModel.VoidClass && contextToken != null)
+            if (isNotInterface && !found.inClass.IsVoid() && contextToken != null)
             {
-                if (resolve.Member == null && resolve.Type != null
-                    && (resolve.Type.Flags & FlagType.Interface) > 0) // implement interface
+                // implement interface
+                if (CanShowImplementInterfaceList(resolve))
                 {
                     contextParam = resolve.Type.Type;
                     ShowImplementInterface(found, options);
                     return;
                 }
-
-                if (resolve.Member != null && !context.CurrentClass.IsVoid()
-                    && (resolve.Member.Flags & FlagType.LocalVar) > 0) // promote to class var
+                // promote to class var
+                if (!context.CurrentClass.IsVoid() && resolve.Member != null && (resolve.Member.Flags & FlagType.LocalVar) > 0)
                 {
                     contextMember = resolve.Member;
                     ShowPromoteLocalAndAddParameter(found, options);
@@ -312,7 +311,7 @@ namespace ASCompletion.Completion
             }
 
             // suggest generate constructor / toString
-            if (isNotInterface && found.member == null && found.inClass != ClassModel.VoidClass && contextToken == null)
+            if (isNotInterface && found.member == null && !found.inClass.IsVoid() && contextToken == null)
             {
                 bool hasConstructor = false;
                 bool hasToString = false;
@@ -336,7 +335,7 @@ namespace ASCompletion.Completion
                 && resolve.Member != null
                 && resolve.Type != null
                 && resolve.Type.QualifiedName == context.Features.stringKey
-                && found.inClass != ClassModel.VoidClass)
+                && !found.inClass.IsVoid())
             {
                 int lineStartPos = sci.PositionFromLine(sci.CurrentLine);
                 var text = sci.GetLine(line);
@@ -447,6 +446,12 @@ namespace ASCompletion.Completion
                 }
             }
             // TODO: Empty line, show generators list? yep
+        }
+
+        protected virtual bool CanShowImplementInterfaceList(ASResult resolve)
+        {
+            return resolve.Context.ContextFunction == null && resolve.Context.ContextMember == null
+                && resolve.Member == null && resolve.Type != null && (resolve.Type.Flags & FlagType.Interface) > 0;
         }
 
         private static MemberModel ResolveDelegate(string type, FileModel inFile)
