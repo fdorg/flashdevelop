@@ -934,6 +934,14 @@
     <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1987_2.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1987_3.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\ContextualGenerator_issue1987_4.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAddInterfaceDefTests_issue1989_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAddInterfaceDefTests_issue1989_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAddInterfaceDefTests_issue1989_2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAddInterfaceDefTests_issue1989_2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAddInterfaceDefTests_issue1989_3.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAddInterfaceDefTests_issue1989_3.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeAddInterfaceDefTests_issue1989_4.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\AfterAddInterfaceDefTests_issue1989_4.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue1992_typecheck.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue1992_typecheck.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue1992_typecheck_2.hx" />
