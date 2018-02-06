@@ -27,6 +27,12 @@ namespace HaXeContext.Completion
         {
             return resolve.Context.Separator != "=" && base.CanShowImplementInterfaceList(resolve);
         }
+
+        protected override bool CanShowGenerateConstructorAndToString(ScintillaControl sci, int position, FoundDeclaration found)
+        {
+            return base.CanShowGenerateConstructorAndToString(sci, position, found)
+                && !found.InClass.Flags.HasFlag(FlagType.Enum);
+        }
     }
 
     class GeneratorItem : ICompletionListItem

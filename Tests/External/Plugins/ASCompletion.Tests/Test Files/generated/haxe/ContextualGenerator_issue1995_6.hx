@@ -1,0 +1,2 @@
+﻿package;
+class Main $(EntryPoint){}
