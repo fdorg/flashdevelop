@@ -297,8 +297,8 @@ namespace ASCompletion.Completion
                 {
                     var returnType = GetStatementReturnType(sci, found.inClass, sci.GetLine(curLine), sci.PositionFromLine(curLine));
                     if (returnType.resolve.Member?.Type == ASContext.Context.Features.voidKey) return;
-                    if (returnType.resolve.Type == null && returnType.resolve.Context?.WordBefore == "new") ShowNewClassList(found, options, returnType.resolve.Context);
-                    else ShowAssignStatementToVarList(found, options, returnType);
+                    if (returnType.resolve.Type == null && returnType.resolve.Context?.WordBefore == "new") ShowNewClassList(found, returnType.resolve.Context, options);
+                    else ShowAssignStatementToVarList(found, returnType, options);
                     return;
                 }
             }
@@ -423,13 +423,13 @@ namespace ASCompletion.Completion
                                 var constructorParametersCount = constructor.Parameters?.Count ?? 0;
                                 var wordEndPosition = sci.WordEndPosition(sci.CurrentPos, true);
                                 var parameters = ParseFunctionParameters(sci, wordEndPosition);
-                                if (parameters.Count != constructorParametersCount) ShowChangeConstructorDeclarationList(found, options, parameters);
+                                if (parameters.Count != constructorParametersCount) ShowChangeConstructorDeclarationList(found, parameters, options);
                                 else
                                 {
                                     for (var i = 0; i < parameters.Count; i++)
                                     {
                                         if (parameters[i].paramType == constructor.Parameters[i].Type) continue;
-                                        ShowChangeConstructorDeclarationList(found, options, parameters);
+                                        ShowChangeConstructorDeclarationList(found, parameters, options);
                                         break;
                                     }
                                 }
@@ -630,7 +630,7 @@ namespace ASCompletion.Completion
 
         #region generators lists
 
-        private static void ShowImportClass(List<MemberModel> matches, List<ICompletionListItem> options)
+        private static void ShowImportClass(List<MemberModel> matches, ICollection<ICompletionListItem> options)
         {
             if (matches.Count == 1)
             {
@@ -647,7 +647,7 @@ namespace ASCompletion.Completion
             }
         }
 
-        private static void ShowPromoteLocalAndAddParameter(FoundDeclaration found, List<ICompletionListItem> options)
+        private static void ShowPromoteLocalAndAddParameter(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             string label = TextHelper.GetString("ASCompletion.Label.PromoteLocal");
             string labelMove = TextHelper.GetString("ASCompletion.Label.MoveDeclarationOnTop");
@@ -657,19 +657,19 @@ namespace ASCompletion.Completion
             options.Add(new GeneratorItem(labelParam, GeneratorJobType.AddAsParameter, found.member, found.inClass));
         }
 
-        private static void ShowConvertToConst(FoundDeclaration found, List<ICompletionListItem> options)
+        private static void ShowConvertToConst(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             string label = TextHelper.GetString("ASCompletion.Label.ConvertToConst");
             options.Add(new GeneratorItem(label, GeneratorJobType.ConvertToConst, found.member, found.inClass));
         }
 
-        private static void ShowImplementInterface(FoundDeclaration found, List<ICompletionListItem> options)
+        private static void ShowImplementInterface(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             string label = TextHelper.GetString("ASCompletion.Label.ImplementInterface");
             options.Add(new GeneratorItem(label, GeneratorJobType.ImplementInterface, null, found.inClass));
         }
 
-        private static void ShowNewVarList(FoundDeclaration found, List<ICompletionListItem> options)
+        private static void ShowNewVarList(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             bool generateClass = true;
             ScintillaControl sci = ASContext.CurSciControl;
@@ -750,19 +750,19 @@ namespace ASCompletion.Completion
             }
         }
 
-        private static void ShowChangeMethodDeclList(FoundDeclaration found, List<ICompletionListItem> options)
+        private static void ShowChangeMethodDeclList(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             string label = TextHelper.GetString("ASCompletion.Label.ChangeMethodDecl");
             options.Add(new GeneratorItem(label, GeneratorJobType.ChangeMethodDecl, found.member, found.inClass));
         }
 
-        private static void ShowChangeConstructorDeclarationList(FoundDeclaration found, ICollection<ICompletionListItem> options, IList<FunctionParameter> parameters)
+        private static void ShowChangeConstructorDeclarationList(FoundDeclaration found, IList<FunctionParameter> parameters, ICollection<ICompletionListItem> options)
         {
             var label = TextHelper.GetString("ASCompletion.Label.ChangeConstructorDecl");
             options.Add(new GeneratorItem(label, GeneratorJobType.ChangeConstructorDecl, found.member, found.inClass, parameters));
         }
 
-        private static void ShowNewMethodList(FoundDeclaration found, List<ICompletionListItem> options)
+        private static void ShowNewMethodList(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             ScintillaControl sci = ASContext.CurSciControl;
             ASResult result = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
@@ -785,15 +785,15 @@ namespace ASCompletion.Completion
             options.Add(new GeneratorItem(label, GeneratorJobType.VariablePublic, found.member, found.inClass));
         }
 
-        static void ShowAssignStatementToVarList(FoundDeclaration found, ICollection<ICompletionListItem> options, StatementReturnType data)
+        private static void ShowAssignStatementToVarList(FoundDeclaration found, StatementReturnType data, ICollection<ICompletionListItem> options)
         {
             var label = TextHelper.GetString("ASCompletion.Label.AssignStatementToVar");
             options.Add(new GeneratorItem(label, GeneratorJobType.AssignStatementToVar, found.member, found.inClass, data));
         }
 
-        private static void ShowNewClassList(FoundDeclaration found, ICollection<ICompletionListItem> options) => ShowNewClassList(found, options, null);
+        private static void ShowNewClassList(FoundDeclaration found, ICollection<ICompletionListItem> options) => ShowNewClassList(found, null, options);
 
-        static void ShowNewClassList(FoundDeclaration found, ICollection<ICompletionListItem> options, ASExpr expr)
+        private static void ShowNewClassList(FoundDeclaration found, ASExpr expr, ICollection<ICompletionListItem> options)
         {
             var label = TextHelper.GetString("ASCompletion.Label.GenerateClass");
             options.Add(new GeneratorItem(label, GeneratorJobType.Class, found.member, found.inClass, expr));
@@ -814,13 +814,13 @@ namespace ASCompletion.Completion
             }
         }
 
-        private static void ShowEventMetatagList(FoundDeclaration found, List<ICompletionListItem> options)
+        private static void ShowEventMetatagList(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             string label = TextHelper.GetString("ASCompletion.Label.GenerateEventMetatag");
             options.Add(new GeneratorItem(label, GeneratorJobType.EventMetatag, found.member, found.inClass));
         }
 
-        private static void ShowFieldFromParameter(FoundDeclaration found, List<ICompletionListItem> options)
+        private static void ShowFieldFromParameter(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             Hashtable parameters = new Hashtable();
             parameters["scope"] = GetDefaultVisibility(found.inClass);
@@ -835,7 +835,7 @@ namespace ASCompletion.Completion
             options.Add(new GeneratorItem(label, GeneratorJobType.FieldFromParameter, found.member, found.inClass, parameters));
         }
 
-        static void ShowAddInterfaceDefList(FoundDeclaration found, IEnumerable<string> interfaces, ICollection<ICompletionListItem> options)
+        private static void ShowAddInterfaceDefList(FoundDeclaration found, IEnumerable<string> interfaces, ICollection<ICompletionListItem> options)
         {
             var label = TextHelper.GetString("ASCompletion.Label.AddInterfaceDef");
             foreach (var interf in interfaces)
@@ -844,7 +844,7 @@ namespace ASCompletion.Completion
             }
         }
 
-        private static void ShowDelegateList(FoundDeclaration found, List<ICompletionListItem> options)
+        private static void ShowDelegateList(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             string label = String.Format(TextHelper.GetString("ASCompletion.Label.GenerateHandler"), "Delegate");
             options.Add(new GeneratorItem(label, GeneratorJobType.Delegate, found.member, found.inClass));
@@ -863,8 +863,9 @@ namespace ASCompletion.Completion
 
             for (int i = 0; i < choices.Length; i++)
             {
-                options.Add(new GeneratorItem(choices[i],
-                    choices[i] == labelContext ? GeneratorJobType.ComplexEvent : GeneratorJobType.BasicEvent,
+                var choice = choices[i];
+                options.Add(new GeneratorItem(choice,
+                    choice == labelContext ? GeneratorJobType.ComplexEvent : GeneratorJobType.BasicEvent,
                     found.member, found.inClass));
             }
         }
@@ -874,7 +875,7 @@ namespace ASCompletion.Completion
             return !ASContext.Context.ResolveType("flash.events.DataEvent", ASContext.Context.CurrentModel).IsVoid();
         }
 
-        private static void ShowGetSetList(FoundDeclaration found, List<ICompletionListItem> options)
+        private static void ShowGetSetList(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             string name = GetPropertyNameFor(found.member);
             ASResult result = new ASResult();
@@ -893,7 +894,7 @@ namespace ASCompletion.Completion
             ShowSetterList(found, options);
         }
 
-        static void ShowGetterList(FoundDeclaration found, ICollection<ICompletionListItem> options)
+        private static void ShowGetterList(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             var name = GetPropertyNameFor(found.member);
             var result = new ASResult();
@@ -903,7 +904,7 @@ namespace ASCompletion.Completion
             options.Add(new GeneratorItem(label, GeneratorJobType.Getter, found.member, found.inClass));
         }
 
-        static void ShowSetterList(FoundDeclaration found, ICollection<ICompletionListItem> options)
+        private static void ShowSetterList(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             var name = GetPropertyNameFor(found.member);
             var result = new ASResult();
