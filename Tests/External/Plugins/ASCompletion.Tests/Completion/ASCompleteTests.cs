@@ -475,19 +475,19 @@ namespace ASCompletion.Completion
                     yield return
                         new TestCaseData(ReadAllText("GetExpression_operator_is"))
                             .Returns(";(\"s\" is String).")
-                            .SetName("(\"s\" is String)");
+                            .SetName("(\"s\" is String).|");
                     yield return
                         new TestCaseData(ReadAllText("GetExpression_operator_as"))
                             .Returns(";(\"s\" as String).")
-                            .SetName("(\"s\" as String)");
+                            .SetName("(\"s\" as String).|");
                     yield return
                         new TestCaseData(ReadAllText("GetExpression_return_operator_as"))
                             .Returns("return;(\"s\" as String).")
-                            .SetName("return (\"s\" as String)");
+                            .SetName("return (\"s\" as String).|");
                     yield return
                         new TestCaseData(ReadAllText("GetExpression_issue1954"))
                             .Returns(";re")
-                            .SetName("function foo():Vector.<int> { re");
+                            .SetName("function foo():Vector.<int> { re|");
                     yield return
                         new TestCaseData("[].$(EntryPoint)")
                             .Returns(" [].")
@@ -862,7 +862,7 @@ namespace ASCompletion.Completion
                     yield return
                         new TestCaseData(ReadAllText("GetExpression_issue1749_increment5"))
                             .Returns("=getId()++")
-                            .SetName("var id = getId()++");
+                            .SetName("var id = getId()++|");
                     yield return
                         new TestCaseData(ReadAllText("GetExpression_issue1749_decrement"))
                             .Returns("--1")
@@ -882,11 +882,43 @@ namespace ASCompletion.Completion
                     yield return
                         new TestCaseData(ReadAllText("GetExpression_issue1749_decrement5"))
                             .Returns("=getId()--")
-                            .SetName("var id = getId()--");
+                            .SetName("var id = getId()--|");
                     yield return
                         new TestCaseData(ReadAllText("GetExpression_issue1954"))
                             .Returns(";re")
-                            .SetName("function foo():Array<Int> { re");
+                            .SetName("function foo():Array<Int> { re|");
+                    yield return
+                        new TestCaseData("(v:String).$(EntryPoint)")
+                            .Returns(" (v:String).")
+                            .SetName("(v:String).|");
+                    yield return
+                        new TestCaseData("(v:Iterable<Dynamic>).$(EntryPoint)")
+                            .Returns(" (v:Iterable<Dynamic>).")
+                            .SetName("(v:Iterable<Dynamic>).|");
+                    yield return
+                        new TestCaseData("(v:{x:Int, y:Int}).$(EntryPoint)")
+                            .Returns(" (v:{x:Int, y:Int}).")
+                            .SetName("(v:{x:Int, y:Int}).|");
+                    yield return
+                        new TestCaseData("(v:{x:Int, y:Int->Array<Int>}).$(EntryPoint)")
+                            .Returns(" (v:{x:Int, y:Int->Array<Int>}).")
+                            .SetName("(v:{x:Int, y:Int->Array<Int>}).|");
+                    yield return
+                        new TestCaseData("return (v:{x:Int, y:Int->Array<Int>}).$(EntryPoint)")
+                            .Returns("return;(v:{x:Int, y:Int->Array<Int>}).")
+                            .SetName("return (v:{x:Int, y:Int->Array<Int>}).|");
+                    yield return
+                        new TestCaseData("[(v:{x:Int, y:Int->Array<Int>}).$(EntryPoint)")
+                            .Returns(";(v:{x:Int, y:Int->Array<Int>}).")
+                            .SetName("[(v:{x:Int, y:Int->Array<Int>}).|");
+                    yield return
+                        new TestCaseData("${(v:{x:Int, y:Int->Array<Int>}).$(EntryPoint)")
+                            .Returns(";(v:{x:Int, y:Int->Array<Int>}).")
+                            .SetName("${(v:{x:Int, y:Int->Array<Int>}).|");
+                    yield return
+                        new TestCaseData("case _: (v:{x:Int, y:Int->Array<Int>}).$(EntryPoint)")
+                            .Returns(":(v:{x:Int, y:Int->Array<Int>}).")
+                            .SetName("case _: {(v:{x:Int, y:Int->Array<Int>}).|");
                 }
             }
 
