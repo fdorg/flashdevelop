@@ -23,14 +23,14 @@ namespace HaXeContext.Completion
             base.ContextualGenerator(sci, position, expr, options);
         }
 
-        protected override bool CanShowImplementInterfaceList(ASResult resolve)
+        protected override bool CanShowImplementInterfaceList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
-            return resolve.Context.Separator != "=" && base.CanShowImplementInterfaceList(resolve);
+            return expr.Context.Separator != "=" && base.CanShowImplementInterfaceList(sci, position, expr, found);
         }
 
-        protected override bool CanShowGenerateConstructorAndToString(ScintillaControl sci, int position, FoundDeclaration found)
+        protected override bool CanShowGenerateConstructorAndToString(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
-            return base.CanShowGenerateConstructorAndToString(sci, position, found)
+            return base.CanShowGenerateConstructorAndToString(sci, position, expr, found)
                 && !found.InClass.Flags.HasFlag(FlagType.Enum);
         }
     }

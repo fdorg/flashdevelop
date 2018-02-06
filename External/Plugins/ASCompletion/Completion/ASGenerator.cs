@@ -106,7 +106,7 @@ namespace ASCompletion.Completion
             if (isNotInterface && !found.InClass.IsVoid() && contextToken != null)
             {
                 // implement interface
-                if (CanShowImplementInterfaceList(resolve))
+                if (CanShowImplementInterfaceList(sci, position, resolve, found))
                 {
                     contextParam = resolve.Type.Type;
                     ShowImplementInterface(found, options);
@@ -259,7 +259,7 @@ namespace ASCompletion.Completion
                 }
 
                 // "add to interface" suggestion
-                if (CanShowAddToInterfaceList(resolve, found, line))
+                if (CanShowAddToInterfaceList(sci, position, resolve, found))
                 {
                     string funcName = found.Member.Name;
                     FlagType flags = found.Member.Flags & ~FlagType.Access;
@@ -304,7 +304,7 @@ namespace ASCompletion.Completion
             }
 
             // suggest generate constructor / toString
-            if (CanShowGenerateConstructorAndToString(sci, position, found))
+            if (CanShowGenerateConstructorAndToString(sci, position, resolve, found))
             {
                 bool hasConstructor = false;
                 bool hasToString = false;
@@ -441,7 +441,7 @@ namespace ASCompletion.Completion
             // TODO: Empty line, show generators list? yep
         }
 
-        protected virtual bool CanShowGenerateConstructorAndToString(ScintillaControl sci, int position, FoundDeclaration found)
+        protected virtual bool CanShowGenerateConstructorAndToString(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return contextToken == null
                 && found.Member == null
@@ -450,19 +450,19 @@ namespace ASCompletion.Completion
                 && position < sci.LineEndPosition(found.InClass.LineTo);
         }
 
-        protected virtual bool CanShowImplementInterfaceList(ASResult resolve)
+        protected virtual bool CanShowImplementInterfaceList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
-            return resolve.Context.ContextFunction == null && resolve.Context.ContextMember == null
-                && resolve.Member == null && resolve.Type != null && (resolve.Type.Flags & FlagType.Interface) > 0;
+            return expr.Context.ContextFunction == null && expr.Context.ContextMember == null
+                && expr.Member == null && expr.Type != null && (expr.Type.Flags & FlagType.Interface) > 0;
         }
 
-        protected virtual bool CanShowAddToInterfaceList(ASResult resolve, FoundDeclaration found, int currentLine)
+        protected virtual bool CanShowAddToInterfaceList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
-            return resolve.Member != null
-                   && !resolve.Member.Flags.HasFlag(FlagType.Static)
-                   && !resolve.Member.Flags.HasFlag(FlagType.Constructor)
-                   && resolve.Member.Name == found.Member.Name
-                   && currentLine == found.Member.LineFrom
+            return expr.Member != null
+                   && !expr.Member.Flags.HasFlag(FlagType.Static)
+                   && !expr.Member.Flags.HasFlag(FlagType.Constructor)
+                   && expr.Member.Name == found.Member.Name
+                   && sci.LineFromPosition(position) == found.Member.LineFrom
                    && ((found.Member.Flags & FlagType.Function) > 0
                        || (found.Member.Flags & FlagType.Getter) > 0
                        || (found.Member.Flags & FlagType.Setter) > 0)
