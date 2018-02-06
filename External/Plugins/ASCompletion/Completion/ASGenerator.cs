@@ -447,7 +447,7 @@ namespace ASCompletion.Completion
         /// <param name="sci">The Scintilla control containing the document</param>
         /// <param name="position">Cursor position</param>
         /// <param name="expr">Expression at cursor position</param>
-        /// <param name="found">The declaration(member or class) at current line(can not be null)</param>
+        /// <param name="found">The declaration target at current line(can not be null)</param>
         /// <returns></returns>
         protected virtual bool CanShowGenerateConstructorAndToString(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
@@ -464,7 +464,7 @@ namespace ASCompletion.Completion
         /// <param name="sci">The Scintilla control containing the document</param>
         /// <param name="position">Cursor position</param>
         /// <param name="expr">Expression at cursor position</param>
-        /// <param name="found">The declaration(member or class) at current line(can not be null)</param>
+        /// <param name="found">Declaration target at current line(can not be null)</param>
         /// <returns></returns>
         protected virtual bool CanShowImplementInterfaceList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
@@ -478,7 +478,7 @@ namespace ASCompletion.Completion
         /// <param name="sci">The Scintilla control containing the document</param>
         /// <param name="position">Cursor position</param>
         /// <param name="expr">Expression at cursor position</param>
-        /// <param name="found">The declaration(member or class) at current line(can not be null)</param>
+        /// <param name="found">Declaration target at current line(can not be null)</param>
         /// <returns></returns>
         protected virtual bool CanShowAddToInterfaceList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
