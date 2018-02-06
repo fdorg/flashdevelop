@@ -441,6 +441,14 @@ namespace ASCompletion.Completion
             // TODO: Empty line, show generators list? yep
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sci">The Scintilla control containing the document</param>
+        /// <param name="position">Cursor position</param>
+        /// <param name="expr">Expression at cursor position</param>
+        /// <param name="found">The declaration(member or class) at current line(can not be null)</param>
+        /// <returns></returns>
         protected virtual bool CanShowGenerateConstructorAndToString(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return contextToken == null
@@ -450,12 +458,28 @@ namespace ASCompletion.Completion
                 && position < sci.LineEndPosition(found.InClass.LineTo);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sci">The Scintilla control containing the document</param>
+        /// <param name="position">Cursor position</param>
+        /// <param name="expr">Expression at cursor position</param>
+        /// <param name="found">The declaration(member or class) at current line(can not be null)</param>
+        /// <returns></returns>
         protected virtual bool CanShowImplementInterfaceList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return expr.Context.ContextFunction == null && expr.Context.ContextMember == null
                 && expr.Member == null && expr.Type != null && (expr.Type.Flags & FlagType.Interface) > 0;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sci">The Scintilla control containing the document</param>
+        /// <param name="position">Cursor position</param>
+        /// <param name="expr">Expression at cursor position</param>
+        /// <param name="found">The declaration(member or class) at current line(can not be null)</param>
+        /// <returns></returns>
         protected virtual bool CanShowAddToInterfaceList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return expr.Member != null
