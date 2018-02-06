@@ -1583,7 +1583,34 @@ namespace ASCompletion.Completion
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, GeneratorJobType job, bool isUseTabs) => HaxeImpl(sourceText, job, isUseTabs, sci);
+                public string Haxe(string sourceText, GeneratorJobType job, bool isUseTabs)
+                {
+                    SetHaxeFeatures(sci);
+                    return HaxeImpl(sourceText, job, isUseTabs, sci);
+                }
+
+                static IEnumerable<TestCaseData> HaxeTestCasesSdk330
+                {
+                    get
+                    {
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1992_typecheck"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1992_typecheck"))
+                            .SetName("Issue 1992. from (v:Iterable<Dynamic>)")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1992_typecheck_2"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1992_typecheck_2"))
+                            .SetName("Issue 1992. from (v:Iterable<Iterable<Dynamic>>)")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
+                    }
+                }
+
+                [Test, TestCaseSource(nameof(HaxeTestCasesSdk330))]
+                public string HaxeSdk330(string sourceText, GeneratorJobType job, bool isUseTabs)
+                {
+                    SetHaxeFeatures(sci);
+                    ASContext.Context.Settings.InstalledSDKs = new[] {new InstalledSDK {Path = PluginBase.CurrentProject.CurrentSDK, Version = "3.3.0"}};
+                    return HaxeImpl(sourceText, job, isUseTabs, sci);
+                }
 
                 internal static string AS3Impl(string sourceText, GeneratorJobType job, bool isUseTabs, ScintillaControl sci)
                 {
@@ -1598,7 +1625,6 @@ namespace ASCompletion.Completion
                 internal static string HaxeImpl(string sourceText, GeneratorJobType job, bool isUseTabs, ScintillaControl sci)
                 {
                     sci.IsUseTabs = isUseTabs;
-                    SetHaxeFeatures(sci);
                     SetSrc(sci, sourceText);
                     return Common(sourceText, job, ASContext.Context, sci);
                 }

@@ -3543,7 +3543,7 @@ namespace ASCompletion.Completion
                         }
                         else if (hasGenerics)
                         {
-                            if (c2 == '.' || c2 == ',' || c2 == '(' || c2 == '[' || c2 == '>' || c2 == '}' || position + 1 == startPosition)
+                            if (c2 == '.' || c2 == ',' || c2 == '(' || c2 == '[' || c2 == '>' || c2 == '}' || c2 == ')' || position + 1 == startPosition)
                             {
                                 genCount++;
                                 var length = sb.Length;
