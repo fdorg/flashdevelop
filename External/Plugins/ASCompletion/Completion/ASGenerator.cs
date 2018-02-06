@@ -259,15 +259,7 @@ namespace ASCompletion.Completion
                 }
 
                 // "add to interface" suggestion
-                if (resolve.Member != null
-                    && resolve.Member.Name == found.member.Name
-                    && line == found.member.LineFrom
-                    && ((found.member.Flags & FlagType.Function) > 0
-                        || (found.member.Flags & FlagType.Getter) > 0
-                        || (found.member.Flags & FlagType.Setter) > 0)
-                    && found.inClass != ClassModel.VoidClass
-                    && found.inClass.Implements != null
-                    && found.inClass.Implements.Count > 0)
+                if (CanShowAddToInterfaceList(resolve, found, line))
                 {
                     string funcName = found.member.Name;
                     FlagType flags = found.member.Flags & ~FlagType.Access;
@@ -453,6 +445,21 @@ namespace ASCompletion.Completion
         {
             return resolve.Context.ContextFunction == null && resolve.Context.ContextMember == null
                 && resolve.Member == null && resolve.Type != null && (resolve.Type.Flags & FlagType.Interface) > 0;
+        }
+
+        internal virtual bool CanShowAddToInterfaceList(ASResult resolve, FoundDeclaration found, int currentLine)
+        {
+            return resolve.Member != null
+                   && !resolve.Member.Flags.HasFlag(FlagType.Static)
+                   && !resolve.Member.Flags.HasFlag(FlagType.Constructor)
+                   && resolve.Member.Name == found.member.Name
+                   && currentLine == found.member.LineFrom
+                   && ((found.member.Flags & FlagType.Function) > 0
+                       || (found.member.Flags & FlagType.Getter) > 0
+                       || (found.member.Flags & FlagType.Setter) > 0)
+                   && !found.inClass.IsVoid()
+                   && found.inClass.Implements != null
+                   && found.inClass.Implements.Count > 0;
         }
 
         private static MemberModel ResolveDelegate(string type, FileModel inFile)

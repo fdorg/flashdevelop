@@ -3149,44 +3149,6 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
-            public class AddInterfaceDefTests : GenerateJob
-            {
-                [TestFixtureSetUp]
-                public void AddInterfaceDefTestsSetup() => ASContext.Context.Settings.GenerateImports.Returns(true);
-
-                public IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData("BeforeAddInterfaceDefTests_issue1731_1")
-                                .Returns(ReadAllTextHaxe("AfterAddInterfaceDefTests_issue1731_1"))
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1731");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string fileName) => HaxeImpl(fileName, sci);
-
-                internal static string HaxeImpl(string fileName, ScintillaControl sci)
-                {
-                    SetHaxeFeatures(sci);
-                    SetCurrentFileName(GetFullPathHaxe(fileName));
-                    return Common(ReadAllTextHaxe(fileName), sci);
-                }
-
-                internal static string Common(string sourceText, ScintillaControl sci)
-                {
-                    SetSrc(sci, sourceText);
-                    var options = new List<ICompletionListItem>();
-                    ASGenerator.ContextualGenerator(sci, options);
-                    var item = options.Find(it => ((GeneratorItem)it).job == GeneratorJobType.AddInterfaceDef);
-                    var value = item.Value;
-                    return sci.Text;
-                }
-            }
-
-            [TestFixture]
             public class GenerateClassTests : GenerateJob
             {
                 public IEnumerable<TestCaseData> HaxeTestCases
@@ -3243,9 +3205,13 @@ namespace ASCompletion.Completion
             public class ContextualGeneratorTests : GenerateJob
             {
                 [TestFixtureSetUp]
-                public void Setup() => ASContext.Context.Settings.GenerateImports.Returns(true);
+                public void Setup()
+                {
+                    ASContext.Context.Settings.GenerateImports.Returns(true);
+                    SetHaxeFeatures(sci);
+                }
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                public IEnumerable<TestCaseData> ContextualGeneratorTestCases
                 {
                     get
                     {
@@ -3326,19 +3292,42 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string fileName, GeneratorJobType job, bool hasGenerator) => HaxeImpl(sci, fileName, job, hasGenerator);
+                [Test, TestCaseSource(nameof(ContextualGeneratorTestCases))]
+                public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => Common(sci, fileName, job, hasGenerator);
 
-                internal static string HaxeImpl(ScintillaControl sci, string fileName, GeneratorJobType job, bool hasGenerator)
+                public IEnumerable<TestCaseData> AddToInterfaceTestCases
                 {
-                    SetHaxeFeatures(sci);
-                    SetCurrentFileName(GetFullPathHaxe(fileName));
-                    return Common(sci, ReadAllTextHaxe(fileName), job, hasGenerator);
+                    get
+                    {
+                        yield return new TestCaseData("BeforeAddInterfaceDefTests_issue1731_1", GeneratorJobType.AddInterfaceDef, true)
+                            .Returns(ReadAllTextHaxe("AfterAddInterfaceDefTests_issue1731_1"))
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1731");
+                        yield return new TestCaseData("BeforeAddInterfaceDefTests_issue1989_1", GeneratorJobType.AddInterfaceDef, false)
+                            .SetName("Issue 1989. Case 1")
+                            .Returns(ReadAllTextHaxe("AfterAddInterfaceDefTests_issue1989_1"))
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1989");
+                        yield return new TestCaseData("BeforeAddInterfaceDefTests_issue1989_2", GeneratorJobType.AddInterfaceDef, false)
+                            .SetName("Issue 1989. Case 2")
+                            .Returns(ReadAllTextHaxe("AfterAddInterfaceDefTests_issue1989_2"))
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1989");
+                        yield return new TestCaseData("BeforeAddInterfaceDefTests_issue1989_3", GeneratorJobType.AddInterfaceDef, false)
+                            .SetName("Issue 1989. Case 3")
+                            .Returns(ReadAllTextHaxe("AfterAddInterfaceDefTests_issue1989_3"))
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1989");
+                        yield return new TestCaseData("BeforeAddInterfaceDefTests_issue1989_4", GeneratorJobType.AddInterfaceDef, false)
+                            .SetName("Issue 1989. Case 4")
+                            .Returns(ReadAllTextHaxe("AfterAddInterfaceDefTests_issue1989_4"))
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1989");
+                    }
                 }
 
-                internal static string Common(ScintillaControl sci, string sourceText, GeneratorJobType job, bool hasGenerator)
+                [Test, TestCaseSource(nameof(AddToInterfaceTestCases))]
+                public string AddToInterface(string fileName, GeneratorJobType job, bool hasGenerator) => Common(sci, fileName, job, hasGenerator);
+
+                internal static string Common(ScintillaControl sci, string fileName, GeneratorJobType job, bool hasGenerator)
                 {
-                    SetSrc(sci, sourceText);
+                    SetCurrentFileName(GetFullPathHaxe(fileName));
+                    SetSrc(sci, ReadAllTextHaxe(fileName));
                     var options = new List<ICompletionListItem>();
                     ASGenerator.ContextualGenerator(sci, options);
                     var item = options.Find(it => it is GeneratorItem && ((GeneratorItem) it).job == job);
