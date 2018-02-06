@@ -68,6 +68,7 @@ namespace ASCompletion.Completion
             if (context is ASContext) ((ASContext)context).UpdateCurrentFile(false); // update model
 
             lookupPosition = -1;
+            if (sci.PositionIsOnComment(position)) return false;
             int style = sci.BaseStyleAt(position);
             if (style == 19 || style == 24) // on keyword
                 return false;
