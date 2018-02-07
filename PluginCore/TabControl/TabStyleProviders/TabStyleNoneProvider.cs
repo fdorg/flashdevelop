@@ -5,12 +5,7 @@
 
 namespace System.Windows.Forms
 {
-	using System;
-	using System.Drawing;
-	using System.Drawing.Drawing2D;
-	using System.Windows.Forms;
-	
-	[System.ComponentModel.ToolboxItem(false)]
+    [System.ComponentModel.ToolboxItem(false)]
 	public class TabStyleNoneProvider : TabStyleProvider
 	{
 		public TabStyleNoneProvider(CustomTabControl tabControl) : base(tabControl){

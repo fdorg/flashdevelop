@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.Remoting.Channels.Ipc;
-using System.Text;
 using ProjectManager.Projects.AS3;
 using ProjectManager.Helpers;
 using System.IO;
 using FDBuild.Building.AS3;
-using System.Collections;
 using PluginCore.Helpers;
 using ProjectManager.Projects;
 using System.Text.RegularExpressions;

@@ -1,7 +1,5 @@
 using System;
 using System.IO;
-using System.Text;
-using System.Diagnostics;
 using ProjectManager.Projects;
 using ProjectManager.Projects.AS2;
 using FDBuild.Building;

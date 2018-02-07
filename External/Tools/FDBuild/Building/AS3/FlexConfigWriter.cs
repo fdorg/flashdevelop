@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using ProjectManager.Projects.AS3;
 using System.IO;
 using System.Collections;
-using ProjectManager.Projects;
 
 
 namespace FDBuild.Building.AS3

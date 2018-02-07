@@ -1,6 +1,3 @@
-using System;
-using System.Text;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
 using PluginCore;

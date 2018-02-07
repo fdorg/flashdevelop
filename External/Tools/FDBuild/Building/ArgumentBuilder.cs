@@ -1,7 +1,5 @@
 using System;
 using System.Collections;
-using System.Text;
-using ProjectManager.Projects;
 
 namespace ProjectManager.Building
 {

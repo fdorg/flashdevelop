@@ -1,7 +1,5 @@
 using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Text;
 using System.Reflection;
 using FDBuild.Building.AS3;
 using ProjectManager.Projects;

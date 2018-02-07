@@ -6,7 +6,6 @@ using System.Text;
 using System.Net.Sockets;
 using System.ComponentModel;
 using System.Windows.Forms;
-using WeifenLuo.WinFormsUI;
 using PluginCore.Localization;
 using PluginCore.Utilities;
 using PluginCore.Managers;
