@@ -3366,7 +3366,6 @@ namespace ASCompletion.Completion
             var ctx = inClass.InFile.Context;
             var features = ctx.Features;
             ASResult resolve = expr;
-            ClassModel type = null;
             if (resolve.Type != null && !resolve.IsPackage)
             {
                 if (resolve.Type.Name == "Function")
@@ -3384,8 +3383,7 @@ namespace ASCompletion.Completion
                             if (t.Contains("->") && !t.StartsWith('(')) t = $"({t})";
                             qualifiedName += t;
                         }
-                        resolve = new ASResult();
-                        type = new ClassModel {Name = qualifiedName, InFile = FileModel.Ignore};
+                        resolve = new ASResult {Type = new ClassModel {Name = qualifiedName, InFile = FileModel.Ignore}};
                     }
                     else resolve.Member = null;
                 }
@@ -3398,7 +3396,6 @@ namespace ASCompletion.Completion
                 var tokens = Regex.Split(resolve.Context.Value, Regex.Escape(features.dot));
                 word = tokens.LastOrDefault(it => it.Length > 0 && !(it.Length >= 2 && it[0] == '#' && it[it.Length - 1] == '~') && char.IsLetter(it[0]));
             }
-            if (resolve.Type == null) resolve.Type = type;
             return new StatementReturnType(resolve, pos, word);
         }
 
