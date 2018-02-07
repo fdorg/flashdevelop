@@ -2597,9 +2597,9 @@ namespace ASCompletion.Completion
             ASResult notFound = new ASResult {Context = context};
             if (string.IsNullOrEmpty(expression)) return notFound;
             var value = expression.TrimEnd('.');
+            if (context.SubExpressions?.Count == 1) value = value.Replace(char.IsLetter(value[0]) ? ".#0~" : "#0~", context.SubExpressions.First());
             if (!string.IsNullOrEmpty(context.WordBefore) && ASContext.Context.Features.OtherOperators.Contains(context.WordBefore))
             {
-                if (context.SubExpressions?.Count == 1) value = value.Replace(char.IsLetter(value[0]) ? ".#0~" : "#0~", context.SubExpressions.First());
                 value = context.WordBefore + " " + value;
             }
 
@@ -2621,13 +2621,7 @@ namespace ASCompletion.Completion
             string token = tokens[0];
             if (token.Length == 0) return notFound;
             if (asFunction && tokens.Length == 1) token += "(";
-            if (context.SubExpressions != null && context.SubExpressions.Count == 1)
-            {
-                value = expression.TrimEnd('.');
-                value = value.Replace(char.IsLetter(value[0]) ? ".#0~" : "#0~", context.SubExpressions.First());
-                type = ctx.ResolveToken(value, inClass.InFile);
-            }
-            else type = ctx.ResolveToken(token, inClass.InFile);
+            type = ctx.ResolveToken(token, inClass.InFile);
             if (!type.IsVoid()) return EvalTail(context, inFile, new ASResult {Type = type}, tokens, complete, filterVisibility) ?? notFound;
             ASResult head = null;
             if (token[0] == '#')
