@@ -2596,15 +2596,17 @@ namespace ASCompletion.Completion
         {
             ASResult notFound = new ASResult {Context = context};
             if (string.IsNullOrEmpty(expression)) return notFound;
-            var ctx = ASContext.Context;
-            ClassModel type;
+            var value = expression.TrimEnd('.');
             if (!string.IsNullOrEmpty(context.WordBefore) && ASContext.Context.Features.OtherOperators.Contains(context.WordBefore))
             {
-                var value = expression.TrimEnd('.');
-                if(context.SubExpressions?.Count == 1) value = value.Replace(char.IsLetter(value[0]) ? ".#0~" : "#0~", context.SubExpressions.First());
-                type = ctx.ResolveToken(context.WordBefore + " " + value, inClass.InFile);
-                if (!type.IsVoid()) return new ASResult {Type = type, Context = context, InClass = inClass, InFile = inFile, Path = context.Value};
+                if (context.SubExpressions?.Count == 1) value = value.Replace(char.IsLetter(value[0]) ? ".#0~" : "#0~", context.SubExpressions.First());
+                value = context.WordBefore + " " + value;
             }
+
+            var ctx = ASContext.Context;
+            var type = ctx.ResolveToken(value, inClass.InFile);
+            if (!type.IsVoid()) return new ASResult {Type = type, Context = context, InClass = inClass, InFile = inFile, Path = context.Value};
+
             var features = ctx.Features;
             if (expression.StartsWithOrdinal(features.dot))
             {
@@ -2621,7 +2623,7 @@ namespace ASCompletion.Completion
             if (asFunction && tokens.Length == 1) token += "(";
             if (context.SubExpressions != null && context.SubExpressions.Count == 1)
             {
-                var value = expression.TrimEnd('.');
+                value = expression.TrimEnd('.');
                 value = value.Replace(char.IsLetter(value[0]) ? ".#0~" : "#0~", context.SubExpressions.First());
                 type = ctx.ResolveToken(value, inClass.InFile);
             }

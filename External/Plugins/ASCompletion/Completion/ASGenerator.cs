@@ -3406,17 +3406,6 @@ namespace ASCompletion.Completion
                     word = tokens.LastOrDefault(it => it.Length > 0 && !(it.Length >= 2 && it[0] == '#' && it[it.Length - 1] == '~') && char.IsLetter(it[0]));
                 }
             }
-            if (resolve?.Type == null || resolve.Type.IsVoid())
-            {
-                var c = (char)sci.CharAt(pos);
-                if (c == ']')
-                {
-                    resolve = ASComplete.GetExpressionType(sci, pos + 1);
-                    type = resolve.Type ?? ctx.ResolveType(features.arrayKey, inClass.InFile);
-                    resolve = null;
-                }
-                if (type != null && type.IsVoid()) type = null;
-            }
             if (resolve == null) resolve = new ASResult();
             if (resolve.Type == null) resolve.Type = type;
             return new StatementReturnType(resolve, pos, word);
