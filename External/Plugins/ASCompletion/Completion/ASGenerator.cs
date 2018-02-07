@@ -3364,15 +3364,16 @@ namespace ASCompletion.Completion
             line = ReplaceAllStringContents(line);
             var bracesRemoved = false;
             var pos = -1;
-            char c;
-            if (line.Last() == ')')
+            var expr = ASComplete.GetExpressionType(sci, startPos + m.Index, false, true);
+            if (expr.Type != null || expr.Member != null) pos = expr.Context.Position;
+            else if (line.Last() == ')')
             {
                 var bracesCount = 1;
                 var position = startPos + line.Length - 1;
                 while (position-- > 0)
                 {
                     if (sci.PositionIsOnComment(position)) continue;
-                    c = (char)sci.CharAt(position);
+                    var c = (char)sci.CharAt(position);
                     if (c == ')') bracesCount++;
                     else if (c == '(')
                     {
@@ -3402,16 +3403,11 @@ namespace ASCompletion.Completion
             else pos = startPos + line.Length - 1;
             var ctx = inClass.InFile.Context;
             var features = ctx.Features;
-            ASResult resolve = null;
+            ASResult resolve = expr;
             string word = null;
             ClassModel type = null;
             if (pos != -1)
             {
-                pos = sci.WordEndPosition(pos, true);
-                c = line.TrimEnd().Last();
-                var startPosition = pos;
-                if ("]}\"'".Contains(c) || ((c == '>' || features.ArithmeticOperators.Contains(c)) && !bracesRemoved)) startPosition++;
-                resolve = ASComplete.GetExpressionType(sci, startPosition, true, true);
                 if (resolve.Type != null && !resolve.IsPackage)
                 {
                     if (resolve.Type.Name == "Function" && !bracesRemoved)
@@ -3438,10 +3434,15 @@ namespace ASCompletion.Completion
                         resolve.Member = null;
                 }
                 word = sci.GetWordFromPosition(pos);
+                if (string.IsNullOrEmpty(word) && resolve.Type != null)
+                {
+                    var tokens = Regex.Split(resolve.Context.Value, Regex.Escape(features.dot));
+                    word = tokens.LastOrDefault(it => it.Length > 0 && !(it.Length >= 2 && it[0] == '#' && it[it.Length - 1] == '~') && char.IsLetter(it[0]));
+                }
             }
             if (resolve?.Type == null || resolve.Type.IsVoid())
             {
-                c = (char)sci.CharAt(pos);
+                var c = (char)sci.CharAt(pos);
                 if (c == ']')
                 {
                     resolve = ASComplete.GetExpressionType(sci, pos + 1);

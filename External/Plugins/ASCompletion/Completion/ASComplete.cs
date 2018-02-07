@@ -2600,8 +2600,10 @@ namespace ASCompletion.Completion
             ClassModel type;
             if (!string.IsNullOrEmpty(context.WordBefore) && ASContext.Context.Features.OtherOperators.Contains(context.WordBefore))
             {
-                type = ctx.ResolveToken(context.WordBefore + " " + context.Value, inClass.InFile);
-                if (type != ClassModel.VoidClass) return new ASResult {Type = type, Context = context, InClass = inClass, InFile = inFile, Path = context.Value};
+                var value = expression.TrimEnd('.');
+                if(context.SubExpressions?.Count == 1) value = value.Replace(char.IsLetter(value[0]) ? ".#0~" : "#0~", context.SubExpressions.First());
+                type = ctx.ResolveToken(context.WordBefore + " " + value, inClass.InFile);
+                if (!type.IsVoid()) return new ASResult {Type = type, Context = context, InClass = inClass, InFile = inFile, Path = context.Value};
             }
             var features = ctx.Features;
             if (expression.StartsWithOrdinal(features.dot))
@@ -2624,7 +2626,7 @@ namespace ASCompletion.Completion
                 type = ctx.ResolveToken(value, inClass.InFile);
             }
             else type = ctx.ResolveToken(token, inClass.InFile);
-            if (type != ClassModel.VoidClass) return EvalTail(context, inFile, new ASResult {Type = type}, tokens, complete, filterVisibility) ?? notFound;
+            if (!type.IsVoid()) return EvalTail(context, inFile, new ASResult {Type = type}, tokens, complete, filterVisibility) ?? notFound;
             ASResult head = null;
             if (token[0] == '#')
             {
