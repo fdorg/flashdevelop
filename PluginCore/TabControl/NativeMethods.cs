@@ -6,8 +6,6 @@
 using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
-using System.Windows.Forms;
 
 namespace System.Windows.Forms
 {

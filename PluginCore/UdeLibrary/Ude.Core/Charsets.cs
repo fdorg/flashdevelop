@@ -35,8 +35,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-using System;
-
 namespace Ude
 {
     public static class Charsets

@@ -4,9 +4,7 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using PluginCore.Localization;
 using PluginCore.Helpers;
-using PluginCore;
 using Microsoft.Win32;
-using System.Reflection;
 using System.IO;
 
 namespace FlashDevelop.Controls
