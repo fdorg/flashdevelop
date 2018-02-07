@@ -3366,40 +3366,6 @@ namespace ASCompletion.Completion
             var pos = -1;
             var expr = ASComplete.GetExpressionType(sci, startPos + m.Index, false, true);
             if (expr.Type != null || expr.Member != null) pos = expr.Context.Position;
-            else if (line.Last() == ')')
-            {
-                var bracesCount = 1;
-                var position = startPos + line.Length - 1;
-                while (position-- > 0)
-                {
-                    if (sci.PositionIsOnComment(position)) continue;
-                    var c = (char)sci.CharAt(position);
-                    if (c == ')') bracesCount++;
-                    else if (c == '(')
-                    {
-                        bracesCount--;
-                        if (bracesCount > 0) continue;
-                        if (haxe && sci.GetWordLeft(position - 1, true) == "cast")
-                        {
-                            pos = startPos + line.Length;
-                            break;
-                        }
-                        var lineFromPosition = sci.LineFromPosition(position);
-                        startPos = sci.PositionFromLine(lineFromPosition);
-                        var tmpLine = sci.GetLine(lineFromPosition);
-                        tmpLine = tmpLine.Substring(0, position - startPos);
-                        if (string.IsNullOrEmpty(tmpLine.TrimStart()))
-                        {
-                            pos = startPos + line.Length;
-                            break;
-                        }
-                        line = tmpLine;
-                        pos = position;
-                        bracesRemoved = true;
-                        break;
-                    }
-                }
-            }
             else pos = startPos + line.Length - 1;
             var ctx = inClass.InFile.Context;
             var features = ctx.Features;
