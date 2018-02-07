@@ -448,7 +448,7 @@ namespace ASCompletion.Completion
         /// <param name="position">Cursor position</param>
         /// <param name="expr">Expression at cursor position</param>
         /// <param name="found">The declaration target at current line(can not be null)</param>
-        /// <returns></returns>
+        /// <returns>true, if can show `Generate Constructor` and(or) `Generate toString()` list</returns>
         protected virtual bool CanShowGenerateConstructorAndToString(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return contextToken == null
@@ -465,7 +465,7 @@ namespace ASCompletion.Completion
         /// <param name="position">Cursor position</param>
         /// <param name="expr">Expression at cursor position</param>
         /// <param name="found">Declaration target at current line(can not be null)</param>
-        /// <returns></returns>
+        /// <returns>true, if can show `Implement Interface` list</returns>
         protected virtual bool CanShowImplementInterfaceList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return expr.Context.ContextFunction == null && expr.Context.ContextMember == null
@@ -479,7 +479,7 @@ namespace ASCompletion.Completion
         /// <param name="position">Cursor position</param>
         /// <param name="expr">Expression at cursor position</param>
         /// <param name="found">Declaration target at current line(can not be null)</param>
-        /// <returns></returns>
+        /// <returns>true, if can show `Add to interface` list</returns>
         protected virtual bool CanShowAddToInterfaceList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return expr.Member != null
