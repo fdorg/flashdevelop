@@ -903,65 +903,143 @@ namespace HaXeContext
         /// <param name="cname">Class (short or full) name</param>
         /// <param name="inFile">Current file</param>
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
-        public override ClassModel ResolveType(string cname, FileModel inFile)
+        public override ClassModel ResolveType(string cname, FileModel inFile) => ResolveType(cname, inFile, true);
+
+        public ClassModel ResolveType(string className, FileModel inFile, bool resolveStaticExtensions)
         {
-            // unknown type
-            if (string.IsNullOrEmpty(cname) || cname == features.voidKey || classPath == null)
-                return ClassModel.VoidClass;
-
-            // handle generic types
-            if (cname.IndexOf('<') > 0)
+            var result = ClassModel.VoidClass;
+            if (!string.IsNullOrEmpty(className) && className != features.voidKey && classPath != null)
             {
-                Match genType = re_genericType.Match(cname);
-                if (genType.Success)
-                    return ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile);
-                else return ClassModel.VoidClass;
-            }
-
-            // typed array
-            if (cname.IndexOf('@') > 0)
-                return ResolveTypeIndex(cname, inFile);
-
-            string package = "";
-            string inPackage = (features.hasPackages && inFile != null) ? inFile.Package : "";
-
-            int p = cname.LastIndexOf('.');
-            if (p > 0)
-            {
-                package = cname.Substring(0, p);
-                cname = cname.Substring(p + 1);
-            }
-            else 
-            {
-                // search in file
-                if (inFile != null)
-                    foreach (ClassModel aClass in inFile.Classes)
-                        if (aClass.Name == cname)
-                            return aClass;
-
-                // search in imported classes
-                var found = false;
-                MemberList imports = ResolveImports(inFile);
-                foreach (MemberModel import in imports)
+                // handle generic types
+                if (className.Contains('<'))
                 {
-                    if (import.Name == cname)
+                    Match genType = re_genericType.Match(className);
+                    if (genType.Success) result = ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile);
+                }
+                else
+                {
+                    // typed array
+                    if (className.Contains('@')) result = ResolveTypeIndex(className, inFile);
+                    else
                     {
-                        if (import.Type.Length > import.Name.Length)
+                        string package = "";
+                        string inPackage = (features.hasPackages && inFile != null) ? inFile.Package : "";
+                        int p = className.LastIndexOf('.');
+                        if (p > 0)
                         {
-                            var type = import.Type;
-                            int temp = type.IndexOf('<');
-                            if (temp > 0) type = type.Substring(0, temp);
-                            int dotIndex = type.LastIndexOf('.');
-                            if (dotIndex > 0) package = type.Substring(0, dotIndex);
+                            package = className.Substring(0, p);
+                            className = className.Substring(p + 1);
                         }
-                        found = true;
-                        break;
+                        else
+                        {
+                            // search in file
+                            if (inFile != null)
+                            {
+                                foreach (ClassModel aClass in inFile.Classes)
+                                    if (aClass.Name == className)
+                                    {
+                                        result = aClass;
+                                        break;
+                                    }
+                            }
+                            if (result.IsVoid())
+                            {
+                                // search in imported classes
+                                var found = false;
+                                var imports = ResolveImports(inFile);
+                                foreach (MemberModel import in imports)
+                                {
+                                    if (import.Name == className)
+                                    {
+                                        if (import.Type.Length > import.Name.Length)
+                                        {
+                                            var type = import.Type;
+                                            int temp = type.IndexOf('<');
+                                            if (temp > 0) type = type.Substring(0, temp);
+                                            int dotIndex = type.LastIndexOf('.');
+                                            if (dotIndex > 0) package = type.Substring(0, dotIndex);
+                                        }
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                                if (!found && className == "Function") result = stubFunctionClass;
+                            }
+                        }
+                        if (result.IsVoid()) result = GetModel(package, className, inPackage);
                     }
                 }
-                if (!found && cname == "Function") return stubFunctionClass;
             }
+            if (!result.IsVoid() && resolveStaticExtensions && inFile?.Imports.Count > 0)
+            {
+                var extensions = ResolveStaticExtensions(result, inFile);
+                if (extensions.Count > 0)
+                {
+                    result = (ClassModel) result.Clone();
+                    result.Members.Merge(extensions);
+                }
+            }
+            return result;
+        }
 
-            return GetModel(package, cname, inPackage);
+        /// <summary>
+        /// https://haxe.org/manual/lf-static-extension.html
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="inFile">Current file</param>
+        /// <returns></returns>
+        public MemberList ResolveStaticExtensions(ClassModel target, FileModel inFile)
+        {
+            var result = new MemberList();
+            IEnumerable<MemberModel> imports = inFile.Imports.Items;
+            if (GetCurrentSDKVersion() >= "3.3.0") imports = ResolveDefaults(inFile.Package).Items.Concat(imports);
+            var importModels = imports.Where(it => it.Flags.HasFlag(FlagType.Using)).ToArray();
+            for (var i = importModels.Length - 1; i >= 0; i--)
+            {
+                var import = importModels[i];
+                var type = ResolveType(import.Name, inFile, false);
+                if (type.IsVoid() || type.Members.Count == 0) continue;
+                var access = TypesAffinity(target, type);
+                var extends = target;
+                while (!extends.IsVoid())
+                {
+                    foreach (MemberModel member in type.Members)
+                    {
+                        if ((member.Access & access) > 0 && member.Flags.HasFlag(FlagType.Static | FlagType.Function) && member.Parameters?.Count > 0)
+                        {
+                            var extendsType = extends.Type;
+                            var firstParamType = member.Parameters[0].Type;
+                            var index = extendsType.IndexOf('<');
+                            if (index != -1) extendsType = extendsType.Remove(index);
+                            index = firstParamType.IndexOf('<');
+                            if (index != -1) firstParamType = firstParamType.Remove(index);
+                            if (firstParamType != extendsType) continue;
+                            var newMember = (MemberModel)member.Clone();
+                            newMember.Parameters.RemoveAt(0);
+                            newMember.Flags = FlagType.Dynamic | FlagType.Function;
+                            newMember.InFile = type.InFile;
+                            result.Add(newMember);
+                        }
+                    }
+                    extends.ResolveExtends();
+                    extends = extends.Extends;
+                }
+            }
+            if (result.Count > 0)
+            {
+                result.Items.RemoveAll(extension =>
+                {
+                    var extends = target;
+                    while (!extends.IsVoid())
+                    {
+                        if (extends.Members.Items.Any(m => !m.Flags.HasFlag(FlagType.Static) && m.Name == extension.Name)) return true;
+                        extends.ResolveExtends();
+                        extends = extends.Extends;
+                    }
+                    return false;
+                });
+            }
+            return result;
         }
 
         public override ClassModel ResolveToken(string token, FileModel inFile)

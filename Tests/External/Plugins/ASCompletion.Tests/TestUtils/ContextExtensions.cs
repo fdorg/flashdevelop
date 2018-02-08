@@ -65,6 +65,7 @@ namespace ASCompletion.TestUtils
             mock.GetAllProjectClasses().Returns(allProjectClasses);
             mock.CodeGenerator.Returns(context.CodeGenerator);
             mock.DocumentationGenerator.Returns(context.DocumentationGenerator);
+            mock.TypesAffinity(null, null).ReturnsForAnyArgs(it => context.TypesAffinity(it.ArgAt<ClassModel>(0) ?? ClassModel.VoidClass, it.ArgAt<ClassModel>(1) ?? ClassModel.VoidClass));
         }
 
         public static void BuildClassPath(this IASContext context)
