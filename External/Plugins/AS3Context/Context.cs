@@ -913,6 +913,12 @@ namespace AS3Context
                         var word = token.Substring(0, index);
                         if (word == "delete") return ResolveType(features.booleanKey, inFile);
                         if (word == "typeof") return ResolveType(features.stringKey, inFile);
+                        if (word == "new" && token[token.Length - 1] == ')')
+                        {
+                            token = token.Substring(index + 1);
+                            token = Regex.Replace(token, @"\(.*", string.Empty);
+                            return ResolveType(token, inFile);
+                        }
                     }
                 }
                 else if (first == '(' && token.Length >= 8/*"(v as T)".Length*/)

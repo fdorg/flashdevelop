@@ -3393,126 +3393,43 @@ namespace ASCompletion.Completion
             if (!m.Success) return null;
             line = line.Substring(0, m.Index);
             if (line.Length == 0) return null;
-            var haxe = sci.ConfigurationLanguage == "haxe";
-            line = ReplaceAllStringContents(line);
-            var bracesRemoved = false;
-            var pos = -1;
-            char c;
-            if (line.Last() == ')')
-            {
-                var bracesCount = 1;
-                var position = startPos + line.Length - 1;
-                while (position-- > 0)
-                {
-                    if (sci.PositionIsOnComment(position)) continue;
-                    c = (char)sci.CharAt(position);
-                    if (c == ')') bracesCount++;
-                    else if (c == '(')
-                    {
-                        bracesCount--;
-                        if (bracesCount > 0) continue;
-                        if (haxe && sci.GetWordLeft(position - 1, true) == "cast")
-                        {
-                            pos = startPos + line.Length;
-                            break;
-                        }
-                        var lineFromPosition = sci.LineFromPosition(position);
-                        startPos = sci.PositionFromLine(lineFromPosition);
-                        var tmpLine = sci.GetLine(lineFromPosition);
-                        tmpLine = tmpLine.Substring(0, position - startPos);
-                        if (string.IsNullOrEmpty(tmpLine.TrimStart()))
-                        {
-                            pos = startPos + line.Length;
-                            break;
-                        }
-                        line = tmpLine;
-                        pos = position;
-                        bracesRemoved = true;
-                        break;
-                    }
-                }
-            }
-            else pos = startPos + line.Length - 1;
+            var pos = startPos + m.Index;
+            var expr = ASComplete.GetExpressionType(sci, pos, false, true);
+            if (expr.Type != null || expr.Member != null) pos = expr.Context.Position;
             var ctx = inClass.InFile.Context;
             var features = ctx.Features;
-            ASResult resolve = null;
-            string word = null;
-            ClassModel type = null;
-            if (pos != -1)
+            ASResult resolve = expr;
+            if (resolve.Type != null && !resolve.IsPackage)
             {
-                pos = sci.WordEndPosition(pos, true);
-                c = line.TrimEnd().Last();
-                var startPosition = pos;
-                if ("]}\"'".Contains(c) || ((c == '>' || features.ArithmeticOperators.Contains(c)) && !bracesRemoved)) startPosition++;
-                resolve = ASComplete.GetExpressionType(sci, startPosition, true, true);
-                if (resolve.Type != null && !resolve.IsPackage)
+                if (resolve.Type.Name == "Function")
                 {
-                    if (resolve.Type.Name == "Function" && !bracesRemoved)
+                    if (IsHaxe)
                     {
-                        if (haxe)
+                        var voidKey = features.voidKey;
+                        var parameters = resolve.Member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
+                        parameters.Add(resolve.Member.Type ?? voidKey);
+                        var qualifiedName = string.Empty;
+                        for (var i = 0; i < parameters.Count; i++)
                         {
-                            var voidKey = features.voidKey;
-                            var parameters = resolve.Member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
-                            parameters.Add(resolve.Member.Type ?? voidKey);
-                            var qualifiedName = string.Empty;
-                            for (var i = 0; i < parameters.Count; i++)
-                            {
-                                if (i > 0) qualifiedName += "->";
-                                var t = parameters[i];
-                                if (t.Contains("->") && !t.StartsWith('(')) t = $"({t})";
-                                qualifiedName += t;
-                            }
-                            resolve = null;
-                            type = new ClassModel {Name = qualifiedName, InFile = FileModel.Ignore};
+                            if (i > 0) qualifiedName += "->";
+                            var t = parameters[i];
+                            if (t.Contains("->") && !t.StartsWith('(')) t = $"({t})";
+                            qualifiedName += t;
                         }
-                        else resolve.Member = null;
+                        resolve = new ASResult {Type = new ClassModel {Name = qualifiedName, InFile = FileModel.Ignore}};
                     }
-                    else if (!string.IsNullOrEmpty(resolve.Path) && Regex.IsMatch(resolve.Path, @"(\.\[.{0,}?\])$", RegexOptions.RightToLeft))
-                        resolve.Member = null;
+                    else resolve.Member = null;
                 }
-                word = sci.GetWordFromPosition(pos);
+                else if (!string.IsNullOrEmpty(resolve.Path) && Regex.IsMatch(resolve.Path, @"(\.\[.{0,}?\])$", RegexOptions.RightToLeft))
+                    resolve.Member = null;
             }
-            if (resolve?.Type == null || resolve.Type.IsVoid())
+            var word = sci.GetWordFromPosition(pos);
+            if (string.IsNullOrEmpty(word) && resolve.Type != null)
             {
-                c = (char)sci.CharAt(pos);
-                if (c == ']')
-                {
-                    resolve = ASComplete.GetExpressionType(sci, pos + 1);
-                    type = resolve.Type ?? ctx.ResolveType(features.arrayKey, inClass.InFile);
-                    resolve = null;
-                }
-                if (type != null && type.IsVoid()) type = null;
+                var tokens = Regex.Split(resolve.Context.Value, Regex.Escape(features.dot));
+                word = tokens.LastOrDefault(it => it.Length > 0 && !(it.Length >= 2 && it[0] == '#' && it[it.Length - 1] == '~') && char.IsLetter(it[0]));
             }
-            if (resolve == null) resolve = new ASResult();
-            if (resolve.Type == null) resolve.Type = type;
             return new StatementReturnType(resolve, pos, word);
-        }
-
-        private static string ReplaceAllStringContents(string line)
-        {
-            string retLine = line;
-            Regex re1 = new Regex("'(?:[^'\\\\]|(?:\\\\\\\\)|(?:\\\\\\\\)*\\\\.{1})*'");
-            Regex re2 = new Regex("\"(?:[^\"\\\\]|(?:\\\\\\\\)|(?:\\\\\\\\)*\\\\.{1})*\"");
-            Match m1 = re1.Match(line);
-            Match m2 = re2.Match(line);
-            while (m1.Success || m2.Success)
-            {
-                Match m = null;
-                if (m1.Success && m2.Success) m = m1.Index > m2.Index ? m2 : m1;
-                else if (m1.Success) m = m1;
-                else m = m2;
-                string sub = "";
-                string val = m.Value;
-                for (int j = 0; j < val.Length - 2; j++) 
-                    sub += "A";
-                
-                line = line.Substring(0, m.Index) + sub + "AA" + line.Substring(m.Index + m.Value.Length);
-                retLine = retLine.Substring(0, m.Index + 1) + sub + retLine.Substring(m.Index + m.Value.Length - 1);
-
-                m1 = re1.Match(line);
-                m2 = re2.Match(line);
-            }
-            return retLine;
         }
 
         private static string GuessVarName(string name, string type)
