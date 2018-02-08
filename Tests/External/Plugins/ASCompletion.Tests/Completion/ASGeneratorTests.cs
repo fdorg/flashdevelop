@@ -76,8 +76,8 @@ namespace ASCompletion.Completion
                     dataEventModel = CreateDataEventModel();
                     found = new FoundDeclaration
                     {
-                        inClass = new ClassModel(),
-                        member = new MemberModel()
+                        InClass = new ClassModel(),
+                        Member = new MemberModel()
                     };
                 }
 
@@ -3419,6 +3419,28 @@ namespace ASCompletion.Completion
                         yield return new TestCaseData("ContextualGenerator_issue1987_4", false)
                             .SetName("Issue1987. Case 4")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/1987");
+                        yield return new TestCaseData("ContextualGenerator_issue1995_1", false)
+                            .SetName("Issue1995. Case 1")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1995");
+                        yield return new TestCaseData("ContextualGenerator_issue1995_2", false)
+                            .SetName("Issue1995. Case 2")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1995");
+                        yield return new TestCaseData("ContextualGenerator_issue1995_3", false)
+                            .SetName("Issue1995. Case 3")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1995");
+                        yield return new TestCaseData("ContextualGenerator_issue1995_4", true)
+                            .SetName("Issue1995. Case 4")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1995");
+                        yield return new TestCaseData("ContextualGenerator_issue1995_5", true)
+                            .SetName("Issue1995. Case 5")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1995");
+                        yield return new TestCaseData("ContextualGenerator_issue1995_6", false)
+                            .SetName("Issue1995. Case 6")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1995")
+                            .Ignore("");
+                        yield return new TestCaseData("ContextualGenerator_issue1995_7", false)
+                            .SetName("Issue1995. Case 7")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1995");
                     }
                 }
 
