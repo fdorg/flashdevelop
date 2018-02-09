@@ -24,7 +24,7 @@ namespace CodeRefactor.Provider
 
         static void RegisterValidators()
         {
-            DefaultFactory.RegisterCommandValidator(typeof(Rename), expr =>
+            DefaultFactory.RegisterValidator(typeof(Rename), expr =>
             {
                 if (expr == null || expr.IsNull()) return false;
                 var c = expr.Context.Value[0];

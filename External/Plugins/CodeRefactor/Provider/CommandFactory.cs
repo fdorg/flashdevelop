@@ -133,7 +133,7 @@ namespace CodeRefactor.Provider
 
         Dictionary<Type, Func<ASResult, bool>> commandToValidator = new Dictionary<Type, Func<ASResult, bool>>();
 
-        public void RegisterCommandValidator(Type command, Func<ASResult, bool> validator) => commandToValidator[command] = validator;
-        public Func<ASResult, bool> GetCommandValidator(Type command) => commandToValidator.ContainsKey(command) ? commandToValidator[command] : null;
+        public void RegisterValidator(Type command, Func<ASResult, bool> validator) => commandToValidator[command] = validator;
+        public Func<ASResult, bool> GetValidator(Type command) => commandToValidator.ContainsKey(command) ? commandToValidator[command] : null;
     }
 }
