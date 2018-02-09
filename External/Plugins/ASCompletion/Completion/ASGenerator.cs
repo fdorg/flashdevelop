@@ -442,13 +442,13 @@ namespace ASCompletion.Completion
         }
 
         /// <summary>
-        /// Check if "Convert to const" are available at the current cursor position.
+        /// Check if "Convert to constant" are available at the current cursor position.
         /// </summary>
         /// <param name="sci">The Scintilla control containing the document</param>
         /// <param name="position">Cursor position</param>
         /// <param name="expr">Expression at cursor position</param>
         /// <param name="found">The declaration target at current line(can not be null)</param>
-        /// <returns>true, if can show `Convert to const` list</returns>
+        /// <returns>true, if can show `Convert to constant` list</returns>
         protected virtual bool CanShowConvertToConst(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return !ASContext.Context.CurrentClass.Flags.HasFlag(FlagType.Interface)
