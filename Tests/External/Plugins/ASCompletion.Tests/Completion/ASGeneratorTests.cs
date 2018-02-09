@@ -3441,22 +3441,20 @@ namespace ASCompletion.Completion
                         yield return new TestCaseData("ContextualGenerator_issue1995_7", false)
                             .SetName("Issue1995. Case 7")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/1995");
+                        yield return new TestCaseData("ContextualGenerator_issue1995_8", false)
+                            .SetName("Issue1995. Case 8")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2005");
                     }
                 }
 
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public void Haxe(string fileName, bool hasGenerator) => HaxeImpl(sci, fileName, hasGenerator);
+                public void Haxe(string fileName, bool hasGenerator) => Common(sci, fileName, hasGenerator);
 
-                internal static void HaxeImpl(ScintillaControl sci, string fileName, bool hasGenerator)
+                internal static void Common(ScintillaControl sci, string fileName, bool hasGenerator)
                 {
                     SetHaxeFeatures(sci);
                     SetCurrentFileName(GetFullPathHaxe(fileName));
-                    Common(sci, ReadAllTextHaxe(fileName), hasGenerator);
-                }
-
-                internal static void Common(ScintillaControl sci, string sourceText, bool hasGenerator)
-                {
-                    SetSrc(sci, sourceText);
+                    SetSrc(sci, ReadAllTextHaxe(fileName));
                     sci.Colourise(0, -1);
                     var options = new List<ICompletionListItem>();
                     ASGenerator.ContextualGenerator(sci, options);

@@ -49,11 +49,12 @@ namespace ASCompletion.Completion
             get { return ASContext.Context.CurrentModel.haXe; }
         }
 
-        static public bool HandleGeneratorCompletion(ScintillaControl Sci, bool autoHide, string word)
+        public static bool HandleGeneratorCompletion(ScintillaControl sci, bool autoHide, string word)
         {
-            ContextFeatures features = ASContext.Context.Features;
-            if (features.overrideKey != null && word == features.overrideKey)
-                return HandleOverrideCompletion(autoHide);
+            var generator = ASContext.Context.CodeGenerator as ASGenerator;
+            if (generator == null) return false;
+            if (!string.IsNullOrEmpty(word) && word == ASContext.Context.Features.overrideKey)
+                return generator.HandleOverrideCompletion(autoHide);
             return false;
         }
 
@@ -4138,7 +4139,7 @@ namespace ASCompletion.Completion
         /// </summary>
         /// <param name="autoHide">Don't keep the list open if the word does not match</param>
         /// <returns>Completion was handled</returns>
-        static bool HandleOverrideCompletion(bool autoHide)
+        protected virtual bool HandleOverrideCompletion(bool autoHide)
         {
             // explore members
             IASContext ctx = ASContext.Context;
@@ -4186,8 +4187,7 @@ namespace ASCompletion.Completion
             members.Sort();
 
             // build list
-            List<ICompletionListItem> known = new List<ICompletionListItem>();
-
+            var known = new List<ICompletionListItem>();
             MemberModel last = null;
             foreach (MemberModel member in members)
             {
