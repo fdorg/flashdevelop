@@ -337,12 +337,14 @@ namespace CodeRefactor
         /// <summary>
         /// Cursor position changed and word at this position was resolved
         /// </summary>
-        private void OnResolvedContextChanged(ResolvedContext resolved) => UpdateMenuItems();
+        private void OnResolvedContextChanged(ResolvedContext resolved) => UpdateMenuItems(resolved);
 
         /// <summary>
         /// Updates the state of the menu items
         /// </summary>
-        private void UpdateMenuItems()
+        private void UpdateMenuItems() => UpdateMenuItems(ASComplete.CurrentResolvedContext);
+
+        private void UpdateMenuItems(ResolvedContext resolved)
         {
             try
             {
@@ -351,7 +353,6 @@ namespace CodeRefactor
                 this.refactorMainMenu.DelegateMenuItem.Enabled = false;
                 this.refactorContextMenu.DelegateMenuItem.Enabled = false;
                 bool langIsValid = RefactoringHelper.GetLanguageIsValid();
-                ResolvedContext resolved = ASComplete.CurrentResolvedContext;
                 bool isValid = langIsValid && resolved != null && resolved.Position >= 0;
                 ASResult result = isValid ? resolved.Result : null;
                 if (result != null && !result.IsNull())
@@ -429,7 +430,7 @@ namespace CodeRefactor
                 this.refactorMainMenu.CodeGeneratorMenuItem.Enabled = isValid;
                 this.refactorContextMenu.CodeGeneratorMenuItem.Enabled = isValid;
             }
-            catch {}
+            catch { }
         }
 
         /// <summary>
