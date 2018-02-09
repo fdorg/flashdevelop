@@ -31,7 +31,8 @@ namespace HaXeContext.Completion
         protected override bool CanShowGenerateConstructorAndToString(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return base.CanShowGenerateConstructorAndToString(sci, position, expr, found)
-                && !found.InClass.Flags.HasFlag(FlagType.Enum);
+                && !found.InClass.Flags.HasFlag(FlagType.Enum)
+                && !found.InClass.Flags.HasFlag(FlagType.TypeDef);
         }
     }
 
