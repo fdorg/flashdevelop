@@ -1,0 +1,4 @@
+﻿package;
+typedef Main {
+	$(EntryPoint)
+}
