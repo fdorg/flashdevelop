@@ -18,7 +18,7 @@ namespace CodeRefactor
 #pragma warning restore CS0436 // Type conflicts with imported type
         protected ISettings Settings;
         protected ITabbedDocument Doc;
-        protected ScintillaControl Sci;
+        protected ScintillaControl sci;
 
         [TestFixtureSetUp]
         public void FixtureSetUp()
@@ -46,8 +46,8 @@ namespace CodeRefactor
             pluginMain.Panel.Returns(pluginUiMock);
             ASContext.GlobalInit(pluginMain);
             ASContext.Context = Substitute.For<IASContext>();
-            Sci = GetBaseScintillaControl();
-            Doc.SciControl.Returns(Sci);
+            sci = GetBaseScintillaControl();
+            Doc.SciControl.Returns(sci);
         }
 
         [TestFixtureTearDown]
@@ -55,7 +55,7 @@ namespace CodeRefactor
         {
             Settings = null;
             Doc = null;
-            Sci = null;
+            sci = null;
             MainForm.Dispose();
             MainForm = null;
         }

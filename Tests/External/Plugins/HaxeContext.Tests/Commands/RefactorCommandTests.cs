@@ -19,8 +19,8 @@ namespace HaXeContext.Commands
             public void OrganizeImportsFixtureSetUp()
             {
                 // Needed for preprocessor directives...
-                Sci.SetProperty("fold", "1");
-                Sci.SetProperty("fold.preprocessor", "1");
+                sci.SetProperty("fold", "1");
+                sci.SetProperty("fold.preprocessor", "1");
                 CommandFactoryProvider.Register("haxe", new HaxeCommandFactory());
             }
 
@@ -57,7 +57,7 @@ namespace HaXeContext.Commands
             }
 
             [Test, TestCaseSource(nameof(HaxeTestCases))]
-            public string Haxe(string sourceText, string fileName) => global::CodeRefactor.Commands.RefactorCommandTests.OrganizeImports.HaxeImpl(Sci, sourceText, fileName);
+            public string Haxe(string sourceText, string fileName) => global::CodeRefactor.Commands.RefactorCommandTests.OrganizeImports.HaxeImpl(sci, sourceText, fileName);
         }
     }
 }

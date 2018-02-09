@@ -83,8 +83,8 @@ namespace CodeRefactor.Commands
             public string Haxe(string sourceText, MemberModel currentMember, string newName)
             {
                 ASContext.Context.SetHaxeFeatures();
-                Sci.ConfigurationLanguage = "haxe";
-                return Common(sourceText, currentMember, newName, Sci);
+                sci.ConfigurationLanguage = "haxe";
+                return Common(sourceText, currentMember, newName, sci);
             }
 
             public IEnumerable<TestCaseData> AS3TestCases
@@ -133,8 +133,8 @@ namespace CodeRefactor.Commands
             public string AS3(string sourceText, MemberModel currentMember, string newName)
             {
                 ASContext.Context.SetAs3Features();
-                Sci.ConfigurationLanguage = "as3";
-                return Common(sourceText, currentMember, newName, Sci);
+                sci.ConfigurationLanguage = "as3";
+                return Common(sourceText, currentMember, newName, sci);
             }
 
             static string Common(string sourceText, MemberModel currentMember, string newName, ScintillaControl sci)
@@ -218,8 +218,8 @@ namespace CodeRefactor.Commands
             public string Haxe(string sourceText, string newName)
             {
                 ASContext.Context.SetHaxeFeatures();
-                Sci.ConfigurationLanguage = "haxe";
-                return Common(sourceText, newName, Sci);
+                sci.ConfigurationLanguage = "haxe";
+                return Common(sourceText, newName, sci);
             }
 
             static string Common(string sourceText, string newName, ScintillaControl sci)
@@ -275,13 +275,13 @@ namespace CodeRefactor.Commands
                 ASContext.Context.SetHaxeFeatures();
                 ASContext.Context.CurrentModel.Returns(new FileModel { haXe = true, Context = ASContext.Context });
                 ASContext.Context.CurrentMember.Returns(currentMember);
-                Sci.Text = sourceText;
-                Sci.ConfigurationLanguage = "haxe";
-                SnippetHelper.PostProcessSnippets(Sci, 0);
-                var command = (ExtractLocalVariableCommand)CommandFactoryProvider.GetFactory(Sci).CreateExtractLocalVariableCommand(false, newName);
+                sci.Text = sourceText;
+                sci.ConfigurationLanguage = "haxe";
+                SnippetHelper.PostProcessSnippets(sci, 0);
+                var command = (ExtractLocalVariableCommand)CommandFactoryProvider.GetFactory(sci).CreateExtractLocalVariableCommand(false, newName);
                 command.Execute();
                 ((CompletionListItem)command.CompletionList[contextualGeneratorItem]).PerformClick();
-                return Sci.Text;
+                return sci.Text;
             }
         }
 
@@ -294,8 +294,8 @@ namespace CodeRefactor.Commands
             public void OrganizeImportsFixtureSetUp()
             {
                 // Needed for preprocessor directives...
-                Sci.SetProperty("fold", "1");
-                Sci.SetProperty("fold.preprocessor", "1");
+                sci.SetProperty("fold", "1");
+                sci.SetProperty("fold.preprocessor", "1");
             }
 
             public IEnumerable<TestCaseData> HaxeTestCases
@@ -326,7 +326,7 @@ namespace CodeRefactor.Commands
             }
 
             [Test, TestCaseSource(nameof(HaxeTestCases))]
-            public string Haxe(string sourceText, string fileName) => HaxeImpl(Sci, sourceText, fileName);
+            public string Haxe(string sourceText, string fileName) => HaxeImpl(sci, sourceText, fileName);
 
             public static string HaxeImpl(ScintillaControl sci, string sourceText, string fileName)
             {
@@ -390,7 +390,7 @@ namespace CodeRefactor.Commands
             public string AS3(string fileName, string newName)
             {
                 ASContext.Context.SetAs3Features();
-                Sci.ConfigurationLanguage = "as3";
+                sci.ConfigurationLanguage = "as3";
                 var sourceText = ReadAllTextAS3(fileName);
                 fileName = GetFullPathAS3(fileName);
                 fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
@@ -399,7 +399,7 @@ namespace CodeRefactor.Commands
                 fileName = fileName.Replace(".as", "_withoutEntryPoint.as");
                 ASContext.Context.CurrentModel.FileName = fileName;
                 PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
-                return Common(Sci, sourceText, newName);
+                return Common(sci, sourceText, newName);
             }
 
             static string Common(ScintillaControl sci, string sourceText, string newName)
