@@ -181,8 +181,8 @@ namespace CodeRefactor.Provider
         /// <param name="snippet"></param>
         SurroundWithCommand CreateSurroundWithCommand(string snippet);
 
-        void RegisterCommandValidator(Type command, Func<ASResult, bool> validator);
+        void RegisterValidator(Type command, Func<ASResult, bool> validator);
 
-        Func<ASResult, bool> GetCommandValidator(Type command);
+        Func<ASResult, bool> GetValidator(Type command);
     }
 }
