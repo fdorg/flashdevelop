@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ASCompletion.Completion;
@@ -21,7 +20,6 @@ using ProjectManager.Actions;
 using ProjectManager.Controls.TreeView;
 using ProjectManager.Helpers;
 using CodeRefactor.Managers;
-using ScintillaNet;
 
 namespace CodeRefactor
 {
@@ -117,7 +115,6 @@ namespace CodeRefactor
             CreateMenuItems();
             RegisterMenuItems();
             RegisterTraceGroups();
-            RegisterValidators();
         }
 
         /// <summary>
@@ -218,8 +215,8 @@ namespace CodeRefactor
         static bool IsValidForMove(string oldPath)
         {
             return PluginBase.CurrentProject != null
-                   && (File.Exists(oldPath) || Directory.Exists(oldPath))
-                   && IsValidFile(oldPath);
+                && (File.Exists(oldPath) || Directory.Exists(oldPath))
+                && IsValidFile(oldPath);
         }
 
         /// <summary>
@@ -335,22 +332,6 @@ namespace CodeRefactor
         {
             TraceManager.RegisterTraceGroup(TraceGroup, TextHelper.GetStringWithoutMnemonics("Label.Refactor"), false);
             TraceManager.RegisterTraceGroup(FindAllReferences.TraceGroup, TextHelper.GetString("Label.FindAllReferencesResult"), false, true);
-        }
-
-        static void RegisterValidators()
-        {
-            CommandFactoryProvider.DefaultFactory.RegisterCommandValidator(typeof(Rename), expr =>
-            {
-                if (expr == null || expr.IsNull()) return false;
-                var c = expr.Context.Value[0];
-                if (char.IsDigit(c)) return false;
-                var characterClass = ScintillaControl.Configuration.GetLanguage(ASContext.CurSciControl.ConfigurationLanguage).characterclass.Characters;
-                if (!characterClass.Contains(c)) return false;
-                return (expr.Member != null && RefactoringHelper.ModelFileExists(expr.Member.InFile) && !RefactoringHelper.IsUnderSDKPath(expr.Member.InFile))
-                    || (expr.Type != null && RefactoringHelper.ModelFileExists(expr.Type.InFile) && !RefactoringHelper.IsUnderSDKPath(expr.Type.InFile))
-                    || (RefactoringHelper.ModelFileExists(expr.InFile) && !RefactoringHelper.IsUnderSDKPath(expr.InFile))
-                    || expr.IsPackage;
-            });
         }
 
         /// <summary>
