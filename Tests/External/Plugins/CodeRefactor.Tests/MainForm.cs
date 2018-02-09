@@ -179,7 +179,6 @@ namespace FlashDevelop
         }
 
         public int getThemeColorCount;
-
         public Color GetThemeColor(string id, Color fallback)
         {
             getThemeColorCount++;
@@ -203,7 +202,6 @@ namespace FlashDevelop
         }
 
         public int imageSetAdjustCount;
-
         public Image ImageSetAdjust(Image image)
         {
             imageSetAdjustCount++;
@@ -218,31 +216,6 @@ namespace FlashDevelop
         public Image FindImage(string data)
         {
             return null;
-        }
-
-        Image IMainForm.FindImage(string data, bool autoAdjust)
-        {
-            return FindImage(data, autoAdjust);
-        }
-
-        Image IMainForm.FindImage16(string data)
-        {
-            return FindImage16(data);
-        }
-
-        Image IMainForm.FindImage16(string data, bool autoAdjusted)
-        {
-            return FindImage16(data, autoAdjusted);
-        }
-
-        Image IMainForm.FindImageAndSetAdjust(string data)
-        {
-            return FindImageAndSetAdjust(data);
-        }
-
-        Image IMainForm.FindImage(string data)
-        {
-            return FindImage(data);
         }
 
         public Image FindImage(string data, bool autoAdjust)
@@ -346,7 +319,6 @@ namespace FlashDevelop
         }
 
         private ITabbedDocument _currentDocument;
-
         public ITabbedDocument CurrentDocument
         {
             get { return _currentDocument; }
