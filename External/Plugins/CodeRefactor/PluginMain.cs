@@ -110,11 +110,12 @@ namespace CodeRefactor
         /// </summary>
         public void Initialize()
         {
-            this.InitBasics();
-            this.LoadSettings();
-            this.CreateMenuItems();
-            this.RegisterMenuItems();
-            this.RegisterTraceGroups();
+            InitBasics();
+            LoadSettings();
+            CreateMenuItems();
+            RegisterMenuItems();
+            RegisterTraceGroups();
+            RegisterValidators();
         }
 
         /// <summary>
@@ -334,13 +335,22 @@ namespace CodeRefactor
             TraceManager.RegisterTraceGroup(FindAllReferences.TraceGroup, TextHelper.GetString("Label.FindAllReferencesResult"), false, true);
         }
 
+        static void RegisterValidators()
+        {
+            CommandFactoryProvider.DefaultFactory.RegisterCommandValidator(typeof(Rename), expr =>
+            {
+                if (expr == null || expr.IsNull()) return false;
+                return (expr.Member != null && RefactoringHelper.ModelFileExists(expr.Member.InFile) && !RefactoringHelper.IsUnderSDKPath(expr.Member.InFile))
+                    || (expr.Type != null && RefactoringHelper.ModelFileExists(expr.Type.InFile) && !RefactoringHelper.IsUnderSDKPath(expr.Type.InFile))
+                    || (RefactoringHelper.ModelFileExists(expr.InFile) && !RefactoringHelper.IsUnderSDKPath(expr.InFile))
+                    || expr.IsPackage;
+            });
+        }
+
         /// <summary>
         /// Cursor position changed and word at this position was resolved
         /// </summary>
-        private void OnResolvedContextChanged(ResolvedContext resolved)
-        {
-            this.UpdateMenuItems();
-        }
+        private void OnResolvedContextChanged(ResolvedContext resolved) => UpdateMenuItems();
 
         /// <summary>
         /// Updates the state of the menu items
@@ -359,10 +369,7 @@ namespace CodeRefactor
                 ASResult result = isValid ? resolved.Result : null;
                 if (result != null && !result.IsNull())
                 {
-                    bool isRenameable = (result.Member != null && RefactoringHelper.ModelFileExists(result.Member.InFile) && !RefactoringHelper.IsUnderSDKPath(result.Member.InFile))
-                        || (result.Type != null && RefactoringHelper.ModelFileExists(result.Type.InFile) && !RefactoringHelper.IsUnderSDKPath(result.Type.InFile))
-                        || (RefactoringHelper.ModelFileExists(result.InFile) && !RefactoringHelper.IsUnderSDKPath(result.InFile))
-                        || result.IsPackage;
+                    bool isRenameable = CommandFactoryProvider.GetFactory(result).GetCommandValidator(typeof(Rename))(result);
                     this.refactorContextMenu.RenameMenuItem.Enabled = isRenameable;
                     this.refactorMainMenu.RenameMenuItem.Enabled = isRenameable;
                     var enabled = !result.IsPackage && (File.Exists(curFileName) || curFileName.Contains("[model]"));

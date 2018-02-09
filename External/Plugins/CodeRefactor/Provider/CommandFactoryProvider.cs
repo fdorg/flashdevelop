@@ -15,8 +15,8 @@ namespace CodeRefactor.Provider
         {
             Register("as2", DefaultFactory);
             Register("as3", DefaultFactory);
-            Register("loom", DefaultFactory);
             Register("haxe", DefaultFactory);
+            Register("loom", DefaultFactory);
         }
 
         public static void Register(string language, ICommandFactory factory)
