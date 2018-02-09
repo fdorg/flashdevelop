@@ -17,7 +17,6 @@ using System.Windows.Forms;
 using ProjectManager.Projects.Haxe;
 using ProjectManager.Projects;
 using AS3Context;
-using HaXeContext.Completion;
 using HaXeContext.Generators;
 using PluginCore.Utilities;
 using ScintillaNet;
