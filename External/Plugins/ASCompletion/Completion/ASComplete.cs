@@ -4382,19 +4382,18 @@ namespace ASCompletion.Completion
         /// Returns whether or not position is inside of an expression
         /// block in Haxe String interpolation ('${expr}')
         /// </summary>
-        private static bool IsInterpolationExpr(ScintillaControl sci, int position)
+        public static bool IsInterpolationExpr(ScintillaControl sci, int position)
         {
             if (ASContext.Context.Features.hasStringInterpolation)
             {
                 char stringChar = sci.GetStringType(position - 1);
-                if (ASContext.Context.Features.stringInterpolationQuotes.IndexOf(stringChar) >= 0)
+                if (ASContext.Context.Features.stringInterpolationQuotes.Contains(stringChar))
                 {
-                    char next;
                     char current = (char) sci.CharAt(position);
 
                     for (int i = position - 1; i >= 0; i--)
                     {
-                        next = current;
+                        var next = current;
                         current = (char) sci.CharAt(i);
 
                         if (current == stringChar)
