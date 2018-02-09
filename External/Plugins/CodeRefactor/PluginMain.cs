@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ASCompletion.Completion;
@@ -20,6 +21,7 @@ using ProjectManager.Actions;
 using ProjectManager.Controls.TreeView;
 using ProjectManager.Helpers;
 using CodeRefactor.Managers;
+using ScintillaNet;
 
 namespace CodeRefactor
 {
@@ -340,6 +342,10 @@ namespace CodeRefactor
             CommandFactoryProvider.DefaultFactory.RegisterCommandValidator(typeof(Rename), expr =>
             {
                 if (expr == null || expr.IsNull()) return false;
+                var c = expr.Context.Value[0];
+                if (char.IsDigit(c)) return false;
+                var characterClass = ScintillaControl.Configuration.GetLanguage(ASContext.CurSciControl.ConfigurationLanguage).characterclass.Characters;
+                if (!characterClass.Contains(c)) return false;
                 return (expr.Member != null && RefactoringHelper.ModelFileExists(expr.Member.InFile) && !RefactoringHelper.IsUnderSDKPath(expr.Member.InFile))
                     || (expr.Type != null && RefactoringHelper.ModelFileExists(expr.Type.InFile) && !RefactoringHelper.IsUnderSDKPath(expr.Type.InFile))
                     || (RefactoringHelper.ModelFileExists(expr.InFile) && !RefactoringHelper.IsUnderSDKPath(expr.InFile))
@@ -369,7 +375,9 @@ namespace CodeRefactor
                 ASResult result = isValid ? resolved.Result : null;
                 if (result != null && !result.IsNull())
                 {
-                    bool isRenameable = CommandFactoryProvider.GetFactory(result).GetCommandValidator(typeof(Rename))(result);
+                    var validator = CommandFactoryProvider.GetFactory(result).GetCommandValidator(typeof(Rename)) ??
+                                    CommandFactoryProvider.DefaultFactory.GetCommandValidator(typeof(Rename));
+                    var isRenameable = validator(result);
                     this.refactorContextMenu.RenameMenuItem.Enabled = isRenameable;
                     this.refactorMainMenu.RenameMenuItem.Enabled = isRenameable;
                     var enabled = !result.IsPackage && (File.Exists(curFileName) || curFileName.Contains("[model]"));
