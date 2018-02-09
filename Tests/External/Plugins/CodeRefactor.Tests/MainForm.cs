@@ -156,11 +156,6 @@ namespace FlashDevelop
             throw new NotImplementedException();
         }
 
-        Color IMainForm.GetThemeColor(string id)
-        {
-            return GetThemeColor(id);
-        }
-
         public Color GetThemeColor(string id)
         {
             return Color.Black;
