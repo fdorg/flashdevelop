@@ -82,18 +82,17 @@ namespace ASCompletion.Completion
 
         protected virtual void ContextualGenerator(ScintillaControl sci, int position, ASResult resolve, List<ICompletionListItem> options)
         {
-            var context = ASContext.Context;
-            int style = sci.BaseStyleAt(position);
-            int line = sci.LineFromPosition(position);
-            FoundDeclaration found = GetDeclarationAtLine(line);
-            bool isNotInterface = (context.CurrentClass.Flags & FlagType.Interface) == 0;
-            if (isNotInterface && ASComplete.IsLiteralStyle(style))
+            var line = sci.LineFromPosition(position);
+            var found = GetDeclarationAtLine(line);
+            if (CanShowConvertToConst(sci, position, resolve, found))
             {
                 ShowConvertToConst(found, options);
                 return;
             }
 
             contextResolved = resolve;
+            var context = ASContext.Context;
+            var isNotInterface = (context.CurrentClass.Flags & FlagType.Interface) == 0;
 
             // ignore automatic vars (MovieClip members)
             if (isNotInterface
@@ -443,13 +442,27 @@ namespace ASCompletion.Completion
         }
 
         /// <summary>
-        /// 
+        /// Check if "Convert to const" are available at the current cursor position.
         /// </summary>
         /// <param name="sci">The Scintilla control containing the document</param>
         /// <param name="position">Cursor position</param>
         /// <param name="expr">Expression at cursor position</param>
         /// <param name="found">The declaration target at current line(can not be null)</param>
-        /// <returns>true, if can show `Generate Constructor` and(or) `Generate toString()` list</returns>
+        /// <returns>true, if can show `Convert to const` list</returns>
+        protected virtual bool CanShowConvertToConst(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        {
+            return !ASContext.Context.CurrentClass.Flags.HasFlag(FlagType.Interface)
+                && ASComplete.IsLiteralStyle(sci.BaseStyleAt(position));
+        }
+
+        /// <summary>
+        /// Check if "Generate constructor" and "Generate toString()" are available at the current cursor position.
+        /// </summary>
+        /// <param name="sci">The Scintilla control containing the document</param>
+        /// <param name="position">Cursor position</param>
+        /// <param name="expr">Expression at cursor position</param>
+        /// <param name="found">The declaration target at current line(can not be null)</param>
+        /// <returns>true, if can show `Generate constructor` and(or) `Generate toString()` list</returns>
         protected virtual bool CanShowGenerateConstructorAndToString(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return contextToken == null
@@ -460,7 +473,7 @@ namespace ASCompletion.Completion
         }
 
         /// <summary>
-        /// 
+        /// Check if "Implement Interface" are available at the current cursor position.
         /// </summary>
         /// <param name="sci">The Scintilla control containing the document</param>
         /// <param name="position">Cursor position</param>
@@ -474,7 +487,7 @@ namespace ASCompletion.Completion
         }
 
         /// <summary>
-        /// 
+        /// Check if "Add to interface" are available at the current cursor position.
         /// </summary>
         /// <param name="sci">The Scintilla control containing the document</param>
         /// <param name="position">Cursor position</param>
