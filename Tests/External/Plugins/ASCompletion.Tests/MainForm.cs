@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using FlashDevelop.Managers;
 using FlashDevelop.Utilities;
 using PluginCore;
+using ScintillaNet;
 using ScintillaNet.Configuration;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -86,15 +88,11 @@ namespace FlashDevelop
             throw new NotImplementedException();
         }
 
+        public DockContent OpenEditableDocument(string file) => OpenEditableDocument(file, false);
+
         public DockContent OpenEditableDocument(string file, bool restoreFileState)
         {
-            if (CurrentDocument != null && CurrentDocument.FileName == file) return CurrentDocument as DockContent;
-            throw new NotImplementedException();
-        }
-
-        public DockContent OpenEditableDocument(string file)
-        {
-            throw new NotImplementedException();
+            return new TabbedDocument(CurrentDocument);
         }
 
         public DockContent CreateCustomDocument(Control ctrl)
@@ -247,7 +245,7 @@ namespace FlashDevelop
 
         public void SetUseTheme(Object parent, Boolean use)
         {
-            throw new NotImplementedException();
+            // Not implemented
         }
 
         public ISettings Settings { get; set; }
@@ -262,10 +260,7 @@ namespace FlashDevelop
             get { throw new NotImplementedException(); }
         }
 
-        public Scintilla SciConfig
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public Scintilla SciConfig => ScintillaManager.SciConfig;
 
         public DockPanel DockPanel
         {
@@ -422,5 +417,59 @@ namespace FlashDevelop
         {
             get { throw new NotImplementedException(); }
         }
+
+    }
+}
+
+class TabbedDocument : DockContent, ITabbedDocument
+{
+    public string FileName { get; }
+    public bool UseCustomIcon { get; set; }
+    public SplitContainer SplitContainer { get; }
+    public ScintillaControl SciControl { get; }
+    public ScintillaControl SplitSci1 { get; }
+    public ScintillaControl SplitSci2 { get; }
+    public bool IsModified { get; set; }
+    public bool IsSplitted { get; set; }
+    public bool IsBrowsable { get; }
+    public bool IsUntitled { get; }
+    public bool IsEditable { get; }
+    public bool HasBookmarks { get; }
+    public bool IsAloneInPane { get; }
+
+    public TabbedDocument(ITabbedDocument mock)
+    {
+        FileName = mock.FileName;
+        SciControl = mock.SciControl;
+    }
+
+    public void RefreshTexts()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Reload(bool showQuestion)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Revert(bool showQuestion)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Save(string file)
+    {
+        // ignore
+    }
+
+    public void Save(string file, string reason)
+    {
+        // ignore
+    }
+
+    public void Save()
+    {
+        // ignore
     }
 }

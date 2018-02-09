@@ -379,7 +379,6 @@ namespace FlashDevelop
         }
 
         private bool _standaloneMode;
-
         public bool StandaloneMode
         {
             get { return _standaloneMode; }
