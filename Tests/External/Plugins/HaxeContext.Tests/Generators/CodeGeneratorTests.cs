@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.TestUtils;
@@ -17,6 +18,13 @@ namespace HaXeContext.Generators
 
         internal static string ReadAll(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
+        static void SetCurrentFile(string fileName)
+        {
+            fileName = GetFullPath(fileName);
+            ASContext.Context.CurrentModel.FileName = fileName;
+            PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
+        }
+
         [TestFixtureSetUp]
         public void Setup()
         {
@@ -29,56 +37,61 @@ namespace HaXeContext.Generators
         {
             get
             {
-                yield return
-                    new TestCaseData("BeforeContextualGeneratorTests_issue1833_1", false)
-                        .Returns(ReadAll("AfterContextualGeneratorTests_issue1833_1"))
-                        .SetName("Issue1833. Case 1")
-                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1833");
-                yield return
-                    new TestCaseData("BeforeContextualGeneratorTests_issue1833_2", false)
-                        .Returns(ReadAll("AfterContextualGeneratorTests_issue1833_2"))
-                        .SetName("Issue1833. Case 2")
-                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1833");
-                yield return
-                    new TestCaseData("BeforeContextualGeneratorTests_issue1743_1", false)
-                        .Returns(ReadAll("AfterContextualGeneratorTests_issue1743_1"))
-                        .SetName("Issue1743. Case 1")
-                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1743");
-                yield return
-                    new TestCaseData("BeforeContextualGeneratorTests_issue1743_2", false)
-                        .Returns(ReadAll("AfterContextualGeneratorTests_issue1743_2"))
-                        .SetName("Issue1743. Case 2")
-                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1743");
-                yield return
-                    new TestCaseData("BeforeContextualGeneratorTests_issue1743_3", false)
-                        .Returns(ReadAll("AfterContextualGeneratorTests_issue1743_3"))
-                        .SetName("Issue1743. Case 3")
-                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1743");
-                yield return
-                    new TestCaseData("BeforeContextualGeneratorTests_issue1927_1", true)
-                        .Returns(ReadAll("AfterContextualGeneratorTests_issue1927_1"))
-                        .SetName("Issue1927. Case 1")
-                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1927");
-                yield return
-                    new TestCaseData("BeforeContextualGeneratorTests_issue1964_1", false)
-                        .Returns(ReadAll("AfterContextualGeneratorTests_issue1964_1"))
-                        .SetName("Issue1964. Case 1")
-                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1964");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1833_1", -1, false)
+                    .Returns(ReadAll("AfterContextualGeneratorTests_issue1833_1"))
+                    .SetName("Issue1833. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1833");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1833_2", -1, false)
+                    .Returns(ReadAll("AfterContextualGeneratorTests_issue1833_2"))
+                    .SetName("Issue1833. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1833");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1743_1", -1, false)
+                    .Returns(ReadAll("AfterContextualGeneratorTests_issue1743_1"))
+                    .SetName("Issue1743. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1743");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1743_2", -1, false)
+                    .Returns(ReadAll("AfterContextualGeneratorTests_issue1743_2"))
+                    .SetName("Issue1743. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1743");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1743_3", -1, false)
+                    .Returns(ReadAll("AfterContextualGeneratorTests_issue1743_3"))
+                    .SetName("Issue1743. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1743");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1927_1", -1, false)
+                    .Returns(ReadAll("AfterContextualGeneratorTests_issue1927_1"))
+                    .SetName("Issue1927. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1927");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1964_1", -1, false)
+                    .Returns(ReadAll("AfterContextualGeneratorTests_issue1964_1"))
+                    .SetName("Issue1964. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1964");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2009_1", GeneratorJobType.ConvertToConst, true)
+                    .Returns(ReadAll("AfterContextualGeneratorTests_issue2009_1"))
+                    .SetName("Convert to const. Issue2009. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2009");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2009_2", GeneratorJobType.ConvertToConst, false)
+                    .Returns(ReadAll("AfterContextualGeneratorTests_issue2009_2"))
+                    .SetName("Convert to const. Issue2009. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2009");
             }
         }
 
         [Test, TestCaseSource(nameof(ContextualGeneratorTestCases))]
-        public string ContextualGenerator(string fileName, bool hasGenerator) => ContextualGenerator(sci, fileName, hasGenerator);
+        public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 
-        internal static string ContextualGenerator(ScintillaControl sci, string fileName, bool hasGenerator)
+        internal static string ContextualGenerator(ScintillaControl sci, string fileName, GeneratorJobType job, bool hasGenerator)
         {
             SetSrc(sci, ReadAll(fileName));
-            fileName = GetFullPath(fileName);
-            ASContext.Context.CurrentModel.FileName = fileName;
-            PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
+            SetCurrentFile(fileName);
+            sci.Colourise(0, -1);
             var options = new List<ICompletionListItem>();
             ASGenerator.ContextualGenerator(sci, options);
-            if (!hasGenerator) Assert.AreEqual(0, options.Count);
+            if (hasGenerator)
+            {
+                Assert.IsNotEmpty(options);
+                Assert.IsTrue(options.Any(it => ((ASCompletion.Completion.GeneratorItem) it).job == job));
+            }
+            else if (options.Count > 0) Assert.IsFalse(options.Any(it => ((ASCompletion.Completion.GeneratorItem) it).job == job));
             return sci.Text;
         }
 
@@ -108,9 +121,7 @@ namespace HaXeContext.Generators
         public bool HandleOverride(string fileName)
         {
             SetSrc(sci, ReadAll(fileName));
-            fileName = GetFullPath(fileName);
-            ASContext.Context.CurrentModel.FileName = fileName;
-            PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
+            SetCurrentFile(fileName);
             return ASGenerator.HandleGeneratorCompletion(sci, false, ASContext.Context.Features.overrideKey);
         }
     }

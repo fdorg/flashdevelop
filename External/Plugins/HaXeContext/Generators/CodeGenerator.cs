@@ -23,6 +23,12 @@ namespace HaXeContext.Generators
             base.ContextualGenerator(sci, position, expr, options);
         }
 
+        protected override bool CanShowConvertToConst(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        {
+            return !ASComplete.IsInterpolationExpr(sci, position) 
+                && base.CanShowConvertToConst(sci, position, expr, found);
+        }
+
         protected override bool CanShowImplementInterfaceList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return expr.Context.Separator != "=" && base.CanShowImplementInterfaceList(sci, position, expr, found);
@@ -30,9 +36,10 @@ namespace HaXeContext.Generators
 
         protected override bool CanShowGenerateConstructorAndToString(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
-            return base.CanShowGenerateConstructorAndToString(sci, position, expr, found)
-                && !found.InClass.Flags.HasFlag(FlagType.Enum)
-                && !found.InClass.Flags.HasFlag(FlagType.TypeDef);
+            var flags = found.InClass.Flags;
+            return !flags.HasFlag(FlagType.Enum)
+                && !flags.HasFlag(FlagType.TypeDef)
+                && base.CanShowGenerateConstructorAndToString(sci, position, expr, found);
         }
 
         protected override bool HandleOverrideCompletion(bool autoHide)

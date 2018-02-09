@@ -185,6 +185,10 @@
     <EmbeddedResource Include="Test Files\generators\code\HandleOverrideCompletion_interface.hx" />
     <EmbeddedResource Include="Test Files\generators\code\HandleOverrideCompletion_class_2.hx" />
     <EmbeddedResource Include="Test Files\generators\code\HandleOverrideCompletion_typedef.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2009_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2009_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2009_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2009_2.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
