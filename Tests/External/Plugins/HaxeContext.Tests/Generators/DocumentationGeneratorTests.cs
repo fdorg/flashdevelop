@@ -14,7 +14,7 @@ using ScintillaNet;
 
 namespace HaXeContext.Generators
 {
-    using GeneratorItem = ASCompletion.Generators.DocumentationGenerator.GeneratorItem;
+    using DocumentationGeneratorItem = ASCompletion.Generators.DocumentationGenerator.GeneratorItem;
 
     public class DocumentationGeneratorTests : ASCompletionTests
     {
@@ -42,7 +42,7 @@ namespace HaXeContext.Generators
                 var options = new List<ICompletionListItem>();
                 ((HaXeSettings) ASContext.Context.Settings).EnableLeadingAsterisks = enableLeadingAsterisks;
                 ASContext.Context.DocumentationGenerator.ContextualGenerator(sci, sci.CurrentPos, options);
-                var item = options.Find(it => it is GeneratorItem && ((GeneratorItem)it).Job == job);
+                var item = options.Find(it => it is DocumentationGeneratorItem && ((DocumentationGeneratorItem)it).Job == job);
                 if (hasGenerator)
                 {
                     Assert.NotNull(item);

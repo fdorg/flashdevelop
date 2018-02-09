@@ -8,7 +8,7 @@ using PluginCore;
 using PluginCore.Localization;
 using ScintillaNet;
 
-namespace HaXeContext.Completion
+namespace HaXeContext.Generators
 {
     internal class CodeGenerator : ASGenerator
     {
@@ -33,6 +33,15 @@ namespace HaXeContext.Completion
             return base.CanShowGenerateConstructorAndToString(sci, position, expr, found)
                 && !found.InClass.Flags.HasFlag(FlagType.Enum)
                 && !found.InClass.Flags.HasFlag(FlagType.TypeDef);
+        }
+
+        protected override bool HandleOverrideCompletion(bool autoHide)
+        {
+            var flags = ASContext.Context.CurrentClass.Flags;
+            return !flags.HasFlag(FlagType.Abstract)
+                && !flags.HasFlag(FlagType.Interface)
+                && !flags.HasFlag(FlagType.TypeDef)
+                && base.HandleOverrideCompletion(autoHide);
         }
     }
 
