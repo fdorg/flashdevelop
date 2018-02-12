@@ -76,6 +76,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Provider\CommandFactoryProviderTests.cs" />
     <Compile Include="Provider\RefactoringHelperTests.cs" />
     <Compile Include="TestUtils\TestFile.cs" />
   </ItemGroup>
@@ -190,6 +191,10 @@
     <EmbeddedResource Include="Test Files\coderefactor\rename\as3\BeforeRename_issue1852.as" />
     <EmbeddedResource Include="Test Files\coderefactor\rename\as3\BeforeRename_issue1852_withoutEntryPoint.as" />
     <EmbeddedResource Include="Test Files\coderefactor\rename\as3\AfterRename_issue1852.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\RenameValidator_1.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\RenameValidator_2.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\RenameValidator_3.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\RenameValidator_4.as" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
