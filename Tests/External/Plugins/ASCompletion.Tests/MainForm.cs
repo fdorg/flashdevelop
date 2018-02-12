@@ -205,7 +205,7 @@ namespace FlashDevelop
         public Image ImageSetAdjust(Image image)
         {
             imageSetAdjustCount++;
-            return image;            
+            return image;
         }
 
         public Image GetAutoAdjustedImage(Image image)
@@ -325,9 +325,12 @@ namespace FlashDevelop
             set { _currentDocument = value; }
         }
 
+        ITabbedDocument[] tabbedDocuments;
+
         public ITabbedDocument[] Documents
         {
-            get { throw new NotImplementedException(); }
+            get { return tabbedDocuments; }
+            set { tabbedDocuments = value; }
         }
 
         public bool HasModifiedDocuments
