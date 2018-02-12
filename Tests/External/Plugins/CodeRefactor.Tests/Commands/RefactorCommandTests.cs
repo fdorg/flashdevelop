@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using ASCompletion.Completion;
 using ASCompletion.Context;
@@ -224,10 +223,7 @@ namespace CodeRefactor.Commands
 
             static string Common(string sourceText, string newName, ScintillaControl sci)
             {
-                sci.Text = sourceText;
-                SnippetHelper.PostProcessSnippets(sci, 0);
-                var model = ASContext.Context.GetCodeModel(sourceText);
-                ASContext.Context.CurrentMember.Returns(model.Classes.First().Members.Items.First());
+                SetSrc(sci, sourceText);
                 CommandFactoryProvider.GetFactory(sci)
                     .CreateExtractMethodCommand(newName)
                     .Execute();
@@ -236,7 +232,7 @@ namespace CodeRefactor.Commands
         }
 
         [TestFixture]
-        public class ExtractLocalVariableWithContextualGenertator : RefactorCommandTests
+        public class ExtractLocalVariableWithContextualGenerator : RefactorCommandTests
         {
             public IEnumerable<TestCaseData> HaxeTestCases
             {
