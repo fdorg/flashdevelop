@@ -197,6 +197,8 @@
     <EmbeddedResource Include="Test Files\coderefactor\rename\as3\RenameValidator_4.as" />
     <EmbeddedResource Include="Test Files\coderefactor\rename\as3\RenameValidator_5.as" />
     <EmbeddedResource Include="Test Files\coderefactor\rename\as3\RenameValidator_6.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\RenameValidator_7.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\as3\RenameValidator_8.as" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
