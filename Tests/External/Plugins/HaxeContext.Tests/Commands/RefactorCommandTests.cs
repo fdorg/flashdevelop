@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using CodeRefactor;
+using ASCompletion.Completion;
 using CodeRefactor.Provider;
 using HaXeContext.CodeRefactor.Provider;
 using HaXeContext.TestUtils;
@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace HaXeContext.Commands
 {
     [TestFixture]
-    class RefactorCommandTests : CodeRefactorTests
+    class RefactorCommandTests : ASCompleteTests
     {
         [TestFixture]
         public class OrganizeImports : RefactorCommandTests
