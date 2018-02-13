@@ -122,8 +122,9 @@ namespace ASCompletion.Completion
             }
 
             var suggestItemDeclaration = false;
-            if (contextToken != null && resolve.Member == null) // import declaration
+            if (contextToken != null && resolve.Member == null && sci.BaseStyleAt(position) != 5)
             {
+                // import declaration
                 if ((resolve.Type == null || resolve.Type.IsVoid() || !context.IsImported(resolve.Type, line)) && CheckAutoImport(resolve, options)) return;
                 if (resolve.Type == null)
                 {
