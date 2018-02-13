@@ -104,6 +104,10 @@ namespace HaXeContext.Generators
                     .Returns(null)
                     .SetName("Contextual generator shouldn't work. `{v:|null}`")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2017");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2017_7", -1, false)
+                    .Returns(null)
+                    .SetName("Contextual generator shouldn't work. `return |null;`")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2017");
             }
         }
 
