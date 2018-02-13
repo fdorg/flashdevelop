@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-using flash.tools.debugger;
 using System.Collections.Generic;
-using PluginCore;
 using PluginCore.Controls;
 
 namespace FlashDebugger

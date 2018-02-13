@@ -1834,13 +1834,13 @@ namespace ASCompletion.Model
                         break;
                     }
                 }
-                else if (c == 10 || c == 13)
+                else if (inString == 1 && c == '"') inString = 0;
+                else if (inString == 2 && c == '\'') inString = 0;
+                if (c == 10 || c == 13)
                 {
                     line++;
                     if (c == 13 && i < len && ba[i + 1] == 10) i++;
                 }
-                else if (inString == 1 && c == '"') inString = 0;
-                else if (inString == 2 && c == '\'') inString = 0;
                 i++;
             }
 
@@ -1895,7 +1895,8 @@ namespace ASCompletion.Model
 
             string token = curToken.Text;
             int dotIndex = token.LastIndexOf('.');
-            if (evalKeyword && (token.Length > 2))
+            var minTokenLength = haXe ? 2 : 3;
+            if (evalKeyword && token.Length >= minTokenLength)
             {
                 if (dotIndex > 0) token = token.Substring(dotIndex + 1);
 
@@ -2001,14 +2002,30 @@ namespace ASCompletion.Model
                             return true;
                         }
                     }
-
-                    else if (context == FlagType.Abstract) 
+                    else if (context == FlagType.Abstract)
                     {
-                        if (features.hasTypeDefs && token == "from")
+                        if (features.hasTypeDefs)
                         {
-                            foundKeyword = FlagType.Class;
-                            curModifiers = FlagType.Extends;
-                            return true;
+                            if (token == "from")
+                            {
+                                foundKeyword = FlagType.Class;
+                                curModifiers = FlagType.Extends;
+                                if (curClass != null)
+                                {
+                                    if (curClass.MetaDatas == null) curClass.MetaDatas = new List<ASMetaData>();
+                                    curClass.MetaDatas.Add(new ASMetaData(token) {RawParams = prevToken.Text});
+                                }
+                                return true;
+                            }
+                            if (token == "to")
+                            {
+                                if (curClass != null)
+                                {
+                                    if (curClass.MetaDatas == null) curClass.MetaDatas = new List<ASMetaData>();
+                                    curClass.MetaDatas.Add(new ASMetaData(token) {RawParams = prevToken.Text});
+                                }
+                                return true;
+                            }
                         }
                     }
 
@@ -2021,7 +2038,7 @@ namespace ASCompletion.Model
                             curModifiers |= FlagType.Getter;
                             return true;
                         }
-                        else if (token == "set")
+                        if (token == "set")
                         {
                             foundKeyword = FlagType.Function;
                             curModifiers |= FlagType.Setter;
@@ -2087,7 +2104,7 @@ namespace ASCompletion.Model
                         {
                             foundModifier = FlagType.Intrinsic | FlagType.Native;
                         }
-                        else if (version == 4 && token == "extern")
+                        else if (version == 4 && token == "extern" && context != FlagType.Package)
                         {
                             foundModifier = FlagType.Intrinsic | FlagType.Extern;
                         }
@@ -2377,8 +2394,7 @@ namespace ASCompletion.Model
                         {
                             if (curClass.MetaDatas == null)
                                 curClass.MetaDatas = carriedMetaData;
-                            else
-                                foreach (var meta in carriedMetaData) curClass.MetaDatas.Add(meta);
+                            else curClass.MetaDatas.AddRange(carriedMetaData);
 
                             carriedMetaData = null;
                         }
@@ -2495,12 +2511,17 @@ namespace ASCompletion.Model
                             curClass.LineTo = curToken.Line;
                             AddClass(model, curClass);
                         }
+                        if (carriedMetaData != null)
+                        {
+                            if (curClass.MetaDatas == null) curClass.MetaDatas = carriedMetaData;
+                            else curClass.MetaDatas.AddRange(carriedMetaData);
+                            carriedMetaData = null;
+                        }
                         break;
 
                     case FlagType.Variable:
                         // Haxe signatures: T -> T
-                        if (haXe && curMember != null && curMember.Type != null
-                            && curMember.Type.EndsWithOrdinal("->"))
+                        if (haXe && curMember?.Type != null && curMember.Type.EndsWithOrdinal("->"))
                         {
                             curMember.Type += token;
                             curMember.Type = ASFileParserRegexes.Spaces.Replace(curMember.Type, string.Empty).Replace(",", ", ");
@@ -2553,8 +2574,7 @@ namespace ASCompletion.Model
                             {
                                 if (member.MetaDatas == null)
                                     member.MetaDatas = carriedMetaData;
-                                else
-                                    foreach (var meta in carriedMetaData) member.MetaDatas.Add(meta);
+                                else member.MetaDatas.AddRange(carriedMetaData);
 
                                 carriedMetaData = null;
                             }
@@ -2584,9 +2604,10 @@ namespace ASCompletion.Model
                         //
                         if (curClass != null)
                         {
-                            if (token == curClass.Constructor)
+                            var constructorKey = features.ConstructorKey;
+                            if (token == curClass.Constructor || (!string.IsNullOrEmpty(constructorKey) && token == constructorKey))
                             {
-                                if (haXe) // constructor is: new()
+                                if (token == constructorKey)
                                 {
                                     member.Name = curClass.Name;
                                     curClass.Constructor = curClass.Name;
@@ -2617,8 +2638,7 @@ namespace ASCompletion.Model
                         {
                             if (member.MetaDatas == null)
                                 member.MetaDatas = carriedMetaData;
-                            else
-                                foreach (var meta in carriedMetaData) member.MetaDatas.Add(meta);
+                            else member.MetaDatas.AddRange(carriedMetaData);
 
                             carriedMetaData = null;
                         }

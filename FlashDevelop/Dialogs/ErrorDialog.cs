@@ -1,12 +1,7 @@
 using System;
-using System.Text;
 using System.Media;
 using System.Drawing;
-using System.Windows.Forms;
-using System.ComponentModel;
-using System.Collections.Generic;
 using PluginCore.Localization;
-using FlashDevelop.Helpers;
 using PluginCore.Controls;
 
 namespace FlashDevelop.Dialogs

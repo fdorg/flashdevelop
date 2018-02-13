@@ -1,5 +1,4 @@
 using System;
-using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -211,10 +210,6 @@ namespace ASCompletion
                         if (!doc.IsEditable) return;
                         timerPosition.Enabled = false;
                         timerPosition.Enabled = true;
-
-                        //Refresh from cache
-                        UpdateMarkersFromCache(PluginBase.MainForm.CurrentDocument.SplitSci1);
-                        UpdateMarkersFromCache(PluginBase.MainForm.CurrentDocument.SplitSci2);
                         return;
 
                     // key combinations
@@ -1097,8 +1092,14 @@ namespace ASCompletion
                             astCache.MarkAsOutdated(c);
                 }
 
-                astCacheTimer.Stop();
-                astCacheTimer.Start();
+                try
+                {
+                    astCacheTimer.Stop();
+                    astCacheTimer.Start();
+                }
+                catch
+                {
+                }
 
                 var sci1 = DocumentManager.FindDocument(obj.FileName)?.SplitSci1;
                 var sci2 = DocumentManager.FindDocument(obj.FileName)?.SplitSci2;
@@ -1213,10 +1214,9 @@ namespace ASCompletion
 
             // get word at mouse position
             int style = sci.BaseStyleAt(position);
-            if (!ASComplete.IsTextStyle(style))
-                return;
-            position = sci.WordEndPosition(position, true);
-            ASResult result = ASComplete.GetExpressionType(sci, position);
+            if (!ASComplete.IsTextStyle(style)) return;
+            position = ASComplete.ExpressionEndPosition(sci, position);
+            var result = ASComplete.GetExpressionType(sci, position, false, true);
 
             // set tooltip
             if (!result.IsNull())

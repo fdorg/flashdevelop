@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using PluginCore.Localization;
 using PluginCore.Utilities;
-using PluginCore.Helpers;
 using PluginCore.Controls;
 
 namespace FlashDevelop.Dialogs

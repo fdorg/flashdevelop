@@ -1,8 +1,7 @@
 using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Text;
 using System.Reflection;
+using FDBuild.Building.AS3;
 using ProjectManager.Projects;
 using ProjectManager.Projects.AS2;
 using ProjectManager.Projects.AS3;
@@ -37,7 +36,10 @@ namespace ProjectManager.Building
             if (project is AS2Project)
                 return new AS2ProjectBuilder(project as AS2Project, compilerPath);
             else if (project is AS3Project)
+            {
+                if (Directory.Exists(Path.Combine(compilerPath, "js"))) return new FlexJSProjectBuilder((AS3Project) project, compilerPath);
                 return new AS3ProjectBuilder(project as AS3Project, compilerPath, ipcName);
+            }
             else if (project is HaxeProject)
                 return new HaxeProjectBuilder(project as HaxeProject, compilerPath);
             else if (project is GenericProject)

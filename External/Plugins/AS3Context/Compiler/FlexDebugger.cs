@@ -1,4 +1,3 @@
-using System.Windows.Forms;
 using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Managers;

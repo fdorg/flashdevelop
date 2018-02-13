@@ -1,13 +1,6 @@
 using System;
-using System.Text;
-using System.Data;
-using System.Drawing;
-using System.Resources;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Windows.Forms;
 using AxShockwaveFlashObjects;
-using PluginCore.Localization;
 using PluginCore.Managers;
 using System.IO;
 using System.Xml;

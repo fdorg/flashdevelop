@@ -3,8 +3,6 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using Microsoft.Win32;
-
 using PluginCore.Helpers;
 
 namespace PluginCore

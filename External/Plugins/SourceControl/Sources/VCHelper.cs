@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using SourceControl.Actions;
 
 namespace SourceControl.Sources
 {

@@ -1,7 +1,5 @@
 namespace Mono.GetOptions
 {
-    using System;
-
     public class Options
     {
         // Methods

@@ -46,7 +46,8 @@ namespace FlashDebugger
 
         public void Hide()
         {
-            m_ToolTip.Visible = false;
+            if (m_ToolTip != null)
+                m_ToolTip.Visible = false;
         }
 
         private void MouseMessageFilter_MouseDownEvent(MouseButtons button, Point e)

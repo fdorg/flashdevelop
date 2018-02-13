@@ -2,7 +2,6 @@ using System;
 using PluginCore.Localization;
 using PluginCore.Managers;
 using PluginCore.Controls;
-using PluginCore.Helpers;
 
 namespace FlashDevelop.Dialogs
 {

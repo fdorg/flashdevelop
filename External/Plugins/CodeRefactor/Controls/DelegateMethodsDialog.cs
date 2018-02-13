@@ -15,7 +15,7 @@ namespace CodeRefactor.Controls
     {
         private Button btnOK;
         private Button btnCancel;
-        private DividedCheckedListBox checkedListBox;
+        private CheckedListBox checkedListBox;
         private Dictionary<MemberModel, ClassModel> members;
         public Dictionary<MemberModel, ClassModel> checkedMembers;
         private Dictionary<String, MemberModel> members2;
@@ -39,14 +39,14 @@ namespace CodeRefactor.Controls
         private void InitializeComponent()
         {
             this.btnOK = new System.Windows.Forms.ButtonEx();
-            this.checkedListBox = new CodeRefactor.Controls.DividedCheckedListBox();
+            this.checkedListBox = new CodeRefactor.Controls.CheckedListBox();
             this.btnCancel = new System.Windows.Forms.ButtonEx();
             this.SuspendLayout();
             // 
             // btnOK
             //
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOK.Location = new System.Drawing.Point(157, 283);
+            this.btnOK.Location = new System.Drawing.Point(303, 288);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 23);
             this.btnOK.TabIndex = 0;
@@ -60,9 +60,9 @@ namespace CodeRefactor.Controls
             this.checkedListBox.CheckOnClick = true;
             this.checkedListBox.FormattingEnabled = true;
             this.checkedListBox.Font = PluginBase.Settings.DefaultFont; // Do not remove!!!
-            this.checkedListBox.Location = new System.Drawing.Point(9, 9);
+            this.checkedListBox.Location = new System.Drawing.Point(11, 11);
             this.checkedListBox.Name = "checkedListBox";
-            this.checkedListBox.Size = new System.Drawing.Size(463, 270);
+            this.checkedListBox.Size = new System.Drawing.Size(463, 269);
             this.checkedListBox.IntegralHeight = false;
             this.checkedListBox.TabIndex = 2;
             // 
@@ -70,7 +70,7 @@ namespace CodeRefactor.Controls
             //
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(243, 283);
+            this.btnCancel.Location = new System.Drawing.Point(389, 288);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(85, 23);
             this.btnCancel.TabIndex = 1;
@@ -86,10 +86,10 @@ namespace CodeRefactor.Controls
             this.ShowInTaskbar = false;
             this.AcceptButton = this.btnOK;
             this.CancelButton = this.btnCancel;
-            this.MinimumSize = new System.Drawing.Size(400, 200);
+            this.MinimumSize = new System.Drawing.Size(300, 200);
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(480, 316);
+            this.ClientSize = new System.Drawing.Size(485, 323);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.checkedListBox);
@@ -111,7 +111,7 @@ namespace CodeRefactor.Controls
             this.members = members;
             String separatorInserted = null;
             members2 = new Dictionary<String, MemberModel>();
-            CheckedListBox.ObjectCollection items = checkedListBox.Items;
+            System.Windows.Forms.CheckedListBox.ObjectCollection items = checkedListBox.Items;
             Dictionary<MemberModel, ClassModel>.KeyCollection keys = members.Keys;
             items.Clear(); // Clear items...
             foreach (MemberModel member in keys)

@@ -11,10 +11,8 @@ using System.Windows.Forms;
 using ScintillaNet.Configuration;
 using ScintillaNet.Lexers;
 using PluginCore.FRService;
-using PluginCore.Utilities;
 using PluginCore.Managers;
 using PluginCore.Controls;
-using PluginCore.Helpers;
 using PluginCore;
 
 namespace ScintillaNet

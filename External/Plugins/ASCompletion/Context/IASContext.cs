@@ -6,6 +6,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using ASCompletion.Completion;
+using ASCompletion.Generators;
 using ASCompletion.Model;
 using ASCompletion.Settings;
 using ScintillaNet;
@@ -51,9 +52,17 @@ namespace ASCompletion.Context
         /// Retrieves a class model from its name
         /// </summary>
         /// <param name="cname">Class (short or full) name</param>
-        /// <param name="inClass">Current file</param>
+        /// <param name="inFile">Current file</param>
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         ClassModel ResolveType(string cname, FileModel inFile);
+
+        /// <summary>
+        /// Retrieves a class model from string
+        /// </summary>
+        /// <param name="token">string</param>
+        /// <param name="inFile">Current file</param>
+        /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
+        ClassModel ResolveToken(string token, FileModel inFile);
 
         /// <summary>
         /// Update model if needed and warn user if it has problems
@@ -73,7 +82,7 @@ namespace ASCompletion.Context
         void ExploreVirtualPath(PathModel path);
 
         /// <summary>
-        /// Called afer:
+        /// Called after:
         /// - a PathExplorer has finished exploring
         /// - a PathModel has some internal change
         /// - an import was generated
@@ -81,11 +90,11 @@ namespace ASCompletion.Context
         /// </summary>
         /// <param name="path">File or classname</param>
         void RefreshContextCache(string path);
-        
+
         /// <summary>
         /// Create a new file model using the default file parser
         /// </summary>
-        /// <param name="filename">Full path</param>
+        /// <param name="fileName">Full path</param>
         /// <returns>File model</returns>
         FileModel GetFileModel(string fileName);
 
@@ -308,6 +317,9 @@ namespace ASCompletion.Context
         MemberModel ResolveFunctionContext(ScintillaControl sci, ASExpr expression, bool autoHide);
 
         bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression);
+
+        IContextualGenerator CodeGenerator { get; }
+        IContextualGenerator DocumentationGenerator { get; }
         #endregion
 
         #region Properties

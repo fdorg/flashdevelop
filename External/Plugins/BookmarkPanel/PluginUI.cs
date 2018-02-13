@@ -1,14 +1,11 @@
 using System;
 using System.IO;
-using System.Timers;
 using System.Drawing;
-using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using PluginCore.Localization;
-using WeifenLuo.WinFormsUI;
 using PluginCore.FRService;
 using PluginCore.Controls;
 using PluginCore.Managers;

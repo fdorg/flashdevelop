@@ -66,7 +66,7 @@ namespace FlashDevelop.Managers
         }
 
         /// <summary>
-        /// 
+        /// Sets the use theme setting also to children
         /// </summary>
         public static void SetUseTheme(Object obj, Boolean use)
         {
@@ -210,8 +210,7 @@ namespace FlashDevelop.Managers
                 // Apply colors of base type before applying for this type
                 Boolean useIn = GetThemeValue("ThemeManager.UseInheritance") == "True";
                 if (useIn && type.BaseType != null) ThemeControl(obj, type.BaseType);
-                // Handle type with full name, with or without suffix 'Ex'
-                String name = type.Name.EndsWithOrdinal("Ex") ? type.Name.Remove(type.Name.Length - 2) : type.Name;
+                String name = ThemeHelper.GetFilteredTypeName(type);
                 // Apply all basic style settings
                 ApplyPropColor(obj, name + ".BackColor");
                 ApplyPropColor(obj, name + ".ForeColor");

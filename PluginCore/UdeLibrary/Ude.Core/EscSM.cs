@@ -36,7 +36,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-using System;
+
 
 /// <summary>
 /// Escaped charsets state machines

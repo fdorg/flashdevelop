@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using ASCompletion.Completion;
 using ASCompletion.Model;
+using CodeRefactor.Commands;
 using PluginCore;
 using ScintillaNet;
 
@@ -13,10 +15,29 @@ namespace CodeRefactor.Provider
 
         static CommandFactoryProvider()
         {
+            RegisterValidators();
             Register("as2", DefaultFactory);
             Register("as3", DefaultFactory);
-            Register("loom", DefaultFactory);
             Register("haxe", DefaultFactory);
+            Register("loom", DefaultFactory);
+        }
+
+        static void RegisterValidators()
+        {
+            DefaultFactory.RegisterValidator(typeof(Rename), expr =>
+            {
+                if (expr == null || expr.IsNull()) return false;
+                var c = expr.Context.Value[0];
+                if (char.IsDigit(c)) return false;
+                var file = expr.InFile ?? expr.Type.InFile;
+                var language = PluginBase.MainForm.SciConfig.GetLanguageFromFile(file.FileName);
+                var characterClass = ScintillaControl.Configuration.GetLanguage(language).characterclass.Characters;
+                if (!characterClass.Contains(c)) return false;
+                return (expr.Member != null && RefactoringHelper.ModelFileExists(expr.Member.InFile) && !RefactoringHelper.IsUnderSDKPath(expr.Member.InFile))
+                    || (expr.Type != null && RefactoringHelper.ModelFileExists(expr.Type.InFile) && !RefactoringHelper.IsUnderSDKPath(expr.Type.InFile))
+                    || (RefactoringHelper.ModelFileExists(expr.InFile) && !RefactoringHelper.IsUnderSDKPath(expr.InFile))
+                    || expr.IsPackage;
+            });
         }
 
         public static void Register(string language, ICommandFactory factory)
@@ -37,10 +58,7 @@ namespace CodeRefactor.Provider
             return GetFactory(document);
         }
 
-        public static ICommandFactory GetFactory(ASResult target)
-        {
-            return GetFactory(target.InFile ?? target.Type.InFile);
-        }
+        public static ICommandFactory GetFactory(ASResult target) => GetFactory(target.InFile ?? target.Type.InFile);
 
         public static ICommandFactory GetFactory(FileModel file)
         {
