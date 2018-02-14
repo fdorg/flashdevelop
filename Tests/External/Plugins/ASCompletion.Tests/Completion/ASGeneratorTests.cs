@@ -2424,14 +2424,8 @@ namespace ASCompletion.Completion
 
                 static string Common(string sourceText, string ofClassName, string memberName, FlagType memberFlags, ScintillaControl sci)
                 {
-                    sci.Text = sourceText;
-                    SnippetHelper.PostProcessSnippets(sci, 0);
-                    var currentModel = ASContext.Context.CurrentModel;
-                    new ASFileParser().ParseSrc(currentModel, sci.Text);
-                    var currentLine = sci.CurrentLine;
-                    var currentClass = currentModel.Classes.Find(it => currentLine >= it.LineFrom && currentLine < it.LineTo);
-                    ASContext.Context.CurrentClass.Returns(currentClass);
-                    var ofClass = currentModel.Classes.Find(model => model.Name == ofClassName);
+                    SetSrc(sci, sourceText);
+                    var ofClass = ASContext.Context.CurrentModel.Classes.Find(model => model.Name == ofClassName);
                     if (ofClass == null)
                     {
                         foreach (var classpath in ASContext.Context.Classpath)
