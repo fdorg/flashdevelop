@@ -254,51 +254,42 @@ namespace CodeRefactor.Commands
         [TestFixture]
         public class RenameTests : RefactorCommandTests
         {
-            static SynchronizationContext context;
+            static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
-            [TestFixtureSetUp]
-            public void OrganizeImportsFixtureSetUp()
-            {
-                context = SynchronizationContext.Current;
-                if (context == null) Assert.Ignore("SynchronizationContext.Current is null");
-            }
+            static string GetFullPath(string fileName) => $"{nameof(CodeRefactor)}.Test_Files.coderefactor.rename.as3.{fileName}.as";
 
-            static string ReadAllTextAS3(string fileName) => TestFile.ReadAllText(GetFullPathAS3(fileName));
-
-            static string GetFullPathAS3(string fileName) => $"{nameof(CodeRefactor)}.Test_Files.coderefactor.rename.as3.{fileName}.as";
-
-            static IEnumerable<TestCaseData> AS3TestCases
+            static IEnumerable<TestCaseData> TestCases
             {
                 get
                 {
-                    yield return
-                        new TestCaseData("BeforeRenameLocalVariable", "newName")
-                            .Returns(ReadAllTextAS3("AfterRenameLocalVariable"))
-                            .SetName("Rename local variable");
-                    yield return
-                        new TestCaseData("BeforeRename_issue1852", "b")
-                            .Returns(ReadAllTextAS3("AfterRename_issue1852"))
-                            .SetName("Issue 1852");
+                    yield return new TestCaseData("BeforeRenameLocalVariable", "newName")
+                        .Returns(ReadAllText("AfterRenameLocalVariable"))
+                        .SetName("Rename local variable");
+                    yield return new TestCaseData("BeforeRename_issue1852", "b")
+                        .Returns(ReadAllText("AfterRename_issue1852"))
+                        .SetName("Issue 1852");
                 }
             }
 
-            [Test, TestCaseSource(nameof(AS3TestCases))]
+            [Test, TestCaseSource(nameof(TestCases))]
             public string AS3(string fileName, string newName)
             {
                 SetAs3Features(sci);
-                var sourceText = ReadAllTextAS3(fileName);
-                fileName = GetFullPathAS3(fileName);
+                var sourceText = ReadAllText(fileName);
+                fileName = GetFullPath(fileName);
                 fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
                 fileName = Path.GetFullPath(fileName);
                 fileName = fileName.Replace($"\\FlashDevelop\\Bin\\Debug\\{nameof(CodeRefactor)}\\Test_Files\\", $"\\Tests\\External\\Plugins\\{nameof(CodeRefactor)}.Tests\\Test Files\\");
                 fileName = fileName.Replace(".as", "_withoutEntryPoint.as");
                 ASContext.Context.CurrentModel.FileName = fileName;
                 PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
-                return Common(sci, sourceText, newName);
+                return Rename(sci, sourceText, newName);
             }
 
-            static string Common(ScintillaControl sci, string sourceText, string newName)
+            public static string Rename(ScintillaControl sci, string sourceText, string newName)
             {
+                var context = SynchronizationContext.Current;
+                if (context == null) Assert.Ignore("SynchronizationContext.Current is null");
                 SetSrc(sci, sourceText);
                 var waitHandle = new AutoResetEvent(false);
                 CommandFactoryProvider.GetFactory(sci)
