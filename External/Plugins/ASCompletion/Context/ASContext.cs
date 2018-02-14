@@ -956,7 +956,7 @@ namespace ASCompletion.Context
         public virtual FileModel GetCodeModel(string src) => GetCodeModel(src, true);
 
         /// <inheritdoc />
-        public virtual FileModel GetCodeModel(string src, bool scriptMode) => GetCodeModel(new FileModel(), src, scriptMode);
+        public virtual FileModel GetCodeModel(string src, bool scriptMode) => GetCodeModel(CreateFileModel(string.Empty), src, scriptMode);
 
         /// <inheritdoc />
         public virtual FileModel GetCodeModel(FileModel result, string src, bool scriptMode)
