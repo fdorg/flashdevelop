@@ -1002,8 +1002,7 @@ namespace ASCompletion.Context
         public virtual void UpdateCurrentFile(bool updateUI)
         {
             if (cFile == null || CurSciControl == null) return;
-            var parser = GetCodeParser();
-            parser.ParseSrc(cFile, CurSciControl.Text);
+            GetCodeModel(cFile, CurSciControl.Text, false);
             cLine = CurSciControl.CurrentLine;
             UpdateContext(cLine);
 
@@ -1478,13 +1477,7 @@ namespace ASCompletion.Context
                     dest = list[1];
                 }
             }
-            FileModel aFile;
-            if (src == null) aFile = cFile;
-            else
-            {
-                var parser = GetCodeParser();
-                aFile = parser.Parse(CreateFileModel(src));
-            }
+            var aFile = src == null ? cFile : GetCodeModel(src, false);
             if (aFile.Version == 0) return;
             //
             string code = aFile.GenerateIntrinsic(false);
