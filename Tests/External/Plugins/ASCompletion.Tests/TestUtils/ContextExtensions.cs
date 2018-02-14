@@ -53,7 +53,7 @@ namespace ASCompletion.TestUtils
             mock.GetCodeModel(null, null, Arg.Any<bool>()).ReturnsForAnyArgs(x =>
             {
                 var src = x[1] as string;
-                return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(x.ArgAt<FileModel>(0), src, x.ArgAt<bool>(1));
+                return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(x.ArgAt<FileModel>(0), src, x.ArgAt<bool>(2));
             });
             mock.IsImported(null, Arg.Any<int>()).ReturnsForAnyArgs(it =>
             {

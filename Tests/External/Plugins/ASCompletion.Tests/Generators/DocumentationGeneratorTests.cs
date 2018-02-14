@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using ASCompletion.Context;
-using ASCompletion.Model;
 using ASCompletion.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
-using PluginCore.Helpers;
 using ScintillaNet;
 
 namespace ASCompletion.Generators
@@ -14,6 +12,10 @@ namespace ASCompletion.Generators
     [TestFixture]
     public class DocumentationGeneratorTests : ASCompletionTests
     {
+        protected static string ReadAllTextAS3(string fileName) => TestFile.ReadAllText(GetFullPathAS3(fileName));
+
+        protected static string GetFullPathAS3(string fileName) => $"{nameof(ASCompletion)}.Test_Files.generated.as3.documentation.{fileName}.as";
+
         public class ContextualGeneratorTests : DocumentationGeneratorTests
         {
             [TestFixtureSetUp]
@@ -74,20 +76,6 @@ namespace ASCompletion.Generators
                 else Assert.IsNull(item);
                 return sci.Text;
             }
-        }
-
-        protected static string ReadAllTextAS3(string fileName) => TestFile.ReadAllText(GetFullPathAS3(fileName));
-
-        protected static string GetFullPathAS3(string fileName) => $"{nameof(ASCompletion)}.Test_Files.generated.as3.documentation.{fileName}.as";
-
-        protected new static void SetSrc(ScintillaControl sci, string sourceText)
-        {
-            sci.Text = sourceText;
-            SnippetHelper.PostProcessSnippets(sci, 0);
-            var currentModel = ASContext.Context.CurrentModel;
-            new ASFileParser().ParseSrc(currentModel, sci.Text);
-            var line = sci.CurrentLine;
-            ASContext.Context.CurrentClass.Returns(currentModel.Classes.FirstOrDefault(line));
         }
     }
 }
