@@ -83,7 +83,11 @@ namespace HaXeContext.Commands
                 {
                     yield return new TestCaseData("BeforeRenameOptionalParameterVar_issue2022_case_1", "newName")
                         .Returns(ReadAllText("AfterRenameOptionalParameterVar_issue2022_case_1"))
-                        .SetName("Rename optional parameter. private function")
+                        .SetName("Rename optional parameter. local function. case 1")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2022");
+                    yield return new TestCaseData("BeforeRenameOptionalParameterVar_issue2022_case_2", "newName")
+                        .Returns(ReadAllText("AfterRenameOptionalParameterVar_issue2022_case_2"))
+                        .SetName("Rename optional parameter. local function. case 2")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2022");
                 }
             }

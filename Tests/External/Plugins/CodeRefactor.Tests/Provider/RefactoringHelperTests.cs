@@ -136,7 +136,7 @@ namespace CodeRefactor.Provider
             }
 
             [Test, TestCaseSource(nameof(HaxeTestCases))]
-            public bool Haxe(string sourceText, string sdkVersion = "0.0.0")
+            public bool Haxe(string sourceText, string sdkVersion)
             {
                 PluginBase.CurrentSDK = new InstalledSDK {Version = sdkVersion};
                 SetHaxeFeatures(sci);

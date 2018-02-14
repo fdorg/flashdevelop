@@ -16,7 +16,7 @@ namespace HaXeContext.Generators
     {
         internal static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.generators.code.{fileName}.hx";
 
-        internal static string ReadAll(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
+        internal static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
         static void SetCurrentFile(string fileName)
         {
@@ -66,7 +66,7 @@ namespace HaXeContext.Generators
                     .SetName("Issue1964. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1964");
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue2009_1", GeneratorJobType.ConvertToConst, true)
-                    .Returns(ReadAll("AfterContextualGeneratorTests_issue2009_1"))
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2009_1"))
                     .SetName("Convert to const. Issue2009. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2009");
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue2009_2", GeneratorJobType.ConvertToConst, false)
@@ -146,7 +146,7 @@ namespace HaXeContext.Generators
 
         internal static string ContextualGenerator(ScintillaControl sci, string fileName, GeneratorJobType job, bool hasGenerator)
         {
-            SetSrc(sci, ReadAll(fileName));
+            SetSrc(sci, ReadAllText(fileName));
             SetCurrentFile(fileName);
             sci.Colourise(0, -1);
             var options = new List<ICompletionListItem>();
@@ -154,7 +154,9 @@ namespace HaXeContext.Generators
             if (hasGenerator)
             {
                 Assert.IsNotEmpty(options);
-                Assert.IsTrue(options.Any(it => ((ASCompletion.Completion.GeneratorItem) it).job == job));
+                var item = options.Find(it => ((ASCompletion.Completion.GeneratorItem) it).job == job);
+                Assert.IsNotNull(item);
+                var value = item.Value;
             }
             else if (job == (GeneratorJobType) (-1))
             {
@@ -194,7 +196,7 @@ namespace HaXeContext.Generators
         [Test, TestCaseSource(nameof(HandleOverrideTestCases))]
         public bool HandleOverride(string fileName)
         {
-            SetSrc(sci, ReadAll(fileName));
+            SetSrc(sci, ReadAllText(fileName));
             SetCurrentFile(fileName);
             return ASGenerator.HandleGeneratorCompletion(sci, false, ASContext.Context.Features.overrideKey);
         }

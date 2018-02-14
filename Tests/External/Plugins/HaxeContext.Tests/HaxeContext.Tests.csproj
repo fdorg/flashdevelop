@@ -193,6 +193,9 @@
     <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2022_case_1_withoutEntryPoint.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2022_case_1.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\rename\AfterRenameOptionalParameterVar_issue2022_case_1.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2022_case_2_withoutEntryPoint.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2022_case_2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\AfterRenameOptionalParameterVar_issue2022_case_2.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

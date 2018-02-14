@@ -272,7 +272,7 @@ namespace CodeRefactor.Commands
             }
 
             [Test, TestCaseSource(nameof(TestCases))]
-            public string AS3(string fileName, string newName)
+            public string Rename(string fileName, string newName)
             {
                 SetAs3Features(sci);
                 var sourceText = ReadAllText(fileName);
