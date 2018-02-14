@@ -119,7 +119,7 @@ namespace HaXeContext.Generators
                     .Returns(null)
                     .SetName("`Generate private function` shouldn't work for optional parameter. private function.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2022")
-                    .Ignore();
+                    .Ignore("");
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue2022_1", GeneratorJobType.FunctionPublic, false)
                     .Returns(null)
                     .SetName("`Generate public function` shouldn't work for optional parameter. private function.")
