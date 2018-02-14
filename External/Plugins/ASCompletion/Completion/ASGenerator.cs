@@ -2873,11 +2873,7 @@ namespace ASCompletion.Completion
                 ASContext.MainForm.OpenEditableDocument(funcResult.RelClass.InFile.FileName, true);
                 sci = ASContext.CurSciControl;
                 isOtherClass = true;
-
-                var fileModel = new FileModel {Context = ASContext.Context};
-                var parser = new ASFileParser();
-                parser.ParseSrc(fileModel, sci.Text);
-
+                var fileModel = ASContext.Context.GetCodeModel(sci.Text, false);
                 foreach (ClassModel cm in fileModel.Classes)
                 {
                     if (cm.QualifiedName.Equals(funcResult.RelClass.QualifiedName))
