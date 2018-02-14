@@ -45,6 +45,16 @@ namespace ASCompletion.TestUtils
                 var src = x[0] as string;
                 return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
             });
+            mock.GetCodeModel(null, Arg.Any<bool>()).ReturnsForAnyArgs(x =>
+            {
+                var src = x[0] as string;
+                return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src, x.ArgAt<bool>(1));
+            });
+            mock.GetCodeModel(null, null, Arg.Any<bool>()).ReturnsForAnyArgs(x =>
+            {
+                var src = x[1] as string;
+                return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(x.ArgAt<FileModel>(0), src, x.ArgAt<bool>(1));
+            });
             mock.IsImported(null, Arg.Any<int>()).ReturnsForAnyArgs(it =>
             {
                 var member = it.ArgAt<MemberModel>(0) ?? ClassModel.VoidClass;
@@ -55,8 +65,7 @@ namespace ASCompletion.TestUtils
             mock.ResolveDotContext(null, null, false).ReturnsForAnyArgs(it =>
             {
                 var expr = it.ArgAt<ASExpr>(1);
-                if (expr == null) return null;
-                return context.ResolveDotContext(it.ArgAt<ScintillaControl>(0), expr, it.ArgAt<bool>(2));
+                return expr == null ? null : context.ResolveDotContext(it.ArgAt<ScintillaControl>(0), expr, it.ArgAt<bool>(2));
             });
             mock.IsFileValid.Returns(context.IsFileValid);
             mock.GetDefaultValue(null).ReturnsForAnyArgs(it => context.GetDefaultValue(it.ArgAt<string>(0)));
