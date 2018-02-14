@@ -133,6 +133,7 @@ namespace ASCompletion.Context
         /// <summary>
         /// Called if a FileModel needs filtering
         /// </summary>
+        /// <param name="fileName"></param>
         /// <param name="src"></param>
         /// <returns></returns>
         string FilterSource(string fileName, string src);
@@ -313,6 +314,7 @@ namespace ASCompletion.Context
         /// </summary>
         /// <param name="sci">Scintilla control</param>
         /// <param name="expression">Completion context</param>
+        /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
         /// <returns>Null (not handled) or function signature</returns>
         MemberModel ResolveFunctionContext(ScintillaControl sci, ASExpr expression, bool autoHide);
 
