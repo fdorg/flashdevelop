@@ -955,21 +955,10 @@ namespace ASCompletion.Context
         /// <inheritdoc />
         public virtual FileModel GetCodeModel(string src) => GetCodeModel(src, true);
 
-        /// <summary>
-        /// Parse a raw source code
-        /// </summary>
-        /// <param name="src"></param>
-        /// <param name="scriptMode"></param>
-        /// <returns></returns>
+        /// <inheritdoc />
         public virtual FileModel GetCodeModel(string src, bool scriptMode) => GetCodeModel(new FileModel(), src, scriptMode);
 
-        /// <summary>
-        /// Parse a raw source code
-        /// </summary>
-        /// <param name="result"></param>
-        /// <param name="src"></param>
-        /// <param name="scriptMode"></param>
-        /// <returns></returns>
+        /// <inheritdoc />
         public virtual FileModel GetCodeModel(FileModel result, string src, bool scriptMode)
         {
             var parser = GetCodeParser();
@@ -982,21 +971,7 @@ namespace ASCompletion.Context
         /// Set local code parser features
         /// </summary>
         /// <returns></returns>
-        protected virtual ASFileParser GetCodeParser()
-        {
-            ASFileParser parser = new ASFileParser();
-            parser.Features.varKey = Context.Features.varKey;
-            parser.Features.constKey = Context.Features.constKey;
-            parser.Features.functionKey = Context.Features.functionKey;
-            parser.Features.hasEcmaTyping = Context.Features.hasEcmaTyping;
-            parser.Features.hasConsts = Context.Features.hasConsts;
-            parser.Features.hasVars = Context.Features.hasVars;
-            parser.Features.hasMethods = Context.Features.hasMethods;
-            parser.Features.hasGenerics = Context.Features.hasGenerics;
-            parser.Features.hasCArrays = Context.Features.hasCArrays;
-            parser.Features.CArrayTemplate = Context.Features.CArrayTemplate;
-            return parser;
-        }
+        protected virtual ASFileParser GetCodeParser() => new ASFileParser(context.Features);
 
         /// <summary>
         /// Build the file DOM

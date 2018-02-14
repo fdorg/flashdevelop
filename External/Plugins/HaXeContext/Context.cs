@@ -580,12 +580,9 @@ namespace HaXeContext
         /// <inheritdoc />
         public override FileModel GetCodeModel(string src)
         {
-            var parser = GetCodeParser();
-            parser.ScriptMode = true;
-            var result = new FileModel {haXe = true};
-            if (!string.IsNullOrEmpty(src))
+            var result = base.GetCodeModel(new FileModel {haXe = true}, src, true);
+            if (result.Members != null)
             {
-                parser.ParseSrc(result, src);
                 for (var i = 0; i < result.Members.Count; i++)
                 {
                     var member = result.Members[i];

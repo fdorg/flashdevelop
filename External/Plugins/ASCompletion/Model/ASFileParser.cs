@@ -497,11 +497,13 @@ namespace ASCompletion.Model
 
         public bool ScriptMode;
 
-        public ContextFeatures Features => features;
-
-        public ASFileParser()
+        public ASFileParser() : this(new ContextFeatures())
         {
-            features = new ContextFeatures();
+        }
+
+        public ASFileParser(ContextFeatures features)
+        {
+            this.features = features;
         }
 
         /// <summary>
