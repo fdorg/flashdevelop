@@ -181,7 +181,6 @@
     <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2009_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2009_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2009_2.hx" />
-    <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2009_2.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2017_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2017_2.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2017_3.hx" />
@@ -189,6 +188,14 @@
     <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2017_5.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2017_6.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2017_7.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2022_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2022_2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2022_case_1_withoutEntryPoint.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2022_case_1.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\AfterRenameOptionalParameterVar_issue2022_case_1.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2022_case_2_withoutEntryPoint.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2022_case_2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\AfterRenameOptionalParameterVar_issue2022_case_2.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

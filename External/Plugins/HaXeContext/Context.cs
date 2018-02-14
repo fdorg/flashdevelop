@@ -577,6 +577,28 @@ namespace HaXeContext
             else return false;
         }
 
+        /// <inheritdoc />
+        public override FileModel GetCodeModel(string src)
+        {
+            var parser = GetCodeParser();
+            parser.ScriptMode = true;
+            var result = new FileModel {haXe = true};
+            if (!string.IsNullOrEmpty(src))
+            {
+                parser.ParseSrc(result, src);
+                for (var i = 0; i < result.Members.Count; i++)
+                {
+                    var member = result.Members[i];
+                    if (!member.Flags.HasFlag(FlagType.Function) || !(member.Parameters?.Count > 0)) continue;
+                    foreach (var parameter in member.Parameters)
+                    {
+                        if (parameter.Name[0] == '?') parameter.Name = parameter.Name.Substring(1);
+                    }
+                }
+            }
+            return result;
+        }
+
         /// <summary>
         /// Delete current class's cached file
         /// </summary>

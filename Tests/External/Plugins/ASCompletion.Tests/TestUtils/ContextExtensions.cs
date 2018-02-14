@@ -18,6 +18,7 @@ namespace ASCompletion.TestUtils
         public static void SetAs3Features(this IASContext mock)
         {
             var context = new AS3Context.Context(new AS3Context.AS3Settings());
+            ASContext.RegisterLanguage(context, "as3");
             BuildClassPath(context);
             context.CurrentModel = new FileModel {Context = mock, Version = 3};
             SetFeatures(mock, context);
@@ -26,6 +27,7 @@ namespace ASCompletion.TestUtils
         public static void SetHaxeFeatures(this IASContext mock)
         {
             var context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+            ASContext.RegisterLanguage(context, "haxe");
             BuildClassPath(context);
             context.CurrentModel = new FileModel {Context = mock, Version = 4, haXe = true};
             SetFeatures(mock, context);

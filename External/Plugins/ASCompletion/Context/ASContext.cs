@@ -963,9 +963,7 @@ namespace ASCompletion.Context
         {
             ASFileParser parser = GetCodeParser();
             parser.ScriptMode = true;
-            // parse
             FileModel temp = new FileModel();
-            temp.haXe = Context.Settings.LanguageId == "HAXE";
             if (!string.IsNullOrEmpty(src)) parser.ParseSrc(temp, src);
             return temp;
         }
