@@ -959,6 +959,9 @@ namespace ASCompletion.Context
         public virtual FileModel GetCodeModel(string src, bool scriptMode) => GetCodeModel(CreateFileModel(string.Empty), src, scriptMode);
 
         /// <inheritdoc />
+        public virtual FileModel GetCodeModel(FileModel result, string src) => GetCodeModel(result, src, false);
+
+        /// <inheritdoc />
         public virtual FileModel GetCodeModel(FileModel result, string src, bool scriptMode)
         {
             var parser = GetCodeParser();
@@ -1002,7 +1005,7 @@ namespace ASCompletion.Context
         public virtual void UpdateCurrentFile(bool updateUI)
         {
             if (cFile == null || CurSciControl == null) return;
-            GetCodeModel(cFile, CurSciControl.Text, false);
+            GetCodeModel(cFile, CurSciControl.Text);
             cLine = CurSciControl.CurrentLine;
             UpdateContext(cLine);
 

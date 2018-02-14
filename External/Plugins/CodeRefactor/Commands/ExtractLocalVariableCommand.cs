@@ -66,7 +66,7 @@ namespace CodeRefactor.Commands
         protected override void ExecutionImplementation()
         {
             var sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            var fileModel = ASContext.Context.GetCodeModel(ASContext.Context.CurrentModel, sci.Text, false);
+            var fileModel = ASContext.Context.GetCodeModel(ASContext.Context.CurrentModel, sci.Text);
             var search = new FRSearch(sci.SelText) {SourceFile = sci.FileName};
             var matches = search.Matches(sci.Text);
             var currentMember = fileModel.Context.CurrentMember;

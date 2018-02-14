@@ -125,6 +125,14 @@ namespace ASCompletion.Context
         /// </summary>
         /// <param name="result">File model</param>
         /// <param name="src">Source code</param>
+        /// <returns></returns>
+        FileModel GetCodeModel(FileModel result, string src);
+
+        /// <summary>
+        /// Rebuild a file model with the source provided
+        /// </summary>
+        /// <param name="result">File model</param>
+        /// <param name="src">Source code</param>
         /// <param name="scriptMode"></param>
         /// <returns></returns>
         FileModel GetCodeModel(FileModel result, string src, bool scriptMode);

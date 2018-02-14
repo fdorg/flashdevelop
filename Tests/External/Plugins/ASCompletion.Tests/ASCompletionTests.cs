@@ -103,7 +103,7 @@ namespace ASCompletion
             sci.Text = sourceText;
             SnippetHelper.PostProcessSnippets(sci, 0);
             var currentModel = ASContext.Context.CurrentModel;
-            ASContext.Context.GetCodeModel(currentModel, sci.Text, false);
+            ASContext.Context.GetCodeModel(currentModel, sci.Text);
             var line = sci.CurrentLine;
             var currentClass = currentModel.Classes.FirstOrDefault(line);
             ASContext.Context.CurrentClass.Returns(currentClass);

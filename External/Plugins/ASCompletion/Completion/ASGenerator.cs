@@ -3149,7 +3149,7 @@ namespace ASCompletion.Completion
             expression = expression.TrimEnd(new char[] { '(', '[', '{', '<' });
             expression = expression.TrimStart(new char[] { ')', ']', '}', '>' });
 
-            var cFile = ASContext.Context.GetCodeModel(ASContext.Context.CurrentModel, sci.Text, false);
+            var cFile = ASContext.Context.GetCodeModel(ASContext.Context.CurrentModel, sci.Text);
             MemberModel current = cFile.Context.CurrentMember;
 
             string characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
@@ -3261,7 +3261,7 @@ namespace ASCompletion.Completion
             }
             InsertCode(sci.CurrentPos, template, sci);
 
-            ASContext.Context.GetCodeModel(ASContext.Context.CurrentModel, sci.Text, false);
+            ASContext.Context.GetCodeModel(ASContext.Context.CurrentModel, sci.Text);
             FoundDeclaration found = GetDeclarationAtLine(lineStart);
             if (found.Member == null) return;
 

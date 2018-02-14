@@ -45,10 +45,15 @@ namespace ASCompletion.TestUtils
                 var src = x[0] as string;
                 return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
             });
-            mock.GetCodeModel(null, Arg.Any<bool>()).ReturnsForAnyArgs(x =>
+            mock.GetCodeModel(Arg.Any<string>(), Arg.Any<bool>()).ReturnsForAnyArgs(x =>
             {
                 var src = x[0] as string;
                 return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src, x.ArgAt<bool>(1));
+            });
+            mock.GetCodeModel(Arg.Any<FileModel>(), Arg.Any<string>()).ReturnsForAnyArgs(x =>
+            {
+                var src = x[1] as string;
+                return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(x.ArgAt<FileModel>(0), src);
             });
             mock.GetCodeModel(null, null, Arg.Any<bool>()).ReturnsForAnyArgs(x =>
             {
