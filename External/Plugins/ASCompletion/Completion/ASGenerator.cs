@@ -3262,10 +3262,7 @@ namespace ASCompletion.Completion
             }
             InsertCode(sci.CurrentPos, template, sci);
 
-            var cFile = ASContext.Context.CurrentModel;
-            ASFileParser parser = new ASFileParser();
-            parser.ParseSrc(cFile, sci.Text);
-
+            ASContext.Context.GetCodeModel(ASContext.Context.CurrentModel, sci.Text, false);
             FoundDeclaration found = GetDeclarationAtLine(lineStart);
             if (found.Member == null) return;
 
