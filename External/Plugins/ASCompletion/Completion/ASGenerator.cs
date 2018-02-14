@@ -3150,10 +3150,7 @@ namespace ASCompletion.Completion
             expression = expression.TrimEnd(new char[] { '(', '[', '{', '<' });
             expression = expression.TrimStart(new char[] { ')', ']', '}', '>' });
 
-            var cFile = ASContext.Context.CurrentModel;
-            ASFileParser parser = new ASFileParser();
-            parser.ParseSrc(cFile, sci.Text);
-
+            var cFile = ASContext.Context.GetCodeModel(ASContext.Context.CurrentModel, sci.Text, false);
             MemberModel current = cFile.Context.CurrentMember;
 
             string characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
