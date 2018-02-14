@@ -55,6 +55,11 @@ namespace ASCompletion.TestUtils
                 var src = x[1] as string;
                 return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(x.ArgAt<FileModel>(0), src, x.ArgAt<bool>(2));
             });
+            mock.GetFileModel(null).ReturnsForAnyArgs(it =>
+            {
+                var fileName = it[0] as string;
+                return fileName == null ? null : context.GetFileModel(fileName);
+            });
             mock.IsImported(null, Arg.Any<int>()).ReturnsForAnyArgs(it =>
             {
                 var member = it.ArgAt<MemberModel>(0) ?? ClassModel.VoidClass;
