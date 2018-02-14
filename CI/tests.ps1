@@ -14,7 +14,8 @@ Param (
 
 If ($env:HAXEPATH -eq $null)
 {
-	cinst.exe haxe --version 3.4.3 -y
+	Set-Service wuauserv -StartupType Manual
+	cinst.exe haxe --version 3.4.4 -y
 	$env:HAXEPATH = "c:\ProgramData\chocolatey\lib\haxe\"
 	RefreshEnv
 }
