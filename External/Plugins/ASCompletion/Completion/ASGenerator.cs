@@ -1612,12 +1612,7 @@ namespace ASCompletion.Completion
 
                 ASContext.MainForm.OpenEditableDocument(funcResult.InClass.InFile.FileName, true);
                 sci = ASContext.CurSciControl;
-
-                FileModel fileModel = new FileModel();
-                fileModel.Context = ASContext.Context;
-                ASFileParser parser = new ASFileParser();
-                parser.ParseSrc(fileModel, sci.Text);
-
+                var fileModel = ASContext.Context.GetCodeModel(sci.Text, false);
                 foreach (ClassModel cm in fileModel.Classes)
                 {
                     if (cm.QualifiedName.Equals(funcResult.InClass.QualifiedName))
