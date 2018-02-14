@@ -844,7 +844,7 @@ namespace ASCompletion.Context
             }
 
             // parse and add to cache
-            nFile = ASFileParser.ParseFile(CreateFileModel(fileName));
+            nFile = GetFileModel(fileName);
             if (classPath != null)
             {
                 string upName = fileName.ToUpper();
