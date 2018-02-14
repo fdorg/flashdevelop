@@ -1612,7 +1612,7 @@ namespace ASCompletion.Completion
 
                 ASContext.MainForm.OpenEditableDocument(funcResult.InClass.InFile.FileName, true);
                 sci = ASContext.CurSciControl;
-                var fileModel = ASContext.Context.GetCodeModel(sci.Text, false);
+                var fileModel = ASContext.Context.GetCodeModel(sci.Text);
                 foreach (ClassModel cm in fileModel.Classes)
                 {
                     if (cm.QualifiedName.Equals(funcResult.InClass.QualifiedName))
@@ -2370,7 +2370,7 @@ namespace ASCompletion.Completion
                 ASContext.MainForm.OpenEditableDocument(varResult.RelClass.InFile.FileName, false);
                 sci = ASContext.CurSciControl;
                 isOtherClass = true;
-                var fileModel = ASContext.Context.GetCodeModel(sci.Text, false);
+                var fileModel = ASContext.Context.GetCodeModel(sci.Text);
                 foreach (ClassModel cm in fileModel.Classes)
                 {
                     if (cm.QualifiedName.Equals(varResult.RelClass.QualifiedName))
@@ -2872,7 +2872,7 @@ namespace ASCompletion.Completion
                 ASContext.MainForm.OpenEditableDocument(funcResult.RelClass.InFile.FileName, true);
                 sci = ASContext.CurSciControl;
                 isOtherClass = true;
-                var fileModel = ASContext.Context.GetCodeModel(sci.Text, false);
+                var fileModel = ASContext.Context.GetCodeModel(sci.Text);
                 foreach (ClassModel cm in fileModel.Classes)
                 {
                     if (cm.QualifiedName.Equals(funcResult.RelClass.QualifiedName))

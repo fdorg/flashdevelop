@@ -4016,7 +4016,7 @@ namespace ASCompletion.Completion
             {
                 MemberModel cm = expression.ContextMember;
                 string functionBody = Regex.Replace(expression.FunctionBody, "function\\s*\\(", "function __anonfunc__("); // name anonymous functions
-                model = ASContext.Context.GetCodeModel(functionBody);
+                model = ASContext.Context.GetCodeModel(functionBody, true);
                 int memberCount = model.Members.Count;
                 for (int memberIndex = 0; memberIndex < memberCount; memberIndex++)
                 {

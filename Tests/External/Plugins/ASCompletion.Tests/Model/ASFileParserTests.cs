@@ -74,7 +74,7 @@ namespace ASCompletion.Model
                 var context = new AS3Context.Context(new AS3Context.AS3Settings());
                 Context.ASContext.GlobalInit(plugin);
                 Context.ASContext.Context = context;
-                var model = context.GetCodeModel(ReadAllText("CompletionErrorTest"));
+                var model = context.GetCodeModel(ReadAllText("CompletionErrorTest"), true);
 
                 Assert.AreEqual(2, model.Members.Count); // First member = function itself
 
@@ -941,7 +941,7 @@ namespace ASCompletion.Model
                 var context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
                 Context.ASContext.GlobalInit(plugin);
                 Context.ASContext.Context = context;
-                var model = context.GetCodeModel(ReadAllText("RegExTest"));
+                var model = context.GetCodeModel(ReadAllText("RegExTest"), true);
 
                 Assert.AreEqual(4, model.Members.Count); // First member = function itself
 
@@ -1094,7 +1094,7 @@ namespace ASCompletion.Model
                 var context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
                 Context.ASContext.GlobalInit(plugin);
                 Context.ASContext.Context = context;
-                var model = context.GetCodeModel(ReadAllText("FunctionTypesTest"));
+                var model = context.GetCodeModel(ReadAllText("FunctionTypesTest"), true);
 
                 Assert.AreEqual(3, model.Members.Count);
 
@@ -1251,7 +1251,7 @@ namespace ASCompletion.Model
                 var context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
                 Context.ASContext.GlobalInit(plugin);
                 Context.ASContext.Context = context;
-                var model = context.GetCodeModel(ReadAllText("FunctionTypesWithSubTypesTest"));
+                var model = context.GetCodeModel(ReadAllText("FunctionTypesWithSubTypesTest"), true);
 
                 Assert.AreEqual(5, model.Members.Count);
 
@@ -1308,7 +1308,7 @@ namespace ASCompletion.Model
                 var context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
                 Context.ASContext.GlobalInit(plugin);
                 Context.ASContext.Context = context;
-                var model = context.GetCodeModel(ReadAllText("MultipleVarsAtOnceTest"));
+                var model = context.GetCodeModel(ReadAllText("MultipleVarsAtOnceTest"), true);
 
                 Assert.AreEqual(7, model.Members.Count);
 
@@ -1741,7 +1741,7 @@ namespace ASCompletion.Model
                 var context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
                 Context.ASContext.GlobalInit(plugin);
                 Context.ASContext.Context = context;
-                var model = context.GetCodeModel(ReadAllText("NotGenericTest"));
+                var model = context.GetCodeModel(ReadAllText("NotGenericTest"), true);
 
                 Assert.AreEqual(3, model.Members.Count); // First member = function itself
 

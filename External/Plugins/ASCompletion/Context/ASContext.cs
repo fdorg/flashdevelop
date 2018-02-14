@@ -953,7 +953,7 @@ namespace ASCompletion.Context
         public virtual bool IsModelValid(FileModel aFile, PathModel pathModel) => (aFile != null);
 
         /// <inheritdoc />
-        public virtual FileModel GetCodeModel(string src) => GetCodeModel(src, true);
+        public virtual FileModel GetCodeModel(string src) => GetCodeModel(src, false);
 
         /// <inheritdoc />
         public virtual FileModel GetCodeModel(string src, bool scriptMode) => GetCodeModel(CreateFileModel(string.Empty), src, scriptMode);
@@ -1477,7 +1477,7 @@ namespace ASCompletion.Context
                     dest = list[1];
                 }
             }
-            var aFile = src == null ? cFile : GetCodeModel(src, false);
+            var aFile = src == null ? cFile : GetCodeModel(src);
             if (aFile.Version == 0) return;
             //
             string code = aFile.GenerateIntrinsic(false);
