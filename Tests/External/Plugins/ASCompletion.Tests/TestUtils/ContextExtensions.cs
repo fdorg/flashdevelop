@@ -128,7 +128,7 @@ namespace ASCompletion.TestUtils
                 {
                     foreach (var fileName in Directory.GetFiles(path, searchPattern, SearchOption.AllDirectories))
                     {
-                        it.AddFile(ASFileParser.ParseFile(new FileModel(fileName) {Context = context, haXe = true, Version = 4}));
+                        it.AddFile(context.GetFileModel(fileName));
                     }
                 }
                 context.RefreshContextCache(path);
