@@ -3,7 +3,7 @@
 	<Entry>
 		<Id>haxe3setup</Id>
 		<Name>Haxe + Neko (x86)</Name>
-		<Version>3.4.5</Version>
+		<Version>3.4.6</Version>
 		<Build>1</Build>
 		<Desc>Haxe 3 and Neko virtual machine 32-bit installer</Desc>
 		<Group>Compilers</Group>
@@ -13,13 +13,13 @@
 		<Type>Executable</Type>
 		<Info>http://www.haxe.org</Info>
 		<Urls>
-			<Url>http://haxe.org/website-content/downloads/3.4.5/downloads/haxe-3.4.5-win.exe</Url>
+			<Url>http://haxe.org/website-content/downloads/3.4.6/downloads/haxe-3.4.6-win.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
 		<Id>haxe3setup64</Id>
 		<Name>Haxe + Neko (x64)</Name>
-		<Version>3.4.5</Version>
+		<Version>3.4.6</Version>
 		<Build>1</Build>
 		<Desc>Haxe 3 and Neko virtual machine 64-bit installer</Desc>
 		<Group>Compilers</Group>
@@ -29,7 +29,7 @@
 		<Type>Executable</Type>
 		<Info>http://www.haxe.org</Info>
 		<Urls>
-			<Url>http://haxe.org/website-content/downloads/3.4.5/downloads/haxe-3.4.5-win64.exe</Url>
+			<Url>http://haxe.org/website-content/downloads/3.4.6/downloads/haxe-3.4.6-win64.exe</Url>
 		</Urls>
 	</Entry>
 	<Entry>
