@@ -66,20 +66,18 @@ namespace CodeRefactor.Commands
         protected override void ExecutionImplementation()
         {
             var sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            var fileModel = ASContext.Context.CurrentModel;
-            var parser = new ASFileParser();
-            parser.ParseSrc(fileModel, sci.Text);
+            var fileModel = ASContext.Context.GetCodeModel(ASContext.Context.CurrentModel, sci.Text, false);
             var search = new FRSearch(sci.SelText) {SourceFile = sci.FileName};
-            var mathes = search.Matches(sci.Text);
+            var matches = search.Matches(sci.Text);
             var currentMember = fileModel.Context.CurrentMember;
             var lineFrom = currentMember.LineFrom;
             var lineTo = currentMember.LineTo;
-            mathes.RemoveAll(it => it.Line < lineFrom || it.Line > lineTo);
-            var target = mathes.FindAll(it => sci.MBSafePosition(it.Index) == sci.SelectionStart);
-            if (mathes.Count > 1)
+            matches.RemoveAll(it => it.Line < lineFrom || it.Line > lineTo);
+            var target = matches.FindAll(it => sci.MBSafePosition(it.Index) == sci.SelectionStart);
+            if (matches.Count > 1)
             {
                 CompletionList = new List<ICompletionListItem> {new CompletionListItem(target, sci, OnItemClick)};
-                CompletionList.Insert(0, new CompletionListItem(mathes, sci, OnItemClick));
+                CompletionList.Insert(0, new CompletionListItem(matches, sci, OnItemClick));
                 sci.DisableAllSciEvents = true;
                 PluginCore.Controls.CompletionList.Show(CompletionList, true);
             }
