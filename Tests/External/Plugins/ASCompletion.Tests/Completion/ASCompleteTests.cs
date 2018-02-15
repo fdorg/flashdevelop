@@ -277,6 +277,10 @@ namespace ASCompletion.Completion
                                 Access = Visibility.Public
                             })
                             .SetName("{}.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_issue2029_1"))
+                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public})
+                        .SetName("'123'.length.")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2029");
                 }
             }
 
