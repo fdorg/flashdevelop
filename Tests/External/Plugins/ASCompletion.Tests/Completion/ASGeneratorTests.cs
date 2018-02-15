@@ -2424,14 +2424,8 @@ namespace ASCompletion.Completion
 
                 static string Common(string sourceText, string ofClassName, string memberName, FlagType memberFlags, ScintillaControl sci)
                 {
-                    sci.Text = sourceText;
-                    SnippetHelper.PostProcessSnippets(sci, 0);
-                    var currentModel = ASContext.Context.CurrentModel;
-                    new ASFileParser().ParseSrc(currentModel, sci.Text);
-                    var currentLine = sci.CurrentLine;
-                    var currentClass = currentModel.Classes.Find(it => currentLine >= it.LineFrom && currentLine < it.LineTo);
-                    ASContext.Context.CurrentClass.Returns(currentClass);
-                    var ofClass = currentModel.Classes.Find(model => model.Name == ofClassName);
+                    SetSrc(sci, sourceText);
+                    var ofClass = ASContext.Context.CurrentModel.Classes.Find(model => model.Name == ofClassName);
                     if (ofClass == null)
                     {
                         foreach (var classpath in ASContext.Context.Classpath)
@@ -2749,50 +2743,50 @@ namespace ASCompletion.Completion
                     get
                     {
                         yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeChangeConstructorDeclaration_String"))
+                            new TestCaseData("BeforeChangeConstructorDeclaration_String")
                                 .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_String"))
                                 .SetName("new Foo(\"\") -> function Foo(string:String)");
                         yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeChangeConstructorDeclaration_String2"))
+                            new TestCaseData("BeforeChangeConstructorDeclaration_String2")
                                 .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_String2"))
                                 .SetName("new Foo(\"\", \"\") -> function Foo(string:String, string1:String)");
                         yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeChangeConstructorDeclaration_Digit"))
+                            new TestCaseData("BeforeChangeConstructorDeclaration_Digit")
                                 .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_Digit"))
                                 .SetName("new Foo(1) -> function Foo(number:Number)");
                         yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeChangeConstructorDeclaration_Boolean"))
+                            new TestCaseData("BeforeChangeConstructorDeclaration_Boolean")
                                 .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_Boolean"))
                                 .SetName("new Foo(true) -> function Foo(boolean:Boolean)");
                         yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeChangeConstructorDeclaration_ObjectInitializer"))
+                            new TestCaseData("BeforeChangeConstructorDeclaration_ObjectInitializer")
                                 .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_ObjectInitializer"))
                                 .SetName("new Foo({}) -> function Foo(object:Object)");
                         yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeChangeConstructorDeclaration_ArrayInitializer"))
+                            new TestCaseData("BeforeChangeConstructorDeclaration_ArrayInitializer")
                                 .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_ArrayInitializer"))
                                 .SetName("new Foo([]) -> function Foo(array:Array)");
                         yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeChangeConstructorDeclaration_VectorInitializer"))
+                            new TestCaseData("BeforeChangeConstructorDeclaration_VectorInitializer")
                                 .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_VectorInitializer"))
                                 .SetName("new Foo(new <int>[]) -> function Foo(vector:Vector.<int>)");
                         yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeChangeConstructorDeclaration_TwoDimensionalVectorInitializer"))
+                            new TestCaseData("BeforeChangeConstructorDeclaration_TwoDimensionalVectorInitializer")
                                 .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_TwoDimensionalVectorInitializer"))
                                 .SetName("new Foo(new <Vector.<Vector.<int>>[new <int>[]]) -> function Foo(vector:Vector.<Vector.<int>>)");
                         yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeChangeConstructorDeclaration_ItemOfTwoDimensionalVectorInitializer"))
+                            new TestCaseData("BeforeChangeConstructorDeclaration_ItemOfTwoDimensionalVectorInitializer")
                                 .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_ItemOfTwoDimensionalVectorInitializer"))
                                 .SetName("new Foo(strings[0][0]) -> function Foo(string:String)");
                         yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeChangeConstructorDeclaration_Function"))
+                            new TestCaseData("BeforeChangeConstructorDeclaration_Function")
                                 .Returns(ReadAllTextAS3("AfterChangeConstructorDeclaration_Function"))
                                 .SetName("new Foo(function():void {}) -> function Foo(functionValue:Function)");
                     }
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText) => AS3Impl(sourceText, sci);
+                public string AS3(string fileName) => AS3Impl(fileName, sci);
 
                 public IEnumerable<TestCaseData> HaxeTestCases
                 {
@@ -2838,10 +2832,11 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
                 public string Haxe(string fileName) => HaxeImpl(fileName, sci);
 
-                internal string AS3Impl(string sourceText, ScintillaControl sci)
+                internal string AS3Impl(string fileName, ScintillaControl sci)
                 {
                     SetAs3Features(sci);
-                    return Common(sourceText, sci);
+                    SetCurrentFileName(GetFullPathAS3(fileName));
+                    return Common(ReadAllTextAS3(fileName), sci);
                 }
 
                 internal string HaxeImpl(string fileName, ScintillaControl sci)

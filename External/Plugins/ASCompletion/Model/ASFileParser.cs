@@ -421,17 +421,15 @@ namespace ASCompletion.Model
 
         #region public methods
 
-        static public FileModel ParseFile(FileModel fileModel)
+        public static FileModel ParseFile(FileModel fileModel)
         {
             // parse file
             if (fileModel.FileName.Length > 0)
             {
                 if (File.Exists(fileModel.FileName))
                 {
-                    var src = FileHelper.ReadFile(fileModel.FileName);
-                    ASFileParser parser = new ASFileParser();
-                    fileModel.LastWriteTime = File.GetLastWriteTime(fileModel.FileName);
-                    parser.ParseSrc(fileModel, src);
+                    var parser = new ASFileParser();
+                    parser.Parse(fileModel);
                 }
                 // the file is not available (for the moment?)
                 else if (Path.GetExtension(fileModel.FileName).Length > 0)
@@ -499,26 +497,34 @@ namespace ASCompletion.Model
 
         public bool ScriptMode;
 
-        public ContextFeatures Features
+        public ASFileParser() : this(new ContextFeatures())
         {
-            get { return features; }
         }
 
-        public ASFileParser()
+        public ASFileParser(ContextFeatures features)
         {
-            features = new ContextFeatures();
+            this.features = features;
+        }
+
+        /// <summary>
+        /// Rebuild a file model using the content of that file.
+        /// </summary>
+        /// <param name="fileModel">Model</param>
+        public FileModel Parse(FileModel fileModel)
+        {
+            fileModel.LastWriteTime = File.GetLastWriteTime(fileModel.FileName);
+            var src = FileHelper.ReadFile(fileModel.FileName);
+            ParseSrc(fileModel, src);
+            return fileModel;
         }
 
         /// <summary>
         /// Rebuild a file model with the source provided
         /// </summary>
         /// <param name="fileModel">Model</param>
-        /// <param name="ba">Source</param>
-        ///
-        public void ParseSrc(FileModel fileModel, string ba)
-        {
-            ParseSrc(fileModel, ba, true);
-        }
+        /// <param name="src">Source</param>
+        public void ParseSrc(FileModel fileModel, string src) => ParseSrc(fileModel, src, true);
+
         public void ParseSrc(FileModel fileModel, string ba, bool allowBaReExtract)
         {
             //TraceManager.Add("Parsing " + Path.GetFileName(fileModel.FileName));
