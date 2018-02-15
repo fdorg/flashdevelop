@@ -1,6 +1,7 @@
 :: Builds the binary on the server for CI
 
 :: Set paths
+set PATH=%PATH%;C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild\15.0\Bin
 set PATH=%PATH%;C:\Windows\Microsoft.NET\Framework\v4.0.30319\
 set PATH=%PATH%;C:\Program Files (x86)\Git\bin\
 set PATH=%PATH%;C:\Program Files (x86)\NSIS
