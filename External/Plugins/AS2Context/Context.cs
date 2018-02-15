@@ -568,7 +568,7 @@ namespace AS2Context
                 var last = token[token.Length - 1];
                 if (first == '{' && last == '}') return ResolveType(features.objectKey, inFile);
                 if (first == '[' && last == ']') return ResolveType(features.arrayKey, inFile);
-                if (first == '"' || first == '\'') return ResolveType(features.stringKey, inFile);
+                if ((first == '"' || first == '\'') && last == first) return ResolveType(features.stringKey, inFile);
             }
             return base.ResolveToken(token, inFile);
         }
