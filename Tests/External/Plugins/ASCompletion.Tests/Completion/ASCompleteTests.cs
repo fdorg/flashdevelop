@@ -200,6 +200,18 @@ namespace ASCompletion.Completion
                                 Name = "foo"
                             })
                             .SetName("Get Expression Type of variable");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue1976_1"))
+                        .Returns(new MemberModel("foo", "void", FlagType.Access | FlagType.Dynamic | FlagType.Function, Visibility.Public))
+                        .SetName("Issue 1976. case 1")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1976");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue1976_2"))
+                        .Returns(new MemberModel("foo", "void", FlagType.Access | FlagType.Dynamic | FlagType.Function, Visibility.Public))
+                        .SetName("Issue 1976. case 2")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1976");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue1976_3"))
+                        .Returns(new MemberModel("foo", "void", FlagType.Access | FlagType.Dynamic | FlagType.Function, Visibility.Public))
+                        .SetName("Issue 1976. case 3")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1976");
                 }
             }
 

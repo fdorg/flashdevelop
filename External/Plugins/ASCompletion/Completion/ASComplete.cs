@@ -2856,8 +2856,7 @@ namespace ASCompletion.Completion
                 if (local.LocalVars != null)
                 {
                     // Haxe 3 get/set keyword in properties declaration
-                    if ((token == "set" || token == "get") && local.ContextFunction == null
-                        && contextMember != null && contextMember.Parameters != null && contextMember.Parameters.Count == 2)
+                    if ((token == "set" || token == "get") && local.ContextFunction == null && contextMember?.Parameters != null && contextMember.Parameters.Count == 2)
                     {
                         if (token == "get" && contextMember.Parameters[0].Name == "get") return EvalVariable("get_" + contextMember.Name, local, inFile, inClass);
                         if (token == "set" && contextMember.Parameters[1].Name == "set") return EvalVariable("set_" + contextMember.Name, local, inFile, inClass);
@@ -2866,7 +2865,7 @@ namespace ASCompletion.Completion
                     var subExpressionsCount = local.SubExpressions?.Count ?? 0;
                     foreach (MemberModel var in local.LocalVars)
                     {
-                        if (var.Name == token && (subExpressionsCount == 0 || var.Flags.HasFlag(FlagType.Function)))
+                        if (var.Name == token && (var.Flags.HasFlag(FlagType.Function) || subExpressionsCount != 1 || local.Value[local.Value.Length - 1] != /*.#0*/'~'))
                         {
                             result.Member = var;
                             result.InFile = inFile;
@@ -2884,7 +2883,7 @@ namespace ASCompletion.Completion
                     }
                 }
                 // method parameters
-                if (local.ContextFunction != null && local.ContextFunction.Parameters != null)
+                if (local.ContextFunction?.Parameters != null)
                 {
                     foreach (MemberModel para in local.ContextFunction.Parameters)
                         if (para.Name == token || (para.Name[0] == '?' && para.Name.Substring(1) == token))

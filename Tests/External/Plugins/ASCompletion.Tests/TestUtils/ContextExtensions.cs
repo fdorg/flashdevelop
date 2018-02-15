@@ -77,6 +77,12 @@ namespace ASCompletion.TestUtils
                 var expr = it.ArgAt<ASExpr>(1);
                 return expr == null ? null : context.ResolveDotContext(it.ArgAt<ScintillaControl>(0), expr, it.ArgAt<bool>(2));
             });
+            mock.TypesAffinity(null, null).ReturnsForAnyArgs(it =>
+            {
+                var inClass = it.ArgAt<ClassModel>(0);
+                var withClass = it.ArgAt<ClassModel>(1);
+                return inClass == null || withClass == null ? Visibility.Default : context.TypesAffinity(inClass, withClass);
+            });
             mock.IsFileValid.Returns(context.IsFileValid);
             mock.GetDefaultValue(null).ReturnsForAnyArgs(it => context.GetDefaultValue(it.ArgAt<string>(0)));
             mock.DecomposeTypes(null).ReturnsForAnyArgs(it => context.DecomposeTypes(it.ArgAt<IEnumerable<string>>(0) ?? new string[0]));
