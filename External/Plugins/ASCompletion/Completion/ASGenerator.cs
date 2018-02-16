@@ -1430,7 +1430,13 @@ namespace ASCompletion.Completion
             if (string.IsNullOrEmpty(type) && !resolve.IsNull())
             {
                 if (resolve.Member?.Type != null) type = resolve.Member.Type;
-                else if (resolve.Type?.Name != null) type = resolve.Type.QualifiedName;
+                else if (resolve.Type?.Name != null)
+                {
+                    type = resolve.Type.QualifiedName;
+                    if (resolve.Type.IndexType == "*") type += ".<*>";
+                    else if (resolve.Type.FullName.Contains(".<Vector>")) type = resolve.Type.FullName.Replace(".<Vector>", ".<Vector.<*>>");
+                }
+
                 if (resolve.Member?.Name != null) varname = GuessVarName(resolve.Member.Name, type);
             }
             if (!string.IsNullOrEmpty(word) && (string.IsNullOrEmpty(type) || Regex.IsMatch(type, "(<[^]]+>)"))) word = null;
