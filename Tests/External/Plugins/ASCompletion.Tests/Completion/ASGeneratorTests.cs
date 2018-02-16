@@ -12,7 +12,6 @@ using PluginCore;
 using ScintillaNet;
 using System.Text.RegularExpressions;
 using AS3Context;
-using PluginCore.Helpers;
 using PluginCore.Managers;
 
 // TODO: Tests with different formatting options using parameterized tests
@@ -1264,190 +1263,163 @@ namespace ASCompletion.Completion
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromVectorInitializer"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromVectorInitializer"))
-                                .SetName("from new <int>[]");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromTwoDimensionalVectorInitializer"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromTwoDimensionalVectorInitializer"))
-                                .SetName("from new <Vector.<int>>[new <int>[]]");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewVector"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewVector"))
-                                .SetName("from new Vector.<Vector.<int>>()");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromFIeldOfItemOfVector"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromFIeldOfItemOfVector"))
-                                .SetName("from v[0][0].length");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromMultilineArrayInitializer_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromMultilineArrayInitializer_useSpaces"))
-                                .SetName("From multiline array initializer");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromMultilineObjectInitializer_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromMultilineObjectInitializer_useSpaces"))
-                                .SetName("From multiline object initializer");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromMultilineObjectInitializer2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromMultilineObjectInitializer2_useSpaces"))
-                                .SetName("From multiline object initializer 2");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromMethodChaining_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromMethodChaining_useSpaces"))
-                                .SetName("From method chaining");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromMethodChaining2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromMethodChaining2_useSpaces"))
-                                .SetName("From method chaining 2");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewString_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewString_useSpaces"))
-                                .SetName("From new String(\"\")");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromStringInitializer_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromStringInitializer_useSpaces"))
-                                .SetName("From \"\"");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromStringInitializer2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromStringInitializer2_useSpaces"))
-                                .SetName("From ''");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewString2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewString2_useSpaces"))
-                                .SetName("From new String(\"\".charAt(0))");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewBitmapDataWithParams_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewBitmapDataWithParams_useSpaces"))
-                                .SetName("From new BitmapData(rect.width, rect.height)");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewBitmapDataWithParams_multiline_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewBitmapDataWithParams_multiline_useSpaces"))
-                                .SetName("From new BitmapData(rect.width, rect.height). Multiline constructor");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromArrayInitializer_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromArrayInitializer_useSpaces"))
-                                .SetName("from []");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromArrayInitializer2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromArrayInitializer2_useSpaces"))
-                                .SetName("from [rect.width, rect.height]");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromFunctionResult_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromFunctionResult_useSpaces"))
-                                .SetName("from foo()");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromCallback_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromCallback_useSpaces"))
-                                .SetName("from callback");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromClass_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromClass_useSpaces"))
-                                .SetName("from Class");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromPrivateField"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromPrivateField"))
-                                .SetName("from private field");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewVar"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewVar"))
-                                .SetName("from new Var()");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromUnsafeCastExpr"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromUnsafeCastExpr"))
-                                .SetName("from (new type() as String)");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromTrue"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromTrue"))
-                                .SetName("from true");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromXML"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromXML"))
-                                .SetName("from <xml/>");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromArrayAccess"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromArrayAccess"))
-                                .SetName("from array[0]");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromArrayAccess2"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromArrayAccess2"))
-                                .SetName("from vector[0]");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1704_1"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1704_1"))
-                                .SetName("from function():Vector.<Sprite>")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1704_2"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1704_2"))
-                                .SetName("from function():Vector.<flash.display.Sprite>")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1704_3"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1704_3"))
-                                .SetName("from function():Array/*flash.display.Sprite*/")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1704_4"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1704_4"))
-                                .SetName("from function():flash.display.Sprite")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1749_1"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_1"))
-                                .SetName("from 1 + 1")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1749_2"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_2"))
-                                .SetName("from 1 +\n1")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1749_3"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_3"))
-                                .SetName("Issue 1749. Case 3")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1749_4"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_4"))
-                                .SetName("Issue 1749. Case 4")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1749_5"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_5"))
-                                .SetName("Issue 1749. Case 5")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1749_6"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_6"))
-                                .SetName("Issue 1749. Modulo")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_increment"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_increment"))
-                                .SetName("From ++1");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_increment2"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_increment2"))
-                                .SetName("From 1++");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_increment3"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_increment3"))
-                                .SetName("From ++1 * 1++");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_increment4"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_increment4"))
-                                .SetName("From ++1 * ++1");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_typeof"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_typeof"))
-                                .SetName("Issue 1908. typeof")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_delete"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextAS3("AfterAssignStatementToVar_delete"))
-                                .SetName("Issue 1908. delete")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromVectorInitializer"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromVectorInitializer"))
+                            .SetName("new <int>[]|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromTwoDimensionalVectorInitializer"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromTwoDimensionalVectorInitializer"))
+                            .SetName("new <Vector.<int>>[new <int>[]]|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewVector"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewVector"))
+                            .SetName("new Vector.<Vector.<int>>()|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromFIeldOfItemOfVector"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromFIeldOfItemOfVector"))
+                            .SetName("v[0][0].length|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromMultilineArrayInitializer_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromMultilineArrayInitializer_useSpaces"))
+                            .SetName("From multiline array initializer");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromMultilineObjectInitializer_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromMultilineObjectInitializer_useSpaces"))
+                            .SetName("From multiline object initializer");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromMultilineObjectInitializer2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromMultilineObjectInitializer2_useSpaces"))
+                            .SetName("From multiline object initializer 2");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromMethodChaining_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromMethodChaining_useSpaces"))
+                            .SetName("From method chaining");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromMethodChaining2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromMethodChaining2_useSpaces"))
+                            .SetName("From method chaining 2");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewString_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewString_useSpaces"))
+                            .SetName("new String(\"\")|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromStringInitializer_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromStringInitializer_useSpaces"))
+                            .SetName("\"\"|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromStringInitializer2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromStringInitializer2_useSpaces"))
+                            .SetName("''|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewString2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewString2_useSpaces"))
+                            .SetName("new String(\"\".charAt(0))|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewBitmapDataWithParams_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewBitmapDataWithParams_useSpaces"))
+                            .SetName("new BitmapData(rect.width, rect.height)|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewBitmapDataWithParams_multiline_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewBitmapDataWithParams_multiline_useSpaces"))
+                            .SetName("new BitmapData(rect.width,\n rect.height)|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromArrayInitializer_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromArrayInitializer_useSpaces"))
+                            .SetName("[]|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromArrayInitializer2_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromArrayInitializer2_useSpaces"))
+                            .SetName("[rect.width, rect.height]|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromFunctionResult_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromFunctionResult_useSpaces"))
+                            .SetName("foo()|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromCallback_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromCallback_useSpaces"))
+                            .SetName("from callback");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromClass_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromClass_useSpaces"))
+                            .SetName("Class|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromPrivateField"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromPrivateField"))
+                            .SetName("from private field");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewVar"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewVar"))
+                            .SetName("new Var()|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromUnsafeCastExpr"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromUnsafeCastExpr"))
+                            .SetName("(new type() as String)|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromTrue"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromTrue"))
+                            .SetName("true|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromXML"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromXML"))
+                            .SetName("<xml/>|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromArrayAccess"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromArrayAccess"))
+                            .SetName("array[0]|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromArrayAccess2"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromArrayAccess2"))
+                            .SetName("vector[0]|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1704_1"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1704_1"))
+                            .SetName("from function():Vector.<Sprite>")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1704_2"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1704_2"))
+                            .SetName("from function():Vector.<flash.display.Sprite>")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1704_3"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1704_3"))
+                            .SetName("from function():Array/*flash.display.Sprite*/")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1704_4"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1704_4"))
+                            .SetName("from function():flash.display.Sprite")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1704");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1749_1"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_1"))
+                            .SetName("1 + 1|")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1749_2"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_2"))
+                            .SetName("1 +\n1|")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1749_3"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_3"))
+                            .SetName("Issue 1749. Case 3")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1749_4"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_4"))
+                            .SetName("Issue 1749. Case 4")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1749_5"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_5"))
+                            .SetName("Issue 1749. Case 5")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1749_6"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1749_6"))
+                            .SetName("Issue 1749. Modulo")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1749");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_increment"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_increment"))
+                            .SetName("++1|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_increment2"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_increment2"))
+                            .SetName("1++|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_increment3"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_increment3"))
+                            .SetName("++1 * 1++|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_increment4"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_increment4"))
+                            .SetName("++1 * ++1|");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_typeof"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_typeof"))
+                            .SetName("Issue 1908. typeof")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_delete"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_delete"))
+                            .SetName("Issue 1908. delete")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1383_1"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1383_1"))
+                            .SetName("new <*>[]|")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1383");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1383_2"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1383_2"))
+                            .SetName("new <Vector.<*>>[new <*>[]]|")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1383");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1383_3"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1383_3"))
+                            .SetName("new Vector.<Vector.<*>>()|")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1383");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1383_4"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1383_4"))
+                            .SetName("new Vector.<Vector.<Vector.<*>>>()|")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1383");
                     }
                 }
 
@@ -2275,27 +2247,30 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(ReadAllTextAS3("BeforeOverridePublicFunction"), "Foo", "foo", FlagType.Function)
                                 .Returns(ReadAllTextAS3("AfterOverridePublicFunction"))
-                                .SetName("Override public function");
+                                .SetName("override public function");
                         yield return
                             new TestCaseData(ReadAllTextAS3("BeforeOverrideProtectedFunction"), "Foo", "foo", FlagType.Function)
                                 .Returns(ReadAllTextAS3("AfterOverrideProtectedFunction"))
-                                .SetName("Override proteced function");
+                                .SetName("override protected function");
                         yield return
                             new TestCaseData(ReadAllTextAS3("BeforeOverrideInternalFunction"), "Foo", "foo", FlagType.Function)
                                 .Returns(ReadAllTextAS3("AfterOverrideInternalFunction"))
-                                .SetName("Override internal function");
+                                .SetName("override internal function");
                         yield return
                             new TestCaseData(ReadAllTextAS3("BeforeOverrideHasOwnProperty"), "Object", "hasOwnProperty", FlagType.Function)
                                 .Returns(ReadAllTextAS3("AfterOverrideHasOwnProperty"))
-                                .SetName("Override hasOwnProperty");
+                                .SetName("override hasOwnProperty");
                         yield return
                             new TestCaseData(ReadAllTextAS3("BeforeOverridePublicGetSet"), "Foo", "foo", FlagType.Getter)
                                 .Returns(ReadAllTextAS3("AfterOverridePublicGetSet"))
-                                .SetName("Override public getter and setter");
+                                .SetName("override public getter and setter");
                         yield return
                             new TestCaseData(ReadAllTextAS3("BeforeOverrideInternalGetSet"), "Foo", "foo", FlagType.Getter)
                                 .Returns(ReadAllTextAS3("AfterOverrideInternalGetSet"))
-                                .SetName("Override internal getter and setter");
+                                .SetName("override internal getter and setter");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeOverrideProtectedFunction_issue1383_1"), "Foo", "foo", FlagType.Function)
+                            .Returns(ReadAllTextAS3("AfterOverrideProtectedFunction_issue1383_1"))
+                            .SetName("override protected function foo(v:Vector.<*>):Vector.<*>");
                     }
                 }
 
@@ -2345,61 +2320,61 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunctionWithTypeParams"), "Foo", "foo", FlagType.Function)
                                 .Returns(ReadAllTextHaxe("AfterOverrideFunctionWithTypeParams"))
-                                .SetName("Override function with type parameters");
+                                .SetName("override function with type parameters");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1553_1"), "Foo", "foo", FlagType.Function)
                                 .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1553_1"))
-                                .SetName("Override function foo(c:haxe.Timer->Void)")
+                                .SetName("override function foo(c:haxe.Timer->Void)")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1553");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1553_2"), "Foo", "foo", FlagType.Function)
                                 .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1553_2"))
-                                .SetName("Override function foo(c:haxe.Timer->(Type.ValueType->Void))")
+                                .SetName("override function foo(c:haxe.Timer->(Type.ValueType->Void))")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1553");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1553_3"), "Foo", "foo", FlagType.Function)
                                 .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1553_3"))
-                                .SetName("Override function foo(c:haxe.Timer->{v:Type.ValueType, s:String}->Void)")
+                                .SetName("override function foo(c:haxe.Timer->{v:Type.ValueType, s:String}->Void)")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1553");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1553_4"), "Foo", "foo", FlagType.Function)
                                 .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1553_4"))
-                                .SetName("Override function foo(c:haxe.Timer->({v:Type.ValueType, s:String}->Void))")
+                                .SetName("override function foo(c:haxe.Timer->({v:Type.ValueType, s:String}->Void))")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1553");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1553_5"), "Foo", "foo", FlagType.Function)
                                 .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1553_5"))
-                                .SetName("Override function foo(c:{v:Type.ValueType, t:haxe.Timer})")
+                                .SetName("override function foo(c:{v:Type.ValueType, t:haxe.Timer})")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1553");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1553_6"), "Foo", "foo", FlagType.Function)
                                 .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1553_6"))
-                                .SetName("Override function foo(c:{v:Type.ValueType, t:{t:haxe.Timer}}})")
+                                .SetName("override function foo(c:{v:Type.ValueType, t:{t:haxe.Timer}}})")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1553");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1696_1"), "Foo", "foo", FlagType.Function)
                                 .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1696_1"))
-                                .SetName("Override function foo(v:Array<haxe.Timer->String>)")
+                                .SetName("override function foo(v:Array<haxe.Timer->String>)")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1696_2"), "Foo", "foo", FlagType.Function)
                                 .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1696_2"))
-                                .SetName("Override function foo(v:Array<haxe.Timer->Type.ValueType->String>)")
+                                .SetName("override function foo(v:Array<haxe.Timer->Type.ValueType->String>)")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1696_3"), "Foo", "foo", FlagType.Function)
                                 .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1696_3"))
-                                .SetName("Override function foo(v:{a:Array<haxe.Timer>}->{a:haxe.ds.Vector<Type.ValueType>}->String)")
+                                .SetName("override function foo(v:{a:Array<haxe.Timer>}->{a:haxe.ds.Vector<Type.ValueType>}->String)")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1696_4"), "flash.display.DisplayObjectContainer", "addChild", FlagType.Function)
                                 .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1696_4"))
-                                .SetName("Override function addChild(child:DisplayObject)")
+                                .SetName("override function addChild(child:DisplayObject)")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_1696_5"), "Foo", "foo", FlagType.Getter | FlagType.Setter)
                                 .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1696_5"))
-                                .SetName("Override function foo(get, set):haxe.ds.Vector<haxe.Timer->Type.ValueType>")
+                                .SetName("override function foo(get, set):haxe.ds.Vector<haxe.Timer->Type.ValueType>")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
                     }
                 }
@@ -2434,11 +2409,9 @@ namespace ASCompletion.Completion
                             {
                                 foreach (var it in model.Classes)
                                 {
-                                    if (it.QualifiedName == ofClassName)
-                                    {
-                                        ofClass = it;
-                                        return false;
-                                    }
+                                    if (it.QualifiedName != ofClassName) continue;
+                                    ofClass = it;
+                                    return false;
                                 }
                                 return true;
                             });
