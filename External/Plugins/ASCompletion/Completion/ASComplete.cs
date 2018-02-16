@@ -2312,31 +2312,17 @@ namespace ASCompletion.Completion
                 IASContext ctx = ASContext.Context;
                 ClassModel aClass = ctx.ResolveType(newItemType, ctx.CurrentModel);
 
-                ICompletionListItem newItem;
+                ICompletionListItem newItem = null;
                 if (!aClass.IsVoid())
                 {
                     // AS2 special srictly typed Arrays supports
                     int p = newItemType.IndexOf('@');
-                    if (p > -1)
-                    {
-                        newItemType = newItemType.Substring(0, p);
-                        newItem = null;
-                    }
+                    if (p > -1) newItemType = newItemType.Substring(0, p);
                     else if (!string.IsNullOrEmpty(aClass.IndexType))
                     {
                         newItemType = aClass.QualifiedName;
                         newItem = new MemberItem(new MemberModel(newItemType, aClass.Type, aClass.Flags, aClass.Access));
                     }
-                    else
-                    {
-                        newItem = null;
-                    }
-                }
-                else if (newItemType == "Vector.")
-                {
-                    // HACK: Vector.<*> is wrongly parsed! should be looked into. Remove once it's fixed.
-                    newItemType = "Vector";
-                    newItem = null;
                 }
                 else
                 {
@@ -3010,7 +2996,7 @@ namespace ASCompletion.Completion
                         {
                             foreach (ClassModel aClass in aDecl.InFile.Classes)
                                 if (aClass.Name == aDecl.Name) return aClass;
-                            return context.GetModel(aDecl.InFile.Package, qname, inFile != null ? inFile.Package : null);
+                            return context.GetModel(aDecl.InFile.Package, qname, inFile?.Package);
                         }
                         else return context.ResolveType(aDecl.Type, inFile);
                     }
@@ -3475,6 +3461,32 @@ namespace ASCompletion.Completion
                             break;
                         }
                     }
+                    else if (c == '>' && arrCount == 0)
+                    {
+                        if (haXe && position - 1 > minPos && (char)sci.CharAt(position - 1) == '-')
+                        {
+                        }
+                        else if (hasGenerics)
+                        {
+                            if (c2 == '.' || c2 == ',' || c2 == '(' || c2 == '[' || c2 == '>' || c2 == '}' || c2 == ')' || position + 1 == startPosition)
+                            {
+                                genCount++;
+                                var length = sb.Length;
+                                if (length >= 3)
+                                {
+                                    var fc = sb[0];
+                                    var sc = sb[1];
+                                    var lc = sb[length - 1];
+                                    if (fc == '.' && sc == '[' && (lc == ']' || (length >= 4 && sb[length - 2] == ']' && lc == '.')))
+                                    {
+                                        sbSub.Insert(0, sb.ToString(1, length - 1));
+                                        sb.Clear();
+                                    }
+                                }
+                            }
+                            else break;
+                        }
+                    }
                     // ignore sub-expressions (method calls' parameters)
                     else if (c == '(')
                     {
@@ -3532,32 +3544,6 @@ namespace ASCompletion.Completion
                             sbSub = new StringBuilder();
                         }
                         parCount++;
-                    }
-                    else if (c == '>' && arrCount == 0)
-                    {
-                        if (haXe && position - 1 > minPos && (char) sci.CharAt(position - 1) == '-')
-                        {
-                        }
-                        else if (hasGenerics)
-                        {
-                            if (c2 == '.' || c2 == ',' || c2 == '(' || c2 == '[' || c2 == '>' || c2 == '}' || c2 == ')' || position + 1 == startPosition)
-                            {
-                                genCount++;
-                                var length = sb.Length;
-                                if (length >= 3)
-                                {
-                                    var fc = sb[0];
-                                    var sc = sb[1];
-                                    var lc = sb[length - 1];
-                                    if (fc == '.' && sc == '[' && (lc == ']' || (length >= 4 && sb[length - 2] == ']' && lc == '.')))
-                                    {
-                                        sbSub.Insert(0, sb.ToString(1, length - 1));
-                                        sb.Clear();
-                                    }
-                                }
-                            }
-                            else break;
-                        }
                     }
                     else if (genCount == 0 && arrCount == 0 && parCount == 0)
                     {
@@ -3717,12 +3703,12 @@ namespace ASCompletion.Completion
                             expression.Separator = " ";
                             break;
                         }
-                        if (subCount > 0)
+                        genCount--;
+                        if (subCount > 0 || genCount < 0)
                         {
                             sb.Insert(0, sbSub);
                             sbSub.Clear();
                         }
-                        genCount--;
                     }
                     else if (c == '{')
                     {

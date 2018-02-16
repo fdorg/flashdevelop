@@ -915,7 +915,7 @@ namespace ASCompletion.Model
                     }
                     continue;
                 }
-                else if (isInString)
+                if (isInString)
                 {
                     // store parameter default value
                     if (inValue && valueLength < VALUE_BUFFER)
@@ -1191,68 +1191,69 @@ namespace ASCompletion.Model
                     bool shortcut = true;
 
                     // valid char for keyword
-                    if (c1 >= 'a' && c1 <= 'z')
-                    {
-                        addChar = true;
-                    }
+                    if (c1 >= 'a' && c1 <= 'z') addChar = true;
                     else
                     {
                         // valid chars for identifiers
-                        if ((!haXe && char.IsLetter(c1)) || (c1 >= 'A' && c1 <= 'Z'))
-                        {
-                            addChar = true;
-                        }
-                        else if (c1 == '$' || c1 == '_')
-                        {
-                            addChar = true;
-                        }
+                        if ((!haXe && char.IsLetter(c1)) || (c1 >= 'A' && c1 <= 'Z')) addChar = true;
+                        else if (c1 == '$' || c1 == '_') addChar = true;
                         else if (length > 0)
                         {
-                            if (c1 >= '0' && c1 <= '9')
-                            {
-                                addChar = true;
-                            }
-                            else if (c1 == '*' && context == FlagType.Import)
-                            {
-                                addChar = true;
-                            }
+                            if (c1 >= '0' && c1 <= '9') addChar = true;
+                            else if (c1 == '*' && context == FlagType.Import) addChar = true;
                             // AS3/Haxe generics
                             else if (c1 == '<' && features.hasGenerics)
                             {
-                                if (!inValue && i > 2 && length > 1 && i < len - 3
-                                    && (char.IsLetterOrDigit(ba[i - 3]) || ba[i - 3] == '_') && (char.IsLetter(ba[i]) || (haXe && (ba[i] == '{' || ba[i] == '(' || ba[i] <= ' ' || ba[i] == '?')))
-                                    && (char.IsLetter(buffer[0]) || buffer[0] == '_' || inType && buffer[0] == '('))
+                                if (!inValue && i > 2 && length > 1 && i <= len - 3)
                                 {
-                                    if (curMember == null)
+                                    if (ba[i] == '*')
                                     {
-                                        evalToken = 0;
-                                        if (inGeneric) paramTempCount++;
-                                        else
-                                        {
-                                            paramTempCount = 1;
-                                            inGeneric = true;
-                                        }
-                                        addChar = true;
-                                    }
-                                    else if (foundColon)
-                                    {
-                                        evalToken = 0;
                                         inGeneric = true;
-                                        inValue = true;
+                                        inValue = false;
                                         hadValue = false;
-                                        inType = true;
+                                        inType = false;
                                         inAnonType = false;
                                         valueLength = 0;
-                                        for (int j = 0; j < length; j++)
-                                            valueBuffer[valueLength++] = buffer[j];
-                                        valueBuffer[valueLength++] = c1;
-                                        length = 0;
-                                        /*
+                                        buffer[length++] = '<';
+                                        buffer[length++] = '*';
+                                        i++;
+                                        continue;
+                                    }
+                                    if ((char.IsLetterOrDigit(ba[i - 3]) || ba[i - 3] == '_')
+                                        && (char.IsLetter(ba[i]) || (haXe && (ba[i] == '{' || ba[i] == '(' || ba[i] <= ' ' || ba[i] == '?')))
+                                        && (char.IsLetter(buffer[0]) || buffer[0] == '_' || inType && buffer[0] == '('))
+                                    {
+                                        if (curMember == null)
+                                        {
+                                            evalToken = 0;
+                                            if (inGeneric) paramTempCount++;
+                                            else
+                                            {
+                                                paramTempCount = 1;
+                                                inGeneric = true;
+                                            }
+                                            addChar = true;
+                                        }
+                                        else if (foundColon)
+                                        {
+                                            evalToken = 0;
+                                            inGeneric = true;
+                                            inValue = true;
+                                            hadValue = false;
+                                            inType = true;
+                                            inAnonType = false;
+                                            valueLength = 0;
+                                            for (int j = 0; j < length; j++)
+                                                valueBuffer[valueLength++] = buffer[j];
+                                            valueBuffer[valueLength++] = c1;
+                                            length = 0;
+                                            /*
                                         paramBraceCount = 0;
                                         paramParCount = 0;
                                         paramSqCount = 0;*/
-                                        paramTempCount++;
-                                        continue;
+                                            paramTempCount++;
+                                            continue;
+                                        }
                                     }
                                 }
                             }
@@ -1322,15 +1323,8 @@ namespace ASCompletion.Model
                             }
                         }
                         // star is valid in import statements
-                        else if (c1 == '*' && version >= 3)
-                        {
-                            addChar = true;
-                        }
-                        // conditional Haxe parameter
-                        else if (c1 == '?' && haXe && inParams && length == 0)
-                        {
-                            addChar = true;
-                        }
+                        else if (c1 == '*' && version >= 3) addChar = true;
+                        else if (c1 == '?' && haXe && inParams && length == 0) addChar = true;
                         else shortcut = false;
                     }
                     // eval this word
