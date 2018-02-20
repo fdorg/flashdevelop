@@ -4255,7 +4255,7 @@ namespace ASCompletion.Completion
             return retVal;
         }
 
-        static private List<ICompletionListItem> GetAllClasses(ScintillaControl sci, bool classesOnly, bool showClassVars)
+        private static List<ICompletionListItem> GetAllClasses(ScintillaControl sci, bool classesOnly, bool showClassVars)
         {
             MemberList known = ASContext.Context.GetAllProjectClasses();
             if (known.Count == 0) return null;
@@ -4812,19 +4812,19 @@ namespace ASCompletion.Completion
             int startPos = expr.PositionExpression;
             int endPos = sci.CurrentPos;
 
-            if (ASContext.Context.Settings.GenerateImports && shouldShortenType(sci, position, import, cFile, ref offset))
+            if (ASContext.Context.Settings.GenerateImports && ShouldShortenType(sci, position, import, cFile, ref offset))
             {
                 // insert short name
                 startPos += offset;
                 endPos += offset;
                 sci.SetSel(startPos, endPos);
-                sci.ReplaceSel(checkShortName(import.Name));
+                sci.ReplaceSel(CheckShortName(import.Name));
                 sci.SetSel(sci.CurrentPos, sci.CurrentPos);
             }            
             return true;
         }
 
-        private static bool shouldShortenType(ScintillaControl sci, int position, MemberModel import, FileModel cFile, ref int offset)
+        private static bool ShouldShortenType(ScintillaControl sci, int position, MemberModel import, FileModel cFile, ref int offset)
         {
             // check if in the same file or package
             /*if (cFile == inFile || features.hasPackages && cFile.Package == inFile.Package)
@@ -4872,7 +4872,7 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        private static string checkShortName(string name)
+        private static string CheckShortName(string name)
         {
             int p = name.IndexOf('<');
             if (p > 1 && name[p - 1] == '.') p--;
