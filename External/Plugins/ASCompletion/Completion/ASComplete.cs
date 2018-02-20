@@ -1650,11 +1650,10 @@ namespace ASCompletion.Completion
             IASContext ctx = ASContext.Context;
             FileModel aFile = ctx.CurrentModel;
             ClassModel aClass = ctx.CurrentClass;
-            ASResult result;
 
             // Expression before cursor
             expr.LocalVars = ParseLocalVars(expr);
-            result = EvalExpression(expr.Value, expr, aFile, aClass, true, true);
+            var result = EvalExpression(expr.Value, expr, aFile, aClass, true, true);
             if (!result.IsNull() && result.Member == null && result.Type != null)
             {
                 foreach(MemberModel member in result.Type.Members)
@@ -3412,8 +3411,6 @@ namespace ASCompletion.Completion
                 if (style == 14) // regex literal
                 {
                     inRegex = true;
-                    //if (hadDot) inRegex = true;
-                    //else break;
                     positionExpression = position;
                 }
                 else if (!IsCommentStyle(style))
@@ -3422,11 +3419,11 @@ namespace ASCompletion.Completion
                     if (inRegex)
                     {
                         inRegex = false;
-                        if (arrCount == 0 && braCount == 0)
+                        if (arrCount == 0 && braCount == 0 && parCount == 0)
                         {
                             if (expression.SubExpressions == null) expression.SubExpressions = new List<string>();
                             expression.SubExpressions.Add("");
-                            sb.Insert(0, "RegExp.#" + (subCount++) + "~");
+                            sb.Insert(0, "#RegExp.#" + (subCount++) + "~");
                             break;
                         }
                     }
@@ -4661,14 +4658,15 @@ namespace ASCompletion.Completion
         #endregion
 
         #region automatic code generation
-        static private ASExpr LastExpression;
+
+        private static ASExpr LastExpression;
 
         /// <summary>
         /// When typing a fully qualified class name:
         /// - automatically insert import statement 
         /// - replace with short name
         /// </summary>
-        static internal void HandleCompletionInsert(ScintillaControl sci, int position, string text, char trigger, ICompletionListItem item)
+        internal static void HandleCompletionInsert(ScintillaControl sci, int position, string text, char trigger, ICompletionListItem item)
         {
             // if the current class hash was set, we want to store whatever the user selected as the last-completed member for this class.
             if (currentClassHash != null)

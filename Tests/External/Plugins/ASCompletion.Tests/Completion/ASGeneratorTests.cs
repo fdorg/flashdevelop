@@ -1259,7 +1259,7 @@ namespace ASCompletion.Completion
                 [TestFixtureSetUp]
                 public void AssignStatementToVarSetUp() => ASContext.Context.Settings.GenerateImports = true;
 
-                public IEnumerable<TestCaseData> AS3TestCases
+                static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -1428,13 +1428,21 @@ namespace ASCompletion.Completion
                             .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1880_3"))
                             .SetName("{v:/regex/}|")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/1880");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1880_4"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1880_4"))
+                            .SetName("(/regex/ as String)|")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1880");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1880_5"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1880_5"))
+                            .SetName("/regex/gm|")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1880");
                     }
                 }
 
                 [Test, TestCaseSource(nameof(AS3TestCases))]
                 public string AS3(string sourceText, GeneratorJobType job, bool isUseTabs) => AS3Impl(sourceText, job, isUseTabs, sci);
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get {
                         yield return
@@ -1559,6 +1567,11 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1908_untyped"))
                                 .SetName("Issue 1908. untyped")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1880_1"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1880_1"))
+                            .SetName("~/regex/|")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908")
+                            .Ignore("");
                     }
                 }
 
