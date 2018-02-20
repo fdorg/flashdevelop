@@ -1,10 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Collections;
 using System.IO;
-using System.Windows.Forms;
 
 namespace PluginCore.Localization
 {

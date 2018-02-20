@@ -3,7 +3,6 @@
  * See http://www.codeproject.com/info/cpol10.aspx for details
 */
 
-using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 

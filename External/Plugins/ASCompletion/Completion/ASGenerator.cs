@@ -49,11 +49,12 @@ namespace ASCompletion.Completion
             get { return ASContext.Context.CurrentModel.haXe; }
         }
 
-        static public bool HandleGeneratorCompletion(ScintillaControl Sci, bool autoHide, string word)
+        public static bool HandleGeneratorCompletion(ScintillaControl sci, bool autoHide, string word)
         {
-            ContextFeatures features = ASContext.Context.Features;
-            if (features.overrideKey != null && word == features.overrideKey)
-                return HandleOverrideCompletion(autoHide);
+            var generator = ASContext.Context.CodeGenerator as ASGenerator;
+            if (generator == null) return false;
+            if (!string.IsNullOrEmpty(word) && word == ASContext.Context.Features.overrideKey)
+                return generator.HandleOverrideCompletion(autoHide);
             return false;
         }
 
@@ -68,8 +69,9 @@ namespace ASCompletion.Completion
             if (context is ASContext) ((ASContext)context).UpdateCurrentFile(false); // update model
 
             lookupPosition = -1;
+            if (sci.PositionIsOnComment(position)) return false;
             int style = sci.BaseStyleAt(position);
-            if (style == 19) // on keyword
+            if (style == 19 || style == 24) // on keyword
                 return false;
             contextMatch = null;
             contextToken = sci.GetWordFromPosition(position);
@@ -80,18 +82,17 @@ namespace ASCompletion.Completion
 
         protected virtual void ContextualGenerator(ScintillaControl sci, int position, ASResult resolve, List<ICompletionListItem> options)
         {
-            var context = ASContext.Context;
-            int style = sci.BaseStyleAt(position);
-            int line = sci.LineFromPosition(position);
-            FoundDeclaration found = GetDeclarationAtLine(line);
-            bool isNotInterface = (context.CurrentClass.Flags & FlagType.Interface) == 0;
-            if (isNotInterface && ASComplete.IsLiteralStyle(style))
+            var line = sci.LineFromPosition(position);
+            var found = GetDeclarationAtLine(line);
+            if (CanShowConvertToConst(sci, position, resolve, found))
             {
                 ShowConvertToConst(found, options);
                 return;
             }
 
             contextResolved = resolve;
+            var context = ASContext.Context;
+            var isNotInterface = (context.CurrentClass.Flags & FlagType.Interface) == 0;
 
             // ignore automatic vars (MovieClip members)
             if (isNotInterface
@@ -102,10 +103,10 @@ namespace ASCompletion.Completion
                 resolve.Type = null;
             }
 
-            if (isNotInterface && !found.inClass.IsVoid() && contextToken != null)
+            if (isNotInterface && !found.InClass.IsVoid() && contextToken != null)
             {
                 // implement interface
-                if (CanShowImplementInterfaceList(resolve))
+                if (CanShowImplementInterfaceList(sci, position, resolve, found))
                 {
                     contextParam = resolve.Type.Type;
                     ShowImplementInterface(found, options);
@@ -121,22 +122,23 @@ namespace ASCompletion.Completion
             }
 
             var suggestItemDeclaration = false;
-            if (contextToken != null && resolve.Member == null) // import declaration
+            if (contextToken != null && resolve.Member == null && sci.BaseStyleAt(position) != 5)
             {
+                // import declaration
                 if ((resolve.Type == null || resolve.Type.IsVoid() || !context.IsImported(resolve.Type, line)) && CheckAutoImport(resolve, options)) return;
                 if (resolve.Type == null)
                 {
                     suggestItemDeclaration = ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1));
                 }
             }
-            if (isNotInterface && found.member != null)
+            if (isNotInterface && found.Member != null)
             {
                 // private var -> property
-                if ((found.member.Flags & FlagType.Variable) > 0 && (found.member.Flags & FlagType.LocalVar) == 0)
+                if ((found.Member.Flags & FlagType.Variable) > 0 && (found.Member.Flags & FlagType.LocalVar) == 0)
                 {
                     var text = sci.GetLine(line);
                     // maybe we just want to import the member's non-imported type
-                    Match m = Regex.Match(text, String.Format(patternVarDecl, found.member.Name, contextToken));
+                    Match m = Regex.Match(text, String.Format(patternVarDecl, found.Member.Name, contextToken));
                     if (m.Success)
                     {
                         contextMatch = m;
@@ -148,7 +150,7 @@ namespace ASCompletion.Completion
                     return;
                 }
                 // inside a function
-                if ((found.member.Flags & (FlagType.Function | FlagType.Getter | FlagType.Setter)) > 0
+                if ((found.Member.Flags & (FlagType.Function | FlagType.Getter | FlagType.Setter)) > 0
                     && resolve.Member == null && resolve.Type == null)
                 {
                     if (IsHaxe)
@@ -248,8 +250,8 @@ namespace ASCompletion.Completion
                 }
 
                 // "Generate fields from parameters" suggestion
-                if ((found.member.Flags & FlagType.Function) > 0
-                    && found.member.Parameters != null && (found.member.Parameters.Count > 0)
+                if ((found.Member.Flags & FlagType.Function) > 0
+                    && found.Member.Parameters != null && (found.Member.Parameters.Count > 0)
                     && resolve.Member != null && (resolve.Member.Flags & FlagType.ParameterVar) > 0)
                 {
                     contextMember = resolve.Member;
@@ -258,21 +260,13 @@ namespace ASCompletion.Completion
                 }
 
                 // "add to interface" suggestion
-                if (resolve.Member != null
-                    && resolve.Member.Name == found.member.Name
-                    && line == found.member.LineFrom
-                    && ((found.member.Flags & FlagType.Function) > 0
-                        || (found.member.Flags & FlagType.Getter) > 0
-                        || (found.member.Flags & FlagType.Setter) > 0)
-                    && found.inClass != ClassModel.VoidClass
-                    && found.inClass.Implements != null
-                    && found.inClass.Implements.Count > 0)
+                if (CanShowAddToInterfaceList(sci, position, resolve, found))
                 {
-                    string funcName = found.member.Name;
-                    FlagType flags = found.member.Flags & ~FlagType.Access;
+                    string funcName = found.Member.Name;
+                    FlagType flags = found.Member.Flags & ~FlagType.Access;
 
                     List<string> interfaces = new List<string>();
-                    foreach (string interf in found.inClass.Implements)
+                    foreach (string interf in found.InClass.Implements)
                     {
                         bool skip = false;
                         ClassModel cm = context.ResolveType(interf, context.CurrentModel);
@@ -302,16 +296,16 @@ namespace ASCompletion.Completion
                 if (ln.Length > 0 && !ln.Contains('=')
                     && ln.Length <= sci.CurrentPos - sci.PositionFromLine(curLine)) // cursor at end of line
                 {
-                    var returnType = GetStatementReturnType(sci, found.inClass, sci.GetLine(curLine), sci.PositionFromLine(curLine));
+                    var returnType = GetStatementReturnType(sci, found.InClass, sci.GetLine(curLine), sci.PositionFromLine(curLine));
                     if (returnType.resolve.Member?.Type == ASContext.Context.Features.voidKey) return;
-                    if (returnType.resolve.Type == null && returnType.resolve.Context?.WordBefore == "new") ShowNewClassList(found, options, returnType.resolve.Context);
-                    else ShowAssignStatementToVarList(found, options, returnType);
+                    if (returnType.resolve.Type == null && returnType.resolve.Context?.WordBefore == "new") ShowNewClassList(found, returnType.resolve.Context, options);
+                    else ShowAssignStatementToVarList(found, returnType, options);
                     return;
                 }
             }
 
             // suggest generate constructor / toString
-            if (isNotInterface && found.member == null && !found.inClass.IsVoid() && contextToken == null)
+            if (CanShowGenerateConstructorAndToString(sci, position, resolve, found))
             {
                 bool hasConstructor = false;
                 bool hasToString = false;
@@ -335,7 +329,7 @@ namespace ASCompletion.Completion
                 && resolve.Member != null
                 && resolve.Type != null
                 && resolve.Type.QualifiedName == context.Features.stringKey
-                && !found.inClass.IsVoid())
+                && !found.InClass.IsVoid())
             {
                 int lineStartPos = sci.PositionFromLine(sci.CurrentLine);
                 var text = sci.GetLine(line);
@@ -375,7 +369,7 @@ namespace ASCompletion.Completion
                         contextMatch = m;
                         ShowNewClassList(found, options);
                     }
-                    else if (!found.inClass.IsVoid())
+                    else if (!found.InClass.IsVoid())
                     {
                         m = Regex.Match(text, String.Format(patternMethod, contextToken));
                         if (m.Success)
@@ -424,19 +418,19 @@ namespace ASCompletion.Completion
                                 type.ResolveExtends();
                                 type = type.Extends;
                             }
-                            if (constructor == null) ShowConstructorAndToStringList(new FoundDeclaration {inClass = resolve.Type}, false, true, options);
+                            if (constructor == null) ShowConstructorAndToStringList(new FoundDeclaration { InClass = resolve.Type }, false, true, options);
                             else
                             {
                                 var constructorParametersCount = constructor.Parameters?.Count ?? 0;
                                 var wordEndPosition = sci.WordEndPosition(sci.CurrentPos, true);
                                 var parameters = ParseFunctionParameters(sci, wordEndPosition);
-                                if (parameters.Count != constructorParametersCount) ShowChangeConstructorDeclarationList(found, options, parameters);
+                                if (parameters.Count != constructorParametersCount) ShowChangeConstructorDeclarationList(found, parameters, options);
                                 else
                                 {
                                     for (var i = 0; i < parameters.Count; i++)
                                     {
                                         if (parameters[i].paramType == constructor.Parameters[i].Type) continue;
-                                        ShowChangeConstructorDeclarationList(found, options, parameters);
+                                        ShowChangeConstructorDeclarationList(found, parameters, options);
                                         break;
                                     }
                                 }
@@ -448,10 +442,72 @@ namespace ASCompletion.Completion
             // TODO: Empty line, show generators list? yep
         }
 
-        protected virtual bool CanShowImplementInterfaceList(ASResult resolve)
+        /// <summary>
+        /// Check if "Convert to constant" are available at the current cursor position.
+        /// </summary>
+        /// <param name="sci">The Scintilla control containing the document</param>
+        /// <param name="position">Cursor position</param>
+        /// <param name="expr">Expression at cursor position</param>
+        /// <param name="found">The declaration target at current line(can not be null)</param>
+        /// <returns>true, if can show `Convert to constant` list</returns>
+        protected virtual bool CanShowConvertToConst(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
-            return resolve.Context.ContextFunction == null && resolve.Context.ContextMember == null
-                && resolve.Member == null && resolve.Type != null && (resolve.Type.Flags & FlagType.Interface) > 0;
+            return !ASContext.Context.CurrentClass.Flags.HasFlag(FlagType.Interface)
+                && ASComplete.IsLiteralStyle(sci.BaseStyleAt(position));
+        }
+
+        /// <summary>
+        /// Check if "Generate constructor" and "Generate toString()" are available at the current cursor position.
+        /// </summary>
+        /// <param name="sci">The Scintilla control containing the document</param>
+        /// <param name="position">Cursor position</param>
+        /// <param name="expr">Expression at cursor position</param>
+        /// <param name="found">The declaration target at current line(can not be null)</param>
+        /// <returns>true, if can show `Generate constructor` and(or) `Generate toString()` list</returns>
+        protected virtual bool CanShowGenerateConstructorAndToString(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        {
+            return contextToken == null
+                && found.Member == null
+                && !found.InClass.IsVoid()
+                && !found.InClass.Flags.HasFlag(FlagType.Interface)
+                && position < sci.LineEndPosition(found.InClass.LineTo);
+        }
+
+        /// <summary>
+        /// Check if "Implement Interface" are available at the current cursor position.
+        /// </summary>
+        /// <param name="sci">The Scintilla control containing the document</param>
+        /// <param name="position">Cursor position</param>
+        /// <param name="expr">Expression at cursor position</param>
+        /// <param name="found">Declaration target at current line(can not be null)</param>
+        /// <returns>true, if can show `Implement Interface` list</returns>
+        protected virtual bool CanShowImplementInterfaceList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        {
+            return expr.Context.ContextFunction == null && expr.Context.ContextMember == null
+                && expr.Member == null && expr.Type != null && (expr.Type.Flags & FlagType.Interface) > 0;
+        }
+
+        /// <summary>
+        /// Check if "Add to interface" are available at the current cursor position.
+        /// </summary>
+        /// <param name="sci">The Scintilla control containing the document</param>
+        /// <param name="position">Cursor position</param>
+        /// <param name="expr">Expression at cursor position</param>
+        /// <param name="found">Declaration target at current line(can not be null)</param>
+        /// <returns>true, if can show `Add to interface` list</returns>
+        protected virtual bool CanShowAddToInterfaceList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        {
+            return expr.Member != null
+                   && !expr.Member.Flags.HasFlag(FlagType.Static)
+                   && !expr.Member.Flags.HasFlag(FlagType.Constructor)
+                   && expr.Member.Name == found.Member.Name
+                   && sci.LineFromPosition(position) == found.Member.LineFrom
+                   && ((found.Member.Flags & FlagType.Function) > 0
+                       || (found.Member.Flags & FlagType.Getter) > 0
+                       || (found.Member.Flags & FlagType.Setter) > 0)
+                   && !found.InClass.IsVoid()
+                   && found.InClass.Implements != null
+                   && found.InClass.Implements.Count > 0;
         }
 
         private static MemberModel ResolveDelegate(string type, FileModel inFile)
@@ -554,7 +610,7 @@ namespace ASCompletion.Completion
             {
                 if (member.LineFrom <= line && member.LineTo >= line)
                 {
-                    result.member = member;
+                    result.Member = member;
                     return result;
                 }
             }
@@ -563,12 +619,12 @@ namespace ASCompletion.Completion
             {
                 if (aClass.LineFrom <= line && aClass.LineTo >= line)
                 {
-                    result.inClass = aClass;
+                    result.InClass = aClass;
                     foreach (MemberModel member in aClass.Members)
                     {
                         if (member.LineFrom <= line && member.LineTo >= line)
                         {
-                            result.member = member;
+                            result.Member = member;
                             return result;
                         }
                     }
@@ -622,7 +678,7 @@ namespace ASCompletion.Completion
 
         #region generators lists
 
-        private static void ShowImportClass(List<MemberModel> matches, List<ICompletionListItem> options)
+        private static void ShowImportClass(List<MemberModel> matches, ICollection<ICompletionListItem> options)
         {
             if (matches.Count == 1)
             {
@@ -639,35 +695,35 @@ namespace ASCompletion.Completion
             }
         }
 
-        private static void ShowPromoteLocalAndAddParameter(FoundDeclaration found, List<ICompletionListItem> options)
+        private static void ShowPromoteLocalAndAddParameter(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             string label = TextHelper.GetString("ASCompletion.Label.PromoteLocal");
             string labelMove = TextHelper.GetString("ASCompletion.Label.MoveDeclarationOnTop");
             string labelParam = TextHelper.GetString("ASCompletion.Label.AddAsParameter");
-            options.Add(new GeneratorItem(label, GeneratorJobType.PromoteLocal, found.member, found.inClass));
-            options.Add(new GeneratorItem(labelMove, GeneratorJobType.MoveLocalUp, found.member, found.inClass));
-            options.Add(new GeneratorItem(labelParam, GeneratorJobType.AddAsParameter, found.member, found.inClass));
+            options.Add(new GeneratorItem(label, GeneratorJobType.PromoteLocal, found.Member, found.InClass));
+            options.Add(new GeneratorItem(labelMove, GeneratorJobType.MoveLocalUp, found.Member, found.InClass));
+            options.Add(new GeneratorItem(labelParam, GeneratorJobType.AddAsParameter, found.Member, found.InClass));
         }
 
-        private static void ShowConvertToConst(FoundDeclaration found, List<ICompletionListItem> options)
+        private static void ShowConvertToConst(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             string label = TextHelper.GetString("ASCompletion.Label.ConvertToConst");
-            options.Add(new GeneratorItem(label, GeneratorJobType.ConvertToConst, found.member, found.inClass));
+            options.Add(new GeneratorItem(label, GeneratorJobType.ConvertToConst, found.Member, found.InClass));
         }
 
-        private static void ShowImplementInterface(FoundDeclaration found, List<ICompletionListItem> options)
+        private static void ShowImplementInterface(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             string label = TextHelper.GetString("ASCompletion.Label.ImplementInterface");
-            options.Add(new GeneratorItem(label, GeneratorJobType.ImplementInterface, null, found.inClass));
+            options.Add(new GeneratorItem(label, GeneratorJobType.ImplementInterface, null, found.InClass));
         }
 
-        private static void ShowNewVarList(FoundDeclaration found, List<ICompletionListItem> options)
+        private static void ShowNewVarList(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             bool generateClass = true;
             ScintillaControl sci = ASContext.CurSciControl;
             int currentPos = sci.CurrentPos;
             ASResult exprAtCursor = ASComplete.GetExpressionType(sci, sci.WordEndPosition(currentPos, true));
-            if (exprAtCursor == null || exprAtCursor.InClass == null || found.inClass.QualifiedName.Equals(exprAtCursor.RelClass.QualifiedName))
+            if (exprAtCursor == null || exprAtCursor.InClass == null || found.InClass.QualifiedName.Equals(exprAtCursor.RelClass.QualifiedName))
                 exprAtCursor = null;
             ASResult exprLeft = null;
             int curWordStartPos = sci.WordStartPosition(currentPos, true);
@@ -698,10 +754,10 @@ namespace ASCompletion.Completion
             }
             string label;
             if ((exprAtCursor != null && exprAtCursor.RelClass != null && (exprAtCursor.RelClass.Flags & FlagType.Interface) > 0)
-                || (found.inClass != null && (found.inClass.Flags & FlagType.Interface) > 0))
+                || (found.InClass != null && (found.InClass.Flags & FlagType.Interface) > 0))
             {
                 label = TextHelper.GetString("ASCompletion.Label.GenerateFunctionInterface");
-                options.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.member, found.inClass));
+                options.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.Member, found.InClass));
             }
             else
             {
@@ -710,85 +766,85 @@ namespace ASCompletion.Completion
                 if (isConst)
                 {
                     label = TextHelper.GetString("ASCompletion.Label.GenerateConstant");
-                    options.Add(new GeneratorItem(label, GeneratorJobType.Constant, found.member, found.inClass));
+                    options.Add(new GeneratorItem(label, GeneratorJobType.Constant, found.Member, found.InClass));
                 }
 
-                bool genProtectedDecl = GetDefaultVisibility(found.inClass) == Visibility.Protected;
+                bool genProtectedDecl = GetDefaultVisibility(found.InClass) == Visibility.Protected;
                 if (exprAtCursor == null && exprLeft == null)
                 {
                     if (genProtectedDecl) label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedVar");
                     else label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateVar");
-                    options.Add(new GeneratorItem(label, GeneratorJobType.Variable, found.member, found.inClass));
+                    options.Add(new GeneratorItem(label, GeneratorJobType.Variable, found.Member, found.InClass));
                 }
 
                 label = TextHelper.GetString("ASCompletion.Label.GeneratePublicVar");
-                options.Add(new GeneratorItem(label, GeneratorJobType.VariablePublic, found.member, found.inClass));
+                options.Add(new GeneratorItem(label, GeneratorJobType.VariablePublic, found.Member, found.InClass));
 
                 if (exprAtCursor == null && exprLeft == null)
                 {
                     if (genProtectedDecl) label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedFunction");
                     else label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFunction");
-                    options.Add(new GeneratorItem(label, GeneratorJobType.Function, found.member, found.inClass));
+                    options.Add(new GeneratorItem(label, GeneratorJobType.Function, found.Member, found.InClass));
                 }
 
                 label = TextHelper.GetString("ASCompletion.Label.GenerateFunctionPublic");
-                options.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.member, found.inClass));
+                options.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.Member, found.InClass));
 
                 if (generateClass)
                 {
                     label = TextHelper.GetString("ASCompletion.Label.GenerateClass");
-                    options.Add(new GeneratorItem(label, GeneratorJobType.Class, found.member, found.inClass));
+                    options.Add(new GeneratorItem(label, GeneratorJobType.Class, found.Member, found.InClass));
                 }
             }
         }
 
-        private static void ShowChangeMethodDeclList(FoundDeclaration found, List<ICompletionListItem> options)
+        private static void ShowChangeMethodDeclList(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             string label = TextHelper.GetString("ASCompletion.Label.ChangeMethodDecl");
-            options.Add(new GeneratorItem(label, GeneratorJobType.ChangeMethodDecl, found.member, found.inClass));
+            options.Add(new GeneratorItem(label, GeneratorJobType.ChangeMethodDecl, found.Member, found.InClass));
         }
 
-        private static void ShowChangeConstructorDeclarationList(FoundDeclaration found, ICollection<ICompletionListItem> options, IList<FunctionParameter> parameters)
+        private static void ShowChangeConstructorDeclarationList(FoundDeclaration found, IList<FunctionParameter> parameters, ICollection<ICompletionListItem> options)
         {
             var label = TextHelper.GetString("ASCompletion.Label.ChangeConstructorDecl");
-            options.Add(new GeneratorItem(label, GeneratorJobType.ChangeConstructorDecl, found.member, found.inClass, parameters));
+            options.Add(new GeneratorItem(label, GeneratorJobType.ChangeConstructorDecl, found.Member, found.InClass, parameters));
         }
 
-        private static void ShowNewMethodList(FoundDeclaration found, List<ICompletionListItem> options)
+        private static void ShowNewMethodList(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             ScintillaControl sci = ASContext.CurSciControl;
             ASResult result = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
-            if (result == null || result.RelClass == null || found.inClass.QualifiedName.Equals(result.RelClass.QualifiedName))
+            if (result == null || result.RelClass == null || found.InClass.QualifiedName.Equals(result.RelClass.QualifiedName))
                 result = null;
             string label;
-            ClassModel inClass = result != null ? result.RelClass : found.inClass;
+            ClassModel inClass = result != null ? result.RelClass : found.InClass;
             bool isInterface = (inClass.Flags & FlagType.Interface) > 0;
             if (!isInterface && result == null)
             {
-                if (GetDefaultVisibility(found.inClass) == Visibility.Protected)
+                if (GetDefaultVisibility(found.InClass) == Visibility.Protected)
                     label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedFunction");
                 else label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFunction");
-                options.Add(new GeneratorItem(label, GeneratorJobType.Function, found.member, found.inClass));
+                options.Add(new GeneratorItem(label, GeneratorJobType.Function, found.Member, found.InClass));
             }
             if (isInterface) label = TextHelper.GetString("ASCompletion.Label.GenerateFunctionInterface");
             else label = TextHelper.GetString("ASCompletion.Label.GenerateFunctionPublic");
-            options.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.member, found.inClass));
+            options.Add(new GeneratorItem(label, GeneratorJobType.FunctionPublic, found.Member, found.InClass));
             label = TextHelper.GetString("ASCompletion.Label.GeneratePublicCallback");
-            options.Add(new GeneratorItem(label, GeneratorJobType.VariablePublic, found.member, found.inClass));
+            options.Add(new GeneratorItem(label, GeneratorJobType.VariablePublic, found.Member, found.InClass));
         }
 
-        static void ShowAssignStatementToVarList(FoundDeclaration found, ICollection<ICompletionListItem> options, StatementReturnType data)
+        private static void ShowAssignStatementToVarList(FoundDeclaration found, StatementReturnType data, ICollection<ICompletionListItem> options)
         {
             var label = TextHelper.GetString("ASCompletion.Label.AssignStatementToVar");
-            options.Add(new GeneratorItem(label, GeneratorJobType.AssignStatementToVar, found.member, found.inClass, data));
+            options.Add(new GeneratorItem(label, GeneratorJobType.AssignStatementToVar, found.Member, found.InClass, data));
         }
 
-        private static void ShowNewClassList(FoundDeclaration found, ICollection<ICompletionListItem> options) => ShowNewClassList(found, options, null);
+        private static void ShowNewClassList(FoundDeclaration found, ICollection<ICompletionListItem> options) => ShowNewClassList(found, null, options);
 
-        static void ShowNewClassList(FoundDeclaration found, ICollection<ICompletionListItem> options, ASExpr expr)
+        private static void ShowNewClassList(FoundDeclaration found, ASExpr expr, ICollection<ICompletionListItem> options)
         {
             var label = TextHelper.GetString("ASCompletion.Label.GenerateClass");
-            options.Add(new GeneratorItem(label, GeneratorJobType.Class, found.member, found.inClass, expr));
+            options.Add(new GeneratorItem(label, GeneratorJobType.Class, found.Member, found.InClass, expr));
         }
 
         private static void ShowConstructorAndToStringList(FoundDeclaration found, bool hasConstructor, bool hasToString, ICollection<ICompletionListItem> options)
@@ -796,50 +852,50 @@ namespace ASCompletion.Completion
             if (!hasConstructor)
             {
                 string label = TextHelper.GetString("ASCompletion.Label.GenerateConstructor");
-                options.Add(new GeneratorItem(label, GeneratorJobType.Constructor, found.member, found.inClass));
+                options.Add(new GeneratorItem(label, GeneratorJobType.Constructor, found.Member, found.InClass));
             }
 
             if (!hasToString)
             {
                 string label = TextHelper.GetString("ASCompletion.Label.GenerateToString");
-                options.Add(new GeneratorItem(label, GeneratorJobType.ToString, found.member, found.inClass));
+                options.Add(new GeneratorItem(label, GeneratorJobType.ToString, found.Member, found.InClass));
             }
         }
 
-        private static void ShowEventMetatagList(FoundDeclaration found, List<ICompletionListItem> options)
+        private static void ShowEventMetatagList(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             string label = TextHelper.GetString("ASCompletion.Label.GenerateEventMetatag");
-            options.Add(new GeneratorItem(label, GeneratorJobType.EventMetatag, found.member, found.inClass));
+            options.Add(new GeneratorItem(label, GeneratorJobType.EventMetatag, found.Member, found.InClass));
         }
 
-        private static void ShowFieldFromParameter(FoundDeclaration found, List<ICompletionListItem> options)
+        private static void ShowFieldFromParameter(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             Hashtable parameters = new Hashtable();
-            parameters["scope"] = GetDefaultVisibility(found.inClass);
+            parameters["scope"] = GetDefaultVisibility(found.InClass);
             string label;
-            if (GetDefaultVisibility(found.inClass) == Visibility.Protected)
+            if (GetDefaultVisibility(found.InClass) == Visibility.Protected)
                 label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedFieldFromParameter");
             else label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFieldFromParameter");
-            options.Add(new GeneratorItem(label, GeneratorJobType.FieldFromParameter, found.member, found.inClass, parameters));
+            options.Add(new GeneratorItem(label, GeneratorJobType.FieldFromParameter, found.Member, found.InClass, parameters));
             parameters = new Hashtable();
             parameters["scope"] = Visibility.Public;
             label = TextHelper.GetString("ASCompletion.Label.GeneratePublicFieldFromParameter");
-            options.Add(new GeneratorItem(label, GeneratorJobType.FieldFromParameter, found.member, found.inClass, parameters));
+            options.Add(new GeneratorItem(label, GeneratorJobType.FieldFromParameter, found.Member, found.InClass, parameters));
         }
 
-        static void ShowAddInterfaceDefList(FoundDeclaration found, IEnumerable<string> interfaces, ICollection<ICompletionListItem> options)
+        private static void ShowAddInterfaceDefList(FoundDeclaration found, IEnumerable<string> interfaces, ICollection<ICompletionListItem> options)
         {
             var label = TextHelper.GetString("ASCompletion.Label.AddInterfaceDef");
             foreach (var interf in interfaces)
             {
-                options.Add(new GeneratorItem(String.Format(label, interf), GeneratorJobType.AddInterfaceDef, found.member, found.inClass, interf));
+                options.Add(new GeneratorItem(String.Format(label, interf), GeneratorJobType.AddInterfaceDef, found.Member, found.InClass, interf));
             }
         }
 
-        private static void ShowDelegateList(FoundDeclaration found, List<ICompletionListItem> options)
+        private static void ShowDelegateList(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             string label = String.Format(TextHelper.GetString("ASCompletion.Label.GenerateHandler"), "Delegate");
-            options.Add(new GeneratorItem(label, GeneratorJobType.Delegate, found.member, found.inClass));
+            options.Add(new GeneratorItem(label, GeneratorJobType.Delegate, found.Member, found.InClass));
         }
 
         internal static void ShowEventList(FoundDeclaration found, List<ICompletionListItem> options)
@@ -855,9 +911,10 @@ namespace ASCompletion.Completion
 
             for (int i = 0; i < choices.Length; i++)
             {
-                options.Add(new GeneratorItem(choices[i],
-                    choices[i] == labelContext ? GeneratorJobType.ComplexEvent : GeneratorJobType.BasicEvent,
-                    found.member, found.inClass));
+                var choice = choices[i];
+                options.Add(new GeneratorItem(choice,
+                    choice == labelContext ? GeneratorJobType.ComplexEvent : GeneratorJobType.BasicEvent,
+                    found.Member, found.InClass));
             }
         }
 
@@ -866,9 +923,9 @@ namespace ASCompletion.Completion
             return !ASContext.Context.ResolveType("flash.events.DataEvent", ASContext.Context.CurrentModel).IsVoid();
         }
 
-        private static void ShowGetSetList(FoundDeclaration found, List<ICompletionListItem> options)
+        private static void ShowGetSetList(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
-            string name = GetPropertyNameFor(found.member);
+            string name = GetPropertyNameFor(found.Member);
             ASResult result = new ASResult();
             ClassModel curClass = ASContext.Context.CurrentClass;
             ASComplete.FindMember(name, curClass, result, FlagType.Getter, 0);
@@ -879,30 +936,30 @@ namespace ASCompletion.Completion
             if (!hasGetter && !hasSetter)
             {
                 string label = TextHelper.GetString("ASCompletion.Label.GenerateGetSet");
-                options.Add(new GeneratorItem(label, GeneratorJobType.GetterSetter, found.member, found.inClass));
+                options.Add(new GeneratorItem(label, GeneratorJobType.GetterSetter, found.Member, found.InClass));
             }
             ShowGetterList(found, options);
             ShowSetterList(found, options);
         }
 
-        static void ShowGetterList(FoundDeclaration found, ICollection<ICompletionListItem> options)
+        private static void ShowGetterList(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
-            var name = GetPropertyNameFor(found.member);
+            var name = GetPropertyNameFor(found.Member);
             var result = new ASResult();
             ASComplete.FindMember(name, ASContext.Context.CurrentClass, result, FlagType.Getter, 0);
             if (!result.IsNull()) return;
             var label = TextHelper.GetString("ASCompletion.Label.GenerateGet");
-            options.Add(new GeneratorItem(label, GeneratorJobType.Getter, found.member, found.inClass));
+            options.Add(new GeneratorItem(label, GeneratorJobType.Getter, found.Member, found.InClass));
         }
 
-        static void ShowSetterList(FoundDeclaration found, ICollection<ICompletionListItem> options)
+        private static void ShowSetterList(FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
-            var name = GetPropertyNameFor(found.member);
+            var name = GetPropertyNameFor(found.Member);
             var result = new ASResult();
             ASComplete.FindMember(name, ASContext.Context.CurrentClass, result, FlagType.Setter, 0);
             if (!result.IsNull()) return;
             var label = TextHelper.GetString("ASCompletion.Label.GenerateSet");
-            options.Add(new GeneratorItem(label, GeneratorJobType.Setter, found.member, found.inClass));
+            options.Add(new GeneratorItem(label, GeneratorJobType.Setter, found.Member, found.InClass));
         }
 
         #endregion
@@ -1279,7 +1336,7 @@ namespace ASCompletion.Completion
                     {
                         atLine = latest.LineFrom;
                         var declaration = GetDeclarationAtLine(atLine - 1);
-                        startsWithNewLine = declaration.member != null;
+                        startsWithNewLine = declaration.Member != null;
                         endsWithNewLine = true;
                     }
                     else atLine = latest.LineTo + 1;
@@ -1373,7 +1430,13 @@ namespace ASCompletion.Completion
             if (string.IsNullOrEmpty(type) && !resolve.IsNull())
             {
                 if (resolve.Member?.Type != null) type = resolve.Member.Type;
-                else if (resolve.Type?.Name != null) type = resolve.Type.QualifiedName;
+                else if (resolve.Type?.Name != null)
+                {
+                    type = resolve.Type.QualifiedName;
+                    if (resolve.Type.IndexType == "*") type += ".<*>";
+                    else if (resolve.Type.FullName.Contains(".<Vector>")) type = resolve.Type.FullName.Replace(".<Vector>", ".<Vector.<*>>");
+                }
+
                 if (resolve.Member?.Name != null) varname = GuessVarName(resolve.Member.Name, type);
             }
             if (!string.IsNullOrEmpty(word) && (string.IsNullOrEmpty(type) || Regex.IsMatch(type, "(<[^]]+>)"))) word = null;
@@ -1555,12 +1618,7 @@ namespace ASCompletion.Completion
 
                 ASContext.MainForm.OpenEditableDocument(funcResult.InClass.InFile.FileName, true);
                 sci = ASContext.CurSciControl;
-
-                FileModel fileModel = new FileModel();
-                fileModel.Context = ASContext.Context;
-                ASFileParser parser = new ASFileParser();
-                parser.ParseSrc(fileModel, sci.Text);
-
+                var fileModel = ASContext.Context.GetCodeModel(sci.Text);
                 foreach (ClassModel cm in fileModel.Classes)
                 {
                     if (cm.QualifiedName.Equals(funcResult.InClass.QualifiedName))
@@ -1605,12 +1663,7 @@ namespace ASCompletion.Completion
 
                 ASContext.MainForm.OpenEditableDocument(funcResult.Type.InFile.FileName, true);
                 sci = ASContext.CurSciControl;
-
-                FileModel fileModel = new FileModel(funcResult.Type.InFile.FileName);
-                fileModel.Context = ASContext.Context;
-                ASFileParser parser = new ASFileParser();
-                parser.ParseSrc(fileModel, sci.Text);
-
+                var fileModel = ASContext.Context.GetFileModel(funcResult.Type.InFile.FileName);
                 foreach (ClassModel cm in fileModel.Classes)
                 {
                     if (cm.QualifiedName.Equals(funcResult.Type.QualifiedName))
@@ -1771,8 +1824,7 @@ namespace ASCompletion.Completion
             var context = ASContext.Context;
             ClassModel aType = context.ResolveType(interf, context.CurrentModel);
             if (aType.IsVoid()) return;
-
-            FileModel fileModel = ASFileParser.ParseFile(context.CreateFileModel(aType.InFile.FileName));
+            var fileModel = ASContext.Context.GetFileModel(aType.InFile.FileName);
             foreach (ClassModel cm in fileModel.Classes)
             {
                 if (cm.QualifiedName.Equals(aType.QualifiedName))
@@ -2324,12 +2376,7 @@ namespace ASCompletion.Completion
                 ASContext.MainForm.OpenEditableDocument(varResult.RelClass.InFile.FileName, false);
                 sci = ASContext.CurSciControl;
                 isOtherClass = true;
-
-                FileModel fileModel = new FileModel();
-                fileModel.Context = ASContext.Context;
-                ASFileParser parser = new ASFileParser();
-                parser.ParseSrc(fileModel, sci.Text);
-
+                var fileModel = ASContext.Context.GetCodeModel(sci.Text);
                 foreach (ClassModel cm in fileModel.Classes)
                 {
                     if (cm.QualifiedName.Equals(varResult.RelClass.QualifiedName))
@@ -2831,11 +2878,7 @@ namespace ASCompletion.Completion
                 ASContext.MainForm.OpenEditableDocument(funcResult.RelClass.InFile.FileName, true);
                 sci = ASContext.CurSciControl;
                 isOtherClass = true;
-
-                var fileModel = new FileModel {Context = ASContext.Context};
-                var parser = new ASFileParser();
-                parser.ParseSrc(fileModel, sci.Text);
-
+                var fileModel = ASContext.Context.GetCodeModel(sci.Text);
                 foreach (ClassModel cm in fileModel.Classes)
                 {
                     if (cm.QualifiedName.Equals(funcResult.RelClass.QualifiedName))
@@ -3112,10 +3155,7 @@ namespace ASCompletion.Completion
             expression = expression.TrimEnd(new char[] { '(', '[', '{', '<' });
             expression = expression.TrimStart(new char[] { ')', ']', '}', '>' });
 
-            var cFile = ASContext.Context.CurrentModel;
-            ASFileParser parser = new ASFileParser();
-            parser.ParseSrc(cFile, sci.Text);
-
+            var cFile = ASContext.Context.GetCodeModel(ASContext.Context.CurrentModel, sci.Text);
             MemberModel current = cFile.Context.CurrentMember;
 
             string characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
@@ -3227,12 +3267,9 @@ namespace ASCompletion.Completion
             }
             InsertCode(sci.CurrentPos, template, sci);
 
-            var cFile = ASContext.Context.CurrentModel;
-            ASFileParser parser = new ASFileParser();
-            parser.ParseSrc(cFile, sci.Text);
-
+            ASContext.Context.GetCodeModel(ASContext.Context.CurrentModel, sci.Text);
             FoundDeclaration found = GetDeclarationAtLine(lineStart);
-            if (found.member == null) return;
+            if (found.Member == null) return;
 
             lookupPosition = sci.CurrentPos;
             AddLookupPosition();
@@ -3240,21 +3277,21 @@ namespace ASCompletion.Completion
             MemberModel latest = TemplateUtils.GetTemplateBlockMember(sci, TemplateUtils.GetBoundary("PrivateMethods"));
 
             if (latest == null)
-                latest = GetLatestMemberForFunction(found.inClass, GetDefaultVisibility(found.inClass), found.member);
+                latest = GetLatestMemberForFunction(found.InClass, GetDefaultVisibility(found.InClass), found.Member);
 
             if (latest == null)
-                latest = found.member;
+                latest = found.Member;
 
             int position = sci.PositionFromLine(latest.LineTo + 1) - ((sci.EOLMode == 0) ? 2 : 1);
             sci.SetSel(position, position);
 
             FlagType flags = FlagType.Function;
-            if ((found.member.Flags & FlagType.Static) > 0)
+            if ((found.Member.Flags & FlagType.Static) > 0)
             {
                 flags |= FlagType.Static;
             }
 
-            MemberModel m = new MemberModel(newName, ASContext.Context.Features.voidKey, flags, GetDefaultVisibility(found.inClass));
+            MemberModel m = new MemberModel(newName, ASContext.Context.Features.voidKey, flags, GetDefaultVisibility(found.InClass));
 
             template = NewLine + TemplateUtils.GetTemplate("Function");
             template = TemplateUtils.ToDeclarationWithModifiersString(m, template);
@@ -3351,126 +3388,43 @@ namespace ASCompletion.Completion
             if (!m.Success) return null;
             line = line.Substring(0, m.Index);
             if (line.Length == 0) return null;
-            var haxe = sci.ConfigurationLanguage == "haxe";
-            line = ReplaceAllStringContents(line);
-            var bracesRemoved = false;
-            var pos = -1;
-            char c;
-            if (line.Last() == ')')
-            {
-                var bracesCount = 1;
-                var position = startPos + line.Length - 1;
-                while (position-- > 0)
-                {
-                    if (sci.PositionIsOnComment(position)) continue;
-                    c = (char)sci.CharAt(position);
-                    if (c == ')') bracesCount++;
-                    else if (c == '(')
-                    {
-                        bracesCount--;
-                        if (bracesCount > 0) continue;
-                        if (haxe && sci.GetWordLeft(position - 1, true) == "cast")
-                        {
-                            pos = startPos + line.Length;
-                            break;
-                        }
-                        var lineFromPosition = sci.LineFromPosition(position);
-                        startPos = sci.PositionFromLine(lineFromPosition);
-                        var tmpLine = sci.GetLine(lineFromPosition);
-                        tmpLine = tmpLine.Substring(0, position - startPos);
-                        if (string.IsNullOrEmpty(tmpLine.TrimStart()))
-                        {
-                            pos = startPos + line.Length;
-                            break;
-                        }
-                        line = tmpLine;
-                        pos = position;
-                        bracesRemoved = true;
-                        break;
-                    }
-                }
-            }
-            else pos = startPos + line.Length - 1;
+            var pos = startPos + m.Index;
+            var expr = ASComplete.GetExpressionType(sci, pos, false, true);
+            if (expr.Type != null || expr.Member != null) pos = expr.Context.Position;
             var ctx = inClass.InFile.Context;
             var features = ctx.Features;
-            ASResult resolve = null;
-            string word = null;
-            ClassModel type = null;
-            if (pos != -1)
+            ASResult resolve = expr;
+            if (resolve.Type != null && !resolve.IsPackage)
             {
-                pos = sci.WordEndPosition(pos, true);
-                c = line.TrimEnd().Last();
-                var startPosition = pos;
-                if ("]}\"'".Contains(c) || ((c == '>' || features.ArithmeticOperators.Contains(c)) && !bracesRemoved)) startPosition++;
-                resolve = ASComplete.GetExpressionType(sci, startPosition, true, true);
-                if (resolve.Type != null && !resolve.IsPackage)
+                if (resolve.Type.Name == "Function")
                 {
-                    if (resolve.Type.Name == "Function" && !bracesRemoved)
+                    if (IsHaxe)
                     {
-                        if (haxe)
+                        var voidKey = features.voidKey;
+                        var parameters = resolve.Member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
+                        parameters.Add(resolve.Member.Type ?? voidKey);
+                        var qualifiedName = string.Empty;
+                        for (var i = 0; i < parameters.Count; i++)
                         {
-                            var voidKey = features.voidKey;
-                            var parameters = resolve.Member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
-                            parameters.Add(resolve.Member.Type ?? voidKey);
-                            var qualifiedName = string.Empty;
-                            for (var i = 0; i < parameters.Count; i++)
-                            {
-                                if (i > 0) qualifiedName += "->";
-                                var t = parameters[i];
-                                if (t.Contains("->") && !t.StartsWith('(')) t = $"({t})";
-                                qualifiedName += t;
-                            }
-                            resolve = null;
-                            type = new ClassModel {Name = qualifiedName, InFile = FileModel.Ignore};
+                            if (i > 0) qualifiedName += "->";
+                            var t = parameters[i];
+                            if (t.Contains("->") && !t.StartsWith('(')) t = $"({t})";
+                            qualifiedName += t;
                         }
-                        else resolve.Member = null;
+                        resolve = new ASResult {Type = new ClassModel {Name = qualifiedName, InFile = FileModel.Ignore}};
                     }
-                    else if (!string.IsNullOrEmpty(resolve.Path) && Regex.IsMatch(resolve.Path, @"(\.\[.{0,}?\])$", RegexOptions.RightToLeft))
-                        resolve.Member = null;
+                    else resolve.Member = null;
                 }
-                word = sci.GetWordFromPosition(pos);
+                else if (!string.IsNullOrEmpty(resolve.Path) && Regex.IsMatch(resolve.Path, @"(\.\[.{0,}?\])$", RegexOptions.RightToLeft))
+                    resolve.Member = null;
             }
-            if (resolve?.Type == null || resolve.Type.IsVoid())
+            var word = sci.GetWordFromPosition(pos);
+            if (string.IsNullOrEmpty(word) && resolve.Type != null)
             {
-                c = (char)sci.CharAt(pos);
-                if (c == ']')
-                {
-                    resolve = ASComplete.GetExpressionType(sci, pos + 1);
-                    type = resolve.Type ?? ctx.ResolveType(features.arrayKey, inClass.InFile);
-                    resolve = null;
-                }
-                if (type != null && type.IsVoid()) type = null;
+                var tokens = Regex.Split(resolve.Context.Value, Regex.Escape(features.dot));
+                word = tokens.LastOrDefault(it => it.Length > 0 && !(it.Length >= 2 && it[0] == '#' && it[it.Length - 1] == '~') && char.IsLetter(it[0]));
             }
-            if (resolve == null) resolve = new ASResult();
-            if (resolve.Type == null) resolve.Type = type;
             return new StatementReturnType(resolve, pos, word);
-        }
-
-        private static string ReplaceAllStringContents(string line)
-        {
-            string retLine = line;
-            Regex re1 = new Regex("'(?:[^'\\\\]|(?:\\\\\\\\)|(?:\\\\\\\\)*\\\\.{1})*'");
-            Regex re2 = new Regex("\"(?:[^\"\\\\]|(?:\\\\\\\\)|(?:\\\\\\\\)*\\\\.{1})*\"");
-            Match m1 = re1.Match(line);
-            Match m2 = re2.Match(line);
-            while (m1.Success || m2.Success)
-            {
-                Match m = null;
-                if (m1.Success && m2.Success) m = m1.Index > m2.Index ? m2 : m1;
-                else if (m1.Success) m = m1;
-                else m = m2;
-                string sub = "";
-                string val = m.Value;
-                for (int j = 0; j < val.Length - 2; j++) 
-                    sub += "A";
-                
-                line = line.Substring(0, m.Index) + sub + "AA" + line.Substring(m.Index + m.Value.Length);
-                retLine = retLine.Substring(0, m.Index + 1) + sub + retLine.Substring(m.Index + m.Value.Length - 1);
-
-                m1 = re1.Match(line);
-                m2 = re2.Match(line);
-            }
-            return retLine;
         }
 
         private static string GuessVarName(string name, string type)
@@ -4179,7 +4133,7 @@ namespace ASCompletion.Completion
         /// </summary>
         /// <param name="autoHide">Don't keep the list open if the word does not match</param>
         /// <returns>Completion was handled</returns>
-        static bool HandleOverrideCompletion(bool autoHide)
+        protected virtual bool HandleOverrideCompletion(bool autoHide)
         {
             // explore members
             IASContext ctx = ASContext.Context;
@@ -4227,8 +4181,7 @@ namespace ASCompletion.Completion
             members.Sort();
 
             // build list
-            List<ICompletionListItem> known = new List<ICompletionListItem>();
-
+            var known = new List<ICompletionListItem>();
             MemberModel last = null;
             foreach (MemberModel member in members)
             {
@@ -4943,15 +4896,15 @@ namespace ASCompletion.Completion
         }
     }
 
-    internal class FoundDeclaration
+    public class FoundDeclaration
     {
-        public MemberModel member;
-        public ClassModel inClass;
+        public MemberModel Member;
+        public ClassModel InClass;
 
         public FoundDeclaration()
         {
-            member = null;
-            inClass = ClassModel.VoidClass;
+            Member = null;
+            InClass = ClassModel.VoidClass;
         }
     }
 

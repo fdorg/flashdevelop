@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.IO;
-using PluginCore;
 using PluginCore.Helpers;
 using ProjectManager.Projects.AS2;
 

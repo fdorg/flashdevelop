@@ -17,7 +17,6 @@ using System.Windows.Forms;
 using ProjectManager.Projects.Haxe;
 using ProjectManager.Projects;
 using AS3Context;
-using HaXeContext.Completion;
 using HaXeContext.Generators;
 using PluginCore.Utilities;
 using ScintillaNet;
@@ -576,6 +575,26 @@ namespace HaXeContext
                 return (aFile.Package == package);
             }
             else return false;
+        }
+
+        /// <inheritdoc />
+        public override FileModel GetCodeModel(FileModel result, string src, bool scriptMode)
+        {
+            result.haXe = true;
+            base.GetCodeModel(result, src, scriptMode);
+            if (result.Members != null)
+            {
+                for (var i = 0; i < result.Members.Count; i++)
+                {
+                    var member = result.Members[i];
+                    if (!member.Flags.HasFlag(FlagType.Function) || !(member.Parameters?.Count > 0)) continue;
+                    foreach (var parameter in member.Parameters)
+                    {
+                        if (parameter.Name[0] == '?') parameter.Name = parameter.Name.Substring(1);
+                    }
+                }
+            }
+            return result;
         }
 
         /// <summary>

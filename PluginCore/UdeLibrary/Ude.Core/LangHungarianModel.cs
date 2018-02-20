@@ -35,8 +35,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-using System;
-
 namespace Ude.Core
 {   
     public abstract class HungarianModel : SequenceModel

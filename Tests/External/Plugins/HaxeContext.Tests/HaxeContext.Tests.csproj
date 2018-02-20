@@ -68,7 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\RefactorCommandTests.cs" />
-    <Compile Include="Completion\CodeGeneratorTests.cs" />
+    <Compile Include="Generators\CodeGeneratorTests.cs" />
     <Compile Include="ContextTests.cs" />
     <Compile Include="Generators\DocumentationGeneratorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -133,18 +133,12 @@
     <EmbeddedResource Include="Test Files\parser\Issue1849_1.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue1849_2.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue1849_3.hx" />
-    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1833_1.hx" />
-    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1833_1.hx" />
-    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1833_2.hx" />
-    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1833_2.hx" />
-    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1743_1.hx" />
-    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1743_1.hx" />
-    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1743_2.hx" />
-    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1743_2.hx" />
-    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1743_3.hx" />
-    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1743_3.hx" />
-    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1927_1.hx" />
-    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1927_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue1833_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue1833_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue1743_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue1743_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue1743_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue1927_1.hx" />
     <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1926_1.hx" />
     <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1926_2.hx" />
     <EmbeddedResource Include="Test Files\parser\ResolveDotContext_Issue1926_3.hx" />
@@ -176,10 +170,32 @@
     <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_disableLeadingAsterisks_methodDetails_5.hx" />
     <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_none.hx" />
     <EmbeddedResource Include="Test Files\generators\documentation\BeforeGenerateDocumentation_none.hx" />
-    <EmbeddedResource Include="Test Files\completion\generated\BeforeContextualGeneratorTests_issue1964_1.hx" />
-    <EmbeddedResource Include="Test Files\completion\generated\AfterContextualGeneratorTests_issue1964_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue1964_1.hx" />
     <EmbeddedResource Include="Test Files\parser\IsImported_issue1969_1.hx" />
     <EmbeddedResource Include="Test Files\parser\IsImported_issue1969_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\HandleOverrideCompletion_class_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\HandleOverrideCompletion_abstract.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\HandleOverrideCompletion_interface.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\HandleOverrideCompletion_class_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\HandleOverrideCompletion_typedef.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2009_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2009_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2009_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2017_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2017_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2017_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2017_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2017_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2017_6.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2017_7.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2022_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2022_2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2022_case_1_withoutEntryPoint.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2022_case_1.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\AfterRenameOptionalParameterVar_issue2022_case_1.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2022_case_2_withoutEntryPoint.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2022_case_2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\AfterRenameOptionalParameterVar_issue2022_case_2.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

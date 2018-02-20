@@ -111,7 +111,6 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
-    <Reference Include="System.Data" />
     <Reference Include="System.Design">
       <Name>System.Design</Name>
     </Reference>

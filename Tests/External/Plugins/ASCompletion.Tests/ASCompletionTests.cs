@@ -39,6 +39,7 @@ namespace ASCompletion
             doc = Substitute.For<ITabbedDocument>();
             mainForm.Settings = settings;
             mainForm.CurrentDocument = doc;
+            mainForm.Documents = new[] {doc};
             mainForm.StandaloneMode = true;
             PluginBase.Initialize(mainForm);
             FlashDevelop.Managers.ScintillaManager.LoadConfiguration();
@@ -102,7 +103,7 @@ namespace ASCompletion
             sci.Text = sourceText;
             SnippetHelper.PostProcessSnippets(sci, 0);
             var currentModel = ASContext.Context.CurrentModel;
-            new ASFileParser().ParseSrc(currentModel, sci.Text);
+            ASContext.Context.GetCodeModel(currentModel, sci.Text);
             var line = sci.CurrentLine;
             var currentClass = currentModel.Classes.FirstOrDefault(line);
             ASContext.Context.CurrentClass.Returns(currentClass);

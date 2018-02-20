@@ -1,15 +1,10 @@
 using System;
 using System.IO;
-using System.Text;
 using System.Drawing;
-using System.Reflection;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Windows.Forms;
 using ProjectManager.Projects;
 using PluginCore.Localization;
-using PluginCore.Managers;
 using PluginCore.Helpers;
 using PluginCore;
 using Ookii.Dialogs;
