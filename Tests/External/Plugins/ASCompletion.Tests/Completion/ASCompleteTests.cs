@@ -23,6 +23,7 @@ namespace ASCompletion.Completion
         internal static string GetExpression(ScintillaControl sci, string sourceText)
         {
             SetSrc(sci, sourceText);
+            sci.Colourise(0, -1);
             var expr = ASComplete.GetExpression(sci, sci.CurrentPos);
             var value = expr.Value;
             if (!string.IsNullOrEmpty(value) && expr.SubExpressions != null)
@@ -357,11 +358,10 @@ namespace ASCompletion.Completion
                         new TestCaseData(ReadAllText("GetExpressionOfNewTwoDimensionalVector"))
                             .Returns("new Vector.<Vector.<String>>")
                             .SetName("From new Vector.<Vector.<String>>|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfRegex"))
-                            .Returns(";g")
-                            .SetName("From /regex/g|")
-                            .Ignore("https://github.com/fdorg/flashdevelop/issues/1880");
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfRegex"))
+                        .Returns(";RegExp")
+                        .SetName("From /regex/g|")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1880");
                     yield return
                         new TestCaseData(ReadAllText("GetExpressionOfDigit"))
                             .Returns(";1")

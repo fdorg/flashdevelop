@@ -1416,10 +1416,18 @@ namespace ASCompletion.Completion
                             .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1383_3"))
                             .SetName("new Vector.<Vector.<*>>()|")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/1383");
-                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1383_4"), GeneratorJobType.AssignStatementToVar, false)
-                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1383_4"))
-                            .SetName("new Vector.<Vector.<Vector.<*>>>()|")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1383");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1880_1"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1880_1"))
+                            .SetName("/regex/|")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1880");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1880_2"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1880_2"))
+                            .SetName("[/regex/]|")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1880");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1880_3"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1880_3"))
+                            .SetName("{v:/regex/}|")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1880");
                     }
                 }
 

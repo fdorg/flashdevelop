@@ -3411,8 +3411,10 @@ namespace ASCompletion.Completion
                 var style = sci.BaseStyleAt(position);
                 if (style == 14) // regex literal
                 {
-                    if (hadDot) inRegex = true;
-                    else break;
+                    inRegex = true;
+                    //if (hadDot) inRegex = true;
+                    //else break;
+                    positionExpression = position;
                 }
                 else if (!IsCommentStyle(style))
                 {
@@ -3420,9 +3422,13 @@ namespace ASCompletion.Completion
                     if (inRegex)
                     {
                         inRegex = false;
-                        if (expression.SubExpressions == null) expression.SubExpressions = new List<string>();
-                        expression.SubExpressions.Add("");
-                        sb.Insert(0, "RegExp.#" + (subCount++) + "~");
+                        if (arrCount == 0 && braCount == 0)
+                        {
+                            if (expression.SubExpressions == null) expression.SubExpressions = new List<string>();
+                            expression.SubExpressions.Add("");
+                            sb.Insert(0, "RegExp.#" + (subCount++) + "~");
+                            break;
+                        }
                     }
                     var c2 = c;
                     c = (char)sci.CharAt(position);
