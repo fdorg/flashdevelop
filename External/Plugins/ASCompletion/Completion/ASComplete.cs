@@ -107,7 +107,7 @@ namespace ASCompletion.Completion
                             if (autoHide) HandleAddClosingBraces(Sci, (char) Value, true);
                             return HandleInterpolationCompletion(Sci, autoHide, true);
                         }
-                        else if (IsInterpolationExpr(Sci, position - 2))
+                        else if (ctx.CodeComplete.IsStringInterpolationStyle(Sci, position - 2))
                         {
                             skipQuoteCheck = true; // continue on with regular completion
                         }
@@ -417,10 +417,10 @@ namespace ASCompletion.Completion
         public static void HandleAddClosingBraces(ScintillaControl sci, char c, bool addedChar)
         {
             if (!ASContext.CommonSettings.AddClosingBraces) return;
-
+            var context = ASContext.Context;
             if (addedChar)
             {
-                if (IsMatchingQuote(c, sci.BaseStyleAt(sci.CurrentPos - 2)) && ASContext.Context.CodeComplete.IsEscapedCharacter(sci, sci.CurrentPos - 1))
+                if (IsMatchingQuote(c, sci.BaseStyleAt(sci.CurrentPos - 2)) && context.CodeComplete.IsEscapedCharacter(sci, sci.CurrentPos - 1))
                 {
                     return;
                 }
@@ -448,8 +448,9 @@ namespace ASCompletion.Completion
                 }
 
                 // not inside a string literal
+                int position = sci.CurrentPos - 1;
                 if (!(IsStringStyle(styleBefore) && IsStringStyle(styleAfter)) && !(IsCharStyle(styleBefore) && IsCharStyle(styleAfter))
-                    || IsInterpolationExpr(sci, sci.CurrentPos - 1))
+                    || context.CodeComplete.IsStringInterpolationStyle(sci, position))
                 {
                     char nextChar = sci.CurrentChar;
                     int nextPos = sci.CurrentPos;
@@ -499,7 +500,7 @@ namespace ASCompletion.Completion
             {
                 char open = (char) sci.CharAt(sci.CurrentPos - 1);
 
-                if (IsMatchingQuote(open, sci.BaseStyleAt(sci.CurrentPos - 2)) && ASContext.Context.CodeComplete.IsEscapedCharacter(sci, sci.CurrentPos - 1))
+                if (IsMatchingQuote(open, sci.BaseStyleAt(sci.CurrentPos - 2)) && context.CodeComplete.IsEscapedCharacter(sci, sci.CurrentPos - 1))
                 {
                     return;
                 }
@@ -508,8 +509,9 @@ namespace ASCompletion.Completion
                 int styleAfter = sci.BaseStyleAt(sci.CurrentPos);
 
                 // not inside a string literal
+                int position = sci.CurrentPos - 1;
                 if (!(IsStringStyle(styleBefore) && IsStringStyle(styleAfter)) && !(IsCharStyle(styleBefore) && IsCharStyle(styleAfter))
-                    || IsInterpolationExpr(sci, sci.CurrentPos - 1)
+                    || context.CodeComplete.IsStringInterpolationStyle(sci, position)
                     || IsMatchingQuote(open, styleAfter))
                 {
                     int closePos = sci.CurrentPos;
@@ -1786,6 +1788,7 @@ namespace ASCompletion.Completion
         /// </summary>
         internal static int FindParameterIndex(ScintillaControl sci, ref int position)
         {
+            var context = ASContext.Context;
             int parCount = 0;
             int braCount = 0;
             int comaCount = 0;
@@ -1794,7 +1797,7 @@ namespace ASCompletion.Completion
             while (position >= 0)
             {
                 var style = sci.BaseStyleAt(position);
-                if ((!IsLiteralStyle(style) && IsTextStyleEx(style)) || IsInterpolationExpr(sci, position))
+                if ((!IsLiteralStyle(style) && IsTextStyleEx(style)) || context.CodeComplete.IsStringInterpolationStyle(sci, position))
                 {
                     var c = (char)sci.CharAt(position);
                     if (c <= ' ')
@@ -4368,16 +4371,6 @@ namespace ASCompletion.Completion
             }
 
             return typeParams;
-        }
-
-        /// <summary>
-        /// Returns whether or not position is inside of an expression block in String interpolation
-        /// <param name="sci">Scintilla Control</param>
-        /// <param name="position">Cursor position</param>
-        /// </summary>
-        public static bool IsInterpolationExpr(ScintillaControl sci, int position)
-        {
-            return ASContext.Context.CodeComplete.IsStringInterpolationStyle(sci, position);
         }
 
         /// <summary>
