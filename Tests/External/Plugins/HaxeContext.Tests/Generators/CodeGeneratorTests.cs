@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using ASCompletion.Completion;
 using ASCompletion.Context;
@@ -20,6 +21,9 @@ namespace HaXeContext.Generators
         static void SetCurrentFile(string fileName)
         {
             fileName = GetFullPath(fileName);
+            fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
+            fileName = Path.GetFullPath(fileName);
+            fileName = fileName.Replace($"\\FlashDevelop\\Bin\\Debug\\{nameof(HaXeContext)}\\Test_Files\\", $"\\Tests\\External\\Plugins\\{nameof(HaXeContext)}.Tests\\Test Files\\");
             ASContext.Context.CurrentModel.FileName = fileName;
             PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
         }
@@ -134,11 +138,35 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> Issue1880TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1880_1", GeneratorJobType.Function, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue1880_1"))
+                    .SetName("fo|o(~/regex/). Generate private function")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1880");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1880_2", GeneratorJobType.FunctionPublic, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue1880_2"))
+                    .SetName("fo|o(~/regex/). Generate public function")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1880");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1880_3", GeneratorJobType.ChangeMethodDecl, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue1880_1"))
+                    .SetName("fo|o(~/regex/). Change method declaration.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1880");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1880_4", GeneratorJobType.ChangeConstructorDecl, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue1880_4"))
+                    .SetName("new Fo|o(~/regex/). Change constructor declaration. ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1880");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(ContextualGeneratorTestCases)),
             TestCaseSource(nameof(Issue2017TestCases)),
-            TestCaseSource(nameof(ContextualGeneratorForOptionParametersTestCases))
+            TestCaseSource(nameof(ContextualGeneratorForOptionParametersTestCases)),
+            TestCaseSource(nameof(Issue1880TestCases))
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 
