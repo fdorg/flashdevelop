@@ -2,7 +2,6 @@
 using System.Linq;
 using ASCompletion.Completion;
 using ASCompletion.Context;
-using ASCompletion.TestUtils;
 using HaXeContext.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
@@ -29,8 +28,7 @@ namespace HaXeContext.Generators
         public void Setup()
         {
             ASContext.Context.Settings.GenerateImports.Returns(true);
-            ASContext.Context.SetHaxeFeatures();
-            sci.ConfigurationLanguage = "haxe";
+            SetHaxeFeatures(sci);
         }
 
         static IEnumerable<TestCaseData> ContextualGeneratorTestCases

@@ -66,7 +66,6 @@ namespace ASCompletion.Context
             cacheRefreshTimer = new Timer();
             cacheRefreshTimer.Interval = 1500; // delay initial refresh
             cacheRefreshTimer.Tick += new EventHandler(cacheRefreshTimer_Tick);
-            CodeGenerator = new ASGenerator();
         }
         #endregion
 
@@ -1316,30 +1315,24 @@ namespace ASCompletion.Context
         /// <param name="expression">Completion context</param>
         /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
         /// <returns>Null (not handled) or member list</returns>
-        public virtual MemberList ResolveDotContext(ScintillaControl sci, ASExpr expression, bool autoHide)
-        {
-            return null;
-        }
+        public virtual MemberList ResolveDotContext(ScintillaControl sci, ASExpr expression, bool autoHide) => null;
 
         /// <summary>
         /// Let contexts handle code completion
         /// </summary>
         /// <param name="sci">Scintilla control</param>
         /// <param name="expression">Completion context</param>
+        /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
         /// <returns>Null (not handled) or function signature</returns>
-        public virtual MemberModel ResolveFunctionContext(ScintillaControl sci, ASExpr expression, bool autoHide)
-        {
-            return null;
-        }
+        public virtual MemberModel ResolveFunctionContext(ScintillaControl sci, ASExpr expression, bool autoHide) => null;
 
-        public virtual bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression)
-        {
-            return false;
-        }
+        public virtual bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression) => false;
 
-        public IContextualGenerator CodeGenerator { get; protected set; } = null;
+        public IContextualGenerator CodeGenerator { get; protected set; } = new ASGenerator();
 
         public IContextualGenerator DocumentationGenerator { get; protected set; } = new DocumentationGenerator();
+
+        public ASComplete CodeComplete { get; protected set; } = new ASComplete();
         #endregion
 
         #region plugin commands

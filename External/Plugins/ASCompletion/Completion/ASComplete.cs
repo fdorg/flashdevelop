@@ -98,11 +98,11 @@ namespace ASCompletion.Completion
                     if (features.stringInterpolationQuotes.IndexOf(stringTypeChar) >= 0 &&
                         IsMatchingQuote(stringTypeChar, Sci.BaseStyleAt(position - 2)))
                     {
-                        if (Value == '$' && !IsEscapedCharacter(Sci, position - 1, '$'))
+                        if (Value == '$' && !ctx.CodeComplete.IsEscapedCharacter(Sci, position - 1, '$'))
                         {
                             return HandleInterpolationCompletion(Sci, autoHide, false);
                         }
-                        else if (Value == '{' && prevValue == '$' && !IsEscapedCharacter(Sci, position - 2, '$'))
+                        else if (Value == '{' && prevValue == '$' && !ctx.CodeComplete.IsEscapedCharacter(Sci, position - 2, '$'))
                         {
                             if (autoHide) HandleAddClosingBraces(Sci, (char) Value, true);
                             return HandleInterpolationCompletion(Sci, autoHide, true);
@@ -420,7 +420,7 @@ namespace ASCompletion.Completion
 
             if (addedChar)
             {
-                if (IsMatchingQuote(c, sci.BaseStyleAt(sci.CurrentPos - 2)) && IsEscapedCharacter(sci, sci.CurrentPos - 1))
+                if (IsMatchingQuote(c, sci.BaseStyleAt(sci.CurrentPos - 2)) && ASContext.Context.CodeComplete.IsEscapedCharacter(sci, sci.CurrentPos - 1))
                 {
                     return;
                 }
@@ -499,7 +499,7 @@ namespace ASCompletion.Completion
             {
                 char open = (char) sci.CharAt(sci.CurrentPos - 1);
 
-                if (IsMatchingQuote(open, sci.BaseStyleAt(sci.CurrentPos - 2)) && IsEscapedCharacter(sci, sci.CurrentPos - 1))
+                if (IsMatchingQuote(open, sci.BaseStyleAt(sci.CurrentPos - 2)) && ASContext.Context.CodeComplete.IsEscapedCharacter(sci, sci.CurrentPos - 1))
                 {
                     return;
                 }
@@ -3336,13 +3336,14 @@ namespace ASCompletion.Completion
         /// <returns></returns>
         private static ASExpr GetExpression(ScintillaControl sci, int position, bool ignoreWhiteSpace)
         {
-            bool haXe = ASContext.Context.CurrentModel.haXe;
+            var context = ASContext.Context;
+            bool haXe = context.CurrentModel.haXe;
             ASExpr expression = new ASExpr();
             expression.Position = position;
             expression.Separator = " ";
 
             // file's member declared at this position
-            expression.ContextMember = ASContext.Context.CurrentMember;
+            expression.ContextMember = context.CurrentMember;
             int minPos = 0;
             if (expression.ContextMember != null)
             {
@@ -3385,7 +3386,7 @@ namespace ASCompletion.Completion
             string characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
 
             // get expression before cursor
-            ContextFeatures features = ASContext.Context.Features;
+            ContextFeatures features = context.Features;
             StringBuilder sb = new StringBuilder();
             StringBuilder sbSub = new StringBuilder();
             int subCount = 0;
@@ -3407,13 +3408,14 @@ namespace ASCompletion.Completion
             while (position > minPos)
             {
                 position--;
-                var style = sci.BaseStyleAt(position);
-                if (style == 14) // regex literal
+                if (context.CodeComplete.IsRegexStyle(sci, position))
                 {
                     inRegex = true;
                     positionExpression = position;
+                    continue;
                 }
-                else if (!IsCommentStyle(style))
+                var style = sci.BaseStyleAt(position);
+                if (!IsCommentStyle(style))
                 {
                     // end of regex literal
                     if (inRegex)
@@ -4128,6 +4130,8 @@ namespace ASCompletion.Completion
                 || style == 17 || style == 18 /*javadoc tags*/;
         }
 
+        public virtual bool IsRegexStyle(ScintillaControl sci, int position) => sci.BaseStyleAt(position) == 14;
+
         public static string GetWordLeft(ScintillaControl sci, ref int position)
         {
             // get the word characters from the syntax definition
@@ -4367,54 +4371,31 @@ namespace ASCompletion.Completion
         }
 
         /// <summary>
-        /// Returns whether or not position is inside of an expression
-        /// block in Haxe String interpolation ('${expr}')
+        /// Returns whether or not position is inside of an expression block in String interpolation
+        /// <param name="sci">Scintilla Control</param>
+        /// <param name="position">Cursor position</param>
         /// </summary>
         public static bool IsInterpolationExpr(ScintillaControl sci, int position)
         {
-            if (ASContext.Context.Features.hasStringInterpolation)
-            {
-                char stringChar = sci.GetStringType(position - 1);
-                if (ASContext.Context.Features.stringInterpolationQuotes.Contains(stringChar))
-                {
-                    char current = (char) sci.CharAt(position);
-
-                    for (int i = position - 1; i >= 0; i--)
-                    {
-                        var next = current;
-                        current = (char) sci.CharAt(i);
-
-                        if (current == stringChar)
-                        {
-                            if (!IsEscapedCharacter(sci, i)) break;
-                        }
-                        else if (current == '$')
-                        {
-                            if (next == '{' && !IsEscapedCharacter(sci, i, '$')) return true;
-                        }
-                        else if (current == '}')
-                        {
-                            i = sci.BraceMatch(i);
-                            current = (char) sci.CharAt(i);
-                            if (i > 0 && current == '{' && sci.CharAt(i - 1) == '$') break;
-                        }
-                    }
-                }
-            }
-            return false;
+            return ASContext.Context.CodeComplete.IsStringInterpolationStyle(sci, position);
         }
 
-        private static bool IsEscapedCharacter(ScintillaControl sci, int position, char escapeChar = '\\')
-        {
-            bool escaped = false;
+        /// <summary>
+        /// Returns whether or not position is inside of an expression block in String interpolation
+        /// <param name="sci">Scintilla Control</param>
+        /// <param name="position">Cursor position</param>
+        /// </summary>
+        public virtual bool IsStringInterpolationStyle(ScintillaControl sci, int position) => false;
 
+        protected bool IsEscapedCharacter(ScintillaControl sci, int position, char escapeChar = '\\')
+        {
+            bool result = false;
             for (int i = position - 1; i >= 0; i--)
             {
                 if (sci.CharAt(i) != escapeChar) break;
-                escaped = !escaped;
+                result = !result;
             }
-
-            return escaped;
+            return result;
         }
 
         private static bool IsMatchingQuote(char quote, int style)

@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\RefactorCommandTests.cs" />
+    <Compile Include="Completion\CodeCompleteTests.cs" />
     <Compile Include="Generators\CodeGeneratorTests.cs" />
     <Compile Include="ContextTests.cs" />
     <Compile Include="Generators\DocumentationGeneratorTests.cs" />
@@ -196,6 +197,13 @@
     <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2022_case_2_withoutEntryPoint.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2022_case_2.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\rename\AfterRenameOptionalParameterVar_issue2022_case_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\IsInterpolationStringStyle_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\IsInterpolationStringStyle_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\IsRegexStyle_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\IsRegexStyle_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\IsRegexStyle_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\IsRegexStyle_4.hx" />
+    <EmbeddedResource Include="Test Files\completion\IsInterpolationStringStyle_3.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -348,6 +348,8 @@ namespace ASCompletion.Context
         IContextualGenerator CodeGenerator { get; }
 
         IContextualGenerator DocumentationGenerator { get; }
+
+        ASComplete CodeComplete { get; }
         #endregion
 
         #region Properties

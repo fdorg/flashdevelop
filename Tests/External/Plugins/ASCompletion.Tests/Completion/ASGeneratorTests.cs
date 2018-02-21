@@ -1570,8 +1570,7 @@ namespace ASCompletion.Completion
                         yield return new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1880_1"), GeneratorJobType.AssignStatementToVar, true)
                             .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1880_1"))
                             .SetName("~/regex/|")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908")
-                            .Ignore("");
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
                     }
                 }
 
@@ -1625,6 +1624,7 @@ namespace ASCompletion.Completion
                 internal static string Common(string sourceText, GeneratorJobType job, IASContext context, ScintillaControl sci)
                 {
                     SetSrc(sci, sourceText);
+                    sci.Colourise(0, -1);
                     var visibleExternalElements = context.GetVisibleExternalElements();
                     ASContext.Context.GetVisibleExternalElements().Returns(visibleExternalElements);
                     ASGenerator.GenerateJob(job, ASContext.Context.CurrentMember, ASContext.Context.CurrentClass, null, null);
