@@ -418,10 +418,9 @@ namespace ASCompletion.Completion
         {
             if (!ASContext.CommonSettings.AddClosingBraces) return;
             var context = ASContext.Context;
-            var currentPos = sci.CurrentPos;
             if (addedChar)
             {
-                if (IsMatchingQuote(c, sci.BaseStyleAt(currentPos - 2)) && context.CodeComplete.IsEscapedCharacter(sci, currentPos - 1))
+                if (IsMatchingQuote(c, sci.BaseStyleAt(sci.CurrentPos - 2)) && context.CodeComplete.IsEscapedCharacter(sci, sci.CurrentPos - 1))
                 {
                     return;
                 }
@@ -437,24 +436,24 @@ namespace ASCompletion.Completion
                     // Get the before & after style values unaffected by the entered char
                     sci.DeleteBack();
                     sci.Colourise(0, -1);
-                    styleBefore = (byte) sci.BaseStyleAt(currentPos - 1);
-                    styleAfter = (byte) sci.BaseStyleAt(currentPos);
+                    styleBefore = (byte) sci.BaseStyleAt(sci.CurrentPos - 1);
+                    styleAfter = (byte) sci.BaseStyleAt(sci.CurrentPos);
                     sci.AddText(1, c.ToString());
                     undo = true;
                 }
                 else
                 {
-                    styleBefore = (byte) sci.BaseStyleAt(currentPos - 2);
-                    styleAfter = (byte) sci.BaseStyleAt(currentPos);
+                    styleBefore = (byte) sci.BaseStyleAt(sci.CurrentPos - 2);
+                    styleAfter = (byte) sci.BaseStyleAt(sci.CurrentPos);
                 }
 
                 // not inside a string literal
-                int position = currentPos - 1;
+                int position = sci.CurrentPos - 1;
                 if (!(IsStringStyle(styleBefore) && IsStringStyle(styleAfter)) && !(IsCharStyle(styleBefore) && IsCharStyle(styleAfter))
                     || context.CodeComplete.IsStringInterpolationStyle(sci, position))
                 {
                     char nextChar = sci.CurrentChar;
-                    int nextPos = currentPos;
+                    int nextPos = sci.CurrentPos;
 
                     while (nextChar == ' ' || nextChar == '\t') // Don't skip new line characters
                     {
@@ -476,7 +475,7 @@ namespace ASCompletion.Completion
                 else if (IsMatchingQuote(c, styleAfter))
                 {
                     char nextChar = sci.CurrentChar;
-                    int nextPos = currentPos;
+                    int nextPos = sci.CurrentPos;
 
                     while (nextChar == ' ' || nextChar == '\t') // Don't skip new line characters
                     {
@@ -499,23 +498,23 @@ namespace ASCompletion.Completion
             }
             else
             {
-                char open = (char) sci.CharAt(currentPos - 1);
+                char open = (char) sci.CharAt(sci.CurrentPos - 1);
 
-                if (IsMatchingQuote(open, sci.BaseStyleAt(currentPos - 2)) && context.CodeComplete.IsEscapedCharacter(sci, currentPos - 1))
+                if (IsMatchingQuote(open, sci.BaseStyleAt(sci.CurrentPos - 2)) && context.CodeComplete.IsEscapedCharacter(sci, sci.CurrentPos - 1))
                 {
                     return;
                 }
 
-                int styleBefore = sci.BaseStyleAt(currentPos - 2);
-                int styleAfter = sci.BaseStyleAt(currentPos);
+                int styleBefore = sci.BaseStyleAt(sci.CurrentPos - 2);
+                int styleAfter = sci.BaseStyleAt(sci.CurrentPos);
 
                 // not inside a string literal
-                int position = currentPos - 1;
+                int position = sci.CurrentPos - 1;
                 if (!(IsStringStyle(styleBefore) && IsStringStyle(styleAfter)) && !(IsCharStyle(styleBefore) && IsCharStyle(styleAfter))
                     || context.CodeComplete.IsStringInterpolationStyle(sci, position)
                     || IsMatchingQuote(open, styleAfter))
                 {
-                    int closePos = currentPos;
+                    int closePos = sci.CurrentPos;
 
                     while (char.IsWhiteSpace(c))
                     {
@@ -557,12 +556,15 @@ namespace ASCompletion.Completion
 
         private static bool HandleBraceClose(ScintillaControl sci, Brace brace, char close, char next, int nextPosition)
         {
-            if (close == brace.Close && next == brace.Close && brace.ShouldClose(sci.CurrentPos, nextPosition))
+            if (close == brace.Close && next == brace.Close)
             {
-                sci.DeleteBack();
-                sci.AnchorPosition = nextPosition;
-                sci.CurrentPos = nextPosition;
-                return true;
+                if (brace.ShouldClose(sci.CurrentPos, nextPosition))
+                {
+                    sci.DeleteBack();
+                    sci.AnchorPosition = nextPosition;
+                    sci.CurrentPos = nextPosition;
+                    return true;
+                }
             }
 
             return false;
@@ -570,11 +572,14 @@ namespace ASCompletion.Completion
         
         private static bool HandleBraceRemove(ScintillaControl sci, Brace brace, char open, char close, int closePosition)
         {
-            if (open == brace.Open && close == brace.Close && brace.ShouldRemove(sci.CurrentPos, closePosition))
+            if (open == brace.Open && close == brace.Close)
             {
-                sci.SelectionEnd = closePosition + 1;
-                sci.DeleteBack();
-                return true;
+                if (brace.ShouldRemove(sci.CurrentPos, closePosition))
+                {
+                    sci.SelectionEnd = closePosition + 1;
+                    sci.DeleteBack();
+                    return true;
+                }
             }
 
             return false;
