@@ -7,11 +7,11 @@ namespace HaXeContext.Completion
 {
     class CodeComplete : ASComplete
     {
-
         public override bool IsRegexStyle(ScintillaControl sci, int position)
         {
             var result = base.IsRegexStyle(sci, position);
-            return result || (sci.CharAt(position) == '~' && sci.CharAt(position + 1) == '/');
+            if (result) return true;
+            return sci.BaseStyleAt(position) == 10 && sci.CharAt(position) == '~' && sci.CharAt(position + 1) == '/';
         }
 
         /// <summary>

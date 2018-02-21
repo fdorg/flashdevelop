@@ -204,6 +204,10 @@
     <EmbeddedResource Include="Test Files\completion\IsRegexStyle_3.hx" />
     <EmbeddedResource Include="Test Files\completion\IsRegexStyle_4.hx" />
     <EmbeddedResource Include="Test Files\completion\IsInterpolationStringStyle_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\IsRegexStyle_5.hx" />
+    <EmbeddedResource Include="Test Files\completion\IsRegexStyle_6.hx" />
+    <EmbeddedResource Include="Test Files\completion\IsRegexStyle_7.hx" />
+    <EmbeddedResource Include="Test Files\completion\IsRegexStyle_8.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

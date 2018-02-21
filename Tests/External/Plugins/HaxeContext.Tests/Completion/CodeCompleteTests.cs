@@ -47,16 +47,26 @@ namespace HaXeContext.Completion
                     .Returns(false)
                     .SetName("//|");
                 yield return new TestCaseData("IsRegexStyle_2")
-                    .Returns(true)
-                    .SetName("~/regex/|")
-                    .Ignore("sci.BaseStyleAt(sci.CurrentPos) => 0");
-                yield return new TestCaseData("IsRegexStyle_2")
-                    .Returns(true)
-                    .SetName("~/reg|ex/")
-                    .Ignore("sci.BaseStyleAt(sci.CurrentPos) => 0");
+                    .Returns(false)
+                    .SetName("~/regex/|");
                 yield return new TestCaseData("IsRegexStyle_3")
                     .Returns(true)
+                    .SetName("~/reg|ex/");
+                yield return new TestCaseData("IsRegexStyle_4")
+                    .Returns(true)
                     .SetName("~|/regex/");
+                yield return new TestCaseData("IsRegexStyle_6")
+                    .Returns(true)
+                    .SetName("|~/regex/");
+                yield return new TestCaseData("IsRegexStyle_5")
+                    .Returns(false)
+                    .SetName("//~|/regex/");
+                yield return new TestCaseData("IsRegexStyle_7")
+                    .Returns(false)
+                    .SetName("//|~/regex/");
+                yield return new TestCaseData("IsRegexStyle_8")
+                    .Returns(false)
+                    .SetName("/**\n|~/regex/\n**/");
             }
         }
 
