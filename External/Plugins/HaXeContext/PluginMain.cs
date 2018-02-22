@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using PluginCore.Localization;
 using PluginCore.Helpers;
 using PluginCore.Managers;
@@ -16,6 +17,7 @@ using CodeRefactor.Provider;
 using HaXeContext.CodeRefactor.Provider;
 using HaXeContext.Linters;
 using LintingHelper.Managers;
+using ProjectManager.Projects.Haxe;
 using SwfOp;
 
 namespace HaXeContext
@@ -171,10 +173,10 @@ namespace HaXeContext
                     break;
                 case EventType.Trace:
                     if (settingObject.DisableLibInstallation) return;
-                    int count = TraceManager.TraceLog.Count;
+                    var count = TraceManager.TraceLog.Count;
                     if (count <= logCount)
                     {
-                        this.logCount = count;
+                        logCount = count;
                         return;
                     }
                     var patterns = new[]
@@ -191,6 +193,17 @@ namespace HaXeContext
                         {
                             var m = Regex.Match(message, pattern);
                             if (m.Success) nameToVersion[m.Groups["name"].Value] = m.Groups["version"].Value;
+                        }
+                    }
+                    if (nameToVersion.Count > 0)
+                    {
+                        var project = (HaxeProject) PluginBase.CurrentProject;
+                        foreach (var line in project.CompilerOptions.Additional)
+                        {
+                           foreach (var lib in nameToVersion.Keys.ToArray())
+                           {
+                               if (line.EndsWithOrdinal(lib) && !line.StartsWithOrdinal("-lib")) nameToVersion.Remove(lib);
+                           }
                         }
                     }
                     if (nameToVersion.Count == 0) return;
