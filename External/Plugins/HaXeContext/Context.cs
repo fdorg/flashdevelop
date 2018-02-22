@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using ProjectManager.Projects.Haxe;
 using ProjectManager.Projects;
 using AS3Context;
+using HaXeContext.Completion;
 using HaXeContext.Generators;
 using PluginCore.Utilities;
 using ScintillaNet;
@@ -155,6 +156,7 @@ namespace HaXeContext
             haxelibsCache = new Dictionary<string, List<string>>();
             CodeGenerator = new CodeGenerator();
             DocumentationGenerator = new DocumentationGenerator();
+            CodeComplete = new CodeComplete();
             //BuildClassPath(); // defered to first use
         }
         #endregion
@@ -987,6 +989,7 @@ namespace HaXeContext
         {
             if (token?.Length > 0)
             {
+                if (token == "#RegExp") return ResolveType("EReg", inFile);
                 if (token.StartsWithOrdinal("0x")) return ResolveType("Int", inFile);
                 var first = token[0];
                 var last = token[token.Length - 1];

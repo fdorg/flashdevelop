@@ -3,7 +3,6 @@ using System.Linq;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
-using ASCompletion.TestUtils;
 using HaXeContext.TestUtils;
 using NUnit.Framework;
 using PluginCore;
@@ -18,11 +17,7 @@ namespace HaXeContext
         protected static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.parser.{fileName}.hx";
 
         [TestFixtureSetUp]
-        public void ContextTestsSetUp()
-        {
-            ASContext.Context.SetHaxeFeatures();
-            sci.ConfigurationLanguage = "haxe";
-        }
+        public void ContextTestsSetUp() => SetHaxeFeatures(sci);
 
         static IEnumerable<TestCaseData> DecomposeTypesTestCases
         {

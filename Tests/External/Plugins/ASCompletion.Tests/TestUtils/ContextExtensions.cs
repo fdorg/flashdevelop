@@ -92,6 +92,7 @@ namespace ASCompletion.TestUtils
             mock.GetAllProjectClasses().Returns(allProjectClasses);
             mock.CodeGenerator.Returns(context.CodeGenerator);
             mock.DocumentationGenerator.Returns(context.DocumentationGenerator);
+            mock.CodeComplete.Returns(context.CodeComplete);
         }
 
         public static void BuildClassPath(this IASContext context)

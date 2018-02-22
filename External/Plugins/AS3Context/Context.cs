@@ -894,6 +894,7 @@ namespace AS3Context
             if (token?.Length > 0)
             {
                 if (token == "</>") return ResolveType("XML", inFile);
+                if (token == "#RegExp") return ResolveType("RegExp", inFile);
                 if (token.StartsWithOrdinal("0x")) return ResolveType("uint", inFile);
                 var first = token[0];
                 if (char.IsLetter(first))
