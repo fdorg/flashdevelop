@@ -195,18 +195,18 @@ namespace HaXeContext
                             if (m.Success) nameToVersion[m.Groups["name"].Value] = m.Groups["version"].Value;
                         }
                     }
-                    if (nameToVersion.Count > 0)
+                    if (nameToVersion.Count == 0) return;
+                    var compilerOptions = ((HaxeProject)PluginBase.CurrentProject).CompilerOptions.Additional;
+                    foreach (var lib in nameToVersion.Keys.ToArray())
                     {
-                        var project = (HaxeProject) PluginBase.CurrentProject;
-                        foreach (var line in project.CompilerOptions.Additional)
+                        var pattern = "-lib " + lib;
+                        foreach (var line in compilerOptions)
                         {
-                           foreach (var lib in nameToVersion.Keys.ToArray())
-                           {
-                               if (line.EndsWithOrdinal(lib) && !line.StartsWithOrdinal("-lib")) nameToVersion.Remove(lib);
-                           }
+                            if (!line.Contains(pattern) || line.StartsWithOrdinal("-lib")) continue;
+                            nameToVersion.Remove(lib);
+                            if (nameToVersion.Count == 0) return;
                         }
                     }
-                    if (nameToVersion.Count == 0) return;
                     var text = TextHelper.GetString("Info.MissingLib");
                     var result = MessageBox.Show(PluginBase.MainForm, text, string.Empty, MessageBoxButtons.OKCancel);
                     if (result == DialogResult.OK) contextInstance.InstallHaxelib(nameToVersion);
