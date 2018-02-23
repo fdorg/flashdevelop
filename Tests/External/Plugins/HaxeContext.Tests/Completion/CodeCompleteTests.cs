@@ -78,7 +78,7 @@ namespace HaXeContext.Completion
             return ASContext.Context.CodeComplete.IsRegexStyle(sci, sci.CurrentPos);
         }
 
-        static IEnumerable<TestCaseData> PositionIsOutsideBodyTestCases
+        static IEnumerable<TestCaseData> PositionIsBeforeBodyTestCases
         {
             get
             {
@@ -97,12 +97,12 @@ namespace HaXeContext.Completion
             }
         }
 
-        [Test, TestCaseSource(nameof(PositionIsOutsideBodyTestCases))]
-        public bool PositionIsOutsideBody(string fileName)
+        [Test, TestCaseSource(nameof(PositionIsBeforeBodyTestCases))]
+        public bool PositionIsBeforeBody(string fileName)
         {
             SetSrc(sci, ReadAllText(fileName));
             sci.Colourise(0, -1);
-            return ((CodeComplete) ASContext.Context.CodeComplete).PositionIsOutsideBody(sci, sci.CurrentPos, ASContext.Context.CurrentClass);
+            return ((CodeComplete) ASContext.Context.CodeComplete).PositionIsBeforeBody(sci, sci.CurrentPos, ASContext.Context.CurrentClass);
         }
     }
 }

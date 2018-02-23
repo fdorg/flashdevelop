@@ -60,16 +60,16 @@ namespace HaXeContext.Completion
                 {
                     case "from":
                     case "to":
-                        return PositionIsOutsideBody(sci, position, currentClass) && HandleNewCompletion(sci, string.Empty, autoHide, wordLeft);
+                        return PositionIsBeforeBody(sci, position, currentClass) && HandleNewCompletion(sci, string.Empty, autoHide, wordLeft);
                 }
             }
             return base.HandleWhiteSpaceCompletion(sci, position, wordLeft, autoHide);
         }
 
         /// <summary>
-        /// Returns true if position is outside body of class or member
+        /// Returns true if position is before body of class or member
         /// </summary>
-        internal bool PositionIsOutsideBody(ScintillaControl sci, int position, MemberModel member)
+        internal bool PositionIsBeforeBody(ScintillaControl sci, int position, MemberModel member)
         {
             var groupCount = 0;
             var positionFrom = sci.PositionFromLine(member.LineFrom);
