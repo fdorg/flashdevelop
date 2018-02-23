@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace LintingHelper
+﻿namespace LintingHelper
 {
     public class LintingResult
     {

@@ -1,8 +1,6 @@
 ﻿using CodeRefactor.Managers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using PluginCore;
 using LintingHelper.Managers;
 using PluginCore.Localization;

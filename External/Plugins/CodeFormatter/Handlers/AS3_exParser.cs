@@ -5,8 +5,6 @@ using System.Text.RegularExpressions;
 using CodeFormatter.InfoCollector;
 using CodeFormatter.Handlers;
 using PluginCore;
-using PluginCore.Managers;
-
 #pragma warning disable 162
 #pragma warning disable 414
 #pragma warning disable 219
@@ -14,11 +12,7 @@ using PluginCore.Managers;
 
 using System;
 using Antlr.Runtime;
-using IList         = System.Collections.IList;
-using ArrayList     = System.Collections.ArrayList;
 using Stack         = Antlr.Runtime.Collections.StackList;
-
-using IDictionary   = System.Collections.IDictionary;
 using Hashtable     = System.Collections.Hashtable;
 
 

@@ -4,7 +4,6 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using ASCompletion.Context;
 using PluginCore.Localization;
 using PluginCore.Utilities;
 using ProjectManager.Projects;

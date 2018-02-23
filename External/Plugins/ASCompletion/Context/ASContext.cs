@@ -66,7 +66,6 @@ namespace ASCompletion.Context
             cacheRefreshTimer = new Timer();
             cacheRefreshTimer.Interval = 1500; // delay initial refresh
             cacheRefreshTimer.Tick += new EventHandler(cacheRefreshTimer_Tick);
-            CodeGenerator = new ASGenerator();
         }
         #endregion
 
@@ -844,7 +843,7 @@ namespace ASCompletion.Context
             }
 
             // parse and add to cache
-            nFile = ASFileParser.ParseFile(CreateFileModel(fileName));
+            nFile = GetFileModel(fileName);
             if (classPath != null)
             {
                 string upName = fileName.ToUpper();
@@ -908,11 +907,12 @@ namespace ASCompletion.Context
         /// <summary>
         /// Create a new file model using the default file parser
         /// </summary>
-        /// <param name="filename">Full path</param>
+        /// <param name="fileName">Full path</param>
         /// <returns>File model</returns>
         public virtual FileModel GetFileModel(string fileName)
         {
-            return ASFileParser.ParseFile(CreateFileModel(fileName));
+            var parser = GetCodeParser();
+            return parser.Parse(CreateFileModel(fileName));
         }
 
         /// <summary>
@@ -949,51 +949,36 @@ namespace ASCompletion.Context
         /// <param name="aFile"></param>
         /// <param name="pathModel"></param>
         /// <returns></returns>
-        public virtual bool IsModelValid(FileModel aFile, PathModel pathModel)
-        {
-            return (aFile != null);
-        }
+        public virtual bool IsModelValid(FileModel aFile, PathModel pathModel) => (aFile != null);
 
-        /// <summary>
-        /// Parse a raw source code
-        /// </summary>
-        /// <param name="src"></param>
-        /// <returns></returns>
-        public virtual FileModel GetCodeModel(string src)
+        /// <inheritdoc />
+        public virtual FileModel GetCodeModel(string src) => GetCodeModel(src, false);
+
+        /// <inheritdoc />
+        public virtual FileModel GetCodeModel(string src, bool scriptMode) => GetCodeModel(CreateFileModel(string.Empty), src, scriptMode);
+
+        /// <inheritdoc />
+        public virtual FileModel GetCodeModel(FileModel result, string src) => GetCodeModel(result, src, false);
+
+        /// <inheritdoc />
+        public virtual FileModel GetCodeModel(FileModel result, string src, bool scriptMode)
         {
-            ASFileParser parser = GetCodeParser();
-            parser.ScriptMode = true;
-            // parse
-            FileModel temp = new FileModel();
-            temp.haXe = Context.Settings.LanguageId == "HAXE";
-            if (!string.IsNullOrEmpty(src)) parser.ParseSrc(temp, src);
-            return temp;
+            var parser = GetCodeParser();
+            parser.ScriptMode = scriptMode;
+            if (!string.IsNullOrEmpty(src)) parser.ParseSrc(result, src);
+            return result;
         }
 
         /// <summary>
         /// Set local code parser features
         /// </summary>
         /// <returns></returns>
-        protected virtual ASFileParser GetCodeParser()
-        {
-            ASFileParser parser = new ASFileParser();
-            parser.Features.varKey = Context.Features.varKey;
-            parser.Features.constKey = Context.Features.constKey;
-            parser.Features.functionKey = Context.Features.functionKey;
-            parser.Features.hasEcmaTyping = Context.Features.hasEcmaTyping;
-            parser.Features.hasConsts = Context.Features.hasConsts;
-            parser.Features.hasVars = Context.Features.hasVars;
-            parser.Features.hasMethods = Context.Features.hasMethods;
-            parser.Features.hasGenerics = Context.Features.hasGenerics;
-            parser.Features.hasCArrays = Context.Features.hasCArrays;
-            parser.Features.CArrayTemplate = Context.Features.CArrayTemplate;
-            return parser;
-        }
+        protected virtual ASFileParser GetCodeParser() => new ASFileParser(context.Features);
 
         /// <summary>
         /// Build the file DOM
         /// </summary>
-        /// <param name="filename">File path</param>
+        /// <param name="fileName">File path</param>
         protected virtual void GetCurrentFileModel(string fileName)
         {
             cFile = GetCachedFileModel(fileName);
@@ -1018,10 +1003,8 @@ namespace ASCompletion.Context
         /// <param name="updateUI">Update outline view</param>
         public virtual void UpdateCurrentFile(bool updateUI)
         {
-            if (cFile == null || CurSciControl == null)
-                return;
-            ASFileParser parser = new ASFileParser();
-            parser.ParseSrc(cFile, CurSciControl.Text);
+            if (cFile == null || CurSciControl == null) return;
+            GetCodeModel(cFile, CurSciControl.Text);
             cLine = CurSciControl.CurrentLine;
             UpdateContext(cLine);
 
@@ -1332,30 +1315,24 @@ namespace ASCompletion.Context
         /// <param name="expression">Completion context</param>
         /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
         /// <returns>Null (not handled) or member list</returns>
-        public virtual MemberList ResolveDotContext(ScintillaControl sci, ASExpr expression, bool autoHide)
-        {
-            return null;
-        }
+        public virtual MemberList ResolveDotContext(ScintillaControl sci, ASExpr expression, bool autoHide) => null;
 
         /// <summary>
         /// Let contexts handle code completion
         /// </summary>
         /// <param name="sci">Scintilla control</param>
         /// <param name="expression">Completion context</param>
+        /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
         /// <returns>Null (not handled) or function signature</returns>
-        public virtual MemberModel ResolveFunctionContext(ScintillaControl sci, ASExpr expression, bool autoHide)
-        {
-            return null;
-        }
+        public virtual MemberModel ResolveFunctionContext(ScintillaControl sci, ASExpr expression, bool autoHide) => null;
 
-        public virtual bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression)
-        {
-            return false;
-        }
+        public virtual bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression) => false;
 
-        public IContextualGenerator CodeGenerator { get; protected set; } = null;
+        public IContextualGenerator CodeGenerator { get; protected set; } = new ASGenerator();
 
         public IContextualGenerator DocumentationGenerator { get; protected set; } = new DocumentationGenerator();
+
+        public ASComplete CodeComplete { get; protected set; } = new ASComplete();
         #endregion
 
         #region plugin commands
@@ -1496,9 +1473,7 @@ namespace ASCompletion.Context
                     dest = list[1];
                 }
             }
-            FileModel aFile;
-            if (src == null) aFile = cFile;
-            else aFile = ASFileParser.ParseFile(CreateFileModel(src));
+            var aFile = src == null ? cFile : GetCodeModel(src);
             if (aFile.Version == 0) return;
             //
             string code = aFile.GenerateIntrinsic(false);

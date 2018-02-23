@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using PluginCore.Localization;
 using PluginCore.Helpers;
 using PluginCore.Managers;
@@ -16,6 +17,7 @@ using CodeRefactor.Provider;
 using HaXeContext.CodeRefactor.Provider;
 using HaXeContext.Linters;
 using LintingHelper.Managers;
+using ProjectManager.Projects.Haxe;
 using SwfOp;
 
 namespace HaXeContext
@@ -171,10 +173,10 @@ namespace HaXeContext
                     break;
                 case EventType.Trace:
                     if (settingObject.DisableLibInstallation) return;
-                    int count = TraceManager.TraceLog.Count;
+                    var count = TraceManager.TraceLog.Count;
                     if (count <= logCount)
                     {
-                        this.logCount = count;
+                        logCount = count;
                         return;
                     }
                     var patterns = new[]
@@ -194,6 +196,17 @@ namespace HaXeContext
                         }
                     }
                     if (nameToVersion.Count == 0) return;
+                    var compilerOptions = ((HaxeProject)PluginBase.CurrentProject).CompilerOptions.Additional;
+                    foreach (var lib in nameToVersion.Keys.ToArray())
+                    {
+                        var pattern = "-lib " + lib;
+                        foreach (var line in compilerOptions)
+                        {
+                            if (!line.Contains(pattern) || line.StartsWithOrdinal("-lib")) continue;
+                            nameToVersion.Remove(lib);
+                            if (nameToVersion.Count == 0) return;
+                        }
+                    }
                     var text = TextHelper.GetString("Info.MissingLib");
                     var result = MessageBox.Show(PluginBase.MainForm, text, string.Empty, MessageBoxButtons.OKCancel);
                     if (result == DialogResult.OK) contextInstance.InstallHaxelib(nameToVersion);

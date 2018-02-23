@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Runtime.Remoting.Messaging;
 using PluginCore.Managers;
 
 namespace PluginCore.Helpers

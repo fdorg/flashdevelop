@@ -1,13 +1,11 @@
 using System;
 using System.Collections;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using ProjectManager.Projects;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using ProjectManager.Projects.AS3;
 using PluginCore;
 using PluginCore.Managers;
 using System.Linq;

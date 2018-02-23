@@ -37,8 +37,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-using System;
-
 namespace Ude.Core
 {
     /// <summary>

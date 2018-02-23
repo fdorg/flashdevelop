@@ -1,7 +1,5 @@
 using System;
-using System.IO;
 using System.Drawing;
-using System.ComponentModel;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI;
 using PluginCore.Helpers;

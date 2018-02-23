@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using FDBuild.Building;
-using ProjectManager.Projects.Generic;
+﻿using ProjectManager.Projects.Generic;
 
 namespace ProjectManager.Building.Generic
 {

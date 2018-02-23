@@ -156,6 +156,7 @@ namespace HaXeContext
             haxelibsCache = new Dictionary<string, List<string>>();
             CodeGenerator = new CodeGenerator();
             DocumentationGenerator = new DocumentationGenerator();
+            CodeComplete = new CodeComplete();
             //BuildClassPath(); // defered to first use
         }
         #endregion
@@ -578,6 +579,26 @@ namespace HaXeContext
             else return false;
         }
 
+        /// <inheritdoc />
+        public override FileModel GetCodeModel(FileModel result, string src, bool scriptMode)
+        {
+            result.haXe = true;
+            base.GetCodeModel(result, src, scriptMode);
+            if (result.Members != null)
+            {
+                for (var i = 0; i < result.Members.Count; i++)
+                {
+                    var member = result.Members[i];
+                    if (!member.Flags.HasFlag(FlagType.Function) || !(member.Parameters?.Count > 0)) continue;
+                    foreach (var parameter in member.Parameters)
+                    {
+                        if (parameter.Name[0] == '?') parameter.Name = parameter.Name.Substring(1);
+                    }
+                }
+            }
+            return result;
+        }
+
         /// <summary>
         /// Delete current class's cached file
         /// </summary>
@@ -968,6 +989,7 @@ namespace HaXeContext
         {
             if (token?.Length > 0)
             {
+                if (token == "#RegExp") return ResolveType("EReg", inFile);
                 if (token.StartsWithOrdinal("0x")) return ResolveType("Int", inFile);
                 var first = token[0];
                 var last = token[token.Length - 1];

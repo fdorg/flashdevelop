@@ -805,44 +805,33 @@ namespace AS3Context
             if (text == "Vector")
             {
                 string insert = null;
-                string line = sci.GetLine(sci.LineFromPosition(position));
-                Match m = Regex.Match(line, @"\svar\s+(?<varname>.+)\s*:\s*Vector\.<(?<indextype>.+)(?=(>\s*=))");
+                var line = sci.GetLine(sci.LineFromPosition(position));
+                var m = Regex.Match(line, @"\s*=\s*new");
                 if (m.Success)
                 {
-                    insert = String.Format(".<{0}>", m.Groups["indextype"].Value);
+                    var result = ASComplete.GetExpressionType(sci, sci.PositionFromLine(sci.LineFromPosition(position)) + m.Index);
+                    if (result != null && !result.IsNull() && result.Member?.Type != null)
+                    {
+                        m = Regex.Match(result.Member.Type, @"(?<=<).+(?=>)");
+                        if (m.Success) insert = $".<{m.Value}>";
+                    }
                 }
-                else
+                if (insert == null)
                 {
-                    m = Regex.Match(line, @"\s*=\s*new");
-                    if (m.Success)
-                    {
-                        ASResult result = ASComplete.GetExpressionType(sci, sci.PositionFromLine(sci.LineFromPosition(position)) + m.Index);
-                        if (result != null && !result.IsNull() && result.Member != null && result.Member.Type != null)
-                        {
-                            m = Regex.Match(result.Member.Type, @"(?<=<).+(?=>)");
-                            if (m.Success)
-                            {
-                                insert = String.Format(".<{0}>", m.Value);
-                            }
-                        }
-                    }
-                    if (insert == null)
-                    {
-                        if (trigger == '.' || trigger == '(') return true;
-                        insert = ".<>";
-                        sci.InsertText(position + text.Length, insert);
-                        sci.CurrentPos = position + text.Length + 2;
-                        sci.SetSel(sci.CurrentPos, sci.CurrentPos);
-                        ASComplete.HandleAllClassesCompletion(sci, "", false, true);
-                        return true;
-                    }
+                    if (trigger == '.' || trigger == '(') return true;
+                    insert = ".<>";
+                    sci.InsertText(position + text.Length, insert);
+                    sci.CurrentPos = position + text.Length + 2;
+                    sci.SetSel(sci.CurrentPos, sci.CurrentPos);
+                    ASComplete.HandleAllClassesCompletion(sci, "", false, true);
+                    return true;
                 }
                 if (trigger == '.')
                 {
                     sci.InsertText(position + text.Length, insert.Substring(1));
                     sci.CurrentPos = position + text.Length;
                 }
-                else 
+                else
                 {
                     sci.InsertText(position + text.Length, insert);
                     sci.CurrentPos = position + text.Length + insert.Length;
@@ -850,8 +839,7 @@ namespace AS3Context
                 sci.SetSel(sci.CurrentPos, sci.CurrentPos);
                 return true;
             }
-
-            return false;
+            return text.StartsWithOrdinal("Vector.<");
         }
 
         /// <summary>
@@ -882,18 +870,21 @@ namespace AS3Context
         public override ClassModel ResolveType(string cname, FileModel inFile)
         {
             // handle generic types
-            if (cname != null && cname.IndexOf('<') >= 0)
+            if (cname != null)
             {
-                if (cname.StartsWith('<'))
+                var index = cname.IndexOf('<');
+                if (index != -1)
                 {
-                    //transform <T>[] to Vector.<T>
-                    cname = Regex.Replace(cname, @">\[.*", ">");
-                    cname = "Vector." + cname;
+                    if (index == 0)
+                    {
+                        //transform <T>[] to Vector.<T>
+                        cname = Regex.Replace(cname, @">\[.*", ">");
+                        cname = "Vector." + cname;
+                    }
+                    Match genType = re_genericType.Match(cname);
+                    if (genType.Success) return ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile);
+                    return ClassModel.VoidClass;
                 }
-                Match genType = re_genericType.Match(cname);
-                if (genType.Success)
-                    return ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile);
-                else return ClassModel.VoidClass;
             }
             return base.ResolveType(cname, inFile);
         }
@@ -903,6 +894,7 @@ namespace AS3Context
             if (token?.Length > 0)
             {
                 if (token == "</>") return ResolveType("XML", inFile);
+                if (token == "#RegExp") return ResolveType("RegExp", inFile);
                 if (token.StartsWithOrdinal("0x")) return ResolveType("uint", inFile);
                 var first = token[0];
                 if (char.IsLetter(first))
@@ -913,6 +905,12 @@ namespace AS3Context
                         var word = token.Substring(0, index);
                         if (word == "delete") return ResolveType(features.booleanKey, inFile);
                         if (word == "typeof") return ResolveType(features.stringKey, inFile);
+                        if (word == "new" && token[token.Length - 1] == ')')
+                        {
+                            token = token.Substring(index + 1);
+                            token = Regex.Replace(token, @"\(.*", string.Empty);
+                            return ResolveType(token, inFile);
+                        }
                     }
                 }
                 else if (first == '(' && token.Length >= 8/*"(v as T)".Length*/)
@@ -932,6 +930,11 @@ namespace AS3Context
         {
             ClassModel originalClass = base.ResolveType(baseType, inFile);
             if (originalClass.IsVoid()) return originalClass;
+            if (indexType == "*")
+            {
+                originalClass.IndexType = "*";
+                return originalClass;
+            }
 
             ClassModel indexClass = ResolveType(indexType, inFile);
             if (indexClass.IsVoid()) return originalClass;

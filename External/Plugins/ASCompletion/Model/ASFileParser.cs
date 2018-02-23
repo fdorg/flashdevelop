@@ -421,17 +421,15 @@ namespace ASCompletion.Model
 
         #region public methods
 
-        static public FileModel ParseFile(FileModel fileModel)
+        public static FileModel ParseFile(FileModel fileModel)
         {
             // parse file
             if (fileModel.FileName.Length > 0)
             {
                 if (File.Exists(fileModel.FileName))
                 {
-                    var src = FileHelper.ReadFile(fileModel.FileName);
-                    ASFileParser parser = new ASFileParser();
-                    fileModel.LastWriteTime = File.GetLastWriteTime(fileModel.FileName);
-                    parser.ParseSrc(fileModel, src);
+                    var parser = new ASFileParser();
+                    parser.Parse(fileModel);
                 }
                 // the file is not available (for the moment?)
                 else if (Path.GetExtension(fileModel.FileName).Length > 0)
@@ -499,26 +497,34 @@ namespace ASCompletion.Model
 
         public bool ScriptMode;
 
-        public ContextFeatures Features
+        public ASFileParser() : this(new ContextFeatures())
         {
-            get { return features; }
         }
 
-        public ASFileParser()
+        public ASFileParser(ContextFeatures features)
         {
-            features = new ContextFeatures();
+            this.features = features;
+        }
+
+        /// <summary>
+        /// Rebuild a file model using the content of that file.
+        /// </summary>
+        /// <param name="fileModel">Model</param>
+        public FileModel Parse(FileModel fileModel)
+        {
+            fileModel.LastWriteTime = File.GetLastWriteTime(fileModel.FileName);
+            var src = FileHelper.ReadFile(fileModel.FileName);
+            ParseSrc(fileModel, src);
+            return fileModel;
         }
 
         /// <summary>
         /// Rebuild a file model with the source provided
         /// </summary>
         /// <param name="fileModel">Model</param>
-        /// <param name="ba">Source</param>
-        ///
-        public void ParseSrc(FileModel fileModel, string ba)
-        {
-            ParseSrc(fileModel, ba, true);
-        }
+        /// <param name="src">Source</param>
+        public void ParseSrc(FileModel fileModel, string src) => ParseSrc(fileModel, src, true);
+
         public void ParseSrc(FileModel fileModel, string ba, bool allowBaReExtract)
         {
             //TraceManager.Add("Parsing " + Path.GetFileName(fileModel.FileName));
@@ -909,7 +915,7 @@ namespace ASCompletion.Model
                     }
                     continue;
                 }
-                else if (isInString)
+                if (isInString)
                 {
                     // store parameter default value
                     if (inValue && valueLength < VALUE_BUFFER)
@@ -1185,68 +1191,69 @@ namespace ASCompletion.Model
                     bool shortcut = true;
 
                     // valid char for keyword
-                    if (c1 >= 'a' && c1 <= 'z')
-                    {
-                        addChar = true;
-                    }
+                    if (c1 >= 'a' && c1 <= 'z') addChar = true;
                     else
                     {
                         // valid chars for identifiers
-                        if ((!haXe && char.IsLetter(c1)) || (c1 >= 'A' && c1 <= 'Z'))
-                        {
-                            addChar = true;
-                        }
-                        else if (c1 == '$' || c1 == '_')
-                        {
-                            addChar = true;
-                        }
+                        if ((!haXe && char.IsLetter(c1)) || (c1 >= 'A' && c1 <= 'Z')) addChar = true;
+                        else if (c1 == '$' || c1 == '_') addChar = true;
                         else if (length > 0)
                         {
-                            if (c1 >= '0' && c1 <= '9')
-                            {
-                                addChar = true;
-                            }
-                            else if (c1 == '*' && context == FlagType.Import)
-                            {
-                                addChar = true;
-                            }
+                            if (c1 >= '0' && c1 <= '9') addChar = true;
+                            else if (c1 == '*' && context == FlagType.Import) addChar = true;
                             // AS3/Haxe generics
                             else if (c1 == '<' && features.hasGenerics)
                             {
-                                if (!inValue && i > 2 && length > 1 && i < len - 3
-                                    && (char.IsLetterOrDigit(ba[i - 3]) || ba[i - 3] == '_') && (char.IsLetter(ba[i]) || (haXe && (ba[i] == '{' || ba[i] == '(' || ba[i] <= ' ' || ba[i] == '?')))
-                                    && (char.IsLetter(buffer[0]) || buffer[0] == '_' || inType && buffer[0] == '('))
+                                if (!inValue && i > 2 && length > 1 && i <= len - 3)
                                 {
-                                    if (curMember == null)
+                                    if (ba[i] == '*')
                                     {
-                                        evalToken = 0;
-                                        if (inGeneric) paramTempCount++;
-                                        else
-                                        {
-                                            paramTempCount = 1;
-                                            inGeneric = true;
-                                        }
-                                        addChar = true;
-                                    }
-                                    else if (foundColon)
-                                    {
-                                        evalToken = 0;
                                         inGeneric = true;
-                                        inValue = true;
+                                        inValue = false;
                                         hadValue = false;
-                                        inType = true;
+                                        inType = false;
                                         inAnonType = false;
                                         valueLength = 0;
-                                        for (int j = 0; j < length; j++)
-                                            valueBuffer[valueLength++] = buffer[j];
-                                        valueBuffer[valueLength++] = c1;
-                                        length = 0;
-                                        /*
+                                        buffer[length++] = '<';
+                                        buffer[length++] = '*';
+                                        i++;
+                                        continue;
+                                    }
+                                    if ((char.IsLetterOrDigit(ba[i - 3]) || ba[i - 3] == '_')
+                                        && (char.IsLetter(ba[i]) || (haXe && (ba[i] == '{' || ba[i] == '(' || ba[i] <= ' ' || ba[i] == '?')))
+                                        && (char.IsLetter(buffer[0]) || buffer[0] == '_' || inType && buffer[0] == '('))
+                                    {
+                                        if (curMember == null)
+                                        {
+                                            evalToken = 0;
+                                            if (inGeneric) paramTempCount++;
+                                            else
+                                            {
+                                                paramTempCount = 1;
+                                                inGeneric = true;
+                                            }
+                                            addChar = true;
+                                        }
+                                        else if (foundColon)
+                                        {
+                                            evalToken = 0;
+                                            inGeneric = true;
+                                            inValue = true;
+                                            hadValue = false;
+                                            inType = true;
+                                            inAnonType = false;
+                                            valueLength = 0;
+                                            for (int j = 0; j < length; j++)
+                                                valueBuffer[valueLength++] = buffer[j];
+                                            valueBuffer[valueLength++] = c1;
+                                            length = 0;
+                                            /*
                                         paramBraceCount = 0;
                                         paramParCount = 0;
                                         paramSqCount = 0;*/
-                                        paramTempCount++;
-                                        continue;
+                                            paramTempCount++;
+                                            continue;
+                                        }
                                     }
                                 }
                             }
@@ -1316,15 +1323,8 @@ namespace ASCompletion.Model
                             }
                         }
                         // star is valid in import statements
-                        else if (c1 == '*' && version >= 3)
-                        {
-                            addChar = true;
-                        }
-                        // conditional Haxe parameter
-                        else if (c1 == '?' && haXe && inParams && length == 0)
-                        {
-                            addChar = true;
-                        }
+                        else if (c1 == '*' && version >= 3) addChar = true;
+                        else if (c1 == '?' && haXe && inParams && length == 0) addChar = true;
                         else shortcut = false;
                     }
                     // eval this word
@@ -1895,7 +1895,8 @@ namespace ASCompletion.Model
 
             string token = curToken.Text;
             int dotIndex = token.LastIndexOf('.');
-            if (evalKeyword && (token.Length > 2))
+            var minTokenLength = haXe ? 2 : 3;
+            if (evalKeyword && token.Length >= minTokenLength)
             {
                 if (dotIndex > 0) token = token.Substring(dotIndex + 1);
 
@@ -2001,14 +2002,30 @@ namespace ASCompletion.Model
                             return true;
                         }
                     }
-
-                    else if (context == FlagType.Abstract) 
+                    else if (context == FlagType.Abstract)
                     {
-                        if (features.hasTypeDefs && token == "from")
+                        if (features.hasTypeDefs)
                         {
-                            foundKeyword = FlagType.Class;
-                            curModifiers = FlagType.Extends;
-                            return true;
+                            if (token == "from")
+                            {
+                                foundKeyword = FlagType.Class;
+                                curModifiers = FlagType.Extends;
+                                if (curClass != null)
+                                {
+                                    if (curClass.MetaDatas == null) curClass.MetaDatas = new List<ASMetaData>();
+                                    curClass.MetaDatas.Add(new ASMetaData(token) {RawParams = prevToken.Text});
+                                }
+                                return true;
+                            }
+                            if (token == "to")
+                            {
+                                if (curClass != null)
+                                {
+                                    if (curClass.MetaDatas == null) curClass.MetaDatas = new List<ASMetaData>();
+                                    curClass.MetaDatas.Add(new ASMetaData(token) {RawParams = prevToken.Text});
+                                }
+                                return true;
+                            }
                         }
                     }
 
@@ -2021,7 +2038,7 @@ namespace ASCompletion.Model
                             curModifiers |= FlagType.Getter;
                             return true;
                         }
-                        else if (token == "set")
+                        if (token == "set")
                         {
                             foundKeyword = FlagType.Function;
                             curModifiers |= FlagType.Setter;
@@ -2377,8 +2394,7 @@ namespace ASCompletion.Model
                         {
                             if (curClass.MetaDatas == null)
                                 curClass.MetaDatas = carriedMetaData;
-                            else
-                                foreach (var meta in carriedMetaData) curClass.MetaDatas.Add(meta);
+                            else curClass.MetaDatas.AddRange(carriedMetaData);
 
                             carriedMetaData = null;
                         }
@@ -2495,12 +2511,17 @@ namespace ASCompletion.Model
                             curClass.LineTo = curToken.Line;
                             AddClass(model, curClass);
                         }
+                        if (carriedMetaData != null)
+                        {
+                            if (curClass.MetaDatas == null) curClass.MetaDatas = carriedMetaData;
+                            else curClass.MetaDatas.AddRange(carriedMetaData);
+                            carriedMetaData = null;
+                        }
                         break;
 
                     case FlagType.Variable:
                         // Haxe signatures: T -> T
-                        if (haXe && curMember != null && curMember.Type != null
-                            && curMember.Type.EndsWithOrdinal("->"))
+                        if (haXe && curMember?.Type != null && curMember.Type.EndsWithOrdinal("->"))
                         {
                             curMember.Type += token;
                             curMember.Type = ASFileParserRegexes.Spaces.Replace(curMember.Type, string.Empty).Replace(",", ", ");
@@ -2553,8 +2574,7 @@ namespace ASCompletion.Model
                             {
                                 if (member.MetaDatas == null)
                                     member.MetaDatas = carriedMetaData;
-                                else
-                                    foreach (var meta in carriedMetaData) member.MetaDatas.Add(meta);
+                                else member.MetaDatas.AddRange(carriedMetaData);
 
                                 carriedMetaData = null;
                             }
@@ -2618,8 +2638,7 @@ namespace ASCompletion.Model
                         {
                             if (member.MetaDatas == null)
                                 member.MetaDatas = carriedMetaData;
-                            else
-                                foreach (var meta in carriedMetaData) member.MetaDatas.Add(meta);
+                            else member.MetaDatas.AddRange(carriedMetaData);
 
                             carriedMetaData = null;
                         }

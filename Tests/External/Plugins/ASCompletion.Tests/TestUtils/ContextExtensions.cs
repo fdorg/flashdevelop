@@ -18,6 +18,7 @@ namespace ASCompletion.TestUtils
         public static void SetAs3Features(this IASContext mock)
         {
             var context = new AS3Context.Context(new AS3Context.AS3Settings());
+            ASContext.RegisterLanguage(context, "as3");
             BuildClassPath(context);
             context.CurrentModel = new FileModel {Context = mock, Version = 3};
             SetFeatures(mock, context);
@@ -26,6 +27,7 @@ namespace ASCompletion.TestUtils
         public static void SetHaxeFeatures(this IASContext mock)
         {
             var context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
+            ASContext.RegisterLanguage(context, "haxe");
             BuildClassPath(context);
             context.CurrentModel = new FileModel {Context = mock, Version = 4, haXe = true};
             SetFeatures(mock, context);
@@ -43,6 +45,26 @@ namespace ASCompletion.TestUtils
                 var src = x[0] as string;
                 return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
             });
+            mock.GetCodeModel(Arg.Any<string>(), Arg.Any<bool>()).ReturnsForAnyArgs(x =>
+            {
+                var src = x[0] as string;
+                return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src, x.ArgAt<bool>(1));
+            });
+            mock.GetCodeModel(Arg.Any<FileModel>(), Arg.Any<string>()).ReturnsForAnyArgs(x =>
+            {
+                var src = x[1] as string;
+                return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(x.ArgAt<FileModel>(0), src);
+            });
+            mock.GetCodeModel(null, null, Arg.Any<bool>()).ReturnsForAnyArgs(x =>
+            {
+                var src = x[1] as string;
+                return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(x.ArgAt<FileModel>(0), src, x.ArgAt<bool>(2));
+            });
+            mock.GetFileModel(null).ReturnsForAnyArgs(it =>
+            {
+                var fileName = it[0] as string;
+                return fileName == null ? null : context.GetFileModel(fileName);
+            });
             mock.IsImported(null, Arg.Any<int>()).ReturnsForAnyArgs(it =>
             {
                 var member = it.ArgAt<MemberModel>(0) ?? ClassModel.VoidClass;
@@ -53,8 +75,13 @@ namespace ASCompletion.TestUtils
             mock.ResolveDotContext(null, null, false).ReturnsForAnyArgs(it =>
             {
                 var expr = it.ArgAt<ASExpr>(1);
-                if (expr == null) return null;
-                return context.ResolveDotContext(it.ArgAt<ScintillaControl>(0), expr, it.ArgAt<bool>(2));
+                return expr == null ? null : context.ResolveDotContext(it.ArgAt<ScintillaControl>(0), expr, it.ArgAt<bool>(2));
+            });
+            mock.TypesAffinity(null, null).ReturnsForAnyArgs(it =>
+            {
+                var inClass = it.ArgAt<ClassModel>(0);
+                var withClass = it.ArgAt<ClassModel>(1);
+                return inClass == null || withClass == null ? Visibility.Default : context.TypesAffinity(inClass, withClass);
             });
             mock.IsFileValid.Returns(context.IsFileValid);
             mock.GetDefaultValue(null).ReturnsForAnyArgs(it => context.GetDefaultValue(it.ArgAt<string>(0)));
@@ -65,6 +92,7 @@ namespace ASCompletion.TestUtils
             mock.GetAllProjectClasses().Returns(allProjectClasses);
             mock.CodeGenerator.Returns(context.CodeGenerator);
             mock.DocumentationGenerator.Returns(context.DocumentationGenerator);
+            mock.CodeComplete.Returns(context.CodeComplete);
         }
 
         public static void BuildClassPath(this IASContext context)
@@ -88,7 +116,7 @@ namespace ASCompletion.TestUtils
                     {
                         foreach (var fileName in Directory.GetFiles(path, searchPattern, SearchOption.AllDirectories))
                         {
-                            it.AddFile(ASFileParser.ParseFile(new FileModel(fileName) {Context = context, Version = 3}));
+                            it.AddFile(context.GetFileModel(fileName));
                         }
                     }
                     context.RefreshContextCache(path);
@@ -112,7 +140,7 @@ namespace ASCompletion.TestUtils
                 {
                     foreach (var fileName in Directory.GetFiles(path, searchPattern, SearchOption.AllDirectories))
                     {
-                        it.AddFile(ASFileParser.ParseFile(new FileModel(fileName) {Context = context, haXe = true, Version = 4}));
+                        it.AddFile(context.GetFileModel(fileName));
                     }
                 }
                 context.RefreshContextCache(path);
