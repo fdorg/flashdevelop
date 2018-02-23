@@ -77,5 +77,32 @@ namespace HaXeContext.Completion
             sci.Colourise(0, -1);
             return ASContext.Context.CodeComplete.IsRegexStyle(sci, sci.CurrentPos);
         }
+
+        static IEnumerable<TestCaseData> PositionIsOutsideBodyTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeBody_1")
+                    .SetName("|class Some {}")
+                    .Returns(true);
+                yield return new TestCaseData("BeforeBody_2")
+                    .SetName("class Some {|}")
+                    .Returns(false);
+                yield return new TestCaseData("BeforeBody_3")
+                    .SetName("class Some | extends Foo<{v:Int}> {}")
+                    .Returns(true);
+                yield return new TestCaseData("BeforeBody_4")
+                    .SetName("class Some {}|")
+                    .Returns(false);
+            }
+        }
+
+        [Test, TestCaseSource(nameof(PositionIsOutsideBodyTestCases))]
+        public bool PositionIsOutsideBody(string fileName)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            sci.Colourise(0, -1);
+            return ((CodeComplete) ASContext.Context.CodeComplete).PositionIsOutsideBody(sci, sci.CurrentPos, ASContext.Context.CurrentClass);
+        }
     }
 }
