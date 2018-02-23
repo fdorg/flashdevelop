@@ -71,8 +71,6 @@ namespace HaXeContext.Completion
         /// </summary>
         internal bool PositionIsOutsideBody(ScintillaControl sci, int position, MemberModel member)
         {
-            if (member == ClassModel.VoidClass) return false;
-            if (sci.LineEndPosition(member.LineTo) <= position) return false;
             var groupCount = 0;
             var positionFrom = sci.PositionFromLine(member.LineFrom);
             for (var i = positionFrom; i < position; i++)
