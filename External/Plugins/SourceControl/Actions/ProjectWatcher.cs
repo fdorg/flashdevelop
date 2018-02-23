@@ -269,12 +269,8 @@ namespace SourceControl.Actions
             var fResult = fsWatchers.ResolveVC(fromFile, true);
             var result = fsWatchers.ResolveVC(toFile, true);
 
-            if (fResult.Status == VCItemStatus.Added) //when moving / renaming a staged file, unstage it
-            {
-                fResult.Manager.FileActions.FileAfterMove(fromFile, fResult.Status, toFile);
-                ForceRefresh();
-                return;
-            }
+            fResult.Manager.FileActions.FileAfterMove(fromFile, fResult.Status, toFile);
+            ForceRefresh();
 
             var fromVCed = fResult != null && fResult.Status >= VCItemStatus.UpToDate && fResult.Status != VCItemStatus.Added;
             var toVCed = result != null && result.Status >= VCItemStatus.UpToDate && result.Status != VCItemStatus.Added;
