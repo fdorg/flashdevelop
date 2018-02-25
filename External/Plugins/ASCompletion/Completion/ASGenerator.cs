@@ -470,7 +470,8 @@ namespace ASCompletion.Completion
                 && found.Member == null
                 && !found.InClass.IsVoid()
                 && !found.InClass.Flags.HasFlag(FlagType.Interface)
-                && position < sci.LineEndPosition(found.InClass.LineTo);
+                && position < sci.LineEndPosition(found.InClass.LineTo)
+                && !ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, position, found.InClass);
         }
 
         /// <summary>

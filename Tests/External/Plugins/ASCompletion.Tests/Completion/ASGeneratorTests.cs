@@ -3425,8 +3425,7 @@ namespace ASCompletion.Completion
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/1995");
                         yield return new TestCaseData("ContextualGenerator_issue1995_6", false)
                             .SetName("Issue1995. Case 6")
-                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1995")
-                            .Ignore("");
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1995");
                         yield return new TestCaseData("ContextualGenerator_issue1995_7", false)
                             .SetName("Issue1995. Case 7")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/1995");

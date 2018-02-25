@@ -66,22 +66,5 @@ namespace HaXeContext.Completion
             return base.HandleWhiteSpaceCompletion(sci, position, wordLeft, autoHide);
         }
 
-        /// <summary>
-        /// Returns true if position is before body of class or member
-        /// </summary>
-        internal bool PositionIsBeforeBody(ScintillaControl sci, int position, MemberModel member)
-        {
-            var groupCount = 0;
-            var positionFrom = sci.PositionFromLine(member.LineFrom);
-            for (var i = positionFrom; i < position; i++)
-            {
-                if (sci.PositionIsOnComment(position)) continue;
-                var c = (char)sci.CharAt(i);
-                if (c == '(' || c == '<') groupCount++;
-                else if (c == ')' || (c == '>' && sci.CharAt(i - 1) != '-')) groupCount--;
-                else if (c == '{' && groupCount == 0) return false;
-            }
-            return true;
-        }
     }
 }

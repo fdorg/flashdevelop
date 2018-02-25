@@ -102,7 +102,7 @@ namespace HaXeContext.Completion
         {
             SetSrc(sci, ReadAllText(fileName));
             sci.Colourise(0, -1);
-            return ((CodeComplete) ASContext.Context.CodeComplete).PositionIsBeforeBody(sci, sci.CurrentPos, ASContext.Context.CurrentClass);
+            return ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, sci.CurrentPos, ASContext.Context.CurrentClass);
         }
     }
 }
