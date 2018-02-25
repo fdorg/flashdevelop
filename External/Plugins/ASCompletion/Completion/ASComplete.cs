@@ -153,33 +153,7 @@ namespace ASCompletion.Completion
                         break;
 
                     case ' ':
-                        position--;
-                        string word = GetWordLeft(Sci, ref position);
-                        if (word.Length == 0)
-                        {
-                            char c = (char)Sci.CharAt(position);
-                            if (c == ':' && features.hasEcmaTyping)
-                                return HandleColonCompletion(Sci, "", autoHide);
-                            else if (autoHide && (c == '(' || c == ',') && !ASContext.CommonSettings.DisableCallTip)
-                                return HandleFunctionCompletion(Sci, autoHide);
-                            break;
-                        }
-                        if (word == "package" || Array.IndexOf(features.typesKeywords, word) >= 0) 
-                            return false;
-                        // new/extends/instanceof/...
-                        if (features.HasTypePreKey(word)) return HandleNewCompletion(Sci, "", autoHide, word);
-                        var beforeBody = true;
-                        var expr = CurrentResolvedContext?.Result?.Context;
-                        if (expr != null) beforeBody = expr.ContextFunction == null || expr.BeforeBody;
-                        if (!beforeBody && features.codeKeywords.Contains(word)) return false;
-                        // override
-                        if (word == features.overrideKey) return ASGenerator.HandleGeneratorCompletion(Sci, autoHide, word);
-                        // import
-                        if (features.hasImports && (word == features.importKey || word == features.importKeyAlt))
-                            return HandleImportCompletion(Sci, "", autoHide);
-                        // public/internal/private/protected/static
-                        if (Array.IndexOf(features.accessKeywords, word) >= 0)
-                            return HandleDeclarationCompletion(Sci, "", autoHide);
+                        if (ASContext.Context.CodeComplete.HandleWhiteSpaceCompletion(Sci, position, autoHide)) return true;
                         break;
 
                     case ':':
@@ -228,7 +202,8 @@ namespace ASCompletion.Completion
                         break;
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 ErrorManager.ShowError(/*"Completion error",*/ ex);
             }
 
@@ -2282,7 +2257,7 @@ namespace ASCompletion.Completion
             return null;
         }
 
-        static private bool HandleNewCompletion(ScintillaControl sci, string tail, bool autoHide, string keyword)
+        protected static bool HandleNewCompletion(ScintillaControl sci, string tail, bool autoHide, string keyword)
         {
             List<ICompletionListItem> list;
 
@@ -2551,6 +2526,56 @@ namespace ASCompletion.Completion
             }
             return true;
         }
+
+        /// <summary>
+        /// Handle completion after inserting a space character
+        /// </summary>
+        /// <param name="sci">Scintilla control</param>
+        /// <param name="position">Current cursor position</param>
+        /// <param name="autoHide">Don't keep the list open if the word does not match</param>
+        /// <returns>Auto-completion has been handled</returns>
+        private bool HandleWhiteSpaceCompletion(ScintillaControl sci, int position, bool autoHide)
+        {
+            var features = ASContext.Context.Features;
+            var pos = position - 1;
+            var word = GetWordLeft(sci, ref pos);
+            if (word.Length == 0)
+            {
+                var c = (char)sci.CharAt(pos);
+                if (c != ':' || !features.hasEcmaTyping)
+                {
+                    if (autoHide && (c == '(' || c == ',') && !ASContext.CommonSettings.DisableCallTip)
+                        return HandleFunctionCompletion(sci, autoHide);
+                    return false;
+                }
+                return HandleColonCompletion(sci, "", autoHide);
+            }
+            if (word == "package" || features.typesKeywords.Contains(word)) return false;
+            // new/extends/instanceof/...
+            if (features.HasTypePreKey(word)) return HandleNewCompletion(sci, "", autoHide, word);
+            var beforeBody = true;
+            var expr = CurrentResolvedContext?.Result?.Context;
+            if (expr != null) beforeBody = expr.ContextFunction == null || expr.BeforeBody;
+            if (!beforeBody && features.codeKeywords.Contains(word)) return false;
+            // override
+            if (word == features.overrideKey) return ASGenerator.HandleGeneratorCompletion(sci, autoHide, word);
+            // import
+            if (features.hasImports && (word == features.importKey || word == features.importKeyAlt))
+                return HandleImportCompletion(sci, "", autoHide);
+            // public/internal/private/protected/static
+            if (features.accessKeywords.Contains(word)) return HandleDeclarationCompletion(sci, "", autoHide);
+            return HandleWhiteSpaceCompletion(sci, position, word, autoHide);
+        }
+
+        /// <summary>
+        /// Handle completion after inserting a space character
+        /// </summary>
+        /// <param name="sci">Scintilla control</param>
+        /// <param name="position">Current cursor position</param>
+        /// <param name="wordLeft">Word before cursor</param>
+        /// <param name="autoHide">Don't keep the list open if the word does not match</param>
+        /// <returns>Auto-completion has been handled</returns>
+        protected virtual bool HandleWhiteSpaceCompletion(ScintillaControl sci, int position, string wordLeft, bool autoHide) => false;
 
         #region expression_evaluator
 

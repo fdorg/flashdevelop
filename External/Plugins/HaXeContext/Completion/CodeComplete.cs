@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using ASCompletion.Completion;
 using ASCompletion.Context;
+using ASCompletion.Model;
 using ScintillaNet;
 
 namespace HaXeContext.Completion
@@ -47,6 +48,40 @@ namespace HaXeContext.Completion
                 }
             }
             return false;
+        }
+
+        /// <inheritdoc />
+        protected override bool HandleWhiteSpaceCompletion(ScintillaControl sci, int position, string wordLeft, bool autoHide)
+        {
+            var currentClass = ASContext.Context.CurrentClass;
+            if (currentClass.Flags.HasFlag(FlagType.Abstract))
+            {
+                switch (wordLeft)
+                {
+                    case "from":
+                    case "to":
+                        return PositionIsBeforeBody(sci, position, currentClass) && HandleNewCompletion(sci, string.Empty, autoHide, wordLeft);
+                }
+            }
+            return base.HandleWhiteSpaceCompletion(sci, position, wordLeft, autoHide);
+        }
+
+        /// <summary>
+        /// Returns true if position is before body of class or member
+        /// </summary>
+        internal bool PositionIsBeforeBody(ScintillaControl sci, int position, MemberModel member)
+        {
+            var groupCount = 0;
+            var positionFrom = sci.PositionFromLine(member.LineFrom);
+            for (var i = positionFrom; i < position; i++)
+            {
+                if (sci.PositionIsOnComment(position)) continue;
+                var c = (char)sci.CharAt(i);
+                if (c == '(' || c == '<') groupCount++;
+                else if (c == ')' || (c == '>' && sci.CharAt(i - 1) != '-')) groupCount--;
+                else if (c == '{' && groupCount == 0) return false;
+            }
+            return true;
         }
     }
 }
