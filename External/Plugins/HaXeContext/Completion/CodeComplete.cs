@@ -79,10 +79,7 @@ namespace HaXeContext.Completion
                 var c = (char)sci.CharAt(i);
                 if (c == '(' || c == '<') groupCount++;
                 else if (c == ')' || (c == '>' && sci.CharAt(i - 1) != '-')) groupCount--;
-                else if (c == '{' && groupCount == 0)
-                {
-                    if (i <= position) return false;
-                }
+                else if (c == '{' && groupCount == 0) return false;
             }
             return true;
         }
