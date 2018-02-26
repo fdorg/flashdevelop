@@ -358,7 +358,7 @@ namespace ProjectManager.Projects.Haxe
             string haxeTarget = "js";
             string output = "";
             if (raw != null)
-                ParseHxmlEntries(raw, defs, cps, libs, add, ref target, ref haxeTarget, ref output);
+                ParseHxmlEntries(raw, defs, cps, libs, add, ref target, ref haxeTarget, ref output, ".");
 
             CompilerOptions.Directives = defs.ToArray();
             CompilerOptions.Libraries = libs.ToArray();
@@ -385,7 +385,7 @@ namespace ProjectManager.Projects.Haxe
             }
         }
 
-        private void ParseHxmlEntries(string[] lines, List<string> defs, List<string> cps, List<string> libs, List<string> add, ref string target, ref string haxeTarget, ref string output)
+        private void ParseHxmlEntries(string[] lines, List<string> defs, List<string> cps, List<string> libs, List<string> add, ref string target, ref string haxeTarget, ref string output, string cwd)
         {
             Regex reHxOp = new Regex("^-([a-z0-9-]+)\\s*(.*)", RegexOptions.IgnoreCase);
             foreach (string line in lines)
@@ -403,7 +403,7 @@ namespace ProjectManager.Projects.Haxe
                     switch (op)
                     {
                         case "D": defs.Add(value); break;
-                        case "cp": cps.Add(CleanPath(value)); break;
+                        case "cp": cps.Add(CleanPath(value, cwd)); break;
                         case "lib": libs.Add(value); break;
                         case "main": CompilerOptions.MainClass = value; break;
                         case "swf":
@@ -421,6 +421,9 @@ namespace ProjectManager.Projects.Haxe
                             break;
                         case "-connect": break; // ignore
                         case "-each": break; // ignore
+                        case "-cwd":
+                            cwd = this.CleanPath(value, cwd);
+                            break;
                         default:
                             // detect platform (-cpp output, -js output, ...)
                             var targetPlatform = FindPlatform(op);
@@ -436,10 +439,10 @@ namespace ProjectManager.Projects.Haxe
                 }
                 else if (!trimmedLine.StartsWith("#") && trimmedLine.EndsWith(".hxml", StringComparison.OrdinalIgnoreCase))
                 {
-                    string subhxml = this.GetAbsolutePath(trimmedLine);
+                    string subhxml = this.GetAbsolutePath(CleanPath(trimmedLine, cwd));
                     if (File.Exists(subhxml))
                     {
-                        ParseHxmlEntries(File.ReadAllLines(subhxml), defs, cps, libs, add, ref target, ref haxeTarget, ref output);
+                        ParseHxmlEntries(File.ReadAllLines(subhxml), defs, cps, libs, add, ref target, ref haxeTarget, ref output, cwd);
                     }
                 }
             }
@@ -455,7 +458,7 @@ namespace ProjectManager.Projects.Haxe
             return null;
         }
 
-        private string CleanPath(string path)
+        private string CleanPath(string path, string cwd)
         {
             path = path.Replace("\"", string.Empty);
             path = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar).TrimEnd(Path.DirectorySeparatorChar);
@@ -463,7 +466,7 @@ namespace ProjectManager.Projects.Haxe
             if (Path.IsPathRooted(path)) return path;
             
             var relDir = Path.GetDirectoryName(ProjectPath);
-            var absPath = Path.GetFullPath(Path.Combine(relDir, path));
+            var absPath = Path.GetFullPath(Path.Combine(relDir, cwd, path));
             return GetRelativePath(absPath);
         }
         #endregion
