@@ -1633,50 +1633,50 @@ namespace ASCompletion.Completion
         /// </summary>
         /// <param name="sci">Scintilla control</param>
         /// <param name="position">Position obtained by FindParameterIndex()</param>
-        /// <param name="result">Expression before cursor</param>
+        /// <param name="expr">Expression before cursor</param>
         /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
         /// <returns>Function successfully resolved</returns>
-        protected virtual bool ResolveFunction(ScintillaControl sci, int position, ASResult result, bool autoHide)
+        protected virtual bool ResolveFunction(ScintillaControl sci, int position, ASResult expr, bool autoHide)
         {
            
-            if (!result.IsNull() && result.Member == null && result.Type != null)
+            if (!expr.IsNull() && expr.Member == null && expr.Type != null)
             {
-                foreach (MemberModel member in result.Type.Members)
-                    if (member.Name == result.Type.Constructor)
+                foreach (MemberModel member in expr.Type.Members)
+                    if (member.Name == expr.Type.Constructor)
                     {
-                        result.Member = member;
+                        expr.Member = member;
                         break;
                     }
             }
             var ctx = ASContext.Context;
-            if (result.IsNull() || (result.Member != null && (result.Member.Flags & FlagType.Function) == 0))
+            if (expr.IsNull() || (expr.Member != null && (expr.Member.Flags & FlagType.Function) == 0))
             {
                 // custom completion
-                MemberModel customMethod = ctx.ResolveFunctionContext(sci, result.Context, autoHide);
+                MemberModel customMethod = ctx.ResolveFunctionContext(sci, expr.Context, autoHide);
                 if (customMethod != null)
                 {
-                    result = new ASResult();
-                    result.Member = customMethod;
+                    expr = new ASResult();
+                    expr.Member = customMethod;
                 }
             }
-            if (result.IsNull())
+            if (expr.IsNull())
                 return false;
 
-            MemberModel method = result.Member;
+            MemberModel method = expr.Member;
             if (method == null)
             {
-                if (result.Type == null)
+                if (expr.Type == null)
                     return false;
-                string constructor = ASContext.GetLastStringToken(result.Type.Name, ".");
-                result.Member = method = result.Type.Members.Search(constructor, FlagType.Constructor, 0);
+                string constructor = ASContext.GetLastStringToken(expr.Type.Name, ".");
+                expr.Member = method = expr.Type.Members.Search(constructor, FlagType.Constructor, 0);
                 if (method == null)
                     return false;
             }
             else if ((method.Flags & FlagType.Function) == 0)
             {
-                if (method.Name == "super" && result.Type != null)
+                if (method.Name == "super" && expr.Type != null)
                 {
-                    result.Member = method = result.Type.Members.Search(result.Type.Constructor, FlagType.Constructor, 0);
+                    expr.Member = method = expr.Type.Members.Search(expr.Type.Constructor, FlagType.Constructor, 0);
                     if (method == null)
                         return false;
                 }
@@ -1684,34 +1684,34 @@ namespace ASCompletion.Completion
             }
 
             // inherit doc
-            while ((method.Flags & FlagType.Override) > 0 && result.InClass != null
+            while ((method.Flags & FlagType.Override) > 0 && expr.InClass != null
                 && (method.Comments == null || method.Comments.Trim() == "" || method.Comments.Contains("@inheritDoc")))
             {
-                FindMember(method.Name, result.InClass.Extends, result, 0, 0);
-                method = result.Member;
+                FindMember(method.Name, expr.InClass.Extends, expr, 0, 0);
+                method = expr.Member;
                 if (method == null)
                     return false;
             }
             if ((method.Comments == null || method.Comments.Trim() == "")
-                && result.InClass != null && result.InClass.Implements != null)
+                && expr.InClass != null && expr.InClass.Implements != null)
             {
                 ASResult iResult = new ASResult();
-                foreach (string type in result.InClass.Implements)
+                foreach (string type in expr.InClass.Implements)
                 {
-                    ClassModel model = ctx.ResolveType(type, result.InFile);
+                    ClassModel model = ctx.ResolveType(type, expr.InFile);
                     FindMember(method.Name, model, iResult, 0, 0);
                     if (iResult.Member != null)
                     {
-                        iResult.RelClass = result.RelClass;
-                        result = iResult;
+                        iResult.RelClass = expr.RelClass;
+                        expr = iResult;
                         method = iResult.Member;
                         break;
                     }
                 }
             }
 
-            result.Context.Position = position;
-            FunctionContextResolved(sci, result.Context, method, result.RelClass, false);
+            expr.Context.Position = position;
+            FunctionContextResolved(sci, expr.Context, method, expr.RelClass, false);
             return true;
         }
 
