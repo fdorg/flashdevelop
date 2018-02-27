@@ -1620,7 +1620,7 @@ namespace ASCompletion.Completion
             // get expression at cursor position
             var expr = GetExpression(sci, position, true);
             if (string.IsNullOrEmpty(expr.Value)
-                || (expr.WordBefore == ASContext.Context.Features.functionKey && expr.Separator == " "))
+                || (expr.WordBefore == ctx.Features.functionKey && expr.Separator == " "))
                 return false;
             // Expression before cursor
             expr.LocalVars = ParseLocalVars(expr);
@@ -1648,10 +1648,11 @@ namespace ASCompletion.Completion
                         break;
                     }
             }
+            var ctx = ASContext.Context;
             if (result.IsNull() || (result.Member != null && (result.Member.Flags & FlagType.Function) == 0))
             {
                 // custom completion
-                MemberModel customMethod = ASContext.Context.ResolveFunctionContext(sci, result.Context, autoHide);
+                MemberModel customMethod = ctx.ResolveFunctionContext(sci, result.Context, autoHide);
                 if (customMethod != null)
                 {
                     result = new ASResult();
@@ -1697,7 +1698,7 @@ namespace ASCompletion.Completion
                 ASResult iResult = new ASResult();
                 foreach (string type in result.InClass.Implements)
                 {
-                    ClassModel model = ASContext.Context.ResolveType(type, result.InFile);
+                    ClassModel model = ctx.ResolveType(type, result.InFile);
                     FindMember(method.Name, model, iResult, 0, 0);
                     if (iResult.Member != null)
                     {
