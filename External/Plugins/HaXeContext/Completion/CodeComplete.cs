@@ -66,5 +66,37 @@ namespace HaXeContext.Completion
             return base.HandleWhiteSpaceCompletion(sci, position, wordLeft, autoHide);
         }
 
+        /// <inheritdoc />
+        protected override bool ResolveFunction(ScintillaControl sci, int position, ASResult expr, bool autoHide)
+        {
+            if (expr.Member == null)
+            {
+                var type = expr.Type;
+                if (type != null)
+                {
+                    var originConstructor = ASContext.GetLastStringToken(type.Name, ".");
+                    while (!type.IsVoid())
+                    {
+                        var constructor = ASContext.GetLastStringToken(type.Name, ".");
+                        var member = type.Members.Search(constructor, FlagType.Constructor, 0);
+                        if (member != null)
+                        {
+                            if (originConstructor != member.Name)
+                            {
+                                member = (MemberModel) member.Clone();
+                                member.Name = originConstructor;
+                            }
+                            expr.Member = member;
+                            expr.Context.Position = position;
+                            FunctionContextResolved(sci, expr.Context, expr.Member, expr.RelClass, false);
+                            return true;
+                        }
+                        type.ResolveExtends();
+                        type = type.Extends;
+                    }
+                }
+            }
+            return base.ResolveFunction(sci, position, expr, autoHide);
+        }
     }
 }
