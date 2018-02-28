@@ -982,6 +982,7 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1880_5.as" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeAssignStatementToVar_issue1880_1.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue1880_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_uint.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

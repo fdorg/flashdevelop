@@ -2626,6 +2626,9 @@ namespace ASCompletion.Completion
                             new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_ArrayAccess"))
                                 .Returns(new List<MemberModel> {new ClassModel {Name = "int", InFile = FileModel.Ignore}})
                                 .SetName("Parse function parameters of foo(v[0][0].length)");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_uint"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "uint", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(0xFF0000)");
                     }
                 }
 
