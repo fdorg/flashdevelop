@@ -2540,10 +2540,7 @@ namespace ASCompletion.Completion
                     {
                         isFuncStarted = true;
                     }
-                    else
-                    {
-                        break;
-                    }
+                    else break;
                 }
                 else if (c == ';' && !isFuncStarted) break;
                 else if (c == ')' && isFuncStarted && !wasEscapeChar && !isDoubleQuote && !isSingleQuote && subClosuresCount == 0)
@@ -2707,30 +2704,6 @@ namespace ASCompletion.Completion
                                 types.Add(result);
                             }
                         }
-                        else
-                        {
-                            double d = double.MaxValue;
-                            try
-                            {
-                                d = double.Parse(trimmed, CultureInfo.InvariantCulture);
-                            }
-                            catch (Exception)
-                            {
-                            }
-                            if (d != double.MaxValue && d.ToString().Length == trimmed.Length)
-                            {
-                                result = new ASResult();
-                                result.Type = ctx.ResolveType(ctx.Features.numberKey, null);
-                                types.Insert(0, result);
-                            }
-                            else if (trimmed.Equals("true") || trimmed.Equals("false"))
-                            {
-                                result = new ASResult();
-                                result.Type = ctx.ResolveType(ctx.Features.booleanKey, null);
-                                types.Insert(0, result);
-                            }
-                        }
-                        
                         if (types.Count == 0)
                         {
                             result = new ASResult();
