@@ -111,15 +111,19 @@ namespace HaXeContext.Completion
             {
                 yield return new TestCaseData("Issue2053_1")
                     .Returns(true)
-                    .SetName("new Foo(|. Class have constructor")
+                    .SetName("new Foo(|. class with constructor")
                     .SetDescription("https://github.com/fdorg/flashdevelop/pull/2055");
                 yield return new TestCaseData("Issue2053_2")
                     .Returns(false)
-                    .SetName("new Foo(|. Class haven't constructor")
+                    .SetName("new Foo(|. class without constructor")
                     .SetDescription("https://github.com/fdorg/flashdevelop/pull/2055");
                 yield return new TestCaseData("Issue2053_3")
                     .Returns(true)
-                    .SetName("new Foo(|. Class haven't constructor. Superclass have constructor")
+                    .SetName("new Foo(|. class with superconstructor")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/pull/2055");
+                yield return new TestCaseData("Issue2053_4")
+                    .Returns(true)
+                    .SetName("new Foo(|. typedef = class with constructor")
                     .SetDescription("https://github.com/fdorg/flashdevelop/pull/2055");
             }
         }

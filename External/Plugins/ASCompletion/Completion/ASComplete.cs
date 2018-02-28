@@ -1410,7 +1410,6 @@ namespace ASCompletion.Completion
         static private int calltipOffset;
         static private ClassModel calltipRelClass;
         static private string prevParam = "";
-        static private string paramInfo = "";
 
         public static bool HasCalltip()
         {
@@ -1448,16 +1447,6 @@ namespace ASCompletion.Completion
                 }
                 char[] toClean = new char[] { ' ', '\t', '\n', '\r', '*', '?' };
                 paramName = paramName.Trim(toClean);
-
-                if (paramName.Length > 0)
-                {
-                    Match mParam = Regex.Match(calltipMember.Comments, "@param\\s+" + Regex.Escape(paramName) + "[ \t:]+(?<desc>[^\r\n]*)");
-                    if (mParam.Success)
-                        paramInfo = "\n" + "[U]" + paramName + ":" + "[/U]" + mParam.Groups["desc"].Value.Trim();
-                    else
-                        paramInfo = "";
-                }
-                else paramInfo = "";
             }
 
             // show calltip
