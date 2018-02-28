@@ -91,6 +91,7 @@ namespace HaXeContext.Completion
                             FunctionContextResolved(sci, expr.Context, expr.Member, expr.RelClass, false);
                             return true;
                         }
+                        if (type.Flags.HasFlag(FlagType.Abstract)) return false;
                         type.ResolveExtends();
                         type = type.Extends;
                     }

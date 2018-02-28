@@ -125,6 +125,14 @@ namespace HaXeContext.Completion
                     .Returns(true)
                     .SetName("new Foo(|. typedef = class with constructor")
                     .SetDescription("https://github.com/fdorg/flashdevelop/pull/2055");
+                yield return new TestCaseData("Issue2053_5")
+                    .Returns(true)
+                    .SetName("new Foo(|. abstract with constructor")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/pull/2055");
+                yield return new TestCaseData("Issue2053_6")
+                    .Returns(false)
+                    .SetName("new Foo(|. abstract without constructor")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/pull/2055");
             }
         }
 
