@@ -1060,6 +1060,17 @@ namespace HaXeContext
                         }
                     }
                 }
+                var index = token.IndexOfOrdinal(" ");
+                if (index != -1)
+                {
+                    var word = token.Substring(0, index);
+                    if (word == "new" && token[token.Length - 1] == ')')
+                    {
+                        token = token.Substring(index + 1);
+                        token = Regex.Replace(token, @"\(.*", string.Empty);
+                        return ResolveType(token, inFile);
+                    }
+                }
             }
             return base.ResolveToken(token, inFile);
         }

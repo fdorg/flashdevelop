@@ -2693,17 +2693,8 @@ namespace ASCompletion.Completion
                     string trimmed = sb.ToString().Trim(charsToTrim);
                     if (trimmed.Length > 0)
                     {
-                        if (trimmed.Contains("<"))
-                        {
-                            var expr = trimmed.StartsWithOrdinal("new")
-                                ? ASComplete.GetExpressionType(sci, lastMemberPos + 1, true, true).Context
-                                : null;
-                            trimmed = Regex.Replace(trimmed, @"^new\s", string.Empty);
-                            trimmed = Regex.Replace(trimmed, @">\(.*", ">");
-                            var type = ctx.ResolveType(trimmed, ctx.CurrentModel);
-                            result = new ASResult {Type = type, Context = expr};
-                        }
-                        else if (trimmed.StartsWithOrdinal("new")) result = ASComplete.GetExpressionType(sci, lastMemberPos + 1, true, true);
+                        var type = ASContext.Context.ResolveToken(trimmed, ASContext.Context.CurrentModel);
+                        if (!type.IsVoid()) result = new ASResult {Type = type};
                         else result = ASComplete.GetExpressionType(sci, lastMemberPos + 1);
                         if (result != null && !result.IsNull())
                         {
