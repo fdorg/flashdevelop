@@ -3569,7 +3569,7 @@ namespace ASCompletion.Completion
                         if (!hadDot)
                         {
                             expression.Separator = ";";
-                           break;
+                            break;
                         }
                         if (parCount == 0) // start sub-expression
                         {
@@ -3859,7 +3859,7 @@ namespace ASCompletion.Completion
                     if (parCount == 0 && !hadDot) // not expected: something's wrong
                     {
                         expression.Separator = ";";
-                       break;
+                        break;
                     }
                 }
             }
