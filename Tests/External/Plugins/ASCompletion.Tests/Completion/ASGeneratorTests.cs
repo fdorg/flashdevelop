@@ -2574,61 +2574,51 @@ namespace ASCompletion.Completion
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_String"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "String", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(\"string\")");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Boolean"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Boolean", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(true)");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Boolean_false"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Boolean", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(false)");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Digit"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Number", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(1)");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Array"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Array", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(new Array())");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_ArrayInitializer"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Array", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo([])");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Object"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Object", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(new Object())");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_ObjectInitializer"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Object", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo({})");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Vector"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Vector.<int>", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(new Vector.<int>())");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_VectorInitializer"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Vector.<int>", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(new <int>[])");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_TwoDimensionalVectorInitializer"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Vector.<Vector.<int>>", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(new <Vector.<int>>[new <int>[]])");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_MultidimensionalVectorInitializer"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Vector.<Vector.<Vector.<int>>>", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(new <Vector.<Vector.<int>>>[new <Vector.<int>[new <int>[]]])");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_ArrayAccess"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "int", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(v[0][0].length)");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_String"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "String", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(\"string\")");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Boolean"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Boolean", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(true)");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Boolean_false"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Boolean", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(false)");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Digit"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Number", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(1)");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Array"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Array", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(new Array())");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_ArrayInitializer"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Array", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo([])");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Object"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Object", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(new Object())");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_ObjectInitializer"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Object", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo({})");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Vector"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Vector.<int>", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(new Vector.<int>())");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_VectorInitializer"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Vector.<int>", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(new <int>[])");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_TwoDimensionalVectorInitializer"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Vector.<Vector.<int>>", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(new <Vector.<int>>[new <int>[]])");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_MultidimensionalVectorInitializer"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Vector.<Vector.<Vector.<int>>>", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(new <Vector.<Vector.<int>>>[new <Vector.<int>[new <int>[]]])");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_ArrayAccess"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "int", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(v[0][0].length)");
                         yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_uint"))
                             .Returns(new List<MemberModel> {new ClassModel {Name = "uint", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(0xFF0000)");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Sprite"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Sprite", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(new Sprite())");
                     }
                 }
 
