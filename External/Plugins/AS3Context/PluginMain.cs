@@ -154,7 +154,7 @@ namespace AS3Context
                         else if (action == "ProjectManager.OpenVirtualFile")
                         {
                             if (PluginBase.CurrentProject != null && PluginBase.CurrentProject.Language == "as3")
-                                e.Handled = OpenVirtualFileModel(de.Data as String);
+                                e.Handled = OpenVirtualFileModel((string) de.Data);
                         }
                         else if (!settingObject.DisableFDB && action == "AS3Context.StartDebugger")
                         {
@@ -194,7 +194,6 @@ namespace AS3Context
                 }
                 return;
             }
-
             else if (priority == HandlingPriority.Normal)
             {
                 switch (e.Type)
@@ -223,7 +222,6 @@ namespace AS3Context
                 }
                 return;
             }
-
             else if (priority == HandlingPriority.High)
             {
                 if (e.Type == EventType.Command)
@@ -300,12 +298,12 @@ namespace AS3Context
             if (ext != ".swf" && ext != ".swc" && ext != ".ane") return false;
             if (!File.Exists(container)) return false;
 
-            string fileName = Path.Combine(container, virtualPath.Substring(p + 2).Replace('.', Path.DirectorySeparatorChar));
             PathModel path = new PathModel(container, contextInstance);
             ContentParser parser = new ContentParser(path.Path);
             parser.Run();
             AbcConverter.Convert(parser, path, contextInstance);
 
+            string fileName = Path.Combine(container, virtualPath.Substring(p + 2).Replace('.', Path.DirectorySeparatorChar));
             if (path.HasFile(fileName))
             {
                 FileModel model = path.GetFile(fileName);

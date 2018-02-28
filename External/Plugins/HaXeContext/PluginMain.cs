@@ -160,7 +160,8 @@ namespace HaXeContext
                     }
                     else if (action == "ProjectManager.OpenVirtualFile")
                     {
-                        e.Handled = OpenVirtualFileModel((string) de.Data);
+                        if (PluginBase.CurrentProject != null && PluginBase.CurrentProject.Language == "haxe")
+                            e.Handled = OpenVirtualFileModel((string) de.Data);
                     }
                     break;
 
@@ -328,11 +329,12 @@ namespace HaXeContext
             var ext = Path.GetExtension(container).ToLower();
             if (ext == ".swf" || ext == ".swc")
             {
-                var fileName = Path.Combine(container, virtualPath.Substring(p + 2).Replace('.', Path.DirectorySeparatorChar));
-                var path = new PathModel(container, contextInstance);
+                var ctx = ASCompletion.Context.ASContext.GetLanguageContext("as3") ?? contextInstance;
+                var path = new PathModel(container, ctx);
                 var parser = new ContentParser(path.Path);
                 parser.Run();
-                AbcConverter.Convert(parser, path, contextInstance);
+                AbcConverter.Convert(parser, path, ctx);
+                var fileName = Path.Combine(container, virtualPath.Substring(p + 2).Replace('.', Path.DirectorySeparatorChar));
                 if (!path.HasFile(fileName)) return false;
                 var model = path.GetFile(fileName);
                 ASComplete.OpenVirtualFile(model);
