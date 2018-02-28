@@ -1,7 +1,3 @@
-/*
- * Code completion
- */
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -62,8 +58,11 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Character written in editor
         /// </summary>
+        /// <param name="Sci">Scintilla Control</param>
         /// <param name="Value">Character inserted</param>
-        static public bool OnChar(ScintillaControl Sci, int Value, bool autoHide)
+        /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
+        /// <returns>Auto-completion has been handled</returns>
+        public static bool OnChar(ScintillaControl Sci, int Value, bool autoHide)
         {
             IASContext ctx = ASContext.Context;
             ContextFeatures features = ctx.Features;
@@ -1411,9 +1410,8 @@ namespace ASCompletion.Completion
         static private int calltipOffset;
         static private ClassModel calltipRelClass;
         static private string prevParam = "";
-        static private string paramInfo = "";
 
-        static public bool HasCalltip()
+        public static bool HasCalltip()
         {
             return UITools.CallTip.CallTipActive && (calltipDef != null);
         }
@@ -1421,14 +1419,9 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Show highlighted calltip
         /// </summary>
-        /// <param name="Sci">Scintilla control</param>
-        /// <param name="paramNumber">Highlight param number</param>
-        static private void ShowCalltip(ScintillaControl sci, int paramNumber)
-        {
-            ShowCalltip(sci, paramNumber, false);
-        }
-
-        static private void ShowCalltip(ScintillaControl sci, int paramIndex, bool forceRedraw)
+        /// <param name="sci">Scintilla control</param>
+        /// <param name="paramIndex">Highlight param number</param>
+        private static void ShowCalltip(ScintillaControl sci, int paramIndex)
         {
             // measure highlighting
             int start = calltipDef.IndexOf('(');
@@ -1454,16 +1447,6 @@ namespace ASCompletion.Completion
                 }
                 char[] toClean = new char[] { ' ', '\t', '\n', '\r', '*', '?' };
                 paramName = paramName.Trim(toClean);
-
-                if (paramName.Length > 0)
-                {
-                    Match mParam = Regex.Match(calltipMember.Comments, "@param\\s+" + Regex.Escape(paramName) + "[ \t:]+(?<desc>[^\r\n]*)");
-                    if (mParam.Success)
-                        paramInfo = "\n" + "[U]" + paramName + ":" + "[/U]" + mParam.Groups["desc"].Value.Trim();
-                    else
-                        paramInfo = "";
-                }
-                else paramInfo = "";
             }
 
             // show calltip
@@ -1472,7 +1455,7 @@ namespace ASCompletion.Completion
                 prevParam = paramName;
                 calltipDetails = UITools.Manager.ShowDetails;
                 string text = calltipDef + ASDocumentation.GetTipDetails(calltipMember, paramName);
-                UITools.CallTip.CallTipShow(sci, calltipPos - calltipOffset, text, forceRedraw);
+                UITools.CallTip.CallTipShow(sci, calltipPos - calltipOffset, text, false);
             }
 
             // highlight
@@ -1563,21 +1546,17 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Display method signature
         /// </summary>
-        /// <param name="Sci">Scintilla control</param>
+        /// <param name="sci">Scintilla control</param>
+        /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
         /// <returns>Auto-completion has been handled</returns>
-        static public bool HandleFunctionCompletion(ScintillaControl Sci, bool autoHide)
-        {
-            return HandleFunctionCompletion(Sci, autoHide, false);
-        }
-
-        static public bool HandleFunctionCompletion(ScintillaControl Sci, bool autoHide, bool forceRedraw)
+        public static bool HandleFunctionCompletion(ScintillaControl sci, bool autoHide)
         {
             // only auto-complete where it makes sense
             if (DeclarationSectionOnly()) 
                 return false;
 
-            int position = Sci.CurrentPos - 1;
-            int paramIndex = FindParameterIndex(Sci, ref position);
+            int position = sci.CurrentPos - 1;
+            int paramIndex = FindParameterIndex(sci, ref position);
             if (position < 0) return false;
             
             // continuing calltip ?
@@ -1585,89 +1564,100 @@ namespace ASCompletion.Completion
             {
                 if (calltipPos == position)
                 {
-                    ShowCalltip(Sci, paramIndex, forceRedraw);
+                    ShowCalltip(sci, paramIndex);
                     return true;
                 }
-                else UITools.CallTip.Hide();
+                UITools.CallTip.Hide();
             }
 
-            if (!ResolveFunction(Sci, position, autoHide))
+            if (!ASContext.Context.CodeComplete.ResolveFunction(sci, position, autoHide))
                 return true;
 
             // EventDispatchers
             if (paramIndex == 0 && calltipRelClass != null && calltipMember.Name.EndsWithOrdinal("EventListener"))
             {
-                ShowListeners(Sci, position, calltipRelClass);
+                ShowListeners(sci, position, calltipRelClass);
                 return true;
             }
 
             // show calltip
-            ShowCalltip(Sci, paramIndex, forceRedraw);
+            ShowCalltip(sci, paramIndex);
             return true;
         }
 
         /// <summary>
         /// Find declaration of function called in code
         /// </summary>
+        /// <param name="sci">Scintilla control</param>
         /// <param name="position">Position obtained by FindParameterIndex()</param>
+        /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
         /// <returns>Function successfully resolved</returns>
-        private static bool ResolveFunction(ScintillaControl Sci, int position, bool autoHide)
+        internal bool ResolveFunction(ScintillaControl sci, int position, bool autoHide)
         {
             calltipPos = 0;
             calltipMember = null;
             calltipRelClass = null;
-
+            var ctx = ASContext.Context;
             // get expression at cursor position
-            ASExpr expr = GetExpression(Sci, position, true);
+            var expr = GetExpression(sci, position, true);
             if (string.IsNullOrEmpty(expr.Value)
-                || (expr.WordBefore == "function" && expr.Separator == " "))
+                || (expr.WordBefore == ctx.Features.functionKey && expr.Separator == " "))
                 return false;
-
-            // Context
-            IASContext ctx = ASContext.Context;
-            FileModel aFile = ctx.CurrentModel;
-            ClassModel aClass = ctx.CurrentClass;
-
             // Expression before cursor
             expr.LocalVars = ParseLocalVars(expr);
-            var result = EvalExpression(expr.Value, expr, aFile, aClass, true, true);
-            if (!result.IsNull() && result.Member == null && result.Type != null)
+            var result = EvalExpression(expr.Value, expr, ctx.CurrentModel, ctx.CurrentClass, true, true);
+            return ResolveFunction(sci, position, result, autoHide);
+        }
+
+        /// <summary>
+        /// Find declaration of function called in code
+        /// </summary>
+        /// <param name="sci">Scintilla control</param>
+        /// <param name="position">Position obtained by FindParameterIndex()</param>
+        /// <param name="expr">Expression before cursor</param>
+        /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
+        /// <returns>Function successfully resolved</returns>
+        protected virtual bool ResolveFunction(ScintillaControl sci, int position, ASResult expr, bool autoHide)
+        {
+           
+            if (!expr.IsNull() && expr.Member == null && expr.Type != null)
             {
-                foreach(MemberModel member in result.Type.Members)
-                    if (member.Name == result.Type.Constructor)
+                foreach (MemberModel member in expr.Type.Members)
+                    if (member.Name == expr.Type.Constructor)
                     {
-                        result.Member = member;
+                        expr.Member = member;
                         break;
                     }
             }
-            if (result.IsNull() || (result.Member != null && (result.Member.Flags & FlagType.Function) == 0))
+            var ctx = ASContext.Context;
+            if (expr.IsNull() || (expr.Member != null && (expr.Member.Flags & FlagType.Function) == 0))
             {
                 // custom completion
-                MemberModel customMethod = ctx.ResolveFunctionContext(Sci, expr, autoHide);
+                MemberModel customMethod = ctx.ResolveFunctionContext(sci, expr.Context, autoHide);
                 if (customMethod != null)
                 {
-                    result = new ASResult();
-                    result.Member = customMethod;
+                    expr = new ASResult();
+                    expr.Member = customMethod;
                 }
             }
-            if (result.IsNull()) 
+            if (expr.IsNull())
                 return false;
 
-            MemberModel method = result.Member;
+            MemberModel method = expr.Member;
             if (method == null)
             {
-                if (result.Type == null)
+                if (expr.Type == null)
                     return false;
-                string constructor = ASContext.GetLastStringToken(result.Type.Name, ".");
-                result.Member = method = result.Type.Members.Search(constructor, FlagType.Constructor, 0);
+                string constructor = ASContext.GetLastStringToken(expr.Type.Name, ".");
+                expr.Member = method = expr.Type.Members.Search(constructor, FlagType.Constructor, 0);
                 if (method == null)
                     return false;
             }
             else if ((method.Flags & FlagType.Function) == 0)
             {
-                if (method.Name == "super" && result.Type != null)
+                if (method.Name == "super" && expr.Type != null)
                 {
-                    result.Member = method = result.Type.Members.Search(result.Type.Constructor, FlagType.Constructor, 0);
+                    expr.Member = method = expr.Type.Members.Search(expr.Type.Constructor, FlagType.Constructor, 0);
                     if (method == null)
                         return false;
                 }
@@ -1675,34 +1665,34 @@ namespace ASCompletion.Completion
             }
 
             // inherit doc
-            while ((method.Flags & FlagType.Override) > 0 && result.InClass != null
+            while ((method.Flags & FlagType.Override) > 0 && expr.InClass != null
                 && (method.Comments == null || method.Comments.Trim() == "" || method.Comments.Contains("@inheritDoc")))
             {
-                FindMember(method.Name, result.InClass.Extends, result, 0, 0);
-                method = result.Member;
-                if (method == null) 
+                FindMember(method.Name, expr.InClass.Extends, expr, 0, 0);
+                method = expr.Member;
+                if (method == null)
                     return false;
             }
             if ((method.Comments == null || method.Comments.Trim() == "")
-                && result.InClass != null && result.InClass.Implements != null)
+                && expr.InClass != null && expr.InClass.Implements != null)
             {
                 ASResult iResult = new ASResult();
-                foreach (string type in result.InClass.Implements)
+                foreach (string type in expr.InClass.Implements)
                 {
-                    ClassModel model = ASContext.Context.ResolveType(type, result.InFile);
+                    ClassModel model = ctx.ResolveType(type, expr.InFile);
                     FindMember(method.Name, model, iResult, 0, 0);
                     if (iResult.Member != null)
                     {
-                        iResult.RelClass = result.RelClass;
-                        result = iResult;
+                        iResult.RelClass = expr.RelClass;
+                        expr = iResult;
                         method = iResult.Member;
                         break;
                     }
                 }
             }
 
-            expr.Position = position;
-            FunctionContextResolved(Sci, expr, method, result.RelClass, false);
+            expr.Context.Position = position;
+            FunctionContextResolved(sci, expr.Context, method, expr.RelClass, false);
             return true;
         }
 
@@ -1732,7 +1722,7 @@ namespace ASCompletion.Completion
                 sci.Colourise(0, -1);
                 int paramIndex = FindParameterIndex(sci, ref position);
                 if (position < 0) return;
-                ShowCalltip(sci, paramIndex, true);
+                ShowCalltip(sci, paramIndex);
             }
         }
 
@@ -1970,7 +1960,7 @@ namespace ASCompletion.Completion
                 {
                     int cpos = Sci.CurrentPos - 1;
                     int paramIndex = FindParameterIndex(Sci, ref cpos);
-                    if (calltipPos != cpos) ResolveFunction(Sci, cpos, autoHide);
+                    if (calltipPos != cpos) ctx.CodeComplete.ResolveFunction(Sci, cpos, autoHide);
                     if (calltipMember == null) return false;
                     argumentType = ResolveParameterType(paramIndex, true);
                     if (argumentType.IsVoid()) return false;
