@@ -2751,7 +2751,6 @@ namespace ASCompletion.Completion
                     sb = new StringBuilder();
                 }
             }
-
             for (int i = 0; i < prms.Count; i++)
             {
                 if (prms[i].paramType == "void")
@@ -2761,7 +2760,6 @@ namespace ASCompletion.Completion
                 }
                 else prms[i].paramName = GuessVarName(prms[i].paramName, FormatType(GetShortType(prms[i].paramType)));
             }
-
             for (int i = 0; i < prms.Count; i++)
             {
                 int iterator = -1;
