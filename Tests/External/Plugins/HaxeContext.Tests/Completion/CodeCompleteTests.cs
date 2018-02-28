@@ -104,5 +104,32 @@ namespace HaXeContext.Completion
             sci.Colourise(0, -1);
             return ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, sci.CurrentPos, ASContext.Context.CurrentClass);
         }
+
+        static IEnumerable<TestCaseData> Issue2053TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("Issue2053_1")
+                    .Returns(true)
+                    .SetName("new Foo(|. Class have constructor")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/pull/2055");
+                yield return new TestCaseData("Issue2053_2")
+                    .Returns(false)
+                    .SetName("new Foo(|. Class haven't constructor")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/pull/2055");
+                yield return new TestCaseData("Issue2053_3")
+                    .Returns(true)
+                    .SetName("new Foo(|. Class haven't constructor. Superclass have constructor")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/pull/2055");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(Issue2053TestCases))]
+        public bool ResolveFunction(string fileName)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            sci.Colourise(0, -1);
+            return ASContext.Context.CodeComplete.ResolveFunction(sci, sci.CurrentPos - 1, true);
+        }
     }
 }

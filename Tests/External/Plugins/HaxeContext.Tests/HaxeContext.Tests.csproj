@@ -219,6 +219,9 @@
     <EmbeddedResource Include="Test Files\completion\BeforeBody_2.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeBody_3.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeBody_4.hx" />
+    <EmbeddedResource Include="Test Files\completion\Issue2053_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\Issue2053_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\Issue2053_3.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

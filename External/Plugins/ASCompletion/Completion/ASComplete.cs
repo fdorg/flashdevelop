@@ -1,7 +1,3 @@
-/*
- * Code completion
- */
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -62,8 +58,11 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Character written in editor
         /// </summary>
+        /// <param name="Sci">Scintilla Control</param>
         /// <param name="Value">Character inserted</param>
-        static public bool OnChar(ScintillaControl Sci, int Value, bool autoHide)
+        /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
+        /// <returns>Auto-completion has been handled</returns>
+        public static bool OnChar(ScintillaControl Sci, int Value, bool autoHide)
         {
             IASContext ctx = ASContext.Context;
             ContextFeatures features = ctx.Features;
@@ -1413,7 +1412,7 @@ namespace ASCompletion.Completion
         static private string prevParam = "";
         static private string paramInfo = "";
 
-        static public bool HasCalltip()
+        public static bool HasCalltip()
         {
             return UITools.CallTip.CallTipActive && (calltipDef != null);
         }
@@ -1421,14 +1420,9 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Show highlighted calltip
         /// </summary>
-        /// <param name="Sci">Scintilla control</param>
-        /// <param name="paramNumber">Highlight param number</param>
-        static private void ShowCalltip(ScintillaControl sci, int paramNumber)
-        {
-            ShowCalltip(sci, paramNumber, false);
-        }
-
-        static private void ShowCalltip(ScintillaControl sci, int paramIndex, bool forceRedraw)
+        /// <param name="sci">Scintilla control</param>
+        /// <param name="paramIndex">Highlight param number</param>
+        private static void ShowCalltip(ScintillaControl sci, int paramIndex)
         {
             // measure highlighting
             int start = calltipDef.IndexOf('(');
@@ -1472,7 +1466,7 @@ namespace ASCompletion.Completion
                 prevParam = paramName;
                 calltipDetails = UITools.Manager.ShowDetails;
                 string text = calltipDef + ASDocumentation.GetTipDetails(calltipMember, paramName);
-                UITools.CallTip.CallTipShow(sci, calltipPos - calltipOffset, text, forceRedraw);
+                UITools.CallTip.CallTipShow(sci, calltipPos - calltipOffset, text, false);
             }
 
             // highlight
@@ -1566,9 +1560,7 @@ namespace ASCompletion.Completion
         /// <param name="sci">Scintilla control</param>
         /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
         /// <returns>Auto-completion has been handled</returns>
-        public static bool HandleFunctionCompletion(ScintillaControl sci, bool autoHide) => HandleFunctionCompletion(sci, autoHide, false);
-
-        public static bool HandleFunctionCompletion(ScintillaControl sci, bool autoHide, bool forceRedraw)
+        public static bool HandleFunctionCompletion(ScintillaControl sci, bool autoHide)
         {
             // only auto-complete where it makes sense
             if (DeclarationSectionOnly()) 
@@ -1583,7 +1575,7 @@ namespace ASCompletion.Completion
             {
                 if (calltipPos == position)
                 {
-                    ShowCalltip(sci, paramIndex, forceRedraw);
+                    ShowCalltip(sci, paramIndex);
                     return true;
                 }
                 UITools.CallTip.Hide();
@@ -1600,7 +1592,7 @@ namespace ASCompletion.Completion
             }
 
             // show calltip
-            ShowCalltip(sci, paramIndex, forceRedraw);
+            ShowCalltip(sci, paramIndex);
             return true;
         }
 
@@ -1611,7 +1603,7 @@ namespace ASCompletion.Completion
         /// <param name="position">Position obtained by FindParameterIndex()</param>
         /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
         /// <returns>Function successfully resolved</returns>
-        private bool ResolveFunction(ScintillaControl sci, int position, bool autoHide)
+        internal bool ResolveFunction(ScintillaControl sci, int position, bool autoHide)
         {
             calltipPos = 0;
             calltipMember = null;
@@ -1741,7 +1733,7 @@ namespace ASCompletion.Completion
                 sci.Colourise(0, -1);
                 int paramIndex = FindParameterIndex(sci, ref position);
                 if (position < 0) return;
-                ShowCalltip(sci, paramIndex, true);
+                ShowCalltip(sci, paramIndex);
             }
         }
 

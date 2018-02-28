@@ -94,6 +94,7 @@ namespace HaXeContext.Completion
                         type.ResolveExtends();
                         type = type.Extends;
                     }
+                    return false;
                 }
             }
             return base.ResolveFunction(sci, position, expr, autoHide);
