@@ -2585,7 +2585,7 @@ namespace ASCompletion.Completion
                         yield return
                             new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Boolean_false"))
                                 .Returns(new List<MemberModel> {new ClassModel {Name = "Boolean", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(falsee)");
+                                .SetName("Parse function parameters of foo(false)");
                         yield return
                             new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Digit"))
                                 .Returns(new List<MemberModel> {new ClassModel {Name = "Number", InFile = FileModel.Ignore}})
