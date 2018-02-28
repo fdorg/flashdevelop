@@ -3485,7 +3485,7 @@ namespace ASCompletion.Completion
                             break;
                         }
                     }
-                    else if (c == '<' && hasGenerics && arrCount == 0)
+                    else if (c == '<' && hasGenerics && arrCount == 0 && parCount == 0)
                     {
                         genCount--;
                         if (genCount < 0)
@@ -3494,7 +3494,7 @@ namespace ASCompletion.Completion
                             break;
                         }
                     }
-                    else if (c == '>' && arrCount == 0)
+                    else if (c == '>' && arrCount == 0 && parCount == 0)
                     {
                         if (haXe && position - 1 > minPos && (char)sci.CharAt(position - 1) == '-')
                         {
