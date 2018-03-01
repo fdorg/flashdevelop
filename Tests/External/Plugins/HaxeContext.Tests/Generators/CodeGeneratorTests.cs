@@ -84,6 +84,12 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("BeforeContextualGeneratorTests_GenerateFunction_3", GeneratorJobType.Function, true)
                     .Returns(ReadAllText("AfterContextualGeneratorTests_GenerateFunction_3"))
                     .SetName("fo|o(1 < 2 && 1 > 0 ? 1 : 0). Generate function. Case 3");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_GenerateFunction_4", GeneratorJobType.Function, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_GenerateFunction_4"))
+                    .SetName("fo|o(this.bar().x). Generate function . Case 4");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_GenerateFunction_5", GeneratorJobType.Function, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_GenerateFunction_5"))
+                    .SetName("fo|o((this.bar().x:Int)). Generate function . Case 5");
             }
         }
 
