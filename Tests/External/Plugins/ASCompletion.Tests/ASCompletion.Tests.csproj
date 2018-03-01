@@ -985,6 +985,9 @@
     <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_uint.as" />
     <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_Sprite.as" />
     <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_complexExpr.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_Sprite2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_Sprite2_withComments.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_Sprite2_withComments2.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

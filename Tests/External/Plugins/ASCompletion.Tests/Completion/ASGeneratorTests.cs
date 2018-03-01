@@ -2570,7 +2570,7 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class ParseFunctionParameters : GenerateJob
             {
-                public IEnumerable<TestCaseData> AS3TestCases
+                static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
@@ -2619,6 +2619,27 @@ namespace ASCompletion.Completion
                         yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Sprite"))
                             .Returns(new List<MemberModel> {new ClassModel {Name = "Sprite", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(new Sprite())");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Sprite2"))
+                            .Returns(new List<MemberModel>
+                            {
+                                new ClassModel {Name = "Sprite", InFile = FileModel.Ignore},
+                                new ClassModel {Name = "Sprite", InFile = FileModel.Ignore}
+                            })
+                            .SetName("Parse function parameters of foo(new Sprite(), new Sprite())");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Sprite2_withComments"))
+                            .Returns(new List<MemberModel>
+                            {
+                                new ClassModel {Name = "Sprite", InFile = FileModel.Ignore},
+                                new ClassModel {Name = "Sprite", InFile = FileModel.Ignore}
+                            })
+                            .SetName("Parse function parameters of foo(/*new MovieClip()*/new Sprite(), /*new MovieClip()*/new Sprite())");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Sprite2_withComments2"))
+                            .Returns(new List<MemberModel>
+                            {
+                                new ClassModel {Name = "Sprite", InFile = FileModel.Ignore},
+                                new ClassModel {Name = "Sprite", InFile = FileModel.Ignore}
+                            })
+                            .SetName("Parse function parameters of foo(/*)*/new Sprite(), /*(((((*/new Sprite())");
                         yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_complexExpr"))
                             .Returns(new List<MemberModel> {new ClassModel {Name = "DisplayObject", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(new Sprite().addChild(new Sprite()))")
@@ -2626,7 +2647,7 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -2718,6 +2739,7 @@ namespace ASCompletion.Completion
                 internal static List<MemberModel> Common(string sourceText, ScintillaControl sci)
                 {
                     SetSrc(sci, sourceText);
+                    sci.Colourise(0, -1);
                     var result = ASGenerator.ParseFunctionParameters(sci, sci.CurrentPos).Select(it => it.result.Type ?? it.result.Member).ToList();
                     return result;
                 }
