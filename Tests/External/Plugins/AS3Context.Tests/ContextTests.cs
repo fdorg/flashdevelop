@@ -103,6 +103,8 @@ namespace AS3Context
                     .Returns(new ClassModel {Name = "Boolean", Type = "Boolean", InFile = FileModel.Ignore});
                 yield return new TestCaseData("(' 1 '   as String)")
                     .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
+                yield return new TestCaseData("new Sprite().addChild(new Sprite())", "3.0.0")
+                    .Returns(ClassModel.VoidClass);
             }
         }
 
