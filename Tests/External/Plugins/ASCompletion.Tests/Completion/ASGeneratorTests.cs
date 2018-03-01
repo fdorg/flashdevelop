@@ -11,7 +11,6 @@ using NUnit.Framework;
 using PluginCore;
 using ScintillaNet;
 using System.Text.RegularExpressions;
-using AS3Context;
 using PluginCore.Managers;
 
 // TODO: Tests with different formatting options using parameterized tests
