@@ -1608,25 +1608,24 @@ namespace ASCompletion.Completion
                 {
                     sci.IsUseTabs = isUseTabs;
                     SetAs3Features(sci);
-                    var context = new AS3Context.Context(new AS3Settings());
-                    ((IASContext)context).BuildClassPath();
-                    context.CurrentModel = ASContext.Context.CurrentModel;
-                    return Common(sourceText, job, context, sci);
+                    return Common(sourceText, job, sci);
                 }
 
                 internal static string HaxeImpl(string sourceText, GeneratorJobType job, bool isUseTabs, ScintillaControl sci)
                 {
                     sci.IsUseTabs = isUseTabs;
                     SetSrc(sci, sourceText);
-                    return Common(sourceText, job, ASContext.Context, sci);
+                    return Common(sourceText, job, sci);
                 }
 
-                internal static string Common(string sourceText, GeneratorJobType job, IASContext context, ScintillaControl sci)
+                internal static string Common(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     SetSrc(sci, sourceText);
                     sci.Colourise(0, -1);
-                    var visibleExternalElements = context.GetVisibleExternalElements();
-                    ASContext.Context.GetVisibleExternalElements().Returns(visibleExternalElements);
+                    var list = new MemberList();
+                    list.Merge(ASContext.GetLanguageContext(sci.ConfigurationLanguage).GetVisibleExternalElements());
+                    list.Merge(ASContext.Context.CurrentModel.Imports);
+                    ASContext.Context.GetVisibleExternalElements().Returns(list);
                     ASGenerator.GenerateJob(job, ASContext.Context.CurrentMember, ASContext.Context.CurrentClass, null, null);
                     return sci.Text;
                 }
