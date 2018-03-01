@@ -75,6 +75,9 @@ namespace HaXeContext.Generators
                     .Returns(null)
                     .SetName("Convert to const. Issue2009. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2009");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_GenerateFunction_1", GeneratorJobType.Function, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_GenerateFunction_1"))
+                    .SetName("fo|o((v is String)). Generate function");
             }
         }
 
@@ -175,10 +178,10 @@ namespace HaXeContext.Generators
         [
             Test,
             TestCaseSource(nameof(ContextualGeneratorTestCases)),
-            TestCaseSource(nameof(Issue2017TestCases)),
-            TestCaseSource(nameof(ContextualGeneratorForOptionParametersTestCases)),
-            TestCaseSource(nameof(Issue1880TestCases)),
-            TestCaseSource(nameof(Issue2060TestCases))
+            //TestCaseSource(nameof(Issue2017TestCases)),
+            //TestCaseSource(nameof(ContextualGeneratorForOptionParametersTestCases)),
+            //TestCaseSource(nameof(Issue1880TestCases)),
+            //TestCaseSource(nameof(Issue2060TestCases))
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 

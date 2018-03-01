@@ -2584,17 +2584,6 @@ namespace ASCompletion.Completion
                                 }
                             }
                         }
-                        else if (c == '}')
-                        {
-                            var s = sb.ToString().TrimStart();
-                            if (s.Length > 0 && s.StartsWith("function"))
-                            {
-                                result = new ASResult();
-                                result.Type = ctx.ResolveType("Function", null);
-                                types.Insert(0, result);
-                            }
-                            else types.Insert(0, ASComplete.GetExpressionType(sci, p));
-                        }
                     }
                 }
                 else if (c == ',' && subClosuresCount == 0) writeParam = true;
@@ -2605,15 +2594,18 @@ namespace ASCompletion.Completion
                 {
                     writeParam = false;
                     string trimmed = sb.ToString().Trim(charsToTrim);
-
-                    if (trimmed.Length > 0)
+                    var trimmedLength = trimmed.Length;
+                    if (trimmedLength > 0)
                     {
-                        var type = ctx.ResolveToken(trimmed, ctx.CurrentModel);
+                        var last = trimmed[trimmedLength - 1];
+                        var type = last == '}' && trimmed.StartsWith(ctx.Features.functionKey)
+                                   ? ctx.ResolveType("Function", null)
+                                   : ctx.ResolveToken(trimmed, ctx.CurrentModel);
                         if (!type.IsVoid()) result = new ASResult {Type = type};
                         else result = ASComplete.GetExpressionType(sci, p - 1, false, true);
                         if (result != null && !result.IsNull())
                         {
-                            if (characterClass.IndexOf(trimmed[trimmed.Length - 1]) > -1)
+                            if (characterClass.Contains(last))
                             {
                                 types.Insert(0, result);
                             }
