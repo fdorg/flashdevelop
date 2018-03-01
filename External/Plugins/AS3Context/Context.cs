@@ -891,12 +891,13 @@ namespace AS3Context
 
         public override ClassModel ResolveToken(string token, FileModel inFile)
         {
-            if (token?.Length > 0)
+            var tokenLength = token != null ? token.Length : 0;
+            if (tokenLength > 0)
             {
-                if (token == "</>") return ResolveType("XML", inFile);
                 if (token == "#RegExp") return ResolveType("RegExp", inFile);
                 if (token.StartsWithOrdinal("0x")) return ResolveType("uint", inFile);
                 var first = token[0];
+                if (first == '<' && tokenLength >= 3 && token[tokenLength - 2] == '/' && token[tokenLength - 1] == '>') return ResolveType("XML", inFile);
                 if (char.IsLetter(first))
                 {
                     var index = token.IndexOfOrdinal(" ");
@@ -913,7 +914,7 @@ namespace AS3Context
                         }
                     }
                 }
-                else if (first == '(' && token.Length >= 8/*"(v as T)".Length*/)
+                else if (first == '(' && tokenLength >= 8/*"(v as T)".Length*/)
                 {
                     var m = Regex.Match(token, @"\((?<lv>.+)\s(?<op>as)\s+(?<rv>\w+)\)");
                     if (m.Success) return ResolveType(m.Groups["rv"].Value.Trim(), inFile);

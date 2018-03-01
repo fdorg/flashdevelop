@@ -988,6 +988,7 @@
     <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_Sprite2.as" />
     <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_Sprite2_withComments.as" />
     <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_Sprite2_withComments2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_XML.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

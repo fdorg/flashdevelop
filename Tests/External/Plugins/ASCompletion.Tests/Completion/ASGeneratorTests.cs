@@ -2644,6 +2644,9 @@ namespace ASCompletion.Completion
                             .Returns(new List<MemberModel> {new ClassModel {Name = "DisplayObject", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(new Sprite().addChild(new Sprite()))")
                             .Ignore("");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_XML"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "XML", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(<xml param = '10' />)");
                     }
                 }
 

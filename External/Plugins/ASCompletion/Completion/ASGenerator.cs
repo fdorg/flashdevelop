@@ -2557,29 +2557,6 @@ namespace ASCompletion.Completion
                 else if (c == '(' || c == '[' || c == '<' || c == '{')
                 {
                     if (c == '[') arrCount++;
-                    if (subClosuresCount == 0)
-                    {
-                        if (c == '(')
-                        {
-                            if (!sb.ToString().Contains("<") && !isFuncStarted)
-                            {
-                                result = ASComplete.GetExpressionType(sci, lastMemberPos + 1);
-                                if (!result.IsNull())
-                                {
-                                    types.Insert(0, result);
-                                }
-                            }
-                        }
-                        else if (c == '<')
-                        {
-                            if (sb.ToString().TrimStart().Length == 0)
-                            {
-                                result = new ASResult();
-                                result.Type = ctx.ResolveType("XML", null);
-                                types.Insert(0, result);
-                            }
-                        }
-                    }
                     subClosuresCount++;
                     sb.Append(c);
                 }
