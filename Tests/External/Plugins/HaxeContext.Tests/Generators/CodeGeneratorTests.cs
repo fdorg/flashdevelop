@@ -75,6 +75,21 @@ namespace HaXeContext.Generators
                     .Returns(null)
                     .SetName("Convert to const. Issue2009. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2009");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_GenerateFunction_1", GeneratorJobType.Function, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_GenerateFunction_1"))
+                    .SetName("fo|o((v is String)). Generate function. Case 1");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_GenerateFunction_2", GeneratorJobType.Function, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_GenerateFunction_2"))
+                    .SetName("Generate function with many arguments. Case 2");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_GenerateFunction_3", GeneratorJobType.Function, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_GenerateFunction_3"))
+                    .SetName("fo|o(1 < 2 && 1 > 0 ? 1 : 0). Generate function. Case 3");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_GenerateFunction_4", GeneratorJobType.Function, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_GenerateFunction_4"))
+                    .SetName("fo|o(this.bar().x). Generate function . Case 4");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_GenerateFunction_5", GeneratorJobType.Function, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_GenerateFunction_5"))
+                    .SetName("fo|o((this.bar().x:Int)). Generate function . Case 5");
             }
         }
 
@@ -161,12 +176,24 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> Issue2060TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2060_1", GeneratorJobType.FunctionPublic, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2060_1"))
+                    .SetName("Foo.f|oo([new Array<Int>()]). Generate public function")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2060");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(ContextualGeneratorTestCases)),
             TestCaseSource(nameof(Issue2017TestCases)),
             TestCaseSource(nameof(ContextualGeneratorForOptionParametersTestCases)),
-            TestCaseSource(nameof(Issue1880TestCases))
+            TestCaseSource(nameof(Issue1880TestCases)),
+            TestCaseSource(nameof(Issue2060TestCases))
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 

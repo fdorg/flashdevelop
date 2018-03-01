@@ -11,7 +11,6 @@ using NUnit.Framework;
 using PluginCore;
 using ScintillaNet;
 using System.Text.RegularExpressions;
-using AS3Context;
 using PluginCore.Managers;
 
 // TODO: Tests with different formatting options using parameterized tests
@@ -1608,25 +1607,24 @@ namespace ASCompletion.Completion
                 {
                     sci.IsUseTabs = isUseTabs;
                     SetAs3Features(sci);
-                    var context = new AS3Context.Context(new AS3Settings());
-                    ((IASContext)context).BuildClassPath();
-                    context.CurrentModel = ASContext.Context.CurrentModel;
-                    return Common(sourceText, job, context, sci);
+                    return Common(sourceText, job, sci);
                 }
 
                 internal static string HaxeImpl(string sourceText, GeneratorJobType job, bool isUseTabs, ScintillaControl sci)
                 {
                     sci.IsUseTabs = isUseTabs;
                     SetSrc(sci, sourceText);
-                    return Common(sourceText, job, ASContext.Context, sci);
+                    return Common(sourceText, job, sci);
                 }
 
-                internal static string Common(string sourceText, GeneratorJobType job, IASContext context, ScintillaControl sci)
+                internal static string Common(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     SetSrc(sci, sourceText);
                     sci.Colourise(0, -1);
-                    var visibleExternalElements = context.GetVisibleExternalElements();
-                    ASContext.Context.GetVisibleExternalElements().Returns(visibleExternalElements);
+                    var list = new MemberList();
+                    list.Merge(ASContext.GetLanguageContext(sci.ConfigurationLanguage).GetVisibleExternalElements());
+                    list.Merge(ASContext.Context.CurrentModel.Imports);
+                    ASContext.Context.GetVisibleExternalElements().Returns(list);
                     ASGenerator.GenerateJob(job, ASContext.Context.CurrentMember, ASContext.Context.CurrentClass, null, null);
                     return sci.Text;
                 }
@@ -2570,66 +2568,83 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class ParseFunctionParameters : GenerateJob
             {
-                public IEnumerable<TestCaseData> AS3TestCases
+                static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_String"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "String", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(\"string\")");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Boolean"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Boolean", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(true)");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Boolean_false"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Boolean", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(falsee)");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Digit"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Number", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(1)");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Array"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Array", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(new Array())");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_ArrayInitializer"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Array", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo([])");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Object"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Object", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(new Object())");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_ObjectInitializer"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Object", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo({})");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Vector"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Vector.<int>", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(new Vector.<int>())");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_VectorInitializer"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Vector.<int>", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(new <int>[])");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_TwoDimensionalVectorInitializer"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Vector.<Vector.<int>>", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(new <Vector.<int>>[new <int>[]])");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_MultidimensionalVectorInitializer"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Vector.<Vector.<Vector.<int>>>", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(new <Vector.<Vector.<int>>>[new <Vector.<int>[new <int>[]]])");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_ArrayAccess"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "int", InFile = FileModel.Ignore}})
-                                .SetName("Parse function parameters of foo(v[0][0].length)");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_String"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "String", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(\"string\")");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Boolean"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Boolean", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(true)");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Boolean_false"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Boolean", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(false)");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Digit"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Number", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(1)");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Array"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Array", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(new Array())");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_ArrayInitializer"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Array", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo([])");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Object"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Object", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(new Object())");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_ObjectInitializer"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Object", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo({})");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Vector"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Vector.<int>", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(new Vector.<int>())");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_VectorInitializer"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Vector.<int>", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(new <int>[])");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_TwoDimensionalVectorInitializer"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Vector.<Vector.<int>>", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(new <Vector.<int>>[new <int>[]])");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_MultidimensionalVectorInitializer"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Vector.<Vector.<Vector.<int>>>", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(new <Vector.<Vector.<int>>>[new <Vector.<int>>[new <int>[]]])");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_ArrayAccess"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "int", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(v[0][0].length)");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_uint"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "uint", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(0xFF0000)");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Sprite"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "Sprite", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(new Sprite())");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Sprite2"))
+                            .Returns(new List<MemberModel>
+                            {
+                                new ClassModel {Name = "Sprite", InFile = FileModel.Ignore},
+                                new ClassModel {Name = "Sprite", InFile = FileModel.Ignore}
+                            })
+                            .SetName("Parse function parameters of foo(new Sprite(), new Sprite())");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Sprite2_withComments"))
+                            .Returns(new List<MemberModel>
+                            {
+                                new ClassModel {Name = "Sprite", InFile = FileModel.Ignore},
+                                new ClassModel {Name = "Sprite", InFile = FileModel.Ignore}
+                            })
+                            .SetName("Parse function parameters of foo(/*new MovieClip()*/new Sprite(), /*new MovieClip()*/new Sprite())");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Sprite2_withComments2"))
+                            .Returns(new List<MemberModel>
+                            {
+                                new ClassModel {Name = "Sprite", InFile = FileModel.Ignore},
+                                new ClassModel {Name = "Sprite", InFile = FileModel.Ignore}
+                            })
+                            .SetName("Parse function parameters of foo(/*)*/new Sprite(), /*(((((*/new Sprite())");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_XML"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "XML", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(<xml param = '10' />)");
                     }
                 }
 
-                public IEnumerable<TestCaseData> HaxeTestCases
+                static IEnumerable<TestCaseData> HaxeTestCases
                 {
                     get
                     {
@@ -2695,8 +2710,11 @@ namespace ASCompletion.Completion
                                 .SetName("Parse function parameters of foo(function() {})");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Math.random.1.5"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Function", InFile = FileModel.Ignore}})
+                                .Returns(new List<MemberModel> {new ClassModel {Name = "Float", InFile = FileModel.Ignore}})
                                 .SetName("Parse function parameters of foo(Math.random(1.5))");
+                        yield return new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_complexExpr"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "DisplayObject", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(new Sprite().addChild(new Sprite()))");
                     }
                 }
 
@@ -2721,6 +2739,11 @@ namespace ASCompletion.Completion
                 internal static List<MemberModel> Common(string sourceText, ScintillaControl sci)
                 {
                     SetSrc(sci, sourceText);
+                    sci.Colourise(0, -1);
+                    var list = new MemberList();
+                    list.Merge(ASContext.GetLanguageContext(sci.ConfigurationLanguage).GetVisibleExternalElements());
+                    list.Merge(ASContext.Context.CurrentModel.Imports);
+                    ASContext.Context.GetVisibleExternalElements().Returns(list);
                     var result = ASGenerator.ParseFunctionParameters(sci, sci.CurrentPos).Select(it => it.result.Type ?? it.result.Member).ToList();
                     return result;
                 }

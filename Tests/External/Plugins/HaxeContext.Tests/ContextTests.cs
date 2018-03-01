@@ -232,6 +232,10 @@ namespace HaXeContext
                     .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
                 yield return new TestCaseData("(v:String)", "3.0.0")
                     .Returns(ClassModel.VoidClass);
+                yield return new TestCaseData("new Sprite().addChild(new Sprite())", "3.0.0")
+                    .Returns(ClassModel.VoidClass);
+                yield return new TestCaseData("new String('1')", "3.0.0")
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
             }
         }
 

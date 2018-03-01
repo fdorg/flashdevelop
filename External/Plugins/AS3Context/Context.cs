@@ -891,12 +891,13 @@ namespace AS3Context
 
         public override ClassModel ResolveToken(string token, FileModel inFile)
         {
-            if (token?.Length > 0)
+            var tokenLength = token != null ? token.Length : 0;
+            if (tokenLength > 0)
             {
-                if (token == "</>") return ResolveType("XML", inFile);
                 if (token == "#RegExp") return ResolveType("RegExp", inFile);
                 if (token.StartsWithOrdinal("0x")) return ResolveType("uint", inFile);
                 var first = token[0];
+                if (first == '<' && tokenLength >= 3 && token[tokenLength - 2] == '/' && token[tokenLength - 1] == '>') return ResolveType("XML", inFile);
                 if (char.IsLetter(first))
                 {
                     var index = token.IndexOfOrdinal(" ");
@@ -905,15 +906,28 @@ namespace AS3Context
                         var word = token.Substring(0, index);
                         if (word == "delete") return ResolveType(features.booleanKey, inFile);
                         if (word == "typeof") return ResolveType(features.stringKey, inFile);
-                        if (word == "new" && token[token.Length - 1] == ')')
+                        if (word == "new")
                         {
+                            var dot = ' ';
+                            var parCount = 0;
+                            for (var i = 0; i < tokenLength; i++)
+                            {
+                                var c = token[i];
+                                if (c == '(') parCount++;
+                                else if (c == ')')
+                                {
+                                    parCount--;
+                                    if (parCount == 0) dot = '.';
+                                }
+                                else if (dot != ' ' && c == dot) return ClassModel.VoidClass;
+                            }
                             token = token.Substring(index + 1);
-                            token = Regex.Replace(token, @"\(.*", string.Empty);
+                            if (token[token.Length - 1] == ')') token = Regex.Replace(token, @"\(.*", string.Empty);
                             return ResolveType(token, inFile);
                         }
                     }
                 }
-                else if (first == '(' && token.Length >= 8/*"(v as T)".Length*/)
+                else if (first == '(' && tokenLength >= 8/*"(v as T)".Length*/)
                 {
                     var m = Regex.Match(token, @"\((?<lv>.+)\s(?<op>as)\s+(?<rv>\w+)\)");
                     if (m.Success) return ResolveType(m.Groups["rv"].Value.Trim(), inFile);
