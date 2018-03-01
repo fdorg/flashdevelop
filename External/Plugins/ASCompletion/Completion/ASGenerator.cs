@@ -2521,7 +2521,6 @@ namespace ASCompletion.Completion
             char[] charsToTrim = {' ', '\t', '\r', '\n'};
             int counter = sci.TextLength; // max number of chars in parameters line (to avoid infinitive loop)
             string characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
-            int lastMemberPos = p;
 
             char c = ' ';
             while (p < counter && !doBreak)
@@ -2585,11 +2584,6 @@ namespace ASCompletion.Completion
                                 }
                             }
                         }
-                        else if (c == ')' && sb.ToString().StartsWithOrdinal("new"))
-                        {
-                            lastMemberPos = p - 1;
-                            writeParam = true;
-                        }
                         else if (c == '}')
                         {
                             var s = sb.ToString().TrimStart();
@@ -2603,35 +2597,20 @@ namespace ASCompletion.Completion
                         }
                     }
                 }
-                else if (c == ',' && subClosuresCount == 0)
-                {
-                    if (isFuncStarted)
-                    {
-                        result = ASComplete.GetExpressionType(sci, p - 1, true, true);
-                        result.Context.coma = ComaExpression.FunctionParameter;
-                        types.Add(result);
-                    }
-                    writeParam = true;
-                }
-                else if (isFuncStarted)
-                {
-                    sb.Append(c);
-                    if (subClosuresCount == 0 && characterClass.Contains(c))
-                    {
-                        lastMemberPos = p - 1;
-                    }
-                }
+                else if (c == ',' && subClosuresCount == 0) writeParam = true;
+                else if (isFuncStarted) sb.Append(c);
                 else if (characterClass.Contains(c)) doBreak = true;
 
                 if (writeParam)
                 {
                     writeParam = false;
                     string trimmed = sb.ToString().Trim(charsToTrim);
+
                     if (trimmed.Length > 0)
                     {
                         var type = ctx.ResolveToken(trimmed, ctx.CurrentModel);
                         if (!type.IsVoid()) result = new ASResult {Type = type};
-                        else result = ASComplete.GetExpressionType(sci, lastMemberPos + 1);
+                        else result = ASComplete.GetExpressionType(sci, p - 1, false, true);
                         if (result != null && !result.IsNull())
                         {
                             if (characterClass.IndexOf(trimmed[trimmed.Length - 1]) > -1)

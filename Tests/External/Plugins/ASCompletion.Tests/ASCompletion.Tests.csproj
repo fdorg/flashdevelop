@@ -984,7 +984,7 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterAssignStatementToVar_issue1880_1.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_uint.as" />
     <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_Sprite.as" />
-    <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_complexExpr.as" />
+    <EmbeddedResource Include="Test Files\generated\haxe\ParseFunctionParameters_complexExpr.hx" />
     <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_Sprite2.as" />
     <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_Sprite2_withComments.as" />
     <EmbeddedResource Include="Test Files\generated\as3\ParseFunctionParameters_Sprite2_withComments2.as" />

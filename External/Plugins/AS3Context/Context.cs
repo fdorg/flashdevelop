@@ -908,6 +908,19 @@ namespace AS3Context
                         if (word == "typeof") return ResolveType(features.stringKey, inFile);
                         if (word == "new")
                         {
+                            var dot = ' ';
+                            var parCount = 0;
+                            for (var i = 0; i < tokenLength; i++)
+                            {
+                                var c = token[i];
+                                if (c == '(') parCount++;
+                                else if (c == ')')
+                                {
+                                    parCount--;
+                                    if (parCount == 0) dot = '.';
+                                }
+                                else if (dot != ' ' && c == dot) return ClassModel.VoidClass;
+                            }
                             token = token.Substring(index + 1);
                             if (token[token.Length - 1] == ')') token = Regex.Replace(token, @"\(.*", string.Empty);
                             return ResolveType(token, inFile);

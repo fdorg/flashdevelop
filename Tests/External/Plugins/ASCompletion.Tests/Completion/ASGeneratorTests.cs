@@ -2609,7 +2609,7 @@ namespace ASCompletion.Completion
                             .SetName("Parse function parameters of foo(new <Vector.<int>>[new <int>[]])");
                         yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_MultidimensionalVectorInitializer"))
                             .Returns(new List<MemberModel> {new ClassModel {Name = "Vector.<Vector.<Vector.<int>>>", InFile = FileModel.Ignore}})
-                            .SetName("Parse function parameters of foo(new <Vector.<Vector.<int>>>[new <Vector.<int>[new <int>[]]])");
+                            .SetName("Parse function parameters of foo(new <Vector.<Vector.<int>>>[new <Vector.<int>>[new <int>[]]])");
                         yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_ArrayAccess"))
                             .Returns(new List<MemberModel> {new ClassModel {Name = "int", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(v[0][0].length)");
@@ -2640,10 +2640,6 @@ namespace ASCompletion.Completion
                                 new ClassModel {Name = "Sprite", InFile = FileModel.Ignore}
                             })
                             .SetName("Parse function parameters of foo(/*)*/new Sprite(), /*(((((*/new Sprite())");
-                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_complexExpr"))
-                            .Returns(new List<MemberModel> {new ClassModel {Name = "DisplayObject", InFile = FileModel.Ignore}})
-                            .SetName("Parse function parameters of foo(new Sprite().addChild(new Sprite()))")
-                            .Ignore("");
                         yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_XML"))
                             .Returns(new List<MemberModel> {new ClassModel {Name = "XML", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(<xml param = '10' />)");
@@ -2716,8 +2712,11 @@ namespace ASCompletion.Completion
                                 .SetName("Parse function parameters of foo(function() {})");
                         yield return
                             new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_Math.random.1.5"))
-                                .Returns(new List<MemberModel> {new ClassModel {Name = "Function", InFile = FileModel.Ignore}})
+                                .Returns(new List<MemberModel> {new ClassModel {Name = "Float", InFile = FileModel.Ignore}})
                                 .SetName("Parse function parameters of foo(Math.random(1.5))");
+                        yield return new TestCaseData(ReadAllTextHaxe("ParseFunctionParameters_complexExpr"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "DisplayObject", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(new Sprite().addChild(new Sprite()))");
                     }
                 }
 
@@ -2743,6 +2742,10 @@ namespace ASCompletion.Completion
                 {
                     SetSrc(sci, sourceText);
                     sci.Colourise(0, -1);
+                    var list = new MemberList();
+                    list.Merge(ASContext.GetLanguageContext(sci.ConfigurationLanguage).GetVisibleExternalElements());
+                    list.Merge(ASContext.Context.CurrentModel.Imports);
+                    ASContext.Context.GetVisibleExternalElements().Returns(list);
                     var result = ASGenerator.ParseFunctionParameters(sci, sci.CurrentPos).Select(it => it.result.Type ?? it.result.Member).ToList();
                     return result;
                 }
