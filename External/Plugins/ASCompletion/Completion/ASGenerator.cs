@@ -2528,7 +2528,6 @@ namespace ASCompletion.Completion
             int lastMemberPos = p;
 
             char c = ' ';
-            // add [] and <>
             while (p < counter && !doBreak)
             {
                 var c2 = c;

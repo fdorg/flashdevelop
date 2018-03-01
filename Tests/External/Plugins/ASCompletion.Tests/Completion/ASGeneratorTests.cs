@@ -2619,6 +2619,9 @@ namespace ASCompletion.Completion
                         yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_Sprite"))
                             .Returns(new List<MemberModel> {new ClassModel {Name = "Sprite", InFile = FileModel.Ignore}})
                             .SetName("Parse function parameters of foo(new Sprite())");
+                        yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_complexExpr"))
+                            .Returns(new List<MemberModel> {new ClassModel {Name = "DisplayObject", InFile = FileModel.Ignore}})
+                            .SetName("Parse function parameters of foo(new Sprite().addChild(new Sprite()))");
                     }
                 }
 
