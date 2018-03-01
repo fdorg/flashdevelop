@@ -1607,7 +1607,7 @@ namespace ASCompletion.Completion
         private static void ChangeMethodDecl(ScintillaControl sci, ClassModel inClass)
         {
             int wordPos = sci.WordEndPosition(sci.CurrentPos, true);
-            List<FunctionParameter> functionParameters = ParseFunctionParameters(sci, wordPos);
+            var parameters = ParseFunctionParameters(sci, wordPos);
 
             ASResult funcResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
             if (funcResult == null || funcResult.Member == null) return;
@@ -1642,7 +1642,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            ChangeDecl(sci, inClass, funcResult.Member, functionParameters);
+            ChangeDecl(sci, inClass, funcResult.Member, parameters);
         }
 
         private static void ChangeConstructorDecl(ScintillaControl sci, ClassModel inClass)
@@ -2722,7 +2722,7 @@ namespace ASCompletion.Completion
             Visibility visibility = job.Equals(GeneratorJobType.FunctionPublic) ? Visibility.Public : GetDefaultVisibility(inClass);
             var wordStartPos = sci.WordStartPosition(sci.CurrentPos, true);
             int wordPos = sci.WordEndPosition(sci.CurrentPos, true);
-            List<FunctionParameter> functionParameters = ParseFunctionParameters(sci, wordPos);
+            List<FunctionParameter> parameters = ParseFunctionParameters(sci, wordPos);
             // evaluate, if the function should be generated in other class
             ASResult funcResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
             if (member != null && ASContext.CommonSettings.GenerateScope && !funcResult.Context.Value.Contains(ASContext.Context.Features.dot)) AddExplicitScopeReference(sci, inClass, member);
@@ -2910,31 +2910,31 @@ namespace ASCompletion.Completion
                                 continue;
                             }
                             type = cleanType(type);
-                            var parameter = $"parameter{functionParameters.Count}";
+                            var parameter = $"parameter{parameters.Count}";
                             if (type.StartsWith('?'))
                             {
                                 parameter = $"?{parameter}";
                                 type = type.TrimStart('?');
                             }
                             if (i == typeLength - 1) newMemberType = type;
-                            else functionParameters.Add(new FunctionParameter(parameter, type, type, callerExpr));
+                            else parameters.Add(new FunctionParameter(parameter, type, type, callerExpr));
                         }
-                        if (functionParameters.Count == 1 && functionParameters[0].paramType == voidKey)
-                            functionParameters.Clear();
+                        if (parameters.Count == 1 && parameters[0].paramType == voidKey)
+                            parameters.Clear();
                     }
                 }
                 newMemberType = cleanType(newMemberType);
             }
             // add imports to function argument types
-            if (ASContext.Context.Settings.GenerateImports && functionParameters.Count > 0)
+            if (ASContext.Context.Settings.GenerateImports && parameters.Count > 0)
             {
-                var types = GetQualifiedTypes(functionParameters.Select(it => it.paramQualType), inClass.InFile);
+                var types = GetQualifiedTypes(parameters.Select(it => it.paramQualType), inClass.InFile);
                 position += AddImportsByName(types, sci.LineFromPosition(position));
                 if (latest == null) sci.SetSel(position, sci.WordEndPosition(position, true));
                 else sci.SetSel(position, position);
             }
             var newMember = NewMember(contextToken, isStatic, FlagType.Function, visibility);
-            newMember.Parameters = functionParameters.Select(parameter => new MemberModel(parameter.paramName, parameter.paramQualType, FlagType.ParameterVar, 0)).ToList();
+            newMember.Parameters = parameters.Select(it => new MemberModel(AvoidKeyword(it.paramName), it.paramQualType, FlagType.ParameterVar, 0)).ToList();
             if (newMemberType != null) newMember.Type = newMemberType;
             GenerateFunction(newMember, position, inClass, detach);
         }

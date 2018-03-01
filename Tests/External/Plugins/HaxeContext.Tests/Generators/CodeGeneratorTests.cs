@@ -77,7 +77,10 @@ namespace HaXeContext.Generators
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2009");
                 yield return new TestCaseData("BeforeContextualGeneratorTests_GenerateFunction_1", GeneratorJobType.Function, true)
                     .Returns(ReadAllText("AfterContextualGeneratorTests_GenerateFunction_1"))
-                    .SetName("fo|o((v is String)). Generate function");
+                    .SetName("fo|o((v is String)). Generate function. Case 1");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_GenerateFunction_2", GeneratorJobType.Function, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_GenerateFunction_2"))
+                    .SetName("Generate function with many arguments. Case 2");
             }
         }
 
