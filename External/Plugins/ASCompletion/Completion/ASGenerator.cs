@@ -2656,28 +2656,20 @@ namespace ASCompletion.Completion
                         result = ASComplete.GetExpressionType(sci, p - 1, true, true);
                         result.Context.coma = ComaExpression.FunctionParameter;
                         types.Add(result);
-                        writeParam = true;
                     }
-                    else if (!isSingleQuote && !isDoubleQuote)
-                    {
-                        writeParam = true;
-                    }
-                    else
-                    {
-                        sb.Append(c);
-                    }
+                    writeParam = true;
                     wasEscapeChar = false;
                 }
                 else if (isFuncStarted)
                 {
                     sb.Append(c);
-                    if (!isSingleQuote && !isDoubleQuote && subClosuresCount == 0 && characterClass.IndexOf(c) > -1)
+                    if (!isSingleQuote && !isDoubleQuote && subClosuresCount == 0 && characterClass.Contains(c))
                     {
                         lastMemberPos = p - 1;
                     }
                     wasEscapeChar = false;
                 }
-                else if (characterClass.IndexOf(c) > -1)
+                else if (characterClass.Contains(c))
                 {
                     if (!isDoubleQuote && !isSingleQuote) doBreak = true;
                     else sb.Append(c);
