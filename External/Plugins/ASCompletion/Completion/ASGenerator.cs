@@ -2513,9 +2513,6 @@ namespace ASCompletion.Completion
             StringBuilder sb = new StringBuilder();
             List<ASResult> types = new List<ASResult>();
             bool isFuncStarted = false;
-            bool isDoubleQuote = false;
-            bool isSingleQuote = false;
-            bool wasEscapeChar = false;
             bool doBreak = false;
             bool writeParam = false;
             int subClosuresCount = 0;
@@ -2551,13 +2548,13 @@ namespace ASCompletion.Completion
                     else break;
                 }
                 else if (c == ';' && !isFuncStarted) break;
-                else if (c == ')' && isFuncStarted && !wasEscapeChar && !isDoubleQuote && !isSingleQuote && subClosuresCount == 0)
+                else if (c == ')' && isFuncStarted && subClosuresCount == 0)
                 {
                     isFuncStarted = false;
                     writeParam = true;
                     doBreak = true;
                 }
-                else if ((c == '(' || c == '[' || c == '<' || c == '{') && !wasEscapeChar && !isDoubleQuote && !isSingleQuote)
+                else if (c == '(' || c == '[' || c == '<' || c == '{')
                 {
                     if (c == '[') arrCount++;
                     if (subClosuresCount == 0)
@@ -2585,14 +2582,12 @@ namespace ASCompletion.Completion
                     }
                     subClosuresCount++;
                     sb.Append(c);
-                    wasEscapeChar = false;
                 }
-                else if ((c == ')' || c == ']' || (c2 != '-' && c == '>') || c == '}') && !wasEscapeChar && !isDoubleQuote && !isSingleQuote)
+                else if ((c == ')' || c == ']' || (c2 != '-' && c == '>') || c == '}'))
                 {
                     if (c == ']') arrCount--;
                     subClosuresCount--;
                     sb.Append(c);
-                    wasEscapeChar = false;
                     if (subClosuresCount == 0)
                     {
                         if (c == ']')
@@ -2631,34 +2626,7 @@ namespace ASCompletion.Completion
                         }
                     }
                 }
-                else if (c == '\\')
-                {
-                    wasEscapeChar = !wasEscapeChar;
-                    sb.Append(c);
-                }
-                else if (c == '"' && !wasEscapeChar && !isSingleQuote)
-                {
-                    isDoubleQuote = !isDoubleQuote;
-                    if (subClosuresCount == 0 && !isDoubleQuote && (char) sci.CharAt(p) != '.')
-                    {
-                        result = ASComplete.GetExpressionType(sci, p);
-                        types.Add(result);
-                    }
-                    sb.Append(c);
-                    wasEscapeChar = false;
-                }
-                else if (c == '\'' && !wasEscapeChar && !isDoubleQuote)
-                {
-                    isSingleQuote = !isSingleQuote;
-                    if (subClosuresCount == 0 && !isSingleQuote)
-                    {
-                        result = ASComplete.GetExpressionType(sci, p);
-                        types.Add(result);
-                    }
-                    sb.Append(c);
-                    wasEscapeChar = false;
-                }
-                else if (c == ',' && subClosuresCount == 0 && !isDoubleQuote && !isSingleQuote)
+                else if (c == ',' && subClosuresCount == 0)
                 {
                     if (isFuncStarted)
                     {
@@ -2667,22 +2635,16 @@ namespace ASCompletion.Completion
                         types.Add(result);
                     }
                     writeParam = true;
-                    wasEscapeChar = false;
                 }
                 else if (isFuncStarted)
                 {
                     sb.Append(c);
-                    if (!isSingleQuote && !isDoubleQuote && subClosuresCount == 0 && characterClass.Contains(c))
+                    if (subClosuresCount == 0 && characterClass.Contains(c))
                     {
                         lastMemberPos = p - 1;
                     }
-                    wasEscapeChar = false;
                 }
-                else if (characterClass.Contains(c))
-                {
-                    if (!isDoubleQuote && !isSingleQuote) doBreak = true;
-                    else sb.Append(c);
-                }
+                else if (characterClass.Contains(c)) doBreak = true;
 
                 if (writeParam)
                 {
