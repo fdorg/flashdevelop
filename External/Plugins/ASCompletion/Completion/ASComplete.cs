@@ -1634,11 +1634,7 @@ namespace ASCompletion.Completion
             {
                 // custom completion
                 MemberModel customMethod = ctx.ResolveFunctionContext(sci, expr.Context, autoHide);
-                if (customMethod != null)
-                {
-                    expr = new ASResult();
-                    expr.Member = customMethod;
-                }
+                if (customMethod != null) expr = new ASResult {Member = customMethod, Context = new ASExpr()};
             }
             if (expr.IsNull())
                 return false;
@@ -1673,8 +1669,7 @@ namespace ASCompletion.Completion
                 if (method == null)
                     return false;
             }
-            if ((method.Comments == null || method.Comments.Trim() == "")
-                && expr.InClass != null && expr.InClass.Implements != null)
+            if ((method.Comments == null || method.Comments.Trim() == "") && expr.InClass?.Implements != null)
             {
                 ASResult iResult = new ASResult();
                 foreach (string type in expr.InClass.Implements)
@@ -1684,13 +1679,13 @@ namespace ASCompletion.Completion
                     if (iResult.Member != null)
                     {
                         iResult.RelClass = expr.RelClass;
+                        iResult.Context = expr.Context;
                         expr = iResult;
                         method = iResult.Member;
                         break;
                     }
                 }
             }
-            
             expr.Context.Position = position;
             FunctionContextResolved(sci, expr.Context, method, expr.RelClass, false);
             return true;
