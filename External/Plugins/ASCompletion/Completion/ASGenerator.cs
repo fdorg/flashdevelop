@@ -2522,7 +2522,6 @@ namespace ASCompletion.Completion
             int counter = sci.TextLength; // max number of chars in parameters line (to avoid infinitive loop)
             string characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
 
-            char c = ' ';
             while (p < counter && !doBreak)
             {
                 if (sci.PositionIsOnComment(p))
@@ -2535,8 +2534,7 @@ namespace ASCompletion.Completion
                     sb.Append((char)sci.CharAt(p++));
                     continue;
                 }
-                var c2 = c;
-                c = (char)sci.CharAt(p++);
+                var c = (char) sci.CharAt(p++);
                 ASResult result;
                 if (c == '(' && !isFuncStarted)
                 {
@@ -2553,13 +2551,13 @@ namespace ASCompletion.Completion
                     writeParam = true;
                     doBreak = true;
                 }
-                else if (c == '(' || c == '[' || c == '<' || c == '{')
+                else if (c == '(' || c == '[' || c == '{')
                 {
                     if (c == '[') arrCount++;
                     subClosuresCount++;
                     sb.Append(c);
                 }
-                else if (c == ')' || c == ']' || (c2 != '-' && c == '>') || c == '}')
+                else if (c == ')' || c == ']' || c == '}')
                 {
                     if (c == ']') arrCount--;
                     subClosuresCount--;

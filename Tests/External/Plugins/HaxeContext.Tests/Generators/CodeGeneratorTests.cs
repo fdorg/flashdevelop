@@ -81,6 +81,9 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("BeforeContextualGeneratorTests_GenerateFunction_2", GeneratorJobType.Function, true)
                     .Returns(ReadAllText("AfterContextualGeneratorTests_GenerateFunction_2"))
                     .SetName("Generate function with many arguments. Case 2");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_GenerateFunction_3", GeneratorJobType.Function, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_GenerateFunction_3"))
+                    .SetName("fo|o(1 < 2 && 1 > 0 ? 1 : 0). Generate function. Case 3");
             }
         }
 
@@ -181,10 +184,10 @@ namespace HaXeContext.Generators
         [
             Test,
             TestCaseSource(nameof(ContextualGeneratorTestCases)),
-            //TestCaseSource(nameof(Issue2017TestCases)),
-            //TestCaseSource(nameof(ContextualGeneratorForOptionParametersTestCases)),
-            //TestCaseSource(nameof(Issue1880TestCases)),
-            //TestCaseSource(nameof(Issue2060TestCases))
+            TestCaseSource(nameof(Issue2017TestCases)),
+            TestCaseSource(nameof(ContextualGeneratorForOptionParametersTestCases)),
+            TestCaseSource(nameof(Issue1880TestCases)),
+            TestCaseSource(nameof(Issue2060TestCases))
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 

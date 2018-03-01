@@ -232,6 +232,8 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_GenerateFunction_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_GenerateFunction_2.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_GenerateFunction_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_GenerateFunction_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_GenerateFunction_3.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
