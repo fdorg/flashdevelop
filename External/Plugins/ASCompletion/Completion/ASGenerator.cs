@@ -2583,7 +2583,7 @@ namespace ASCompletion.Completion
                     subClosuresCount++;
                     sb.Append(c);
                 }
-                else if ((c == ')' || c == ']' || (c2 != '-' && c == '>') || c == '}'))
+                else if (c == ')' || c == ']' || (c2 != '-' && c == '>') || c == '}')
                 {
                     if (c == ']') arrCount--;
                     subClosuresCount--;
