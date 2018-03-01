@@ -2530,6 +2530,11 @@ namespace ASCompletion.Completion
             char c = ' ';
             while (p < counter && !doBreak)
             {
+                if (sci.PositionIsOnComment(p))
+                {
+                    p++;
+                    continue;
+                }
                 var c2 = c;
                 c = (char)sci.CharAt(p++);
                 ASResult result;

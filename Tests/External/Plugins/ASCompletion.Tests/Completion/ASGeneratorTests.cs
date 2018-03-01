@@ -2621,7 +2621,8 @@ namespace ASCompletion.Completion
                             .SetName("Parse function parameters of foo(new Sprite())");
                         yield return new TestCaseData(ReadAllTextAS3("ParseFunctionParameters_complexExpr"))
                             .Returns(new List<MemberModel> {new ClassModel {Name = "DisplayObject", InFile = FileModel.Ignore}})
-                            .SetName("Parse function parameters of foo(new Sprite().addChild(new Sprite()))");
+                            .SetName("Parse function parameters of foo(new Sprite().addChild(new Sprite()))")
+                            .Ignore("");
                     }
                 }
 

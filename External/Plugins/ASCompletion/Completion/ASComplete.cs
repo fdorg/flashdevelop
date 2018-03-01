@@ -1690,7 +1690,7 @@ namespace ASCompletion.Completion
                     }
                 }
             }
-
+            
             expr.Context.Position = position;
             FunctionContextResolved(sci, expr.Context, method, expr.RelClass, false);
             return true;
