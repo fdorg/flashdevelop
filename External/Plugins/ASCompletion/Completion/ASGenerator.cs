@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -2535,6 +2534,11 @@ namespace ASCompletion.Completion
                     p++;
                     continue;
                 }
+                if (sci.PositionIsInString(p))
+                {
+                    sb.Append((char)sci.CharAt(p++));
+                    continue;
+                }
                 var c2 = c;
                 c = (char)sci.CharAt(p++);
                 ASResult result;
@@ -2686,7 +2690,7 @@ namespace ASCompletion.Completion
                     string trimmed = sb.ToString().Trim(charsToTrim);
                     if (trimmed.Length > 0)
                     {
-                        var type = ASContext.Context.ResolveToken(trimmed, ASContext.Context.CurrentModel);
+                        var type = ctx.ResolveToken(trimmed, ctx.CurrentModel);
                         if (!type.IsVoid()) result = new ASResult {Type = type};
                         else result = ASComplete.GetExpressionType(sci, lastMemberPos + 1);
                         if (result != null && !result.IsNull())
