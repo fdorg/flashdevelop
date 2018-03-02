@@ -502,7 +502,7 @@ namespace CodeRefactor.Provider
         /// Generates an FRSearch to find all instances of the given member name.
         /// Enables WholeWord and Match Case. No comment/string literal, escape characters, or regex searching.
         /// </summary>
-        private static FRSearch GetFRSearch(string memberName, bool includeComments, bool includeStrings)
+        internal static FRSearch GetFRSearch(string memberName, bool includeComments, bool includeStrings)
         {
             FRSearch search = new FRSearch(memberName);
             search.IsRegex = false;

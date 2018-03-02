@@ -268,6 +268,9 @@ namespace CodeRefactor.Commands
                     yield return new TestCaseData("BeforeRename_issue1852", "b")
                         .Returns(ReadAllText("AfterRename_issue1852"))
                         .SetName("Issue 1852");
+                    yield return new TestCaseData("BeforeRenameParameterVar", "newName")
+                        .Returns(ReadAllText("AfterRenameParameterVar"))
+                        .SetName("Rename parameter of function");
                 }
             }
 

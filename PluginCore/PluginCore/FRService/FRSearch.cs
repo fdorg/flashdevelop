@@ -94,7 +94,7 @@ namespace PluginCore.FRService
         /// <summary>
         /// Replace regular expressions groups in replacement text
         /// </summary>
-        /// <param name="escapedText">Text to expand</param>
+        /// <param name="text">Text to expand</param>
         /// <param name="match">Search result (for reinjecting groups)</param>
         static public string ExpandGroups(string text, SearchMatch match)
         {
