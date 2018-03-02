@@ -672,15 +672,15 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Show resolved element declaration
         /// </summary>
-        static public bool OpenDocumentToDeclaration(ScintillaControl Sci, ASResult result)
+        /// <param name="sci">Scintilla control</param>
+        /// <param name="result">Element declaration</param>
+        public static bool OpenDocumentToDeclaration(ScintillaControl sci, ASResult result)
         {
-            FileModel model = result.InFile
-                ?? ((result.Member != null && result.Member.InFile != null) ? result.Member.InFile : null)
-                ?? ((result.Type != null) ? result.Type.InFile : null);
+            var model = result.InFile ?? result.Member?.InFile ?? result.Type?.InFile;
             if (model == null || model.FileName == "") return false;
-            ClassModel inClass = result.InClass ?? result.Type;
+            var inClass = result.InClass ?? result.Type;
 
-            SaveLastLookupPosition(Sci);
+            SaveLastLookupPosition(sci);
 
             if (model != ASContext.Context.CurrentModel)
             {
@@ -701,12 +701,8 @@ namespace ASCompletion.Completion
                         result.Member = result.InFile.Members.Search(result.Member.Name, 0, 0);
                 }
             }
-            if ((inClass == null || inClass.IsVoid()) && result.Member == null)
-                return false;
-
-            Sci = ASContext.CurSciControl;
-            if (Sci == null)
-                return false;
+            if ((inClass == null || inClass.IsVoid()) && result.Member == null) return false;
+            if (ASContext.CurSciControl == null) return false;
 
             int line = 0;
             string name = null;
@@ -718,7 +714,7 @@ namespace ASCompletion.Completion
                 name = result.Member.Name;
             }
             // class declaration
-            else if (inClass.LineFrom > 0)
+            else if (inClass != null && inClass.LineFrom > 0)
             {
                 line = inClass.LineFrom;
                 name = inClass.Name;
@@ -2603,7 +2599,7 @@ namespace ASCompletion.Completion
 
             var ctx = ASContext.Context;
             var type = ctx.ResolveToken(value, inClass.InFile);
-            if (!type.IsVoid()) return new ASResult {Type = type, Context = context, InClass = inClass, InFile = inFile, Path = context.Value};
+            if (!type.IsVoid()) return new ASResult {Type = type, Context = context, InClass = type, InFile = type.InFile, Path = context.Value};
 
             var features = ctx.Features;
             if (expression.StartsWithOrdinal(features.dot))
