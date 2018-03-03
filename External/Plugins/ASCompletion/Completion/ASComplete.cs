@@ -2856,10 +2856,11 @@ namespace ASCompletion.Completion
                         if (token == "set" && contextMember.Parameters[1].Name == "set") return EvalVariable("set_" + contextMember.Name, local, inFile, inClass);
                     }
 
-                    var subExpressionsCount = local.SubExpressions?.Count ?? 0;
+                    var checkFunction = local.SubExpressions != null && local.SubExpressions.Count == 1
+                                        && !string.IsNullOrEmpty(local.Value) && local.Value.IndexOf('.') == local.Value.IndexOf(".#0~");
                     foreach (MemberModel var in local.LocalVars)
                     {
-                        if (var.Name == token && (var.Flags.HasFlag(FlagType.Function) || subExpressionsCount != 1 || local.Value[local.Value.Length - 1] != /*.#0*/'~'))
+                        if (var.Name == token && (!checkFunction || var.Flags.HasFlag(FlagType.Function)))
                         {
                             result.Member = var;
                             result.InFile = inFile;
