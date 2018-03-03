@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Context;
@@ -131,7 +132,32 @@ namespace HaXeContext.Completion
                             if (member?.Type != null)
                             {
                                 var type = ASContext.Context.ResolveType(member.Type, ASContext.Context.CurrentModel);
-                                var.Type = type.IndexType;
+                                var iteratorIndexType = type.IndexType;
+                                var.Type = iteratorIndexType;
+                                if (expr.Type.IndexType.Contains(','))
+                                {
+                                    var t = expr.Type;
+                                    var originTypes = t.IndexType.Split(',');
+                                    if (!originTypes.Contains(var.Type))
+                                    {
+                                        var.Type = null;
+                                        t.ResolveExtends();
+                                        t = t.Extends;
+                                        while (!t.IsVoid())
+                                        {
+                                            var types = t.IndexType.Split(',');
+                                            for (var j = 0; j < types.Length; j++)
+                                            {
+                                                if (types[j] != iteratorIndexType) continue;
+                                                var.Type = originTypes[j].Trim();
+                                                break;
+                                            }
+                                            if (var.Type != null) break;
+                                            t.ResolveExtends();
+                                            t = t.Extends;
+                                        }
+                                    }
+                                }
                             }
                             if (var.Type == null)
                             {
