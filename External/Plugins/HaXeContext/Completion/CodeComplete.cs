@@ -113,7 +113,7 @@ namespace HaXeContext.Completion
                 var parCount = 0;
                 for (var i = rvalueStart; i < methodEndPosition; i++)
                 {
-                    if (sci.PositionIsOnComment(i)) continue;
+                    if (sci.PositionIsOnComment(i) || sci.PositionIsInString(i)) continue;
                     var c = (char)sci.CharAt(i);
                     if (c <= ' ') continue;
                     if (c == '(') parCount++;
