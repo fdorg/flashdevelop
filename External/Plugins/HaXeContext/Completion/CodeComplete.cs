@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Context;
@@ -124,60 +123,58 @@ namespace HaXeContext.Completion
                         if (parCount >= 0) continue;
                         var expr = GetExpressionType(sci, i, false, true);
                         var exprType = expr.Type;
-                        if (exprType != null)
+                        if (exprType == null) return;
+                        var members = exprType.Members;
+                        var member = members.Search("iterator", 0, 0);
+                        string iteratorIndexType = null;
+                        if (member == null)
                         {
-                            var members = exprType.Members;
-                            var member = members.Search("iterator", 0, 0);
-                            string iteratorIndexType = null;
-                            if (member == null)
+                            if (members.Search("hasNext", 0, 0) != null)
                             {
-                                if (members.Search("hasNext", 0, 0) != null)
-                                {
-                                    member = members.Search("next", 0, 0);
-                                    if (member != null) iteratorIndexType = member.Type;
-                                }
-                            }
-                            else
-                            {
-                                var type = ASContext.Context.ResolveType(member.Type, ASContext.Context.CurrentModel);
-                                iteratorIndexType = type.IndexType;
+                                member = members.Search("next", 0, 0);
+                                if (member != null) iteratorIndexType = member.Type;
                             }
                             if (exprType.Name.StartsWith("Iterator<")) exprType = expr.InClass;
-                            if (iteratorIndexType != null)
+                        }
+                        else
+                        {
+                            var type = ASContext.Context.ResolveType(member.Type, ASContext.Context.CurrentModel);
+                            iteratorIndexType = type.IndexType;
+                        }
+                        if (iteratorIndexType != null)
+                        {
+                            var.Type = iteratorIndexType;
+                            if (exprType.IndexType.Contains(','))
                             {
-                                var.Type = iteratorIndexType;
-                                if (exprType.IndexType.Contains(','))
+                                var t = exprType;
+                                var originTypes = t.IndexType.Split(',');
+                                if (!originTypes.Contains(var.Type))
                                 {
-                                    var t = exprType;
-                                    var originTypes = t.IndexType.Split(',');
-                                    if (!originTypes.Contains(var.Type))
+                                    var.Type = null;
+                                    t.ResolveExtends();
+                                    t = t.Extends;
+                                    while (!t.IsVoid())
                                     {
-                                        var.Type = null;
+                                        var types = t.IndexType.Split(',');
+                                        for (var j = 0; j < types.Length; j++)
+                                        {
+                                            if (types[j] != iteratorIndexType) continue;
+                                            var.Type = originTypes[j].Trim();
+                                            break;
+                                        }
+                                        if (var.Type != null) break;
                                         t.ResolveExtends();
                                         t = t.Extends;
-                                        while (!t.IsVoid())
-                                        {
-                                            var types = t.IndexType.Split(',');
-                                            for (var j = 0; j < types.Length; j++)
-                                            {
-                                                if (types[j] != iteratorIndexType) continue;
-                                                var.Type = originTypes[j].Trim();
-                                                break;
-                                            }
-                                            if (var.Type != null) break;
-                                            t.ResolveExtends();
-                                            t = t.Extends;
-                                        }
                                     }
                                 }
                             }
-                            if (var.Type == null)
-                            {
-                                var type = ASContext.Context.ResolveType(ASContext.Context.Features.dynamicKey, null);
-                                var.Type = type.QualifiedName;
-                            }
-                            var.Flags |= FlagType.Inferred;
                         }
+                        if (var.Type == null)
+                        {
+                            var type = ASContext.Context.ResolveType(ASContext.Context.Features.dynamicKey, null);
+                            var.Type = type.QualifiedName;
+                        }
+                        var.Flags |= FlagType.Inferred;
                         return;
                     }
                     else if (c == '.' && sci.CharAt(i + 1) == '.' && sci.CharAt(i + 2) == '.')
