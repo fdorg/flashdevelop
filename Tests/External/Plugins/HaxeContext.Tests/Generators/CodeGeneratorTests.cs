@@ -209,16 +209,32 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_4"))
                     .SetName("Issue2069. Case 4.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2069_5", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_5"))
+                    .SetName("Issue2069. Case 5.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2069_6", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_6"))
+                    .SetName("Issue2069. Case 6.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2069_7", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_7"))
+                    .SetName("Issue2069. Case 7.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2069_8", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_8"))
+                    .SetName("Issue2069. Case 8.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
             }
         }
 
         [
             Test,
-            TestCaseSource(nameof(ContextualGeneratorTestCases)),
-            TestCaseSource(nameof(Issue2017TestCases)),
-            TestCaseSource(nameof(ContextualGeneratorForOptionParametersTestCases)),
-            TestCaseSource(nameof(Issue1880TestCases)),
-            TestCaseSource(nameof(Issue2060TestCases)),
+            //TestCaseSource(nameof(ContextualGeneratorTestCases)),
+            //TestCaseSource(nameof(Issue2017TestCases)),
+            //TestCaseSource(nameof(ContextualGeneratorForOptionParametersTestCases)),
+            //TestCaseSource(nameof(Issue1880TestCases)),
+            //TestCaseSource(nameof(Issue2060TestCases)),
             TestCaseSource(nameof(Issue2069TestCases)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);

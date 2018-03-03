@@ -112,6 +112,15 @@ namespace HaXeContext.Completion
                 return;
             }
             var rvalueEnd = ExpressionEndPosition(sci, rvalueStart, sci.LineEndPosition(var.LineTo));
+            var endPosition = sci.LineEndPosition(ASContext.Context.CurrentMember.LineTo);
+            for (var i = rvalueEnd; i < endPosition; i++)
+            {
+                if(sci.PositionIsOnComment(i)) continue;
+                var c = (char) sci.CharAt(i);
+                if (c <= ' ') continue;
+                if (c == ';') break;
+                if (c == '.') rvalueEnd = ExpressionEndPosition(sci, i + 1, endPosition);
+            }
             var expr = GetExpressionType(sci, rvalueEnd, false, true);
             if (expr.Type != null)
             {
