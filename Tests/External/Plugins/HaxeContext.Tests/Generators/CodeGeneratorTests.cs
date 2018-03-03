@@ -135,13 +135,11 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue2022_1", GeneratorJobType.Function, false)
                     .Returns(null)
                     .SetName("`Generate private function` shouldn't work for optional parameter. private function.")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2022")
-                    .Ignore("");
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2022");
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue2022_1", GeneratorJobType.FunctionPublic, false)
                     .Returns(null)
                     .SetName("`Generate public function` shouldn't work for optional parameter. private function.")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2022")
-                    .Ignore("");
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2022");
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue2022_2", GeneratorJobType.Function, false)
                     .Returns(null)
                     .SetName("`Generate private function` shouldn't work for optional parameter. local function.")
@@ -149,6 +147,10 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue2022_2", GeneratorJobType.FunctionPublic, false)
                     .Returns(null)
                     .SetName("`Generate public function` shouldn't work for optional parameter. local function.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2022");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2022_3", GeneratorJobType.FieldFromParameter, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2022_3"))
+                    .SetName("foo(?ar|gs). Generate field.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2022");
             }
         }

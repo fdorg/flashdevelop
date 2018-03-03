@@ -2844,7 +2844,8 @@ namespace ASCompletion.Completion
             if (!inClass.IsVoid() && !string.IsNullOrEmpty(context.Features.ConstructorKey) && token == context.Features.ConstructorKey && local.BeforeBody)
                 return EvalVariable(inClass.Name, local, inFile, inClass);
             var contextMember = local.ContextMember;
-            if (contextMember == null || local.coma != ComaExpression.None || !local.BeforeBody || (contextMember.Flags & (FlagType.Getter | FlagType.Setter)) > 0)
+            if (contextMember == null || local.coma != ComaExpression.None || !local.BeforeBody || (contextMember.Flags & (FlagType.Getter | FlagType.Setter)) > 0
+                || (local.BeforeBody && local.WordBefore != context.Features.functionKey))
             {
                 // local vars
                 if (local.LocalVars != null)
@@ -3689,19 +3690,6 @@ namespace ASCompletion.Completion
                         }
                         sb.Insert(0, c);
                     }
-                    else if (characterClass.IndexOf(c) >= 0)
-                    {
-                        if (hadWS && !hadDot)
-                        {
-                            expression.Separator = " ";
-                            break;
-                        }
-                        hadWS = false;
-                        hadDot = false;
-                        dotCount = 0;
-                        sb.Insert(0, c);
-                        positionExpression = position;
-                    }
                     else if (c == ';')
                     {
                         if(expression.Separator == " ") expression.Separator = ";";
@@ -3823,6 +3811,19 @@ namespace ASCompletion.Completion
                         expression.RightOperator = curOp;
                         hadDot = true;
                     }
+                    else if (characterClass.IndexOf(c) >= 0)
+                    {
+                        if (hadWS && !hadDot)
+                        {
+                            expression.Separator = " ";
+                            break;
+                        }
+                        hadWS = false;
+                        hadDot = false;
+                        dotCount = 0;
+                        sb.Insert(0, c);
+                        positionExpression = position;
+                    }
                     else //if (hadWS && !hadDot)
                     {
                         if (hadDot && features.SpecialPostfixOperators.Contains(c))
@@ -3831,7 +3832,7 @@ namespace ASCompletion.Completion
                             continue;
                         }
                         if (c == '\'' || c == '"') expression.Separator = "\"";
-                        else expression.Separator = ";";
+                        else expression.Separator = c.ToString();
                         break;
                     }
                 }
