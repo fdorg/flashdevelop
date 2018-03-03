@@ -121,15 +121,23 @@ namespace HaXeContext.Completion
                     {
                         parCount--;
                         if (parCount >= 0) continue;
-                        var expr = GetExpressionType(sci, i - 1, false, true);
+                        var expr = GetExpressionType(sci, i, false, true);
                         if (expr.Type != null)
                         {
-                            var.Type = expr.Type.QualifiedName;
-                            var.Flags |= FlagType.Inferred;
-                        }
-                        else if (expr.Member != null)
-                        {
-                            var.Type = expr.Member.Type;
+                            var members = expr.Type.Members;
+                            var member = members.Search("iterator", 0, 0);
+                            if (member == null && members.Search("hasNext", 0, 0) != null)
+                                member = members.Search("next", 0, 0);
+                            if (member?.Type != null)
+                            {
+                                var type = ASContext.Context.ResolveType(member.Type, ASContext.Context.CurrentModel);
+                                var.Type = type.IndexType;
+                            }
+                            if (var.Type == null)
+                            {
+                                var type = ASContext.Context.ResolveType(ASContext.Context.Features.dynamicKey, null);
+                                var.Type = type.QualifiedName;
+                            }
                             var.Flags |= FlagType.Inferred;
                         }
                         return;
