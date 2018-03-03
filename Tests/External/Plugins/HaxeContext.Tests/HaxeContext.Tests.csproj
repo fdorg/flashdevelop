@@ -256,6 +256,8 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2069_7.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2069_8.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2069_8.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2069_9.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2069_9.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
@@ -101,6 +102,50 @@ namespace HaXeContext.Completion
             return base.ResolveFunction(sci, position, expr, autoHide);
         }
 
+        protected override void InferVariableType(ScintillaControl sci, ASExpr local, MemberModel var)
+        {
+            var line = sci.GetLine(var.LineFrom);
+            var m = Regex.Match(line, "\\s*for\\s*\\(\\s*" + var.Name + "\\s*in\\s*");
+            if (m.Success)
+            {
+                var rvalueStart = sci.PositionFromLine(var.LineFrom) + m.Index + m.Length;
+                var methodEndPosition = sci.LineEndPosition(ASContext.Context.CurrentMember.LineTo);
+                var parCount = 0;
+                for (var i = rvalueStart; i < methodEndPosition; i++)
+                {
+                    if (sci.PositionIsOnComment(i)) continue;
+                    var c = (char)sci.CharAt(i);
+                    if (c <= ' ') continue;
+                    if (c == '(') parCount++;
+                    else if (c == ')')
+                    {
+                        parCount--;
+                        if (parCount >= 0) continue;
+                        var expr = GetExpressionType(sci, i - 1, false, true);
+                        if (expr.Type != null)
+                        {
+                            var.Type = expr.Type.QualifiedName;
+                            var.Flags |= FlagType.Inferred;
+                        }
+                        else if (expr.Member != null)
+                        {
+                            var.Type = expr.Member.Type;
+                            var.Flags |= FlagType.Inferred;
+                        }
+                        return;
+                    }
+                    else if (c == '.' && sci.CharAt(i + 1) == '.' && sci.CharAt(i + 2) == '.')
+                    {
+                        var type = ASContext.Context.ResolveType("Int", null);
+                        var.Type = type.QualifiedName;
+                        var.Flags |= FlagType.Inferred;
+                        return;
+                    }
+                }
+            }
+            else base.InferVariableType(sci, local, var);
+        }
+
         protected override void InferVariableType(ScintillaControl sci, string declarationLine, int rvalueStart, ASExpr local, MemberModel var)
         {
             var word = sci.GetWordRight(rvalueStart, true);
@@ -111,15 +156,15 @@ namespace HaXeContext.Completion
                 var.Flags |= FlagType.Inferred;
                 return;
             }
+            var methodEndPosition = sci.LineEndPosition(ASContext.Context.CurrentMember.LineTo);
             var rvalueEnd = ExpressionEndPosition(sci, rvalueStart, sci.LineEndPosition(var.LineTo));
-            var endPosition = sci.LineEndPosition(ASContext.Context.CurrentMember.LineTo);
-            for (var i = rvalueEnd; i < endPosition; i++)
+            for (var i = rvalueEnd; i < methodEndPosition; i++)
             {
                 if(sci.PositionIsOnComment(i)) continue;
                 var c = (char) sci.CharAt(i);
                 if (c <= ' ') continue;
                 if (c == ';') break;
-                if (c == '.') rvalueEnd = ExpressionEndPosition(sci, i + 1, endPosition);
+                if (c == '.') rvalueEnd = ExpressionEndPosition(sci, i + 1, methodEndPosition);
             }
             var expr = GetExpressionType(sci, rvalueEnd, false, true);
             if (expr.Type != null)

@@ -3022,6 +3022,11 @@ namespace ASCompletion.Completion
         {
             var sci = ASContext.CurSciControl;
             if (sci == null || var.LineFrom >= sci.LineCount) return;
+            InferVariableType(sci, local, var);
+        }
+
+        protected virtual void InferVariableType(ScintillaControl sci, ASExpr local, MemberModel var)
+        {
             // is it a simple affectation inference?
             var text = sci.GetLine(var.LineFrom);
             var m = Regex.Match(text, "\\s*var\\s+" + var.Name + "\\s*=([^;]+)");
