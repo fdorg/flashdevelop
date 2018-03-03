@@ -4449,7 +4449,7 @@ namespace ASCompletion.Completion
             var result = startPos;
             var statementEnd = startPos;
             var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
-            var groupCount = 0;
+            var parCount = 0;
             var brCount = 0;
             var arrCount = 0;
             var hadWS = false;
@@ -4462,30 +4462,32 @@ namespace ASCompletion.Completion
                     continue;
                 }
                 var c = (char) sci.CharAt(statementEnd++);
-                if (c == '(') groupCount++;
+                if (c == '(') parCount++;
                 else if (c == ')')
                 {
-                    groupCount--;
-                    if (groupCount == 0) result = statementEnd;
-                    if (groupCount <= 0) break;
+                    parCount--;
+                    if (parCount == 0) result = statementEnd;
+                    if (parCount <= 0) break;
                 }
-                else if (c == '{' && groupCount > 0) brCount++;
-                else if (c == '}')
+                else if (c == '{' && parCount == 0) brCount++;
+                else if (c == '}' && parCount == 0)
                 {
                     brCount--;
+                    if (brCount == 0) result = statementEnd;
                     if (brCount < 0) break;
                 }
-                else if (c == '[' && groupCount > 0) arrCount++;
-                else if (c == ']')
+                else if (c == '[' && parCount == 0) arrCount++;
+                else if (c == ']' && parCount == 0)
                 {
                     arrCount--;
+                    if (arrCount == 0) result = statementEnd;
                     if (arrCount < 0) break;
                 }
                 else if (c == ';')
                 {
                     if (brCount == 0) break;
                 }
-                else if (groupCount == 0)
+                else if (parCount == 0 && arrCount == 0 && brCount == 0)
                 {
                     if (characterClass.Contains(c))
                     {

@@ -111,6 +111,20 @@ namespace HaXeContext.Completion
                 var.Flags |= FlagType.Inferred;
                 return;
             }
+            var rvalueEnd = ExpressionEndPosition(sci, rvalueStart, sci.LineEndPosition(var.LineTo));
+            var expr = GetExpressionType(sci, rvalueEnd, false, true);
+            if (expr.Type != null)
+            {
+                var.Type = expr.Type.QualifiedName;
+                var.Flags |= FlagType.Inferred;
+                return;
+            }
+            if (expr.Member != null)
+            {
+                var.Type = expr.Member.Type;
+                var.Flags |= FlagType.Inferred;
+                return;
+            }
             base.InferVariableType(sci, declarationLine, rvalueStart, local, var);
         }
     }
