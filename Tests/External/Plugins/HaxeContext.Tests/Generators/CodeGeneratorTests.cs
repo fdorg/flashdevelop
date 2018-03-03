@@ -189,13 +189,25 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> Issue2069TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2069_1", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_1"))
+                    .SetName("Issue2069. Case 1.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(ContextualGeneratorTestCases)),
             TestCaseSource(nameof(Issue2017TestCases)),
             TestCaseSource(nameof(ContextualGeneratorForOptionParametersTestCases)),
             TestCaseSource(nameof(Issue1880TestCases)),
-            TestCaseSource(nameof(Issue2060TestCases))
+            TestCaseSource(nameof(Issue2060TestCases)),
+            TestCaseSource(nameof(Issue2069TestCases)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 

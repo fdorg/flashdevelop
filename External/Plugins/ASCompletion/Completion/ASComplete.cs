@@ -2867,7 +2867,7 @@ namespace ASCompletion.Completion
                             result.InFile = inFile;
                             result.InClass = inClass;
                             if (var.Type == null && var.Flags.HasFlag(FlagType.LocalVar) && context.Features.hasInference)
-                                InferVariableType(local, var);
+                                context.CodeComplete.InferVariableType(local, var);
 
                             if (var.Flags.HasFlag(FlagType.Function))
                                 result.Type = context.ResolveType("Function", null);
@@ -3018,40 +3018,39 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Infer very simple cases: var foo = {expression}
         /// </summary>
-        private static void InferVariableType(ASExpr local, MemberModel var)
+        private void InferVariableType(ASExpr local, MemberModel var)
         {
-            ScintillaControl sci = ASContext.CurSciControl;
-            if (sci == null || var.LineFrom >= sci.LineCount) 
-                return;
+            var sci = ASContext.CurSciControl;
+            if (sci == null || var.LineFrom >= sci.LineCount) return;
             // is it a simple affectation inference?
-            string text = sci.GetLine(var.LineFrom);
-            Regex reVar = new Regex("\\s*var\\s+" + var.Name + "\\s*=([^;]+)");
-            Match m = reVar.Match(text);
-            if (m.Success && m.Groups[1].Length > 1)
+            var text = sci.GetLine(var.LineFrom);
+            var m = Regex.Match(text, "\\s*var\\s+" + var.Name + "\\s*=([^;]+)");
+            if (!m.Success) return;
+            var rvalue = m.Groups[1];
+            if (rvalue.Length <= 1) return;
+            InferVariableType(sci, text, sci.PositionFromLine(var.LineFrom) + rvalue.Index, local, var);
+        }
+
+        protected virtual void InferVariableType(ScintillaControl sci, string declarationLine, int rvalueStart, ASExpr local, MemberModel var)
+        {
+            int p = declarationLine.IndexOf(';');
+            var text = declarationLine.TrimEnd();
+            if (p < 0) p = text.Length;
+            if (text.EndsWith('(')) p--;
+            // resolve expression
+            ASExpr expr = GetExpression(sci, sci.PositionFromLine(var.LineFrom) + p, true);
+            if (string.IsNullOrEmpty(expr.Value)) return;
+            ASResult result = EvalExpression(expr.Value, expr, ASContext.Context.CurrentModel, ASContext.Context.CurrentClass, true, false);
+            if (result.IsNull()) return;
+            if (result.Type != null && !result.Type.IsVoid())
             {
-                int p = text.IndexOf(';');
-                text = text.TrimEnd();
-                if (p < 0) p = text.Length;
-                if (text.EndsWith('(')) p--;
-                // resolve expression
-                ASExpr expr = GetExpression(sci, sci.PositionFromLine(var.LineFrom) + p, true);
-                if (!string.IsNullOrEmpty(expr.Value))
-                {
-                    ASResult result = EvalExpression(expr.Value, expr, ASContext.Context.CurrentModel, ASContext.Context.CurrentClass, true, false);
-                    if (!result.IsNull())
-                    {
-                        if (result.Type != null && !result.Type.IsVoid())
-                        {
-                            var.Type = result.Type.QualifiedName;
-                            var.Flags |= FlagType.Inferred;
-                        }
-                        else if (result.Member != null)
-                        {
-                            var.Type = result.Member.Type;
-                            var.Flags |= FlagType.Inferred;
-                        } 
-                    }
-                }
+                var.Type = result.Type.QualifiedName;
+                var.Flags |= FlagType.Inferred;
+            }
+            else if (result.Member != null)
+            {
+                var.Type = result.Member.Type;
+                var.Flags |= FlagType.Inferred;
             }
         }
 
