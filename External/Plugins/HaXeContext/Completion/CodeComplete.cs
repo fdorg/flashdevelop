@@ -123,20 +123,32 @@ namespace HaXeContext.Completion
                         parCount--;
                         if (parCount >= 0) continue;
                         var expr = GetExpressionType(sci, i, false, true);
-                        if (expr.Type != null)
+                        var exprType = expr.Type;
+                        if (exprType != null)
                         {
-                            var members = expr.Type.Members;
+                            var members = exprType.Members;
                             var member = members.Search("iterator", 0, 0);
-                            if (member == null && members.Search("hasNext", 0, 0) != null)
-                                member = members.Search("next", 0, 0);
-                            if (member?.Type != null)
+                            string iteratorIndexType = null;
+                            if (member == null)
+                            {
+                                if (members.Search("hasNext", 0, 0) != null)
+                                {
+                                    member = members.Search("next", 0, 0);
+                                    if (member != null) iteratorIndexType = member.Type;
+                                }
+                            }
+                            else
                             {
                                 var type = ASContext.Context.ResolveType(member.Type, ASContext.Context.CurrentModel);
-                                var iteratorIndexType = type.IndexType;
+                                iteratorIndexType = type.IndexType;
+                            }
+                            if (exprType.Name.StartsWith("Iterator<")) exprType = expr.InClass;
+                            if (iteratorIndexType != null)
+                            {
                                 var.Type = iteratorIndexType;
-                                if (expr.Type.IndexType.Contains(','))
+                                if (exprType.IndexType.Contains(','))
                                 {
-                                    var t = expr.Type;
+                                    var t = exprType;
                                     var originTypes = t.IndexType.Split(',');
                                     if (!originTypes.Contains(var.Type))
                                     {
