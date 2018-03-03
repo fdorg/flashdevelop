@@ -1044,9 +1044,9 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("test(); //")
                         .Returns("test()".Length);
                     yield return new TestCaseData("test[1]; //")
-                        .Returns("test".Length);
+                        .Returns("test[1]".Length);
                     yield return new TestCaseData("test['1']; //")
-                        .Returns("test".Length);
+                        .Returns("test['1']".Length);
                     yield return new TestCaseData("x:10, y:10}; //")
                         .Returns("x".Length);
                     yield return new TestCaseData("test()); //")
@@ -1056,7 +1056,7 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("test()}; //")
                         .Returns("test()".Length);
                     yield return new TestCaseData("test[1]); //")
-                        .Returns("test".Length);
+                        .Returns("test[1]".Length);
                     yield return new TestCaseData("test(), 1, 2); //")
                         .Returns("test()".Length);
                     yield return new TestCaseData("test().test().test().test; //")
@@ -1081,6 +1081,20 @@ namespace ASCompletion.Completion
                         .Returns("test(/*12345*/)".Length);
                     yield return new TestCaseData("test(Math.random() > 0.5 ? 1 : 1); //")
                         .Returns("test(Math.random() > 0.5 ? 1 : 1)".Length);
+                    yield return new TestCaseData("[1,2,3,4]; //")
+                        .Returns("[1,2,3,4]".Length);
+                    yield return new TestCaseData("{v:1}; //")
+                        .Returns("{v:1}".Length);
+                    yield return new TestCaseData("{v:[1]}; //")
+                        .Returns("{v:[1]}".Length);
+                    yield return new TestCaseData("[{v:[1]}]; //")
+                        .Returns("[{v:[1]}]".Length);
+                    yield return new TestCaseData("(v:{v:Int}); //")
+                        .Returns("(v:{v:Int})".Length);
+                    yield return new TestCaseData("[(v:{v:Int})]; //")
+                        .Returns("[(v:{v:Int})]".Length);
+                    yield return new TestCaseData("[function() {return 1;}]; //")
+                        .Returns("[function() {return 1;}]".Length);
                 }
             }
 

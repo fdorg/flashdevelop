@@ -197,6 +197,62 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_1"))
                     .SetName("Issue2069. Case 1.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2069_2", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_2"))
+                    .SetName("Issue2069. Case 2.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2069_3", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_3"))
+                    .SetName("Issue2069. Case 3.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2069_4", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_4"))
+                    .SetName("Issue2069. Case 4.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2069_5", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_5"))
+                    .SetName("Issue2069. Case 5.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2069_6", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_6"))
+                    .SetName("Issue2069. Case 6.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2069_7", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_7"))
+                    .SetName("Issue2069. Case 7.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2069_8", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_8"))
+                    .SetName("Issue2069. Case 8.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2069_9", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_9"))
+                    .SetName("Issue2069. Case 9.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2069_10", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_10"))
+                    .SetName("Issue2069. Case 10.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2069_11", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_11"))
+                    .SetName("Issue2069. Case 11.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2069_12", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_12"))
+                    .SetName("Issue2069. Case 12.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2069_13", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_13"))
+                    .SetName("Issue2069. Case 13.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2069_14", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_14"))
+                    .SetName("Issue2069. Case 14.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2069_15", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_15"))
+                    .SetName("Issue2069. Case 15.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
             }
         }
 
