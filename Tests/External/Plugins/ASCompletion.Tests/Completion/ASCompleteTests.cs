@@ -1081,6 +1081,20 @@ namespace ASCompletion.Completion
                         .Returns("test(/*12345*/)".Length);
                     yield return new TestCaseData("test(Math.random() > 0.5 ? 1 : 1); //")
                         .Returns("test(Math.random() > 0.5 ? 1 : 1)".Length);
+                    yield return new TestCaseData("[1,2,3,4]; //")
+                        .Returns("[1,2,3,4]".Length);
+                    yield return new TestCaseData("{v:1}; //")
+                        .Returns("{v:1}".Length);
+                    yield return new TestCaseData("{v:[1]}; //")
+                        .Returns("{v:[1]}".Length);
+                    yield return new TestCaseData("[{v:[1]}]; //")
+                        .Returns("[{v:[1]}]".Length);
+                    yield return new TestCaseData("(v:{v:Int}); //")
+                        .Returns("(v:{v:Int})".Length);
+                    yield return new TestCaseData("[(v:{v:Int})]; //")
+                        .Returns("[(v:{v:Int})]".Length);
+                    yield return new TestCaseData("[function() {return 1;}]; //")
+                        .Returns("[function() {return 1;}]".Length);
                 }
             }
 

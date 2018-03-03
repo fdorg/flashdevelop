@@ -4467,7 +4467,7 @@ namespace ASCompletion.Completion
                 {
                     parCount--;
                     if (parCount == 0) result = statementEnd;
-                    if (parCount <= 0) break;
+                    if (parCount < 0) break;
                 }
                 else if (c == '{' && parCount == 0) brCount++;
                 else if (c == '}' && parCount == 0)
