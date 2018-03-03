@@ -100,5 +100,18 @@ namespace HaXeContext.Completion
             }
             return base.ResolveFunction(sci, position, expr, autoHide);
         }
+
+        protected override void InferVariableType(ScintillaControl sci, string declarationLine, int rvalueStart, ASExpr local, MemberModel var)
+        {
+            var word = sci.GetWordRight(rvalueStart, true);
+            if (word == "untyped")
+            {
+                var type = ASContext.Context.ResolveType(ASContext.Context.Features.dynamicKey, null);
+                var.Type = type.QualifiedName;
+                var.Flags |= FlagType.Inferred;
+                return;
+            }
+            base.InferVariableType(sci, declarationLine, rvalueStart, local, var);
+        }
     }
 }
