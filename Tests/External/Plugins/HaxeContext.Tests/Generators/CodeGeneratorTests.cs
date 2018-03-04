@@ -256,6 +256,14 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_15"))
                     .SetName("Issue2069. Case 15.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2069_16", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_16"))
+                    .SetName("Issue2069. Case 16.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2069_17", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2069_17"))
+                    .SetName("Issue2069. Case 17.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2069");
             }
         }
 
