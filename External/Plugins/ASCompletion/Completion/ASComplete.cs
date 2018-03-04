@@ -3449,10 +3449,15 @@ namespace ASCompletion.Completion
                     if ((dQuotes > 0 && c != '\"') || (sQuotes > 0 && c != '\''))
                     {
                         sbSub.Insert(0, c);
+                        ignoreWhiteSpace = false;
                         continue;
                     }
                     // array access
-                    if (c == ']') arrCount++;
+                    if (c == ']')
+                    {
+                        arrCount++;
+                        ignoreWhiteSpace = false;
+                    }
                     else if (c == '[')
                     {
                         arrCount--;
@@ -3553,6 +3558,7 @@ namespace ASCompletion.Completion
                     }
                     else if (c == ')')
                     {
+                        ignoreWhiteSpace = false;
                         if (!hadDot)
                         {
                             expression.Separator = ";";

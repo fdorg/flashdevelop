@@ -18,12 +18,15 @@ namespace HaXeContext.Generators
 
         internal static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
+        static readonly string testFilesAssemblyPath = $"\\FlashDevelop\\Bin\\Debug\\{nameof(HaXeContext)}\\Test_Files\\";
+        static readonly string testFilesDirectory = $"\\Tests\\External\\Plugins\\{nameof(HaXeContext)}.Tests\\Test Files\\";
+
         static void SetCurrentFile(string fileName)
         {
             fileName = GetFullPath(fileName);
             fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
             fileName = Path.GetFullPath(fileName);
-            fileName = fileName.Replace($"\\FlashDevelop\\Bin\\Debug\\{nameof(HaXeContext)}\\Test_Files\\", $"\\Tests\\External\\Plugins\\{nameof(HaXeContext)}.Tests\\Test Files\\");
+            fileName = fileName.Replace(testFilesAssemblyPath, testFilesDirectory);
             ASContext.Context.CurrentModel.FileName = fileName;
             PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
         }
@@ -256,6 +259,41 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> AssignStatementToVarIssue1999
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue1999_1", GeneratorJobType.AssignStatementToVar, false)
+                    .Returns(null)
+                    .SetName("Contextual generator shouldn't work. if(expr) {|")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1999");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue1999_2", GeneratorJobType.AssignStatementToVar, false)
+                    .Returns(null)
+                    .SetName("Contextual generator shouldn't work. if(expr) {}|")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1999");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue1999_3", GeneratorJobType.AssignStatementToVar, false)
+                    .Returns(null)
+                    .SetName("Contextual generator shouldn't work. if(expr) {}\nelse|")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1999");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue1999_4", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue1999_4"))
+                    .SetName("if(true){}\n[]|. Assign statement to var")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1999");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue1999_5", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue1999_5"))
+                    .SetName("if(true){}\n(v:String)|. Assign statement to var")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1999");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue1999_6", GeneratorJobType.AssignStatementToVar, false)
+                    .Returns(null)
+                    .SetName("Contextual generator shouldn't work. /*some comment*/|")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1999");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue1999_7", GeneratorJobType.AssignStatementToVar, false)
+                    .Returns(null)
+                    .SetName("Contextual generator shouldn't work. case v:|")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1999");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(ContextualGeneratorTestCases)),
@@ -264,6 +302,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(Issue1880TestCases)),
             TestCaseSource(nameof(Issue2060TestCases)),
             TestCaseSource(nameof(Issue2069TestCases)),
+            TestCaseSource(nameof(AssignStatementToVarIssue1999)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 
@@ -280,18 +319,11 @@ namespace HaXeContext.Generators
                 var item = options.Find(it => ((ASCompletion.Completion.GeneratorItem) it).job == job);
                 Assert.IsNotNull(item);
                 var value = item.Value;
+                return sci.Text;
             }
-            else if (job == (GeneratorJobType) (-1))
-            {
-                Assert.IsEmpty(options);
-                return null;
-            }
-            else if (options.Count > 0)
-            {
-                Assert.IsFalse(options.Any(it => ((ASCompletion.Completion.GeneratorItem) it).job == job));
-                return null;
-            }
-            return sci.Text;
+            if (job == (GeneratorJobType) (-1)) Assert.IsEmpty(options);
+            if (options.Count > 0) Assert.IsFalse(options.Any(it => ((ASCompletion.Completion.GeneratorItem) it).job == job));
+            return null;
         }
 
         static IEnumerable<TestCaseData> HandleOverrideTestCases

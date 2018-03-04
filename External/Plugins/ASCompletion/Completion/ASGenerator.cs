@@ -298,6 +298,7 @@ namespace ASCompletion.Completion
                     var returnType = GetStatementReturnType(sci, found.InClass, sci.GetLine(curLine), sci.PositionFromLine(curLine));
                     if (returnType.resolve.Member?.Type == ASContext.Context.Features.voidKey) return;
                     if (returnType.resolve.Type == null && returnType.resolve.Context?.WordBefore == "new") ShowNewClassList(found, returnType.resolve.Context, options);
+                    else if (returnType.resolve.Type == null && returnType.resolve.Member == null) return;
                     else ShowAssignStatementToVarList(found, returnType, options);
                     return;
                 }

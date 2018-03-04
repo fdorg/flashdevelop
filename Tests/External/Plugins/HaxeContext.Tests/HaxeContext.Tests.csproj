@@ -270,6 +270,15 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2069_14.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2069_15.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2069_15.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue1999_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue1999_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue1999_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue1999_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue1999_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue1999_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue1999_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue1999_6.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue1999_7.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
