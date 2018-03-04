@@ -23,4 +23,6 @@
 	<!-- optimize output
 	<haxeflag name="-dce full" /> -->
 	
+	<define name="AIR_SDK" value="${AIR_SDK}"></define>
+	
 </project>
