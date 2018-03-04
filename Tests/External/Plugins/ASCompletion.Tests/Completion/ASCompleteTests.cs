@@ -1095,6 +1095,8 @@ namespace ASCompletion.Completion
                         .Returns("[(v:{v:Int})]".Length);
                     yield return new TestCaseData("[function() {return 1;}]; //")
                         .Returns("[function() {return 1;}]".Length);
+                    yield return new TestCaseData("'12345'; //")
+                        .Returns("'12345'".Length);
                 }
             }
 

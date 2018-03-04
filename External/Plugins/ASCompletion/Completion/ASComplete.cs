@@ -3449,7 +3449,6 @@ namespace ASCompletion.Completion
                     if ((dQuotes > 0 && c != '\"') || (sQuotes > 0 && c != '\''))
                     {
                         sbSub.Insert(0, c);
-                        ignoreWhiteSpace = false;
                         continue;
                     }
                     // array access
@@ -3611,23 +3610,25 @@ namespace ASCompletion.Completion
                                         expression.Separator = ";";
                                         if (expression.SubExpressions != null)
                                         {
-                                            sbSub.Insert(0, "\"");
+                                            sbSub.Insert(0, c);
                                             sb.Insert(0, sbSub.ToString());
                                             break;
                                         }
-                                        sb.Insert(0, "\"" + sbSub + "\"");
+
+                                        sb.Insert(0, string.Concat(c, sbSub, c));
                                         positionExpression = position;
                                         continue;
                                     }
                                 }
-                                if (hadDot)
+                                if (hadDot && !ignoreWhiteSpace)
                                 {
                                     sbSub.Clear();
-                                    sbSub.Insert(0, "\"");
+                                    sbSub.Insert(0, c);
                                     if (expression.SubExpressions == null) expression.SubExpressions = new List<string>();
                                     expression.SubExpressions.Add(string.Empty);
                                     sb.Insert(0, ".#" + (subCount++) + "~");
                                 }
+                                ignoreWhiteSpace = false;
                                 continue;
                             }
                             if (c == '\'' && dQuotes == 0)
@@ -3642,23 +3643,24 @@ namespace ASCompletion.Completion
                                         expression.Separator = ";";
                                         if (expression.SubExpressions != null)
                                         {
-                                            sbSub.Insert(0, "'");
+                                            sbSub.Insert(0, c);
                                             sb.Insert(0, sbSub.ToString());
                                             break;
                                         }
-                                        sb.Insert(0, "'" + sbSub + "'");
+                                        sb.Insert(0, string.Concat(c, sbSub, c));
                                         positionExpression = position;
                                         continue;
                                     }
                                 }
-                                if (hadDot)
+                                if (hadDot && !ignoreWhiteSpace)
                                 {
                                     sbSub.Clear();
-                                    sbSub.Insert(0, "'");
+                                    sbSub.Insert(0, c);
                                     if (expression.SubExpressions == null) expression.SubExpressions = new List<string>();
                                     expression.SubExpressions.Add(string.Empty);
                                     sb.Insert(0, ".#" + (subCount++) + "~");
                                 }
+                                ignoreWhiteSpace = false;
                                 continue;
                             }
                         }
@@ -3821,7 +3823,7 @@ namespace ASCompletion.Completion
                         expression.RightOperator = curOp;
                         hadDot = true;
                     }
-                    else if (characterClass.IndexOf(c) >= 0)
+                    else if (characterClass.Contains(c))
                     {
                         if (hadWS && !hadDot)
                         {
@@ -4467,9 +4469,15 @@ namespace ASCompletion.Completion
             sci.Colourise(0, -1);
             while (statementEnd < endPos)
             {
-                if (sci.PositionIsOnComment(statementEnd) || sci.PositionIsInString(statementEnd))
+                if (sci.PositionIsOnComment(statementEnd))
                 {
                     statementEnd++;
+                    continue;
+                }
+                if (sci.PositionIsInString(statementEnd))
+                {
+                    statementEnd++;
+                    result = statementEnd;
                     continue;
                 }
                 var c = (char) sci.CharAt(statementEnd++);

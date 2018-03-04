@@ -203,7 +203,7 @@ namespace HaXeContext.Completion
             var rvalueEnd = ExpressionEndPosition(sci, rvalueStart, sci.LineEndPosition(var.LineTo));
             for (var i = rvalueEnd; i < methodEndPosition; i++)
             {
-                if(sci.PositionIsOnComment(i)) continue;
+                if(sci.PositionIsOnComment(i) || sci.PositionIsInString(i)) continue;
                 var c = (char) sci.CharAt(i);
                 if (c <= ' ') continue;
                 if (c == ';') break;
