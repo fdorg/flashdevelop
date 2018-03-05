@@ -34,6 +34,7 @@ namespace HaXeContext.Generators
         [TestFixtureSetUp]
         public void Setup()
         {
+            ASContext.CommonSettings.DeclarationModifierOrder = new[] {"public", "protected", "internal", "private", "static", "inline", "override"};
             ASContext.Context.Settings.GenerateImports.Returns(true);
             SetHaxeFeatures(sci);
         }
@@ -93,6 +94,80 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("BeforeContextualGeneratorTests_GenerateFunction_5", GeneratorJobType.Function, true)
                     .Returns(ReadAllText("AfterContextualGeneratorTests_GenerateFunction_5"))
                     .SetName("fo|o((this.bar().x:Int)). Generate function . Case 5");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1747_1", 0, false)
+                    .Returns(null)
+                    .SetName("Issue1747. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1747");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1747_2", 0, false)
+                    .Returns(null)
+                    .SetName("Issue1747. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1747");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1747_3", 0, false)
+                    .Returns(null)
+                    .SetName("Issue1747. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1747");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1747_4", 0, false)
+                    .Returns(null)
+                    .SetName("Issue1747. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1747");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1767_1", 0, false)
+                    .Returns(null)
+                    .SetName("Issue1767. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1767");
+                yield return new TestCaseData("BeforeGenerateConstructor_issue1738_1", GeneratorJobType.Constructor, true)
+                    .Returns(ReadAllText("AfterGenerateConstructor_issue1738_1"))
+                    .SetName("Generate constructor")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1738");
+                yield return new TestCaseData("BeforeGenerateConstructor_issue1738_2", GeneratorJobType.Constructor, true)
+                    .Returns(ReadAllText("AfterGenerateConstructor_issue1738_2"))
+                    .SetName("Generate constructor with parameters")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1738");
+                yield return new TestCaseData("BeforeGenerateConstructor_issue1738_3", GeneratorJobType.ChangeConstructorDecl, true)
+                    .Returns(ReadAllText("AfterGenerateConstructor_issue1738_3"))
+                    .SetName("Change constructor declaration")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1738");
+                yield return new TestCaseData("BeforeGenerateConstructor_issue1738_4", GeneratorJobType.Constructor, false)
+                    .Returns(null)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1738");
+                yield return new TestCaseData("BeforeGenerateConstructor_issue1738_5", GeneratorJobType.ChangeConstructorDecl, false)
+                    .Returns(null)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1738");
+                yield return new TestCaseData("BeforeGenerateConstructor_issue1738_6", GeneratorJobType.ChangeConstructorDecl, false)
+                    .Returns(null)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1738");
+                yield return new TestCaseData("BeforeGenerateConstructor_issue1738_7", GeneratorJobType.ChangeConstructorDecl, true)
+                    .Returns(ReadAllText("AfterGenerateConstructor_issue1738_7"))
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1738");
+                yield return new TestCaseData("BeforeGenerateConstructor_issue1738_8", GeneratorJobType.ChangeConstructorDecl, false)
+                    .Returns(null)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1738");
+                yield return new TestCaseData("BeforeGenerateConstructor_issue1738_9", GeneratorJobType.ChangeConstructorDecl, true)
+                    .Returns(ReadAllText("AfterGenerateConstructor_issue1738_9"))
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1738");
+                yield return new TestCaseData("BeforeImplementInterface_issue1982_1", GeneratorJobType.ImplementInterface, true)
+                    .Returns(ReadAllText("AfterImplementInterface_issue1982_1"))
+                    .SetName("Issue1982. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1982");
+                yield return new TestCaseData("BeforeImplementInterface_issue1982_2", GeneratorJobType.ImplementInterface, false)
+                    .Returns(null)
+                    .SetName("Issue1982. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1982");
+                yield return new TestCaseData("BeforeImplementInterface_issue1982_3", GeneratorJobType.ImplementInterface, false)
+                    .Returns(null)
+                    .SetName("Issue1982. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1982");
+                yield return new TestCaseData("BeforeImplementInterface_issue1982_4", GeneratorJobType.ImplementInterface, false)
+                    .Returns(null)
+                    .SetName("Issue1982. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1982");
+                yield return new TestCaseData("BeforeImplementInterface_issue1982_5", GeneratorJobType.ImplementInterface, false)
+                    .Returns(null)
+                    .SetName("Issue1982. Case 5")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1982");
+                yield return new TestCaseData("BeforeImplementInterface_issue1982_6", GeneratorJobType.ImplementInterface, false)
+                    .Returns(null)
+                    .SetName("Issue1982. Case 6")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1982");
             }
         }
 
@@ -302,6 +377,43 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> AddToInterfaceTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeAddInterfaceDefTests_issue1731_1", GeneratorJobType.AddInterfaceDef, true)
+                    .Returns(ReadAllText("AfterAddInterfaceDefTests_issue1731_1"))
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1731");
+                yield return new TestCaseData("BeforeAddInterfaceDefTests_issue1989_1", GeneratorJobType.AddInterfaceDef, false)
+                    .SetName("Issue 1989. Case 1")
+                    .Returns(null)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1989");
+                yield return new TestCaseData("BeforeAddInterfaceDefTests_issue1989_2", GeneratorJobType.AddInterfaceDef, false)
+                    .SetName("Issue 1989. Case 2")
+                    .Returns(null)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1989");
+                yield return new TestCaseData("BeforeAddInterfaceDefTests_issue1989_3", GeneratorJobType.AddInterfaceDef, false)
+                    .SetName("Issue 1989. Case 3")
+                    .Returns(null)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1989");
+                yield return new TestCaseData("BeforeAddInterfaceDefTests_issue1989_4", GeneratorJobType.AddInterfaceDef, false)
+                    .SetName("Issue 1989. Case 4")
+                    .Returns(null)
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1989");
+            }
+        }
+
+        static IEnumerable<TestCaseData> GenerateFunctionTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGeneratePublicFunction_issue1735_1", GeneratorJobType.FunctionPublic, true)
+                    .Returns(ReadAllText("AfterGeneratePublicFunction_issue1735_1"))
+                    .SetName("Issue1725. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1735");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(ContextualGeneratorTestCases)),
@@ -311,14 +423,16 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(Issue2060TestCases)),
             TestCaseSource(nameof(Issue2069TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue1999)),
+            TestCaseSource(nameof(AddToInterfaceTestCases)),
+            TestCaseSource(nameof(GenerateFunctionTestCases)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 
         internal static string ContextualGenerator(ScintillaControl sci, string fileName, GeneratorJobType job, bool hasGenerator)
         {
             SetSrc(sci, ReadAllText(fileName));
-            SetCurrentFile(fileName);
             sci.Colourise(0, -1);
+            SetCurrentFile(fileName);
             var options = new List<ICompletionListItem>();
             ASGenerator.ContextualGenerator(sci, options);
             if (hasGenerator)

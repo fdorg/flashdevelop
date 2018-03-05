@@ -2933,7 +2933,7 @@ namespace ASCompletion.Completion
                 else sci.SetSel(position, position);
             }
             var newMember = NewMember(contextToken, isStatic, FlagType.Function, visibility);
-            newMember.Parameters = parameters.Select(it => new MemberModel(AvoidKeyword(it.paramName), it.paramQualType, FlagType.ParameterVar, 0)).ToList();
+            newMember.Parameters = parameters.Select(it => new MemberModel(AvoidKeyword(it.paramName), it.paramType, FlagType.ParameterVar, 0)).ToList();
             if (newMemberType != null) newMember.Type = newMemberType;
             GenerateFunction(newMember, position, inClass, detach);
         }

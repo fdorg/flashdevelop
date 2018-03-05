@@ -1,2 +1,0 @@
-﻿package;
-class Flags {}
