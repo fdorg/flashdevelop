@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using ProjectManager.Projects.Haxe;
 using ProjectManager.Projects;
 using AS3Context;
+using HaXeContext.Completion;
 using HaXeContext.Generators;
 using PluginCore.Utilities;
 using ScintillaNet;
@@ -155,6 +156,7 @@ namespace HaXeContext
             haxelibsCache = new Dictionary<string, List<string>>();
             CodeGenerator = new CodeGenerator();
             DocumentationGenerator = new DocumentationGenerator();
+            CodeComplete = new CodeComplete();
             //BuildClassPath(); // defered to first use
         }
         #endregion
@@ -985,18 +987,19 @@ namespace HaXeContext
 
         public override ClassModel ResolveToken(string token, FileModel inFile)
         {
-            if (token?.Length > 0)
+            var tokenLength = token != null ? token.Length : 0;
+            if (tokenLength > 0)
             {
+                if (token == "#RegExp") return ResolveType("EReg", inFile);
                 if (token.StartsWithOrdinal("0x")) return ResolveType("Int", inFile);
                 var first = token[0];
-                var last = token[token.Length - 1];
+                var last = token[tokenLength - 1];
                 if (first == '[' && last == ']')
                 {
                     var dQuotes = 0;
                     var sQuotes = 0;
-                    var length = token.Length;
-                    var arrayComprehensionEnd = length - 3;
-                    for (var i = 1; i < length; i++)
+                    var arrayComprehensionEnd = tokenLength - 3;
+                    for (var i = 1; i < tokenLength; i++)
                     {
                         var c = token[i];
                         if (c == '\"' && sQuotes == 0)
@@ -1029,8 +1032,9 @@ namespace HaXeContext
                     if (GetCurrentSDKVersion() >= "3.1.0")
                     {
                         var groupCount = 0;
-                        var sb = new StringBuilder(token.Length - 2);
-                        for (var i = token.Length - 2; i >= 1; i--)
+                        var length = tokenLength - 2;
+                        var sb = new StringBuilder(length);
+                        for (var i = length; i >= 1; i--)
                         {
                             var c = token[i];
                             if (c == '}' || c == ')') groupCount++;
@@ -1044,7 +1048,7 @@ namespace HaXeContext
                 else if (token.StartsWithOrdinal("cast("))
                 {
                     var groupCount = 0;
-                    var length = token.Length - 1;
+                    var length = tokenLength - 1;
                     for (var i = "cast(".Length; i < length; i++)
                     {
                         var c = token[i];
@@ -1055,6 +1059,30 @@ namespace HaXeContext
                             i++;
                             return ResolveType(token.Substring(i, length - i).Trim(), inFile);
                         }
+                    }
+                }
+                var index = token.IndexOfOrdinal(" ");
+                if (index != -1)
+                {
+                    var word = token.Substring(0, index);
+                    if (word == "new" && last == ')')
+                    {
+                        var dot = ' ';
+                        var parCount = 0;
+                        for (var i = 0; i < tokenLength; i++)
+                        {
+                            var c = token[i];
+                            if (c == '(') parCount++;
+                            else if (c == ')')
+                            {
+                                parCount--;
+                                if (parCount == 0) dot = '.';
+                            }
+                            else if (dot != ' ' && c == dot) return ClassModel.VoidClass;
+                        }
+                        token = token.Substring(index + 1);
+                        token = Regex.Replace(token, @"\(.*", string.Empty);
+                        return ResolveType(token, inFile);
                     }
                 }
             }

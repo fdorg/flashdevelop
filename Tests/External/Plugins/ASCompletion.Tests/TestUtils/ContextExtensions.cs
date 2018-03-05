@@ -92,12 +92,7 @@ namespace ASCompletion.TestUtils
             mock.GetAllProjectClasses().Returns(allProjectClasses);
             mock.CodeGenerator.Returns(context.CodeGenerator);
             mock.DocumentationGenerator.Returns(context.DocumentationGenerator);
-        }
-
-        public static void BuildClassPath(this IASContext context)
-        {
-            if (context is AS3Context.Context) BuildClassPath((AS3Context.Context) context);
-            else if (context is HaXeContext.Context) BuildClassPath((HaXeContext.Context) context);
+            mock.CodeComplete.Returns(context.CodeComplete);
         }
 
         static void BuildClassPath(AS3Context.Context context)

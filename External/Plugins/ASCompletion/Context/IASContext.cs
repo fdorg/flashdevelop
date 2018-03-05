@@ -346,7 +346,10 @@ namespace ASCompletion.Context
         bool HandleGotoDeclaration(ScintillaControl sci, ASExpr expression);
 
         IContextualGenerator CodeGenerator { get; }
+
         IContextualGenerator DocumentationGenerator { get; }
+
+        ASComplete CodeComplete { get; }
         #endregion
 
         #region Properties

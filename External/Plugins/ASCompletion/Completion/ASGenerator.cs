@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -299,6 +298,7 @@ namespace ASCompletion.Completion
                     var returnType = GetStatementReturnType(sci, found.InClass, sci.GetLine(curLine), sci.PositionFromLine(curLine));
                     if (returnType.resolve.Member?.Type == ASContext.Context.Features.voidKey) return;
                     if (returnType.resolve.Type == null && returnType.resolve.Context?.WordBefore == "new") ShowNewClassList(found, returnType.resolve.Context, options);
+                    else if (returnType.resolve.Type == null && returnType.resolve.Member == null) return;
                     else ShowAssignStatementToVarList(found, returnType, options);
                     return;
                 }
@@ -470,7 +470,8 @@ namespace ASCompletion.Completion
                 && found.Member == null
                 && !found.InClass.IsVoid()
                 && !found.InClass.Flags.HasFlag(FlagType.Interface)
-                && position < sci.LineEndPosition(found.InClass.LineTo);
+                && position < sci.LineEndPosition(found.InClass.LineTo)
+                && !ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, position, found.InClass);
         }
 
         /// <summary>
@@ -1607,7 +1608,7 @@ namespace ASCompletion.Completion
         private static void ChangeMethodDecl(ScintillaControl sci, ClassModel inClass)
         {
             int wordPos = sci.WordEndPosition(sci.CurrentPos, true);
-            List<FunctionParameter> functionParameters = ParseFunctionParameters(sci, wordPos);
+            var parameters = ParseFunctionParameters(sci, wordPos);
 
             ASResult funcResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
             if (funcResult == null || funcResult.Member == null) return;
@@ -1642,7 +1643,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            ChangeDecl(sci, inClass, funcResult.Member, functionParameters);
+            ChangeDecl(sci, inClass, funcResult.Member, parameters);
         }
 
         private static void ChangeConstructorDecl(ScintillaControl sci, ClassModel inClass)
@@ -2513,9 +2514,6 @@ namespace ASCompletion.Completion
             StringBuilder sb = new StringBuilder();
             List<ASResult> types = new List<ASResult>();
             bool isFuncStarted = false;
-            bool isDoubleQuote = false;
-            bool isSingleQuote = false;
-            bool wasEscapeChar = false;
             bool doBreak = false;
             bool writeParam = false;
             int subClosuresCount = 0;
@@ -2524,14 +2522,20 @@ namespace ASCompletion.Completion
             char[] charsToTrim = {' ', '\t', '\r', '\n'};
             int counter = sci.TextLength; // max number of chars in parameters line (to avoid infinitive loop)
             string characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
-            int lastMemberPos = p;
 
-            char c = ' ';
-            // add [] and <>
             while (p < counter && !doBreak)
             {
-                var c2 = c;
-                c = (char)sci.CharAt(p++);
+                if (sci.PositionIsOnComment(p))
+                {
+                    p++;
+                    continue;
+                }
+                if (sci.PositionIsInString(p))
+                {
+                    sb.Append((char)sci.CharAt(p++));
+                    continue;
+                }
+                var c = (char) sci.CharAt(p++);
                 ASResult result;
                 if (c == '(' && !isFuncStarted)
                 {
@@ -2539,54 +2543,26 @@ namespace ASCompletion.Completion
                     {
                         isFuncStarted = true;
                     }
-                    else
-                    {
-                        break;
-                    }
+                    else break;
                 }
                 else if (c == ';' && !isFuncStarted) break;
-                else if (c == ')' && isFuncStarted && !wasEscapeChar && !isDoubleQuote && !isSingleQuote && subClosuresCount == 0)
+                else if (c == ')' && isFuncStarted && subClosuresCount == 0)
                 {
                     isFuncStarted = false;
                     writeParam = true;
                     doBreak = true;
                 }
-                else if ((c == '(' || c == '[' || c == '<' || c == '{') && !wasEscapeChar && !isDoubleQuote && !isSingleQuote)
+                else if (c == '(' || c == '[' || c == '{')
                 {
                     if (c == '[') arrCount++;
-                    if (subClosuresCount == 0)
-                    {
-                        if (c == '(')
-                        {
-                            if (!sb.ToString().Contains("<") && !isFuncStarted)
-                            {
-                                result = ASComplete.GetExpressionType(sci, lastMemberPos + 1);
-                                if (!result.IsNull())
-                                {
-                                    types.Insert(0, result);
-                                }
-                            }
-                        }
-                        else if (c == '<')
-                        {
-                            if (sb.ToString().TrimStart().Length == 0)
-                            {
-                                result = new ASResult();
-                                result.Type = ctx.ResolveType("XML", null);
-                                types.Insert(0, result);
-                            }
-                        }
-                    }
                     subClosuresCount++;
                     sb.Append(c);
-                    wasEscapeChar = false;
                 }
-                else if ((c == ')' || c == ']' || (c2 != '-' && c == '>') || c == '}') && !wasEscapeChar && !isDoubleQuote && !isSingleQuote)
+                else if (c == ')' || c == ']' || c == '}')
                 {
                     if (c == ']') arrCount--;
                     subClosuresCount--;
                     sb.Append(c);
-                    wasEscapeChar = false;
                     if (subClosuresCount == 0)
                     {
                         if (c == ']')
@@ -2607,106 +2583,28 @@ namespace ASCompletion.Completion
                                 }
                             }
                         }
-                        else if (c == ')' && sb.ToString().StartsWithOrdinal("new"))
-                        {
-                            lastMemberPos = p - 1;
-                            writeParam = true;
-                        }
-                        else if (c == '}')
-                        {
-                            var s = sb.ToString().TrimStart();
-                            if (s.Length > 0 && s.StartsWith("function"))
-                            {
-                                result = new ASResult();
-                                result.Type = ctx.ResolveType("Function", null);
-                                types.Insert(0, result);
-                            }
-                            else types.Insert(0, ASComplete.GetExpressionType(sci, p));
-                        }
                     }
                 }
-                else if (c == '\\')
-                {
-                    wasEscapeChar = !wasEscapeChar;
-                    sb.Append(c);
-                }
-                else if (c == '"' && !wasEscapeChar && !isSingleQuote)
-                {
-                    isDoubleQuote = !isDoubleQuote;
-                    if (subClosuresCount == 0 && !isDoubleQuote && (char) sci.CharAt(p) != '.')
-                    {
-                        result = ASComplete.GetExpressionType(sci, p);
-                        types.Add(result);
-                    }
-                    sb.Append(c);
-                    wasEscapeChar = false;
-                }
-                else if (c == '\'' && !wasEscapeChar && !isDoubleQuote)
-                {
-                    isSingleQuote = !isSingleQuote;
-                    if (subClosuresCount == 0 && !isSingleQuote)
-                    {
-                        result = ASComplete.GetExpressionType(sci, p);
-                        types.Add(result);
-                    }
-                    sb.Append(c);
-                    wasEscapeChar = false;
-                }
-                else if (c == ',' && subClosuresCount == 0 && !isDoubleQuote && !isSingleQuote)
-                {
-                    if (isFuncStarted)
-                    {
-                        result = ASComplete.GetExpressionType(sci, p - 1, true, true);
-                        result.Context.coma = ComaExpression.FunctionParameter;
-                        types.Add(result);
-                        writeParam = true;
-                    }
-                    else if (!isSingleQuote && !isDoubleQuote)
-                    {
-                        writeParam = true;
-                    }
-                    else
-                    {
-                        sb.Append(c);
-                    }
-                    wasEscapeChar = false;
-                }
-                else if (isFuncStarted)
-                {
-                    sb.Append(c);
-                    if (!isSingleQuote && !isDoubleQuote && subClosuresCount == 0 && characterClass.IndexOf(c) > -1)
-                    {
-                        lastMemberPos = p - 1;
-                    }
-                    wasEscapeChar = false;
-                }
-                else if (characterClass.IndexOf(c) > -1)
-                {
-                    if (!isDoubleQuote && !isSingleQuote) doBreak = true;
-                    else sb.Append(c);
-                }
+                else if (c == ',' && subClosuresCount == 0) writeParam = true;
+                else if (isFuncStarted) sb.Append(c);
+                else if (characterClass.Contains(c)) doBreak = true;
 
                 if (writeParam)
                 {
                     writeParam = false;
                     string trimmed = sb.ToString().Trim(charsToTrim);
-                    if (trimmed.Length > 0)
+                    var trimmedLength = trimmed.Length;
+                    if (trimmedLength > 0)
                     {
-                        if (trimmed.Contains("<"))
-                        {
-                            var expr = trimmed.StartsWithOrdinal("new")
-                                ? ASComplete.GetExpressionType(sci, lastMemberPos + 1, true, true).Context
-                                : null;
-                            trimmed = Regex.Replace(trimmed, @"^new\s", string.Empty);
-                            trimmed = Regex.Replace(trimmed, @">\(.*", ">");
-                            var type = ctx.ResolveType(trimmed, ctx.CurrentModel);
-                            result = new ASResult {Type = type, Context = expr};
-                        }
-                        else if (trimmed.StartsWithOrdinal("new")) result = ASComplete.GetExpressionType(sci, lastMemberPos + 1, true, true);
-                        else result = ASComplete.GetExpressionType(sci, lastMemberPos + 1);
+                        var last = trimmed[trimmedLength - 1];
+                        var type = last == '}' && trimmed.StartsWith(ctx.Features.functionKey)
+                                   ? ctx.ResolveType("Function", null)
+                                   : ctx.ResolveToken(trimmed, ctx.CurrentModel);
+                        if (!type.IsVoid()) result = new ASResult {Type = type};
+                        else result = ASComplete.GetExpressionType(sci, p - 1, false, true);
                         if (result != null && !result.IsNull())
                         {
-                            if (characterClass.IndexOf(trimmed[trimmed.Length - 1]) > -1)
+                            if (characterClass.Contains(last))
                             {
                                 types.Insert(0, result);
                             }
@@ -2715,30 +2613,6 @@ namespace ASCompletion.Completion
                                 types.Add(result);
                             }
                         }
-                        else
-                        {
-                            double d = double.MaxValue;
-                            try
-                            {
-                                d = double.Parse(trimmed, CultureInfo.InvariantCulture);
-                            }
-                            catch (Exception)
-                            {
-                            }
-                            if (d != double.MaxValue && d.ToString().Length == trimmed.Length)
-                            {
-                                result = new ASResult();
-                                result.Type = ctx.ResolveType(ctx.Features.numberKey, null);
-                                types.Insert(0, result);
-                            }
-                            else if (trimmed.Equals("true") || trimmed.Equals("false"))
-                            {
-                                result = new ASResult();
-                                result.Type = ctx.ResolveType(ctx.Features.booleanKey, null);
-                                types.Insert(0, result);
-                            }
-                        }
-                        
                         if (types.Count == 0)
                         {
                             result = new ASResult();
@@ -2786,7 +2660,6 @@ namespace ASCompletion.Completion
                     sb = new StringBuilder();
                 }
             }
-
             for (int i = 0; i < prms.Count; i++)
             {
                 if (prms[i].paramType == "void")
@@ -2796,7 +2669,6 @@ namespace ASCompletion.Completion
                 }
                 else prms[i].paramName = GuessVarName(prms[i].paramName, FormatType(GetShortType(prms[i].paramType)));
             }
-
             for (int i = 0; i < prms.Count; i++)
             {
                 int iterator = -1;
@@ -2849,7 +2721,7 @@ namespace ASCompletion.Completion
             Visibility visibility = job.Equals(GeneratorJobType.FunctionPublic) ? Visibility.Public : GetDefaultVisibility(inClass);
             var wordStartPos = sci.WordStartPosition(sci.CurrentPos, true);
             int wordPos = sci.WordEndPosition(sci.CurrentPos, true);
-            List<FunctionParameter> functionParameters = ParseFunctionParameters(sci, wordPos);
+            List<FunctionParameter> parameters = ParseFunctionParameters(sci, wordPos);
             // evaluate, if the function should be generated in other class
             ASResult funcResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
             if (member != null && ASContext.CommonSettings.GenerateScope && !funcResult.Context.Value.Contains(ASContext.Context.Features.dot)) AddExplicitScopeReference(sci, inClass, member);
@@ -3037,31 +2909,31 @@ namespace ASCompletion.Completion
                                 continue;
                             }
                             type = cleanType(type);
-                            var parameter = $"parameter{functionParameters.Count}";
+                            var parameter = $"parameter{parameters.Count}";
                             if (type.StartsWith('?'))
                             {
                                 parameter = $"?{parameter}";
                                 type = type.TrimStart('?');
                             }
                             if (i == typeLength - 1) newMemberType = type;
-                            else functionParameters.Add(new FunctionParameter(parameter, type, type, callerExpr));
+                            else parameters.Add(new FunctionParameter(parameter, type, type, callerExpr));
                         }
-                        if (functionParameters.Count == 1 && functionParameters[0].paramType == voidKey)
-                            functionParameters.Clear();
+                        if (parameters.Count == 1 && parameters[0].paramType == voidKey)
+                            parameters.Clear();
                     }
                 }
                 newMemberType = cleanType(newMemberType);
             }
             // add imports to function argument types
-            if (ASContext.Context.Settings.GenerateImports && functionParameters.Count > 0)
+            if (ASContext.Context.Settings.GenerateImports && parameters.Count > 0)
             {
-                var types = GetQualifiedTypes(functionParameters.Select(it => it.paramQualType), inClass.InFile);
+                var types = GetQualifiedTypes(parameters.Select(it => it.paramQualType), inClass.InFile);
                 position += AddImportsByName(types, sci.LineFromPosition(position));
                 if (latest == null) sci.SetSel(position, sci.WordEndPosition(position, true));
                 else sci.SetSel(position, position);
             }
             var newMember = NewMember(contextToken, isStatic, FlagType.Function, visibility);
-            newMember.Parameters = functionParameters.Select(parameter => new MemberModel(parameter.paramName, parameter.paramQualType, FlagType.ParameterVar, 0)).ToList();
+            newMember.Parameters = parameters.Select(it => new MemberModel(AvoidKeyword(it.paramName), it.paramQualType, FlagType.ParameterVar, 0)).ToList();
             if (newMemberType != null) newMember.Type = newMemberType;
             GenerateFunction(newMember, position, inClass, detach);
         }

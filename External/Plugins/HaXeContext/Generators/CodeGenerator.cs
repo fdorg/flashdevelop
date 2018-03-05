@@ -25,7 +25,7 @@ namespace HaXeContext.Generators
 
         protected override bool CanShowConvertToConst(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
-            return !ASComplete.IsInterpolationExpr(sci, position) 
+            return !ASContext.Context.CodeComplete.IsStringInterpolationStyle(sci, position) 
                 && base.CanShowConvertToConst(sci, position, expr, found);
         }
 
