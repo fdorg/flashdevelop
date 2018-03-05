@@ -414,6 +414,28 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> ImplementInterfaceTestCases
+        {
+            get
+            {
+                yield return
+                    new TestCaseData("BeforeImplementInterface_issue1696_1", GeneratorJobType.ImplementInterface, true)
+                        .Returns(ReadAllText("AfterImplementInterface_issue1696_1"))
+                        .SetName("Implement interface methods. Issue 1696. Case 1")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
+                yield return
+                    new TestCaseData("BeforeImplementInterface_issue1696_2", GeneratorJobType.ImplementInterface, true)
+                        .Returns(ReadAllText("AfterImplementInterface_issue1696_2"))
+                        .SetName("Implement interface properties. Issue 1696. Case 2")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
+                yield return
+                    new TestCaseData("BeforeImplementInterface_issue1696_3", GeneratorJobType.ImplementInterface, true)
+                        .Returns(ReadAllText("AfterImplementInterface_issue1696_3"))
+                        .SetName("Implement interface properties. Issue 1696. Case 3")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(ContextualGeneratorTestCases)),
@@ -425,9 +447,10 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(AssignStatementToVarIssue1999)),
             TestCaseSource(nameof(AddToInterfaceTestCases)),
             TestCaseSource(nameof(GenerateFunctionTestCases)),
+            TestCaseSource(nameof(ImplementInterfaceTestCases)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
-
+        
         internal static string ContextualGenerator(ScintillaControl sci, string fileName, GeneratorJobType job, bool hasGenerator)
         {
             SetSrc(sci, ReadAllText(fileName));

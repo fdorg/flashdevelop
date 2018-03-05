@@ -495,86 +495,12 @@ namespace ASCompletion.Completion
             }
 
             [TestFixture]
-            public class ImplementInterface2 : GenerateJob
-            {
-                internal static string[] DeclarationModifierOrder = {"public", "protected", "internal", "private", "static", "override"};
-
-                [TestFixtureSetUp]
-                public void ImplementInterfaceSetup()
-                {
-                    ASContext.CommonSettings.DeclarationModifierOrder = DeclarationModifierOrder;
-                    ASContext.Context.Settings.GenerateImports.Returns(true);
-                }
-
-                static IEnumerable<TestCaseData> AS3TestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeImplementInterfaceMethods"), GeneratorJobType.ImplementInterface)
-                                .Returns(ReadAllTextAS3("AfterImplementInterfaceMethods"))
-                                .SetName("Implement interface methods. Issue 1684")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1684");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(AS3TestCases))]
-                public string AS3(string sourceText, GeneratorJobType job)
-                {
-                    SetAs3Features(sci);
-                    return Common(sourceText, job);
-                }
-
-                static IEnumerable<TestCaseData> HaxeTestCases
-                {
-                    get
-                    {
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeImplementInterface_issue1696_1"), GeneratorJobType.ImplementInterface)
-                                .Returns(ReadAllTextHaxe("AfterImplementInterface_issue1696_1"))
-                                .SetName("Implement interface methods. Issue 1696. Case 1")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeImplementInterface_issue1696_2"), GeneratorJobType.ImplementInterface)
-                                .Returns(ReadAllTextHaxe("AfterImplementInterface_issue1696_2"))
-                                .SetName("Implement interface properties. Issue 1696. Case 2")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeImplementInterface_issue1696_3"), GeneratorJobType.ImplementInterface)
-                                .Returns(ReadAllTextHaxe("AfterImplementInterface_issue1696_3"))
-                                .SetName("Implement interface properties. Issue 1696. Case 3")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
-                    }
-                }
-
-                [Test, TestCaseSource(nameof(HaxeTestCases))]
-                public string Haxe(string sourceText, GeneratorJobType job)
-                {
-                    SetHaxeFeatures(sci);
-                    return Common(sourceText, job);
-                }
-
-                string Common(string sourceText, GeneratorJobType job)
-                {
-                    SetSrc(sci, sourceText);
-                    var options = new List<ICompletionListItem>();
-                    ASGenerator.ContextualGenerator(sci, options);
-                    var item = options.Find(it => ((GeneratorItem)it).job == job);
-                    var value = item.Value;
-                    return sci.Text;
-                }
-            }
-
-            [TestFixture]
             public class PromoteLocal : GenerateJob
             {
                 internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
 
                 [TestFixtureSetUp]
-                public void PromoteLocalWithSetup()
-                {
-                    ASContext.CommonSettings.DeclarationModifierOrder = DeclarationModifierOrder;
-                }
+                public void PromoteLocalWithSetup() => ASContext.CommonSettings.DeclarationModifierOrder = DeclarationModifierOrder;
 
                 static IEnumerable<TestCaseData> AS3TestCases
                 {
@@ -3219,6 +3145,10 @@ namespace ASCompletion.Completion
                         yield return new TestCaseData("BeforeGenerateFunction_1", GeneratorJobType.Function, true)
                             .Returns(ReadAllTextAS3("AfterGenerateFunction_1"))
                             .SetName("Generate function. case 1");
+                        yield return new TestCaseData("BeforeImplementInterfaceMethods", GeneratorJobType.ImplementInterface, true)
+                            .Returns(ReadAllTextAS3("AfterImplementInterfaceMethods"))
+                            .SetName("Implement interface methods. Issue 1684")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1684");
                     }
                 }
 
