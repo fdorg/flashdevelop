@@ -271,8 +271,14 @@ namespace CodeRefactor.Commands
                     yield return new TestCaseData("BeforeRenameParameterVar", "newName")
                         .Returns(ReadAllText("AfterRenameParameterVar"))
                         .SetName("Rename parameter of function");
+                    yield return new TestCaseData("BeforeRenameClass", "Bar")
+                        .Returns(ReadAllText("AfterRenameClass"))
+                        .SetName("Rename class");
                 }
             }
+
+            static readonly string testFilesAssemblyPath = $"\\FlashDevelop\\Bin\\Debug\\{nameof(CodeRefactor)}\\Test_Files\\";
+            static readonly string testFilesDirectory = $"\\Tests\\External\\Plugins\\{nameof(CodeRefactor)}.Tests\\Test Files\\";
 
             [Test, TestCaseSource(nameof(TestCases))]
             public string Rename(string fileName, string newName)
@@ -282,7 +288,7 @@ namespace CodeRefactor.Commands
                 fileName = GetFullPath(fileName);
                 fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
                 fileName = Path.GetFullPath(fileName);
-                fileName = fileName.Replace($"\\FlashDevelop\\Bin\\Debug\\{nameof(CodeRefactor)}\\Test_Files\\", $"\\Tests\\External\\Plugins\\{nameof(CodeRefactor)}.Tests\\Test Files\\");
+                fileName = fileName.Replace(testFilesAssemblyPath, testFilesDirectory);
                 fileName = fileName.Replace(".as", "_withoutEntryPoint.as");
                 ASContext.Context.CurrentModel.FileName = fileName;
                 PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
