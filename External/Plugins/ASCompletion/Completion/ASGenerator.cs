@@ -2319,7 +2319,6 @@ namespace ASCompletion.Completion
         private static void GenerateVariableJob(GeneratorJobType job, ScintillaControl sci, MemberModel member, bool detach, ClassModel inClass)
         {
             var wordStartPos = sci.WordStartPosition(sci.CurrentPos, true);
-            var position = 0;
             Visibility visibility = job.Equals(GeneratorJobType.Variable) ? GetDefaultVisibility(inClass) : Visibility.Public;
             // evaluate, if the variable (or constant) should be generated in other class
             ASResult varResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
@@ -2345,15 +2344,14 @@ namespace ASCompletion.Completion
             int lineNum = sci.CurrentLine;
             string line = sci.GetLine(lineNum);
             
-            Match m = Regex.Match(line, "\\b" + Regex.Escape(contextToken) + "\\(");
-            if (m.Success)
+            if (Regex.IsMatch(line, "\\b" + Regex.Escape(contextToken) + "\\("))
             {
                 returnType = new ASResult();
                 returnType.Type = ASContext.Context.ResolveType("Function", null);
             }
             else
             {
-                m = Regex.Match(line, @"=\s*[^;\n\r}}]+");
+                var m = Regex.Match(line, @"=\s*[^;\n\r}}]+");
                 if (m.Success)
                 {
                     int posLineStart = sci.PositionFromLine(lineNum);
@@ -2392,7 +2390,7 @@ namespace ASCompletion.Completion
             }
 
             var latest = GetLatestMemberForVariable(job, inClass, visibility, isStatic);
-            
+            var position = 0;
             // if we generate variable in current class..
             if (!isOtherClass && member == null)
             {
@@ -2418,39 +2416,38 @@ namespace ASCompletion.Completion
 
             // if this is a constant, we assign a value to constant
             string returnTypeStr = null;
-            if (job == GeneratorJobType.Constant && returnType == null)
-            {
-                isStatic.Flags |= FlagType.Static;
-            }
+            if (job == GeneratorJobType.Constant && returnType == null) isStatic.Flags |= FlagType.Static;
             else if (returnType != null)
             {
-                ClassModel inClassForImport;
-                if (returnType.InClass != null) inClassForImport = returnType.InClass;
-                else if (returnType.RelClass != null) inClassForImport = returnType.RelClass;
-                else inClassForImport = inClass;
-                List<string> imports = new List<string>(1);
                 if (returnType.Member != null)
                 {
                     if (returnType.Member.Type != ASContext.Context.Features.voidKey)
-                    {
                         returnTypeStr = returnType.Member.Type;
-                        imports.Add(returnType.Member.Type);
+                }
+                else if (returnType.Type != null) returnTypeStr = returnType.Type.Name;
+                if (ASContext.Context.Settings.GenerateImports)
+                {
+                    ClassModel inClassForImport;
+                    if (returnType.InClass != null) inClassForImport = returnType.InClass;
+                    else if (returnType.RelClass != null) inClassForImport = returnType.RelClass;
+                    else inClassForImport = inClass;
+                    List<string> imports = null;
+                    if (returnType.Member != null)
+                    {
+                        if (returnType.Member.Type != ASContext.Context.Features.voidKey) imports = new List<string> {returnType.Member.Type};
+                    }
+                    else if (returnType.Type != null) imports = new List<string> {returnType.Type.QualifiedName};
+                    if (imports != null)
+                    {
+                        var types = GetQualifiedTypes(imports, inClassForImport.InFile);
+                        position += AddImportsByName(types, sci.LineFromPosition(position));
+                        sci.SetSel(position, position);
                     }
                 }
-                else if (returnType.Type != null)
-                {
-                    returnTypeStr = returnType.Type.QualifiedName;
-                    imports.Add(returnType.Type.QualifiedName);
-                }
-                if (ASContext.Context.Settings.GenerateImports && imports.Count > 0)
-                {
-                    var types = GetQualifiedTypes(imports, inClassForImport.InFile);
-                    position += AddImportsByName(types, sci.LineFromPosition(position));
-                    sci.SetSel(position, position);
-                }
             }
-            FlagType kind = job.Equals(GeneratorJobType.Constant) ? FlagType.Constant : FlagType.Variable;
-            MemberModel newMember = NewMember(contextToken, isStatic, kind, visibility);
+
+            var kind = job.Equals(GeneratorJobType.Constant) ? FlagType.Constant : FlagType.Variable;
+            var newMember = NewMember(contextToken, isStatic, kind, visibility);
             if (returnTypeStr != null) newMember.Type = returnTypeStr;
             else
             {

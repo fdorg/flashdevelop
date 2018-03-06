@@ -3149,6 +3149,9 @@ namespace ASCompletion.Completion
                             .Returns(ReadAllTextAS3("AfterImplementInterfaceMethods"))
                             .SetName("Implement interface methods. Issue 1684")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/1684");
+                        yield return new TestCaseData("BeforeGenerateVariable_1", GeneratorJobType.VariablePublic, true)
+                            .Returns(ReadAllTextAS3("AfterGenerateVariable_1"))
+                            .SetName("Generate variable. case 1");
                     }
                 }
 
@@ -3272,11 +3275,14 @@ namespace ASCompletion.Completion
             }
         }
 
+        static readonly string testFilesAssemblyPath = $"\\FlashDevelop\\Bin\\Debug\\{nameof(ASCompletion)}\\Test_Files\\";
+        static readonly string testFilesDirectory = $"\\Tests\\External\\Plugins\\{nameof(ASCompletion)}.Tests\\Test Files\\";
+
         protected static void SetCurrentFileName(string fileName)
         {
             fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
             fileName = Path.GetFullPath(fileName);
-            fileName = fileName.Replace($"\\FlashDevelop\\Bin\\Debug\\{nameof(ASCompletion)}\\Test_Files\\", $"\\Tests\\External\\Plugins\\{nameof(ASCompletion)}.Tests\\Test Files\\");
+            fileName = fileName.Replace(testFilesAssemblyPath, testFilesDirectory);
             ASContext.Context.CurrentModel.FileName = fileName;
             PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
         }
