@@ -2589,98 +2589,106 @@ namespace ASCompletion.Completion
         private static ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility)
         {
             ASResult notFound = new ASResult {Context = context};
-            if (string.IsNullOrEmpty(expression)) return notFound;
-            var value = expression.TrimEnd('.');
-            if (context.SubExpressions?.Count == 1) value = value.Replace(char.IsLetter(value[0]) ? ".#0~" : "#0~", context.SubExpressions.First());
-            if (!string.IsNullOrEmpty(context.WordBefore) && ASContext.Context.Features.OtherOperators.Contains(context.WordBefore))
+            try
             {
-                value = context.WordBefore + " " + value;
-            }
-
-            var ctx = ASContext.Context;
-            var type = ctx.ResolveToken(value, inClass.InFile);
-            if (!type.IsVoid()) return new ASResult {Type = type, Context = context, InClass = type, InFile = type.InFile, Path = context.Value};
-
-            var features = ctx.Features;
-            if (expression.StartsWithOrdinal(features.dot))
-            {
-                if (expression.StartsWithOrdinal(features.dot + "#")) expression = expression.Substring(1);
-                else if (context.Separator == "\"") expression = "\"" + expression;
-                else return notFound;
-            }
-
-            string[] tokens = Regex.Split(expression, Regex.Escape(features.dot));
-
-            // eval first token
-            string token = tokens[0];
-            if (token.Length == 0) return notFound;
-            if (asFunction && tokens.Length == 1) token += "(";
-            type = ctx.ResolveToken(token, inClass.InFile);
-            if (!type.IsVoid()) return EvalTail(context, inFile, new ASResult {Type = type}, tokens, complete, filterVisibility) ?? notFound;
-            ASResult head = null;
-            if (token[0] == '#')
-            {
-                Match mSub = re_sub.Match(token);
-                if (mSub.Success)
+                if (string.IsNullOrEmpty(expression)) return notFound;
+                var value = expression.TrimEnd('.');
+                if (context.SubExpressions?.Count == 1) value = value.Replace(char.IsLetter(value[0]) ? ".#0~" : "#0~", context.SubExpressions.First());
+                if (!string.IsNullOrEmpty(context.WordBefore) && ASContext.Context.Features.OtherOperators.Contains(context.WordBefore))
                 {
-                    string subExpr = context.SubExpressions[Convert.ToInt16(mSub.Groups["index"].Value)];
-                    // parse sub expression
-                    subExpr = subExpr.Substring(1, subExpr.Length - 2).Trim();
-                    ASExpr subContext = new ASExpr(context);
-                    subContext.SubExpressions = ExtractedSubex = new List<string>();
-                    subExpr = re_balancedParenthesis.Replace(subExpr, ExtractSubex);
-                    Match m = re_refineExpression.Match(subExpr);
-                    if (!m.Success) return notFound;
-                    Regex re_dot = new Regex("[\\s]*" + Regex.Escape(features.dot) + "[\\s]*");
-                    subExpr = re_dot.Replace(re_whiteSpace.Replace(m.Value, " "), features.dot).Trim();
-                    int space = subExpr.LastIndexOf(' ');
-                    if (space > 0)
+                    value = context.WordBefore + " " + value;
+                }
+
+                var ctx = ASContext.Context;
+                var type = ctx.ResolveToken(value, inClass.InFile);
+                if (!type.IsVoid()) return new ASResult {Type = type, Context = context, InClass = type, InFile = type.InFile, Path = context.Value};
+
+                var features = ctx.Features;
+                if (expression.StartsWithOrdinal(features.dot))
+                {
+                    if (expression.StartsWithOrdinal(features.dot + "#")) expression = expression.Substring(1);
+                    else if (context.Separator == "\"") expression = "\"" + expression;
+                    else return notFound;
+                }
+
+                string[] tokens = Regex.Split(expression, Regex.Escape(features.dot));
+
+                // eval first token
+                string token = tokens[0];
+                if (token.Length == 0) return notFound;
+                if (asFunction && tokens.Length == 1) token += "(";
+                type = ctx.ResolveToken(token, inClass.InFile);
+                if (!type.IsVoid()) return EvalTail(context, inFile, new ASResult {Type = type}, tokens, complete, filterVisibility) ?? notFound;
+                ASResult head = null;
+                if (token[0] == '#')
+                {
+                    Match mSub = re_sub.Match(token);
+                    if (mSub.Success)
                     {
-                        string trash = subExpr.Substring(0, space).TrimEnd();
-                        subExpr = subExpr.Substring(space + 1);
-                        if (trash.EndsWithOrdinal("as")) subExpr += features.dot + "#";
+                        string subExpr = context.SubExpressions[Convert.ToInt16(mSub.Groups["index"].Value)];
+                        // parse sub expression
+                        subExpr = subExpr.Substring(1, subExpr.Length - 2).Trim();
+                        ASExpr subContext = new ASExpr(context);
+                        subContext.SubExpressions = ExtractedSubex = new List<string>();
+                        subExpr = re_balancedParenthesis.Replace(subExpr, ExtractSubex);
+                        Match m = re_refineExpression.Match(subExpr);
+                        if (!m.Success) return notFound;
+                        Regex re_dot = new Regex("[\\s]*" + Regex.Escape(features.dot) + "[\\s]*");
+                        subExpr = re_dot.Replace(re_whiteSpace.Replace(m.Value, " "), features.dot).Trim();
+                        int space = subExpr.LastIndexOf(' ');
+                        if (space > 0)
+                        {
+                            string trash = subExpr.Substring(0, space).TrimEnd();
+                            subExpr = subExpr.Substring(space + 1);
+                            if (trash.EndsWithOrdinal("as")) subExpr += features.dot + "#";
+                        }
+                        // eval sub expression
+                        head = EvalExpression(subExpr, subContext, inFile, inClass, true, false);
+                        if (head.Member != null)
+                            head.Type = ctx.ResolveType(head.Member.Type, head.Type.InFile);
                     }
-                    // eval sub expression
-                    head = EvalExpression(subExpr, subContext, inFile, inClass, true, false);
-                    if (head.Member != null)
-                        head.Type = ctx.ResolveType(head.Member.Type, head.Type.InFile);
+                    else
+                    {
+                        token = token.Substring(token.IndexOf('~') + 1);
+                        head = EvalVariable(token, context, inFile, inClass);
+                    }
                 }
-                else
+                else if (token.Contains("<")) head = new ASResult {Type = ctx.ResolveType(token, inFile)};
+                else head = EvalVariable(token, context, inFile, inClass); // regular eval
+
+                // no head, exit
+                if (head.IsNull()) return notFound;
+
+                // accessing instance member in static function, exit
+                if (IsStatic(context.ContextFunction) && context.WordBefore != features.overrideKey
+                                                      && head.RelClass == inClass
+                                                      && head.Member != null && !IsStatic(head.Member)
+                                                      && (head.Member.Flags & FlagType.Constructor) == 0)
+                    return notFound;
+
+                // resolve
+                ASResult result = EvalTail(context, inFile, head, tokens, complete, filterVisibility);
+
+                // if failed, try as qualified class name
+                if ((result == null || result.IsNull()) && tokens.Length > 1) 
                 {
-                    token = token.Substring(token.IndexOf('~') + 1);
-                    head = EvalVariable(token, context, inFile, inClass);
+                    ClassModel qualif = ctx.ResolveType(expression, null);
+                    if (!qualif.IsVoid())
+                    {
+                        result = new ASResult();
+                        result.Context = context;
+                        result.IsStatic = true;
+                        result.InFile = qualif.InFile;
+                        result.Type = qualif;
+                    }
                 }
+                return result ?? notFound;
             }
-            else if (token.Contains("<")) head = new ASResult {Type = ctx.ResolveType(token, inFile)};
-            else head = EvalVariable(token, context, inFile, inClass); // regular eval
-
-            // no head, exit
-            if (head.IsNull()) return notFound;
-
-            // accessing instance member in static function, exit
-            if (IsStatic(context.ContextFunction) && context.WordBefore != features.overrideKey
-                && head.RelClass == inClass
-                && head.Member != null && !IsStatic(head.Member)
-                && (head.Member.Flags & FlagType.Constructor) == 0)
-                return notFound;
-
-            // resolve
-            ASResult result = EvalTail(context, inFile, head, tokens, complete, filterVisibility);
-
-            // if failed, try as qualified class name
-            if ((result == null || result.IsNull()) && tokens.Length > 1) 
+            catch (Exception e)
             {
-                ClassModel qualif = ctx.ResolveType(expression, null);
-                if (!qualif.IsVoid())
-                {
-                    result = new ASResult();
-                    result.Context = context;
-                    result.IsStatic = true;
-                    result.InFile = qualif.InFile;
-                    result.Type = qualif;
-                }
+                ErrorManager.ShowError(e);
+                return notFound;
             }
-            return result ?? notFound;
         }
 
         static ASResult EvalTail(ASExpr context, FileModel inFile, ASResult head, string[] tokens, bool complete, bool filterVisibility)
