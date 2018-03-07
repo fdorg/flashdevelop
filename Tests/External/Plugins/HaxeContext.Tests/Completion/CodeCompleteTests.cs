@@ -35,7 +35,6 @@ namespace HaXeContext.Completion
         public bool IsInterpolationStringStyle(string fileName)
         {
             SetSrc(sci, ReadAllText(fileName));
-            sci.Colourise(0, -1);
             return ASContext.Context.CodeComplete.IsStringInterpolationStyle(sci, sci.CurrentPos);
         }
 
@@ -74,7 +73,6 @@ namespace HaXeContext.Completion
         public bool IsRegexStyle(string fileName)
         {
             SetSrc(sci, ReadAllText(fileName));
-            sci.Colourise(0, -1);
             return ASContext.Context.CodeComplete.IsRegexStyle(sci, sci.CurrentPos);
         }
 
@@ -101,7 +99,6 @@ namespace HaXeContext.Completion
         public bool PositionIsBeforeBody(string fileName)
         {
             SetSrc(sci, ReadAllText(fileName));
-            sci.Colourise(0, -1);
             return ASContext.Context.CodeComplete.PositionIsBeforeBody(sci, sci.CurrentPos, ASContext.Context.CurrentClass);
         }
 
@@ -144,7 +141,6 @@ namespace HaXeContext.Completion
         public bool ResolveFunction(string fileName)
         {
             SetSrc(sci, ReadAllText(fileName));
-            sci.Colourise(0, -1);
             return ASContext.Context.CodeComplete.ResolveFunction(sci, sci.CurrentPos - 1, true);
         }
     }

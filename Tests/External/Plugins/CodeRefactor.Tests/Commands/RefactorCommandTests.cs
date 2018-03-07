@@ -243,7 +243,6 @@ namespace CodeRefactor.Commands
             {
                 ASContext.Context.CurrentModel.FileName = fileName;
                 SetSrc(sci, sourceText);
-                sci.Colourise(0, -1); // Needed for preprocessor directives...
                 CommandFactoryProvider.GetFactory(sci)
                     .CreateOrganizeImportsCommand()
                     .Execute();

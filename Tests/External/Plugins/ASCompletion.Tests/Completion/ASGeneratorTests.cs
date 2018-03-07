@@ -902,7 +902,6 @@ namespace ASCompletion.Completion
                 internal static string Common(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     SetSrc(sci, sourceText);
-                    sci.Colourise(0, -1);
                     var options = new List<ICompletionListItem>();
                     ASGenerator.ContextualGenerator(sci, options);
                     var item = options.Find(it => ((GeneratorItem) it).job == job);
@@ -1509,7 +1508,6 @@ namespace ASCompletion.Completion
                 internal static string Common(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     SetSrc(sci, sourceText);
-                    sci.Colourise(0, -1);
                     var list = new MemberList();
                     list.Merge(ASContext.GetLanguageContext(sci.ConfigurationLanguage).GetVisibleExternalElements());
                     list.Merge(ASContext.Context.CurrentModel.Imports);
@@ -2628,7 +2626,6 @@ namespace ASCompletion.Completion
                 internal static List<MemberModel> Common(string sourceText, ScintillaControl sci)
                 {
                     SetSrc(sci, sourceText);
-                    sci.Colourise(0, -1);
                     var list = new MemberList();
                     list.Merge(ASContext.GetLanguageContext(sci.ConfigurationLanguage).GetVisibleExternalElements());
                     list.Merge(ASContext.Context.CurrentModel.Imports);
@@ -2832,19 +2829,19 @@ namespace ASCompletion.Completion
                             new TestCaseData(" new Array<{name:String, factory:String->{x:Int, y:Int}}>()$(EntryPoint)", new ASResult {Type = new ClassModel {Flags = FlagType.Class }, Context = new ASExpr {WordBefore = "new", WordBeforePosition = 1}})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" [1 => 1, 2 => 2]$(EntryPoint)", new ASResult {Type = ClassModel.VoidClass})
+                            new TestCaseData(" [1 => 1, 2 => 2]$(EntryPoint)", new ASResult {Type = ClassModel.VoidClass, Context = new ASExpr{PositionExpression = 1}})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" (1 > 2 ? 1 : 2)$(EntryPoint)", new ASResult {Type = ClassModel.VoidClass})
+                            new TestCaseData(" (1 > 2 ? 1 : 2)$(EntryPoint)", new ASResult {Type = ClassModel.VoidClass, Context = new ASExpr {PositionExpression = 1}})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" {v:1 > 2 ? 1 : 2}$(EntryPoint)", new ASResult {Type = ClassModel.VoidClass})
+                            new TestCaseData(" {v:1 > 2 ? 1 : 2}$(EntryPoint)", new ASResult {Type = ClassModel.VoidClass, Context = new ASExpr {PositionExpression = 1}})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" [new Array<String>()]$(EntryPoint)", new ASResult {Type = ClassModel.VoidClass})
+                            new TestCaseData(" [new Array<String>()]$(EntryPoint)", new ASResult {Type = ClassModel.VoidClass, Context = new ASExpr {PositionExpression = 1}})
                                 .Returns(1);
                         yield return
-                            new TestCaseData(" test(type:Class<Dynamic>)$(EntryPoint)", new ASResult {Type = ClassModel.VoidClass})
+                            new TestCaseData(" test(type:Class<Dynamic>)$(EntryPoint)", new ASResult {Type = ClassModel.VoidClass, Context = new ASExpr {PositionExpression = 1}})
                                 .Returns(1);
                     }
                 }
@@ -2867,7 +2864,7 @@ namespace ASCompletion.Completion
                 internal static int Common(ScintillaControl sci, string sourceText, ASResult expr)
                 {
                     SetSrc(sci, sourceText);
-                    return ASGenerator.GetStartOfStatement(sci, sci.CurrentPos, expr);
+                    return ASGenerator.GetStartOfStatement(expr);
                 }
             }
 
@@ -3162,7 +3159,6 @@ namespace ASCompletion.Completion
                 {
                     SetCurrentFileName(GetFullPathAS3(fileName));
                     SetSrc(sci, ReadAllTextAS3(fileName));
-                    sci.Colourise(0, -1);
                     var options = new List<ICompletionListItem>();
                     ASGenerator.ContextualGenerator(sci, options);
                     if (hasGenerator)
@@ -3266,7 +3262,6 @@ namespace ASCompletion.Completion
                     SetHaxeFeatures(sci);
                     SetCurrentFileName(GetFullPathHaxe(fileName));
                     SetSrc(sci, ReadAllTextHaxe(fileName));
-                    sci.Colourise(0, -1);
                     var options = new List<ICompletionListItem>();
                     ASGenerator.ContextualGenerator(sci, options);
                     if (hasGenerator) Assert.IsNotEmpty(options);

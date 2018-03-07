@@ -1453,7 +1453,7 @@ namespace ASCompletion.Completion
             template = TemplateUtils.ReplaceTemplateVariable(template, "Type", cleanType);
 
             int pos;
-            if (expressions == null) pos = GetStartOfStatement(sci, sci.CurrentPos, resolve);
+            if (expressions == null) pos = GetStartOfStatement(resolve);
             else
             {
                 var last = expressions.Last();
@@ -2061,78 +2061,17 @@ namespace ASCompletion.Completion
             return funcBodyStart + 1;
         }
 
-        public static int GetStartOfStatement(ScintillaControl sci, int statementEnd, ASResult expr)
+        [Obsolete(message: "Please use ASGenerator.GetStartOfStatement(expr) instead of ASGenerator.GetStartOfStatement(sci, statementEnd, expr)")]
+        public static int GetStartOfStatement(ScintillaControl sci, int statementEnd, ASResult expr) => GetStartOfStatement(expr);
+
+        public static int GetStartOfStatement(ASResult expr)
         {
-            var wordBefore = expr.Context?.WordBefore;
-            if (expr.Type != null && wordBefore != null && ASContext.Context.Features.OtherOperators.Contains(wordBefore)) return expr.Context.WordBeforePosition;
-            var line = sci.LineFromPosition(statementEnd);
-            var text = sci.GetLine(line);
-            var match = Regex.Match(text, @"[;\s\n\r]*", RegexOptions.RightToLeft);
-            if (match.Success) statementEnd = sci.PositionFromLine(line) + match.Index;
-            var result = 0;
-            var characters = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
-            var arrCount = 0;
-            var parCount = 0;
-            var genCount = 0;
-            var braCount = 0;
-            var dQuotes = 0;
-            var sQuotes = 0;
-            var hasDot = false;
-            var c = ' ';
-            sci.Colourise(0, -1);
-            for (var i = statementEnd; i > 0; i--)
+            if (expr.Type != null)
             {
-                if (sci.PositionIsOnComment(i - 1)) continue;
-                var pc = c;
-                c = (char)sci.CharAt(i - 1);
-                if (c == ']') arrCount++;
-                else if (c == '[' && arrCount > 0) arrCount--;
-                else if (c == ')') parCount++;
-                else if (c == '(' && parCount > 0) parCount--;
-                else if (c == '>' && arrCount == 0 && parCount == 0 && braCount == 0)
-                {
-                    if (i > 1 && (char)sci.CharAt(i - 2) != '-') genCount++;
-                }
-                else if (c == '<' && genCount > 0 && arrCount == 0 && parCount == 0 && braCount == 0) genCount--;
-                else if (c == '}') braCount++;
-                else if (c == '{' && braCount > 0) braCount--;
-                else if (c == '\"' && sQuotes == 0)
-                {
-                    if (i <= 1 || (char) sci.CharAt(i - 2) == '\\') continue;
-                    if (dQuotes == 0) dQuotes++;
-                    else dQuotes--;
-                    if (arrCount == 0 && parCount == 0) hasDot = false;
-                }
-                else if (c == '\'' && dQuotes == 0)
-                {
-                    if (i <= 1 || (char) sci.CharAt(i - 2) == '\\') continue;
-                    if (sQuotes == 0) sQuotes++;
-                    else sQuotes--;
-                    if (arrCount == 0 && parCount == 0) hasDot = false;
-                }
-                else if (arrCount == 0 && parCount == 0 && genCount == 0 && braCount == 0 && dQuotes == 0 && sQuotes == 0 && !characters.Contains(c) && c != '.')
-                {
-                    if (hasDot && c <= ' ')
-                    {
-                        while (i > 0)
-                        {
-                            var nextPos = i - 1;
-                            c = (char) sci.CharAt(nextPos);
-                            if (c > ' ' && !sci.PositionIsOnComment(nextPos)) break;
-                            i = nextPos;
-                        }
-                        i++;
-                    }
-                    else
-                    {
-                        result = i;
-                        break;
-                    }
-                }
-                else if (!hasDot && c == '.') hasDot = pc != '<' && parCount == 0;
-                else if (hasDot && characters.Contains(c)) hasDot = false;
+                var wordBefore = expr.Context.WordBefore;
+                if (wordBefore != null && ASContext.Context.Features.OtherOperators.Contains(wordBefore)) return expr.Context.WordBeforePosition;
             }
-            return expr.Context == null ? result : Math.Min(result, expr.Context.PositionExpression);
+            return expr.Context.PositionExpression;
         }
 
         /// <summary>
@@ -3280,7 +3219,7 @@ namespace ASCompletion.Completion
                             if (t.Contains("->") && !t.StartsWith('(')) t = $"({t})";
                             qualifiedName += t;
                         }
-                        resolve = new ASResult {Type = new ClassModel {Name = qualifiedName, InFile = FileModel.Ignore}};
+                        resolve = new ASResult {Type = new ClassModel {Name = qualifiedName, InFile = FileModel.Ignore}, Context =  expr.Context};
                     }
                     else resolve.Member = null;
                 }
