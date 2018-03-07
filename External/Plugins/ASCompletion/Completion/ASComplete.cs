@@ -3462,6 +3462,7 @@ namespace ASCompletion.Completion
                         arrCount--;
                         if (arrCount == 0 && braCount == 0)
                         {
+                            positionExpression = position;
                             if (sbSub.Length > 0) sbSub.Insert(0, '[');
                             if (parCount == 0)
                             {
@@ -3517,6 +3518,7 @@ namespace ASCompletion.Completion
                         parCount--;
                         if (parCount == 0 && arrCount == 0)
                         {
+                            positionExpression = position;
                             sbSub.Insert(0, c);
                             int testPos = position - 1;
                             string testWord = GetWordLeft(sci, ref testPos);
@@ -3586,6 +3588,7 @@ namespace ASCompletion.Completion
                             braCount--;
                             if (braCount == 0)
                             {
+                                positionExpression = position;
                                 sb.Insert(0, "{}");
                                 expression.Separator = ";";
                                 continue;
@@ -3607,6 +3610,7 @@ namespace ASCompletion.Completion
                                     dQuotes--;
                                     if (dQuotes == 0)
                                     {
+                                        positionExpression = position;
                                         expression.Separator = ";";
                                         if (expression.SubExpressions != null)
                                         {
@@ -3614,9 +3618,7 @@ namespace ASCompletion.Completion
                                             sb.Insert(0, sbSub.ToString());
                                             break;
                                         }
-
                                         sb.Insert(0, string.Concat(c, sbSub, c));
-                                        positionExpression = position;
                                         continue;
                                     }
                                 }
@@ -3640,6 +3642,7 @@ namespace ASCompletion.Completion
                                     sQuotes--;
                                     if (sQuotes == 0)
                                     {
+                                        positionExpression = position;
                                         expression.Separator = ";";
                                         if (expression.SubExpressions != null)
                                         {
@@ -3648,7 +3651,6 @@ namespace ASCompletion.Completion
                                             break;
                                         }
                                         sb.Insert(0, string.Concat(c, sbSub, c));
-                                        positionExpression = position;
                                         continue;
                                     }
                                 }
@@ -3683,6 +3685,7 @@ namespace ASCompletion.Completion
                         else
                         {
                             sb.Insert(sb.Length, sbSub.ToString().ToCharArray());
+                            positionExpression = position + 1;
                             expression.Separator = " ";
                             break;
                         }
@@ -3714,6 +3717,7 @@ namespace ASCompletion.Completion
                             && sci.ConfigurationLanguage == "as3"
                             && position > minPos && sci.CharAt(position - 1) != '.')
                         {
+                            positionExpression = position;
                             position--;
                             expression.Separator = " ";
                             break;
