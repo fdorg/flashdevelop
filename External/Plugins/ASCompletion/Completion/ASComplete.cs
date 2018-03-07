@@ -3848,7 +3848,11 @@ namespace ASCompletion.Completion
                             continue;
                         }
                         if (c == '\'' || c == '"') expression.Separator = "\"";
-                        else expression.Separator = c.ToString();
+                        else
+                        {
+                            expression.Separator = c.ToString();
+                            expression.SeparatorPosition = position;
+                        }
                         break;
                     }
                 }
@@ -3867,7 +3871,16 @@ namespace ASCompletion.Completion
             if (expression.Separator == " ")
             {
                 expression.WordBefore = GetWordLeft(sci, ref position);
-                expression.WordBeforePosition = position + 1;
+                if (expression.WordBefore.Length > 0) expression.WordBeforePosition = position + 1;
+            }
+            if (expression.Separator == " " || (expression.Separator == ";" && sci.CharAt(position) != ';'))
+            {
+                var @operator = GetOperatorLeft(sci, ref position);
+                if (@operator.Length > 0)
+                {
+                    expression.Separator = @operator;
+                    expression.SeparatorPosition = position + 1;
+                }
             }
 
             var value = sb.ToString().TrimStart('.');
@@ -4177,7 +4190,7 @@ namespace ASCompletion.Completion
                         if (!skipWS)
                             break;
                     }
-                    else if (characterClass.IndexOf(c) < 0) break;
+                    else if (!characterClass.Contains(c)) break;
                     else if (style != 6)
                     {
                         word = c + word;
@@ -4187,6 +4200,37 @@ namespace ASCompletion.Completion
                 position--;
             }
             return word;
+        }
+
+        static string GetOperatorLeft(ScintillaControl sci, ref int position)
+        {
+            var result = string.Empty;
+            var skipWS = true;
+            while (position >= 0)
+            {
+                var style = sci.BaseStyleAt(position);
+                if (IsTextStyleEx(style))
+                {
+                    var c = (char)sci.CharAt(position);
+                    if (c <= ' ')
+                    {
+                        if (!skipWS) break;
+                    }
+                    else if (char.IsLetterOrDigit(c)
+                        || c == '.' || c == ',' || c == ':' || c == ';' || c == '_' || c == '$'
+                        || c == '"' || c == '\''
+                        || c == ')' || c == '('
+                        || c == ']' || c == '['
+                        || c == '}' || c == '{') break;
+                    else
+                    {
+                        skipWS = false;
+                        result += c;
+                    }
+                }
+                --position;
+            }
+            return result;
         }
 
         public static ASResult GetExpressionType(ScintillaControl sci, int position) => GetExpressionType(sci, position, true);

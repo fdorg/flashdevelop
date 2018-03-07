@@ -107,6 +107,7 @@ namespace ASCompletion.Completion
         public bool HasGenericsShortNotation;
         public HashSet<char> ArithmeticOperators = new HashSet<char>();
         public string[] IncrementDecrementOperators = {};
+        public string[] BitwiseOperators = { };
         public HashSet<string> OtherOperators = new HashSet<string>();
 
         /// <summary>
