@@ -2061,6 +2061,9 @@ namespace ASCompletion.Completion
             return funcBodyStart + 1;
         }
 
+        [Obsolete(message: "Please use ASGenerator.GetStartOfStatement(expr) instead of ASGenerator.GetStartOfStatement(sci, statementEnd, expr)")]
+        public static int GetStartOfStatement(ScintillaControl sci, int statementEnd, ASResult expr) => GetStartOfStatement(expr);
+
         public static int GetStartOfStatement(ASResult expr)
         {
             if (expr.Type != null)

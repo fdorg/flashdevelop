@@ -902,7 +902,6 @@ namespace ASCompletion.Completion
                 internal static string Common(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     SetSrc(sci, sourceText);
-                    sci.Colourise(0, -1);
                     var options = new List<ICompletionListItem>();
                     ASGenerator.ContextualGenerator(sci, options);
                     var item = options.Find(it => ((GeneratorItem) it).job == job);
@@ -1509,7 +1508,6 @@ namespace ASCompletion.Completion
                 internal static string Common(string sourceText, GeneratorJobType job, ScintillaControl sci)
                 {
                     SetSrc(sci, sourceText);
-                    sci.Colourise(0, -1);
                     var list = new MemberList();
                     list.Merge(ASContext.GetLanguageContext(sci.ConfigurationLanguage).GetVisibleExternalElements());
                     list.Merge(ASContext.Context.CurrentModel.Imports);
@@ -2628,7 +2626,6 @@ namespace ASCompletion.Completion
                 internal static List<MemberModel> Common(string sourceText, ScintillaControl sci)
                 {
                     SetSrc(sci, sourceText);
-                    sci.Colourise(0, -1);
                     var list = new MemberList();
                     list.Merge(ASContext.GetLanguageContext(sci.ConfigurationLanguage).GetVisibleExternalElements());
                     list.Merge(ASContext.Context.CurrentModel.Imports);
@@ -3162,7 +3159,6 @@ namespace ASCompletion.Completion
                 {
                     SetCurrentFileName(GetFullPathAS3(fileName));
                     SetSrc(sci, ReadAllTextAS3(fileName));
-                    sci.Colourise(0, -1);
                     var options = new List<ICompletionListItem>();
                     ASGenerator.ContextualGenerator(sci, options);
                     if (hasGenerator)
@@ -3266,7 +3262,6 @@ namespace ASCompletion.Completion
                     SetHaxeFeatures(sci);
                     SetCurrentFileName(GetFullPathHaxe(fileName));
                     SetSrc(sci, ReadAllTextHaxe(fileName));
-                    sci.Colourise(0, -1);
                     var options = new List<ICompletionListItem>();
                     ASGenerator.ContextualGenerator(sci, options);
                     if (hasGenerator) Assert.IsNotEmpty(options);

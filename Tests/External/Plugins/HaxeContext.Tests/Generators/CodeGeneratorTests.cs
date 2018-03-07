@@ -454,7 +454,6 @@ namespace HaXeContext.Generators
         internal static string ContextualGenerator(ScintillaControl sci, string fileName, GeneratorJobType job, bool hasGenerator)
         {
             SetSrc(sci, ReadAllText(fileName));
-            sci.Colourise(0, -1);
             SetCurrentFile(fileName);
             var options = new List<ICompletionListItem>();
             ASGenerator.ContextualGenerator(sci, options);

@@ -102,6 +102,7 @@ namespace ASCompletion
         {
             sci.Text = sourceText;
             SnippetHelper.PostProcessSnippets(sci, 0);
+            sci.Colourise(0, -1);
             var currentModel = ASContext.Context.CurrentModel;
             ASContext.Context.GetCodeModel(currentModel, sci.Text);
             var line = sci.CurrentLine;
