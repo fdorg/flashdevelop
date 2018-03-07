@@ -5252,6 +5252,9 @@ namespace ASCompletion.Completion
         public int FunctionOffset;
         public bool BeforeBody;
 
+        /// <summary>
+        /// Start position of expression
+        /// </summary>
         public int PositionExpression;
         public string Value;
         public List<string> SubExpressions;
@@ -5276,7 +5279,7 @@ namespace ASCompletion.Completion
     /// <summary>
     /// Expressions/tokens evaluation result
     /// </summary>
-    sealed public class ASResult
+    public sealed class ASResult
     {
         public ClassModel Type;
         public ClassModel InClass;
