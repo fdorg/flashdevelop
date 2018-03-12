@@ -1453,7 +1453,7 @@ namespace ASCompletion.Completion
             template = TemplateUtils.ReplaceTemplateVariable(template, "Type", cleanType);
 
             int pos;
-            if (expressions == null) pos = GetStartOfStatement(sci, sci.CurrentPos, resolve);
+            if (expressions == null) pos = GetStartOfStatement(resolve);
             else
             {
                 var last = expressions.Last();
@@ -2061,78 +2061,17 @@ namespace ASCompletion.Completion
             return funcBodyStart + 1;
         }
 
-        public static int GetStartOfStatement(ScintillaControl sci, int statementEnd, ASResult expr)
+        [Obsolete(message: "Please use ASGenerator.GetStartOfStatement(expr) instead of ASGenerator.GetStartOfStatement(sci, statementEnd, expr)")]
+        public static int GetStartOfStatement(ScintillaControl sci, int statementEnd, ASResult expr) => GetStartOfStatement(expr);
+
+        public static int GetStartOfStatement(ASResult expr)
         {
-            var wordBefore = expr.Context?.WordBefore;
-            if (expr.Type != null && wordBefore != null && ASContext.Context.Features.OtherOperators.Contains(wordBefore)) return expr.Context.WordBeforePosition;
-            var line = sci.LineFromPosition(statementEnd);
-            var text = sci.GetLine(line);
-            var match = Regex.Match(text, @"[;\s\n\r]*", RegexOptions.RightToLeft);
-            if (match.Success) statementEnd = sci.PositionFromLine(line) + match.Index;
-            var result = 0;
-            var characters = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
-            var arrCount = 0;
-            var parCount = 0;
-            var genCount = 0;
-            var braCount = 0;
-            var dQuotes = 0;
-            var sQuotes = 0;
-            var hasDot = false;
-            var c = ' ';
-            sci.Colourise(0, -1);
-            for (var i = statementEnd; i > 0; i--)
+            if (expr.Type != null)
             {
-                if (sci.PositionIsOnComment(i - 1)) continue;
-                var pc = c;
-                c = (char)sci.CharAt(i - 1);
-                if (c == ']') arrCount++;
-                else if (c == '[' && arrCount > 0) arrCount--;
-                else if (c == ')') parCount++;
-                else if (c == '(' && parCount > 0) parCount--;
-                else if (c == '>' && arrCount == 0 && parCount == 0 && braCount == 0)
-                {
-                    if (i > 1 && (char)sci.CharAt(i - 2) != '-') genCount++;
-                }
-                else if (c == '<' && genCount > 0 && arrCount == 0 && parCount == 0 && braCount == 0) genCount--;
-                else if (c == '}') braCount++;
-                else if (c == '{' && braCount > 0) braCount--;
-                else if (c == '\"' && sQuotes == 0)
-                {
-                    if (i <= 1 || (char) sci.CharAt(i - 2) == '\\') continue;
-                    if (dQuotes == 0) dQuotes++;
-                    else dQuotes--;
-                    if (arrCount == 0 && parCount == 0) hasDot = false;
-                }
-                else if (c == '\'' && dQuotes == 0)
-                {
-                    if (i <= 1 || (char) sci.CharAt(i - 2) == '\\') continue;
-                    if (sQuotes == 0) sQuotes++;
-                    else sQuotes--;
-                    if (arrCount == 0 && parCount == 0) hasDot = false;
-                }
-                else if (arrCount == 0 && parCount == 0 && genCount == 0 && braCount == 0 && dQuotes == 0 && sQuotes == 0 && !characters.Contains(c) && c != '.')
-                {
-                    if (hasDot && c <= ' ')
-                    {
-                        while (i > 0)
-                        {
-                            var nextPos = i - 1;
-                            c = (char) sci.CharAt(nextPos);
-                            if (c > ' ' && !sci.PositionIsOnComment(nextPos)) break;
-                            i = nextPos;
-                        }
-                        i++;
-                    }
-                    else
-                    {
-                        result = i;
-                        break;
-                    }
-                }
-                else if (!hasDot && c == '.') hasDot = pc != '<' && parCount == 0;
-                else if (hasDot && characters.Contains(c)) hasDot = false;
+                var wordBefore = expr.Context.WordBefore;
+                if (wordBefore != null && ASContext.Context.Features.OtherOperators.Contains(wordBefore)) return expr.Context.WordBeforePosition;
             }
-            return expr.Context == null ? result : Math.Min(result, expr.Context.PositionExpression);
+            return expr.Context.PositionExpression;
         }
 
         /// <summary>
@@ -2319,7 +2258,6 @@ namespace ASCompletion.Completion
         private static void GenerateVariableJob(GeneratorJobType job, ScintillaControl sci, MemberModel member, bool detach, ClassModel inClass)
         {
             var wordStartPos = sci.WordStartPosition(sci.CurrentPos, true);
-            var position = 0;
             Visibility visibility = job.Equals(GeneratorJobType.Variable) ? GetDefaultVisibility(inClass) : Visibility.Public;
             // evaluate, if the variable (or constant) should be generated in other class
             ASResult varResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
@@ -2345,15 +2283,14 @@ namespace ASCompletion.Completion
             int lineNum = sci.CurrentLine;
             string line = sci.GetLine(lineNum);
             
-            Match m = Regex.Match(line, "\\b" + Regex.Escape(contextToken) + "\\(");
-            if (m.Success)
+            if (Regex.IsMatch(line, "\\b" + Regex.Escape(contextToken) + "\\("))
             {
                 returnType = new ASResult();
                 returnType.Type = ASContext.Context.ResolveType("Function", null);
             }
             else
             {
-                m = Regex.Match(line, @"=\s*[^;\n\r}}]+");
+                var m = Regex.Match(line, @"=\s*[^;\n\r}}]+");
                 if (m.Success)
                 {
                     int posLineStart = sci.PositionFromLine(lineNum);
@@ -2392,7 +2329,7 @@ namespace ASCompletion.Completion
             }
 
             var latest = GetLatestMemberForVariable(job, inClass, visibility, isStatic);
-            
+            var position = 0;
             // if we generate variable in current class..
             if (!isOtherClass && member == null)
             {
@@ -2418,39 +2355,38 @@ namespace ASCompletion.Completion
 
             // if this is a constant, we assign a value to constant
             string returnTypeStr = null;
-            if (job == GeneratorJobType.Constant && returnType == null)
-            {
-                isStatic.Flags |= FlagType.Static;
-            }
+            if (job == GeneratorJobType.Constant && returnType == null) isStatic.Flags |= FlagType.Static;
             else if (returnType != null)
             {
-                ClassModel inClassForImport;
-                if (returnType.InClass != null) inClassForImport = returnType.InClass;
-                else if (returnType.RelClass != null) inClassForImport = returnType.RelClass;
-                else inClassForImport = inClass;
-                List<string> imports = new List<string>(1);
                 if (returnType.Member != null)
                 {
                     if (returnType.Member.Type != ASContext.Context.Features.voidKey)
-                    {
                         returnTypeStr = returnType.Member.Type;
-                        imports.Add(returnType.Member.Type);
+                }
+                else if (returnType.Type != null) returnTypeStr = returnType.Type.Name;
+                if (ASContext.Context.Settings.GenerateImports)
+                {
+                    ClassModel inClassForImport;
+                    if (returnType.InClass != null) inClassForImport = returnType.InClass;
+                    else if (returnType.RelClass != null) inClassForImport = returnType.RelClass;
+                    else inClassForImport = inClass;
+                    List<string> imports = null;
+                    if (returnType.Member != null)
+                    {
+                        if (returnType.Member.Type != ASContext.Context.Features.voidKey) imports = new List<string> {returnType.Member.Type};
+                    }
+                    else if (returnType.Type != null) imports = new List<string> {returnType.Type.QualifiedName};
+                    if (imports != null)
+                    {
+                        var types = GetQualifiedTypes(imports, inClassForImport.InFile);
+                        position += AddImportsByName(types, sci.LineFromPosition(position));
+                        sci.SetSel(position, position);
                     }
                 }
-                else if (returnType.Type != null)
-                {
-                    returnTypeStr = returnType.Type.QualifiedName;
-                    imports.Add(returnType.Type.QualifiedName);
-                }
-                if (ASContext.Context.Settings.GenerateImports && imports.Count > 0)
-                {
-                    var types = GetQualifiedTypes(imports, inClassForImport.InFile);
-                    position += AddImportsByName(types, sci.LineFromPosition(position));
-                    sci.SetSel(position, position);
-                }
             }
-            FlagType kind = job.Equals(GeneratorJobType.Constant) ? FlagType.Constant : FlagType.Variable;
-            MemberModel newMember = NewMember(contextToken, isStatic, kind, visibility);
+
+            var kind = job.Equals(GeneratorJobType.Constant) ? FlagType.Constant : FlagType.Variable;
+            var newMember = NewMember(contextToken, isStatic, kind, visibility);
             if (returnTypeStr != null) newMember.Type = returnTypeStr;
             else
             {
@@ -2933,7 +2869,7 @@ namespace ASCompletion.Completion
                 else sci.SetSel(position, position);
             }
             var newMember = NewMember(contextToken, isStatic, FlagType.Function, visibility);
-            newMember.Parameters = parameters.Select(it => new MemberModel(AvoidKeyword(it.paramName), it.paramQualType, FlagType.ParameterVar, 0)).ToList();
+            newMember.Parameters = parameters.Select(it => new MemberModel(AvoidKeyword(it.paramName), it.paramType, FlagType.ParameterVar, 0)).ToList();
             if (newMemberType != null) newMember.Type = newMemberType;
             GenerateFunction(newMember, position, inClass, detach);
         }
@@ -3283,7 +3219,7 @@ namespace ASCompletion.Completion
                             if (t.Contains("->") && !t.StartsWith('(')) t = $"({t})";
                             qualifiedName += t;
                         }
-                        resolve = new ASResult {Type = new ClassModel {Name = qualifiedName, InFile = FileModel.Ignore}};
+                        resolve = new ASResult {Type = new ClassModel {Name = qualifiedName, InFile = FileModel.Ignore}, Context =  expr.Context};
                     }
                     else resolve.Member = null;
                 }

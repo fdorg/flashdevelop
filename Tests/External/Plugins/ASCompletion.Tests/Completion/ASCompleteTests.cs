@@ -23,7 +23,6 @@ namespace ASCompletion.Completion
         internal static string GetExpression(ScintillaControl sci, string sourceText)
         {
             SetSrc(sci, sourceText);
-            sci.Colourise(0, -1);
             var expr = ASComplete.GetExpression(sci, sci.CurrentPos);
             var value = expr.Value;
             if (!string.IsNullOrEmpty(value) && expr.SubExpressions != null)

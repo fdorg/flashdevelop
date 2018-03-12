@@ -59,12 +59,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\RefactorCommandTests.cs" />
@@ -77,11 +72,6 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
-      <Project>{74ad0487-cef9-43fe-9283-bc6f79539ade}</Project>
-      <Name>AS2Context</Name>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\External\Plugins\ASCompletion\ASCompletion.csproj">
       <Project>{4EBF2653-9654-4E40-880E-0046B3D6210E}</Project>
       <Name>ASCompletion</Name>
@@ -95,11 +85,6 @@
     <ProjectReference Include="..\..\..\..\External\Plugins\HaXeContext\HaXeContext.csproj">
       <Project>{5b4e9515-994a-4da7-9916-cda8fd874701}</Project>
       <Name>HaXeContext</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\FlashDevelop\FlashDevelop.csproj">
-      <Project>{EFD07485-9A64-4EEC-94E7-ACBD4DA5CA93}</Project>
-      <Name>FlashDevelop</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\PluginCore\PluginCore.csproj">
@@ -283,6 +268,48 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2069_16.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2069_17.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2069_17.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue1747_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue1747_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue1747_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue1747_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue1767_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateConstructor_issue1738_9.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateConstructor_issue1738_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateConstructor_issue1738_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateConstructor_issue1738_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateConstructor_issue1738_7.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateConstructor_issue1738_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateConstructor_issue1738_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateConstructor_issue1738_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateConstructor_issue1738_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateConstructor_issue1738_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateConstructor_issue1738_6.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateConstructor_issue1738_7.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateConstructor_issue1738_8.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateConstructor_issue1738_9.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeImplementInterface_issue1696_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeImplementInterface_issue1696_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeImplementInterface_issue1696_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeImplementInterface_issue1982_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeImplementInterface_issue1982_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeImplementInterface_issue1982_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeImplementInterface_issue1982_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeImplementInterface_issue1982_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeImplementInterface_issue1982_6.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeImplementInterfaceNoPublicMember.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeImplementInterfacePublicMemberBehindPrivate.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterImplementInterface_issue1696_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterImplementInterface_issue1696_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterImplementInterface_issue1696_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterImplementInterface_issue1982_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAddInterfaceDefTests_issue1989_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAddInterfaceDefTests_issue1731_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAddInterfaceDefTests_issue1989_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAddInterfaceDefTests_issue1989_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAddInterfaceDefTests_issue1989_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAddInterfaceDefTests_issue1731_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGeneratePublicFunction_issue1735_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGeneratePublicFunction_issue1735_1.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
