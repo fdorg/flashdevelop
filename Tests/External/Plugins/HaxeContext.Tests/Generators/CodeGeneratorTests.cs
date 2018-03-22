@@ -392,6 +392,29 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> AssignStatementToVarIssue1764TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue1764_1", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue1764_1"))
+                    .SetName("1 < 2|. Assign statement to local variable")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1764");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue1764_2", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue1764_2"))
+                    .SetName("1 > 2|. Assign statement to local variable")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1764");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue1764_3", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue1764_3"))
+                    .SetName("1 && 2|. Assign statement to local variable")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1764");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue1764_4", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue1764_4"))
+                    .SetName("1 || 2|. Assign statement to local variable")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1764");
+            }
+        }
+
         static IEnumerable<TestCaseData> AddToInterfaceTestCases
         {
             get
@@ -461,6 +484,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(Issue2069TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue1999TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue2086TestCases)),
+            TestCaseSource(nameof(AssignStatementToVarIssue1764TestCases)),
             TestCaseSource(nameof(AddToInterfaceTestCases)),
             TestCaseSource(nameof(GenerateFunctionTestCases)),
             TestCaseSource(nameof(ImplementInterfaceTestCases)),

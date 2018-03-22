@@ -3848,11 +3848,13 @@ namespace ASCompletion.Completion
                             continue;
                         }
                         if (c == '\'' || c == '"') expression.Separator = "\"";
+                        /*
                         else
                         {
                             expression.Separator = c.ToString();
                             expression.SeparatorPosition = position;
                         }
+                        */
                         break;
                     }
                 }

@@ -1387,6 +1387,7 @@ namespace ASCompletion.Completion
                     .Select(it => it.ToString())
                     .Concat(ctx.Features.IncrementDecrementOperators)
                     .Concat(ctx.Features.BitwiseOperators)
+                    .Concat(ctx.Features.BooleanOperators)
                     .ToHashSet();
                 var sep = new[] {' '};
                 var isValid = new Func<ASExpr, bool>((c) => c.Separator.Contains(' ') 
@@ -1409,7 +1410,17 @@ namespace ASCompletion.Completion
                 }
             }
             string type = null;
-            if (resolve.Member == null && (resolve.Type.Flags & FlagType.Class) != 0
+            int pos;
+            if (expressions == null) pos = GetStartOfStatement(resolve);
+            else
+            {
+                var last = expressions.Last();
+                pos = last.Context.Separator != ";" ? last.Context.SeparatorPosition : last.Context.PositionExpression;
+                var first = expressions.First();
+                if (ctx.Features.BooleanOperators.Contains(first.Context.Separator)) type = ctx.Features.booleanKey;
+            }
+            if (type == null
+                && resolve.Member == null && resolve.Type.Flags.HasFlag(FlagType.Class)
                 && resolve.Type.Name != ctx.Features.booleanKey
                 && resolve.Type.Name != "Function"
                 && !string.IsNullOrEmpty(resolve.Path) && !char.IsDigit(resolve.Path[0]))
@@ -1446,20 +1457,13 @@ namespace ASCompletion.Completion
             if (varname == null) varname = GuessVarName(word, type);
             if (varname != null && varname == word) varname = varname.Length == 1 ? varname + "1" : varname[0] + "";
             varname = AvoidKeyword(varname);
+            
             string cleanType = null;
             if (type != null) cleanType = FormatType(GetShortType(type));
-            
-            string template = TemplateUtils.GetTemplate("AssignVariable");
+            var template = TemplateUtils.GetTemplate("AssignVariable");
             template = TemplateUtils.ReplaceTemplateVariable(template, "Name", varname);
             template = TemplateUtils.ReplaceTemplateVariable(template, "Type", cleanType);
 
-            int pos;
-            if (expressions == null) pos = GetStartOfStatement(resolve);
-            else
-            {
-                var last = expressions.Last();
-                pos = last.Context.Separator != ";" ? last.Context.SeparatorPosition : last.Context.PositionExpression;
-            }
             sci.SetSel(pos, pos);
             InsertCode(pos, template, sci);
 

@@ -108,6 +108,7 @@ namespace ASCompletion.Completion
         public HashSet<char> ArithmeticOperators = new HashSet<char>();
         public string[] IncrementDecrementOperators = {};
         public string[] BitwiseOperators = { };
+        public string[] BooleanOperators = { };
         public HashSet<string> OtherOperators = new HashSet<string>();
 
         /// <summary>
