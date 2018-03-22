@@ -1386,6 +1386,7 @@ namespace ASCompletion.Completion
                 var operators = ctx.Features.ArithmeticOperators
                     .Select(it => it.ToString())
                     .Concat(ctx.Features.IncrementDecrementOperators)
+                    .Concat(ctx.Features.BitwiseOperators)
                     .ToHashSet();
                 var sep = new[] {' '};
                 var isValid = new Func<ASExpr, bool>((c) => c.Separator.Contains(' ') 

@@ -133,6 +133,7 @@ namespace AS3Context
             features.namespaceKey = "namespace";
             features.ArithmeticOperators = new HashSet<char>{'+', '-', '*', '/', '%'};
             features.IncrementDecrementOperators = new[] {"++", "--"};
+            features.BitwiseOperators = new[] {"~", "&", "|", "^", "<<", ">>", ">>>"};
             features.OtherOperators = new HashSet<string> {"delete", "typeof", "new"};
             /* INITIALIZATION */
 
