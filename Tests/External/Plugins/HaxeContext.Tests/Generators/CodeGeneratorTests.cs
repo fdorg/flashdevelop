@@ -342,7 +342,7 @@ namespace HaXeContext.Generators
             }
         }
 
-        static IEnumerable<TestCaseData> AssignStatementToVarIssue1999
+        static IEnumerable<TestCaseData> AssignStatementToVarIssue1999TestCases
         {
             get
             {
@@ -374,6 +374,21 @@ namespace HaXeContext.Generators
                     .Returns(null)
                     .SetName("Contextual generator shouldn't work. case v:|")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1999");
+            }
+        }
+
+        static IEnumerable<TestCaseData> AssignStatementToVarIssue2086TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2086_1", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2086_1"))
+                    .SetName("Issue 2086. Case 1. Infer variable type")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2086");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2086_2", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2086_2"))
+                    .SetName("Issue 2086. Case 2. Infer variable type")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2086");
             }
         }
 
@@ -444,7 +459,8 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(Issue1880TestCases)),
             TestCaseSource(nameof(Issue2060TestCases)),
             TestCaseSource(nameof(Issue2069TestCases)),
-            TestCaseSource(nameof(AssignStatementToVarIssue1999)),
+            TestCaseSource(nameof(AssignStatementToVarIssue1999TestCases)),
+            TestCaseSource(nameof(AssignStatementToVarIssue2086TestCases)),
             TestCaseSource(nameof(AddToInterfaceTestCases)),
             TestCaseSource(nameof(GenerateFunctionTestCases)),
             TestCaseSource(nameof(ImplementInterfaceTestCases)),
