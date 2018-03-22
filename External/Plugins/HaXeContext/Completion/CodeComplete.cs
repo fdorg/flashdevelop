@@ -106,87 +106,95 @@ namespace HaXeContext.Completion
         {
             var line = sci.GetLine(var.LineFrom);
             var m = Regex.Match(line, "\\s*for\\s*\\(\\s*" + var.Name + "\\s*in\\s*");
-            if (m.Success)
+            if (!m.Success)
             {
-                var rvalueStart = sci.PositionFromLine(var.LineFrom) + m.Index + m.Length;
-                var methodEndPosition = sci.LineEndPosition(ASContext.Context.CurrentMember.LineTo);
-                var parCount = 0;
-                for (var i = rvalueStart; i < methodEndPosition; i++)
+                base.InferVariableType(sci, local, var);
+                return;
+            }
+            var ctx = ASContext.Context;
+            var currentModel = ctx.CurrentModel;
+            var rvalueStart = sci.PositionFromLine(var.LineFrom) + m.Index + m.Length;
+            var methodEndPosition = sci.LineEndPosition(ctx.CurrentMember.LineTo);
+            var parCount = 0;
+            for (var i = rvalueStart; i < methodEndPosition; i++)
+            {
+                if (sci.PositionIsOnComment(i) || sci.PositionIsInString(i)) continue;
+                var c = (char) sci.CharAt(i);
+                if (c <= ' ') continue;
+                // for(i in 0...1)
+                if (c == '.' && sci.CharAt(i + 1) == '.' && sci.CharAt(i + 2) == '.')
                 {
-                    if (sci.PositionIsOnComment(i) || sci.PositionIsInString(i)) continue;
-                    var c = (char)sci.CharAt(i);
-                    if (c <= ' ') continue;
-                    if (c == '(') parCount++;
-                    else if (c == ')')
+                    var type = ctx.ResolveType("Int", null);
+                    var.Type = type.QualifiedName;
+                    var.Flags |= FlagType.Inferred;
+                    return;
+                }
+                if (c == '(') parCount++;
+                // for(it in expr)
+                else if (c == ')')
+                {
+                    parCount--;
+                    if (parCount >= 0) continue;
+                    var expr = GetExpressionType(sci, i, false, true);
+                    var exprType = expr.Type;
+                    if (exprType == null) return;
+                    string iteratorIndexType = null;
+                    var members = exprType.Members;
+                    var member = members.Search("iterator", 0, 0);
+                    if (member == null)
                     {
-                        parCount--;
-                        if (parCount >= 0) continue;
-                        var expr = GetExpressionType(sci, i, false, true);
-                        var exprType = expr.Type;
-                        if (exprType == null) return;
-                        var members = exprType.Members;
-                        var member = members.Search("iterator", 0, 0);
-                        string iteratorIndexType = null;
-                        if (member == null)
+                        if (members.Search("hasNext", 0, 0) != null)
                         {
-                            if (members.Search("hasNext", 0, 0) != null)
-                            {
-                                member = members.Search("next", 0, 0);
-                                if (member != null) iteratorIndexType = member.Type;
-                            }
-                            if (exprType.Name.StartsWith("Iterator<")) exprType = expr.InClass;
+                            member = members.Search("next", 0, 0);
+                            if (member != null) iteratorIndexType = member.Type;
                         }
-                        else
+                        var exprTypeIndexType = exprType.IndexType;
+                        if (exprType.Name.StartsWith("Iterator<") && !string.IsNullOrEmpty(exprTypeIndexType) && ctx.ResolveType(exprTypeIndexType, currentModel).IsVoid())
+                            exprType = expr.InClass;
+                    }
+                    else
+                    {
+                        var type = ctx.ResolveType(member.Type, currentModel);
+                        iteratorIndexType = type.IndexType;
+                    }
+                    if (iteratorIndexType != null)
+                    {
+                        var.Type = iteratorIndexType;
+                        var exprTypeIndexType = exprType.IndexType;
+                        if (!string.IsNullOrEmpty(exprTypeIndexType) && exprTypeIndexType.Contains(','))
                         {
-                            var type = ASContext.Context.ResolveType(member.Type, ASContext.Context.CurrentModel);
-                            iteratorIndexType = type.IndexType;
-                        }
-                        if (iteratorIndexType != null)
-                        {
-                            var.Type = iteratorIndexType;
-                            if (exprType.IndexType.Contains(','))
+                            var t = exprType;
+                            var originTypes = t.IndexType.Split(',');
+                            if (!originTypes.Contains(var.Type))
                             {
-                                var t = exprType;
-                                var originTypes = t.IndexType.Split(',');
-                                if (!originTypes.Contains(var.Type))
+                                var.Type = null;
+                                t.ResolveExtends();
+                                t = t.Extends;
+                                while (!t.IsVoid())
                                 {
-                                    var.Type = null;
+                                    var types = t.IndexType.Split(',');
+                                    for (var j = 0; j < types.Length; j++)
+                                    {
+                                        if (types[j] != iteratorIndexType) continue;
+                                        var.Type = originTypes[j].Trim();
+                                        break;
+                                    }
+                                    if (var.Type != null) break;
                                     t.ResolveExtends();
                                     t = t.Extends;
-                                    while (!t.IsVoid())
-                                    {
-                                        var types = t.IndexType.Split(',');
-                                        for (var j = 0; j < types.Length; j++)
-                                        {
-                                            if (types[j] != iteratorIndexType) continue;
-                                            var.Type = originTypes[j].Trim();
-                                            break;
-                                        }
-                                        if (var.Type != null) break;
-                                        t.ResolveExtends();
-                                        t = t.Extends;
-                                    }
                                 }
                             }
                         }
-                        if (var.Type == null)
-                        {
-                            var type = ASContext.Context.ResolveType(ASContext.Context.Features.dynamicKey, null);
-                            var.Type = type.QualifiedName;
-                        }
-                        var.Flags |= FlagType.Inferred;
-                        return;
                     }
-                    else if (c == '.' && sci.CharAt(i + 1) == '.' && sci.CharAt(i + 2) == '.')
+                    if (var.Type == null)
                     {
-                        var type = ASContext.Context.ResolveType("Int", null);
+                        var type = ctx.ResolveType(ctx.Features.dynamicKey, null);
                         var.Type = type.QualifiedName;
-                        var.Flags |= FlagType.Inferred;
-                        return;
                     }
+                    var.Flags |= FlagType.Inferred;
+                    return;
                 }
             }
-            else base.InferVariableType(sci, local, var);
         }
 
         protected override void InferVariableType(ScintillaControl sci, string declarationLine, int rvalueStart, ASExpr local, MemberModel var)
