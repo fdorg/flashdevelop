@@ -551,6 +551,14 @@ namespace ASCompletion.Completion
                         .Returns("test".Length);
                     yield return new TestCaseData(ReadAllText("ExpressionEndPosition_TypeOfVariable"))
                         .Returns(94);
+                    yield return new TestCaseData("Test2 {\n}")
+                        .Returns("Test2".Length);
+                    yield return new TestCaseData("Test2{\n}")
+                        .Returns("Test2".Length);
+                    yield return new TestCaseData("[1] }\n  private function foo() {\n}")
+                        .Returns("[1]".Length);
+                    yield return new TestCaseData("'' }\n  private function foo() {\n}")
+                        .Returns("''".Length);
                 }
             }
 

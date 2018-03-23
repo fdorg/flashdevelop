@@ -4504,6 +4504,7 @@ namespace ASCompletion.Completion
             var brCount = 0;
             var arrCount = 0;
             var hadWS = false;
+            var stop = false;
             sci.Colourise(0, -1);
             while (statementEnd < endPos)
             {
@@ -4519,15 +4520,19 @@ namespace ASCompletion.Completion
                     continue;
                 }
                 var c = (char) sci.CharAt(statementEnd++);
-                if (c == '(') parCount++;
-                else if (c == ')')
+                if (c == '(' && arrCount == 0) parCount++;
+                else if (c == ')' && arrCount == 0)
                 {
                     parCount--;
                     if (parCount == 0) result = statementEnd;
                     if (parCount < 0) break;
                 }
-                else if (c == '{' && parCount == 0) brCount++;
-                else if (c == '}' && parCount == 0)
+                else if (c == '{' && parCount == 0 && arrCount == 0)
+                {
+                    if (stop) break;
+                    brCount++;
+                }
+                else if (c == '}' && parCount == 0 && arrCount == 0)
                 {
                     brCount--;
                     if (brCount == 0) result = statementEnd;
@@ -4540,15 +4545,12 @@ namespace ASCompletion.Completion
                     if (arrCount == 0) result = statementEnd;
                     if (arrCount < 0) break;
                 }
-                else if (c == ';')
-                {
-                    if (brCount == 0) break;
-                }
                 else if (parCount == 0 && arrCount == 0 && brCount == 0)
                 {
                     if (characterClass.Contains(c))
                     {
                         if (hadWS) break;
+                        stop = true;
                         result = statementEnd;
                     }
                     else if (c <= ' ') hadWS = true;
