@@ -3863,7 +3863,7 @@ namespace ASCompletion.Completion
                 expression.WordBefore = GetWordLeft(sci, ref position);
                 if (expression.WordBefore.Length > 0) expression.WordBeforePosition = position + 1;
             }
-            if (expression.Separator == " " || (expression.Separator == ";" && ((char)sci.CharAt(position)) != ';'))
+            if (expression.Separator == " " || (expression.Separator == ";" && sci.CharAt(position) != ';'))
             {
                 var @operator = GetOperatorLeft(sci, ref position);
                 if (@operator.Length > 0)
