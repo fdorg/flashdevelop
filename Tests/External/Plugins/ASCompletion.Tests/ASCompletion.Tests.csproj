@@ -947,6 +947,22 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1765_6.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1765_7.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1765_7.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1764_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1764_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1764_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1764_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1764_5.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1764_6.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1764_7.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue1764_8.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1764_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1764_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1764_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1764_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1764_5.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1764_6.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1764_7.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1764_8.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
