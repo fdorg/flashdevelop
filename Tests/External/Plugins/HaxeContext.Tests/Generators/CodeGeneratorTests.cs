@@ -412,6 +412,14 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue1764_4"))
                     .SetName("1 || 2|. Assign statement to local variable")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1764");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue1764_5", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue1764_5"))
+                    .SetName("1 != 2|. Assign statement to local variable")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1764");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue1764_6", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue1764_6"))
+                    .SetName("1 == 2|. Assign statement to local variable")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1764");
             }
         }
 

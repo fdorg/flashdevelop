@@ -3771,11 +3771,6 @@ namespace ASCompletion.Completion
                         expression.Separator = ":";
                         break;
                     }
-                    else if (c == '=')
-                    {
-                        expression.Separator = "=";
-                        break;
-                    }
                     else if (features.ArithmeticOperators.Contains(c))
                     {
                         expression.SeparatorPosition = position;
@@ -3848,13 +3843,6 @@ namespace ASCompletion.Completion
                             continue;
                         }
                         if (c == '\'' || c == '"') expression.Separator = "\"";
-                        /*
-                        else
-                        {
-                            expression.Separator = c.ToString();
-                            expression.SeparatorPosition = position;
-                        }
-                        */
                         break;
                     }
                 }
@@ -3875,7 +3863,7 @@ namespace ASCompletion.Completion
                 expression.WordBefore = GetWordLeft(sci, ref position);
                 if (expression.WordBefore.Length > 0) expression.WordBeforePosition = position + 1;
             }
-            if (expression.Separator == " " || (expression.Separator == ";" && sci.CharAt(position) != ';'))
+            if (expression.Separator == " " || (expression.Separator == ";" && ((char)sci.CharAt(position)) != ';'))
             {
                 var @operator = GetOperatorLeft(sci, ref position);
                 if (@operator.Length > 0)
@@ -4227,7 +4215,7 @@ namespace ASCompletion.Completion
                     else
                     {
                         skipWS = false;
-                        result += c;
+                        result = c + result;
                     }
                 }
                 --position;

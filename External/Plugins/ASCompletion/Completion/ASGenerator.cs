@@ -292,7 +292,7 @@ namespace ASCompletion.Completion
                 // "assign var to statement" suggestion
                 int curLine = sci.CurrentLine;
                 string ln = sci.GetLine(curLine).TrimEnd();
-                if (ln.Length > 0 && !ln.Contains('=')
+                if (ln.Length > 0
                     && ln.Length <= sci.CurrentPos - sci.PositionFromLine(curLine)) // cursor at end of line
                 {
                     var returnType = GetStatementReturnType(sci, found.InClass, sci.GetLine(curLine), sci.PositionFromLine(curLine));
