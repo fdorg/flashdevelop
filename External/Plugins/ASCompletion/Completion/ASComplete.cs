@@ -3771,11 +3771,6 @@ namespace ASCompletion.Completion
                         expression.Separator = ":";
                         break;
                     }
-                    else if (c == '=')
-                    {
-                        expression.Separator = "=";
-                        break;
-                    }
                     else if (features.ArithmeticOperators.Contains(c))
                     {
                         expression.SeparatorPosition = position;
@@ -3848,11 +3843,6 @@ namespace ASCompletion.Completion
                             continue;
                         }
                         if (c == '\'' || c == '"') expression.Separator = "\"";
-                        else
-                        {
-                            expression.Separator = c.ToString();
-                            expression.SeparatorPosition = position;
-                        }
                         break;
                     }
                 }
@@ -4225,7 +4215,7 @@ namespace ASCompletion.Completion
                     else
                     {
                         skipWS = false;
-                        result += c;
+                        result = c + result;
                     }
                 }
                 --position;
