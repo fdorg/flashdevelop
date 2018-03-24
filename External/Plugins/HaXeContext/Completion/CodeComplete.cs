@@ -141,6 +141,7 @@ namespace HaXeContext.Completion
                     string iteratorIndexType = null;
                     while (!exprType.IsVoid())
                     {
+                        // typedef Ints = Array<Int>
                         if (exprType.Flags.HasFlag(FlagType.TypeDef) && exprType.Members.Count == 0)
                         {
                             var text = sci.GetLine(exprType.LineFrom);

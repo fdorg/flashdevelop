@@ -391,11 +391,15 @@ namespace HaXeContext.Generators
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2086");
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue2086_3", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue2086_3"))
-                    .SetName("Issue 2086. Case 3. Infer variable type")
+                    .SetName("Issue 2086. Case 3. Infer variable type. typedef Ints = Array<Int>")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2086");
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue2086_4", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue2086_4"))
-                    .SetName("Issue 2086. Case 4. Infer variable type")
+                    .SetName("Issue 2086. Case 4. Infer variable type. typedef Ints = Array<Int>")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2086");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2086_5", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2086_5"))
+                    .SetName("Issue 2086. Case 5. Infer variable type. abstract Ints(Array<int>)")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2086");
             }
         }
