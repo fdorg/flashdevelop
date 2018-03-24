@@ -2305,15 +2305,11 @@ namespace ASCompletion.Completion
                 CompletionList.Show(list, autoHide, tail);
                 CompletionList.SelectItem(newItemType);
             }
-            else
-            {
-                CompletionList.Show(list, autoHide, tail);
-            }
-
+            else CompletionList.Show(list, autoHide, tail);
             return true;
         }
 
-        static private bool HandleImportCompletion(ScintillaControl Sci, string tail, bool autoHide)
+        private static bool HandleImportCompletion(ScintillaControl Sci, string tail, bool autoHide)
         {
             if (!ASContext.Context.Features.hasImports) return false;
 
@@ -2337,7 +2333,7 @@ namespace ASCompletion.Completion
             return true;
         }
 
-        static private bool HandleColonCompletion(ScintillaControl Sci, string tail, bool autoHide)
+        private static bool HandleColonCompletion(ScintillaControl Sci, string tail, bool autoHide)
         {
             ComaExpression coma;
             if (DeclarationSectionOnly()) coma = ComaExpression.FunctionDeclaration;
@@ -2456,14 +2452,14 @@ namespace ASCompletion.Completion
         /// Display the full project classes list
         /// </summary>
         /// <param name="Sci"></param>
-        static public void HandleAllClassesCompletion(ScintillaControl Sci, string tail, bool classesOnly, bool showClassVars)
+        public static void HandleAllClassesCompletion(ScintillaControl Sci, string tail, bool classesOnly, bool showClassVars)
         {
             List<ICompletionListItem> list = GetAllClasses(Sci, classesOnly, showClassVars);
             list.Sort(new CompletionItemCaseSensitiveImportComparer());
             CompletionList.Show(list, false, tail);
         }
 
-        static private bool HandleInterpolationCompletion(ScintillaControl sci, bool autoHide, bool expressions)
+        private static bool HandleInterpolationCompletion(ScintillaControl sci, bool autoHide, bool expressions)
         {
             IASContext ctx = ASContext.Context;
             MemberList members = new MemberList();
@@ -2523,15 +2519,13 @@ namespace ASCompletion.Completion
             if (word.Length == 0)
             {
                 var c = (char)sci.CharAt(pos);
-                if (c != ':' || !features.hasEcmaTyping)
-                {
-                    if (autoHide && (c == '(' || c == ',') && !ASContext.CommonSettings.DisableCallTip)
-                        return HandleFunctionCompletion(sci, autoHide);
-                    return false;
-                }
-                return HandleColonCompletion(sci, "", autoHide);
+                if (c == ':' && features.hasEcmaTyping) return HandleColonCompletion(sci, "", autoHide);
+                if (autoHide && (c == '(' || c == ',') && !ASContext.CommonSettings.DisableCallTip)
+                    return HandleFunctionCompletion(sci, autoHide);
+                return false;
             }
             if (word == "package" || features.typesKeywords.Contains(word)) return false;
+            if (word == features.ImplementsKey) return HandleImplementsCompletion(autoHide);
             // new/extends/instanceof/...
             if (features.HasTypePreKey(word)) return HandleNewCompletion(sci, "", autoHide, word);
             var beforeBody = true;
@@ -2557,6 +2551,23 @@ namespace ASCompletion.Completion
         /// <param name="autoHide">Don't keep the list open if the word does not match</param>
         /// <returns>Auto-completion has been handled</returns>
         protected virtual bool HandleWhiteSpaceCompletion(ScintillaControl sci, int position, string wordLeft, bool autoHide) => false;
+
+        /// <summary>
+        /// Display the full project interfaces list
+        /// </summary>
+        /// <param name="autoHide">Don't keep the list open if the word does not match</param>
+        /// <returns>Auto-completion has been handled</returns>
+        private bool HandleImplementsCompletion(bool autoHide)
+        {
+            var list = new List<ICompletionListItem>();
+            foreach (MemberModel it in ASContext.Context.GetAllProjectClasses())
+            {
+                if (!it.Flags.HasFlag(FlagType.Interface)) continue;
+                list.Add(new MemberItem(it));
+            }
+            CompletionList.Show(list, autoHide);
+            return true;
+        }
 
         #region expression_evaluator
 
@@ -4313,7 +4324,7 @@ namespace ASCompletion.Completion
                     if (!inConstraint)
                         retVal.Add(new MemberModel { Name = sb.ToString(), Type = sb.ToString(), Flags = FlagType.TypeDef });
                     else
-                        genType.Type += ":" + sb.ToString();
+                        genType.Type += ":" + sb;
                 }
             }
 
