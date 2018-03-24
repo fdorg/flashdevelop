@@ -393,6 +393,10 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue2086_3"))
                     .SetName("Issue 2086. Case 3. Infer variable type")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2086");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2086_4", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2086_4"))
+                    .SetName("Issue 2086. Case 4. Infer variable type")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2086");
             }
         }
 
