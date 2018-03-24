@@ -7035,7 +7035,7 @@ namespace ScintillaNet
             this.Clear();
             this.InsertText(this.PositionFromLine(startLine), line);
             this.EndUndoAction();
-
+            
             if (direction > 0)
             {
                 this.AnchorPosition = anchorPosition + length;
