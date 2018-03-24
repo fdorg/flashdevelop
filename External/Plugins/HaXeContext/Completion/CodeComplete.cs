@@ -139,23 +139,43 @@ namespace HaXeContext.Completion
                     var exprType = expr.Type;
                     if (exprType == null) return;
                     string iteratorIndexType = null;
-                    var members = exprType.Members;
-                    var member = members.Search("iterator", 0, 0);
-                    if (member == null)
+                    while (!exprType.IsVoid())
                     {
-                        if (members.Search("hasNext", 0, 0) != null)
+                        // typedef Ints = Array<Int>
+                        if (exprType.Flags.HasFlag(FlagType.TypeDef) && exprType.Members.Count == 0)
                         {
-                            member = members.Search("next", 0, 0);
-                            if (member != null) iteratorIndexType = member.Type;
+                            var text = sci.GetLine(exprType.LineFrom);
+                            m = Regex.Match(text, "\\s*typedef\\s+" + exprType.Name + "\\s*=([^;]+)");
+                            if (!m.Success) break;
+                            var rvalue = m.Groups[1].Value.TrimStart();
+                            exprType = ctx.ResolveType(rvalue, currentModel);
+                            continue;
                         }
-                        var exprTypeIndexType = exprType.IndexType;
-                        if (exprType.Name.StartsWith("Iterator<") && !string.IsNullOrEmpty(exprTypeIndexType) && ctx.ResolveType(exprTypeIndexType, currentModel).IsVoid())
-                            exprType = expr.InClass;
-                    }
-                    else
-                    {
-                        var type = ctx.ResolveType(member.Type, currentModel);
-                        iteratorIndexType = type.IndexType;
+                        var members = exprType.Members;
+                        var member = members.Search("iterator", 0, 0);
+                        if (member == null)
+                        {
+                            if (members.Search("hasNext", 0, 0) != null)
+                            {
+                                member = members.Search("next", 0, 0);
+                                if (member != null) iteratorIndexType = member.Type;
+                            }
+                            var exprTypeIndexType = exprType.IndexType;
+                            if (exprType.Name.StartsWith("Iterator<") && !string.IsNullOrEmpty(exprTypeIndexType) && ctx.ResolveType(exprTypeIndexType, currentModel).IsVoid())
+                            {
+                                exprType = expr.InClass;
+                                break;
+                            }
+                            if (iteratorIndexType != null) break;
+                        }
+                        else
+                        {
+                            var type = ctx.ResolveType(member.Type, currentModel);
+                            iteratorIndexType = type.IndexType;
+                            break;
+                        }
+                        exprType.ResolveExtends();
+                        exprType = exprType.Extends;
                     }
                     if (iteratorIndexType != null)
                     {
