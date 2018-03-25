@@ -219,34 +219,48 @@ namespace HaXeContext.Completion
 
         protected override void InferVariableType(ScintillaControl sci, string declarationLine, int rvalueStart, ASExpr local, MemberModel var)
         {
+            var ctx = ASContext.Context;
             var word = sci.GetWordRight(rvalueStart, true);
             if (word == "untyped")
             {
-                var type = ASContext.Context.ResolveType(ASContext.Context.Features.dynamicKey, null);
+                var type = ctx.ResolveType(ctx.Features.dynamicKey, null);
                 var.Type = type.QualifiedName;
                 var.Flags |= FlagType.Inferred;
                 return;
             }
-            var methodEndPosition = sci.LineEndPosition(ASContext.Context.CurrentMember.LineTo);
-            var rvalueEnd = ExpressionEndPosition(sci, rvalueStart, sci.LineEndPosition(var.LineTo));
-            for (var i = rvalueEnd; i < methodEndPosition; i++)
+            if (var.Flags.HasFlag(FlagType.LocalVar))
             {
-                if(sci.PositionIsOnComment(i) || sci.PositionIsInString(i)) continue;
-                var c = (char) sci.CharAt(i);
-                if (c <= ' ') continue;
-                if (c == ';') break;
-                if (c == '.') rvalueEnd = ExpressionEndPosition(sci, i + 1, methodEndPosition);
+                var methodEndPosition = sci.LineEndPosition(ctx.CurrentMember.LineTo);
+                var rvalueEnd = ExpressionEndPosition(sci, rvalueStart, sci.LineEndPosition(var.LineTo));
+                for (var i = rvalueEnd; i < methodEndPosition; i++)
+                {
+                    if (sci.PositionIsOnComment(i) || sci.PositionIsInString(i)) continue;
+                    var c = (char) sci.CharAt(i);
+                    if (c <= ' ') continue;
+                    if (c == ';') break;
+                    if (c == '.') rvalueEnd = ExpressionEndPosition(sci, i + 1, methodEndPosition);
+                }
+                var expr = GetExpressionType(sci, rvalueEnd, false, true);
+                if (expr.Type != null)
+                {
+                    var.Type = expr.Type.QualifiedName;
+                    var.Flags |= FlagType.Inferred;
+                    return;
+                }
+                if (expr.Member != null)
+                {
+                    var.Type = expr.Member.Type;
+                    var.Flags |= FlagType.Inferred;
+                    return;
+                }
             }
-            var expr = GetExpressionType(sci, rvalueEnd, false, true);
-            if (expr.Type != null)
+            else
             {
-                var.Type = expr.Type.QualifiedName;
-                var.Flags |= FlagType.Inferred;
-                return;
-            }
-            if (expr.Member != null)
-            {
-                var.Type = expr.Member.Type;
+                var rvalueEnd = ExpressionEndPosition(sci, rvalueStart);
+                var token = sci.GetTextRange(rvalueStart, rvalueEnd);
+                var type = ctx.ResolveToken(token, ctx.CurrentModel);
+                if (type.IsVoid()) type = ctx.ResolveType(ctx.Features.dynamicKey, null);
+                var.Type = type.QualifiedName;
                 var.Flags |= FlagType.Inferred;
                 return;
             }

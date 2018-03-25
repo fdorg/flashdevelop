@@ -383,23 +383,23 @@ namespace HaXeContext.Generators
             {
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue2086_1", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue2086_1"))
-                    .SetName("Issue 2086. Case 1. Infer variable type")
+                    .SetName("Issue 2086. Case 1. Infer local variable type")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2086");
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue2086_2", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue2086_2"))
-                    .SetName("Issue 2086. Case 2. Infer variable type")
+                    .SetName("Issue 2086. Case 2. Infer local variable type")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2086");
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue2086_3", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue2086_3"))
-                    .SetName("Issue 2086. Case 3. Infer variable type. typedef Ints = Array<Int>")
+                    .SetName("Issue 2086. Case 3. Infer local variable type. typedef Ints = Array<Int>")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2086");
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue2086_4", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue2086_4"))
-                    .SetName("Issue 2086. Case 4. Infer variable type. typedef Ints = Array<Int>")
+                    .SetName("Issue 2086. Case 4. Infer local variable type. typedef Ints = Array<Int>")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2086");
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue2086_5", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue2086_5"))
-                    .SetName("Issue 2086. Case 5. Infer variable type. abstract Ints(Array<int>)")
+                    .SetName("Issue 2086. Case 5. Infer local variable type. abstract Ints(Array<int>)")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2086");
             }
         }
@@ -432,6 +432,19 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue1764_6"))
                     .SetName("1 == 2|. Assign statement to local variable")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1764");
+            }
+        }
+
+        static IEnumerable<TestCaseData> AssignStatementToVarInferPrivateVarTestsCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeAssignStatementToVar_InferPrivateVar_1", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_InferPrivateVar_1"))
+                    .SetName("private var a = 1; Infer private variable type.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_InferPrivateVar_2", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_InferPrivateVar_2"))
+                    .SetName("private var a = \"12345\"; Infer private variable type.");
             }
         }
 
@@ -505,6 +518,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(AssignStatementToVarIssue1999TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue2086TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue1764TestCases)),
+            TestCaseSource(nameof(AssignStatementToVarInferPrivateVarTestsCases)),
             TestCaseSource(nameof(AddToInterfaceTestCases)),
             TestCaseSource(nameof(GenerateFunctionTestCases)),
             TestCaseSource(nameof(ImplementInterfaceTestCases)),

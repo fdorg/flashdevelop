@@ -2719,13 +2719,13 @@ namespace ASCompletion.Completion
             int n = tokens.Length;
             if (!complete) n--;
             // context
-            ContextFeatures features = ASContext.Context.Features;
+            var ctx = ASContext.Context;
+            ContextFeatures features = ctx.Features;
             ASResult step = head;
             ClassModel resultClass = head.Type;
             // look for static or dynamic members?
             FlagType mask = head.IsStatic ? FlagType.Static : FlagType.Dynamic;
             // members visibility
-            IASContext ctx = ASContext.Context;
             ClassModel curClass = ctx.CurrentClass;
             curClass.ResolveExtends();
             Visibility acc = ctx.TypesAffinity(curClass, step.Type);
@@ -2746,15 +2746,14 @@ namespace ASCompletion.Completion
                 if (token.Length == 0)
                 {
                     // this means expression ends with one dot
-                    if (i == n - 1)
-                        return step;
+                    if (i == n - 1) return step;
                     // this means 2 dots in the expression: consider as E4X expression
-                    if (ctx.Features.hasE4X && IsXmlType(step.Type) && i < n - 1)
+                    if (features.hasE4X && IsXmlType(step.Type) && i < n - 1)
                     {
                         inE4X = true;
                         step = new ASResult();
                         step.Member = new MemberModel(token, "XMLList", FlagType.Variable | FlagType.Dynamic | FlagType.AutomaticVar, Visibility.Public);
-                        step.Type = ctx.ResolveType(ctx.Features.objectKey, null);
+                        step.Type = ctx.ResolveType(features.objectKey, null);
                         acc = Visibility.Public;
                     }
                     else return null;
@@ -2804,7 +2803,7 @@ namespace ASCompletion.Completion
                     // handle E4X expressions
                     if (step.Type == null)
                     {
-                        if (inE4X || (ctx.Features.hasE4X && IsXmlType(resultClass)))
+                        if (inE4X || (features.hasE4X && IsXmlType(resultClass)))
                         {
                             inE4X = false;
                             step = new ASResult();
@@ -2819,13 +2818,10 @@ namespace ASCompletion.Completion
                     }
                     else inE4X = false;
 
-                    if (!step.IsStatic)
+                    if (!step.IsStatic && (mask & FlagType.Static) > 0)
                     {
-                        if ((mask & FlagType.Static) > 0)
-                        {
-                            mask -= FlagType.Static;
-                            mask |= FlagType.Dynamic;
-                        }
+                        mask -= FlagType.Static;
+                        mask |= FlagType.Dynamic;
                     }
                 }
                 else
@@ -2857,7 +2853,8 @@ namespace ASCompletion.Completion
         {
             ASResult result = new ASResult();
             if (local.coma == ComaExpression.AnonymousObjectParam) return result;
-            IASContext context = ASContext.Context;
+            var context = ASContext.Context;
+            var features = context.Features;
             if (!inClass.IsVoid()) inFile = inClass.InFile;
 
             int p = token.IndexOf('(');
@@ -2871,11 +2868,11 @@ namespace ASCompletion.Completion
                     result.Type = ResolveType("Function", null);
                 return result;
             }
-            if (!inClass.IsVoid() && !string.IsNullOrEmpty(context.Features.ConstructorKey) && token == context.Features.ConstructorKey && local.BeforeBody)
+            if (!inClass.IsVoid() && !string.IsNullOrEmpty(features.ConstructorKey) && token == features.ConstructorKey && local.BeforeBody)
                 return EvalVariable(inClass.Name, local, inFile, inClass);
             var contextMember = local.ContextMember;
             if (contextMember == null || local.coma != ComaExpression.None || !local.BeforeBody || (contextMember.Flags & (FlagType.Getter | FlagType.Setter)) > 0
-                || (local.BeforeBody && local.WordBefore != context.Features.functionKey))
+                || (local.BeforeBody && local.WordBefore != features.functionKey))
             {
                 // local vars
                 if (local.LocalVars != null)
@@ -2896,7 +2893,7 @@ namespace ASCompletion.Completion
                             result.Member = var;
                             result.InFile = inFile;
                             result.InClass = inClass;
-                            if (var.Type == null && var.Flags.HasFlag(FlagType.LocalVar) && context.Features.hasInference)
+                            if (var.Type == null && var.Flags.HasFlag(FlagType.LocalVar) && features.hasInference)
                                 context.CodeComplete.InferVariableType(local, var);
 
                             if (var.Flags.HasFlag(FlagType.Function))
@@ -2925,7 +2922,17 @@ namespace ASCompletion.Completion
             {
                 FindMember(token, inClass, result, 0, 0);
                 if (!result.IsNull())
+                {
+                    if (features.hasInference)
+                    {
+                        var member = result.Member;
+                        if (member != null && member.Flags.HasFlag(FlagType.Variable) && member.Type == null)
+                        {
+                            context.CodeComplete.InferVariableType(local, member);
+                        }
+                    }
                     return result;
+                }
             }
             // file member
             if (inFile.Version != 2 || inClass.IsVoid())
@@ -3062,8 +3069,9 @@ namespace ASCompletion.Completion
             var m = Regex.Match(text, "\\s*var\\s+" + var.Name + "\\s*=([^;]+)");
             if (!m.Success) return;
             var rvalue = m.Groups[1];
-            if (rvalue.Length <= 1) return;
-            InferVariableType(sci, text, sci.PositionFromLine(var.LineFrom) + rvalue.Index, local, var);
+            if (rvalue.Length == 0) return;
+            var offset = rvalue.Length - rvalue.Value.TrimStart().Length;
+            InferVariableType(sci, text, sci.PositionFromLine(var.LineFrom) + rvalue.Index + offset, local, var);
         }
 
         protected virtual void InferVariableType(ScintillaControl sci, string declarationLine, int rvalueStart, ASExpr local, MemberModel var)

@@ -334,6 +334,10 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2086_4.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2086_5.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2086_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_InferPrivateVar_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_InferPrivateVar_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_InferPrivateVar_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_InferPrivateVar_2.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
