@@ -221,6 +221,8 @@ namespace ASCompletion.Model
             self.Name = Name;
             self.Type = QualifiedName;
             self.Flags = Flags;
+            self.LineFrom = LineFrom;
+            self.LineTo = LineTo;
             return self;
         }
 

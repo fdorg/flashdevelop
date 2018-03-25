@@ -1,8 +1,11 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
+using PluginCore;
+using PluginCore.Controls;
 using ScintillaNet;
 
 namespace HaXeContext.Completion
@@ -102,6 +105,7 @@ namespace HaXeContext.Completion
             return base.ResolveFunction(sci, position, expr, autoHide);
         }
 
+        /// <inheritdoc />
         protected override void InferVariableType(ScintillaControl sci, ASExpr local, MemberModel var)
         {
             var line = sci.GetLine(var.LineFrom);
@@ -144,11 +148,7 @@ namespace HaXeContext.Completion
                         // typedef Ints = Array<Int>
                         if (exprType.Flags.HasFlag(FlagType.TypeDef) && exprType.Members.Count == 0)
                         {
-                            var text = sci.GetLine(exprType.LineFrom);
-                            m = Regex.Match(text, "\\s*typedef\\s+" + exprType.Name + "\\s*=([^;]+)");
-                            if (!m.Success) break;
-                            var rvalue = m.Groups[1].Value.TrimStart();
-                            exprType = ctx.ResolveType(rvalue, currentModel);
+                            exprType = InferTypedefType(sci, exprType);
                             continue;
                         }
                         var members = exprType.Members;
@@ -251,6 +251,33 @@ namespace HaXeContext.Completion
                 return;
             }
             base.InferVariableType(sci, declarationLine, rvalueStart, local, var);
+        }
+
+        static ClassModel InferTypedefType(ScintillaControl sci, MemberModel expr)
+        {
+            var text = sci.GetLine(expr.LineFrom);
+            var m = Regex.Match(text, "\\s*typedef\\s+" + expr.Name + "\\s*=([^;]+)");
+            if (!m.Success) return ClassModel.VoidClass;
+            var rvalue = m.Groups[1].Value.TrimStart();
+            return ASContext.Context.ResolveType(rvalue, ASContext.Context.CurrentModel);
+        }
+
+        /// <inheritdoc />
+        protected override bool HandleImplementsCompletion(ScintillaControl sci, bool autoHide)
+        {
+            var list = new List<ICompletionListItem>();
+            foreach (var it in ASContext.Context.GetAllProjectClasses().Items.Distinct())
+            {
+                var type = it;
+                while (type.Flags.HasFlag(FlagType.TypeDef))
+                {
+                    type = InferTypedefType(sci, type);
+                }
+                if (!type.Flags.HasFlag(FlagType.Interface)) continue;
+                list.Add(new MemberItem(it));
+            }
+            CompletionList.Show(list, autoHide);
+            return true;
         }
     }
 }
