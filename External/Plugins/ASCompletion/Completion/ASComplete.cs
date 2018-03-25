@@ -4304,17 +4304,15 @@ namespace ASCompletion.Completion
                         {
                             if (groupCount == 0)
                             {
-                                genType.Type += ":" + sb.ToString();
+                                genType.Type += ":" + sb;
                                 genType = null;
                                 inConstraint = false;
                                 sb.Length = 0;
                                 continue;
                             }
                         }
-                        else if ("({[<".IndexOf(c) > -1)
-                            groupCount++;
-                        else if (")}]>".IndexOf(c) > -1)
-                            groupCount--;
+                        else if ("({[<".Contains(c)) groupCount++;
+                        else if (")}]>".Contains(c)) groupCount--;
                         sb.Append(c);
                     }
                 }
@@ -4322,9 +4320,11 @@ namespace ASCompletion.Completion
                 {
                     if (retVal == null) retVal = new MemberList();
                     if (!inConstraint)
-                        retVal.Add(new MemberModel { Name = sb.ToString(), Type = sb.ToString(), Flags = FlagType.TypeDef });
-                    else
-                        genType.Type += ":" + sb;
+                    {
+                        var name = sb.ToString();
+                        retVal.Add(new MemberModel {Name = name, Type = name, Flags = FlagType.TypeDef});
+                    }
+                    else genType.Type += ":" + sb;
                 }
             }
 
