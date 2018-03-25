@@ -2525,7 +2525,7 @@ namespace ASCompletion.Completion
                 return false;
             }
             if (word == "package" || features.typesKeywords.Contains(word)) return false;
-            if (word == features.ImplementsKey) return HandleImplementsCompletion(autoHide);
+            if (word == features.ImplementsKey) return HandleImplementsCompletion(sci, autoHide);
             // new/extends/instanceof/...
             if (features.HasTypePreKey(word)) return HandleNewCompletion(sci, "", autoHide, word);
             var beforeBody = true;
@@ -2557,7 +2557,7 @@ namespace ASCompletion.Completion
         /// </summary>
         /// <param name="autoHide">Don't keep the list open if the word does not match</param>
         /// <returns>Auto-completion has been handled</returns>
-        private bool HandleImplementsCompletion(bool autoHide)
+        protected virtual bool HandleImplementsCompletion(ScintillaControl sci, bool autoHide)
         {
             var list = new List<ICompletionListItem>();
             foreach (MemberModel it in ASContext.Context.GetAllProjectClasses())
@@ -4389,7 +4389,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            List<ICompletionListItem> list = new List<ICompletionListItem>();
+            var list = new List<ICompletionListItem>();
             string prev = null;
             FlagType mask = (classesOnly) ?
                 FlagType.Class | FlagType.Interface | FlagType.Enum | FlagType.Delegate | FlagType.Struct | FlagType.TypeDef
