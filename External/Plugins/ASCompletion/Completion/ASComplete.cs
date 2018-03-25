@@ -2513,13 +2513,32 @@ namespace ASCompletion.Completion
         /// <returns>Auto-completion has been handled</returns>
         private bool HandleWhiteSpaceCompletion(ScintillaControl sci, int position, bool autoHide)
         {
-            var features = ASContext.Context.Features;
+            var ctx = ASContext.Context;
+            var features = ctx.Features;
             var pos = position - 1;
             var word = GetWordLeft(sci, ref pos);
             if (word.Length == 0)
             {
                 var c = (char)sci.CharAt(pos);
                 if (c == ':' && features.hasEcmaTyping) return HandleColonCompletion(sci, "", autoHide);
+                if (c == ',')
+                {
+                    var currentClass = ctx.CurrentClass;
+                    if (currentClass.Flags.HasFlag(FlagType.Class) && PositionIsBeforeBody(sci, pos, currentClass))
+                    {
+                        var endPosition = sci.PositionFromLine(currentClass.LineFrom);
+                        for (var i = pos; i > endPosition; i--)
+                        {
+                            if (sci.PositionIsOnComment(i) || c <= ' ') continue;
+                            var e = GetExpressionType(sci, i, false, true);
+                            if (e.Type == currentClass) break;
+                            var value = e.Context.Value;
+                            if (value == features.ExtendsKey) break;
+                            if (value == features.ImplementsKey) return HandleNewCompletion(sci, string.Empty, autoHide, string.Empty);
+                            i -= value.Length;
+                        }
+                    }
+                }
                 if (autoHide && (c == '(' || c == ',') && !ASContext.CommonSettings.DisableCallTip)
                     return HandleFunctionCompletion(sci, autoHide);
                 return false;
