@@ -69,9 +69,7 @@ namespace AS3Context
             features.hasImportsWildcard = true;
             features.hasClasses = true;
             features.hasExtends = true;
-            features.ExtendsKey = "extends";
             features.hasImplements = true;
-            features.ImplementsKey = "implements";
             features.hasInterfaces = true;
             features.hasEnums = false;
             features.hasGenerics = true;
@@ -99,6 +97,8 @@ namespace AS3Context
             features.methodModifierDefault = Visibility.Internal;
 
             // keywords
+            features.ExtendsKey = "extends";
+            features.ImplementsKey = "implements";
             features.dot = ".";
             features.voidKey = "void";
             features.objectKey = "Object";
