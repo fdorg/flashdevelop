@@ -70,7 +70,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestUtils\TestFile.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\ASCompletion\ASCompletion.csproj">
       <Project>{4EBF2653-9654-4E40-880E-0046B3D6210E}</Project>
@@ -310,6 +312,28 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterAddInterfaceDefTests_issue1731_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterGeneratePublicFunction_issue1735_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeGeneratePublicFunction_issue1735_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2086_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2086_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2086_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2086_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue1764_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue1764_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue1764_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue1764_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue1764_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue1764_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue1764_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue1764_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue1764_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue1764_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue1764_6.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue1764_6.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2086_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2086_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2086_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2086_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2086_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2086_5.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

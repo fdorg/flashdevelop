@@ -97,6 +97,8 @@ namespace AS3Context
             features.methodModifierDefault = Visibility.Internal;
 
             // keywords
+            features.ExtendsKey = "extends";
+            features.ImplementsKey = "implements";
             features.dot = ".";
             features.voidKey = "void";
             features.objectKey = "Object";
@@ -106,17 +108,6 @@ namespace AS3Context
             features.arrayKey = "Array";
             features.dynamicKey = "*";
             features.importKey = "import";
-            features.typesPreKeys = new string[] { "import", "new", "typeof", "is", "as", "extends", "implements" };
-            features.codeKeywords = new string[] { 
-                "var", "function", "const", "new", "delete", "typeof", "is", "as", "return", 
-                "break", "continue", "if", "else", "for", "each", "in", "while", "do", "switch", "case", "default", "with",
-                "null", "true", "false", "try", "catch", "finally", "throw", "use", "namespace"
-            };
-            features.accessKeywords = new string[] { 
-                "native", "dynamic", "final", "public", "private", "protected", "internal", "static", "override"
-            };
-            features.declKeywords = new string[] { "var", "function", "const", "namespace", "get", "set" };
-            features.typesKeywords = new string[] { "import", "class", "interface" };
             features.varKey = "var";
             features.constKey = "const";
             features.functionKey = "function";
@@ -131,8 +122,19 @@ namespace AS3Context
             features.privateKey = "private";
             features.intrinsicKey = "extern";
             features.namespaceKey = "namespace";
+            features.typesPreKeys = new[] { features.importKey, "new", "typeof", "is", "as", features.ExtendsKey, features.ImplementsKey };
+            features.codeKeywords = new[] {
+                "var", "function", "const", "new", "delete", "typeof", "is", "as", "return",
+                "break", "continue", "if", "else", "for", "each", "in", "while", "do", "switch", "case", "default", "with",
+                "null", "true", "false", "try", "catch", "finally", "throw", "use", "namespace"
+            };
+            features.accessKeywords = new[] {"native", "dynamic", "final", "public", "private", "protected", "internal", "static", "override"};
+            features.declKeywords = new[] {features.varKey, features.functionKey, features.constKey, features.namespaceKey, features.getKey, features.setKey};
+            features.typesKeywords = new[] {features.importKey, "class", "interface"};
             features.ArithmeticOperators = new HashSet<char>{'+', '-', '*', '/', '%'};
             features.IncrementDecrementOperators = new[] {"++", "--"};
+            features.BitwiseOperators = new[] {"~", "&", "|", "^", "<<", ">>", ">>>"};
+            features.BooleanOperators = new[] {"<", ">", "&&", "||", "!=", "==", "!==", "==="};
             features.OtherOperators = new HashSet<string> {"delete", "typeof", "new"};
             /* INITIALIZATION */
 
@@ -150,7 +152,7 @@ namespace AS3Context
 
         #region classpath management
         /// <summary>
-        /// Classpathes & classes cache initialisation
+        /// Classpathes & classes cache initialization
         /// </summary>
         public override void BuildClassPath()
         {

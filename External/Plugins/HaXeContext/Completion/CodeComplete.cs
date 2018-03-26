@@ -1,8 +1,11 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
+using PluginCore;
+using PluginCore.Controls;
 using ScintillaNet;
 
 namespace HaXeContext.Completion
@@ -102,31 +105,54 @@ namespace HaXeContext.Completion
             return base.ResolveFunction(sci, position, expr, autoHide);
         }
 
+        /// <inheritdoc />
         protected override void InferVariableType(ScintillaControl sci, ASExpr local, MemberModel var)
         {
             var line = sci.GetLine(var.LineFrom);
             var m = Regex.Match(line, "\\s*for\\s*\\(\\s*" + var.Name + "\\s*in\\s*");
-            if (m.Success)
+            if (!m.Success)
             {
-                var rvalueStart = sci.PositionFromLine(var.LineFrom) + m.Index + m.Length;
-                var methodEndPosition = sci.LineEndPosition(ASContext.Context.CurrentMember.LineTo);
-                var parCount = 0;
-                for (var i = rvalueStart; i < methodEndPosition; i++)
+                base.InferVariableType(sci, local, var);
+                return;
+            }
+            var ctx = ASContext.Context;
+            var currentModel = ctx.CurrentModel;
+            var rvalueStart = sci.PositionFromLine(var.LineFrom) + m.Index + m.Length;
+            var methodEndPosition = sci.LineEndPosition(ctx.CurrentMember.LineTo);
+            var parCount = 0;
+            for (var i = rvalueStart; i < methodEndPosition; i++)
+            {
+                if (sci.PositionIsOnComment(i) || sci.PositionIsInString(i)) continue;
+                var c = (char) sci.CharAt(i);
+                if (c <= ' ') continue;
+                // for(i in 0...1)
+                if (c == '.' && sci.CharAt(i + 1) == '.' && sci.CharAt(i + 2) == '.')
                 {
-                    if (sci.PositionIsOnComment(i) || sci.PositionIsInString(i)) continue;
-                    var c = (char)sci.CharAt(i);
-                    if (c <= ' ') continue;
-                    if (c == '(') parCount++;
-                    else if (c == ')')
+                    var type = ctx.ResolveType("Int", null);
+                    var.Type = type.QualifiedName;
+                    var.Flags |= FlagType.Inferred;
+                    return;
+                }
+                if (c == '(') parCount++;
+                // for(it in expr)
+                else if (c == ')')
+                {
+                    parCount--;
+                    if (parCount >= 0) continue;
+                    var expr = GetExpressionType(sci, i, false, true);
+                    var exprType = expr.Type;
+                    if (exprType == null) return;
+                    string iteratorIndexType = null;
+                    while (!exprType.IsVoid())
                     {
-                        parCount--;
-                        if (parCount >= 0) continue;
-                        var expr = GetExpressionType(sci, i, false, true);
-                        var exprType = expr.Type;
-                        if (exprType == null) return;
+                        // typedef Ints = Array<Int>
+                        if (exprType.Flags.HasFlag(FlagType.TypeDef) && exprType.Members.Count == 0)
+                        {
+                            exprType = InferTypedefType(sci, exprType);
+                            continue;
+                        }
                         var members = exprType.Members;
                         var member = members.Search("iterator", 0, 0);
-                        string iteratorIndexType = null;
                         if (member == null)
                         {
                             if (members.Search("hasNext", 0, 0) != null)
@@ -134,59 +160,61 @@ namespace HaXeContext.Completion
                                 member = members.Search("next", 0, 0);
                                 if (member != null) iteratorIndexType = member.Type;
                             }
-                            if (exprType.Name.StartsWith("Iterator<")) exprType = expr.InClass;
+                            var exprTypeIndexType = exprType.IndexType;
+                            if (exprType.Name.StartsWith("Iterator<") && !string.IsNullOrEmpty(exprTypeIndexType) && ctx.ResolveType(exprTypeIndexType, currentModel).IsVoid())
+                            {
+                                exprType = expr.InClass;
+                                break;
+                            }
+                            if (iteratorIndexType != null) break;
                         }
                         else
                         {
-                            var type = ASContext.Context.ResolveType(member.Type, ASContext.Context.CurrentModel);
+                            var type = ctx.ResolveType(member.Type, currentModel);
                             iteratorIndexType = type.IndexType;
+                            break;
                         }
-                        if (iteratorIndexType != null)
+                        exprType.ResolveExtends();
+                        exprType = exprType.Extends;
+                    }
+                    if (iteratorIndexType != null)
+                    {
+                        var.Type = iteratorIndexType;
+                        var exprTypeIndexType = exprType.IndexType;
+                        if (!string.IsNullOrEmpty(exprTypeIndexType) && exprTypeIndexType.Contains(','))
                         {
-                            var.Type = iteratorIndexType;
-                            if (exprType.IndexType.Contains(','))
+                            var t = exprType;
+                            var originTypes = t.IndexType.Split(',');
+                            if (!originTypes.Contains(var.Type))
                             {
-                                var t = exprType;
-                                var originTypes = t.IndexType.Split(',');
-                                if (!originTypes.Contains(var.Type))
+                                var.Type = null;
+                                t.ResolveExtends();
+                                t = t.Extends;
+                                while (!t.IsVoid())
                                 {
-                                    var.Type = null;
+                                    var types = t.IndexType.Split(',');
+                                    for (var j = 0; j < types.Length; j++)
+                                    {
+                                        if (types[j] != iteratorIndexType) continue;
+                                        var.Type = originTypes[j].Trim();
+                                        break;
+                                    }
+                                    if (var.Type != null) break;
                                     t.ResolveExtends();
                                     t = t.Extends;
-                                    while (!t.IsVoid())
-                                    {
-                                        var types = t.IndexType.Split(',');
-                                        for (var j = 0; j < types.Length; j++)
-                                        {
-                                            if (types[j] != iteratorIndexType) continue;
-                                            var.Type = originTypes[j].Trim();
-                                            break;
-                                        }
-                                        if (var.Type != null) break;
-                                        t.ResolveExtends();
-                                        t = t.Extends;
-                                    }
                                 }
                             }
                         }
-                        if (var.Type == null)
-                        {
-                            var type = ASContext.Context.ResolveType(ASContext.Context.Features.dynamicKey, null);
-                            var.Type = type.QualifiedName;
-                        }
-                        var.Flags |= FlagType.Inferred;
-                        return;
                     }
-                    else if (c == '.' && sci.CharAt(i + 1) == '.' && sci.CharAt(i + 2) == '.')
+                    if (var.Type == null)
                     {
-                        var type = ASContext.Context.ResolveType("Int", null);
+                        var type = ctx.ResolveType(ctx.Features.dynamicKey, null);
                         var.Type = type.QualifiedName;
-                        var.Flags |= FlagType.Inferred;
-                        return;
                     }
+                    var.Flags |= FlagType.Inferred;
+                    return;
                 }
             }
-            else base.InferVariableType(sci, local, var);
         }
 
         protected override void InferVariableType(ScintillaControl sci, string declarationLine, int rvalueStart, ASExpr local, MemberModel var)
@@ -223,6 +251,33 @@ namespace HaXeContext.Completion
                 return;
             }
             base.InferVariableType(sci, declarationLine, rvalueStart, local, var);
+        }
+
+        static ClassModel InferTypedefType(ScintillaControl sci, MemberModel expr)
+        {
+            var text = sci.GetLine(expr.LineFrom);
+            var m = Regex.Match(text, "\\s*typedef\\s+" + expr.Name + "\\s*=([^;]+)");
+            if (!m.Success) return ClassModel.VoidClass;
+            var rvalue = m.Groups[1].Value.TrimStart();
+            return ASContext.Context.ResolveType(rvalue, ASContext.Context.CurrentModel);
+        }
+
+        /// <inheritdoc />
+        protected override bool HandleImplementsCompletion(ScintillaControl sci, bool autoHide)
+        {
+            var list = new List<ICompletionListItem>();
+            foreach (var it in ASContext.Context.GetAllProjectClasses().Items.Distinct())
+            {
+                var type = it;
+                while (type.Flags.HasFlag(FlagType.TypeDef))
+                {
+                    type = InferTypedefType(sci, type);
+                }
+                if (!type.Flags.HasFlag(FlagType.Interface)) continue;
+                list.Add(new MemberItem(it));
+            }
+            CompletionList.Show(list, autoHide);
+            return true;
         }
     }
 }

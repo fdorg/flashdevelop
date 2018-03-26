@@ -66,11 +66,7 @@ namespace ASCompletion.Completion
             protected static string GetFullPath(string fileName) => $"ASCompletion.Test_Files.completion.as3.{fileName}.as";
 
             [TestFixtureSetUp]
-            public void Setup()
-            {
-                ASContext.Context.SetAs3Features();
-                sci.ConfigurationLanguage = "as3";
-            }
+            public void Setup() => SetAs3Features(sci);
 
             [Test]
             public void GetExpressionTypeSimpleTest()
@@ -478,6 +474,21 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("new Vector.<*>().$(EntryPoint)")
                         .Returns("new Vector.<*>().")
                         .SetName("new Vector.<*>().|");
+                    yield return new TestCaseData(">> 1$(EntryPoint)")
+                        .Returns(">>1")
+                        .SetName(">>1");
+                    yield return new TestCaseData(">>> 1$(EntryPoint)")
+                        .Returns(">>>1")
+                        .SetName(">>>1");
+                    yield return new TestCaseData("<< 1$(EntryPoint)")
+                        .Returns("<<1")
+                        .SetName("<<1");
+                    yield return new TestCaseData("1 | 2$(EntryPoint)")
+                        .Returns("|2")
+                        .SetName("|2");
+                    yield return new TestCaseData(" ~2$(EntryPoint)")
+                        .Returns("~2")
+                        .SetName("~2");
                 }
             }
 
@@ -540,6 +551,14 @@ namespace ASCompletion.Completion
                         .Returns("test".Length);
                     yield return new TestCaseData(ReadAllText("ExpressionEndPosition_TypeOfVariable"))
                         .Returns(94);
+                    yield return new TestCaseData("Test2 {\n}")
+                        .Returns("Test2".Length);
+                    yield return new TestCaseData("Test2{\n}")
+                        .Returns("Test2".Length);
+                    yield return new TestCaseData("[1] }\n  private function foo() {\n}")
+                        .Returns("[1]".Length);
+                    yield return new TestCaseData("'' }\n  private function foo() {\n}")
+                        .Returns("''".Length);
                 }
             }
 

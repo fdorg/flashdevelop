@@ -2305,15 +2305,11 @@ namespace ASCompletion.Completion
                 CompletionList.Show(list, autoHide, tail);
                 CompletionList.SelectItem(newItemType);
             }
-            else
-            {
-                CompletionList.Show(list, autoHide, tail);
-            }
-
+            else CompletionList.Show(list, autoHide, tail);
             return true;
         }
 
-        static private bool HandleImportCompletion(ScintillaControl Sci, string tail, bool autoHide)
+        private static bool HandleImportCompletion(ScintillaControl Sci, string tail, bool autoHide)
         {
             if (!ASContext.Context.Features.hasImports) return false;
 
@@ -2337,7 +2333,7 @@ namespace ASCompletion.Completion
             return true;
         }
 
-        static private bool HandleColonCompletion(ScintillaControl Sci, string tail, bool autoHide)
+        private static bool HandleColonCompletion(ScintillaControl Sci, string tail, bool autoHide)
         {
             ComaExpression coma;
             if (DeclarationSectionOnly()) coma = ComaExpression.FunctionDeclaration;
@@ -2456,14 +2452,14 @@ namespace ASCompletion.Completion
         /// Display the full project classes list
         /// </summary>
         /// <param name="Sci"></param>
-        static public void HandleAllClassesCompletion(ScintillaControl Sci, string tail, bool classesOnly, bool showClassVars)
+        public static void HandleAllClassesCompletion(ScintillaControl Sci, string tail, bool classesOnly, bool showClassVars)
         {
             List<ICompletionListItem> list = GetAllClasses(Sci, classesOnly, showClassVars);
             list.Sort(new CompletionItemCaseSensitiveImportComparer());
             CompletionList.Show(list, false, tail);
         }
 
-        static private bool HandleInterpolationCompletion(ScintillaControl sci, bool autoHide, bool expressions)
+        private static bool HandleInterpolationCompletion(ScintillaControl sci, bool autoHide, bool expressions)
         {
             IASContext ctx = ASContext.Context;
             MemberList members = new MemberList();
@@ -2517,21 +2513,38 @@ namespace ASCompletion.Completion
         /// <returns>Auto-completion has been handled</returns>
         private bool HandleWhiteSpaceCompletion(ScintillaControl sci, int position, bool autoHide)
         {
-            var features = ASContext.Context.Features;
+            var ctx = ASContext.Context;
+            var features = ctx.Features;
             var pos = position - 1;
             var word = GetWordLeft(sci, ref pos);
             if (word.Length == 0)
             {
                 var c = (char)sci.CharAt(pos);
-                if (c != ':' || !features.hasEcmaTyping)
+                if (c == ':' && features.hasEcmaTyping) return HandleColonCompletion(sci, "", autoHide);
+                if (c == ',')
                 {
-                    if (autoHide && (c == '(' || c == ',') && !ASContext.CommonSettings.DisableCallTip)
-                        return HandleFunctionCompletion(sci, autoHide);
-                    return false;
+                    var currentClass = ctx.CurrentClass;
+                    if (currentClass.Flags.HasFlag(FlagType.Class) && PositionIsBeforeBody(sci, pos, currentClass))
+                    {
+                        var endPosition = sci.PositionFromLine(currentClass.LineFrom);
+                        for (var i = pos; i > endPosition; i--)
+                        {
+                            if (sci.PositionIsOnComment(i) || c <= ' ') continue;
+                            var e = GetExpressionType(sci, i, false, true);
+                            if (e.Type == currentClass) break;
+                            var value = e.Context.Value;
+                            if (value == features.ExtendsKey) break;
+                            if (value == features.ImplementsKey) return HandleNewCompletion(sci, string.Empty, autoHide, string.Empty);
+                            i -= value.Length;
+                        }
+                    }
                 }
-                return HandleColonCompletion(sci, "", autoHide);
+                if (autoHide && (c == '(' || c == ',') && !ASContext.CommonSettings.DisableCallTip)
+                    return HandleFunctionCompletion(sci, autoHide);
+                return false;
             }
             if (word == "package" || features.typesKeywords.Contains(word)) return false;
+            if (word == features.ImplementsKey) return HandleImplementsCompletion(sci, autoHide);
             // new/extends/instanceof/...
             if (features.HasTypePreKey(word)) return HandleNewCompletion(sci, "", autoHide, word);
             var beforeBody = true;
@@ -2557,6 +2570,23 @@ namespace ASCompletion.Completion
         /// <param name="autoHide">Don't keep the list open if the word does not match</param>
         /// <returns>Auto-completion has been handled</returns>
         protected virtual bool HandleWhiteSpaceCompletion(ScintillaControl sci, int position, string wordLeft, bool autoHide) => false;
+
+        /// <summary>
+        /// Display the full project interfaces list
+        /// </summary>
+        /// <param name="autoHide">Don't keep the list open if the word does not match</param>
+        /// <returns>Auto-completion has been handled</returns>
+        protected virtual bool HandleImplementsCompletion(ScintillaControl sci, bool autoHide)
+        {
+            var list = new List<ICompletionListItem>();
+            foreach (MemberModel it in ASContext.Context.GetAllProjectClasses())
+            {
+                if (!it.Flags.HasFlag(FlagType.Interface)) continue;
+                list.Add(new MemberItem(it));
+            }
+            CompletionList.Show(list, autoHide);
+            return true;
+        }
 
         #region expression_evaluator
 
@@ -3771,11 +3801,6 @@ namespace ASCompletion.Completion
                         expression.Separator = ":";
                         break;
                     }
-                    else if (c == '=')
-                    {
-                        expression.Separator = "=";
-                        break;
-                    }
                     else if (features.ArithmeticOperators.Contains(c))
                     {
                         expression.SeparatorPosition = position;
@@ -3848,7 +3873,6 @@ namespace ASCompletion.Completion
                             continue;
                         }
                         if (c == '\'' || c == '"') expression.Separator = "\"";
-                        else expression.Separator = c.ToString();
                         break;
                     }
                 }
@@ -3867,7 +3891,16 @@ namespace ASCompletion.Completion
             if (expression.Separator == " ")
             {
                 expression.WordBefore = GetWordLeft(sci, ref position);
-                expression.WordBeforePosition = position + 1;
+                if (expression.WordBefore.Length > 0) expression.WordBeforePosition = position + 1;
+            }
+            if (expression.Separator == " " || (expression.Separator == ";" && sci.CharAt(position) != ';'))
+            {
+                var @operator = GetOperatorLeft(sci, ref position);
+                if (@operator.Length > 0)
+                {
+                    expression.Separator = @operator;
+                    expression.SeparatorPosition = position + 1;
+                }
             }
 
             var value = sb.ToString().TrimStart('.');
@@ -4177,7 +4210,7 @@ namespace ASCompletion.Completion
                         if (!skipWS)
                             break;
                     }
-                    else if (characterClass.IndexOf(c) < 0) break;
+                    else if (!characterClass.Contains(c)) break;
                     else if (style != 6)
                     {
                         word = c + word;
@@ -4187,6 +4220,37 @@ namespace ASCompletion.Completion
                 position--;
             }
             return word;
+        }
+
+        static string GetOperatorLeft(ScintillaControl sci, ref int position)
+        {
+            var result = string.Empty;
+            var skipWS = true;
+            while (position >= 0)
+            {
+                var style = sci.BaseStyleAt(position);
+                if (IsTextStyleEx(style))
+                {
+                    var c = (char)sci.CharAt(position);
+                    if (c <= ' ')
+                    {
+                        if (!skipWS) break;
+                    }
+                    else if (char.IsLetterOrDigit(c)
+                        || c == '.' || c == ',' || c == ':' || c == ';' || c == '_' || c == '$'
+                        || c == '"' || c == '\''
+                        || c == ')' || c == '('
+                        || c == ']' || c == '['
+                        || c == '}' || c == '{') break;
+                    else
+                    {
+                        skipWS = false;
+                        result = c + result;
+                    }
+                }
+                --position;
+            }
+            return result;
         }
 
         public static ASResult GetExpressionType(ScintillaControl sci, int position) => GetExpressionType(sci, position, true);
@@ -4259,17 +4323,15 @@ namespace ASCompletion.Completion
                         {
                             if (groupCount == 0)
                             {
-                                genType.Type += ":" + sb.ToString();
+                                genType.Type += ":" + sb;
                                 genType = null;
                                 inConstraint = false;
                                 sb.Length = 0;
                                 continue;
                             }
                         }
-                        else if ("({[<".IndexOf(c) > -1)
-                            groupCount++;
-                        else if (")}]>".IndexOf(c) > -1)
-                            groupCount--;
+                        else if ("({[<".Contains(c)) groupCount++;
+                        else if (")}]>".Contains(c)) groupCount--;
                         sb.Append(c);
                     }
                 }
@@ -4277,9 +4339,11 @@ namespace ASCompletion.Completion
                 {
                     if (retVal == null) retVal = new MemberList();
                     if (!inConstraint)
-                        retVal.Add(new MemberModel { Name = sb.ToString(), Type = sb.ToString(), Flags = FlagType.TypeDef });
-                    else
-                        genType.Type += ":" + sb.ToString();
+                    {
+                        var name = sb.ToString();
+                        retVal.Add(new MemberModel {Name = name, Type = name, Flags = FlagType.TypeDef});
+                    }
+                    else genType.Type += ":" + sb;
                 }
             }
 
@@ -4344,7 +4408,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            List<ICompletionListItem> list = new List<ICompletionListItem>();
+            var list = new List<ICompletionListItem>();
             string prev = null;
             FlagType mask = (classesOnly) ?
                 FlagType.Class | FlagType.Interface | FlagType.Enum | FlagType.Delegate | FlagType.Struct | FlagType.TypeDef
@@ -4470,6 +4534,7 @@ namespace ASCompletion.Completion
             var brCount = 0;
             var arrCount = 0;
             var hadWS = false;
+            var stop = false;
             sci.Colourise(0, -1);
             while (statementEnd < endPos)
             {
@@ -4485,15 +4550,19 @@ namespace ASCompletion.Completion
                     continue;
                 }
                 var c = (char) sci.CharAt(statementEnd++);
-                if (c == '(') parCount++;
-                else if (c == ')')
+                if (c == '(' && arrCount == 0) parCount++;
+                else if (c == ')' && arrCount == 0)
                 {
                     parCount--;
                     if (parCount == 0) result = statementEnd;
                     if (parCount < 0) break;
                 }
-                else if (c == '{' && parCount == 0) brCount++;
-                else if (c == '}' && parCount == 0)
+                else if (c == '{' && parCount == 0 && arrCount == 0)
+                {
+                    if (stop) break;
+                    brCount++;
+                }
+                else if (c == '}' && parCount == 0 && arrCount == 0)
                 {
                     brCount--;
                     if (brCount == 0) result = statementEnd;
@@ -4506,15 +4575,12 @@ namespace ASCompletion.Completion
                     if (arrCount == 0) result = statementEnd;
                     if (arrCount < 0) break;
                 }
-                else if (c == ';')
-                {
-                    if (brCount == 0) break;
-                }
                 else if (parCount == 0 && arrCount == 0 && brCount == 0)
                 {
                     if (characterClass.Contains(c))
                     {
                         if (hadWS) break;
+                        stop = true;
                         result = statementEnd;
                     }
                     else if (c <= ' ') hadWS = true;

@@ -1323,10 +1323,81 @@ namespace ASCompletion.Completion
                             .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1880_5"))
                             .SetName("/regex/gm|")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/1880");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1765_1"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1765_1"))
+                            .SetName("1 << 1|")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1765");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1765_2"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1765_2"))
+                            .SetName("1 >> 1|")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1765");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1765_3"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1765_3"))
+                            .SetName("1 ^ 1|")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1765");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1765_4"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1765_4"))
+                            .SetName("1 >>> 1|")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1765");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1765_5"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1765_5"))
+                            .SetName("1 | 1|")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1765");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1765_6"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1765_6"))
+                            .SetName("1 & 1|")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1765");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1765_7"), GeneratorJobType.AssignStatementToVar, false)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1765_7"))
+                            .SetName("~1|")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1765");
                     }
                 }
 
-                [Test, TestCaseSource(nameof(AS3TestCases))]
+                static IEnumerable<TestCaseData> AS3Issue1764TestCases
+                {
+                    get
+                    {
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1764_1"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1764_1"))
+                            .SetName("1 < 2|. Assign statement to local variable")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1764");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1764_2"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1764_2"))
+                            .SetName("1 > 2|. Assign statement to local variable")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1764");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1764_3"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1764_3"))
+                            .SetName("1 && 2|. Assign statement to local variable")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1764");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1764_4"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1764_4"))
+                            .SetName("1 || 2|. Assign statement to local variable")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1764");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1764_5"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1764_5"))
+                            .SetName("1 != 2|. Assign statement to local variable")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1764");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1764_6"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1764_6"))
+                            .SetName("1 == 2|. Assign statement to local variable")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1764");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1764_5"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1764_5"))
+                            .SetName("1 !== 2|. Assign statement to local variable")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1764");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1764_6"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1764_6"))
+                            .SetName("1 === 2|. Assign statement to local variable")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1764");
+                    }
+                }
+
+                [
+                    Test,
+                    TestCaseSource(nameof(AS3TestCases)),
+                    TestCaseSource(nameof(AS3Issue1764TestCases)),
+                ]
                 public string AS3(string sourceText, GeneratorJobType job, bool isUseTabs) => AS3Impl(sourceText, job, isUseTabs, sci);
 
                 static IEnumerable<TestCaseData> HaxeTestCases

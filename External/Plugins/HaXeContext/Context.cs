@@ -111,6 +111,8 @@ namespace HaXeContext
             features.methodModifierDefault = Visibility.Private;
 
             // keywords
+            features.ExtendsKey = "extends";
+            features.ImplementsKey = "implements";
             features.dot = ".";
             features.voidKey = "Void";
             features.objectKey = "Dynamic";
@@ -121,15 +123,6 @@ namespace HaXeContext
             features.dynamicKey = "Dynamic";
             features.importKey = "import";
             features.importKeyAlt = "using";
-            features.typesPreKeys = new string[] { "import", "new", "extends", "implements", "using" };
-            features.codeKeywords = new string[] { 
-                "var", "function", "new", "cast", "return", "break", 
-                "continue", "if", "else", "for", "in", "while", "do", "switch", "case", "default", "$type",
-                "null", "untyped", "true", "false", "try", "catch", "throw", "trace", "macro"
-            };
-            features.declKeywords = new string[] { "var", "function" };
-            features.accessKeywords = new string[] { "extern", "inline", "dynamic", "macro", "override", "public", "private", "static" };
-            features.typesKeywords = new string[] { "import", "using", "class", "interface", "typedef", "enum", "abstract" };
             features.varKey = "var";
             features.overrideKey = "override";
             features.functionKey = "function";
@@ -141,8 +134,19 @@ namespace HaXeContext
             features.hiddenPackagePrefix = '_';
             features.stringInterpolationQuotes = "'";
             features.ConstructorKey = "new";
+            features.typesPreKeys = new[] {features.importKey, features.importKeyAlt, "new", features.ExtendsKey, features.ImplementsKey};
+            features.codeKeywords = new[] {
+                "var", "function", "new", "cast", "return", "break",
+                "continue", "if", "else", "for", "in", "while", "do", "switch", "case", "default", "$type",
+                "null", "untyped", "true", "false", "try", "catch", "throw", "trace", "macro"
+            };
+            features.declKeywords = new[] {features.varKey, features.functionKey};
+            features.accessKeywords = new[] { "extern", "inline", "dynamic", "macro", "override", "public", "private", "static" };
+            features.typesKeywords = new[] { "import", "using", "class", "interface", "typedef", "enum", "abstract" };
             features.ArithmeticOperators = new HashSet<char> {'+', '-', '*', '/', '%'};
             features.IncrementDecrementOperators = new[] {"++", "--"};
+            features.BitwiseOperators = new[] {"~", "&", "|", "^", "<<", ">>", ">>>"};
+            features.BooleanOperators = new[] {"<", ">", "&&", "||", "!=", "=="};
             features.OtherOperators = new HashSet<string> {"untyped", "cast", "new"};
             /* INITIALIZATION */
 
