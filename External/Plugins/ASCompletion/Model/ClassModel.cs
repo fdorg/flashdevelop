@@ -215,10 +215,6 @@ namespace ASCompletion.Model
         public MemberModel ToMemberModel()
         {
             var result = (ClassModel) Clone();
-            //int p = Name.LastIndexOf(".");
-            //self.Name = (p >= 0) ? Name.Substring(p + 1) : Name;
-            result.Comments = Comments;
-            result.Name = Name;
             result.Type = QualifiedName;
             result.IndexType = string.Empty;
             return result;
