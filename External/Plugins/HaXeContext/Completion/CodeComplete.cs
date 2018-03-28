@@ -146,7 +146,7 @@ namespace HaXeContext.Completion
                     while (!exprType.IsVoid())
                     {
                         // typedef Ints = Array<Int>
-                        if (exprType.Flags.HasFlag(FlagType.TypeDef) && exprType.Members.Count == 0)
+                        if (!exprType.IsVoid() && exprType.Flags.HasFlag(FlagType.TypeDef) && exprType.Members.Count == 0)
                         {
                             exprType = InferTypedefType(sci, exprType);
                             continue;
@@ -265,13 +265,23 @@ namespace HaXeContext.Completion
         /// <inheritdoc />
         protected override bool HandleImplementsCompletion(ScintillaControl sci, bool autoHide)
         {
+            var extends = new HashSet<string>();
             var list = new List<ICompletionListItem>();
             foreach (var it in ASContext.Context.GetAllProjectClasses().Items.Distinct())
             {
-                var type = it;
-                while (type.Flags.HasFlag(FlagType.TypeDef))
+                extends.Clear();
+                var type = it as ClassModel ?? ClassModel.VoidClass;
+                while (!type.IsVoid() && type.Flags.HasFlag(FlagType.TypeDef) && type.Members.Count == 0)
                 {
-                    type = InferTypedefType(sci, type);
+                    if (extends.Contains(type.Type)) break;
+                    extends.Add(type.Type);
+                    if (!string.IsNullOrEmpty(type.ExtendsType))
+                    {
+                        type = type.Extends;
+                        if (extends.Contains(type.ExtendsType)) break;
+                        type.ResolveExtends();
+                    }
+                    else type = InferTypedefType(sci, type);
                 }
                 if (!type.Flags.HasFlag(FlagType.Interface)) continue;
                 list.Add(new MemberItem(it));

@@ -214,16 +214,14 @@ namespace ASCompletion.Model
 
         public MemberModel ToMemberModel()
         {
-            MemberModel self = new MemberModel();
+            var result = (ClassModel) Clone();
             //int p = Name.LastIndexOf(".");
             //self.Name = (p >= 0) ? Name.Substring(p + 1) : Name;
-            self.Comments = Comments;
-            self.Name = Name;
-            self.Type = QualifiedName;
-            self.Flags = Flags;
-            self.LineFrom = LineFrom;
-            self.LineTo = LineTo;
-            return self;
+            result.Comments = Comments;
+            result.Name = Name;
+            result.Type = QualifiedName;
+            result.IndexType = string.Empty;
+            return result;
         }
 
         internal MemberList GetSortedMembersList()
