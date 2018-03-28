@@ -146,7 +146,7 @@ namespace HaXeContext.Completion
                     while (!exprType.IsVoid())
                     {
                         // typedef Ints = Array<Int>
-                        if (!exprType.IsVoid() && exprType.Flags.HasFlag(FlagType.TypeDef) && exprType.Members.Count == 0)
+                        if (exprType.Flags.HasFlag(FlagType.TypeDef) && exprType.Members.Count == 0)
                         {
                             exprType = InferTypedefType(sci, exprType);
                             continue;
