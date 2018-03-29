@@ -2857,7 +2857,8 @@ namespace ASCompletion.Completion
         {
             ASResult result = new ASResult();
             if (local.coma == ComaExpression.AnonymousObjectParam) return result;
-            IASContext context = ASContext.Context;
+            var context = ASContext.Context;
+            var features = context.Features;
             if (!inClass.IsVoid()) inFile = inClass.InFile;
 
             int p = token.IndexOf('(');
@@ -2871,11 +2872,11 @@ namespace ASCompletion.Completion
                     result.Type = ResolveType("Function", null);
                 return result;
             }
-            if (!inClass.IsVoid() && !string.IsNullOrEmpty(context.Features.ConstructorKey) && token == context.Features.ConstructorKey && local.BeforeBody)
+            if (!inClass.IsVoid() && !string.IsNullOrEmpty(features.ConstructorKey) && token == features.ConstructorKey && local.BeforeBody)
                 return EvalVariable(inClass.Name, local, inFile, inClass);
             var contextMember = local.ContextMember;
             if (contextMember == null || local.coma != ComaExpression.None || !local.BeforeBody || (contextMember.Flags & (FlagType.Getter | FlagType.Setter)) > 0
-                || (local.BeforeBody && local.WordBefore != context.Features.functionKey))
+                || (local.BeforeBody && local.WordBefore != features.functionKey))
             {
                 // local vars
                 if (local.LocalVars != null)
@@ -2896,8 +2897,11 @@ namespace ASCompletion.Completion
                             result.Member = var;
                             result.InFile = inFile;
                             result.InClass = inClass;
-                            if (var.Type == null && var.Flags.HasFlag(FlagType.LocalVar) && context.Features.hasInference)
-                                context.CodeComplete.InferVariableType(local, var);
+                            if (features.hasInference && var.Type == null)
+                            {
+                                if (var.Flags.HasFlag(FlagType.LocalVar)) context.CodeComplete.InferVariableType(local, var);
+                                else if (var.Flags.HasFlag(FlagType.ParameterVar)) context.CodeComplete.InferParameterVarType(var);
+                            }
 
                             if (var.Flags.HasFlag(FlagType.Function))
                                 result.Type = context.ResolveType("Function", null);
@@ -3087,6 +3091,17 @@ namespace ASCompletion.Completion
                 var.Type = result.Member.Type;
                 var.Flags |= FlagType.Inferred;
             }
+        }
+
+        /// <summary>
+        /// Infer very simple cases: function foo(value = {expression})
+        /// </summary>
+        private void InferParameterVarType(MemberModel var)
+        {
+            var ctx = ASContext.Context;
+            var type = ctx.ResolveToken(var.Value, ctx.CurrentModel);
+            if (type.IsVoid()) type = ctx.ResolveType(ctx.Features.dynamicKey, null);
+            var.Type = type.Name;
         }
 
         /// <summary>
