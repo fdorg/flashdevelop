@@ -344,6 +344,9 @@
     <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_inferParameterVar_3.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_inferParameterVar_4.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_inferParameterVar_4.hx" />
+    <EmbeddedResource Include="Test Files\parser\GetTopLevelElements_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\GetTopLevelElements_2.hx" />
+    <EmbeddedResource Include="Test Files\parser\GetTopLevelElements_3.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1607,8 +1607,7 @@ namespace HaXeContext
                     {
                         if (mainClass == aClass) continue;
                         elements.Add(aClass.ToMemberModel());
-                        if (aClass.IsEnum())
-                            other.Add(aClass.Members);
+                        TryAddEnums(aClass, other);
                     }
                 }
 
@@ -1618,11 +1617,7 @@ namespace HaXeContext
 
                 foreach (MemberModel import in imports)
                 {
-                    if (import is ClassModel)
-                    {
-                        ClassModel aClass = import as ClassModel;
-                        if (aClass.IsEnum()) other.Add(aClass.Members);
-                    }
+                    TryAddEnums(import as ClassModel, other);
                 }
 
                 // in cache
@@ -1641,8 +1636,27 @@ namespace HaXeContext
                     catch (AccessViolationException) { } // catch memory errors
                 }
             }
-
             return completionCache.Elements;
+
+            // Adds members of `model` into `elements` if `model` is enum or abstract with meta tag `@:enum`
+            void TryAddEnums(ClassModel model, MemberList elements)
+            {
+                if (model == null || model.IsVoid()) return;
+                if (model.IsEnum()) elements.Add(model.Members);
+                else if (model.Flags.HasFlag(FlagType.Abstract))
+                {
+                    var meta = model.MetaDatas;
+                    if (meta == null || meta.All(it => it.Name != ":enum")) return;
+                    foreach (MemberModel member in model.Members)
+                    {
+                        if (!member.Flags.HasFlag(FlagType.Variable)) continue;
+                        var clone = (MemberModel) member.Clone();
+                        clone.Flags |= FlagType.Static;
+                        clone.Access = Visibility.Public;
+                        elements.Add(clone);
+                    }
+                }
+            }
         }
 
         /// <summary>

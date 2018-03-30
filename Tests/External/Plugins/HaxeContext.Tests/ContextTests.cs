@@ -245,5 +245,32 @@ namespace HaXeContext
             ASContext.Context.Settings.InstalledSDKs = new[] {new InstalledSDK {Path = PluginBase.CurrentProject.CurrentSDK, Version = sdkVersion}};
             return ASContext.Context.ResolveToken(token, null);
         }
+
+        static IEnumerable<TestCaseData> GetTopLevelElementsTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("GetTopLevelElements_1", new MemberModel("Foo", string.Empty, FlagType.Enum | FlagType.Static | FlagType.Variable, Visibility.Public))
+                    .Returns(true)
+                    .SetName("Case 1. enum");
+                yield return new TestCaseData("GetTopLevelElements_2", new MemberModel("Foo", string.Empty, FlagType.Dynamic | FlagType.Static | FlagType.Variable, Visibility.Public))
+                    .Returns(true)
+                    .SetName("Case 2. @:enum abstract");
+                yield return new TestCaseData("GetTopLevelElements_3", new MemberModel("toString", string.Empty, FlagType.Function, Visibility.Public))
+                    .Returns(false)
+                    .SetName("Case 3. @:enum abstract without variables");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(GetTopLevelElementsTestCases))]
+        public bool GetTopLevelElements(string fileName, MemberModel member)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            var context = ((ASContext) ASContext.GetLanguageContext("haxe"));
+            context.CurrentModel = ASContext.Context.CurrentModel;
+            context.completionCache.IsDirty = true;
+            var topLevelElements = context.GetTopLevelElements();
+            return topLevelElements.Items.Contains(member);
+        }
     }
 }
