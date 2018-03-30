@@ -902,15 +902,11 @@ namespace HaXeContext
         {
             if (member == ClassModel.VoidClass) return false;
             if (member.InFile?.Package == CurrentModel.Package) return true;
-            int p = member.Name.IndexOf('#');
-            if (p > 0)
-            {
-                member = member.Clone() as MemberModel;
-                member.Name = member.Name.Substring(0, p);
-            }
+            var name = member.Name;
+            int p = name.IndexOf('#');
+            if (p > 0) name = name.Substring(0, p);
 
             string fullName = member.Type;
-            string name = member.Name;
             var curFile = Context.CurrentModel;
             var imports = curFile.Imports.Items.Concat(ResolveDefaults(curFile.Package).Items).ToArray();
             foreach (var import in imports)
