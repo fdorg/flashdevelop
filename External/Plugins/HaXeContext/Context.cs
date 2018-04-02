@@ -1602,29 +1602,21 @@ namespace HaXeContext
                 // other types in same file
                 if (cFile.Classes.Count > 1)
                 {
-                    ClassModel mainClass = cFile.GetPublicClass();
-                    foreach (ClassModel aClass in cFile.Classes)
+                    var mainClass = cFile.GetPublicClass();
+                    foreach (var aClass in cFile.Classes)
                     {
                         if (mainClass == aClass) continue;
                         elements.Add(aClass.ToMemberModel());
-                        if (aClass.IsEnum())
-                            other.Add(aClass.Members);
+                        TryAddEnums(aClass, other);
                     }
                 }
-
                 // imports
-                MemberList imports = ResolveImports(CurrentModel);
+                var imports = ResolveImports(CurrentModel);
                 elements.Add(imports);
-
                 foreach (MemberModel import in imports)
                 {
-                    if (import is ClassModel)
-                    {
-                        ClassModel aClass = import as ClassModel;
-                        if (aClass.IsEnum()) other.Add(aClass.Members);
-                    }
+                    TryAddEnums(import as ClassModel, other);
                 }
-
                 // in cache
                 elements.Sort();
                 other.Sort();
@@ -1641,8 +1633,31 @@ namespace HaXeContext
                     catch (AccessViolationException) { } // catch memory errors
                 }
             }
-
             return completionCache.Elements;
+        }
+
+        /// <summary>
+        /// Adds members of `model` into `result` if `model` is enum or abstract with meta tag `@:enum`
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="result"></param>
+        static void TryAddEnums(ClassModel model, MemberList result)
+        {
+            if (model == null || model.IsVoid()) return;
+            if (model.IsEnum()) result.Add(model.Members);
+            else if (model.Flags.HasFlag(FlagType.Abstract))
+            {
+                var meta = model.MetaDatas;
+                if (meta == null || meta.All(it => it.Name != ":enum")) return;
+                foreach (MemberModel member in model.Members)
+                {
+                    if (!member.Flags.HasFlag(FlagType.Variable)) continue;
+                    var clone = (MemberModel) member.Clone();
+                    clone.Flags |= FlagType.Static;
+                    clone.Access = Visibility.Public;
+                    result.Add(clone);
+                }
+            }
         }
 
         /// <summary>
