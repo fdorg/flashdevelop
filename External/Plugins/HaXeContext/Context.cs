@@ -1543,6 +1543,27 @@ namespace HaXeContext
             else return hxCompletionCache.OtherElements;
         }
 
+        /// <inheritdoc />
+        public override void ResolveTopLevelElement(string token, ASResult result)
+        {
+            var list = GetTopLevelElements();
+            if (list != null && list.Count > 0)
+            {
+                var item = list.Search(token, 0, 0);
+                if (item != null)
+                {
+                    result.InClass = ClassModel.VoidClass;
+                    result.InFile = item.InFile;
+                    result.Member = item;
+                    result.Type = ResolveType(item.Type, item.InFile);
+                    result.IsStatic = false;
+                    result.IsPackage = false;
+                    return;
+                }
+            }
+            base.ResolveTopLevelElement(token, result);
+        }
+
         /// <summary>
         /// Return the visible elements (types, package-level declarations) visible from the current file
         /// </summary>
@@ -1644,7 +1665,20 @@ namespace HaXeContext
         static void TryAddEnums(ClassModel model, MemberList result)
         {
             if (model == null || model.IsVoid()) return;
-            if (model.IsEnum()) result.Add(model.Members);
+            if (model.IsEnum())
+            {
+                for (var i = 0; i < model.Members.Count; i++)
+                {
+                    var member = model.Members[i];
+                    if (member.Type == null || model.InFile == null)
+                    {
+                        member = (MemberModel) member.Clone();
+                        member.Type = model.Type;
+                        member.InFile = model.InFile;
+                    }
+                    result.Add(member);
+                }
+            }
             else if (model.Flags.HasFlag(FlagType.Abstract))
             {
                 var meta = model.MetaDatas;
@@ -1653,8 +1687,10 @@ namespace HaXeContext
                 {
                     if (!member.Flags.HasFlag(FlagType.Variable)) continue;
                     var clone = (MemberModel) member.Clone();
-                    clone.Flags |= FlagType.Static;
+                    clone.Flags = FlagType.Enum | FlagType.Static | FlagType.Variable;
                     clone.Access = Visibility.Public;
+                    clone.Type = model.Type;
+                    clone.InFile = model.InFile;
                     result.Add(clone);
                 }
             }

@@ -74,6 +74,11 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
+      <Project>{74AD0487-CEF9-43FE-9283-BC6F79539ADE}</Project>
+      <Name>AS2Context</Name>
+      <Private>False</Private>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\External\Plugins\ASCompletion\ASCompletion.csproj">
       <Project>{4EBF2653-9654-4E40-880E-0046B3D6210E}</Project>
       <Name>ASCompletion</Name>
@@ -347,6 +352,8 @@
     <EmbeddedResource Include="Test Files\parser\GetTopLevelElements_1.hx" />
     <EmbeddedResource Include="Test Files\parser\GetTopLevelElements_2.hx" />
     <EmbeddedResource Include="Test Files\parser\GetTopLevelElements_3.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveTopLevelElement_enum.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveTopLevelElement_abstract.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

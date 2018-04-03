@@ -253,7 +253,7 @@ namespace HaXeContext
                 yield return new TestCaseData("GetTopLevelElements_1", new MemberModel("Foo", string.Empty, FlagType.Enum | FlagType.Static | FlagType.Variable, Visibility.Public))
                     .Returns(true)
                     .SetName("Case 1. enum");
-                yield return new TestCaseData("GetTopLevelElements_2", new MemberModel("Foo", string.Empty, FlagType.Dynamic | FlagType.Static | FlagType.Variable, Visibility.Public))
+                yield return new TestCaseData("GetTopLevelElements_2", new MemberModel("Foo", string.Empty, FlagType.Enum | FlagType.Static | FlagType.Variable, Visibility.Public))
                     .Returns(true)
                     .SetName("Case 2. @:enum abstract");
                 yield return new TestCaseData("GetTopLevelElements_3", new MemberModel("toString", string.Empty, FlagType.Function, Visibility.Public))
@@ -271,6 +271,30 @@ namespace HaXeContext
             context.completionCache.IsDirty = true;
             var topLevelElements = context.GetTopLevelElements();
             return topLevelElements.Items.Contains(member);
+        }
+
+        static IEnumerable<TestCaseData> ResolveTopLevelElementTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("ResolveTopLevelElement_enum")
+                    .Returns(new MemberModel("EFoo", "Foo", FlagType.Enum | FlagType.Static | FlagType.Variable, Visibility.Public));
+                yield return new TestCaseData("ResolveTopLevelElement_abstract")
+                    .Returns(new MemberModel("EFoo", "Foo", FlagType.Enum | FlagType.Static | FlagType.Variable, Visibility.Public));
+            }
+        }
+
+        [Test, TestCaseSource(nameof(ResolveTopLevelElementTestCases))]
+        public MemberModel ResolveTopLevelElement(string fileName)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            var context = (Context)ASContext.GetLanguageContext("haxe");
+            context.CurrentModel = ASContext.Context.CurrentModel;
+            context.completionCache.IsDirty = true;
+            context.GetVisibleExternalElements();
+            var result = new ASResult();
+            context.ResolveTopLevelElement("EFoo", result);
+            return result.Member;
         }
     }
 }

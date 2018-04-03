@@ -2618,20 +2618,17 @@ namespace ASCompletion.Completion
         /// <returns>Class/member struct</returns>
         private static ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility)
         {
-            ASResult notFound = new ASResult {Context = context};
+            var notFound = new ASResult {Context = context};
             if (string.IsNullOrEmpty(expression)) return notFound;
             var value = expression.TrimEnd('.');
             if (context.SubExpressions?.Count == 1) value = value.Replace(char.IsLetter(value[0]) ? ".#0~" : "#0~", context.SubExpressions.First());
-            if (!string.IsNullOrEmpty(context.WordBefore) && ASContext.Context.Features.OtherOperators.Contains(context.WordBefore))
-            {
-                value = context.WordBefore + " " + value;
-            }
-
             var ctx = ASContext.Context;
+            var features = ctx.Features;
+            if (!string.IsNullOrEmpty(context.WordBefore) && features.OtherOperators.Contains(context.WordBefore))
+                value = context.WordBefore + " " + value;
+
             var type = ctx.ResolveToken(value, inClass.InFile);
             if (!type.IsVoid()) return new ASResult {Type = type, Context = context, InClass = type, InFile = type.InFile, Path = context.Value};
-
-            var features = ctx.Features;
             if (expression.StartsWithOrdinal(features.dot))
             {
                 if (expression.StartsWithOrdinal(features.dot + "#")) expression = expression.Substring(1);
@@ -2639,10 +2636,10 @@ namespace ASCompletion.Completion
                 else return notFound;
             }
 
-            string[] tokens = Regex.Split(expression, Regex.Escape(features.dot));
+            var tokens = Regex.Split(expression, Regex.Escape(features.dot));
 
             // eval first token
-            string token = tokens[0];
+            var token = tokens[0];
             if (token.Length == 0) return notFound;
             if (asFunction && tokens.Length == 1) token += "(";
             type = ctx.ResolveToken(token, inClass.InFile);
