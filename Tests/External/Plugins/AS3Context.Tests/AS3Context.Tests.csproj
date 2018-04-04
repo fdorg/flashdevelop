@@ -62,11 +62,6 @@
     <Compile Include="TestUtils\TestFile.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\External\Plugins\AS3Context\AS3Context.csproj">
-      <Project>{74ad0487-cef9-43fe-9283-bc6f79539ade}</Project>
-      <Name>AS2Context</Name>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\..\External\Plugins\ASCompletion\ASCompletion.csproj">
       <Project>{4EBF2653-9654-4E40-880E-0046B3D6210E}</Project>
       <Name>ASCompletion</Name>

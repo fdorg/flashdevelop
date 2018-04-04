@@ -77,6 +77,8 @@ namespace ASCompletion.TestUtils
                 var expr = it.ArgAt<ASExpr>(1);
                 return expr == null ? null : context.ResolveDotContext(it.ArgAt<ScintillaControl>(0), expr, it.ArgAt<bool>(2));
             });
+            mock.When(it => it.ResolveTopLevelElement(Arg.Any<string>(), Arg.Any<ASResult>()))
+                .Do(it => context.ResolveTopLevelElement(it.ArgAt<string>(0), it.ArgAt<ASResult>(1)));
             mock.TypesAffinity(null, null).ReturnsForAnyArgs(it =>
             {
                 var inClass = it.ArgAt<ClassModel>(0);

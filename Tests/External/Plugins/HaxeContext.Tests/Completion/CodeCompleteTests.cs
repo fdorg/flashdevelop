@@ -8,9 +8,9 @@ namespace HaXeContext.Completion
 {
     class CodeCompleteTests : ASCompleteTests
     {
-        internal static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.completion.{fileName}.hx";
+        static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.completion.{fileName}.hx";
 
-        internal static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
+        static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
         [TestFixtureSetUp]
         public void Setup() => SetHaxeFeatures(sci);
