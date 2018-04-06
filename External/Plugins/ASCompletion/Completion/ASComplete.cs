@@ -2618,20 +2618,17 @@ namespace ASCompletion.Completion
         /// <returns>Class/member struct</returns>
         private static ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility)
         {
-            ASResult notFound = new ASResult {Context = context};
+            var notFound = new ASResult {Context = context};
             if (string.IsNullOrEmpty(expression)) return notFound;
             var value = expression.TrimEnd('.');
             if (context.SubExpressions?.Count == 1) value = value.Replace(char.IsLetter(value[0]) ? ".#0~" : "#0~", context.SubExpressions.First());
-            if (!string.IsNullOrEmpty(context.WordBefore) && ASContext.Context.Features.OtherOperators.Contains(context.WordBefore))
-            {
-                value = context.WordBefore + " " + value;
-            }
-
             var ctx = ASContext.Context;
+            var features = ctx.Features;
+            if (!string.IsNullOrEmpty(context.WordBefore) && features.OtherOperators.Contains(context.WordBefore))
+                value = context.WordBefore + " " + value;
+
             var type = ctx.ResolveToken(value, inClass.InFile);
             if (!type.IsVoid()) return new ASResult {Type = type, Context = context, InClass = type, InFile = type.InFile, Path = context.Value};
-
-            var features = ctx.Features;
             if (expression.StartsWithOrdinal(features.dot))
             {
                 if (expression.StartsWithOrdinal(features.dot + "#")) expression = expression.Substring(1);
@@ -2639,10 +2636,10 @@ namespace ASCompletion.Completion
                 else return notFound;
             }
 
-            string[] tokens = Regex.Split(expression, Regex.Escape(features.dot));
+            var tokens = Regex.Split(expression, Regex.Escape(features.dot));
 
             // eval first token
-            string token = tokens[0];
+            var token = tokens[0];
             if (token.Length == 0) return notFound;
             if (asFunction && tokens.Length == 1) token += "(";
             type = ctx.ResolveToken(token, inClass.InFile);
@@ -2857,7 +2854,8 @@ namespace ASCompletion.Completion
         {
             ASResult result = new ASResult();
             if (local.coma == ComaExpression.AnonymousObjectParam) return result;
-            IASContext context = ASContext.Context;
+            var context = ASContext.Context;
+            var features = context.Features;
             if (!inClass.IsVoid()) inFile = inClass.InFile;
 
             int p = token.IndexOf('(');
@@ -2871,11 +2869,11 @@ namespace ASCompletion.Completion
                     result.Type = ResolveType("Function", null);
                 return result;
             }
-            if (!inClass.IsVoid() && !string.IsNullOrEmpty(context.Features.ConstructorKey) && token == context.Features.ConstructorKey && local.BeforeBody)
+            if (!inClass.IsVoid() && !string.IsNullOrEmpty(features.ConstructorKey) && token == features.ConstructorKey && local.BeforeBody)
                 return EvalVariable(inClass.Name, local, inFile, inClass);
             var contextMember = local.ContextMember;
             if (contextMember == null || local.coma != ComaExpression.None || !local.BeforeBody || (contextMember.Flags & (FlagType.Getter | FlagType.Setter)) > 0
-                || (local.BeforeBody && local.WordBefore != context.Features.functionKey))
+                || (local.BeforeBody && local.WordBefore != features.functionKey))
             {
                 // local vars
                 if (local.LocalVars != null)
@@ -2896,8 +2894,11 @@ namespace ASCompletion.Completion
                             result.Member = var;
                             result.InFile = inFile;
                             result.InClass = inClass;
-                            if (var.Type == null && var.Flags.HasFlag(FlagType.LocalVar) && context.Features.hasInference)
-                                context.CodeComplete.InferVariableType(local, var);
+                            if (features.hasInference && var.Type == null)
+                            {
+                                if (var.Flags.HasFlag(FlagType.LocalVar)) context.CodeComplete.InferVariableType(local, var);
+                                else if (var.Flags.HasFlag(FlagType.ParameterVar)) context.CodeComplete.InferParameterVarType(var);
+                            }
 
                             if (var.Flags.HasFlag(FlagType.Function))
                                 result.Type = context.ResolveType("Function", null);
@@ -3087,6 +3088,17 @@ namespace ASCompletion.Completion
                 var.Type = result.Member.Type;
                 var.Flags |= FlagType.Inferred;
             }
+        }
+
+        /// <summary>
+        /// Infer very simple cases: function foo(value = {expression})
+        /// </summary>
+        private void InferParameterVarType(MemberModel var)
+        {
+            var ctx = ASContext.Context;
+            var type = ctx.ResolveToken(var.Value, ctx.CurrentModel);
+            if (type.IsVoid()) type = ctx.ResolveType(ctx.Features.dynamicKey, null);
+            var.Type = type.Name;
         }
 
         /// <summary>

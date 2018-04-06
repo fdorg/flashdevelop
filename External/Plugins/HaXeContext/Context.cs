@@ -902,15 +902,11 @@ namespace HaXeContext
         {
             if (member == ClassModel.VoidClass) return false;
             if (member.InFile?.Package == CurrentModel.Package) return true;
-            int p = member.Name.IndexOf('#');
-            if (p > 0)
-            {
-                member = member.Clone() as MemberModel;
-                member.Name = member.Name.Substring(0, p);
-            }
+            var name = member.Name;
+            int p = name.IndexOf('#');
+            if (p > 0) name = name.Substring(0, p);
 
             string fullName = member.Type;
-            string name = member.Name;
             var curFile = Context.CurrentModel;
             var imports = curFile.Imports.Items.Concat(ResolveDefaults(curFile.Package).Items).ToArray();
             foreach (var import in imports)
@@ -1547,6 +1543,27 @@ namespace HaXeContext
             else return hxCompletionCache.OtherElements;
         }
 
+        /// <inheritdoc />
+        public override void ResolveTopLevelElement(string token, ASResult result)
+        {
+            var list = GetTopLevelElements();
+            if (list != null && list.Count > 0)
+            {
+                var item = list.Search(token, 0, 0);
+                if (item != null)
+                {
+                    result.InClass = ClassModel.VoidClass;
+                    result.InFile = item.InFile;
+                    result.Member = item;
+                    result.Type = ResolveType(item.Type, item.InFile);
+                    result.IsStatic = false;
+                    result.IsPackage = false;
+                    return;
+                }
+            }
+            base.ResolveTopLevelElement(token, result);
+        }
+
         /// <summary>
         /// Return the visible elements (types, package-level declarations) visible from the current file
         /// </summary>
@@ -1606,29 +1623,21 @@ namespace HaXeContext
                 // other types in same file
                 if (cFile.Classes.Count > 1)
                 {
-                    ClassModel mainClass = cFile.GetPublicClass();
-                    foreach (ClassModel aClass in cFile.Classes)
+                    var mainClass = cFile.GetPublicClass();
+                    foreach (var aClass in cFile.Classes)
                     {
                         if (mainClass == aClass) continue;
                         elements.Add(aClass.ToMemberModel());
-                        if (aClass.IsEnum())
-                            other.Add(aClass.Members);
+                        TryAddEnums(aClass, other);
                     }
                 }
-
                 // imports
-                MemberList imports = ResolveImports(CurrentModel);
+                var imports = ResolveImports(CurrentModel);
                 elements.Add(imports);
-
                 foreach (MemberModel import in imports)
                 {
-                    if (import is ClassModel)
-                    {
-                        ClassModel aClass = import as ClassModel;
-                        if (aClass.IsEnum()) other.Add(aClass.Members);
-                    }
+                    TryAddEnums(import as ClassModel, other);
                 }
-
                 // in cache
                 elements.Sort();
                 other.Sort();
@@ -1645,8 +1654,46 @@ namespace HaXeContext
                     catch (AccessViolationException) { } // catch memory errors
                 }
             }
-
             return completionCache.Elements;
+        }
+
+        /// <summary>
+        /// Adds members of `model` into `result` if `model` is enum or abstract with meta tag `@:enum`
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="result"></param>
+        static void TryAddEnums(ClassModel model, MemberList result)
+        {
+            if (model == null || model.IsVoid()) return;
+            if (model.IsEnum())
+            {
+                for (var i = 0; i < model.Members.Count; i++)
+                {
+                    var member = model.Members[i];
+                    if (member.Type == null || model.InFile == null)
+                    {
+                        member = (MemberModel) member.Clone();
+                        member.Type = model.Type;
+                        member.InFile = model.InFile;
+                    }
+                    result.Add(member);
+                }
+            }
+            else if (model.Flags.HasFlag(FlagType.Abstract))
+            {
+                var meta = model.MetaDatas;
+                if (meta == null || meta.All(it => it.Name != ":enum")) return;
+                foreach (MemberModel member in model.Members)
+                {
+                    if (!member.Flags.HasFlag(FlagType.Variable)) continue;
+                    var clone = (MemberModel) member.Clone();
+                    clone.Flags = FlagType.Enum | FlagType.Static | FlagType.Variable;
+                    clone.Access = Visibility.Public;
+                    clone.Type = model.Type;
+                    clone.InFile = model.InFile;
+                    result.Add(clone);
+                }
+            }
         }
 
         /// <summary>

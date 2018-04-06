@@ -14,9 +14,9 @@ namespace HaXeContext.Generators
     [TestFixture]
     public class CodeGeneratorTests : ASGeneratorTests.GenerateJob
     {
-        internal static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.generators.code.{fileName}.hx";
+        static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.generators.code.{fileName}.hx";
 
-        internal static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
+        static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
         static readonly string testFilesAssemblyPath = $"\\FlashDevelop\\Bin\\Debug\\{nameof(HaXeContext)}\\Test_Files\\";
         static readonly string testFilesDirectory = $"\\Tests\\External\\Plugins\\{nameof(HaXeContext)}.Tests\\Test Files\\";
@@ -383,23 +383,23 @@ namespace HaXeContext.Generators
             {
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue2086_1", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue2086_1"))
-                    .SetName("Issue 2086. Case 1. Infer variable type")
+                    .SetName("Issue 2086. Case 1. Infer local variable type")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2086");
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue2086_2", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue2086_2"))
-                    .SetName("Issue 2086. Case 2. Infer variable type")
+                    .SetName("Issue 2086. Case 2. Infer local variable type")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2086");
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue2086_3", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue2086_3"))
-                    .SetName("Issue 2086. Case 3. Infer variable type. typedef Ints = Array<Int>")
+                    .SetName("Issue 2086. Case 3. Infer local variable type. typedef Ints = Array<Int>")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2086");
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue2086_4", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue2086_4"))
-                    .SetName("Issue 2086. Case 4. Infer variable type. typedef Ints = Array<Int>")
+                    .SetName("Issue 2086. Case 4. Infer local variable type. typedef Ints = Array<Int>")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2086");
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue2086_5", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue2086_5"))
-                    .SetName("Issue 2086. Case 5. Infer variable type. abstract Ints(Array<int>)")
+                    .SetName("Issue 2086. Case 5. Infer local variable type. abstract Ints(Array<int>)")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2086");
             }
         }
@@ -432,6 +432,38 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue1764_6"))
                     .SetName("1 == 2|. Assign statement to local variable")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1764");
+            }
+        }
+
+        static IEnumerable<TestCaseData> AssignStatementToVarInferParameterVarTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferParameterVar_1", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferParameterVar_1"))
+                    .SetName("Infer parameter var type. Case 1.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferParameterVar_2", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferParameterVar_2"))
+                    .SetName("Infer parameter var type. Case 2.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferParameterVar_3", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferParameterVar_3"))
+                    .SetName("Infer parameter var type. Case 3.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferParameterVar_4", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferParameterVar_4"))
+                    .SetName("Infer parameter var type. Case 4.");
+            }
+        }
+
+        static IEnumerable<TestCaseData> AssignStatementToVarIssue220TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue220_1", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue220_1"))
+                    .SetName("EnumValue(1)|. Assign statement to var");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue220_2", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue220_2"))
+                    .SetName("AbstractEnumValue|. Assign statement to var");
             }
         }
 
@@ -505,16 +537,22 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(AssignStatementToVarIssue1999TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue2086TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue1764TestCases)),
+            TestCaseSource(nameof(AssignStatementToVarInferParameterVarTestCases)),
+            //TestCaseSource(nameof(AssignStatementToVarIssue220TestCases)),
             TestCaseSource(nameof(AddToInterfaceTestCases)),
             TestCaseSource(nameof(GenerateFunctionTestCases)),
             TestCaseSource(nameof(ImplementInterfaceTestCases)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
-        
-        internal static string ContextualGenerator(ScintillaControl sci, string fileName, GeneratorJobType job, bool hasGenerator)
+
+        static string ContextualGenerator(ScintillaControl sci, string fileName, GeneratorJobType job, bool hasGenerator)
         {
             SetSrc(sci, ReadAllText(fileName));
             SetCurrentFile(fileName);
+            var context = (Context)ASContext.GetLanguageContext("haxe");
+            context.CurrentModel = ASContext.Context.CurrentModel;
+            context.completionCache.IsDirty = true;
+            context.GetTopLevelElements();
             var options = new List<ICompletionListItem>();
             ASGenerator.ContextualGenerator(sci, options);
             if (hasGenerator)

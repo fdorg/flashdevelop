@@ -38,7 +38,7 @@ namespace ASCompletion.Context
         protected bool inPrivateSection;
         protected FileModel topLevel;
         protected string lastClassWarning;
-        protected CompletionCache completionCache;
+        protected internal CompletionCache completionCache;
         protected Timer cacheRefreshTimer;
         // path normalization
         static protected bool doPathNormalization;

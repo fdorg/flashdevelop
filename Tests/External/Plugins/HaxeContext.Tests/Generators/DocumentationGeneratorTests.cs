@@ -83,6 +83,9 @@ namespace HaXeContext.Generators
                         yield return new TestCaseData("BeforeGenerateDocumentation_methodDetails_6", DocumentationGeneratorJobType.MethodDetails, true)
                             .Returns(ReadAllText("AfterGenerateDocumentation_methodDetails_6"))
                             .SetName("MethodDetails. Case 6");
+                        yield return new TestCaseData("BeforeGenerateDocumentation_methodDetails_7", DocumentationGeneratorJobType.MethodDetails, true)
+                            .Returns(ReadAllText("AfterGenerateDocumentation_methodDetails_7"))
+                            .SetName("MethodDetails. Case 7");
                     }
                 }
 
