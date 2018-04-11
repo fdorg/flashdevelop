@@ -61,6 +61,29 @@ namespace ASCompletion.Completion
             return ASComplete.ExpressionEndPosition(sci, sci.CurrentPos);
         }
 
+        protected static void OnChar(ScintillaControl sci, string sourceText, char addedChar, bool autoHide, bool hasCompletion)
+        {
+            var passed = true;
+            var handler = Substitute.For<IEventHandler>();
+            handler
+                .When(it => it.HandleEvent(Arg.Any<object>(), Arg.Any<NotifyEvent>(), Arg.Any<HandlingPriority>()))
+                .Do(it =>
+                {
+                    var e = it.ArgAt<NotifyEvent>(1);
+                    if (e.Type != EventType.Command) return;
+                    var de = (DataEvent)e;
+                    if (de.Action != "ASCompletion.DotCompletion") return;
+                    if (hasCompletion) passed = ((IList<ICompletionListItem>)de.Data).Count > 0;
+                    else passed = false;
+                });
+            EventManager.AddEventHandler(handler, EventType.Command);
+            SetSrc(sci, sourceText);
+            ASContext.HasContext = true;
+            Assert.AreEqual(hasCompletion, ASComplete.OnChar(sci, addedChar, autoHide));
+            Assert.IsTrue(passed);
+            EventManager.RemoveEventHandler(handler);
+        }
+
         public class ActonScript3 : ASCompleteTests
         {
             static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
@@ -567,6 +590,31 @@ namespace ASCompletion.Completion
             [Test, TestCaseSource(nameof(ExpressionEndPositionTestCases))]
             public int ExpressionEndPosition(string sourceText) => ExpressionEndPosition(sci, sourceText);
 
+            static IEnumerable<TestCaseData> OnCharTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("OnChar_1", '.', false, true)
+                        .SetName("this.|");
+                    yield return new TestCaseData("OnChar_3", '.', false, true)
+                        .SetName("''.|");
+                    yield return new TestCaseData("OnChar_4", '.', false, true)
+                        .SetName("[].|");
+                    yield return new TestCaseData("OnChar_7", '.', false, false)
+                        .SetName("1.|");
+                    yield return new TestCaseData("OnChar_8", '.', false, true)
+                        .SetName("true.|")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2105");
+                    yield return new TestCaseData("OnChar_9", '.', false, true)
+                        .SetName("0xFF0000.|");
+                    yield return new TestCaseData("OnChar_10", '.', false, true)
+                        .SetName("{}.|");
+
+                    yield return new TestCaseData("OnChar_2", '.', false, false)
+                        .Ignore("Completion shouldn't work for this case.")
+                        .SetName("this.|. inside static function");
+                }
+            }
             static IEnumerable<TestCaseData> OnCharIssue2105TestCases
             {
                 get
@@ -577,51 +625,15 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("OnCharIssue2105_6", '.', false, false)
                         .SetName("\".|\" Issue2105. Case 2.")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2105");
-                    yield return new TestCaseData("OnCharIssue2105_1", '.', false, true)
-                        .SetName("this.|");
-                    yield return new TestCaseData("OnCharIssue2105_3", '.', false, true)
-                        .SetName("''.|");
-                    yield return new TestCaseData("OnCharIssue2105_4", '.', false, true)
-                        .SetName("[].|");
-                    yield return new TestCaseData("OnCharIssue2105_7", '.', false, false)
-                        .SetName("1.|");
-                    yield return new TestCaseData("OnCharIssue2105_8", '.', false, true)
-                        .SetName("true.|")
-                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2105");
-                    yield return new TestCaseData("OnCharIssue2105_9", '.', false, true)
-                        .SetName("0xFF0000.|");
-                    yield return new TestCaseData("OnCharIssue2105_10", '.', false, true)
-                        .SetName("{}.|");
-
-                    yield return new TestCaseData("OnCharIssue2105_2", '.', false, false)
-                        .Ignore("Completion shouldn't work for this case.")
-                        .SetName("this.|. inside static function");
                 }
             }
 
-            [Test, TestCaseSource(nameof(OnCharIssue2105TestCases))]
-            public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion)
-            {
-                var passed = true;
-                var handler = Substitute.For<IEventHandler>();
-                handler
-                    .When(it => it.HandleEvent(Arg.Any<object>(), Arg.Any<NotifyEvent>(), Arg.Any<HandlingPriority>()))
-                    .Do(it =>
-                    {
-                        var e = it.ArgAt<NotifyEvent>(1);
-                        if (e.Type != EventType.Command) return;
-                        var de = (DataEvent) e;
-                        if (de.Action != "ASCompletion.DotCompletion") return;
-                        if (hasCompletion) passed = ((IList<ICompletionListItem>) de.Data).Count > 0;
-                        else passed = false;
-                    });
-                EventManager.AddEventHandler(handler, EventType.Command);
-                SetSrc(sci, ReadAllText(fileName));
-                ASContext.HasContext = true;
-                Assert.AreEqual(hasCompletion, ASComplete.OnChar(sci, addedChar, autoHide));
-                Assert.IsTrue(passed);
-                EventManager.RemoveEventHandler(handler);
-            }
+            [
+                Test,
+                TestCaseSource(nameof(OnCharTestCases)),
+                TestCaseSource(nameof(OnCharIssue2105TestCases)),
+            ]
+            public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion) => OnChar(sci, ReadAllText(fileName), addedChar, autoHide, hasCompletion);
         }
 
         public class Haxe : ASCompleteTests
