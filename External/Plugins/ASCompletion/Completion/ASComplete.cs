@@ -2097,7 +2097,7 @@ namespace ASCompletion.Completion
             }
 
             // show
-            List<ICompletionListItem> list = new List<ICompletionListItem>();
+            var list = new List<ICompletionListItem>();
             foreach (MemberModel member in mix)
             {
                 if ((member.Flags & FlagType.Template) > 0)

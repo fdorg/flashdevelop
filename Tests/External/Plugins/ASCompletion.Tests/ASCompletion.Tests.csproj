@@ -963,6 +963,16 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1764_6.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1764_7.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue1764_8.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnCharIssue2105_1.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnCharIssue2105_2.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnCharIssue2105_3.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnCharIssue2105_4.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnCharIssue2105_5.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnCharIssue2105_6.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnCharIssue2105_7.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnCharIssue2105_8.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnCharIssue2105_9.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\OnCharIssue2105_10.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

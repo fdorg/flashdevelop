@@ -3160,14 +3160,14 @@ namespace ASCompletion.Completion
                 [Test, TestCaseSource(nameof(HaxeTestCases))]
                 public void Haxe(string fileName, string constructorArgs) => HaxeImpl(fileName, constructorArgs, sci);
 
-                internal static void HaxeImpl(string fileName, string constructorArgs, ScintillaControl sci)
+                static void HaxeImpl(string fileName, string constructorArgs, ScintillaControl sci)
                 {
                     SetHaxeFeatures(sci);
                     SetCurrentFileName(GetFullPathHaxe(fileName));
                     Common(ReadAllTextHaxe(fileName), constructorArgs, sci);
                 }
 
-                internal static void Common(string sourceText, string constructorArgs, ScintillaControl sci)
+                static void Common(string sourceText, string constructorArgs, ScintillaControl sci)
                 {
                     var handler = Substitute.For<IEventHandler>();
                     handler
