@@ -88,7 +88,7 @@ namespace ASCompletion.Completion
         {
             static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
-            static string GetFullPath(string fileName) => $"ASCompletion.Test_Files.completion.as3.{fileName}.as";
+            static string GetFullPath(string fileName) => $"{nameof(ASCompletion)}.Test_Files.completion.as3.{fileName}.as";
 
             [TestFixtureSetUp]
             public void Setup() => SetAs3Features(sci);
@@ -640,7 +640,7 @@ namespace ASCompletion.Completion
         {
             static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
-            static string GetFullPath(string fileName) => $"ASCompletion.Test_Files.completion.haxe.{fileName}.hx";
+            static string GetFullPath(string fileName) => $"{nameof(ASCompletion)}.Test_Files.completion.haxe.{fileName}.hx";
 
             [TestFixtureSetUp]
             public void Setup()
