@@ -865,23 +865,20 @@ namespace HaXeContext
                 {
                     var path = aPath.Path + dirSeparator + fileName;
 
-                    FileModel file = null;
+                    FileModel file;
                     // cached file
-                    if (aPath.HasFile(path))
+                    if (aPath.TryGetFile(path, out file))
                     {
-                        file = aPath.GetFile(path);
                         if (file.Context != this)
                         {
                             // not associated with this context -> refresh
                             file.OutOfDate = true;
                             file.Context = this;
                         }
-                    }
-                    if (file != null)
-                    {
+
                         // add all public classes of Haxe modules
                         foreach (ClassModel c in file.Classes)
-                            if (c.IndexType == null && c.Access == Visibility.Public) 
+                            if (c.IndexType == null && c.Access == Visibility.Public)
                                 imports.Add(c);
                         matched = true;
                     }
