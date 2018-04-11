@@ -1239,8 +1239,8 @@ namespace HaXeContext
                 {
                     if (!it.IsValid || it.Updating || it.FilesCount == 0) continue;
                     var path = Path.Combine(it.Path, packagePath, "import.hx");
-                    if (!it.HasFile(path)) continue;
-                    var model = it.GetFile(path);
+                    FileModel model;
+                    if (!it.TryGetFile(path, out model)) continue;
                     result.Add(model.Imports);
                     break;
                 }
