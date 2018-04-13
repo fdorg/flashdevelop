@@ -41,14 +41,17 @@ namespace ASCompletion.Model
         /// </summary>
         static public void Compact()
         {
-            Dictionary<string, PathModel> clean = new Dictionary<string, PathModel>();
-            foreach (string key in pathes.Keys)
+            lock (pathes)
             {
-                PathModel model = pathes[key];
-                if (model.InUse) clean.Add(key, model);
-                else model.Cleanup();
+                Dictionary<string, PathModel> clean = new Dictionary<string, PathModel>();
+                foreach (string key in pathes.Keys)
+                {
+                    PathModel model = pathes[key];
+                    if (model.InUse) clean.Add(key, model);
+                    else model.Cleanup();
+                }
+                pathes = clean;
             }
-            pathes = clean;
         }
 
         /// <summary>
