@@ -4,7 +4,9 @@ using ASCompletion.Model;
 using ASCompletion.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
+using PluginCore;
 using PluginCore.Helpers;
+using PluginCore.Managers;
 using ScintillaNet;
 
 //TODO: Sadly most of ASComplete is currently untestable in a proper way. Work on this branch solves it: https://github.com/Neverbirth/flashdevelop/tree/completionlist
@@ -14,13 +16,13 @@ namespace ASCompletion.Completion
     [TestFixture]
     public class ASCompleteTests : ASCompletionTests
     {
-        internal static ASResult GetExpressionType(ScintillaControl sci, string sourceText)
+        static ASResult GetExpressionType(ScintillaControl sci, string sourceText)
         {
             SetSrc(sci, sourceText);
             return ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
         }
 
-        internal static string GetExpression(ScintillaControl sci, string sourceText)
+        static string GetExpression(ScintillaControl sci, string sourceText)
         {
             SetSrc(sci, sourceText);
             var expr = ASComplete.GetExpression(sci, sci.CurrentPos);
@@ -36,13 +38,13 @@ namespace ASCompletion.Completion
             return $"{expr.WordBefore}{expr.Separator}{value}{expr.RightOperator}";
         }
 
-        internal static ComaExpression DisambiguateComa(ScintillaControl sci, string sourceText)
+        static ComaExpression DisambiguateComa(ScintillaControl sci, string sourceText)
         {
             sci.Text = sourceText;
             return ASComplete.DisambiguateComa(sci, sourceText.Length, 0);
         }
 
-        internal static int FindParameterIndex(ScintillaControl sci, string sourceText)
+        static int FindParameterIndex(ScintillaControl sci, string sourceText)
         {
             sci.Text = sourceText;
             sci.Colourise(0, -1);
@@ -53,17 +55,40 @@ namespace ASCompletion.Completion
             return result;
         }
 
-        internal static int ExpressionEndPosition(ScintillaControl sci, string sourceText)
+        static int ExpressionEndPosition(ScintillaControl sci, string sourceText)
         {
             SetSrc(sci, sourceText);
             return ASComplete.ExpressionEndPosition(sci, sci.CurrentPos);
         }
 
+        protected static void OnChar(ScintillaControl sci, string sourceText, char addedChar, bool autoHide, bool hasCompletion)
+        {
+            var passed = true;
+            var handler = Substitute.For<IEventHandler>();
+            handler
+                .When(it => it.HandleEvent(Arg.Any<object>(), Arg.Any<NotifyEvent>(), Arg.Any<HandlingPriority>()))
+                .Do(it =>
+                {
+                    var e = it.ArgAt<NotifyEvent>(1);
+                    if (e.Type != EventType.Command) return;
+                    var de = (DataEvent)e;
+                    if (de.Action != "ASCompletion.DotCompletion") return;
+                    if (hasCompletion) passed = ((IList<ICompletionListItem>)de.Data).Count > 0;
+                    else passed = false;
+                });
+            EventManager.AddEventHandler(handler, EventType.Command);
+            SetSrc(sci, sourceText);
+            ASContext.HasContext = true;
+            Assert.AreEqual(hasCompletion, ASComplete.OnChar(sci, addedChar, autoHide));
+            Assert.IsTrue(passed);
+            EventManager.RemoveEventHandler(handler);
+        }
+
         public class ActonScript3 : ASCompleteTests
         {
-            protected static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
+            static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
-            protected static string GetFullPath(string fileName) => $"ASCompletion.Test_Files.completion.as3.{fileName}.as";
+            static string GetFullPath(string fileName) => $"{nameof(ASCompletion)}.Test_Files.completion.as3.{fileName}.as";
 
             [TestFixtureSetUp]
             public void Setup() => SetAs3Features(sci);
@@ -564,13 +589,58 @@ namespace ASCompletion.Completion
 
             [Test, TestCaseSource(nameof(ExpressionEndPositionTestCases))]
             public int ExpressionEndPosition(string sourceText) => ExpressionEndPosition(sci, sourceText);
+
+            static IEnumerable<TestCaseData> OnCharTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("OnChar_1", '.', false, true)
+                        .SetName("this.|");
+                    yield return new TestCaseData("OnChar_3", '.', false, true)
+                        .SetName("''.|");
+                    yield return new TestCaseData("OnChar_4", '.', false, true)
+                        .SetName("[].|");
+                    yield return new TestCaseData("OnChar_7", '.', false, false)
+                        .SetName("1.|");
+                    yield return new TestCaseData("OnChar_8", '.', false, true)
+                        .SetName("true.|")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2105");
+                    yield return new TestCaseData("OnChar_9", '.', false, true)
+                        .SetName("0xFF0000.|");
+                    yield return new TestCaseData("OnChar_10", '.', false, true)
+                        .SetName("{}.|");
+
+                    yield return new TestCaseData("OnChar_2", '.', false, false)
+                        .Ignore("Completion shouldn't work for this case.")
+                        .SetName("this.|. inside static function");
+                }
+            }
+            static IEnumerable<TestCaseData> OnCharIssue2105TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("OnCharIssue2105_5", '.', false, false)
+                        .SetName("'.|' Issue2105. Case 1.")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2105");
+                    yield return new TestCaseData("OnCharIssue2105_6", '.', false, false)
+                        .SetName("\".|\" Issue2105. Case 2.")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2105");
+                }
+            }
+
+            [
+                Test,
+                TestCaseSource(nameof(OnCharTestCases)),
+                TestCaseSource(nameof(OnCharIssue2105TestCases)),
+            ]
+            public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion) => OnChar(sci, ReadAllText(fileName), addedChar, autoHide, hasCompletion);
         }
 
         public class Haxe : ASCompleteTests
         {
-            protected static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
+            static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
-            protected static string GetFullPath(string fileName) => $"ASCompletion.Test_Files.completion.haxe.{fileName}.hx";
+            static string GetFullPath(string fileName) => $"{nameof(ASCompletion)}.Test_Files.completion.haxe.{fileName}.hx";
 
             [TestFixtureSetUp]
             public void Setup()
@@ -1130,7 +1200,7 @@ namespace ASCompletion.Completion
             [TestFixtureSetUp]
             public void AddClosingBracesSetUp() => ASContext.CommonSettings.AddClosingBraces = true;
 
-            public IEnumerable<TestCaseData> OpenBraceTestCases
+            static IEnumerable<TestCaseData> OpenBraceTestCases
             {
                 get
                 {
@@ -1194,7 +1264,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            public IEnumerable<TestCaseData> CloseBraceTestCases
+            static IEnumerable<TestCaseData> CloseBraceTestCases
             {
                 get
                 {
@@ -1209,7 +1279,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            public IEnumerable<TestCaseData> DeleteBraceTestCases
+            static IEnumerable<TestCaseData> DeleteBraceTestCases
             {
                 get
                 {
@@ -1222,7 +1292,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            public IEnumerable<TestCaseData> AroundStringsTestCases
+            static IEnumerable<TestCaseData> AroundStringsTestCases
             {
                 get
                 {
@@ -1243,7 +1313,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            public IEnumerable<TestCaseData> DeleteWhitespaceTestCases
+            static IEnumerable<TestCaseData> DeleteWhitespaceTestCases
             {
                 get
                 {
@@ -1260,7 +1330,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            public IEnumerable<TestCaseData> InsideInterpolationTestCases
+            static IEnumerable<TestCaseData> InsideInterpolationTestCases
             {
                 get
                 {

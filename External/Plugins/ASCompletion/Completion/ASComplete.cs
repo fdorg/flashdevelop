@@ -64,19 +64,17 @@ namespace ASCompletion.Completion
         /// <returns>Auto-completion has been handled</returns>
         public static bool OnChar(ScintillaControl Sci, int Value, bool autoHide)
         {
-            IASContext ctx = ASContext.Context;
-            ContextFeatures features = ctx.Features;
-            if (ctx.Settings == null || !ctx.Settings.CompletionEnabled) 
-                return false;
+            var ctx = ASContext.Context;
+            if (ctx.Settings == null || !ctx.Settings.CompletionEnabled) return false;
+            var features = ctx.Features;
             try
             {
-                if (Sci.IsSelectionRectangle) 
-                    return false;
+                if (Sci.IsSelectionRectangle) return false;
                 // code auto
                 int eolMode = Sci.EOLMode;
                 if (((Value == '\n') && (eolMode != 1)) || ((Value == '\r') && (eolMode == 1)))
                 {
-                    if (ASContext.HasContext && ASContext.Context.IsFileValid) HandleStructureCompletion(Sci);
+                    if (ASContext.HasContext && ctx.IsFileValid) HandleStructureCompletion(Sci);
                     return false;
                 }
 
@@ -123,12 +121,12 @@ namespace ASCompletion.Completion
                         {
                             return ASDocumentation.OnChar(Sci, Value, position, style);
                         }
-                        else if (autoHide)
+                        if (autoHide)
                         {
                             // close quotes
                             HandleAddClosingBraces(Sci, (char) Value, true);
-                            return false;
                         }
+                        return false;
                     }
                 }
 
@@ -136,7 +134,7 @@ namespace ASCompletion.Completion
                 if (autoHide) HandleAddClosingBraces(Sci, (char) Value, true);
 
                 // stop here if the class is not valid
-                if (!ASContext.HasContext || !ASContext.Context.IsFileValid) return false;
+                if (!ASContext.HasContext || !ctx.IsFileValid) return false;
 
                 // handle
                 switch (Value)
@@ -152,11 +150,11 @@ namespace ASCompletion.Completion
                         break;
 
                     case ' ':
-                        if (ASContext.Context.CodeComplete.HandleWhiteSpaceCompletion(Sci, position, autoHide)) return true;
+                        if (ctx.CodeComplete.HandleWhiteSpaceCompletion(Sci, position, autoHide)) return true;
                         break;
 
                     case ':':
-                        if (ASContext.Context.CurrentModel.haXe && prevValue == '@')
+                        if (ctx.CurrentModel.haXe && prevValue == '@')
                         {
                             return HandleMetadataCompletion(autoHide);
                         }
@@ -171,7 +169,7 @@ namespace ASCompletion.Completion
                         {
                             char c0 = (char)Sci.CharAt(position - 2);
                             //TODO: We should check if we are actually on a generic type
-                            if ((ASContext.Context.CurrentModel.Version == 3 && c0 == '.') || Char.IsLetterOrDigit(c0))
+                            if ((ctx.CurrentModel.Version == 3 && c0 == '.') || Char.IsLetterOrDigit(c0))
                                 return HandleColonCompletion(Sci, "", autoHide);
                             return false;
                         }
@@ -2099,7 +2097,7 @@ namespace ASCompletion.Completion
             }
 
             // show
-            List<ICompletionListItem> list = new List<ICompletionListItem>();
+            var list = new List<ICompletionListItem>();
             foreach (MemberModel member in mix)
             {
                 if ((member.Flags & FlagType.Template) > 0)

@@ -12,9 +12,9 @@ namespace HaXeContext
     [TestFixture]
     class ContextTests : ASCompleteTests
     {
-        protected static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
+        static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
-        protected static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.parser.{fileName}.hx";
+        static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.parser.{fileName}.hx";
 
         [TestFixtureSetUp]
         public void ContextTestsSetUp() => SetHaxeFeatures(sci);
