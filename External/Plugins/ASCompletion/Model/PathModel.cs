@@ -43,13 +43,11 @@ namespace ASCompletion.Model
         {
             lock (pathes)
             {
-                //TimeSpan keep = TimeSpan.FromMinutes(5);
                 Dictionary<string, PathModel> clean = new Dictionary<string, PathModel>();
                 foreach (string key in pathes.Keys)
                 {
                     PathModel model = pathes[key];
-                    //TimeSpan span = DateTime.Now.Subtract(model.LastAccess);
-                    if (model.InUse/* || span < keep*/) clean.Add(key, model);
+                    if (model.InUse) clean.Add(key, model);
                     else model.Cleanup();
                 }
                 pathes = clean;
@@ -76,7 +74,6 @@ namespace ASCompletion.Model
                 {
                     pathes[modelName] = aPath = new PathModel(path, context);
                 }
-                else aPath.Touch();
             }
             else pathes[modelName] = aPath = new PathModel(path, context);
             return aPath;
@@ -85,7 +82,6 @@ namespace ASCompletion.Model
         public volatile bool Updating;
         public bool WasExplored;
         public bool IsTemporaryPath;
-        public DateTime LastAccess;
         public string Path;
         public IASContext Owner;
         public bool IsValid;
@@ -134,7 +130,6 @@ namespace ASCompletion.Model
             Path = path.TrimEnd(new char[] { '\\', '/' });
 
             files = new Dictionary<string, FileModel>();
-            LastAccess = DateTime.Now;
 
             if (Owner != null)
             {
@@ -525,6 +520,20 @@ namespace ASCompletion.Model
             }
         }
 
+        public bool TryGetFile(string fileName, out FileModel value)
+        {
+            if (!IsValid)
+            {
+                value = null;
+                return false;
+            }
+
+            lock (lockObject)
+            {
+                return files.TryGetValue(fileName.ToUpper(), out value);
+            }
+        }
+
         public FileModel GetFile(string fileName)
         {
             if (!IsValid)
@@ -536,7 +545,6 @@ namespace ASCompletion.Model
             }
             lock (lockObject)
             {
-                Touch();
                 return files[fileName.ToUpper()];
             }
         }
@@ -556,7 +564,6 @@ namespace ASCompletion.Model
             if (!IsValid) return;
             lock (lockObject)
             {
-                Touch();
                 files.Clear();
                 foreach (FileModel model in newFiles.Values)
                     files[model.FileName.ToUpper()] = model;
@@ -567,7 +574,6 @@ namespace ASCompletion.Model
         {
             lock (lockObject)
             {
-                Touch();
                 foreach (FileModel model in files.Values)
                     if (!callback(model)) break;
             }
@@ -582,11 +588,6 @@ namespace ASCompletion.Model
                 OnFileRemove?.Invoke(files[fn]);
                 files.Remove(fn);
             }
-        }
-
-        public void Touch()
-        {
-            LastAccess = DateTime.Now;
         }
 
         public void Cleanup()

@@ -370,9 +370,8 @@ namespace ASCompletion
                 return null;
             FileModel model = null;
             foreach (PathModel aPath in context.Classpath)
-                if (aPath.HasFile(filename))
+                if (aPath.TryGetFile(filename, out model))
                 {
-                    model = aPath.GetFile(filename);
                     break;
                 }
             if (model != null)

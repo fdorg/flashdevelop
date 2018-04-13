@@ -335,8 +335,8 @@ namespace HaXeContext
                 parser.Run();
                 AbcConverter.Convert(parser, path, ctx);
                 var fileName = Path.Combine(container, virtualPath.Substring(p + 2).Replace('.', Path.DirectorySeparatorChar));
-                if (!path.HasFile(fileName)) return false;
-                var model = path.GetFile(fileName);
+                FileModel model;
+                if (!path.TryGetFile(fileName, out model)) return false;
                 ASComplete.OpenVirtualFile(model);
                 return true;
             }

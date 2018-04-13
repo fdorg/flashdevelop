@@ -865,23 +865,20 @@ namespace HaXeContext
                 {
                     var path = aPath.Path + dirSeparator + fileName;
 
-                    FileModel file = null;
+                    FileModel file;
                     // cached file
-                    if (aPath.HasFile(path))
+                    if (aPath.TryGetFile(path, out file))
                     {
-                        file = aPath.GetFile(path);
                         if (file.Context != this)
                         {
                             // not associated with this context -> refresh
                             file.OutOfDate = true;
                             file.Context = this;
                         }
-                    }
-                    if (file != null)
-                    {
+
                         // add all public classes of Haxe modules
                         foreach (ClassModel c in file.Classes)
-                            if (c.IndexType == null && c.Access == Visibility.Public) 
+                            if (c.IndexType == null && c.Access == Visibility.Public)
                                 imports.Add(c);
                         matched = true;
                     }
@@ -1242,8 +1239,8 @@ namespace HaXeContext
                 {
                     if (!it.IsValid || it.Updating || it.FilesCount == 0) continue;
                     var path = Path.Combine(it.Path, packagePath, "import.hx");
-                    if (!it.HasFile(path)) continue;
-                    var model = it.GetFile(path);
+                    FileModel model;
+                    if (!it.TryGetFile(path, out model)) continue;
                     result.Add(model.Imports);
                     break;
                 }

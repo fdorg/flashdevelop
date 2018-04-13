@@ -819,9 +819,8 @@ namespace ASCompletion.Context
                 // check if in cache
                 foreach (PathModel aPath in classPath)
                 {
-                    if (aPath.HasFile(fileName))
+                    if (aPath.TryGetFile(fileName, out nFile))
                     {
-                        nFile = aPath.GetFile(fileName);
                         nFile.Check();
                         return nFile;
                     }
