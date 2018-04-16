@@ -19,6 +19,7 @@ using HaXeContext.Linters;
 using LintingHelper.Managers;
 using ProjectManager.Projects.Haxe;
 using SwfOp;
+using System.Diagnostics;
 
 namespace HaXeContext
 {
@@ -345,7 +346,7 @@ namespace HaXeContext
 
         #endregion
 
-        #region InstalledSDKOwner Membres
+        #region InstalledSDKOwner Members
 
         public bool ValidateSDK(InstalledSDK sdk)
         {
@@ -372,14 +373,81 @@ namespace HaXeContext
                 return false;
             }
 
+            bool result = 
+                ValidateHaxeShimSDK(sdk, path) ||
+                ValidateRecentHaxeSDK(sdk, path) ||
+                ValidateOldHaxeSDK(sdk, path) ||
+                ValidateUnknownHaxeSDK(sdk, path);
+
+            if (!result) ErrorManager.ShowInfo("Unable to identify a Haxe SDK at path:\n" + sdk.Path);
+
+            return result;
+        }
+
+        private bool ValidateHaxeShimSDK(InstalledSDK sdk, string path)
+        {
+            bool result = false;
+
+            string haxePath = Path.Combine(path, "haxe.exe");
+            if (File.Exists(haxePath))
+            {
+                Process p = StartHiddenProcess(haxePath, "--run show-version");
+                p.StandardError.ReadToEnd();
+                p.WaitForExit();
+
+                if (p.ExitCode == 0)
+                {
+                    sdk.Version = "haxeshim";
+                    sdk.Name = "Haxe Shim";
+                    result = true;
+                }
+
+                p.Close();
+            }
+
+            return result;
+        }
+
+        private bool ValidateRecentHaxeSDK(InstalledSDK sdk, string path)
+        {
+            bool result = false;
+
+            string haxePath = Path.Combine(path, "haxe.exe");
+            if (File.Exists(haxePath))
+            {
+                Process p = StartHiddenProcess(haxePath, "-version");
+
+                string line = p.StandardError.ReadToEnd();
+                p.WaitForExit();
+
+                if (p.ExitCode == 0)
+                {
+                    Match mVer = Regex.Match(line, "([0-9.]+)\\s*");
+                    if (mVer.Success)
+                    {
+                        sdk.Version = mVer.Groups[1].Value;
+                        sdk.Name = "Haxe " + sdk.Version;
+                        result = true;
+                    }
+                }
+
+                p.Close();
+            }
+
+            return result;
+        }
+
+        private bool ValidateOldHaxeSDK(InstalledSDK sdk, string path)
+        {
             string[] lookup = new string[] {
                 Path.Combine(path, "CHANGES.txt"),
                 Path.Combine(path, Path.Combine("extra", "CHANGES.txt")),
                 Path.Combine(path, Path.Combine("doc", "CHANGES.txt"))
             };
             string descriptor = null;
-            foreach(string p in lookup) 
-                if (File.Exists(p)) {
+            foreach (string p in lookup)
+                if (File.Exists(p))
+                {
                     descriptor = p;
                     break;
                 }
@@ -395,18 +463,36 @@ namespace HaXeContext
                 }
                 else ErrorManager.ShowInfo("Invalid changes.txt file:\n" + descriptor);
             }
-            else if (File.Exists(Path.Combine(path, "haxe.exe"))) 
+            return false;
+        }
+
+        private bool ValidateUnknownHaxeSDK(InstalledSDK sdk, string path)
+        {
+            string haxePath = Path.Combine(path, "haxe.exe");
+            if (File.Exists(haxePath))
             {
                 sdk.Version = "0.0";
                 sdk.Name = "Haxe ?";
                 return true;
             }
-            else ErrorManager.ShowInfo("No change.txt found:\n" + descriptor);
             return false;
         }
 
+        private Process StartHiddenProcess(string fileName, string arguments)
+        {
+            ProcessStartInfo pi = new ProcessStartInfo();
+            pi.FileName = fileName;
+            pi.Arguments = arguments;
+            pi.RedirectStandardOutput = true;
+            pi.RedirectStandardError = true;
+            pi.UseShellExecute = false;
+            pi.CreateNoWindow = true;
+            pi.WindowStyle = ProcessWindowStyle.Hidden;
+            return Process.Start(pi);
+        }
+
         #endregion
-    
+
     }
 
 }
