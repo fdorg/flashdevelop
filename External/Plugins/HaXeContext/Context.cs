@@ -181,6 +181,7 @@ namespace HaXeContext
                 {
                     if (hxPath != currentEnv) SetHaxeEnvironment(hxPath);
                     haxelib = Path.Combine(hxPath, haxelib);
+                    if (File.Exists(haxelib + ".exe")) haxelib += ".exe";
                 }
                 
                 ProcessStartInfo pi = new ProcessStartInfo();
