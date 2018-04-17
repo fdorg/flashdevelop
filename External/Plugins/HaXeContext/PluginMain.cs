@@ -392,14 +392,19 @@ namespace HaXeContext
             if (File.Exists(haxePath))
             {
                 Process p = StartHiddenProcess(haxePath, "--run show-version");
-                p.StandardError.ReadToEnd();
+                string output = p.StandardOutput.ReadToEnd();
                 p.WaitForExit();
 
                 if (p.ExitCode == 0)
                 {
-                    sdk.Version = "haxeshim";
-                    sdk.Name = "Haxe Shim";
-                    result = true;
+                    Match mVer = Regex.Match(output, "^-D haxe-ver=([0-9.]+)\\s*-cp (.*)\\s*");
+                    if (mVer.Success)
+                    {
+                        sdk.Version = mVer.Groups[1].Value;
+                        sdk.ClassPath = ASCompletion.Context.ASContext.NormalizePath(mVer.Groups[2].Value).TrimEnd(Path.DirectorySeparatorChar);
+                        sdk.Name = InstalledSDK.HAXE_SHIM_NAME;
+                        result = true;
+                    }
                 }
 
                 p.Close();
@@ -417,12 +422,12 @@ namespace HaXeContext
             {
                 Process p = StartHiddenProcess(haxePath, "-version");
 
-                string line = p.StandardError.ReadToEnd();
+                string output = p.StandardError.ReadToEnd();
                 p.WaitForExit();
 
                 if (p.ExitCode == 0)
                 {
-                    Match mVer = Regex.Match(line, "([0-9.]+)\\s*");
+                    Match mVer = Regex.Match(output, "^([0-9.]+)\\s*");
                     if (mVer.Success)
                     {
                         sdk.Version = mVer.Groups[1].Value;
@@ -471,8 +476,8 @@ namespace HaXeContext
             string haxePath = Path.Combine(path, "haxe.exe");
             if (File.Exists(haxePath))
             {
-                sdk.Version = "0.0";
-                sdk.Name = "Haxe ?";
+                sdk.Version = InstalledSDK.UNKNOWN_VERSION;
+                sdk.Name = InstalledSDK.UNKNOWN_NAME;
                 return true;
             }
             return false;
@@ -488,6 +493,7 @@ namespace HaXeContext
             pi.UseShellExecute = false;
             pi.CreateNoWindow = true;
             pi.WindowStyle = ProcessWindowStyle.Hidden;
+
             return Process.Start(pi);
         }
 
