@@ -174,59 +174,107 @@ namespace HaXeContext
 
             try
             {
-                string haxelib = "haxelib";
-
-                string hxPath = currentSDK;
-                if (hxPath != null && Path.IsPathRooted(hxPath))
-                {
-                    if (hxPath != currentEnv) SetHaxeEnvironment(hxPath);
-                    haxelib = Path.Combine(hxPath, haxelib);
-                    if (File.Exists(haxelib + ".exe")) haxelib += ".exe";
-                }
-                
-                ProcessStartInfo pi = new ProcessStartInfo();
-                pi.FileName = haxelib;
-                pi.Arguments = "path " + lib;
-                pi.RedirectStandardOutput = true;
-                pi.UseShellExecute = false;
-                pi.CreateNoWindow = true;
-                pi.WindowStyle = ProcessWindowStyle.Hidden;
-                Process p = Process.Start(pi);
-                p.WaitForExit();
-
-                List<string> paths = new List<string>();
-                string line = "";
-                do { 
-                    line = p.StandardOutput.ReadLine();
-                    if (string.IsNullOrEmpty(line)) continue;
-                    if (line.IndexOfOrdinal("not installed") > 0)
-                    {
-                        TraceManager.Add(line, 3);
-                    }
-                    else if (!line.StartsWith('-'))
-                    {
-                        try
-                        {
-                            if (Directory.Exists(line))
-                                paths.Add(NormalizePath(line).TrimEnd(Path.DirectorySeparatorChar));
-                        }
-                        catch (Exception) { }
-                    }
-                }
-                while (!p.StandardOutput.EndOfStream);
-                p.Close();
-
-                if (paths.Count > 0)
-                {
-                    haxelibsCache.Add(lib, paths);
-                    return paths;
-                }
-                else return null;
+                return GetCurrentSDK().IsHaxeShim ? LookupLixLibrary(lib) : LookupHaxeLibLibrary(lib);
             }
             catch (Exception)
             {
                 return null;
             }
+        }
+
+        private List<string> LookupHaxeLibLibrary(string lib)
+        {
+            Process p = StartHiddenProcess("haxelib", "path " + lib);
+
+            List<string> paths = new List<string>();
+            do
+            {
+                string line = p.StandardOutput.ReadLine();
+                if (string.IsNullOrEmpty(line)) continue;
+                if (line.IndexOfOrdinal("not installed") > 0)
+                {
+                    TraceManager.Add(line, 3);
+                }
+                else if (!line.StartsWith('-'))
+                {
+                    try
+                    {
+                        if (Directory.Exists(line))
+                            paths.Add(NormalizePath(line).TrimEnd(Path.DirectorySeparatorChar));
+                    }
+                    catch (Exception) { }
+                }
+            }
+            while (!p.StandardOutput.EndOfStream);
+
+            p.WaitForExit();
+            p.Close();
+
+            if (paths.Count > 0)
+            {
+                haxelibsCache.Add(lib, paths);
+                return paths;
+            }
+            else return null;
+        }
+
+        private List<string> LookupLixLibrary(string lib)
+        {
+            Process p = StartHiddenProcess("haxe", "--run resolve-args -lib " + lib);
+
+            List<string> paths = new List<string>();
+            bool isPathExpected = false;
+            do
+            {
+                string line = p.StandardOutput.ReadLine();
+                if (string.IsNullOrEmpty(line)) continue;
+                if (line.IndexOfOrdinal("Cannot resolve") == 0)
+                {
+                    TraceManager.Add(line, 3);
+                }
+                else if (!line.StartsWith('-') && isPathExpected)
+                {
+                    try
+                    {
+                        if (Directory.Exists(line))
+                            paths.Add(NormalizePath(line).TrimEnd(Path.DirectorySeparatorChar));
+                    }
+                    catch (Exception) { }
+                }
+                isPathExpected = line == "-cp";
+            }
+            while (!p.StandardOutput.EndOfStream);
+
+            p.WaitForExit();
+            p.Close();
+
+            if (paths.Count > 0)
+            {
+                haxelibsCache.Add(lib, paths);
+                return paths;
+            }
+            else return null;
+        }
+        private Process StartHiddenProcess(string fileName, string arguments)
+        {
+            string hxPath = currentSDK;
+            if (hxPath != null && Path.IsPathRooted(hxPath))
+            {
+                if (hxPath != currentEnv) SetHaxeEnvironment(hxPath);
+                fileName = Path.Combine(hxPath, fileName);
+                if (File.Exists(fileName + ".exe")) fileName += ".exe";
+            }
+
+            ProcessStartInfo pi = new ProcessStartInfo();
+            pi.FileName = fileName;
+            pi.Arguments = arguments;
+            pi.RedirectStandardOutput = true;
+            pi.RedirectStandardError = true;
+            pi.UseShellExecute = false;
+            pi.CreateNoWindow = true;
+            pi.WindowStyle = ProcessWindowStyle.Hidden;
+
+            return Process.Start(pi);
         }
 
         /// <summary>
@@ -370,7 +418,8 @@ namespace HaXeContext
                     OnCompletionModeChange();
                 }
 
-                string haxeCP = Path.Combine(hxPath, "std");
+                InstalledSDK installedSDK = GetCurrentSDK();
+                string haxeCP = installedSDK.IsHaxeShim ? installedSDK.ClassPath : Path.Combine(hxPath, "std");
                 if (Directory.Exists(haxeCP))
                 {
                     if (Directory.Exists(Path.Combine(haxeCP, "flash9")))

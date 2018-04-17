@@ -36,7 +36,7 @@ namespace ProjectManager
         string[] excludedFileTypes = new string[] { ".p", ".abc", ".bak", ".tmp" };
         string[] excludedDirectories = new string[] { ".svn", "_svn", ".cvs", "_cvs", "cvs", "_sgbak", ".git", ".hg", "node_modules" };
         string[] executableFileTypes = new string[] { ".exe", ".lnk", ".fla", ".flump", ".doc", ".pps", ".psd", ".png", ".jpg", ".gif", ".xls", ".docproj", ".ttf", ".otf", ".wav", ".mp3", ".ppt", ".pptx", ".docx", ".xlsx", ".ai", ".pdf", ".zip", ".rar" };
-        string[] filteredDirectoryNames = new string[] { "src", "source", "sources", "as", "as2", "as3", "actionscript", "flash", "classes", "trunk", "svn", "git", "hg", "..", "." };
+        string[] filteredDirectoryNames = new string[] { "src", "source", "sources", "as", "as2", "as3", "actionscript", "flash", "classes", "trunk", "svn", "git", "hg", "github", "gitlab", "haxelib", "library", "..", "." };
 
         HighlightType tabHighlightType = HighlightType.ExternalFiles;
 

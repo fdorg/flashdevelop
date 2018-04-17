@@ -117,6 +117,7 @@ namespace ProjectManager.Controls.TreeView
             string[] parts = text.Split(sep);
             List<string> label = new List<string>();
             Regex reVersion = new Regex("^[0-9]+[.,-][0-9]+");
+            Regex reSHAHash = new Regex("^[0-9a-f]+$");
 
             if (parts.Length > 0)
             {
@@ -126,6 +127,7 @@ namespace ProjectManager.Controls.TreeView
                     if (part != "" && part != "." && part != ".." && Array.IndexOf(excludes, part.ToLower()) == -1)
                     {
                         if (Char.IsDigit(part[0]) && reVersion.IsMatch(part)) label.Add(part);
+                        else if (part.Length == 40 && reSHAHash.IsMatch(part)) label.Add(part);
                         else
                         {
                             label.Add(part);
