@@ -184,7 +184,8 @@ namespace HaXeContext
                     var patterns = new[]
                     {
                         "Library \\s*(?<name>[^ ]+)\\s*?(\\s*version (?<version>[^ ]+))?",
-                        "Could not find haxelib\\s*(?<name>\"[^ ]+\")?(\\s*version \"(?<version>[^ ]+)\")?"//openfl project
+                        "Could not find haxelib\\s*(?<name>\"[^ ]+\")?(\\s*version \"(?<version>[^ ]+)\")?", // openfl project
+                        "Cannot resolve `-lib\\s*(?<name>[^ ]+)`" // lix library
                     };
                     var nameToVersion = new Dictionary<string, string>();
                     for (; logCount < count; logCount++)
