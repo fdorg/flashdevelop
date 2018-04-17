@@ -169,9 +169,6 @@ namespace HaXeContext
 
         private List<string> LookupLibrary(string lib)
         {
-            if (haxelibsCache.ContainsKey(lib))
-                return haxelibsCache[lib];
-
             try
             {
                 return GetCurrentSDK().IsHaxeShim ? LookupLixLibrary(lib) : LookupHaxeLibLibrary(lib);
@@ -184,6 +181,9 @@ namespace HaXeContext
 
         private List<string> LookupHaxeLibLibrary(string lib)
         {
+            if (haxelibsCache.ContainsKey(lib))
+                return haxelibsCache[lib];
+
             Process p = StartHiddenProcess("haxelib", "path " + lib);
 
             List<string> paths = new List<string>();
@@ -220,8 +220,8 @@ namespace HaXeContext
 
         private List<string> LookupLixLibrary(string lib)
         {
-            // TODO: Make sure correct working directory (project directory) is being used
-            Process p = StartHiddenProcess("haxe", "--run resolve-args -lib " + lib);
+            IProject project = PluginBase.CurrentProject;
+            Process p = StartHiddenProcess("haxe", "--run resolve-args -lib " + lib, Path.GetDirectoryName(project.ProjectPath));
 
             List<string> paths = new List<string>();
             bool isPathExpected = false;
@@ -249,14 +249,10 @@ namespace HaXeContext
             p.WaitForExit();
             p.Close();
 
-            if (paths.Count > 0)
-            {
-                haxelibsCache.Add(lib, paths);
-                return paths;
-            }
-            else return null;
+            return paths.Count > 0 ? paths : null;
         }
-        private Process StartHiddenProcess(string fileName, string arguments)
+
+        private Process StartHiddenProcess(string fileName, string arguments, string workingDirectory = "")
         {
             string hxPath = currentSDK;
             if (hxPath != null && Path.IsPathRooted(hxPath))
@@ -269,6 +265,7 @@ namespace HaXeContext
             ProcessStartInfo pi = new ProcessStartInfo();
             pi.FileName = fileName;
             pi.Arguments = arguments;
+            pi.WorkingDirectory = workingDirectory;
             pi.RedirectStandardOutput = true;
             pi.RedirectStandardError = true;
             pi.UseShellExecute = false;
