@@ -154,6 +154,10 @@ namespace HaXeContext
                     {
                         var project = de.Data as IProject;
                         ExternalToolchain.Monitor(project);
+                        foreach (InstalledSDK sdk in settingObject.InstalledSDKs)
+                        {
+                            if (sdk.IsHaxeShim) ValidateHaxeShimSDK(sdk, GetSDKPath(sdk), project != null ? Path.GetDirectoryName(project.ProjectPath) : "");
+                        }
                     }
                     else if (action == "Context.SetHaxeEnvironment")
                     {
@@ -212,7 +216,7 @@ namespace HaXeContext
                     }
                     var text = TextHelper.GetString("Info.MissingLib");
                     var result = MessageBox.Show(PluginBase.MainForm, text, string.Empty, MessageBoxButtons.OKCancel);
-                    if (result == DialogResult.OK) contextInstance.InstallHaxelib(nameToVersion);
+                    if (result == DialogResult.OK) contextInstance.InstallLibrary(nameToVersion);
                     break;
             }
         }
@@ -353,30 +357,12 @@ namespace HaXeContext
         {
             sdk.Owner = this;
 
-            IProject project = PluginBase.CurrentProject;
-            string path = sdk.Path;
-            if (project != null)
-                path = PathHelper.ResolvePath(path, Path.GetDirectoryName(project.ProjectPath));
-            else
-                path = PathHelper.ResolvePath(path);
-            
-            try
-            {
-                if (path == null || !Directory.Exists(path))
-                {
-                    //ErrorManager.ShowInfo("Path not found:\n" + sdk.Path);
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                ErrorManager.ShowInfo("Invalid path (" + ex.Message + "):\n" + sdk.Path);
-                return false;
-            }
+            string path = GetSDKPath(sdk);
+            if (path == "") return false;
 
             bool result = 
                 ValidateHaxeShimSDK(sdk, path) ||
-                ValidateRecentHaxeSDK(sdk, path) ||
+                ValidateHaxeSDK(sdk, path) ||
                 ValidateOldHaxeSDK(sdk, path) ||
                 ValidateUnknownHaxeSDK(sdk, path);
 
@@ -385,14 +371,40 @@ namespace HaXeContext
             return result;
         }
 
-        private bool ValidateHaxeShimSDK(InstalledSDK sdk, string path)
+        private string GetSDKPath(InstalledSDK sdk)
+        {
+            IProject project = PluginBase.CurrentProject;
+            string path = sdk.Path;
+            if (project != null)
+                path = PathHelper.ResolvePath(path, Path.GetDirectoryName(project.ProjectPath));
+            else
+                path = PathHelper.ResolvePath(path);
+
+            try
+            {
+                if (path == null || !Directory.Exists(path))
+                {
+                    //ErrorManager.ShowInfo("Path not found:\n" + sdk.Path);
+                    return "";
+                }
+            }
+            catch (Exception ex)
+            {
+                ErrorManager.ShowInfo("Invalid path (" + ex.Message + "):\n" + sdk.Path);
+                return "";
+            }
+
+            return path;
+        }
+
+        private bool ValidateHaxeShimSDK(InstalledSDK sdk, string path, string projectPath = "")
         {
             bool result = false;
 
             string haxePath = Path.Combine(path, "haxe.exe");
             if (File.Exists(haxePath))
             {
-                Process p = StartHiddenProcess(haxePath, "--run show-version");
+                Process p = StartHiddenProcess(haxePath, "--run show-version", projectPath);
                 string output = p.StandardOutput.ReadToEnd();
                 p.WaitForExit();
 
@@ -403,7 +415,7 @@ namespace HaXeContext
                     {
                         sdk.Version = mVer.Groups[1].Value;
                         sdk.ClassPath = ASCompletion.Context.ASContext.NormalizePath(mVer.Groups[2].Value).TrimEnd(Path.DirectorySeparatorChar);
-                        sdk.Name = InstalledSDK.HAXE_SHIM_NAME;
+                        sdk.Name = "Haxe Shim " + sdk.Version;
                         result = true;
                     }
                 }
@@ -414,7 +426,7 @@ namespace HaXeContext
             return result;
         }
 
-        private bool ValidateRecentHaxeSDK(InstalledSDK sdk, string path)
+        private bool ValidateHaxeSDK(InstalledSDK sdk, string path)
         {
             bool result = false;
 
@@ -477,18 +489,19 @@ namespace HaXeContext
             string haxePath = Path.Combine(path, "haxe.exe");
             if (File.Exists(haxePath))
             {
-                sdk.Version = InstalledSDK.UNKNOWN_VERSION;
-                sdk.Name = InstalledSDK.UNKNOWN_NAME;
+                sdk.Version = "0.0.0";
+                sdk.Name = "Haxe ?";
                 return true;
             }
             return false;
         }
 
-        private Process StartHiddenProcess(string fileName, string arguments)
+        private Process StartHiddenProcess(string fileName, string arguments, string workingDirectory = "")
         {
             ProcessStartInfo pi = new ProcessStartInfo();
             pi.FileName = fileName;
             pi.Arguments = arguments;
+            pi.WorkingDirectory = workingDirectory;
             pi.RedirectStandardOutput = true;
             pi.RedirectStandardError = true;
             pi.UseShellExecute = false;

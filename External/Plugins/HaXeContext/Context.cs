@@ -220,6 +220,7 @@ namespace HaXeContext
 
         private List<string> LookupLixLibrary(string lib)
         {
+            // TODO: Make sure correct working directory (project directory) is being used
             Process p = StartHiddenProcess("haxe", "--run resolve-args -lib " + lib);
 
             List<string> paths = new List<string>();
@@ -663,7 +664,7 @@ namespace HaXeContext
         #endregion
 
         #region SDK
-        private InstalledSDK GetCurrentSDK()
+        public InstalledSDK GetCurrentSDK()
         {
             return hxsettings.InstalledSDKs?.FirstOrDefault(sdk => sdk.Path == currentSDK);
         }
@@ -2060,7 +2061,13 @@ namespace HaXeContext
 
         #region haxelib
 
-        internal void InstallHaxelib(Dictionary<string, string> nameToVersion)
+        internal void InstallLibrary(Dictionary<string, string> nameToVersion)
+        {
+            if (GetCurrentSDK().IsHaxeShim) InstallLixLibrary(nameToVersion);
+            else InstallHaxeLibLibrary(nameToVersion);
+        }
+
+        internal void InstallHaxeLibLibrary(Dictionary<string, string> nameToVersion)
         {
             var haxePath = PathHelper.ResolvePath(GetCompilerPath());
             if (!Directory.Exists(haxePath) && !File.Exists(haxePath))
@@ -2072,6 +2079,22 @@ namespace HaXeContext
 
             var cwd = Directory.GetCurrentDirectory();
             nameToVersion.Select(it => $"{haxePath};install {it.Key} {it.Value} -cwd \"{cwd}\"")
+                .ToList()
+                .ForEach(it => MainForm.CallCommand("RunProcessCaptured", it));
+        }
+
+        internal void InstallLixLibrary(Dictionary<string, string> nameToVersion)
+        {
+            var lixPath = Path.Combine(PathHelper.ResolvePath(GetCompilerPath()), PlatformHelper.IsRunningOnWindows() ? "lix.cmd" : "lix");
+            if (!File.Exists(lixPath))
+            {
+                ErrorManager.ShowInfo(TextHelper.GetString("Info.InvalidHaXePath"));
+                return;
+            }
+
+            // TODO: Make sure correct working directory (project directory) is being used
+            var cwd = Directory.GetCurrentDirectory();
+            nameToVersion.Select(it => $"{lixPath};install haxelib:{it.Key}")
                 .ToList()
                 .ForEach(it => MainForm.CallCommand("RunProcessCaptured", it));
         }

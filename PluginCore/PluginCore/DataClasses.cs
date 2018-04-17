@@ -91,10 +91,6 @@ namespace PluginCore
     {
         static public readonly InstalledSDK INVALID_SDK = new InstalledSDK(null);
 
-        public const string HAXE_SHIM_NAME = "Haxe Shim";
-        public const string UNKNOWN_NAME = "Haxe ?";
-        public const string UNKNOWN_VERSION = "0.0.0";
-
         private String path;
         private String name;
         private String version;
@@ -150,7 +146,7 @@ namespace PluginCore
         [Browsable(false)]
         public bool IsHaxeShim
         {
-            get { return this.name == HAXE_SHIM_NAME; }
+            get { return this.classPath != null; }
         }
 
         [Browsable(false)]
