@@ -171,7 +171,7 @@ namespace HaXeContext
         {
             try
             {
-                return GetCurrentSDK().IsHaxeShim ? LookupLixLibrary(lib) : LookupHaxeLibLibrary(lib);
+                return (GetCurrentSDK()?.IsHaxeShim ?? false) ? LookupLixLibrary(lib) : LookupHaxeLibLibrary(lib);
             }
             catch (Exception)
             {
@@ -432,7 +432,7 @@ namespace HaXeContext
                 }
 
                 InstalledSDK installedSDK = GetCurrentSDK();
-                string haxeCP = installedSDK.IsHaxeShim ? installedSDK.ClassPath : Path.Combine(hxPath, "std");
+                string haxeCP = (installedSDK != null && installedSDK.IsHaxeShim) ? installedSDK.ClassPath : Path.Combine(hxPath, "std");
                 if (Directory.Exists(haxeCP))
                 {
                     if (Directory.Exists(Path.Combine(haxeCP, "flash9")))
@@ -676,7 +676,7 @@ namespace HaXeContext
         #endregion
 
         #region SDK
-        public InstalledSDK GetCurrentSDK()
+        private InstalledSDK GetCurrentSDK()
         {
             return hxsettings.InstalledSDKs?.FirstOrDefault(sdk => sdk.Path == currentSDK);
         }
@@ -2075,7 +2075,7 @@ namespace HaXeContext
 
         internal void InstallLibrary(Dictionary<string, string> nameToVersion)
         {
-            if (GetCurrentSDK().IsHaxeShim) InstallLixLibrary(nameToVersion);
+            if (GetCurrentSDK()?.IsHaxeShim ?? false) InstallLixLibrary(nameToVersion);
             else InstallHaxeLibLibrary(nameToVersion);
         }
 
