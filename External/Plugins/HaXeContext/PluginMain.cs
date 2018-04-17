@@ -215,6 +215,8 @@ namespace HaXeContext
                         }
                     }
                     var text = TextHelper.GetString("Info.MissingLib");
+                    // TODO: Show information about which libraries are missing in a single dialog?
+                    // TODO: Prevent showing multiple dialogs about the same library.
                     var result = MessageBox.Show(PluginBase.MainForm, text, string.Empty, MessageBoxButtons.OKCancel);
                     if (result == DialogResult.OK) contextInstance.InstallLibrary(nameToVersion);
                     break;

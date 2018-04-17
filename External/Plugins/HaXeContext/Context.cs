@@ -184,7 +184,15 @@ namespace HaXeContext
             if (haxelibsCache.ContainsKey(lib))
                 return haxelibsCache[lib];
 
-            Process p = StartHiddenProcess("haxelib", "path " + lib);
+            var haxePath = PathHelper.ResolvePath(GetCompilerPath());
+            if (!Directory.Exists(haxePath) && !File.Exists(haxePath))
+            {
+                ErrorManager.ShowInfo(TextHelper.GetString("Info.InvalidHaXePath"));
+                return null;
+            }
+            if (Directory.Exists(haxePath)) haxePath = Path.Combine(haxePath, "haxelib.exe");
+
+            Process p = StartHiddenProcess(haxePath, "path " + lib);
 
             List<string> paths = new List<string>();
             do
@@ -193,7 +201,7 @@ namespace HaXeContext
                 if (string.IsNullOrEmpty(line)) continue;
                 if (line.IndexOfOrdinal("not installed") > 0)
                 {
-                    TraceManager.Add(line, 3);
+                    TraceManager.Add(line, (Int32)TraceType.Error);
                 }
                 else if (!line.StartsWith('-'))
                 {
@@ -220,8 +228,16 @@ namespace HaXeContext
 
         private List<string> LookupLixLibrary(string lib)
         {
-            IProject project = PluginBase.CurrentProject;
-            Process p = StartHiddenProcess("haxe", "--run resolve-args -lib " + lib, Path.GetDirectoryName(project.ProjectPath));
+            var haxePath = PathHelper.ResolvePath(GetCompilerPath());
+            if (!Directory.Exists(haxePath) && !File.Exists(haxePath))
+            {
+                ErrorManager.ShowInfo(TextHelper.GetString("Info.InvalidHaXePath"));
+                return null;
+            }
+            if (Directory.Exists(haxePath)) haxePath = Path.Combine(haxePath, "haxe.exe");
+
+            string projectDir = PluginBase.CurrentProject != null ? Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath) : "";
+            Process p = StartHiddenProcess(haxePath, "--run resolve-args -lib " + lib, projectDir);
 
             List<string> paths = new List<string>();
             bool isPathExpected = false;
@@ -229,11 +245,7 @@ namespace HaXeContext
             {
                 string line = p.StandardOutput.ReadLine();
                 if (string.IsNullOrEmpty(line)) continue;
-                if (line.IndexOfOrdinal("Cannot resolve") == 0)
-                {
-                    TraceManager.Add(line, 3);
-                }
-                else if (!line.StartsWith('-') && isPathExpected)
+                if (!line.StartsWith('-') && isPathExpected)
                 {
                     try
                     {
@@ -245,6 +257,9 @@ namespace HaXeContext
                 isPathExpected = line == "-cp";
             }
             while (!p.StandardOutput.EndOfStream);
+
+            string error = p.StandardError.ReadToEnd();
+            if (error != "") TraceManager.Add(error, (Int32)TraceType.Error);
 
             p.WaitForExit();
             p.Close();
@@ -2089,11 +2104,17 @@ namespace HaXeContext
                 return;
             }
 
-            // TODO: Make sure correct working directory (project directory) is being used
-            var cwd = Directory.GetCurrentDirectory();
-            nameToVersion.Select(it => $"{lixPath};install haxelib:{it.Key}")
-                .ToList()
-                .ForEach(it => MainForm.CallCommand("RunProcessCaptured", it));
+            string projectDir = PluginBase.CurrentProject != null ? Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath) : "";
+            foreach (var item in nameToVersion)
+            {
+                Process p = StartHiddenProcess(lixPath, "install haxelib:" + item.Key, projectDir);
+                string output = p.StandardOutput.ReadToEnd();
+                string error = p.StandardError.ReadToEnd();
+                if (output != "") TraceManager.Add(output, (Int32)TraceType.Info);
+                else if (error != "") TraceManager.Add(error, (Int32)TraceType.Error);
+                p.WaitForExit();
+                p.Close();
+            }
         }
 
         #endregion
