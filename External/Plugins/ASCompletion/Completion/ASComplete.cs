@@ -2626,7 +2626,7 @@ namespace ASCompletion.Completion
                 value = context.WordBefore + " " + value;
 
             var type = ctx.ResolveToken(value, inClass.InFile);
-            if (!type.IsVoid()) return new ASResult {Type = type, Context = context, InClass = type, InFile = type.InFile, Path = context.Value, IsStatic = true};
+            if (!type.IsVoid()) return new ASResult {Type = type, Context = context, InClass = type, InFile = type.InFile, Path = context.Value, IsStatic = !features.codeKeywords.Contains(value)};
             if (expression.StartsWithOrdinal(features.dot))
             {
                 if (expression.StartsWithOrdinal(features.dot + "#")) expression = expression.Substring(1);
@@ -4829,7 +4829,7 @@ namespace ASCompletion.Completion
             if (!ASContext.Context.Settings.GenerateImports) return;
             try
             {
-                ClassModel import = (item as EventItem).EventType;
+                ClassModel import = ((EventItem) item).EventType;
                 if (!ASContext.Context.IsImported(import, sci.LineFromPosition(position)))
                 {
                     int offset = ASGenerator.InsertImport(import, true);
@@ -4856,7 +4856,7 @@ namespace ASCompletion.Completion
             if (context.Member != null && context.Member.IsPackageLevel && context.Member.InFile.Package != "")
             {
                 inFile = context.Member.InFile;
-                import = context.Member.Clone() as MemberModel;
+                import = (MemberModel) context.Member.Clone();
                 import.Type = inFile.Package + "." + import.Name;
             }
             // if not completed a type
@@ -4864,8 +4864,7 @@ namespace ASCompletion.Completion
                 || (context.Type.Type != null && context.Type.Type.IndexOfOrdinal(features.dot) < 0)
                 || context.Type.IsVoid())
             {
-                if (context.Member != null && expr.Separator == " "
-                    && expr.WordBefore == features.overrideKey)
+                if (context.Member != null && expr.Separator == " " && expr.WordBefore == features.overrideKey)
                 {
                     ASGenerator.GenerateOverride(sci, context.InClass, context.Member, position);
                     return false;
@@ -4882,10 +4881,9 @@ namespace ASCompletion.Completion
                     ASGenerator.GenerateOverride(sci, context.inClass, context.Member, position);
                     return false;
                 }*/
-                else if (!context.IsNull())
+                if (!context.IsNull() && expr.WordBefore == features.importKey)
                 {
-                    if (expr.WordBefore == features.importKey)
-                        ASContext.Context.RefreshContextCache(expr.Value);
+                    ASContext.Context.RefreshContextCache(expr.Value);
                 }
                 return true;
             }
