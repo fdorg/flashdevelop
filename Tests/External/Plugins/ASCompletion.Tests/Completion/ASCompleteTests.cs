@@ -641,21 +641,25 @@ namespace ASCompletion.Completion
             {
                 get
                 {
-                    yield return new TestCaseData("BeforeOnCharIssue2076_1", false)
+                    yield return new TestCaseData("BeforeOnCharIssue2076_1", ' ', false)
                         .Returns(ReadAllText("AfterOnCharIssue2076_1"))
                         .SetName("var v:Sprite = new |' Issue2076. Case 1.")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
-                    yield return new TestCaseData("BeforeOnCharIssue2076_2", false)
+                    yield return new TestCaseData("BeforeOnCharIssue2076_2", ' ', false)
                         .Returns(ReadAllText("AfterOnCharIssue2076_2"))
                         .SetName("override |' Issue2076. Case 2.")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
-                    yield return new TestCaseData("BeforeOnCharIssue2076_3", false)
+                    yield return new TestCaseData("BeforeOnCharIssue2076_3", ' ', false)
                         .Returns(ReadAllText("AfterOnCharIssue2076_3"))
                         .SetName("extends |' Issue2076. Case 3.")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
-                    yield return new TestCaseData("BeforeOnCharIssue2076_4", false)
+                    yield return new TestCaseData("BeforeOnCharIssue2076_4", ' ', false)
                         .Returns(ReadAllText("AfterOnCharIssue2076_4"))
                         .SetName("implements |' Issue2076. Case 4.")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_5", ':', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_5"))
+                        .SetName("function foo(v:|' Issue2076. Case 5.")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
                 }
             }
@@ -664,14 +668,14 @@ namespace ASCompletion.Completion
                 Test,
                 TestCaseSource(nameof(OnCharIssue2076TestCases)),
             ]
-            public string OnWhiteSpaceChar(string fileName, bool autoHide)
+            public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
             {
                 PluginBase.MainForm.CurrentDocument.IsEditable.Returns(true);
                 var manager = UITools.Manager;
                 SetSrc(sci, ReadAllText(fileName));
                 ASContext.Context.CurrentClass.InFile.Context = ASContext.Context;
                 ASContext.HasContext = true;
-                ASComplete.OnChar(sci, ' ', false);
+                ASComplete.OnChar(sci, addedChar, false);
                 Assert.IsNotNullOrEmpty(CompletionList.SelectedLabel);
                 CompletionList.OnInsert += ASComplete.HandleCompletionInsert;
                 CompletionList.ReplaceText(sci, '\0');
