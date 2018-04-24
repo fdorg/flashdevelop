@@ -669,6 +669,7 @@ namespace ASCompletion.Completion
                 PluginBase.MainForm.CurrentDocument.IsEditable.Returns(true);
                 var manager = UITools.Manager;
                 SetSrc(sci, ReadAllText(fileName));
+                ASContext.Context.CurrentClass.InFile.Context = ASContext.Context;
                 ASContext.HasContext = true;
                 ASComplete.OnChar(sci, ' ', false);
                 Assert.IsNotNullOrEmpty(CompletionList.SelectedLabel);
