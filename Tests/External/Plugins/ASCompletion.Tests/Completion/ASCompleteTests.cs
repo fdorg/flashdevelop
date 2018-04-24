@@ -685,6 +685,10 @@ namespace ASCompletion.Completion
                         .Returns(ReadAllText("AfterOnCharIssue2076_11"))
                         .SetName("Issue2076. Case 11. true.| ")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_12", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_12"))
+                        .SetName("Issue2076. Case 12. (v as String).| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
                 }
             }
 
