@@ -677,10 +677,9 @@ namespace ASCompletion.Completion
                         .Returns(ReadAllText("AfterOnCharIssue2076_9"))
                         .SetName("Issue2076. Case 9. ''.| ")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
-                    yield return new TestCaseData("BeforeOnCharIssue2076_10", '.', false)
+                    yield return new TestCaseData("BeforeOnCharIssue2076_10", '.', true)
                         .Returns(ReadAllText("AfterOnCharIssue2076_10"))
                         .SetName("Issue2076. Case 10. 0x1.| ")
-                        .Ignore("-> 0x1.toExponential")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
                 }
             }
@@ -696,7 +695,7 @@ namespace ASCompletion.Completion
                 SetSrc(sci, ReadAllText(fileName));
                 ASContext.Context.CurrentClass.InFile.Context = ASContext.Context;
                 ASContext.HasContext = true;
-                ASComplete.OnChar(sci, addedChar, false);
+                ASComplete.OnChar(sci, addedChar, autoHide);
                 Assert.IsNotNullOrEmpty(CompletionList.SelectedLabel);
                 CompletionList.OnInsert += ASComplete.HandleCompletionInsert;
                 CompletionList.ReplaceText(sci, '\0');
