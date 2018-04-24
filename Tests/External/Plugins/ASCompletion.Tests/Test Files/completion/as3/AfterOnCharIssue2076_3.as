@@ -1,3 +1,4 @@
 package test {
-	public class ASCompleteTest extends adobe.utils.CustomActions {}
+	import adobe.utils.CustomActions;
+	public class ASCompleteTest extends CustomActions {}
 }

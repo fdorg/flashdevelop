@@ -1,3 +1,4 @@
 package test {
-	public class ASCompleteTest implements flash.accessibility.ISearchableText {}
+	import flash.accessibility.ISearchableText;
+	public class ASCompleteTest implements ISearchableText {}
 }

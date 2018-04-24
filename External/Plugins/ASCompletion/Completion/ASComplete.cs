@@ -1916,8 +1916,7 @@ namespace ASCompletion.Completion
 
             // complete keyword
             string word = expr.WordBefore;
-            if (word != null && Array.IndexOf(features.declKeywords, word) >= 0)
-                return false;
+            if (word != null && features.declKeywords.Contains(word)) return false;
             ClassModel argumentType = null;
             if (dotIndex < 0)
             {
@@ -1956,13 +1955,13 @@ namespace ASCompletion.Completion
                 }
 
                 // complete declaration
-                MemberModel cMember = ASContext.Context.CurrentMember;
+                MemberModel cMember = ctx.CurrentMember;
                 int line = Sci.LineFromPosition(position);
-                if (cMember == null && !ASContext.Context.CurrentClass.IsVoid())
+                if (cMember == null && !ctx.CurrentClass.IsVoid())
                 {
                     if (!string.IsNullOrEmpty(expr.Value))
                         return HandleDeclarationCompletion(Sci, expr.Value, autoHide);
-                    else if (ASContext.Context.CurrentModel.Version >= 2)
+                    if (ctx.CurrentModel.Version >= 2)
                         return ASGenerator.HandleGeneratorCompletion(Sci, autoHide, features.overrideKey);
                 }
                 else if (cMember != null && line == cMember.LineFrom)
@@ -1985,7 +1984,7 @@ namespace ASCompletion.Completion
             string tail = (dotIndex >= 0) ? expr.Value.Substring(dotIndex + features.dot.Length) : expr.Value;
             
             // custom completion
-            MemberList items = ASContext.Context.ResolveDotContext(Sci, expr, autoHide);
+            MemberList items = ctx.ResolveDotContext(Sci, expr, autoHide);
             if (items != null)
             {
                 DotContextResolved(Sci, expr, items, autoHide);
@@ -2039,8 +2038,6 @@ namespace ASCompletion.Completion
             if ((result.IsNull() || (dotIndex < 0)) && expr.ContextFunction != null)
                 mix.Merge(expr.LocalVars);
 
-            // get all members
-            FlagType mask = 0;
             // members visibility
             ClassModel curClass = cClass;
             curClass.ResolveExtends();
@@ -2059,6 +2056,7 @@ namespace ASCompletion.Completion
                 bool limitMembers = autoHide; // ASContext.Context.HideIntrinsicMembers || (autoHide && !ASContext.Context.AlwaysShowIntrinsicMembers);
 
                 // static or instance members?
+                FlagType mask = 0;
                 if (!result.IsNull()) mask = result.IsStatic ? FlagType.Static : FlagType.Dynamic;
                 else if (expr.ContextFunction == null || IsStatic(expr.ContextFunction)) mask = FlagType.Static;
                 else mask = 0;
