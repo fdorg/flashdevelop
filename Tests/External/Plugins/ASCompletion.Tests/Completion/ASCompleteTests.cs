@@ -672,11 +672,15 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("BeforeOnCharIssue2076_8", '.', false)
                         .Returns(ReadAllText("AfterOnCharIssue2076_8"))
                         .SetName("Issue2076. Case 8. [].| ")
-                        .Ignore("")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
                     yield return new TestCaseData("BeforeOnCharIssue2076_9", '.', false)
                         .Returns(ReadAllText("AfterOnCharIssue2076_9"))
                         .SetName("Issue2076. Case 9. ''.| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_10", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_10"))
+                        .SetName("Issue2076. Case 10. 0x1.| ")
+                        .Ignore("-> 0x1.toExponential")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
                 }
             }

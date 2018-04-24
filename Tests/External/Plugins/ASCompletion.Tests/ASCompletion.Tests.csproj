@@ -991,6 +991,8 @@
     <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_8.as" />
     <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_9.as" />
     <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_9.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_10.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_10.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

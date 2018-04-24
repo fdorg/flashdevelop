@@ -2624,7 +2624,7 @@ namespace ASCompletion.Completion
                 value = context.WordBefore + " " + value;
 
             var type = ctx.ResolveToken(value, inClass.InFile);
-            if (!type.IsVoid()) return new ASResult {Type = type, Context = context, InClass = type, InFile = type.InFile, Path = context.Value, IsStatic = !features.codeKeywords.Contains(value)};
+            if (!type.IsVoid()) return new ASResult {Type = type, Context = context, InClass = type, InFile = type.InFile, Path = context.Value, IsStatic = context.WordBefore == "new"};
             if (expression.StartsWithOrdinal(features.dot))
             {
                 if (expression.StartsWithOrdinal(features.dot + "#")) expression = expression.Substring(1);
