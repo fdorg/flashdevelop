@@ -834,7 +834,7 @@ namespace ASCompletion.Completion
 
                 // get type at cursor position
                 ASResult result;
-                if (ASContext.Context.IsFileValid) result = GetExpressionType(Sci, position);
+                if (context.IsFileValid) result = GetExpressionType(Sci, position);
                 else result = new ASResult();
                 CurrentResolvedContext.Result = result;
                 ContextFeatures features = context.Features;
@@ -843,8 +843,7 @@ namespace ASCompletion.Completion
                 string package = context.CurrentModel.Package;
                 args.Add("TypPkg", package);
 
-                ClassModel cClass = context.CurrentClass;
-                if (cClass == null) cClass = ClassModel.VoidClass;
+                ClassModel cClass = context.CurrentClass ?? ClassModel.VoidClass;
                 args.Add("TypName", MemberModel.FormatType(cClass.Name));
                 string fullname = MemberModel.FormatType(cClass.QualifiedName);
                 args.Add("TypPkgName", fullname);
@@ -860,7 +859,7 @@ namespace ASCompletion.Completion
                     args.Add("MbrKind", kind);
 
                     ClassModel aType = CurrentResolvedContext.TokenType
-                        = ASContext.Context.ResolveType(context.CurrentMember.Type, context.CurrentModel);
+                        = context.ResolveType(context.CurrentMember.Type, context.CurrentModel);
                     package = aType.IsVoid() ? "" : aType.InFile.Package;
                     args.Add("MbrTypPkg", package);
                     args.Add("MbrTypName", MemberModel.FormatType(aType.Name));
@@ -1071,12 +1070,11 @@ namespace ASCompletion.Completion
         {
             int iteratorCount = 105;
             string iterator = ((char)iteratorCount).ToString();
-            bool restartCycle = false;
             MemberList members = cClass.Members;
             List<MemberModel> parameters = context.CurrentMember.Parameters;
             while (true)
             {
-                restartCycle = false;
+                var restartCycle = false;
                 if (expr != null && expr.LocalVars != null)
                     foreach (MemberModel m in expr.LocalVars)
                     {
@@ -1829,8 +1827,6 @@ namespace ASCompletion.Completion
                 Regex reName = new Regex("[\"']" + name + "[\"']");
                 string type = meta.Params["type"];
                 string comments = meta.Comments;
-                FlagType flags = FlagType.Variable | FlagType.Constant;
-                Visibility acc = Visibility.Public;
                 if (name.Length > 0 && type.Length > 0)
                 {
                     ClassModel evClass;
@@ -1850,8 +1846,6 @@ namespace ASCompletion.Completion
                         {
                             typeFound = true;
                             name = evClass.Name + '.' + member.Name;
-                            flags = member.Flags;
-                            acc = member.Access;
                             if (meta.Comments == null && member.Comments != null) 
                                 comments = member.Comments;
                             break;
@@ -2058,7 +2052,7 @@ namespace ASCompletion.Completion
                 // static or instance members?
                 FlagType mask = 0;
                 if (!result.IsNull()) mask = result.IsStatic ? FlagType.Static : FlagType.Dynamic;
-                else if (expr.ContextFunction == null || IsStatic(expr.ContextFunction)) mask = FlagType.Static;
+                else if (IsStatic(expr.ContextFunction)) mask = FlagType.Static;
                 else mask = 0;
                 if (argumentType != null) mask |= FlagType.Variable;
 
@@ -2118,8 +2112,7 @@ namespace ASCompletion.Completion
         {
             IASContext ctx = ASContext.Context;
             ContextFeatures features = ctx.Features;
-            ClassModel cClass = ctx.CurrentClass;
-            bool inClass = !cClass.IsVoid();
+            bool inClass = !ctx.CurrentClass.IsVoid();
 
             MemberList decl = new MemberList();
             if (inClass || !ctx.CurrentModel.haXe)
@@ -2911,7 +2904,6 @@ namespace ASCompletion.Completion
                                     result.Type = ResolveType(var.Type, inFile);
 
                                 return result;
-
                             }
                         }
                     }
