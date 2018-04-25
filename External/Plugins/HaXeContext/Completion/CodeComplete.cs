@@ -155,7 +155,14 @@ namespace HaXeContext.Completion
                         var vars = local.LocalVars;
                         vars.Items.Sort((l, r) => l.LineFrom > r.LineFrom ? -1 : l.LineFrom < r.LineFrom ? 1 : 0);
                         var model = vars.Items.Find(it => it.LineFrom <= lineBefore);
-                        expr = new ASResult {Type = ctx.ResolveType(model.Type, ctx.CurrentModel), InClass = ctx.CurrentClass};
+                        if (model != null) expr = new ASResult {Type = ctx.ResolveType(model.Type, ctx.CurrentModel), InClass = ctx.CurrentClass};
+                        // class members
+                        else
+                        {
+                            expr = new ASResult();
+                            FindMember(local.Value, ctx.CurrentClass, expr, 0, 0);
+                            if (expr.IsNull()) return;
+                        }
                     }
                     else expr = GetExpressionType(sci, i, false, true);
                     var exprType = expr.Type;
