@@ -2880,13 +2880,14 @@ namespace ASCompletion.Completion
                         if (token == "get" && contextMember.Parameters[0].Name == "get") return EvalVariable("get_" + contextMember.Name, local, inFile, inClass);
                         if (token == "set" && contextMember.Parameters[1].Name == "set") return EvalVariable("set_" + contextMember.Name, local, inFile, inClass);
                     }
-
-                    var checkFunction = local.SubExpressions != null && local.SubExpressions.Count == 1
-                                        && !string.IsNullOrEmpty(local.Value) && local.Value.IndexOf('.') == local.Value.IndexOf(".#0~");
-                    foreach (MemberModel var in local.LocalVars)
+                    if (local.LocalVars.Count > 0)
                     {
-                        if (var.Name == token && (!checkFunction || var.Flags.HasFlag(FlagType.Function)))
+                        var checkFunction = local.SubExpressions != null && local.SubExpressions.Count == 1
+                                       && !string.IsNullOrEmpty(local.Value) && local.Value.IndexOf('.') == local.Value.IndexOf(".#0~");
+                        local.LocalVars.Items.Sort((l, r) => l.LineFrom > r.LineFrom ? -1 : l.LineFrom < r.LineFrom ? 1 : 0);
+                        foreach (MemberModel var in local.LocalVars)
                         {
+                            if (var.Name != token || (checkFunction && !var.Flags.HasFlag(FlagType.Function))) continue;
                             result.Member = var;
                             result.InFile = inFile;
                             result.InClass = inClass;
