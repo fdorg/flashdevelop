@@ -139,7 +139,24 @@ namespace HaXeContext.Completion
                 {
                     parCount--;
                     if (parCount >= 0) continue;
-                    var expr = GetExpressionType(sci, i, false, true);
+                    ASResult expr;
+                    /**
+                     * check:
+                     * var a = [1,2,3,4];
+                     * for(a in a)
+                     * {
+                     *     trace(a|); // | <-- cursor
+                     * }
+                     */
+                    var wordLeft = sci.GetWordLeft(i - 1, false);
+                    if (wordLeft == var.Name)
+                    {
+                        var vars = ParseLocalVars(local);
+                        var lineBefore = sci.LineFromPosition(i) - 1;
+                        var model = vars.Items.Find(it => it.LineFrom <= lineBefore);
+                        expr = new ASResult {Type = ctx.ResolveType(model.Type, ctx.CurrentModel), InClass = ctx.CurrentClass};
+                    }
+                    else expr = GetExpressionType(sci, i, false, true);
                     var exprType = expr.Type;
                     if (exprType == null) return;
                     string iteratorIndexType = null;
