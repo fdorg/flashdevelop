@@ -164,7 +164,7 @@
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
 			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/29/flashplayer_29_plugin_debug.exe</Url>
-    </Urls>
+	</Urls>
 	</Entry>
 	<Entry>
 		<Id>flashppapi</Id>
@@ -177,7 +177,7 @@
 		<Info>http://www.adobe.com/support/flashplayer/downloads.html</Info>
 		<Urls>
 			<Url>https://fpdownload.macromedia.com/pub/flashplayer/updaters/29/flashplayer_29_ppapi_debug.exe</Url>
-    </Urls>
+	</Urls>
 	</Entry>
 	<Entry>
 		<Id>torgit</Id>
@@ -256,7 +256,7 @@
 		<Type>Executable</Type>
 		<Info>http://tortoisesvn.net/</Info>
 		<Urls>
-      <Url>https://osdn.net/projects/tortoisesvn/storage/1.10.0/Application/TortoiseSVN-1.10.0.28176-win32-svn-1.10.0.msi</Url>
+			<Url>https://osdn.net/projects/tortoisesvn/storage/1.10.0/Application/TortoiseSVN-1.10.0.28176-win32-svn-1.10.0.msi</Url>
 		</Urls>
 	</Entry>
 	<Entry>
@@ -464,7 +464,7 @@
 	</Entry>
 	<Entry>
 		<Id>quicknavigate</Id>
-    		<Name>QuickNavigate</Name>
+		<Name>QuickNavigate</Name>
 		<Version>3.0</Version>
 		<Build>89</Build>
 		<Checksum>b9bdc3f75c8743cba2668e39d5ef1d6</Checksum>
