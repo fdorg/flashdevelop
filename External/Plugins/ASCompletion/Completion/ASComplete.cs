@@ -2712,13 +2712,13 @@ namespace ASCompletion.Completion
             int n = tokens.Length;
             if (!complete) n--;
             // context
-            ContextFeatures features = ASContext.Context.Features;
+            IASContext ctx = ASContext.Context;
+            ContextFeatures features = ctx.Features;
             ASResult step = head;
             ClassModel resultClass = head.Type;
             // look for static or dynamic members?
             FlagType mask = head.IsStatic ? FlagType.Static : FlagType.Dynamic;
             // members visibility
-            IASContext ctx = ASContext.Context;
             ClassModel curClass = ctx.CurrentClass;
             curClass.ResolveExtends();
             Visibility acc = ctx.TypesAffinity(curClass, step.Type);
@@ -2882,27 +2882,38 @@ namespace ASCompletion.Completion
                     }
                     if (local.LocalVars.Count > 0)
                     {
-                        var checkFunction = local.SubExpressions != null && local.SubExpressions.Count == 1
-                                       && !string.IsNullOrEmpty(local.Value) && local.Value.IndexOf('.') == local.Value.IndexOf(".#0~");
-                        local.LocalVars.Items.Sort((l, r) => l.LineFrom > r.LineFrom ? -1 : l.LineFrom < r.LineFrom ? 1 : 0);
-                        foreach (MemberModel var in local.LocalVars)
+                        var vars = local.LocalVars.Items.Where(it => it.Name == token).ToArray();
+                        if (vars.Length > 0)
                         {
-                            if (var.Name != token || (checkFunction && !var.Flags.HasFlag(FlagType.Function))) continue;
-                            result.Member = var;
-                            result.InFile = inFile;
-                            result.InClass = inClass;
-                            if (features.hasInference && var.Type == null)
+                            var checkFunction = local.SubExpressions != null && local.SubExpressions.Count == 1
+                                           && !string.IsNullOrEmpty(local.Value) && local.Value.IndexOf('.') == local.Value.IndexOf(".#0~");
+                            MemberModel var = null;
+                            if (vars.Length > 1)
+                                var = vars.FirstOrDefault(it =>
+                                {
+                                    return it.LineFrom == local.LineFrom && it.LineTo == local.LineTo
+                                        && (!checkFunction || it.Flags.HasFlag(FlagType.Function));
+                                });
+                            if (var == null) var = vars.FirstOrDefault(it => !checkFunction || it.Flags.HasFlag(FlagType.Function));
+                            if (var != null)
                             {
-                                if (var.Flags.HasFlag(FlagType.LocalVar)) context.CodeComplete.InferVariableType(local, var);
-                                else if (var.Flags.HasFlag(FlagType.ParameterVar)) context.CodeComplete.InferParameterVarType(var);
+                                result.Member = var;
+                                result.InFile = inFile;
+                                result.InClass = inClass;
+                                if (features.hasInference && var.Type == null)
+                                {
+                                    if (var.Flags.HasFlag(FlagType.LocalVar)) context.CodeComplete.InferVariableType(local, var);
+                                    else if (var.Flags.HasFlag(FlagType.ParameterVar)) context.CodeComplete.InferParameterVarType(var);
+                                }
+
+                                if (var.Flags.HasFlag(FlagType.Function))
+                                    result.Type = context.ResolveType("Function", null);
+                                else
+                                    result.Type = ResolveType(var.Type, inFile);
+
+                                return result;
+
                             }
-
-                            if (var.Flags.HasFlag(FlagType.Function))
-                                result.Type = context.ResolveType("Function", null);
-                            else
-                                result.Type = ResolveType(var.Type, inFile);
-
-                            return result;
                         }
                     }
                 }
@@ -3921,6 +3932,8 @@ namespace ASCompletion.Completion
 
             expression.Value = value;
             expression.PositionExpression = positionExpression;
+            expression.LineFrom = sci.LineFromPosition(positionExpression) - 1;
+            expression.LineTo = sci.LineFromPosition(expression.Position) - 1;
             LastExpression = expression;
             return expression;
         }
@@ -4108,18 +4121,18 @@ namespace ASCompletion.Completion
                 }
             }
             else model = new FileModel();
-            if (expression.ContextFunction != null && expression.ContextFunction.Parameters != null)
+            if (expression.ContextFunction?.Parameters != null)
             {
-                ContextFeatures features = ASContext.Context.Features;
+                var features = ASContext.Context.Features;
+                var dot = features.dot;
                 foreach (MemberModel item in expression.ContextFunction.Parameters)
                 {
-                    if (item.Name.StartsWithOrdinal(features.dot)) 
-                        model.Members.Merge(new MemberModel(item.Name.Substring(item.Name.LastIndexOfOrdinal(features.dot) + 1), "Array", item.Flags, item.Access));
+                    if (item.Name.StartsWithOrdinal(dot)) 
+                        model.Members.Merge(new MemberModel(item.Name.Substring(item.Name.LastIndexOfOrdinal(dot) + 1), "Array", item.Flags, item.Access));
                     else if (item.Name[0] == '?') model.Members.Merge(new MemberModel(item.Name.Substring(1), item.Type, item.Flags, item.Access));
                     else model.Members.Merge(item);
                 }
-                if (features.functionArguments != null)
-                    model.Members.Add(ASContext.Context.Features.functionArguments);
+                if (features.functionArguments != null) model.Members.Add(features.functionArguments);
             }
             model.Members.Sort();
             return model.Members;
@@ -5317,6 +5330,9 @@ namespace ASCompletion.Completion
     /// </summary>
     public sealed class ASExpr
     {
+        /// <summary>
+        /// End position of expression
+        /// </summary>
         public int Position;
         public MemberModel ContextMember;
         public MemberList LocalVars;
@@ -5337,6 +5353,9 @@ namespace ASCompletion.Completion
         public int WordBeforePosition;
         public ComaExpression coma;
         public string RightOperator = string.Empty;
+
+        internal int LineFrom;
+        internal int LineTo;
 
         public ASExpr() { }
 

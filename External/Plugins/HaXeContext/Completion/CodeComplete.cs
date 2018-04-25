@@ -151,8 +151,9 @@ namespace HaXeContext.Completion
                     var wordLeft = sci.GetWordLeft(i - 1, false);
                     if (wordLeft == var.Name)
                     {
-                        var vars = ParseLocalVars(local);
                         var lineBefore = sci.LineFromPosition(i) - 1;
+                        var vars = local.LocalVars;
+                        vars.Items.Sort((l, r) => l.LineFrom > r.LineFrom ? -1 : l.LineFrom < r.LineFrom ? 1 : 0);
                         var model = vars.Items.Find(it => it.LineFrom <= lineBefore);
                         expr = new ASResult {Type = ctx.ResolveType(model.Type, ctx.CurrentModel), InClass = ctx.CurrentClass};
                     }

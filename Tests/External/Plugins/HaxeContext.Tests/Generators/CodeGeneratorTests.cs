@@ -475,6 +475,10 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue2117_1"))
                     .SetName("Issue 2117. Case 1. Infer local variable type.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2117");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2117_2", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2117_2"))
+                    .SetName("Issue 2117. Case 2. Infer local variable type.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2117");
             }
         }
 
