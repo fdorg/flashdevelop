@@ -94,11 +94,11 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("BeforeContextualGeneratorTests_GenerateFunction_5", GeneratorJobType.Function, true)
                     .Returns(ReadAllText("AfterContextualGeneratorTests_GenerateFunction_5"))
                     .SetName("fo|o((this.bar().x:Int)). Generate function . Case 5");
-                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1747_1", 0, false)
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1747_1", -1, false)
                     .Returns(null)
                     .SetName("Issue1747. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1747");
-                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1747_2", 0, false)
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1747_2", -1, false)
                     .Returns(null)
                     .SetName("Issue1747. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1747");
@@ -106,11 +106,11 @@ namespace HaXeContext.Generators
                     .Returns(null)
                     .SetName("Issue1747. Case 3")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1747");
-                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1747_4", 0, false)
-                    .Returns(null)
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1747_4", GeneratorJobType.GetterSetter, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue1747_4"))
                     .SetName("Issue1747. Case 4")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1747");
-                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1767_1", 0, false)
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue1767_1", -1, false)
                     .Returns(null)
                     .SetName("Issue1767. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1767");

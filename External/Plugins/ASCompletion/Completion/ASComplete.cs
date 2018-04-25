@@ -1916,8 +1916,7 @@ namespace ASCompletion.Completion
 
             // complete keyword
             string word = expr.WordBefore;
-            if (word != null && Array.IndexOf(features.declKeywords, word) >= 0)
-                return false;
+            if (word != null && features.declKeywords.Contains(word)) return false;
             ClassModel argumentType = null;
             if (dotIndex < 0)
             {
@@ -1956,13 +1955,13 @@ namespace ASCompletion.Completion
                 }
 
                 // complete declaration
-                MemberModel cMember = ASContext.Context.CurrentMember;
+                MemberModel cMember = ctx.CurrentMember;
                 int line = Sci.LineFromPosition(position);
-                if (cMember == null && !ASContext.Context.CurrentClass.IsVoid())
+                if (cMember == null && !ctx.CurrentClass.IsVoid())
                 {
                     if (!string.IsNullOrEmpty(expr.Value))
                         return HandleDeclarationCompletion(Sci, expr.Value, autoHide);
-                    else if (ASContext.Context.CurrentModel.Version >= 2)
+                    if (ctx.CurrentModel.Version >= 2)
                         return ASGenerator.HandleGeneratorCompletion(Sci, autoHide, features.overrideKey);
                 }
                 else if (cMember != null && line == cMember.LineFrom)
@@ -1985,7 +1984,7 @@ namespace ASCompletion.Completion
             string tail = (dotIndex >= 0) ? expr.Value.Substring(dotIndex + features.dot.Length) : expr.Value;
             
             // custom completion
-            MemberList items = ASContext.Context.ResolveDotContext(Sci, expr, autoHide);
+            MemberList items = ctx.ResolveDotContext(Sci, expr, autoHide);
             if (items != null)
             {
                 DotContextResolved(Sci, expr, items, autoHide);
@@ -2039,8 +2038,6 @@ namespace ASCompletion.Completion
             if ((result.IsNull() || (dotIndex < 0)) && expr.ContextFunction != null)
                 mix.Merge(expr.LocalVars);
 
-            // get all members
-            FlagType mask = 0;
             // members visibility
             ClassModel curClass = cClass;
             curClass.ResolveExtends();
@@ -2059,6 +2056,7 @@ namespace ASCompletion.Completion
                 bool limitMembers = autoHide; // ASContext.Context.HideIntrinsicMembers || (autoHide && !ASContext.Context.AlwaysShowIntrinsicMembers);
 
                 // static or instance members?
+                FlagType mask = 0;
                 if (!result.IsNull()) mask = result.IsStatic ? FlagType.Static : FlagType.Dynamic;
                 else if (expr.ContextFunction == null || IsStatic(expr.ContextFunction)) mask = FlagType.Static;
                 else mask = 0;
@@ -2626,7 +2624,7 @@ namespace ASCompletion.Completion
                 value = context.WordBefore + " " + value;
 
             var type = ctx.ResolveToken(value, inClass.InFile);
-            if (!type.IsVoid()) return new ASResult {Type = type, Context = context, InClass = type, InFile = type.InFile, Path = context.Value};
+            if (!type.IsVoid()) return new ASResult {Type = type, Context = context, InClass = type, InFile = type.InFile, Path = context.Value, IsStatic = context.WordBefore == "new"};
             if (expression.StartsWithOrdinal(features.dot))
             {
                 if (expression.StartsWithOrdinal(features.dot + "#")) expression = expression.Substring(1);
@@ -4829,7 +4827,7 @@ namespace ASCompletion.Completion
             if (!ASContext.Context.Settings.GenerateImports) return;
             try
             {
-                ClassModel import = (item as EventItem).EventType;
+                ClassModel import = ((EventItem) item).EventType;
                 if (!ASContext.Context.IsImported(import, sci.LineFromPosition(position)))
                 {
                     int offset = ASGenerator.InsertImport(import, true);
@@ -4856,7 +4854,7 @@ namespace ASCompletion.Completion
             if (context.Member != null && context.Member.IsPackageLevel && context.Member.InFile.Package != "")
             {
                 inFile = context.Member.InFile;
-                import = context.Member.Clone() as MemberModel;
+                import = (MemberModel) context.Member.Clone();
                 import.Type = inFile.Package + "." + import.Name;
             }
             // if not completed a type
@@ -4864,8 +4862,7 @@ namespace ASCompletion.Completion
                 || (context.Type.Type != null && context.Type.Type.IndexOfOrdinal(features.dot) < 0)
                 || context.Type.IsVoid())
             {
-                if (context.Member != null && expr.Separator == " "
-                    && expr.WordBefore == features.overrideKey)
+                if (context.Member != null && expr.Separator == " " && expr.WordBefore == features.overrideKey)
                 {
                     ASGenerator.GenerateOverride(sci, context.InClass, context.Member, position);
                     return false;
@@ -4882,10 +4879,9 @@ namespace ASCompletion.Completion
                     ASGenerator.GenerateOverride(sci, context.inClass, context.Member, position);
                     return false;
                 }*/
-                else if (!context.IsNull())
+                if (!context.IsNull() && expr.WordBefore == features.importKey)
                 {
-                    if (expr.WordBefore == features.importKey)
-                        ASContext.Context.RefreshContextCache(expr.Value);
+                    ASContext.Context.RefreshContextCache(expr.Value);
                 }
                 return true;
             }
