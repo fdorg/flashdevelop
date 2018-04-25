@@ -2882,18 +2882,17 @@ namespace ASCompletion.Completion
                     }
                     if (local.LocalVars.Count > 0)
                     {
-                        var vars = local.LocalVars.Items.Where(it => it.Name == token).ToArray();
-                        if (vars.Length > 0)
+                        var vars = local.LocalVars.Items.Where(it => it.Name == token).ToList();
+                        if (vars.Count > 0)
                         {
                             var checkFunction = local.SubExpressions != null && local.SubExpressions.Count == 1
                                            && !string.IsNullOrEmpty(local.Value) && local.Value.IndexOf('.') == local.Value.IndexOf(".#0~");
                             MemberModel var = null;
-                            if (vars.Length > 1)
-                                var = vars.FirstOrDefault(it =>
-                                {
-                                    return it.LineFrom == local.LineFrom && it.LineTo == local.LineTo
-                                        && (!checkFunction || it.Flags.HasFlag(FlagType.Function));
-                                });
+                            if (vars.Count > 1)
+                            {
+                                vars.Sort((l, r) => l.LineFrom > r.LineFrom ? -1 : l.LineFrom < r.LineFrom ? 1 : 0);
+                                var = vars.FirstOrDefault(it => it.LineTo <= local.LineTo && (!checkFunction || it.Flags.HasFlag(FlagType.Function)));
+                            }
                             if (var == null) var = vars.FirstOrDefault(it => !checkFunction || it.Flags.HasFlag(FlagType.Function));
                             if (var != null)
                             {
@@ -3932,8 +3931,8 @@ namespace ASCompletion.Completion
 
             expression.Value = value;
             expression.PositionExpression = positionExpression;
-            expression.LineFrom = sci.LineFromPosition(positionExpression) - 1;
-            expression.LineTo = sci.LineFromPosition(expression.Position) - 1;
+            expression.LineFrom = sci.LineFromPosition(positionExpression);
+            expression.LineTo = sci.LineFromPosition(expression.Position);
             LastExpression = expression;
             return expression;
         }
