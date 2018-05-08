@@ -365,7 +365,6 @@ namespace HaXeContext
             bool result = 
                 ValidateHaxeShimSDK(sdk, path) ||
                 ValidateHaxeSDK(sdk, path) ||
-                ValidateOldHaxeSDK(sdk, path) ||
                 ValidateUnknownHaxeSDK(sdk, path);
 
             if (!result) ErrorManager.ShowInfo("Unable to identify a Haxe SDK at path:\n" + sdk.Path);
@@ -412,11 +411,15 @@ namespace HaXeContext
 
                 if (p.ExitCode == 0)
                 {
-                    Match mVer = Regex.Match(output, "^-D haxe-ver=([0-9.]+)\\s*-cp (.*)\\s*");
+                    Match mVer = Regex.Match(output, "^-D haxe-ver=([0-9.]+)(?:\\s*\\(git\\s*[^)]*@\\s*([0-9a-f]+)\\))?\\s*-cp (.*)\\s*");
                     if (mVer.Success)
                     {
                         sdk.Version = mVer.Groups[1].Value;
-                        sdk.ClassPath = ASCompletion.Context.ASContext.NormalizePath(mVer.Groups[2].Value).TrimEnd(Path.DirectorySeparatorChar);
+                        sdk.ClassPath = ASCompletion.Context.ASContext.NormalizePath(mVer.Groups[3].Value).TrimEnd(Path.DirectorySeparatorChar);
+                        // Get pre-release version from class path, if present
+                        Match mSuffix = Regex.Match(mVer.Groups[3].Value, ".*/" + sdk.Version + "(-[0-9A-Za-z.-]+)/");
+                        if (mSuffix.Success) sdk.Version += mSuffix.Groups[1].Value;
+                        if (mVer.Groups[2].Success) sdk.Version += "+git." + mVer.Groups[2].Value;
                         sdk.Name = "Haxe Shim " + sdk.Version;
                         result = true;
                     }
@@ -431,6 +434,7 @@ namespace HaXeContext
         private bool ValidateHaxeSDK(InstalledSDK sdk, string path)
         {
             bool result = false;
+            string gitSha = "";
 
             string haxePath = Path.Combine(path, "haxe.exe");
             if (File.Exists(haxePath))
@@ -438,15 +442,16 @@ namespace HaXeContext
                 Process p = StartHiddenProcess(haxePath, "-version");
 
                 string output = p.StandardError.ReadToEnd();
+                if (output == "") output = p.StandardOutput.ReadToEnd(); // haxe >= 4.0.0
                 p.WaitForExit();
 
                 if (p.ExitCode == 0)
                 {
-                    Match mVer = Regex.Match(output, "^([0-9.]+)\\s*");
+                    Match mVer = Regex.Match(output, "^([0-9.]+)(?:\\s*\\(git\\s*[^)]*@\\s*([0-9a-f]+)\\))?\\s*");
                     if (mVer.Success)
                     {
                         sdk.Version = mVer.Groups[1].Value;
-                        sdk.Name = "Haxe " + sdk.Version;
+                        if (mVer.Groups[2].Success) gitSha = mVer.Groups[2].Value;
                         result = true;
                     }
                 }
@@ -454,11 +459,6 @@ namespace HaXeContext
                 p.Close();
             }
 
-            return result;
-        }
-
-        private bool ValidateOldHaxeSDK(InstalledSDK sdk, string path)
-        {
             string[] lookup = new string[] {
                 Path.Combine(path, "CHANGES.txt"),
                 Path.Combine(path, Path.Combine("extra", "CHANGES.txt")),
@@ -474,16 +474,32 @@ namespace HaXeContext
             if (descriptor != null)
             {
                 string raw = File.ReadAllText(descriptor);
-                Match mVer = Regex.Match(raw, "[0-9\\-?]+\\s*:\\s*([0-9.]+)");
+                Match mVer = Regex.Match(raw, "[0-9\\-?]+\\s*:\\s*([0-9.]+(-[0-9A-Za-z.-]+)?)");
                 if (mVer.Success)
                 {
-                    sdk.Version = mVer.Groups[1].Value;
-                    sdk.Name = "Haxe " + sdk.Version;
-                    return true;
+                    if (!result)
+                    {
+                        sdk.Version = mVer.Groups[1].Value;
+                        result = true;
+                    }
+                    else if (mVer.Groups[2].Success)
+                    {
+                        // Get pre-release version from CHANGES.txt, if present
+                        sdk.Version += mVer.Groups[2].Value;
+                    }
                 }
-                else ErrorManager.ShowInfo("Invalid changes.txt file:\n" + descriptor);
+                else if (!result)
+                {
+                    ErrorManager.ShowInfo("Invalid CHANGES.txt file:\n" + descriptor);
+                }
             }
-            return false;
+
+            if (result)
+            {
+                if (gitSha != "") sdk.Version += "+git." + gitSha;
+                sdk.Name = "Haxe " + sdk.Version;
+            }
+            return result;
         }
 
         private bool ValidateUnknownHaxeSDK(InstalledSDK sdk, string path)
