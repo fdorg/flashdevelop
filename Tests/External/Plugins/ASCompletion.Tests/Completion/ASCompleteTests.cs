@@ -5,6 +5,7 @@ using ASCompletion.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Helpers;
 using PluginCore.Managers;
 using ScintillaNet;
@@ -615,6 +616,7 @@ namespace ASCompletion.Completion
                         .SetName("this.|. inside static function");
                 }
             }
+
             static IEnumerable<TestCaseData> OnCharIssue2105TestCases
             {
                 get
@@ -634,6 +636,80 @@ namespace ASCompletion.Completion
                 TestCaseSource(nameof(OnCharIssue2105TestCases)),
             ]
             public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion) => OnChar(sci, ReadAllText(fileName), addedChar, autoHide, hasCompletion);
+
+            static IEnumerable<TestCaseData> OnCharIssue2076TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("BeforeOnCharIssue2076_1", ' ', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_1"))
+                        .SetName("Issue2076. Case 1. var v:Sprite = new | ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_2", ' ', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_2"))
+                        .SetName("Issue2076. Case 2. override | ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_3", ' ', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_3"))
+                        .SetName("Issue2076. Case 3. extends | ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_4", ' ', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_4"))
+                        .SetName("Issue2076. Case 4. implements | ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_5", ':', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_5"))
+                        .SetName("Issue2076. Case 5. function foo(v:| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_6", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_6"))
+                        .SetName("Issue2076. Case 6. function foo(v:flash.display.| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_7", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_7"))
+                        .SetName("Issue2076. Case 7. this.| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_8", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_8"))
+                        .SetName("Issue2076. Case 8. [].| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_9", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_9"))
+                        .SetName("Issue2076. Case 9. ''.| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_10", '.', true)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_10"))
+                        .SetName("Issue2076. Case 10. 0x1.| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_11", '.', true)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_11"))
+                        .SetName("Issue2076. Case 11. true.| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_12", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_12"))
+                        .SetName("Issue2076. Case 12. (v as String).| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                }
+            }
+
+            [
+                Test,
+                TestCaseSource(nameof(OnCharIssue2076TestCases)),
+            ]
+            public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
+            {
+                PluginBase.MainForm.CurrentDocument.IsEditable.Returns(true);
+                var manager = UITools.Manager;
+                SetSrc(sci, ReadAllText(fileName));
+                ASContext.Context.CurrentClass.InFile.Context = ASContext.Context;
+                ASContext.HasContext = true;
+                ASComplete.OnChar(sci, addedChar, autoHide);
+                Assert.IsNotNullOrEmpty(CompletionList.SelectedLabel);
+                CompletionList.OnInsert += ASComplete.HandleCompletionInsert;
+                CompletionList.ReplaceText(sci, '\0');
+                CompletionList.OnInsert -= ASComplete.HandleCompletionInsert;
+                return sci.Text;
+            }
         }
 
         public class Haxe : ASCompleteTests

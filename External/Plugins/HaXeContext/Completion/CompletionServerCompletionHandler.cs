@@ -17,6 +17,8 @@ namespace HaXeContext
 
         private readonly Process haxeProcess;
         private readonly int port;
+        private readonly object lockObj = new object();
+        private bool isRunning;
         private bool listening;
         private bool failure;
 
@@ -29,8 +31,7 @@ namespace HaXeContext
 
         public bool IsRunning()
         {
-            try { return !haxeProcess.HasExited; } 
-            catch { return false; }
+            return isRunning;
         }
 
         ~CompletionServerCompletionHandler()
@@ -42,11 +43,12 @@ namespace HaXeContext
         {
             return GetCompletion(args, null);
         }
+
         public string GetCompletion(string[] args, string fileContent)
         {
             if (args == null || haxeProcess == null)
                 return string.Empty;
-            if (!IsRunning()) StartServer();
+            if (!isRunning) StartServer();
             try
             {
                 var client = new TcpClient("127.0.0.1", port);
@@ -78,26 +80,32 @@ namespace HaXeContext
 
         public void StartServer()
         {
-            if (haxeProcess == null || IsRunning()) return;
-            haxeProcess.Start();
-            if (!listening)
+            if (!isRunning)
             {
-                listening = true;
-                haxeProcess.BeginOutputReadLine();
-                haxeProcess.BeginErrorReadLine();
-                haxeProcess.OutputDataReceived += new DataReceivedEventHandler(haxeProcess_OutputDataReceived);
-                haxeProcess.ErrorDataReceived += new DataReceivedEventHandler(haxeProcess_ErrorDataReceived);
+                lock (lockObj)
+                {
+                    if (isRunning) return;
+                    if (!(isRunning = haxeProcess.Start())) return;
+                    if (listening) return;
+                    listening = true;
+                    haxeProcess.BeginOutputReadLine();
+                    haxeProcess.BeginErrorReadLine();
+                    haxeProcess.OutputDataReceived += HaxeProcess_OutputDataReceived;
+                    haxeProcess.ErrorDataReceived += HaxeProcess_ErrorDataReceived;
+                    haxeProcess.Exited += HaxeProcess_Exited;
+                }
             }
         }
 
-        void haxeProcess_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        private void HaxeProcess_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
             TraceManager.AddAsync(e.Data, 2);
         }
 
-        void haxeProcess_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+        private void HaxeProcess_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
             if (e.Data == null) return;
+            TraceManager.AddAsync(e.Data, 2);
             if (Regex.IsMatch(e.Data, "Error.*--wait"))
             {
                 if (!failure && FallbackNeeded != null) 
@@ -106,10 +114,18 @@ namespace HaXeContext
             }
         }
 
+        private void HaxeProcess_Exited(object sender, EventArgs e)
+        {
+            isRunning = false;
+        }
+
         public void Stop()
         {
-            if (IsRunning())
+            if (isRunning)
+            {
                 haxeProcess.Kill();
+                isRunning = false;
+            }
         }
     }
 }
