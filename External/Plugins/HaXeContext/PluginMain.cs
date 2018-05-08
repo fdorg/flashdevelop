@@ -403,6 +403,7 @@ namespace HaXeContext
             bool result = false;
 
             string haxePath = Path.Combine(path, "haxe.exe");
+            if (!File.Exists(haxePath)) haxePath = Path.Combine(path, PlatformHelper.IsRunningOnWindows() ? "haxe.cmd" : "haxe");
             if (File.Exists(haxePath))
             {
                 Process p = StartHiddenProcess(haxePath, "--run show-version", projectPath);

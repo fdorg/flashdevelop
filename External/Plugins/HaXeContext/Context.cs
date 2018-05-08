@@ -229,12 +229,17 @@ namespace HaXeContext
         private List<string> LookupLixLibrary(string lib)
         {
             var haxePath = PathHelper.ResolvePath(GetCompilerPath());
-            if (!Directory.Exists(haxePath) && !File.Exists(haxePath))
+            if (Directory.Exists(haxePath))
+            {
+                string path = haxePath;
+                haxePath = Path.Combine(path, "haxe.exe");
+                if (!File.Exists(haxePath)) haxePath = Path.Combine(path, PlatformHelper.IsRunningOnWindows() ? "haxe.cmd" : "haxe");
+            }
+            if (!File.Exists(haxePath))
             {
                 ErrorManager.ShowInfo(TextHelper.GetString("Info.InvalidHaXePath"));
                 return null;
             }
-            if (Directory.Exists(haxePath)) haxePath = Path.Combine(haxePath, "haxe.exe");
 
             string projectDir = PluginBase.CurrentProject != null ? Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath) : "";
             Process p = StartHiddenProcess(haxePath, "--run resolve-args -lib " + lib, projectDir);
@@ -1482,6 +1487,8 @@ namespace HaXeContext
             // compiler path
             var hxPath = currentSDK ?? ""; 
             var process = Path.Combine(hxPath, "haxe.exe");
+            if (!File.Exists(process) && (GetCurrentSDK()?.IsHaxeShim ?? false))
+                process = Path.Combine(hxPath, PlatformHelper.IsRunningOnWindows() ? "haxe.cmd" : "haxe");
             if (!File.Exists(process))
                 return null;
 

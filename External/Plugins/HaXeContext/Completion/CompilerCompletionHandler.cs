@@ -11,7 +11,7 @@ namespace HaXeContext
 
         public CompilerCompletionHandler(ProcessStartInfo haxeProcessStartInfo)
         {
-            this.haxeProcessStartInfo = new ThreadLocal<ProcessStartInfo>(haxeProcessStartInfo.Clone);
+            this.haxeProcessStartInfo = haxeProcessStartInfo != null ? new ThreadLocal<ProcessStartInfo>(haxeProcessStartInfo.Clone) : null;
             Environment.SetEnvironmentVariable("HAXE_SERVER_PORT", "0");
         }
 
