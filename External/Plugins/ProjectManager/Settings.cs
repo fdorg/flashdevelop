@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Runtime.Serialization;
 using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -273,6 +274,19 @@ namespace ProjectManager
             if (Changed != null)
                 Changed(setting);
         }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            string[] extraFilteredDirectoryNames = { "github", "gitlab", "haxelib", "library" };
+            var filteredDirectoryNames = new List<string>(this.filteredDirectoryNames);
+
+            foreach (var item in extraFilteredDirectoryNames)
+                if (filteredDirectoryNames.IndexOf(item) == -1) filteredDirectoryNames.Add(item);
+
+            this.filteredDirectoryNames = filteredDirectoryNames.ToArray();
+        }
+
     }
 
     [Serializable]
