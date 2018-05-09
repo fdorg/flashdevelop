@@ -19,6 +19,7 @@ using HaXeContext.Linters;
 using LintingHelper.Managers;
 using ProjectManager.Projects.Haxe;
 using SwfOp;
+using System.Diagnostics;
 
 namespace HaXeContext
 {
@@ -153,6 +154,10 @@ namespace HaXeContext
                     {
                         var project = de.Data as IProject;
                         ExternalToolchain.Monitor(project);
+                        foreach (InstalledSDK sdk in settingObject.InstalledSDKs)
+                        {
+                            if (sdk.IsHaxeShim) ValidateHaxeShimSDK(sdk, GetSDKPath(sdk), project != null ? Path.GetDirectoryName(project.ProjectPath) : "");
+                        }
                     }
                     else if (action == "Context.SetHaxeEnvironment")
                     {
@@ -183,7 +188,8 @@ namespace HaXeContext
                     var patterns = new[]
                     {
                         "Library \\s*(?<name>[^ ]+)\\s*?(\\s*version (?<version>[^ ]+))?",
-                        "Could not find haxelib\\s*(?<name>\"[^ ]+\")?(\\s*version \"(?<version>[^ ]+)\")?"//openfl project
+                        "Could not find haxelib\\s*(?<name>\"[^ ]+\")?(\\s*version \"(?<version>[^ ]+)\")?", // openfl project
+                        "Cannot resolve `-lib\\s*(?<name>[^ ]+)`" // lix library
                     };
                     var nameToVersion = new Dictionary<string, string>();
                     for (; logCount < count; logCount++)
@@ -209,8 +215,10 @@ namespace HaXeContext
                         }
                     }
                     var text = TextHelper.GetString("Info.MissingLib");
+                    // TODO: Show information about which libraries are missing in a single dialog?
+                    // TODO: Prevent showing multiple dialogs about the same library.
                     var result = MessageBox.Show(PluginBase.MainForm, text, string.Empty, MessageBoxButtons.OKCancel);
-                    if (result == DialogResult.OK) contextInstance.InstallHaxelib(nameToVersion);
+                    if (result == DialogResult.OK) contextInstance.InstallLibrary(nameToVersion);
                     break;
             }
         }
@@ -345,31 +353,111 @@ namespace HaXeContext
 
         #endregion
 
-        #region InstalledSDKOwner Membres
+        #region InstalledSDKOwner Members
 
         public bool ValidateSDK(InstalledSDK sdk)
         {
             sdk.Owner = this;
 
+            string path = GetSDKPath(sdk);
+            if (path == "") return false;
+
+            bool result = 
+                ValidateHaxeShimSDK(sdk, path) ||
+                ValidateHaxeSDK(sdk, path) ||
+                ValidateUnknownHaxeSDK(sdk, path);
+
+            if (!result) ErrorManager.ShowInfo("Unable to identify a Haxe SDK at path:\n" + sdk.Path);
+
+            return result;
+        }
+
+        private string GetSDKPath(InstalledSDK sdk)
+        {
             IProject project = PluginBase.CurrentProject;
             string path = sdk.Path;
             if (project != null)
                 path = PathHelper.ResolvePath(path, Path.GetDirectoryName(project.ProjectPath));
             else
                 path = PathHelper.ResolvePath(path);
-            
+
             try
             {
                 if (path == null || !Directory.Exists(path))
                 {
                     //ErrorManager.ShowInfo("Path not found:\n" + sdk.Path);
-                    return false;
+                    return "";
                 }
             }
             catch (Exception ex)
             {
                 ErrorManager.ShowInfo("Invalid path (" + ex.Message + "):\n" + sdk.Path);
-                return false;
+                return "";
+            }
+
+            return path;
+        }
+
+        private bool ValidateHaxeShimSDK(InstalledSDK sdk, string path, string projectPath = "")
+        {
+            bool result = false;
+
+            string haxePath = Path.Combine(path, "haxe.exe");
+            if (!File.Exists(haxePath)) haxePath = Path.Combine(path, PlatformHelper.IsRunningOnWindows() ? "haxe.cmd" : "haxe");
+            if (File.Exists(haxePath))
+            {
+                Process p = StartHiddenProcess(haxePath, "--run show-version", projectPath);
+                string output = p.StandardOutput.ReadToEnd();
+                p.WaitForExit();
+
+                if (p.ExitCode == 0)
+                {
+                    Match mVer = Regex.Match(output, "^-D haxe-ver=([0-9.]+)(?:\\s*\\(git\\s*[^)]*@\\s*([0-9a-f]+)\\))?\\s*-cp (.*)\\s*");
+                    if (mVer.Success)
+                    {
+                        sdk.Version = mVer.Groups[1].Value;
+                        sdk.ClassPath = ASCompletion.Context.ASContext.NormalizePath(mVer.Groups[3].Value).TrimEnd(Path.DirectorySeparatorChar);
+                        // Get pre-release version from class path, if present
+                        Match mSuffix = Regex.Match(mVer.Groups[3].Value, ".*/" + sdk.Version + "(-[0-9A-Za-z.-]+)/");
+                        if (mSuffix.Success) sdk.Version += mSuffix.Groups[1].Value;
+                        if (mVer.Groups[2].Success) sdk.Version += "+git." + mVer.Groups[2].Value;
+                        sdk.Name = "Haxe Shim " + sdk.Version;
+                        result = true;
+                    }
+                }
+
+                p.Close();
+            }
+
+            return result;
+        }
+
+        private bool ValidateHaxeSDK(InstalledSDK sdk, string path)
+        {
+            bool result = false;
+            string gitSha = "";
+
+            string haxePath = Path.Combine(path, "haxe.exe");
+            if (File.Exists(haxePath))
+            {
+                Process p = StartHiddenProcess(haxePath, "-version");
+
+                string output = p.StandardError.ReadToEnd();
+                if (output == "") output = p.StandardOutput.ReadToEnd(); // haxe >= 4.0.0
+                p.WaitForExit();
+
+                if (p.ExitCode == 0)
+                {
+                    Match mVer = Regex.Match(output, "^([0-9.]+)(?:\\s*\\(git\\s*[^)]*@\\s*([0-9a-f]+)\\))?\\s*");
+                    if (mVer.Success)
+                    {
+                        sdk.Version = mVer.Groups[1].Value;
+                        if (mVer.Groups[2].Success) gitSha = mVer.Groups[2].Value;
+                        result = true;
+                    }
+                }
+
+                p.Close();
             }
 
             string[] lookup = new string[] {
@@ -378,35 +466,72 @@ namespace HaXeContext
                 Path.Combine(path, Path.Combine("doc", "CHANGES.txt"))
             };
             string descriptor = null;
-            foreach(string p in lookup) 
-                if (File.Exists(p)) {
+            foreach (string p in lookup)
+                if (File.Exists(p))
+                {
                     descriptor = p;
                     break;
                 }
             if (descriptor != null)
             {
                 string raw = File.ReadAllText(descriptor);
-                Match mVer = Regex.Match(raw, "[0-9\\-?]+\\s*:\\s*([0-9.]+)");
+                Match mVer = Regex.Match(raw, "[0-9\\-?]+\\s*:\\s*([0-9.]+(-[0-9A-Za-z.-]+)?)");
                 if (mVer.Success)
                 {
-                    sdk.Version = mVer.Groups[1].Value;
-                    sdk.Name = "Haxe " + sdk.Version;
-                    return true;
+                    if (!result)
+                    {
+                        sdk.Version = mVer.Groups[1].Value;
+                        result = true;
+                    }
+                    else if (mVer.Groups[2].Success)
+                    {
+                        // Get pre-release version from CHANGES.txt, if present
+                        sdk.Version += mVer.Groups[2].Value;
+                    }
                 }
-                else ErrorManager.ShowInfo("Invalid changes.txt file:\n" + descriptor);
+                else if (!result)
+                {
+                    ErrorManager.ShowInfo("Invalid CHANGES.txt file:\n" + descriptor);
+                }
             }
-            else if (File.Exists(Path.Combine(path, "haxe.exe"))) 
+
+            if (result)
             {
-                sdk.Version = "0.0";
+                if (gitSha != "") sdk.Version += "+git." + gitSha;
+                sdk.Name = "Haxe " + sdk.Version;
+            }
+            return result;
+        }
+
+        private bool ValidateUnknownHaxeSDK(InstalledSDK sdk, string path)
+        {
+            string haxePath = Path.Combine(path, "haxe.exe");
+            if (File.Exists(haxePath))
+            {
+                sdk.Version = "0.0.0";
                 sdk.Name = "Haxe ?";
                 return true;
             }
-            else ErrorManager.ShowInfo("No change.txt found:\n" + descriptor);
             return false;
         }
 
+        private Process StartHiddenProcess(string fileName, string arguments, string workingDirectory = "")
+        {
+            ProcessStartInfo pi = new ProcessStartInfo();
+            pi.FileName = fileName;
+            pi.Arguments = arguments;
+            pi.WorkingDirectory = workingDirectory;
+            pi.RedirectStandardOutput = true;
+            pi.RedirectStandardError = true;
+            pi.UseShellExecute = false;
+            pi.CreateNoWindow = true;
+            pi.WindowStyle = ProcessWindowStyle.Hidden;
+
+            return Process.Start(pi);
+        }
+
         #endregion
-    
+
     }
 
 }
