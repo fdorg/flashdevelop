@@ -568,7 +568,7 @@ namespace AS2Context
                 var last = token[token.Length - 1];
                 if (first == '{' && last == '}') return ResolveType(features.objectKey, inFile);
                 if (first == '[' && last == ']') return ResolveType(features.arrayKey, inFile);
-                if (first == '"' || first == '\'') return ResolveType(features.stringKey, inFile);
+                if ((first == '"' || first == '\'') && last == first) return ResolveType(features.stringKey, inFile);
             }
             return base.ResolveToken(token, inFile);
         }
@@ -771,9 +771,9 @@ namespace AS2Context
             {
                 string path = Path.Combine(aPath.Path, fileName);
                 // cached file
-                if (aPath.HasFile(path))
+                FileModel nFile;
+                if (aPath.TryGetFile(path, out nFile))
                 {
-                    FileModel nFile = aPath.GetFile(path);
                     if (nFile.Context != this)
                     {
                         // not associated with this context -> refresh
@@ -785,7 +785,7 @@ namespace AS2Context
                 // non-cached existing file
                 else if (File.Exists(path))
                 {
-                    FileModel nFile = GetFileModel(path);
+                    nFile = GetFileModel(path);
                     if (nFile != null)
                     {
                         aPath.AddFile(nFile);

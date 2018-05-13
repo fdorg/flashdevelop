@@ -231,6 +231,7 @@ namespace CodeRefactor.Commands
             UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("Info.UpdatingReferences"));
             MessageBar.Locked = true;
             var isParameterVar = (Target.Member?.Flags & FlagType.ParameterVar) > 0;
+            var fileName = PluginBase.MainForm.CurrentDocument.FileName;
             foreach (var entry in eventArgs.Results)
             {
                 UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.Updating") + " \"" + entry.Key + "\"");
@@ -242,8 +243,9 @@ namespace CodeRefactor.Commands
                 {
                     var lineFrom = Target.Context.ContextFunction.LineFrom;
                     var lineTo = Target.Context.ContextFunction.LineTo;
-                    var search = new FRSearch(NewName) {WholeWord = true, NoCase = false, SingleLine = true};
-                    var matches = search.Matches(sci.Text, sci.PositionFromLine(lineFrom), lineFrom);
+                    var search = RefactoringHelper.GetFRSearch(NewName, false, false);
+                    var config = new FRConfiguration(fileName, search) {CacheDocuments = true};
+                    var matches = search.Matches(config.GetSource(fileName));
                     matches.RemoveAll(it => it.Line < lineFrom || it.Line > lineTo);
                     if (matches.Count != 0)
                     {

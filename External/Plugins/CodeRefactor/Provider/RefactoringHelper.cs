@@ -107,16 +107,12 @@ namespace CodeRefactor.Provider
         {
             var type = target.Type;
             var member = target.Member;
-            if ((type.IsEnum() && member == null)
-                || (!type.IsVoid() && target.IsStatic && (member == null || (member.Flags & FlagType.Constructor) > 0)))
+            if ((type.IsEnum() && member == null) || (!type.IsVoid() && (member == null || (member.Flags & FlagType.Constructor) > 0)))
                 return type;
             return member;
         }
 
-        public static string GetRefactorTargetName(ASResult target)
-        {
-            return GetRefactoringTarget(target).Name;
-        }
+        public static string GetRefactorTargetName(ASResult target) => GetRefactoringTarget(target).Name;
 
         /// <summary>
         /// Retrieves the refactoring target based on the file.
@@ -286,8 +282,8 @@ namespace CodeRefactor.Provider
             else if (target.Member != null && target.InClass == null)
                 targetInFile = target.Member.InFile;
 
-            Boolean matchMember = targetInFile != null && target.Member != null;
-            Boolean matchType = target.Member == null && target.IsStatic && target.Type != null;
+            var matchMember = targetInFile != null && target.Member != null;
+            var matchType = target.Member == null && target.Type != null;
             if (!matchMember && !matchType) return false;
 
             ASResult result = null;
@@ -502,7 +498,7 @@ namespace CodeRefactor.Provider
         /// Generates an FRSearch to find all instances of the given member name.
         /// Enables WholeWord and Match Case. No comment/string literal, escape characters, or regex searching.
         /// </summary>
-        private static FRSearch GetFRSearch(string memberName, bool includeComments, bool includeStrings)
+        internal static FRSearch GetFRSearch(string memberName, bool includeComments, bool includeStrings)
         {
             FRSearch search = new FRSearch(memberName);
             search.IsRegex = false;

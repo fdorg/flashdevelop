@@ -326,8 +326,6 @@ namespace HaXeContext
             return HaxeCompleteStatus.DIAGNOSTICS;
         }
 
-
-
         HaxePositionResult ParseRange(JsonData range, string path)
         {
             if (range == null) return null;

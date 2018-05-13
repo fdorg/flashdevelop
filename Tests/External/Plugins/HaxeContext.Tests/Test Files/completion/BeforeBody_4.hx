@@ -1,0 +1,3 @@
+﻿package;
+class Foo {
+}$(EntryPoint)

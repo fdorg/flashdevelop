@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using ProjectManager.Projects.Haxe;
 using ProjectManager.Projects;
 using AS3Context;
+using HaXeContext.Completion;
 using HaXeContext.Generators;
 using PluginCore.Utilities;
 using ScintillaNet;
@@ -110,6 +111,8 @@ namespace HaXeContext
             features.methodModifierDefault = Visibility.Private;
 
             // keywords
+            features.ExtendsKey = "extends";
+            features.ImplementsKey = "implements";
             features.dot = ".";
             features.voidKey = "Void";
             features.objectKey = "Dynamic";
@@ -120,15 +123,6 @@ namespace HaXeContext
             features.dynamicKey = "Dynamic";
             features.importKey = "import";
             features.importKeyAlt = "using";
-            features.typesPreKeys = new string[] { "import", "new", "extends", "implements", "using" };
-            features.codeKeywords = new string[] { 
-                "var", "function", "new", "cast", "return", "break", 
-                "continue", "if", "else", "for", "in", "while", "do", "switch", "case", "default", "$type",
-                "null", "untyped", "true", "false", "try", "catch", "throw", "trace", "macro"
-            };
-            features.declKeywords = new string[] { "var", "function" };
-            features.accessKeywords = new string[] { "extern", "inline", "dynamic", "macro", "override", "public", "private", "static" };
-            features.typesKeywords = new string[] { "import", "using", "class", "interface", "typedef", "enum", "abstract" };
             features.varKey = "var";
             features.overrideKey = "override";
             features.functionKey = "function";
@@ -140,8 +134,19 @@ namespace HaXeContext
             features.hiddenPackagePrefix = '_';
             features.stringInterpolationQuotes = "'";
             features.ConstructorKey = "new";
+            features.typesPreKeys = new[] {features.importKey, features.importKeyAlt, "new", features.ExtendsKey, features.ImplementsKey};
+            features.codeKeywords = new[] {
+                "var", "function", "new", "cast", "return", "break",
+                "continue", "if", "else", "for", "in", "while", "do", "switch", "case", "default", "$type",
+                "null", "untyped", "true", "false", "try", "catch", "throw", "trace", "macro"
+            };
+            features.declKeywords = new[] {features.varKey, features.functionKey};
+            features.accessKeywords = new[] { "extern", "inline", "dynamic", "macro", "override", "public", "private", "static" };
+            features.typesKeywords = new[] { "import", "using", "class", "interface", "typedef", "enum", "abstract" };
             features.ArithmeticOperators = new HashSet<char> {'+', '-', '*', '/', '%'};
             features.IncrementDecrementOperators = new[] {"++", "--"};
+            features.BitwiseOperators = new[] {"~", "&", "|", "^", "<<", ">>", ">>>"};
+            features.BooleanOperators = new[] {"<", ">", "&&", "||", "!=", "=="};
             features.OtherOperators = new HashSet<string> {"untyped", "cast", "new"};
             /* INITIALIZATION */
 
@@ -155,6 +160,7 @@ namespace HaXeContext
             haxelibsCache = new Dictionary<string, List<string>>();
             CodeGenerator = new CodeGenerator();
             DocumentationGenerator = new DocumentationGenerator();
+            CodeComplete = new CodeComplete();
             //BuildClassPath(); // defered to first use
         }
         #endregion
@@ -163,63 +169,130 @@ namespace HaXeContext
 
         private List<string> LookupLibrary(string lib)
         {
-            if (haxelibsCache.ContainsKey(lib))
-                return haxelibsCache[lib];
-
             try
             {
-                string haxelib = "haxelib";
-
-                string hxPath = currentSDK;
-                if (hxPath != null && Path.IsPathRooted(hxPath))
-                {
-                    if (hxPath != currentEnv) SetHaxeEnvironment(hxPath);
-                    haxelib = Path.Combine(hxPath, haxelib);
-                }
-                
-                ProcessStartInfo pi = new ProcessStartInfo();
-                pi.FileName = haxelib;
-                pi.Arguments = "path " + lib;
-                pi.RedirectStandardOutput = true;
-                pi.UseShellExecute = false;
-                pi.CreateNoWindow = true;
-                pi.WindowStyle = ProcessWindowStyle.Hidden;
-                Process p = Process.Start(pi);
-                p.WaitForExit();
-
-                List<string> paths = new List<string>();
-                string line = "";
-                do { 
-                    line = p.StandardOutput.ReadLine();
-                    if (string.IsNullOrEmpty(line)) continue;
-                    if (line.IndexOfOrdinal("not installed") > 0)
-                    {
-                        TraceManager.Add(line, 3);
-                    }
-                    else if (!line.StartsWith('-'))
-                    {
-                        try
-                        {
-                            if (Directory.Exists(line))
-                                paths.Add(NormalizePath(line).TrimEnd(Path.DirectorySeparatorChar));
-                        }
-                        catch (Exception) { }
-                    }
-                }
-                while (!p.StandardOutput.EndOfStream);
-                p.Close();
-
-                if (paths.Count > 0)
-                {
-                    haxelibsCache.Add(lib, paths);
-                    return paths;
-                }
-                else return null;
+                return (GetCurrentSDK()?.IsHaxeShim ?? false) ? LookupLixLibrary(lib) : LookupHaxeLibLibrary(lib);
             }
             catch (Exception)
             {
                 return null;
             }
+        }
+
+        private List<string> LookupHaxeLibLibrary(string lib)
+        {
+            if (haxelibsCache.ContainsKey(lib))
+                return haxelibsCache[lib];
+
+            var haxePath = PathHelper.ResolvePath(GetCompilerPath());
+            if (!Directory.Exists(haxePath) && !File.Exists(haxePath))
+            {
+                ErrorManager.ShowInfo(TextHelper.GetString("Info.InvalidHaXePath"));
+                return null;
+            }
+            if (Directory.Exists(haxePath)) haxePath = Path.Combine(haxePath, "haxelib.exe");
+
+            Process p = StartHiddenProcess(haxePath, "path " + lib);
+
+            List<string> paths = new List<string>();
+            do
+            {
+                string line = p.StandardOutput.ReadLine();
+                if (string.IsNullOrEmpty(line)) continue;
+                if (line.IndexOfOrdinal("not installed") > 0)
+                {
+                    TraceManager.Add(line, (Int32)TraceType.Error);
+                }
+                else if (!line.StartsWith('-'))
+                {
+                    try
+                    {
+                        if (Directory.Exists(line))
+                            paths.Add(NormalizePath(line).TrimEnd(Path.DirectorySeparatorChar));
+                    }
+                    catch (Exception) { }
+                }
+            }
+            while (!p.StandardOutput.EndOfStream);
+
+            p.WaitForExit();
+            p.Close();
+
+            if (paths.Count > 0)
+            {
+                haxelibsCache.Add(lib, paths);
+                return paths;
+            }
+            else return null;
+        }
+
+        private List<string> LookupLixLibrary(string lib)
+        {
+            var haxePath = PathHelper.ResolvePath(GetCompilerPath());
+            if (Directory.Exists(haxePath))
+            {
+                string path = haxePath;
+                haxePath = Path.Combine(path, "haxe.exe");
+                if (!File.Exists(haxePath)) haxePath = Path.Combine(path, PlatformHelper.IsRunningOnWindows() ? "haxe.cmd" : "haxe");
+            }
+            if (!File.Exists(haxePath))
+            {
+                ErrorManager.ShowInfo(TextHelper.GetString("Info.InvalidHaXePath"));
+                return null;
+            }
+
+            string projectDir = PluginBase.CurrentProject != null ? Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath) : "";
+            Process p = StartHiddenProcess(haxePath, "--run resolve-args -lib " + lib, projectDir);
+
+            List<string> paths = new List<string>();
+            bool isPathExpected = false;
+            do
+            {
+                string line = p.StandardOutput.ReadLine();
+                if (string.IsNullOrEmpty(line)) continue;
+                if (!line.StartsWith('-') && isPathExpected)
+                {
+                    try
+                    {
+                        if (Directory.Exists(line))
+                            paths.Add(NormalizePath(line).TrimEnd(Path.DirectorySeparatorChar));
+                    }
+                    catch (Exception) { }
+                }
+                isPathExpected = line == "-cp";
+            }
+            while (!p.StandardOutput.EndOfStream);
+
+            string error = p.StandardError.ReadToEnd();
+            if (error != "") TraceManager.Add(error, (Int32)TraceType.Error);
+
+            p.WaitForExit();
+            p.Close();
+
+            return paths.Count > 0 ? paths : null;
+        }
+
+        private Process StartHiddenProcess(string fileName, string arguments, string workingDirectory = "")
+        {
+            string hxPath = currentSDK;
+            if (hxPath != null && Path.IsPathRooted(hxPath))
+            {
+                if (hxPath != currentEnv) SetHaxeEnvironment(hxPath);
+                fileName = Path.Combine(hxPath, fileName);
+                if (File.Exists(fileName + ".exe")) fileName += ".exe";
+            }
+
+            ProcessStartInfo pi = new ProcessStartInfo();
+            pi.FileName = fileName;
+            pi.Arguments = arguments;
+            pi.WorkingDirectory = workingDirectory;
+            pi.RedirectStandardOutput = true;
+            pi.RedirectStandardError = true;
+            pi.UseShellExecute = false;
+            pi.CreateNoWindow = true;
+            pi.WindowStyle = ProcessWindowStyle.Hidden;
+
+            return Process.Start(pi);
         }
 
         /// <summary>
@@ -363,7 +436,8 @@ namespace HaXeContext
                     OnCompletionModeChange();
                 }
 
-                string haxeCP = Path.Combine(hxPath, "std");
+                InstalledSDK installedSDK = GetCurrentSDK();
+                string haxeCP = (installedSDK != null && installedSDK.IsHaxeShim) ? installedSDK.ClassPath : Path.Combine(hxPath, "std");
                 if (Directory.Exists(haxeCP))
                 {
                     if (Directory.Exists(Path.Combine(haxeCP, "flash9")))
@@ -575,6 +649,26 @@ namespace HaXeContext
                 return (aFile.Package == package);
             }
             else return false;
+        }
+
+        /// <inheritdoc />
+        public override FileModel GetCodeModel(FileModel result, string src, bool scriptMode)
+        {
+            result.haXe = true;
+            base.GetCodeModel(result, src, scriptMode);
+            if (result.Members != null)
+            {
+                for (var i = 0; i < result.Members.Count; i++)
+                {
+                    var member = result.Members[i];
+                    if (!member.Flags.HasFlag(FlagType.Function) || !(member.Parameters?.Count > 0)) continue;
+                    foreach (var parameter in member.Parameters)
+                    {
+                        if (parameter.Name[0] == '?') parameter.Name = parameter.Name.Substring(1);
+                    }
+                }
+            }
+            return result;
         }
 
         /// <summary>
@@ -839,23 +933,20 @@ namespace HaXeContext
                 {
                     var path = aPath.Path + dirSeparator + fileName;
 
-                    FileModel file = null;
+                    FileModel file;
                     // cached file
-                    if (aPath.HasFile(path))
+                    if (aPath.TryGetFile(path, out file))
                     {
-                        file = aPath.GetFile(path);
                         if (file.Context != this)
                         {
                             // not associated with this context -> refresh
                             file.OutOfDate = true;
                             file.Context = this;
                         }
-                    }
-                    if (file != null)
-                    {
+
                         // add all public classes of Haxe modules
                         foreach (ClassModel c in file.Classes)
-                            if (c.IndexType == null && c.Access == Visibility.Public) 
+                            if (c.IndexType == null && c.Access == Visibility.Public)
                                 imports.Add(c);
                         matched = true;
                     }
@@ -876,15 +967,11 @@ namespace HaXeContext
         {
             if (member == ClassModel.VoidClass) return false;
             if (member.InFile?.Package == CurrentModel.Package) return true;
-            int p = member.Name.IndexOf('#');
-            if (p > 0)
-            {
-                member = member.Clone() as MemberModel;
-                member.Name = member.Name.Substring(0, p);
-            }
+            var name = member.Name;
+            int p = name.IndexOf('#');
+            if (p > 0) name = name.Substring(0, p);
 
             string fullName = member.Type;
-            string name = member.Name;
             var curFile = Context.CurrentModel;
             var imports = curFile.Imports.Items.Concat(ResolveDefaults(curFile.Package).Items).ToArray();
             foreach (var import in imports)
@@ -965,18 +1052,19 @@ namespace HaXeContext
 
         public override ClassModel ResolveToken(string token, FileModel inFile)
         {
-            if (token?.Length > 0)
+            var tokenLength = token != null ? token.Length : 0;
+            if (tokenLength > 0)
             {
+                if (token == "#RegExp") return ResolveType("EReg", inFile);
                 if (token.StartsWithOrdinal("0x")) return ResolveType("Int", inFile);
                 var first = token[0];
-                var last = token[token.Length - 1];
+                var last = token[tokenLength - 1];
                 if (first == '[' && last == ']')
                 {
                     var dQuotes = 0;
                     var sQuotes = 0;
-                    var length = token.Length;
-                    var arrayComprehensionEnd = length - 3;
-                    for (var i = 1; i < length; i++)
+                    var arrayComprehensionEnd = tokenLength - 3;
+                    for (var i = 1; i < tokenLength; i++)
                     {
                         var c = token[i];
                         if (c == '\"' && sQuotes == 0)
@@ -1009,8 +1097,9 @@ namespace HaXeContext
                     if (GetCurrentSDKVersion() >= "3.1.0")
                     {
                         var groupCount = 0;
-                        var sb = new StringBuilder(token.Length - 2);
-                        for (var i = token.Length - 2; i >= 1; i--)
+                        var length = tokenLength - 2;
+                        var sb = new StringBuilder(length);
+                        for (var i = length; i >= 1; i--)
                         {
                             var c = token[i];
                             if (c == '}' || c == ')') groupCount++;
@@ -1024,7 +1113,7 @@ namespace HaXeContext
                 else if (token.StartsWithOrdinal("cast("))
                 {
                     var groupCount = 0;
-                    var length = token.Length - 1;
+                    var length = tokenLength - 1;
                     for (var i = "cast(".Length; i < length; i++)
                     {
                         var c = token[i];
@@ -1035,6 +1124,30 @@ namespace HaXeContext
                             i++;
                             return ResolveType(token.Substring(i, length - i).Trim(), inFile);
                         }
+                    }
+                }
+                var index = token.IndexOfOrdinal(" ");
+                if (index != -1)
+                {
+                    var word = token.Substring(0, index);
+                    if (word == "new" && last == ')')
+                    {
+                        var dot = ' ';
+                        var parCount = 0;
+                        for (var i = 0; i < tokenLength; i++)
+                        {
+                            var c = token[i];
+                            if (c == '(') parCount++;
+                            else if (c == ')')
+                            {
+                                parCount--;
+                                if (parCount == 0) dot = '.';
+                            }
+                            else if (dot != ' ' && c == dot) return ClassModel.VoidClass;
+                        }
+                        token = token.Substring(index + 1);
+                        token = Regex.Replace(token, @"\(.*", string.Empty);
+                        return ResolveType(token, inFile);
                     }
                 }
             }
@@ -1194,8 +1307,8 @@ namespace HaXeContext
                 {
                     if (!it.IsValid || it.Updating || it.FilesCount == 0) continue;
                     var path = Path.Combine(it.Path, packagePath, "import.hx");
-                    if (!it.HasFile(path)) continue;
-                    var model = it.GetFile(path);
+                    FileModel model;
+                    if (!it.TryGetFile(path, out model)) continue;
                     result.Add(model.Imports);
                     break;
                 }
@@ -1374,6 +1487,8 @@ namespace HaXeContext
             // compiler path
             var hxPath = currentSDK ?? ""; 
             var process = Path.Combine(hxPath, "haxe.exe");
+            if (!File.Exists(process) && (GetCurrentSDK()?.IsHaxeShim ?? false))
+                process = Path.Combine(hxPath, PlatformHelper.IsRunningOnWindows() ? "haxe.cmd" : "haxe");
             if (!File.Exists(process))
                 return null;
 
@@ -1495,6 +1610,27 @@ namespace HaXeContext
             else return hxCompletionCache.OtherElements;
         }
 
+        /// <inheritdoc />
+        public override void ResolveTopLevelElement(string token, ASResult result)
+        {
+            var list = GetTopLevelElements();
+            if (list != null && list.Count > 0)
+            {
+                var item = list.Search(token, 0, 0);
+                if (item != null)
+                {
+                    result.InClass = ClassModel.VoidClass;
+                    result.InFile = item.InFile;
+                    result.Member = item;
+                    result.Type = ResolveType(item.Type, item.InFile);
+                    result.IsStatic = false;
+                    result.IsPackage = false;
+                    return;
+                }
+            }
+            base.ResolveTopLevelElement(token, result);
+        }
+
         /// <summary>
         /// Return the visible elements (types, package-level declarations) visible from the current file
         /// </summary>
@@ -1554,29 +1690,21 @@ namespace HaXeContext
                 // other types in same file
                 if (cFile.Classes.Count > 1)
                 {
-                    ClassModel mainClass = cFile.GetPublicClass();
-                    foreach (ClassModel aClass in cFile.Classes)
+                    var mainClass = cFile.GetPublicClass();
+                    foreach (var aClass in cFile.Classes)
                     {
                         if (mainClass == aClass) continue;
                         elements.Add(aClass.ToMemberModel());
-                        if (aClass.IsEnum())
-                            other.Add(aClass.Members);
+                        TryAddEnums(aClass, other);
                     }
                 }
-
                 // imports
-                MemberList imports = ResolveImports(CurrentModel);
+                var imports = ResolveImports(CurrentModel);
                 elements.Add(imports);
-
                 foreach (MemberModel import in imports)
                 {
-                    if (import is ClassModel)
-                    {
-                        ClassModel aClass = import as ClassModel;
-                        if (aClass.IsEnum()) other.Add(aClass.Members);
-                    }
+                    TryAddEnums(import as ClassModel, other);
                 }
-
                 // in cache
                 elements.Sort();
                 other.Sort();
@@ -1593,8 +1721,46 @@ namespace HaXeContext
                     catch (AccessViolationException) { } // catch memory errors
                 }
             }
-
             return completionCache.Elements;
+        }
+
+        /// <summary>
+        /// Adds members of `model` into `result` if `model` is enum or abstract with meta tag `@:enum`
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="result"></param>
+        static void TryAddEnums(ClassModel model, MemberList result)
+        {
+            if (model == null || model.IsVoid()) return;
+            if (model.IsEnum())
+            {
+                for (var i = 0; i < model.Members.Count; i++)
+                {
+                    var member = model.Members[i];
+                    if (member.Type == null || model.InFile == null)
+                    {
+                        member = (MemberModel) member.Clone();
+                        member.Type = model.Type;
+                        member.InFile = model.InFile;
+                    }
+                    result.Add(member);
+                }
+            }
+            else if (model.Flags.HasFlag(FlagType.Abstract))
+            {
+                var meta = model.MetaDatas;
+                if (meta == null || meta.All(it => it.Name != ":enum")) return;
+                foreach (MemberModel member in model.Members)
+                {
+                    if (!member.Flags.HasFlag(FlagType.Variable)) continue;
+                    var clone = (MemberModel) member.Clone();
+                    clone.Flags = FlagType.Enum | FlagType.Static | FlagType.Variable;
+                    clone.Access = Visibility.Public;
+                    clone.Type = model.Type;
+                    clone.InFile = model.InFile;
+                    result.Add(clone);
+                }
+            }
         }
 
         /// <summary>
@@ -1914,7 +2080,13 @@ namespace HaXeContext
 
         #region haxelib
 
-        internal void InstallHaxelib(Dictionary<string, string> nameToVersion)
+        internal void InstallLibrary(Dictionary<string, string> nameToVersion)
+        {
+            if (GetCurrentSDK()?.IsHaxeShim ?? false) InstallLixLibrary(nameToVersion);
+            else InstallHaxeLibLibrary(nameToVersion);
+        }
+
+        internal void InstallHaxeLibLibrary(Dictionary<string, string> nameToVersion)
         {
             var haxePath = PathHelper.ResolvePath(GetCompilerPath());
             if (!Directory.Exists(haxePath) && !File.Exists(haxePath))
@@ -1928,6 +2100,28 @@ namespace HaXeContext
             nameToVersion.Select(it => $"{haxePath};install {it.Key} {it.Value} -cwd \"{cwd}\"")
                 .ToList()
                 .ForEach(it => MainForm.CallCommand("RunProcessCaptured", it));
+        }
+
+        internal void InstallLixLibrary(Dictionary<string, string> nameToVersion)
+        {
+            var lixPath = Path.Combine(PathHelper.ResolvePath(GetCompilerPath()), PlatformHelper.IsRunningOnWindows() ? "lix.cmd" : "lix");
+            if (!File.Exists(lixPath))
+            {
+                ErrorManager.ShowInfo(TextHelper.GetString("Info.InvalidHaXePath"));
+                return;
+            }
+
+            string projectDir = PluginBase.CurrentProject != null ? Path.GetDirectoryName(PluginBase.CurrentProject.ProjectPath) : "";
+            foreach (var item in nameToVersion)
+            {
+                Process p = StartHiddenProcess(lixPath, "install haxelib:" + item.Key, projectDir);
+                string output = p.StandardOutput.ReadToEnd();
+                string error = p.StandardError.ReadToEnd();
+                if (output != "") TraceManager.Add(output, (Int32)TraceType.Info);
+                else if (error != "") TraceManager.Add(error, (Int32)TraceType.Error);
+                p.WaitForExit();
+                p.Close();
+            }
         }
 
         #endregion

@@ -3,13 +3,10 @@ using System.IO;
 using ASCompletion;
 using ASCompletion.Context;
 using ASCompletion.Generators;
-using ASCompletion.Model;
-using ASCompletion.TestUtils;
 using HaXeContext.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
-using PluginCore.Helpers;
 using ScintillaNet;
 
 namespace HaXeContext.Generators
@@ -18,8 +15,12 @@ namespace HaXeContext.Generators
 
     public class DocumentationGeneratorTests : ASCompletionTests
     {
+        protected static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
+
+        protected static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.generators.documentation.{fileName}.hx";
+
         [TestFixtureSetUp]
-        public void DocumentationGeneratorSetUp() => ASContext.Context.SetHaxeFeatures();
+        public void DocumentationGeneratorSetUp() => SetHaxeFeatures(sci);
 
         public class ContextualGeneratorTests : DocumentationGeneratorTests
         {
@@ -82,6 +83,9 @@ namespace HaXeContext.Generators
                         yield return new TestCaseData("BeforeGenerateDocumentation_methodDetails_6", DocumentationGeneratorJobType.MethodDetails, true)
                             .Returns(ReadAllText("AfterGenerateDocumentation_methodDetails_6"))
                             .SetName("MethodDetails. Case 6");
+                        yield return new TestCaseData("BeforeGenerateDocumentation_methodDetails_7", DocumentationGeneratorJobType.MethodDetails, true)
+                            .Returns(ReadAllText("AfterGenerateDocumentation_methodDetails_7"))
+                            .SetName("MethodDetails. Case 7");
                     }
                 }
 
@@ -122,20 +126,6 @@ namespace HaXeContext.Generators
                 [Test, TestCaseSource(nameof(TestCases))]
                 public string Haxe(string fileName, DocumentationGeneratorJobType job) => Impl(sci, fileName, job, false, true);
             }
-        }
-
-        protected static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
-
-        protected static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.generators.documentation.{fileName}.hx";
-
-        protected new static void SetSrc(ScintillaControl sci, string sourceText)
-        {
-            sci.Text = sourceText;
-            SnippetHelper.PostProcessSnippets(sci, 0);
-            var currentModel = ASContext.Context.CurrentModel;
-            new ASFileParser().ParseSrc(currentModel, sci.Text);
-            var line = sci.CurrentLine;
-            ASContext.Context.CurrentClass.Returns(currentModel.Classes.FirstOrDefault(line));
         }
     }
 }

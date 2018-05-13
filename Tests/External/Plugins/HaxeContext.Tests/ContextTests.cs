@@ -3,7 +3,6 @@ using System.Linq;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
-using ASCompletion.TestUtils;
 using HaXeContext.TestUtils;
 using NUnit.Framework;
 using PluginCore;
@@ -13,16 +12,12 @@ namespace HaXeContext
     [TestFixture]
     class ContextTests : ASCompleteTests
     {
-        protected static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
+        static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
-        protected static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.parser.{fileName}.hx";
+        static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.parser.{fileName}.hx";
 
         [TestFixtureSetUp]
-        public void ContextTestsSetUp()
-        {
-            ASContext.Context.SetHaxeFeatures();
-            sci.ConfigurationLanguage = "haxe";
-        }
+        public void ContextTestsSetUp() => SetHaxeFeatures(sci);
 
         static IEnumerable<TestCaseData> DecomposeTypesTestCases
         {
@@ -237,6 +232,10 @@ namespace HaXeContext
                     .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
                 yield return new TestCaseData("(v:String)", "3.0.0")
                     .Returns(ClassModel.VoidClass);
+                yield return new TestCaseData("new Sprite().addChild(new Sprite())", "3.0.0")
+                    .Returns(ClassModel.VoidClass);
+                yield return new TestCaseData("new String('1')", "3.0.0")
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
             }
         }
 
@@ -245,6 +244,57 @@ namespace HaXeContext
         {
             ASContext.Context.Settings.InstalledSDKs = new[] {new InstalledSDK {Path = PluginBase.CurrentProject.CurrentSDK, Version = sdkVersion}};
             return ASContext.Context.ResolveToken(token, null);
+        }
+
+        static IEnumerable<TestCaseData> GetTopLevelElementsTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("GetTopLevelElements_1", new MemberModel("Foo", string.Empty, FlagType.Enum | FlagType.Static | FlagType.Variable, Visibility.Public))
+                    .Returns(true)
+                    .SetName("Case 1. enum");
+                yield return new TestCaseData("GetTopLevelElements_2", new MemberModel("Foo", string.Empty, FlagType.Enum | FlagType.Static | FlagType.Variable, Visibility.Public))
+                    .Returns(true)
+                    .SetName("Case 2. @:enum abstract");
+                yield return new TestCaseData("GetTopLevelElements_3", new MemberModel("toString", string.Empty, FlagType.Function, Visibility.Public))
+                    .Returns(false)
+                    .SetName("Case 3. @:enum abstract without variables");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(GetTopLevelElementsTestCases))]
+        public bool GetTopLevelElements(string fileName, MemberModel member)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            var context = ((ASContext) ASContext.GetLanguageContext("haxe"));
+            context.CurrentModel = ASContext.Context.CurrentModel;
+            context.completionCache.IsDirty = true;
+            var topLevelElements = context.GetTopLevelElements();
+            return topLevelElements.Items.Contains(member);
+        }
+
+        static IEnumerable<TestCaseData> ResolveTopLevelElementTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("ResolveTopLevelElement_enum")
+                    .Returns(new MemberModel("EFoo", "Foo", FlagType.Enum | FlagType.Static | FlagType.Variable, Visibility.Public));
+                yield return new TestCaseData("ResolveTopLevelElement_abstract")
+                    .Returns(new MemberModel("EFoo", "Foo", FlagType.Enum | FlagType.Static | FlagType.Variable, Visibility.Public));
+            }
+        }
+
+        [Test, TestCaseSource(nameof(ResolveTopLevelElementTestCases))]
+        public MemberModel ResolveTopLevelElement(string fileName)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            var context = (Context)ASContext.GetLanguageContext("haxe");
+            context.CurrentModel = ASContext.Context.CurrentModel;
+            context.completionCache.IsDirty = true;
+            context.GetVisibleExternalElements();
+            var result = new ASResult();
+            context.ResolveTopLevelElement("EFoo", result);
+            return result.Member;
         }
     }
 }

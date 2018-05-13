@@ -50,7 +50,7 @@ namespace FlashDevelop
 
         public void ShowErrorDialog(object sender, Exception ex)
         {
-            throw new NotImplementedException();
+            // Not implemented
         }
 
         public void ShowSettingsDialog(string itemName, string filter)
@@ -150,16 +150,9 @@ namespace FlashDevelop
             throw new NotImplementedException();
         }
 
-        public string GetThemeValue(string id)
-        {
-            if (id == "ScrollBar.UseCustom") return string.Empty;
-            throw new NotImplementedException();
-        }
+        public string GetThemeValue(string id) => string.Empty;
 
-        public Color GetThemeColor(string id)
-        {
-            return Color.Black;
-        }
+        public Color GetThemeColor(string id) => Color.Black;
 
         public bool GetThemeFlag(string id)
         {
@@ -262,10 +255,7 @@ namespace FlashDevelop
 
         public Scintilla SciConfig => ScintillaManager.SciConfig;
 
-        public DockPanel DockPanel
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public DockPanel DockPanel => new DockPanel();
 
         public string[] StartArguments
         {
@@ -411,10 +401,7 @@ namespace FlashDevelop
             get { throw new NotImplementedException(); }
         }
 
-        public List<Keys> IgnoredKeys
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public List<Keys> IgnoredKeys => new List<Keys>();
 
         public string CommandPromptExecutable
         {

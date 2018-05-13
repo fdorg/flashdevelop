@@ -4,7 +4,10 @@ using ASCompletion.Model;
 using ASCompletion.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
+using PluginCore;
+using PluginCore.Controls;
 using PluginCore.Helpers;
+using PluginCore.Managers;
 using ScintillaNet;
 
 //TODO: Sadly most of ASComplete is currently untestable in a proper way. Work on this branch solves it: https://github.com/Neverbirth/flashdevelop/tree/completionlist
@@ -14,13 +17,13 @@ namespace ASCompletion.Completion
     [TestFixture]
     public class ASCompleteTests : ASCompletionTests
     {
-        internal static ASResult GetExpressionType(ScintillaControl sci, string sourceText)
+        static ASResult GetExpressionType(ScintillaControl sci, string sourceText)
         {
             SetSrc(sci, sourceText);
             return ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
         }
 
-        internal static string GetExpression(ScintillaControl sci, string sourceText)
+        static string GetExpression(ScintillaControl sci, string sourceText)
         {
             SetSrc(sci, sourceText);
             var expr = ASComplete.GetExpression(sci, sci.CurrentPos);
@@ -36,13 +39,13 @@ namespace ASCompletion.Completion
             return $"{expr.WordBefore}{expr.Separator}{value}{expr.RightOperator}";
         }
 
-        internal static ComaExpression DisambiguateComa(ScintillaControl sci, string sourceText)
+        static ComaExpression DisambiguateComa(ScintillaControl sci, string sourceText)
         {
             sci.Text = sourceText;
             return ASComplete.DisambiguateComa(sci, sourceText.Length, 0);
         }
 
-        internal static int FindParameterIndex(ScintillaControl sci, string sourceText)
+        static int FindParameterIndex(ScintillaControl sci, string sourceText)
         {
             sci.Text = sourceText;
             sci.Colourise(0, -1);
@@ -53,24 +56,43 @@ namespace ASCompletion.Completion
             return result;
         }
 
-        internal static int ExpressionEndPosition(ScintillaControl sci, string sourceText)
+        static int ExpressionEndPosition(ScintillaControl sci, string sourceText)
         {
             SetSrc(sci, sourceText);
             return ASComplete.ExpressionEndPosition(sci, sci.CurrentPos);
         }
 
+        protected static void OnChar(ScintillaControl sci, string sourceText, char addedChar, bool autoHide, bool hasCompletion)
+        {
+            var passed = true;
+            var handler = Substitute.For<IEventHandler>();
+            handler
+                .When(it => it.HandleEvent(Arg.Any<object>(), Arg.Any<NotifyEvent>(), Arg.Any<HandlingPriority>()))
+                .Do(it =>
+                {
+                    var e = it.ArgAt<NotifyEvent>(1);
+                    if (e.Type != EventType.Command) return;
+                    var de = (DataEvent)e;
+                    if (de.Action != "ASCompletion.DotCompletion") return;
+                    if (hasCompletion) passed = ((IList<ICompletionListItem>)de.Data).Count > 0;
+                    else passed = false;
+                });
+            EventManager.AddEventHandler(handler, EventType.Command);
+            SetSrc(sci, sourceText);
+            ASContext.HasContext = true;
+            Assert.AreEqual(hasCompletion, ASComplete.OnChar(sci, addedChar, autoHide));
+            Assert.IsTrue(passed);
+            EventManager.RemoveEventHandler(handler);
+        }
+
         public class ActonScript3 : ASCompleteTests
         {
-            protected static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
+            static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
-            protected static string GetFullPath(string fileName) => $"ASCompletion.Test_Files.completion.as3.{fileName}.as";
+            static string GetFullPath(string fileName) => $"{nameof(ASCompletion)}.Test_Files.completion.as3.{fileName}.as";
 
             [TestFixtureSetUp]
-            public void Setup()
-            {
-                ASContext.Context.SetAs3Features();
-                sci.ConfigurationLanguage = "as3";
-            }
+            public void Setup() => SetAs3Features(sci);
 
             [Test]
             public void GetExpressionTypeSimpleTest()
@@ -200,6 +222,18 @@ namespace ASCompletion.Completion
                                 Name = "foo"
                             })
                             .SetName("Get Expression Type of variable");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue1976_1"))
+                        .Returns(new MemberModel("foo", "void", FlagType.Access | FlagType.Dynamic | FlagType.Function, Visibility.Public))
+                        .SetName("Issue 1976. case 1")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1976");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue1976_2"))
+                        .Returns(new MemberModel("foo", "void", FlagType.Access | FlagType.Dynamic | FlagType.Function, Visibility.Public))
+                        .SetName("Issue 1976. case 2")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1976");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_issue1976_3"))
+                        .Returns(new MemberModel("foo", "void", FlagType.Access | FlagType.Dynamic | FlagType.Function, Visibility.Public))
+                        .SetName("Issue 1976. case 3")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1976");
                 }
             }
 
@@ -214,69 +248,39 @@ namespace ASCompletion.Completion
             {
                 get
                 {
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionType_Type_as"))
-                            .Returns(new ClassModel
-                            {
-                                Name = "String",
-                                Flags = FlagType.Class,
-                                Access = Visibility.Public
-                            })
-                            .SetName("('s' as String).");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionType_Type_as_2"))
-                            .Returns(new ClassModel
-                            {
-                                Name = "String",
-                                Flags = FlagType.Class,
-                                Access = Visibility.Public
-                            })
-                            .SetName("return ('s' as String).");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionType_Type_is"))
-                            .Returns(new ClassModel
-                            {
-                                Name = "Boolean",
-                                Flags = FlagType.Class,
-                                Access = Visibility.Public
-                            })
-                            .SetName("('s' is String).");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer"))
-                            .Returns(new ClassModel
-                            {
-                                Name = "Array",
-                                Flags = FlagType.Class,
-                                Access = Visibility.Public
-                            })
-                            .SetName("[].");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer"))
-                            .Returns(new ClassModel
-                            {
-                                Name = "String",
-                                Flags = FlagType.Class,
-                                Access = Visibility.Public
-                            })
-                            .SetName("\"\".");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_2"))
-                            .Returns(new ClassModel
-                            {
-                                Name = "String",
-                                Flags = FlagType.Class,
-                                Access = Visibility.Public
-                            })
-                            .SetName("''.");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionType_Type_objectInitializer"))
-                            .Returns(new ClassModel
-                            {
-                                Name = "Object",
-                                Flags = FlagType.Class,
-                                Access = Visibility.Public
-                            })
-                            .SetName("{}.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_as"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("('s' as String).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_as_2"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("return ('s' as String).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_is"))
+                        .Returns(new ClassModel {Name = "Boolean", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("('s' is String).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer"))
+                        .Returns(new ClassModel {Name = "Array", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("[].");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("\"\".");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_2"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("''.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_objectInitializer"))
+                        .Returns(new ClassModel {Name = "Object", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("{}.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_issue2029_1"))
+                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("'123'.length.")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2029");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_issue1383_1"))
+                        .Returns(new ClassModel {Name = "Vector.<int>", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("new Vector.<int>()")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1383");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_issue1383_2"))
+                        .Returns(new ClassModel {Name = "Vector", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("new Vector.<*>()")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1383");
                 }
             }
 
@@ -375,11 +379,10 @@ namespace ASCompletion.Completion
                         new TestCaseData(ReadAllText("GetExpressionOfNewTwoDimensionalVector"))
                             .Returns("new Vector.<Vector.<String>>")
                             .SetName("From new Vector.<Vector.<String>>|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfRegex"))
-                            .Returns(";g")
-                            .SetName("From /regex/g|")
-                            .Ignore("https://github.com/fdorg/flashdevelop/issues/1880");
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfRegex"))
+                        .Returns(" #RegExp")
+                        .SetName("From /regex/g|")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1880");
                     yield return
                         new TestCaseData(ReadAllText("GetExpressionOfDigit"))
                             .Returns(";1")
@@ -464,42 +467,54 @@ namespace ASCompletion.Completion
                         new TestCaseData(ReadAllText("GetExpression_issue1749_decrement7"))
                             .Returns("*1++")
                             .SetName("5 * 1++");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpression_issue1908_typeof"))
-                            .Returns("typeof 1")
-                            .SetName("typeof 1");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpression_issue1908_delete"))
-                            .Returns("delete o.[k]")
-                            .SetName("delete o[k]");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpression_operator_is"))
-                            .Returns(";(\"s\" is String).")
-                            .SetName("(\"s\" is String).|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpression_operator_as"))
-                            .Returns(";(\"s\" as String).")
-                            .SetName("(\"s\" as String).|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpression_return_operator_as"))
-                            .Returns("return;(\"s\" as String).")
-                            .SetName("return (\"s\" as String).|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpression_issue1954"))
-                            .Returns(";re")
-                            .SetName("function foo():Vector.<int> { re|");
-                    yield return
-                        new TestCaseData("[].$(EntryPoint)")
-                            .Returns(" [].")
-                            .SetName("From [].|");
-                    yield return
-                        new TestCaseData("new <int>[].$(EntryPoint)")
-                            .Returns("new <int>[].")
-                            .SetName("From new <int>[].|");
-                    yield return
-                        new TestCaseData("new <int>[1,2,3,4].$(EntryPoint)")
-                            .Returns("new <int>[1,2,3,4].")
-                            .SetName("From new <int>[1,2,3,4].|");
+                    yield return new TestCaseData(ReadAllText("GetExpression_issue1908_typeof"))
+                        .Returns("typeof 1")
+                        .SetName("typeof 1");
+                    yield return new TestCaseData(ReadAllText("GetExpression_issue1908_delete"))
+                        .Returns("delete o.[k]")
+                        .SetName("delete o[k]");
+                    yield return new TestCaseData(ReadAllText("GetExpression_operator_is"))
+                        .Returns(";(\"s\" is String).")
+                        .SetName("(\"s\" is String).|");
+                    yield return new TestCaseData(ReadAllText("GetExpression_operator_as"))
+                        .Returns(";(\"s\" as String).")
+                        .SetName("(\"s\" as String).|");
+                    yield return new TestCaseData(ReadAllText("GetExpression_return_operator_as"))
+                        .Returns("return;(\"s\" as String).")
+                        .SetName("return (\"s\" as String).|");
+                    yield return new TestCaseData(ReadAllText("GetExpression_issue1954"))
+                        .Returns(";re")
+                        .SetName("function foo():Vector.<int> { re|");
+                    yield return new TestCaseData("[].$(EntryPoint)")
+                        .Returns(" [].")
+                        .SetName("[].|");
+                    yield return new TestCaseData("new <int>[].$(EntryPoint)")
+                        .Returns("new <int>[].")
+                        .SetName("new <int>[].|");
+                    yield return new TestCaseData("new <int>[1,2,3,4].$(EntryPoint)")
+                        .Returns("new <int>[1,2,3,4].")
+                        .SetName("new <int>[1,2,3,4].|");
+                    yield return new TestCaseData("new <*>[1,2,3,4].$(EntryPoint)")
+                        .Returns("new <*>[1,2,3,4].")
+                        .SetName("new <*>[1,2,3,4].|");
+                    yield return new TestCaseData("new Vector.<*>().$(EntryPoint)")
+                        .Returns("new Vector.<*>().")
+                        .SetName("new Vector.<*>().|");
+                    yield return new TestCaseData(">> 1$(EntryPoint)")
+                        .Returns(">>1")
+                        .SetName(">>1");
+                    yield return new TestCaseData(">>> 1$(EntryPoint)")
+                        .Returns(">>>1")
+                        .SetName(">>>1");
+                    yield return new TestCaseData("<< 1$(EntryPoint)")
+                        .Returns("<<1")
+                        .SetName("<<1");
+                    yield return new TestCaseData("1 | 2$(EntryPoint)")
+                        .Returns("|2")
+                        .SetName("|2");
+                    yield return new TestCaseData(" ~2$(EntryPoint)")
+                        .Returns("~2")
+                        .SetName("~2");
                 }
             }
 
@@ -562,18 +577,146 @@ namespace ASCompletion.Completion
                         .Returns("test".Length);
                     yield return new TestCaseData(ReadAllText("ExpressionEndPosition_TypeOfVariable"))
                         .Returns(94);
+                    yield return new TestCaseData("Test2 {\n}")
+                        .Returns("Test2".Length);
+                    yield return new TestCaseData("Test2{\n}")
+                        .Returns("Test2".Length);
+                    yield return new TestCaseData("[1] }\n  private function foo() {\n}")
+                        .Returns("[1]".Length);
+                    yield return new TestCaseData("'' }\n  private function foo() {\n}")
+                        .Returns("''".Length);
                 }
             }
 
             [Test, TestCaseSource(nameof(ExpressionEndPositionTestCases))]
             public int ExpressionEndPosition(string sourceText) => ExpressionEndPosition(sci, sourceText);
+
+            static IEnumerable<TestCaseData> OnCharTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("OnChar_1", '.', false, true)
+                        .SetName("this.|");
+                    yield return new TestCaseData("OnChar_3", '.', false, true)
+                        .SetName("''.|");
+                    yield return new TestCaseData("OnChar_4", '.', false, true)
+                        .SetName("[].|");
+                    yield return new TestCaseData("OnChar_7", '.', false, false)
+                        .SetName("1.|");
+                    yield return new TestCaseData("OnChar_8", '.', false, true)
+                        .SetName("true.|")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2105");
+                    yield return new TestCaseData("OnChar_9", '.', false, true)
+                        .SetName("0xFF0000.|");
+                    yield return new TestCaseData("OnChar_10", '.', false, true)
+                        .SetName("{}.|");
+
+                    yield return new TestCaseData("OnChar_2", '.', false, false)
+                        .Ignore("Completion shouldn't work for this case.")
+                        .SetName("this.|. inside static function");
+                }
+            }
+
+            static IEnumerable<TestCaseData> OnCharIssue2105TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("OnCharIssue2105_5", '.', false, false)
+                        .SetName("'.|' Issue2105. Case 1.")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2105");
+                    yield return new TestCaseData("OnCharIssue2105_6", '.', false, false)
+                        .SetName("\".|\" Issue2105. Case 2.")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2105");
+                }
+            }
+
+            [
+                Test,
+                TestCaseSource(nameof(OnCharTestCases)),
+                TestCaseSource(nameof(OnCharIssue2105TestCases)),
+            ]
+            public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion) => OnChar(sci, ReadAllText(fileName), addedChar, autoHide, hasCompletion);
+
+            static IEnumerable<TestCaseData> OnCharIssue2076TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("BeforeOnCharIssue2076_1", ' ', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_1"))
+                        .SetName("Issue2076. Case 1. var v:Sprite = new | ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_2", ' ', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_2"))
+                        .SetName("Issue2076. Case 2. override | ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_3", ' ', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_3"))
+                        .SetName("Issue2076. Case 3. extends | ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_4", ' ', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_4"))
+                        .SetName("Issue2076. Case 4. implements | ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_5", ':', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_5"))
+                        .SetName("Issue2076. Case 5. function foo(v:| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_6", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_6"))
+                        .SetName("Issue2076. Case 6. function foo(v:flash.display.| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_7", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_7"))
+                        .SetName("Issue2076. Case 7. this.| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_8", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_8"))
+                        .SetName("Issue2076. Case 8. [].| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_9", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_9"))
+                        .SetName("Issue2076. Case 9. ''.| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_10", '.', true)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_10"))
+                        .SetName("Issue2076. Case 10. 0x1.| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_11", '.', true)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_11"))
+                        .SetName("Issue2076. Case 11. true.| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_12", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_12"))
+                        .SetName("Issue2076. Case 12. (v as String).| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                }
+            }
+
+            [
+                Test,
+                TestCaseSource(nameof(OnCharIssue2076TestCases)),
+            ]
+            public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
+            {
+                PluginBase.MainForm.CurrentDocument.IsEditable.Returns(true);
+                var manager = UITools.Manager;
+                SetSrc(sci, ReadAllText(fileName));
+                ASContext.Context.CurrentClass.InFile.Context = ASContext.Context;
+                ASContext.HasContext = true;
+                ASComplete.OnChar(sci, addedChar, autoHide);
+                Assert.IsNotNullOrEmpty(CompletionList.SelectedLabel);
+                CompletionList.OnInsert += ASComplete.HandleCompletionInsert;
+                CompletionList.ReplaceText(sci, '\0');
+                CompletionList.OnInsert -= ASComplete.HandleCompletionInsert;
+                return sci.Text;
+            }
         }
 
         public class Haxe : ASCompleteTests
         {
-            protected static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
+            static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
-            protected static string GetFullPath(string fileName) => $"ASCompletion.Test_Files.completion.haxe.{fileName}.hx";
+            static string GetFullPath(string fileName) => $"{nameof(ASCompletion)}.Test_Files.completion.haxe.{fileName}.hx";
 
             [TestFixtureSetUp]
             public void Setup()
@@ -919,6 +1062,18 @@ namespace ASCompletion.Completion
                         new TestCaseData("case _: (v:{x:Int, y:Int->Array<Int>}).$(EntryPoint)")
                             .Returns(":(v:{x:Int, y:Int->Array<Int>}).")
                             .SetName("case _: {(v:{x:Int, y:Int->Array<Int>}).|");
+                    yield return new TestCaseData("function foo(Math.random() > .5 || Math.random() < 0.5 ? {x:10, y:10} : null).$(EntryPoint)")
+                        .Returns("function foo(Math.random() > .5 || Math.random() < 0.5 ? {x:10, y:10} : null).")
+                        .SetName("function foo(Math.random() > .5 || Math.random() < 0.5 ? {x:10, y:10} : null).|");
+                    yield return new TestCaseData("function foo(1 << 2).$(EntryPoint)")
+                        .Returns("function foo(1 << 2).")
+                        .SetName("function foo(1 << 2).|");
+                    yield return new TestCaseData("function foo(1 >> 2).$(EntryPoint)")
+                        .Returns("function foo(1 >> 2).")
+                        .SetName("function foo(1 >> 2).|");
+                    yield return new TestCaseData("function foo(1 >>> 3).$(EntryPoint)")
+                        .Returns("function foo(1 >>> 3).")
+                        .SetName("function foo(1 >>> 3).|");
                 }
             }
 
@@ -1053,9 +1208,9 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("test(); //")
                         .Returns("test()".Length);
                     yield return new TestCaseData("test[1]; //")
-                        .Returns("test".Length);
+                        .Returns("test[1]".Length);
                     yield return new TestCaseData("test['1']; //")
-                        .Returns("test".Length);
+                        .Returns("test['1']".Length);
                     yield return new TestCaseData("x:10, y:10}; //")
                         .Returns("x".Length);
                     yield return new TestCaseData("test()); //")
@@ -1065,7 +1220,7 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("test()}; //")
                         .Returns("test()".Length);
                     yield return new TestCaseData("test[1]); //")
-                        .Returns("test".Length);
+                        .Returns("test[1]".Length);
                     yield return new TestCaseData("test(), 1, 2); //")
                         .Returns("test()".Length);
                     yield return new TestCaseData("test().test().test().test; //")
@@ -1088,6 +1243,24 @@ namespace ASCompletion.Completion
                         .Returns("test".Length);
                     yield return new TestCaseData("test(/*12345*/); //")
                         .Returns("test(/*12345*/)".Length);
+                    yield return new TestCaseData("test(Math.random() > 0.5 ? 1 : 1); //")
+                        .Returns("test(Math.random() > 0.5 ? 1 : 1)".Length);
+                    yield return new TestCaseData("[1,2,3,4]; //")
+                        .Returns("[1,2,3,4]".Length);
+                    yield return new TestCaseData("{v:1}; //")
+                        .Returns("{v:1}".Length);
+                    yield return new TestCaseData("{v:[1]}; //")
+                        .Returns("{v:[1]}".Length);
+                    yield return new TestCaseData("[{v:[1]}]; //")
+                        .Returns("[{v:[1]}]".Length);
+                    yield return new TestCaseData("(v:{v:Int}); //")
+                        .Returns("(v:{v:Int})".Length);
+                    yield return new TestCaseData("[(v:{v:Int})]; //")
+                        .Returns("[(v:{v:Int})]".Length);
+                    yield return new TestCaseData("[function() {return 1;}]; //")
+                        .Returns("[function() {return 1;}]".Length);
+                    yield return new TestCaseData("'12345'; //")
+                        .Returns("'12345'".Length);
                 }
             }
 
@@ -1101,12 +1274,9 @@ namespace ASCompletion.Completion
             private const string prefix = "AddClosingBraces: ";
 
             [TestFixtureSetUp]
-            public void AddClosingBracesSetUp()
-            {
-                ASContext.CommonSettings.AddClosingBraces = true;
-            }
-            
-            public IEnumerable<TestCaseData> OpenBraceTestCases
+            public void AddClosingBracesSetUp() => ASContext.CommonSettings.AddClosingBraces = true;
+
+            static IEnumerable<TestCaseData> OpenBraceTestCases
             {
                 get
                 {
@@ -1170,7 +1340,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            public IEnumerable<TestCaseData> CloseBraceTestCases
+            static IEnumerable<TestCaseData> CloseBraceTestCases
             {
                 get
                 {
@@ -1185,7 +1355,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            public IEnumerable<TestCaseData> DeleteBraceTestCases
+            static IEnumerable<TestCaseData> DeleteBraceTestCases
             {
                 get
                 {
@@ -1198,7 +1368,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            public IEnumerable<TestCaseData> AroundStringsTestCases
+            static IEnumerable<TestCaseData> AroundStringsTestCases
             {
                 get
                 {
@@ -1219,7 +1389,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            public IEnumerable<TestCaseData> DeleteWhitespaceTestCases
+            static IEnumerable<TestCaseData> DeleteWhitespaceTestCases
             {
                 get
                 {
@@ -1236,7 +1406,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            public IEnumerable<TestCaseData> InsideInterpolationTestCases
+            static IEnumerable<TestCaseData> InsideInterpolationTestCases
             {
                 get
                 {

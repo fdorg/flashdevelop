@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using ASCompletion.Completion;
 using ASCompletion.Context;
@@ -36,6 +37,7 @@ namespace ASCompletion
             settings.SmartIndentType = SmartIndent.CPP;
             settings.TabIndents = true;
             settings.TabWidth = 4;
+            settings.DefaultFont.Returns(SystemFonts.DefaultFont);
             doc = Substitute.For<ITabbedDocument>();
             mainForm.Settings = settings;
             mainForm.CurrentDocument = doc;
@@ -102,8 +104,9 @@ namespace ASCompletion
         {
             sci.Text = sourceText;
             SnippetHelper.PostProcessSnippets(sci, 0);
+            sci.Colourise(0, -1);
             var currentModel = ASContext.Context.CurrentModel;
-            new ASFileParser().ParseSrc(currentModel, sci.Text);
+            ASContext.Context.GetCodeModel(currentModel, sci.Text);
             var line = sci.CurrentLine;
             var currentClass = currentModel.Classes.FirstOrDefault(line);
             ASContext.Context.CurrentClass.Returns(currentClass);

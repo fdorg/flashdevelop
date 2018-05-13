@@ -357,7 +357,7 @@ namespace CodeRefactor
                 ASResult result = isValid ? resolved.Result : null;
                 if (result != null && !result.IsNull())
                 {
-                    var validator = CommandFactoryProvider.GetFactory(result).GetValidator(typeof(Rename))
+                    var validator = CommandFactoryProvider.GetFactory(result)?.GetValidator(typeof(Rename))
                                  ?? CommandFactoryProvider.DefaultFactory.GetValidator(typeof(Rename));
                     var isRenameable = validator(result);
                     this.refactorContextMenu.RenameMenuItem.Enabled = isRenameable;

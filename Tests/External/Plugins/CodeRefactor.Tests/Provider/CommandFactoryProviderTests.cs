@@ -13,10 +13,7 @@ namespace CodeRefactor.Provider
     class CommandFactoryProviderTests : ASCompleteTests
     {
         [TestFixtureSetUp]
-        public void Setup()
-        {
-            SetAs3Features(sci);
-        }
+        public void Setup() => SetAs3Features(sci);
 
         static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
