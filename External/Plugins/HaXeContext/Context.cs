@@ -1061,25 +1061,17 @@ namespace HaXeContext
                 var last = token[tokenLength - 1];
                 if (first == '[' && last == ']')
                 {
+                    var arrCount = 0;
                     var dQuotes = 0;
                     var sQuotes = 0;
                     var arrayComprehensionEnd = tokenLength - 3;
                     for (var i = 1; i < tokenLength; i++)
                     {
-                        var c = token[i];
-                        if (c == '\"' && sQuotes == 0)
-                        {
-                            if (token[i - 1] == '\\') continue;
-                            if (dQuotes == 0) dQuotes++;
-                            else dQuotes--;
-                        }
-                        else if (c == '\'' && dQuotes == 0)
-                        {
-                            if (token[i - 1] == '\\') continue;
-                            if (sQuotes == 0) sQuotes++;
-                            else sQuotes--;
-                        }
-                        if (sQuotes > 0 || dQuotes > 0) continue;
+                        var c = ' ';
+                        if (PositionIsInString(token, i, out c, ref dQuotes, ref sQuotes)) continue;
+                        if (c == '[') arrCount++;
+                        else if (c == ']') arrCount--;
+                        if (arrCount > 0) continue;
                         if (i <= arrayComprehensionEnd && c == '=' && token[i + 1] == '>')
                             // TODO: try parse K, V
                             return ResolveType("Map<K, V>", inFile);
@@ -1097,11 +1089,14 @@ namespace HaXeContext
                     if (GetCurrentSDKVersion() >= "3.1.0")
                     {
                         var groupCount = 0;
+                        var dQuotes = 0;
+                        var sQuotes = 0;
                         var length = tokenLength - 2;
                         var sb = new StringBuilder(length);
                         for (var i = length; i >= 1; i--)
                         {
-                            var c = token[i];
+                            var c = ' ';
+                            if (PositionIsInString(token, i, out c, ref dQuotes, ref sQuotes)) continue;
                             if (c == '}' || c == ')') groupCount++;
                             else if (c == '{' || c == '(') groupCount--;
                             else if (c == ':' && groupCount == 0) break;
@@ -1113,10 +1108,13 @@ namespace HaXeContext
                 else if (token.StartsWithOrdinal("cast("))
                 {
                     var groupCount = 0;
+                    var dQuotes = 0;
+                    var sQuotes = 0;
                     var length = tokenLength - 1;
                     for (var i = "cast(".Length; i < length; i++)
                     {
-                        var c = token[i];
+                        var c = ' ';
+                        if (PositionIsInString(token, i, out c, ref dQuotes, ref sQuotes)) continue;
                         if (c == '{' || c == '(') groupCount++;
                         else if (c == '}' || c == ')') groupCount--;
                         else if (c == ',' && groupCount == 0)
@@ -1152,6 +1150,24 @@ namespace HaXeContext
                 }
             }
             return base.ResolveToken(token, inFile);
+
+            bool PositionIsInString(string context, int pos, out char c, ref int dQuotes, ref int sQuotes)
+            {
+                c = context[pos];
+                if (c == '\"' && sQuotes == 0)
+                {
+                    if (context[pos - 1] == '\\') return true;
+                    if (dQuotes == 0) dQuotes++;
+                    else dQuotes--;
+                }
+                else if (c == '\'' && dQuotes == 0)
+                {
+                    if (context[pos - 1] == '\\') return true;
+                    if (sQuotes == 0) sQuotes++;
+                    else sQuotes--;
+                }
+                return sQuotes > 0 || dQuotes > 0;
+            }
         }
 
         ClassModel ResolveTypeByPackage(string package, string cname, FileModel inFile, string inPackage)

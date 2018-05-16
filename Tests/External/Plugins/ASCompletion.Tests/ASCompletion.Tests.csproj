@@ -1005,6 +1005,10 @@
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_mapInitializer_2.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_arrayInitializer_2.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_arrayInitializer_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_arrayInitializer_4.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_cast_7.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_typecheck_4.hx" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_typecheck_5.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

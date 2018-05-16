@@ -823,6 +823,12 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typecheck_3"))
                         .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
                         .SetName("return ('...':String).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typecheck_4"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
+                        .SetName("('...' : String).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typecheck_5"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
+                        .SetName("('v:Int' : String).");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_cast"))
                         .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
                         .SetName("cast('s', String).");
@@ -841,6 +847,9 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_cast_6"))
                         .Returns(new ClassModel {Name = "Int", Flags = FlagType.Class})
                         .SetName("cast('...', String).charAt(0).length");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_cast_7"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
+                        .SetName("cast(', Int', String).");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_is"))
                         .Returns(new ClassModel {Name = "Bool", Flags = FlagType.Class})
                         .SetName("('s' is String).");
@@ -853,6 +862,9 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_3"))
                         .Returns(new ClassModel {Name = "Array<T>", Flags = FlagType.Class})
                         .SetName("['=>'].");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_4"))
+                        .Returns(new ClassModel {Name = "Array<T>", Flags = FlagType.Class})
+                        .SetName("[[1 => 2], [2 => 3]].");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_mapInitializer_1"))
                         .Returns(new ClassModel {Name = "Map<K, V>", Flags = FlagType.Class})
                         .SetName("[1=>1].");
