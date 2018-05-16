@@ -1089,8 +1089,6 @@ namespace HaXeContext
                     if (GetCurrentSDKVersion() >= "3.1.0")
                     {
                         var groupCount = 0;
-                        var dQuotes = 0;
-                        var sQuotes = 0;
                         var length = tokenLength - 2;
                         var sb = new StringBuilder(length);
                         for (var i = length; i >= 1; i--)
