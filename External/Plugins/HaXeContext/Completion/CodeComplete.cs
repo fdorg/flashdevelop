@@ -314,5 +314,21 @@ namespace HaXeContext.Completion
             CompletionList.Show(list, autoHide);
             return true;
         }
+
+        protected override ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility)
+        {
+            if (expression != null && context.SubExpressions != null)
+            {
+                var lastIndex = context.SubExpressions.Count - 1;
+                var firstExpr = "cast.#" + lastIndex + "~";
+                if (expression.StartsWith(firstExpr))
+                {
+                    var token = "cast" + context.SubExpressions[lastIndex];
+                    var type = ASContext.Context.ResolveToken(token, inFile);
+                    expression = type.Name + ".#" + expression.Substring(firstExpr.Length);
+                }
+            }
+            return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
+        }
     }
 }

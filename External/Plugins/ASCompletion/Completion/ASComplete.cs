@@ -2586,7 +2586,7 @@ namespace ASCompletion.Completion
         /// <returns>Class/member struct</returns>
         private static ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction)
         {
-            return EvalExpression(expression, context, inFile, inClass, complete, asFunction, true);
+            return ASContext.Context.CodeComplete.EvalExpression(expression, context, inFile, inClass, complete, asFunction, true);
         }
 
         /// <summary>
@@ -2600,22 +2600,27 @@ namespace ASCompletion.Completion
         /// <param name="asFunction"></param>
         /// <param name="filterVisibility"></param>
         /// <returns>Class/member struct</returns>
-        private static ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility)
+        protected virtual ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility)
         {
             var notFound = new ASResult {Context = context};
             if (string.IsNullOrEmpty(expression)) return notFound;
-            var value = expression.TrimEnd('.');
-            if (context.SubExpressions?.Count == 1) value = value.Replace(char.IsLetter(value[0]) ? ".#0~" : "#0~", context.SubExpressions.First());
             var ctx = ASContext.Context;
             var features = ctx.Features;
-            if (!string.IsNullOrEmpty(context.WordBefore) && features.OtherOperators.Contains(context.WordBefore))
-                value = context.WordBefore + " " + value;
-
-            var type = ctx.ResolveToken(value, inClass.InFile);
-            if (!type.IsVoid()) return new ASResult {Type = type, Context = context, InClass = type, InFile = type.InFile, Path = context.Value, IsStatic = context.WordBefore == "new"};
-            if (expression.StartsWithOrdinal(features.dot))
+            ClassModel type;
+            if (((context.SubExpressions == null || context.SubExpressions.Count == 1) && (expression[0] != '.' && expression.Count(c => c == '.') < 2)) 
+                || (context.WordBefore != null && features.OtherOperators.Contains(context.WordBefore)) || char.IsPunctuation(expression[0]))
             {
-                if (expression.StartsWithOrdinal(features.dot + "#")) expression = expression.Substring(1);
+                var value = expression.TrimEnd('.');
+                if (context.SubExpressions?.Count == 1) value = value.Replace(char.IsLetter(value[0]) ? ".#0~" : "#0~", context.SubExpressions.First());
+                if (!string.IsNullOrEmpty(context.WordBefore) && features.OtherOperators.Contains(context.WordBefore))
+                    value = context.WordBefore + " " + value;
+                type = ctx.ResolveToken(value, inClass.InFile);
+                if (!type.IsVoid()) return new ASResult {Type = type, Context = context, InClass = type, InFile = type.InFile, Path = context.Value, IsStatic = context.WordBefore == "new"};
+            }
+
+            if (expression[0] == '.')
+            {
+                if (expression.StartsWithOrdinal(".#")) expression = expression.Substring(1);
                 else if (context.Separator == "\"") expression = "\"" + expression;
                 else return notFound;
             }
@@ -4280,7 +4285,7 @@ namespace ASCompletion.Completion
                 FileModel aFile = ASContext.Context.CurrentModel;
                 ClassModel aClass = ASContext.Context.CurrentClass;
                 // Expression before cursor
-                return EvalExpression(expr.Value, expr, aFile, aClass, true, false, filterVisibility);
+                return ASContext.Context.CodeComplete.EvalExpression(expr.Value, expr, aFile, aClass, true, false, filterVisibility);
             }
             finally
             {

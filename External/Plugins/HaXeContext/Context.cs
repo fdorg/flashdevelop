@@ -1069,13 +1069,13 @@ namespace HaXeContext
                         var c = token[i];
                         if (c == '\"' && sQuotes == 0)
                         {
-                            if (i <= 1 || token[i - 2] == '\\') continue;
+                            if (token[i - 1] == '\\') continue;
                             if (dQuotes == 0) dQuotes++;
                             else dQuotes--;
                         }
                         else if (c == '\'' && dQuotes == 0)
                         {
-                            if (i <= 1 || token[i - 2] == '\\') continue;
+                            if (token[i - 1] == '\\') continue;
                             if (sQuotes == 0) sQuotes++;
                             else sQuotes--;
                         }

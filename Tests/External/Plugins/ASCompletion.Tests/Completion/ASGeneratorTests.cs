@@ -1283,13 +1283,13 @@ namespace ASCompletion.Completion
                         yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_increment4"), GeneratorJobType.AssignStatementToVar, true)
                             .Returns(ReadAllTextAS3("AfterAssignStatementToVar_increment4"))
                             .SetName("++1 * ++1|");
-                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_typeof"), GeneratorJobType.AssignStatementToVar, true)
-                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_typeof"))
-                            .SetName("Issue 1908. typeof")
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_typeof1"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_typeof1"))
+                            .SetName("typeof value. Issue 1908.")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
                         yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_delete"), GeneratorJobType.AssignStatementToVar, true)
                             .Returns(ReadAllTextAS3("AfterAssignStatementToVar_delete"))
-                            .SetName("Issue 1908. delete")
+                            .SetName("delete o[key]. Issue 1908.")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
                         yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1383_1"), GeneratorJobType.AssignStatementToVar, false)
                             .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1383_1"))
