@@ -850,9 +850,24 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_cast_7"))
                         .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
                         .SetName("cast(', Int', String).");
-                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_is"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_cast_8"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
+                        .SetName("cast ( 's' , String ).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_is_1"))
                         .Returns(new ClassModel {Name = "Bool", Flags = FlagType.Class})
                         .SetName("('s' is String).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_is_2"))
+                        .Returns(new ClassModel {Name = "Bool", Flags = FlagType.Class})
+                        .SetName("(' is ' is String).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_is_3"))
+                        .Returns(new ClassModel {Name = "Bool", Flags = FlagType.Class})
+                        .SetName("('v is Int' is String).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_is_4"))
+                        .Returns(new ClassModel {Name = "Bool", Flags = FlagType.Class})
+                        .SetName("('(v is Int)' is String).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_is_5"))
+                        .Returns(new ClassModel {Name = "Bool", Flags = FlagType.Class})
+                        .SetName("( 's' is String ).");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_1"))
                         .Returns(new ClassModel {Name = "Array<T>", Flags = FlagType.Class})
                         .SetName("[].");
