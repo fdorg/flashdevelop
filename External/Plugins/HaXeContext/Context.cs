@@ -1095,8 +1095,8 @@ namespace HaXeContext
                         var sb = new StringBuilder(length);
                         for (var i = length; i >= 1; i--)
                         {
-                            var c = ' ';
-                            if (PositionIsInString(token, i, out c, ref dQuotes, ref sQuotes)) continue;
+                            var c = token[i];
+                            if (c <= ' ') continue;
                             if (c == '}' || c == ')') groupCount++;
                             else if (c == '{' || c == '(') groupCount--;
                             else if (c == ':' && groupCount == 0) break;

@@ -327,6 +327,11 @@ namespace HaXeContext.Completion
                     var type = ASContext.Context.ResolveToken(token, inFile);
                     expression = type.Name + ".#" + expression.Substring(firstExpr.Length);
                 }
+                else if (expression.StartsWith("#" + lastIndex + "~."))
+                {
+                    var type = ASContext.Context.ResolveToken(context.SubExpressions[lastIndex], inFile);
+                    expression = type.Name + ".#" + expression.Substring(("#" + lastIndex + "~").Length);
+                }
             }
             return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
         }

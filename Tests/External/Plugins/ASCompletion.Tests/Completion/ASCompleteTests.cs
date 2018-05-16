@@ -248,12 +248,18 @@ namespace ASCompletion.Completion
             {
                 get
                 {
-                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_as"))
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_as_1"))
                         .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
                         .SetName("('s' as String).");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_as_2"))
                         .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
                         .SetName("return ('s' as String).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_as_3"))
+                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("('s' as String).charAt(0).length.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_as_4"))
+                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("('...' as String).charAt(0).length.");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_is"))
                         .Returns(new ClassModel {Name = "Boolean", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
                         .SetName("('s' is String).");
@@ -814,21 +820,6 @@ namespace ASCompletion.Completion
             {
                 get
                 {
-                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typecheck"))
-                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
-                        .SetName("('s':String).");
-                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typecheck_2"))
-                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
-                        .SetName("return ('s':String).");
-                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typecheck_3"))
-                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
-                        .SetName("return ('...':String).");
-                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typecheck_4"))
-                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
-                        .SetName("('...' : String).");
-                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typecheck_5"))
-                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
-                        .SetName("('v:Int' : String).");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_cast"))
                         .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
                         .SetName("cast('s', String).");
@@ -898,6 +889,39 @@ namespace ASCompletion.Completion
             [Test, TestCaseSource(nameof(GetExpressionType_TypeTestCases))]
             public ClassModel GetExpressionType_Type(string sourceText)
             {
+                var expr = GetExpressionType(sci, sourceText);
+                return expr.Type;
+            }
+
+            static IEnumerable<TestCaseData> GetExpressionTypeSDK_340_TypeTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typecheck"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
+                        .SetName("('s':String).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typecheck_2"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
+                        .SetName("return ('s':String).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typecheck_3"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
+                        .SetName("return ('...':String).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typecheck_4"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
+                        .SetName("('...' : String).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typecheck_5"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
+                        .SetName("('v:Int' : String).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typecheck_6"))
+                        .Returns(new ClassModel {Name = "Int", Flags = FlagType.Class})
+                        .SetName("('s':String).charAt(0).length");
+                }
+            }
+
+            [Test, TestCaseSource(nameof(GetExpressionTypeSDK_340_TypeTestCases))]
+            public ClassModel GetExpressionType_Type_SDK_340(string sourceText)
+            {
+                ASContext.Context.Settings.InstalledSDKs = new[] {new InstalledSDK {Path = PluginBase.CurrentProject.CurrentSDK, Version = "3.4.0"}};
                 var expr = GetExpressionType(sci, sourceText);
                 return expr.Type;
             }

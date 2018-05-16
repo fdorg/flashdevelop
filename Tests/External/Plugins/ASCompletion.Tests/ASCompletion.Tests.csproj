@@ -850,7 +850,7 @@
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfStringInitializer2.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionOfStringInitializer3.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionTypeOfVariable.as" />
-    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_as.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_as_1.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_is.as" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_is_1.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_typecheck.hx" />
@@ -1014,6 +1014,9 @@
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_is_4.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_is_5.hx" />
     <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_cast_8.hx" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_as_3.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_as_4.as" />
+    <EmbeddedResource Include="Test Files\completion\haxe\GetExpressionType_Type_typecheck_6.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
