@@ -10,6 +10,7 @@ using PluginCore;
 using PluginCore.Helpers;
 using PluginCore.Localization;
 using PluginCore.Managers;
+using PluginCore.Utilities;
 using ProjectManager.Helpers;
 using ProjectManager.Projects;
 
@@ -352,8 +353,9 @@ namespace ProjectManager.Actions
             {
                 try
                 {
-                    string[] pa = (sa[j].Trim() + ".0.0").Split('.');
-                    string[] pb = (sb[j].Trim() + ".0.0").Split('.');
+                    // TODO: Adjust scoring based on pre-release metadata (e.g. 4.0.0 is better than 4.0.0-preview.3). Handling various possible cases might get complicated, though.
+                    string[] pa = new SemVer(sa[j].Trim()).ToString().Split('.');
+                    string[] pb = new SemVer(sb[j].Trim()).ToString().Split('.');
                     int major = int.Parse(pa[0]) - int.Parse(pb[0]);
                     if (major < 0) return int.MaxValue;
                     else if (major > 0) score += 10;
