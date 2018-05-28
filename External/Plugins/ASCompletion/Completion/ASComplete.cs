@@ -3894,7 +3894,7 @@ namespace ASCompletion.Completion
             }
 
             // check if there is a particular keyword
-            if (expression.Separator == " ")
+            if (expression.Separator == " " && position > 0)
             {
                 expression.WordBefore = GetWordLeft(sci, ref position);
                 if (expression.WordBefore.Length > 0) expression.WordBeforePosition = position + 1;

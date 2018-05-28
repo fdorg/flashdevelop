@@ -595,7 +595,6 @@ namespace ASCompletion.Completion
                         .SetName("0xFF0000.|");
                     yield return new TestCaseData("OnChar_10", '.', false, true)
                         .SetName("{}.|");
-
                     yield return new TestCaseData("OnChar_2", '.', false, false)
                         .Ignore("Completion shouldn't work for this case.")
                         .SetName("this.|. inside static function");
@@ -914,7 +913,13 @@ namespace ASCompletion.Completion
                         .SetName("('v:Int' : String).");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typecheck_6"))
                         .Returns(new ClassModel {Name = "Int", Flags = FlagType.Class})
-                        .SetName("('s':String).charAt(0).length");
+                        .SetName("('s':String).charAt(0).length.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typecheck_7"))
+                        .Returns(new ClassModel {Name = "Array<String>", Flags = FlagType.Class})
+                        .SetName("('s':String).split('').");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typecheck_8"))
+                        .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class})
+                        .SetName("('s':String).split.");
                 }
             }
 
@@ -938,63 +943,49 @@ namespace ASCompletion.Completion
             {
                 get
                 {
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfNewMap"))
-                            .Returns("new Map<String, Int>")
-                            .SetName("From new Map<String, Int>|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfNewMap2"))
-                            .Returns("new Map<Map<String, Int>, Int>")
-                            .SetName("From new Map<Map<String, Int>, Int>|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfNewMap3"))
-                            .Returns("new Map<String, Array<Map<String, Int>>>")
-                            .SetName("From new Map<String, Array<Map<String, Int>>>|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfNewMap4"))
-                            .Returns("new Map<String, Array<Int->Int->Int>>")
-                            .SetName("From new Map<String, Array<Int->Int->Int>>|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfMapInitializer"))
-                            .Returns(";[\"1\" => 1, \"2\" => 2]")
-                            .SetName("From [\"1\" => 1, \"2\" => 2]|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfRegex"))
-                            .Returns(";g")
-                            .SetName("~/regex/g|")
-                            .Ignore("https://github.com/fdorg/flashdevelop/issues/1880");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfNewArray"))
-                            .Returns("new Array<Int>")
-                            .SetName("From new Array<Int>|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfNewArray2"))
-                            .Returns("new Array<{x:Int, y:Int}>")
-                            .SetName("From new Array<{x:Int, y:Int}>|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfNewArray3"))
-                            .Returns("new Array<{name:String, params:Array<Dynamic>}>")
-                            .SetName("From new Array<{name:String, params:Array<Dynamic>}>|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfStringInterpolation.charAt"))
-                            .Returns(";'result: ${1 + 2}'.charAt")
-                            .SetName("'result: ${1 + 2}'.charAt");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpression_issue1749_plus"))
-                            .Returns("+1")
-                            .SetName("1 + 1");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpression_issue1749_minus"))
-                            .Returns("-1")
-                            .SetName("1 - 1");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpression_issue1749_mul"))
-                            .Returns("*1")
-                            .SetName("1 * 1");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpression_issue1749_division"))
-                            .Returns("/1")
-                            .SetName("1 / 1");
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfNewMap"))
+                        .Returns("new Map<String, Int>")
+                        .SetName("From new Map<String, Int>|");
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfNewMap2"))
+                        .Returns("new Map<Map<String, Int>, Int>")
+                        .SetName("From new Map<Map<String, Int>, Int>|");
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfNewMap3"))
+                        .Returns("new Map<String, Array<Map<String, Int>>>")
+                        .SetName("From new Map<String, Array<Map<String, Int>>>|");
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfNewMap4"))
+                        .Returns("new Map<String, Array<Int->Int->Int>>")
+                        .SetName("From new Map<String, Array<Int->Int->Int>>|");
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfMapInitializer"))
+                        .Returns(";[\"1\" => 1, \"2\" => 2]")
+                        .SetName("From [\"1\" => 1, \"2\" => 2]|");
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfRegex"))
+                        .Returns(";g")
+                        .SetName("~/regex/g|")
+                        .Ignore("https://github.com/fdorg/flashdevelop/issues/1880");
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfNewArray"))
+                        .Returns("new Array<Int>")
+                        .SetName("From new Array<Int>|");
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfNewArray2"))
+                        .Returns("new Array<{x:Int, y:Int}>")
+                        .SetName("From new Array<{x:Int, y:Int}>|");
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfNewArray3"))
+                        .Returns("new Array<{name:String, params:Array<Dynamic>}>")
+                        .SetName("From new Array<{name:String, params:Array<Dynamic>}>|");
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfStringInterpolation.charAt"))
+                        .Returns(";'result: ${1 + 2}'.charAt")
+                        .SetName("'result: ${1 + 2}'.charAt");
+                    yield return new TestCaseData(ReadAllText("GetExpression_issue1749_plus"))
+                        .Returns("+1")
+                        .SetName("1 + 1");
+                    yield return new TestCaseData(ReadAllText("GetExpression_issue1749_minus"))
+                        .Returns("-1")
+                        .SetName("1 - 1");
+                    yield return new TestCaseData(ReadAllText("GetExpression_issue1749_mul"))
+                        .Returns("*1")
+                        .SetName("1 * 1");
+                    yield return new TestCaseData(ReadAllText("GetExpression_issue1749_division"))
+                        .Returns("/1")
+                        .SetName("1 / 1");
                     yield return
                         new TestCaseData(ReadAllText("GetExpression_issue1749_increment"))
                             .Returns("++1")
@@ -1067,10 +1058,9 @@ namespace ASCompletion.Completion
                         new TestCaseData("${(v:{x:Int, y:Int->Array<Int>}).$(EntryPoint)")
                             .Returns(";(v:{x:Int, y:Int->Array<Int>}).")
                             .SetName("${(v:{x:Int, y:Int->Array<Int>}).|");
-                    yield return
-                        new TestCaseData("case _: (v:{x:Int, y:Int->Array<Int>}).$(EntryPoint)")
-                            .Returns(":(v:{x:Int, y:Int->Array<Int>}).")
-                            .SetName("case _: {(v:{x:Int, y:Int->Array<Int>}).|");
+                    yield return new TestCaseData("case _: (v:{x:Int, y:Int->Array<Int>}).$(EntryPoint)")
+                        .Returns(":(v:{x:Int, y:Int->Array<Int>}).")
+                        .SetName("case _: (v:{x:Int, y:Int->Array<Int>}).|");
                     yield return new TestCaseData("function foo(Math.random() > .5 || Math.random() < 0.5 ? {x:10, y:10} : null).$(EntryPoint)")
                         .Returns("function foo(Math.random() > .5 || Math.random() < 0.5 ? {x:10, y:10} : null).")
                         .SetName("function foo(Math.random() > .5 || Math.random() < 0.5 ? {x:10, y:10} : null).|");
@@ -1083,6 +1073,15 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("function foo(1 >>> 3).$(EntryPoint)")
                         .Returns("function foo(1 >>> 3).")
                         .SetName("function foo(1 >>> 3).|");
+
+                    yield return new TestCaseData("cast(v, String).charAt(0).charAt(1).charAt(2).charAt(3).charAt(4).charAt(5).charAt(6).charAt(7).charAt(8).charAt(9).charAt(10).charAt(11).$(EntryPoint)")
+                        .Returns(" cast(v, String).charAt(0).charAt(1).charAt(2).charAt(3).charAt(4).charAt(5).charAt(6).charAt(7).charAt(8).charAt(9).charAt(10).charAt(11).")
+                        .SetName("cast(v, String).charAt(0).charAt(1).charAt(2).charAt(3).charAt(4).charAt(5).charAt(6).charAt(7).charAt(8).charAt(9).charAt(10).charAt(11).|")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2108");
+                    yield return new TestCaseData("cast(v, String).charAt.$(EntryPoint)")
+                        .Returns(" cast(v, String).charAt.")
+                        .SetName("cast(v, String).charAt.|")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2108");
                 }
             }
 
