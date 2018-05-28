@@ -18,6 +18,7 @@
 
         public SemVer(string version)
         {
+            // TODO: Parse and expose pre-release and build metadata
             // ignore the pre-release and build metadata denotation if present
             int hyphenIndex = version.IndexOf('-');
             if (hyphenIndex >= 0) version = version.Substring(0, hyphenIndex);
