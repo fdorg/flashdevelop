@@ -836,13 +836,19 @@ namespace ASCompletion.Completion
                         .SetName("cast('...', String).");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_cast_6"))
                         .Returns(new ClassModel {Name = "Int", Flags = FlagType.Class})
-                        .SetName("cast('...', String).charAt(0).length");
+                        .SetName("cast('...', String).charAt(0).length.");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_cast_7"))
                         .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
                         .SetName("cast(', Int', String).");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_cast_8"))
                         .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
                         .SetName("cast ( 's' , String ).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_cast_9"))
+                        .Returns(new ClassModel {Name = "Array<String>", Flags = FlagType.Class})
+                        .SetName("cast('s', String).split('').");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_cast_10"))
+                        .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class})
+                        .SetName("cast('s', String).charAt.");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_is_1"))
                         .Returns(new ClassModel {Name = "Bool", Flags = FlagType.Class})
                         .SetName("('s' is String).");
