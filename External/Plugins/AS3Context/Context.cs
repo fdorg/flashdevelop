@@ -933,8 +933,6 @@ namespace AS3Context
                 }
                 else if (first == '(' && tokenLength >= 8/*"(v as T)".Length*/)
                 {
-                    var m = Regex.Match(token, @"\((?<lv>.+)\s(?<op>as)\s+(?<rv>\w+)\)");
-                    if (m.Success) return ResolveType(m.Groups["rv"].Value.Trim(), inFile);
                     if (Regex.IsMatch(token, @"\((?<lv>.+)\s(?<op>is)\s+(?<rv>\w+)\)")) return ResolveType(features.booleanKey, inFile);
                 }
             }

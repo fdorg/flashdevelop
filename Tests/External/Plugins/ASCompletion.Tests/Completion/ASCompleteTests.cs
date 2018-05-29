@@ -306,7 +306,7 @@ namespace ASCompletion.Completion
             [
                 Test, 
                 TestCaseSource(nameof(GetExpressionType_as_TypeTestCases)),
-                //TestCaseSource(nameof(GetExpressionType_TypeTestCases)),
+                TestCaseSource(nameof(GetExpressionType_TypeTestCases)),
             ]
             public ClassModel GetExpressionType_Type(string sourceText)
             {
