@@ -815,7 +815,7 @@ namespace ASCompletion.Completion
                 return expr.Member;
             }
 
-            static IEnumerable<TestCaseData> GetExpressionType_castTypeTestCases
+            static IEnumerable<TestCaseData> GetExpressionType_cast_TypeTestCases
             {
                 get
                 {
@@ -852,7 +852,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            static IEnumerable<TestCaseData> GetExpressionType_isTypeTestCases
+            static IEnumerable<TestCaseData> GetExpressionType_is_TypeTestCases
             {
                 get
                 {
@@ -902,6 +902,10 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_8"))
                         .Returns(new ClassModel {Name = "Int", Flags = FlagType.Class})
                         .SetName("[].concat([]).length.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_9"))
+                        .Returns(new ClassModel {Name = "T", Flags = FlagType.Class})
+                        .SetName("[].concat([])[0].")
+                        .Ignore("");
                 }
             }
 
@@ -940,13 +944,16 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_6"))
                         .Returns(new ClassModel {Name = "Int", Flags = FlagType.Class})
                         .SetName("''.split('').length.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_7"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
+                        .SetName("''.split('')[0].");
                 }
             }
 
             [
                 Test, 
-                TestCaseSource(nameof(GetExpressionType_castTypeTestCases)),
-                TestCaseSource(nameof(GetExpressionType_isTypeTestCases)),
+                TestCaseSource(nameof(GetExpressionType_cast_TypeTestCases)),
+                TestCaseSource(nameof(GetExpressionType_is_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_ArrayInitializer_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_MapInitializer_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_StringInitializer_TypeTestCases)),
