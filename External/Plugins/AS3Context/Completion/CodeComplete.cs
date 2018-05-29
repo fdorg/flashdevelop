@@ -2,6 +2,7 @@
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
+using PluginCore;
 
 namespace AS3Context.Completion
 {
@@ -12,18 +13,22 @@ namespace AS3Context.Completion
 
         protected override ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility)
         {
-            if (expression != null && context.SubExpressions != null && context.SubExpressions.Count > 0)
+            if (expression != null)
             {
-                var lastIndex = context.SubExpressions.Count - 1;
-                var subExpr = context.SubExpressions[lastIndex];
-                if (subExpr.Length >= 8/*"(v as T)".Length*/ && subExpr[0] == '(')
+                if (expression.StartsWithOrdinal("#RegExp")) expression = expression.Remove(0, 1);
+                else if (context.SubExpressions != null && context.SubExpressions.Count > 0)
                 {
-                    var ctx = ASContext.Context;
-                    ClassModel type = null;
-                    var m = re_asExpr.Match(subExpr);
-                    if (m.Success) type = ctx.ResolveType(m.Groups["rv"].Value.Trim(), inFile);
-                    if (type == null && re_isExpr.IsMatch(subExpr)) type = ctx.ResolveType(ctx.Features.booleanKey, inFile);
-                    if (type != null) expression = type.Name + ".#" + expression.Substring(("#" + lastIndex + "~").Length);
+                    var lastIndex = context.SubExpressions.Count - 1;
+                    var subExpr = context.SubExpressions[lastIndex];
+                    if (subExpr.Length >= 8/*"(v as T)".Length*/ && subExpr[0] == '(')
+                    {
+                        var ctx = ASContext.Context;
+                        ClassModel type = null;
+                        var m = re_asExpr.Match(subExpr);
+                        if (m.Success) type = ctx.ResolveType(m.Groups["rv"].Value.Trim(), inFile);
+                        if (type == null && re_isExpr.IsMatch(subExpr)) type = ctx.ResolveType(ctx.Features.booleanKey, inFile);
+                        if (type != null) expression = type.Name + ".#" + expression.Substring(("#" + lastIndex + "~").Length);
+                    }
                 }
             }
             return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);

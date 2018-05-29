@@ -317,35 +317,39 @@ namespace HaXeContext.Completion
 
         protected override ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility)
         {
-            if (expression != null && context.SubExpressions != null && context.SubExpressions.Count > 0)
+            if (expression != null)
             {
-                var lastIndex = context.SubExpressions.Count - 1;
-                if (expression.StartsWith("cast.#"))
+                if (expression.StartsWithOrdinal("#RegExp")) expression = expression.Replace("#RegExp", "EReg");
+                else if (context.SubExpressions != null && context.SubExpressions.Count > 0)
                 {
-                    var lastExpr = context.SubExpressions[lastIndex];
-                    var groupCount = 0;
-                    var dQuotes = 0;
-                    var sQuotes = 0;
-                    var length = lastExpr.Length - 1;
-                    for (var i = 1; i < length; i++)
+                    var lastIndex = context.SubExpressions.Count - 1;
+                    if (expression.StartsWithOrdinal("cast.#"))
                     {
-                        var c = ' ';
-                        if (PositionIsInString(lastExpr, i, out c, ref dQuotes, ref sQuotes)) continue;
-                        if (c == '{' || c == '(') groupCount++;
-                        else if (c == '}' || c == ')') groupCount--;
-                        else if (c == ',' && groupCount == 0)
+                        var lastExpr = context.SubExpressions[lastIndex];
+                        var groupCount = 0;
+                        var dQuotes = 0;
+                        var sQuotes = 0;
+                        var length = lastExpr.Length - 1;
+                        for (var i = 1; i < length; i++)
                         {
-                            i++;
-                            var type = ASContext.Context.ResolveType(lastExpr.Substring(i, length - i).Trim(), inFile);
-                            expression = type.Name + ".#" + expression.Substring(("cast.#" + lastIndex + "~").Length);
-                            break;
+                            var c = ' ';
+                            if (PositionIsInString(lastExpr, i, out c, ref dQuotes, ref sQuotes)) continue;
+                            if (c == '{' || c == '(') groupCount++;
+                            else if (c == '}' || c == ')') groupCount--;
+                            else if (c == ',' && groupCount == 0)
+                            {
+                                i++;
+                                var type = ASContext.Context.ResolveType(lastExpr.Substring(i, length - i).Trim(), inFile);
+                                expression = type.Name + ".#" + expression.Substring(("cast.#" + lastIndex + "~").Length);
+                                break;
+                            }
                         }
                     }
-                }
-                else if (expression.StartsWith("#" + lastIndex + "~."))
-                {
-                    var type = ASContext.Context.ResolveToken(context.SubExpressions[lastIndex], inFile);
-                    expression = type.Name + ".#" + expression.Substring(("#" + lastIndex + "~").Length);
+                    else if (expression.StartsWithOrdinal("#" + lastIndex + "~."))
+                    {
+                        var type = ASContext.Context.ResolveToken(context.SubExpressions[lastIndex], inFile);
+                        expression = type.Name + ".#" + expression.Substring(("#" + lastIndex + "~").Length);
+                    }
                 }
             }
 

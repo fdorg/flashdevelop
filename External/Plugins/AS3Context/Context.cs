@@ -898,7 +898,6 @@ namespace AS3Context
             var tokenLength = token != null ? token.Length : 0;
             if (tokenLength > 0)
             {
-                if (token == "#RegExp") return ResolveType("RegExp", inFile);
                 if (token.StartsWithOrdinal("0x")) return ResolveType("uint", inFile);
                 var first = token[0];
                 if (first == '<' && tokenLength >= 3 && token[tokenLength - 2] == '/' && token[tokenLength - 1] == '>') return ResolveType("XML", inFile);
