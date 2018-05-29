@@ -815,7 +815,7 @@ namespace ASCompletion.Completion
                 return expr.Member;
             }
 
-            static IEnumerable<TestCaseData> GetExpressionType_TypeTestCases
+            static IEnumerable<TestCaseData> GetExpressionType_castTypeTestCases
             {
                 get
                 {
@@ -849,6 +849,13 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_cast_10"))
                         .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class})
                         .SetName("cast('s', String).charAt.");
+                }
+            }
+
+            static IEnumerable<TestCaseData> GetExpressionType_isTypeTestCases
+            {
+                get
+                {
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_is_1"))
                         .Returns(new ClassModel {Name = "Bool", Flags = FlagType.Class})
                         .SetName("('s' is String).");
@@ -864,6 +871,13 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_is_5"))
                         .Returns(new ClassModel {Name = "Bool", Flags = FlagType.Class})
                         .SetName("( 's' is String ).");
+                }
+            }
+
+            static IEnumerable<TestCaseData> GetExpressionType_ArrayInitializer_TypeTestCases
+            {
+                get
+                {
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_1"))
                         .Returns(new ClassModel {Name = "Array<T>", Flags = FlagType.Class})
                         .SetName("[].");
@@ -876,22 +890,67 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_4"))
                         .Returns(new ClassModel {Name = "Array<T>", Flags = FlagType.Class})
                         .SetName("[[1 => 2], [2 => 3]].");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_5"))
+                        .Returns(new ClassModel {Name = "Int", Flags = FlagType.Class})
+                        .SetName("[].length.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_6"))
+                        .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class})
+                        .SetName("[].concat.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_7"))
+                        .Returns(new ClassModel {Name = "Array<T>", Flags = FlagType.Class})
+                        .SetName("[].concat([]).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_8"))
+                        .Returns(new ClassModel {Name = "Int", Flags = FlagType.Class})
+                        .SetName("[].concat([]).length.");
+                }
+            }
+
+            static IEnumerable<TestCaseData> GetExpressionType_MapInitializer_TypeTestCases
+            {
+                get
+                {
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_mapInitializer_1"))
                         .Returns(new ClassModel {Name = "Map<K, V>", Flags = FlagType.Class})
                         .SetName("[1=>1].");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_mapInitializer_2"))
                         .Returns(new ClassModel {Name = "Map<K, V>", Flags = FlagType.Class})
                         .SetName("['...' => 1, '1' => '...'].");
+                }
+            }
+
+            static IEnumerable<TestCaseData> GetExpressionType_StringInitializer_TypeTestCases
+            {
+                get
+                {
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer"))
                         .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
                         .SetName("\"\".");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_2"))
                         .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
                         .SetName("''.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_3"))
+                        .Returns(new ClassModel {Name = "Int", Flags = FlagType.Class})
+                        .SetName("''.length.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_4"))
+                        .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class})
+                        .SetName("''.charAt.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_5"))
+                        .Returns(new ClassModel {Name = "Array<String>", Flags = FlagType.Class})
+                        .SetName("''.split('').");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_6"))
+                        .Returns(new ClassModel {Name = "Int", Flags = FlagType.Class})
+                        .SetName("''.split('').length.");
                 }
             }
 
-            [Test, TestCaseSource(nameof(GetExpressionType_TypeTestCases))]
+            [
+                Test, 
+                TestCaseSource(nameof(GetExpressionType_castTypeTestCases)),
+                TestCaseSource(nameof(GetExpressionType_isTypeTestCases)),
+                TestCaseSource(nameof(GetExpressionType_ArrayInitializer_TypeTestCases)),
+                TestCaseSource(nameof(GetExpressionType_MapInitializer_TypeTestCases)),
+                TestCaseSource(nameof(GetExpressionType_StringInitializer_TypeTestCases)),
+            ]
             public ClassModel GetExpressionType_Type(string sourceText)
             {
                 var expr = GetExpressionType(sci, sourceText);
