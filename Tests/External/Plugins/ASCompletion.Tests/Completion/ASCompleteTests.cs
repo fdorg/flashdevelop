@@ -335,6 +335,18 @@ namespace ASCompletion.Completion
                         .Returns(new ClassModel {Name = "Vector", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("new Vector.<*>()")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/1383");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_SafeCast_1"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("String(v).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_SafeCast_2"))
+                        .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("String(v).charAt.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_SafeCast_3"))
+                        .Returns(new ClassModel {Name = "Array", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("String(v).split().");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_SafeCast_3"))
+                        .Returns(new ClassModel {Name = "Array", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("String(v).split().length.");
                 }
             }
 
