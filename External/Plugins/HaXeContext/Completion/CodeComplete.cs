@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Context;
@@ -315,6 +316,8 @@ namespace HaXeContext.Completion
             return true;
         }
 
+        static readonly Regex re_isExpr = new Regex(@"\((?<lv>.+)\s(?<op>is)\s+(?<rv>\w+)\)");
+
         protected override ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility)
         {
             if (expression != null)
@@ -322,30 +325,33 @@ namespace HaXeContext.Completion
                 if (expression.StartsWithOrdinal("#RegExp")) expression = expression.Replace("#RegExp", "EReg");
                 else if (context.SubExpressions != null && context.SubExpressions.Count > 0)
                 {
+                    var ctx = ASContext.Context;
                     var lastIndex = context.SubExpressions.Count - 1;
+                    var lastExpr = context.SubExpressions[lastIndex];
+                    // for example: cast(v, T).<complete>
                     if (expression.StartsWithOrdinal("cast.#"))
                     {
-                        var lastExpr = context.SubExpressions[lastIndex];
                         var groupCount = 0;
-                        var length = lastExpr.Length - 1;
-                        for (var i = length - 1; i >= 1; i--)
+                        var length = lastExpr.Length - 2;
+                        var sb = new StringBuilder(length);
+                        for (var i = length; i >= 1; i--)
                         {
                             var c = lastExpr[i];
-                            if (c == '{' || c == '(') groupCount--;
-                            else if (c == '}' || c == ')') groupCount++;
-                            else if (c == ',' && groupCount == 0)
-                            {
-                                i++;
-                                var type = ASContext.Context.ResolveType(lastExpr.Substring(i, length - i).Trim(), inFile);
-                                expression = type.Name + ".#" + expression.Substring(("cast.#" + lastIndex + "~").Length);
-                                break;
-                            }
+                            if (c <= ' ') continue;
+                            if (c == '}' || c == ')') groupCount++;
+                            else if (c == '{' || c == '(') groupCount--;
+                            else if (c == ',' && groupCount == 0) break;
+                            sb.Insert(0, c);
                         }
+                        var type = ctx.ResolveType(sb.ToString(), inFile);
+                        expression = type.Name + ".#" + expression.Substring(("cast.#" + lastIndex + "~").Length);
                     }
-                    else if (expression.StartsWithOrdinal("#" + lastIndex + "~."))
+                    else if (expression.StartsWithOrdinal("#" + lastIndex + "~"))
                     {
-                        var type = ASContext.Context.ResolveToken(context.SubExpressions[lastIndex], inFile);
-                        expression = type.Name + ".#" + expression.Substring(("#" + lastIndex + "~").Length);
+                        ClassModel type = null;
+                        if (re_isExpr.IsMatch(lastExpr)) type = ctx.ResolveType(ctx.Features.booleanKey, inFile);
+                        if (type == null) type = ctx.ResolveToken(context.SubExpressions[lastIndex], inFile);
+                        if (type != null) expression = type.Name + ".#" + expression.Substring(("#" + lastIndex + "~").Length);
                     }
                 }
             }

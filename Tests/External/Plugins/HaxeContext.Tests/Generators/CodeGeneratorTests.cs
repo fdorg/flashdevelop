@@ -93,7 +93,8 @@ namespace HaXeContext.Generators
                     .SetName("fo|o(this.bar().x). Generate function . Case 4");
                 yield return new TestCaseData("BeforeContextualGeneratorTests_GenerateFunction_5", GeneratorJobType.Function, true)
                     .Returns(ReadAllText("AfterContextualGeneratorTests_GenerateFunction_5"))
-                    .SetName("fo|o((this.bar().x:Int)). Generate function . Case 5");
+                    .SetName("fo|o((this.bar().x:Int)). Generate function . Case 5")
+                    .Ignore("Setup sdk");
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue1747_1", -1, false)
                     .Returns(null)
                     .SetName("Issue1747. Case 1")
@@ -365,7 +366,8 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue1999_5", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue1999_5"))
                     .SetName("if(true){}\n(v:String)|. Assign statement to var")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1999");
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1999")
+                    .Ignore("Setup sdk");
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue1999_6", GeneratorJobType.AssignStatementToVar, false)
                     .Returns(null)
                     .SetName("Contextual generator shouldn't work. /*some comment*/|")

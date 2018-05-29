@@ -757,11 +757,7 @@ namespace ASCompletion.Completion
             static string GetFullPath(string fileName) => $"{nameof(ASCompletion)}.Test_Files.completion.haxe.{fileName}.hx";
 
             [TestFixtureSetUp]
-            public void Setup()
-            {
-                ASContext.Context.SetHaxeFeatures();
-                sci.ConfigurationLanguage = "haxe";
-            }
+            public void Setup() => SetHaxeFeatures(sci);
 
             static IEnumerable<TestCaseData> GetExpressionTypeTestCases
             {

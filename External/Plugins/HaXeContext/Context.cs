@@ -1084,7 +1084,6 @@ namespace HaXeContext
                 }
                 if (first == '(' && last == ')')
                 {
-                    if (Regex.IsMatch(token, @"\((?<lv>.+)\s(?<op>is)\s+(?<rv>\w+)\)")) return ResolveType(features.booleanKey, inFile);
                     if (GetCurrentSDKVersion() >= "3.1.0")
                     {
                         var groupCount = 0;
