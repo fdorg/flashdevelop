@@ -322,10 +322,11 @@ namespace HaXeContext.Completion
         {
             if (expression != null)
             {
+                var ctx = ASContext.Context;
+                var features = ctx.Features;
                 if (expression.StartsWithOrdinal("#RegExp")) expression = expression.Replace("#RegExp", "EReg");
                 else if (context.SubExpressions != null && context.SubExpressions.Count > 0)
                 {
-                    var ctx = ASContext.Context;
                     var lastIndex = context.SubExpressions.Count - 1;
                     var lastExpr = context.SubExpressions[lastIndex];
                     // for example: cast(v, T).<complete>
@@ -346,10 +347,11 @@ namespace HaXeContext.Completion
                         var type = ctx.ResolveType(sb.ToString(), inFile);
                         expression = type.Name + ".#" + expression.Substring(("cast.#" + lastIndex + "~").Length);
                     }
+                    // for example: (v is T).<complete>, (v:T).<complete>
                     else if (expression.StartsWithOrdinal("#" + lastIndex + "~"))
                     {
                         ClassModel type = null;
-                        if (re_isExpr.IsMatch(lastExpr)) type = ctx.ResolveType(ctx.Features.booleanKey, inFile);
+                        if (re_isExpr.IsMatch(lastExpr)) type = ctx.ResolveType(features.booleanKey, inFile);
                         if (type == null) type = ctx.ResolveToken(context.SubExpressions[lastIndex], inFile);
                         if (type != null) expression = type.Name + ".#" + expression.Substring(("#" + lastIndex + "~").Length);
                     }
