@@ -1103,25 +1103,6 @@ namespace HaXeContext
                         return ResolveType(sb.ToString(), inFile);
                     }
                 }
-                else if (token.StartsWithOrdinal("cast("))
-                {
-                    var groupCount = 0;
-                    var dQuotes = 0;
-                    var sQuotes = 0;
-                    var length = tokenLength - 1;
-                    for (var i = "cast(".Length; i < length; i++)
-                    {
-                        var c = ' ';
-                        if (PositionIsInString(token, i, out c, ref dQuotes, ref sQuotes)) continue;
-                        if (c == '{' || c == '(') groupCount++;
-                        else if (c == '}' || c == ')') groupCount--;
-                        else if (c == ',' && groupCount == 0)
-                        {
-                            i++;
-                            return ResolveType(token.Substring(i, length - i).Trim(), inFile);
-                        }
-                    }
-                }
                 var index = token.IndexOfOrdinal(" ");
                 if (index != -1)
                 {

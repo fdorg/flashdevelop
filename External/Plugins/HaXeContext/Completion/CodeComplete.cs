@@ -320,12 +320,27 @@ namespace HaXeContext.Completion
             if (expression != null && context.SubExpressions != null && context.SubExpressions.Count > 0)
             {
                 var lastIndex = context.SubExpressions.Count - 1;
-                var firstExpr = "cast.#" + lastIndex + "~";
-                if (expression.StartsWith(firstExpr))
+                if (expression.StartsWith("cast.#"))
                 {
-                    var token = "cast" + context.SubExpressions[lastIndex];
-                    var type = ASContext.Context.ResolveToken(token, inFile);
-                    expression = type.Name + ".#" + expression.Substring(firstExpr.Length);
+                    var lastExpr = context.SubExpressions[lastIndex];
+                    var groupCount = 0;
+                    var dQuotes = 0;
+                    var sQuotes = 0;
+                    var length = lastExpr.Length - 1;
+                    for (var i = 1; i < length; i++)
+                    {
+                        var c = ' ';
+                        if (PositionIsInString(lastExpr, i, out c, ref dQuotes, ref sQuotes)) continue;
+                        if (c == '{' || c == '(') groupCount++;
+                        else if (c == '}' || c == ')') groupCount--;
+                        else if (c == ',' && groupCount == 0)
+                        {
+                            i++;
+                            var type = ASContext.Context.ResolveType(lastExpr.Substring(i, length - i).Trim(), inFile);
+                            expression = type.Name + ".#" + expression.Substring(("cast.#" + lastIndex + "~").Length);
+                            break;
+                        }
+                    }
                 }
                 else if (expression.StartsWith("#" + lastIndex + "~."))
                 {
@@ -333,6 +348,25 @@ namespace HaXeContext.Completion
                     expression = type.Name + ".#" + expression.Substring(("#" + lastIndex + "~").Length);
                 }
             }
+
+            bool PositionIsInString(string expr, int pos, out char c, ref int dQuotes, ref int sQuotes)
+            {
+                c = expr[pos];
+                if (c == '\"' && sQuotes == 0)
+                {
+                    if (expr[pos - 1] == '\\') return true;
+                    if (dQuotes == 0) dQuotes++;
+                    else dQuotes--;
+                }
+                else if (c == '\'' && dQuotes == 0)
+                {
+                    if (expr[pos - 1] == '\\') return true;
+                    if (sQuotes == 0) sQuotes++;
+                    else sQuotes--;
+                }
+                return sQuotes > 0 || dQuotes > 0;
+            }
+
             return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
         }
     }
