@@ -244,22 +244,35 @@ namespace ASCompletion.Completion
                 return expr.Member;
             }
 
-            static IEnumerable<TestCaseData> GetExpressionType_TypeTestCases
+            static IEnumerable<TestCaseData> GetExpressionType_as_TypeTestCases
             {
                 get
                 {
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_as_1"))
-                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("('s' as String).");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_as_2"))
-                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("return ('s' as String).");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_as_3"))
-                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("('s' as String).charAt(0).length.");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_as_4"))
-                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("('...' as String).charAt(0).length.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_as_5"))
+                        .Returns(new ClassModel {Name = "Array", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("('s' as String).split().");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_as_6"))
+                        .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("('s' as String).split.");
+                }
+            }
+
+            static IEnumerable<TestCaseData> GetExpressionType_TypeTestCases
+            {
+                get
+                {
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_is"))
                         .Returns(new ClassModel {Name = "Boolean", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
                         .SetName("('s' is String).");
@@ -290,7 +303,11 @@ namespace ASCompletion.Completion
                 }
             }
 
-            [Test, TestCaseSource(nameof(GetExpressionType_TypeTestCases))]
+            [
+                Test, 
+                TestCaseSource(nameof(GetExpressionType_as_TypeTestCases)),
+                //TestCaseSource(nameof(GetExpressionType_TypeTestCases)),
+            ]
             public ClassModel GetExpressionType_Type(string sourceText)
             {
                 var expr = GetExpressionType(sci, sourceText);

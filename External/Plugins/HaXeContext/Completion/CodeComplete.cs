@@ -317,7 +317,7 @@ namespace HaXeContext.Completion
 
         protected override ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility)
         {
-            if (expression != null && context.SubExpressions != null)
+            if (expression != null && context.SubExpressions != null && context.SubExpressions.Count > 0)
             {
                 var lastIndex = context.SubExpressions.Count - 1;
                 var firstExpr = "cast.#" + lastIndex + "~";

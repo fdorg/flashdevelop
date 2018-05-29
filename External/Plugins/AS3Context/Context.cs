@@ -18,6 +18,7 @@ using ScintillaNet.Enums;
 using SwfOp;
 using Timer = System.Timers.Timer;
 using System.Linq;
+using AS3Context.Completion;
 
 namespace AS3Context
 {
@@ -139,6 +140,7 @@ namespace AS3Context
             /* INITIALIZATION */
 
             settings = initSettings;
+            CodeComplete = new CodeComplete();
             //BuildClassPath(); // defered to first use
 
             // live syntax checking
