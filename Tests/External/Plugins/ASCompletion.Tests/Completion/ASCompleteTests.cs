@@ -269,13 +269,29 @@ namespace ASCompletion.Completion
                 }
             }
 
+            static IEnumerable<TestCaseData> GetExpressionType_is_TypeTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_is_1"))
+                        .Returns(new ClassModel {Name = "Boolean", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("('s' is String).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_is_2"))
+                        .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("('s' is String).toString.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_is_3"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("('s' is String).toString().");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_is_4"))
+                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("('s' is String).toString().length.");
+                }
+            }
+
             static IEnumerable<TestCaseData> GetExpressionType_TypeTestCases
             {
                 get
                 {
-                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_is"))
-                        .Returns(new ClassModel {Name = "Boolean", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
-                        .SetName("('s' is String).");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer"))
                         .Returns(new ClassModel {Name = "Array", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
                         .SetName("[].");
@@ -306,6 +322,7 @@ namespace ASCompletion.Completion
             [
                 Test, 
                 TestCaseSource(nameof(GetExpressionType_as_TypeTestCases)),
+                TestCaseSource(nameof(GetExpressionType_is_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_TypeTestCases)),
             ]
             public ClassModel GetExpressionType_Type(string sourceText)
