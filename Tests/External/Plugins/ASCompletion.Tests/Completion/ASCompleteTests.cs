@@ -288,10 +288,16 @@ namespace ASCompletion.Completion
                 }
             }
 
-            static IEnumerable<TestCaseData> GetExpressionType_numeric_TypeTestCases
+            static IEnumerable<TestCaseData> GetExpressionType_StringInitializer_TypeTestCases
             {
                 get
                 {
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("\"\".");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_2"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("''.");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_issue2029_1"))
                         .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
                         .SetName("'123'.length.")
@@ -318,12 +324,6 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer"))
                         .Returns(new ClassModel {Name = "Array", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
                         .SetName("[].");
-                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer"))
-                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
-                        .SetName("\"\".");
-                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_2"))
-                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
-                        .SetName("''.");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_objectInitializer"))
                         .Returns(new ClassModel {Name = "Object", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
                         .SetName("{}.");
@@ -342,7 +342,7 @@ namespace ASCompletion.Completion
                 Test, 
                 TestCaseSource(nameof(GetExpressionType_as_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_is_TypeTestCases)),
-                TestCaseSource(nameof(GetExpressionType_numeric_TypeTestCases)),
+                TestCaseSource(nameof(GetExpressionType_StringInitializer_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_TypeTestCases)),
             ]
             public ClassModel GetExpressionType_Type(string sourceText)
