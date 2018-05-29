@@ -344,6 +344,22 @@ namespace ASCompletion.Completion
                 }
             }
 
+            static IEnumerable<TestCaseData> GetExpressionType_XML_TypeTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_XMLInitializer_1"))
+                        .Returns(new ClassModel {Name = "XML", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("<xml/>.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_XMLInitializer_2"))
+                        .Returns(new ClassModel {Name = "Boolean", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("<xml/>.contains(<xml/>).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_XMLInitializer_3"))
+                        .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("<xml/>.contains.");
+                }
+            }
+
             static IEnumerable<TestCaseData> GetExpressionType_TypeTestCases
             {
                 get
@@ -375,6 +391,7 @@ namespace ASCompletion.Completion
                 TestCaseSource(nameof(GetExpressionType_is_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_StringInitializer_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_Vector_TypeTestCases)),
+                TestCaseSource(nameof(GetExpressionType_XML_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_TypeTestCases)),
             ]
             public ClassModel GetExpressionType_Type(string sourceText)
