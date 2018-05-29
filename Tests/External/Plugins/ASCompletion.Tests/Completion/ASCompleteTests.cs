@@ -317,6 +317,27 @@ namespace ASCompletion.Completion
                 }
             }
 
+            static IEnumerable<TestCaseData> GetExpressionType_Vector_TypeTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_issue1383_1"))
+                        .Returns(new ClassModel {Name = "Vector.<int>", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("new Vector.<int>()")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1383");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_issue1383_2"))
+                        .Returns(new ClassModel {Name = "Vector", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("new Vector.<*>()")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1383");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_VectorInitializer_1"))
+                        .Returns(new ClassModel {Name = "Vector.<int>", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("new <int>[].");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_VectorInitializer_2"))
+                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("new <int>[].length.");
+                }
+            }
+
             static IEnumerable<TestCaseData> GetExpressionType_TypeTestCases
             {
                 get
@@ -327,14 +348,6 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_objectInitializer"))
                         .Returns(new ClassModel {Name = "Object", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
                         .SetName("{}.");
-                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_issue1383_1"))
-                        .Returns(new ClassModel {Name = "Vector.<int>", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
-                        .SetName("new Vector.<int>()")
-                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1383");
-                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_issue1383_2"))
-                        .Returns(new ClassModel {Name = "Vector", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
-                        .SetName("new Vector.<*>()")
-                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1383");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_SafeCast_1"))
                         .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
                         .SetName("String(v).");
@@ -355,6 +368,7 @@ namespace ASCompletion.Completion
                 TestCaseSource(nameof(GetExpressionType_as_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_is_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_StringInitializer_TypeTestCases)),
+                TestCaseSource(nameof(GetExpressionType_Vector_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_TypeTestCases)),
             ]
             public ClassModel GetExpressionType_Type(string sourceText)

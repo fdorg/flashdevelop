@@ -15,11 +15,16 @@ namespace AS3Context.Completion
         {
             if (expression != null)
             {
-                if (expression.StartsWithOrdinal("#RegExp")) expression = expression.Remove(0, 1);
+                // for example: new <T>[].<complete>
+                if (expression.Contains(">.[")) expression = expression.Replace(">.[", ">[");
+                else if (expression.Contains(".<")) expression = expression.Replace(".<", "<");
+                // for example: ~/pattern/.<complete>
+                else if (expression.StartsWithOrdinal("#RegExp")) expression = expression.Substring(1);
                 else if (context.SubExpressions != null && context.SubExpressions.Count > 0)
                 {
                     var lastIndex = context.SubExpressions.Count - 1;
                     var subExpr = context.SubExpressions[lastIndex];
+                    // for example: (v as T).<complete>, (v is Complete).<complete>, ...
                     if (subExpr.Length >= 8/*"(v as T)".Length*/ && subExpr[0] == '(')
                     {
                         var ctx = ASContext.Context;

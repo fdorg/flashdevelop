@@ -885,6 +885,8 @@ namespace AS3Context
                         cname = Regex.Replace(cname, @">\[.*", ">");
                         cname = "Vector." + cname;
                     }
+                    // for example: Vector<T> -> Vector.<T>
+                    if (cname.Contains("r<")) cname = cname.Replace("r<", "r.<");
                     Match genType = re_genericType.Match(cname);
                     if (genType.Success) return ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile);
                     return ClassModel.VoidClass;

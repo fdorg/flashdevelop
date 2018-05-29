@@ -2607,8 +2607,8 @@ namespace ASCompletion.Completion
             var ctx = ASContext.Context;
             var features = ctx.Features;
             ClassModel type;
-            if (((context.SubExpressions == null || context.SubExpressions.Count == 1) && (expression[0] != '.' && expression.Count(c => c == '.') < 2)) 
-                || (context.WordBefore != null && features.OtherOperators.Contains(context.WordBefore)) || char.IsPunctuation(expression[0]))
+            if (char.IsPunctuation(expression[0])
+                || ((context.SubExpressions == null || context.SubExpressions.Count == 1) && (expression[0] != '.' && expression.Count(c => c == '.') < 2)))
             {
                 var value = expression.TrimEnd('.');
                 if (context.SubExpressions?.Count == 1) value = value.Replace(char.IsLetter(value[0]) ? ".#0~" : "#0~", context.SubExpressions.First());
