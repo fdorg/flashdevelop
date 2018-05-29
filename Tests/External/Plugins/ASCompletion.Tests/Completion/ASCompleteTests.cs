@@ -335,6 +335,12 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_VectorInitializer_2"))
                         .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("new <int>[].length.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_VectorInitializer_3"))
+                        .Returns(new ClassModel {Name = "Vector.<int>", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("new <int>[].concat(new <int>[1,2,3]).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_VectorInitializer_4"))
+                        .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("new <int>[].concat(new <int>[1,2,3]).push.");
                 }
             }
 
