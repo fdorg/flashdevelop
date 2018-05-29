@@ -2615,7 +2615,7 @@ namespace ASCompletion.Completion
                 if (!string.IsNullOrEmpty(context.WordBefore) && features.OtherOperators.Contains(context.WordBefore))
                     value = context.WordBefore + " " + value;
                 type = ctx.ResolveToken(value, inClass.InFile);
-                if (!type.IsVoid()) return new ASResult {Type = type, Context = context, InClass = type, InFile = type.InFile, Path = context.Value, IsStatic = context.WordBefore == "new"};
+                if (!type.IsVoid()) return new ASResult {Type = type, Context = context, InClass = type, InFile = type.InFile, Path = context.Value/*, IsStatic = context.WordBefore == "new"*/};
             }
 
             if (expression[0] == '.')
