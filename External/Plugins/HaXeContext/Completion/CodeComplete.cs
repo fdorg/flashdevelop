@@ -327,15 +327,12 @@ namespace HaXeContext.Completion
                     {
                         var lastExpr = context.SubExpressions[lastIndex];
                         var groupCount = 0;
-                        var dQuotes = 0;
-                        var sQuotes = 0;
                         var length = lastExpr.Length - 1;
-                        for (var i = 1; i < length; i++)
+                        for (var i = length - 1; i >= 1; i--)
                         {
-                            var c = ' ';
-                            if (PositionIsInString(lastExpr, i, out c, ref dQuotes, ref sQuotes)) continue;
-                            if (c == '{' || c == '(') groupCount++;
-                            else if (c == '}' || c == ')') groupCount--;
+                            var c = lastExpr[i];
+                            if (c == '{' || c == '(') groupCount--;
+                            else if (c == '}' || c == ')') groupCount++;
                             else if (c == ',' && groupCount == 0)
                             {
                                 i++;
@@ -352,25 +349,6 @@ namespace HaXeContext.Completion
                     }
                 }
             }
-
-            bool PositionIsInString(string expr, int pos, out char c, ref int dQuotes, ref int sQuotes)
-            {
-                c = expr[pos];
-                if (c == '\"' && sQuotes == 0)
-                {
-                    if (expr[pos - 1] == '\\') return true;
-                    if (dQuotes == 0) dQuotes++;
-                    else dQuotes--;
-                }
-                else if (c == '\'' && dQuotes == 0)
-                {
-                    if (expr[pos - 1] == '\\') return true;
-                    if (sQuotes == 0) sQuotes++;
-                    else sQuotes--;
-                }
-                return sQuotes > 0 || dQuotes > 0;
-            }
-
             return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
         }
     }
