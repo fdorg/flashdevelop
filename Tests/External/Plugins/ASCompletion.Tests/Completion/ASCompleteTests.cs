@@ -1004,6 +1004,22 @@ namespace ASCompletion.Completion
                 }
             }
 
+            static IEnumerable<TestCaseData> GetExpressionType_new_TypeTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_new_1"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
+                        .SetName("new String('').");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_new_2"))
+                        .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class})
+                        .SetName("new String('').charAt.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_new_3"))
+                        .Returns(new ClassModel {Name = "Array<String>", Flags = FlagType.Class})
+                        .SetName("new String('').split('').");
+                }
+            }
+
             [
                 Test, 
                 TestCaseSource(nameof(GetExpressionType_cast_TypeTestCases)),
@@ -1011,6 +1027,7 @@ namespace ASCompletion.Completion
                 TestCaseSource(nameof(GetExpressionType_ArrayInitializer_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_MapInitializer_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_StringInitializer_TypeTestCases)),
+                TestCaseSource(nameof(GetExpressionType_new_TypeTestCases)),
             ]
             public ClassModel GetExpressionType_Type(string sourceText)
             {
