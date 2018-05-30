@@ -292,28 +292,34 @@ namespace ASCompletion.Completion
             {
                 get
                 {
-                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer"))
-                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_1"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("\"\".");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_2"))
-                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("''.");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_issue2029_1"))
-                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("'123'.length.")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2029");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_issue2029_2"))
-                        .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("'123'.toString.")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2029");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_issue2029_3"))
-                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("'123'.toString(10).")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2029");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_issue2029_4"))
-                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("'123'.toString(10).length.")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2029");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_3"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("\"...\".");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_4"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("'...'.");
                 }
             }
 

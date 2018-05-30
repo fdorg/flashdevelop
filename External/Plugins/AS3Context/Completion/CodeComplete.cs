@@ -23,17 +23,30 @@ namespace AS3Context.Completion
                 else if (expression.StartsWithOrdinal("#RegExp")) expression = expression.Substring(1);
                 else if (context.SubExpressions != null && context.SubExpressions.Count > 0)
                 {
+                    var ctx = ASContext.Context;
+                    var features = ctx.Features;
                     var lastIndex = context.SubExpressions.Count - 1;
-                    var subExpr = context.SubExpressions[lastIndex];
-                    // for example: (v as T).<complete>, (v is Complete).<complete>, ...
-                    if (subExpr.Length >= 8/*"(v as T)".Length*/ && subExpr[0] == '(')
+                    var c = expression[0];
+                    // for example: "".<complete>, ''.<complete>
+                    if (c == '"' || c == '\'')
                     {
-                        var ctx = ASContext.Context;
-                        ClassModel type = null;
-                        var m = re_asExpr.Match(subExpr);
-                        if (m.Success) type = ctx.ResolveType(m.Groups["rv"].Value.Trim(), inFile);
-                        if (type == null && re_isExpr.IsMatch(subExpr)) type = ctx.ResolveType(ctx.Features.booleanKey, inFile);
-                        if (type != null) expression = type.Name + ".#" + expression.Substring(("#" + lastIndex + "~").Length);
+                        var type = ctx.ResolveType(features.stringKey, inFile);
+                        var pattern = c + ".#" + lastIndex + "~";
+                        var startIndex = expression.IndexOfOrdinal(pattern) + pattern.Length;
+                        expression = type.Name + ".#" + expression.Substring(startIndex);
+                    }
+                    else
+                    {
+                        var expr = context.SubExpressions[lastIndex];
+                        // for example: (v as T).<complete>, (v is Complete).<complete>, ...
+                        if (expr.Length >= 8 /*"(v as T)".Length*/ && expr[0] == '(')
+                        {
+                            ClassModel type = null;
+                            var m = re_asExpr.Match(expr);
+                            if (m.Success) type = ctx.ResolveType(m.Groups["rv"].Value.Trim(), inFile);
+                            if (type == null && re_isExpr.IsMatch(expr)) type = ctx.ResolveType(features.booleanKey, inFile);
+                            if (type != null) expression = type.Name + ".#" + expression.Substring(("#" + lastIndex + "~").Length);
+                        }
                     }
                 }
             }

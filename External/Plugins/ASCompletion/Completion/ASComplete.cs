@@ -3556,11 +3556,11 @@ namespace ASCompletion.Completion
                         {
                             positionExpression = position;
                             sbSub.Insert(0, c);
-                            int testPos = position - 1;
-                            string testWord = GetWordLeft(sci, ref testPos);
                             expression.SubExpressions.Add(sbSub.ToString());
                             sbSub.Clear();
                             sb.Insert(0, ".#" + (subCount++) + "~"); // method call or sub expression
+                            int testPos = position - 1;
+                            string testWord = GetWordLeft(sci, ref testPos);
                             if (testWord == "return" || testWord == "case" || testWord == "default")
                             {
                                 // AS3, AS2, Loom ex: return (a as B).<complete>

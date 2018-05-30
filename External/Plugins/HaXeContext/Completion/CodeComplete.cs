@@ -326,8 +326,9 @@ namespace HaXeContext.Completion
                     var ctx = ASContext.Context;
                     var features = ctx.Features;
                     var lastIndex = context.SubExpressions.Count - 1;
-                    var lastExpr = context.SubExpressions[lastIndex];
+                    var expr = context.SubExpressions[lastIndex];
                     var firstChar = expression[0];
+                    // for example: "".<complete>, ''.<complete>
                     if (firstChar == '\'' || firstChar == '"')
                     {
                         var type = ctx.ResolveType(features.stringKey, inFile);
@@ -341,11 +342,11 @@ namespace HaXeContext.Completion
                         if (expression.StartsWithOrdinal("cast.#"))
                         {
                             var groupCount = 0;
-                            var length = lastExpr.Length - 2;
+                            var length = expr.Length - 2;
                             var sb = new StringBuilder(length);
                             for (var i = length; i >= 1; i--)
                             {
-                                var c = lastExpr[i];
+                                var c = expr[i];
                                 if (c <= ' ') continue;
                                 if (c == '}' || c == ')') groupCount++;
                                 else if (c == '{' || c == '(') groupCount--;
