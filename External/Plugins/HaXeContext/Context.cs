@@ -1050,6 +1050,8 @@ namespace HaXeContext
             return GetModel(package, cname, inPackage);
         }
 
+        static readonly Regex re_isExpr = new Regex(@"\((?<lv>.+)\s(?<op>is)\s+(?<rv>\w+)\)");
+
         public override ClassModel ResolveToken(string token, FileModel inFile)
         {
             var tokenLength = token != null ? token.Length : 0;
@@ -1084,6 +1086,7 @@ namespace HaXeContext
                 }
                 if (first == '(' && last == ')')
                 {
+                    if (re_isExpr.IsMatch(token)) return ResolveType(features.booleanKey, inFile);
                     if (GetCurrentSDKVersion() >= "3.1.0")
                     {
                         var groupCount = 0;

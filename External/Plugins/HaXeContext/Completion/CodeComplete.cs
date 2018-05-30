@@ -316,8 +316,6 @@ namespace HaXeContext.Completion
             return true;
         }
 
-        static readonly Regex re_isExpr = new Regex(@"\((?<lv>.+)\s(?<op>is)\s+(?<rv>\w+)\)");
-
         protected override ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility)
         {
             if (expression != null)
@@ -363,9 +361,7 @@ namespace HaXeContext.Completion
                             // for example: (v is T).<complete>, (v:T).<complete>, ...
                             if (expression.StartsWithOrdinal(pattern))
                             {
-                                ClassModel type = null;
-                                if (re_isExpr.IsMatch(lastExpr)) type = ctx.ResolveType(features.booleanKey, inFile);
-                                if (type == null) type = ctx.ResolveToken(context.SubExpressions[lastIndex], inFile);
+                                var type = ctx.ResolveToken(context.SubExpressions[lastIndex], inFile);
                                 if (!type.IsVoid()) expression = type.Name + ".#" + expression.Substring(pattern.Length);
                             }
                         }
