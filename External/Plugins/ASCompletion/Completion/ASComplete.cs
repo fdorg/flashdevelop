@@ -3604,7 +3604,7 @@ namespace ASCompletion.Completion
                         if (parCount == 0) // start sub-expression
                         {
                             if (expression.SubExpressions == null) expression.SubExpressions = new List<string>();
-                            sbSub = new StringBuilder();
+                            sbSub.Clear();
                         }
                         parCount++;
                     }
