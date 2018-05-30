@@ -17,7 +17,7 @@ namespace AS3Context.Completion
             {
                 // for example: new <T>[].<complete>
                 if (expression.Contains(">.[")) expression = expression.Replace(">.[", ">[");
-                // for example: Vector.<T> -> Vector<T>
+                // transform Vector.<T> to Vector<T>
                 else if (expression.Contains(".<")) expression = expression.Replace(".<", "<");
                 // for example: ~/pattern/.<complete>
                 else if (expression.StartsWithOrdinal("#RegExp")) expression = expression.Substring(1);

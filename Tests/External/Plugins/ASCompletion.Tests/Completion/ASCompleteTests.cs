@@ -1046,6 +1046,12 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_7"))
                         .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
                         .SetName("''.split('')[0].");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_8"))
+                        .Returns(new ClassModel {Name = "Int", Flags = FlagType.Class})
+                        .SetName("'...'.length.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_9"))
+                        .Returns(new ClassModel {Name = "Int", Flags = FlagType.Class})
+                        .SetName("\"...\".length.");
                 }
             }
 

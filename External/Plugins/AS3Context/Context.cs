@@ -881,13 +881,13 @@ namespace AS3Context
                 {
                     if (index == 0)
                     {
-                        //transform <T>[] to Vector.<T>
+                        // transform <T>[] to Vector.<T>
                         cname = Regex.Replace(cname, @">\[.*", ">");
                         cname = "Vector." + cname;
                     }
-                    // for example: Vector<T> -> Vector.<T>
+                    // transform Vector<T> to Vector.<T>
                     if (cname.Contains("r<")) cname = cname.Replace("r<", "r.<");
-                    Match genType = re_genericType.Match(cname);
+                    var genType = re_genericType.Match(cname);
                     if (genType.Success) return ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile);
                     return ClassModel.VoidClass;
                 }

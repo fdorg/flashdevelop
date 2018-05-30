@@ -322,38 +322,53 @@ namespace HaXeContext.Completion
         {
             if (expression != null)
             {
-                var ctx = ASContext.Context;
-                var features = ctx.Features;
                 if (expression.StartsWithOrdinal("#RegExp")) expression = expression.Replace("#RegExp", "EReg");
                 else if (context.SubExpressions != null && context.SubExpressions.Count > 0)
                 {
+                    var ctx = ASContext.Context;
+                    var features = ctx.Features;
                     var lastIndex = context.SubExpressions.Count - 1;
                     var lastExpr = context.SubExpressions[lastIndex];
-                    // for example: cast(v, T).<complete>
-                    if (expression.StartsWithOrdinal("cast.#"))
+                    var firstChar = expression[0];
+                    if (firstChar == '\'' || firstChar == '"')
                     {
-                        var groupCount = 0;
-                        var length = lastExpr.Length - 2;
-                        var sb = new StringBuilder(length);
-                        for (var i = length; i >= 1; i--)
-                        {
-                            var c = lastExpr[i];
-                            if (c <= ' ') continue;
-                            if (c == '}' || c == ')') groupCount++;
-                            else if (c == '{' || c == '(') groupCount--;
-                            else if (c == ',' && groupCount == 0) break;
-                            sb.Insert(0, c);
-                        }
-                        var type = ctx.ResolveType(sb.ToString(), inFile);
-                        expression = type.Name + ".#" + expression.Substring(("cast.#" + lastIndex + "~").Length);
+                        var type = ctx.ResolveType(features.stringKey, inFile);
+                        var pattern = firstChar + ".#" + lastIndex + "~";
+                        var startIndex = expression.IndexOfOrdinal(pattern) + pattern.Length;
+                        expression = type.Name + ".#" + expression.Substring(startIndex);
                     }
-                    // for example: (v is T).<complete>, (v:T).<complete>
-                    else if (expression.StartsWithOrdinal("#" + lastIndex + "~"))
+                    else
                     {
-                        ClassModel type = null;
-                        if (re_isExpr.IsMatch(lastExpr)) type = ctx.ResolveType(features.booleanKey, inFile);
-                        if (type == null) type = ctx.ResolveToken(context.SubExpressions[lastIndex], inFile);
-                        if (type != null) expression = type.Name + ".#" + expression.Substring(("#" + lastIndex + "~").Length);
+                        // for example: cast(v, T).<complete>
+                        if (expression.StartsWithOrdinal("cast.#"))
+                        {
+                            var groupCount = 0;
+                            var length = lastExpr.Length - 2;
+                            var sb = new StringBuilder(length);
+                            for (var i = length; i >= 1; i--)
+                            {
+                                var c = lastExpr[i];
+                                if (c <= ' ') continue;
+                                if (c == '}' || c == ')') groupCount++;
+                                else if (c == '{' || c == '(') groupCount--;
+                                else if (c == ',' && groupCount == 0) break;
+                                sb.Insert(0, c);
+                            }
+                            var type = ctx.ResolveType(sb.ToString(), inFile);
+                            expression = type.Name + ".#" + expression.Substring(("cast.#" + lastIndex + "~").Length);
+                        }
+                        else
+                        {
+                            var pattern = "#" + lastIndex + "~";
+                            // for example: (v is T).<complete>, (v:T).<complete>, ...
+                            if (expression.StartsWithOrdinal(pattern))
+                            {
+                                ClassModel type = null;
+                                if (re_isExpr.IsMatch(lastExpr)) type = ctx.ResolveType(features.booleanKey, inFile);
+                                if (type == null) type = ctx.ResolveToken(context.SubExpressions[lastIndex], inFile);
+                                if (!type.IsVoid()) expression = type.Name + ".#" + expression.Substring(pattern.Length);
+                            }
+                        }
                     }
                 }
             }
