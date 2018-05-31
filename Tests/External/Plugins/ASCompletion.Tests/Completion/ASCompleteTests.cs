@@ -755,47 +755,71 @@ namespace ASCompletion.Completion
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
                     yield return new TestCaseData("BeforeOnCharIssue2076_2", ' ', false)
                         .Returns(ReadAllText("AfterOnCharIssue2076_2"))
-                        .SetName("Issue2076. Case 2. override | ")
+                        .SetName("override | ")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
                     yield return new TestCaseData("BeforeOnCharIssue2076_3", ' ', false)
                         .Returns(ReadAllText("AfterOnCharIssue2076_3"))
-                        .SetName("Issue2076. Case 3. extends | ")
+                        .SetName("extends | ")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
                     yield return new TestCaseData("BeforeOnCharIssue2076_4", ' ', false)
                         .Returns(ReadAllText("AfterOnCharIssue2076_4"))
-                        .SetName("Issue2076. Case 4. implements | ")
+                        .SetName("implements | ")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
                     yield return new TestCaseData("BeforeOnCharIssue2076_5", ':', false)
                         .Returns(ReadAllText("AfterOnCharIssue2076_5"))
-                        .SetName("Issue2076. Case 5. function foo(v:| ")
+                        .SetName("function foo(v:| ")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
                     yield return new TestCaseData("BeforeOnCharIssue2076_6", '.', false)
                         .Returns(ReadAllText("AfterOnCharIssue2076_6"))
-                        .SetName("Issue2076. Case 6. function foo(v:flash.display.| ")
+                        .SetName("function foo(v:flash.display.| ")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
                     yield return new TestCaseData("BeforeOnCharIssue2076_7", '.', false)
                         .Returns(ReadAllText("AfterOnCharIssue2076_7"))
-                        .SetName("Issue2076. Case 7. this.| ")
+                        .SetName("this.| ")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
                     yield return new TestCaseData("BeforeOnCharIssue2076_8", '.', false)
                         .Returns(ReadAllText("AfterOnCharIssue2076_8"))
-                        .SetName("Issue2076. Case 8. [].| ")
+                        .SetName("[].| ")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
                     yield return new TestCaseData("BeforeOnCharIssue2076_9", '.', false)
                         .Returns(ReadAllText("AfterOnCharIssue2076_9"))
-                        .SetName("Issue2076. Case 9. ''.| ")
+                        .SetName("''.| ")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
                     yield return new TestCaseData("BeforeOnCharIssue2076_10", '.', true)
                         .Returns(ReadAllText("AfterOnCharIssue2076_10"))
-                        .SetName("Issue2076. Case 10. 0x1.| ")
+                        .SetName("0x1.| ")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
                     yield return new TestCaseData("BeforeOnCharIssue2076_11", '.', true)
                         .Returns(ReadAllText("AfterOnCharIssue2076_11"))
-                        .SetName("Issue2076. Case 11. true.| ")
+                        .SetName("true.| ")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
                     yield return new TestCaseData("BeforeOnCharIssue2076_12", '.', false)
                         .Returns(ReadAllText("AfterOnCharIssue2076_12"))
-                        .SetName("Issue2076. Case 12. (v as String).| ")
+                        .SetName("(v as String).| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_13", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_13"))
+                        .SetName("(v is String).| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_14", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_14"))
+                        .SetName("(v is String).toString().| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_15", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_15"))
+                        .SetName("new Vector.<int>(10, true).| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_16", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_16"))
+                        .SetName("new Vector.<int>(10, true).join(',').| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_17", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_17"))
+                        .SetName("new <int>[1,2,3].| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_18", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_18"))
+                        .SetName("new <int>[1,2,3].join(',').| ")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
                 }
             }

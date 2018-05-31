@@ -1064,6 +1064,18 @@
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_VectorInitializer_5.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_VectorInitializer_6.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_VectorInitializer_7.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_13.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_13.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_14.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_14.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_15.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_15.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_16.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_16.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_17.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_17.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_18.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_18.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
