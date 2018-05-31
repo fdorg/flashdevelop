@@ -2873,7 +2873,9 @@ namespace ASCompletion.Completion
                         if (vars.Count > 0)
                         {
                             var checkFunction = local.SubExpressions != null && local.SubExpressions.Count == 1
-                                           && !string.IsNullOrEmpty(local.Value) && local.Value.IndexOf('.') == local.Value.IndexOf(".#0~");
+                                && !string.IsNullOrEmpty(local.Value) && local.Value.IndexOf('.') == local.Value.IndexOfOrdinal(".#0~")
+                                // array access check
+                                && local.SubExpressions[0][0] != '[';
                             MemberModel var = null;
                             if (vars.Count > 1)
                             {
@@ -3490,8 +3492,13 @@ namespace ASCompletion.Completion
                     // array access
                     if (c == ']')
                     {
-                        arrCount++;
                         ignoreWhiteSpace = false;
+                        if (arrCount == 0) // start sub-expression
+                        {
+                            if (expression.SubExpressions == null) expression.SubExpressions = new List<string>();
+                            sbSub.Clear();
+                        }
+                        arrCount++;
                     }
                     else if (c == '[')
                     {
@@ -3499,10 +3506,12 @@ namespace ASCompletion.Completion
                         if (arrCount == 0 && braCount == 0)
                         {
                             positionExpression = position;
-                            if (sbSub.Length > 0) sbSub.Insert(0, '[');
                             if (parCount == 0)
                             {
-                                sb.Insert(0, "." + sbSub);
+                                sbSub.Insert(0, c);
+                                expression.SubExpressions.Add(sbSub.ToString());
+                                sb.Insert(0, ".#" + (subCount++) + "~");
+                                //sb.Insert(0, "." + sbSub);
                                 sbSub.Clear();
                             }
                             continue;
@@ -3559,8 +3568,8 @@ namespace ASCompletion.Completion
                             expression.SubExpressions.Add(sbSub.ToString());
                             sbSub.Clear();
                             sb.Insert(0, ".#" + (subCount++) + "~"); // method call or sub expression
-                            int testPos = position - 1;
-                            string testWord = GetWordLeft(sci, ref testPos);
+                            var testPos = position - 1;
+                            var testWord = GetWordLeft(sci, ref testPos);
                             if (testWord == "return" || testWord == "case" || testWord == "default")
                             {
                                 // AS3, AS2, Loom ex: return (a as B).<complete>
@@ -3915,6 +3924,18 @@ namespace ASCompletion.Completion
                 expression.Separator = ";";
                 value = "</>";
             }
+            //if (value.Length > 0 && expression.SubExpressions != null)
+            //{
+            //    var count = expression.SubExpressions.Count;
+            //    for (var i = 0; i < count; i++)
+            //    {
+            //        var subExpression = expression.SubExpressions[i];
+            //        if (subExpression.Length >= 2 /*[]*/ && subExpression[0] == '[' && (value[0] != '#' || i != count - 1))
+            //        {
+            //            value = value.Replace(".#" + i + "~", "." + subExpression);
+            //        }
+            //    }
+            //}
 
             expression.Value = value;
             expression.PositionExpression = positionExpression;

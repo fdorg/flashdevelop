@@ -320,6 +320,17 @@ namespace HaXeContext.Completion
         {
             if (expression != null)
             {
+                if (context.SubExpressions != null)
+                {
+                    var count = context.SubExpressions.Count;
+                    for (var i = 0; i < count; i++)
+                    {
+                        var subExpression = context.SubExpressions[i];
+                        if (subExpression.Length < 2 || subExpression[0] != '[') continue;
+                        if (expression[0] == '#' && i == count - 1) break;
+                        expression = expression.Replace(".#" + i + "~", "." + subExpression);
+                    }
+                }
                 if (expression.StartsWithOrdinal("#RegExp")) expression = expression.Replace("#RegExp", "EReg");
                 else if (context.SubExpressions != null && context.SubExpressions.Count > 0)
                 {

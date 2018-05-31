@@ -320,6 +320,15 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_4"))
                         .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("'...'.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_5"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("'>.['.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_6"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("'.<'.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_stringInitializer_7"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("'#RegExp'.");
                 }
             }
 
@@ -347,6 +356,15 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_VectorInitializer_4"))
                         .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("new <int>[].concat(new <int>[1,2,3]).push.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_VectorInitializer_5"))
+                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("new Vector.<int>().length.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_VectorInitializer_6"))
+                        .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("new Vector.<int>().push.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_VectorInitializer_7"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("new Vector.<int>().join(',').");
                 }
             }
 
@@ -482,18 +500,15 @@ namespace ASCompletion.Completion
                         new TestCaseData(ReadAllText("GetExpressionOfTwoDimensionalVectorInitializer"))
                             .Returns("new <Vector.<int>>[new <int>[]]")
                             .SetName("From new <Vector.<int>>[new <int>[]]|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfArrayAccess"))
-                            .Returns(",[4,5,6].[0].[2]")
-                            .SetName("From [[1,2,3], [4,5,6][0][2]|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfNewVector"))
-                            .Returns("new Vector.<String>")
-                            .SetName("From new Vector.<String>|");
-                    yield return
-                        new TestCaseData(ReadAllText("GetExpressionOfNewTwoDimensionalVector"))
-                            .Returns("new Vector.<Vector.<String>>")
-                            .SetName("From new Vector.<Vector.<String>>|");
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfArrayAccess"))
+                        .Returns(",[4,5,6][0][2]")
+                        .SetName("From [[1,2,3], [4,5,6][0][2]|");
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfNewVector"))
+                        .Returns("new Vector.<String>")
+                        .SetName("From new Vector.<String>|");
+                    yield return new TestCaseData(ReadAllText("GetExpressionOfNewTwoDimensionalVector"))
+                        .Returns("new Vector.<Vector.<String>>")
+                        .SetName("From new Vector.<Vector.<String>>|");
                     yield return new TestCaseData(ReadAllText("GetExpressionOfRegex"))
                         .Returns(" #RegExp")
                         .SetName("From /regex/g|")
@@ -565,7 +580,7 @@ namespace ASCompletion.Completion
                         .Returns("typeof 1")
                         .SetName("typeof 1");
                     yield return new TestCaseData(ReadAllText("GetExpression_issue1908_delete"))
-                        .Returns("delete o.[k]")
+                        .Returns("delete o[k]")
                         .SetName("delete o[k]");
                     yield return new TestCaseData(ReadAllText("GetExpression_operator_is"))
                         .Returns(";(\"s\" is String).")
