@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
@@ -17,24 +16,22 @@ namespace AS3Context.Completion
             if (expression != null)
             {
                 var ctx = ASContext.Context;
+                var features = ctx.Features;
                 if (context.SubExpressions != null && context.SubExpressions.Count > 0)
                 {
                     var count = context.SubExpressions.Count;
-                    int i;
-                    for (i = 0; i < count; i++)
+                    for (var i = 0; i < count; i++)
                     {
+                        // transform #2~.#1~.#0~ to #2~.[].[]
                         var subExpression = context.SubExpressions[i];
                         if (subExpression.Length < 2 || subExpression[0] != '[') continue;
                         // for example: [].<complete>
                         if (expression[0] == '#' && i == count - 1)
                         {
-                            var type = ctx.ResolveToken(subExpression, inFile);
-                            if (!type.IsVoid())
-                            {
-                                expression = type.Name + ".#" + expression.Substring(("#" + i + "~").Length);
-                                context.SubExpressions.RemoveAt(i);
-                            }
-                            break;
+                            var type = ctx.ResolveType(features.arrayKey, inFile);
+                            expression = type.Name + ".#" + expression.Substring(("#" + i + "~").Length);
+                            context.SubExpressions.RemoveAt(i);
+                            return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
                         }
                         expression = expression.Replace(">.#" + i + "~", ">" + subExpression);
                         expression = expression.Replace(".#" + i + "~", "." + subExpression);
@@ -48,7 +45,6 @@ namespace AS3Context.Completion
                 else if (expression.StartsWithOrdinal("#RegExp")) expression = expression.Substring(1);
                 else if (context.SubExpressions != null && context.SubExpressions.Count > 0)
                 {
-                    var features = ctx.Features;
                     var lastIndex = context.SubExpressions.Count - 1;
                     var c = expression[0];
                     // for example: "".<complete>, ''.<complete>

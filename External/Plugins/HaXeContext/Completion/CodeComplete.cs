@@ -320,21 +320,33 @@ namespace HaXeContext.Completion
         {
             if (expression != null)
             {
+                var ctx = ASContext.Context;
                 if (context.SubExpressions != null)
                 {
+                    // transform #2~.#1~.#0~ to #2~.[].[]
                     var count = context.SubExpressions.Count;
                     for (var i = 0; i < count; i++)
                     {
                         var subExpression = context.SubExpressions[i];
                         if (subExpression.Length < 2 || subExpression[0] != '[') continue;
-                        if (expression[0] == '#' && i == count - 1) break;
+                        // for example: [].<complete>, [1 => 2].<complete>
+                        if (expression[0] == '#' && i == count - 1)
+                        {
+                            var type = ctx.ResolveType(subExpression, inFile);
+                            if (!type.IsVoid())
+                            {
+                                expression = type.Name + ".#" + expression.Substring(("#" + i + "~").Length);
+                                context.SubExpressions.RemoveAt(i);
+                                return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
+                            }
+                            break;
+                        }
                         expression = expression.Replace(".#" + i + "~", "." + subExpression);
                     }
                 }
                 if (expression.StartsWithOrdinal("#RegExp")) expression = expression.Replace("#RegExp", "EReg");
                 else if (context.SubExpressions != null && context.SubExpressions.Count > 0)
                 {
-                    var ctx = ASContext.Context;
                     var features = ctx.Features;
                     var lastIndex = context.SubExpressions.Count - 1;
                     var expr = context.SubExpressions[lastIndex];
