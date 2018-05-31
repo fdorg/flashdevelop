@@ -333,7 +333,7 @@ namespace HaXeContext.Completion
                         // for example: [].<complete>, [1 => 2].<complete>
                         if (expression[0] == '#' && i == count - 1)
                         {
-                            var type = ctx.ResolveType(subExpression, inFile);
+                            var type = ctx.ResolveToken(subExpression, inFile);
                             if (type.IsVoid()) break;
                             expression = type.Name + ".#" + expression.Substring(("#" + i + "~").Length);
                             context.SubExpressions.RemoveAt(i);

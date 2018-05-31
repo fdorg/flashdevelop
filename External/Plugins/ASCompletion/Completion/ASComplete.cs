@@ -3490,7 +3490,7 @@ namespace ASCompletion.Completion
                         continue;
                     }
                     // array access
-                    if (c == ']')
+                    if (c == ']' && parCount == 0)
                     {
                         ignoreWhiteSpace = false;
                         if (arrCount == 0) // start sub-expression
@@ -3500,7 +3500,7 @@ namespace ASCompletion.Completion
                         }
                         arrCount++;
                     }
-                    else if (c == '[')
+                    else if (c == '[' && parCount == 0)
                     {
                         arrCount--;
                         if (arrCount == 0 && braCount == 0)
