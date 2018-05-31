@@ -3511,7 +3511,6 @@ namespace ASCompletion.Completion
                                 sbSub.Insert(0, c);
                                 expression.SubExpressions.Add(sbSub.ToString());
                                 sb.Insert(0, ".#" + (subCount++) + "~");
-                                //sb.Insert(0, "." + sbSub);
                                 sbSub.Clear();
                             }
                             continue;
@@ -3924,18 +3923,6 @@ namespace ASCompletion.Completion
                 expression.Separator = ";";
                 value = "</>";
             }
-            //if (value.Length > 0 && expression.SubExpressions != null)
-            //{
-            //    var count = expression.SubExpressions.Count;
-            //    for (var i = 0; i < count; i++)
-            //    {
-            //        var subExpression = expression.SubExpressions[i];
-            //        if (subExpression.Length >= 2 /*[]*/ && subExpression[0] == '[' && (value[0] != '#' || i != count - 1))
-            //        {
-            //            value = value.Replace(".#" + i + "~", "." + subExpression);
-            //        }
-            //    }
-            //}
 
             expression.Value = value;
             expression.PositionExpression = positionExpression;

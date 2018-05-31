@@ -16,6 +16,7 @@ namespace AS3Context.Completion
         {
             if (expression != null)
             {
+                var ctx = ASContext.Context;
                 if (context.SubExpressions != null && context.SubExpressions.Count > 0)
                 {
                     var count = context.SubExpressions.Count;
@@ -24,7 +25,17 @@ namespace AS3Context.Completion
                     {
                         var subExpression = context.SubExpressions[i];
                         if (subExpression.Length < 2 || subExpression[0] != '[') continue;
-                        if (expression[0] == '#' && i == count - 1) break;
+                        // for example: [].<complete>
+                        if (expression[0] == '#' && i == count - 1)
+                        {
+                            var type = ctx.ResolveToken(subExpression, inFile);
+                            if (!type.IsVoid())
+                            {
+                                expression = type.Name + ".#" + expression.Substring(("#" + i + "~").Length);
+                                context.SubExpressions.RemoveAt(i);
+                            }
+                            break;
+                        }
                         expression = expression.Replace(">.#" + i + "~", ">" + subExpression);
                         expression = expression.Replace(".#" + i + "~", "." + subExpression);
                     }
@@ -37,7 +48,6 @@ namespace AS3Context.Completion
                 else if (expression.StartsWithOrdinal("#RegExp")) expression = expression.Substring(1);
                 else if (context.SubExpressions != null && context.SubExpressions.Count > 0)
                 {
-                    var ctx = ASContext.Context;
                     var features = ctx.Features;
                     var lastIndex = context.SubExpressions.Count - 1;
                     var c = expression[0];
@@ -52,18 +62,8 @@ namespace AS3Context.Completion
                     else
                     {
                         var expr = context.SubExpressions[lastIndex];
-                        // for example: [].<complete>
-                        if (expression[0] == '#' && expr.Length >= 2 /*[].Length*/ && expr[lastIndex] == '[')
-                        {
-                            var type = ctx.ResolveToken(expr, inFile);
-                            if (!type.IsVoid())
-                            {
-                                expression = type.Name + ".#" + expression.Substring(("#" + lastIndex + "~").Length);
-                                context.SubExpressions.RemoveAt(lastIndex);
-                            }
-                        }
                         // for example: (v as T).<complete>, (v is Complete).<complete>, ...
-                        else if (expr.Length >= 8 /*"(v as T)".Length*/ && expr[0] == '(')
+                        if (expr.Length >= 8 /*"(v as T)".Length*/ && expr[0] == '(')
                         {
                             ClassModel type = null;
                             var m = re_asExpr.Match(expr);
