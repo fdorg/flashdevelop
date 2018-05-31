@@ -821,6 +821,10 @@ namespace ASCompletion.Completion
                         .Returns(ReadAllText("AfterOnCharIssue2076_18"))
                         .SetName("new <int>[1,2,3].join(',').| ")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_19", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_19"))
+                        .SetName("String.| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
                 }
             }
 
