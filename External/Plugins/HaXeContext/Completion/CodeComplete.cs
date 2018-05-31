@@ -357,6 +357,7 @@ namespace HaXeContext.Completion
                         if (context.SubExpressions.Count == 1) context.SubExpressions = null;
                     }
                 }
+                // for example: ~/pattern/.<complete>
                 else if (expression.StartsWithOrdinal("#RegExp")) expression = expression.Replace("#RegExp", "EReg");
                 else if (context.SubExpressions != null && context.SubExpressions.Count > 0)
                 {

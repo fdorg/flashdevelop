@@ -57,7 +57,7 @@ namespace AS3Context.Completion
                 else if (expression.Contains(">.[")) expression = expression.Replace(">.[", ">[");
                 // transform Vector.<T> to Vector<T>
                 else if (expression.Contains(".<")) expression = expression.Replace(".<", "<");
-                // for example: ~/pattern/.<complete>
+                // for example: /pattern/.<complete>
                 else if (expression.StartsWithOrdinal("#RegExp")) expression = expression.Substring(1);
                 else if (context.SubExpressions != null && context.SubExpressions.Count > 0)
                 {
