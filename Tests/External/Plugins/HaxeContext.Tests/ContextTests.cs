@@ -217,13 +217,34 @@ namespace HaXeContext
                     .Returns(new ClassModel {Name = "Map<K, V>", Type = "Map<K, V>", InFile = FileModel.Ignore})
                     .SetName("[1 => 1]");
                 yield return new TestCaseData("(v:String)", "3.4.0")
-                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore})
+                    .SetName("(v:String). Haxe 3.4.0");
                 yield return new TestCaseData("(v:String)", "3.0.0")
-                    .Returns(ClassModel.VoidClass);
+                    .Returns(ClassModel.VoidClass)
+                    .SetName("(v:String). Haxe 3.0.0");
                 yield return new TestCaseData("new Sprite().addChild(new Sprite())", "3.0.0")
                     .Returns(ClassModel.VoidClass);
                 yield return new TestCaseData("new String('1')", "3.0.0")
-                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore})
+                    .SetName("new String('1')");
+                yield return new TestCaseData("(v is String)", "3.4.0")
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
+                    .SetName("(v is String)");
+                yield return new TestCaseData("(['is'] is Array)", "3.4.0")
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
+                    .SetName("(['is'] is Array)");
+                yield return new TestCaseData("(' is string' is String)", "3.4.0")
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
+                    .SetName("(' is string' is String)");
+                yield return new TestCaseData("({x:Int, y:Int} is Point)", "3.4.0")
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
+                    .SetName("({x:Int, y:Int} is Point)");
+                yield return new TestCaseData("('   is  ' is Array)", "3.4.0")
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
+                    .SetName("('   is  ' is Array)");
+                yield return new TestCaseData("('   is  '   is  Array)", "3.4.0")
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
+                    .SetName("('   is  '   is  Array)");
             }
         }
 

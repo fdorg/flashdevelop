@@ -895,6 +895,9 @@ namespace AS3Context
             return base.ResolveType(cname, inFile);
         }
 
+        static readonly Regex re_asExpr = new Regex(@"\((?<lv>.+)\s(?<op>as)\s+(?<rv>\w+)\)");
+        static readonly Regex re_isExpr = new Regex(@"\((?<lv>.+)\s(?<op>is)\s+(?<rv>\w+)\)");
+
         public override ClassModel ResolveToken(string token, FileModel inFile)
         {
             var tokenLength = token != null ? token.Length : 0;
@@ -903,6 +906,12 @@ namespace AS3Context
                 if (token.StartsWithOrdinal("0x")) return ResolveType("uint", inFile);
                 var first = token[0];
                 if (first == '<' && tokenLength >= 3 && token[tokenLength - 2] == '/' && token[tokenLength - 1] == '>') return ResolveType("XML", inFile);
+                if (first == '(' && token[token.Length - 1] == ')')
+                {
+                    if (re_isExpr.IsMatch(token)) return ResolveType(features.booleanKey, inFile);
+                    var m = re_asExpr.Match(token);
+                    if (m.Success) return ResolveType(m.Groups["rv"].Value.Trim(), inFile);
+                }
                 if (char.IsLetter(first))
                 {
                     var index = token.IndexOfOrdinal(" ");

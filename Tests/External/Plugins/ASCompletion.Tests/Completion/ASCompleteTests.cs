@@ -838,6 +838,14 @@ namespace ASCompletion.Completion
                         .Returns(ReadAllText("AfterOnCharIssue2076_22"))
                         .SetName("String.fromCharCode.| ")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_23", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_23"))
+                        .SetName("super.| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_24", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_24"))
+                        .SetName("[super.| ]")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
                 }
             }
 

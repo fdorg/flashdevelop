@@ -9,9 +9,6 @@ namespace AS3Context.Completion
 {
     class CodeComplete : ASComplete
     {
-        static readonly Regex re_asExpr = new Regex(@"\((?<lv>.+)\s(?<op>as)\s+(?<rv>\w+)\)");
-        static readonly Regex re_isExpr = new Regex(@"\((?<lv>.+)\s(?<op>is)\s+(?<rv>\w+)\)");
-
         protected override ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility)
         {
             if (expression != null)
@@ -65,11 +62,8 @@ namespace AS3Context.Completion
                     // for example: (v as T).<complete>, (v is Complete).<complete>, ...
                     if (expr.Length >= 8 /*"(v as T)".Length*/ && expr[0] == '(')
                     {
-                        ClassModel type = null;
-                        var m = re_asExpr.Match(expr);
-                        if (m.Success) type = ctx.ResolveType(m.Groups["rv"].Value.Trim(), inFile);
-                        if (type == null && re_isExpr.IsMatch(expr)) type = ctx.ResolveType(features.booleanKey, inFile);
-                        if (type != null)
+                        var type = ctx.ResolveToken(expr, inFile);
+                        if (!type.IsVoid())
                         {
                             expression = type.Name + ".#" + expression.Substring(("#" + (context.SubExpressions.Count - 1) + "~").Length);
                             context.SubExpressions.RemoveAt(context.SubExpressions.Count - 1);

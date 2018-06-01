@@ -1084,6 +1084,10 @@
     <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_21.as" />
     <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_22.as" />
     <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_22.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_23.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_23.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2076_24.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\BeforeOnCharIssue2076_24.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
