@@ -2607,8 +2607,7 @@ namespace ASCompletion.Completion
             var ctx = ASContext.Context;
             var features = ctx.Features;
             ClassModel type;
-            if (char.IsPunctuation(expression[0])
-                || ((context.SubExpressions == null || context.SubExpressions.Count == 1) && expression.Count(c => c == '.') < 2))
+            if ((context.SubExpressions == null || context.SubExpressions.Count == 1) && expression.Count(c => c == '.') < 2)
             {
                 var value = expression.TrimEnd('.');
                 if (context.SubExpressions?.Count == 1) value = value.Replace(char.IsLetter(value[0]) ? ".#0~" : "#0~", context.SubExpressions.First());
@@ -2650,12 +2649,7 @@ namespace ASCompletion.Completion
                     Regex re_dot = new Regex("[\\s]*" + Regex.Escape(features.dot) + "[\\s]*");
                     subExpr = re_dot.Replace(re_whiteSpace.Replace(m.Value, " "), features.dot).Trim();
                     int space = subExpr.LastIndexOf(' ');
-                    if (space > 0)
-                    {
-                        string trash = subExpr.Substring(0, space).TrimEnd();
-                        subExpr = subExpr.Substring(space + 1);
-                        if (trash.EndsWithOrdinal("as")) subExpr += features.dot + "#";
-                    }
+                    if (space > 0) subExpr = subExpr.Substring(space + 1);
                     // eval sub expression
                     head = EvalExpression(subExpr, subContext, inFile, inClass, true, false);
                     if (head.Member != null)
@@ -3461,7 +3455,7 @@ namespace ASCompletion.Completion
             while (position > minPos)
             {
                 position--;
-                if (context.CodeComplete.IsRegexStyle(sci, position))
+                if (arrCount == 0 && braCount == 0 && parCount == 0 && context.CodeComplete.IsRegexStyle(sci, position))
                 {
                     inRegex = true;
                     positionExpression = position;
@@ -3473,14 +3467,10 @@ namespace ASCompletion.Completion
                     // end of regex literal
                     if (inRegex)
                     {
-                        inRegex = false;
-                        if (arrCount == 0 && braCount == 0 && parCount == 0)
-                        {
-                            if (expression.SubExpressions == null) expression.SubExpressions = new List<string>();
-                            expression.SubExpressions.Add("");
-                            sb.Insert(0, "#RegExp.#" + (subCount++) + "~");
-                            break;
-                        }
+                        if (expression.SubExpressions == null) expression.SubExpressions = new List<string>();
+                        expression.SubExpressions.Add("");
+                        sb.Insert(0, "#RegExp.#" + (subCount++) + "~");
+                        break;
                     }
                     var c2 = c;
                     c = (char)sci.CharAt(position);
