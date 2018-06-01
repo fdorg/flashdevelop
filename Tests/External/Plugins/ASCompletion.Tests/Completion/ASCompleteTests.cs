@@ -751,7 +751,7 @@ namespace ASCompletion.Completion
                 {
                     yield return new TestCaseData("BeforeOnCharIssue2076_1", ' ', false)
                         .Returns(ReadAllText("AfterOnCharIssue2076_1"))
-                        .SetName("Issue2076. Case 1. var v:Sprite = new | ")
+                        .SetName("var v:Sprite = new | ")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
                     yield return new TestCaseData("BeforeOnCharIssue2076_2", ' ', false)
                         .Returns(ReadAllText("AfterOnCharIssue2076_2"))
@@ -830,6 +830,14 @@ namespace ASCompletion.Completion
                         .SetName("typeof String.| ")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076")
                         .Ignore("");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_21", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_21"))
+                        .SetName("String.fromCharCode(0).| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_22", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_22"))
+                        .SetName("String.fromCharCode.| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
                 }
             }
 
