@@ -49,13 +49,6 @@ namespace AS3Context.Completion
                         if (context.SubExpressions.Count == 1) context.SubExpressions = null;
                     }
                 }
-                // for example: typeof [].<complete>
-                else if (expression.StartsWithOrdinal("typeof.["))
-                {
-                    expression = expression.Substring(7);
-                    context.WordBefore = "typeof";
-                    context.WordBeforePosition = context.PositionExpression;
-                }
                 // for example: new <T>[].<complete>
                 else if (expression.Contains(">.[")) expression = expression.Replace(">.[", ">[");
                 // transform Vector.<T> to Vector<T>

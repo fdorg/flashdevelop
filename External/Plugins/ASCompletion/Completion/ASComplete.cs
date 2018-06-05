@@ -3500,8 +3500,17 @@ namespace ASCompletion.Completion
                             {
                                 sbSub.Insert(0, c);
                                 expression.SubExpressions.Add(sbSub.ToString());
-                                sb.Insert(0, ".#" + (subCount++) + "~");
                                 sbSub.Clear();
+                                sb.Insert(0, ".#" + (subCount++) + "~");
+                                var pos = position - 1;
+                                var word = GetWordLeft(sci, ref pos);
+                                if (context.Features.codeKeywords.Contains(word))
+                                {
+                                    expression.Separator = ";";
+                                    expression.WordBefore = word;
+                                    expression.WordBeforePosition = pos + 1;
+                                    break;
+                                }
                             }
                             continue;
                         }

@@ -389,50 +389,56 @@ namespace ASCompletion.Completion
                 get
                 {
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer"))
-                        .Returns(new ClassModel {Name = "Array", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "Array", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("[].");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_2"))
-                        .Returns(new ClassModel {Name = "Object", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "Object", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("[].concat([])[0].");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_3"))
-                        .Returns(new ClassModel {Name = "uint", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "uint", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("[].length.");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_objectInitializer"))
-                        .Returns(new ClassModel {Name = "Object", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "Object", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("{}.");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_SafeCast_1"))
-                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("String(v).");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_SafeCast_2"))
-                        .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("String(v).charAt.");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_SafeCast_3"))
-                        .Returns(new ClassModel {Name = "Array", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "Array", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("String(v).split().");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_SafeCast_3"))
-                        .Returns(new ClassModel {Name = "Array", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "Array", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("String(v).split().length.");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typeof_1"))
-                        .Returns(new ClassModel {Name = "Boolean", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "Boolean", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("typeof Boolean(v).");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typeof_2"))
-                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("typeof Boolean(v).toString().length.");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typeof_3"))
-                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("typeof v.");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typeof_4"))
-                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("typeof v.length.");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typeof_5"))
-                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("typeof new Vector.<int>(10, true).length.");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typeof_6"))
-                        .Returns(new ClassModel {Name = "uint", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "uint", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("typeof [].length.");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typeof_7"))
-                        .Returns(new ClassModel {Name = "Array", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .Returns(new ClassModel {Name = "Array", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("typeof [].");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_return_1"))
+                        .Returns(new ClassModel {Name = "Array", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("return [].");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_return_2"))
+                        .Returns(new ClassModel {Name = "uint", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("return [].length.");
                 }
             }
 
