@@ -1520,11 +1520,10 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1908_unsafecast"))
                                 .SetName("Issue 1908. Unsafe cast")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1908_untyped"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1908_untyped"))
-                                .SetName("Issue 1908. untyped")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1908_untyped"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1908_untyped"))
+                            .SetName("Issue 1908. untyped")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
                         yield return new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1880_1"), GeneratorJobType.AssignStatementToVar, true)
                             .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1880_1"))
                             .SetName("~/regex/|")

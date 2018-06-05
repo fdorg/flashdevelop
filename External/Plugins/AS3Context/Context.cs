@@ -136,7 +136,7 @@ namespace AS3Context
             features.IncrementDecrementOperators = new[] {"++", "--"};
             features.BitwiseOperators = new[] {"~", "&", "|", "^", "<<", ">>", ">>>"};
             features.BooleanOperators = new[] {"<", ">", "&&", "||", "!=", "==", "!==", "==="};
-            features.OtherOperators = new HashSet<string> {"delete", "typeof", "new"};
+            features.OtherOperators = new HashSet<string> {"new"};
             /* INITIALIZATION */
 
             settings = initSettings;
