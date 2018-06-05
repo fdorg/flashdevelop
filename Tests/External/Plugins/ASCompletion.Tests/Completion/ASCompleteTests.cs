@@ -266,6 +266,15 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_as_6"))
                         .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
                         .SetName("('s' as String).split.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_as_7"))
+                        .Returns(new ClassModel {Name = "Array", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("for each(var it:* in (a as Array).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_as_8"))
+                        .Returns(new ClassModel {Name = "Array", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("for each(var it:* in (a as Array).concat([1]).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_as_9"))
+                        .Returns(new ClassModel {Name = "Array", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore})
+                        .SetName("for each(var it:* in [1,2,3,4].");
                 }
             }
 
@@ -1094,6 +1103,13 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_is_5"))
                         .Returns(new ClassModel {Name = "Bool", Flags = FlagType.Class})
                         .SetName("( 's' is String ).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_is_6"))
+                        .Returns(new ClassModel {Name = "Bool", Flags = FlagType.Class})
+                        .SetName("switch ( 's' is String ).")
+                        .Ignore("");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_is_7"))
+                        .Returns(new ClassModel {Name = "Bool", Flags = FlagType.Class})
+                        .SetName("return ( 's' is String ).");
                 }
             }
 
@@ -1129,6 +1145,12 @@ namespace ASCompletion.Completion
                         .Returns(new ClassModel {Name = "T", Flags = FlagType.Class})
                         .SetName("[].concat([])[0].")
                         .Ignore("");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_10"))
+                        .Returns(new ClassModel {Name = "Array<T>", Flags = FlagType.Class})
+                        .SetName("return [].");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_11"))
+                        .Returns(new ClassModel {Name = "Array<T>", Flags = FlagType.Class})
+                        .SetName("switch [].");
                 }
             }
 
