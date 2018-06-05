@@ -1044,6 +1044,15 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_cast_10"))
                         .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class})
                         .SetName("cast('s', String).charAt.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_cast_11"))
+                        .Returns(new ClassModel {Name = "Array<T>", Flags = FlagType.Class})
+                        .SetName("cast [].");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_cast_12"))
+                        .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class})
+                        .SetName("cast [].concat.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_cast_13"))
+                        .Returns(new ClassModel {Name = "Int", Flags = FlagType.Class})
+                        .SetName("cast [].concat([1]).length.");
                 }
             }
 
