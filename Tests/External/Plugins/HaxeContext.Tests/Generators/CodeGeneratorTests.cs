@@ -500,6 +500,22 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> AssignStatementToVarTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeAssignStatementToVar_unsafe_cast_1", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_unsafe_cast_1"))
+                    .SetName("cast v|");
+                yield return new TestCaseData("BeforeAssignStatementToVar_unsafe_cast_2", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_unsafe_cast_2"))
+                    .SetName("cast v.length|");
+                yield return new TestCaseData("BeforeAssignStatementToVar_unsafe_cast_3", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_unsafe_cast_3"))
+                    .SetName("cast []|");
+            }
+        }
+
         static IEnumerable<TestCaseData> AddToInterfaceTestCases
         {
             get
@@ -572,6 +588,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(AssignStatementToVarIssue1764TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue2117TestCases)),
             TestCaseSource(nameof(AssignStatementToVarInferParameterVarTestCases)),
+            TestCaseSource(nameof(AssignStatementToVarTestCases)),
             //TestCaseSource(nameof(AssignStatementToVarIssue220TestCases)),
             TestCaseSource(nameof(AddToInterfaceTestCases)),
             TestCaseSource(nameof(GenerateFunctionTestCases)),

@@ -427,6 +427,12 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typeof_5"))
                         .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
                         .SetName("typeof new Vector.<int>(10, true).length.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typeof_6"))
+                        .Returns(new ClassModel {Name = "uint", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("typeof [].length.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typeof_7"))
+                        .Returns(new ClassModel {Name = "Array", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("typeof [].");
                 }
             }
 

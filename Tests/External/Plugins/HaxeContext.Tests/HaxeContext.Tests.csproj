@@ -339,6 +339,7 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2086_4.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2086_5.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2086_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_unsafe_cast_1.hx" />
     <EmbeddedResource Include="Test Files\generators\documentation\BeforeGenerateDocumentation_methodDetails_7.hx" />
     <EmbeddedResource Include="Test Files\generators\documentation\AfterGenerateDocumentation_methodDetails_7.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_inferParameterVar_1.hx" />
@@ -373,6 +374,11 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2117_5.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2117__1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2117__1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_unsafe_cast_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_unsafe_cast_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_unsafe_cast_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_unsafe_cast_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_unsafe_cast_3.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

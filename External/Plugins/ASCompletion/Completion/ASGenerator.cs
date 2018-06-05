@@ -3261,7 +3261,7 @@ namespace ASCompletion.Completion
             return new StatementReturnType(resolve, pos, word);
         }
 
-        private static string GuessVarName(string name, string type)
+        protected static string GuessVarName(string name, string type)
         {
             if (string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(type))
             {

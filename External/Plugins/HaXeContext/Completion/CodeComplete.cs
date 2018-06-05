@@ -357,6 +357,13 @@ namespace HaXeContext.Completion
                         if (context.SubExpressions.Count == 1) context.SubExpressions = null;
                     }
                 }
+                // for example: cast [].<complete>
+                else if (expression.StartsWithOrdinal("cast.["))
+                {
+                    expression = expression.Substring(5);
+                    context.WordBefore = "cast";
+                    context.WordBeforePosition = context.PositionExpression;
+                }
                 // for example: ~/pattern/.<complete>
                 else if (expression.StartsWithOrdinal("#RegExp")) expression = expression.Replace("#RegExp", "EReg");
                 else if (context.SubExpressions != null && context.SubExpressions.Count > 0)

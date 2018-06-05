@@ -1095,6 +1095,8 @@
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_typeof_5.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_arrayInitializer_2.as" />
     <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_arrayInitializer_3.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_typeof_6.as" />
+    <EmbeddedResource Include="Test Files\completion\as3\GetExpressionType_Type_typeof_7.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

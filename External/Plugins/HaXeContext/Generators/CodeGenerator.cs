@@ -47,5 +47,22 @@ namespace HaXeContext.Generators
                 && !flags.HasFlag(FlagType.TypeDef)
                 && base.HandleOverrideCompletion(autoHide);
         }
+
+        protected override bool AssignStatementToVar(ScintillaControl sci, ClassModel inClass, ASExpr expr)
+        {
+            var ctx = inClass.InFile.Context;
+            ClassModel type = null;
+            if (expr.WordBefore == "cast") type = ctx.ResolveType(ctx.Features.dynamicKey, inClass.InFile);
+            if (type == null) return false;
+            var varName = GuessVarName(type.Name, type.Type);
+            varName = AvoidKeyword(varName);
+            var template = TemplateUtils.GetTemplate("AssignVariable");
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Name", varName);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Type", type.Name);
+            var pos = expr.WordBeforePosition;
+            sci.SetSel(pos, pos);
+            InsertCode(pos, template, sci);
+            return true;
+        }
     }
 }
