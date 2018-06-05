@@ -66,6 +66,7 @@ namespace AS3Context.Completion
                         {
                             expression = type.Name + ".#" + expression.Substring(("#" + (context.SubExpressions.Count - 1) + "~").Length);
                             context.SubExpressions.RemoveAt(context.SubExpressions.Count - 1);
+                            if (context.SubExpressions.Count == 0) context.SubExpressions = null;
                         }
                     }
                 }

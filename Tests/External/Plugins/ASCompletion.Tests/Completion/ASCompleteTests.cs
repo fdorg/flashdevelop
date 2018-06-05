@@ -391,6 +391,12 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer"))
                         .Returns(new ClassModel {Name = "Array", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
                         .SetName("[].");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_2"))
+                        .Returns(new ClassModel {Name = "Object", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("[].concat([])[0].");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_3"))
+                        .Returns(new ClassModel {Name = "uint", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("[].length.");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_objectInitializer"))
                         .Returns(new ClassModel {Name = "Object", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
                         .SetName("{}.");
@@ -406,6 +412,21 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_SafeCast_3"))
                         .Returns(new ClassModel {Name = "Array", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
                         .SetName("String(v).split().length.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typeof_1"))
+                        .Returns(new ClassModel {Name = "Boolean", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("typeof Boolean(v).");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typeof_2"))
+                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("typeof Boolean(v).toString().length.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typeof_3"))
+                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("typeof v.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typeof_4"))
+                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("typeof v.length.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_typeof_5"))
+                        .Returns(new ClassModel {Name = "int", Flags = FlagType.Class, Access = Visibility.Public, InFile = FileModel.Ignore })
+                        .SetName("typeof new Vector.<int>(10, true).length.");
                 }
             }
 
@@ -828,8 +849,7 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("BeforeOnCharIssue2076_20", '.', false)
                         .Returns(ReadAllText("AfterOnCharIssue2076_20"))
                         .SetName("typeof String.| ")
-                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076")
-                        .Ignore("");
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
                     yield return new TestCaseData("BeforeOnCharIssue2076_21", '.', false)
                         .Returns(ReadAllText("AfterOnCharIssue2076_21"))
                         .SetName("String.fromCharCode(0).| ")

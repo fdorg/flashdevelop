@@ -886,7 +886,7 @@ namespace AS3Context
                         cname = "Vector." + cname;
                     }
                     // transform Vector<T> to Vector.<T>
-                    if (cname.Contains("r<")) cname = cname.Replace("r<", "r.<");
+                    if (cname.Contains("Vector<")) cname = cname.Replace("Vector<", "Vector.<");
                     var genType = re_genericType.Match(cname);
                     if (genType.Success) return ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile);
                     return ClassModel.VoidClass;
@@ -918,8 +918,6 @@ namespace AS3Context
                     if (index != -1)
                     {
                         var word = token.Substring(0, index);
-                        if (word == "delete") return ResolveType(features.booleanKey, inFile);
-                        if (word == "typeof") return ResolveType(features.stringKey, inFile);
                         if (word == "new")
                         {
                             var dot = ' ';

@@ -2609,7 +2609,7 @@ namespace ASCompletion.Completion
             ClassModel type;
             if ((context.SubExpressions == null || context.SubExpressions.Count == 1) && expression.Count(c => c == '.') < 2)
             {
-                var value = expression.TrimEnd('.');
+                var value = expression;
                 if (context.SubExpressions?.Count == 1) value = value.Replace(char.IsLetter(value[0]) ? ".#0~" : "#0~", context.SubExpressions.First());
                 if (!string.IsNullOrEmpty(context.WordBefore) && features.OtherOperators.Contains(context.WordBefore))
                     value = context.WordBefore + " " + value;
