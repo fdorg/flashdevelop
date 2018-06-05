@@ -364,6 +364,13 @@ namespace HaXeContext.Completion
                     context.WordBefore = "cast";
                     context.WordBeforePosition = context.PositionExpression;
                 }
+                // for example: untyped [].<complete>
+                else if (expression.StartsWithOrdinal("untyped.["))
+                {
+                    expression = expression.Substring(8);
+                    context.WordBefore = "untyped";
+                    context.WordBeforePosition = context.PositionExpression;
+                }
                 // for example: ~/pattern/.<complete>
                 else if (expression.StartsWithOrdinal("#RegExp")) expression = expression.Replace("#RegExp", "EReg");
                 else if (context.SubExpressions != null && context.SubExpressions.Count > 0)

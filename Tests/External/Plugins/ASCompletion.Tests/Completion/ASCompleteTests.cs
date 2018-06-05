@@ -1010,6 +1010,19 @@ namespace ASCompletion.Completion
                 return expr.Member;
             }
 
+            static IEnumerable<TestCaseData> GetExpressionType_untyped_TypeTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_untyped_1"))
+                        .Returns(new ClassModel {Name = "String", Flags = FlagType.Class})
+                        .SetName("untyped 's'.");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_untyped_2"))
+                        .Returns(new ClassModel {Name = "Array<T>", Flags = FlagType.Class})
+                        .SetName("untyped [].");
+                }
+            }
+
             static IEnumerable<TestCaseData> GetExpressionType_cast_TypeTestCases
             {
                 get
@@ -1178,6 +1191,7 @@ namespace ASCompletion.Completion
 
             [
                 Test, 
+                TestCaseSource(nameof(GetExpressionType_untyped_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_cast_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_is_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_ArrayInitializer_TypeTestCases)),
