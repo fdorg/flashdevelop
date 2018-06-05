@@ -3504,6 +3504,7 @@ namespace ASCompletion.Completion
                                 sb.Insert(0, ".#" + (subCount++) + "~");
                                 var pos = position - 1;
                                 var word = GetWordLeft(sci, ref pos);
+                                // for example: return [].<complete>
                                 if (context.Features.codeKeywords.Contains(word))
                                 {
                                     expression.Separator = ";";
@@ -3566,14 +3567,14 @@ namespace ASCompletion.Completion
                             expression.SubExpressions.Add(sbSub.ToString());
                             sbSub.Clear();
                             sb.Insert(0, ".#" + (subCount++) + "~"); // method call or sub expression
-                            var testPos = position - 1;
-                            var testWord = GetWordLeft(sci, ref testPos);
-                            if (testWord == "return" || testWord == "case" || testWord == "default")
+                            var pos = position - 1;
+                            var word = GetWordLeft(sci, ref pos);
+                            // AS3, AS2, Loom ex: return (a as B).<complete>
+                            if (context.Features.codeKeywords.Contains(word))
                             {
-                                // AS3, AS2, Loom ex: return (a as B).<complete>
                                 expression.Separator = ";";
-                                expression.WordBefore = testWord;
-                                expression.WordBeforePosition = testPos + 1;
+                                expression.WordBefore = word;
+                                expression.WordBeforePosition = pos + 1;
                                 break;
                             }
                             continue;

@@ -1104,6 +1104,22 @@ namespace HaXeContext
                         return ResolveType(sb.ToString(), inFile);
                     }
                 }
+                if (token.StartsWithOrdinal("cast("))
+                {
+                    var groupCount = 0;
+                    var length = token.Length - 2;
+                    var sb = new StringBuilder(length);
+                    for (var i = length; i >= 1; i--)
+                    {
+                        var c = token[i];
+                        if (c <= ' ') continue;
+                        if (c == '}' || c == ')') groupCount++;
+                        else if (c == '{' || c == '(') groupCount--;
+                        else if (c == ',' && groupCount == 0) break;
+                        sb.Insert(0, c);
+                    }
+                    return ResolveType(sb.ToString(), inFile);
+                }
                 var index = token.IndexOfOrdinal(" ");
                 if (index != -1)
                 {

@@ -342,8 +342,8 @@ namespace HaXeContext.Completion
                         expression = expression.Replace(".#" + i + "~", "." + subExpression);
                     }
                 }
-                var firstChar = expression[0];
-                if (firstChar == '\'' || firstChar == '"')
+                var c = expression[0];
+                if (c == '\'' || c == '"')
                 {
                     var type = ctx.ResolveType(features.stringKey, inFile);
                     // for example: ""|, ''|
@@ -351,7 +351,7 @@ namespace HaXeContext.Completion
                     // for example: "".<complete>, ''.<complete>
                     else
                     {
-                        var pattern = firstChar + ".#" + (context.SubExpressions.Count - 1) + "~";
+                        var pattern = c + ".#" + (context.SubExpressions.Count - 1) + "~";
                         var startIndex = expression.IndexOfOrdinal(pattern) + pattern.Length;
                         expression = type.Name + ".#" + expression.Substring(startIndex);
                         if (context.SubExpressions.Count == 1) context.SubExpressions = null;
@@ -362,34 +362,14 @@ namespace HaXeContext.Completion
                 else if (context.SubExpressions != null && context.SubExpressions.Count > 0)
                 {
                     var lastIndex = context.SubExpressions.Count - 1;
-                    var expr = context.SubExpressions[lastIndex];
-                    // for example: cast(v, T).<complete>
-                    if (expression.StartsWithOrdinal("cast.#"))
+                    var pattern = "#" + lastIndex + "~";
+                    // for example: cast(v, T).<complete>, (v is T).<complete>, (v:T).<complete>, ...
+                    if (expression.StartsWithOrdinal(pattern))
                     {
-                        var groupCount = 0;
-                        var length = expr.Length - 2;
-                        var sb = new StringBuilder(length);
-                        for (var i = length; i >= 1; i--)
-                        {
-                            var c = expr[i];
-                            if (c <= ' ') continue;
-                            if (c == '}' || c == ')') groupCount++;
-                            else if (c == '{' || c == '(') groupCount--;
-                            else if (c == ',' && groupCount == 0) break;
-                            sb.Insert(0, c);
-                        }
-                        var type = ctx.ResolveType(sb.ToString(), inFile);
-                        expression = type.Name + ".#" + expression.Substring(("cast.#" + lastIndex + "~").Length);
-                    }
-                    else
-                    {
-                        var pattern = "#" + lastIndex + "~";
-                        // for example: (v is T).<complete>, (v:T).<complete>, ...
-                        if (expression.StartsWithOrdinal(pattern))
-                        {
-                            var type = ctx.ResolveToken(expr, inFile);
-                            if (!type.IsVoid()) expression = type.Name + ".#" + expression.Substring(pattern.Length);
-                        }
+                        var expr = context.SubExpressions[lastIndex];
+                        if (context.WordBefore == "cast") expr = "cast" + expr;
+                        var type = ctx.ResolveToken(expr, inFile);
+                        if (!type.IsVoid()) expression = type.Name + ".#" + expression.Substring(pattern.Length);
                     }
                 }
             }

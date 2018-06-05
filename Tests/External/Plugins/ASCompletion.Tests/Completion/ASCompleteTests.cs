@@ -1105,8 +1105,7 @@ namespace ASCompletion.Completion
                         .SetName("( 's' is String ).");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_is_6"))
                         .Returns(new ClassModel {Name = "Bool", Flags = FlagType.Class})
-                        .SetName("switch ( 's' is String ).")
-                        .Ignore("");
+                        .SetName("switch ( 's' is String ).");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_is_7"))
                         .Returns(new ClassModel {Name = "Bool", Flags = FlagType.Class})
                         .SetName("return ( 's' is String ).");
@@ -1414,13 +1413,12 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData("function foo(1 >>> 3).$(EntryPoint)")
                         .Returns("function foo(1 >>> 3).")
                         .SetName("function foo(1 >>> 3).|");
-
                     yield return new TestCaseData("cast(v, String).charAt(0).charAt(1).charAt(2).charAt(3).charAt(4).charAt(5).charAt(6).charAt(7).charAt(8).charAt(9).charAt(10).charAt(11).$(EntryPoint)")
-                        .Returns(" cast(v, String).charAt(0).charAt(1).charAt(2).charAt(3).charAt(4).charAt(5).charAt(6).charAt(7).charAt(8).charAt(9).charAt(10).charAt(11).")
+                        .Returns("cast;(v, String).charAt(0).charAt(1).charAt(2).charAt(3).charAt(4).charAt(5).charAt(6).charAt(7).charAt(8).charAt(9).charAt(10).charAt(11).")
                         .SetName("cast(v, String).charAt(0).charAt(1).charAt(2).charAt(3).charAt(4).charAt(5).charAt(6).charAt(7).charAt(8).charAt(9).charAt(10).charAt(11).|")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2108");
                     yield return new TestCaseData("cast(v, String).charAt.$(EntryPoint)")
-                        .Returns(" cast(v, String).charAt.")
+                        .Returns("cast;(v, String).charAt.")
                         .SetName("cast(v, String).charAt.|")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2108");
                 }
