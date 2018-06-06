@@ -1145,15 +1145,17 @@ namespace ASCompletion.Completion
                         .Returns(new ClassModel {Name = "Int", Flags = FlagType.Class})
                         .SetName("[].concat([]).length.");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_9"))
-                        .Returns(new ClassModel {Name = "T", Flags = FlagType.Class})
-                        .SetName("[].concat([])[0].")
-                        .Ignore("");
+                        .Returns(new ClassModel {Name = "Int", Flags = FlagType.Class})
+                        .SetName("[].concat([])[0].");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_10"))
                         .Returns(new ClassModel {Name = "Array<T>", Flags = FlagType.Class})
                         .SetName("return [].");
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_11"))
                         .Returns(new ClassModel {Name = "Array<T>", Flags = FlagType.Class})
                         .SetName("switch [].");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_12"))
+                        .Returns(new ClassModel {Name = "Array<T>", Flags = FlagType.Class})
+                        .SetName("for(it in [].");
                 }
             }
 

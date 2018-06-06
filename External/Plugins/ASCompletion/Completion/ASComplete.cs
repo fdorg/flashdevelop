@@ -2694,7 +2694,6 @@ namespace ASCompletion.Completion
             IASContext ctx = ASContext.Context;
             ContextFeatures features = ctx.Features;
             ASResult step = head;
-            ClassModel resultClass = head.Type;
             // look for static or dynamic members?
             FlagType mask = head.IsStatic ? FlagType.Static : FlagType.Dynamic;
             // members visibility
@@ -2703,15 +2702,14 @@ namespace ASCompletion.Completion
             Visibility acc = ctx.TypesAffinity(curClass, step.Type);
 
             // explore
-            bool inE4X = false;
-            string token = tokens[0];
-            string path = token;
-            step.Path = token;
+            var inE4X = false;
+            var path = tokens[0];
+            step.Path = path;
             step.Context = context;
 
             for (int i = 1; i < n; i++)
             {
-                token = tokens[i];
+                var token = tokens[i];
                 path += features.dot + token;
                 step.Path = path;
 
@@ -2721,12 +2719,12 @@ namespace ASCompletion.Completion
                     if (i == n - 1)
                         return step;
                     // this means 2 dots in the expression: consider as E4X expression
-                    if (ctx.Features.hasE4X && IsXmlType(step.Type) && i < n - 1)
+                    if (features.hasE4X && IsXmlType(step.Type) && i < n - 1)
                     {
                         inE4X = true;
                         step = new ASResult();
                         step.Member = new MemberModel(token, "XMLList", FlagType.Variable | FlagType.Dynamic | FlagType.AutomaticVar, Visibility.Public);
-                        step.Type = ctx.ResolveType(ctx.Features.objectKey, null);
+                        step.Type = ctx.ResolveType(features.objectKey, null);
                         acc = Visibility.Public;
                     }
                     else return null;
@@ -2739,7 +2737,7 @@ namespace ASCompletion.Completion
                 }
                 else if (step.Type != null && !step.Type.IsVoid())
                 {
-                    resultClass = step.Type;
+                    var resultClass = step.Type;
                     // handle typed indexes automatic typing
                     if (token[0] == '#' && step.InClass != null && step.Member != null
                         && step.InClass.IndexType == step.Member.Type)
