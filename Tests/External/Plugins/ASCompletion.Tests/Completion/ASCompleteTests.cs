@@ -552,7 +552,7 @@ namespace ASCompletion.Completion
                         .Returns("new Vector.<Vector.<String>>")
                         .SetName("From new Vector.<Vector.<String>>|");
                     yield return new TestCaseData(ReadAllText("GetExpressionOfRegex"))
-                        .Returns(" #RegExp")
+                        .Returns(";#RegExp")
                         .SetName("From /regex/g|")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/1880");
                     yield return new TestCaseData(ReadAllText("GetExpressionOfDigit"))

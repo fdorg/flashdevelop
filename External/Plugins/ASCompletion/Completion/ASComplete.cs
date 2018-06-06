@@ -3459,6 +3459,7 @@ namespace ASCompletion.Completion
                         if (expression.SubExpressions == null) expression.SubExpressions = new List<string>();
                         expression.SubExpressions.Add("");
                         sb.Insert(0, "#RegExp.#" + (subCount++) + "~");
+                        expression.Separator = ";";
                         break;
                     }
                     var c2 = c;
@@ -3889,6 +3890,13 @@ namespace ASCompletion.Completion
                     }
                 }
             }
+            
+            var value = sb.ToString().TrimStart('.');
+            if (features.hasE4X && value.Length >= 2 && value[0] == '<' && value[value.Length - 1]  == '>')
+            {
+                expression.Separator = ";";
+                value = "</>";
+            }
 
             // check if there is a particular keyword
             if (expression.Separator == " " && position > 0)
@@ -3904,13 +3912,6 @@ namespace ASCompletion.Completion
                     expression.Separator = @operator;
                     expression.SeparatorPosition = position + 1;
                 }
-            }
-
-            var value = sb.ToString().TrimStart('.');
-            if (features.hasE4X && value.Length >= 2 && value[0] == '<' && value[value.Length - 1]  == '>')
-            {
-                expression.Separator = ";";
-                value = "</>";
             }
 
             expression.Value = value;

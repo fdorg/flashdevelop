@@ -111,7 +111,6 @@ namespace ASCompletion.Completion
         public string[] IncrementDecrementOperators = {};
         public string[] BitwiseOperators = { };
         public string[] BooleanOperators = { };
-        public HashSet<string> OtherOperators = new HashSet<string>();
 
         /// <summary>
         /// Tells if a word is a keyword which precedes a type (like 'new')
