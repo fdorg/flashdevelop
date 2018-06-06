@@ -219,6 +219,12 @@ namespace HaXeContext
                 yield return new TestCaseData("(v:String)", "3.4.0")
                     .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore})
                     .SetName("(v:String). Haxe 3.4.0");
+                yield return new TestCaseData("(v:Map<Dynamic, Dynamic>)", "3.4.0")
+                    .Returns(new ClassModel {Name = "Map<Dynamic,Dynamic>", Type = "Map<Dynamic,Dynamic>", InFile = FileModel.Ignore})
+                    .SetName("(v:Map<Dynamic, Dynamic>). Haxe 3.4.0");
+                yield return new TestCaseData("(v:Map<Dynamic, {x:Int}>)", "3.4.0")
+                    .Returns(new ClassModel {Name = "Map<Dynamic,{x:Int}>", Type = "Map<Dynamic,{x:Int}>", InFile = FileModel.Ignore})
+                    .SetName("(v:Map<Dynamic, {x:Int}>). Haxe 3.4.0");
                 yield return new TestCaseData("(v:String)", "3.0.0")
                     .Returns(ClassModel.VoidClass)
                     .SetName("(v:String). Haxe 3.0.0");
@@ -245,6 +251,15 @@ namespace HaXeContext
                 yield return new TestCaseData("('   is  '   is  Array)", "3.4.0")
                     .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
                     .SetName("('   is  '   is  Array)");
+                yield return new TestCaseData("cast('s', String)", "3.4.0")
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore})
+                    .SetName("cast('s', String)");
+                yield return new TestCaseData("cast(v, Array<Dynamic>)", "3.4.0")
+                    .Returns(new ClassModel {Name = "Array<Dynamic>", Type = "Array<Dynamic>", InFile = FileModel.Ignore})
+                    .SetName("cast(v, Array<Dynamic>)");
+                yield return new TestCaseData("cast(v, Map<Dynamic, Dynamic>)", "3.4.0")
+                    .Returns(new ClassModel {Name = "Map<Dynamic,Dynamic>", Type = "Map<Dynamic,Dynamic>", InFile = FileModel.Ignore})
+                    .SetName("cast(v, Map<Dynamic, Dynamic>)");
             }
         }
 
