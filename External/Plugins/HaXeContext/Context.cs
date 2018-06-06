@@ -141,8 +141,8 @@ namespace HaXeContext
                 "null", "untyped", "true", "false", "try", "catch", "throw", "trace", "macro"
             };
             features.declKeywords = new[] {features.varKey, features.functionKey};
-            features.accessKeywords = new[] { "extern", "inline", "dynamic", "macro", "override", "public", "private", "static" };
-            features.typesKeywords = new[] { "import", "using", "class", "interface", "typedef", "enum", "abstract" };
+            features.accessKeywords = new[] {features.intrinsicKey, features.inlineKey, features.dynamicKey, "macro", features.overrideKey, features.publicKey, features.privateKey, features.staticKey};
+            features.typesKeywords = new[] {features.importKey, features.importKeyAlt, "class", "interface", "typedef", "enum", "abstract" };
             features.ArithmeticOperators = new HashSet<char> {'+', '-', '*', '/', '%'};
             features.IncrementDecrementOperators = new[] {"++", "--"};
             features.BitwiseOperators = new[] {"~", "&", "|", "^", "<<", ">>", ">>>"};
@@ -715,12 +715,7 @@ namespace HaXeContext
                     return Visibility.Public | Visibility.Private;
                 tmp = tmp.Extends;
             }
-            // same package
-            if (withClass != null && inClass.InFile.Package == withClass.InFile.Package)
-                return Visibility.Public;
-            // public only
-            else
-                return Visibility.Public;
+            return Visibility.Public;
         }
 
         /// <summary>
@@ -1414,9 +1409,9 @@ namespace HaXeContext
                             pos = i + 1;
                             hasColon = false;
                             if (braCount == 0 && genCount == 0 
-                                && type.IndexOfOrdinal("{", pos) == -1
-                                && type.IndexOfOrdinal("<", pos) == -1
-                                && type.IndexOfOrdinal(",", pos) == -1)
+                                && type.IndexOf('{', pos) == -1
+                                && type.IndexOf('<', pos) == -1
+                                && type.IndexOf(',', pos) == -1)
                             {
                                 result.Add(type.Substring(pos));
                                 break;
