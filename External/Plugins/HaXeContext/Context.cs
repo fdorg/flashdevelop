@@ -1068,8 +1068,20 @@ namespace HaXeContext
                     var arrayComprehensionEnd = tokenLength - 3;
                     for (var i = 1; i < tokenLength; i++)
                     {
-                        var c = ' ';
-                        if (PositionIsInString(token, i, out c, ref dQuotes, ref sQuotes)) continue;
+                        var c = token[i];
+                        if (c == '\"' && sQuotes == 0)
+                        {
+                            if (token[i - 1] == '\\') continue;
+                            if (dQuotes == 0) dQuotes++;
+                            else dQuotes--;
+                        }
+                        else if (c == '\'' && dQuotes == 0)
+                        {
+                            if (token[i - 1] == '\\') continue;
+                            if (sQuotes == 0) sQuotes++;
+                            else sQuotes--;
+                        }
+                        if(sQuotes > 0 || dQuotes > 0) continue;
                         if (c == '[') arrCount++;
                         else if (c == ']') arrCount--;
                         if (arrCount > 0) continue;
@@ -1104,7 +1116,7 @@ namespace HaXeContext
                         return ResolveType(sb.ToString(), inFile);
                     }
                 }
-                if (token.StartsWithOrdinal("cast("))
+                else if (token.StartsWithOrdinal("cast("))
                 {
                     var groupCount = 0;
                     var length = token.Length - 2;
@@ -1146,24 +1158,6 @@ namespace HaXeContext
                 }
             }
             return base.ResolveToken(token, inFile);
-
-            bool PositionIsInString(string context, int pos, out char c, ref int dQuotes, ref int sQuotes)
-            {
-                c = context[pos];
-                if (c == '\"' && sQuotes == 0)
-                {
-                    if (context[pos - 1] == '\\') return true;
-                    if (dQuotes == 0) dQuotes++;
-                    else dQuotes--;
-                }
-                else if (c == '\'' && dQuotes == 0)
-                {
-                    if (context[pos - 1] == '\\') return true;
-                    if (sQuotes == 0) sQuotes++;
-                    else sQuotes--;
-                }
-                return sQuotes > 0 || dQuotes > 0;
-            }
         }
 
         ClassModel ResolveTypeByPackage(string package, string cname, FileModel inFile, string inPackage)
