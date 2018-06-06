@@ -1156,6 +1156,24 @@ namespace ASCompletion.Completion
                     yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_12"))
                         .Returns(new ClassModel {Name = "Array<T>", Flags = FlagType.Class})
                         .SetName("for(it in [].");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_13"))
+                        .Returns(new ClassModel {Name = "Array<T>", Flags = FlagType.Class})
+                        .SetName("var l = try [1]. catch(e:Dynamic) 1;");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_14"))
+                        .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class})
+                        .SetName("var l = try [1].concat. catch(e:Dynamic) 1;");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_15"))
+                        .Returns(new ClassModel {Name = "Array<T>", Flags = FlagType.Class})
+                        .SetName("case [1, 2].");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_16"))
+                        .Returns(new ClassModel {Name = "Array<T>", Flags = FlagType.Class})
+                        .SetName("var a = [1, 2].");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_17"))
+                        .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class})
+                        .SetName("[1 => [1].concat.]");
+                    yield return new TestCaseData(ReadAllText("GetExpressionType_Type_arrayInitializer_18"))
+                        .Returns(new ClassModel {Name = "Function", Flags = FlagType.Class})
+                        .SetName("{c:[1].concat.}");
                 }
             }
 
