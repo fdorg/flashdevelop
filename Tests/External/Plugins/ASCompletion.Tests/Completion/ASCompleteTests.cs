@@ -1223,7 +1223,7 @@ namespace ASCompletion.Completion
             }
 
             [
-                Test, 
+                Test,
                 TestCaseSource(nameof(GetExpressionType_untyped_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_cast_TypeTestCases)),
                 TestCaseSource(nameof(GetExpressionType_is_TypeTestCases)),
