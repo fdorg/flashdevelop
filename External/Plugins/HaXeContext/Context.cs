@@ -141,7 +141,7 @@ namespace HaXeContext
                 "null", "untyped", "true", "false", "try", "catch", "throw", "trace", "macro"
             };
             features.declKeywords = new[] {features.varKey, features.functionKey};
-            features.accessKeywords = new[] {features.intrinsicKey, features.inlineKey, features.dynamicKey, "macro", features.overrideKey, features.publicKey, features.privateKey, features.staticKey};
+            features.accessKeywords = new[] {features.intrinsicKey, features.inlineKey, "dynamic", "macro", features.overrideKey, features.publicKey, features.privateKey, features.staticKey};
             features.typesKeywords = new[] {features.importKey, features.importKeyAlt, "class", "interface", "typedef", "enum", "abstract" };
             features.ArithmeticOperators = new HashSet<char> {'+', '-', '*', '/', '%'};
             features.IncrementDecrementOperators = new[] {"++", "--"};
