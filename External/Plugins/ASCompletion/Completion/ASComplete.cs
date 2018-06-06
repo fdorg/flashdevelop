@@ -2604,19 +2604,6 @@ namespace ASCompletion.Completion
         {
             var notFound = new ASResult {Context = context};
             if (string.IsNullOrEmpty(expression)) return notFound;
-            var ctx = ASContext.Context;
-            var features = ctx.Features;
-            ClassModel type;
-            if ((context.SubExpressions == null || context.SubExpressions.Count == 1) && expression.Count(c => c == '.') < 2)
-            {
-                var value = expression;
-                if (context.SubExpressions?.Count == 1) value = value.Replace(char.IsLetter(value[0]) ? ".#0~" : "#0~", context.SubExpressions.First());
-                if (!string.IsNullOrEmpty(context.WordBefore) && features.OtherOperators.Contains(context.WordBefore))
-                    value = context.WordBefore + " " + value;
-                type = ctx.ResolveToken(value, inClass.InFile);
-                if (!type.IsVoid()) return new ASResult {Type = type, Context = context, InClass = type, InFile = type.InFile, Path = context.Value};
-            }
-
             if (expression[0] == '.')
             {
                 if (expression.StartsWithOrdinal(".#")) expression = expression.Substring(1);
@@ -2624,13 +2611,15 @@ namespace ASCompletion.Completion
                 else return notFound;
             }
 
+            var ctx = ASContext.Context;
+            var features = ctx.Features;
             var tokens = Regex.Split(expression, Regex.Escape(features.dot));
 
             // eval first token
             var token = tokens[0];
             if (token.Length == 0) return notFound;
             if (asFunction && tokens.Length == 1) token += "(";
-            type = ctx.ResolveToken(token, inClass.InFile);
+            var type = ctx.ResolveToken(token, inClass.InFile);
             if (!type.IsVoid()) return EvalTail(context, inFile, new ASResult {Type = type}, tokens, complete, filterVisibility) ?? notFound;
             ASResult head = null;
             if (token[0] == '#')
@@ -2693,10 +2682,10 @@ namespace ASCompletion.Completion
             return result ?? notFound;
         }
 
-        static ASResult EvalTail(ASExpr context, FileModel inFile, ASResult head, string[] tokens, bool complete, bool filterVisibility)
+        static ASResult EvalTail(ASExpr context, FileModel inFile, ASResult head, IList<string> tokens, bool complete, bool filterVisibility)
         {
             // eval tail
-            int n = tokens.Length;
+            int n = tokens.Count;
             if (!complete) n--;
             // context
             IASContext ctx = ASContext.Context;

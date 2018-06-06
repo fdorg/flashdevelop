@@ -887,6 +887,10 @@ namespace ASCompletion.Completion
                         .Returns(ReadAllText("AfterOnCharIssue2076_24"))
                         .SetName("[super.| ]")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
+                    yield return new TestCaseData("BeforeOnCharIssue2076_25", '.', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2076_25"))
+                        .SetName("new Date().| ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2076");
                 }
             }
 
