@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
@@ -46,6 +47,32 @@ namespace HaXeContext.Generators
                 && !flags.HasFlag(FlagType.Interface)
                 && !flags.HasFlag(FlagType.TypeDef)
                 && base.HandleOverrideCompletion(autoHide);
+        }
+
+        protected override bool AssignStatementToVar(ScintillaControl sci, ClassModel inClass, ASExpr expr)
+        {
+            var ctx = inClass.InFile.Context;
+            ClassModel type = null;
+            // for example: cast value|, cast(value, Type)|
+            if (expr.WordBefore == "cast")
+            {
+                // for example: cast(value, Type)|
+                if (expr.SubExpressions != null && expr.SubExpressions.Count > 0 && expr.Value[0] == '#')
+                    type = ctx.ResolveToken("cast" + expr.SubExpressions.Last(), inClass.InFile);
+                else type = ctx.ResolveType(ctx.Features.dynamicKey, inClass.InFile);
+            }
+            // for example: untyped value|
+            else if (expr.WordBefore == "untyped") type = ctx.ResolveType(ctx.Features.dynamicKey, inClass.InFile);
+            if (type == null) return false;
+            var varName = GuessVarName(type.Name, type.Type);
+            varName = AvoidKeyword(varName);
+            var template = TemplateUtils.GetTemplate("AssignVariable");
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Name", varName);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Type", type.Name);
+            var pos = expr.WordBeforePosition;
+            sci.SetSel(pos, pos);
+            InsertCode(pos, template, sci);
+            return true;
         }
     }
 }

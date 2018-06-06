@@ -141,13 +141,12 @@ namespace HaXeContext
                 "null", "untyped", "true", "false", "try", "catch", "throw", "trace", "macro"
             };
             features.declKeywords = new[] {features.varKey, features.functionKey};
-            features.accessKeywords = new[] { "extern", "inline", "dynamic", "macro", "override", "public", "private", "static" };
-            features.typesKeywords = new[] { "import", "using", "class", "interface", "typedef", "enum", "abstract" };
+            features.accessKeywords = new[] {features.intrinsicKey, features.inlineKey, "dynamic", "macro", features.overrideKey, features.publicKey, features.privateKey, features.staticKey};
+            features.typesKeywords = new[] {features.importKey, features.importKeyAlt, "class", "interface", "typedef", "enum", "abstract" };
             features.ArithmeticOperators = new HashSet<char> {'+', '-', '*', '/', '%'};
             features.IncrementDecrementOperators = new[] {"++", "--"};
             features.BitwiseOperators = new[] {"~", "&", "|", "^", "<<", ">>", ">>>"};
             features.BooleanOperators = new[] {"<", ">", "&&", "||", "!=", "=="};
-            features.OtherOperators = new HashSet<string> {"untyped", "cast", "new"};
             /* INITIALIZATION */
 
             settings = initSettings;
@@ -716,12 +715,7 @@ namespace HaXeContext
                     return Visibility.Public | Visibility.Private;
                 tmp = tmp.Extends;
             }
-            // same package
-            if (withClass != null && inClass.InFile.Package == withClass.InFile.Package)
-                return Visibility.Public;
-            // public only
-            else
-                return Visibility.Public;
+            return Visibility.Public;
         }
 
         /// <summary>
@@ -1050,17 +1044,19 @@ namespace HaXeContext
             return GetModel(package, cname, inPackage);
         }
 
+        static readonly Regex re_isExpr = new Regex(@"\((?<lv>.+)\s(?<op>is)\s+(?<rv>\w+)\)");
+
         public override ClassModel ResolveToken(string token, FileModel inFile)
         {
             var tokenLength = token != null ? token.Length : 0;
             if (tokenLength > 0)
             {
-                if (token == "#RegExp") return ResolveType("EReg", inFile);
                 if (token.StartsWithOrdinal("0x")) return ResolveType("Int", inFile);
                 var first = token[0];
                 var last = token[tokenLength - 1];
                 if (first == '[' && last == ']')
                 {
+                    var arrCount = 0;
                     var dQuotes = 0;
                     var sQuotes = 0;
                     var arrayComprehensionEnd = tokenLength - 3;
@@ -1069,17 +1065,20 @@ namespace HaXeContext
                         var c = token[i];
                         if (c == '\"' && sQuotes == 0)
                         {
-                            if (i <= 1 || token[i - 2] == '\\') continue;
+                            if (token[i - 1] == '\\') continue;
                             if (dQuotes == 0) dQuotes++;
                             else dQuotes--;
                         }
                         else if (c == '\'' && dQuotes == 0)
                         {
-                            if (i <= 1 || token[i - 2] == '\\') continue;
+                            if (token[i - 1] == '\\') continue;
                             if (sQuotes == 0) sQuotes++;
                             else sQuotes--;
                         }
-                        if (sQuotes > 0 || dQuotes > 0) continue;
+                        if(sQuotes > 0 || dQuotes > 0) continue;
+                        if (c == '[') arrCount++;
+                        else if (c == ']') arrCount--;
+                        if (arrCount > 0) continue;
                         if (i <= arrayComprehensionEnd && c == '=' && token[i + 1] == '>')
                             // TODO: try parse K, V
                             return ResolveType("Map<K, V>", inFile);
@@ -1093,7 +1092,7 @@ namespace HaXeContext
                 }
                 if (first == '(' && last == ')')
                 {
-                    if (Regex.IsMatch(token, @"\((?<lv>.+)\s(?<op>is)\s+(?<rv>\w+)\)")) return ResolveType(features.booleanKey, inFile);
+                    if (re_isExpr.IsMatch(token)) return ResolveType(features.booleanKey, inFile);
                     if (GetCurrentSDKVersion() >= "3.1.0")
                     {
                         var groupCount = 0;
@@ -1102,8 +1101,9 @@ namespace HaXeContext
                         for (var i = length; i >= 1; i--)
                         {
                             var c = token[i];
-                            if (c == '}' || c == ')') groupCount++;
-                            else if (c == '{' || c == '(') groupCount--;
+                            if (c <= ' ') continue;
+                            if (c == '}' || c == ')' || c == '>') groupCount++;
+                            else if (c == '{' || c == '(' || c == '<') groupCount--;
                             else if (c == ':' && groupCount == 0) break;
                             sb.Insert(0, c);
                         }
@@ -1113,18 +1113,18 @@ namespace HaXeContext
                 else if (token.StartsWithOrdinal("cast("))
                 {
                     var groupCount = 0;
-                    var length = tokenLength - 1;
-                    for (var i = "cast(".Length; i < length; i++)
+                    var length = tokenLength - 2;
+                    var sb = new StringBuilder(length);
+                    for (var i = length; i >= 1; i--)
                     {
                         var c = token[i];
-                        if (c == '{' || c == '(') groupCount++;
-                        else if (c == '}' || c == ')') groupCount--;
-                        else if (c == ',' && groupCount == 0)
-                        {
-                            i++;
-                            return ResolveType(token.Substring(i, length - i).Trim(), inFile);
-                        }
+                        if (c <= ' ') continue;
+                        if (c == '}' || c == ')' || c == '>') groupCount++;
+                        else if (c == '{' || c == '(' || c == '<') groupCount--;
+                        else if (c == ',' && groupCount == 0) break;
+                        sb.Insert(0, c);
                     }
+                    return ResolveType(sb.ToString(), inFile);
                 }
                 var index = token.IndexOfOrdinal(" ");
                 if (index != -1)
@@ -1409,9 +1409,9 @@ namespace HaXeContext
                             pos = i + 1;
                             hasColon = false;
                             if (braCount == 0 && genCount == 0 
-                                && type.IndexOfOrdinal("{", pos) == -1
-                                && type.IndexOfOrdinal("<", pos) == -1
-                                && type.IndexOfOrdinal(",", pos) == -1)
+                                && type.IndexOf('{', pos) == -1
+                                && type.IndexOf('<', pos) == -1
+                                && type.IndexOf(',', pos) == -1)
                             {
                                 result.Add(type.Substring(pos));
                                 break;

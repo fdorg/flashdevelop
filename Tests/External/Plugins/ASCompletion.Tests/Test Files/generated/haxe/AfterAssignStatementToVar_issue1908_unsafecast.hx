@@ -2,6 +2,6 @@
 class Main {
 	public function new() {
 		var d:Dynamic = "";
-		var d1:Dynamic = cast d;
+		var dynamicValue:Dynamic = cast d;
 	}
 }

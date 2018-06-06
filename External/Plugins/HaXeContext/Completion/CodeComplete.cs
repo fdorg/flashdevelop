@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Context;
@@ -313,6 +314,66 @@ namespace HaXeContext.Completion
             }
             CompletionList.Show(list, autoHide);
             return true;
+        }
+
+        protected override ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility)
+        {
+            if (expression != null)
+            {
+                var ctx = ASContext.Context;
+                var features = ctx.Features;
+                if (context.SubExpressions != null)
+                {
+                    var count = context.SubExpressions.Count;
+                    // transform #2~.#1~.#0~ to #2~.[].[]
+                    for (var i = 0; i < count; i++)
+                    {
+                        var subExpression = context.SubExpressions[i];
+                        if (subExpression.Length < 2 || subExpression[0] != '[') continue;
+                        // for example: [].<complete>, [1 => 2].<complete>
+                        if (expression[0] == '#' && i == count - 1)
+                        {
+                            var type = ctx.ResolveToken(subExpression, inFile);
+                            if (type.IsVoid()) break;
+                            expression = type.Name + ".#" + expression.Substring(("#" + i + "~").Length);
+                            context.SubExpressions.RemoveAt(i);
+                            return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
+                        }
+                        expression = expression.Replace(".#" + i + "~", "." + subExpression);
+                    }
+                }
+                var c = expression[0];
+                if (c == '\'' || c == '"')
+                {
+                    var type = ctx.ResolveType(features.stringKey, inFile);
+                    // for example: ""|, ''|
+                    if (context.SubExpressions == null) expression = type.Name + ".#.";
+                    // for example: "".<complete>, ''.<complete>
+                    else
+                    {
+                        var pattern = c + ".#" + (context.SubExpressions.Count - 1) + "~";
+                        var startIndex = expression.IndexOfOrdinal(pattern) + pattern.Length;
+                        expression = type.Name + ".#" + expression.Substring(startIndex);
+                        if (context.SubExpressions.Count == 1) context.SubExpressions = null;
+                    }
+                }
+                // for example: ~/pattern/.<complete>
+                else if (expression.StartsWithOrdinal("#RegExp")) expression = expression.Replace("#RegExp", "EReg");
+                else if (context.SubExpressions != null && context.SubExpressions.Count > 0)
+                {
+                    var lastIndex = context.SubExpressions.Count - 1;
+                    var pattern = "#" + lastIndex + "~";
+                    // for example: cast(v, T).<complete>, (v is T).<complete>, (v:T).<complete>, ...
+                    if (expression.StartsWithOrdinal(pattern))
+                    {
+                        var expr = context.SubExpressions[lastIndex];
+                        if (context.WordBefore == "cast") expr = "cast" + expr;
+                        var type = ctx.ResolveToken(expr, inFile);
+                        if (!type.IsVoid()) expression = type.Name + ".#" + expression.Substring(pattern.Length);
+                    }
+                }
+            }
+            return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
         }
     }
 }

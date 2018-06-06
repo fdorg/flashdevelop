@@ -1,12 +1,11 @@
 ﻿package {
-	import flash.display.Sprite;
 	public class Main {
 		public function Main() {
-			new Foo().sprite = new Sprite();
+			new Foo().value = new Date();
 		}
 	}
 }
 
 class Foo {
-	public var sprite:Sprite;
+	public var value:Date;
 }

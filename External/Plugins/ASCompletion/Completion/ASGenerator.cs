@@ -1383,6 +1383,9 @@ namespace ASCompletion.Completion
             var context = resolve.Context;
             if (context != null)
             {
+                // for example: typeof v, delete o[k], ...
+                if (((ASGenerator) ctx.CodeGenerator).AssignStatementToVar(sci, inClass, context)) return;
+                // for example: 1 + 1, 1 << 1, ...
                 var operators = ctx.Features.ArithmeticOperators
                     .Select(it => it.ToString())
                     .Concat(ctx.Features.IncrementDecrementOperators)
@@ -1467,12 +1470,30 @@ namespace ASCompletion.Completion
             sci.SetSel(pos, pos);
             InsertCode(pos, template, sci);
 
-            if (ASContext.Context.Settings.GenerateImports && type != null)
+            if (ctx.Settings.GenerateImports && type != null)
             {
                 var inClassForImport = resolve.InClass ?? resolve.RelClass ?? inClass;
                 var types = GetQualifiedTypes(new [] {type}, inClassForImport.InFile);
                 AddImportsByName(types, sci.LineFromPosition(pos));
             }
+        }
+
+        protected virtual bool AssignStatementToVar(ScintillaControl sci, ClassModel inClass, ASExpr expr)
+        {
+            var ctx = inClass.InFile.Context;
+            ClassModel type = null;
+            if (expr.WordBefore == "typeof") type = ctx.ResolveType(ctx.Features.stringKey, inClass.InFile);
+            else if(expr.WordBefore == "delete") type = ctx.ResolveType(ctx.Features.booleanKey, inClass.InFile);
+            if (type == null) return false;
+            var varName = GuessVarName(type.Name, type.Type);
+            varName = AvoidKeyword(varName);
+            var template = TemplateUtils.GetTemplate("AssignVariable");
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Name", varName);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Type", type.Name);
+            var pos = expr.WordBeforePosition;
+            sci.SetSel(pos, pos);
+            InsertCode(pos, template, sci);
+            return true;
         }
 
         public static string AvoidKeyword(string word)
@@ -2074,7 +2095,7 @@ namespace ASCompletion.Completion
             if (expr.Type != null)
             {
                 var wordBefore = expr.Context.WordBefore;
-                if (wordBefore != null && ASContext.Context.Features.OtherOperators.Contains(wordBefore)) return expr.Context.WordBeforePosition;
+                if (wordBefore != null) return expr.Context.WordBeforePosition;
             }
             return expr.Context.PositionExpression;
         }
@@ -3240,7 +3261,7 @@ namespace ASCompletion.Completion
             return new StatementReturnType(resolve, pos, word);
         }
 
-        private static string GuessVarName(string name, string type)
+        protected static string GuessVarName(string name, string type)
         {
             if (string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(type))
             {

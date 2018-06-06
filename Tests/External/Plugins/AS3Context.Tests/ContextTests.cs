@@ -99,13 +99,13 @@ namespace AS3Context
                     .Returns(new ClassModel {Name = "XML", Type = "XML", InFile = FileModel.Ignore});
                 yield return new TestCaseData("0xFF0000")
                     .Returns(new ClassModel {Name = "uint", Type = "uint", InFile = FileModel.Ignore});
-                yield return new TestCaseData("(' 1 '   is String)")
-                    .Returns(new ClassModel {Name = "Boolean", Type = "Boolean", InFile = FileModel.Ignore});
-                yield return new TestCaseData("(' 1 '   as String)")
-                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
                 yield return new TestCaseData("new Sprite().addChild(new Sprite())")
                     .Returns(ClassModel.VoidClass);
                 yield return new TestCaseData("new String")
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
+                yield return new TestCaseData("(' 1 '   is String)")
+                    .Returns(new ClassModel {Name = "Boolean", Type = "Boolean", InFile = FileModel.Ignore});
+                yield return new TestCaseData("(' 1 '   as String)")
                     .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
             }
         }
