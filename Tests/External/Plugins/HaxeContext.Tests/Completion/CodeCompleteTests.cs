@@ -160,7 +160,7 @@ namespace HaXeContext.Completion
         [Test, TestCaseSource(nameof(OnCharIssue2105TestCases))]
         public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion) => OnChar(sci, ReadAllText(fileName), addedChar, autoHide, hasCompletion);
 
-        static IEnumerable<TestCaseData> OnCharIssue2134TestCases
+        static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2134TestCases
         {
             get
             {
@@ -171,13 +171,27 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> OnCharAndReplaceTextTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_1", '.', false)
+                    .Returns(ReadAllText("AfterOnCharAndReplaceText_1"))
+                    .SetName("[].| ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2134");
+            }
+        }
+
         [
             Test,
-            //TestCaseSource(nameof(OnCharIssue2134TestCases)),
+            //TestCaseSource(nameof(OnCharAndReplaceTextIssue2134TestCases)),
+            TestCaseSource(nameof(OnCharAndReplaceTextTestCases)),
         ]
         public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
         {
-            ((Context) ASContext.GetLanguageContext("haxe")).completionCache.IsDirty = true;
+            var ctx = ((Context) ASContext.GetLanguageContext("haxe"));
+            ((HaXeSettings) ctx.Settings).CompletionMode = HaxeCompletionModeEnum.FlashDevelop;
+            ctx.completionCache.IsDirty = true;
             return OnCharAndReplaceText(sci, ReadAllText(fileName), addedChar, autoHide);
         }
     }
