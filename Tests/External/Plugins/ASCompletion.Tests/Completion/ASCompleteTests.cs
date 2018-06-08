@@ -85,6 +85,21 @@ namespace ASCompletion.Completion
             EventManager.RemoveEventHandler(handler);
         }
 
+        protected static string OnCharAndReplaceText(ScintillaControl sci, string sourceText, char addedChar, bool autoHide)
+        {
+            PluginBase.MainForm.CurrentDocument.IsEditable.Returns(true);
+            var manager = UITools.Manager;
+            SetSrc(sci, sourceText);
+            ASContext.Context.CurrentClass.InFile.Context = ASContext.Context;
+            ASContext.HasContext = true;
+            ASComplete.OnChar(sci, addedChar, autoHide);
+            Assert.IsNotNullOrEmpty(CompletionList.SelectedLabel);
+            CompletionList.OnInsert += ASComplete.HandleCompletionInsert;
+            CompletionList.ReplaceText(sci, '\0');
+            CompletionList.OnInsert -= ASComplete.HandleCompletionInsert;
+            return sci.Text;
+        }
+
         public class ActonScript3 : ASCompleteTests
         {
             static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
@@ -894,24 +909,23 @@ namespace ASCompletion.Completion
                 }
             }
 
+            static IEnumerable<TestCaseData> OnCharIssue2134TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("BeforeOnCharIssue2134_1", ' ', false)
+                        .Returns(ReadAllText("AfterOnCharIssue2134_1"))
+                        .SetName("override | ")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2134");
+                }
+            }
+
             [
                 Test,
                 TestCaseSource(nameof(OnCharIssue2076TestCases)),
+                TestCaseSource(nameof(OnCharIssue2134TestCases)),
             ]
-            public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
-            {
-                PluginBase.MainForm.CurrentDocument.IsEditable.Returns(true);
-                var manager = UITools.Manager;
-                SetSrc(sci, ReadAllText(fileName));
-                ASContext.Context.CurrentClass.InFile.Context = ASContext.Context;
-                ASContext.HasContext = true;
-                ASComplete.OnChar(sci, addedChar, autoHide);
-                Assert.IsNotNullOrEmpty(CompletionList.SelectedLabel);
-                CompletionList.OnInsert += ASComplete.HandleCompletionInsert;
-                CompletionList.ReplaceText(sci, '\0');
-                CompletionList.OnInsert -= ASComplete.HandleCompletionInsert;
-                return sci.Text;
-            }
+            public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide) => OnCharAndReplaceText(sci, ReadAllText(fileName), addedChar, autoHide);
         }
 
         public class Haxe : ASCompleteTests

@@ -995,7 +995,7 @@ namespace HaXeContext
                 Match genType = re_genericType.Match(cname);
                 if (genType.Success)
                     return ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile);
-                else return ClassModel.VoidClass;
+                return ClassModel.VoidClass;
             }
 
             // typed array

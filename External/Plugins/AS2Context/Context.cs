@@ -670,7 +670,7 @@ namespace AS2Context
                 foreach (PathModel aPath in classPath) 
                     if (aPath.IsValid && !aPath.Updating)
                     {
-                        ClassModel found = LookupClass(package, cname, inPackage, testSamePackage, testModule, aPath);
+                        var found = LookupClass(package, cname, inPackage, testSamePackage, testModule, aPath);
                         if (found != null) return found;
                     }
                 if (classPath.Count > 0 && classPath[0].IsTemporaryPath)
@@ -687,7 +687,7 @@ namespace AS2Context
                     }
                     catch { }
                     if (model != null) return model;
-                    else return ClassModel.VoidClass;
+                    return ClassModel.VoidClass;
                 }
             }
             else
@@ -931,8 +931,7 @@ namespace AS2Context
         /// </summary>
         protected override void UpdateTopLevelElements()
         {
-            MemberModel special;
-            special = topLevel.Members.Search("this", 0, 0);
+            var special = topLevel.Members.Search("this", 0, 0);
             if (special != null)
             {
                 if (!cClass.IsVoid()) special.Type = cClass.QualifiedName;
@@ -1094,16 +1093,14 @@ namespace AS2Context
             }
             catch { }
             if (fileEntries == null) return;
-            string mname;
-            string type;
             FlagType flag = FlagType.Class | ((package == null) ? FlagType.Intrinsic : 0);
             foreach (string entry in fileEntries)
             {
-                mname = GetLastStringToken(entry, dirSeparator);
+                var mname = GetLastStringToken(entry, dirSeparator);
                 mname = mname.Substring(0, mname.LastIndexOf('.'));
                 if (mname.Length > 0 && memberList.Search(mname, 0, 0) == null && re_token.IsMatch(mname))
                 {
-                    type = mname;
+                    var type = mname;
                     if (package.Length > 0) type = package + "." + mname;
                     memberList.Add(new MemberModel(mname, type, flag, Visibility.Public));
                 }
@@ -1120,14 +1117,12 @@ namespace AS2Context
             catch { }
             if (dirEntries == null) return;
 
-            string mname;
-            string type;
             foreach (string entry in dirEntries)
             {
-                mname = GetLastStringToken(entry, dirSeparator);
+                var mname = GetLastStringToken(entry, dirSeparator);
                 if (mname.Length > 0 && memberList.Search(mname, 0, 0) == null && re_token.IsMatch(mname))
                 {
-                    type = mname;
+                    var type = mname;
                     if (package.Length > 0) type = package + "." + mname;
                     memberList.Add(new MemberModel(mname, type, FlagType.Package, Visibility.Public));
                 }
@@ -1207,12 +1202,11 @@ namespace AS2Context
                         }
                     }
 
-                    MemberModel member;
                     foreach (ClassModel aClass in cFile.Classes)
                     {
                         if (features.hasMultipleDefs || aClass.Access == Visibility.Private)
                         {
-                            member = aClass.ToMemberModel();
+                            var member = aClass.ToMemberModel();
                             elements.Add(member);
                         }
                     }

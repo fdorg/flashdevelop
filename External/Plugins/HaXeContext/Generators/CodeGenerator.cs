@@ -4,6 +4,7 @@ using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using PluginCore;
+using PluginCore.Controls;
 using ScintillaNet;
 
 namespace HaXeContext.Generators
@@ -42,11 +43,50 @@ namespace HaXeContext.Generators
 
         protected override bool HandleOverrideCompletion(bool autoHide)
         {
-            var flags = ASContext.Context.CurrentClass.Flags;
-            return !flags.HasFlag(FlagType.Abstract)
-                && !flags.HasFlag(FlagType.Interface)
-                && !flags.HasFlag(FlagType.TypeDef)
-                && base.HandleOverrideCompletion(autoHide);
+            var ctx = ASContext.Context;
+            var curClass = ctx.CurrentClass;
+            if (curClass.IsVoid()) return false;
+            var flags = curClass.Flags;
+            if (flags.HasFlag(FlagType.Abstract) || flags.HasFlag(FlagType.Interface) || flags.HasFlag(FlagType.TypeDef)) return false;
+
+            var members = new List<MemberModel>();
+            curClass.ResolveExtends();
+
+            // explore getters or setters
+            const FlagType mask = FlagType.Function | FlagType.Getter | FlagType.Setter;
+            var tmpClass = curClass.Extends;
+            var acc = ctx.TypesAffinity(curClass, tmpClass);
+            while (tmpClass != null && !tmpClass.IsVoid())
+            {
+                foreach (MemberModel member in tmpClass.Members)
+                {
+                    if (curClass.Members.Search(member.Name, FlagType.Override, 0) != null) continue;
+                    var parameters = member.Parameters;
+                    if ((member.Flags & FlagType.Dynamic) > 0
+                        && (member.Access & acc) > 0
+                        && ((member.Flags & FlagType.Function) > 0
+                            || ((member.Flags & mask) > 0 && (parameters[0].Name == "get" || parameters[1].Name == "set"))))
+                    {
+                        members.Add(member);
+                    }
+                }
+
+                tmpClass = tmpClass.Extends;
+                // members visibility
+                acc = ctx.TypesAffinity(curClass, tmpClass);
+            }
+            members.Sort();
+
+            var list = new List<ICompletionListItem>();
+            MemberModel last = null;
+            foreach (var member in members)
+            {
+                if (last == null || last.Name != member.Name)
+                    list.Add(new MemberItem(member));
+                last = member;
+            }
+            if (list.Count > 0) CompletionList.Show(list, autoHide);
+            return true;
         }
 
         protected override bool AssignStatementToVar(ScintillaControl sci, ClassModel inClass, ASExpr expr)

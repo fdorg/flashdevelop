@@ -379,6 +379,10 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_unsafe_cast_2.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_unsafe_cast_3.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_unsafe_cast_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceTextIssue2134_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceTextIssue2134_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_1.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

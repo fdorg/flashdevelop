@@ -154,15 +154,9 @@ namespace ASCompletion.Completion
                         break;
 
                     case ':':
-                        if (ctx.CurrentModel.haXe && prevValue == '@')
-                        {
-                            return HandleMetadataCompletion(autoHide);
-                        }
-                        if (features.hasEcmaTyping)
-                        {
-                            return HandleColonCompletion(Sci, "", autoHide);
-                        }
-                        else break;
+                        if (ctx.CurrentModel.haXe && prevValue == '@') return HandleMetadataCompletion(autoHide);
+                        if (features.hasEcmaTyping) return HandleColonCompletion(Sci, "", autoHide);
+                        break;
 
                     case '<':
                         if (features.hasGenerics && position > 2)
@@ -173,13 +167,13 @@ namespace ASCompletion.Completion
                                 return HandleColonCompletion(Sci, "", autoHide);
                             return false;
                         }
-                        else break;
+                        break;
 
                     case '(':
                     case ',':
                         if (!ASContext.CommonSettings.DisableCallTip)
                             return HandleFunctionCompletion(Sci, autoHide);
-                        else return false;
+                        return false;
 
                     case ')':
                         if (UITools.CallTip.CallTipActive) UITools.CallTip.Hide();

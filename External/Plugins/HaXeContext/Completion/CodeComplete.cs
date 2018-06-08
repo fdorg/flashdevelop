@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Context;
@@ -318,20 +317,20 @@ namespace HaXeContext.Completion
 
         protected override ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility)
         {
-            if (expression != null)
+            if (!string.IsNullOrEmpty(expression))
             {
                 var ctx = ASContext.Context;
                 var features = ctx.Features;
                 if (context.SubExpressions != null)
                 {
-                    var count = context.SubExpressions.Count;
+                    var count = context.SubExpressions.Count - 1;
                     // transform #2~.#1~.#0~ to #2~.[].[]
-                    for (var i = 0; i < count; i++)
+                    for (var i = 0; i <= count; i++)
                     {
                         var subExpression = context.SubExpressions[i];
                         if (subExpression.Length < 2 || subExpression[0] != '[') continue;
                         // for example: [].<complete>, [1 => 2].<complete>
-                        if (expression[0] == '#' && i == count - 1)
+                        if (expression[0] == '#' && i == count)
                         {
                             var type = ctx.ResolveToken(subExpression, inFile);
                             if (type.IsVoid()) break;
