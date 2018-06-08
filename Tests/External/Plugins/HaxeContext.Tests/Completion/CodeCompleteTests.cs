@@ -8,9 +8,9 @@ namespace HaXeContext.Completion
 {
     class CodeCompleteTests : ASCompleteTests
     {
-        static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.completion.{fileName}.hx";
+        internal static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.completion.{fileName}.hx";
 
-        static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
+        internal static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
         [TestFixtureSetUp]
         public void Setup() => SetHaxeFeatures(sci);
@@ -160,12 +160,21 @@ namespace HaXeContext.Completion
         [Test, TestCaseSource(nameof(OnCharIssue2105TestCases))]
         public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion) => OnChar(sci, ReadAllText(fileName), addedChar, autoHide, hasCompletion);
 
+        
+    }
+
+    [Ignore]
+    class CodeCompleteTests2 : ASCompleteTests
+    {
+        [TestFixtureSetUp]
+        public void Setup() => SetHaxeFeatures(sci);
+
         static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2134TestCases
         {
             get
             {
                 yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2134_1", ' ', false)
-                    .Returns(ReadAllText("AfterOnCharAndReplaceTextIssue2134_1"))
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceTextIssue2134_1"))
                     .SetName("override | ")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2134");
             }
@@ -176,7 +185,7 @@ namespace HaXeContext.Completion
             get
             {
                 yield return new TestCaseData("BeforeOnCharAndReplaceText_1", '.', false)
-                    .Returns(ReadAllText("AfterOnCharAndReplaceText_1"))
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_1"))
                     .SetName("[].| ")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2134");
             }
@@ -184,7 +193,7 @@ namespace HaXeContext.Completion
 
         [
             Test,
-            //TestCaseSource(nameof(OnCharAndReplaceTextIssue2134TestCases)),
+            TestCaseSource(nameof(OnCharAndReplaceTextIssue2134TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceTextTestCases)),
         ]
         public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
@@ -192,7 +201,7 @@ namespace HaXeContext.Completion
             var ctx = ((Context) ASContext.GetLanguageContext("haxe"));
             ((HaXeSettings) ctx.Settings).CompletionMode = HaxeCompletionModeEnum.FlashDevelop;
             ctx.completionCache.IsDirty = true;
-            return OnCharAndReplaceText(sci, ReadAllText(fileName), addedChar, autoHide);
+            return OnCharAndReplaceText(sci, CodeCompleteTests.ReadAllText(fileName), addedChar, autoHide);
         }
     }
 }
