@@ -10,7 +10,7 @@ namespace AS3Context.Completion
     {
         protected override ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility)
         {
-            if (expression != null)
+            if (!string.IsNullOrEmpty(expression))
             {
                 var ctx = ASContext.Context;
                 var features = ctx.Features;

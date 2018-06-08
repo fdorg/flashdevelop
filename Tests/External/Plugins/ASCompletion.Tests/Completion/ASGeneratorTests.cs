@@ -2352,6 +2352,10 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1696_5"))
                                 .SetName("override function foo(get, set):haxe.ds.Vector<haxe.Timer->Type.ValueType>")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_2134_1"), "flash.utils.Proxy", "callProperty", FlagType.Function)
+                            .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_2134_1"))
+                            .SetName("override function callProperty()")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2134");
                     }
                 }
 

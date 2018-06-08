@@ -159,5 +159,26 @@ namespace HaXeContext.Completion
 
         [Test, TestCaseSource(nameof(OnCharIssue2105TestCases))]
         public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion) => OnChar(sci, ReadAllText(fileName), addedChar, autoHide, hasCompletion);
+
+        static IEnumerable<TestCaseData> OnCharIssue2134TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2134_1", ' ', false)
+                    .Returns(ReadAllText("AfterOnCharAndReplaceTextIssue2134_1"))
+                    .SetName("override | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2134");
+            }
+        }
+
+        [
+            Test,
+            //TestCaseSource(nameof(OnCharIssue2134TestCases)),
+        ]
+        public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
+        {
+            ((Context) ASContext.GetLanguageContext("haxe")).completionCache.IsDirty = true;
+            return OnCharAndReplaceText(sci, ReadAllText(fileName), addedChar, autoHide);
+        }
     }
 }

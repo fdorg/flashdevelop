@@ -3969,18 +3969,17 @@ namespace ASCompletion.Completion
         /// <returns>Completion was handled</returns>
         protected virtual bool HandleOverrideCompletion(bool autoHide)
         {
-            // explore members
-            IASContext ctx = ASContext.Context;
-            ClassModel curClass = ctx.CurrentClass;
+            var ctx = ASContext.Context;
+            var curClass = ctx.CurrentClass;
             if (curClass.IsVoid()) return false;
 
-            List<MemberModel> members = new List<MemberModel>();
+            var members = new List<MemberModel>();
             curClass.ResolveExtends(); // Resolve inheritance chain
 
             // explore getters or setters
-            FlagType mask = FlagType.Function | FlagType.Getter | FlagType.Setter;
-            ClassModel tmpClass = curClass.Extends;
-            Visibility acc = ctx.TypesAffinity(curClass, tmpClass);
+            const FlagType mask = FlagType.Function | FlagType.Getter | FlagType.Setter;
+            var tmpClass = curClass.Extends;
+            var acc = ctx.TypesAffinity(curClass, tmpClass);
             while (tmpClass != null && !tmpClass.IsVoid())
             {
                 if (tmpClass.QualifiedName.StartsWithOrdinal("flash.utils.Proxy"))
@@ -3992,38 +3991,33 @@ namespace ASCompletion.Completion
                     }
                     break;
                 }
-                else
-                {
-                    foreach (MemberModel member in tmpClass.Members)
-                    {
-                        if (curClass.Members.Search(member.Name, FlagType.Override, 0) != null) continue;
-                        var parameters = member.Parameters;
-                        if ((member.Flags & FlagType.Dynamic) > 0
-                            && (member.Access & acc) > 0
-                            && ((member.Flags & FlagType.Function) > 0 
-                                || ((member.Flags & mask) > 0 && (!IsHaxe || parameters[0].Name == "get" || parameters[1].Name == "set"))))
-                        {
-                            members.Add(member);
-                        }
-                    }
 
-                    tmpClass = tmpClass.Extends;
-                    // members visibility
-                    acc = ctx.TypesAffinity(curClass, tmpClass);
+                foreach (MemberModel member in tmpClass.Members)
+                {
+                    if (curClass.Members.Search(member.Name, FlagType.Override, 0) != null) continue;
+                    if ((member.Flags & FlagType.Dynamic) > 0
+                        && (member.Access & acc) > 0
+                        && ((member.Flags & FlagType.Function) > 0 || (member.Flags & mask) > 0))
+                    {
+                        members.Add(member);
+                    }
                 }
+
+                tmpClass = tmpClass.Extends;
+                // members visibility
+                acc = ctx.TypesAffinity(curClass, tmpClass);
             }
             members.Sort();
 
-            // build list
-            var known = new List<ICompletionListItem>();
+            var list = new List<ICompletionListItem>();
             MemberModel last = null;
-            foreach (MemberModel member in members)
+            foreach (var member in members)
             {
                 if (last == null || last.Name != member.Name)
-                    known.Add(new MemberItem(member));
+                    list.Add(new MemberItem(member));
                 last = member;
             }
-            if (known.Count > 0) CompletionList.Show(known, autoHide);
+            if (list.Count > 0) CompletionList.Show(list, autoHide);
             return true;
         }
 
