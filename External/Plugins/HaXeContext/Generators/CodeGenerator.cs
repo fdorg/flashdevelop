@@ -65,7 +65,7 @@ namespace HaXeContext.Generators
                     if ((member.Flags & FlagType.Dynamic) > 0
                         && (member.Access & acc) > 0
                         && ((member.Flags & FlagType.Function) > 0
-                            || ((member.Flags & mask) > 0 && (parameters[0].Name == "get" || parameters[1].Name == "set"))))
+                            || ((member.Flags & mask) > 0 && parameters != null && (parameters[0].Name == "get" || parameters[1].Name == "set"))))
                     {
                         members.Add(member);
                     }
