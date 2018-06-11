@@ -1,4 +1,4 @@
-<platform name="Lime" targets="html5,flash,windows,neko,android,tizen,blackberry,webos" debugger="flash" 
+<platform name="Lime" targets="html5,air,air -android,air -ios,flash,windows,neko,android,tizen,blackberry,webos" debugger="air,air -android,air -ios,flash" 
   external="haxelib" external-capture="windows,neko,android,tizen,blackberry,webos" default-project="project.xml,application.xml">
   <versions>
     <version value="1.0">
