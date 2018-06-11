@@ -851,22 +851,20 @@ namespace HaXeContext
             if (inFile == cFile && completionCache.Imports != null) 
                 return completionCache.Imports;
 
-            MemberList imports = new MemberList();
+            var imports = new MemberList();
             if (inFile == null) return imports;
             foreach (MemberModel item in inFile.Imports)
             {
                 if (item.Name != "*") ResolveImport(item, imports);
                 else
                 {
-                    string cname = item.Type.Substring(0, item.Type.Length - 2);
+                    var cname = item.Type.Substring(0, item.Type.Length - 2);
                     // classes matching wildcard
-                    FileModel matches = ResolvePackage(cname, false);
+                    var matches = ResolvePackage(cname, false);
                     if (matches != null)
                     {
-                        foreach (MemberModel import in matches.Imports)
-                            imports.Add(import);
-                        foreach (MemberModel member in matches.Members)
-                            imports.Add(member);
+                        imports.Add(matches.Imports);
+                        imports.Add(matches.Members);
                     }
                     else
                     {
@@ -893,13 +891,16 @@ namespace HaXeContext
             }
             else
             {
-                foreach (ClassModel aClass in inFile.Classes)
+                foreach (var aClass in inFile.Classes)
                     if (aClass.Access != Visibility.Private) ResolveImport(aClass, imports);
             }
             imports.Add(ResolveDefaults(inFile.Package));
-            // haxe3: type resolution from bottom to top
-            imports.Items.Reverse();
-            if (inFile == cFile) completionCache.Imports = imports;
+            if (imports.Count > 0)
+            {
+                // haxe3: type resolution from bottom to top
+                imports.Items.Reverse();
+                if (inFile == cFile) completionCache.Imports = imports;
+            }
             return imports;
         }
 

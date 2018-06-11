@@ -2,6 +2,7 @@
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using HaXeContext.TestUtils;
+using NSubstitute;
 using NUnit.Framework;
 
 namespace HaXeContext.Completion
@@ -163,7 +164,6 @@ namespace HaXeContext.Completion
         
     }
 
-    [Ignore]
     class CodeCompleteTests2 : ASCompleteTests
     {
         [TestFixtureSetUp]
@@ -193,14 +193,13 @@ namespace HaXeContext.Completion
 
         [
             Test,
-            TestCaseSource(nameof(OnCharAndReplaceTextIssue2134TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceTextTestCases)),
+            TestCaseSource(nameof(OnCharAndReplaceTextIssue2134TestCases)),
         ]
         public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
         {
-            var ctx = ((Context) ASContext.GetLanguageContext("haxe"));
-            ((HaXeSettings) ctx.Settings).CompletionMode = HaxeCompletionModeEnum.FlashDevelop;
-            ctx.completionCache.IsDirty = true;
+            ((Context) ASContext.GetLanguageContext("haxe")).completionCache.IsDirty = true;
+            ASContext.Context.ResolveDotContext(null, null, false).ReturnsForAnyArgs(it => null);
             return OnCharAndReplaceText(sci, CodeCompleteTests.ReadAllText(fileName), addedChar, autoHide);
         }
     }
