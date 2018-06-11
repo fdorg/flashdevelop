@@ -180,6 +180,12 @@
     <EmbeddedResource Include="Test Files\coderefactor\rename\as3\BeforeRenameClass.as" />
     <EmbeddedResource Include="Test Files\coderefactor\rename\as3\BeforeRenameClass_withoutEntryPoint.as" />
     <EmbeddedResource Include="Test Files\coderefactor\rename\as3\AfterRenameClass.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_fromGeneric_2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromGeneric_2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_arrayInitializer_1.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_arrayInitializer_1.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_arrayInitializer_2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_arrayInitializer_2.hx" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
