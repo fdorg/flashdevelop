@@ -188,6 +188,14 @@ namespace HaXeContext.Completion
                     .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_1"))
                     .SetName("[].| ")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2134");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_2", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_2"))
+                    .SetName("'${[].| }'")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2134");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_3", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_3"))
+                    .SetName("[[].| ]")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2134");
             }
         }
 
