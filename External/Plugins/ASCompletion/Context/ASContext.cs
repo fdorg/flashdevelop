@@ -64,7 +64,7 @@ namespace ASCompletion.Context
             completionCache = new CompletionCache(this, null);
             cacheRefreshTimer = new Timer();
             cacheRefreshTimer.Interval = 1500; // delay initial refresh
-            cacheRefreshTimer.Tick += new EventHandler(cacheRefreshTimer_Tick);
+            cacheRefreshTimer.Tick += cacheRefreshTimer_Tick;
         }
         #endregion
 
@@ -563,7 +563,7 @@ namespace ASCompletion.Context
             }
             
             // avoid duplicated pathes
-            string upath = path.ToUpper().TrimEnd(new char[] { '\\', '/' });
+            string upath = path.ToUpper().TrimEnd('\\', '/');
             foreach(PathModel apath in classPath)
             {
                 if (apath.Path.ToUpper() == upath)
@@ -598,8 +598,8 @@ namespace ASCompletion.Context
             PathExplorer explorer = new PathExplorer(this, path);
             path.InUse = true;
             if (hideDirectories != null) explorer.HideDirectories(hideDirectories);
-            explorer.OnExplorationDone += new PathExplorer.ExplorationDoneHandler(RefreshContextCache);
-            explorer.OnExplorationProgress += new PathExplorer.ExplorationProgressHandler(ExplorationProgress);
+            explorer.OnExplorationDone += RefreshContextCache;
+            explorer.OnExplorationProgress += ExplorationProgress;
             explorer.UseCache = !CommonSettings.DisableCache;
             explorer.Run();
         }
@@ -617,8 +617,8 @@ namespace ASCompletion.Context
             {
                 //TraceManager.Add("EXPLORE: " + path.Path);
                 PathExplorer explorer = new PathExplorer(this, path);
-                explorer.OnExplorationDone += new PathExplorer.ExplorationDoneHandler(RefreshContextCache);
-                explorer.OnExplorationProgress += new PathExplorer.ExplorationProgressHandler(ExplorationProgress);
+                explorer.OnExplorationDone += RefreshContextCache;
+                explorer.OnExplorationProgress += ExplorationProgress;
                 explorer.UseCache = !CommonSettings.DisableCache;
                 explorer.Run();
                 return true;
@@ -1009,13 +1009,11 @@ namespace ASCompletion.Context
                 SetTemporaryPath(null);
                 return;
             }
-            else 
+
+            if (SetTemporaryPath(NormalizePath(cFile.GetBasePath())))
             {
-                if (SetTemporaryPath(NormalizePath(cFile.GetBasePath())))
-                {
-                    PathModel tPath = classPath[0];
-                    tPath.AddFile(cFile);
-                }
+                PathModel tPath = classPath[0];
+                tPath.AddFile(cFile);
             }
 
             if (cFile.OutOfDate) UpdateCurrentFile(true);
@@ -1279,9 +1277,9 @@ namespace ASCompletion.Context
                     ASComplete.LocateMember("(class|interface|abstract)", name, aClass.LineFrom);
                 }
             }
-            else if (node.Tag != null && node.Tag is string)
+            else if (node.Tag is string)
             {
-                string[] info = (node.Tag as string).Split('@');
+                string[] info = ((string) node.Tag).Split('@');
                 int line;
                 if (info.Length == 2 && int.TryParse(info[1], out line))
                 {
