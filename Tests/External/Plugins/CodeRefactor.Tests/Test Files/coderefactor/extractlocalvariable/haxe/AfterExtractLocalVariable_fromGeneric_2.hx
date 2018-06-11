@@ -1,8 +1,8 @@
 ﻿package generatortest;
 class ExtractLocaleVariable {
 	static function main() {
-		var newVar:String = new Test<String>("test").get();
-		newVar.toString();
+		var newVar:Test<String> = new Test<String>("test");
+		newVar.get().toString();
 	}
 }
 
