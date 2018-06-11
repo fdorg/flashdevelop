@@ -427,14 +427,11 @@ namespace AS2Context
                 else
                 {
                     // classes matching wildcard
-                    FileModel matches = ResolvePackage(item.Type.Substring(0, item.Type.Length - 2), false);
-
+                    var matches = ResolvePackage(item.Type.Substring(0, item.Type.Length - 2), false);
                     if (matches != null)
                     {
-                        foreach (MemberModel import in matches.Imports)
-                            imports.Add(import);
-                        foreach (MemberModel member in matches.Members)
-                            imports.Add(member);
+                        imports.Add(matches.Imports);
+                        imports.Add(matches.Members);
                     }
                 }
             }

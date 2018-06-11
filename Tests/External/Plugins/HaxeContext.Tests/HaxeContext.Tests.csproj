@@ -383,6 +383,22 @@
     <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceTextIssue2134_1.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_1.hx" />
     <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_4.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_4.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_5.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_5.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_6.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_6.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_7.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_7.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_8.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_8.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_9.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_9.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

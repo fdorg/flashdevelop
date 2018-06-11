@@ -2,6 +2,7 @@
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using HaXeContext.TestUtils;
+using NSubstitute;
 using NUnit.Framework;
 
 namespace HaXeContext.Completion
@@ -163,7 +164,6 @@ namespace HaXeContext.Completion
         
     }
 
-    [Ignore]
     class CodeCompleteTests2 : ASCompleteTests
     {
         [TestFixtureSetUp]
@@ -188,19 +188,45 @@ namespace HaXeContext.Completion
                     .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_1"))
                     .SetName("[].| ")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2134");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_2", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_2"))
+                    .SetName("'${[].| }'")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2134");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_3", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_3"))
+                    .SetName("[[].| ]")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2134");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_4", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_4"))
+                    .SetName("''.| ");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_5", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_5"))
+                    .Ignore("")
+                    .SetName("'${\"123\".| }'");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_6", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_6"))
+                    .SetName("'${String.| }'");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_7", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_7"))
+                    .SetName("'${String.fromCharCode(1).| }'");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_8", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_8"))
+                    .SetName("'${[1 => 1].| }'");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_9", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_9"))
+                    .SetName("cast(v, String).| ");
             }
         }
 
         [
             Test,
-            TestCaseSource(nameof(OnCharAndReplaceTextIssue2134TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceTextTestCases)),
+            TestCaseSource(nameof(OnCharAndReplaceTextIssue2134TestCases)),
         ]
         public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
         {
-            var ctx = ((Context) ASContext.GetLanguageContext("haxe"));
-            ((HaXeSettings) ctx.Settings).CompletionMode = HaxeCompletionModeEnum.FlashDevelop;
-            ctx.completionCache.IsDirty = true;
+            ((Context) ASContext.GetLanguageContext("haxe")).completionCache.IsDirty = true;
+            ASContext.Context.ResolveDotContext(null, null, false).ReturnsForAnyArgs(it => null);
             return OnCharAndReplaceText(sci, CodeCompleteTests.ReadAllText(fileName), addedChar, autoHide);
         }
     }
