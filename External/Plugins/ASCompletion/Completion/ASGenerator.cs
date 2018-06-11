@@ -568,7 +568,7 @@ namespace ASCompletion.Completion
             }
             
             eventName = Camelize(eventName.Substring(eventName.LastIndexOf('.') + 1));
-            if (target != null) target = target.TrimStart(new char[] { '_' });
+            if (target != null) target = target.TrimStart('_');
 
             switch (ASContext.CommonSettings.HandlerNamingConvention)
             {
@@ -638,12 +638,12 @@ namespace ASCompletion.Completion
         protected bool CheckAutoImport(ASResult expr, List<ICompletionListItem> options)
         {
             if (ASContext.Context.CurrentClass.Equals(expr.RelClass)) return false;
-            MemberList allClasses = ASContext.Context.GetAllProjectClasses();
+            var allClasses = ASContext.Context.GetAllProjectClasses();
             if (allClasses != null)
             {
                 var names = new HashSet<string>();
-                List<MemberModel> matches = new List<MemberModel>();
-                string dotToken = "." + contextToken;
+                var matches = new List<MemberModel>();
+                var dotToken = "." + contextToken;
                 foreach (MemberModel member in allClasses)
                     if (!names.Contains(member.Name) && member.Name.EndsWithOrdinal(dotToken))
                     {
