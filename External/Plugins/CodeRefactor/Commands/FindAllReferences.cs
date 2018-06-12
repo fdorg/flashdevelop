@@ -121,7 +121,6 @@ namespace CodeRefactor.Commands
             {
                 foreach (var fileEntries in this.Results)
                 {
-
                     if (fileEntries.Value.Count > 0 && File.Exists(fileEntries.Key))
                     {
                         SearchMatch entry = fileEntries.Value[0];

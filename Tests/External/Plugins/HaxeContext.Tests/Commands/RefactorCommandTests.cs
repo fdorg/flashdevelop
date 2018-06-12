@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using ASCompletion.Completion;
 using ASCompletion.Context;
@@ -8,6 +9,8 @@ using HaXeContext.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
+using ProjectManager;
+using ProjectManager.Projects.Haxe;
 
 namespace HaXeContext.Commands
 {
@@ -73,6 +76,18 @@ namespace HaXeContext.Commands
         [TestFixture]
         public class RenameCommandTests : RefactorCommandTests
         {
+            static readonly string ProjectPath = $"\\Tests\\External\\Plugins\\{nameof(HaXeContext)}.Tests\\Test Files\\";
+
+            [TestFixtureSetUp]
+            public new void Setup()
+            {
+                ProjectManager.PluginMain.Settings = new ProjectManagerSettings();
+                PluginBase.CurrentProject = new HaxeProject(ProjectPath)
+                {
+                    CurrentSDK = Environment.GetEnvironmentVariable("HAXEPATH")
+                };
+            }
+
             static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
             static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.coderefactor.rename.{fileName}.hx";
@@ -89,20 +104,39 @@ namespace HaXeContext.Commands
                         .Returns(ReadAllText("AfterRenameOptionalParameterVar_issue2022_case_2"))
                         .SetName("Rename optional parameter. local function. case 2")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2022");
+                    yield return new TestCaseData("BeforeRename_stringInterpolations_1", "newName")
+                        .Returns(ReadAllText("AfterRename_stringInterpolations_1"))
+                        .Ignore("")
+                        .SetName("'${val|ue}'");
                 }
             }
 
-            [Test, TestCaseSource(nameof(TestCases))]
+            static IEnumerable<TestCaseData> RenameEnumTestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("BeforeRename_enum_1", "NewName")
+                        .Returns(ReadAllText("AfterRename_enum_1"))
+                        .SetName("Enu|m");
+                }
+            }
+
+            [
+                Test,
+                TestCaseSource(nameof(TestCases)),
+                TestCaseSource(nameof(RenameEnumTestCases)),
+            ]
             public string Rename(string fileName, string newName)
             {
                 var sourceText = ReadAllText(fileName);
                 fileName = GetFullPath(fileName);
                 fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
                 fileName = Path.GetFullPath(fileName);
-                fileName = fileName.Replace($"\\FlashDevelop\\Bin\\Debug\\{nameof(HaXeContext)}\\Test_Files\\", $"\\Tests\\External\\Plugins\\{nameof(HaXeContext)}.Tests\\Test Files\\");
+                fileName = fileName.Replace($"\\FlashDevelop\\Bin\\Debug\\{nameof(HaXeContext)}\\Test_Files\\", ProjectPath);
                 fileName = fileName.Replace(".hx", "_withoutEntryPoint.hx");
                 ASContext.Context.CurrentModel.FileName = fileName;
                 PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
+                ((Context) ASContext.GetLanguageContext("haxe")).completionCache.IsDirty = true;
                 return global::CodeRefactor.Commands.RefactorCommandTests.RenameTests.Rename(sci, sourceText, newName);
             }
         }
