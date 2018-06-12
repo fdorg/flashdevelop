@@ -409,6 +409,9 @@
     <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_enum_1.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_enum_1_withoutEntryPoint.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\rename\AfterRename_enum_1.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_enum_2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_enum_2_withoutEntryPoint.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\AfterRename_enum_2.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

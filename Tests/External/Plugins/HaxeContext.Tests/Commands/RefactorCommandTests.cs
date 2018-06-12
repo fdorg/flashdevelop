@@ -117,7 +117,10 @@ namespace HaXeContext.Commands
                 {
                     yield return new TestCaseData("BeforeRename_enum_1", "NewName")
                         .Returns(ReadAllText("AfterRename_enum_1"))
-                        .SetName("Enu|m");
+                        .SetName("Enu|mInstance");
+                    yield return new TestCaseData("BeforeRename_enum_2", "NewName")
+                        .Returns(ReadAllText("AfterRename_enum_2"))
+                        .SetName("EType.Enu|mInstance");
                 }
             }
 
