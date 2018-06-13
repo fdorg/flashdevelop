@@ -120,7 +120,7 @@ namespace HaXeContext.Commands
                     .Returns(ReadAllText("AfterRename_enum_3"))
                     .SetName("Enu|mAbstractValue");
                 yield return new TestCaseData("BeforeRename_enum_4", "NewName")
-                    .Returns(ReadAllText("AfterRename_enum_4. without access modifiers"))
+                    .Returns(ReadAllText("AfterRename_enum_4"))
                     .Ignore("")
                     .SetName("AType.Enu|mAbstractValue. without access modifiers");
                 yield return new TestCaseData("BeforeRename_enum_5", "NewName")
