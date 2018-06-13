@@ -79,13 +79,11 @@ namespace CodeRefactor.Provider
         /// <summary>
         /// Checks if the file is under the current SDK
         /// </summary>
-        public static bool IsUnderSDKPath(FileModel model)
-        {
-            return IsUnderSDKPath(model.FileName);
-        }
+        public static bool IsUnderSDKPath(FileModel model) => IsUnderSDKPath(model.FileName);
+
         public static bool IsUnderSDKPath(string file)
         {
-            InstalledSDK sdk = PluginBase.CurrentSDK;
+            var sdk = PluginBase.CurrentSDK;
             return sdk != null && !string.IsNullOrEmpty(sdk.Path) && file.StartsWithOrdinal(sdk.Path);
         }
 
@@ -309,12 +307,8 @@ namespace CodeRefactor.Provider
                     && result.Member.LineFrom == target.Member.LineFrom
                     && result.Member.Name == target.Member.Name;
             }
-            else // type
-            {
-                if (result.Type == null) return false;
-                if (result.Type.QualifiedName == target.Type.QualifiedName) return true;
-                return false;
-            }
+            // type
+            return result.Type != null && result.Type.QualifiedName == target.Type.QualifiedName;
         }
 
         /// <summary>
@@ -397,14 +391,8 @@ namespace CodeRefactor.Provider
             }
             config.CacheDocuments = true;
             FRRunner runner = new FRRunner();
-            if (progressReportHandler != null)
-            {
-                runner.ProgressReport += progressReportHandler;
-            }
-            if (findFinishedHandler != null)
-            {
-                runner.Finished += findFinishedHandler;
-            }
+            if (progressReportHandler != null) runner.ProgressReport += progressReportHandler;
+            if (findFinishedHandler != null) runner.Finished += findFinishedHandler;
             if (asynchronous) runner.SearchAsync(config);
             else return runner.SearchSync(config);
             return null;

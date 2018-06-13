@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using ASCompletion.Completion;
 using ASCompletion.Context;
-using ASCompletion.TestUtils;
 using CodeRefactor.Provider;
 using HaXeContext.CodeRefactor.Provider;
 using HaXeContext.TestUtils;

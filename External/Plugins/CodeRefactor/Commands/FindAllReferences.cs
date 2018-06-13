@@ -8,7 +8,6 @@ using PluginCore.Controls;
 using PluginCore.FRService;
 using PluginCore.Localization;
 using PluginCore.Managers;
-using ScintillaNet;
 
 namespace CodeRefactor.Commands
 {
@@ -85,10 +84,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Indicates if the current settings for the refactoring are valid.
         /// </summary>
-        public override Boolean IsValid()
-        {
-            return CurrentTarget != null;
-        }
+        public override Boolean IsValid() => CurrentTarget != null;
 
         #endregion
 
@@ -199,12 +195,12 @@ namespace CodeRefactor.Commands
         /// </summary>
         private void ReportResults()
         {
-            string groupData = TraceManager.CreateGroupDataUnique(TraceGroup, CurrentTarget.Member == null ? CurrentTarget.Type.Name : CurrentTarget.Member.Name);
+            var groupData = TraceManager.CreateGroupDataUnique(TraceGroup, CurrentTarget.Member == null ? CurrentTarget.Type.Name : CurrentTarget.Member.Name);
             PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
-            foreach (KeyValuePair<String, List<SearchMatch>> entry in this.Results)
+            foreach (var entry in Results)
             {
                 // Outputs the lines as they change
-                foreach (SearchMatch match in entry.Value)
+                foreach (var match in entry.Value)
                 {
                     string message = $"{entry.Key}:{match.Line}: chars {match.Column}-{match.Column + match.Length} : {match.LineText.Trim()}";
                     TraceManager.Add(message, (int) TraceType.Info, groupData);
