@@ -94,6 +94,11 @@
       <Name>HaXeContext</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\External\Plugins\ProjectManager\ProjectManager.csproj">
+      <Project>{78101c01-e186-4954-b1dd-debb7905fad8}</Project>
+      <Name>ProjectManager</Name>
+      <Private>False</Private>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\PluginCore\PluginCore.csproj">
       <Project>{61885F70-B4DC-4B44-852D-5D6D03F2A734}</Project>
       <Name>PluginCore</Name>
@@ -399,6 +404,24 @@
     <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_8.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_9.hx" />
     <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_9.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_stringInterpolations_1.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_stringInterpolations_1_withoutEntryPoint.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\AfterRename_stringInterpolations_1.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_enum_1.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_enum_1_withoutEntryPoint.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\AfterRename_enum_1.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_enum_2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_enum_2_withoutEntryPoint.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\AfterRename_enum_2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_enum_3.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_enum_3_withoutEntryPoint.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\AfterRename_enum_3.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_enum_4.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_enum_4_withoutEntryPoint.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\AfterRename_enum_4.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_enum_5.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_enum_5_withoutEntryPoint.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\rename\AfterRename_enum_5.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

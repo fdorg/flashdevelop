@@ -8,7 +8,6 @@ using PluginCore.Controls;
 using PluginCore.FRService;
 using PluginCore.Localization;
 using PluginCore.Managers;
-using ScintillaNet;
 
 namespace CodeRefactor.Commands
 {
@@ -85,10 +84,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Indicates if the current settings for the refactoring are valid.
         /// </summary>
-        public override Boolean IsValid()
-        {
-            return CurrentTarget != null;
-        }
+        public override Boolean IsValid() => CurrentTarget != null;
 
         #endregion
 
@@ -121,7 +117,6 @@ namespace CodeRefactor.Commands
             {
                 foreach (var fileEntries in this.Results)
                 {
-
                     if (fileEntries.Value.Count > 0 && File.Exists(fileEntries.Key))
                     {
                         SearchMatch entry = fileEntries.Value[0];
@@ -140,27 +135,28 @@ namespace CodeRefactor.Commands
         private IDictionary<String, List<SearchMatch>> ResolveActualMatches(FRResults results, ASResult target)
         {
             // this will hold actual references back to the source member (some result hits could point to different members with the same name)
-            IDictionary<String, List<SearchMatch>> actualMatches = new Dictionary<String, List<SearchMatch>>();
-            IDictionary<String, List<SearchMatch>> initialResultsList = RefactoringHelper.GetInitialResultsList(results);
-            int matchesChecked = 0; int totalMatches = 0;
+            var actualMatches = new Dictionary<String, List<SearchMatch>>();
+            var initialResultsList = RefactoringHelper.GetInitialResultsList(results);
+            int matchesChecked = 0;
+            int totalMatches = 0;
             foreach (KeyValuePair<String, List<SearchMatch>> entry in initialResultsList)
             {
                 totalMatches += entry.Value.Count;
             }
-            Boolean foundDeclarationSource = false;
-            bool optionsEnabled = IncludeComments || IncludeStrings;
-            foreach (KeyValuePair<String, List<SearchMatch>> entry in initialResultsList)
+            var foundDeclarationSource = false;
+            var optionsEnabled = IncludeComments || IncludeStrings;
+            foreach (var entry in initialResultsList)
             {
-                String currentFileName = entry.Key;
+                var currentFileName = entry.Key;
                 UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.ResolvingReferencesIn") + " \"" + currentFileName + "\"");
-                foreach (SearchMatch match in entry.Value)
+                foreach (var match in entry.Value)
                 {
                     // we have to open/reopen the entry's file
                     // there are issues with evaluating the declaration targets with non-open, non-current files
                     // we have to do it each time as the process of checking the declaration source can change the currently open file!
-                    ScintillaControl sci = this.AssociatedDocumentHelper.LoadDocument(currentFileName).SciControl;
+                    var sci = this.AssociatedDocumentHelper.LoadDocument(currentFileName).SciControl;
                     // if the search result does point to the member source, store it
-                    bool add = false;
+                    var add = false;
                     if (RefactoringHelper.DoesMatchPointToTarget(sci, match, target, this.AssociatedDocumentHelper))
                     {
                         if (IgnoreDeclarationSource && !foundDeclarationSource && RefactoringHelper.IsMatchTheTarget(sci, match, target, AssociatedDocumentHelper))
@@ -199,12 +195,12 @@ namespace CodeRefactor.Commands
         /// </summary>
         private void ReportResults()
         {
-            string groupData = TraceManager.CreateGroupDataUnique(TraceGroup, CurrentTarget.Member == null ? CurrentTarget.Type.Name : CurrentTarget.Member.Name);
+            var groupData = TraceManager.CreateGroupDataUnique(TraceGroup, CurrentTarget.Member == null ? CurrentTarget.Type.Name : CurrentTarget.Member.Name);
             PluginBase.MainForm.CallCommand("PluginCommand", "ResultsPanel.ClearResults;" + groupData);
-            foreach (KeyValuePair<String, List<SearchMatch>> entry in this.Results)
+            foreach (var entry in Results)
             {
                 // Outputs the lines as they change
-                foreach (SearchMatch match in entry.Value)
+                foreach (var match in entry.Value)
                 {
                     string message = $"{entry.Key}:{match.Line}: chars {match.Column}-{match.Column + match.Length} : {match.LineText.Trim()}";
                     TraceManager.Add(message, (int) TraceType.Info, groupData);

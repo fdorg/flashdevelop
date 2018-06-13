@@ -1602,13 +1602,13 @@ namespace HaXeContext
 
             if (topLevel != null)
             {
-                MemberList items = new MemberList();
+                var items = new MemberList();
                 if (topLevel.OutOfDate) InitTopLevelElements();
                 items.Merge(topLevel.Members);
                 items.Merge(hxCompletionCache.OtherElements);
                 return items;
             }
-            else return hxCompletionCache.OtherElements;
+            return hxCompletionCache.OtherElements;
         }
 
         /// <inheritdoc />
