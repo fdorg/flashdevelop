@@ -271,9 +271,9 @@ namespace CodeRefactor.Provider
         /// Checks if a given search match actually points to the given target source
         /// </summary>
         /// <returns>True if the SearchMatch does point to the target source.</returns>
-        public static bool DoesMatchPointToTarget(ScintillaControl Sci, SearchMatch match, ASResult target, DocumentHelper associatedDocumentHelper)
+        public static bool DoesMatchPointToTarget(ScintillaControl sci, SearchMatch match, ASResult target, DocumentHelper associatedDocumentHelper)
         {
-            if (Sci == null || target == null) return false;
+            if (sci == null || target == null) return false;
             FileModel targetInFile = null;
 
             if (target.InFile != null)
@@ -287,9 +287,9 @@ namespace CodeRefactor.Provider
 
             ASResult result = null;
             // get type at match position
-            if (match.Index < Sci.Text.Length) // TODO: find out rare cases of incorrect index reported
+            if (match.Index < sci.Text.Length) // TODO: find out rare cases of incorrect index reported
             {
-                result = DeclarationLookupResult(Sci, Sci.MBSafePosition(match.Index) + Sci.MBSafeTextLength(match.Value), associatedDocumentHelper);
+                result = DeclarationLookupResult(sci, sci.MBSafePosition(match.Index) + sci.MBSafeTextLength(match.Value), associatedDocumentHelper);
                 if (associatedDocumentHelper != null)
                 {
                     // because the declaration lookup opens a document, we should register it with the document helper to be closed later
@@ -307,8 +307,7 @@ namespace CodeRefactor.Provider
                 return resultInFile.BasePath == targetInFile.BasePath
                     && resultInFile.FileName == targetInFile.FileName
                     && result.Member.LineFrom == target.Member.LineFrom
-                    && result.Member.Name == target.Member.Name
-                    && result.Member.Flags == target.Member.Flags;
+                    && result.Member.Name == target.Member.Name;
             }
             else // type
             {

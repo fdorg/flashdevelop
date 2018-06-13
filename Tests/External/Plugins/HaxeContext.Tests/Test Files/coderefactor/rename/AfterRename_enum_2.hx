@@ -1,10 +1,10 @@
 package;
 class Main {
 	public function new() {
-		var v = E.NewName;
+		var v = E2.NewName;
 	}
 }
 
-private enum E {
+private enum E2 {
 	NewName;
 }
