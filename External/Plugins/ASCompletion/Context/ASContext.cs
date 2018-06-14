@@ -70,27 +70,18 @@ namespace ASCompletion.Context
 
         #region static properties
 
-        static public IMainForm MainForm
-        {
-            get { return PluginBase.MainForm; }
-        }
+        public static IMainForm MainForm => PluginBase.MainForm;
 
-        static public ScintillaControl CurSciControl => PluginBase.MainForm.CurrentDocument?.SciControl;
+        public static ScintillaControl CurSciControl => PluginBase.MainForm.CurrentDocument?.SciControl;
 
-        static public PluginUI Panel => plugin?.Panel;
+        public static PluginUI Panel => plugin?.Panel;
 
-        static public GeneralSettings CommonSettings
-        {
-            get { return plugin.Settings as GeneralSettings; }
-        }
+        public static GeneralSettings CommonSettings => plugin.Settings as GeneralSettings;
 
-        static public string DataPath
-        {
-            get { return plugin.DataPath; }
-        }
+        public static string DataPath => plugin.DataPath;
 
         //static private int setCount = 0;
-        static public IASContext Context
+        public static IASContext Context
         {
             get { return context; }
             set
@@ -163,7 +154,7 @@ namespace ASCompletion.Context
             get
             {
                 if (cFile.OutOfDate) UpdateCurrentFile(true);
-                return (cClass != null) ? cClass : ClassModel.VoidClass;
+                return cClass ?? ClassModel.VoidClass;
             }
             set { cClass = value; }
         }
@@ -234,10 +225,7 @@ namespace ASCompletion.Context
             }
         }
 
-        virtual public bool CanBuild
-        {
-            get { return false; }
-        }
+        public virtual bool CanBuild => false;
 
         /// <summary>
         /// Language built-in elements
@@ -326,7 +314,7 @@ namespace ASCompletion.Context
         /// </summary>
         /// <param name="lang">Language id (ie. Scintilla.ConfigurationLanguage)</param>
         /// <param name="classpath">Additional classpath</param>
-        static public void SetLanguageClassPath(ContextSetupInfos setup)
+        public static void SetLanguageClassPath(ContextSetupInfos setup)
         {
             foreach (RegisteredContext reg in allContexts)
             {
@@ -851,10 +839,7 @@ namespace ASCompletion.Context
         /// </summary>
         /// <param name="src"></param>
         /// <returns></returns>
-        public virtual string FilterSource(string fileName, string src)
-        {
-            return src;
-        }
+        public virtual string FilterSource(string fileName, string src) => src;
 
         /// <summary>
         /// Called if a FileModel needs filtering
@@ -896,8 +881,9 @@ namespace ASCompletion.Context
         /// <returns>File model</returns>
         public virtual FileModel GetFileModel(string fileName)
         {
-            var parser = GetCodeParser();
-            return parser.Parse(CreateFileModel(fileName));
+            var result = CreateFileModel(fileName);
+            result.LastWriteTime = File.GetLastWriteTime(result.FileName);
+            return GetCodeModel(result, FileHelper.ReadFile(result.FileName));
         }
 
         /// <summary>
@@ -941,6 +927,14 @@ namespace ASCompletion.Context
 
         /// <inheritdoc />
         public virtual FileModel GetCodeModel(string src, bool scriptMode) => GetCodeModel(CreateFileModel(string.Empty), src, scriptMode);
+
+        /// <inheritdoc />
+        public virtual FileModel GetCodeModel(FileModel result)
+        {
+            var fileName = result.FileName;
+            if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName)) GetCodeModel(result, FileHelper.ReadFile(fileName));
+            return result;
+        }
 
         /// <inheritdoc />
         public virtual FileModel GetCodeModel(FileModel result, string src) => GetCodeModel(result, src, false);
@@ -1068,7 +1062,7 @@ namespace ASCompletion.Context
                             result.Member = member;
                             return result;
                         }
-                        else if (member.LineFrom > line) return result;
+                        if (member.LineFrom > line) return result;
                     }
                     return result;
                 }
@@ -1082,7 +1076,7 @@ namespace ASCompletion.Context
                     result.Member = member;
                     return result;
                 }
-                else if (member.LineFrom > line) return result;
+                if (member.LineFrom > line) return result;
             }
             return result;
         }
@@ -1095,10 +1089,7 @@ namespace ASCompletion.Context
         /// <summary>
         /// Default types/member visibility
         /// </summary>
-        public virtual Visibility DefaultVisibility
-        {
-            get { return Visibility.Public; }
-        }
+        public virtual Visibility DefaultVisibility => Visibility.Public;
 
         /// <summary>
         /// Default types inheritance
@@ -1553,7 +1544,7 @@ namespace ASCompletion.Context
         {
             Context = context;
             Language = language.ToLower();
-            Inlined = (inlinedLanguage != null) ? inlinedLanguage.ToLower() : null;
+            Inlined = inlinedLanguage?.ToLower();
             //TraceManager.Add("Register context: " + language + " (" + inlinedLanguage + ")");
         }
     }

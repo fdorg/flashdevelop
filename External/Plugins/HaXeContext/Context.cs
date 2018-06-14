@@ -1674,10 +1674,10 @@ namespace HaXeContext
                 // other classes in same package (or parent packages!)
                 if (features.hasPackages && cFile.Package != "")
                 {
-                    string package = cFile.Package;
+                    var package = cFile.Package;
                     do
                     {
-                        int pLen = package.Length;
+                        var pLen = package.Length;
                         var packageElements = ResolvePackage(package, false);
                         if (packageElements != null)
                         {
@@ -1691,14 +1691,14 @@ namespace HaXeContext
                             }
                             foreach (MemberModel member in packageElements.Members)
                             {
-                                string pkg = member.InFile.Package;
+                                var pkg = member.InFile.Package;
                                 //if (qualify && pkg != "") member.Name = pkg + "." + member.Name;
                                 member.Type = pkg != "" ? pkg + "." + member.Name : member.Name;
                                 elements.Add(member);
                             }
                         }
 
-                        int p = package.LastIndexOf('.'); // parent package
+                        var p = package.LastIndexOf('.'); // parent package
                         if (p < 0) break;
                         package = package.Substring(0, p);
                     } while (true);
@@ -1719,7 +1719,7 @@ namespace HaXeContext
                 elements.Add(imports);
                 foreach (MemberModel import in imports)
                 {
-                    TryAddEnums(import as ClassModel, other);
+                    TryAddEnums(import as ClassModel ?? ResolveType(import.Name, cFile), other);
                 }
                 // in cache
                 elements.Sort();
@@ -1789,7 +1789,7 @@ namespace HaXeContext
                 return null;
 
             // Do not show error
-            string val = expression.Value;
+            var val = expression.Value;
             if (val == "for" || 
                 val == "while" ||
                 val == "if" ||

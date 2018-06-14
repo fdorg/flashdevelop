@@ -39,14 +39,14 @@ namespace ASCompletion.Model
         /// <summary>
         /// Free models & system watchers
         /// </summary>
-        static public void Compact()
+        public static void Compact()
         {
             lock (pathes)
             {
-                Dictionary<string, PathModel> clean = new Dictionary<string, PathModel>();
-                foreach (string key in pathes.Keys)
+                var clean = new Dictionary<string, PathModel>();
+                foreach (var key in pathes.Keys)
                 {
-                    PathModel model = pathes[key];
+                    var model = pathes[key];
                     if (model.InUse) clean.Add(key, model);
                     else model.Cleanup();
                 }
@@ -60,10 +60,9 @@ namespace ASCompletion.Model
         /// <param name="path"></param>
         /// <param name="context">Associated language context</param>
         /// <returns></returns>
-        static public PathModel GetModel(string path, IASContext context)
+        public static PathModel GetModel(string path, IASContext context)
         {
-            if (context == null || context.Settings == null) 
-                return null;
+            if (context?.Settings == null) return null;
 
             string modelName = context.Settings.LanguageId + "|" + path.ToUpper();
             PathModel aPath;

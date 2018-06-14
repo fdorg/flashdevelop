@@ -438,6 +438,12 @@
     <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_enums_6.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_enums_7.hx" />
     <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_enums_7.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_enums_8.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_enums_8.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_enums_9.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_enums_9.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_enums_10.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_enums_10.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
