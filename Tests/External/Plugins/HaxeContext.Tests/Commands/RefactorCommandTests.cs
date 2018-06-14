@@ -148,10 +148,9 @@ namespace HaXeContext.Commands
                 .Do(it =>
                 {
                     var ctx = (Context) ASContext.GetLanguageContext("haxe");
+                    ctx.CurrentModel.FileName = fileName;
+                    ctx.GetCodeModel(ctx.CurrentModel, sci.Text);
                     ctx.completionCache.IsDirty = true;
-                    ctx.CurrentModel.Classes.Clear();
-                    var model = ctx.GetCodeModel(ctx.CreateFileModel(fileName), FileHelper.ReadFile(fileName));
-                    ctx.CurrentModel.Classes.AddRange(model.Classes);
                     ctx.ResolveTopLevelElement(it.ArgAt<string>(0), it.ArgAt<ASResult>(1));
                 });
             //}

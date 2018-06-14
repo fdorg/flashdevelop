@@ -424,6 +424,20 @@
     <EmbeddedResource Include="Test Files\coderefactor\rename\AfterRename_enum_5.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue220_3.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue220_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_enums_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_enums_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_enums_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_enums_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_enums_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_enums_3.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_enums_4.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_enums_4.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_enums_5.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_enums_5.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_enums_6.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_enums_6.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_enums_7.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_enums_7.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

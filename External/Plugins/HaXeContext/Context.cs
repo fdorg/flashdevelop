@@ -689,7 +689,7 @@ namespace HaXeContext
                         if (!member.Flags.HasFlag(FlagType.Variable)) continue;
                         member.Flags = FlagType.Enum | FlagType.Static | FlagType.Variable;
                         member.Access = Visibility.Public;
-                        member.Type = model.Type;
+                        if (string.IsNullOrEmpty(member.Type)) member.Type = model.Type;
                         member.InFile = model.InFile;
                     }
                 }

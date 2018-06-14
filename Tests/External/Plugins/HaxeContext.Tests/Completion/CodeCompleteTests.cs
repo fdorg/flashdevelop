@@ -4,6 +4,7 @@ using ASCompletion.Context;
 using HaXeContext.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
+using PluginCore.Helpers;
 
 namespace HaXeContext.Completion
 {
@@ -216,16 +217,57 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> OnCharAndReplaceText_enums_TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_1", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_enums_1"))
+                    .SetName("EnumType.| ");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_2", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_enums_2"))
+                    .Ignore("Need support for `haxe.EnumValueTools`")
+                    .SetName("EnumType.EnumInstance.| ");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_3", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_enums_3"))
+                    .Ignore("Need support for `haxe.EnumValueTools`")
+                    .SetName("EnumInstance.| ");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_4", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_enums_4"))
+                    .SetName("EnumAbstractType.| ");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_5", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_enums_5"))
+                    .SetName("EnumAbstractType.EnumAbstractInstance.| ");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_6", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_enums_6"))
+                    .SetName("EnumAbstractInstance.| ");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_7", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_enums_7"))
+                    .SetName("EnumAbstractVariable.| ");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(OnCharAndReplaceTextTestCases)),
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2134TestCases)),
+            TestCaseSource(nameof(OnCharAndReplaceText_enums_TestCases)),
         ]
         public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
         {
-            ((Context) ASContext.GetLanguageContext("haxe")).completionCache.IsDirty = true;
             ASContext.Context.ResolveDotContext(null, null, false).ReturnsForAnyArgs(it => null);
-            return OnCharAndReplaceText(sci, CodeCompleteTests.ReadAllText(fileName), addedChar, autoHide);
+            //{TODO slavara: quick hack
+            ASContext.Context.When(it => it.ResolveTopLevelElement(Arg.Any<string>(), Arg.Any<ASResult>()))
+                .Do(it =>
+                {
+                    var ctx = (Context) ASContext.GetLanguageContext("haxe");
+                    ctx.GetCodeModel(ctx.CurrentModel, sci.Text);
+                    ctx.completionCache.IsDirty = true;
+                    ctx.ResolveTopLevelElement(it.ArgAt<string>(0), it.ArgAt<ASResult>(1));
+                });
+            //}
+            var result = OnCharAndReplaceText(sci, CodeCompleteTests.ReadAllText(fileName), addedChar, autoHide);
+            return result;
         }
     }
 }
