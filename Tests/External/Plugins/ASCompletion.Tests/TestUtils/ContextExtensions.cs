@@ -40,10 +40,15 @@ namespace ASCompletion.TestUtils
             mock.CurrentModel.Returns(context.CurrentModel);
             var visibleExternalElements = context.GetVisibleExternalElements();
             mock.GetVisibleExternalElements().Returns(visibleExternalElements);
-            mock.GetCodeModel(null).ReturnsForAnyArgs(x =>
+            mock.GetCodeModel((string)null).ReturnsForAnyArgs(x =>
             {
                 var src = x[0] as string;
                 return string.IsNullOrEmpty(src) ? null : context.GetCodeModel(src);
+            });
+            mock.GetCodeModel((FileModel)null).ReturnsForAnyArgs(x =>
+            {
+                var src = x[0] as FileModel;
+                return src == null ? null : context.GetCodeModel(src);
             });
             mock.GetCodeModel(Arg.Any<string>(), Arg.Any<bool>()).ReturnsForAnyArgs(x =>
             {

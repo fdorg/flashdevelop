@@ -92,6 +92,11 @@ namespace ASCompletion.Completion
             SetSrc(sci, sourceText);
             ASContext.Context.CurrentClass.InFile.Context = ASContext.Context;
             ASContext.HasContext = true;
+            //{ Update completion cache
+            var ctx = ASContext.GetLanguageContext(sci.ConfigurationLanguage);
+            var visibleExternalElements = ctx.GetVisibleExternalElements();
+            ASContext.Context.GetVisibleExternalElements().Returns(visibleExternalElements);
+            //}
             ASComplete.OnChar(sci, addedChar, autoHide);
             Assert.IsNotNullOrEmpty(CompletionList.SelectedLabel);
             CompletionList.OnInsert += ASComplete.HandleCompletionInsert;

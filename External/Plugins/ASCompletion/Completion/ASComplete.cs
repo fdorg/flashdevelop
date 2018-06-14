@@ -603,11 +603,9 @@ namespace ASCompletion.Completion
             var position = ExpressionEndPosition(sci, sci.CurrentPos);
             var result = GetExpressionType(sci, position, false, true);
 
+            var ctx = ASContext.Context;
             // browse to package folder
-            if (result.IsPackage && result.InFile != null)
-            {
-                return ASContext.Context.BrowseTo(result.InFile.Package);
-            }
+            if (result.IsPackage && result.InFile != null) return ctx.BrowseTo(result.InFile.Package);
 
             // open source and show declaration
             if (!result.IsNull())
@@ -619,14 +617,14 @@ namespace ASCompletion.Completion
                 return OpenDocumentToDeclaration(sci, result);
             }
             // show overridden method
-            else if (ASContext.Context.CurrentMember != null 
-                && ASContext.Context.Features.overrideKey != null
-                && sci.GetWordFromPosition(position) == ASContext.Context.Features.overrideKey)
+            if (ctx.CurrentMember != null
+                && ctx.Features.overrideKey != null
+                && sci.GetWordFromPosition(position) == ctx.Features.overrideKey)
             {
-                MemberModel member = ASContext.Context.CurrentMember;
+                MemberModel member = ctx.CurrentMember;
                 if ((member.Flags & FlagType.Override) > 0)
                 {
-                    ClassModel tmpClass = ASContext.Context.CurrentClass;
+                    ClassModel tmpClass = ctx.CurrentClass;
                     if (tmpClass != null)
                     {
                         tmpClass.ResolveExtends();
@@ -1677,8 +1675,7 @@ namespace ASCompletion.Completion
 
         public static void FunctionContextResolved(ScintillaControl sci, ASExpr expr, MemberModel method, ClassModel inClass, bool showTip)
         {
-            if (string.IsNullOrEmpty(method?.Name)) 
-                return;
+            if (string.IsNullOrEmpty(method?.Name)) return;
             if (calltipMember != null && calltipMember.Name == method.Name)
             {
                 // use FD-extracted comments

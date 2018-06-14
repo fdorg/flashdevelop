@@ -246,11 +246,28 @@ namespace HaXeContext.Completion
             }
         }
 
+        static IEnumerable<TestCaseData> OnCharAndReplaceText_enums2_TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_8", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_enums_8"))
+                    .SetName("EnumAbstractType.| . case 2");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_9", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_enums_9"))
+                    .SetName("EnumAbstractType.EnumAbstractInstance.| . case 2");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_10", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_enums_10"))
+                    .SetName("EnumAbstractInstance.| . case 3");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(OnCharAndReplaceTextTestCases)),
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2134TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceText_enums_TestCases)),
+            //TestCaseSource(nameof(OnCharAndReplaceText_enums2_TestCases)),
         ]
         public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
         {
@@ -265,8 +282,8 @@ namespace HaXeContext.Completion
                     ctx.ResolveTopLevelElement(it.ArgAt<string>(0), it.ArgAt<ASResult>(1));
                 });
             //}
-            var result = OnCharAndReplaceText(sci, CodeCompleteTests.ReadAllText(fileName), addedChar, autoHide);
-            return result;
+            ((Context) ASContext.GetLanguageContext("haxe")).completionCache.IsDirty = true;
+            return OnCharAndReplaceText(sci, CodeCompleteTests.ReadAllText(fileName), addedChar, autoHide);
         }
     }
 }
