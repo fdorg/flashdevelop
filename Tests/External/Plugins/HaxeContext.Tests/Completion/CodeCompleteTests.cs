@@ -4,7 +4,6 @@ using ASCompletion.Context;
 using HaXeContext.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
-using PluginCore.Helpers;
 
 namespace HaXeContext.Completion
 {
