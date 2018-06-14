@@ -462,10 +462,13 @@ namespace HaXeContext.Generators
             {
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue220_1", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue220_1"))
-                    .SetName("EnumValue(1)|. Assign statement to var");
+                    .SetName("EnumInstance(1)|. Assign statement to var");
                 yield return new TestCaseData("BeforeAssignStatementToVar_issue220_2", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue220_2"))
-                    .SetName("AbstractEnumValue|. Assign statement to var");
+                    .SetName("EnumAbstractValue|. Assign statement to var");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue220_3", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue220_3"))
+                    .SetName("EnumAbstract.Value|. Assign statement to var");
             }
         }
 

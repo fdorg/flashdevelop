@@ -422,6 +422,8 @@
     <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_enum_5.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRename_enum_5_withoutEntryPoint.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\rename\AfterRename_enum_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue220_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue220_3.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

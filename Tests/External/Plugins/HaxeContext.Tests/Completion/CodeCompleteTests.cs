@@ -117,7 +117,7 @@ namespace HaXeContext.Completion
                     .SetDescription("https://github.com/fdorg/flashdevelop/pull/2055");
                 yield return new TestCaseData("Issue2053_3")
                     .Returns(true)
-                    .SetName("new Foo(|. class with superconstructor")
+                    .SetName("new Foo(|. class with super constructor")
                     .SetDescription("https://github.com/fdorg/flashdevelop/pull/2055");
                 yield return new TestCaseData("Issue2053_4")
                     .Returns(true)
@@ -160,8 +160,6 @@ namespace HaXeContext.Completion
 
         [Test, TestCaseSource(nameof(OnCharIssue2105TestCases))]
         public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion) => OnChar(sci, ReadAllText(fileName), addedChar, autoHide, hasCompletion);
-
-        
     }
 
     class CodeCompleteTests2 : ASCompleteTests

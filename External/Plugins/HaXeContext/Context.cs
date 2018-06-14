@@ -667,6 +667,33 @@ namespace HaXeContext
                     }
                 }
             }
+            if (result.Classes != null)
+            {
+                foreach (var model in result.Classes)
+                {
+                    if (!model.Flags.HasFlag(FlagType.Abstract)) continue;
+                    var meta = model.MetaDatas;
+                    if (meta == null || meta.All(it => it.Name != ":enum")) continue;
+                    /**
+                     * transform
+                     * @:enum abstract AType(T) {
+                     *     var Value;
+                     * }
+                     * to
+                     * @:enum abstract AType(T) {
+                     *     public static var Value;
+                     * }
+                     */
+                    foreach (MemberModel member in model.Members)
+                    {
+                        if (!member.Flags.HasFlag(FlagType.Variable)) continue;
+                        member.Flags = FlagType.Enum | FlagType.Static | FlagType.Variable;
+                        member.Access = Visibility.Public;
+                        member.Type = model.Type;
+                        member.InFile = model.InFile;
+                    }
+                }
+            }
             return result;
         }
 
@@ -1753,13 +1780,7 @@ namespace HaXeContext
                 if (meta == null || meta.All(it => it.Name != ":enum")) return;
                 foreach (MemberModel member in model.Members)
                 {
-                    if (!member.Flags.HasFlag(FlagType.Variable)) continue;
-                    var clone = (MemberModel) member.Clone();
-                    clone.Flags = FlagType.Enum | FlagType.Static | FlagType.Variable;
-                    clone.Access = Visibility.Public;
-                    clone.Type = model.Type;
-                    clone.InFile = model.InFile;
-                    result.Add(clone);
+                    if (member.Flags.HasFlag(FlagType.Variable)) result.Add(member);
                 }
             }
         }
