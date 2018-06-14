@@ -9,7 +9,6 @@ using HaXeContext.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
-using PluginCore.Helpers;
 using ProjectManager;
 using ProjectManager.Projects.Haxe;
 
@@ -121,7 +120,6 @@ namespace HaXeContext.Commands
                     .SetName("Enu|mAbstractValue");
                 yield return new TestCaseData("BeforeRename_enum_4", "NewName")
                     .Returns(ReadAllText("AfterRename_enum_4"))
-                    .Ignore("")
                     .SetName("AType.Enu|mAbstractValue. without access modifiers");
                 yield return new TestCaseData("BeforeRename_enum_5", "NewName")
                     .Returns(ReadAllText("AfterRename_enum_5"))
@@ -149,10 +147,9 @@ namespace HaXeContext.Commands
                 .Do(it =>
                 {
                     var ctx = (Context) ASContext.GetLanguageContext("haxe");
+                    ctx.CurrentModel.FileName = fileName;
+                    ctx.GetCodeModel(ctx.CurrentModel, sci.Text);
                     ctx.completionCache.IsDirty = true;
-                    ctx.CurrentModel.Classes.Clear();
-                    var model = ctx.GetCodeModel(ctx.CreateFileModel(fileName), FileHelper.ReadFile(fileName));
-                    ctx.CurrentModel.Classes.AddRange(model.Classes);
                     ctx.ResolveTopLevelElement(it.ArgAt<string>(0), it.ArgAt<ASResult>(1));
                 });
             //}
