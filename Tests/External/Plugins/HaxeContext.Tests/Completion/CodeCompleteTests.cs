@@ -267,6 +267,7 @@ namespace HaXeContext.Completion
             TestCaseSource(nameof(OnCharAndReplaceTextTestCases)),
             TestCaseSource(nameof(OnCharAndReplaceTextIssue2134TestCases)),
             TestCaseSource(nameof(OnCharAndReplaceText_enums_TestCases)),
+            // TODO: That tests pass without other tests.
             //TestCaseSource(nameof(OnCharAndReplaceText_enums2_TestCases)),
         ]
         public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
