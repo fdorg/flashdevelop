@@ -2868,12 +2868,9 @@ namespace ASCompletion.Completion
                                     if (var.Flags.HasFlag(FlagType.LocalVar)) context.CodeComplete.InferVariableType(local, var);
                                     else if (var.Flags.HasFlag(FlagType.ParameterVar)) context.CodeComplete.InferParameterVarType(var);
                                 }
-
-                                if (var.Flags.HasFlag(FlagType.Function))
-                                    result.Type = context.ResolveType("Function", null);
-                                else
-                                    result.Type = ResolveType(var.Type, inFile);
-
+                                if (string.IsNullOrEmpty(var.Type)) result.Type = context.ResolveType(features.objectKey, null);
+                                else if (var.Flags.HasFlag(FlagType.Function)) result.Type = context.ResolveType("Function", null);
+                                else result.Type = ResolveType(var.Type, inFile);
                                 return result;
                             }
                         }
