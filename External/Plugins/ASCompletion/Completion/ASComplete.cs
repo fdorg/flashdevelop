@@ -3030,7 +3030,7 @@ namespace ASCompletion.Completion
         {
             // is it a simple affectation inference?
             var text = sci.GetLine(var.LineFrom);
-            var m = Regex.Match(text, "\\s*var\\s+" + var.Name + "\\s*=([^;]+)");
+            var m = Regex.Match(text, "=([^;]+)");
             if (!m.Success) return;
             var rvalue = m.Groups[1];
             if (rvalue.Length <= 1) return;

@@ -444,6 +444,10 @@
     <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_enums_9.hx" />
     <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_enums_10.hx" />
     <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_enums_10.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_inferVar_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_inferVar_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_inferVar_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_inferVar_2.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
