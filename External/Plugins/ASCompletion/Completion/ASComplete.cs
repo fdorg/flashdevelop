@@ -2658,12 +2658,12 @@ namespace ASCompletion.Completion
                 return notFound;
 
             // resolve
-            ASResult result = EvalTail(context, inFile, head, tokens, complete, filterVisibility);
+            var result = EvalTail(context, inFile, head, tokens, complete, filterVisibility);
 
             // if failed, try as qualified class name
             if ((result == null || result.IsNull()) && tokens.Length > 1) 
             {
-                ClassModel qualif = ctx.ResolveType(expression, null);
+                var qualif = ctx.ResolveType(expression, null);
                 if (!qualif.IsVoid())
                 {
                     result = new ASResult();
@@ -3039,14 +3039,14 @@ namespace ASCompletion.Completion
 
         protected virtual void InferVariableType(ScintillaControl sci, string declarationLine, int rvalueStart, ASExpr local, MemberModel var)
         {
-            int p = declarationLine.IndexOf(';');
+            var p = declarationLine.IndexOf(';');
             var text = declarationLine.TrimEnd();
             if (p < 0) p = text.Length;
             if (text.EndsWith('(')) p--;
             // resolve expression
-            ASExpr expr = GetExpression(sci, sci.PositionFromLine(var.LineFrom) + p, true);
+            var expr = GetExpression(sci, sci.PositionFromLine(var.LineFrom) + p, true);
             if (string.IsNullOrEmpty(expr.Value)) return;
-            ASResult result = EvalExpression(expr.Value, expr, ASContext.Context.CurrentModel, ASContext.Context.CurrentClass, true, false);
+            var result = EvalExpression(expr.Value, expr, ASContext.Context.CurrentModel, ASContext.Context.CurrentClass, true, false);
             if (result.IsNull()) return;
             if (result.Type != null && !result.Type.IsVoid())
             {
@@ -4264,16 +4264,11 @@ namespace ASCompletion.Completion
                 ASContext.Context.UpdateContext(line);
             try
             {
-                ASExpr expr = GetExpression(sci, position, ignoreWhiteSpace);
+                var expr = GetExpression(sci, position, ignoreWhiteSpace);
                 expr.LocalVars = ParseLocalVars(expr);
-                if (string.IsNullOrEmpty(expr.Value))
-                {
-                    ASResult res = new ASResult();
-                    res.Context = expr;
-                    return res;
-                }
-                FileModel aFile = ASContext.Context.CurrentModel;
-                ClassModel aClass = ASContext.Context.CurrentClass;
+                if (string.IsNullOrEmpty(expr.Value)) return new ASResult {Context = expr};
+                var aFile = ASContext.Context.CurrentModel;
+                var aClass = ASContext.Context.CurrentClass;
                 // Expression before cursor
                 return ASContext.Context.CodeComplete.EvalExpression(expr.Value, expr, aFile, aClass, true, false, filterVisibility);
             }
