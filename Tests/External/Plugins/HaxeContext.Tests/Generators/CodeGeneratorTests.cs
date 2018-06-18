@@ -453,6 +453,46 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("BeforeAssignStatementToVar_inferParameterVar_4", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_inferParameterVar_4"))
                     .SetName("Infer parameter var type. Case 4.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferParameterVar_5", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferParameterVar_5"))
+                    .SetName("Infer parameter var type. Case 5.");
+            }
+        }
+
+        static IEnumerable<TestCaseData> AssignStatementToVarInferVarTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_1", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_1"))
+                    .SetName("Infer var type. Case 1.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_2", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_2"))
+                    .SetName("Infer var type. Case 2.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_3", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_3"))
+                    .SetName("Infer var type. Case 3.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_4", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_4"))
+                    .SetName("Infer var type. Case 4.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_5", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_5"))
+                    .SetName("Infer var type. Case 5.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_6", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_6"))
+                    .SetName("Infer var type. Case 6.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_7", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_7"))
+                    .SetName("Infer var type. Case 7.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_8", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_8"))
+                    .SetName("Infer var type. Case 8.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_9", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_9"))
+                    .SetName("Infer var type. Case 9.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_10", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_10"))
+                    .SetName("Infer var type. Case 10.");
             }
         }
 
@@ -591,6 +631,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(AssignStatementToVarIssue1764TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue2117TestCases)),
             TestCaseSource(nameof(AssignStatementToVarInferParameterVarTestCases)),
+            TestCaseSource(nameof(AssignStatementToVarInferVarTestCases)),
             TestCaseSource(nameof(AssignStatementToVarTestCases)),
             //TestCaseSource(nameof(AssignStatementToVarIssue220TestCases)),
             TestCaseSource(nameof(AddToInterfaceTestCases)),

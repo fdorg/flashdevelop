@@ -253,7 +253,7 @@ namespace HaXeContext.Completion
                 return;
             }
             var methodEndPosition = sci.LineEndPosition(ASContext.Context.CurrentMember.LineTo);
-            var rvalueEnd = ExpressionEndPosition(sci, rvalueStart, sci.LineEndPosition(var.LineTo));
+            var rvalueEnd = ExpressionEndPosition(sci, rvalueStart, sci.LineEndPosition(var.LineTo), true);
             for (var i = rvalueEnd; i < methodEndPosition; i++)
             {
                 if(sci.PositionIsOnComment(i) || sci.PositionIsInString(i)) continue;
