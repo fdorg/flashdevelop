@@ -4523,7 +4523,9 @@ namespace ASCompletion.Completion
             return ExpressionEndPosition(sci, position, endPosition);
         }
 
-        public static int ExpressionEndPosition(ScintillaControl sci, int startPos, int endPos)
+        public static int ExpressionEndPosition(ScintillaControl sci, int startPos, int endPos) => ExpressionEndPosition(sci, startPos, endPos, false);
+
+        public static int ExpressionEndPosition(ScintillaControl sci, int startPos, int endPos, bool skipWhiteSpace)
         {
             var result = startPos;
             var statementEnd = startPos;
@@ -4577,7 +4579,12 @@ namespace ASCompletion.Completion
                 {
                     if (characterClass.Contains(c))
                     {
-                        if (hadWS) break;
+                        if (skipWhiteSpace)
+                        {
+                            skipWhiteSpace = false;
+                            hadWS = false;
+                        }
+                        else if (hadWS) break;
                         stop = true;
                         result = statementEnd;
                     }
