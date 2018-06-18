@@ -448,6 +448,8 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_inferVar_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_inferVar_2.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_inferVar_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_inferParameterVar_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_inferParameterVar_5.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
