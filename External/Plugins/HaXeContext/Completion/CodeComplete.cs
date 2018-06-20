@@ -371,6 +371,20 @@ namespace HaXeContext.Completion
                         if (!type.IsVoid()) expression = type.Name + ".#" + expression.Substring(pattern.Length);
                     }
                 }
+                /**
+                 * for example:
+                 * macro function foo(v:Expr):Expr {
+                 *     return macro {
+                 *         $v.<complete>
+                 *     }
+                 * }
+                 */
+                if (string.IsNullOrEmpty(context.WordBefore) && context.PositionExpression > 0 &&
+                    ASContext.CurSciControl != null && ASContext.CurSciControl.CharAt(context.PositionExpression - 1) == '$')
+                {
+                    context.PositionExpression -= 1;
+                    context.Value = $"${context.Value}";
+                }
             }
             return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
         }
