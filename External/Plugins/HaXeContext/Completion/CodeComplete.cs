@@ -207,9 +207,9 @@ namespace HaXeContext.Completion
                                 if (member != null) iteratorIndexType = member.Type;
                             }
                             var exprTypeIndexType = exprType.IndexType;
-                            if (exprTypeIndexType == null)
+                            if (exprType.Name == null)
                             {
-                                TraceManager.Add("exprType.IndexType is null", -3);
+                                TraceManager.Add("exprType.Name is null", -3);
                                 return;
                             }
                             if (exprType.Name.StartsWith("Iterator<") && !string.IsNullOrEmpty(exprTypeIndexType) && ctx.ResolveType(exprTypeIndexType, currentModel).IsVoid())
