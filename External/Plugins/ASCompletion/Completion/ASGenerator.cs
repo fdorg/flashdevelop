@@ -2095,7 +2095,7 @@ namespace ASCompletion.Completion
             if (expr.Type != null)
             {
                 var wordBefore = expr.Context.WordBefore;
-                if (wordBefore != null) return expr.Context.WordBeforePosition;
+                if (!string.IsNullOrEmpty(wordBefore)) return expr.Context.WordBeforePosition;
             }
             return expr.Context.PositionExpression;
         }
@@ -3263,40 +3263,33 @@ namespace ASCompletion.Completion
 
         protected static string GuessVarName(string name, string type)
         {
+            if (name == "_") name = null;
             if (string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(type))
             {
-                Match m = Regex.Match(type, "^([a-z0-9_$]+)", RegexOptions.IgnoreCase);
-                if (m.Success)
-                    name = m.Groups[1].Value;
-                else
-                    name = type;
+                var m = Regex.Match(type, "^([a-z0-9_$]+)", RegexOptions.IgnoreCase);
+                if (m.Success) name = m.Groups[1].Value;
+                else name = type;
             }
 
-            if (string.IsNullOrEmpty(name)) 
-                return name;
+            if (string.IsNullOrEmpty(name)) return name;
 
             // if constant then convert to camelCase
-            if (name.ToUpper() == name)
-                name = Camelize(name);
+            if (name.ToUpper() == name) name = Camelize(name);
 
             // if getter, then remove 'get' prefix
-            name = name.TrimStart(new char[] { '_' });
+            name = name.TrimStart('_');
             if (name.Length > 3 && name.StartsWithOrdinal("get") && (name[3].ToString() == char.ToUpper(name[3]).ToString()))
             {
                 name = char.ToLower(name[3]) + name.Substring(4);
             }
 
-            if (name.Length > 1)
-                name = Char.ToLower(name[0]) + name.Substring(1);
-            else
-                name = Char.ToLower(name[0]) + "";
+            if (name.Length > 1) name = char.ToLower(name[0]) + name.Substring(1);
+            else name = char.ToLower(name[0]) + "";
 
             if (name == "this" || type == name)
             {
-                if (!string.IsNullOrEmpty(type))
-                    name = Char.ToLower(type[0]) + type.Substring(1);
-                else
-                    name = "p_this";
+                if (!string.IsNullOrEmpty(type)) name = char.ToLower(type[0]) + type.Substring(1);
+                else name = "p_this";
             }
             return name;
         }
