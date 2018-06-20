@@ -1393,10 +1393,22 @@ namespace ASCompletion.Completion
                     }
                 }
 
+                static IEnumerable<TestCaseData> AS3Issue2151TestCases
+                {
+                    get
+                    {
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue2151_1"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue2151_1"))
+                            .SetName("_;| Assign statement to var. Issue 2151.")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2151");
+                    }
+                }
+
                 [
                     Test,
                     TestCaseSource(nameof(AS3TestCases)),
                     TestCaseSource(nameof(AS3Issue1764TestCases)),
+                    TestCaseSource(nameof(AS3Issue2151TestCases)),
                 ]
                 public string AS3(string sourceText, GeneratorJobType job, bool isUseTabs) => AS3Impl(sourceText, job, isUseTabs, sci);
 
