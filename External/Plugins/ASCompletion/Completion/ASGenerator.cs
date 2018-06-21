@@ -3278,14 +3278,13 @@ namespace ASCompletion.Completion
 
             // if getter, then remove 'get' prefix
             name = name.TrimStart('_');
-            if (name.Length > 3 && name.StartsWithOrdinal("get") && (name[3].ToString() == char.ToUpper(name[3]).ToString()))
+            if (name.Length > 3 && name.StartsWithOrdinal("get") && !char.IsDigit(name[3]) && (name[3].ToString() == char.ToUpper(name[3]).ToString()))
             {
                 name = char.ToLower(name[3]) + name.Substring(4);
             }
 
             if (name.Length > 1) name = char.ToLower(name[0]) + name.Substring(1);
             else name = char.ToLower(name[0]) + "";
-
             if (name == "this" || type == name)
             {
                 if (!string.IsNullOrEmpty(type)) name = char.ToLower(type[0]) + type.Substring(1);
