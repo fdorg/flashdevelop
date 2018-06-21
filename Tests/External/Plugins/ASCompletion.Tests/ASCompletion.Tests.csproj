@@ -1126,6 +1126,12 @@
     <EmbeddedResource Include="Test Files\completion\as3\AfterOnCharIssue2134_1.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue2151_1.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue2151_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue2153_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue2153_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue2153_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue2153_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAssignStatementToVar_issue2153_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue2153_3.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
