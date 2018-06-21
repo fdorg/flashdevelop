@@ -94,11 +94,10 @@ namespace HaXeContext
 
             // haxe directives
             features.hasDirectives = true;
-            features.Directives = new List<string>();
-            features.Directives.Add("true");
+            features.Directives = new List<string> {"true"};
 
             // allowed declarations access modifiers
-            Visibility all = Visibility.Public | Visibility.Private;
+            const Visibility all = Visibility.Public | Visibility.Private;
             features.classModifiers = all;
             features.varModifiers = all;
             features.methodModifiers = all;
@@ -131,6 +130,8 @@ namespace HaXeContext
             features.privateKey = "private";
             features.intrinsicKey = "extern";
             features.inlineKey = "inline";
+            features.ThisKey = "this";
+            features.BaseKey = "super";
             features.hiddenPackagePrefix = '_';
             features.stringInterpolationQuotes = "'";
             features.ConstructorKey = "new";

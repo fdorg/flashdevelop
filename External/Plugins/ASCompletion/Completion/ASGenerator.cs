@@ -3278,17 +3278,22 @@ namespace ASCompletion.Completion
 
             // if getter, then remove 'get' prefix
             name = name.TrimStart('_');
-            if (name.Length > 3 && name.StartsWithOrdinal("get") && (name[3].ToString() == char.ToUpper(name[3]).ToString()))
+            if (name.Length > 3 && name.StartsWithOrdinal("get"))
             {
-                name = char.ToLower(name[3]) + name.Substring(4);
+                var c = name[3];
+                if (!char.IsDigit(c) && c.ToString() == char.ToUpper(c).ToString())
+                {
+                    name = char.ToLower(c) + name.Substring(4);
+                }
             }
 
             if (name.Length > 1) name = char.ToLower(name[0]) + name.Substring(1);
             else name = char.ToLower(name[0]) + "";
-
-            if (name == "this" || type == name)
+            var features = ASContext.Context.Features;
+            if (name == features.ThisKey || name == features.BaseKey || type == name)
             {
                 if (!string.IsNullOrEmpty(type)) name = char.ToLower(type[0]) + type.Substring(1);
+                else if(name == features.BaseKey) name = "p_super";
                 else name = "p_this";
             }
             return name;

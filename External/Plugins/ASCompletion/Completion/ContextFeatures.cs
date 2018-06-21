@@ -79,11 +79,11 @@ namespace ASCompletion.Completion
         public string dynamicKey;
         public string importKey;
         public string importKeyAlt;
-        public string[] typesPreKeys = new string[] { };
-        public string[] accessKeywords = new string[] { };
-        public string[] codeKeywords = new string[] { };
-        public string[] declKeywords = new string[] { };
-        public string[] typesKeywords = new string[] { };
+        public string[] typesPreKeys = { };
+        public string[] accessKeywords = { };
+        public string[] codeKeywords = { };
+        public string[] declKeywords = { };
+        public string[] typesKeywords = { };
         public string varKey;
         public string constKey;
         public string functionKey;
@@ -100,6 +100,8 @@ namespace ASCompletion.Completion
         public string inlineKey;
         public string namespaceKey;
         public string stringInterpolationQuotes = "";
+        public string ThisKey;
+        public string BaseKey;
 
         public Dictionary<string, string> metadata = new Dictionary<string,string>();
 
