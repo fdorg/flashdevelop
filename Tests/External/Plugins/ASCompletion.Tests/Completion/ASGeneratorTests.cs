@@ -1404,11 +1404,31 @@ namespace ASCompletion.Completion
                     }
                 }
 
+                static IEnumerable<TestCaseData> AS3Issue2153TestCases
+                {
+                    get
+                    {
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue2153_1"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue2153_1"))
+                            .SetName("get3D;| Assign statement to var. Issue 2153.")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2153");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue2153_2"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue2153_2"))
+                            .SetName("getThis;| Assign statement to var. Issue 2153.")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2153");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue2153_2"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue2153_2"))
+                            .SetName("getSuper;| Assign statement to var. Issue 2153.")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2153");
+                    }
+                }
+
                 [
                     Test,
                     TestCaseSource(nameof(AS3TestCases)),
                     TestCaseSource(nameof(AS3Issue1764TestCases)),
                     TestCaseSource(nameof(AS3Issue2151TestCases)),
+                    TestCaseSource(nameof(AS3Issue2153TestCases)),
                 ]
                 public string AS3(string sourceText, GeneratorJobType job, bool isUseTabs) => AS3Impl(sourceText, job, isUseTabs, sci);
 
