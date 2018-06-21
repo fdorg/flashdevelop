@@ -1651,6 +1651,9 @@ namespace ASCompletion.Completion
                         .Returns("[function() {return 1;}]".Length);
                     yield return new TestCaseData("'12345'; //")
                         .Returns("'12345'".Length);
+                    yield return new TestCaseData("'${1$(EntryPoint)2345}'; //")
+                        .Ignore("")
+                        .Returns("'${12345".Length);
                 }
             }
 
