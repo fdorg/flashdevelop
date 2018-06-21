@@ -86,7 +86,7 @@ namespace AS3Context
             features.checkFileName = true;
 
             // allowed declarations access modifiers
-            Visibility all = Visibility.Public | Visibility.Internal | Visibility.Protected | Visibility.Private;
+            const Visibility all = Visibility.Public | Visibility.Internal | Visibility.Protected | Visibility.Private;
             features.classModifiers = all;
             features.varModifiers = all;
             features.constModifiers = all;
@@ -123,6 +123,8 @@ namespace AS3Context
             features.privateKey = "private";
             features.intrinsicKey = "extern";
             features.namespaceKey = "namespace";
+            features.ThisKey = "this";
+            features.BaseKey = "super";
             features.typesPreKeys = new[] { features.importKey, "new", "typeof", "is", "as", features.ExtendsKey, features.ImplementsKey };
             features.codeKeywords = new[] {
                 "var", "function", "const", "new", "delete", "typeof", "is", "as", "return",
@@ -146,8 +148,8 @@ namespace AS3Context
             timerCheck = new Timer(500);
             timerCheck.SynchronizingObject = PluginBase.MainForm as Form;
             timerCheck.AutoReset = false;
-            timerCheck.Elapsed += new ElapsedEventHandler(timerCheck_Elapsed);
-            FlexShells.SyntaxError += new SyntaxErrorHandler(FlexShell_SyntaxError);
+            timerCheck.Elapsed += timerCheck_Elapsed;
+            FlexShells.SyntaxError += FlexShell_SyntaxError;
         }
         #endregion
 
