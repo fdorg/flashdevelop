@@ -4519,6 +4519,7 @@ namespace ASCompletion.Completion
 
         public static int ExpressionEndPosition(ScintillaControl sci, int startPos, int endPos, bool skipWhiteSpace)
         {
+            var ctx = ASContext.Context;
             var result = startPos;
             var statementEnd = startPos;
             var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
@@ -4535,7 +4536,7 @@ namespace ASCompletion.Completion
                     statementEnd++;
                     continue;
                 }
-                if (sci.PositionIsInString(statementEnd))
+                if (sci.PositionIsInString(statementEnd) && !ctx.CodeComplete.IsStringInterpolationStyle(sci, statementEnd))
                 {
                     statementEnd++;
                     result = statementEnd;
