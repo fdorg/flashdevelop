@@ -131,6 +131,8 @@ namespace HaXeContext
             features.privateKey = "private";
             features.intrinsicKey = "extern";
             features.inlineKey = "inline";
+            features.ThisKey = "this";
+            features.BaseKey = "super";
             features.hiddenPackagePrefix = '_';
             features.stringInterpolationQuotes = "'";
             features.ConstructorKey = "new";

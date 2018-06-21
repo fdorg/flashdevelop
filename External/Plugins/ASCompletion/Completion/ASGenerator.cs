@@ -3285,9 +3285,11 @@ namespace ASCompletion.Completion
 
             if (name.Length > 1) name = char.ToLower(name[0]) + name.Substring(1);
             else name = char.ToLower(name[0]) + "";
-            if (name == "this" || type == name)
+            var features = ASContext.Context.Features;
+            if (name == features.ThisKey || name == features.BaseKey || type == name)
             {
                 if (!string.IsNullOrEmpty(type)) name = char.ToLower(type[0]) + type.Substring(1);
+                else if(name == features.BaseKey) name = "p_super";
                 else name = "p_this";
             }
             return name;
