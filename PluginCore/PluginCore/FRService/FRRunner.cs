@@ -38,7 +38,10 @@ namespace PluginCore.FRService
         /// <summary>
         /// Creates a search/replace service instance
         /// </summary>
-        public FRRunner() => CreateWorker();
+        public FRRunner()
+        {
+            CreateWorker();
+        }
 
         /// <summary>
         /// Do a synchronous search
@@ -113,9 +116,9 @@ namespace PluginCore.FRService
         /// <param name="configuration">Search operation parameters</param>
         public void SearchAsync(FRConfiguration configuration)
         {
-            if (this.backgroundWorker == null) this.CreateWorker();
+            if (backgroundWorker == null) CreateWorker();
             configuration.Replacement = null;
-            this.backgroundWorker.RunWorkerAsync(configuration);
+            backgroundWorker.RunWorkerAsync(configuration);
         }
 
         /// <summary>
@@ -125,8 +128,8 @@ namespace PluginCore.FRService
         /// <param name="configuration">Replace operation parameters</param>
         public void ReplaceAsync(FRConfiguration configuration)
         {
-            if (this.backgroundWorker == null) this.CreateWorker();
-            this.backgroundWorker.RunWorkerAsync(configuration);
+            if (backgroundWorker == null) CreateWorker();
+            backgroundWorker.RunWorkerAsync(configuration);
         }
 
         /// <summary>
