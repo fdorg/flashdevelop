@@ -38,10 +38,7 @@ namespace PluginCore.FRService
         /// <summary>
         /// Creates a search/replace service instance
         /// </summary>
-        public FRRunner()
-        {
-            this.CreateWorker();
-        }
+        public FRRunner() => CreateWorker();
 
         /// <summary>
         /// Do a synchronous search
@@ -53,14 +50,14 @@ namespace PluginCore.FRService
         {
             try
             {
-                FRResults results = new FRResults();
-                List<String> files = configuration.GetFiles();
-                FRSearch search = configuration.GetSearch();
-                foreach (String file in files)
+                var results = new FRResults();
+                var files = configuration.GetFiles();
+                var search = configuration.GetSearch();
+                foreach (var file in files)
                 {
-                    String src = configuration.GetSource(file);
+                    var src = configuration.GetSource(file);
                     search.SourceFile = file;
-                    List<SearchMatch> matches = search.Matches(src);
+                    var matches = search.Matches(src);
                     FRSearch.ExtractResultsLineText(matches, src);
                     results[file] = matches;
                 }
@@ -83,24 +80,22 @@ namespace PluginCore.FRService
         {
             try
             {
-                FRResults results = new FRResults();
-                List<String> files = configuration.GetFiles();
-                FRSearch search = configuration.GetSearch();
-                string replacement = configuration.Replacement;
+                var results = new FRResults();
+                var files = configuration.GetFiles();
+                var search = configuration.GetSearch();
+                var replacement = configuration.Replacement;
                 if (replacement == null) return results;
-                string src; 
-                List<SearchMatch> matches;
-                foreach (String file in files)
+                foreach (var file in files)
                 {
-                    src = configuration.GetSource(file);
+                    var src = configuration.GetSource(file);
                     search.SourceFile = file;
-                    results[file] = matches = search.Matches(src);
-                    foreach (SearchMatch match in matches)
+                    var matches = search.Matches(src);;
+                    results[file] = matches;
+                    foreach (var match in matches)
                     {
                         src = search.ReplaceAll(src, replacement, matches);
                         configuration.SetSource(file, src);
                     }
-                    matches = null;
                 }
                 return results;
             }
@@ -139,10 +134,7 @@ namespace PluginCore.FRService
         /// </summary>
         public void CancelAsync()
         {
-            if (this.backgroundWorker != null)
-            {
-                this.backgroundWorker.CancelAsync();
-            }
+            backgroundWorker?.CancelAsync();
         }
 
         #region Background Work
@@ -152,25 +144,22 @@ namespace PluginCore.FRService
         /// </summary>
         private void CreateWorker()
         {
-            this.backgroundWorker = new BackgroundWorker();
-            this.backgroundWorker.WorkerReportsProgress = true;
-            this.backgroundWorker.WorkerSupportsCancellation = true;
-            this.backgroundWorker.DoWork += new DoWorkEventHandler(this.BackgroundWork);
-            this.backgroundWorker.ProgressChanged += new ProgressChangedEventHandler(this.BackgroundReport);
-            this.backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(this.BackgroundDone);
+            backgroundWorker = new BackgroundWorker();
+            backgroundWorker.WorkerReportsProgress = true;
+            backgroundWorker.WorkerSupportsCancellation = true;
+            backgroundWorker.DoWork += BackgroundWork;
+            backgroundWorker.ProgressChanged += BackgroundReport;
+            backgroundWorker.RunWorkerCompleted += BackgroundDone;
         }
 
         /// <summary>
         /// Event: background work finished or cancelled
         /// </summary>
-        private void BackgroundDone(Object sender, RunWorkerCompletedEventArgs e)
+        private void BackgroundDone(object sender, RunWorkerCompletedEventArgs e)
         {
             try
             {
-                if (Finished != null)
-                {
-                    Finished((e.Cancelled) ? null : (FRResults)e.Result);
-                }
+                Finished?.Invoke(e.Cancelled ? null : (FRResults)e.Result);
             }
             catch (Exception ex)
             {
@@ -181,14 +170,11 @@ namespace PluginCore.FRService
         /// <summary>
         /// Event: report background work status
         /// </summary>
-        private void BackgroundReport(Object sender, ProgressChangedEventArgs e)
+        private void BackgroundReport(object sender, ProgressChangedEventArgs e)
         {
             try
             {
-                if (ProgressReport != null)
-                {
-                    ProgressReport(e.ProgressPercentage);
-                }
+                ProgressReport?.Invoke(e.ProgressPercentage);
             }
             catch (Exception ex)
             {
@@ -199,11 +185,11 @@ namespace PluginCore.FRService
         /// <summary>
         /// Background work main loop
         /// </summary>
-        private void BackgroundWork(Object sender, DoWorkEventArgs e)
+        private void BackgroundWork(object sender, DoWorkEventArgs e)
         {
             try
             {
-                FRConfiguration configuration = e.Argument as FRConfiguration;
+                var configuration = e.Argument as FRConfiguration;
                 if (configuration == null)
                 {
                     e.Result = null;
@@ -228,17 +214,16 @@ namespace PluginCore.FRService
                     // do search
                     Int32 total = files.Count;
                     Int32 lastPercent = 0;
-                    List<SearchMatch> matches;
-                    string src;
                     foreach (String file in files)
                     {
                         if (this.backgroundWorker.CancellationPending) e.Cancel = true;
                         else
                         {
                             // work
-                            src = configuration.GetSource(file);
+                            var src = configuration.GetSource(file);
                             search.SourceFile = file;
-                            results[file] = matches = search.Matches(src);
+                            var matches = search.Matches(src);
+                            results[file] = matches;
 
                             if (matches.Count > 0)
                             {
@@ -250,7 +235,6 @@ namespace PluginCore.FRService
                                 }
                                 else FRSearch.ExtractResultsLineText(matches, src);
                             }
-                            matches = null;
 
                             // progress
                             count++;

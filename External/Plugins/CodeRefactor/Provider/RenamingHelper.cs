@@ -42,11 +42,15 @@ namespace CodeRefactor.Provider
             {
                 if (HasGetterSetter(target))
                 {
-                    string oldName = rename.OldName;
-                    string newName = rename.NewName;
+                    var oldName = rename.OldName;
+                    var newName = rename.NewName;
                     var list = target.Member.Parameters;
-                    if (list[0].Name == ParamGetter) startState.Commands[1] = RenameMember(target, PrefixGetter + oldName, PrefixGetter + newName, outputResults);
-                    if (list[1].Name == ParamSetter) startState.Commands[2] = RenameMember(target, PrefixSetter + oldName, PrefixSetter + newName, outputResults);
+                    if (list != null)
+                    {
+                        var count = list.Count;
+                        if (count > 0 && list[0].Name == ParamGetter) startState.Commands[1] = RenameMember(target, PrefixGetter + oldName, PrefixGetter + newName, outputResults);
+                        if (count > 1 && list[1].Name == ParamSetter) startState.Commands[2] = RenameMember(target, PrefixSetter + oldName, PrefixSetter + newName, outputResults);
+                    }
                 }
                 else if ((RefactoringHelper.GetRefactoringTarget(target).Flags & (FlagType.Constructor | FlagType.Class)) > 0)
                 {
