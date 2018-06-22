@@ -1134,6 +1134,8 @@
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAssignStatementToVar_issue2153_3.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateEventHandler_issue164_1.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateEventHandler_withAutoRemove_issue164_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateEventHandler_issue164_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateEventHandler_withAutoRemove_issue164_2.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

@@ -3694,7 +3694,7 @@ namespace ASCompletion.Completion
             if (currentTarget != null)
             {
                 var delta = 0;
-                if (TryImportType("flash.events.IEventDispatcher", ref delta, sci.PositionFromLine(position)))
+                if (TryImportType("flash.events.IEventDispatcher", ref delta, sci.LineFromPosition(position)))
                 {
                     position += delta;
                     sci.SetSel(position, position);
