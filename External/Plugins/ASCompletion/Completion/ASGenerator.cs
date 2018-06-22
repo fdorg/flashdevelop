@@ -3651,12 +3651,13 @@ namespace ASCompletion.Completion
 
         private static void GenerateEventHandler(string name, string type, MemberModel afterMethod, int position, ClassModel inClass)
         {
-            ScintillaControl sci = ASContext.CurSciControl;
+            var ctx = ASContext.Context;
+            var sci = ASContext.CurSciControl;
             sci.BeginUndoAction();
             try
             {
-                int delta = 0;
-                ClassModel eventClass = ASContext.Context.ResolveType(type, ASContext.Context.CurrentModel);
+                var delta = 0;
+                var eventClass = ctx.ResolveType(type, ctx.CurrentModel);
                 if (eventClass.IsVoid())
                 {
                     if (TryImportType("flash.events." + type, ref delta, sci.LineFromPosition(position)))
@@ -3675,19 +3676,11 @@ namespace ASCompletion.Completion
                 };
                 if ((afterMethod.Flags & FlagType.Static) > 0) newMember.Flags = FlagType.Static;
                 var template = TemplateUtils.GetTemplate("EventHandler");
-                var decl = NewLine + TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
-                decl = TemplateUtils.ReplaceTemplateVariable(decl, "Void", ASContext.Context.Features.voidKey);
-
-                string eventName = contextMatch.Groups["event"].Value;
-                string autoRemove = AddRemoveEvent(eventName);
-                if (autoRemove != null)
-                {
-                    if (autoRemove.Length == 0 && ASContext.CommonSettings.GenerateScope) autoRemove = "this";
-                    if (autoRemove.Length > 0) autoRemove += ".";
-                    string remove = string.Format("{0}removeEventListener({1}, {2});\n\t$(EntryPoint)", autoRemove, eventName, name);
-                    decl = decl.Replace("$(EntryPoint)", remove);
-                }
-                InsertCode(position, decl, sci);
+                var declaration = NewLine + TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
+                declaration = TemplateUtils.ReplaceTemplateVariable(declaration, "Void", ctx.Features.voidKey);
+                var eventName = contextMatch.Groups["event"].Value;
+                var autoRemove = AddRemoveEvent(eventName);
+                ((ASGenerator) ctx.CodeGenerator).GenerateEventHandler(sci, position, declaration, autoRemove, eventName, name);
             }
             finally
             {
@@ -3695,25 +3688,44 @@ namespace ASCompletion.Completion
             }
         }
 
-        private static bool TryImportType(string type, ref int delta, int atLine)
+        protected virtual void GenerateEventHandler(ScintillaControl sci, int position, string template, string currentTarget, string eventName, string handlerName)
         {
-            ClassModel eventClass = ASContext.Context.ResolveType(type, ASContext.Context.CurrentModel);
-            if (eventClass.IsVoid())
-                return false;
-            
-            List<string> typesUsed = new List<string>();
-            typesUsed.Add(type);
+            var ctx = ASContext.Context;
+            if (currentTarget != null)
+            {
+                var delta = 0;
+                if (TryImportType("flash.events.IEventDispatcher", ref delta, sci.PositionFromLine(position)))
+                {
+                    position += delta;
+                    sci.SetSel(position, position);
+                    lookupPosition += delta;
+                    currentTarget = "IEventDispatcher(e.currentTarget)";
+                }
+                if (currentTarget.Length == 0 && ASContext.CommonSettings.GenerateScope && ctx.Features.ThisKey != null)
+                    currentTarget = ctx.Features.ThisKey;
+                if (currentTarget.Length > 0) currentTarget += ".";
+                var remove = $"{currentTarget}removeEventListener({eventName}, {handlerName});\n\t$(EntryPoint)";
+                template = template.Replace("$(EntryPoint)", remove);
+            }
+            InsertCode(position, template, sci);
+        }
+
+        protected static bool TryImportType(string type, ref int delta, int atLine)
+        {
+            var eventClass = ASContext.Context.ResolveType(type, ASContext.Context.CurrentModel);
+            if (eventClass.IsVoid()) return false;
+            var typesUsed = new List<string> {type};
             delta += AddImportsByName(typesUsed, atLine);
             return true;
         }
 
         private static string AddRemoveEvent(string eventName)
         {
-            foreach (string autoRemove in ASContext.CommonSettings.EventListenersAutoRemove)
+            foreach (var autoRemove in ASContext.CommonSettings.EventListenersAutoRemove)
             {
-                string test = autoRemove.Trim();
+                var test = autoRemove.Trim();
                 if (test.Length == 0 || test.StartsWithOrdinal("//")) continue;
-                int colonPos = test.IndexOf(':');
+                var colonPos = test.IndexOf(':');
                 if (colonPos >= 0) test = test.Substring(colonPos + 1);
                 if (test != eventName) continue;
                 return colonPos < 0 ? "" : autoRemove.Trim().Substring(0, colonPos);
@@ -4412,17 +4424,17 @@ namespace ASCompletion.Completion
         /// <returns>Inserted characters count</returns>
         private static int AddImportsByName(IEnumerable<string> typesUsed, int atLine)
         {
-            int length = 0;
-            IASContext context = ASContext.Context;
+            var length = 0;
+            var context = ASContext.Context;
             var addedTypes = new HashSet<string>();
             typesUsed = context.DecomposeTypes(typesUsed);
-            foreach (string type in typesUsed)
+            foreach (var type in typesUsed)
             {
                 var cleanType = CleanType(type);
                 if (string.IsNullOrEmpty(cleanType) || addedTypes.Contains(cleanType) || cleanType.IndexOf('.') <= 0)
                     continue;
                 addedTypes.Add(cleanType);
-                MemberModel import = new MemberModel(cleanType.Substring(cleanType.LastIndexOf('.') + 1), cleanType, FlagType.Import, Visibility.Public);
+                var import = new MemberModel(cleanType.Substring(cleanType.LastIndexOf('.') + 1), cleanType, FlagType.Import, Visibility.Public);
                 if (!context.IsImported(import, atLine))
                     length += InsertImport(import, false);
             }
@@ -4530,7 +4542,8 @@ namespace ASCompletion.Completion
         #endregion
 
         #region common safe code insertion
-        static private int lookupPosition;
+
+        protected static int lookupPosition;
 
         public static void InsertCode(int position, string src)
         {

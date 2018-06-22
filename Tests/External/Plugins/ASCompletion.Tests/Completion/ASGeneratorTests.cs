@@ -1970,14 +1970,16 @@ namespace ASCompletion.Completion
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeGenerateEventHandler"), new string[0])
-                                .Returns(ReadAllTextAS3("AfterGenerateEventHandler_withoutAutoRemove"))
-                                .SetName("Generate event handler without auto remove");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeGenerateEventHandler"), new[] {"Event.ADDED", "Event.REMOVED"})
-                                .Returns(ReadAllTextAS3("AfterGenerateEventHandler_withAutoRemove"))
-                                .SetName("Generate event handler with auto remove");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeGenerateEventHandler"), new string[0])
+                            .Returns(ReadAllTextAS3("AfterGenerateEventHandler_withoutAutoRemove"))
+                            .SetName("Generate event handler without auto remove");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeGenerateEventHandler"), new[] {"Event.ADDED", "Event.REMOVED"})
+                            .Returns(ReadAllTextAS3("AfterGenerateEventHandler_withAutoRemove"))
+                            .SetName("Generate event handler with auto remove");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeGenerateEventHandler_issue164_1"), new[] {"Event.ADDED", "Event.REMOVED"})
+                            .Returns(ReadAllTextAS3("AfterGenerateEventHandler_withAutoRemove_issue164_1"))
+                            .SetName("Generate event handler with auto remove. Issue 164. Case 1")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/164");
                     }
                 }
 
