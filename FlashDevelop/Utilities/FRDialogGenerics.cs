@@ -54,6 +54,7 @@ namespace FlashDevelop.Utilities
             Int32 end = start + sci.MBSafeTextLength(match.Value); // wchar to byte text length
             Int32 line = sci.LineFromPosition(start);
             sci.EnsureVisibleEnforcePolicy(line);
+            sci.SetSel(start, start);
             sci.SetSel(start, end);
         }
 
