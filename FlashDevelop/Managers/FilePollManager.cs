@@ -38,7 +38,7 @@ namespace FlashDevelop.Managers
         private static void CheckFileChange(ITabbedDocument document)
         {
             TabbedDocument casted = document as TabbedDocument;
-            if (casted.IsEditable && casted.CheckFileChange())
+            if (casted != null && casted.IsEditable && casted.CheckFileChange())
             {
                 if (Globals.Settings.AutoReloadModifiedFiles)
                 {
