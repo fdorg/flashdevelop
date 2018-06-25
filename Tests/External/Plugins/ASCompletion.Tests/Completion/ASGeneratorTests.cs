@@ -1964,20 +1964,26 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateEventHandler : GenerateJob
             {
-                internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
+                internal static readonly string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
 
                 static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeGenerateEventHandler"), new string[0])
-                                .Returns(ReadAllTextAS3("AfterGenerateEventHandler_withoutAutoRemove"))
-                                .SetName("Generate event handler without auto remove");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeGenerateEventHandler"), new[] {"Event.ADDED", "Event.REMOVED"})
-                                .Returns(ReadAllTextAS3("AfterGenerateEventHandler_withAutoRemove"))
-                                .SetName("Generate event handler with auto remove");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeGenerateEventHandler"), new string[0])
+                            .Returns(ReadAllTextAS3("AfterGenerateEventHandler_withoutAutoRemove"))
+                            .SetName("Generate event handler without auto remove");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeGenerateEventHandler"), new[] {"Event.ADDED", "Event.REMOVED"})
+                            .Returns(ReadAllTextAS3("AfterGenerateEventHandler_withAutoRemove"))
+                            .SetName("Generate event handler with auto remove");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeGenerateEventHandler_issue164_1"), new[] {"Event.ADDED", "Event.REMOVED"})
+                            .Returns(ReadAllTextAS3("AfterGenerateEventHandler_withAutoRemove_issue164_1"))
+                            .SetName("Generate event handler with auto remove. Issue 164. Case 1")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/164");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeGenerateEventHandler_issue164_2"), new[] {"Event.ADDED", "Event.REMOVED"})
+                            .Returns(ReadAllTextAS3("AfterGenerateEventHandler_withAutoRemove_issue164_2"))
+                            .SetName("Generate event handler with auto remove. Issue 164. Case 2")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/164");
                     }
                 }
 
@@ -1988,14 +1994,12 @@ namespace ASCompletion.Completion
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateEventHandler"), new string[0])
-                                .Returns(ReadAllTextHaxe("AfterGenerateEventHandler_withoutAutoRemove"))
-                                .SetName("Generate event handler without auto remove");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateEventHandler"), new[] {"Event.ADDED", "Event.REMOVED"})
-                                .Returns(ReadAllTextHaxe("AfterGenerateEventHandler_withAutoRemove"))
-                                .SetName("Generate event handler with auto remove");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateEventHandler"), new string[0])
+                            .Returns(ReadAllTextHaxe("AfterGenerateEventHandler_withoutAutoRemove"))
+                            .SetName("Generate event handler without auto remove");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateEventHandler"), new[] {"Event.ADDED", "Event.REMOVED"})
+                            .Returns(ReadAllTextHaxe("AfterGenerateEventHandler_withAutoRemove"))
+                            .SetName("Generate event handler with auto remove");
                     }
                 }
 
@@ -2018,8 +2022,6 @@ namespace ASCompletion.Completion
                 {
                     ASContext.CommonSettings.EventListenersAutoRemove = autoRemove;
                     SetSrc(sci, sourceText);
-                    var eventModel = new ClassModel {Name = "Event", Type = "flash.events.Event"};
-                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => eventModel);
                     var re = string.Format(ASGenerator.patternEvent, ASGenerator.contextToken);
                     var m = Regex.Match(sci.GetLine(sci.CurrentLine), re, RegexOptions.IgnoreCase);
                     ASGenerator.contextMatch = m;
@@ -2033,10 +2035,7 @@ namespace ASCompletion.Completion
             public class GenerateEventHandlerWithExplicitScope : GenerateJob
             {
                 [TestFixtureSetUp]
-                public void GenerateEventHandlerSetup()
-                {
-                    ASContext.CommonSettings.GenerateScope = true;
-                }
+                public void GenerateEventHandlerSetup() => ASContext.CommonSettings.GenerateScope = true;
 
                 static IEnumerable<TestCaseData> AS3TestCases
                 {
