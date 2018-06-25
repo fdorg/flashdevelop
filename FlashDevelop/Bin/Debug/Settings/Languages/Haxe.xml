@@ -3,7 +3,7 @@
 	<keyword-classes>
 		<keyword-class name="haxe-primary-keywords">
 			abstract break case catch class continue default do else enum extends for in function if implements import
-			interface new package return switch throw try typedef using var final  as from to while $type 
+			interface new package return switch throw try typedef using var final  as while $type 
 		</keyword-class>
 		<keyword-class name="haxe-secondary-keywords">
 			null true false
