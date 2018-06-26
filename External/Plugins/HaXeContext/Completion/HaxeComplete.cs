@@ -92,18 +92,13 @@ namespace HaXeContext
             });
         }
 
-        protected virtual void SaveFile()
-        {
-            PluginBase.MainForm.CallCommand("Save", "HaxeComplete");
-        }
+        protected virtual void SaveFile() => PluginBase.MainForm.CallCommand("Save", "HaxeComplete");
 
         void Notify<T>(HaxeCompleteResultHandler<T> callback, T result)
         {
             if (Sci.InvokeRequired)
             {
-                Sci.BeginInvoke((MethodInvoker)delegate {
-                    Notify(callback, result);
-                });
+                Sci.BeginInvoke((MethodInvoker)(() => Notify(callback, result)));
                 return;
             }
             callback(this, result, Status);
@@ -117,12 +112,12 @@ namespace HaXeContext
             if (!(PluginBase.CurrentProject is HaxeProject))
                 return null;
 
-            var hxproj = (PluginBase.CurrentProject as HaxeProject);
+            var project = ((HaxeProject) PluginBase.CurrentProject);
             var pos = GetDisplayPosition();
 
             // Build Haxe command
             var paths = ProjectManager.PluginMain.Settings.GlobalClasspaths.ToArray();
-            var hxmlArgs = new List<String>(hxproj.BuildHXML(paths, "Nothing__", true));
+            var hxmlArgs = new List<string>(project.BuildHXML(paths, "Nothing__", true));
             RemoveComments(hxmlArgs);
             QuotePath(hxmlArgs);
             EscapeMacros(hxmlArgs);
@@ -134,7 +129,7 @@ namespace HaXeContext
 
             hxmlArgs.Add("-D use_rtti_doc");
             hxmlArgs.Add("-D display-details");
-            if (hxproj.TraceEnabled) hxmlArgs.Add("-debug");
+            if (project.TraceEnabled) hxmlArgs.Add("-debug");
             
             return hxmlArgs.ToArray();
         }
@@ -164,48 +159,42 @@ namespace HaXeContext
             return "";
         }
 
-        private void RemoveComments(List<string> hxmlArgs)
+        private void RemoveComments(IList<string> hxmlArgs)
         {
             for (int i = 0; i < hxmlArgs.Count; i++)
             {
-                string arg = hxmlArgs[i];
-                if (!string.IsNullOrEmpty(arg))
-                {
-                    if (arg.StartsWith('#')) // commented line
-                        hxmlArgs[i] = "";
-                }
+                var arg = hxmlArgs[i];
+                if (string.IsNullOrEmpty(arg)) continue;
+                if (arg.StartsWith('#')) // commented line
+                    hxmlArgs[i] = "";
             }
         }
 
-        private void EscapeMacros(List<string> hxmlArgs)
+        private void EscapeMacros(IList<string> hxmlArgs)
         {
             for (int i = 0; i < hxmlArgs.Count; i++)
             {
-                string arg = hxmlArgs[i];
-                if (!string.IsNullOrEmpty(arg))
-                {
-                    Match m = reMacro.Match(arg);
-                    if (m.Success)
-                        hxmlArgs[i] = m.Groups[1].Value + " \"" + m.Groups[2].Value.Trim(' ', '"', '\'').Replace("\"", "\\\"") + "\"";
-                }
+                var arg = hxmlArgs[i];
+                if (string.IsNullOrEmpty(arg)) continue;
+                var m = reMacro.Match(arg);
+                if (m.Success)
+                    hxmlArgs[i] = m.Groups[1].Value + " \"" + m.Groups[2].Value.Trim(' ', '"', '\'').Replace("\"", "\\\"") + "\"";
             }
         }
 
-        void QuotePath(List<string> hxmlArgs)
+        void QuotePath(IList<string> hxmlArgs)
         {
             for (int i = 0; i < hxmlArgs.Count; i++)
             {
-                string arg = hxmlArgs[i];
-                if (!string.IsNullOrEmpty(arg))
-                {
-                    Match m = reArg.Match(arg);
-                    if (m.Success)
-                        hxmlArgs[i] = m.Groups[1].Value + " \"" + m.Groups[2].Value.Trim(' ', '"', '\'') + "\"";
-                }
+                var arg = hxmlArgs[i];
+                if (string.IsNullOrEmpty(arg)) continue;
+                var m = reArg.Match(arg);
+                if (m.Success)
+                    hxmlArgs[i] = m.Groups[1].Value + " \"" + m.Groups[2].Value.Trim(' ', '"', '\'') + "\"";
             }
         }
 
-        int GetDisplayPosition()
+        protected virtual int GetDisplayPosition()
         {
             var pos = Expr.Position;
 
@@ -262,7 +251,7 @@ namespace HaXeContext
 
                         using (TextReader stream = new StringReader(lines))
                         {
-                            using (XmlTextReader reader = new XmlTextReader(stream))
+                            using (var reader = new XmlTextReader(stream))
                             {
                                 return ProcessResponse(reader);
                             }
@@ -344,7 +333,7 @@ namespace HaXeContext
             };
         }
 
-        HaxeCompleteStatus ProcessResponse(XmlTextReader reader)
+        HaxeCompleteStatus ProcessResponse(XmlReader reader)
         {
             reader.MoveToContent();
 
@@ -363,10 +352,10 @@ namespace HaXeContext
             return HaxeCompleteStatus.FAILED;
         }
 
-        void ProcessType(XmlTextReader reader)
+        void ProcessType(XmlReader reader)
         {
-            string[] parts = Expr.Value.Split('.');
-            string name = parts[parts.Length - 1];
+            var parts = Expr.Value.Split('.');
+            var name = parts[parts.Length - 1];
 
             var type = new MemberModel();
             type.Name = name;
@@ -376,7 +365,7 @@ namespace HaXeContext
             result.Type = type;
         }
 
-        HaxeCompleteStatus ProcessList(XmlTextReader reader)
+        HaxeCompleteStatus ProcessList(XmlReader reader)
         {
             result = new HaxeCompleteResult();
             result.Members = new MemberList();
@@ -413,8 +402,7 @@ namespace HaXeContext
                     }
                     continue;
                 }
-                else if (reader.NodeType != XmlNodeType.Element)
-                    continue;
+                if (reader.NodeType != XmlNodeType.Element) continue;
 
                 switch (reader.Name)
                 {
@@ -463,7 +451,7 @@ namespace HaXeContext
                             case "global":
                             case "package":
                             case "type":
-                                string t = k == "global" ? reader.GetAttribute("t") : null;
+                                var t = k == "global" ? reader.GetAttribute("t") : null;
                                 reader.Read();
                                 var member = new MemberModel {Name = reader.Value};
                                 ExtractType(t, member);
@@ -477,15 +465,15 @@ namespace HaXeContext
             return HaxeCompleteStatus.TOP_LEVEL;
         }
 
-        HaxePositionResult ExtractPos(XmlTextReader reader)
+        HaxePositionResult ExtractPos(XmlReader reader)
         {
             var result = new HaxePositionResult();
 
-            string value = ReadValue(reader);
-            Match match = rePosition.Match(value);
+            var value = ReadValue(reader);
+            var match = rePosition.Match(value);
             result.Path = match.Groups["path"].Value;
             int.TryParse(match.Groups["line"].Value, out result.LineStart);
-            string rangeType = match.Groups["range"].Value;
+            var rangeType = match.Groups["range"].Value;
             if (rangeType == "lines")
                 result.RangeType = HaxePositionCompleteRangeType.LINES;
             else
