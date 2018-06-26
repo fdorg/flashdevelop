@@ -1525,11 +1525,8 @@ namespace HaXeContext
         internal HaxeComplete GetHaxeComplete(ScintillaControl sci, ASExpr expression, bool autoHide, HaxeCompilerService compilerService)
         {
             var sdkVersion = GetCurrentSDKVersion();
-            if (hxsettings.CompletionMode != HaxeCompletionModeEnum.FlashDevelop)
-            {
-                if (sdkVersion >= "4.0.0") return new HaxeComplete400(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
-                if (sdkVersion >= "3.3.0") return new HaxeComplete330(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
-            }
+            if (sdkVersion >= "4.0.0") return new HaxeComplete400(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
+            if (sdkVersion >= "3.3.0") return new HaxeComplete330(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
             return new HaxeComplete(sci, expression, autoHide, completionModeHandler, compilerService, sdkVersion);
         }
 
