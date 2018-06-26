@@ -1047,7 +1047,7 @@ namespace HaXeContext
                 {
                     if (import.Name == cname)
                     {
-                        if (import.Type.Length > import.Name.Length)
+                        if (import.Type != null && import.Type.Length > import.Name.Length)
                         {
                             var type = import.Type;
                             int temp = type.IndexOf('<');
