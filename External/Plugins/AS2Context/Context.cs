@@ -449,11 +449,11 @@ namespace AS2Context
         public override bool IsImported(MemberModel member, int atLine)
         {
             if (member == ClassModel.VoidClass) return false;
-            FileModel cFile = Context.CurrentModel;
-            string fullName = member.Type;
-            string name = member.Name;
-            int lineMin = (Context.InPrivateSection) ? cFile.PrivateSectionIndex : 0;
-            int lineMax = atLine;
+            var cFile = Context.CurrentModel;
+            var fullName = member.Type;
+            var name = member.Name;
+            var lineMin = (Context.InPrivateSection) ? cFile.PrivateSectionIndex : 0;
+            var lineMax = atLine;
             foreach (MemberModel import in cFile.Imports)
             {
                 if (import.LineFrom >= lineMin && import.LineFrom <= lineMax && import.Name == name)
@@ -461,7 +461,7 @@ namespace AS2Context
                     if (import.Type != fullName) throw new Exception("Ambiguous Type");
                     return true;
                 }
-                else if (import.Name == "*" && import.Type.Replace("*", name) == fullName)
+                if (import.Name == "*" && import.Type.Replace("*", name) == fullName)
                     return true;
             }
             return false;

@@ -4,11 +4,16 @@
 	import flash.events.IEventDispatcher;
 	public class Main extends Sprite {
 		public function Main() {
-			addEventListener(Event.ADDED, handleAdded);
+			new Sprite().addEventListener(Event.ADDED, handleAdded);
 		}
 		
 		private function handleAdded(e:Event):void {
 			IEventDispatcher(e.currentTarget).removeEventListener(Event.ADDED, handleAdded);
+			new Sprite().addEventListener(Event.ADDED, handleAdded2);
+		}
+		
+		private function handleAdded2(e:Event):void {
+			IEventDispatcher(e.currentTarget).removeEventListener(Event.ADDED, handleAdded2);
 			
 		}
 	}
