@@ -1013,7 +1013,7 @@ namespace HaXeContext
             // handle generic types
             if (cname.IndexOf('<') > 0)
             {
-                Match genType = re_genericType.Match(cname);
+                var genType = re_genericType.Match(cname);
                 if (genType.Success)
                     return ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile);
                 return ClassModel.VoidClass;
@@ -1023,10 +1023,10 @@ namespace HaXeContext
             if (cname.IndexOf('@') > 0)
                 return ResolveTypeIndex(cname, inFile);
 
-            string package = "";
-            string inPackage = (features.hasPackages && inFile != null) ? inFile.Package : "";
+            var package = "";
+            var inPackage = (features.hasPackages && inFile != null) ? inFile.Package : "";
 
-            int p = cname.LastIndexOf('.');
+            var p = cname.LastIndexOf('.');
             if (p > 0)
             {
                 package = cname.Substring(0, p);
@@ -1036,32 +1036,29 @@ namespace HaXeContext
             {
                 // search in file
                 if (inFile != null)
-                    foreach (ClassModel aClass in inFile.Classes)
+                    foreach (var aClass in inFile.Classes)
                         if (aClass.Name == cname)
                             return aClass;
 
                 // search in imported classes
                 var found = false;
-                MemberList imports = ResolveImports(inFile);
+                var imports = ResolveImports(inFile);
                 foreach (MemberModel import in imports)
                 {
-                    if (import.Name == cname)
+                    if (import.Name != cname) continue;
+                    if (import.Type != null && import.Type.Length > import.Name.Length)
                     {
-                        if (import.Type != null && import.Type.Length > import.Name.Length)
-                        {
-                            var type = import.Type;
-                            int temp = type.IndexOf('<');
-                            if (temp > 0) type = type.Substring(0, temp);
-                            int dotIndex = type.LastIndexOf('.');
-                            if (dotIndex > 0) package = type.Substring(0, dotIndex);
-                        }
-                        found = true;
-                        break;
+                        var type = import.Type;
+                        var temp = type.IndexOf('<');
+                        if (temp > 0) type = type.Substring(0, temp);
+                        var dotIndex = type.LastIndexOf('.');
+                        if (dotIndex > 0) package = type.Substring(0, dotIndex);
                     }
+                    found = true;
+                    break;
                 }
                 if (!found && cname == "Function") return stubFunctionClass;
             }
-
             return GetModel(package, cname, inPackage);
         }
 
