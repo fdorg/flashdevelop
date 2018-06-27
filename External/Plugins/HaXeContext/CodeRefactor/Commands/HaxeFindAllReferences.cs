@@ -20,7 +20,7 @@ namespace HaXeContext.CodeRefactor.Commands
             UserInterfaceManager.ProgressDialog.Show();
             UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("CodeRefactor.Info.FindingReferences"));
             UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("CodeRefactor.Info.SearchingFiles"));
-            var context = (HaXeContext.Context) ASContext.Context;
+            var context = (Context) ASContext.GetLanguageContext("haxe");
             var hc = context.GetHaxeComplete(ASContext.CurSciControl, CurrentTarget.Context, true, HaxeCompilerService.USAGE);
             hc.GetUsages(OnHaxeCompleteResultHandler);
         }
@@ -45,7 +45,7 @@ namespace HaXeContext.CodeRefactor.Commands
                         var lineEnd = sci.LineEndPosition(line);
                         var lineText = sci.GetLine(line);
                         var value = hc.Expr.Value;
-                        results[path].Add(new SearchMatch
+                        var match = new SearchMatch
                         {
                             Column = index - lineStart,
                             Index = index,
@@ -55,7 +55,9 @@ namespace HaXeContext.CodeRefactor.Commands
                             LineEnd = lineEnd,
                             LineText = lineText,
                             Value = value
-                        });
+                        };
+                        match.Index = sci.MBSafeCharPosition(match.Index);
+                        results[path].Add(match);
                     }
                     foreach (var it in result)
                     {
@@ -68,7 +70,7 @@ namespace HaXeContext.CodeRefactor.Commands
                         var lineEnd = sci.LineEndPosition(line);
                         var lineText = sci.GetLine(line);
                         var value = lineText.Substring(it.CharacterStart, it.CharacterEnd - it.CharacterStart);
-                        matches.Add(new SearchMatch
+                        var match = new SearchMatch
                         {
                             Column = it.CharacterStart,
                             Index = lineStart + it.CharacterStart,
@@ -78,7 +80,9 @@ namespace HaXeContext.CodeRefactor.Commands
                             LineEnd = lineEnd,
                             LineText = lineText,
                             Value = value
-                        });
+                        };
+                        match.Index = sci.MBSafeCharPosition(match.Index);
+                        matches.Add(match);
                     }
                     break;
             }

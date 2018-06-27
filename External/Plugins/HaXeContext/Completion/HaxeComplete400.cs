@@ -1,4 +1,5 @@
-﻿using ASCompletion.Completion;
+﻿using System.Xml;
+using ASCompletion.Completion;
 using PluginCore.Utilities;
 using ScintillaNet;
 
@@ -14,6 +15,17 @@ namespace HaXeContext
         {
             var result = base.GetDisplayPosition();
             result = Sci.MBSafeCharPosition(result);
+            return result;
+        }
+
+        protected override HaxePositionResult ExtractPos(XmlReader reader)
+        {
+            var result = base.ExtractPos(reader);
+            if (result.RangeType == HaxePositionCompleteRangeType.CHARACTERS)
+            {
+                result.CharacterStart = result.CharacterStart - 1;
+                result.CharacterEnd = result.CharacterEnd - 1;
+            }
             return result;
         }
     }

@@ -330,7 +330,7 @@ namespace FlashDevelop
 
         public bool ClosingEntirely
         {
-            get { throw new NotImplementedException(); }
+            get { return false; }
         }
 
         public bool ProcessIsRunning

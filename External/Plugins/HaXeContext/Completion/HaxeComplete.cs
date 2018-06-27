@@ -12,6 +12,7 @@ using ASCompletion.Model;
 using PluginCore.Helpers;
 using System.Windows.Forms;
 using LitJson;
+using PluginCore.Managers;
 using PluginCore.Utilities;
 
 namespace HaXeContext
@@ -217,7 +218,7 @@ namespace HaXeContext
                     pos = 0;
                     break;
             }
-            
+
             // account for BOM characters
             pos += FileHelper.GetEncodingFileInfo(FileName).BomLength;
             return pos;
@@ -465,7 +466,7 @@ namespace HaXeContext
             return HaxeCompleteStatus.TOP_LEVEL;
         }
 
-        HaxePositionResult ExtractPos(XmlReader reader)
+        protected virtual HaxePositionResult ExtractPos(XmlReader reader)
         {
             var result = new HaxePositionResult();
 

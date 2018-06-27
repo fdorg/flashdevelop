@@ -288,11 +288,8 @@ namespace CodeRefactor.Provider
             if (match.Index < sci.Text.Length) // TODO: find out rare cases of incorrect index reported
             {
                 result = DeclarationLookupResult(sci, sci.MBSafePosition(match.Index) + sci.MBSafeTextLength(match.Value), associatedDocumentHelper);
-                if (associatedDocumentHelper != null)
-                {
-                    // because the declaration lookup opens a document, we should register it with the document helper to be closed later
-                    associatedDocumentHelper.RegisterLoadedDocument(PluginBase.MainForm.CurrentDocument);
-                }
+                // because the declaration lookup opens a document, we should register it with the document helper to be closed later
+                associatedDocumentHelper?.RegisterLoadedDocument(PluginBase.MainForm.CurrentDocument);
             }
             // check if the result matches the target
             if (result == null || (result.InFile == null && result.Type == null)) return false;
