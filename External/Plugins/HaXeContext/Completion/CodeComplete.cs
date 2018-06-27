@@ -245,6 +245,8 @@ namespace HaXeContext.Completion
         protected override void InferVariableType(ScintillaControl sci, string declarationLine, int rvalueStart, ASExpr local, MemberModel var)
         {
             var word = sci.GetWordRight(rvalueStart, true);
+            // for example: var v = v;
+            if (word == local.Value) return;
             if (word == "untyped")
             {
                 var type = ASContext.Context.ResolveType(ASContext.Context.Features.dynamicKey, null);
