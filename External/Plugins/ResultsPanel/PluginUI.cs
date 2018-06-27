@@ -566,28 +566,27 @@ namespace ResultsPanel
             return false;
         }
 
+        static readonly Regex re_lineColumn = new Regex("([0-9]+),\\s*([0-9]+)", RegexOptions.Compiled);
+
         /// <summary>
         /// Adds the log entries to the list view
         /// </summary>
         internal void AddLogEntries()
         {
             int count = TraceManager.TraceLog.Count;
-            if (count <= this.logCount)
+            if (count <= logCount)
             {
-                this.logCount = count;
+                logCount = count;
                 return;
             }
-            bool newResult = false;
-            IProject project = PluginBase.CurrentProject;
-            string projectDir = project != null ? Path.GetDirectoryName(project.ProjectPath) : "";
-            int limit = Math.Min(count, this.logCount + 1000);
-            for (int i = this.logCount; i < limit; i++)
+            var newResult = false;
+            var project = PluginBase.CurrentProject;
+            var projectDir = project != null ? Path.GetDirectoryName(project.ProjectPath) : "";
+            var limit = Math.Min(count, logCount + 1000);
+            for (var i = logCount; i < limit; i++)
             {
                 var entry = TraceManager.TraceLog[i];
-                if (entry.GroupData != GroupData)
-                {
-                    continue;
-                }
+                if (entry.GroupData != GroupData) continue;
                 if (entry.Message != null && entry.Message.Length > 7 && entry.Message.IndexOf(':') > 0)
                 {
                     var fileTest = entry.Message.TrimStart();
@@ -613,7 +612,7 @@ namespace ResultsPanel
                         else if (!File.Exists(filename)) continue;
                         var fileInfo = new FileInfo(filename);
                         var description = match.Groups["description"].Value.Trim();
-                        var state = (inExec) ? -3 : entry.State;
+                        var state = inExec ? -3 : entry.State;
                         // automatic state from message
                         // ie. "2:message" -> state = 2
                         if (state == 1 && description.Length > 2
@@ -626,7 +625,7 @@ namespace ResultsPanel
                         int icon;
                         if (state > 2) icon = 1;
                         else if (state == 2) icon = 2;
-                        else if (state == -3) icon = (description.IndexOfOrdinal("Warning") >= 0) ? 2 : 1;
+                        else if (state == -3) icon = description.Contains("Warning") ? 2 : 1;
                         else if (description.StartsWith("error", StringComparison.OrdinalIgnoreCase)) icon = 1;
                         else icon = 0;
                         var item = new ListViewItem("", icon);
@@ -634,7 +633,7 @@ namespace ResultsPanel
                         var matchLine = match.Groups["line"].Value;
                         if (matchLine.IndexOf(',') > 0)
                         {
-                            var split = Regex.Match(matchLine, "([0-9]+),\\s*([0-9]+)");
+                            var split = re_lineColumn.Match(matchLine);
                             if (!split.Success) continue; // invalid line
                             matchLine = split.Groups[1].Value;
                             description = "col: " + split.Groups[2].Value + " " + description;
