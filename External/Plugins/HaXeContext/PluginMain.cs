@@ -123,12 +123,6 @@ namespace HaXeContext
         }
 
         /// <summary>
-        /// Match standard file entry -- filename:line: characters start-end : description
-        /// i.e. C:/path/to/src/com/Class.hx:15: characters 11-22 : description
-        /// </summary>
-        private static Regex re_errorCharacters = new Regex(@"^(?<filename>([_A-Za-z]:)?[^:*?]+):(?<line>[0-9]+):[\s](characters)[\s](?<start>[0-9]+)-(?<end>[0-9]+)[\s]:[\s](?<description>.*)$", RegexOptions.Compiled);
-
-        /// <summary>
         /// Handles the incoming events
         /// </summary>
         public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
@@ -184,29 +178,13 @@ namespace HaXeContext
                     CommandFactoryProvider.Register("haxe", new HaxeCommandFactory());
                     break;
                 case EventType.Trace:
+                    if (settingObject.DisableLibInstallation) return;
                     var count = TraceManager.TraceLog.Count;
                     if (count <= logCount)
                     {
                         logCount = count;
                         return;
                     }
-                    EventManager.RemoveEventHandler(this, EventType.Trace, HandlingPriority.High);
-                    for (var i = logCount; i < count; i++)
-                    {
-                        var traceItem = TraceManager.TraceLog[i];
-                        var message = traceItem.Message?.Trim();
-                        if (string.IsNullOrEmpty(message)) continue;
-                        var m = re_errorCharacters.Match(message);
-                        if (!m.Success) continue;
-                        var fileName = m.Groups["filename"];
-                        var line = m.Groups["line"];
-                        var start = int.Parse(m.Groups["start"].Value);
-                        var end = int.Parse(m.Groups["end"].Value);
-                        var description = m.Groups["description"];
-                        TraceManager.TraceLog[i] = new TraceItem($"{fileName}:{line}: characters {start - 1}-{end -1} : {description}", traceItem.State);
-                    }
-                    EventManager.AddEventHandler(this, EventType.Trace, HandlingPriority.High);
-                    if (settingObject.DisableLibInstallation) return;
                     var patterns = new[]
                     {
                         "Library \\s*(?<name>[^ ]+)\\s*?(\\s*version (?<version>[^ ]+))?",
