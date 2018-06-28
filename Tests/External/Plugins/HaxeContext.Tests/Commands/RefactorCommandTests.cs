@@ -134,9 +134,39 @@ namespace HaXeContext.Commands
         ]
         public string Rename(string fileName, string newName)
         {
+            ((HaXeSettings) ASContext.GetLanguageContext("haxe").Settings).CompletionMode = HaxeCompletionModeEnum.FlashDevelop;
+            return Common(fileName, newName);
+        }
+
+        static IEnumerable<TestCaseData> TestCases2
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeRenameOptionalParameterVar_issue2167_case_1", "newName", "3.4.7")
+                    .Returns(ReadAllText("AfterRenameOptionalParameterVar_issue2167_case_1"))
+                    .SetName("Rename optional parameter. local function. case 3")
+                    .Ignore("")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2167");
+            }
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(TestCases2)),
+        ]
+        public string Rename2(string fileName, string newName, string sdkVersion)
+        {
+            ASContext.Context.Settings.InstalledSDKs = new[] {new InstalledSDK {Path = PluginBase.CurrentProject.CurrentSDK, Version = sdkVersion}};
+            ((HaXeSettings) ASContext.GetLanguageContext("haxe").Settings).CompletionMode = HaxeCompletionModeEnum.Compiler;
+            return Common(fileName, newName);
+        }
+
+        string Common(string fileName, string newName)
+        {
             var sourceText = ReadAllText(fileName);
             fileName = GetFullPath(fileName);
-            fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
+            fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) +
+                       Path.GetExtension(fileName);
             fileName = Path.GetFullPath(fileName);
             fileName = fileName.Replace($"\\FlashDevelop\\Bin\\Debug\\{nameof(HaXeContext)}\\Test_Files\\", ProjectPath);
             fileName = fileName.Replace(".hx", "_withoutEntryPoint.hx");

@@ -20,7 +20,7 @@ namespace HaXeContext.CodeRefactor.Commands
             UserInterfaceManager.ProgressDialog.Show();
             UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("CodeRefactor.Info.FindingReferences"));
             UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("CodeRefactor.Info.SearchingFiles"));
-            var context = (HaXeContext.Context) ASContext.Context;
+            var context = (Context) ASContext.GetLanguageContext("haxe");
             var hc = context.GetHaxeComplete(ASContext.CurSciControl, CurrentTarget.Context, true, HaxeCompilerService.USAGE);
             hc.GetUsages(OnHaxeCompleteResultHandler);
         }
@@ -39,7 +39,7 @@ namespace HaXeContext.CodeRefactor.Commands
                         var sci = ASContext.CurSciControl;
                         var path = sci.FileName;
                         if (!results.ContainsKey(path)) results.Add(path, new List<SearchMatch>());
-                        var index = hc.Expr.PositionExpression;
+                        var index = sci.MBSafeCharPosition(hc.Expr.PositionExpression);
                         var line = sci.LineFromPosition(index);
                         var lineStart = sci.PositionFromLine(line);
                         var lineEnd = sci.LineEndPosition(line);
@@ -65,13 +65,14 @@ namespace HaXeContext.CodeRefactor.Commands
                         var sci = AssociatedDocumentHelper.LoadDocument(path).SciControl;
                         var line = it.LineStart - 1;
                         var lineStart = sci.PositionFromLine(line);
+                        var index = sci.MBSafeCharPosition(lineStart - it.CharacterStart);
                         var lineEnd = sci.LineEndPosition(line);
                         var lineText = sci.GetLine(line);
                         var value = lineText.Substring(it.CharacterStart, it.CharacterEnd - it.CharacterStart);
                         matches.Add(new SearchMatch
                         {
                             Column = it.CharacterStart,
-                            Index = lineStart + it.CharacterStart,
+                            Index = index,
                             Length = value.Length,
                             Line = line + 1,
                             LineStart = lineStart,

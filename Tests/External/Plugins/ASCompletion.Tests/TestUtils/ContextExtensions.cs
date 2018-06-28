@@ -132,7 +132,7 @@ namespace ASCompletion.TestUtils
             PlatformData.Load(Path.Combine(PathHelper.AppDir, platformsFile));
             PluginBase.CurrentProject = new HaxeProject("haxe")
             {
-                CurrentSDK = Environment.GetEnvironmentVariable("HAXEPATH")
+                CurrentSDK = Environment.GetEnvironmentVariable("HAXEPATH")?.TrimEnd('\\', '/')
             };
             context.BuildClassPath();
             foreach (var it in context.Classpath)
