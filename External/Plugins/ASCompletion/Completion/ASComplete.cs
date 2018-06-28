@@ -4671,9 +4671,10 @@ namespace ASCompletion.Completion
 
         protected virtual string GetConstructorTooltipText(ClassModel type)
         {
-            var member = type.Members.Search(type.Name, FlagType.Constructor, 0);
-            if (member != null) return MemberTooltipText(member, type) + GetToolTipDoc(member);
-            return ClassModel.ClassDeclaration(type) + GetToolTipDoc(type);
+            var name = type.Name;
+            var member = type.Members.Search(name, FlagType.Constructor, 0);
+            if (member == null) member = new MemberModel(name, name, FlagType.Access | FlagType.Function | FlagType.Constructor, Visibility.Public);
+            return MemberTooltipText(member, type) + GetToolTipDoc(member);
         }
 
         protected static string GetToolTipDoc(MemberModel model)

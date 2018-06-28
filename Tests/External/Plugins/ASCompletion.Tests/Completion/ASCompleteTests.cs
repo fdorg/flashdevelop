@@ -938,13 +938,16 @@ namespace ASCompletion.Completion
                 {
                     yield return new TestCaseData("GetToolTipText_1")
                         .SetName("new B|(). Case 1. Class without constructor")
-                        .Returns("public class Bar");
+                        .Returns("public Bar ()\n[COLOR=Black]in Bar[/COLOR]");
                     yield return new TestCaseData("GetToolTipText_2")
                         .SetName("new B|(). Case 2. Class with explicit constructor")
                         .Returns("public Bar (v:int)\n[COLOR=Black]in Bar[/COLOR]");
+                    yield return new TestCaseData("GetToolTipText_4")
+                        .SetName("new B|(). Case 4. Class with explicit constructor")
+                        .Returns("public Bar ()\n[COLOR=Black]in Bar[/COLOR]");
                     yield return new TestCaseData("GetToolTipText_3")
                         .SetName("new B|(). Case 3. Class with implicit constructor")
-                        .Returns("private class Bar");
+                        .Returns("public Bar ()\n[COLOR=Black]in Bar[/COLOR]");
                 }
             }
 
