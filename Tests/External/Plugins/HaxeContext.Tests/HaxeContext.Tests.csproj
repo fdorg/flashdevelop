@@ -489,6 +489,9 @@
     <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2167_case_1.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\rename\BeforeRenameOptionalParameterVar_issue2167_case_1_withoutEntryPoint.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\rename\AfterRenameOptionalParameterVar_issue2167_case_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\GetToolTipText_1.hx" />
+    <EmbeddedResource Include="Test Files\completion\GetToolTipText_2.hx" />
+    <EmbeddedResource Include="Test Files\completion\GetToolTipText_3.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

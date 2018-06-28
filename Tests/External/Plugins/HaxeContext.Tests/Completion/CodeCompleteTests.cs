@@ -160,6 +160,30 @@ namespace HaXeContext.Completion
 
         [Test, TestCaseSource(nameof(OnCharIssue2105TestCases))]
         public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion) => OnChar(sci, ReadAllText(fileName), addedChar, autoHide, hasCompletion);
+
+        static IEnumerable<TestCaseData> GetToolTipTextTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("GetToolTipText_1")
+                    .SetName("new B|(). Case 1. Class without constructor")
+                    .Returns(null);
+                yield return new TestCaseData("GetToolTipText_2")
+                    .SetName("new B|(). Case 2. Class with explicit constructor")
+                    .Returns("public Bar (v:Int)\n[COLOR=Black]in Bar[/COLOR]");
+                yield return new TestCaseData("GetToolTipText_3")
+                    .SetName("new B|(). Case 3. Class with implicit constructor")
+                    .Returns("public Bar (v:Int)\n[COLOR=Black]in Foo[/COLOR]");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(GetToolTipTextTestCases))]
+        public string GetToolTipText(string fileName)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            var expr = ASComplete.GetExpressionType(sci, sci.CurrentPos, false, true);
+            return ASComplete.GetToolTipText(expr);
+        }
     }
 
     class CodeCompleteTests2 : ASCompleteTests

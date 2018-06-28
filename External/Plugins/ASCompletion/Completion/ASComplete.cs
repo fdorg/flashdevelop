@@ -4651,52 +4651,48 @@ namespace ASCompletion.Completion
             return null;
         }
 
-        static public string GetToolTipText(ASResult result)
+        public static string GetToolTipText(ASResult result)
         {
             if (result.Member != null && result.InClass != null)
             {
                 return MemberTooltipText(result.Member, result.InClass) + GetToolTipDoc(result.Member);
             }
-            else if (result.Member != null && (result.Member.Flags & FlagType.Constructor) != FlagType.Constructor)
+            if (result.Member != null && (result.Member.Flags & FlagType.Constructor) != FlagType.Constructor)
             {
                 return MemberTooltipText(result.Member, ClassModel.VoidClass) + GetToolTipDoc(result.Member);
             }
-            else if (result.InClass != null)
+            if (result.InClass != null)
             {
                 return ClassModel.ClassDeclaration(result.InClass) + GetToolTipDoc(result.InClass);
             }
-            else if (result.Type != null)
-            {
-                if (result.Context.WordBefore == "new")
-                {
-                    var member = result.Type.Members.Search(result.Type.Name, FlagType.Constructor, 0);
-                    if (member != null) return MemberTooltipText(member, result.Type) + GetToolTipDoc(member);
-                }
-                return ClassModel.ClassDeclaration(result.Type) + GetToolTipDoc(result.Type);
-            }
-            else return null;
+            if (result.Type != null && result.Context.WordBefore == "new") return ASContext.Context.CodeComplete.GetConstructorTooltipText(result.Type);
+            return null;
         }
 
-        private static string GetToolTipDoc(MemberModel model)
+        protected virtual string GetConstructorTooltipText(ClassModel type)
+        {
+            var name = type.Name;
+            var member = type.Members.Search(name, FlagType.Constructor, 0);
+            if (member == null) member = new MemberModel(name, name, FlagType.Access | FlagType.Function | FlagType.Constructor, Visibility.Public);
+            return MemberTooltipText(member, type) + GetToolTipDoc(member);
+        }
+
+        protected static string GetToolTipDoc(MemberModel model)
         {
             string details = (UITools.Manager.ShowDetails) ? ASDocumentation.GetTipFullDetails(model, null) : ASDocumentation.GetTipShortDetails(model, null);
-            return details.TrimStart(new char[] { ' ', '\u2026' });
+            return details.TrimStart(' ', '\u2026');
         }
 
-        static private string MemberTooltipText(MemberModel member, ClassModel inClass)
+        protected static string MemberTooltipText(MemberModel member, ClassModel inClass)
         {
             // modifiers
-            FlagType ft = member.Flags;
-            Visibility acc = member.Access;
-            string modifiers = "";
+            var ft = member.Flags;
+            var modifiers = "";
             if ((ft & FlagType.Class) == 0)
             {
-                if ((ft & FlagType.LocalVar) > 0)
-                    modifiers += "(local) ";
-                else if ((ft & FlagType.ParameterVar) > 0)
-                    modifiers += "(parameter) ";
-                else if ((ft & FlagType.AutomaticVar) > 0)
-                    modifiers += "(auto) ";
+                if ((ft & FlagType.LocalVar) > 0) modifiers += "(local) ";
+                else if ((ft & FlagType.ParameterVar) > 0) modifiers += "(parameter) ";
+                else if ((ft & FlagType.AutomaticVar) > 0) modifiers += "(auto) ";
                 else
                 {
                     if ((ft & FlagType.Extern) > 0)
@@ -4705,6 +4701,7 @@ namespace ASCompletion.Completion
                         modifiers += "native ";
                     if ((ft & FlagType.Static) > 0)
                         modifiers += "static ";
+                    var acc = member.Access;
                     if ((acc & Visibility.Private) > 0)
                         modifiers += "private ";
                     else if ((acc & Visibility.Public) > 0)
@@ -4716,32 +4713,24 @@ namespace ASCompletion.Completion
                 }
             }
             // signature
-            string foundIn = "";
+            var foundIn = "";
             if (inClass != ClassModel.VoidClass)
             {
-                Color themeForeColor = PluginBase.MainForm.GetThemeColor("MethodCallTip.InfoColor");
-                string foreColorString = themeForeColor != Color.Empty ? ColorTranslator.ToHtml(themeForeColor) : "#666666:MULTIPLY";
+                var themeForeColor = PluginBase.MainForm.GetThemeColor("MethodCallTip.InfoColor");
+                var foreColorString = themeForeColor != Color.Empty ? ColorTranslator.ToHtml(themeForeColor) : "#666666:MULTIPLY";
                 foundIn = "\n[COLOR=" + foreColorString + "]in " + MemberModel.FormatType(inClass.QualifiedName) + "[/COLOR]";
             }
-            if ((ft & (FlagType.Getter | FlagType.Setter)) > 0)
-                return String.Format("{0}property {1}{2}", modifiers, member.ToString(), foundIn);
-            else if (ft == FlagType.Function)
-                return String.Format("{0}function {1}{2}", modifiers, member.ToString(), foundIn);
-            else if ((ft & FlagType.Namespace) > 0)
-                return String.Format("{0}namespace {1}{2}", modifiers, member.Name, foundIn);
-            else if ((ft & FlagType.Constant) > 0)
+            if ((ft & (FlagType.Getter | FlagType.Setter)) > 0) return $"{modifiers}property {member}{foundIn}";
+            if (ft == FlagType.Function) return $"{modifiers}function {member}{foundIn}";
+            if ((ft & FlagType.Namespace) > 0) return $"{modifiers}namespace {member.Name}{foundIn}";
+            if ((ft & FlagType.Constant) > 0)
             {
-                if (member.Value == null)
-                    return String.Format("{0}const {1}{2}", modifiers, member.ToString(), foundIn);
-                else
-                    return String.Format("{0}const {1} = {2}{3}", modifiers, member.ToString(), member.Value, foundIn);
+                if (member.Value == null) return $"{modifiers}const {member}{foundIn}";
+                return $"{modifiers}const {member} = {member.Value}{foundIn}";
             }
-            else if ((ft & FlagType.Variable) > 0)
-                return String.Format("{0}var {1}{2}", modifiers, member.ToString(), foundIn);
-            else if ((ft & FlagType.Delegate) > 0)
-                return String.Format("{0}delegate {1}{2}", modifiers, member.ToString(), foundIn);
-            else
-                return String.Format("{0}{1}{2}", modifiers, member.ToString(), foundIn);
+            if ((ft & FlagType.Variable) > 0) return $"{modifiers}var {member}{foundIn}";
+            if ((ft & FlagType.Delegate) > 0) return $"{modifiers}delegate {member}{foundIn}";
+            return $"{modifiers}{member}{foundIn}";
         }
         #endregion
 
