@@ -407,5 +407,27 @@ namespace HaXeContext.Completion
             }
             return base.EvalExpression(expression, context, inFile, inClass, complete, asFunction, filterVisibility);
         }
+
+        protected override string GetConstructorTooltipText(ClassModel type)
+        {
+            var inClass = type;
+            while (!type.IsVoid())
+            {
+                var member = type.Members.Search(type.Name, FlagType.Constructor, 0);
+                if (member != null)
+                {
+                    if (member.Name != inClass.Name)
+                    {
+                        member = (MemberModel) member.Clone();
+                        member.Name = inClass.Name;
+                        inClass = type;
+                    }
+                    return MemberTooltipText(member, inClass) + GetToolTipDoc(member);
+                }
+                type.ResolveExtends();
+                type = type.Extends;
+            }
+            return null;
+        }
     }
 }
