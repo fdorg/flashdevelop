@@ -25,7 +25,7 @@ namespace HaXeContext
         {
             var args = base.BuildHxmlArgs();
             if (args == null) return null;
-            var settings = (ASContext.GetLanguageContext("haxe") as Context)?.Settings as HaXeSettings;
+            var settings = ASContext.Context.Settings as HaXeSettings;
             if (settings == null || (settings.EnabledFeatures & CompletionFeatures.DisplayStdIn) == 0) return args;
             var list = new List<string>(args) {"-D display-stdin"};
             var result = list.ToArray();
