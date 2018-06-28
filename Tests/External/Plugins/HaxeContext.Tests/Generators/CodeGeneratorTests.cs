@@ -403,6 +403,18 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue2086_5"))
                     .SetName("Issue 2086. Case 5. Infer local variable type. abstract Ints(Array<int>)")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2086");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2086_6", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2086_6"))
+                    .SetName("Issue 2086. Case 6. Infer local variable type. var v = new flash.display.BitmapData(2, 2)")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2086");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2086_7", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2086_7"))
+                    .SetName("Issue 2086. Case 7. Infer local variable type. var v = new flash.display.BitmapData(Std.int(2), Std.int(2))")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2086");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2086_8", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2086_8"))
+                    .SetName("Issue 2086. Case 8. Infer local variable type. var v = new haxe.ds.Vector<flash.display.BitmapData>(function() {return 10;}())")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2086");
             }
         }
 
@@ -493,6 +505,9 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_10", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_10"))
                     .SetName("Infer var type. Case 10.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_11", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_11"))
+                    .SetName("Infer var type. Case 11.");
             }
         }
 

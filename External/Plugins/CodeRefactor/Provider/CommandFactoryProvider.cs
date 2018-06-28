@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using ASCompletion.Completion;
 using ASCompletion.Model;
 using CodeRefactor.Commands;

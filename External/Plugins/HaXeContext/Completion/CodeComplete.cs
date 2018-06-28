@@ -276,6 +276,8 @@ namespace HaXeContext.Completion
         protected override void InferVariableType(ScintillaControl sci, string declarationLine, int rvalueStart, ASExpr local, MemberModel var)
         {
             var word = sci.GetWordRight(rvalueStart, true);
+            // for example: var v = v;
+            if (word == local.Value) return;
             if (word == "untyped")
             {
                 var type = ASContext.Context.ResolveType(ASContext.Context.Features.dynamicKey, null);
@@ -285,10 +287,27 @@ namespace HaXeContext.Completion
             }
             var methodEndPosition = sci.LineEndPosition(ASContext.Context.CurrentMember.LineTo);
             var rvalueEnd = ExpressionEndPosition(sci, rvalueStart, sci.LineEndPosition(var.LineTo), true);
+            var parCount = 0;
+            var genCount = 0;
             for (var i = rvalueEnd; i < methodEndPosition; i++)
             {
                 if(sci.PositionIsOnComment(i) || sci.PositionIsInString(i)) continue;
                 var c = (char) sci.CharAt(i);
+                if (c == '(' && genCount == 0) parCount++;
+                else if (c == ')' && genCount == 0)
+                {
+                    parCount--;
+                    rvalueEnd = i + 1;
+                    if (parCount < 0) break;
+                }
+                else if (c == '<' && parCount == 0) genCount++;
+                else if (c == '>' && parCount == 0)
+                {
+                    genCount--;
+                    rvalueEnd = i + 1;
+                    if (genCount < 0) break;
+                }
+                else if (parCount > 0 || genCount > 0) continue;
                 if (c <= ' ') continue;
                 if (c == ';') break;
                 if (c == '.') rvalueEnd = ExpressionEndPosition(sci, i + 1, methodEndPosition);

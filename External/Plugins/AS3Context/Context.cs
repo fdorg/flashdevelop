@@ -17,7 +17,6 @@ using ScintillaNet;
 using ScintillaNet.Enums;
 using SwfOp;
 using Timer = System.Timers.Timer;
-using System.Linq;
 using AS3Context.Completion;
 
 namespace AS3Context
