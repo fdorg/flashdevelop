@@ -12,7 +12,6 @@ using ASCompletion.Model;
 using PluginCore.Helpers;
 using System.Windows.Forms;
 using LitJson;
-using PluginCore.Managers;
 using PluginCore.Utilities;
 
 namespace HaXeContext
