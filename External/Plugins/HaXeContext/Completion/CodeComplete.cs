@@ -263,16 +263,12 @@ namespace HaXeContext.Completion
                 var.Flags |= FlagType.Inferred;
                 return;
             }
-            /**
-             * for example:
-             * class Foo {
-             *   var value = 1;
-             *   function new() {
-             *     value.<complete>
-             *   }
-             * }
-             */
-            if (var.Flags.HasFlag(FlagType.Variable) && !var.Flags.HasFlag(FlagType.LocalVar))
+            if (var.Flags.HasFlag(FlagType.LocalVar))
+            {
+                InferLocalVariableType(sci, declarationLine, rvalueStart, local, var);
+                return;
+            }
+            if (var.Flags.HasFlag(FlagType.Variable))
             {
                 var rvalueEnd = ExpressionEndPosition(sci, rvalueStart);
                 var token = sci.GetTextRange(rvalueStart, rvalueEnd);
@@ -280,9 +276,7 @@ namespace HaXeContext.Completion
                 if (type.IsVoid()) type = ctx.ResolveType(ctx.Features.dynamicKey, null);
                 var.Type = type.QualifiedName;
                 var.Flags |= FlagType.Inferred;
-                return;
             }
-            InferLocalVariableType(sci, declarationLine, rvalueStart, local, var);
         }
 
         void InferLocalVariableType(ScintillaControl sci, string declarationLine, int rvalueStart, ASExpr local, MemberModel var)
