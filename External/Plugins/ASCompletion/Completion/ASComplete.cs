@@ -2810,13 +2810,13 @@ namespace ASCompletion.Completion
         /// <returns>Class/member struct</returns>
         private static ASResult EvalVariable(string token, ASExpr local, FileModel inFile, ClassModel inClass)
         {
-            ASResult result = new ASResult();
+            var result = new ASResult();
             if (local.coma == ComaExpression.AnonymousObjectParam) return result;
             var context = ASContext.Context;
             var features = context.Features;
             if (!inClass.IsVoid()) inFile = inClass.InFile;
 
-            int p = token.IndexOf('(');
+            var p = token.IndexOf('(');
             if (p > 0) token = token.Substring(0, p);
 
             // top-level elements resolution
@@ -2898,7 +2898,10 @@ namespace ASCompletion.Completion
                     {
                         var member = result.Member;
                         if (member != null && member.Flags.HasFlag(FlagType.Variable) && member.Type == null)
+                        {
                             context.CodeComplete.InferVariableType(local, member);
+                            if (string.IsNullOrEmpty(member.Type)) member.Type = context.ResolveType(features.dynamicKey, null).Name;
+                        }
                     }
                     return result;
                 }
@@ -2907,8 +2910,7 @@ namespace ASCompletion.Completion
             if (inFile.Version != 2 || inClass.IsVoid())
             {
                 FindMember(token, inFile, result, 0, 0);
-                if (!result.IsNull())
-                    return result;
+                if (!result.IsNull()) return result;
             }
             // current file types
             foreach(var aClass in inFile.Classes)
@@ -2922,60 +2924,57 @@ namespace ASCompletion.Completion
             var visible = context.GetVisibleExternalElements();
             foreach (MemberModel aDecl in visible)
             {
-                if (aDecl.Name == token)
+                if (aDecl.Name != token) continue;
+                if ((aDecl.Flags & FlagType.Package) > 0)
                 {
-                    if ((aDecl.Flags & FlagType.Package) > 0)
+                    var package = context.ResolvePackage(token, false);
+                    if (package != null)
                     {
-                        FileModel package = context.ResolvePackage(token, false);
-                        if (package != null)
-                        {
-                            result.InFile = package;
-                            result.IsPackage = true;
-                            result.IsStatic = true;
-                            return result;
-                        }
-                    }
-                    else if ((aDecl.Flags & (FlagType.Class | FlagType.Enum)) > 0)
-                    {
-                        ClassModel friendClass = null;
-                        if (aDecl.InFile != null)
-                        {
-                            foreach(ClassModel aClass in aDecl.InFile.Classes)
-                                if (aClass.Name == token)
-                                {
-                                    friendClass = aClass;
-                                    break;
-                                }
-                        }
-                        if (friendClass == null) friendClass = context.ResolveType(aDecl.Type, inFile);
-
-                        if (!friendClass.IsVoid())
-                        {
-                            result.Type = friendClass;
-                            result.IsStatic = (p < 0);
-                            return result;
-                        }
-                    }
-                    else if ((aDecl.Flags & FlagType.Function) > 0)
-                    {
-                        result.Member = aDecl;
-                        result.RelClass = ClassModel.VoidClass;
-                        result.InClass = FindClassOf(aDecl);
-                        result.Type = (p < 0)
-                            ? context.ResolveType("Function", null)
-                            : context.ResolveType(aDecl.Type, aDecl.InFile);
-                        result.InFile = aDecl.InFile;
+                        result.InFile = package;
+                        result.IsPackage = true;
+                        result.IsStatic = true;
                         return result;
                     }
-                    else if ((aDecl.Flags & (FlagType.Variable | FlagType.Getter)) > 0)
+                }
+                else if ((aDecl.Flags & (FlagType.Class | FlagType.Enum)) > 0)
+                {
+                    ClassModel friendClass = null;
+                    if (aDecl.InFile != null)
                     {
-                        result.Member = aDecl;
-                        result.RelClass = ClassModel.VoidClass;
-                        result.InClass = FindClassOf(aDecl);
-                        result.Type = context.ResolveType(aDecl.Type, aDecl.InFile);
-                        result.InFile = aDecl.InFile;
+                        foreach(var aClass in aDecl.InFile.Classes)
+                            if (aClass.Name == token)
+                            {
+                                friendClass = aClass;
+                                break;
+                            }
+                    }
+                    if (friendClass == null) friendClass = context.ResolveType(aDecl.Type, inFile);
+                    if (!friendClass.IsVoid())
+                    {
+                        result.Type = friendClass;
+                        result.IsStatic = (p < 0);
                         return result;
                     }
+                }
+                else if ((aDecl.Flags & FlagType.Function) > 0)
+                {
+                    result.Member = aDecl;
+                    result.RelClass = ClassModel.VoidClass;
+                    result.InClass = FindClassOf(aDecl);
+                    result.Type = (p < 0)
+                        ? context.ResolveType("Function", null)
+                        : context.ResolveType(aDecl.Type, aDecl.InFile);
+                    result.InFile = aDecl.InFile;
+                    return result;
+                }
+                else if ((aDecl.Flags & (FlagType.Variable | FlagType.Getter)) > 0)
+                {
+                    result.Member = aDecl;
+                    result.RelClass = ClassModel.VoidClass;
+                    result.InClass = FindClassOf(aDecl);
+                    result.Type = context.ResolveType(aDecl.Type, aDecl.InFile);
+                    result.InFile = aDecl.InFile;
+                    return result;
                 }
             }
             return result;

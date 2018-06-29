@@ -511,6 +511,12 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_12", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_12"))
                     .SetName("Infer var type. Case 12.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_13", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_13"))
+                    .SetName("Infer var type. Case 13.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_14", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_14"))
+                    .SetName("Infer var type. Case 14.");
             }
         }
 
