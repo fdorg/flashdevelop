@@ -6,6 +6,7 @@ using ASCompletion.Context;
 using ASCompletion.Model;
 using PluginCore;
 using PluginCore.Controls;
+using PluginCore.Managers;
 using ScintillaNet;
 
 namespace HaXeContext.Completion
@@ -108,6 +109,11 @@ namespace HaXeContext.Completion
         /// <inheritdoc />
         protected override void InferVariableType(ScintillaControl sci, ASExpr local, MemberModel var)
         {
+            if (var == null)
+            {
+                TraceManager.Add("var is null", -3);
+                return;
+            }
             var line = sci.GetLine(var.LineFrom);
             var m = Regex.Match(line, "\\s*for\\s*\\(\\s*" + var.Name + "\\s*in\\s*");
             if (!m.Success)
@@ -118,6 +124,11 @@ namespace HaXeContext.Completion
             var ctx = ASContext.Context;
             var currentModel = ctx.CurrentModel;
             var rvalueStart = sci.PositionFromLine(var.LineFrom) + m.Index + m.Length;
+            if (ctx.CurrentMember == null)
+            {
+                TraceManager.Add("ctx.CurrentMember is null", -3);
+                return;
+            }
             var methodEndPosition = sci.LineEndPosition(ctx.CurrentMember.LineTo);
             var parCount = 0;
             for (var i = rvalueStart; i < methodEndPosition; i++)
@@ -153,6 +164,11 @@ namespace HaXeContext.Completion
                     {
                         var lineBefore = sci.LineFromPosition(i) - 1;
                         var vars = local.LocalVars;
+                        if (vars == null)
+                        {
+                            TraceManager.Add("local.LocalVars is null", -3);
+                            return;
+                        }
                         vars.Items.Sort((l, r) => l.LineFrom > r.LineFrom ? -1 : l.LineFrom < r.LineFrom ? 1 : 0);
                         var model = vars.Items.Find(it => it.LineFrom <= lineBefore);
                         if (model != null) expr = new ASResult {Type = ctx.ResolveType(model.Type, ctx.CurrentModel), InClass = ctx.CurrentClass};
@@ -177,6 +193,11 @@ namespace HaXeContext.Completion
                             continue;
                         }
                         var members = exprType.Members;
+                        if (members == null)
+                        {
+                            TraceManager.Add("exprType.Members is null", -3);
+                            return;
+                        }
                         var member = members.Search("iterator", 0, 0);
                         if (member == null)
                         {
@@ -186,6 +207,11 @@ namespace HaXeContext.Completion
                                 if (member != null) iteratorIndexType = member.Type;
                             }
                             var exprTypeIndexType = exprType.IndexType;
+                            if (exprType.Name == null)
+                            {
+                                TraceManager.Add("exprType.Name is null", -3);
+                                return;
+                            }
                             if (exprType.Name.StartsWith("Iterator<") && !string.IsNullOrEmpty(exprTypeIndexType) && ctx.ResolveType(exprTypeIndexType, currentModel).IsVoid())
                             {
                                 exprType = expr.InClass;
@@ -209,6 +235,11 @@ namespace HaXeContext.Completion
                         if (!string.IsNullOrEmpty(exprTypeIndexType) && exprTypeIndexType.Contains(','))
                         {
                             var t = exprType;
+                            if (t.IndexType == null)
+                            {
+                                TraceManager.Add("t.IndexType is null", -3);
+                                return;
+                            }
                             var originTypes = t.IndexType.Split(',');
                             if (!originTypes.Contains(var.Type))
                             {
