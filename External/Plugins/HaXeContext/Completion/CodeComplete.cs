@@ -273,7 +273,15 @@ namespace HaXeContext.Completion
                 var rvalueEnd = ExpressionEndPosition(sci, rvalueStart, true);
                 var expr = GetExpressionType(sci, rvalueEnd, false, true);
                 var type = expr.Type;
-                if (type == null || (type.IsVoid() && expr.Member != null)) type = ctx.ResolveType(expr.Member.Type, ctx.CurrentModel);
+                if (type == null || type.IsVoid())
+                {
+                    if (expr.Member != null) type = ctx.ResolveType(expr.Member.Type, ctx.CurrentModel);
+                    else
+                    {
+                        var token = sci.GetTextRange(rvalueStart, rvalueEnd);
+                        type = ctx.ResolveToken(token, ctx.CurrentModel);
+                    }
+                }
                 if (type.IsVoid()) type = ctx.ResolveType(ctx.Features.dynamicKey, null);
                 var.Type = type.QualifiedName;
                 var.Flags |= FlagType.Inferred;
