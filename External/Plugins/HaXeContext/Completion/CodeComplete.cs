@@ -272,7 +272,7 @@ namespace HaXeContext.Completion
              *   }
              * }
              */
-            if (var.Flags.HasFlag(FlagType.Variable))
+            if (var.Flags.HasFlag(FlagType.Variable) && !var.Flags.HasFlag(FlagType.LocalVar))
             {
                 var rvalueEnd = ExpressionEndPosition(sci, rvalueStart);
                 var token = sci.GetTextRange(rvalueStart, rvalueEnd);
