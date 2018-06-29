@@ -508,6 +508,28 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_11", GeneratorJobType.AssignStatementToVar, true)
                     .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_11"))
                     .SetName("Infer var type. Case 11.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_12", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_12"))
+                    .SetName("Infer var type. Case 12.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_13", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_13"))
+                    .SetName("Infer var type. Case 13.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_14", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_14"))
+                    .SetName("Infer var type. Case 14.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_15", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_15"))
+                    .SetName("Infer var type. Case 15.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_16", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_16"))
+                    .SetName("Infer var type. Case 16.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_17", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_17"))
+                    .SetName("Infer var type. Case 17.");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_18", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_18"))
+                    .SetName("Infer var type. Case 18.")
+                    .Ignore("Result should be `var v1:Class<Dynamic> = v;` instead of `var v1:Dynamic = v;`");
             }
         }
 
