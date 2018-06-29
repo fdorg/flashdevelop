@@ -162,9 +162,9 @@ namespace ASCompletion
             }
         }
 
-        /**
-        * Disposes the plugin
-        */
+        /// <summary>
+        /// Disposes the plugin
+        /// </summary>
         public void Dispose()
         {
             timerPosition.Enabled = false;
@@ -173,9 +173,9 @@ namespace ASCompletion
             SaveSettings();
         }
 
-        /**
-        * Handles the incoming events
-        */
+        /// <summary>
+        /// Handles the incoming events
+        /// </summary>
         public void HandleEvent(Object sender, NotifyEvent e, HandlingPriority priority)
         {
             try
@@ -214,14 +214,19 @@ namespace ASCompletion
 
                     // key combinations
                     case EventType.Keys:
-                        Keys key = (e as KeyEvent).Value;
+                        Keys keys = ((KeyEvent) e).Value;
                         if (ModelsExplorer.HasFocus)
                         {
-                            e.Handled = ModelsExplorer.Instance.OnShortcut(key);
+                            e.Handled = ModelsExplorer.Instance.OnShortcut(keys);
+                            return;
+                        }
+                        if (pluginUI.OnShortcut(keys))
+                        {
+                            e.Handled = true;
                             return;
                         }
                         if (!doc.IsEditable) return;
-                        e.Handled = ASComplete.OnShortcut(key, sci);
+                        e.Handled = ASComplete.OnShortcut(keys, sci);
                         return;
 
                     // user-customized shortcuts
@@ -260,7 +265,7 @@ namespace ASCompletion
                         if (doc.FileName.ToLower().EndsWithOrdinal(".as"))
                         {
                             settingObject.LastASVersion = DetectActionscriptVersion(doc);
-                            (e as TextEvent).Value = settingObject.LastASVersion;
+                            ((TextEvent) e).Value = settingObject.LastASVersion;
                             e.Handled = true;
                         }
                         break;
@@ -337,8 +342,7 @@ namespace ASCompletion
                                 if (info != null && info.ContainsKey("language"))
                                 {
                                     IASContext context = ASContext.GetLanguageContext(info["language"] as string);
-                                    if (context != null && context.Settings != null 
-                                        && context.Settings.UserClasspath != null)
+                                    if (context?.Settings?.UserClasspath != null)
                                         info["cp"] = new List<string>(context.Settings.UserClasspath);
                                 }
                                 e.Handled = true;
@@ -351,7 +355,7 @@ namespace ASCompletion
                                 {
                                     IASContext context = ASContext.GetLanguageContext(info["language"] as string);
                                     List<string> cp = info["cp"] as List<string>;
-                                    if (cp != null && context != null && context.Settings != null)
+                                    if (cp != null && context?.Settings != null)
                                     {
                                         string[] pathes = new string[cp.Count];
                                         cp.CopyTo(pathes);
@@ -378,7 +382,7 @@ namespace ASCompletion
                                 e.Handled = true;
                                 IASContext context = ASContext.GetLanguageContext(cmdData);
                                 if (context == null) return;
-                                string filter = "SDK";
+                                const string filter = "SDK";
                                 string name = "";
                                 switch (cmdData.ToUpper())
                                 {
@@ -616,29 +620,20 @@ namespace ASCompletion
 
         #region Custom Properties
 
-        /**
-        * Gets the PluginPanel
-        */
+        /// <summary>
+        /// Gets the PluginPanel
+        /// </summary>
         [Browsable(false)]
-        public DockContent PluginPanel
-        {
-            get { return pluginPanel; }
-        }
+        public DockContent PluginPanel => pluginPanel;
 
-        /**
-        * Gets the PluginSettings
-        */
+        /// <summary>
+        /// Gets the PluginSettings
+        /// </summary>
         [Browsable(false)]
-        public virtual GeneralSettings PluginSettings
-        {
-            get { return settingObject; }
-        }
+        public virtual GeneralSettings PluginSettings => settingObject;
 
         [Browsable(false)]
-        public virtual List<ToolStripItem> MenuItems
-        {
-            get { return menuItems; }
-        }
+        public virtual List<ToolStripItem> MenuItems => menuItems;
 
         #endregion
 
@@ -649,7 +644,7 @@ namespace ASCompletion
             pluginDesc = TextHelper.GetString("Info.Description");
             dataPath = Path.Combine(PathHelper.DataDir, "ASCompletion");
             if (!Directory.Exists(dataPath)) Directory.CreateDirectory(dataPath);
-            else if (PluginBase.MainForm.RefreshConfig) CleanData(dataPath);
+            else if (PluginBase.MainForm.RefreshConfig) CleanData();
             settingsFile = Path.Combine(dataPath, "Settings.fdb");
             settingObject = new GeneralSettings();
             if (!File.Exists(settingsFile))
@@ -669,10 +664,7 @@ namespace ASCompletion
         /// <summary>
         /// FD has been updated, clean some app data
         /// </summary>
-        private void CleanData(string dataPath)
-        {
-            PathExplorer.ClearPersistentCache();
-        }
+        private void CleanData() => PathExplorer.ClearPersistentCache();
 
         private void SaveSettings()
         {
@@ -1004,10 +996,7 @@ namespace ASCompletion
         /// <summary>
         /// Opens the plugin panel again if closed
         /// </summary>
-        public void OpenPanel(object sender, EventArgs e)
-        {
-            pluginPanel.Show();
-        }
+        public void OpenPanel(object sender, EventArgs e) => pluginPanel.Show();
 
         /// <summary>
         /// Menu item command: Check ActionScript
