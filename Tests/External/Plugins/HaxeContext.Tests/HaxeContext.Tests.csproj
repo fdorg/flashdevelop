@@ -492,6 +492,8 @@
     <EmbeddedResource Include="Test Files\completion\GetToolTipText_1.hx" />
     <EmbeddedResource Include="Test Files\completion\GetToolTipText_2.hx" />
     <EmbeddedResource Include="Test Files\completion\GetToolTipText_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_inferVar_12.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_inferVar_12.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
