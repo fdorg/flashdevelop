@@ -247,20 +247,53 @@ namespace HaXeContext.Completion
             var word = sci.GetWordRight(rvalueStart, true);
             // for example: var v = v;
             if (word == local.Value) return;
+            var ctx = ASContext.Context;
+            /**
+             * for example:
+             * class Foo {
+             *   function new() {
+             *     untyped __js__('value').<complete>
+             *   }
+             * }
+             */
             if (word == "untyped")
             {
-                var type = ASContext.Context.ResolveType(ASContext.Context.Features.dynamicKey, null);
+                var type = ctx.ResolveType(ctx.Features.dynamicKey, null);
                 var.Type = type.QualifiedName;
                 var.Flags |= FlagType.Inferred;
                 return;
             }
+            /**
+             * for example:
+             * class Foo {
+             *   var value = 1;
+             *   function new() {
+             *     value.<complete>
+             *   }
+             * }
+             */
+            if (var.Flags.HasFlag(FlagType.Variable))
+            {
+                var rvalueEnd = ExpressionEndPosition(sci, rvalueStart);
+                var token = sci.GetTextRange(rvalueStart, rvalueEnd);
+                var type = ctx.ResolveToken(token, ctx.CurrentModel);
+                if (type.IsVoid()) type = ctx.ResolveType(ctx.Features.dynamicKey, null);
+                var.Type = type.QualifiedName;
+                var.Flags |= FlagType.Inferred;
+                return;
+            }
+            InferLocalVariableType(sci, declarationLine, rvalueStart, local, var);
+        }
+
+        void InferLocalVariableType(ScintillaControl sci, string declarationLine, int rvalueStart, ASExpr local, MemberModel var)
+        {
             var methodEndPosition = sci.LineEndPosition(ASContext.Context.CurrentMember.LineTo);
             var rvalueEnd = ExpressionEndPosition(sci, rvalueStart, sci.LineEndPosition(var.LineTo), true);
             var parCount = 0;
             var genCount = 0;
             for (var i = rvalueEnd; i < methodEndPosition; i++)
             {
-                if(sci.PositionIsOnComment(i) || sci.PositionIsInString(i)) continue;
+                if (sci.PositionIsOnComment(i) || sci.PositionIsInString(i)) continue;
                 var c = (char) sci.CharAt(i);
                 if (c == '(' && genCount == 0) parCount++;
                 else if (c == ')' && genCount == 0)

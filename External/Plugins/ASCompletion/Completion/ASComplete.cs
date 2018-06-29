@@ -2879,7 +2879,7 @@ namespace ASCompletion.Completion
                 // method parameters
                 if (local.ContextFunction?.Parameters != null)
                 {
-                    foreach (MemberModel para in local.ContextFunction.Parameters)
+                    foreach (var para in local.ContextFunction.Parameters)
                         if (para.Name == token || (para.Name[0] == '?' && para.Name.Substring(1) == token))
                         {
                             result.Member = para;
@@ -2893,7 +2893,15 @@ namespace ASCompletion.Completion
             {
                 FindMember(token, inClass, result, 0, 0);
                 if (!result.IsNull())
+                {
+                    if (features.hasInference)
+                    {
+                        var member = result.Member;
+                        if (member != null && member.Flags.HasFlag(FlagType.Variable) && member.Type == null)
+                            context.CodeComplete.InferVariableType(local, member);
+                    }
                     return result;
+                }
             }
             // file member
             if (inFile.Version != 2 || inClass.IsVoid())
@@ -2903,17 +2911,12 @@ namespace ASCompletion.Completion
                     return result;
             }
             // current file types
-            foreach(ClassModel aClass in inFile.Classes)
+            foreach(var aClass in inFile.Classes)
             {
-                if (aClass.Name == token)
-                {
-                    if (!context.InPrivateSection || aClass.Access == Visibility.Private)
-                    {
-                        result.Type = aClass;
-                        result.IsStatic = (p < 0);
-                        return result;
-                    }
-                }
+                if (aClass.Name != token || (context.InPrivateSection && aClass.Access != Visibility.Private)) continue;
+                result.Type = aClass;
+                result.IsStatic = p < 0;
+                return result;
             }
             // visible types & declarations
             var visible = context.GetVisibleExternalElements();
@@ -3030,8 +3033,10 @@ namespace ASCompletion.Completion
             var m = Regex.Match(text, "=([^;]+)");
             if (!m.Success) return;
             var rvalue = m.Groups[1];
-            if (rvalue.Length <= 1) return;
-            InferVariableType(sci, text, sci.PositionFromLine(var.LineFrom) + rvalue.Index, local, var);
+            if (rvalue.Length == 0) return;
+            var offset = rvalue.Length - rvalue.Value.TrimStart().Length;
+            var rvalueStart = sci.PositionFromLine(var.LineFrom) + rvalue.Index + offset;
+            InferVariableType(sci, text, rvalueStart, local, var);
         }
 
         protected virtual void InferVariableType(ScintillaControl sci, string declarationLine, int rvalueStart, ASExpr local, MemberModel var)
@@ -4504,15 +4509,16 @@ namespace ASCompletion.Completion
 
         private static bool IsXmlType(ClassModel model)
         {
-            return model != null
-                && (model.QualifiedName == "XML" || model.QualifiedName == "XMLList");
+            return model != null && (model.QualifiedName == "XML" || model.QualifiedName == "XMLList");
         }
 
-        public static int ExpressionEndPosition(ScintillaControl sci, int position)
+        public static int ExpressionEndPosition(ScintillaControl sci, int position) => ExpressionEndPosition(sci, position, false);
+
+        public static int ExpressionEndPosition(ScintillaControl sci, int position, bool skipWhiteSpace)
         {
             var member = ASContext.Context.CurrentMember;
             var endPosition = member != null ? sci.LineEndPosition(member.LineTo) : sci.TextLength;
-            return ExpressionEndPosition(sci, position, endPosition);
+            return ExpressionEndPosition(sci, position, endPosition, skipWhiteSpace);
         }
 
         public static int ExpressionEndPosition(ScintillaControl sci, int startPos, int endPos) => ExpressionEndPosition(sci, startPos, endPos, false);
