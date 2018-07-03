@@ -87,7 +87,7 @@ namespace HaXeContext
             SaveFile();
             ThreadPool.QueueUserWorkItem(_ =>
             {
-                Status = ParseLines(handler.GetCompletion(BuildHxmlArgs(), GetFileContent()));
+                Status = ParseLines(handler.GetCompletion(BuildHxmlArgs()?.ToArray(), GetFileContent()));
                 Notify(callback, resultFunc());
             });
         }
@@ -106,13 +106,11 @@ namespace HaXeContext
 
         /* HAXE COMPILER ARGS */
 
-        protected virtual string[] BuildHxmlArgs()
+        protected virtual List<string> BuildHxmlArgs()
         {
             // check haxe project
-            if (!(PluginBase.CurrentProject is HaxeProject))
-                return null;
-
-            var project = ((HaxeProject) PluginBase.CurrentProject);
+            if (!(PluginBase.CurrentProject is HaxeProject)) return null;
+            var project = (HaxeProject) PluginBase.CurrentProject;
             var pos = GetDisplayPosition();
 
             // Build Haxe command
@@ -130,8 +128,7 @@ namespace HaXeContext
             hxmlArgs.Add("-D use_rtti_doc");
             hxmlArgs.Add("-D display-details");
             if (project.TraceEnabled) hxmlArgs.Add("-debug");
-            
-            return hxmlArgs.ToArray();
+            return hxmlArgs;
         }
 
         protected virtual string GetFileContent() => null;
@@ -305,13 +302,9 @@ namespace HaXeContext
                             };
                         }
                     }
-                    
-
                     diagnosticsResults.Add(result);
-
                 }
             }
-            
             return HaxeCompleteStatus.DIAGNOSTICS;
         }
 
