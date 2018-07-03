@@ -21,14 +21,14 @@ namespace HaXeContext
             }
         }
 
-        protected override string[] BuildHxmlArgs()
+        protected override List<string> BuildHxmlArgs()
         {
-            var args = base.BuildHxmlArgs();
-            if (args == null) return null;
-            var settings = (ASContext.GetLanguageContext("haxe") as Context)?.Settings as HaXeSettings;
-            if (settings == null || (settings.EnabledFeatures & CompletionFeatures.DisplayStdIn) == 0) return args;
-            var list = new List<string>(args) {"-D display-stdin"};
-            var result = list.ToArray();
+            var result = base.BuildHxmlArgs();
+            if (result == null) return null;
+            if ((ASContext.GetLanguageContext("haxe") as Context)?.Settings is HaXeSettings settings
+                && (settings.EnabledFeatures & CompletionFeatures.DisplayStdIn) != 0
+                && settings.CompletionMode == HaxeCompletionModeEnum.CompletionServer)
+                result.Add("-D display-stdin");
             return result;
         }
 
