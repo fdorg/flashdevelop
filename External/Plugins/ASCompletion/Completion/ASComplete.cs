@@ -60,7 +60,7 @@ namespace ASCompletion.Completion
         /// </summary>
         /// <param name="Sci">Scintilla Control</param>
         /// <param name="Value">Character inserted</param>
-        /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
+        /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space or Ctrl+Alt+Space)</param>
         /// <returns>Auto-completion has been handled</returns>
         public static bool OnChar(ScintillaControl Sci, int Value, bool autoHide)
         {
