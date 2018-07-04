@@ -311,4 +311,31 @@ namespace HaXeContext.Completion
             return OnCharAndReplaceText(sci, CodeCompleteTests.ReadAllText(fileName), addedChar, autoHide);
         }
     }
+
+    class CodeCompleteTests3 : ASCompleteTests
+    {
+        [TestFixtureSetUp]
+        public void Setup()
+        {
+            SetHaxeFeatures(sci);
+            ((HaXeSettings) ASContext.GetLanguageContext("haxe").Settings).DisableCompletionOnDemand = false;
+        }
+
+        static IEnumerable<TestCaseData> OnCharIssue825TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("OnCharIssue2105_1", '.', false)
+                    .SetName("'.|' Issue825. Case 1.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("OnCharIssue2105_2", '.', false)
+                    .SetName("\".|\" Issue825. Case 2.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(OnCharIssue825TestCases))]
+        public void OnChar(string fileName, char addedChar, bool autoHide) => OnChar(sci, CodeCompleteTests.ReadAllText(fileName), addedChar, autoHide, false);
+
+    }
 }

@@ -1876,7 +1876,7 @@ namespace ASCompletion.Completion
         /// <param name="Sci">Scintilla control</param>
         /// <param name="autoHide">Don't keep the list open if the word does not match</param>
         /// <returns>Auto-completion has been handled</returns>
-        static private bool HandleDotCompletion(ScintillaControl Sci, bool autoHide)
+        private static bool HandleDotCompletion(ScintillaControl Sci, bool autoHide)
         {
             //this method can exit at multiple points, so reset the current class now rather than later
             currentClassHash = null;
