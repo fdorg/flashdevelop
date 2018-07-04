@@ -203,45 +203,34 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        internal static void OnTextChanged(ScintillaControl sci, int position, int length, int linesAdded)
-        {
-            // TODO track text changes -> LastChar
-        }
-
         /// <summary>
         /// Handle shortcuts
         /// </summary>
         /// <param name="keys">Test keys</param>
         /// <returns></returns>
-        static public bool OnShortcut(Keys keys, ScintillaControl Sci)
+        public static bool OnShortcut(Keys keys, ScintillaControl Sci)
         {
-            if (Sci.IsSelectionRectangle) 
-                return false;
-
+            if (Sci.IsSelectionRectangle) return false;
             // dot complete
             if (keys == (Keys.Control | Keys.Space))
             {
                 if (ASContext.HasContext && ASContext.Context.IsFileValid)
                 {
                     // try to get completion as if we had just typed the previous char
-                    if (OnChar(Sci, Sci.CharAt(Sci.PositionBefore(Sci.CurrentPos)), false))
-                        return true;
-                    else
-                    {
-                        // force dot completion
-                        OnChar(Sci, '.', false);
-                        return true;
-                    }
+                    if (OnChar(Sci, Sci.CharAt(Sci.PositionBefore(Sci.CurrentPos)), false)) return true;
+                    // force dot completion
+                    OnChar(Sci, '.', false);
+                    return true;
                 }
-                else return false;
+                return false;
             }
-            else if (keys == Keys.Back)
+            if (keys == Keys.Back)
             {
                 HandleAddClosingBraces(Sci, Sci.CurrentChar, false);
                 return false;
             }
             // show calltip
-            else if (keys == (Keys.Control | Keys.Shift | Keys.Space))
+            if (keys == (Keys.Control | Keys.Shift | Keys.Space))
             {
                 if (ASContext.HasContext && ASContext.Context.IsFileValid)
                 {
@@ -253,7 +242,7 @@ namespace ASCompletion.Completion
                 else return false;
             }
             // project types completion
-            else if (keys == (Keys.Control | Keys.Alt | Keys.Space))
+            if (keys == (Keys.Control | Keys.Alt | Keys.Space))
             {
                 if (ASContext.HasContext && ASContext.Context.IsFileValid && !ASContext.Context.Settings.LazyClasspathExploration)
                 {
@@ -268,7 +257,7 @@ namespace ASCompletion.Completion
                 else return false;
             }
             // hot build
-            else if (keys == (Keys.Control | Keys.Enter))
+            if (keys == (Keys.Control | Keys.Enter))
             {
                 // project build
                 DataEvent de = new DataEvent(EventType.Command, "ProjectManager.HotBuild", null);
