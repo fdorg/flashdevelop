@@ -89,22 +89,21 @@ namespace ASCompletion.Completion
 
                 if (features.hasStringInterpolation && (IsStringStyle(style) || IsCharStyle(style)))
                 {
-                    char stringTypeChar = Sci.GetStringType(position - 2); // start from -2 in case the inserted char is ' or "
-
+                    var stringTypeChar = Sci.GetStringType(position - 2); // start from -2 in case the inserted char is ' or "
                     // string interpolation
-                    if (features.stringInterpolationQuotes.IndexOf(stringTypeChar) >= 0 &&
-                        IsMatchingQuote(stringTypeChar, Sci.BaseStyleAt(position - 2)))
+                    if (features.stringInterpolationQuotes.Contains(stringTypeChar)
+                        && IsMatchingQuote(stringTypeChar, Sci.BaseStyleAt(position - 2)))
                     {
                         if (Value == '$' && !ctx.CodeComplete.IsEscapedCharacter(Sci, position - 1, '$'))
                         {
                             return HandleInterpolationCompletion(Sci, autoHide, false);
                         }
-                        else if (Value == '{' && prevValue == '$' && !ctx.CodeComplete.IsEscapedCharacter(Sci, position - 2, '$'))
+                        if (Value == '{' && prevValue == '$' && !ctx.CodeComplete.IsEscapedCharacter(Sci, position - 2, '$'))
                         {
                             if (autoHide) HandleAddClosingBraces(Sci, (char) Value, true);
                             return HandleInterpolationCompletion(Sci, autoHide, true);
                         }
-                        else if (ctx.CodeComplete.IsStringInterpolationStyle(Sci, position - 2))
+                        if (ctx.CodeComplete.IsStringInterpolationStyle(Sci, position - 2))
                         {
                             skipQuoteCheck = true; // continue on with regular completion
                         }
@@ -140,13 +139,11 @@ namespace ASCompletion.Completion
                 switch (Value)
                 {
                     case '.':
-                        if (features.dot == "." || !autoHide)
-                            return HandleDotCompletion(Sci, autoHide);
+                        if (features.dot == "." || !autoHide) return HandleDotCompletion(Sci, autoHide);
                         break;
 
                     case '>':
-                        if (features.dot == "->" && prevValue == '-')
-                            return HandleDotCompletion(Sci, autoHide);
+                        if (features.dot == "->" && prevValue == '-') return HandleDotCompletion(Sci, autoHide);
                         break;
 
                     case ' ':
@@ -163,7 +160,7 @@ namespace ASCompletion.Completion
                         {
                             char c0 = (char)Sci.CharAt(position - 2);
                             //TODO: We should check if we are actually on a generic type
-                            if ((ctx.CurrentModel.Version == 3 && c0 == '.') || Char.IsLetterOrDigit(c0))
+                            if ((ctx.CurrentModel.Version == 3 && c0 == '.') || char.IsLetterOrDigit(c0))
                                 return HandleColonCompletion(Sci, "", autoHide);
                             return false;
                         }
@@ -171,8 +168,7 @@ namespace ASCompletion.Completion
 
                     case '(':
                     case ',':
-                        if (!ASContext.CommonSettings.DisableCallTip)
-                            return HandleFunctionCompletion(Sci, autoHide);
+                        if (!ASContext.CommonSettings.DisableCallTip) return HandleFunctionCompletion(Sci, autoHide);
                         return false;
 
                     case ')':
@@ -184,8 +180,7 @@ namespace ASCompletion.Completion
                         break;
 
                     case ';':
-                        if (!ASContext.CommonSettings.DisableCodeReformat) 
-                            ReformatLine(Sci, position);
+                        if (!ASContext.CommonSettings.DisableCodeReformat) ReformatLine(Sci, position);
                         break;
 
                     default:
