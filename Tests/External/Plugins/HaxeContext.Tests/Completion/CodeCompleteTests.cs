@@ -325,10 +325,10 @@ namespace HaXeContext.Completion
         {
             get
             {
-                yield return new TestCaseData("OnCharIssue2105_1", '.', false)
+                yield return new TestCaseData("OnCharIssue2105_1", '.', true)
                     .SetName("'.|' Issue825. Case 1.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
-                yield return new TestCaseData("OnCharIssue2105_2", '.', false)
+                yield return new TestCaseData("OnCharIssue2105_2", '.', true)
                     .SetName("\".|\" Issue825. Case 2.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
             }
