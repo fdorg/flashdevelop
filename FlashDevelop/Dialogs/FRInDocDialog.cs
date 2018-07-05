@@ -450,12 +450,12 @@ namespace FlashDevelop.Dialogs
             this.currentMatch = null;
             if (update) this.UpdateFindText();
             if (Globals.SciControl == null) return;
-            ScintillaControl sci = Globals.SciControl;
-            List<SearchMatch> matches = this.GetResults(sci, simple);
+            var sci = Globals.SciControl;
+            var matches = this.GetResults(sci, simple);
             if (matches != null && matches.Count != 0)
             {
                 FRDialogGenerics.UpdateComboBoxItems(this.findComboBox);
-                SearchMatch match = FRDialogGenerics.GetNextDocumentMatch(sci, matches, forward, false);
+                var match = FRDialogGenerics.GetNextDocumentMatch(sci, matches, forward, false);
                 if (match != null)
                 {
                     this.currentMatch = match;
@@ -480,35 +480,23 @@ namespace FlashDevelop.Dialogs
             }
             this.SelectText();
         }
-        public void FindNext(Boolean forward, Boolean update)
-        {
-            this.FindNext(forward, update, false);
-        }
-        public void FindNext(Boolean forward)
-        {
-            this.FindNext(forward, true);
-        }
+        public void FindNext(Boolean forward, Boolean update) => FindNext(forward, update, false);
+        public void FindNext(Boolean forward) => FindNext(forward, true);
 
         /// <summary>
         /// Finds the next result specified by user input
         /// </summary>
-        private void FindNextButtonClick(Object sender, System.EventArgs e)
-        {
-            this.FindNext(true, false);
-        }
-        
+        private void FindNextButtonClick(Object sender, EventArgs e) => FindNext(true, false);
+
         /// <summary>
         /// Finds the previous result specified by user input
         /// </summary>
-        private void FindPrevButtonClick(Object sender, System.EventArgs e)
-        {
-            this.FindNext(false, false);
-        }
+        private void FindPrevButtonClick(Object sender, EventArgs e) => FindNext(false, false);
 
         /// <summary>
         /// Bookmarks all results
         /// </summary>
-        private void BookmarkAllButtonClick(Object sender, System.EventArgs e)
+        private void BookmarkAllButtonClick(Object sender, EventArgs e)
         {
             if (Globals.SciControl == null) return;
             ScintillaControl sci = Globals.SciControl;
@@ -535,28 +523,34 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Replaces the next result specified by user input
         /// </summary>
-        private void ReplaceButtonClick(Object sender, System.EventArgs e)
+        private void ReplaceButtonClick(object sender, EventArgs e)
         {
             if (Globals.SciControl == null) return;
-            ScintillaControl sci = Globals.SciControl;
-            if (sci.SelText.Length == 0) this.FindNext(true);
-            else
+            var sci = Globals.SciControl;
+            if (sci.SelText.Length == 0)
             {
-                String replaceWith = this.GetReplaceText(currentMatch);
-                sci.ReplaceSel(replaceWith);
-                FRDialogGenerics.UpdateComboBoxItems(this.findComboBox);
-                FRDialogGenerics.UpdateComboBoxItems(this.replaceComboBox);
-                String message = TextHelper.GetString("Info.SelectedReplaced");
-                this.ShowMessage(message, 0);
-                this.lookupIsDirty = false;
-                this.FindNext(true);
+                FindNext(true);
+                return;
             }
+            if (useRegexCheckBox.Enabled && currentMatch == null)
+            {
+                FindNext(true, false);
+                if (currentMatch == null) return;
+            }
+            var replaceWith = GetReplaceText(currentMatch);
+            sci.ReplaceSel(replaceWith);
+            FRDialogGenerics.UpdateComboBoxItems(findComboBox);
+            FRDialogGenerics.UpdateComboBoxItems(replaceComboBox);
+            var message = TextHelper.GetString("Info.SelectedReplaced");
+            ShowMessage(message, 0);
+            lookupIsDirty = false;
+            FindNext(true);
         }
 
         /// <summary>
         /// Replaces all results specified by user input
         /// </summary>
-        private void ReplaceAllButtonClick(Object sender, System.EventArgs e)
+        private void ReplaceAllButtonClick(Object sender, EventArgs e)
         {
             if (Globals.SciControl == null) return;
             ScintillaControl sci = Globals.SciControl;
@@ -579,13 +573,13 @@ namespace FlashDevelop.Dialogs
                     {
                         var match = matches[i];
                         var replacement = GetReplaceText(match);
-                        var replacementLenght = sci.MBSafeTextLength(replacement);
-                        if (sci.MBSafePosition(match.Index) < pos) pos += replacementLenght - sci.MBSafeTextLength(match.Value);
+                        var replacementLength = sci.MBSafeTextLength(replacement);
+                        if (sci.MBSafePosition(match.Index) < pos) pos += replacementLength - sci.MBSafeTextLength(match.Value);
                         if (selectionOnly) FRDialogGenerics.SelectMatchInTarget(sci, match);
                         else FRDialogGenerics.SelectMatch(sci, match);
                         FRSearch.PadIndexes(matches, i, match.Value, replacement);
                         sci.EnsureVisible(sci.CurrentLine);
-                        if (selectionOnly) sci.ReplaceTarget(replacementLenght, replacement);
+                        if (selectionOnly) sci.ReplaceTarget(replacementLength, replacement);
                         else sci.ReplaceSel(replacement);
                     }
                     sci.FirstVisibleLine = firstVisibleLine;
@@ -607,15 +601,12 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Closes the find and replace dialog
         /// </summary>
-        private void CloseButtonClick(Object sender, System.EventArgs e)
-        {
-            this.Close();
-        }
+        private void CloseButtonClick(Object sender, EventArgs e) => Close();
 
         /// <summary>
         /// Marks the lookup as dirty
         /// </summary>
-        private void LookupChanged(Object sender, System.EventArgs e)
+        private void LookupChanged(Object sender, EventArgs e)
         {
             if (this.Visible)
             {
@@ -635,7 +626,7 @@ namespace FlashDevelop.Dialogs
         /// <summary>
         /// Some event handling when showing the form
         /// </summary>
-        private void VisibleChange(Object sender, System.EventArgs e)
+        private void VisibleChange(Object sender, EventArgs e)
         {
             if (this.Visible) this.SelectText();
             else this.lookupIsDirty = false;
