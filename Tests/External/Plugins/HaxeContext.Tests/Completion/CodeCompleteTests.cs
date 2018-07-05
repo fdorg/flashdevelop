@@ -361,13 +361,49 @@ namespace HaXeContext.Completion
                 yield return new TestCaseData("BeforeOnCharAndReplaceText_9", '.', true)
                     .SetName("cast(v, String).| ")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_10", ' ', true)
+                    .Ignore("That test pass without other tests")
+                    .SetName("import | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_11", ' ', true)
+                    .Ignore("That test pass without other tests")
+                    .SetName("new | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_12", ' ', true)
+                    .Ignore("That test pass without other tests")
+                    .SetName("extends | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_13", ' ', true)
+                    .Ignore("That test pass without other tests")
+                    .SetName("implements | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_14", ' ', true)
+                    .SetName("from | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_15", ' ', true)
+                    .SetName("to | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_16", ' ', true)
+                    .SetName("public | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
                 yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2134_1", ' ', true)
                     .Ignore("That test pass without other tests")
                     .SetName("override | ")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
-                yield return new TestCaseData("BeforeOnCharAndReplaceText_10", ' ', true)
-                    .Ignore("That test pass without other tests")
-                    .SetName("import | ")
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_1", '.', true)
+                    .SetName("EnumType.| ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_4", '.', true)
+                    .SetName("EnumAbstractType.| ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_5", '.', true)
+                    .SetName("EnumAbstractType.EnumAbstractInstance.| ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_6", '.', true)
+                    .SetName("EnumAbstractInstance.| ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_7", '.', true)
+                    .SetName("EnumAbstractVariable.| ")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
             }
         }
