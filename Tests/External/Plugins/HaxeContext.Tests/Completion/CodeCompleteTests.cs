@@ -361,22 +361,6 @@ namespace HaXeContext.Completion
                 yield return new TestCaseData("BeforeOnCharAndReplaceText_9", '.', true)
                     .SetName("cast(v, String).| ")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
-                yield return new TestCaseData("BeforeOnCharAndReplaceText_10", ' ', true)
-                    .Ignore("That test pass without other tests")
-                    .SetName("import | ")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
-                yield return new TestCaseData("BeforeOnCharAndReplaceText_11", ' ', true)
-                    .Ignore("That test pass without other tests")
-                    .SetName("new | ")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
-                yield return new TestCaseData("BeforeOnCharAndReplaceText_12", ' ', true)
-                    .Ignore("That test pass without other tests")
-                    .SetName("extends | ")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
-                yield return new TestCaseData("BeforeOnCharAndReplaceText_13", ' ', true)
-                    .Ignore("That test pass without other tests")
-                    .SetName("implements | ")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
                 yield return new TestCaseData("BeforeOnCharAndReplaceText_14", ' ', true)
                     .SetName("from | ")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
@@ -385,10 +369,6 @@ namespace HaXeContext.Completion
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
                 yield return new TestCaseData("BeforeOnCharAndReplaceText_16", ' ', true)
                     .SetName("public | ")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
-                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2134_1", ' ', true)
-                    .Ignore("That test pass without other tests")
-                    .SetName("override | ")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
                 yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_1", '.', true)
                     .SetName("EnumType.| ")
@@ -408,7 +388,34 @@ namespace HaXeContext.Completion
             }
         }
 
-        [Test, TestCaseSource(nameof(OnCharIssue825TestCases))]
+        static IEnumerable<TestCaseData> OnCharIssue825TestCases2
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_10", ' ', true)
+                    .SetName("import | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_11", ' ', true)
+                    .SetName("new | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_12", ' ', true)
+                    .SetName("extends | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_13", ' ', true)
+                    .SetName("implements | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2134_1", ' ', true)
+                    .SetName("override | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+            }
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(OnCharIssue825TestCases)),
+            // TODO: That tests pass without other tests
+            //TestCaseSource(nameof(OnCharIssue825TestCases2)),
+        ]
         public void OnChar(string fileName, char addedChar, bool autoHide) => OnChar(sci, CodeCompleteTests.ReadAllText(fileName), addedChar, autoHide, false);
     }
 }
