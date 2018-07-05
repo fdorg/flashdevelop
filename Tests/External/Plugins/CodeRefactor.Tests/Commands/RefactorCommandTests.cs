@@ -30,6 +30,9 @@ namespace CodeRefactor.Commands
                     yield return new TestCaseData(ReadAllTextHaxe("BeforeExtractLocalVariable_fromGeneric"), "newVar")
                         .Returns(ReadAllTextHaxe("AfterExtractLocalVariable_fromGeneric"))
                         .SetName("ExtractLocaleVariable from Generic");
+                    yield return new TestCaseData(ReadAllTextHaxe("BeforeExtractLocalVariable_fromGeneric_2"), "newVar")
+                        .Returns(ReadAllTextHaxe("AfterExtractLocalVariable_fromGeneric_2"))
+                        .SetName("new Test<String>('test') -> var newVar:Test<String> = new Test<String>('test')");
                     yield return new TestCaseData(ReadAllTextHaxe("BeforeExtractLocalVariable_fromString"), "newVar")
                         .Returns(ReadAllTextHaxe("AfterExtractLocalVariable_fromString"))
                         .SetName("ExtractLocaleVariable from String");
@@ -40,6 +43,12 @@ namespace CodeRefactor.Commands
                         .Ignore("Not supported at the moment")
                         .Returns(ReadAllTextHaxe("AfterExtractLocalVariable_inSinglelineMethod"))
                         .SetName("ExtractLocaleVariable in single line method");
+                    yield return new TestCaseData(ReadAllTextHaxe("BeforeExtractLocalVariable_arrayInitializer_1"), "newVar")
+                        .Returns(ReadAllTextHaxe("AfterExtractLocalVariable_arrayInitializer_1"))
+                        .SetName("[1,2,3] -> var newArray:Array<T> = [1,2,3]");
+                    yield return new TestCaseData(ReadAllTextHaxe("BeforeExtractLocalVariable_arrayInitializer_2"), "newVar")
+                        .Returns(ReadAllTextHaxe("AfterExtractLocalVariable_arrayInitializer_2"))
+                        .SetName("[1,2,3].push(4) -> var newArray:Int = [1,2,3].push(4)");
                 }
             }
 
@@ -56,13 +65,11 @@ namespace CodeRefactor.Commands
                 {
                     yield return new TestCaseData(ReadAllTextAS3("BeforeExtractLocalVariable"), "newVar")
                         .Returns(ReadAllTextAS3("AfterExtractLocalVariable"))
-                        .SetName("ExtractLocaleVariable");
+                        .SetName("getChildByName('child') -> var newVar:DisplayObject = getChildByName('child')");
                     yield return new TestCaseData(ReadAllTextAS3("BeforeExtractLocalVariable_fromString"), "newVar")
-                        .Ignore("Not supported at the moment")
                         .Returns(ReadAllTextAS3("AfterExtractLocalVariable_fromString"))
                         .SetName("ExtractLocaleVariable from String");
                     yield return new TestCaseData(ReadAllTextAS3("BeforeExtractLocalVariable_fromNumber"), "newVar")
-                        .Ignore("Not supported at the moment")
                         .Returns(ReadAllTextAS3("AfterExtractLocalVariable_fromNumber"))
                         .SetName("ExtractLocaleVariable from Number");
                 }

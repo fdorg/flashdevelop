@@ -568,7 +568,7 @@ namespace ASCompletion.Completion
             }
             
             eventName = Camelize(eventName.Substring(eventName.LastIndexOf('.') + 1));
-            if (target != null) target = target.TrimStart(new char[] { '_' });
+            if (target != null) target = target.TrimStart('_');
 
             switch (ASContext.CommonSettings.HandlerNamingConvention)
             {
@@ -638,12 +638,12 @@ namespace ASCompletion.Completion
         protected bool CheckAutoImport(ASResult expr, List<ICompletionListItem> options)
         {
             if (ASContext.Context.CurrentClass.Equals(expr.RelClass)) return false;
-            MemberList allClasses = ASContext.Context.GetAllProjectClasses();
+            var allClasses = ASContext.Context.GetAllProjectClasses();
             if (allClasses != null)
             {
                 var names = new HashSet<string>();
-                List<MemberModel> matches = new List<MemberModel>();
-                string dotToken = "." + contextToken;
+                var matches = new List<MemberModel>();
+                var dotToken = "." + contextToken;
                 foreach (MemberModel member in allClasses)
                     if (!names.Contains(member.Name) && member.Name.EndsWithOrdinal(dotToken))
                     {
@@ -1383,6 +1383,9 @@ namespace ASCompletion.Completion
             var context = resolve.Context;
             if (context != null)
             {
+                // for example: typeof v, delete o[k], ...
+                if (((ASGenerator) ctx.CodeGenerator).AssignStatementToVar(sci, inClass, context)) return;
+                // for example: 1 + 1, 1 << 1, ...
                 var operators = ctx.Features.ArithmeticOperators
                     .Select(it => it.ToString())
                     .Concat(ctx.Features.IncrementDecrementOperators)
@@ -1467,12 +1470,30 @@ namespace ASCompletion.Completion
             sci.SetSel(pos, pos);
             InsertCode(pos, template, sci);
 
-            if (ASContext.Context.Settings.GenerateImports && type != null)
+            if (ctx.Settings.GenerateImports && type != null)
             {
                 var inClassForImport = resolve.InClass ?? resolve.RelClass ?? inClass;
                 var types = GetQualifiedTypes(new [] {type}, inClassForImport.InFile);
                 AddImportsByName(types, sci.LineFromPosition(pos));
             }
+        }
+
+        protected virtual bool AssignStatementToVar(ScintillaControl sci, ClassModel inClass, ASExpr expr)
+        {
+            var ctx = inClass.InFile.Context;
+            ClassModel type = null;
+            if (expr.WordBefore == "typeof") type = ctx.ResolveType(ctx.Features.stringKey, inClass.InFile);
+            else if(expr.WordBefore == "delete") type = ctx.ResolveType(ctx.Features.booleanKey, inClass.InFile);
+            if (type == null) return false;
+            var varName = GuessVarName(type.Name, type.Type);
+            varName = AvoidKeyword(varName);
+            var template = TemplateUtils.GetTemplate("AssignVariable");
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Name", varName);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Type", type.Name);
+            var pos = expr.WordBeforePosition;
+            sci.SetSel(pos, pos);
+            InsertCode(pos, template, sci);
+            return true;
         }
 
         public static string AvoidKeyword(string word)
@@ -2074,7 +2095,7 @@ namespace ASCompletion.Completion
             if (expr.Type != null)
             {
                 var wordBefore = expr.Context.WordBefore;
-                if (wordBefore != null && ASContext.Context.Features.OtherOperators.Contains(wordBefore)) return expr.Context.WordBeforePosition;
+                if (!string.IsNullOrEmpty(wordBefore)) return expr.Context.WordBeforePosition;
             }
             return expr.Context.PositionExpression;
         }
@@ -3240,42 +3261,40 @@ namespace ASCompletion.Completion
             return new StatementReturnType(resolve, pos, word);
         }
 
-        private static string GuessVarName(string name, string type)
+        protected static string GuessVarName(string name, string type)
         {
+            if (name == "_") name = null;
             if (string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(type))
             {
-                Match m = Regex.Match(type, "^([a-z0-9_$]+)", RegexOptions.IgnoreCase);
-                if (m.Success)
-                    name = m.Groups[1].Value;
-                else
-                    name = type;
+                var m = Regex.Match(type, "^([a-z0-9_$]+)", RegexOptions.IgnoreCase);
+                if (m.Success) name = m.Groups[1].Value;
+                else name = type;
             }
 
-            if (string.IsNullOrEmpty(name)) 
-                return name;
+            if (string.IsNullOrEmpty(name)) return name;
 
             // if constant then convert to camelCase
-            if (name.ToUpper() == name)
-                name = Camelize(name);
+            if (name.ToUpper() == name) name = Camelize(name);
 
             // if getter, then remove 'get' prefix
-            name = name.TrimStart(new char[] { '_' });
-            if (name.Length > 3 && name.StartsWithOrdinal("get") && (name[3].ToString() == char.ToUpper(name[3]).ToString()))
+            name = name.TrimStart('_');
+            if (name.Length > 3 && name.StartsWithOrdinal("get"))
             {
-                name = char.ToLower(name[3]) + name.Substring(4);
+                var c = name[3];
+                if (!char.IsDigit(c) && c.ToString() == char.ToUpper(c).ToString())
+                {
+                    name = char.ToLower(c) + name.Substring(4);
+                }
             }
 
-            if (name.Length > 1)
-                name = Char.ToLower(name[0]) + name.Substring(1);
-            else
-                name = Char.ToLower(name[0]) + "";
-
-            if (name == "this" || type == name)
+            if (name.Length > 1) name = char.ToLower(name[0]) + name.Substring(1);
+            else name = char.ToLower(name[0]) + "";
+            var features = ASContext.Context.Features;
+            if (name == features.ThisKey || name == features.BaseKey || type == name)
             {
-                if (!string.IsNullOrEmpty(type))
-                    name = Char.ToLower(type[0]) + type.Substring(1);
-                else
-                    name = "p_this";
+                if (!string.IsNullOrEmpty(type)) name = char.ToLower(type[0]) + type.Substring(1);
+                else if(name == features.BaseKey) name = "p_super";
+                else name = "p_this";
             }
             return name;
         }
@@ -3632,12 +3651,13 @@ namespace ASCompletion.Completion
 
         private static void GenerateEventHandler(string name, string type, MemberModel afterMethod, int position, ClassModel inClass)
         {
-            ScintillaControl sci = ASContext.CurSciControl;
+            var ctx = ASContext.Context;
+            var sci = ASContext.CurSciControl;
             sci.BeginUndoAction();
             try
             {
-                int delta = 0;
-                ClassModel eventClass = ASContext.Context.ResolveType(type, ASContext.Context.CurrentModel);
+                var delta = 0;
+                var eventClass = ctx.ResolveType(type, ctx.CurrentModel);
                 if (eventClass.IsVoid())
                 {
                     if (TryImportType("flash.events." + type, ref delta, sci.LineFromPosition(position)))
@@ -3656,19 +3676,11 @@ namespace ASCompletion.Completion
                 };
                 if ((afterMethod.Flags & FlagType.Static) > 0) newMember.Flags = FlagType.Static;
                 var template = TemplateUtils.GetTemplate("EventHandler");
-                var decl = NewLine + TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
-                decl = TemplateUtils.ReplaceTemplateVariable(decl, "Void", ASContext.Context.Features.voidKey);
-
-                string eventName = contextMatch.Groups["event"].Value;
-                string autoRemove = AddRemoveEvent(eventName);
-                if (autoRemove != null)
-                {
-                    if (autoRemove.Length == 0 && ASContext.CommonSettings.GenerateScope) autoRemove = "this";
-                    if (autoRemove.Length > 0) autoRemove += ".";
-                    string remove = string.Format("{0}removeEventListener({1}, {2});\n\t$(EntryPoint)", autoRemove, eventName, name);
-                    decl = decl.Replace("$(EntryPoint)", remove);
-                }
-                InsertCode(position, decl, sci);
+                var declaration = NewLine + TemplateUtils.ToDeclarationWithModifiersString(newMember, template);
+                declaration = TemplateUtils.ReplaceTemplateVariable(declaration, "Void", ctx.Features.voidKey);
+                var eventName = contextMatch.Groups["event"].Value;
+                var autoRemove = AddRemoveEvent(eventName);
+                ((ASGenerator) ctx.CodeGenerator).GenerateEventHandler(sci, position, declaration, autoRemove, eventName, name);
             }
             finally
             {
@@ -3676,25 +3688,44 @@ namespace ASCompletion.Completion
             }
         }
 
-        private static bool TryImportType(string type, ref int delta, int atLine)
+        protected virtual void GenerateEventHandler(ScintillaControl sci, int position, string template, string currentTarget, string eventName, string handlerName)
         {
-            ClassModel eventClass = ASContext.Context.ResolveType(type, ASContext.Context.CurrentModel);
-            if (eventClass.IsVoid())
-                return false;
-            
-            List<string> typesUsed = new List<string>();
-            typesUsed.Add(type);
+            var ctx = ASContext.Context;
+            if (currentTarget != null)
+            {
+                var delta = 0;
+                if (TryImportType("flash.events.IEventDispatcher", ref delta, sci.LineFromPosition(position)))
+                {
+                    position += delta;
+                    sci.SetSel(position, position);
+                    lookupPosition += delta;
+                    currentTarget = "IEventDispatcher(e.currentTarget)";
+                }
+                if (currentTarget.Length == 0 && ASContext.CommonSettings.GenerateScope && ctx.Features.ThisKey != null)
+                    currentTarget = ctx.Features.ThisKey;
+                if (currentTarget.Length > 0) currentTarget += ".";
+                var remove = $"{currentTarget}removeEventListener({eventName}, {handlerName});\n\t$(EntryPoint)";
+                template = template.Replace("$(EntryPoint)", remove);
+            }
+            InsertCode(position, template, sci);
+        }
+
+        protected static bool TryImportType(string type, ref int delta, int atLine)
+        {
+            var eventClass = ASContext.Context.ResolveType(type, ASContext.Context.CurrentModel);
+            if (eventClass.IsVoid()) return false;
+            var typesUsed = new List<string> {type};
             delta += AddImportsByName(typesUsed, atLine);
             return true;
         }
 
         private static string AddRemoveEvent(string eventName)
         {
-            foreach (string autoRemove in ASContext.CommonSettings.EventListenersAutoRemove)
+            foreach (var autoRemove in ASContext.CommonSettings.EventListenersAutoRemove)
             {
-                string test = autoRemove.Trim();
+                var test = autoRemove.Trim();
                 if (test.Length == 0 || test.StartsWithOrdinal("//")) continue;
-                int colonPos = test.IndexOf(':');
+                var colonPos = test.IndexOf(':');
                 if (colonPos >= 0) test = test.Substring(colonPos + 1);
                 if (test != eventName) continue;
                 return colonPos < 0 ? "" : autoRemove.Trim().Substring(0, colonPos);
@@ -3948,18 +3979,17 @@ namespace ASCompletion.Completion
         /// <returns>Completion was handled</returns>
         protected virtual bool HandleOverrideCompletion(bool autoHide)
         {
-            // explore members
-            IASContext ctx = ASContext.Context;
-            ClassModel curClass = ctx.CurrentClass;
+            var ctx = ASContext.Context;
+            var curClass = ctx.CurrentClass;
             if (curClass.IsVoid()) return false;
 
-            List<MemberModel> members = new List<MemberModel>();
+            var members = new List<MemberModel>();
             curClass.ResolveExtends(); // Resolve inheritance chain
 
             // explore getters or setters
-            FlagType mask = FlagType.Function | FlagType.Getter | FlagType.Setter;
-            ClassModel tmpClass = curClass.Extends;
-            Visibility acc = ctx.TypesAffinity(curClass, tmpClass);
+            const FlagType mask = FlagType.Function | FlagType.Getter | FlagType.Setter;
+            var tmpClass = curClass.Extends;
+            var acc = ctx.TypesAffinity(curClass, tmpClass);
             while (tmpClass != null && !tmpClass.IsVoid())
             {
                 if (tmpClass.QualifiedName.StartsWithOrdinal("flash.utils.Proxy"))
@@ -3971,38 +4001,33 @@ namespace ASCompletion.Completion
                     }
                     break;
                 }
-                else
-                {
-                    foreach (MemberModel member in tmpClass.Members)
-                    {
-                        if (curClass.Members.Search(member.Name, FlagType.Override, 0) != null) continue;
-                        var parameters = member.Parameters;
-                        if ((member.Flags & FlagType.Dynamic) > 0
-                            && (member.Access & acc) > 0
-                            && ((member.Flags & FlagType.Function) > 0 
-                                || ((member.Flags & mask) > 0 && (!IsHaxe || parameters[0].Name == "get" || parameters[1].Name == "set"))))
-                        {
-                            members.Add(member);
-                        }
-                    }
 
-                    tmpClass = tmpClass.Extends;
-                    // members visibility
-                    acc = ctx.TypesAffinity(curClass, tmpClass);
+                foreach (MemberModel member in tmpClass.Members)
+                {
+                    if (curClass.Members.Search(member.Name, FlagType.Override, 0) != null) continue;
+                    if ((member.Flags & FlagType.Dynamic) > 0
+                        && (member.Access & acc) > 0
+                        && ((member.Flags & FlagType.Function) > 0 || (member.Flags & mask) > 0))
+                    {
+                        members.Add(member);
+                    }
                 }
+
+                tmpClass = tmpClass.Extends;
+                // members visibility
+                acc = ctx.TypesAffinity(curClass, tmpClass);
             }
             members.Sort();
 
-            // build list
-            var known = new List<ICompletionListItem>();
+            var list = new List<ICompletionListItem>();
             MemberModel last = null;
-            foreach (MemberModel member in members)
+            foreach (var member in members)
             {
                 if (last == null || last.Name != member.Name)
-                    known.Add(new MemberItem(member));
+                    list.Add(new MemberItem(member));
                 last = member;
             }
-            if (known.Count > 0) CompletionList.Show(known, autoHide);
+            if (list.Count > 0) CompletionList.Show(list, autoHide);
             return true;
         }
 
@@ -4399,17 +4424,17 @@ namespace ASCompletion.Completion
         /// <returns>Inserted characters count</returns>
         private static int AddImportsByName(IEnumerable<string> typesUsed, int atLine)
         {
-            int length = 0;
-            IASContext context = ASContext.Context;
+            var length = 0;
+            var context = ASContext.Context;
             var addedTypes = new HashSet<string>();
             typesUsed = context.DecomposeTypes(typesUsed);
-            foreach (string type in typesUsed)
+            foreach (var type in typesUsed)
             {
                 var cleanType = CleanType(type);
                 if (string.IsNullOrEmpty(cleanType) || addedTypes.Contains(cleanType) || cleanType.IndexOf('.') <= 0)
                     continue;
                 addedTypes.Add(cleanType);
-                MemberModel import = new MemberModel(cleanType.Substring(cleanType.LastIndexOf('.') + 1), cleanType, FlagType.Import, Visibility.Public);
+                var import = new MemberModel(cleanType.Substring(cleanType.LastIndexOf('.') + 1), cleanType, FlagType.Import, Visibility.Public);
                 if (!context.IsImported(import, atLine))
                     length += InsertImport(import, false);
             }
@@ -4517,7 +4542,8 @@ namespace ASCompletion.Completion
         #endregion
 
         #region common safe code insertion
-        static private int lookupPosition;
+
+        protected static int lookupPosition;
 
         public static void InsertCode(int position, string src)
         {

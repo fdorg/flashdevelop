@@ -17,7 +17,7 @@ using ScintillaNet;
 using ScintillaNet.Enums;
 using SwfOp;
 using Timer = System.Timers.Timer;
-using System.Linq;
+using AS3Context.Completion;
 
 namespace AS3Context
 {
@@ -85,7 +85,7 @@ namespace AS3Context
             features.checkFileName = true;
 
             // allowed declarations access modifiers
-            Visibility all = Visibility.Public | Visibility.Internal | Visibility.Protected | Visibility.Private;
+            const Visibility all = Visibility.Public | Visibility.Internal | Visibility.Protected | Visibility.Private;
             features.classModifiers = all;
             features.varModifiers = all;
             features.constModifiers = all;
@@ -122,6 +122,8 @@ namespace AS3Context
             features.privateKey = "private";
             features.intrinsicKey = "extern";
             features.namespaceKey = "namespace";
+            features.ThisKey = "this";
+            features.BaseKey = "super";
             features.typesPreKeys = new[] { features.importKey, "new", "typeof", "is", "as", features.ExtendsKey, features.ImplementsKey };
             features.codeKeywords = new[] {
                 "var", "function", "const", "new", "delete", "typeof", "is", "as", "return",
@@ -135,18 +137,18 @@ namespace AS3Context
             features.IncrementDecrementOperators = new[] {"++", "--"};
             features.BitwiseOperators = new[] {"~", "&", "|", "^", "<<", ">>", ">>>"};
             features.BooleanOperators = new[] {"<", ">", "&&", "||", "!=", "==", "!==", "==="};
-            features.OtherOperators = new HashSet<string> {"delete", "typeof", "new"};
             /* INITIALIZATION */
 
             settings = initSettings;
+            CodeComplete = new CodeComplete();
             //BuildClassPath(); // defered to first use
 
             // live syntax checking
             timerCheck = new Timer(500);
             timerCheck.SynchronizingObject = PluginBase.MainForm as Form;
             timerCheck.AutoReset = false;
-            timerCheck.Elapsed += new ElapsedEventHandler(timerCheck_Elapsed);
-            FlexShells.SyntaxError += new SyntaxErrorHandler(FlexShell_SyntaxError);
+            timerCheck.Elapsed += timerCheck_Elapsed;
+            FlexShells.SyntaxError += FlexShell_SyntaxError;
         }
         #endregion
 
@@ -854,13 +856,11 @@ namespace AS3Context
         public override bool IsImported(MemberModel member, int atLine)
         {
             if (member == ClassModel.VoidClass) return false;
-            FileModel cFile = Context.CurrentModel;
             // same package is auto-imported
-            string package = member.Type.Length > member.Name.Length 
+            var package = member.Type.Length > member.Name.Length
                 ? member.Type.Substring(0, member.Type.Length - member.Name.Length - 1)
                 : "";
-            if (package == cFile.Package) return true;
-            return base.IsImported(member, atLine);
+            return package == Context.CurrentModel.Package || base.IsImported(member, atLine);
         }
 
         /// <summary>
@@ -879,11 +879,13 @@ namespace AS3Context
                 {
                     if (index == 0)
                     {
-                        //transform <T>[] to Vector.<T>
+                        // transform <T>[] to Vector.<T>
                         cname = Regex.Replace(cname, @">\[.*", ">");
                         cname = "Vector." + cname;
                     }
-                    Match genType = re_genericType.Match(cname);
+                    // transform Vector<T> to Vector.<T>
+                    if (cname.Contains("Vector<")) cname = cname.Replace("Vector<", "Vector.<");
+                    var genType = re_genericType.Match(cname);
                     if (genType.Success) return ResolveGenericType(genType.Groups["gen"].Value, genType.Groups["type"].Value, inFile);
                     return ClassModel.VoidClass;
                 }
@@ -891,23 +893,29 @@ namespace AS3Context
             return base.ResolveType(cname, inFile);
         }
 
+        static readonly Regex re_asExpr = new Regex(@"\((?<lv>.+)\s(?<op>as)\s+(?<rv>\w+)\)");
+        static readonly Regex re_isExpr = new Regex(@"\((?<lv>.+)\s(?<op>is)\s+(?<rv>\w+)\)");
+
         public override ClassModel ResolveToken(string token, FileModel inFile)
         {
             var tokenLength = token != null ? token.Length : 0;
             if (tokenLength > 0)
             {
-                if (token == "#RegExp") return ResolveType("RegExp", inFile);
                 if (token.StartsWithOrdinal("0x")) return ResolveType("uint", inFile);
                 var first = token[0];
                 if (first == '<' && tokenLength >= 3 && token[tokenLength - 2] == '/' && token[tokenLength - 1] == '>') return ResolveType("XML", inFile);
+                if (first == '(' && token[token.Length - 1] == ')')
+                {
+                    if (re_isExpr.IsMatch(token)) return ResolveType(features.booleanKey, inFile);
+                    var m = re_asExpr.Match(token);
+                    if (m.Success) return ResolveType(m.Groups["rv"].Value.Trim(), inFile);
+                }
                 if (char.IsLetter(first))
                 {
                     var index = token.IndexOfOrdinal(" ");
                     if (index != -1)
                     {
                         var word = token.Substring(0, index);
-                        if (word == "delete") return ResolveType(features.booleanKey, inFile);
-                        if (word == "typeof") return ResolveType(features.stringKey, inFile);
                         if (word == "new")
                         {
                             var dot = ' ';
@@ -928,12 +936,6 @@ namespace AS3Context
                             return ResolveType(token, inFile);
                         }
                     }
-                }
-                else if (first == '(' && tokenLength >= 8/*"(v as T)".Length*/)
-                {
-                    var m = Regex.Match(token, @"\((?<lv>.+)\s(?<op>as)\s+(?<rv>\w+)\)");
-                    if (m.Success) return ResolveType(m.Groups["rv"].Value.Trim(), inFile);
-                    if (Regex.IsMatch(token, @"\((?<lv>.+)\s(?<op>is)\s+(?<rv>\w+)\)")) return ResolveType(features.booleanKey, inFile);
                 }
             }
             return base.ResolveToken(token, inFile);

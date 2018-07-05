@@ -2,15 +2,16 @@
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using HaXeContext.TestUtils;
+using NSubstitute;
 using NUnit.Framework;
 
 namespace HaXeContext.Completion
 {
     class CodeCompleteTests : ASCompleteTests
     {
-        static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.completion.{fileName}.hx";
+        internal static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.completion.{fileName}.hx";
 
-        static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
+        internal static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
         [TestFixtureSetUp]
         public void Setup() => SetHaxeFeatures(sci);
@@ -116,7 +117,7 @@ namespace HaXeContext.Completion
                     .SetDescription("https://github.com/fdorg/flashdevelop/pull/2055");
                 yield return new TestCaseData("Issue2053_3")
                     .Returns(true)
-                    .SetName("new Foo(|. class with superconstructor")
+                    .SetName("new Foo(|. class with super constructor")
                     .SetDescription("https://github.com/fdorg/flashdevelop/pull/2055");
                 yield return new TestCaseData("Issue2053_4")
                     .Returns(true)
@@ -159,5 +160,155 @@ namespace HaXeContext.Completion
 
         [Test, TestCaseSource(nameof(OnCharIssue2105TestCases))]
         public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion) => OnChar(sci, ReadAllText(fileName), addedChar, autoHide, hasCompletion);
+
+        static IEnumerable<TestCaseData> GetToolTipTextTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("GetToolTipText_1")
+                    .SetName("new B|(). Case 1. Class without constructor")
+                    .Returns(null);
+                yield return new TestCaseData("GetToolTipText_2")
+                    .SetName("new B|(). Case 2. Class with explicit constructor")
+                    .Returns("public Bar (v:Int)\n[COLOR=Black]in Bar[/COLOR]");
+                yield return new TestCaseData("GetToolTipText_3")
+                    .SetName("new B|(). Case 3. Class with implicit constructor")
+                    .Returns("public Bar (v:Int)\n[COLOR=Black]in Foo[/COLOR]");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(GetToolTipTextTestCases))]
+        public string GetToolTipText(string fileName)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            var expr = ASComplete.GetExpressionType(sci, sci.CurrentPos, false, true);
+            return ASComplete.GetToolTipText(expr);
+        }
+    }
+
+    class CodeCompleteTests2 : ASCompleteTests
+    {
+        [TestFixtureSetUp]
+        public void Setup() => SetHaxeFeatures(sci);
+
+        static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2134TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2134_1", ' ', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceTextIssue2134_1"))
+                    .SetName("override | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2134");
+            }
+        }
+
+        static IEnumerable<TestCaseData> OnCharAndReplaceTextTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_1", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_1"))
+                    .SetName("[].| ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2134");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_2", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_2"))
+                    .SetName("'${[].| }'")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2134");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_3", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_3"))
+                    .SetName("[[].| ]")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2134");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_4", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_4"))
+                    .SetName("''.| ");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_5", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_5"))
+                    .Ignore("")
+                    .SetName("'${\"123\".| }'");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_6", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_6"))
+                    .SetName("'${String.| }'");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_7", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_7"))
+                    .SetName("'${String.fromCharCode(1).| }'");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_8", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_8"))
+                    .SetName("'${[1 => 1].| }'");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_9", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_9"))
+                    .SetName("cast(v, String).| ");
+            }
+        }
+
+        static IEnumerable<TestCaseData> OnCharAndReplaceText_enums_TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_1", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_enums_1"))
+                    .SetName("EnumType.| ");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_2", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_enums_2"))
+                    .Ignore("Need support for `haxe.EnumValueTools`")
+                    .SetName("EnumType.EnumInstance.| ");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_3", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_enums_3"))
+                    .Ignore("Need support for `haxe.EnumValueTools`")
+                    .SetName("EnumInstance.| ");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_4", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_enums_4"))
+                    .SetName("EnumAbstractType.| ");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_5", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_enums_5"))
+                    .SetName("EnumAbstractType.EnumAbstractInstance.| ");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_6", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_enums_6"))
+                    .SetName("EnumAbstractInstance.| ");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_7", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_enums_7"))
+                    .SetName("EnumAbstractVariable.| ");
+            }
+        }
+
+        static IEnumerable<TestCaseData> OnCharAndReplaceText_enums2_TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_8", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_enums_8"))
+                    .SetName("EnumAbstractType.| . case 2");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_9", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_enums_9"))
+                    .SetName("EnumAbstractType.EnumAbstractInstance.| . case 2");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_10", '.', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_enums_10"))
+                    .SetName("EnumAbstractInstance.| . case 3");
+            }
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(OnCharAndReplaceTextTestCases)),
+            TestCaseSource(nameof(OnCharAndReplaceTextIssue2134TestCases)),
+            TestCaseSource(nameof(OnCharAndReplaceText_enums_TestCases)),
+            // TODO: That tests pass without other tests.
+            //TestCaseSource(nameof(OnCharAndReplaceText_enums2_TestCases)),
+        ]
+        public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide)
+        {
+            ASContext.Context.ResolveDotContext(null, null, false).ReturnsForAnyArgs(it => null);
+            //{TODO slavara: quick hack
+            ASContext.Context.When(it => it.ResolveTopLevelElement(Arg.Any<string>(), Arg.Any<ASResult>()))
+                .Do(it =>
+                {
+                    var ctx = (Context) ASContext.GetLanguageContext("haxe");
+                    ctx.GetCodeModel(ctx.CurrentModel, sci.Text);
+                    ctx.completionCache.IsDirty = true;
+                    ctx.ResolveTopLevelElement(it.ArgAt<string>(0), it.ArgAt<ASResult>(1));
+                });
+            //}
+            ((Context) ASContext.GetLanguageContext("haxe")).completionCache.IsDirty = true;
+            return OnCharAndReplaceText(sci, CodeCompleteTests.ReadAllText(fileName), addedChar, autoHide);
+        }
     }
 }

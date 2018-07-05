@@ -1283,13 +1283,13 @@ namespace ASCompletion.Completion
                         yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_increment4"), GeneratorJobType.AssignStatementToVar, true)
                             .Returns(ReadAllTextAS3("AfterAssignStatementToVar_increment4"))
                             .SetName("++1 * ++1|");
-                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_typeof"), GeneratorJobType.AssignStatementToVar, true)
-                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_typeof"))
-                            .SetName("Issue 1908. typeof")
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_typeof1"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_typeof1"))
+                            .SetName("typeof value. Issue 1908.")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
                         yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_delete"), GeneratorJobType.AssignStatementToVar, true)
                             .Returns(ReadAllTextAS3("AfterAssignStatementToVar_delete"))
-                            .SetName("Issue 1908. delete")
+                            .SetName("delete o[key]. Issue 1908.")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
                         yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue1383_1"), GeneratorJobType.AssignStatementToVar, false)
                             .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue1383_1"))
@@ -1393,10 +1393,42 @@ namespace ASCompletion.Completion
                     }
                 }
 
+                static IEnumerable<TestCaseData> AS3Issue2151TestCases
+                {
+                    get
+                    {
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue2151_1"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue2151_1"))
+                            .SetName("_;| Assign statement to var. Issue 2151.")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2151");
+                    }
+                }
+
+                static IEnumerable<TestCaseData> AS3Issue2153TestCases
+                {
+                    get
+                    {
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue2153_1"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue2153_1"))
+                            .SetName("get3D;| Assign statement to var. Issue 2153.")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2153");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue2153_2"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue2153_2"))
+                            .SetName("getThis;| Assign statement to var. Issue 2153.")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2153");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVar_issue2153_2"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextAS3("AfterAssignStatementToVar_issue2153_2"))
+                            .SetName("getSuper;| Assign statement to var. Issue 2153.")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2153");
+                    }
+                }
+
                 [
                     Test,
                     TestCaseSource(nameof(AS3TestCases)),
                     TestCaseSource(nameof(AS3Issue1764TestCases)),
+                    TestCaseSource(nameof(AS3Issue2151TestCases)),
+                    TestCaseSource(nameof(AS3Issue2153TestCases)),
                 ]
                 public string AS3(string sourceText, GeneratorJobType job, bool isUseTabs) => AS3Impl(sourceText, job, isUseTabs, sci);
 
@@ -1520,11 +1552,10 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1908_unsafecast"))
                                 .SetName("Issue 1908. Unsafe cast")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1908_untyped"), GeneratorJobType.AssignStatementToVar, true)
-                                .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1908_untyped"))
-                                .SetName("Issue 1908. untyped")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1908_untyped"), GeneratorJobType.AssignStatementToVar, true)
+                            .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1908_untyped"))
+                            .SetName("Issue 1908. untyped")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1908");
                         yield return new TestCaseData(ReadAllTextHaxe("BeforeAssignStatementToVar_issue1880_1"), GeneratorJobType.AssignStatementToVar, true)
                             .Returns(ReadAllTextHaxe("AfterAssignStatementToVar_issue1880_1"))
                             .SetName("~/regex/|")
@@ -1933,20 +1964,26 @@ namespace ASCompletion.Completion
             [TestFixture]
             public class GenerateEventHandler : GenerateJob
             {
-                internal static string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
+                internal static readonly string[] DeclarationModifierOrder = { "public", "protected", "internal", "private", "static", "override" };
 
                 static IEnumerable<TestCaseData> AS3TestCases
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeGenerateEventHandler"), new string[0])
-                                .Returns(ReadAllTextAS3("AfterGenerateEventHandler_withoutAutoRemove"))
-                                .SetName("Generate event handler without auto remove");
-                        yield return
-                            new TestCaseData(ReadAllTextAS3("BeforeGenerateEventHandler"), new[] {"Event.ADDED", "Event.REMOVED"})
-                                .Returns(ReadAllTextAS3("AfterGenerateEventHandler_withAutoRemove"))
-                                .SetName("Generate event handler with auto remove");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeGenerateEventHandler"), new string[0])
+                            .Returns(ReadAllTextAS3("AfterGenerateEventHandler_withoutAutoRemove"))
+                            .SetName("Generate event handler without auto remove");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeGenerateEventHandler"), new[] {"Event.ADDED", "Event.REMOVED"})
+                            .Returns(ReadAllTextAS3("AfterGenerateEventHandler_withAutoRemove"))
+                            .SetName("Generate event handler with auto remove");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeGenerateEventHandler_issue164_1"), new[] {"Event.ADDED", "Event.REMOVED"})
+                            .Returns(ReadAllTextAS3("AfterGenerateEventHandler_withAutoRemove_issue164_1"))
+                            .SetName("Generate event handler with auto remove. Issue 164. Case 1")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/164");
+                        yield return new TestCaseData(ReadAllTextAS3("BeforeGenerateEventHandler_issue164_2"), new[] {"Event.ADDED", "Event.REMOVED"})
+                            .Returns(ReadAllTextAS3("AfterGenerateEventHandler_withAutoRemove_issue164_2"))
+                            .SetName("Generate event handler with auto remove. Issue 164. Case 2")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/164");
                     }
                 }
 
@@ -1957,14 +1994,12 @@ namespace ASCompletion.Completion
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateEventHandler"), new string[0])
-                                .Returns(ReadAllTextHaxe("AfterGenerateEventHandler_withoutAutoRemove"))
-                                .SetName("Generate event handler without auto remove");
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateEventHandler"), new[] {"Event.ADDED", "Event.REMOVED"})
-                                .Returns(ReadAllTextHaxe("AfterGenerateEventHandler_withAutoRemove"))
-                                .SetName("Generate event handler with auto remove");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateEventHandler"), new string[0])
+                            .Returns(ReadAllTextHaxe("AfterGenerateEventHandler_withoutAutoRemove"))
+                            .SetName("Generate event handler without auto remove");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateEventHandler"), new[] {"Event.ADDED", "Event.REMOVED"})
+                            .Returns(ReadAllTextHaxe("AfterGenerateEventHandler_withAutoRemove"))
+                            .SetName("Generate event handler with auto remove");
                     }
                 }
 
@@ -1987,8 +2022,6 @@ namespace ASCompletion.Completion
                 {
                     ASContext.CommonSettings.EventListenersAutoRemove = autoRemove;
                     SetSrc(sci, sourceText);
-                    var eventModel = new ClassModel {Name = "Event", Type = "flash.events.Event"};
-                    ASContext.Context.ResolveType(null, null).ReturnsForAnyArgs(x => eventModel);
                     var re = string.Format(ASGenerator.patternEvent, ASGenerator.contextToken);
                     var m = Regex.Match(sci.GetLine(sci.CurrentLine), re, RegexOptions.IgnoreCase);
                     ASGenerator.contextMatch = m;
@@ -2002,10 +2035,7 @@ namespace ASCompletion.Completion
             public class GenerateEventHandlerWithExplicitScope : GenerateJob
             {
                 [TestFixtureSetUp]
-                public void GenerateEventHandlerSetup()
-                {
-                    ASContext.CommonSettings.GenerateScope = true;
-                }
+                public void GenerateEventHandlerSetup() => ASContext.CommonSettings.GenerateScope = true;
 
                 static IEnumerable<TestCaseData> AS3TestCases
                 {
@@ -2353,6 +2383,10 @@ namespace ASCompletion.Completion
                                 .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_1696_5"))
                                 .SetName("override function foo(get, set):haxe.ds.Vector<haxe.Timer->Type.ValueType>")
                                 .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeOverrideFunction_issue_2134_1"), "flash.utils.Proxy", "callProperty", FlagType.Function)
+                            .Returns(ReadAllTextHaxe("AfterOverrideFunction_issue_2134_1"))
+                            .SetName("override function callProperty()")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2134");
                     }
                 }
 

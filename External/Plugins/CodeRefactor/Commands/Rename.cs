@@ -160,10 +160,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Indicates if the current settings for the refactoring are valid.
         /// </summary>
-        public override bool IsValid()
-        {
-            return isRenamePackage ? renamePackage.IsValid() : !string.IsNullOrEmpty(NewName);
-        }
+        public override bool IsValid() => isRenamePackage ? renamePackage.IsValid() : !string.IsNullOrEmpty(NewName);
 
         #endregion
 

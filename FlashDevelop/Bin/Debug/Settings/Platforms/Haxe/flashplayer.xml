@@ -33,5 +33,6 @@
     <version value="27.0" swf-version="38" />
     <version value="28.0" swf-version="39" />
     <version value="29.0" swf-version="40" />
+    <version value="30.0" swf-version="41" />
   </versions>
 </platform>

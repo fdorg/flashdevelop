@@ -154,15 +154,9 @@ namespace ASCompletion.Completion
                         break;
 
                     case ':':
-                        if (ctx.CurrentModel.haXe && prevValue == '@')
-                        {
-                            return HandleMetadataCompletion(autoHide);
-                        }
-                        if (features.hasEcmaTyping)
-                        {
-                            return HandleColonCompletion(Sci, "", autoHide);
-                        }
-                        else break;
+                        if (ctx.CurrentModel.haXe && prevValue == '@') return HandleMetadataCompletion(autoHide);
+                        if (features.hasEcmaTyping) return HandleColonCompletion(Sci, "", autoHide);
+                        break;
 
                     case '<':
                         if (features.hasGenerics && position > 2)
@@ -173,13 +167,13 @@ namespace ASCompletion.Completion
                                 return HandleColonCompletion(Sci, "", autoHide);
                             return false;
                         }
-                        else break;
+                        break;
 
                     case '(':
                     case ',':
                         if (!ASContext.CommonSettings.DisableCallTip)
                             return HandleFunctionCompletion(Sci, autoHide);
-                        else return false;
+                        return false;
 
                     case ')':
                         if (UITools.CallTip.CallTipActive) UITools.CallTip.Hide();
@@ -609,11 +603,9 @@ namespace ASCompletion.Completion
             var position = ExpressionEndPosition(sci, sci.CurrentPos);
             var result = GetExpressionType(sci, position, false, true);
 
+            var ctx = ASContext.Context;
             // browse to package folder
-            if (result.IsPackage && result.InFile != null)
-            {
-                return ASContext.Context.BrowseTo(result.InFile.Package);
-            }
+            if (result.IsPackage && result.InFile != null) return ctx.BrowseTo(result.InFile.Package);
 
             // open source and show declaration
             if (!result.IsNull())
@@ -625,14 +617,14 @@ namespace ASCompletion.Completion
                 return OpenDocumentToDeclaration(sci, result);
             }
             // show overridden method
-            else if (ASContext.Context.CurrentMember != null 
-                && ASContext.Context.Features.overrideKey != null
-                && sci.GetWordFromPosition(position) == ASContext.Context.Features.overrideKey)
+            if (ctx.CurrentMember != null
+                && ctx.Features.overrideKey != null
+                && sci.GetWordFromPosition(position) == ctx.Features.overrideKey)
             {
-                MemberModel member = ASContext.Context.CurrentMember;
+                MemberModel member = ctx.CurrentMember;
                 if ((member.Flags & FlagType.Override) > 0)
                 {
-                    ClassModel tmpClass = ASContext.Context.CurrentClass;
+                    ClassModel tmpClass = ctx.CurrentClass;
                     if (tmpClass != null)
                     {
                         tmpClass.ResolveExtends();
@@ -1683,8 +1675,7 @@ namespace ASCompletion.Completion
 
         public static void FunctionContextResolved(ScintillaControl sci, ASExpr expr, MemberModel method, ClassModel inClass, bool showTip)
         {
-            if (string.IsNullOrEmpty(method?.Name)) 
-                return;
+            if (string.IsNullOrEmpty(method?.Name)) return;
             if (calltipMember != null && calltipMember.Name == method.Name)
             {
                 // use FD-extracted comments
@@ -2586,7 +2577,7 @@ namespace ASCompletion.Completion
         /// <returns>Class/member struct</returns>
         private static ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction)
         {
-            return EvalExpression(expression, context, inFile, inClass, complete, asFunction, true);
+            return ASContext.Context.CodeComplete.EvalExpression(expression, context, inFile, inClass, complete, asFunction, true);
         }
 
         /// <summary>
@@ -2600,34 +2591,25 @@ namespace ASCompletion.Completion
         /// <param name="asFunction"></param>
         /// <param name="filterVisibility"></param>
         /// <returns>Class/member struct</returns>
-        private static ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility)
+        protected virtual ASResult EvalExpression(string expression, ASExpr context, FileModel inFile, ClassModel inClass, bool complete, bool asFunction, bool filterVisibility)
         {
             var notFound = new ASResult {Context = context};
             if (string.IsNullOrEmpty(expression)) return notFound;
-            var value = expression.TrimEnd('.');
-            if (context.SubExpressions?.Count == 1) value = value.Replace(char.IsLetter(value[0]) ? ".#0~" : "#0~", context.SubExpressions.First());
-            var ctx = ASContext.Context;
-            var features = ctx.Features;
-            if (!string.IsNullOrEmpty(context.WordBefore) && features.OtherOperators.Contains(context.WordBefore))
-                value = context.WordBefore + " " + value;
-
-            var type = ctx.ResolveToken(value, inClass.InFile);
-            if (!type.IsVoid()) return new ASResult {Type = type, Context = context, InClass = type, InFile = type.InFile, Path = context.Value, IsStatic = context.WordBefore == "new"};
-            if (expression.StartsWithOrdinal(features.dot))
+            if (expression[0] == '.')
             {
-                if (expression.StartsWithOrdinal(features.dot + "#")) expression = expression.Substring(1);
+                if (expression.StartsWithOrdinal(".#")) expression = expression.Substring(1);
                 else if (context.Separator == "\"") expression = "\"" + expression;
                 else return notFound;
             }
 
+            var ctx = ASContext.Context;
+            var features = ctx.Features;
             var tokens = Regex.Split(expression, Regex.Escape(features.dot));
 
             // eval first token
             var token = tokens[0];
             if (token.Length == 0) return notFound;
             if (asFunction && tokens.Length == 1) token += "(";
-            type = ctx.ResolveToken(token, inClass.InFile);
-            if (!type.IsVoid()) return EvalTail(context, inFile, new ASResult {Type = type}, tokens, complete, filterVisibility) ?? notFound;
             ASResult head = null;
             if (token[0] == '#')
             {
@@ -2645,12 +2627,7 @@ namespace ASCompletion.Completion
                     Regex re_dot = new Regex("[\\s]*" + Regex.Escape(features.dot) + "[\\s]*");
                     subExpr = re_dot.Replace(re_whiteSpace.Replace(m.Value, " "), features.dot).Trim();
                     int space = subExpr.LastIndexOf(' ');
-                    if (space > 0)
-                    {
-                        string trash = subExpr.Substring(0, space).TrimEnd();
-                        subExpr = subExpr.Substring(space + 1);
-                        if (trash.EndsWithOrdinal("as")) subExpr += features.dot + "#";
-                    }
+                    if (space > 0) subExpr = subExpr.Substring(space + 1);
                     // eval sub expression
                     head = EvalExpression(subExpr, subContext, inFile, inClass, true, false);
                     if (head.Member != null)
@@ -2662,8 +2639,13 @@ namespace ASCompletion.Completion
                     head = EvalVariable(token, context, inFile, inClass);
                 }
             }
-            else if (token.Contains("<")) head = new ASResult {Type = ctx.ResolveType(token, inFile)};
-            else head = EvalVariable(token, context, inFile, inClass); // regular eval
+            else
+            {
+                var type = ctx.ResolveToken(token, inClass.InFile);
+                if (!type.IsVoid()) return EvalTail(context, inFile, new ASResult {Type = type}, tokens, complete, filterVisibility) ?? notFound;
+                if (token.Contains("<")) head = new ASResult {Type = ctx.ResolveType(token, inFile)};
+                else head = EvalVariable(token, context, inFile, inClass); // regular eval
+            }
 
             // no head, exit
             if (head.IsNull()) return notFound;
@@ -2676,12 +2658,12 @@ namespace ASCompletion.Completion
                 return notFound;
 
             // resolve
-            ASResult result = EvalTail(context, inFile, head, tokens, complete, filterVisibility);
+            var result = EvalTail(context, inFile, head, tokens, complete, filterVisibility);
 
             // if failed, try as qualified class name
             if ((result == null || result.IsNull()) && tokens.Length > 1) 
             {
-                ClassModel qualif = ctx.ResolveType(expression, null);
+                var qualif = ctx.ResolveType(expression, null);
                 if (!qualif.IsVoid())
                 {
                     result = new ASResult();
@@ -2694,16 +2676,15 @@ namespace ASCompletion.Completion
             return result ?? notFound;
         }
 
-        static ASResult EvalTail(ASExpr context, FileModel inFile, ASResult head, string[] tokens, bool complete, bool filterVisibility)
+        static ASResult EvalTail(ASExpr context, FileModel inFile, ASResult head, IList<string> tokens, bool complete, bool filterVisibility)
         {
             // eval tail
-            int n = tokens.Length;
+            int n = tokens.Count;
             if (!complete) n--;
             // context
             IASContext ctx = ASContext.Context;
             ContextFeatures features = ctx.Features;
             ASResult step = head;
-            ClassModel resultClass = head.Type;
             // look for static or dynamic members?
             FlagType mask = head.IsStatic ? FlagType.Static : FlagType.Dynamic;
             // members visibility
@@ -2712,15 +2693,14 @@ namespace ASCompletion.Completion
             Visibility acc = ctx.TypesAffinity(curClass, step.Type);
 
             // explore
-            bool inE4X = false;
-            string token = tokens[0];
-            string path = token;
-            step.Path = token;
+            var inE4X = false;
+            var path = tokens[0];
+            step.Path = path;
             step.Context = context;
 
             for (int i = 1; i < n; i++)
             {
-                token = tokens[i];
+                var token = tokens[i];
                 path += features.dot + token;
                 step.Path = path;
 
@@ -2730,12 +2710,12 @@ namespace ASCompletion.Completion
                     if (i == n - 1)
                         return step;
                     // this means 2 dots in the expression: consider as E4X expression
-                    if (ctx.Features.hasE4X && IsXmlType(step.Type) && i < n - 1)
+                    if (features.hasE4X && IsXmlType(step.Type) && i < n - 1)
                     {
                         inE4X = true;
                         step = new ASResult();
                         step.Member = new MemberModel(token, "XMLList", FlagType.Variable | FlagType.Dynamic | FlagType.AutomaticVar, Visibility.Public);
-                        step.Type = ctx.ResolveType(ctx.Features.objectKey, null);
+                        step.Type = ctx.ResolveType(features.objectKey, null);
                         acc = Visibility.Public;
                     }
                     else return null;
@@ -2748,7 +2728,7 @@ namespace ASCompletion.Completion
                 }
                 else if (step.Type != null && !step.Type.IsVoid())
                 {
-                    resultClass = step.Type;
+                    var resultClass = step.Type;
                     // handle typed indexes automatic typing
                     if (token[0] == '#' && step.InClass != null && step.Member != null
                         && step.InClass.IndexType == step.Member.Type)
@@ -2830,13 +2810,13 @@ namespace ASCompletion.Completion
         /// <returns>Class/member struct</returns>
         private static ASResult EvalVariable(string token, ASExpr local, FileModel inFile, ClassModel inClass)
         {
-            ASResult result = new ASResult();
+            var result = new ASResult();
             if (local.coma == ComaExpression.AnonymousObjectParam) return result;
             var context = ASContext.Context;
             var features = context.Features;
             if (!inClass.IsVoid()) inFile = inClass.InFile;
 
-            int p = token.IndexOf('(');
+            var p = token.IndexOf('(');
             if (p > 0) token = token.Substring(0, p);
 
             // top-level elements resolution
@@ -2868,7 +2848,9 @@ namespace ASCompletion.Completion
                         if (vars.Count > 0)
                         {
                             var checkFunction = local.SubExpressions != null && local.SubExpressions.Count == 1
-                                           && !string.IsNullOrEmpty(local.Value) && local.Value.IndexOf('.') == local.Value.IndexOf(".#0~");
+                                && !string.IsNullOrEmpty(local.Value) && local.Value.IndexOf('.') == local.Value.IndexOfOrdinal(".#0~")
+                                // array access check
+                                && local.SubExpressions[0][0] != '[';
                             MemberModel var = null;
                             if (vars.Count > 1)
                             {
@@ -2886,12 +2868,9 @@ namespace ASCompletion.Completion
                                     if (var.Flags.HasFlag(FlagType.LocalVar)) context.CodeComplete.InferVariableType(local, var);
                                     else if (var.Flags.HasFlag(FlagType.ParameterVar)) context.CodeComplete.InferParameterVarType(var);
                                 }
-
-                                if (var.Flags.HasFlag(FlagType.Function))
-                                    result.Type = context.ResolveType("Function", null);
-                                else
-                                    result.Type = ResolveType(var.Type, inFile);
-
+                                if (string.IsNullOrEmpty(var.Type)) result.Type = context.ResolveType(features.objectKey, null);
+                                else if (var.Flags.HasFlag(FlagType.Function)) result.Type = context.ResolveType("Function", null);
+                                else result.Type = ResolveType(var.Type, inFile);
                                 return result;
                             }
                         }
@@ -2900,7 +2879,7 @@ namespace ASCompletion.Completion
                 // method parameters
                 if (local.ContextFunction?.Parameters != null)
                 {
-                    foreach (MemberModel para in local.ContextFunction.Parameters)
+                    foreach (var para in local.ContextFunction.Parameters)
                         if (para.Name == token || (para.Name[0] == '?' && para.Name.Substring(1) == token))
                         {
                             result.Member = para;
@@ -2914,86 +2893,88 @@ namespace ASCompletion.Completion
             {
                 FindMember(token, inClass, result, 0, 0);
                 if (!result.IsNull())
+                {
+                    if (features.hasInference)
+                    {
+                        var member = result.Member;
+                        if (member != null && member.Flags.HasFlag(FlagType.Variable) && member.Type == null)
+                        {
+                            context.CodeComplete.InferVariableType(local, member);
+                            if (string.IsNullOrEmpty(member.Type)) member.Type = context.ResolveType(features.dynamicKey, null).Name;
+                        }
+                    }
                     return result;
+                }
             }
             // file member
             if (inFile.Version != 2 || inClass.IsVoid())
             {
                 FindMember(token, inFile, result, 0, 0);
-                if (!result.IsNull())
-                    return result;
+                if (!result.IsNull()) return result;
             }
             // current file types
-            foreach(ClassModel aClass in inFile.Classes)
+            foreach(var aClass in inFile.Classes)
             {
-                if (aClass.Name == token)
-                {
-                    if (!context.InPrivateSection || aClass.Access == Visibility.Private)
-                    {
-                        result.Type = aClass;
-                        result.IsStatic = (p < 0);
-                        return result;
-                    }
-                }
+                if (aClass.Name != token || (context.InPrivateSection && aClass.Access != Visibility.Private)) continue;
+                result.Type = aClass;
+                result.IsStatic = p < 0;
+                return result;
             }
             // visible types & declarations
             var visible = context.GetVisibleExternalElements();
             foreach (MemberModel aDecl in visible)
             {
-                if (aDecl.Name == token)
+                if (aDecl.Name != token) continue;
+                if ((aDecl.Flags & FlagType.Package) > 0)
                 {
-                    if ((aDecl.Flags & FlagType.Package) > 0)
+                    var package = context.ResolvePackage(token, false);
+                    if (package != null)
                     {
-                        FileModel package = context.ResolvePackage(token, false);
-                        if (package != null)
-                        {
-                            result.InFile = package;
-                            result.IsPackage = true;
-                            result.IsStatic = true;
-                            return result;
-                        }
-                    }
-                    else if ((aDecl.Flags & (FlagType.Class | FlagType.Enum)) > 0)
-                    {
-                        ClassModel friendClass = null;
-                        if (aDecl.InFile != null)
-                        {
-                            foreach(ClassModel aClass in aDecl.InFile.Classes)
-                                if (aClass.Name == token)
-                                {
-                                    friendClass = aClass;
-                                    break;
-                                }
-                        }
-                        if (friendClass == null) friendClass = context.ResolveType(aDecl.Type, inFile);
-
-                        if (!friendClass.IsVoid())
-                        {
-                            result.Type = friendClass;
-                            result.IsStatic = (p < 0);
-                            return result;
-                        }
-                    }
-                    else if ((aDecl.Flags & FlagType.Function) > 0)
-                    {
-                        result.Member = aDecl;
-                        result.RelClass = ClassModel.VoidClass;
-                        result.InClass = FindClassOf(aDecl);
-                        result.Type = (p < 0)
-                            ? context.ResolveType("Function", null)
-                            : context.ResolveType(aDecl.Type, aDecl.InFile);
-                        result.InFile = aDecl.InFile;
+                        result.InFile = package;
+                        result.IsPackage = true;
+                        result.IsStatic = true;
                         return result;
                     }
-                    else if ((aDecl.Flags & (FlagType.Variable | FlagType.Getter)) > 0)
+                }
+                else if ((aDecl.Flags & (FlagType.Class | FlagType.Enum)) > 0)
+                {
+                    ClassModel friendClass = null;
+                    if (aDecl.InFile != null)
                     {
-                        result.Member = aDecl;
-                        result.RelClass = ClassModel.VoidClass;
-                        result.InClass = FindClassOf(aDecl);
-                        result.Type = context.ResolveType(aDecl.Type, aDecl.InFile);
-                        result.InFile = aDecl.InFile;
+                        foreach(var aClass in aDecl.InFile.Classes)
+                            if (aClass.Name == token)
+                            {
+                                friendClass = aClass;
+                                break;
+                            }
+                    }
+                    if (friendClass == null) friendClass = context.ResolveType(aDecl.Type, inFile);
+                    if (!friendClass.IsVoid())
+                    {
+                        result.Type = friendClass;
+                        result.IsStatic = (p < 0);
                         return result;
                     }
+                }
+                else if ((aDecl.Flags & FlagType.Function) > 0)
+                {
+                    result.Member = aDecl;
+                    result.RelClass = ClassModel.VoidClass;
+                    result.InClass = FindClassOf(aDecl);
+                    result.Type = (p < 0)
+                        ? context.ResolveType("Function", null)
+                        : context.ResolveType(aDecl.Type, aDecl.InFile);
+                    result.InFile = aDecl.InFile;
+                    return result;
+                }
+                else if ((aDecl.Flags & (FlagType.Variable | FlagType.Getter)) > 0)
+                {
+                    result.Member = aDecl;
+                    result.RelClass = ClassModel.VoidClass;
+                    result.InClass = FindClassOf(aDecl);
+                    result.Type = context.ResolveType(aDecl.Type, aDecl.InFile);
+                    result.InFile = aDecl.InFile;
+                    return result;
                 }
             }
             return result;
@@ -3048,23 +3029,25 @@ namespace ASCompletion.Completion
         {
             // is it a simple affectation inference?
             var text = sci.GetLine(var.LineFrom);
-            var m = Regex.Match(text, "\\s*var\\s+" + var.Name + "\\s*=([^;]+)");
+            var m = Regex.Match(text, "=([^;]+)");
             if (!m.Success) return;
             var rvalue = m.Groups[1];
-            if (rvalue.Length <= 1) return;
-            InferVariableType(sci, text, sci.PositionFromLine(var.LineFrom) + rvalue.Index, local, var);
+            if (rvalue.Length == 0) return;
+            var offset = rvalue.Length - rvalue.Value.TrimStart().Length;
+            var rvalueStart = sci.PositionFromLine(var.LineFrom) + rvalue.Index + offset;
+            InferVariableType(sci, text, rvalueStart, local, var);
         }
 
         protected virtual void InferVariableType(ScintillaControl sci, string declarationLine, int rvalueStart, ASExpr local, MemberModel var)
         {
-            int p = declarationLine.IndexOf(';');
+            var p = declarationLine.IndexOf(';');
             var text = declarationLine.TrimEnd();
             if (p < 0) p = text.Length;
             if (text.EndsWith('(')) p--;
             // resolve expression
-            ASExpr expr = GetExpression(sci, sci.PositionFromLine(var.LineFrom) + p, true);
+            var expr = GetExpression(sci, sci.PositionFromLine(var.LineFrom) + p, true);
             if (string.IsNullOrEmpty(expr.Value)) return;
-            ASResult result = EvalExpression(expr.Value, expr, ASContext.Context.CurrentModel, ASContext.Context.CurrentClass, true, false);
+            var result = EvalExpression(expr.Value, expr, ASContext.Context.CurrentModel, ASContext.Context.CurrentClass, true, false);
             if (result.IsNull()) return;
             if (result.Type != null && !result.Type.IsVoid())
             {
@@ -3454,7 +3437,7 @@ namespace ASCompletion.Completion
             while (position > minPos)
             {
                 position--;
-                if (context.CodeComplete.IsRegexStyle(sci, position))
+                if (arrCount == 0 && braCount == 0 && parCount == 0 && context.CodeComplete.IsRegexStyle(sci, position))
                 {
                     inRegex = true;
                     positionExpression = position;
@@ -3466,14 +3449,11 @@ namespace ASCompletion.Completion
                     // end of regex literal
                     if (inRegex)
                     {
-                        inRegex = false;
-                        if (arrCount == 0 && braCount == 0 && parCount == 0)
-                        {
-                            if (expression.SubExpressions == null) expression.SubExpressions = new List<string>();
-                            expression.SubExpressions.Add("");
-                            sb.Insert(0, "#RegExp.#" + (subCount++) + "~");
-                            break;
-                        }
+                        if (expression.SubExpressions == null) expression.SubExpressions = new List<string>();
+                        expression.SubExpressions.Add("");
+                        sb.Insert(0, "#RegExp.#" + (subCount++) + "~");
+                        expression.Separator = ";";
+                        break;
                     }
                     var c2 = c;
                     c = (char)sci.CharAt(position);
@@ -3483,22 +3463,38 @@ namespace ASCompletion.Completion
                         continue;
                     }
                     // array access
-                    if (c == ']')
+                    if (c == ']' && parCount == 0)
                     {
-                        arrCount++;
                         ignoreWhiteSpace = false;
+                        if (arrCount == 0) // start sub-expression
+                        {
+                            if (expression.SubExpressions == null) expression.SubExpressions = new List<string>();
+                            sbSub.Clear();
+                        }
+                        arrCount++;
                     }
-                    else if (c == '[')
+                    else if (c == '[' && parCount == 0)
                     {
                         arrCount--;
                         if (arrCount == 0 && braCount == 0)
                         {
                             positionExpression = position;
-                            if (sbSub.Length > 0) sbSub.Insert(0, '[');
                             if (parCount == 0)
                             {
-                                sb.Insert(0, "." + sbSub);
+                                sbSub.Insert(0, c);
+                                expression.SubExpressions.Add(sbSub.ToString());
                                 sbSub.Clear();
+                                sb.Insert(0, ".#" + (subCount++) + "~");
+                                var pos = position - 1;
+                                var word = GetWordLeft(sci, ref pos);
+                                // for example: return [].<complete>
+                                if (context.Features.codeKeywords.Contains(word))
+                                {
+                                    expression.Separator = ";";
+                                    expression.WordBefore = word;
+                                    expression.WordBeforePosition = pos + 1;
+                                    break;
+                                }
                             }
                             continue;
                         }
@@ -3551,17 +3547,17 @@ namespace ASCompletion.Completion
                         {
                             positionExpression = position;
                             sbSub.Insert(0, c);
-                            int testPos = position - 1;
-                            string testWord = GetWordLeft(sci, ref testPos);
                             expression.SubExpressions.Add(sbSub.ToString());
                             sbSub.Clear();
                             sb.Insert(0, ".#" + (subCount++) + "~"); // method call or sub expression
-                            if (testWord == "return" || testWord == "case" || testWord == "default")
+                            var pos = position - 1;
+                            var word = GetWordLeft(sci, ref pos);
+                            // AS3, AS2, Loom ex: return (a as B).<complete>
+                            if (context.Features.codeKeywords.Contains(word))
                             {
-                                // AS3, AS2, Loom ex: return (a as B).<complete>
                                 expression.Separator = ";";
-                                expression.WordBefore = testWord;
-                                expression.WordBeforePosition = testPos + 1;
+                                expression.WordBefore = word;
+                                expression.WordBeforePosition = pos + 1;
                                 break;
                             }
                             continue;
@@ -3599,7 +3595,7 @@ namespace ASCompletion.Completion
                         if (parCount == 0) // start sub-expression
                         {
                             if (expression.SubExpressions == null) expression.SubExpressions = new List<string>();
-                            sbSub = new StringBuilder();
+                            sbSub.Clear();
                         }
                         parCount++;
                     }
@@ -3887,9 +3883,16 @@ namespace ASCompletion.Completion
                     }
                 }
             }
+            
+            var value = sb.ToString().TrimStart('.');
+            if (features.hasE4X && value.Length >= 2 && value[0] == '<' && value[value.Length - 1]  == '>')
+            {
+                expression.Separator = ";";
+                value = "</>";
+            }
 
             // check if there is a particular keyword
-            if (expression.Separator == " ")
+            if (expression.Separator == " " && position > 0)
             {
                 expression.WordBefore = GetWordLeft(sci, ref position);
                 if (expression.WordBefore.Length > 0) expression.WordBeforePosition = position + 1;
@@ -3902,13 +3905,6 @@ namespace ASCompletion.Completion
                     expression.Separator = @operator;
                     expression.SeparatorPosition = position + 1;
                 }
-            }
-
-            var value = sb.ToString().TrimStart('.');
-            if (features.hasE4X && value.Length >= 2 && value[0] == '<' && value[value.Length - 1]  == '>')
-            {
-                expression.Separator = ";";
-                value = "</>";
             }
 
             expression.Value = value;
@@ -4269,18 +4265,13 @@ namespace ASCompletion.Completion
                 ASContext.Context.UpdateContext(line);
             try
             {
-                ASExpr expr = GetExpression(sci, position, ignoreWhiteSpace);
+                var expr = GetExpression(sci, position, ignoreWhiteSpace);
                 expr.LocalVars = ParseLocalVars(expr);
-                if (string.IsNullOrEmpty(expr.Value))
-                {
-                    ASResult res = new ASResult();
-                    res.Context = expr;
-                    return res;
-                }
-                FileModel aFile = ASContext.Context.CurrentModel;
-                ClassModel aClass = ASContext.Context.CurrentClass;
+                if (string.IsNullOrEmpty(expr.Value)) return new ASResult {Context = expr};
+                var aFile = ASContext.Context.CurrentModel;
+                var aClass = ASContext.Context.CurrentClass;
                 // Expression before cursor
-                return EvalExpression(expr.Value, expr, aFile, aClass, true, false, filterVisibility);
+                return ASContext.Context.CodeComplete.EvalExpression(expr.Value, expr, aFile, aClass, true, false, filterVisibility);
             }
             finally
             {
@@ -4517,19 +4508,23 @@ namespace ASCompletion.Completion
 
         private static bool IsXmlType(ClassModel model)
         {
-            return model != null
-                && (model.QualifiedName == "XML" || model.QualifiedName == "XMLList");
+            return model != null && (model.QualifiedName == "XML" || model.QualifiedName == "XMLList");
         }
 
-        public static int ExpressionEndPosition(ScintillaControl sci, int position)
+        public static int ExpressionEndPosition(ScintillaControl sci, int position) => ExpressionEndPosition(sci, position, false);
+
+        public static int ExpressionEndPosition(ScintillaControl sci, int position, bool skipWhiteSpace)
         {
             var member = ASContext.Context.CurrentMember;
             var endPosition = member != null ? sci.LineEndPosition(member.LineTo) : sci.TextLength;
-            return ExpressionEndPosition(sci, position, endPosition);
+            return ExpressionEndPosition(sci, position, endPosition, skipWhiteSpace);
         }
 
-        public static int ExpressionEndPosition(ScintillaControl sci, int startPos, int endPos)
+        public static int ExpressionEndPosition(ScintillaControl sci, int startPos, int endPos) => ExpressionEndPosition(sci, startPos, endPos, false);
+
+        public static int ExpressionEndPosition(ScintillaControl sci, int startPos, int endPos, bool skipWhiteSpace)
         {
+            var ctx = ASContext.Context;
             var result = startPos;
             var statementEnd = startPos;
             var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
@@ -4546,7 +4541,7 @@ namespace ASCompletion.Completion
                     statementEnd++;
                     continue;
                 }
-                if (sci.PositionIsInString(statementEnd))
+                if (sci.PositionIsInString(statementEnd) && !ctx.CodeComplete.IsStringInterpolationStyle(sci, statementEnd))
                 {
                     statementEnd++;
                     result = statementEnd;
@@ -4582,7 +4577,12 @@ namespace ASCompletion.Completion
                 {
                     if (characterClass.Contains(c))
                     {
-                        if (hadWS) break;
+                        if (skipWhiteSpace)
+                        {
+                            skipWhiteSpace = false;
+                            hadWS = false;
+                        }
+                        else if (hadWS) break;
                         stop = true;
                         result = statementEnd;
                     }
@@ -4656,52 +4656,48 @@ namespace ASCompletion.Completion
             return null;
         }
 
-        static public string GetToolTipText(ASResult result)
+        public static string GetToolTipText(ASResult result)
         {
             if (result.Member != null && result.InClass != null)
             {
                 return MemberTooltipText(result.Member, result.InClass) + GetToolTipDoc(result.Member);
             }
-            else if (result.Member != null && (result.Member.Flags & FlagType.Constructor) != FlagType.Constructor)
+            if (result.Member != null && (result.Member.Flags & FlagType.Constructor) != FlagType.Constructor)
             {
                 return MemberTooltipText(result.Member, ClassModel.VoidClass) + GetToolTipDoc(result.Member);
             }
-            else if (result.InClass != null)
+            if (result.InClass != null)
             {
                 return ClassModel.ClassDeclaration(result.InClass) + GetToolTipDoc(result.InClass);
             }
-            else if (result.Type != null)
-            {
-                if (result.Context.WordBefore == "new")
-                {
-                    var member = result.Type.Members.Search(result.Type.Name, FlagType.Constructor, 0);
-                    if (member != null) return MemberTooltipText(member, result.Type) + GetToolTipDoc(member);
-                }
-                return ClassModel.ClassDeclaration(result.Type) + GetToolTipDoc(result.Type);
-            }
-            else return null;
+            if (result.Type != null && result.Context.WordBefore == "new") return ASContext.Context.CodeComplete.GetConstructorTooltipText(result.Type);
+            return null;
         }
 
-        private static string GetToolTipDoc(MemberModel model)
+        protected virtual string GetConstructorTooltipText(ClassModel type)
+        {
+            var name = type.Name;
+            var member = type.Members.Search(name, FlagType.Constructor, 0);
+            if (member == null) member = new MemberModel(name, name, FlagType.Access | FlagType.Function | FlagType.Constructor, Visibility.Public);
+            return MemberTooltipText(member, type) + GetToolTipDoc(member);
+        }
+
+        protected static string GetToolTipDoc(MemberModel model)
         {
             string details = (UITools.Manager.ShowDetails) ? ASDocumentation.GetTipFullDetails(model, null) : ASDocumentation.GetTipShortDetails(model, null);
-            return details.TrimStart(new char[] { ' ', '\u2026' });
+            return details.TrimStart(' ', '\u2026');
         }
 
-        static private string MemberTooltipText(MemberModel member, ClassModel inClass)
+        protected static string MemberTooltipText(MemberModel member, ClassModel inClass)
         {
             // modifiers
-            FlagType ft = member.Flags;
-            Visibility acc = member.Access;
-            string modifiers = "";
+            var ft = member.Flags;
+            var modifiers = "";
             if ((ft & FlagType.Class) == 0)
             {
-                if ((ft & FlagType.LocalVar) > 0)
-                    modifiers += "(local) ";
-                else if ((ft & FlagType.ParameterVar) > 0)
-                    modifiers += "(parameter) ";
-                else if ((ft & FlagType.AutomaticVar) > 0)
-                    modifiers += "(auto) ";
+                if ((ft & FlagType.LocalVar) > 0) modifiers += "(local) ";
+                else if ((ft & FlagType.ParameterVar) > 0) modifiers += "(parameter) ";
+                else if ((ft & FlagType.AutomaticVar) > 0) modifiers += "(auto) ";
                 else
                 {
                     if ((ft & FlagType.Extern) > 0)
@@ -4710,6 +4706,7 @@ namespace ASCompletion.Completion
                         modifiers += "native ";
                     if ((ft & FlagType.Static) > 0)
                         modifiers += "static ";
+                    var acc = member.Access;
                     if ((acc & Visibility.Private) > 0)
                         modifiers += "private ";
                     else if ((acc & Visibility.Public) > 0)
@@ -4721,32 +4718,24 @@ namespace ASCompletion.Completion
                 }
             }
             // signature
-            string foundIn = "";
+            var foundIn = "";
             if (inClass != ClassModel.VoidClass)
             {
-                Color themeForeColor = PluginBase.MainForm.GetThemeColor("MethodCallTip.InfoColor");
-                string foreColorString = themeForeColor != Color.Empty ? ColorTranslator.ToHtml(themeForeColor) : "#666666:MULTIPLY";
+                var themeForeColor = PluginBase.MainForm.GetThemeColor("MethodCallTip.InfoColor");
+                var foreColorString = themeForeColor != Color.Empty ? ColorTranslator.ToHtml(themeForeColor) : "#666666:MULTIPLY";
                 foundIn = "\n[COLOR=" + foreColorString + "]in " + MemberModel.FormatType(inClass.QualifiedName) + "[/COLOR]";
             }
-            if ((ft & (FlagType.Getter | FlagType.Setter)) > 0)
-                return String.Format("{0}property {1}{2}", modifiers, member.ToString(), foundIn);
-            else if (ft == FlagType.Function)
-                return String.Format("{0}function {1}{2}", modifiers, member.ToString(), foundIn);
-            else if ((ft & FlagType.Namespace) > 0)
-                return String.Format("{0}namespace {1}{2}", modifiers, member.Name, foundIn);
-            else if ((ft & FlagType.Constant) > 0)
+            if ((ft & (FlagType.Getter | FlagType.Setter)) > 0) return $"{modifiers}property {member}{foundIn}";
+            if (ft == FlagType.Function) return $"{modifiers}function {member}{foundIn}";
+            if ((ft & FlagType.Namespace) > 0) return $"{modifiers}namespace {member.Name}{foundIn}";
+            if ((ft & FlagType.Constant) > 0)
             {
-                if (member.Value == null)
-                    return String.Format("{0}const {1}{2}", modifiers, member.ToString(), foundIn);
-                else
-                    return String.Format("{0}const {1} = {2}{3}", modifiers, member.ToString(), member.Value, foundIn);
+                if (member.Value == null) return $"{modifiers}const {member}{foundIn}";
+                return $"{modifiers}const {member} = {member.Value}{foundIn}";
             }
-            else if ((ft & FlagType.Variable) > 0)
-                return String.Format("{0}var {1}{2}", modifiers, member.ToString(), foundIn);
-            else if ((ft & FlagType.Delegate) > 0)
-                return String.Format("{0}delegate {1}{2}", modifiers, member.ToString(), foundIn);
-            else
-                return String.Format("{0}{1}{2}", modifiers, member.ToString(), foundIn);
+            if ((ft & FlagType.Variable) > 0) return $"{modifiers}var {member}{foundIn}";
+            if ((ft & FlagType.Delegate) > 0) return $"{modifiers}delegate {member}{foundIn}";
+            return $"{modifiers}{member}{foundIn}";
         }
         #endregion
 

@@ -35,9 +35,7 @@ namespace PluginCore.Utilities
             if (isRunning)
             {
                 // kill process and queue Run command
-                nextTask = () => {
-                    Run(fileName, arguments, shellCommand);
-                };
+                nextTask = () => Run(fileName, arguments, shellCommand);
                 this.KillProcess();
                 return;
             }
@@ -66,14 +64,14 @@ namespace PluginCore.Utilities
             // to finish (processexit, readoutput, readerror)
             tasksFinished = 0;
             
-            ThreadStart waitForExitDel = new ThreadStart(process.WaitForExit);
-            waitForExitDel.BeginInvoke(new AsyncCallback(TaskFinished), null);
+            ThreadStart waitForExitDel = process.WaitForExit;
+            waitForExitDel.BeginInvoke(TaskFinished, null);
             
-            ThreadStart readOutputDel = new ThreadStart(ReadOutput);
-            ThreadStart readErrorDel = new ThreadStart(ReadError);
+            ThreadStart readOutputDel = ReadOutput;
+            ThreadStart readErrorDel = ReadError;
             
-            readOutputDel.BeginInvoke(new AsyncCallback(TaskFinished), null);
-            readErrorDel.BeginInvoke(new AsyncCallback(TaskFinished), null);
+            readOutputDel.BeginInvoke(TaskFinished, null);
+            readErrorDel.BeginInvoke(TaskFinished, null);
         }
         
         public void KillProcess()

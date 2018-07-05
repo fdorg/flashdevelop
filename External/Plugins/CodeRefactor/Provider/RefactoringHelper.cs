@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -25,9 +24,9 @@ namespace CodeRefactor.Provider
         /// <summary>
         /// Populates the m_SearchResults with any found matches
         /// </summary>
-        public static IDictionary<String, List<SearchMatch>> GetInitialResultsList(FRResults results)
+        public static IDictionary<string, List<SearchMatch>> GetInitialResultsList(FRResults results)
         {
-            IDictionary<String, List<SearchMatch>> searchResults = new Dictionary<String, List<SearchMatch>>();
+            var searchResults = new Dictionary<string, List<SearchMatch>>();
             if (results == null)
             {
                 // I suppose this should never happen -- 
@@ -46,10 +45,10 @@ namespace CodeRefactor.Provider
                 // found some matches!
                 // I current separate the search listing from the FRResults.  It's probably unnecessary but this is just the initial implementation.
                 // TODO: test if this is necessary
-                foreach (KeyValuePair<String, List<SearchMatch>> entry in results)
+                foreach (var entry in results)
                 {
                     searchResults.Add(entry.Key, new List<SearchMatch>());
-                    foreach (SearchMatch match in entry.Value)
+                    foreach (var match in entry.Value)
                     {
                         searchResults[entry.Key].Add(match);
                     }
@@ -61,18 +60,18 @@ namespace CodeRefactor.Provider
         /// <summary>
         /// Gets if the language is valid for refactoring
         /// </summary>
-        public static Boolean GetLanguageIsValid()
+        public static bool GetLanguageIsValid()
         {
-            ITabbedDocument document = PluginBase.MainForm.CurrentDocument;
+            var document = PluginBase.MainForm.CurrentDocument;
             if (document == null || !document.IsEditable) return false;
-            string lang = document.SciControl.ConfigurationLanguage;
+            var lang = document.SciControl.ConfigurationLanguage;
             return CommandFactoryProvider.ContainsLanguage(lang);
         }
 
         /// <summary>
         /// Checks if the model is not null and file exists
         /// </summary>
-        public static Boolean ModelFileExists(FileModel model)
+        public static bool ModelFileExists(FileModel model)
         {
             return model != null && File.Exists(model.FileName);
         }
@@ -80,14 +79,12 @@ namespace CodeRefactor.Provider
         /// <summary>
         /// Checks if the file is under the current SDK
         /// </summary>
-        public static Boolean IsUnderSDKPath(FileModel model)
+        public static bool IsUnderSDKPath(FileModel model) => IsUnderSDKPath(model.FileName);
+
+        public static bool IsUnderSDKPath(string file)
         {
-            return IsUnderSDKPath(model.FileName);
-        }
-        public static Boolean IsUnderSDKPath(String file)
-        {
-            InstalledSDK sdk = PluginBase.CurrentSDK;
-            return sdk != null && !String.IsNullOrEmpty(sdk.Path) && file.StartsWithOrdinal(sdk.Path);
+            var sdk = PluginBase.CurrentSDK;
+            return sdk != null && !string.IsNullOrEmpty(sdk.Path) && file.StartsWithOrdinal(sdk.Path);
         }
 
         /// <summary>
@@ -97,9 +94,9 @@ namespace CodeRefactor.Provider
         /// </summary>
         public static ASResult GetDefaultRefactorTarget()
         {
-            ScintillaControl sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var sci = PluginBase.MainForm.CurrentDocument.SciControl;
             if (!ASContext.Context.IsFileValid || (sci == null)) return null;
-            int position = sci.WordEndPosition(sci.CurrentPos, true);
+            var position = sci.WordEndPosition(sci.CurrentPos, true);
             return ASComplete.GetExpressionType(sci, position);
         }
 
@@ -119,8 +116,8 @@ namespace CodeRefactor.Provider
         /// </summary>
         public static ASResult GetRefactorTargetFromFile(string path, DocumentHelper associatedDocumentHelper)
         {
-            String fileName = Path.GetFileNameWithoutExtension(path);
-            Int32 line = 0;
+            string fileName = Path.GetFileNameWithoutExtension(path);
+            int line = 0;
             var doc = associatedDocumentHelper.LoadDocument(path);
             ScintillaControl sci = doc != null ? doc.SciControl : null;
             if (sci == null) return null; // Should not happen...
@@ -262,7 +259,7 @@ namespace CodeRefactor.Provider
             {
                 return false;
             }
-            String originalFile = Sci.FileName;
+            string originalFile = Sci.FileName;
             // get type at match position
             ASResult declaration = DeclarationLookupResult(Sci, Sci.MBSafePosition(match.Index) + Sci.MBSafeTextLength(match.Value), associatedDocumentHelper);
             return (declaration.InFile != null && originalFile == declaration.InFile.FileName) && (Sci.CurrentPos == (Sci.MBSafePosition(match.Index) + Sci.MBSafeTextLength(match.Value)));
@@ -272,9 +269,9 @@ namespace CodeRefactor.Provider
         /// Checks if a given search match actually points to the given target source
         /// </summary>
         /// <returns>True if the SearchMatch does point to the target source.</returns>
-        public static bool DoesMatchPointToTarget(ScintillaControl Sci, SearchMatch match, ASResult target, DocumentHelper associatedDocumentHelper)
+        public static bool DoesMatchPointToTarget(ScintillaControl sci, SearchMatch match, ASResult target, DocumentHelper associatedDocumentHelper)
         {
-            if (Sci == null || target == null) return false;
+            if (sci == null || target == null) return false;
             FileModel targetInFile = null;
 
             if (target.InFile != null)
@@ -288,14 +285,11 @@ namespace CodeRefactor.Provider
 
             ASResult result = null;
             // get type at match position
-            if (match.Index < Sci.Text.Length) // TODO: find out rare cases of incorrect index reported
+            if (match.Index < sci.Text.Length) // TODO: find out rare cases of incorrect index reported
             {
-                result = DeclarationLookupResult(Sci, Sci.MBSafePosition(match.Index) + Sci.MBSafeTextLength(match.Value), associatedDocumentHelper);
-                if (associatedDocumentHelper != null)
-                {
-                    // because the declaration lookup opens a document, we should register it with the document helper to be closed later
-                    associatedDocumentHelper.RegisterLoadedDocument(PluginBase.MainForm.CurrentDocument);
-                }
+                result = DeclarationLookupResult(sci, sci.MBSafePosition(match.Index) + sci.MBSafeTextLength(match.Value), associatedDocumentHelper);
+                // because the declaration lookup opens a document, we should register it with the document helper to be closed later
+                associatedDocumentHelper?.RegisterLoadedDocument(PluginBase.MainForm.CurrentDocument);
             }
             // check if the result matches the target
             if (result == null || (result.InFile == null && result.Type == null)) return false;
@@ -308,15 +302,10 @@ namespace CodeRefactor.Provider
                 return resultInFile.BasePath == targetInFile.BasePath
                     && resultInFile.FileName == targetInFile.FileName
                     && result.Member.LineFrom == target.Member.LineFrom
-                    && result.Member.Name == target.Member.Name
-                    && result.Member.Flags == target.Member.Flags;
+                    && result.Member.Name == target.Member.Name;
             }
-            else // type
-            {
-                if (result.Type == null) return false;
-                if (result.Type.QualifiedName == target.Type.QualifiedName) return true;
-                return false;
-            }
+            // type
+            return result.Type != null && result.Type.QualifiedName == target.Type.QualifiedName;
         }
 
         /// <summary>
@@ -330,7 +319,7 @@ namespace CodeRefactor.Provider
         /// <param name="findFinishedHandler">event to fire once searching is finished</param>
         /// <param name="asynchronous">executes in asynchronous mode</param>
         /// <returns>If "asynchronous" is false, will return the search results, otherwise returns null on bad input or if running in asynchronous mode.</returns>
-        public static FRResults FindTargetInFiles(ASResult target, FRProgressReportHandler progressReportHandler, FRFinishedHandler findFinishedHandler, Boolean asynchronous)
+        public static FRResults FindTargetInFiles(ASResult target, FRProgressReportHandler progressReportHandler, FRFinishedHandler findFinishedHandler, bool asynchronous)
         {
             return FindTargetInFiles(target, progressReportHandler, findFinishedHandler, asynchronous, false, false);
         }
@@ -347,7 +336,7 @@ namespace CodeRefactor.Provider
         /// <param name="asynchronous">executes in asynchronous mode</param>
         /// <param name="onlySourceFiles">searches only on defined classpaths</param>
         /// <returns>If "asynchronous" is false, will return the search results, otherwise returns null on bad input or if running in asynchronous mode.</returns>
-        public static FRResults FindTargetInFiles(ASResult target, FRProgressReportHandler progressReportHandler, FRFinishedHandler findFinishedHandler, Boolean asynchronous, Boolean onlySourceFiles, Boolean ignoreSdkFiles)
+        public static FRResults FindTargetInFiles(ASResult target, FRProgressReportHandler progressReportHandler, FRFinishedHandler findFinishedHandler, bool asynchronous, bool onlySourceFiles, bool ignoreSdkFiles)
         {
             return FindTargetInFiles(target, progressReportHandler, findFinishedHandler, asynchronous, onlySourceFiles, ignoreSdkFiles, false, false);
         }
@@ -364,7 +353,7 @@ namespace CodeRefactor.Provider
         /// <param name="asynchronous">executes in asynchronous mode</param>
         /// <param name="onlySourceFiles">searches only on defined classpaths</param>
         /// <returns>If "asynchronous" is false, will return the search results, otherwise returns null on bad input or if running in asynchronous mode.</returns>
-        public static FRResults FindTargetInFiles(ASResult target, FRProgressReportHandler progressReportHandler, FRFinishedHandler findFinishedHandler, Boolean asynchronous, Boolean onlySourceFiles, Boolean ignoreSdkFiles, bool includeComments, bool includeStrings)
+        public static FRResults FindTargetInFiles(ASResult target, FRProgressReportHandler progressReportHandler, FRFinishedHandler findFinishedHandler, bool asynchronous, bool onlySourceFiles, bool ignoreSdkFiles, bool includeComments, bool includeStrings)
         {
             if (target == null) return null;
             var member = target.Member;
@@ -375,17 +364,17 @@ namespace CodeRefactor.Provider
             }
             FRConfiguration config;
             IProject project = PluginBase.CurrentProject;
-            String file = PluginBase.MainForm.CurrentDocument.FileName;
+            string file = PluginBase.MainForm.CurrentDocument.FileName;
             // This is out of the project, just look for this file...
             if (IsPrivateTarget(target) || !IsProjectRelatedFile(project, file))
             {
-                String mask = Path.GetFileName(file);
+                string mask = Path.GetFileName(file);
                 if (mask.Contains("[model]"))
                 {
                     findFinishedHandler?.Invoke(new FRResults());
                     return null;
                 }
-                String path = Path.GetDirectoryName(file);
+                string path = Path.GetDirectoryName(file);
                 config = new FRConfiguration(path, mask, false, GetFRSearch(member != null ? member.Name : type.Name, includeComments, includeStrings));
             }
             else if (member != null && !CheckFlag(member.Flags, FlagType.Constructor))
@@ -399,14 +388,8 @@ namespace CodeRefactor.Provider
             }
             config.CacheDocuments = true;
             FRRunner runner = new FRRunner();
-            if (progressReportHandler != null)
-            {
-                runner.ProgressReport += progressReportHandler;
-            }
-            if (findFinishedHandler != null)
-            {
-                runner.Finished += findFinishedHandler;
-            }
+            if (progressReportHandler != null) runner.ProgressReport += progressReportHandler;
+            if (findFinishedHandler != null) runner.Finished += findFinishedHandler;
             if (asynchronous) runner.SearchAsync(config);
             else return runner.SearchSync(config);
             return null;
@@ -416,7 +399,7 @@ namespace CodeRefactor.Provider
         /// Checks if files is related to the project
         /// TODO support SWCs -> refactor test as IProject method
         /// </summary>
-        public static Boolean IsProjectRelatedFile(IProject project, String file)
+        public static bool IsProjectRelatedFile(IProject project, string file)
         {
             if (project == null) return false;
             IASContext context = ASContext.GetLanguageContext(project.Language);
@@ -429,7 +412,7 @@ namespace CodeRefactor.Provider
             // If no source paths are defined, is it under the project?
             if (project.SourcePaths.Length == 0)
             {
-                String projRoot = Path.GetDirectoryName(project.ProjectPath);
+                string projRoot = Path.GetDirectoryName(project.ProjectPath);
                 if (file.StartsWithOrdinal(projRoot)) return true;
             }
             return false;
@@ -438,13 +421,13 @@ namespace CodeRefactor.Provider
         /// <summary>
         /// Gets all files related to the project
         /// </summary>
-        private static List<String> GetAllProjectRelatedFiles(IProject project, bool onlySourceFiles)
+        private static List<string> GetAllProjectRelatedFiles(IProject project, bool onlySourceFiles)
         {
             return GetAllProjectRelatedFiles(project, onlySourceFiles, false);
         }
-        private static List<String> GetAllProjectRelatedFiles(IProject project, bool onlySourceFiles, Boolean ignoreSdkFiles)
+        private static List<string> GetAllProjectRelatedFiles(IProject project, bool onlySourceFiles, bool ignoreSdkFiles)
         {
-            List<String> files = new List<String>();
+            var files = new List<string>();
             string filter = project.DefaultSearchFilter;
             if (string.IsNullOrEmpty(filter)) return files;
             string[] filters = project.DefaultSearchFilter.Split(';');
@@ -485,7 +468,7 @@ namespace CodeRefactor.Provider
             // If no source paths are defined, get files directly from project path
             if (project.SourcePaths.Length == 0)
             {
-                String projRoot = Path.GetDirectoryName(project.ProjectPath);
+                string projRoot = Path.GetDirectoryName(project.ProjectPath);
                 foreach (string filterMask in filters)
                 {
                     files.AddRange(Directory.GetFiles(projRoot, filterMask, SearchOption.AllDirectories));
@@ -516,7 +499,7 @@ namespace CodeRefactor.Provider
         /// <summary>
         /// Replaces only the matches in the current sci control
         /// </summary>
-        public static void ReplaceMatches(List<SearchMatch> matches, ScintillaControl sci, String replacement)
+        public static void ReplaceMatches(List<SearchMatch> matches, ScintillaControl sci, string replacement)
         {
             if (sci == null || matches == null || matches.Count == 0) return;
             sci.BeginUndoAction();
@@ -543,9 +526,9 @@ namespace CodeRefactor.Provider
         public static void SelectMatch(ScintillaControl sci, SearchMatch match)
         {
             if (sci == null || match == null) return;
-            Int32 start = sci.MBSafePosition(match.Index); // wchar to byte position
-            Int32 end = start + sci.MBSafeTextLength(match.Value); // wchar to byte text length
-            Int32 line = sci.LineFromPosition(start);
+            int start = sci.MBSafePosition(match.Index); // wchar to byte position
+            int end = start + sci.MBSafeTextLength(match.Value); // wchar to byte text length
+            int line = sci.LineFromPosition(start);
             sci.EnsureVisible(line);
             sci.SetSel(start, end);
         }
