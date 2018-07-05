@@ -2415,7 +2415,7 @@ namespace ASCompletion.Completion
         /// <param name="Sci"></param>
         public static void HandleAllClassesCompletion(ScintillaControl Sci, string tail, bool classesOnly, bool showClassVars)
         {
-            List<ICompletionListItem> list = GetAllClasses(Sci, classesOnly, showClassVars);
+            var list = GetAllClasses(Sci, classesOnly, showClassVars);
             list.Sort(new CompletionItemCaseSensitiveImportComparer());
             CompletionList.Show(list, false, tail);
         }
@@ -2504,6 +2504,9 @@ namespace ASCompletion.Completion
                     return HandleFunctionCompletion(sci, autoHide);
                 return false;
             }
+            // import
+            if (features.hasImports && (word == features.importKey || word == features.importKeyAlt))
+                return HandleImportCompletion(sci, "", autoHide);
             if (word == "package" || features.typesKeywords.Contains(word)) return false;
             if (word == features.ImplementsKey) return HandleImplementsCompletion(sci, autoHide);
             // new/extends/instanceof/...
@@ -2514,9 +2517,6 @@ namespace ASCompletion.Completion
             if (!beforeBody && features.codeKeywords.Contains(word)) return false;
             // override
             if (word == features.overrideKey) return ASGenerator.HandleGeneratorCompletion(sci, autoHide, word);
-            // import
-            if (features.hasImports && (word == features.importKey || word == features.importKeyAlt))
-                return HandleImportCompletion(sci, "", autoHide);
             // public/internal/private/protected/static
             if (features.accessKeywords.Contains(word)) return HandleDeclarationCompletion(sci, "", autoHide);
             return HandleWhiteSpaceCompletion(sci, position, word, autoHide);

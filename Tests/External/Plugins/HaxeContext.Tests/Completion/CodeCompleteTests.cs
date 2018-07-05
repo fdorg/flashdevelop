@@ -237,6 +237,9 @@ namespace HaXeContext.Completion
                 yield return new TestCaseData("BeforeOnCharAndReplaceText_9", '.', false)
                     .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_9"))
                     .SetName("cast(v, String).| ");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_10", ' ', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_10"))
+                    .SetName("import | ");
             }
         }
 
@@ -358,11 +361,18 @@ namespace HaXeContext.Completion
                 yield return new TestCaseData("BeforeOnCharAndReplaceText_9", '.', true)
                     .SetName("cast(v, String).| ")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2134_1", ' ', true)
+                    .Ignore("That test pass without other tests")
+                    .SetName("override | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_10", ' ', true)
+                    .Ignore("That test pass without other tests")
+                    .SetName("import | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
             }
         }
 
         [Test, TestCaseSource(nameof(OnCharIssue825TestCases))]
         public void OnChar(string fileName, char addedChar, bool autoHide) => OnChar(sci, CodeCompleteTests.ReadAllText(fileName), addedChar, autoHide, false);
-
     }
 }
