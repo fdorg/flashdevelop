@@ -12,6 +12,11 @@ namespace HaXeContext.Completion
 {
     class CodeComplete : ASComplete
     {
+        protected override bool IsAvailable(IASContext ctx, bool autoHide)
+        {
+            return base.IsAvailable(ctx, autoHide) && (!autoHide || ((HaXeSettings)ctx.Settings).DisableCompletionOnDemand);
+        }
+
         public override bool IsRegexStyle(ScintillaControl sci, int position)
         {
             var result = base.IsRegexStyle(sci, position);

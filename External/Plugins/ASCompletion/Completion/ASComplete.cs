@@ -65,7 +65,7 @@ namespace ASCompletion.Completion
         public static bool OnChar(ScintillaControl Sci, int Value, bool autoHide)
         {
             var ctx = ASContext.Context;
-            if (ctx.Settings == null || !ctx.Settings.CompletionEnabled) return false;
+            if (!ctx.CodeComplete.IsAvailable(ctx, autoHide)) return false;
             var features = ctx.Features;
             try
             {
@@ -197,6 +197,14 @@ namespace ASCompletion.Completion
             if (!CompletionList.Active) LastExpression = null;
             return false;
         }
+
+        /// <summary>
+        /// Returns true if completion is available
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space or Ctrl+Alt+Space)</param>
+        /// <returns>true if completion is available</returns>
+        protected virtual bool IsAvailable(IASContext ctx, bool autoHide) => ctx.Settings != null && ctx.Settings.CompletionEnabled;
 
         /// <summary>
         /// Handle shortcuts
@@ -627,7 +635,7 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        static public void SaveLastLookupPosition(ScintillaControl Sci)
+        public static void SaveLastLookupPosition(ScintillaControl Sci)
         {
             if (Sci != null)
             {
@@ -2157,7 +2165,7 @@ namespace ASCompletion.Completion
 
         #region types_completion
 
-        static private string SelectTypedNewMember(ScintillaControl sci)
+        private static string SelectTypedNewMember(ScintillaControl sci)
         {
             try
             {
@@ -2527,6 +2535,7 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Display the full project interfaces list
         /// </summary>
+        /// <param name="sci">Scintilla control</param>
         /// <param name="autoHide">Don't keep the list open if the word does not match</param>
         /// <returns>Auto-completion has been handled</returns>
         protected virtual bool HandleImplementsCompletion(ScintillaControl sci, bool autoHide)

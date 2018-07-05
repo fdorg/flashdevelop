@@ -331,6 +331,33 @@ namespace HaXeContext.Completion
                 yield return new TestCaseData("OnCharIssue2105_2", '.', true)
                     .SetName("\".|\" Issue825. Case 2.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_1", '.', true)
+                    .SetName("[].| ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_2", '.', true)
+                    .SetName("'${[].| }'")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_3", '.', true)
+                    .SetName("[[].| ]")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_4", '.', true)
+                    .SetName("''.| ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_5", '.', true)
+                    .SetName("'${\"123\".| }'")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_6", '.', true)
+                    .SetName("'${String.| }'")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_7", '.', true)
+                    .SetName("'${String.fromCharCode(1).| }'")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_8", '.', true)
+                    .SetName("'${[1 => 1].| }'")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_9", '.', true)
+                    .SetName("cast(v, String).| ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
             }
         }
 
