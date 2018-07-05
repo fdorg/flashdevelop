@@ -109,6 +109,7 @@ namespace ASCompletion
             ASContext.Context.GetCodeModel(currentModel, sci.Text);
             var line = sci.CurrentLine;
             var currentClass = currentModel.Classes.FirstOrDefault(line);
+            if (currentClass == null && currentModel.Classes.Count > 0) currentClass = currentModel.Classes[0];
             ASContext.Context.CurrentClass.Returns(currentClass);
             var currentMember = currentClass?.Members.FirstOrDefault(line);
             ASContext.Context.CurrentMember.Returns(currentMember);
