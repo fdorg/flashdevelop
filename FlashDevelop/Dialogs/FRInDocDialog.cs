@@ -442,10 +442,16 @@ namespace FlashDevelop.Dialogs
             }
         }
 
+        public void FindNext(bool forward) => FindNext(forward, true);
+
+        public void FindNext(bool forward, bool update) => FindNext(forward, update, false);
+
+        public void FindNext(bool forward, bool update, bool simple) => FindNext(forward, update, simple, false);
+
         /// <summary>
         /// Finds the next result based on direction
         /// </summary>
-        public void FindNext(Boolean forward, Boolean update, Boolean simple)
+        public void FindNext(bool forward, bool update, bool simple, bool fixedPosition)
         {
             this.currentMatch = null;
             if (update) this.UpdateFindText();
@@ -455,7 +461,7 @@ namespace FlashDevelop.Dialogs
             if (matches != null && matches.Count != 0)
             {
                 FRDialogGenerics.UpdateComboBoxItems(this.findComboBox);
-                var match = FRDialogGenerics.GetNextDocumentMatch(sci, matches, forward, false);
+                var match = FRDialogGenerics.GetNextDocumentMatch(sci, matches, forward, fixedPosition);
                 if (match != null)
                 {
                     this.currentMatch = match;
@@ -480,8 +486,6 @@ namespace FlashDevelop.Dialogs
             }
             this.SelectText();
         }
-        public void FindNext(Boolean forward, Boolean update) => FindNext(forward, update, false);
-        public void FindNext(Boolean forward) => FindNext(forward, true);
 
         /// <summary>
         /// Finds the next result specified by user input
@@ -534,7 +538,7 @@ namespace FlashDevelop.Dialogs
             }
             if (useRegexCheckBox.Enabled && currentMatch == null)
             {
-                FindNext(true, false);
+                FindNext(true, false, false, true);
                 if (currentMatch == null) return;
             }
             var replaceWith = GetReplaceText(currentMatch);
