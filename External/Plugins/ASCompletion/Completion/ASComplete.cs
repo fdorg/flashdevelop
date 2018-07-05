@@ -291,7 +291,7 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Fire the completion automatically
         /// </summary>
-        private static void AutoStartCompletion(ScintillaControl Sci, int position)
+        private static void AutoStartCompletion(ScintillaControl sci, int position)
         {
             if (!CompletionList.Active && ASContext.Context.Features.hasEcmaTyping 
                 && ASContext.CommonSettings.AlwaysCompleteWordLength > 0)
@@ -299,47 +299,42 @@ namespace ASCompletion.Completion
                 // fire completion if starting to write a word
                 bool valid = true;
                 int n = ASContext.CommonSettings.AlwaysCompleteWordLength;
-                int wordStart = Sci.WordStartPosition(position, true);
-                if (position - wordStart != n)
-                    return;
-                char c = (char)Sci.CharAt(wordStart);
-                string characterClass = ScintillaControl.Configuration.GetLanguage(Sci.ConfigurationLanguage).characterclass.Characters;
-                if (Char.IsDigit(c) || characterClass.IndexOf(c) < 0)
-                    return;
+                int wordStart = sci.WordStartPosition(position, true);
+                if (position - wordStart != n) return;
+                char c = (char)sci.CharAt(wordStart);
+                string characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
+                if (char.IsDigit(c) || !characterClass.Contains(c)) return;
                 // give a guess to the context (do not complete where it should not)
                 if (valid)
                 {
                     int pos = wordStart - 1;
-                    c = ' ';
-                    char c2 = ' ';
                     bool hadWS = false;
                     bool canComplete = false;
                     while (pos > 0)
                     {
-                        c = (char)Sci.CharAt(pos--);
+                        c = (char)sci.CharAt(pos--);
                         if (hadWS && characterClass.IndexOf(c) >= 0) break;
-                        else if (c == '<' && ((char)Sci.CharAt(pos + 2) == '/' || !hadWS)) break;
-                        else if (":;,+-*%!&|<>/{}()[=?".IndexOf(c) >= 0)
+                        if (c == '<' && ((char)sci.CharAt(pos + 2) == '/' || !hadWS)) break;
+                        if (":;,+-*%!&|<>/{}()[=?".Contains(c))
                         {
                             canComplete = true;
                             // TODO  Add HTML lookup here
                             if (pos > 0)
                             {
-                                char c0 = (char)Sci.CharAt(pos);
-                                if (c == '/' && c0 == '<') canComplete = false;
+                                if (c == '/' && (char)sci.CharAt(pos) == '<') canComplete = false;
                             }
                             break;
                         }
-                        else if (c <= 32)
+                        if (c <= 32)
                         {
                             if (c == '\r' || c == '\n')
                             {
                                 canComplete = true;
                                 break;
                             }
-                            else if (pos > 1)
+                            if (pos > 1)
                             {
-                                int style = Sci.BaseStyleAt(pos - 1);
+                                int style = sci.BaseStyleAt(pos - 1);
                                 if (style == 19)
                                 {
                                     canComplete = true;
@@ -348,15 +343,14 @@ namespace ASCompletion.Completion
                             }
                             hadWS = true;
                         }
-                        else if (c != '.' && characterClass.IndexOf(c) < 0)
+                        else if (c != '.' && !characterClass.Contains(c))
                         {
                             // TODO support custom DOT
                             canComplete = false;
                             break;
                         }
-                        c2 = c;
                     }
-                    if (canComplete) HandleDotCompletion(Sci, true);
+                    if (canComplete) HandleDotCompletion(sci, true);
                 }
             }
         }
@@ -2450,10 +2444,10 @@ namespace ASCompletion.Completion
 
         private static bool HandleMetadataCompletion(bool autoHide)
         {
-            List<ICompletionListItem> list = new List<ICompletionListItem>();
-            foreach (KeyValuePair<string, string> meta in ASContext.Context.Features.metadata)
+            var list = new List<ICompletionListItem>();
+            foreach (var meta in ASContext.Context.Features.metadata)
             {
-                MemberModel member = new MemberModel();
+                var member = new MemberModel();
                 member.Name = meta.Key;
                 member.Comments = meta.Value;
                 member.Type = "Compiler Metadata";
