@@ -4050,13 +4050,13 @@ namespace ASCompletion.Completion
             FileModel model;
             if (!string.IsNullOrEmpty(expression.FunctionBody))
             {
-                MemberModel cm = expression.ContextMember;
-                string functionBody = Regex.Replace(expression.FunctionBody, "function\\s*\\(", "function __anonfunc__("); // name anonymous functions
+                var cm = expression.ContextMember;
+                var functionBody = Regex.Replace(expression.FunctionBody, "function\\s*\\(", "function __anonfunc__("); // name anonymous functions
                 model = ASContext.Context.GetCodeModel(functionBody, true);
-                int memberCount = model.Members.Count;
-                for (int memberIndex = 0; memberIndex < memberCount; memberIndex++)
+                var memberCount = model.Members.Count;
+                for (var memberIndex = 0; memberIndex < memberCount; memberIndex++)
                 {
-                    MemberModel member = model.Members[memberIndex];
+                    var member = model.Members[memberIndex];
 
                     if (cm.Equals(member)) continue;
 
@@ -4064,42 +4064,37 @@ namespace ASCompletion.Completion
                     member.LineFrom += expression.FunctionOffset;
                     member.LineTo += expression.FunctionOffset;
 
-                    if ((member.Flags & FlagType.Function) == FlagType.Function)
+                    if ((member.Flags & FlagType.Function) != FlagType.Function) continue;
+                    if (member.Name == "__anonfunc__")
                     {
-                        if (member.Name == "__anonfunc__")
-                        {
-                            model.Members.Remove(member);
-                            memberCount--;
-                            memberIndex--;
-                        }
-
-                        if (member.Parameters == null) continue;
-
-                        foreach (MemberModel parameter in member.Parameters)
-                        {
-                            parameter.LineFrom += expression.FunctionOffset;
-                            parameter.LineTo += expression.FunctionOffset;
-                            model.Members.Add(parameter);
-                        }
+                        model.Members.Remove(member);
+                        memberCount--;
+                        memberIndex--;
+                    }
+                    if (member.Parameters == null) continue;
+                    foreach (var parameter in member.Parameters)
+                    {
+                        parameter.LineFrom += expression.FunctionOffset;
+                        parameter.LineTo += expression.FunctionOffset;
+                        model.Members.Add(parameter);
                     }
                 }
             }
             else model = new FileModel();
+            model.Members.Sort();
             if (expression.ContextFunction?.Parameters != null)
             {
                 var features = ASContext.Context.Features;
                 var dot = features.dot;
-                foreach (MemberModel item in expression.ContextFunction.Parameters)
+                foreach (var item in expression.ContextFunction.Parameters)
                 {
                     var name = item.Name;
-                    if (name.StartsWithOrdinal(dot))
-                        model.Members.Merge(new MemberModel(name.Substring(name.LastIndexOfOrdinal(dot) + 1), "Array", item.Flags, item.Access));
-                    else if (name[0] == '?') model.Members.Merge(new MemberModel(name.Substring(1), item.Type, item.Flags, item.Access));
-                    else model.Members.Merge(item);
+                    if (name.StartsWithOrdinal(dot)) model.Members.MergeByLine(new MemberModel(name.Substring(name.LastIndexOfOrdinal(dot) + 1), "Array", item.Flags, item.Access));
+                    else if (name[0] == '?') model.Members.MergeByLine(new MemberModel(name.Substring(1), item.Type, item.Flags, item.Access));
+                    else model.Members.MergeByLine(item);
                 }
-                if (features.functionArguments != null) model.Members.Add(features.functionArguments);
+                if (features.functionArguments != null) model.Members.MergeByLine(features.functionArguments);
             }
-            model.Members.Sort();
             return model.Members;
         }
 
