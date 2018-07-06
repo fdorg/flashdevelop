@@ -253,25 +253,12 @@ namespace ASCompletion.Model
         private List<MemberModel> items;
         private bool Sorted;
         
-        public IEnumerator GetEnumerator()
-        {
-            return items.GetEnumerator();
-        }
-        
-        public List<MemberModel> Items 
-        {
-            get {
-                return items;
-            }
-        }
+        public IEnumerator GetEnumerator() => items.GetEnumerator();
 
-        public int Count
-        {
-            get {
-                return items.Count;
-            }
-        }
-        
+        public List<MemberModel> Items => items;
+
+        public int Count => items.Count;
+
         public MemberList()
         {
             items = new List<MemberModel>();
@@ -279,7 +266,8 @@ namespace ASCompletion.Model
         
         public MemberModel this[int index]
         {
-            get {
+            get
+            {
                 return items[index];
             }
             set {
@@ -308,10 +296,7 @@ namespace ASCompletion.Model
             items.Insert(index, value);
         }
         
-        public void Remove(MemberModel value)
-        {
-            items.Remove(value);
-        }
+        public void Remove(MemberModel value) => items.Remove(value);
 
         public void Remove(string name)
         {
@@ -362,10 +347,7 @@ namespace ASCompletion.Model
             return result;
         }
         
-        public void Sort()
-        {
-            this.Sort(null);
-        }
+        public void Sort() => Sort(null);
 
         public void Sort(IComparer<MemberModel> comparer)
         {
@@ -396,10 +378,9 @@ namespace ASCompletion.Model
         {
             if (list == null) return;
             int index = 0;
-            bool added;
             foreach (MemberModel m in list)
             {
-                added = false;
+                var added = false;
                 while (index < items.Count)
                 {
                     if (m.Name.CompareTo(items[index].Name) <= 0)
@@ -419,6 +400,24 @@ namespace ASCompletion.Model
             }
         }
 
+        public void MergeByLine(MemberModel item)
+        {
+            if (item == null) return;
+            var index = 0;
+            var added = false;
+            while (index < items.Count)
+            {
+                if (item.LineFrom <= items[index].LineFrom)
+                {
+                    items.Insert(index, item);
+                    added = true;
+                    break;
+                }
+                index++;
+            }
+            if (!added) items.Add(item);
+        }
+
         /// <summary>
         /// Merge ORDERED (by line) lists
         /// </summary>
@@ -426,22 +425,21 @@ namespace ASCompletion.Model
         public void MergeByLine(MemberList list)
         {
             if (list == null) return;
-            int index = 0;
-            bool added;
-            foreach (MemberModel m in list)
+            var index = 0;
+            foreach (MemberModel item in list)
             {
-                added = false;
+                var added = false;
                 while (index < items.Count)
                 {
-                    if (m.LineFrom <= items[index].LineFrom)
+                    if (item.LineFrom <= items[index].LineFrom)
                     {
-                        items.Insert(index, m);
+                        items.Insert(index, item);
                         added = true;
                         break;
                     }
                     index++;
                 }
-                if (!added) items.Add(m);
+                if (!added) items.Add(item);
             }
         }
 
@@ -453,11 +451,10 @@ namespace ASCompletion.Model
         {
             if (list == null) return;
             int index = 0;
-            bool added;
             foreach (MemberModel m in list)
             if ((m.Flags & mask) == mask && (m.Access & acc) > 0)
             {
-                added = false;
+                var added = false;
                 while (index < items.Count)
                 {
                     if (m.Name.CompareTo(items[index].Name) <= 0)
@@ -477,15 +474,9 @@ namespace ASCompletion.Model
             }
         }
 
-        public void RemoveAllWithFlag(FlagType flag)
-        {
-            items.RemoveAll(m => (m.Flags & flag) > 0);   
-        }
+        public void RemoveAllWithFlag(FlagType flag) => items.RemoveAll(m => (m.Flags & flag) > 0);
 
-        public void RemoveAllWithoutFlag(FlagType flag)
-        {
-            items.RemoveAll(m => (m.Flags & flag) == 0);
-        }
+        public void RemoveAllWithoutFlag(FlagType flag) => items.RemoveAll(m => (m.Flags & flag) == 0);
     }
 
     public class ByKindMemberComparer : IComparer<MemberModel>
@@ -537,11 +528,7 @@ namespace ASCompletion.Model
     public class ByDeclarationPositionMemberComparer : IComparer<MemberModel>
     {
 
-        public int Compare(MemberModel a, MemberModel b)
-        {
-            return a.LineFrom - b.LineFrom;
-        }
-
+        public int Compare(MemberModel a, MemberModel b) => a.LineFrom - b.LineFrom;
     }
 
     /// <summary>

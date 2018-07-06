@@ -530,6 +530,9 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_18"))
                     .SetName("Infer var type. Case 18.")
                     .Ignore("Result should be `var v1:Class<Dynamic> = v;` instead of `var v1:Dynamic = v;`");
+                yield return new TestCaseData("BeforeAssignStatementToVar_inferVar_19", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_inferVar_19"))
+                    .SetName("Infer var type. Case 19.");
             }
         }
 
