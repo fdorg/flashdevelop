@@ -43,16 +43,19 @@ namespace HaXeContext
         
         private HaXeSettings hxsettings;
         private Dictionary<string, List<string>> haxelibsCache;
+        private Func<string, InstalledSDK> CreateCustomSDK;
+        private Dictionary<string, InstalledSDK> customSDKCache;
         private string HaxeTarget;
         private bool resolvingDot;
         private bool resolvingFunction;
         HaxeCompletionCache hxCompletionCache;
         ClassModel stubFunctionClass;
 
-        public Context(HaXeSettings initSettings)
+        public Context(HaXeSettings initSettings, Func<string, InstalledSDK> CreateCustomSDK)
         {
             hxsettings = initSettings;
             hxsettings.Init();
+            this.CreateCustomSDK = CreateCustomSDK;
 
             /* AS-LIKE OPTIONS */
 
@@ -158,6 +161,7 @@ namespace HaXeContext
             //OnCompletionModeChange(); // defered to first use
 
             haxelibsCache = new Dictionary<string, List<string>>();
+            customSDKCache = new Dictionary<string, InstalledSDK>();
             CodeGenerator = new CodeGenerator();
             DocumentationGenerator = new DocumentationGenerator();
             CodeComplete = new CodeComplete();
@@ -702,9 +706,15 @@ namespace HaXeContext
         #endregion
 
         #region SDK
-        private InstalledSDK GetCurrentSDK()
+        private InstalledSDK GetCurrentSDK() => hxsettings.InstalledSDKs?.FirstOrDefault(sdk => sdk.Path == currentSDK) ?? GetCustomSDK(currentSDK);
+
+        private InstalledSDK GetCustomSDK(string customPath)
         {
-            return hxsettings.InstalledSDKs?.FirstOrDefault(sdk => sdk.Path == currentSDK);
+            InstalledSDK sdk;
+            if (customSDKCache.TryGetValue(customPath, out sdk)) return sdk;
+            sdk = CreateCustomSDK(customPath);
+            if (sdk != null) customSDKCache.Add(customPath, sdk);
+            return sdk;
         }
 
         public SemVer GetCurrentSDKVersion()

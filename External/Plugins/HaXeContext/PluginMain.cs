@@ -172,7 +172,7 @@ namespace HaXeContext
 
                 case EventType.UIStarted:
                     ValidateSettings();
-                    contextInstance = new Context(settingObject);
+                    contextInstance = new Context(settingObject, CreateCustomSDK);
                     // Associate this context with haxe language
                     ASCompletion.Context.ASContext.RegisterLanguage(contextInstance, "haxe");
                     CommandFactoryProvider.Register("haxe", new HaxeCommandFactory());
@@ -349,6 +349,13 @@ namespace HaXeContext
                 return true;
             }
             return false;
+        }
+
+        private InstalledSDK CreateCustomSDK(string path)
+        {
+            var sdk = new InstalledSDK(this);
+            sdk.Path = path;
+            return ValidateSDK(sdk) ? sdk : null;
         }
 
         #endregion
