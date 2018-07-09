@@ -1873,7 +1873,7 @@ namespace HaXeContext
         /// <summary>
         /// Retrieve the context's default compiler path
         /// </summary>
-        public override string GetCompilerPath() => hxsettings.GetDefaultSDK().Path;
+        public override string GetCompilerPath() => GetCurrentSDK()?.Path ?? hxsettings.GetDefaultSDK().Path;
 
         /// <summary>
         /// Check current file's syntax
