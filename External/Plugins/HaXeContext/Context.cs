@@ -43,7 +43,7 @@ namespace HaXeContext
         
         private HaXeSettings hxsettings;
         private Dictionary<string, List<string>> haxelibsCache;
-        private Func<string, InstalledSDK> CreateCustomSDK;
+        private Func<string, InstalledSDK> createCustomSDK;
         private Dictionary<string, InstalledSDK> customSDKCache;
         private string HaxeTarget;
         private bool resolvingDot;
@@ -51,11 +51,11 @@ namespace HaXeContext
         HaxeCompletionCache hxCompletionCache;
         ClassModel stubFunctionClass;
 
-        public Context(HaXeSettings initSettings, Func<string, InstalledSDK> CreateCustomSDK)
+        public Context(HaXeSettings initSettings, Func<string, InstalledSDK> createCustomSDK)
         {
             hxsettings = initSettings;
             hxsettings.Init();
-            this.CreateCustomSDK = CreateCustomSDK;
+            this.createCustomSDK = createCustomSDK;
 
             /* AS-LIKE OPTIONS */
 
@@ -712,7 +712,7 @@ namespace HaXeContext
         {
             InstalledSDK sdk;
             if (customSDKCache.TryGetValue(customPath, out sdk)) return sdk;
-            sdk = CreateCustomSDK(customPath);
+            sdk = createCustomSDK(customPath);
             if (sdk != null) customSDKCache.Add(customPath, sdk);
             return sdk;
         }
