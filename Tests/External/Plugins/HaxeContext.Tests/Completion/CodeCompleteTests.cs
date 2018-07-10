@@ -237,6 +237,9 @@ namespace HaXeContext.Completion
                 yield return new TestCaseData("BeforeOnCharAndReplaceText_9", '.', false)
                     .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_9"))
                     .SetName("cast(v, String).| ");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_10", ' ', false)
+                    .Returns(CodeCompleteTests.ReadAllText("AfterOnCharAndReplaceText_10"))
+                    .SetName("import | ");
             }
         }
 
@@ -310,5 +313,109 @@ namespace HaXeContext.Completion
             ((Context) ASContext.GetLanguageContext("haxe")).completionCache.IsDirty = true;
             return OnCharAndReplaceText(sci, CodeCompleteTests.ReadAllText(fileName), addedChar, autoHide);
         }
+    }
+
+    class CodeCompleteTests3 : ASCompleteTests
+    {
+        [TestFixtureSetUp]
+        public void Setup()
+        {
+            SetHaxeFeatures(sci);
+            ((HaXeSettings) ASContext.GetLanguageContext("haxe").Settings).DisableCompletionOnDemand = false;
+        }
+
+        static IEnumerable<TestCaseData> OnCharIssue825TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("OnCharIssue2105_1", '.', true)
+                    .SetName("'.|' Issue825. Case 1.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("OnCharIssue2105_2", '.', true)
+                    .SetName("\".|\" Issue825. Case 2.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_1", '.', true)
+                    .SetName("[].| ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_2", '.', true)
+                    .SetName("'${[].| }'")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_3", '.', true)
+                    .SetName("[[].| ]")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_4", '.', true)
+                    .SetName("''.| ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_5", '.', true)
+                    .SetName("'${\"123\".| }'")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_6", '.', true)
+                    .SetName("'${String.| }'")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_7", '.', true)
+                    .SetName("'${String.fromCharCode(1).| }'")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_8", '.', true)
+                    .SetName("'${[1 => 1].| }'")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_9", '.', true)
+                    .SetName("cast(v, String).| ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_14", ' ', true)
+                    .SetName("from | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_15", ' ', true)
+                    .SetName("to | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_16", ' ', true)
+                    .SetName("public | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_1", '.', true)
+                    .SetName("EnumType.| ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_4", '.', true)
+                    .SetName("EnumAbstractType.| ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_5", '.', true)
+                    .SetName("EnumAbstractType.EnumAbstractInstance.| ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_6", '.', true)
+                    .SetName("EnumAbstractInstance.| ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_enums_7", '.', true)
+                    .SetName("EnumAbstractVariable.| ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+            }
+        }
+
+        static IEnumerable<TestCaseData> OnCharIssue825TestCases2
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_10", ' ', true)
+                    .SetName("import | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_11", ' ', true)
+                    .SetName("new | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_12", ' ', true)
+                    .SetName("extends | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceText_13", ' ', true)
+                    .SetName("implements | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+                yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2134_1", ' ', true)
+                    .SetName("override | ")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/825");
+            }
+        }
+
+        [
+            Test,
+            TestCaseSource(nameof(OnCharIssue825TestCases)),
+            // TODO: That tests pass without other tests
+            //TestCaseSource(nameof(OnCharIssue825TestCases2)),
+        ]
+        public void OnChar(string fileName, char addedChar, bool autoHide) => OnChar(sci, CodeCompleteTests.ReadAllText(fileName), addedChar, autoHide, false);
     }
 }

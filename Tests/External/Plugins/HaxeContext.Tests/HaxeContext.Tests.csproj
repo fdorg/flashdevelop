@@ -506,6 +506,16 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_inferVar_17.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_inferVar_18.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_inferVar_18.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_10.hx" />
+    <EmbeddedResource Include="Test Files\completion\AfterOnCharAndReplaceText_10.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_11.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_12.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_13.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_14.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_15.hx" />
+    <EmbeddedResource Include="Test Files\completion\BeforeOnCharAndReplaceText_16.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_inferVar_19.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_inferVar_19.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

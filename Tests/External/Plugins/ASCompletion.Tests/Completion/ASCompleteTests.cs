@@ -75,7 +75,7 @@ namespace ASCompletion.Completion
                     var de = (DataEvent)e;
                     if (de.Action != "ASCompletion.DotCompletion") return;
                     if (hasCompletion) passed = ((IList<ICompletionListItem>)de.Data).Count > 0;
-                    else passed = false;
+                    else passed = ((IList<ICompletionListItem>)de.Data).Count == 0;
                 });
             EventManager.AddEventHandler(handler, EventType.Command);
             SetSrc(sci, sourceText);

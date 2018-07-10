@@ -1228,7 +1228,6 @@ namespace ASCompletion
 
         private void OnTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
         {
-            ASComplete.OnTextChanged(sender, position, length, linesAdded);
             ASContext.OnTextChanged(sender, position, length, linesAdded);
 
             if (settingObject.DisableInheritanceNavigation) return;

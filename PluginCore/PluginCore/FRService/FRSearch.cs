@@ -98,7 +98,7 @@ namespace PluginCore.FRService
         /// <param name="match">Search result (for reinjecting groups)</param>
         static public string ExpandGroups(string text, SearchMatch match)
         {
-            if (text.IndexOf('$') < 0) return text;
+            if (!text.Contains('$')) return text;
             for (int i = 0; i < match.Groups.Length; i++)
                 text = text.Replace("$" + i, match.Groups[i].Value);
             return text;
@@ -115,11 +115,10 @@ namespace PluginCore.FRService
         {
             int linesDiff = CountNewLines(replacement) - CountNewLines(found);
             int charsDiff = replacement.Length - found.Length;
-            SearchMatch match;
             if (charsDiff != 0 || linesDiff != 0)
                 for (int i = fromMatchIndex; i < matches.Count; i++)
                 {
-                    match = matches[i];
+                    var match = matches[i];
                     match.Index += charsDiff;
                     match.LineStart += charsDiff;
                     match.LineEnd += charsDiff;
@@ -130,11 +129,10 @@ namespace PluginCore.FRService
         static private int CountNewLines(string src)
         {
             int lines = 0;
-            char c1;
             char c2 = ' ';
             for (int i = 0; i < src.Length; i++)
             {
-                c1 = src[i];
+                var c1 = src[i];
                 if (c1 == '\r') lines++;
                 else if (c1 == '\n' && c2 != '\r') lines++;
                 c2 = c1;

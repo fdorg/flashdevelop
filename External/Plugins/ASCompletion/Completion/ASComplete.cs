@@ -60,12 +60,12 @@ namespace ASCompletion.Completion
         /// </summary>
         /// <param name="Sci">Scintilla Control</param>
         /// <param name="Value">Character inserted</param>
-        /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space)</param>
+        /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space or Ctrl+Alt+Space)</param>
         /// <returns>Auto-completion has been handled</returns>
         public static bool OnChar(ScintillaControl Sci, int Value, bool autoHide)
         {
             var ctx = ASContext.Context;
-            if (ctx.Settings == null || !ctx.Settings.CompletionEnabled) return false;
+            if (!ctx.CodeComplete.IsAvailable(ctx, autoHide)) return false;
             var features = ctx.Features;
             try
             {
@@ -89,22 +89,21 @@ namespace ASCompletion.Completion
 
                 if (features.hasStringInterpolation && (IsStringStyle(style) || IsCharStyle(style)))
                 {
-                    char stringTypeChar = Sci.GetStringType(position - 2); // start from -2 in case the inserted char is ' or "
-
+                    var stringTypeChar = Sci.GetStringType(position - 2); // start from -2 in case the inserted char is ' or "
                     // string interpolation
-                    if (features.stringInterpolationQuotes.IndexOf(stringTypeChar) >= 0 &&
-                        IsMatchingQuote(stringTypeChar, Sci.BaseStyleAt(position - 2)))
+                    if (features.stringInterpolationQuotes.Contains(stringTypeChar)
+                        && IsMatchingQuote(stringTypeChar, Sci.BaseStyleAt(position - 2)))
                     {
                         if (Value == '$' && !ctx.CodeComplete.IsEscapedCharacter(Sci, position - 1, '$'))
                         {
                             return HandleInterpolationCompletion(Sci, autoHide, false);
                         }
-                        else if (Value == '{' && prevValue == '$' && !ctx.CodeComplete.IsEscapedCharacter(Sci, position - 2, '$'))
+                        if (Value == '{' && prevValue == '$' && !ctx.CodeComplete.IsEscapedCharacter(Sci, position - 2, '$'))
                         {
                             if (autoHide) HandleAddClosingBraces(Sci, (char) Value, true);
                             return HandleInterpolationCompletion(Sci, autoHide, true);
                         }
-                        else if (ctx.CodeComplete.IsStringInterpolationStyle(Sci, position - 2))
+                        if (ctx.CodeComplete.IsStringInterpolationStyle(Sci, position - 2))
                         {
                             skipQuoteCheck = true; // continue on with regular completion
                         }
@@ -140,13 +139,11 @@ namespace ASCompletion.Completion
                 switch (Value)
                 {
                     case '.':
-                        if (features.dot == "." || !autoHide)
-                            return HandleDotCompletion(Sci, autoHide);
+                        if (features.dot == "." || !autoHide) return HandleDotCompletion(Sci, autoHide);
                         break;
 
                     case '>':
-                        if (features.dot == "->" && prevValue == '-')
-                            return HandleDotCompletion(Sci, autoHide);
+                        if (features.dot == "->" && prevValue == '-') return HandleDotCompletion(Sci, autoHide);
                         break;
 
                     case ' ':
@@ -163,7 +160,7 @@ namespace ASCompletion.Completion
                         {
                             char c0 = (char)Sci.CharAt(position - 2);
                             //TODO: We should check if we are actually on a generic type
-                            if ((ctx.CurrentModel.Version == 3 && c0 == '.') || Char.IsLetterOrDigit(c0))
+                            if ((ctx.CurrentModel.Version == 3 && c0 == '.') || char.IsLetterOrDigit(c0))
                                 return HandleColonCompletion(Sci, "", autoHide);
                             return false;
                         }
@@ -171,8 +168,7 @@ namespace ASCompletion.Completion
 
                     case '(':
                     case ',':
-                        if (!ASContext.CommonSettings.DisableCallTip)
-                            return HandleFunctionCompletion(Sci, autoHide);
+                        if (!ASContext.CommonSettings.DisableCallTip) return HandleFunctionCompletion(Sci, autoHide);
                         return false;
 
                     case ')':
@@ -184,8 +180,7 @@ namespace ASCompletion.Completion
                         break;
 
                     case ';':
-                        if (!ASContext.CommonSettings.DisableCodeReformat) 
-                            ReformatLine(Sci, position);
+                        if (!ASContext.CommonSettings.DisableCodeReformat) ReformatLine(Sci, position);
                         break;
 
                     default:
@@ -203,45 +198,42 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        internal static void OnTextChanged(ScintillaControl sci, int position, int length, int linesAdded)
-        {
-            // TODO track text changes -> LastChar
-        }
+        /// <summary>
+        /// Returns true if completion is available
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="autoHide">Auto-started completion (is false when pressing Ctrl+Space or Ctrl+Alt+Space)</param>
+        /// <returns>true if completion is available</returns>
+        protected virtual bool IsAvailable(IASContext ctx, bool autoHide) => ctx.Settings != null && ctx.Settings.CompletionEnabled;
 
         /// <summary>
         /// Handle shortcuts
         /// </summary>
         /// <param name="keys">Test keys</param>
         /// <returns></returns>
-        static public bool OnShortcut(Keys keys, ScintillaControl Sci)
+        public static bool OnShortcut(Keys keys, ScintillaControl Sci)
         {
-            if (Sci.IsSelectionRectangle) 
-                return false;
-
+            if (Sci.IsSelectionRectangle) return false;
             // dot complete
             if (keys == (Keys.Control | Keys.Space))
             {
                 if (ASContext.HasContext && ASContext.Context.IsFileValid)
                 {
                     // try to get completion as if we had just typed the previous char
-                    if (OnChar(Sci, Sci.CharAt(Sci.PositionBefore(Sci.CurrentPos)), false))
-                        return true;
-                    else
-                    {
-                        // force dot completion
-                        OnChar(Sci, '.', false);
-                        return true;
-                    }
+                    if (OnChar(Sci, Sci.CharAt(Sci.PositionBefore(Sci.CurrentPos)), false)) return true;
+                    // force dot completion
+                    OnChar(Sci, '.', false);
+                    return true;
                 }
-                else return false;
+                return false;
             }
-            else if (keys == Keys.Back)
+            if (keys == Keys.Back)
             {
                 HandleAddClosingBraces(Sci, Sci.CurrentChar, false);
                 return false;
             }
             // show calltip
-            else if (keys == (Keys.Control | Keys.Shift | Keys.Space))
+            if (keys == (Keys.Control | Keys.Shift | Keys.Space))
             {
                 if (ASContext.HasContext && ASContext.Context.IsFileValid)
                 {
@@ -253,7 +245,7 @@ namespace ASCompletion.Completion
                 else return false;
             }
             // project types completion
-            else if (keys == (Keys.Control | Keys.Alt | Keys.Space))
+            if (keys == (Keys.Control | Keys.Alt | Keys.Space))
             {
                 if (ASContext.HasContext && ASContext.Context.IsFileValid && !ASContext.Context.Settings.LazyClasspathExploration)
                 {
@@ -268,7 +260,7 @@ namespace ASCompletion.Completion
                 else return false;
             }
             // hot build
-            else if (keys == (Keys.Control | Keys.Enter))
+            if (keys == (Keys.Control | Keys.Enter))
             {
                 // project build
                 DataEvent de = new DataEvent(EventType.Command, "ProjectManager.HotBuild", null);
@@ -307,7 +299,7 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Fire the completion automatically
         /// </summary>
-        private static void AutoStartCompletion(ScintillaControl Sci, int position)
+        private static void AutoStartCompletion(ScintillaControl sci, int position)
         {
             if (!CompletionList.Active && ASContext.Context.Features.hasEcmaTyping 
                 && ASContext.CommonSettings.AlwaysCompleteWordLength > 0)
@@ -315,47 +307,42 @@ namespace ASCompletion.Completion
                 // fire completion if starting to write a word
                 bool valid = true;
                 int n = ASContext.CommonSettings.AlwaysCompleteWordLength;
-                int wordStart = Sci.WordStartPosition(position, true);
-                if (position - wordStart != n)
-                    return;
-                char c = (char)Sci.CharAt(wordStart);
-                string characterClass = ScintillaControl.Configuration.GetLanguage(Sci.ConfigurationLanguage).characterclass.Characters;
-                if (Char.IsDigit(c) || characterClass.IndexOf(c) < 0)
-                    return;
+                int wordStart = sci.WordStartPosition(position, true);
+                if (position - wordStart != n) return;
+                char c = (char)sci.CharAt(wordStart);
+                string characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
+                if (char.IsDigit(c) || !characterClass.Contains(c)) return;
                 // give a guess to the context (do not complete where it should not)
                 if (valid)
                 {
                     int pos = wordStart - 1;
-                    c = ' ';
-                    char c2 = ' ';
                     bool hadWS = false;
                     bool canComplete = false;
                     while (pos > 0)
                     {
-                        c = (char)Sci.CharAt(pos--);
+                        c = (char)sci.CharAt(pos--);
                         if (hadWS && characterClass.IndexOf(c) >= 0) break;
-                        else if (c == '<' && ((char)Sci.CharAt(pos + 2) == '/' || !hadWS)) break;
-                        else if (":;,+-*%!&|<>/{}()[=?".IndexOf(c) >= 0)
+                        if (c == '<' && ((char)sci.CharAt(pos + 2) == '/' || !hadWS)) break;
+                        if (":;,+-*%!&|<>/{}()[=?".Contains(c))
                         {
                             canComplete = true;
                             // TODO  Add HTML lookup here
                             if (pos > 0)
                             {
-                                char c0 = (char)Sci.CharAt(pos);
-                                if (c == '/' && c0 == '<') canComplete = false;
+                                if (c == '/' && (char)sci.CharAt(pos) == '<') canComplete = false;
                             }
                             break;
                         }
-                        else if (c <= 32)
+                        if (c <= 32)
                         {
                             if (c == '\r' || c == '\n')
                             {
                                 canComplete = true;
                                 break;
                             }
-                            else if (pos > 1)
+                            if (pos > 1)
                             {
-                                int style = Sci.BaseStyleAt(pos - 1);
+                                int style = sci.BaseStyleAt(pos - 1);
                                 if (style == 19)
                                 {
                                     canComplete = true;
@@ -364,15 +351,14 @@ namespace ASCompletion.Completion
                             }
                             hadWS = true;
                         }
-                        else if (c != '.' && characterClass.IndexOf(c) < 0)
+                        else if (c != '.' && !characterClass.Contains(c))
                         {
                             // TODO support custom DOT
                             canComplete = false;
                             break;
                         }
-                        c2 = c;
                     }
-                    if (canComplete) HandleDotCompletion(Sci, true);
+                    if (canComplete) HandleDotCompletion(sci, true);
                 }
             }
         }
@@ -649,7 +635,7 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        static public void SaveLastLookupPosition(ScintillaControl Sci)
+        public static void SaveLastLookupPosition(ScintillaControl Sci)
         {
             if (Sci != null)
             {
@@ -1876,7 +1862,7 @@ namespace ASCompletion.Completion
         /// <param name="Sci">Scintilla control</param>
         /// <param name="autoHide">Don't keep the list open if the word does not match</param>
         /// <returns>Auto-completion has been handled</returns>
-        static private bool HandleDotCompletion(ScintillaControl Sci, bool autoHide)
+        private static bool HandleDotCompletion(ScintillaControl Sci, bool autoHide)
         {
             //this method can exit at multiple points, so reset the current class now rather than later
             currentClassHash = null;
@@ -2179,7 +2165,7 @@ namespace ASCompletion.Completion
 
         #region types_completion
 
-        static private string SelectTypedNewMember(ScintillaControl sci)
+        private static string SelectTypedNewMember(ScintillaControl sci)
         {
             try
             {
@@ -2429,7 +2415,7 @@ namespace ASCompletion.Completion
         /// <param name="Sci"></param>
         public static void HandleAllClassesCompletion(ScintillaControl Sci, string tail, bool classesOnly, bool showClassVars)
         {
-            List<ICompletionListItem> list = GetAllClasses(Sci, classesOnly, showClassVars);
+            var list = GetAllClasses(Sci, classesOnly, showClassVars);
             list.Sort(new CompletionItemCaseSensitiveImportComparer());
             CompletionList.Show(list, false, tail);
         }
@@ -2466,10 +2452,10 @@ namespace ASCompletion.Completion
 
         private static bool HandleMetadataCompletion(bool autoHide)
         {
-            List<ICompletionListItem> list = new List<ICompletionListItem>();
-            foreach (KeyValuePair<string, string> meta in ASContext.Context.Features.metadata)
+            var list = new List<ICompletionListItem>();
+            foreach (var meta in ASContext.Context.Features.metadata)
             {
-                MemberModel member = new MemberModel();
+                var member = new MemberModel();
                 member.Name = meta.Key;
                 member.Comments = meta.Value;
                 member.Type = "Compiler Metadata";
@@ -2518,6 +2504,9 @@ namespace ASCompletion.Completion
                     return HandleFunctionCompletion(sci, autoHide);
                 return false;
             }
+            // import
+            if (features.hasImports && (word == features.importKey || word == features.importKeyAlt))
+                return HandleImportCompletion(sci, "", autoHide);
             if (word == "package" || features.typesKeywords.Contains(word)) return false;
             if (word == features.ImplementsKey) return HandleImplementsCompletion(sci, autoHide);
             // new/extends/instanceof/...
@@ -2528,9 +2517,6 @@ namespace ASCompletion.Completion
             if (!beforeBody && features.codeKeywords.Contains(word)) return false;
             // override
             if (word == features.overrideKey) return ASGenerator.HandleGeneratorCompletion(sci, autoHide, word);
-            // import
-            if (features.hasImports && (word == features.importKey || word == features.importKeyAlt))
-                return HandleImportCompletion(sci, "", autoHide);
             // public/internal/private/protected/static
             if (features.accessKeywords.Contains(word)) return HandleDeclarationCompletion(sci, "", autoHide);
             return HandleWhiteSpaceCompletion(sci, position, word, autoHide);
@@ -2549,6 +2535,7 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Display the full project interfaces list
         /// </summary>
+        /// <param name="sci">Scintilla control</param>
         /// <param name="autoHide">Don't keep the list open if the word does not match</param>
         /// <returns>Auto-completion has been handled</returns>
         protected virtual bool HandleImplementsCompletion(ScintillaControl sci, bool autoHide)
@@ -4063,13 +4050,13 @@ namespace ASCompletion.Completion
             FileModel model;
             if (!string.IsNullOrEmpty(expression.FunctionBody))
             {
-                MemberModel cm = expression.ContextMember;
-                string functionBody = Regex.Replace(expression.FunctionBody, "function\\s*\\(", "function __anonfunc__("); // name anonymous functions
+                var cm = expression.ContextMember;
+                var functionBody = Regex.Replace(expression.FunctionBody, "function\\s*\\(", "function __anonfunc__("); // name anonymous functions
                 model = ASContext.Context.GetCodeModel(functionBody, true);
-                int memberCount = model.Members.Count;
-                for (int memberIndex = 0; memberIndex < memberCount; memberIndex++)
+                var memberCount = model.Members.Count;
+                for (var memberIndex = 0; memberIndex < memberCount; memberIndex++)
                 {
-                    MemberModel member = model.Members[memberIndex];
+                    var member = model.Members[memberIndex];
 
                     if (cm.Equals(member)) continue;
 
@@ -4077,42 +4064,37 @@ namespace ASCompletion.Completion
                     member.LineFrom += expression.FunctionOffset;
                     member.LineTo += expression.FunctionOffset;
 
-                    if ((member.Flags & FlagType.Function) == FlagType.Function)
+                    if ((member.Flags & FlagType.Function) != FlagType.Function) continue;
+                    if (member.Name == "__anonfunc__")
                     {
-                        if (member.Name == "__anonfunc__")
-                        {
-                            model.Members.Remove(member);
-                            memberCount--;
-                            memberIndex--;
-                        }
-
-                        if (member.Parameters == null) continue;
-
-                        foreach (MemberModel parameter in member.Parameters)
-                        {
-                            parameter.LineFrom += expression.FunctionOffset;
-                            parameter.LineTo += expression.FunctionOffset;
-                            model.Members.Add(parameter);
-                        }
+                        model.Members.Remove(member);
+                        memberCount--;
+                        memberIndex--;
+                    }
+                    if (member.Parameters == null) continue;
+                    foreach (var parameter in member.Parameters)
+                    {
+                        parameter.LineFrom += expression.FunctionOffset;
+                        parameter.LineTo += expression.FunctionOffset;
+                        model.Members.Add(parameter);
                     }
                 }
             }
             else model = new FileModel();
+            model.Members.Sort();
             if (expression.ContextFunction?.Parameters != null)
             {
                 var features = ASContext.Context.Features;
                 var dot = features.dot;
-                foreach (MemberModel item in expression.ContextFunction.Parameters)
+                foreach (var item in expression.ContextFunction.Parameters)
                 {
                     var name = item.Name;
-                    if (name.StartsWithOrdinal(dot))
-                        model.Members.Merge(new MemberModel(name.Substring(name.LastIndexOfOrdinal(dot) + 1), "Array", item.Flags, item.Access));
-                    else if (name[0] == '?') model.Members.Merge(new MemberModel(name.Substring(1), item.Type, item.Flags, item.Access));
-                    else model.Members.Merge(item);
+                    if (name.StartsWithOrdinal(dot)) model.Members.MergeByLine(new MemberModel(name.Substring(name.LastIndexOfOrdinal(dot) + 1), "Array", item.Flags, item.Access));
+                    else if (name[0] == '?') model.Members.MergeByLine(new MemberModel(name.Substring(1), item.Type, item.Flags, item.Access));
+                    else model.Members.MergeByLine(item);
                 }
-                if (features.functionArguments != null) model.Members.Add(features.functionArguments);
+                if (features.functionArguments != null) model.Members.MergeByLine(features.functionArguments);
             }
-            model.Members.Sort();
             return model.Members;
         }
 
