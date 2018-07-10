@@ -4259,6 +4259,14 @@ namespace ScintillaNet
         }
 
         /// <summary>
+        /// Delete a range of text in the document.
+        /// </summary>
+        public void DeleteRange(int start, int lengthDelete)
+        {
+            SPerform(2645, start, lengthDelete);
+        }
+
+        /// <summary>
         /// If selection is empty or all on one line replace the selection with a tab character.
         /// If more than one line selected, indent the lines.
         /// </summary>
@@ -7008,21 +7016,23 @@ namespace ScintillaNet
                 endLine++;
             }
 
+            // Special handling for the last line case. Needed if the last line doesn't end with a newline.
+            string eol = endLine + Math.Max(direction, 0) == this.LineCount ? this.NewLineMarker : null;
+
+            this.BeginUndoAction();
+            if (eol != null) this.AppendText(eol.Length, eol); // Make sure the last line ends with a newline.
+
             if (direction > 0)
             {
-                if (endLine + direction >= this.LineCount)
-                {
-                    return;
-                }
+                if (endLine + direction > this.LineCount) return;
+
                 this.AnchorPosition = this.PositionFromLine(endLine);
                 this.CurrentPos = this.PositionFromLine(endLine + direction);
             }
             else
             {
-                if (startLine + direction < 0 || endLine >= this.LineCount)
-                {
-                    return;
-                }
+                if (startLine + direction < 0 || endLine > this.LineCount) return;
+
                 this.AnchorPosition = this.PositionFromLine(startLine + direction);
                 this.CurrentPos = this.PositionFromLine(startLine);
                 startLine = endLine + direction;
@@ -7031,11 +7041,9 @@ namespace ScintillaNet
             string line = this.SelText;
             int length = line.Length;
 
-            this.BeginUndoAction();
             this.Clear();
             this.InsertText(this.PositionFromLine(startLine), line);
-            this.EndUndoAction();
-            
+
             if (direction > 0)
             {
                 this.AnchorPosition = anchorPosition + length;
@@ -7046,6 +7054,9 @@ namespace ScintillaNet
                 this.AnchorPosition = anchorPosition - length;
                 this.CurrentPos = currentPosition - length;
             }
+
+            if (eol != null) this.DeleteRange(this.Length - eol.Length, eol.Length); // Remove the previously added newline.
+            this.EndUndoAction();
         }
 
         /// <summary>
