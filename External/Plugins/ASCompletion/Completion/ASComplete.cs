@@ -1416,7 +1416,7 @@ namespace ASCompletion.Completion
                 char[] toClean = new char[] { ' ', '\t', '\n', '\r', '*', '?' };
                 paramName = paramName.Trim(toClean);
             }
-
+            
             // show calltip
             if (!UITools.CallTip.CallTipActive || UITools.Manager.ShowDetails != calltipDetails || paramName != prevParam)
             {
@@ -1431,7 +1431,7 @@ namespace ASCompletion.Completion
             else UITools.CallTip.CallTipSetHlt(start + 1, end, true);
         }
 
-        static private int FindNearSymbolInFunctDef(string defBody, char symbol, int startAt)
+        private static int FindNearSymbolInFunctDef(string defBody, char symbol, int startAt)
         {
             string featEnd = null;
 
