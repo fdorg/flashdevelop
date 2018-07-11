@@ -4259,6 +4259,14 @@ namespace ScintillaNet
         }
 
         /// <summary>
+        /// Delete a range of text in the document.
+        /// </summary>
+        public void DeleteRange(int start, int lengthDelete)
+        {
+            SPerform(2645, start, lengthDelete);
+        }
+
+        /// <summary>
         /// If selection is empty or all on one line replace the selection with a tab character.
         /// If more than one line selected, indent the lines.
         /// </summary>
@@ -6127,14 +6135,8 @@ namespace ScintillaNet
         /// </summary>
         public void AddLastLineEnd()
         {
-            string eolMarker = "\r\n";
-            if (this.EOLMode == 1) eolMarker = "\r";
-            else if (this.EOLMode == 2) eolMarker = "\n";
-            if (!this.Text.EndsWithOrdinal(eolMarker))
-            {
-                this.TargetStart = this.TargetEnd = this.TextLength;
-                this.ReplaceTarget(eolMarker.Length, eolMarker);
-            }
+            string eolMarker = NewLineMarker;
+            if (!this.Text.EndsWithOrdinal(eolMarker)) this.AppendText(eolMarker.Length, eolMarker);
         }
 
         /// <summary>
@@ -7008,21 +7010,20 @@ namespace ScintillaNet
                 endLine++;
             }
 
+            // Special handling for the last line case, but only if the last line doesn't end with a newline.
+            string eolMarker = endLine + Math.Max(direction, 0) == this.LineCount ? NewLineMarker : null;
+
             if (direction > 0)
             {
-                if (endLine + direction >= this.LineCount)
-                {
-                    return;
-                }
+                if (endLine + direction > this.LineCount) return;
+
                 this.AnchorPosition = this.PositionFromLine(endLine);
                 this.CurrentPos = this.PositionFromLine(endLine + direction);
             }
             else
             {
-                if (startLine + direction < 0 || endLine >= this.LineCount)
-                {
-                    return;
-                }
+                if (startLine + direction < 0 || endLine > this.LineCount) return;
+
                 this.AnchorPosition = this.PositionFromLine(startLine + direction);
                 this.CurrentPos = this.PositionFromLine(startLine);
                 startLine = endLine + direction;
@@ -7033,9 +7034,23 @@ namespace ScintillaNet
 
             this.BeginUndoAction();
             this.Clear();
+            if (eolMarker != null)
+            {
+                if (direction > 0)
+                {
+                    line = line + eolMarker;
+                    length += eolMarker.Length;
+                }
+                else
+                {
+                    this.AppendText(eolMarker.Length, eolMarker);
+                    line = line.TrimEnd(); // We don't want to decrease the length here, or the caret won't move down.
+                }
+            }
             this.InsertText(this.PositionFromLine(startLine), line);
+            if (eolMarker != null && direction > 0) this.DeleteRange(this.TextLength - eolMarker.Length, eolMarker.Length);
             this.EndUndoAction();
-            
+
             if (direction > 0)
             {
                 this.AnchorPosition = anchorPosition + length;
