@@ -278,6 +278,7 @@ namespace CodeRefactor.Commands
                 string newPath = target.NewFilePath;
                 if (File.Exists(oldPath))
                 {
+                    // TODO: Is it necessary to check for "name casing changed" case? In which circumstances is it possible?
                     if (oldPath.Equals(newPath, StringComparison.OrdinalIgnoreCase))
                     {
                         // name casing changed
@@ -303,7 +304,9 @@ namespace CodeRefactor.Commands
             foreach (KeyValuePair<string, string> item in OldPathToNewPath)
             {
                 string oldPath = item.Key;
+                string originalOld = oldPath;
                 string newPath = item.Value;
+                // TODO: Is it necessary to check for "name casing changed" cases? In which circumstances are they possible?
                 if (File.Exists(oldPath))
                 {
                     newPath = Path.Combine(newPath, Path.GetFileName(oldPath));
@@ -312,11 +315,11 @@ namespace CodeRefactor.Commands
                     {
                         // name casing changed
                         string tmpPath = oldPath + "$renaming$";
-                        RefactoringHelper.Move(oldPath, tmpPath);
+                        File.Move(oldPath, tmpPath);
                         oldPath = tmpPath;
                     }
                     if (!Path.IsPathRooted(newPath)) newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
-                    RefactoringHelper.Move(oldPath, newPath, true);
+                    RefactoringHelper.Move(oldPath, newPath, true, originalOld);
                 }
                 else if (Directory.Exists(oldPath))
                 {
@@ -324,10 +327,10 @@ namespace CodeRefactor.Commands
                     {
                         // name casing changed
                         string tmpPath = oldPath + "$renaming$";
-                        RefactoringHelper.Move(oldPath, tmpPath);
+                        File.Move(oldPath, tmpPath);
                         oldPath = tmpPath;
                     }
-                    RefactoringHelper.Move(oldPath, newPath, renaming);
+                    RefactoringHelper.Move(oldPath, newPath, renaming, originalOld);
                 }
             }
             MessageBar.Locked = false;
@@ -463,11 +466,20 @@ namespace CodeRefactor.Commands
             {
                 string oldPath = item.Key;
                 string newPath = item.Value;
+                // TODO: Is it necessary to check for "name casing changed" cases? In which circumstances are they possible?
                 if (File.Exists(oldPath))
                 {
+                    string originalOld = oldPath;
                     newPath = Path.Combine(newPath, Path.GetFileName(oldPath));
+                    if (oldPath.Equals(newPath, StringComparison.OrdinalIgnoreCase))
+                    {
+                        // name casing changed
+                        string tmpPath = oldPath + "$renaming$";
+                        File.Move(oldPath, tmpPath);
+                        oldPath = tmpPath;
+                    }
                     if (!Path.IsPathRooted(newPath)) newPath = Path.Combine(Path.GetDirectoryName(oldPath), newPath);
-                    RefactoringHelper.Move(oldPath, newPath, true);
+                    RefactoringHelper.Move(oldPath, newPath, true, originalOld);
                 }
                 else if (Directory.Exists(oldPath))
                 {
@@ -491,25 +503,26 @@ namespace CodeRefactor.Commands
                         if (newDocumentClass != null) break;
                     }
 
+                    string originalOld = oldPath;
+
                     // Check if this is a name casing change
                     if (oldPath.Equals(newPath, StringComparison.OrdinalIgnoreCase))
                     {
                         string tmpPath = oldPath + "$renaming$";
                         FileHelper.ForceMoveDirectory(oldPath, tmpPath);
-                        DocumentManager.MoveDocuments(oldPath, tmpPath);
                         oldPath = tmpPath;
                     }
 
                     // Move directory contents to final location
                     FileHelper.ForceMoveDirectory(oldPath, newPath);
-                    DocumentManager.MoveDocuments(oldPath, newPath);
+                    DocumentManager.MoveDocuments(originalOld, newPath);
 
                     if (!string.IsNullOrEmpty(newDocumentClass))
                     {
                         project.SetDocumentClass(newDocumentClass, true);
                         project.Save();
                     }
-                    RefactoringHelper.RaiseMoveEvent(oldPath, newPath);
+                    RefactoringHelper.RaiseMoveEvent(originalOld, newPath);
                 }
             }
 
