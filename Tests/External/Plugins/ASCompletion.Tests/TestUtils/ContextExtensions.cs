@@ -26,7 +26,7 @@ namespace ASCompletion.TestUtils
 
         public static void SetHaxeFeatures(this IASContext mock)
         {
-            var context = new HaXeContext.Context(new HaXeContext.HaXeSettings(), path => null);
+            var context = new HaXeContext.Context(new HaXeContext.HaXeSettings());
             ASContext.RegisterLanguage(context, "haxe");
             BuildClassPath(context);
             context.CurrentModel = new FileModel {Context = mock, Version = 4, haXe = true};
