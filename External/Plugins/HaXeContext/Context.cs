@@ -51,6 +51,10 @@ namespace HaXeContext
         HaxeCompletionCache hxCompletionCache;
         ClassModel stubFunctionClass;
 
+        public Context(HaXeSettings initSettings) : this(initSettings, path => null)
+        {
+        }
+        
         public Context(HaXeSettings initSettings, Func<string, InstalledSDK> createCustomSDK)
         {
             hxsettings = initSettings;
