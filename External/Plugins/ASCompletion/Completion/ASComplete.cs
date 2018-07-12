@@ -3982,7 +3982,6 @@ namespace ASCompletion.Completion
                                 else if (")}]>".Contains(c)) groupCount++;
                                 position--;
                             }
-
                             word1 = GetWordLeft(sci, ref position);
                         }
                         if (word1 == features.functionKey) return ComaExpression.FunctionDeclaration; // anonymous function
