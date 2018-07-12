@@ -671,6 +671,15 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterAssignStatementToVar_issue2198_8"))
                     .SetName("Assign statement to var. Issue 2198. Case 8.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2198");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2198_9", GeneratorJobType.AssignStatementToVar, true)
+                    .Ignore("")
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2198_9"))
+                    .SetName("Assign statement to var. Issue 2198. Case 9.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2198");
+                yield return new TestCaseData("BeforeAssignStatementToVar_issue2198_10", GeneratorJobType.AssignStatementToVar, true)
+                    .Returns(ReadAllText("AfterAssignStatementToVar_issue2198_10"))
+                    .SetName("Assign statement to var. Issue 2198. Case 10.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2198");
             }
         }
 
