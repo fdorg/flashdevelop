@@ -117,7 +117,6 @@ namespace HaXeContext.Generators
 
         protected override void GenerateEventHandler(ScintillaControl sci, int position, string template, string currentTarget, string eventName, string handlerName)
         {
-            var ctx = ASContext.Context;
             if (currentTarget != null)
             {
                 var delta = 0;
@@ -128,13 +127,13 @@ namespace HaXeContext.Generators
                     lookupPosition += delta;
                     currentTarget = "cast(e.currentTarget, IEventDispatcher)";
                 }
+                var ctx = ASContext.Context;
                 if (currentTarget.Length == 0 && ASContext.CommonSettings.GenerateScope && ctx.Features.ThisKey != null)
                     currentTarget = ctx.Features.ThisKey;
                 if (currentTarget.Length > 0) currentTarget += ".";
                 var remove = $"{currentTarget}removeEventListener({eventName}, {handlerName});\n\t$(EntryPoint)";
                 template = template.Replace("$(EntryPoint)", remove);
             }
-
             InsertCode(position, template, sci);
         }
     }

@@ -2095,7 +2095,7 @@ namespace ASCompletion.Completion
             if (expr.Type != null)
             {
                 var wordBefore = expr.Context.WordBefore;
-                if (!string.IsNullOrEmpty(wordBefore)) return expr.Context.WordBeforePosition;
+                if (!string.IsNullOrEmpty(wordBefore) && ASContext.Context.Features.codeKeywords.Contains(wordBefore)) return expr.Context.WordBeforePosition;
             }
             return expr.Context.PositionExpression;
         }
