@@ -348,7 +348,7 @@ namespace HaXeContext.Completion
                     rvalueEnd = i + 1;
                     if (genCount < 0) break;
                 }
-                else if (parCount > 0 || genCount > 0 || arrCount > 0) continue;
+                if (parCount > 0 || genCount > 0 || arrCount > 0) continue;
                 if (c <= ' ')
                 {
                     hadDot = false;
