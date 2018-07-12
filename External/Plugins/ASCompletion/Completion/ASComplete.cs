@@ -3859,7 +3859,6 @@ namespace ASCompletion.Completion
                     {
                         if (hadWS && !hadDot)
                         {
-                            //position++;
                             expression.Separator = " ";
                             break;
                         }
