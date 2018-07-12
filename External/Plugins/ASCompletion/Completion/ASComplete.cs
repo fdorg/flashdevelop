@@ -3985,10 +3985,8 @@ namespace ASCompletion.Completion
 
                             word1 = GetWordLeft(sci, ref position);
                         }
-
-                        if (word1 == features.functionKey)
-                            return ComaExpression.FunctionDeclaration; // anonymous function
-                        string word2 = GetWordLeft(sci, ref position);
+                        if (word1 == features.functionKey) return ComaExpression.FunctionDeclaration; // anonymous function
+                        var word2 = GetWordLeft(sci, ref position);
                         if (word2 == features.functionKey || word2 == features.setKey || word2 == features.getKey)
                             return ComaExpression.FunctionDeclaration; // function declaration
                         if (features.hasDelegates && word2 == "delegate")
