@@ -3452,6 +3452,16 @@ namespace ASCompletion.Completion
                     // array access
                     if (c == ']' && parCount == 0)
                     {
+                        /**
+                         * for example:
+                         * var v = []
+                         * v.<complete>
+                         */
+                        if (!hadDot && sb.Length > 0 && characterClass.Contains(sb[0]))
+                        {
+                            expression.Separator = ";";
+                            break;
+                        }
                         ignoreWhiteSpace = false;
                         if (arrCount == 0) // start sub-expression
                         {
@@ -3706,8 +3716,7 @@ namespace ASCompletion.Completion
                     }
                     else if (c == dot)
                     {
-                        if (features.dot.Length == 2)
-                            hadDot = position > 0 && sci.CharAt(position - 1) == features.dot[0];
+                        if (features.dot.Length == 2) hadDot = position > 0 && sci.CharAt(position - 1) == features.dot[0];
                         else
                         {
                             hadDot = true;
