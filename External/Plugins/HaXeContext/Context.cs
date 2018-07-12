@@ -43,16 +43,23 @@ namespace HaXeContext
         
         private HaXeSettings hxsettings;
         private Dictionary<string, List<string>> haxelibsCache;
+        private Func<string, InstalledSDK> createCustomSDK;
+        private Dictionary<string, InstalledSDK> customSDKCache;
         private string HaxeTarget;
         private bool resolvingDot;
         private bool resolvingFunction;
         HaxeCompletionCache hxCompletionCache;
         ClassModel stubFunctionClass;
 
-        public Context(HaXeSettings initSettings)
+        public Context(HaXeSettings initSettings) : this(initSettings, path => null)
+        {
+        }
+        
+        public Context(HaXeSettings initSettings, Func<string, InstalledSDK> createCustomSDK)
         {
             hxsettings = initSettings;
             hxsettings.Init();
+            this.createCustomSDK = createCustomSDK;
 
             /* AS-LIKE OPTIONS */
 
@@ -158,6 +165,7 @@ namespace HaXeContext
             //OnCompletionModeChange(); // defered to first use
 
             haxelibsCache = new Dictionary<string, List<string>>();
+            customSDKCache = new Dictionary<string, InstalledSDK>();
             CodeGenerator = new CodeGenerator();
             DocumentationGenerator = new DocumentationGenerator();
             CodeComplete = new CodeComplete();
@@ -702,9 +710,15 @@ namespace HaXeContext
         #endregion
 
         #region SDK
-        private InstalledSDK GetCurrentSDK()
+        private InstalledSDK GetCurrentSDK() => hxsettings.InstalledSDKs?.FirstOrDefault(sdk => sdk.Path == currentSDK) ?? GetCustomSDK(currentSDK);
+
+        private InstalledSDK GetCustomSDK(string customPath)
         {
-            return hxsettings.InstalledSDKs?.FirstOrDefault(sdk => sdk.Path == currentSDK);
+            InstalledSDK sdk;
+            if (customSDKCache.TryGetValue(customPath, out sdk)) return sdk;
+            sdk = createCustomSDK(customPath);
+            if (sdk != null) customSDKCache.Add(customPath, sdk);
+            return sdk;
         }
 
         public SemVer GetCurrentSDKVersion()
@@ -1873,7 +1887,7 @@ namespace HaXeContext
         /// <summary>
         /// Retrieve the context's default compiler path
         /// </summary>
-        public override string GetCompilerPath() => hxsettings.GetDefaultSDK().Path;
+        public override string GetCompilerPath() => GetCurrentSDK()?.Path ?? hxsettings.GetDefaultSDK().Path;
 
         /// <summary>
         /// Check current file's syntax
