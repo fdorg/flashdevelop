@@ -3600,6 +3600,16 @@ namespace ASCompletion.Completion
                     {
                         if (c == '}')
                         {
+                            /**
+                             * for example:
+                             * var v = {}
+                             * v.<complete>
+                             */
+                            if (!hadDot && sb.Length > 0 && characterClass.Contains(sb[0]))
+                            {
+                                expression.Separator = ";";
+                                break;
+                            }
                             if (!ignoreWhiteSpace && hadWS)
                             {
                                 expression.Separator = ";";

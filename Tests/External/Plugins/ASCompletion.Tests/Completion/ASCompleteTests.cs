@@ -756,6 +756,8 @@ namespace ASCompletion.Completion
                         .Returns("[1]".Length);
                     yield return new TestCaseData("'' }\n  private function foo() {\n}")
                         .Returns("''".Length);
+                    yield return new TestCaseData("[123]\n trace(1)")
+                        .Returns("[123]".Length);
                 }
             }
 
