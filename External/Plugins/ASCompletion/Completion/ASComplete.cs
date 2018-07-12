@@ -4053,10 +4053,8 @@ namespace ASCompletion.Completion
                             if (c == ',' || c == '{') return coma;
                         }
                     }
-
                     return ComaExpression.AnonymousObject;
                 }
-
                 position--;
             }
             return ComaExpression.None;
