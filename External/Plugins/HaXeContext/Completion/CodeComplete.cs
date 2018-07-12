@@ -298,31 +298,61 @@ namespace HaXeContext.Completion
             var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
             var methodEndPosition = sci.LineEndPosition(ASContext.Context.CurrentMember.LineTo);
             var rvalueEnd = ExpressionEndPosition(sci, rvalueStart, sci.LineEndPosition(var.LineTo), true);
+            var arrCount = 0;
             var parCount = 0;
             var genCount = 0;
             var hadDot = false;
+            var isInExpr = false;
             for (var i = rvalueEnd; i < methodEndPosition; i++)
             {
-                if (sci.PositionIsOnComment(i) || sci.PositionIsInString(i)) continue;
+                if (arrCount == 0 && parCount == 0 && genCount == 0)
+                {
+                    if (sci.PositionIsOnComment(i)) continue;
+                    if (sci.PositionIsInString(i))
+                    {
+                        if (isInExpr) break;
+                        continue;
+                    }
+                }
                 var c = (char) sci.CharAt(i);
-                if (c == '(' && genCount == 0) parCount++;
-                else if (c == ')' && genCount == 0)
+                if (c == '[' && genCount == 0 && parCount == 0)
+                {
+                    arrCount++;
+                    isInExpr = true;
+                }
+                else if (c == ']' && genCount == 0 && parCount == 0)
+                {
+                    arrCount--;
+                    rvalueEnd = i + 1;
+                    if (arrCount < 0) break;
+                }
+                else if (c == '(' && genCount == 0 && arrCount == 0)
+                {
+                    parCount++;
+                    isInExpr = true;
+                }
+                else if (c == ')' && genCount == 0 && arrCount == 0)
                 {
                     parCount--;
                     rvalueEnd = i + 1;
                     if (parCount < 0) break;
                 }
-                else if (c == '<' && parCount == 0) genCount++;
-                else if (c == '>' && parCount == 0)
+                else if (c == '<' && parCount == 0 && arrCount == 0)
+                {
+                    genCount++;
+                    isInExpr = true;
+                }
+                else if (c == '>' && parCount == 0 && arrCount == 0)
                 {
                     genCount--;
                     rvalueEnd = i + 1;
                     if (genCount < 0) break;
                 }
-                else if (parCount > 0 || genCount > 0) continue;
+                else if (parCount > 0 || genCount > 0 || arrCount > 0) continue;
                 if (c <= ' ')
                 {
                     hadDot = false;
+                    isInExpr = true;
                     continue;
                 }
                 if (c == ';' || (!hadDot && characterClass.Contains(c))) break;
@@ -331,6 +361,7 @@ namespace HaXeContext.Completion
                     hadDot = true;
                     rvalueEnd = ExpressionEndPosition(sci, i + 1, methodEndPosition);
                 }
+                isInExpr = true;
             }
             var expr = GetExpressionType(sci, rvalueEnd, false, true);
             if (expr.Type != null)
