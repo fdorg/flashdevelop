@@ -4016,12 +4016,9 @@ namespace ASCompletion.Completion
                                     return ComaExpression.VarDeclaration;
                                 }
                             }
-
                             return ComaExpression.AnonymousObjectParam;
                         }
-                        else if (c != ')' && c != '}' && !Char.IsLetterOrDigit(c))
-                            return ComaExpression.AnonymousObject;
-
+                        if (c != ')' && c != '}' && !char.IsLetterOrDigit(c)) return ComaExpression.AnonymousObject;
                         break;
                     }
                 }
