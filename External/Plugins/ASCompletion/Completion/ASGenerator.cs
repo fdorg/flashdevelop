@@ -1462,10 +1462,7 @@ namespace ASCompletion.Completion
             varname = AvoidKeyword(varname);
             
             string cleanType = null;
-            if (type != null)
-            {
-                cleanType = MemberModel.FormatType(GetShortType(type));
-            }
+            if (type != null) cleanType = MemberModel.FormatType(GetShortType(type));
 
             var template = TemplateUtils.GetTemplate("AssignVariable");
             template = TemplateUtils.ReplaceTemplateVariable(template, "Name", varname);
