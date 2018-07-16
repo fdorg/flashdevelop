@@ -33,7 +33,7 @@ namespace HaXeContext
         private HaXeSettings settingObject;
         private Context contextInstance;
         private String settingFilename;
-        private Dictionary<string, InstalledSDK> customSDKCache;
+        private KeyValuePair<string, InstalledSDK> customSDK;
         private int logCount;
 
         #region Required Properties
@@ -155,11 +155,11 @@ namespace HaXeContext
                     {
                         var project = de.Data as IProject;
                         ExternalToolchain.Monitor(project);
+                        var projectPath = project != null ? Path.GetDirectoryName(project.ProjectPath) : "";
                         foreach (InstalledSDK sdk in settingObject.InstalledSDKs)
-                        {
-                            if (sdk.IsHaxeShim) ValidateHaxeShimSDK(sdk, GetSDKPath(sdk), project != null ? Path.GetDirectoryName(project.ProjectPath) : "");
-                        }
-                        customSDKCache = new Dictionary<string, InstalledSDK>();
+                            if (sdk.IsHaxeShim) ValidateHaxeShimSDK(sdk, GetSDKPath(sdk), projectPath);
+                        if (project?.CurrentSDK == customSDK.Key && (customSDK.Value?.IsHaxeShim ?? false))
+                            ValidateHaxeShimSDK(customSDK.Value, GetSDKPath(customSDK.Value), projectPath);
                     }
                     else if (action == "Context.SetHaxeEnvironment")
                     {
@@ -174,7 +174,7 @@ namespace HaXeContext
 
                 case EventType.UIStarted:
                     ValidateSettings();
-                    customSDKCache = new Dictionary<string, InstalledSDK>();
+                    customSDK = new KeyValuePair<string, InstalledSDK>();
                     contextInstance = new Context(settingObject, GetCustomSDK);
                     // Associate this context with haxe language
                     ASCompletion.Context.ASContext.RegisterLanguage(contextInstance, "haxe");
@@ -357,11 +357,12 @@ namespace HaXeContext
         private InstalledSDK GetCustomSDK(string path)
         {
             InstalledSDK sdk;
-            if (!customSDKCache.TryGetValue(path, out sdk))
+            if (customSDK.Key == path) sdk = customSDK.Value;
+            else
             {
                 sdk = new InstalledSDK(this);
                 sdk.Path = path;
-                if (sdk.IsValid) customSDKCache.Add(path, sdk);
+                if (sdk.IsValid) customSDK = new KeyValuePair<string, InstalledSDK>(path, sdk);
                 else sdk = null;
             }
             return sdk;
