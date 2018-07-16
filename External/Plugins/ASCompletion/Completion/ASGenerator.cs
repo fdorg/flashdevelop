@@ -2110,10 +2110,9 @@ namespace ASCompletion.Completion
         /// <remarks>For now internal because for the current use we don't need to detect a lot of cases! use with caution!</remarks>
         public static int GetEndOfStatement(int startPos, int endPos, ScintillaControl sci)
         {
-            int groupCount = 0;
-            int brCount = 0;
-            int statementEnd = startPos;
-            sci.Colourise(0, -1);
+            var groupCount = 0;
+            var brCount = 0;
+            var statementEnd = startPos;
             while (statementEnd < endPos)
             {
                 if (sci.PositionIsOnComment(statementEnd) || sci.PositionIsInString(statementEnd))
@@ -2121,12 +2120,13 @@ namespace ASCompletion.Completion
                     statementEnd++;
                     continue;
                 }
-                char c = (char)sci.CharAt(statementEnd++);
-                bool endOfStatement = false;
+                var endOfStatement = false;
+                var c = (char)sci.CharAt(statementEnd++);
                 switch (c)
                 {
                     case '\r':
                     case '\n':
+                    case ',':
                         endOfStatement = groupCount == 0 && brCount == 0;
                         break;
                     case ';':
@@ -2149,10 +2149,8 @@ namespace ASCompletion.Completion
                         endOfStatement = brCount < 0;
                         break;
                 }
-
                 if (endOfStatement) break;
             }
-
             return statementEnd;
         }
 
@@ -2178,7 +2176,7 @@ namespace ASCompletion.Completion
             while (startPos <= endPos)
             {
                 char c = (char)sci.CharAt(startPos);
-                if (Array.IndexOf(characterClass, c) == -1)
+                if (!characterClass.Contains(c))
                 {
                     int endLn = sci.LineFromPosition(startPos);
                     if (endLn == baseLine || endLn == initialLn)
@@ -2442,11 +2440,11 @@ namespace ASCompletion.Completion
 
         private static int GetContextOwnerEndPos(ScintillaControl sci, int wordStartPos)
         {
-            int pos = wordStartPos - 1;
-            bool dotFound = false;
+            var pos = wordStartPos - 1;
+            var dotFound = false;
             while (pos > 0)
             {
-                char c = (char) sci.CharAt(pos);
+                var c = (char) sci.CharAt(pos);
                 if (c == '.' && !dotFound) dotFound = true;
                 else if (c == '\t' || c == '\n' || c == '\r' || c == ' ') { /* skip */ }
                 else return dotFound ? pos + 1 : -1;
@@ -2457,18 +2455,17 @@ namespace ASCompletion.Completion
 
         public static string Capitalize(string name)
         {
-            return !string.IsNullOrEmpty(name) ? Char.ToUpper(name[0]) + name.Substring(1) : name;
+            return !string.IsNullOrEmpty(name) ? char.ToUpper(name[0]) + name.Substring(1) : name;
         }
 
         public static string Camelize(string name)
         {
-            name = name.Trim(new char[] { '\'', '"' });
-            string[] parts = name.ToLower().Split('_');
-            string result = "";
-            foreach (string part in parts)
+            name = name.Trim('\'', '"');
+            var parts = name.ToLower().Split('_');
+            var result = "";
+            foreach (var part in parts)
             {
-                if (result.Length > 0)
-                    result += Capitalize(part);
+                if (result.Length > 0) result += Capitalize(part);
                 else result = part;
             }
             return result;
