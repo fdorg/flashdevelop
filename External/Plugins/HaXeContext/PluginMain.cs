@@ -152,10 +152,12 @@ namespace HaXeContext
                         if (ExternalToolchain.HandleProject(project))
                             e.Handled = ExternalToolchain.Clean(project);
                     }
-                    else if (action == ProjectManagerEvents.Project)
+                    else if (action == ProjectManagerEvents.Project || action == ProjectManagerEvents.OpenProjectProperties)
                     {
                         var project = de.Data as IProject;
-                        ExternalToolchain.Monitor(project);
+
+                        if (action == ProjectManagerEvents.Project) ExternalToolchain.Monitor(project);
+
                         var projectPath = project != null ? Path.GetDirectoryName(project.ProjectPath) : "";
                         foreach (InstalledSDK sdk in settingObject.InstalledSDKs)
                             if (sdk.IsHaxeShim) ValidateHaxeShimSDK(sdk, GetSDKPath(sdk), projectPath);
@@ -376,6 +378,7 @@ namespace HaXeContext
         public bool ValidateSDK(InstalledSDK sdk)
         {
             sdk.Owner = this;
+            sdk.ClassPath = null;
 
             string path = GetSDKPath(sdk);
             if (path == "") return false;
