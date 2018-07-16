@@ -17,6 +17,7 @@ using CodeRefactor.Provider;
 using HaXeContext.CodeRefactor.Provider;
 using HaXeContext.Linters;
 using LintingHelper.Managers;
+using ProjectManager;
 using ProjectManager.Projects.Haxe;
 using SwfOp;
 using System.Diagnostics;
@@ -33,6 +34,7 @@ namespace HaXeContext
         private HaXeSettings settingObject;
         private Context contextInstance;
         private String settingFilename;
+        private KeyValuePair<string, InstalledSDK> customSDK;
         private int logCount;
 
         #region Required Properties
@@ -133,37 +135,40 @@ namespace HaXeContext
                     DataEvent de = e as DataEvent;
                     if (de == null) return;
                     var action = de.Action;
-                    if (action == "ProjectManager.RunCustomCommand")
+                    if (action == ProjectManagerEvents.RunCustomCommand)
                     {
                         if (ExternalToolchain.HandleProject(PluginBase.CurrentProject))
                             e.Handled = ExternalToolchain.Run(de.Data as string);
                     }
-                    else if (action == "ProjectManager.BuildingProject" || action == "ProjectManager.TestingProject")
+                    else if (action == ProjectManagerEvents.BuildProject || action == ProjectManagerEvents.TestProject)
                     {
                         var completionHandler = contextInstance.completionModeHandler as CompletionServerCompletionHandler;
                         if (completionHandler != null && !completionHandler.IsRunning())
                             completionHandler.StartServer();
                     }
-                    else if (action == "ProjectManager.CleanProject")
+                    else if (action == ProjectManagerEvents.CleanProject)
                     {
                         var project = de.Data as IProject;
                         if (ExternalToolchain.HandleProject(project))
                             e.Handled = ExternalToolchain.Clean(project);
                     }
-                    else if (action == "ProjectManager.Project")
+                    else if (action == ProjectManagerEvents.Project || action == ProjectManagerEvents.OpenProjectProperties)
                     {
                         var project = de.Data as IProject;
-                        ExternalToolchain.Monitor(project);
+
+                        if (action == ProjectManagerEvents.Project) ExternalToolchain.Monitor(project);
+
+                        var projectPath = project != null ? Path.GetDirectoryName(project.ProjectPath) : "";
                         foreach (InstalledSDK sdk in settingObject.InstalledSDKs)
-                        {
-                            if (sdk.IsHaxeShim) ValidateHaxeShimSDK(sdk, GetSDKPath(sdk), project != null ? Path.GetDirectoryName(project.ProjectPath) : "");
-                        }
+                            if (sdk.IsHaxeShim) ValidateHaxeShimSDK(sdk, GetSDKPath(sdk), projectPath);
+                        if (project?.CurrentSDK == customSDK.Key && (customSDK.Value?.IsHaxeShim ?? false))
+                            ValidateHaxeShimSDK(customSDK.Value, GetSDKPath(customSDK.Value), projectPath);
                     }
                     else if (action == "Context.SetHaxeEnvironment")
                     {
                         contextInstance.SetHaxeEnvironment(de.Data as string);
                     }
-                    else if (action == "ProjectManager.OpenVirtualFile")
+                    else if (action == ProjectManagerEvents.OpenVirtualFile)
                     {
                         if (PluginBase.CurrentProject != null && PluginBase.CurrentProject.Language == "haxe")
                             e.Handled = OpenVirtualFileModel((string) de.Data);
@@ -172,7 +177,8 @@ namespace HaXeContext
 
                 case EventType.UIStarted:
                     ValidateSettings();
-                    contextInstance = new Context(settingObject, CreateCustomSDK);
+                    customSDK = new KeyValuePair<string, InstalledSDK>();
+                    contextInstance = new Context(settingObject, GetCustomSDK);
                     // Associate this context with haxe language
                     ASCompletion.Context.ASContext.RegisterLanguage(contextInstance, "haxe");
                     CommandFactoryProvider.Register("haxe", new HaxeCommandFactory());
@@ -351,11 +357,18 @@ namespace HaXeContext
             return false;
         }
 
-        private InstalledSDK CreateCustomSDK(string path)
+        private InstalledSDK GetCustomSDK(string path)
         {
-            var sdk = new InstalledSDK(this);
-            sdk.Path = path;
-            return ValidateSDK(sdk) ? sdk : null;
+            InstalledSDK sdk;
+            if (customSDK.Key == path) sdk = customSDK.Value;
+            else
+            {
+                sdk = new InstalledSDK(this);
+                sdk.Path = path;
+                if (sdk.IsValid) customSDK = new KeyValuePair<string, InstalledSDK>(path, sdk);
+                else sdk = null;
+            }
+            return sdk;
         }
 
         #endregion
@@ -365,6 +378,7 @@ namespace HaXeContext
         public bool ValidateSDK(InstalledSDK sdk)
         {
             sdk.Owner = this;
+            sdk.ClassPath = null;
 
             string path = GetSDKPath(sdk);
             if (path == "") return false;
