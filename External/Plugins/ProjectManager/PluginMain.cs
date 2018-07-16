@@ -767,8 +767,8 @@ namespace ProjectManager
 
         void OpenProjectProperties()
         {
-            Project project = activeProject;
-            using (PropertiesDialog dialog = project.CreatePropertiesDialog())
+            var project = activeProject;
+            using (var dialog = project.CreatePropertiesDialog())
             {
                 project.UpdateVars(false);
                 dialog.SetProject(project);
