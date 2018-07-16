@@ -1191,10 +1191,10 @@ namespace ASCompletion.Completion
                             .SetName("new String(\"\".charAt(0))|");
                         yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewBitmapDataWithParams_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
                             .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewBitmapDataWithParams_useSpaces"))
-                            .SetName("new BitmapData(rect.width, rect.height)|");
+                            .SetName("new BitmapData(rect.width, rect.height)| . Case 1");
                         yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromNewBitmapDataWithParams_multiline_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
                             .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromNewBitmapDataWithParams_multiline_useSpaces"))
-                            .SetName("new BitmapData(rect.width,\n rect.height)|");
+                            .SetName("new BitmapData(rect.width,\n rect.height)| . Case 2");
                         yield return new TestCaseData(ReadAllTextAS3("BeforeAssignStatementToVarFromArrayInitializer_useSpaces"), GeneratorJobType.AssignStatementToVar, false)
                             .Returns(ReadAllTextAS3("AfterAssignStatementToVarFromArrayInitializer_useSpaces"))
                             .SetName("[]|");

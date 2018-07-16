@@ -1463,7 +1463,6 @@ namespace ASCompletion.Completion
             
             string cleanType = null;
             if (type != null) cleanType = MemberModel.FormatType(GetShortType(type));
-
             var template = TemplateUtils.GetTemplate("AssignVariable");
             template = TemplateUtils.ReplaceTemplateVariable(template, "Name", varname);
             template = TemplateUtils.ReplaceTemplateVariable(template, "Type", cleanType);
@@ -2111,10 +2110,9 @@ namespace ASCompletion.Completion
         /// <remarks>For now internal because for the current use we don't need to detect a lot of cases! use with caution!</remarks>
         public static int GetEndOfStatement(int startPos, int endPos, ScintillaControl sci)
         {
-            int groupCount = 0;
-            int brCount = 0;
-            int statementEnd = startPos;
-            sci.Colourise(0, -1);
+            var groupCount = 0;
+            var brCount = 0;
+            var statementEnd = startPos;
             while (statementEnd < endPos)
             {
                 if (sci.PositionIsOnComment(statementEnd) || sci.PositionIsInString(statementEnd))
@@ -2122,12 +2120,13 @@ namespace ASCompletion.Completion
                     statementEnd++;
                     continue;
                 }
-                char c = (char)sci.CharAt(statementEnd++);
-                bool endOfStatement = false;
+                var endOfStatement = false;
+                var c = (char)sci.CharAt(statementEnd++);
                 switch (c)
                 {
                     case '\r':
                     case '\n':
+                    case ',':
                         endOfStatement = groupCount == 0 && brCount == 0;
                         break;
                     case ';':
@@ -2143,15 +2142,15 @@ namespace ASCompletion.Completion
                     case ')':
                     case ']':
                         groupCount--;
+                        endOfStatement = groupCount < 0;
                         break;
                     case '}':
                         brCount--;
+                        endOfStatement = brCount < 0;
                         break;
                 }
-
                 if (endOfStatement) break;
             }
-
             return statementEnd;
         }
 
@@ -2177,7 +2176,7 @@ namespace ASCompletion.Completion
             while (startPos <= endPos)
             {
                 char c = (char)sci.CharAt(startPos);
-                if (Array.IndexOf(characterClass, c) == -1)
+                if (!characterClass.Contains(c))
                 {
                     int endLn = sci.LineFromPosition(startPos);
                     if (endLn == baseLine || endLn == initialLn)
@@ -2285,15 +2284,15 @@ namespace ASCompletion.Completion
         private static void GenerateVariableJob(GeneratorJobType job, ScintillaControl sci, MemberModel member, bool detach, ClassModel inClass)
         {
             var wordStartPos = sci.WordStartPosition(sci.CurrentPos, true);
-            Visibility visibility = job.Equals(GeneratorJobType.Variable) ? GetDefaultVisibility(inClass) : Visibility.Public;
+            var visibility = job.Equals(GeneratorJobType.Variable) ? GetDefaultVisibility(inClass) : Visibility.Public;
             // evaluate, if the variable (or constant) should be generated in other class
-            ASResult varResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
+            var varResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
             if (member != null && ASContext.CommonSettings.GenerateScope && !varResult.Context.Value.Contains(ASContext.Context.Features.dot)) AddExplicitScopeReference(sci, inClass, member);
-            int contextOwnerPos = GetContextOwnerEndPos(sci, sci.WordStartPosition(sci.CurrentPos, true));
-            MemberModel isStatic = new MemberModel();
+            var contextOwnerPos = GetContextOwnerEndPos(sci, sci.WordStartPosition(sci.CurrentPos, true));
+            var isStatic = new MemberModel();
             if (contextOwnerPos != -1)
             {
-                ASResult contextOwnerResult = ASComplete.GetExpressionType(sci, contextOwnerPos);
+                var contextOwnerResult = ASComplete.GetExpressionType(sci, contextOwnerPos);
                 if (contextOwnerResult != null
                     && (contextOwnerResult.Member == null || (contextOwnerResult.Member.Flags & FlagType.Constructor) > 0)
                     && contextOwnerResult.Type != null)
@@ -2307,24 +2306,26 @@ namespace ASCompletion.Completion
             }
 
             ASResult returnType = null;
-            int lineNum = sci.CurrentLine;
-            string line = sci.GetLine(lineNum);
+            var lineNum = sci.CurrentLine;
+            var line = sci.GetLine(lineNum);
             
             if (Regex.IsMatch(line, "\\b" + Regex.Escape(contextToken) + "\\("))
             {
-                returnType = new ASResult();
-                returnType.Type = ASContext.Context.ResolveType("Function", null);
+                returnType = new ASResult {Type = ASContext.Context.ResolveType("Function", null)};
             }
             else
             {
                 var m = Regex.Match(line, @"=\s*[^;\n\r}}]+");
                 if (m.Success)
                 {
-                    int posLineStart = sci.PositionFromLine(lineNum);
-                    if (posLineStart + m.Index >= sci.CurrentPos)
+                    var posLineStart = sci.PositionFromLine(lineNum);
+                    var p = posLineStart + m.Index;
+                    p = GetEndOfStatement(p, sci.Length, sci) - 1;
+                    returnType = ASComplete.GetExpressionType(sci, p, false, true);
+                    if (returnType == null && posLineStart + m.Index >= sci.CurrentPos)
                     {
                         line = line.Substring(m.Index);
-                        StatementReturnType rType = GetStatementReturnType(sci, inClass, line, posLineStart + m.Index);
+                        var rType = GetStatementReturnType(sci, inClass, line, posLineStart + m.Index);
                         if (rType != null)
                         {
                             returnType = rType.resolve;
@@ -2439,11 +2440,11 @@ namespace ASCompletion.Completion
 
         private static int GetContextOwnerEndPos(ScintillaControl sci, int wordStartPos)
         {
-            int pos = wordStartPos - 1;
-            bool dotFound = false;
+            var pos = wordStartPos - 1;
+            var dotFound = false;
             while (pos > 0)
             {
-                char c = (char) sci.CharAt(pos);
+                var c = (char) sci.CharAt(pos);
                 if (c == '.' && !dotFound) dotFound = true;
                 else if (c == '\t' || c == '\n' || c == '\r' || c == ' ') { /* skip */ }
                 else return dotFound ? pos + 1 : -1;
@@ -2454,18 +2455,17 @@ namespace ASCompletion.Completion
 
         public static string Capitalize(string name)
         {
-            return !string.IsNullOrEmpty(name) ? Char.ToUpper(name[0]) + name.Substring(1) : name;
+            return !string.IsNullOrEmpty(name) ? char.ToUpper(name[0]) + name.Substring(1) : name;
         }
 
         public static string Camelize(string name)
         {
-            name = name.Trim(new char[] { '\'', '"' });
-            string[] parts = name.ToLower().Split('_');
-            string result = "";
-            foreach (string part in parts)
+            name = name.Trim('\'', '"');
+            var parts = name.ToLower().Split('_');
+            var result = "";
+            foreach (var part in parts)
             {
-                if (result.Length > 0)
-                    result += Capitalize(part);
+                if (result.Length > 0) result += Capitalize(part);
                 else result = part;
             }
             return result;
@@ -3223,8 +3223,8 @@ namespace ASCompletion.Completion
 
         internal static StatementReturnType GetStatementReturnType(ScintillaControl sci, ClassModel inClass, string line, int startPos)
         {
-            Regex target = new Regex(@"[;\s\n\r]*", RegexOptions.RightToLeft);
-            Match m = target.Match(line);
+            var target = new Regex(@"[;\s\n\r]*", RegexOptions.RightToLeft);
+            var m = target.Match(line);
             if (!m.Success) return null;
             line = line.Substring(0, m.Index);
             if (line.Length == 0) return null;
