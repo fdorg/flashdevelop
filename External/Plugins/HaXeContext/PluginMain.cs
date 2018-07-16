@@ -17,6 +17,7 @@ using CodeRefactor.Provider;
 using HaXeContext.CodeRefactor.Provider;
 using HaXeContext.Linters;
 using LintingHelper.Managers;
+using ProjectManager;
 using ProjectManager.Projects.Haxe;
 using SwfOp;
 using System.Diagnostics;
@@ -134,24 +135,24 @@ namespace HaXeContext
                     DataEvent de = e as DataEvent;
                     if (de == null) return;
                     var action = de.Action;
-                    if (action == "ProjectManager.RunCustomCommand")
+                    if (action == ProjectManagerEvents.RunCustomCommand)
                     {
                         if (ExternalToolchain.HandleProject(PluginBase.CurrentProject))
                             e.Handled = ExternalToolchain.Run(de.Data as string);
                     }
-                    else if (action == "ProjectManager.BuildingProject" || action == "ProjectManager.TestingProject")
+                    else if (action == ProjectManagerEvents.BuildProject || action == ProjectManagerEvents.TestProject)
                     {
                         var completionHandler = contextInstance.completionModeHandler as CompletionServerCompletionHandler;
                         if (completionHandler != null && !completionHandler.IsRunning())
                             completionHandler.StartServer();
                     }
-                    else if (action == "ProjectManager.CleanProject")
+                    else if (action == ProjectManagerEvents.CleanProject)
                     {
                         var project = de.Data as IProject;
                         if (ExternalToolchain.HandleProject(project))
                             e.Handled = ExternalToolchain.Clean(project);
                     }
-                    else if (action == "ProjectManager.Project")
+                    else if (action == ProjectManagerEvents.Project)
                     {
                         var project = de.Data as IProject;
                         ExternalToolchain.Monitor(project);
@@ -165,7 +166,7 @@ namespace HaXeContext
                     {
                         contextInstance.SetHaxeEnvironment(de.Data as string);
                     }
-                    else if (action == "ProjectManager.OpenVirtualFile")
+                    else if (action == ProjectManagerEvents.OpenVirtualFile)
                     {
                         if (PluginBase.CurrentProject != null && PluginBase.CurrentProject.Language == "haxe")
                             e.Handled = OpenVirtualFileModel((string) de.Data);
