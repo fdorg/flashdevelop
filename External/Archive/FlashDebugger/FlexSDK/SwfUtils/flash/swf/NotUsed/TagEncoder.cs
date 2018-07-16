@@ -1287,7 +1287,7 @@ namespace flash.swf
 						encodeKerningRecord(tag.kerningTable[i], tagw, tag.wideCodes);
 					}
 				}
-				//UPGRADE_NOTE: Label 'loop' was moved. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1014'"
+				//UPGRADE_NOTE: Label 'loop' was moved. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1014'"
 loop: ;
 			}
 			while (again);
