@@ -1462,7 +1462,8 @@ namespace ASCompletion.Completion
             varname = AvoidKeyword(varname);
             
             string cleanType = null;
-            if (type != null) cleanType = FormatType(GetShortType(type));
+            if (type != null) cleanType = MemberModel.FormatType(GetShortType(type));
+
             var template = TemplateUtils.GetTemplate("AssignVariable");
             template = TemplateUtils.ReplaceTemplateVariable(template, "Name", varname);
             template = TemplateUtils.ReplaceTemplateVariable(template, "Type", cleanType);
@@ -2605,7 +2606,13 @@ namespace ASCompletion.Completion
                             }
                             else
                             {
-                                paramType = FormatType(GetShortType(result.Member.Type));
+                                var flags = result.Member.Flags;
+                                if ((flags & FlagType.Function) != 0 && (flags & FlagType.Getter) == 0 && (flags & FlagType.Setter) == 0
+                                    && !result.Path.EndsWith('~'))
+                                {
+                                    paramType = ((ASGenerator) ctx.CodeGenerator).GetFunctionType(result);
+                                }
+                                else paramType = MemberModel.FormatType(GetShortType(result.Member.Type));
                                 if (result.InClass == null)
                                 {
                                     paramQualType = result.Type.QualifiedName;
@@ -2629,7 +2636,7 @@ namespace ASCompletion.Completion
                     prms[i].paramName = "object";
                     prms[i].paramType = null;
                 }
-                else prms[i].paramName = GuessVarName(prms[i].paramName, FormatType(GetShortType(prms[i].paramType)));
+                else prms[i].paramName = GuessVarName(prms[i].paramName, MemberModel.FormatType(GetShortType(prms[i].paramType)));
             }
             for (int i = 0; i < prms.Count; i++)
             {
@@ -2680,15 +2687,15 @@ namespace ASCompletion.Completion
 
         private static void GenerateFunctionJob(GeneratorJobType job, ScintillaControl sci, MemberModel member, bool detach, ClassModel inClass)
         {
-            Visibility visibility = job.Equals(GeneratorJobType.FunctionPublic) ? Visibility.Public : GetDefaultVisibility(inClass);
+            var visibility = job.Equals(GeneratorJobType.FunctionPublic) ? Visibility.Public : GetDefaultVisibility(inClass);
             var wordStartPos = sci.WordStartPosition(sci.CurrentPos, true);
-            int wordPos = sci.WordEndPosition(sci.CurrentPos, true);
-            List<FunctionParameter> parameters = ParseFunctionParameters(sci, wordPos);
+            var wordPos = sci.WordEndPosition(sci.CurrentPos, true);
+            var parameters = ParseFunctionParameters(sci, wordPos);
             // evaluate, if the function should be generated in other class
-            ASResult funcResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
+            var funcResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
             if (member != null && ASContext.CommonSettings.GenerateScope && !funcResult.Context.Value.Contains(ASContext.Context.Features.dot)) AddExplicitScopeReference(sci, inClass, member);
-            int contextOwnerPos = GetContextOwnerEndPos(sci, sci.WordStartPosition(sci.CurrentPos, true));
-            MemberModel isStatic = new MemberModel();
+            var contextOwnerPos = GetContextOwnerEndPos(sci, sci.WordStartPosition(sci.CurrentPos, true));
+            var isStatic = new MemberModel();
             if (contextOwnerPos != -1)
             {
                 var contextOwnerResult = ASComplete.GetExpressionType(sci, contextOwnerPos);
@@ -2713,7 +2720,7 @@ namespace ASCompletion.Completion
                 sci = ASContext.CurSciControl;
                 isOtherClass = true;
                 var fileModel = ASContext.Context.GetCodeModel(sci.Text);
-                foreach (ClassModel cm in fileModel.Classes)
+                foreach (var cm in fileModel.Classes)
                 {
                     if (cm.QualifiedName.Equals(funcResult.RelClass.QualifiedName))
                     {
@@ -2722,7 +2729,6 @@ namespace ASCompletion.Completion
                     }
                 }
                 inClass = funcResult.RelClass;
-
                 ASContext.Context.UpdateContext(inClass.LineFrom);
             }
 
@@ -3188,13 +3194,13 @@ namespace ASCompletion.Completion
             string type = "";
             if (contextMember.Type != null && (contextMember.Flags & FlagType.Inferred) == 0)
             {
-                type = FormatType(contextMember.Type);
+                type = MemberModel.FormatType(contextMember.Type);
                 if (type.IndexOf('*') > 0)
                     type = type.Replace("/*", @"/\*\s*").Replace("*/", @"\s*\*/");
                 type = @":\s*" + type;
             }
             var name = contextMember.Name;
-            Regex reDecl = new Regex(String.Format(@"[\s\(]((var|const)\s+{0}\s*{1})\s*", name, type));
+            Regex reDecl = new Regex($@"[\s\(]((var|const)\s+{name}\s*{type})\s*");
             for (int i = contextMember.LineFrom; i <= contextMember.LineTo + 10; i++)
             {
                 string text = sci.GetLine(i);
@@ -3227,27 +3233,13 @@ namespace ASCompletion.Completion
             if (expr.Type != null || expr.Member != null) pos = expr.Context.Position;
             var ctx = inClass.InFile.Context;
             var features = ctx.Features;
-            ASResult resolve = expr;
+            var resolve = expr;
             if (resolve.Type != null && !resolve.IsPackage)
             {
                 if (resolve.Type.Name == "Function")
                 {
-                    if (IsHaxe)
-                    {
-                        var voidKey = features.voidKey;
-                        var parameters = resolve.Member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
-                        parameters.Add(resolve.Member.Type ?? voidKey);
-                        var qualifiedName = string.Empty;
-                        for (var i = 0; i < parameters.Count; i++)
-                        {
-                            if (i > 0) qualifiedName += "->";
-                            var t = parameters[i];
-                            if (t.Contains("->") && !t.StartsWith('(')) t = $"({t})";
-                            qualifiedName += t;
-                        }
-                        resolve = new ASResult {Type = new ClassModel {Name = qualifiedName, InFile = FileModel.Ignore}, Context =  expr.Context};
-                    }
-                    else resolve.Member = null;
+                    var type = ((ASGenerator) ctx.CodeGenerator).GetFunctionType(expr);
+                    resolve = new ASResult {Type = new ClassModel {Name = type, InFile = FileModel.Ignore}, Context =  expr.Context};
                 }
                 else if (!string.IsNullOrEmpty(resolve.Path) && Regex.IsMatch(resolve.Path, @"(\.\[.{0,}?\])$", RegexOptions.RightToLeft))
                     resolve.Member = null;
@@ -3260,6 +3252,8 @@ namespace ASCompletion.Completion
             }
             return new StatementReturnType(resolve, pos, word);
         }
+
+        protected virtual string GetFunctionType(ASResult expr) => "Function";
 
         protected static string GuessVarName(string name, string type)
         {
@@ -3740,7 +3734,7 @@ namespace ASCompletion.Completion
             var newMember = new MemberModel
             {
                 Name = name,
-                Type = FormatType(member.Type),
+                Type = MemberModel.FormatType(member.Type),
                 Access = IsHaxe ? Visibility.Private : Visibility.Public
             };
             if ((member.Flags & FlagType.Static) > 0) newMember.Flags = FlagType.Static;
@@ -3759,7 +3753,7 @@ namespace ASCompletion.Completion
             var newMember = new MemberModel
             {
                 Name = name,
-                Type = FormatType(member.Type),
+                Type = MemberModel.FormatType(member.Type),
                 Access = IsHaxe ? Visibility.Private : Visibility.Public
             };
             if ((member.Flags & FlagType.Static) > 0) newMember.Flags = FlagType.Static;
@@ -3784,7 +3778,7 @@ namespace ASCompletion.Completion
             var newMember = new MemberModel
             {
                 Name = name,
-                Type = FormatType(member.Type),
+                Type = MemberModel.FormatType(member.Type),
                 Access = IsHaxe ? Visibility.Private : Visibility.Public
             };
             if ((member.Flags & FlagType.Static) > 0) newMember.Flags = FlagType.Static;
@@ -4073,7 +4067,7 @@ namespace ASCompletion.Completion
                 var type = newMember.Type;
                 var name = newMember.Name;
                 if (parameters != null && parameters.Count == 1) type = parameters[0].Type;
-                type = FormatType(type);
+                type = MemberModel.FormatType(type);
                 if (type == null && !features.hasInference) type = features.objectKey;
                 newMember.Type = type;
                 var currentClass = context.CurrentClass;
@@ -4100,7 +4094,7 @@ namespace ASCompletion.Completion
             }
             else
             {
-                var type = FormatType(newMember.Type);
+                var type = MemberModel.FormatType(newMember.Type);
                 var noRet = type == null || type.Equals("void", StringComparison.OrdinalIgnoreCase);
                 type = (noRet && type != null) ? features.voidKey : type;
                 if (!noRet) typesUsed.Add(type);
@@ -4204,7 +4198,7 @@ namespace ASCompletion.Completion
                             methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Modifiers", modifiers);
                             methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Name", m.Name);
                             methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "EntryPoint", "");
-                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Type", FormatType(m.Type));
+                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Type", MemberModel.FormatType(m.Type));
                             methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Member", member.Name + "." + m.Name);
                             flags &= ~FlagType.Function;
                         }
@@ -4221,7 +4215,7 @@ namespace ASCompletion.Completion
                                 variableTemplate += "set)";
                                 if (methodTemplate != NewLine) methodTemplate += NewLine;
                                 modifiers = (TemplateUtils.GetStaticExternOverride(m) + TemplateUtils.GetModifiers(Visibility.Private)).Trim();
-                                type = FormatType(m.Type);
+                                type = MemberModel.FormatType(m.Type);
                             }
                             else
                             {
@@ -4353,11 +4347,6 @@ namespace ASCompletion.Completion
         private static string GetShortType(string type)
         {
             return string.IsNullOrEmpty(type) ? type : Regex.Replace(type, @"(?=\w+\.<)|(?:\w+\.)", string.Empty);
-        }
-
-        private static string FormatType(string type)
-        {
-            return MemberModel.FormatType(type);
         }
 
         private static string CleanType(string type)

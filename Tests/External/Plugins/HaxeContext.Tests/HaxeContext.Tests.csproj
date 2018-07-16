@@ -536,6 +536,16 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2198_9.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2198_10.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2198_10.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGeneratePublicFunction_issue2200_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGeneratePublicFunction_issue2200_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGeneratePublicFunction_issue2200_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGeneratePublicFunction_issue2200_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGeneratePublicFunction_issue2200_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGeneratePublicFunction_issue2200_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGeneratePublicFunction_issue2200_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGeneratePublicFunction_issue2200_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGeneratePublicFunction_issue2200_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGeneratePublicFunction_issue2200_5.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
