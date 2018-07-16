@@ -213,19 +213,19 @@ namespace HaXeContext.Generators
             {
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue2022_1", GeneratorJobType.Function, false)
                     .Returns(null)
-                    .SetName("`Generate private function` shouldn't work for optional parameter. private function.")
+                    .SetName("Generate private function shouldn't work for optional parameter. private function.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2022");
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue2022_1", GeneratorJobType.FunctionPublic, false)
                     .Returns(null)
-                    .SetName("`Generate public function` shouldn't work for optional parameter. private function.")
+                    .SetName("Generate public function shouldn't work for optional parameter. private function.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2022");
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue2022_2", GeneratorJobType.Function, false)
                     .Returns(null)
-                    .SetName("`Generate private function` shouldn't work for optional parameter. local function.")
+                    .SetName("Generate private function shouldn't work for optional parameter. local function.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2022");
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue2022_2", GeneratorJobType.FunctionPublic, false)
                     .Returns(null)
-                    .SetName("`Generate public function` shouldn't work for optional parameter. local function.")
+                    .SetName("Generate public function shouldn't work for optional parameter. local function.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2022");
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue2022_3", GeneratorJobType.FieldFromParameter, true)
                     .Returns(ReadAllText("AfterContextualGeneratorTests_issue2022_3"))
@@ -736,6 +736,17 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> GenerateFunctionIssue2200TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGeneratePublicFunction_issue2200_1", GeneratorJobType.Function, true)
+                    .Returns(ReadAllText("AfterGeneratePublicFunction_issue2200_1"))
+                    .SetName("Issue2200. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2200");
+            }
+        }
+
         static IEnumerable<TestCaseData> ImplementInterfaceTestCases
         {
             get
@@ -781,6 +792,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(AssignStatementToVarTestCases)),
             TestCaseSource(nameof(AddToInterfaceTestCases)),
             TestCaseSource(nameof(GenerateFunctionTestCases)),
+            TestCaseSource(nameof(GenerateFunctionIssue2200TestCases)),
             TestCaseSource(nameof(ImplementInterfaceTestCases)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
