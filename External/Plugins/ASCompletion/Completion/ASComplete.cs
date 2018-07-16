@@ -3656,7 +3656,7 @@ namespace ASCompletion.Completion
                                         continue;
                                     }
                                 }
-                                if (hadDot && !ignoreWhiteSpace)
+                                if (hadDot)
                                 {
                                     sbSub.Clear();
                                     sbSub.Insert(0, c);
@@ -3688,7 +3688,7 @@ namespace ASCompletion.Completion
                                         continue;
                                     }
                                 }
-                                if (hadDot && !ignoreWhiteSpace)
+                                if (hadDot)
                                 {
                                     sbSub.Clear();
                                     sbSub.Insert(0, c);
