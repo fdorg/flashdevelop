@@ -833,7 +833,7 @@ namespace ProjectManager
             DataEvent de;
             Webserver.Port = Settings.WebserverPort;
 
-            Project project = activeProject; // TODO this should be the runnable project
+            var project = activeProject; // TODO this should be the runnable project
             if (path == null)
             {
                 if (project == null) return;
@@ -846,8 +846,6 @@ namespace ProjectManager
                 return;
             }
 
-            int w = project.MovieOptions.Width;
-            int h = project.MovieOptions.Height;
             if (path.StartsWithOrdinal(project.Directory)) 
                 path = project.FixDebugReleasePath(path);
 
@@ -858,7 +856,7 @@ namespace ProjectManager
             }
             else if (project.TestMovieBehavior == TestMovieBehavior.NewWindow)
             {
-                de = new DataEvent(EventType.Command, "FlashViewer.Popup", path + "," + w + "," + h);
+                de = new DataEvent(EventType.Command, "FlashViewer.Popup", $"{path},{project.MovieOptions.Width},{project.MovieOptions.Height}");
                 EventManager.DispatchEvent(this, de);
             }
             else if (project.TestMovieBehavior == TestMovieBehavior.ExternalPlayer)
@@ -877,13 +875,16 @@ namespace ProjectManager
                         de = new DataEvent(EventType.Command, "AS3Context.StartDebugger", null);
                         EventManager.DispatchEvent(this, de);
                     }
-                    string doc = project.TestMovieCommand;
+                    var doc = project.TestMovieCommand;
                     try
                     {
                         doc = project.GetAbsolutePath(doc);
                         doc = project.FixDebugReleasePath(doc);
                     }
-                    catch { }
+                    catch
+                    {
+                        // ignored
+                    }
                     ProcessStartInfo psi = new ProcessStartInfo(doc);
                     psi.WorkingDirectory = project.Directory;
                     ProcessHelper.StartAsync(psi);
@@ -898,7 +899,7 @@ namespace ProjectManager
                     de = new DataEvent(EventType.Command, "AS3Context.StartDebugger", null);
                     EventManager.DispatchEvent(this, de);
                 }
-                string doc = project.TestMovieCommand;
+                var doc = project.TestMovieCommand;
                 try
                 {
                     if (string.IsNullOrEmpty(doc) || doc == "/" || doc == "\\")
@@ -910,7 +911,10 @@ namespace ProjectManager
                     doc = project.FixDebugReleasePath(doc);
                     Webserver.StartServer(doc);
                 }
-                catch { }
+                catch
+                {
+                    // ignored
+                }
             }
             else if (project.TestMovieBehavior == TestMovieBehavior.Custom)
             {
@@ -924,7 +928,7 @@ namespace ProjectManager
                         EventManager.DispatchEvent(this, de);
                     }
 
-                    string cmd = MainForm.ProcessArgString(project.TestMovieCommand).Trim();
+                    var cmd = MainForm.ProcessArgString(project.TestMovieCommand).Trim();
                     cmd = project.FixDebugReleasePath(cmd);
 
                     // let plugins handle the command
@@ -933,12 +937,12 @@ namespace ProjectManager
                     if (de.Handled) return;
 
                     // shell execute
-                    int semi = cmd.IndexOf(';');
+                    var semi = cmd.IndexOf(';');
                     if (semi < 0) semi = cmd.IndexOf(' ');
-                    string args = semi > 0 ? cmd.Substring(semi + 1) : "";
+                    var args = semi > 0 ? cmd.Substring(semi + 1) : "";
                     cmd = semi > 0 ? cmd.Substring(0, semi) : cmd;
 
-                    ProcessStartInfo psi = new ProcessStartInfo(cmd, args);
+                    var psi = new ProcessStartInfo(cmd, args);
                     psi.UseShellExecute = true;
                     psi.WorkingDirectory = project.Directory;
                     ProcessHelper.StartAsync(psi);
@@ -948,13 +952,12 @@ namespace ProjectManager
                     // let plugins handle the command
                     de = new DataEvent(EventType.Command, ProjectManagerEvents.RunCustomCommand, "");
                     EventManager.DispatchEvent(this, de);
-                    if (de.Handled) return;
                 }
             }
             else
             {
                 // Default: Let FlashViewer handle it..
-                de = new DataEvent(EventType.Command, "FlashViewer.Default", path + "," + w + "," + h);
+                de = new DataEvent(EventType.Command, "FlashViewer.Default", $"{path},{project.MovieOptions.Width},{project.MovieOptions.Height}");
                 EventManager.DispatchEvent(this, de);
             }
         }
@@ -998,9 +1001,9 @@ namespace ProjectManager
 
         public void UpdateUIStatus(ProjectManagerUIStatus status)
         {
-            ToolStripMenuItem contextMenuItem = pluginUI.Menu.BuildProject;
-            ToolStripMenuItem menuItem = menus.ProjectMenu.BuildProject;
-            ToolStripButton menuButton = menus.BuildProject;
+            var contextMenuItem = pluginUI.Menu.BuildProject;
+            var menuItem = menus.ProjectMenu.BuildProject;
+            var menuButton = menus.BuildProject;
 
             uiStatus = status;
 
@@ -1030,7 +1033,7 @@ namespace ProjectManager
 
         private bool ProjectBeforeSave(Project project, string fileName)
         {
-            DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.BeforeSave, fileName);
+            var de = new DataEvent(EventType.Command, ProjectManagerEvents.BeforeSave, fileName);
             EventManager.DispatchEvent(project, de);
             return !de.Handled; // saving handled or not allowed
         }
@@ -1048,13 +1051,13 @@ namespace ProjectManager
 
         private void NewProject()
         {
-            Project project = projectActions.NewProject();
+            var project = projectActions.NewProject();
             if (project != null) SetProject(project);
         }
 
         private void OpenProject()
         {
-            Project project = projectActions.OpenProject();
+            var project = projectActions.OpenProject();
             if (project != null) SetProject(project);
         }
 
@@ -1079,15 +1082,15 @@ namespace ProjectManager
         private void OpenProjectSilent(string projectPath)
         {
             if (!Path.IsPathRooted(projectPath)) projectPath = Path.GetFullPath(projectPath);
-            Project project = projectActions.OpenProjectSilent(projectPath);
+            var project = projectActions.OpenProjectSilent(projectPath);
             if (project != null) SetProject(project);
         }
 
         private void TestMovie()
         {
-            Project project = activeProject; // TODO we need a runnable project
-            bool noTrace = pluginUI.IsTraceDisabled;
-            DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.TestProject, (noTrace) ? "Release" : "Debug");
+            var project = activeProject; // TODO we need a runnable project
+            var noTrace = pluginUI.IsTraceDisabled;
+            var de = new DataEvent(EventType.Command, ProjectManagerEvents.TestProject, (noTrace) ? "Release" : "Debug");
             EventManager.DispatchEvent(this, de);
             if (de.Handled) return;
             if (!buildActions.Build(project, true, noTrace))
@@ -1104,13 +1107,11 @@ namespace ProjectManager
 
         private void BuildProject() 
         {
-            Project project = activeProject; // TODO build all projects
-
-            bool noTrace = pluginUI.IsTraceDisabled;
-            DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.BuildProject, (noTrace) ? "Release" : "Debug");
+            var project = activeProject; // TODO build all projects
+            var noTrace = pluginUI.IsTraceDisabled;
+            var de = new DataEvent(EventType.Command, ProjectManagerEvents.BuildProject, (noTrace) ? "Release" : "Debug");
             EventManager.DispatchEvent(this, de);
             if (de.Handled) return;
-
             if (!buildActions.Build(project, false, noTrace))
             {
                 BroadcastBuildFailed(project);
