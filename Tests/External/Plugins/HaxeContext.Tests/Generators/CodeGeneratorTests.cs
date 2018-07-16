@@ -744,6 +744,10 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterGeneratePublicFunction_issue2200_1"))
                     .SetName("Issue2200. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2200");
+                yield return new TestCaseData("BeforeGeneratePublicFunction_issue2200_2", GeneratorJobType.Function, true)
+                    .Returns(ReadAllText("AfterGeneratePublicFunction_issue2200_2"))
+                    .SetName("Issue2200. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2200");
             }
         }
 

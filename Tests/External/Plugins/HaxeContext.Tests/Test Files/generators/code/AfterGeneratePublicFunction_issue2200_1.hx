@@ -5,8 +5,8 @@ class Main {
 	public function new() {
 		test(complete);
 	}
-
-	private function test(param:Void->Bool):Void {
+	
+	function test(complete:Void->Bool) {
 		
 	}
 }

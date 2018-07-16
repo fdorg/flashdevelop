@@ -136,5 +136,21 @@ namespace HaXeContext.Generators
             }
             InsertCode(position, template, sci);
         }
+
+        protected override string GetFunctionType(ASResult expr)
+        {
+            var voidKey = ASContext.Context.Features.voidKey;
+            var parameters = expr.Member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
+            parameters.Add(expr.Member.Type ?? voidKey);
+            var qualifiedName = string.Empty;
+            for (var i = 0; i < parameters.Count; i++)
+            {
+                if (i > 0) qualifiedName += "->";
+                var t = parameters[i];
+                if (t.Contains("->") && !t.StartsWith('(')) t = $"({t})";
+                qualifiedName += t;
+            }
+            return qualifiedName;
+        }
     }
 }
