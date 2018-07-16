@@ -303,7 +303,7 @@ namespace ProjectManager.Actions
             string name = parts[parts.Length - 3];
             if (name != "")
                 foreach (InstalledSDK sdk in sdks)
-                    if (sdk.IsValid && sdk.Name == name)
+                    if (sdk.IsValid && ((name.StartsWith("Haxe Shim ") && sdk.IsHaxeShim) || sdk.Name == name))
                     {
                         LatestSDKMatchQuality = 0;
                         return sdk;
