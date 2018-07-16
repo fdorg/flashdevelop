@@ -799,7 +799,7 @@ namespace ProjectManager
             else if (FileInspector.IsSwf(path, Path.GetExtension(path).ToLower())) PlaySwf(path);
             else if (path.IndexOfOrdinal("::") > 0)
             {
-                DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.OpenVirtualFile, path);
+                var de = new DataEvent(EventType.Command, ProjectManagerEvents.OpenVirtualFile, path);
                 EventManager.DispatchEvent(this, de);
             }
             else MainForm.OpenEditableDocument(path);
@@ -827,7 +827,7 @@ namespace ProjectManager
         void PlaySwf(string path)
         {
             // Let FlashViewer handle it..
-            DataEvent de = new DataEvent(EventType.Command, "FlashViewer.Default", path);
+            var de = new DataEvent(EventType.Command, "FlashViewer.Default", path);
             EventManager.DispatchEvent(this, de);
         }
 
@@ -888,7 +888,7 @@ namespace ProjectManager
                     {
                         // ignored
                     }
-                    ProcessStartInfo psi = new ProcessStartInfo(doc);
+                    var psi = new ProcessStartInfo(doc);
                     psi.WorkingDirectory = project.Directory;
                     ProcessHelper.StartAsync(psi);
                 }
@@ -1125,12 +1125,12 @@ namespace ProjectManager
         {
             try
             {
-                DataEvent disableWatchers = new DataEvent(EventType.Command, ProjectFileActionsEvents.FileDisableWatchers, null);
+                var disableWatchers = new DataEvent(EventType.Command, ProjectFileActionsEvents.FileDisableWatchers, null);
                 EventManager.DispatchEvent(this, disableWatchers);
 
-                Project project = activeProject; // TODO clean all projects
+                var project = activeProject; // TODO clean all projects
 
-                DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.CleanProject, project);
+                var de = new DataEvent(EventType.Command, ProjectManagerEvents.CleanProject, project);
                 EventManager.DispatchEvent(this, de);
                 if (de.Handled)
                     return;
@@ -1141,7 +1141,7 @@ namespace ProjectManager
             }
             finally
             {
-                DataEvent enableWatchers = new DataEvent(EventType.Command, ProjectFileActionsEvents.FileEnableWatchers, null);
+                var enableWatchers = new DataEvent(EventType.Command, ProjectFileActionsEvents.FileEnableWatchers, null);
                 EventManager.DispatchEvent(this, enableWatchers);
             }
         }
@@ -1149,7 +1149,7 @@ namespace ProjectManager
         private void FileDeleted(string path)
         {
             DocumentManager.CloseDocuments(path);
-            Project project = Tree.ProjectOf(path);
+            var project = Tree.ProjectOf(path);
             if (project != null)
             {
                 projectActions.RemoveAllReferences(project, path);
@@ -1160,8 +1160,8 @@ namespace ProjectManager
 
         private void FileMoved(string fromPath, string toPath)
         {
-            Project project = Tree.ProjectOf(fromPath);
-            Project projectTo = Tree.ProjectOf(toPath);
+            var project = Tree.ProjectOf(fromPath);
+            var projectTo = Tree.ProjectOf(toPath);
             if (project != null && project != projectTo)
             {
                 if (project.IsCompileTarget(fromPath) || project.IsLibraryAsset(fromPath))
@@ -1180,26 +1180,23 @@ namespace ProjectManager
             pluginUI.WatchParentOf(fromPath);
             pluginUI.WatchParentOf(toPath);
 
-            Hashtable data = new Hashtable();
+            var data = new Hashtable();
             data["fromPath"] = fromPath;
             data["toPath"] = toPath;
-            DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.FileMoved, data);
+            var de = new DataEvent(EventType.Command, ProjectManagerEvents.FileMoved, data);
             EventManager.DispatchEvent(this, de);
         }
 
         private void FilePasted(string fromPath, string toPath)
         {
-            Hashtable data = new Hashtable();
+            var data = new Hashtable();
             data["fromPath"] = fromPath;
             data["toPath"] = toPath;
-            DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.FilePasted, data);
+            var de = new DataEvent(EventType.Command, ProjectManagerEvents.FilePasted, data);
             EventManager.DispatchEvent(this, de);
         }
 
-        public void PropertiesClick(object sender, EventArgs e)
-        {
-            OpenProjectProperties();
-        }
+        public void PropertiesClick(object sender, EventArgs e) => OpenProjectProperties();
 
         private void SettingChanged(string setting)
         {
@@ -1223,37 +1220,37 @@ namespace ProjectManager
 
         private void BroadcastMenuInfo()
         {
-            DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.Menu, this.menus.ProjectMenu);
+            var de = new DataEvent(EventType.Command, ProjectManagerEvents.Menu, this.menus.ProjectMenu);
             EventManager.DispatchEvent(this, de);
         }
 
         private void BroadcastToolBarInfo()
         {
-            DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.ToolBar, this.pluginUI.TreeBar);
+            var de = new DataEvent(EventType.Command, ProjectManagerEvents.ToolBar, this.pluginUI.TreeBar);
             EventManager.DispatchEvent(this, de);
         }
 
         private void BroadcastProjectInfo(Project project)
         {
-            DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.Project, project);
+            var de = new DataEvent(EventType.Command, ProjectManagerEvents.Project, project);
             EventManager.DispatchEvent(this, de);
         }
 
         private void BroadcastProjectSetUp(Project project)
         {
-            DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.ProjectSetUp, project);
+            var de = new DataEvent(EventType.Command, ProjectManagerEvents.ProjectSetUp, project);
             EventManager.DispatchEvent(this, de);
         }
 
         private void BroadcastBuildComplete(IProject project)
         {
-            DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.BuildComplete, project);
+            var de = new DataEvent(EventType.Command, ProjectManagerEvents.BuildComplete, project);
             EventManager.DispatchEvent(this, de);
         }
 
         private void BroadcastBuildFailed(IProject project)
         {
-            DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.BuildFailed, project);
+            var de = new DataEvent(EventType.Command, ProjectManagerEvents.BuildFailed, project);
             EventManager.DispatchEvent(this, de);
         }
 
@@ -1261,7 +1258,7 @@ namespace ProjectManager
 
         #region Project Tree Event Handling
 
-        private void MenuOpening(Object sender, CancelEventArgs e)
+        private void MenuOpening(object sender, CancelEventArgs e)
         {
             if (Control.ModifierKeys == Keys.Control)
             {
@@ -1277,7 +1274,7 @@ namespace ProjectManager
 
         private void TreeOpenItems()
         {
-            foreach (string path in Tree.SelectedPaths)
+            foreach (var path in Tree.SelectedPaths)
             {
                 openFileQueue.Enqueue(path);
             }
@@ -1288,7 +1285,7 @@ namespace ProjectManager
         {
             if (openFileQueue.Count > 0)
             {
-                String file = openFileQueue.Dequeue();
+                var file = openFileQueue.Dequeue();
                 if (File.Exists(file)) OpenFile(file);
                 if (file.IndexOfOrdinal("::") > 0 && File.Exists(file.Substring(0, file.IndexOfOrdinal("::")))) // virtual files
                 {
@@ -1299,7 +1296,7 @@ namespace ProjectManager
 
         private void TreeExecuteItems()
         {
-            foreach (string path in Tree.SelectedPaths)
+            foreach (var path in Tree.SelectedPaths)
                 ShellOpenFile(path);
         }
 
@@ -1310,7 +1307,7 @@ namespace ProjectManager
                 BridgeManager.RemoteOpen(path);
                 return;
             }
-            ProcessStartInfo psi = new ProcessStartInfo(path);
+            var psi = new ProcessStartInfo(path);
             psi.WorkingDirectory = Path.GetDirectoryName(path);
             ProcessHelper.StartAsync(psi);
         }
@@ -1318,9 +1315,9 @@ namespace ProjectManager
         private void TreeInsertItem()
         {
             // special behavior if this is a fake export node inside a SWF file
-            ExportNode node = Tree.SelectedNode as ExportNode;
-            string path = (node != null) ? node.ContainingSwfPath : Tree.SelectedPath;
-            Project project = Tree.ProjectOf(path) ?? Tree.ProjectOf(Tree.SelectedNode);
+            var node = Tree.SelectedNode as ExportNode;
+            var path = (node != null) ? node.ContainingSwfPath : Tree.SelectedPath;
+            var project = Tree.ProjectOf(path) ?? Tree.ProjectOf(Tree.SelectedNode);
             if (project != null)
                 projectActions.InsertFile(MainForm, project, path, node);
             // TODO better handling / report invalid action
@@ -1330,8 +1327,8 @@ namespace ProjectManager
         {
             // we want to deselect all nodes when toggling library so you can see
             // them turn blue to get some feedback
-            string[] selectedPaths = Tree.SelectedPaths;
-            Project project = Tree.ProjectOf(Tree.SelectedNode);
+            var selectedPaths = Tree.SelectedPaths;
+            var project = Tree.ProjectOf(Tree.SelectedNode);
             Tree.SelectedNodes = null;
             if (project != null)
                 projectActions.ToggleLibraryAsset(project, selectedPaths);
@@ -1340,7 +1337,7 @@ namespace ProjectManager
 
         private void TreeAlwaysCompileItems()
         {
-            Project project = Tree.ProjectOf(Tree.SelectedNode);
+            var project = Tree.ProjectOf(Tree.SelectedNode);
             if (project != null)
                 projectActions.ToggleAlwaysCompile(project, Tree.SelectedPaths);
             // TODO report invalid action
@@ -1348,7 +1345,7 @@ namespace ProjectManager
 
         private void TreeDocumentClass()
         {
-            Project project = Tree.ProjectOf(Tree.SelectedNode);
+            var project = Tree.ProjectOf(Tree.SelectedNode);
             if (project != null)
                 projectActions.ToggleDocumentClass(project, Tree.SelectedPaths);
             // TODO report invalid action
@@ -1356,8 +1353,7 @@ namespace ProjectManager
 
         private void TreeBrowseItem()
         {
-            string path = Tree.SelectedPath;
-            DataEvent de = new DataEvent(EventType.Command, "FileExplorer.Explore", path);
+            var de = new DataEvent(EventType.Command, "FileExplorer.Explore", Tree.SelectedPath);
             EventManager.DispatchEvent(this, de);
         }
 
@@ -1383,7 +1379,7 @@ namespace ProjectManager
 
         private void TreeLibraryOptions()
         {
-            Project project = Tree.ProjectOf(Tree.SelectedNode);
+            var project = Tree.ProjectOf(Tree.SelectedNode);
             if (project != null)
             {
                 using (var dialog = new LibraryAssetDialog( /*Tree.SelectedAsset*/project.GetAsset(Tree.SelectedPath), project))
@@ -1399,7 +1395,7 @@ namespace ProjectManager
 
         private void TreeAddFileFromTemplate(string templatePath, bool noName)
         {
-            Project project = Tree.ProjectOf(Tree.SelectedNode);
+            var project = Tree.ProjectOf(Tree.SelectedNode);
             if (project != null)
                 fileActions.AddFileFromTemplate(project, Tree.SelectedPath, templatePath, noName);
         }
@@ -1430,17 +1426,17 @@ namespace ProjectManager
 
         public void ToggleShowHidden()
         {
-            Project project = activeProject; // TODO apply to all projects
+            var project = activeProject; // TODO apply to all projects
             projectActions.ToggleShowHidden(project);
             pluginUI.ShowHiddenPaths(project.ShowHiddenPaths);
         }
 
         public void TreeRefreshSelectedNode()
         {
-            DataEvent de = new DataEvent(EventType.Command, ProjectManagerEvents.UserRefreshTree, Tree);
+            var de = new DataEvent(EventType.Command, ProjectManagerEvents.UserRefreshTree, Tree);
             EventManager.DispatchEvent(this, de);
 
-            Project project = activeProject; // TODO apply to all projects?
+            var project = activeProject; // TODO apply to all projects?
             projectActions.UpdateASCompletion(MainForm, project);
 
             Tree.RefreshTree();
@@ -1456,10 +1452,10 @@ namespace ProjectManager
 
             if (!de.Handled)
             {
-                ProcessStartInfo cmdPrompt = new ProcessStartInfo();
-                cmdPrompt.FileName = PluginBase.MainForm.CommandPromptExecutable;
-                cmdPrompt.WorkingDirectory = Tree.SelectedPath;
-                Process.Start(cmdPrompt);
+                var psi = new ProcessStartInfo();
+                psi.FileName = PluginBase.MainForm.CommandPromptExecutable;
+                psi.WorkingDirectory = Tree.SelectedPath;
+                Process.Start(psi);
             }
         }
 
