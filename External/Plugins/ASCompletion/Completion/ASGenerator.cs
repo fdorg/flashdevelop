@@ -1463,7 +1463,6 @@ namespace ASCompletion.Completion
             
             string cleanType = null;
             if (type != null) cleanType = MemberModel.FormatType(GetShortType(type));
-
             var template = TemplateUtils.GetTemplate("AssignVariable");
             template = TemplateUtils.ReplaceTemplateVariable(template, "Name", varname);
             template = TemplateUtils.ReplaceTemplateVariable(template, "Type", cleanType);
@@ -2143,9 +2142,11 @@ namespace ASCompletion.Completion
                     case ')':
                     case ']':
                         groupCount--;
+                        endOfStatement = groupCount < 0;
                         break;
                     case '}':
                         brCount--;
+                        endOfStatement = brCount < 0;
                         break;
                 }
 
@@ -2285,15 +2286,15 @@ namespace ASCompletion.Completion
         private static void GenerateVariableJob(GeneratorJobType job, ScintillaControl sci, MemberModel member, bool detach, ClassModel inClass)
         {
             var wordStartPos = sci.WordStartPosition(sci.CurrentPos, true);
-            Visibility visibility = job.Equals(GeneratorJobType.Variable) ? GetDefaultVisibility(inClass) : Visibility.Public;
+            var visibility = job.Equals(GeneratorJobType.Variable) ? GetDefaultVisibility(inClass) : Visibility.Public;
             // evaluate, if the variable (or constant) should be generated in other class
-            ASResult varResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
+            var varResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
             if (member != null && ASContext.CommonSettings.GenerateScope && !varResult.Context.Value.Contains(ASContext.Context.Features.dot)) AddExplicitScopeReference(sci, inClass, member);
-            int contextOwnerPos = GetContextOwnerEndPos(sci, sci.WordStartPosition(sci.CurrentPos, true));
-            MemberModel isStatic = new MemberModel();
+            var contextOwnerPos = GetContextOwnerEndPos(sci, sci.WordStartPosition(sci.CurrentPos, true));
+            var isStatic = new MemberModel();
             if (contextOwnerPos != -1)
             {
-                ASResult contextOwnerResult = ASComplete.GetExpressionType(sci, contextOwnerPos);
+                var contextOwnerResult = ASComplete.GetExpressionType(sci, contextOwnerPos);
                 if (contextOwnerResult != null
                     && (contextOwnerResult.Member == null || (contextOwnerResult.Member.Flags & FlagType.Constructor) > 0)
                     && contextOwnerResult.Type != null)
@@ -2307,24 +2308,26 @@ namespace ASCompletion.Completion
             }
 
             ASResult returnType = null;
-            int lineNum = sci.CurrentLine;
-            string line = sci.GetLine(lineNum);
+            var lineNum = sci.CurrentLine;
+            var line = sci.GetLine(lineNum);
             
             if (Regex.IsMatch(line, "\\b" + Regex.Escape(contextToken) + "\\("))
             {
-                returnType = new ASResult();
-                returnType.Type = ASContext.Context.ResolveType("Function", null);
+                returnType = new ASResult {Type = ASContext.Context.ResolveType("Function", null)};
             }
             else
             {
                 var m = Regex.Match(line, @"=\s*[^;\n\r}}]+");
                 if (m.Success)
                 {
-                    int posLineStart = sci.PositionFromLine(lineNum);
-                    if (posLineStart + m.Index >= sci.CurrentPos)
+                    var posLineStart = sci.PositionFromLine(lineNum);
+                    var p = posLineStart + m.Index;
+                    p = GetEndOfStatement(p, sci.Length, sci) - 1;
+                    returnType = ASComplete.GetExpressionType(sci, p, false, true);
+                    if (returnType == null && posLineStart + m.Index >= sci.CurrentPos)
                     {
                         line = line.Substring(m.Index);
-                        StatementReturnType rType = GetStatementReturnType(sci, inClass, line, posLineStart + m.Index);
+                        var rType = GetStatementReturnType(sci, inClass, line, posLineStart + m.Index);
                         if (rType != null)
                         {
                             returnType = rType.resolve;
@@ -3223,8 +3226,8 @@ namespace ASCompletion.Completion
 
         internal static StatementReturnType GetStatementReturnType(ScintillaControl sci, ClassModel inClass, string line, int startPos)
         {
-            Regex target = new Regex(@"[;\s\n\r]*", RegexOptions.RightToLeft);
-            Match m = target.Match(line);
+            var target = new Regex(@"[;\s\n\r]*", RegexOptions.RightToLeft);
+            var m = target.Match(line);
             if (!m.Success) return null;
             line = line.Substring(0, m.Index);
             if (line.Length == 0) return null;

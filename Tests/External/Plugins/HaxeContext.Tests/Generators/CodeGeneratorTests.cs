@@ -763,6 +763,21 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> GenerateVariableIssue2201TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGeneratePublicFunction_issue2201_1", GeneratorJobType.Variable, true)
+                    .Returns(ReadAllText("AfterGeneratePublicFunction_issue2201_1"))
+                    .SetName("Issue2201. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2201");
+                yield return new TestCaseData("BeforeGeneratePublicFunction_issue2201_2", GeneratorJobType.Variable, true)
+                    .Returns(ReadAllText("AfterGeneratePublicFunction_issue2201_2"))
+                    .SetName("Issue2201. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2201");
+            }
+        }
+
         static IEnumerable<TestCaseData> ImplementInterfaceTestCases
         {
             get
@@ -809,6 +824,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(AddToInterfaceTestCases)),
             TestCaseSource(nameof(GenerateFunctionTestCases)),
             TestCaseSource(nameof(GenerateFunctionIssue2200TestCases)),
+            TestCaseSource(nameof(GenerateVariableIssue2201TestCases)),
             TestCaseSource(nameof(ImplementInterfaceTestCases)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
