@@ -54,6 +54,7 @@ namespace ProjectManager
         public const string RunCustomCommand = "ProjectManager.RunCustomCommand";
         public const string FileMapping = "ProjectManager.FileMapping";
         public const string TreeSelectionChanged = "ProjectManager.TreeSelectionChanged";
+        public const string OpenProjectProperties = "ProjectManager.OpenProjectProperties";
         public const string OpenVirtualFile = "ProjectManager.OpenVirtualFile";
         public const string CreateProject = "ProjectManager.CreateProject";
         public const string ProjectCreated = "ProjectManager.ProjectCreated";
@@ -768,6 +769,8 @@ namespace ProjectManager
         void OpenProjectProperties()
         {
             var project = activeProject;
+            var de = new DataEvent(EventType.Command, ProjectManagerEvents.OpenProjectProperties, project);
+            EventManager.DispatchEvent(this, de);
             using (var dialog = project.CreatePropertiesDialog())
             {
                 project.UpdateVars(false);
