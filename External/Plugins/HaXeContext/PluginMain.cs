@@ -33,6 +33,7 @@ namespace HaXeContext
         private HaXeSettings settingObject;
         private Context contextInstance;
         private String settingFilename;
+        private Dictionary<string, InstalledSDK> customSDKCache;
         private int logCount;
 
         #region Required Properties
@@ -158,6 +159,7 @@ namespace HaXeContext
                         {
                             if (sdk.IsHaxeShim) ValidateHaxeShimSDK(sdk, GetSDKPath(sdk), project != null ? Path.GetDirectoryName(project.ProjectPath) : "");
                         }
+                        customSDKCache = new Dictionary<string, InstalledSDK>();
                     }
                     else if (action == "Context.SetHaxeEnvironment")
                     {
@@ -172,7 +174,8 @@ namespace HaXeContext
 
                 case EventType.UIStarted:
                     ValidateSettings();
-                    contextInstance = new Context(settingObject, CreateCustomSDK);
+                    customSDKCache = new Dictionary<string, InstalledSDK>();
+                    contextInstance = new Context(settingObject, GetCustomSDK);
                     // Associate this context with haxe language
                     ASCompletion.Context.ASContext.RegisterLanguage(contextInstance, "haxe");
                     CommandFactoryProvider.Register("haxe", new HaxeCommandFactory());
@@ -351,11 +354,17 @@ namespace HaXeContext
             return false;
         }
 
-        private InstalledSDK CreateCustomSDK(string path)
+        private InstalledSDK GetCustomSDK(string path)
         {
-            var sdk = new InstalledSDK(this);
-            sdk.Path = path;
-            return ValidateSDK(sdk) ? sdk : null;
+            InstalledSDK sdk;
+            if (!customSDKCache.TryGetValue(path, out sdk))
+            {
+                sdk = new InstalledSDK(this);
+                sdk.Path = path;
+                if (sdk.IsValid) customSDKCache.Add(path, sdk);
+                else sdk = null;
+            }
+            return sdk;
         }
 
         #endregion

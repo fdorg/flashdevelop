@@ -43,8 +43,7 @@ namespace HaXeContext
         
         private HaXeSettings hxsettings;
         private Dictionary<string, List<string>> haxelibsCache;
-        private Func<string, InstalledSDK> createCustomSDK;
-        private Dictionary<string, InstalledSDK> customSDKCache;
+        private Func<string, InstalledSDK> getCustomSDK;
         private string HaxeTarget;
         private bool resolvingDot;
         private bool resolvingFunction;
@@ -55,11 +54,11 @@ namespace HaXeContext
         {
         }
         
-        public Context(HaXeSettings initSettings, Func<string, InstalledSDK> createCustomSDK)
+        public Context(HaXeSettings initSettings, Func<string, InstalledSDK> getCustomSDK)
         {
             hxsettings = initSettings;
             hxsettings.Init();
-            this.createCustomSDK = createCustomSDK;
+            this.getCustomSDK = getCustomSDK;
 
             /* AS-LIKE OPTIONS */
 
@@ -165,7 +164,6 @@ namespace HaXeContext
             //OnCompletionModeChange(); // defered to first use
 
             haxelibsCache = new Dictionary<string, List<string>>();
-            customSDKCache = new Dictionary<string, InstalledSDK>();
             CodeGenerator = new CodeGenerator();
             DocumentationGenerator = new DocumentationGenerator();
             CodeComplete = new CodeComplete();
@@ -710,16 +708,7 @@ namespace HaXeContext
         #endregion
 
         #region SDK
-        private InstalledSDK GetCurrentSDK() => hxsettings.InstalledSDKs?.FirstOrDefault(sdk => sdk.Path == currentSDK) ?? GetCustomSDK(currentSDK);
-
-        private InstalledSDK GetCustomSDK(string customPath)
-        {
-            InstalledSDK sdk;
-            if (customSDKCache.TryGetValue(customPath, out sdk)) return sdk;
-            sdk = createCustomSDK(customPath);
-            if (sdk != null) customSDKCache.Add(customPath, sdk);
-            return sdk;
-        }
+        private InstalledSDK GetCurrentSDK() => hxsettings.InstalledSDKs?.FirstOrDefault(sdk => sdk.Path == currentSDK) ?? getCustomSDK(currentSDK);
 
         public SemVer GetCurrentSDKVersion()
         {
