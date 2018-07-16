@@ -111,7 +111,7 @@ namespace ProjectManager.Controls
             get { return !TestMovie.Enabled; }
             set
             {
-                BuildProject.Enabled = TestMovie.Enabled = ProjectMenu.ProjectItemsEnabledForBuild = ConfigurationSelector.Enabled = !value;
+                ProjectMenu.ProjectItemsEnabledForBuild = ConfigurationSelector.Enabled = !value;
                 EnableTargetBuildSelector(!value);
             }
         }
@@ -121,8 +121,6 @@ namespace ProjectManager.Controls
             RecentProjects.AddOpenedProject(project.ProjectPath);
             ConfigurationSelector.Enabled = true;
             ProjectMenu.ProjectItemsEnabled = true;
-            TestMovie.Enabled = true;
-            BuildProject.Enabled = true;
             ProjectChanged(project);
         }
 
@@ -130,6 +128,7 @@ namespace ProjectManager.Controls
         {
             TargetBuildSelector.Text = "";
             EnableTargetBuildSelector(false);
+            ProjectMenu.ProjectItemsEnabled = false;
         }
 
         public void ProjectChanged(Project project)

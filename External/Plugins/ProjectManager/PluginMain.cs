@@ -190,13 +190,13 @@ namespace ProjectManager
             menus.GlobalClasspaths.Click += delegate { OpenGlobalClasspaths(); };
             menus.ConfigurationSelector.FlatCombo.SelectedIndexChanged += delegate 
             {
-                bool isDebug = menus.ConfigurationSelector.Text == TextHelper.GetString("Info.Debug");
+                var isDebug = menus.ConfigurationSelector.Text == TextHelper.GetString("Info.Debug");
                 FlexCompilerShell.Cleanup();
                 pluginUI.IsTraceDisabled = !isDebug;
-                Project project = activeProject;
+                var project = activeProject;
                 if (project != null) project.TraceEnabled = isDebug;
             };
-            menus.TargetBuildSelector.KeyDown += new KeyEventHandler(TargetBuildSelector_KeyDown);
+            menus.TargetBuildSelector.KeyDown += TargetBuildSelector_KeyDown;
             menus.TargetBuildSelector.FlatCombo.SelectedIndexChanged += delegate { ApplyTargetBuild(); };
             menus.TargetBuildSelector.LostFocus += delegate { ApplyTargetBuild(); };
             
@@ -210,7 +210,7 @@ namespace ProjectManager
             menus.ProjectMenu.BuildProject.Click += BuildProjectClick;
             menus.ProjectMenu.CleanProject.Click += delegate { CleanProject(); };
             menus.ProjectMenu.Properties.Click += delegate { OpenProjectProperties(); };
-            menus.RecentProjects.ProjectSelected += delegate(string projectPath) { OpenProjectSilent(projectPath); };
+            menus.RecentProjects.ProjectSelected += OpenProjectSilent;
 
             buildActions = new BuildActions(MainForm, this);
             buildActions.BuildComplete += BuildComplete;
@@ -279,7 +279,7 @@ namespace ProjectManager
             pluginUI.Menu.CopyClassName.Click += delegate { CopyClassName(); };
             pluginUI.Menu.AddSourcePath.Click += delegate { AddSourcePath(); };
             pluginUI.Menu.RemoveSourcePath.Click += delegate { RemoveSourcePath(); };
-            pluginUI.Menu.Opening += new CancelEventHandler(this.MenuOpening);
+            pluginUI.Menu.Opening += MenuOpening;
 
             Tree.MovePath += fileActions.Move;
             Tree.CopyPath += fileActions.Copy;
@@ -288,10 +288,10 @@ namespace ProjectManager
             #endregion
 
             pluginPanel = MainForm.CreateDockablePanel(pluginUI, Guid, Icons.Project.Img, DockState.DockRight);
-            buildQueue = new Queue<String>();
+            buildQueue = new Queue<string>();
             buildTimer = new Timer();
             buildTimer.Interval = 500;
-            buildTimer.Tick += new EventHandler(OnBuildTimerTick);
+            buildTimer.Tick += OnBuildTimerTick;
             buildingAll = false;
             runOutput = false;
         }
@@ -741,10 +741,7 @@ namespace ProjectManager
             TabColors.UpdateTabColors(Settings);
         }
         
-        public void OpenPanel()
-        {
-            this.pluginPanel.Show();
-        }
+        public void OpenPanel() => this.pluginPanel.Show();
 
         public void OpenLastProject()
         {
