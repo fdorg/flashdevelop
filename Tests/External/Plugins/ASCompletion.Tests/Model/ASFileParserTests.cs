@@ -295,7 +295,7 @@ namespace ASCompletion.Model
             public void ParseFile_TypeDefs()
             {
                 var model = ASContext.Context.GetCodeModel(ReadAllText("TypeDefsTest"));
-                Assert.AreEqual(7, model.Classes.Count);
+                Assert.AreEqual(8, model.Classes.Count);
 
                 var aliasTypeDef = model.Classes[0];
                 Assert.AreEqual(2, aliasTypeDef.LineFrom);
@@ -419,6 +419,11 @@ namespace ASCompletion.Model
                 Assert.AreEqual(28, member.LineTo);
                 Assert.AreEqual("Dynamic", member.Type);
                 Assert.AreEqual(FlagType.Variable, member.Flags & FlagType.Variable);
+
+                //issue: https://github.com/fdorg/flashdevelop/issues/2209
+                var typedef = model.Classes[7];
+                Assert.AreEqual("ShortDef", typedef.ExtendsType);
+                Assert.AreEqual(1, typedef.Members.Count);
             }
 
             [Test]

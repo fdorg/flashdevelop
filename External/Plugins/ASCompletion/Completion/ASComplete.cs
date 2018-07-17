@@ -3353,8 +3353,8 @@ namespace ASCompletion.Completion
         private static ASExpr GetExpression(ScintillaControl sci, int position, bool ignoreWhiteSpace)
         {
             var context = ASContext.Context;
-            bool haXe = context.CurrentModel.haXe;
-            ASExpr expression = new ASExpr();
+            var haXe = context.CurrentModel.haXe;
+            var expression = new ASExpr();
             expression.Position = position;
             expression.Separator = " ";
 
@@ -3399,12 +3399,12 @@ namespace ASCompletion.Completion
             }
 
             // get the word characters from the syntax definition
-            string characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
+            var characterClass = ScintillaControl.Configuration.GetLanguage(sci.ConfigurationLanguage).characterclass.Characters;
 
             // get expression before cursor
-            ContextFeatures features = context.Features;
-            StringBuilder sb = new StringBuilder();
-            StringBuilder sbSub = new StringBuilder();
+            var features = context.Features;
+            var sb = new StringBuilder();
+            var sbSub = new StringBuilder();
             int subCount = 0;
             char c = ' ';
             var startPosition = position;
