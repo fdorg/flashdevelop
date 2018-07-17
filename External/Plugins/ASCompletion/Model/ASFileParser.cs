@@ -952,7 +952,7 @@ namespace ASCompletion.Model
                 {
                     bool stopParser = false;
                     bool valueError = false;
-                    if (inType && !inAnonType && !inGeneric && !char.IsLetterOrDigit(c1) && ".{}-><".IndexOf(c1) < 0)
+                    if (inType && !inAnonType && !inGeneric && !char.IsLetterOrDigit(c1) && !".{}-><".Contains(c1))
                     {
                         inType = false;
                         inValue = false;
@@ -1093,7 +1093,7 @@ namespace ASCompletion.Model
                             curToken.Text = param;
                             curToken.Line = tokLine;
                             curToken.Position = tokPos;
-                            EvalToken(true, true/*false*/, i - 1 - valueLength);
+                            EvalToken(true, true);
                             evalToken = 0;
                         }
                     }
@@ -1142,7 +1142,7 @@ namespace ASCompletion.Model
                     valueLength = 0;
                     valueMember = null;
                     if (!inParams && !(inConst && context != 0) && c1 != '{' && c1 != ',') continue;
-                    else length = 0;
+                    length = 0;
                 }
 
                 /* TOKENIZATION */
@@ -1247,10 +1247,6 @@ namespace ASCompletion.Model
                                                 valueBuffer[valueLength++] = buffer[j];
                                             valueBuffer[valueLength++] = c1;
                                             length = 0;
-                                            /*
-                                        paramBraceCount = 0;
-                                        paramParCount = 0;
-                                        paramSqCount = 0;*/
                                             paramTempCount++;
                                             continue;
                                         }
@@ -1280,8 +1276,7 @@ namespace ASCompletion.Model
                                     paramParCount--;
                                     addChar = true;
                                 }
-                                else if (paramParCount == 0 && paramTempCount == 0 && paramBraceCount == 0
-                                    && paramSqCount == 0)
+                                else if (paramParCount == 0 && paramTempCount == 0 && paramBraceCount == 0 && paramSqCount == 0)
                                 {
                                     inType = false;
                                     shortcut = false;
@@ -1336,23 +1331,19 @@ namespace ASCompletion.Model
                         curToken.Text = new string(buffer, 0, length);
                         curToken.Line = tokLine;
                         curToken.Position = tokPos;
-                        EvalToken(!inValue, (c1 != '=' && c1 != ','), i - 1 - length);
+                        EvalToken(!inValue, (c1 != '=' && c1 != ','));
                         length = 0;
                         evalToken = 0;
                     }
-
                     if (!shortcut)
                         // start of block
                         if (c1 == '{')
                         {
-                            if (context == FlagType.Package || context == FlagType.Class) // parse package/class block
-                            {
-                                context = 0;
-                            }
+                            // parse package/class block
+                            if (context == FlagType.Package || context == FlagType.Class) context = 0;
                             else if (context == FlagType.Enum) // parse enum block
                             {
-                                if (curClass != null && (curClass.Flags & FlagType.Enum) > 0)
-                                    inEnum = true;
+                                if (curClass != null && (curClass.Flags & FlagType.Enum) > 0) inEnum = true;
                                 else
                                 {
                                     context = 0;
@@ -1365,11 +1356,24 @@ namespace ASCompletion.Model
                                 if (curClass != null && (curClass.Flags & FlagType.TypeDef) > 0)
                                 {
                                     inTypedef = true;
-                                    if (i < len && ba[i] == '>')
+                                    var pos = i;
+                                    while (pos < len)
                                     {
-                                        buffer[0] = 'e'; buffer[1] = 'x'; buffer[2] = 't'; buffer[3] = 'e'; buffer[4] = 'n'; buffer[5] = 'd'; buffer[6] = 's';
-                                        length = 7;
-                                        context = FlagType.Class;
+                                        var c = ba[pos++];
+                                        if (c <= ' ') continue;
+                                        if (c == '>')
+                                        {
+                                            buffer[0] = 'e';
+                                            buffer[1] = 'x';
+                                            buffer[2] = 't';
+                                            buffer[3] = 'e';
+                                            buffer[4] = 'n';
+                                            buffer[5] = 'd';
+                                            buffer[6] = 's';
+                                            length = 7;
+                                            context = FlagType.Class;
+                                        }
+                                        break;
                                     }
                                 }
                                 else
@@ -1509,14 +1513,14 @@ namespace ASCompletion.Model
                                     if ((curModifiers & FlagType.Getter) > 0)
                                     {
                                         curModifiers -= FlagType.Getter;
-                                        EvalToken(true, false, i);
+                                        EvalToken(true, false);
                                         curMethod = curMember;
                                         context = FlagType.Variable;
                                     }
                                     else if ((curModifiers & FlagType.Setter) > 0)
                                     {
                                         curModifiers -= FlagType.Setter;
-                                        EvalToken(true, false, i);
+                                        EvalToken(true, false);
                                         curMethod = curMember;
                                         context = FlagType.Variable;
                                     }
@@ -1592,7 +1596,6 @@ namespace ASCompletion.Model
                             inParams = false;
                             curMember = curMethod;
                         }
-
                         // skip value of a declared variable
                         else if (c1 == '=')
                         {
@@ -1614,7 +1617,6 @@ namespace ASCompletion.Model
                                 }
                             }
                         }
-
                         // metadata, contexts should define a meta keyword and a way to parse metadata
                         else if (!inValue && c1 == '[')
                         {
@@ -1654,7 +1656,11 @@ namespace ASCompletion.Model
                             }
                         }
                         // escape next char
-                        else if (c1 == '\\') { i++; continue; }
+                        else if (c1 == '\\')
+                        {
+                            i++;
+                            continue;
+                        }
                         // literal regex
                         else if (c1 == '/' && version == 3)
                         {
@@ -1681,8 +1687,7 @@ namespace ASCompletion.Model
             FinalizeModel();
 
             // post-filtering
-            if (model.HasFiltering && model.Context != null)
-                model.Context.FilterSource(model);
+            if (model.HasFiltering) model.Context?.FilterSource(model);
 
             //  Debug.WriteLine("out model: " + model.GenerateIntrinsic(false));
         }
@@ -1878,14 +1883,14 @@ namespace ASCompletion.Model
         #endregion
 
         #region lexer
+
         /// <summary>
         /// Eval a token depending on the parser context
         /// </summary>
         /// <param name="evalContext">The token could be an identifier</param>
         /// <param name="evalKeyword">The token could be a keyword</param>
-        /// <param name="position">Parser position</param>
         /// <returns>A keyword was found</returns>
-        private bool EvalToken(bool evalContext, bool evalKeyword, int position)
+        private bool EvalToken(bool evalContext, bool evalKeyword)
         {
             bool hadContext = (context != 0);
             bool hadKeyword = (foundKeyword != 0);
@@ -2659,7 +2664,7 @@ namespace ASCompletion.Model
         private void AddClass(FileModel model, ClassModel curClass)
         {
             // avoid empty duplicates due to Haxe directives
-            foreach(ClassModel aClass in model.Classes) 
+            foreach(var aClass in model.Classes)
                 if (aClass.Name == curClass.Name)
                 {
                     if (aClass.Members.Count == 0)
@@ -2667,7 +2672,7 @@ namespace ASCompletion.Model
                         model.Classes.Remove(aClass);
                         break;
                     }
-                    else return;
+                    return;
                 }
             model.Classes.Add(curClass);
         }
