@@ -2315,21 +2315,21 @@ namespace ASCompletion.Completion
             }
             else
             {
-                var m = Regex.Match(line, @"=\s*[^;\n\r}}]+");
+                var posLineStart = sci.PositionFromLine(lineNum);
+                var currentPos = sci.CurrentPos;
+                var offset = currentPos - posLineStart;
+                var m = Regex.Match(line.Substring(offset), @"=\s*[^;\n\r}}]+");
                 if (m.Success)
                 {
-                    var posLineStart = sci.PositionFromLine(lineNum);
-                    var p = posLineStart + m.Index;
+                    var matchIndex = m.Index + offset;
+                    var p = posLineStart + matchIndex;
                     p = GetEndOfStatement(p, sci.Length, sci) - 1;
                     returnType = ASComplete.GetExpressionType(sci, p, false, true);
-                    if (returnType == null && posLineStart + m.Index >= sci.CurrentPos)
+                    if (returnType == null && posLineStart + matchIndex >= currentPos)
                     {
-                        line = line.Substring(m.Index);
-                        var rType = GetStatementReturnType(sci, inClass, line, posLineStart + m.Index);
-                        if (rType != null)
-                        {
-                            returnType = rType.resolve;
-                        }
+                        line = line.Substring(matchIndex);
+                        var rType = GetStatementReturnType(sci, inClass, line, posLineStart + matchIndex);
+                        if (rType != null) returnType = rType.resolve;
                     }
                 }
             }
