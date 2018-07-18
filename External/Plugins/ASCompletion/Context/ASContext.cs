@@ -20,12 +20,12 @@ namespace ASCompletion.Context
     {
         #region internal
         // all contexts management
-        static protected List<RegisteredContext> allContexts = new List<RegisteredContext>();
-        static protected int currentLine;
-        static protected IASContext context;
-        static protected List<IASContext> validContexts;
-        static protected ASContext defaultContext;
-        static protected PluginMain plugin;
+        protected static List<RegisteredContext> allContexts = new List<RegisteredContext>();
+        protected static int currentLine;
+        protected static IASContext context;
+        protected static List<IASContext> validContexts;
+        protected static ASContext defaultContext;
+        protected static PluginMain plugin;
         // context state/models
         protected bool started;
         protected ContextSetupInfos contextSetup;
@@ -40,11 +40,11 @@ namespace ASCompletion.Context
         protected internal CompletionCache completionCache;
         protected Timer cacheRefreshTimer;
         // path normalization
-        static protected bool doPathNormalization;
-        static protected string dirSeparator;
-        static protected char dirSeparatorChar;
-        static protected string dirAltSeparator;
-        static protected char dirAltSeparatorChar;
+        protected static bool doPathNormalization;
+        protected static string dirSeparator;
+        protected static char dirSeparatorChar;
+        protected static string dirAltSeparator;
+        protected static char dirAltSeparatorChar;
         // settings
         protected IContextSettings settings;
         protected ContextFeatures features;
@@ -251,7 +251,7 @@ namespace ASCompletion.Context
         /// Init completion engine context
         /// </summary>
         /// <param name="mainForm">Reference to MainForm</param>
-        static internal void GlobalInit(PluginMain pluginMain)
+        internal static void GlobalInit(PluginMain pluginMain)
         {
             dirSeparatorChar = Path.DirectorySeparatorChar;
             dirSeparator = dirSeparatorChar.ToString();
@@ -278,7 +278,7 @@ namespace ASCompletion.Context
         /// </summary>
         /// <param name="contextReference">Language context</param>
         /// <param name="language">Language id (ie. Scintilla.ConfigurationLanguage)</param>
-        static public void RegisterLanguage(IASContext contextReference, string language)
+        public static void RegisterLanguage(IASContext contextReference, string language)
         {
             allContexts.Add(new RegisteredContext(contextReference, language, null));
         }
@@ -289,7 +289,7 @@ namespace ASCompletion.Context
         /// <param name="contextReference">Language context</param>
         /// <param name="language">File language id (ie. Scintilla.ConfigurationLanguage)</param>
         /// <param name="inlined">Inlined language id</param>
-        static public void RegisterInlineLanguage(IASContext contextReference, string language, string inlined)
+        public static void RegisterInlineLanguage(IASContext contextReference, string language, string inlined)
         {
             allContexts.Add(new RegisteredContext(contextReference, language, inlined));
         }
@@ -298,7 +298,7 @@ namespace ASCompletion.Context
         /// Return the main context for a language
         /// </summary>
         /// <param name="lang">Language id (ie. Scintilla.ConfigurationLanguage)</param>
-        static public IASContext GetLanguageContext(string lang)
+        public static IASContext GetLanguageContext(string lang)
         {
             if (lang == null) return null;
             lang = lang.ToLower();
@@ -325,7 +325,7 @@ namespace ASCompletion.Context
         /// <summary>
         /// Currently edited document
         /// </summary>
-        static internal void SetCurrentFile(ITabbedDocument doc, bool shouldIgnore)
+        internal static void SetCurrentFile(ITabbedDocument doc, bool shouldIgnore)
         {
             // reset previous contexts
             if (validContexts.Count > 0)
@@ -371,7 +371,7 @@ namespace ASCompletion.Context
             else Context.CheckModel(true);
         }
 
-        static internal void SetCurrentLine(int line)
+        internal static void SetCurrentLine(int line)
         {
             ScintillaControl sci = CurSciControl;
             if (validContexts.Count == 0 || sci == null)
@@ -430,7 +430,7 @@ namespace ASCompletion.Context
         /// <summary>
         /// Current document's text changed
         /// </summary>
-        static public void OnTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
+        public static void OnTextChanged(ScintillaControl sender, int position, int length, int linesAdded)
         {
             if (validContexts.Count > 0)
             {
@@ -461,7 +461,7 @@ namespace ASCompletion.Context
         /// <summary>
         /// Clear and rebuild classpath models cache
         /// </summary>
-        static public void RebuildClasspath()
+        public static void RebuildClasspath()
         {
             Context = defaultContext;
             validContexts.Clear();
@@ -944,7 +944,7 @@ namespace ASCompletion.Context
         {
             var parser = GetCodeParser();
             parser.ScriptMode = scriptMode;
-            if (!string.IsNullOrEmpty(src)) parser.ParseSrc(result, src);
+            if (src != null) parser.ParseSrc(result, src);
             return result;
         }
 
@@ -1006,13 +1006,13 @@ namespace ASCompletion.Context
 
             if (SetTemporaryPath(NormalizePath(cFile.GetBasePath())))
             {
-                PathModel tPath = classPath[0];
+                var tPath = classPath[0];
                 tPath.AddFile(cFile);
             }
 
             if (cFile.OutOfDate) UpdateCurrentFile(true);
 
-            ASResult ctx = GetDeclarationAtLine(line);
+            var ctx = GetDeclarationAtLine(line);
             if (ctx.InClass != cClass) 
             {
                 cClass = ctx.InClass;
@@ -1044,11 +1044,11 @@ namespace ASCompletion.Context
         /// <returns></returns>
         public virtual ASResult GetDeclarationAtLine(int line)
         {
-            ASResult result = new ASResult();
+            var result = new ASResult();
             result.InClass = ClassModel.VoidClass;
             if (cFile == null) return result;
             // current class
-            foreach (ClassModel aClass in cFile.Classes)
+            foreach (var aClass in cFile.Classes)
             {
                 if (aClass.LineFrom <= line && aClass.LineTo >= line)
                 {
@@ -1080,7 +1080,6 @@ namespace ASCompletion.Context
             }
             return result;
         }
-
 
         #endregion
 
@@ -1478,11 +1477,11 @@ namespace ASCompletion.Context
         #endregion
 
         #region common tool methods
-        static public void SetStatusText(string text)
+        public static void SetStatusText(string text)
         {
             MainForm.StatusStrip.Items[0].Text = "  " + text;
         }
-        static protected string GetStatusText()
+        protected static string GetStatusText()
         {
             if (MainForm.StatusStrip.Items[0].Text.Length > 2)
                 return MainForm.StatusStrip.Items[0].Text.Substring(2);
@@ -1490,7 +1489,7 @@ namespace ASCompletion.Context
                 return "";
         }
 
-        static public string NormalizeFilename(string path)
+        public static string NormalizeFilename(string path)
         {
             if (string.IsNullOrEmpty(path)) return "";
             path = path.Trim();
@@ -1500,7 +1499,7 @@ namespace ASCompletion.Context
             path = path.Replace(dirSeparator + dirSeparator, dirSeparator);
             return PathHelper.GetLongPathName(path);
         }
-        static public string NormalizePath(string path)
+        public static string NormalizePath(string path)
         {
             if (string.IsNullOrEmpty(path)) return "";
             path = path.Trim();
@@ -1512,7 +1511,7 @@ namespace ASCompletion.Context
             path = path.Replace(dirSeparator + dirSeparator, dirSeparator);
             return PathHelper.GetLongPathName(path);
         }
-        static public string GetLastStringToken(string str, string sep)
+        public static string GetLastStringToken(string str, string sep)
         {
             if (str == null) return "";
             if (sep == null) return str;
@@ -1520,7 +1519,7 @@ namespace ASCompletion.Context
             return (p >= 0) ? str.Substring(p + 1) : str;
         }
 
-        static public void ParseVersion(string version, ref int majorVersion, ref int minorVersion)
+        public static void ParseVersion(string version, ref int majorVersion, ref int minorVersion)
         {
             //if (version == "0.0") return;
             if (string.IsNullOrEmpty(version)) return;
