@@ -153,10 +153,7 @@ namespace CodeRefactor.Commands
             }
         }
 
-        public override bool IsValid()
-        {
-            return OldPathToNewPath != null;
-        }
+        public override bool IsValid() => OldPathToNewPath != null;
 
         #endregion
 
@@ -166,10 +163,10 @@ namespace CodeRefactor.Commands
         {
             targets = new List<MoveTargetHelper>();
             filesToReopen = new List<string>();
-            IProject project = PluginBase.CurrentProject;
+            var project = PluginBase.CurrentProject;
             if (project == null) return;
-            string filterMask = project.DefaultSearchFilter;
-            foreach (KeyValuePair<string, string> item in OldPathToNewPath)
+            var filterMask = project.DefaultSearchFilter;
+            foreach (var item in OldPathToNewPath)
             {
                 string oldPath = item.Key;
                 string newPath = item.Value;
@@ -300,15 +297,16 @@ namespace CodeRefactor.Commands
         private void MoveTargets()
         {
             MessageBar.Locked = true;
-            foreach (KeyValuePair<string, string> item in OldPathToNewPath)
+            foreach (var item in OldPathToNewPath)
             {
                 string oldPath = item.Key;
                 string newPath = item.Value;
                 if (File.Exists(oldPath))
                 {
-                    newPath = Path.Combine(newPath, Path.GetFileName(oldPath));
+                    var oldFileName = Path.GetFileName(oldPath);
+                    newPath = Path.Combine(newPath, oldFileName);
                     // refactor failed or was refused
-                    if (Path.GetFileName(oldPath).Equals(newPath, StringComparison.OrdinalIgnoreCase))
+                    if (oldFileName.Equals(newPath, StringComparison.OrdinalIgnoreCase))
                     {
                         // name casing changed
                         string tmpPath = oldPath + "$renaming$";
@@ -370,30 +368,26 @@ namespace CodeRefactor.Commands
             if (currentTargetIndex < targets.Count)
             {
                 var currentTarget = targets[currentTargetIndex];
-                FileModel oldFileModel = currentTarget.OldFileModel;
+                var oldFileModel = currentTarget.OldFileModel;
                 FRSearch search;
-                string oldType;
                 if (string.IsNullOrEmpty(oldFileModel.Package))
                 {
                     search = new FRSearch("package");
                     search.WholeWord = true;
-                    oldType = Path.GetFileNameWithoutExtension(currentTarget.OldFilePath);
                 }
                 else
                 {
                     search = new FRSearch("package\\s+(" + oldFileModel.Package + ")");
-                    oldType = oldFileModel.Package + "." + Path.GetFileNameWithoutExtension(currentTarget.OldFilePath);
                 }
                 search.IsRegex = true;
                 search.Filter = SearchFilter.None;
-                oldType = oldType.Trim('.');
                 MessageBar.Locked = true;
                 string newFilePath = currentTarget.NewFilePath;
                 var doc = AssociatedDocumentHelper.LoadDocument(currentTarget.TmpFilePath ?? newFilePath);
-                ScintillaControl sci = doc.SciControl;
+                var sci = doc.SciControl;
                 search.SourceFile = sci.FileName;
-                List<SearchMatch> matches = search.Matches(sci.Text);
-                string packageReplacement = "package";
+                var matches = search.Matches(sci.Text);
+                var packageReplacement = "package";
                 if (currentTarget.NewPackage != "")
                     packageReplacement += " " + currentTarget.NewPackage;
                 RefactoringHelper.ReplaceMatches(matches, sci, packageReplacement);
@@ -459,7 +453,7 @@ namespace CodeRefactor.Commands
                     RefactoringHelper.RaiseMoveEvent(target.OldFilePath, target.NewFilePath);
             }
             // Move non-source files and whole folders
-            foreach (KeyValuePair<string, string> item in OldPathToNewPath)
+            foreach (var item in OldPathToNewPath)
             {
                 string oldPath = item.Key;
                 string newPath = item.Value;
@@ -543,7 +537,6 @@ namespace CodeRefactor.Commands
                     entry.Key == currentTarget.NewFilePath) continue;
                 string file = entry.Key;
                 UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.Updating") + " \"" + file + "\"");
-                ITabbedDocument doc;
                 ScintillaControl sci;
                 var actualMatches = new List<SearchMatch>();
                 foreach (SearchMatch match in entry.Value)
@@ -558,7 +551,7 @@ namespace CodeRefactor.Commands
                 }
                 if (actualMatches.Count == 0) continue;
                 int currLine = -1;
-                doc = AssociatedDocumentHelper.LoadDocument(file);
+                var doc = AssociatedDocumentHelper.LoadDocument(file);
                 sci = doc.SciControl;
                 string directory = Path.GetDirectoryName(file);
                 // Let's check if we need to add the import. Check the considerations at the start of the file

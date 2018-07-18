@@ -1290,6 +1290,11 @@ namespace ASCompletion.Context
         /// <returns>Null (not handled) or member list</returns>
         public virtual MemberList ResolveDotContext(ScintillaControl sci, ASExpr expression, bool autoHide) => null;
 
+        /// <inheritdoc />
+        public virtual void ResolveDotContext(ScintillaControl sci, ASExpr expression, MemberList result)
+        {
+        }
+
         /// <summary>
         /// Let contexts handle code completion
         /// </summary>

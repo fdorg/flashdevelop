@@ -1868,19 +1868,16 @@ namespace ASCompletion.Completion
             currentClassHash = null;
 
             // only auto-complete where it makes sense
-            if (autoHide && DeclarationSectionOnly())
-                return false;
+            if (autoHide && DeclarationSectionOnly()) return false;
 
             // get expression at cursor position
             int position = Sci.CurrentPos;
-            ASExpr expr = GetExpression(Sci, position);
-            if (expr.Value == null)
-                return true;
-            IASContext ctx = ASContext.Context;
-            ContextFeatures features = ctx.Features;
+            var expr = GetExpression(Sci, position);
+            if (expr.Value == null) return true;
+            var ctx = ASContext.Context;
+            var features = ctx.Features;
             int dotIndex = expr.Value.LastIndexOfOrdinal(features.dot);
-            if (dotIndex == 0 && expr.Separator != "\"")
-                return true;
+            if (dotIndex == 0 && expr.Separator != "\"") return true;
 
             // complete keyword
             string word = expr.WordBefore;
@@ -1952,19 +1949,21 @@ namespace ASCompletion.Completion
             string tail = (dotIndex >= 0) ? expr.Value.Substring(dotIndex + features.dot.Length) : expr.Value;
             
             // custom completion
-            MemberList items = ctx.ResolveDotContext(Sci, expr, autoHide);
+            var items = ctx.ResolveDotContext(Sci, expr, autoHide);
             if (items != null)
             {
                 DotContextResolved(Sci, expr, items, autoHide);
                 return true;
             }
+            var mix = new MemberList();
+            ctx.ResolveDotContext(Sci, expr, mix);
 
             // Context
             ASResult result;
             ClassModel tmpClass;
             bool outOfDate = (expr.Separator == ":") && ctx.UnsetOutOfDate();
-            FileModel cFile = ctx.CurrentModel;
-            ClassModel cClass = ctx.CurrentClass;
+            var cFile = ctx.CurrentModel;
+            var cClass = ctx.CurrentClass;
 
             expr.LocalVars = ParseLocalVars(expr);
             if (argumentType != null)
@@ -1999,17 +1998,15 @@ namespace ASCompletion.Completion
             }
 
             //stores a reference to our current class.  tmpClass gets overwritten later, so we need to store the current class separately
-            ClassModel classScope = tmpClass;
-
-            MemberList mix = new MemberList();
+            var classScope = tmpClass;
             // local vars are the first thing to try
             if ((result.IsNull() || (dotIndex < 0)) && expr.ContextFunction != null)
                 mix.Merge(expr.LocalVars);
 
             // members visibility
-            ClassModel curClass = cClass;
+            var curClass = cClass;
             curClass.ResolveExtends();
-            Visibility acc = ctx.TypesAffinity(curClass, tmpClass);
+            var acc = ctx.TypesAffinity(curClass, tmpClass);
 
             // list package elements
             if (result.IsPackage)

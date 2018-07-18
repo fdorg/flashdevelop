@@ -1542,41 +1542,15 @@ namespace HaXeContext
         /// <returns>Null (not handled) or member list</returns>
         public override MemberList ResolveDotContext(ScintillaControl sci, ASExpr expression, bool autoHide)
         {
-            if (resolvingDot || PluginBase.MainForm.CurrentDocument.IsUntitled) return null;
-            if (autoHide && !hxsettings.DisableCompletionOnDemand) return null;
-            var result = hxsettings.DisableMixedCompletion ? new MemberList() : null;
-            var exprValue = expression.Value;
-            if (!hxsettings.DisableMixedCompletion || hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop)
-            {
-                if (exprValue.Length >= 3)
-                {
-                    var first = exprValue[0];
-                    if ((first == '\"' || first == '\'') && expression.SubExpressions != null && expression.SubExpressions.Count == 1)
-                    {
-                        var s = exprValue.Replace(".#0~.", string.Empty);
-                        if (s.Length == 3 || (s.Length == 4 && s[1] == '\\'))
-                        {
-                            if (result == null) result = new MemberList();
-                            result.Add(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public) {Comments = "The character code of this character(inlined at compile-time)"});
-                            var type = ResolveType(features.stringKey, CurrentModel);
-                            foreach (MemberModel member in type.Members)
-                            {
-                                if (member.Flags.HasFlag(FlagType.Static) || !member.Access.HasFlag(Visibility.Public)) continue;
-                                result.Add(member);
-                            }
-                            result.Sort();
-                        }
-                    }
-                }
-                if (hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop) return result;
-            }
-
-            // auto-started completion, can be ignored for performance (show default completion tooltip)
-            if (exprValue.IndexOfOrdinal(".") < 0 || (autoHide && !exprValue.EndsWith('.')))
-            {
-                if (hxsettings.DisableMixedCompletion && exprValue.Length > 0 && autoHide) return new MemberList();
+            if (resolvingDot || hxsettings.CompletionMode == HaxeCompletionModeEnum.FlashDevelop
+                || PluginBase.MainForm.CurrentDocument.IsUntitled)
                 return null;
-            }
+            if (autoHide && !hxsettings.DisableCompletionOnDemand) return null;
+            var exprValue = expression.Value;
+            // auto-started completion, can be ignored for performance (show default completion tooltip)
+            if (!exprValue.Contains('.') || (autoHide && !exprValue.EndsWith('.')))
+                if (hxsettings.DisableMixedCompletion && exprValue.Length > 0 && autoHide) return new MemberList();
+                else return null;
 
             // empty expression
             if (exprValue != "")
@@ -1586,8 +1560,24 @@ namespace HaXeContext
                 hc.GetList(OnDotCompletionResult);
                 resolvingDot = true;
             }
+            return hxsettings.DisableMixedCompletion ? new MemberList() : null;
+        }
 
-            return result;
+        public override void ResolveDotContext(ScintillaControl sci, ASExpr expression, MemberList result)
+        {
+            var exprValue = expression.Value;
+            if (exprValue.Length >= 3)
+            {
+                var first = exprValue[0];
+                if ((first == '\"' || first == '\'') && expression.SubExpressions != null && expression.SubExpressions.Count == 1)
+                {
+                    var s = exprValue.Replace(".#0~.", string.Empty);
+                    if (s.Length == 3 || (s.Length == 4 && s[1] == '\\'))
+                    {
+                        result.Add(new MemberModel("code", "Int", FlagType.Getter, Visibility.Public) {Comments = "The character code of this character(inlined at compile-time)"});
+                    }
+                }
+            }
         }
 
         internal void OnDotCompletionResult(HaxeComplete hc,  HaxeCompleteResult result, HaxeCompleteStatus status)
