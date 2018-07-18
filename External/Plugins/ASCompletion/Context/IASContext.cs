@@ -342,6 +342,14 @@ namespace ASCompletion.Context
         MemberList ResolveDotContext(ScintillaControl sci, ASExpr expression, bool autoHide);
 
         /// <summary>
+        /// Let contexts handle code completion
+        /// </summary>
+        /// <param name="sci">Scintilla control</param>
+        /// <param name="expression">Completion context</param>
+        /// <param name="result">Response structure</param>
+        void ResolveDotContext(ScintillaControl sci, ASExpr expression, MemberList result);
+
+        /// <summary>
         /// Let contexts resolve function at give position
         /// </summary>
         /// <param name="sci">Scintilla control</param>

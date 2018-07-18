@@ -122,20 +122,10 @@ namespace HaXeContext
         {
             ((HaXeSettings)ASContext.Context.Settings).CompletionMode = HaxeCompletionModeEnum.FlashDevelop;
             SetSrc(sci, sourceText);
+            var mix = new MemberList();
             var expr = ASComplete.GetExpression(sci, sci.CurrentPos);
-            var list = ASContext.Context.ResolveDotContext(sci, expr, false);
-            if (code == null) Assert.IsNull(list);
-            else
-            {
-                var members = ASContext.Context.ResolveType(ASContext.Context.Features.stringKey, ASContext.Context.CurrentModel)
-                    .Members.Items.Where(it => !it.Flags.HasFlag(FlagType.Static) && it.Access.HasFlag(Visibility.Public))
-                    .ToArray();
-                var expectedList = new MemberList();
-                foreach (var member in members) expectedList.Add(member);
-                expectedList.Add(code);
-                expectedList.Sort();
-                Assert.AreEqual(expectedList, list);
-            }
+            ASContext.Context.ResolveDotContext(sci, expr, mix);
+            Assert.AreEqual(code, mix.Items.FirstOrDefault());
         }
 
         static IEnumerable<TestCaseData> IsImportedTestCases
