@@ -62,7 +62,7 @@ namespace HaXeContext.Commands
         }
 
         [Test, TestCaseSource(nameof(TestCases))]
-        public string OrganizeImports(string sourceText, string fileName) => global::CodeRefactor.Commands.RefactorCommandTests.OrganizeImports.HaxeImpl(sci, sourceText, fileName);
+        public string OrganizeImports(string sourceText, string fileName) => global::CodeRefactor.Commands.RefactorCommandTests.OrganizeImports.HaxeImpl(sci, sourceText, fileName, false);
     }
 
     [TestFixture]
