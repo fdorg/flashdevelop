@@ -2315,22 +2315,17 @@ namespace ASCompletion.Completion
             }
             else
             {
-                var posLineStart = sci.PositionFromLine(lineNum);
-                var currentPos = sci.CurrentPos;
-                var offset = currentPos - posLineStart;
-                var m = Regex.Match(line.Substring(offset), @"=\s*[^;\n\r}}]+");
-                if (m.Success)
+                for (int i = sci.WordEndPosition(sci.CurrentPos, true), length = sci.Length; i < length; i++)
                 {
-                    var matchIndex = m.Index + offset;
-                    var p = posLineStart + matchIndex;
-                    p = GetEndOfStatement(p, sci.Length, sci) - 1;
-                    returnType = ASComplete.GetExpressionType(sci, p, false, true);
-                    if (returnType == null && posLineStart + matchIndex >= currentPos)
+                    if (sci.PositionIsOnComment(i)) continue;
+                    var c = sci.CharAt(i);
+                    if (c <= ' ') continue;
+                    if (c == '=')
                     {
-                        line = line.Substring(matchIndex);
-                        var rType = GetStatementReturnType(sci, inClass, line, posLineStart + matchIndex);
-                        if (rType != null) returnType = rType.resolve;
+                        i = GetEndOfStatement(i, sci.Length, sci) - 1;
+                        returnType = ASComplete.GetExpressionType(sci, i, false, true);
                     }
+                    break;
                 }
             }
             bool isOtherClass = false;
