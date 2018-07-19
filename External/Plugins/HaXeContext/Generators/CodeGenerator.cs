@@ -171,5 +171,48 @@ namespace HaXeContext.Generators
             }
             return qualifiedName;
         }
+
+        protected override void TryGetGetterSetterDelegateTemplate(MemberModel member, MemberModel receiver, ref FlagType flags, ref string variableTemplate, ref string methodTemplate)
+        {
+            if ((flags & (FlagType.Getter | FlagType.Setter)) != 0)
+            {
+                variableTemplate = NewLine + NewLine + (TemplateUtils.GetStaticExternOverride(receiver) + TemplateUtils.GetModifiers(receiver)).Trim() + " var " + receiver.Name;
+            }
+            var parameters = receiver.Parameters;
+            var parametersCount = parameters?.Count ?? 0;
+            if ((flags & FlagType.Getter) != 0)
+            {
+                if (parametersCount == 0 || (parameters[0].Name is var name && (name != "null" && name != "never")))
+                {
+                    variableTemplate += "(get, ";
+                    var modifiers = (TemplateUtils.GetStaticExternOverride(receiver) + TemplateUtils.GetModifiers(Visibility.Private)).Trim();
+                    methodTemplate += TemplateUtils.GetTemplate("Getter");
+                    methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Modifiers", modifiers);
+                    methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Name", receiver.Name);
+                    methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "EntryPoint", "");
+                    methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Type", MemberModel.FormatType(receiver.Type));
+                    methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Member", member.Name + "." + receiver.Name);
+                    flags &= ~FlagType.Function;
+                }
+                else variableTemplate += "(" + parameters[0].Name + ", ";
+            }
+            if ((flags & FlagType.Setter) != 0)
+            {
+                if (parametersCount == 1 || (parameters[1].Name is var name && (name != "null" && name != "never")))
+                {
+                    variableTemplate += "set)";
+                    if (methodTemplate != NewLine) methodTemplate += NewLine;
+                    var modifiers = (TemplateUtils.GetStaticExternOverride(receiver) + TemplateUtils.GetModifiers(Visibility.Private)).Trim();
+                    methodTemplate += TemplateUtils.GetTemplate("Setter");
+                    methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Modifiers", modifiers);
+                    methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Name", receiver.Name);
+                    methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "EntryPoint", "");
+                    methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Type", MemberModel.FormatType(receiver.Type));
+                    methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Member", member.Name + "." + receiver.Name);
+                    flags &= ~FlagType.Function;
+                }
+                else variableTemplate += receiver.Parameters[1].Name + ")";
+            }
+        }
     }
 }
