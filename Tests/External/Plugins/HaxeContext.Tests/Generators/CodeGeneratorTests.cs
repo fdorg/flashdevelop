@@ -343,6 +343,29 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> Issue2220TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2220_1", GeneratorJobType.Getter, false)
+                    .Returns(null)
+                    .SetName("ge|t(). Issue2220. Case 1.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2220");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2220_2", GeneratorJobType.Getter, false)
+                    .Returns(null)
+                    .SetName("se|t(). Issue2220. Case 2.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2220");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2220_3", GeneratorJobType.FunctionPublic, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2220_3"))
+                    .SetName("ge|t() -> public function get(){}. Issue2220. Case 3.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2220");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2220_4", GeneratorJobType.FunctionPublic, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2220_4"))
+                    .SetName("se|t() -> public function set(){}. Issue2220. Case 4.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2220");
+            }
+        }
+
         static IEnumerable<TestCaseData> AssignStatementToVarIssue1999TestCases
         {
             get
@@ -820,6 +843,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(Issue1880TestCases)),
             TestCaseSource(nameof(Issue2060TestCases)),
             TestCaseSource(nameof(Issue2069TestCases)),
+            TestCaseSource(nameof(Issue2220TestCases)),
             //TestCaseSource(nameof(AssignStatementToVarIssue220TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue1764TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue1999TestCases)),
