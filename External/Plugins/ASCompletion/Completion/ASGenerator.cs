@@ -32,7 +32,7 @@ namespace ASCompletion.Completion
         const string patternMethodDecl = @"function\s+{0}\s*\(";
         const string patternClass = @"new\s*{0}";
         const string BlankLine = "$(Boundary)\n\n";
-        const string NewLine = "$(Boundary)\n";
+        protected const string NewLine = "$(Boundary)\n";
         static private Regex reModifiers = new Regex("^\\s*(\\$\\(Boundary\\))?([a-z ]+)(function|var|const)", RegexOptions.Compiled);
         static private Regex reSuperCall = new Regex("^super\\s*\\(", RegexOptions.Compiled);
 
@@ -43,10 +43,7 @@ namespace ASCompletion.Completion
         static internal MemberModel contextMember;
         static private bool firstVar;
 
-        static private bool IsHaxe
-        {
-            get { return ASContext.Context.CurrentModel.haXe; }
-        }
+        private static bool IsHaxe => ASContext.Context.CurrentModel.haXe;
 
         public static bool HandleGeneratorCompletion(ScintillaControl sci, bool autoHide, string word)
         {
@@ -4145,111 +4142,43 @@ namespace ASCompletion.Completion
         public static void GenerateDelegateMethods(ScintillaControl sci, MemberModel member,
             Dictionary<MemberModel, ClassModel> selectedMembers, ClassModel classModel, ClassModel inClass)
         {
+            var ctx = ASContext.Context;
+            var generateImports = ctx.Settings.GenerateImports;
             sci.BeginUndoAction();
             try
             {
-                string result = TemplateUtils.ReplaceTemplateVariable(
-                    TemplateUtils.GetTemplate("DelegateMethodsHeader"), 
-                    "Class", 
-                    classModel.Type);
-
-                int position = -1;
-                List<string> importsList = new List<string>();
-                bool isStaticMember = (member.Flags & FlagType.Static) > 0;
-
+                var result = TemplateUtils.GetTemplate("DelegateMethodsHeader");
+                result = TemplateUtils.ReplaceTemplateVariable(result,  "Class", classModel.Type);
+                var position = -1;
+                var importsList = new List<string>();
+                var isStaticMember = (member.Flags & FlagType.Static) > 0;
                 inClass.ResolveExtends();
-                
-                Dictionary<MemberModel, ClassModel>.KeyCollection selectedMemberKeys = selectedMembers.Keys;
-                foreach (MemberModel m in selectedMemberKeys)
+                foreach (var m in selectedMembers.Keys)
                 {
-                    MemberModel mCopy = (MemberModel) m.Clone();
-
-                    string methodTemplate = NewLine;
-
-                    bool overrideFound = false;
-                    ClassModel baseClassType = inClass;
+                    var mCopy = (MemberModel) m.Clone();
+                    var methodTemplate = NewLine;
+                    var overrideFound = false;
+                    var baseClassType = inClass;
                     while (baseClassType != null && !baseClassType.IsVoid())
                     {
                         MemberList inClassMembers = baseClassType.Members;
                         foreach (MemberModel inClassMember in inClassMembers)
                         {
-                            if ((inClassMember.Flags & FlagType.Function) > 0
-                               && m.Name.Equals(inClassMember.Name))
+                            if ((inClassMember.Flags & FlagType.Function) > 0 && m.Name.Equals(inClassMember.Name))
                             {
                                 mCopy.Flags |= FlagType.Override;
                                 overrideFound = true;
                                 break;
                             }
                         }
-
-                        if (overrideFound)
-                            break;
-
+                        if (overrideFound) break;
                         baseClassType = baseClassType.Extends;
                     }
-
                     var flags = m.Flags;
                     if (isStaticMember && (flags & FlagType.Static) == 0) mCopy.Flags |= FlagType.Static;
                     var variableTemplate = string.Empty;
-                    if (IsHaxe & (flags & (FlagType.Getter | FlagType.Setter)) != 0)
-                    {
-                        variableTemplate = NewLine + NewLine + (TemplateUtils.GetStaticExternOverride(m) + TemplateUtils.GetModifiers(m)).Trim() + " var " + m.Name;
-                    }
-                    if ((flags & FlagType.Getter) > 0)
-                    {
-                        if (!IsHaxe || (m.Parameters[0].Name != "null" && m.Parameters[0].Name != "never"))
-                        {
-                            string modifiers;
-                            if (IsHaxe)
-                            {
-                                variableTemplate += "(get, ";
-                                modifiers = (TemplateUtils.GetStaticExternOverride(m) + TemplateUtils.GetModifiers(Visibility.Private)).Trim();
-                            }
-                            else modifiers = (TemplateUtils.GetStaticExternOverride(m) + TemplateUtils.GetModifiers(m)).Trim();
-                            methodTemplate += TemplateUtils.GetTemplate("Getter");
-                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Modifiers", modifiers);
-                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Name", m.Name);
-                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "EntryPoint", "");
-                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Type", MemberModel.FormatType(m.Type));
-                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Member", member.Name + "." + m.Name);
-                            flags &= ~FlagType.Function;
-                        }
-                        else variableTemplate += "(" + m.Parameters[0].Name + ", ";
-                    }
-                    if ((flags & FlagType.Setter) > 0)
-                    {
-                        if (!IsHaxe || (m.Parameters[1].Name != "null" && m.Parameters[1].Name != "never"))
-                        {
-                            string modifiers;
-                            string type;
-                            if (IsHaxe)
-                            {
-                                variableTemplate += "set)";
-                                if (methodTemplate != NewLine) methodTemplate += NewLine;
-                                modifiers = (TemplateUtils.GetStaticExternOverride(m) + TemplateUtils.GetModifiers(Visibility.Private)).Trim();
-                                type = MemberModel.FormatType(m.Type);
-                            }
-                            else
-                            {
-                                modifiers = (TemplateUtils.GetStaticExternOverride(m) + TemplateUtils.GetModifiers(m)).Trim();
-                                type = m.Parameters[0].Type;
-                            }
-                            methodTemplate += TemplateUtils.GetTemplate("Setter");
-                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Modifiers", modifiers);
-                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Name", m.Name);
-                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "EntryPoint", "");
-                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Type", type);
-                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Member", member.Name + "." + m.Name);
-                            methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Void", ASContext.Context.Features.voidKey ?? "void");
-                            flags &= ~FlagType.Function;
-                        }
-                        else variableTemplate += m.Parameters[1].Name + ")";
-                    }
-                    if (!string.IsNullOrEmpty(variableTemplate))
-                    {
-                        variableTemplate += ":" + m.Type + ";";
-                        result += variableTemplate;
-                    }
+                    ((ASGenerator) ctx.CodeGenerator).TryGetGetterSetterDelegateTemplate(member, m, ref flags, ref variableTemplate, ref methodTemplate);
+                    if (!string.IsNullOrEmpty(variableTemplate)) result += variableTemplate + ":" + m.Type + ";";
                     if ((flags & FlagType.Function) > 0)
                     {
                         methodTemplate += TemplateUtils.GetTemplate("Function");
@@ -4312,12 +4241,10 @@ namespace ASCompletion.Completion
                     }
                     methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "BlankLine", NewLine);
                     result += methodTemplate;
-
-                    if (ASContext.Context.Settings.GenerateImports && m.Parameters != null)
+                    if (generateImports && m.Parameters != null)
                     {
                         importsList.AddRange(from param in m.Parameters where param.Type != null select param.Type);
                     }
-
                     if (position < 0)
                     {
                         MemberModel latest = GetLatestMemberForFunction(inClass, mCopy.Access, mCopy);
@@ -4333,20 +4260,44 @@ namespace ASCompletion.Completion
                         }
                     }
                     else position = sci.CurrentPos;
-
-                    if (ASContext.Context.Settings.GenerateImports && m.Type != null) importsList.Add(m.Type);
+                    if (generateImports && m.Type != null) importsList.Add(m.Type);
                 }
-
-                if (ASContext.Context.Settings.GenerateImports && importsList.Count > 0 && position > -1)
+                if (generateImports && importsList.Count > 0 && position > -1)
                 {
                     var types = GetQualifiedTypes(importsList, inClass.InFile);
                     position += AddImportsByName(types, sci.LineFromPosition(position));
                     sci.SetSel(position, position);
                 }
-
                 InsertCode(position, result, sci);
             }
             finally { sci.EndUndoAction(); }
+        }
+
+        protected virtual void TryGetGetterSetterDelegateTemplate(MemberModel member, MemberModel receiver, ref FlagType flags, ref string variableTemplate, ref string methodTemplate)
+        {
+            if ((flags & FlagType.Getter) != 0)
+            {
+                var modifiers = (TemplateUtils.GetStaticExternOverride(receiver) + TemplateUtils.GetModifiers(receiver)).Trim();
+                methodTemplate += TemplateUtils.GetTemplate("Getter");
+                methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Modifiers", modifiers);
+                methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Name", receiver.Name);
+                methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "EntryPoint", "");
+                methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Type", MemberModel.FormatType(receiver.Type));
+                methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Member", member.Name + "." + receiver.Name);
+                flags &= ~FlagType.Function;
+            }
+            if ((flags & FlagType.Setter) != 0)
+            {
+                var modifiers = (TemplateUtils.GetStaticExternOverride(receiver) + TemplateUtils.GetModifiers(receiver)).Trim();
+                methodTemplate += TemplateUtils.GetTemplate("Setter");
+                methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Modifiers", modifiers);
+                methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Name", receiver.Name);
+                methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "EntryPoint", "");
+                methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Type", receiver.Parameters[0].Type);
+                methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Member", member.Name + "." + receiver.Name);
+                methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Void", ASContext.Context.Features.voidKey ?? "void");
+                flags &= ~FlagType.Function;
+            }
         }
 
         private static void GetStartPos(string currentText, ref int startPos, string keyword)
