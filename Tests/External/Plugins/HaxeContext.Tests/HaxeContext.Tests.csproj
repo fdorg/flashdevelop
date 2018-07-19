@@ -563,6 +563,14 @@
     <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2220_4.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2220_4.hx" />
     <EmbeddedResource Include="Test Files\generators\code\HandleOverrideCompletion_issue2222_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAddInterfaceDefTests_issue1733_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAddInterfaceDefTests_issue1733_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAddInterfaceDefTests_issue1733_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAddInterfaceDefTests_issue1733_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAddInterfaceDefTests_issue1733_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAddInterfaceDefTests_issue1733_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAddInterfaceDefTests_issue1733_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAddInterfaceDefTests_issue1733_4.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

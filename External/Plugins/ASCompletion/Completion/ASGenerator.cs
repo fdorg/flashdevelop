@@ -1856,71 +1856,57 @@ namespace ASCompletion.Completion
 
         private static void AddInterfaceDefJob(ScintillaControl sci, MemberModel member, ClassModel inClass, string interf)
         {
-            var context = ASContext.Context;
-            ClassModel aType = context.ResolveType(interf, context.CurrentModel);
+            var ctx = ASContext.Context;
+            var aType = ctx.ResolveType(interf, ctx.CurrentModel);
             if (aType.IsVoid()) return;
-            var fileModel = ASContext.Context.GetFileModel(aType.InFile.FileName);
-            foreach (ClassModel cm in fileModel.Classes)
+            var fileModel = ctx.GetFileModel(aType.InFile.FileName);
+            foreach (var cm in fileModel.Classes)
             {
-                if (cm.QualifiedName.Equals(aType.QualifiedName))
-                {
-                    aType = cm;
-                    break;
-                }
+                if (!cm.QualifiedName.Equals(aType.QualifiedName)) continue;
+                aType = cm;
+                break;
             }
-
-            string template;
-            if ((member.Flags & FlagType.Getter) > 0)
-            {
-                template = TemplateUtils.GetTemplate("IGetter");
-            }
-            else if ((member.Flags & FlagType.Setter) > 0)
-            {
-                template = TemplateUtils.GetTemplate("ISetter");
-            }
-            else template = TemplateUtils.GetTemplate("IFunction");
-
+            var template = ((ASGenerator) ctx.CodeGenerator).GetAddInterfaceDefTemplate(member);
             ASContext.MainForm.OpenEditableDocument(aType.InFile.FileName, true);
             sci = ASContext.CurSciControl;
-
-            MemberModel latest = GetLatestMemberForFunction(aType, Visibility.Default, new MemberModel());
+            var latest = GetLatestMemberForFunction(aType, Visibility.Default, new MemberModel());
             int position;
-            if (latest == null)
-            {
-                position = GetBodyStart(aType.LineFrom, aType.LineTo, sci);
-            }
+            if (latest == null) position = GetBodyStart(aType.LineFrom, aType.LineTo, sci);
             else
             {
                 position = sci.PositionFromLine(latest.LineTo + 1) - ((sci.EOLMode == 0) ? 2 : 1);
                 template = NewLine + template;
             }
+
             sci.SetSel(position, position);
             sci.CurrentPos = position;
-            template = TemplateUtils.ReplaceTemplateVariable(template, "Type", member.Type ?? context.Features.voidKey);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Type", member.Type ?? ctx.Features.voidKey);
             template = TemplateUtils.ToDeclarationString(member, template);
             template = TemplateUtils.ReplaceTemplateVariable(template, "BlankLine", NewLine);
-            template = TemplateUtils.ReplaceTemplateVariable(template, "Void", context.Features.voidKey);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Void", ctx.Features.voidKey);
 
-            if (context.Settings.GenerateImports)
+            if (ctx.Settings.GenerateImports)
             {
-                List<string> importsList = new List<string>();
-                List<MemberModel> parms = member.Parameters;
-                if (parms != null && parms.Count > 0)
+                var imports = new List<string>();
+                var parameters = member.Parameters;
+                if (parameters != null && parameters.Count > 0) imports.AddRange(from t in parameters where t.Type != null select t.Type);
+                if (member.Type != null) imports.Add(member.Type);
+                if (imports.Count > 0)
                 {
-                    importsList.AddRange(from t in parms where t.Type != null select t.Type);
-                }
-                if (member.Type != null) importsList.Add(member.Type);
-                if (importsList.Count > 0)
-                {
-                    var types = GetQualifiedTypes(importsList, inClass.InFile);
+                    var types = GetQualifiedTypes(imports, inClass.InFile);
                     position += AddImportsByName(types, sci.LineFromPosition(position));
                 }
             }
-
             sci.SetSel(position, position);
             sci.CurrentPos = position;
-
             InsertCode(position, template, sci);
+        }
+
+        protected virtual string GetAddInterfaceDefTemplate(MemberModel member)
+        {
+            if ((member.Flags & FlagType.Getter) > 0) return TemplateUtils.GetTemplate("IGetter");
+            if ((member.Flags & FlagType.Setter) > 0) return TemplateUtils.GetTemplate("ISetter");
+            return TemplateUtils.GetTemplate("IFunction");
         }
 
         private static void GenerateFieldFromParameter(ScintillaControl sci, MemberModel member, ClassModel inClass, Visibility scope)
