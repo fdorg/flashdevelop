@@ -1084,21 +1084,15 @@ namespace ASCompletion.Completion
                     break;
 
                 case GeneratorJobType.ImplementInterface:
-                    ClassModel iType = ASContext.Context.ResolveType(contextParam, inClass.InFile ?? ASContext.Context.CurrentModel );
+                    var iType = ASContext.Context.ResolveType(contextParam, inClass.InFile ?? ASContext.Context.CurrentModel);
                     if (iType.IsVoid()) return;
-
-                    latest = GetLatestMemberForFunction(inClass, Visibility.Public, null);
-                    if (latest == null)
-                        latest = FindLatest(0, 0, inClass, false, false);
-
+                    latest = GetLatestMemberForFunction(inClass, Visibility.Public, null) ?? FindLatest(0, 0, inClass, false, false);
                     if (latest == null)
                     {
                         position = GetBodyStart(inClass.LineFrom, inClass.LineTo, sci);
                         detach = false;
                     }
-                    else
-                        position = sci.PositionFromLine(latest.LineTo + 1) - ((sci.EOLMode == 0) ? 2 : 1);
-
+                    else position = sci.PositionFromLine(latest.LineTo + 1) - ((sci.EOLMode == 0) ? 2 : 1);
                     sci.SetSel(position, position);
                     GenerateImplementation(iType, inClass, sci, detach);
                     break;
@@ -3309,18 +3303,17 @@ namespace ASCompletion.Completion
             StringBuilder sb = new StringBuilder();
 
             string header = TemplateUtils.ReplaceTemplateVariable(TemplateUtils.GetTemplate("ImplementHeader"), "Class", iType.Type);
-
             header = TemplateUtils.ReplaceTemplateVariable(header, "BlankLine", detached ? BlankLine : null);
 
             sb.Append(header);
             sb.Append(NewLine);
-            bool entry = true;
-            ASResult result = new ASResult();
-            IASContext context = ASContext.Context;
-            ContextFeatures features = context.Features;
-            bool canGenerate = false;
-            bool isHaxe = IsHaxe;
-            FlagType flags = (FlagType.Function | FlagType.Getter | FlagType.Setter);
+            var entry = true;
+            var result = new ASResult();
+            var ctx = ASContext.Context;
+            var features = ctx.Features;
+            var canGenerate = false;
+            var isHaxe = IsHaxe;
+            var flags = (FlagType.Function | FlagType.Getter | FlagType.Setter);
             if (isHaxe) flags |= FlagType.Variable;
 
             iType.ResolveExtends(); // resolve inheritance chain
@@ -3337,67 +3330,21 @@ namespace ASCompletion.Completion
                     if (!result.IsNull()) continue;
 
                     string decl;
-                    if ((method.Flags & FlagType.Getter) > 0)
-                    {
-                        if (isHaxe)
-                        {
-                            decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Property"));
-
-                            string templateName = null;
-                            string metadata = null;
-                            if (method.Parameters[0].Name == "get")
-                            {
-                                if (method.Parameters[1].Name == "set")
-                                {
-                                    templateName = "GetterSetter";
-                                    metadata = "@:isVar";
-                                }
-                                else
-                                    templateName = "Getter";
-                            }
-                            else if (method.Parameters[1].Name == "set")
-                            {
-                                templateName = "Setter";
-                            }
-
-                            decl = TemplateUtils.ReplaceTemplateVariable(decl, "MetaData", metadata);
-
-                            if (templateName != null)
-                            {
-                                var accessor = NewLine + TemplateUtils.ToDeclarationString(method, TemplateUtils.GetTemplate(templateName));
-                                accessor = TemplateUtils.ReplaceTemplateVariable(accessor, "Modifiers", null);
-                                accessor = TemplateUtils.ReplaceTemplateVariable(accessor, "Member", method.Name);
-                                decl += accessor;
-                            }
-                        }
-                        else
-                            decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Getter"));
-                    }
-                    else if ((method.Flags & FlagType.Setter) > 0)
-                        decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Setter"));
-                    else if ((method.Flags & FlagType.Function) > 0)
-                        decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Function"));
-                    else
-                        decl = NewLine + TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Variable"));
+                    if ((method.Flags & FlagType.Getter) > 0) decl = ((ASGenerator) ctx.CodeGenerator).GetGetterImplementationTemplate(method);
+                    else if ((method.Flags & FlagType.Setter) > 0) decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Setter"));
+                    else if ((method.Flags & FlagType.Function) > 0) decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Function"));
+                    else decl = NewLine + TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Variable"));
                     decl = TemplateUtils.ReplaceTemplateVariable(decl, "Member", "_" + method.Name);
                     decl = TemplateUtils.ReplaceTemplateVariable(decl, "Void", features.voidKey);
                     decl = TemplateUtils.ReplaceTemplateVariable(decl, "Body", null);
                     decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", NewLine);
 
-                    if (!entry)
-                    {
-                        decl = TemplateUtils.ReplaceTemplateVariable(decl, "EntryPoint", null);
-                    }
-
+                    if (!entry) decl = TemplateUtils.ReplaceTemplateVariable(decl, "EntryPoint", null);
                     decl += NewLine;
-
                     entry = false;
-
                     sb.Append(decl);
                     canGenerate = true;
-
                     typesUsed.Add(method.Type);
-
                     if (method.Parameters != null && method.Parameters.Count > 0)
                         foreach (MemberModel param in method.Parameters)
                             typesUsed.Add(param.Type);
@@ -3424,7 +3371,12 @@ namespace ASCompletion.Completion
             finally { sci.EndUndoAction(); }
         }
 
-        private static void AddTypeOnce(List<string> typesUsed, string qualifiedName)
+        protected virtual string GetGetterImplementationTemplate(MemberModel method)
+        {
+            return TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Getter"));
+        }
+
+        private static void AddTypeOnce(ICollection<string> typesUsed, string qualifiedName)
         {
             if (!typesUsed.Contains(qualifiedName)) typesUsed.Add(qualifiedName);
         }
@@ -3516,11 +3468,10 @@ namespace ASCompletion.Completion
 
         public static bool MakePrivate(ScintillaControl Sci, MemberModel member, ClassModel inClass)
         {
-            ContextFeatures features = ASContext.Context.Features;
-            string visibility = GetPrivateKeyword(inClass);
+            var features = ASContext.Context.Features;
+            var visibility = GetPrivateKeyword(inClass);
             if (features.publicKey == null || visibility == null) return false;
-            Regex rePublic = new Regex(String.Format(@"\s*({0})\s+", features.publicKey));
-
+            var rePublic = new Regex($@"\s*({features.publicKey})\s+");
             for (int i = member.LineFrom; i <= member.LineTo; i++)
             {
                 var line = Sci.GetLine(i);

@@ -214,5 +214,36 @@ namespace HaXeContext.Generators
                 else variableTemplate += receiver.Parameters[1].Name + ")";
             }
         }
+
+        protected override string GetGetterImplementationTemplate(MemberModel method)
+        {
+            var result = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Property"));
+            string templateName = null;
+            string metadata = null;
+            var parameters = method.Parameters;
+            var parametersCount = parameters?.Count ?? 0;
+            if (parametersCount > 0)
+            {
+                if (parameters[0].Name == "get")
+                {
+                    if (parametersCount > 1 && parameters[1].Name == "set")
+                    {
+                        templateName = "GetterSetter";
+                        metadata = "@:isVar";
+                    }
+                    else templateName = "Getter";
+                }
+                else if (parametersCount > 1 && parameters[1].Name == "set") templateName = "Setter";
+            }
+            result = TemplateUtils.ReplaceTemplateVariable(result, "MetaData", metadata);
+            if (templateName != null)
+            {
+                var accessor = NewLine + TemplateUtils.ToDeclarationString(method, TemplateUtils.GetTemplate(templateName));
+                accessor = TemplateUtils.ReplaceTemplateVariable(accessor, "Modifiers", null);
+                accessor = TemplateUtils.ReplaceTemplateVariable(accessor, "Member", method.Name);
+                result += accessor;
+            }
+            return result;
+        }
     }
 }
