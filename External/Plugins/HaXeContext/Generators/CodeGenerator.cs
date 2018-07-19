@@ -172,6 +172,22 @@ namespace HaXeContext.Generators
             return qualifiedName;
         }
 
+        protected override string GetAddInterfaceDefTemplate(MemberModel member)
+        {
+            if ((member.Flags & (FlagType.Getter | FlagType.Setter)) != 0)
+            {
+                var template = TemplateUtils.GetTemplate("IGetterSetter");
+                var parameters = member.Parameters;
+                if (parameters != null)
+                {
+                    if (parameters.Count > 0) template = template.Replace("get_$(Name)", parameters[0].Name);
+                    if (parameters.Count > 1) template = template.Replace("set_$(Name)", parameters[1].Name);
+                }
+                return template;
+            }
+            return base.GetAddInterfaceDefTemplate(member);
+        }
+
         protected override string GetGetterImplementationTemplate(MemberModel method)
         {
             var result = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Property"));
