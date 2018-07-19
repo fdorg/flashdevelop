@@ -71,17 +71,20 @@ namespace HaXeContext.Generators
             // explore getters or setters
             const FlagType mask = FlagType.Function | FlagType.Getter | FlagType.Setter;
             var tmpClass = curClass.Extends;
-            var acc = ctx.TypesAffinity(curClass, tmpClass);
+            var access = ctx.TypesAffinity(curClass, tmpClass);
             while (tmpClass != null && !tmpClass.IsVoid())
             {
                 foreach (MemberModel member in tmpClass.Members)
                 {
                     if (curClass.Members.Search(member.Name, FlagType.Override, 0) != null) continue;
                     var parameters = member.Parameters;
-                    if ((member.Flags & FlagType.Dynamic) > 0
-                        && (member.Access & acc) > 0
-                        && ((member.Flags & FlagType.Function) > 0
-                            || ((member.Flags & mask) > 0 && parameters != null && (parameters[0].Name == "get" || parameters[1].Name == "set"))))
+                    var parametersCount = parameters?.Count ?? 0;
+                    if ((member.Flags & FlagType.Dynamic) != 0
+                        && (member.Access & access) != 0
+                        && ((member.Flags & FlagType.Function) != 0
+                            || ((member.Flags & mask) != 0 && ((parametersCount > 0 && parameters[0].Name == "get")
+                                                               || (parametersCount > 1 && parameters[1].Name == "set")
+                        ))))
                     {
                         members.Add(member);
                     }
@@ -89,7 +92,7 @@ namespace HaXeContext.Generators
 
                 tmpClass = tmpClass.Extends;
                 // members visibility
-                acc = ctx.TypesAffinity(curClass, tmpClass);
+                access = ctx.TypesAffinity(curClass, tmpClass);
             }
             members.Sort();
 

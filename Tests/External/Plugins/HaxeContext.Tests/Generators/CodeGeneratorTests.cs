@@ -907,6 +907,10 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("HandleOverrideCompletion_typedef")
                     .Returns(false)
                     .SetName("Handle override completion. Typedef.");
+                yield return new TestCaseData("HandleOverrideCompletion_issue2222_1")
+                    .Returns(true)
+                    .SetName("Issue2222. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2222");
             }
         }
 
