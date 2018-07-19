@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ASCompletion.Completion;
 using ASCompletion.Context;
@@ -172,6 +173,37 @@ namespace HaXeContext.Generators
             return qualifiedName;
         }
 
+        protected override string GetGetterImplementationTemplate(MemberModel method)
+        {
+            var result = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Property"));
+            string templateName = null;
+            string metadata = null;
+            var parameters = method.Parameters;
+            var parametersCount = parameters?.Count ?? 0;
+            if (parametersCount > 0)
+            {
+                if (parameters[0].Name == "get")
+                {
+                    if (parametersCount > 1 && parameters[1].Name == "set")
+                    {
+                        templateName = "GetterSetter";
+                        metadata = "@:isVar";
+                    }
+                    else templateName = "Getter";
+                }
+                else if (parametersCount > 1 && parameters[1].Name == "set") templateName = "Setter";
+            }
+            result = TemplateUtils.ReplaceTemplateVariable(result, "MetaData", metadata);
+            if (templateName != null)
+            {
+                var accessor = NewLine + TemplateUtils.ToDeclarationString(method, TemplateUtils.GetTemplate(templateName));
+                accessor = TemplateUtils.ReplaceTemplateVariable(accessor, "Modifiers", null);
+                accessor = TemplateUtils.ReplaceTemplateVariable(accessor, "Member", method.Name);
+                result += accessor;
+            }
+            return result;
+        }
+
         protected override void TryGetGetterSetterDelegateTemplate(MemberModel member, MemberModel receiver, ref FlagType flags, ref string variableTemplate, ref string methodTemplate)
         {
             if ((flags & (FlagType.Getter | FlagType.Setter)) != 0)
@@ -215,35 +247,18 @@ namespace HaXeContext.Generators
             }
         }
 
-        protected override string GetGetterImplementationTemplate(MemberModel method)
+        protected override string TryGetOverrideGetterTemplate(ClassModel ofClass, List<MemberModel> parameters, MemberModel newMember)
         {
-            var result = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Property"));
-            string templateName = null;
-            string metadata = null;
-            var parameters = method.Parameters;
-            var parametersCount = parameters?.Count ?? 0;
-            if (parametersCount > 0)
-            {
-                if (parameters[0].Name == "get")
-                {
-                    if (parametersCount > 1 && parameters[1].Name == "set")
-                    {
-                        templateName = "GetterSetter";
-                        metadata = "@:isVar";
-                    }
-                    else templateName = "Getter";
-                }
-                else if (parametersCount > 1 && parameters[1].Name == "set") templateName = "Setter";
-            }
-            result = TemplateUtils.ReplaceTemplateVariable(result, "MetaData", metadata);
-            if (templateName != null)
-            {
-                var accessor = NewLine + TemplateUtils.ToDeclarationString(method, TemplateUtils.GetTemplate(templateName));
-                accessor = TemplateUtils.ReplaceTemplateVariable(accessor, "Modifiers", null);
-                accessor = TemplateUtils.ReplaceTemplateVariable(accessor, "Member", method.Name);
-                result += accessor;
-            }
-            return result;
+            if (parameters == null || parameters.Count == 0 || parameters.First().Name != "get"
+                || ASContext.Context.CurrentClass.Members.Search($"get_{newMember.Name}", FlagType.Function, 0) != null) return string.Empty;
+            return base.TryGetOverrideGetterTemplate(ofClass, parameters, newMember);
+        }
+
+        protected override string TryGetOverrideSetterTemplate(ClassModel ofClass, List<MemberModel> parameters, MemberModel newMember)
+        {
+            if (parameters == null || parameters.Count == 0 || parameters.Count > 2 || parameters.Last().Name  != "set"
+                || ASContext.Context.CurrentClass.Members.Search($"set_{newMember.Name}", FlagType.Function, 0) != null) return string.Empty;
+            return base.TryGetOverrideSetterTemplate(ofClass, parameters, newMember);
         }
     }
 }
