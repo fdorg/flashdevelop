@@ -556,6 +556,12 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterGeneratePublicFunction_issue2201_4.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeGeneratePublicFunction_issue2201_5.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterGeneratePublicFunction_issue2201_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2220_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2220_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2220_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2220_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2220_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2220_4.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

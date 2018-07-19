@@ -11,6 +11,7 @@ namespace HaXeContext.Generators
 {
     internal class CodeGenerator : ASGenerator
     {
+        /// <inheritdoc />
         protected override void ContextualGenerator(ScintillaControl sci, int position, ASResult expr, List<ICompletionListItem> options)
         {
             var context = ASContext.Context;
@@ -22,17 +23,32 @@ namespace HaXeContext.Generators
             base.ContextualGenerator(sci, position, expr, options);
         }
 
+        /// <inheritdoc />
         protected override bool CanShowConvertToConst(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return !ASContext.Context.CodeComplete.IsStringInterpolationStyle(sci, position) 
                 && base.CanShowConvertToConst(sci, position, expr, found);
         }
 
+        /// <inheritdoc />
         protected override bool CanShowImplementInterfaceList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return expr.Context.Separator != "=" && base.CanShowImplementInterfaceList(sci, position, expr, found);
         }
 
+        /// <inheritdoc />
+        protected override bool CanShowGenerateGetter(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        {
+            return contextToken == "get" && found.Member != null && found.Member.Flags.HasFlag(FlagType.Getter | FlagType.Setter);
+        }
+
+        /// <inheritdoc />
+        protected override bool CanShowGenerateSetter(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        {
+            return contextToken == "set" && found.Member != null && found.Member.Flags.HasFlag(FlagType.Getter | FlagType.Setter);
+        }
+
+        /// <inheritdoc />
         protected override bool CanShowGenerateConstructorAndToString(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             var flags = found.InClass.Flags;

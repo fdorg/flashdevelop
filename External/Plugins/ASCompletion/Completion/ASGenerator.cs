@@ -152,25 +152,22 @@ namespace ASCompletion.Completion
                 if ((found.Member.Flags & (FlagType.Function | FlagType.Getter | FlagType.Setter)) > 0
                     && resolve.Member == null && resolve.Type == null)
                 {
-                    if (IsHaxe)
+                    if (CanShowGenerateGetter(sci, position, resolve, found))
                     {
-                        if (contextToken == "get")
-                        {
-                            ShowGetterList(found, options);
-                            return;
-                        }
-                        if (contextToken == "set")
-                        {
-                            ShowSetterList(found, options);
-                            return;
-                        }
+                        ShowGetterList(found, options);
+                        return;
+                    }
+                    if (CanShowGenerateSetter(sci, position, resolve, found))
+                    {
+                        ShowSetterList(found, options);
+                        return;
                     }
                     var text = sci.GetLine(line);
                     if (contextToken != null)
                     {
                         // "generate event handlers" suggestion
-                        string re = String.Format(patternEvent, contextToken);
-                        Match m = Regex.Match(text, re, RegexOptions.IgnoreCase);
+                        var re = string.Format(patternEvent, contextToken);
+                        var m = Regex.Match(text, re, RegexOptions.IgnoreCase);
                         if (m.Success)
                         {
                             contextMatch = m;
@@ -178,7 +175,7 @@ namespace ASCompletion.Completion
                             ShowEventList(found, options);
                             return;
                         }
-                        m = Regex.Match(text, String.Format(patternAS2Delegate, contextToken), RegexOptions.IgnoreCase);
+                        m = Regex.Match(text, string.Format(patternAS2Delegate, contextToken), RegexOptions.IgnoreCase);
                         if (m.Success)
                         {
                             contextMatch = m;
@@ -449,12 +446,32 @@ namespace ASCompletion.Completion
         /// <param name="position">Cursor position</param>
         /// <param name="expr">Expression at cursor position</param>
         /// <param name="found">The declaration target at current line(can not be null)</param>
-        /// <returns>true, if can show `Convert to constant` list</returns>
+        /// <returns>true, if can show "Convert to constant" list</returns>
         protected virtual bool CanShowConvertToConst(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return !ASContext.Context.CurrentClass.Flags.HasFlag(FlagType.Interface)
                 && ASComplete.IsLiteralStyle(sci.BaseStyleAt(position));
         }
+
+        /// <summary>
+        /// Check if "Getter" are available at the current cursor position.
+        /// </summary>
+        /// <param name="sci">The Scintilla control containing the document</param>
+        /// <param name="position">Cursor position</param>
+        /// <param name="expr">Expression at cursor position</param>
+        /// <param name="found">The declaration target at current line(can not be null)</param>
+        /// <returns>true, if can show "Getter" list</returns>
+        protected virtual bool CanShowGenerateGetter(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found) => false;
+
+        /// <summary>
+        /// Check if "Setter" are available at the current cursor position.
+        /// </summary>
+        /// <param name="sci">The Scintilla control containing the document</param>
+        /// <param name="position">Cursor position</param>
+        /// <param name="expr">Expression at cursor position</param>
+        /// <param name="found">The declaration target at current line(can not be null)</param>
+        /// <returns>true, if can show "Setter" list</returns>
+        protected virtual bool CanShowGenerateSetter(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found) => false;
 
         /// <summary>
         /// Check if "Generate constructor" and "Generate toString()" are available at the current cursor position.
@@ -463,7 +480,7 @@ namespace ASCompletion.Completion
         /// <param name="position">Cursor position</param>
         /// <param name="expr">Expression at cursor position</param>
         /// <param name="found">The declaration target at current line(can not be null)</param>
-        /// <returns>true, if can show `Generate constructor` and(or) `Generate toString()` list</returns>
+        /// <returns>true, if can show "Generate constructor" and(or) "Generate toString()" list</returns>
         protected virtual bool CanShowGenerateConstructorAndToString(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return contextToken == null
@@ -481,7 +498,7 @@ namespace ASCompletion.Completion
         /// <param name="position">Cursor position</param>
         /// <param name="expr">Expression at cursor position</param>
         /// <param name="found">Declaration target at current line(can not be null)</param>
-        /// <returns>true, if can show `Implement Interface` list</returns>
+        /// <returns>true, if can show "Implement Interface" list</returns>
         protected virtual bool CanShowImplementInterfaceList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return expr.Context.ContextFunction == null && expr.Context.ContextMember == null
@@ -495,7 +512,7 @@ namespace ASCompletion.Completion
         /// <param name="position">Cursor position</param>
         /// <param name="expr">Expression at cursor position</param>
         /// <param name="found">Declaration target at current line(can not be null)</param>
-        /// <returns>true, if can show `Add to interface` list</returns>
+        /// <returns>true, if can show "Add to interface" list</returns>
         protected virtual bool CanShowAddToInterfaceList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return expr.Member != null
@@ -517,10 +534,10 @@ namespace ASCompletion.Completion
                 if (def.Name == type && (def.Flags & FlagType.Delegate) > 0)
                     return def;
 
-            if (type.IndexOf('.') < 0)
+            if (!type.Contains('.'))
             {
-                string dotType = '.' + type;
-                MemberList imports = ASContext.Context.ResolveImports(inFile);
+                var dotType = '.' + type;
+                var imports = ASContext.Context.ResolveImports(inFile);
                 foreach (MemberModel import in imports)
                     if (import.Type.EndsWithOrdinal(dotType))
                     {
@@ -529,7 +546,7 @@ namespace ASCompletion.Completion
                     }
             }
 
-            MemberList known = ASContext.Context.GetAllProjectClasses();
+            var known = ASContext.Context.GetAllProjectClasses();
             foreach (MemberModel def in known)
                 if (def.Type == type && (def.Flags & FlagType.Delegate) > 0)
                     return def;
