@@ -1075,7 +1075,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        GenerateFunctionJob(job, sci, member, detach, inClass);
+                        GenerateFunctionJob(job, sci, member, true, inClass);
                     }
                     finally
                     {
@@ -1179,8 +1179,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        int offset = InsertImport(member, true);
-                        position += offset;
+                        position += InsertImport(member, true);
                         sci.SetSel(position, position);
                     }
                     finally
@@ -1210,7 +1209,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        GenerateFieldFromParameter(sci, member, inClass, (Visibility)(((Hashtable)data)["scope"]));
+                        GenerateFieldFromParameter(sci, member, inClass, (Visibility) (((Hashtable) data)["scope"]));
                     }
                     finally
                     {
@@ -1222,7 +1221,7 @@ namespace ASCompletion.Completion
                     sci.BeginUndoAction();
                     try
                     {
-                        AddInterfaceDefJob(sci, member, inClass, (String)data);
+                        AddInterfaceDefJob(sci, member, inClass, (string)data);
                     }
                     finally
                     {
@@ -1383,6 +1382,7 @@ namespace ASCompletion.Completion
             var returnType = GetStatementReturnType(sci, inClass, sci.GetLine(currentLine), sci.PositionFromLine(currentLine));
             AssignStatementToVar(sci, inClass, returnType);
         }
+        
         static void AssignStatementToVar(ScintillaControl sci, ClassModel inClass, StatementReturnType returnType)
         {
             var ctx = inClass.InFile.Context;
@@ -1467,23 +1467,24 @@ namespace ASCompletion.Completion
             if (type == ctx.Features.voidKey) type = null;
             if (varname == null) varname = GuessVarName(word, type);
             if (varname != null && varname == word) varname = varname.Length == 1 ? varname + "1" : varname[0] + "";
-            varname = AvoidKeyword(varname);
-            
-            string cleanType = null;
-            if (type != null) cleanType = MemberModel.FormatType(GetShortType(type));
-            var template = TemplateUtils.GetTemplate("AssignVariable");
-            template = TemplateUtils.ReplaceTemplateVariable(template, "Name", varname);
-            template = TemplateUtils.ReplaceTemplateVariable(template, "Type", cleanType);
-
-            sci.SetSel(pos, pos);
-            InsertCode(pos, template, sci);
-
+            ((ASGenerator) ctx.CodeGenerator).AssignStatementToVar(sci, pos, varname, type);
             if (ctx.Settings.GenerateImports && type != null)
             {
                 var inClassForImport = resolve.InClass ?? resolve.RelClass ?? inClass;
                 var types = GetQualifiedTypes(new [] {type}, inClassForImport.InFile);
                 AddImportsByName(types, sci.LineFromPosition(pos));
             }
+        }
+
+        protected virtual void AssignStatementToVar(ScintillaControl sci, int position, string name, string type)
+        {
+            name = AvoidKeyword(name);
+            if (type != null) type = MemberModel.FormatType(GetShortType(type));
+            var template = TemplateUtils.GetTemplate("AssignVariable");
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Name", name);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Type", type);
+            sci.SetSel(position, position);
+            InsertCode(position, template, sci);
         }
 
         protected virtual bool AssignStatementToVar(ScintillaControl sci, ClassModel inClass, ASExpr expr)
@@ -2008,10 +2009,7 @@ namespace ASCompletion.Completion
         /// <param name="lineTo">The line inside the Scintilla document where the owner member of the body ends</param>
         /// <param name="sci">The Scintilla control containing the document</param>
         /// <returns>The position inside the scintilla document, or -1 if not suitable position was found</returns>
-        public static int GetBodyStart(int lineFrom, int lineTo, ScintillaControl sci)
-        {
-            return GetBodyStart(lineFrom, lineTo, sci, true);
-        }
+        public static int GetBodyStart(int lineFrom, int lineTo, ScintillaControl sci) => GetBodyStart(lineFrom, lineTo, sci, true);
 
         /// <summary>
         /// Tries to get the start position of a code block, delimited by { and }
@@ -2792,8 +2790,7 @@ namespace ASCompletion.Completion
             }
             if (caller?.Parameters != null && caller.Parameters.Count > 0)
             {
-                Func<string, string> cleanType = null;
-                cleanType = s => s.StartsWith("(") && s.EndsWith(')') ? cleanType(s.Trim('(', ')')) : s;
+                string CleanType(string s) => s.StartsWith("(") && s.EndsWith(')') ? CleanType(s.Trim('(', ')')) : s;
                 var parameterType = caller.Parameters[parameterIndex].Type;
                 if ((char) sci.CharAt(wordPos) == '(') newMemberType = parameterType;
                 else
@@ -2865,7 +2862,7 @@ namespace ASCompletion.Completion
                                     newMemberType = parameterType.Substring(startPosition);
                                 continue;
                             }
-                            type = cleanType(type);
+                            type = CleanType(type);
                             var parameter = $"parameter{parameters.Count}";
                             if (type.StartsWith('?'))
                             {
@@ -2879,7 +2876,7 @@ namespace ASCompletion.Completion
                             parameters.Clear();
                     }
                 }
-                newMemberType = cleanType(newMemberType);
+                newMemberType = CleanType(newMemberType);
             }
             // add imports to function argument types
             if (ASContext.Context.Settings.GenerateImports && parameters.Count > 0)
@@ -3050,10 +3047,7 @@ namespace ASCompletion.Completion
         public static void GenerateExtractMethod(ScintillaControl sci, string newName)
         {
             string selection = sci.SelText;
-            if (string.IsNullOrEmpty(selection))
-            {
-                return;
-            }
+            if (string.IsNullOrEmpty(selection)) return;
 
             var trimmedLength = selection.TrimStart().Length;
             if (trimmedLength == 0) return;
@@ -3307,8 +3301,7 @@ namespace ASCompletion.Completion
             {
                 foreach (MemberModel method in iType.Members)
                 {
-                    if ((method.Flags & flags) == 0
-                        || method.Name == iType.Name)
+                    if ((method.Flags & flags) == 0 || method.Name == iType.Name)
                         continue;
 
                     // check if method exists
@@ -3348,8 +3341,7 @@ namespace ASCompletion.Completion
                 int position = sci.CurrentPos;
                 if (ASContext.Context.Settings.GenerateImports && typesUsed.Count > 0)
                 {
-                    int offset = AddImportsByName(typesUsed, sci.LineFromPosition(position));
-                    position += offset;
+                    position += AddImportsByName(typesUsed, sci.LineFromPosition(position));
                     sci.SetSel(position, position);
                 }
                 InsertCode(position, sb.ToString(), sci);
@@ -3475,30 +3467,27 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        public static bool MakeHaxeProperty(ScintillaControl Sci, MemberModel member, string args)
+        public static bool MakeHaxeProperty(ScintillaControl sci, MemberModel member, string args)
         {
             ContextFeatures features = ASContext.Context.Features;
             string kind = features.varKey;
 
-            if ((member.Flags & FlagType.Getter) > 0)
-                kind = features.getKey;
-            else if ((member.Flags & FlagType.Setter) > 0)
-                kind = features.setKey;
-            else if (member.Flags == FlagType.Function)
-                kind = features.functionKey;
+            if ((member.Flags & FlagType.Getter) > 0) kind = features.getKey;
+            else if ((member.Flags & FlagType.Setter) > 0) kind = features.setKey;
+            else if (member.Flags == FlagType.Function) kind = features.functionKey;
 
-            Regex reMember = new Regex(String.Format(@"{0}\s+({1})[\s:]", kind, member.Name));
+            Regex reMember = new Regex($@"{kind}\s+({member.Name})[\s:]");
 
             for (int i = member.LineFrom; i <= member.LineTo; i++)
             {
-                var line = Sci.GetLine(i);
+                var line = sci.GetLine(i);
                 var m = reMember.Match(line);
                 if (m.Success)
                 {
-                    var index = Sci.MBSafeTextLength(line.Substring(0, m.Groups[1].Index));
-                    var position = Sci.PositionFromLine(i) + index;
-                    Sci.SetSel(position, position + member.Name.Length);
-                    Sci.ReplaceSel(member.Name + args);
+                    var index = sci.MBSafeTextLength(line.Substring(0, m.Groups[1].Index));
+                    var position = sci.PositionFromLine(i) + index;
+                    sci.SetSel(position, position + member.Name.Length);
+                    sci.ReplaceSel(member.Name + args);
                     UpdateLookupPosition(position, 1);
                     return true;
                 }
@@ -3559,12 +3548,10 @@ namespace ASCompletion.Completion
         /// </summary>
         private static string GetNewPropertyNameFor(MemberModel member)
         {
-            if (member.Name.Length == 0)
-                return "prop";
+            if (member.Name.Length == 0) return "prop";
             if (Regex.IsMatch(member.Name, "^[A-Z].*[a-z]"))
-                return Char.ToLower(member.Name[0]) + member.Name.Substring(1);
-            else
-                return "_" + member.Name;
+                return char.ToLower(member.Name[0]) + member.Name.Substring(1);
+            return "_" + member.Name;
         }
 
         private static void GenerateDelegateMethod(string name, MemberModel afterMethod, int position, ClassModel inClass)
@@ -3839,15 +3826,9 @@ namespace ASCompletion.Completion
             return found;
         }
 
-        private static MemberModel FindLatest(FlagType match, ClassModel inClass)
-        {
-            return FindLatest(match, 0, inClass);
-        }
+        private static MemberModel FindLatest(FlagType match, ClassModel inClass) => FindLatest(match, 0, inClass);
 
-        private static MemberModel FindLatest(FlagType match, Visibility visi, ClassModel inClass)
-        {
-            return FindLatest(match, visi, inClass, true, true);
-        }
+        private static MemberModel FindLatest(FlagType match, Visibility visi, ClassModel inClass) => FindLatest(match, visi, inClass, true, true);
 
         private static MemberModel FindLatest(FlagType match, Visibility visi, ClassModel inClass, bool isFlagMatchStrict, bool isVisibilityMatchStrict)
         {
@@ -4435,10 +4416,7 @@ namespace ASCompletion.Completion
 
         protected static int lookupPosition;
 
-        public static void InsertCode(int position, string src)
-        {
-            InsertCode(position, src, ASContext.CurSciControl);
-        }
+        public static void InsertCode(int position, string src) => InsertCode(position, src, ASContext.CurSciControl);
 
         public static void InsertCode(int position, string src, ScintillaControl sci)
         {
@@ -4516,10 +4494,7 @@ namespace ASCompletion.Completion
             }
         }
 
-        private static void AddLookupPosition()
-        {
-            AddLookupPosition(ASContext.CurSciControl);
-        }
+        private static void AddLookupPosition() => AddLookupPosition(ASContext.CurSciControl);
 
         private static void AddLookupPosition(ScintillaControl sci)
         {
@@ -4574,55 +4549,39 @@ namespace ASCompletion.Completion
     /// </summary>
     class GeneratorItem : ICompletionListItem
     {
-        private string label;
         internal GeneratorJobType job { get; }
-        private MemberModel member;
-        private ClassModel inClass;
-        private Object data;
+        private readonly MemberModel member;
+        private readonly ClassModel inClass;
 
         public GeneratorItem(string label, GeneratorJobType job, MemberModel member, ClassModel inClass)
         {
-            this.label = label;
+            Label = label;
             this.job = job;
             this.member = member;
             this.inClass = inClass;
         }
 
-        public GeneratorItem(string label, GeneratorJobType job, MemberModel member, ClassModel inClass, Object data) : this(label, job, member, inClass)
+        public GeneratorItem(string label, GeneratorJobType job, MemberModel member, ClassModel inClass, object data) : this(label, job, member, inClass)
         {
-            this.data = data;
+            Data = data;
         }
 
-        public string Label
-        {
-            get { return label; }
-        }
-        public string Description
-        {
-            get { return TextHelper.GetString("Info.GeneratorTemplate"); }
-        }
+        public string Label { get; }
 
-        public Bitmap Icon
-        {
-            get { return (Bitmap)ASContext.Panel.GetIcon(PluginUI.ICON_DECLARATION); }
-        }
+        public string Description => TextHelper.GetString("Info.GeneratorTemplate");
+
+        public Bitmap Icon => (Bitmap)ASContext.Panel.GetIcon(PluginUI.ICON_DECLARATION);
 
         public string Value
         {
             get
             {
-                ASGenerator.GenerateJob(job, member, inClass, label, data);
+                ASGenerator.GenerateJob(job, member, inClass, Label, Data);
                 return null;
             }
         }
 
-        public Object Data
-        {
-            get
-            {
-                return data;
-            }
-        }
+        public object Data { get; }
     }
 
     public class FoundDeclaration
