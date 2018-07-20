@@ -2487,7 +2487,7 @@ namespace ASCompletion.Completion
                         var endPosition = sci.PositionFromLine(currentClass.LineFrom);
                         for (var i = pos; i > endPosition; i--)
                         {
-                            if (sci.PositionIsOnComment(i) || c <= ' ') continue;
+                            if (sci.PositionIsOnComment(i)) continue;
                             var e = GetExpressionType(sci, i, false, true);
                             if (e.Type == currentClass) break;
                             var value = e.Context.Value;
@@ -2814,8 +2814,8 @@ namespace ASCompletion.Completion
             if (!inClass.IsVoid() && !string.IsNullOrEmpty(features.ConstructorKey) && token == features.ConstructorKey && local.BeforeBody)
                 return EvalVariable(inClass.Name, local, inFile, inClass);
             var contextMember = local.ContextMember;
-            if (contextMember == null || local.coma != ComaExpression.None || !local.BeforeBody || (contextMember.Flags & (FlagType.Getter | FlagType.Setter)) > 0
-                || (local.BeforeBody && local.WordBefore != features.functionKey))
+            if (contextMember == null || local.coma != ComaExpression.None || (contextMember.Flags & (FlagType.Getter | FlagType.Setter)) > 0
+                || (local.WordBefore != features.functionKey))
             {
                 // local vars
                 if (local.LocalVars != null)
@@ -3473,22 +3473,19 @@ namespace ASCompletion.Completion
                         if (arrCount == 0 && braCount == 0)
                         {
                             positionExpression = position;
-                            if (parCount == 0)
+                            sbSub.Insert(0, c);
+                            expression.SubExpressions.Add(sbSub.ToString());
+                            sbSub.Clear();
+                            sb.Insert(0, ".#" + (subCount++) + "~");
+                            var pos = position - 1;
+                            var word = GetWordLeft(sci, ref pos);
+                            // for example: return [].<complete>
+                            if (context.Features.codeKeywords.Contains(word))
                             {
-                                sbSub.Insert(0, c);
-                                expression.SubExpressions.Add(sbSub.ToString());
-                                sbSub.Clear();
-                                sb.Insert(0, ".#" + (subCount++) + "~");
-                                var pos = position - 1;
-                                var word = GetWordLeft(sci, ref pos);
-                                // for example: return [].<complete>
-                                if (context.Features.codeKeywords.Contains(word))
-                                {
-                                    expression.Separator = ";";
-                                    expression.WordBefore = word;
-                                    expression.WordBeforePosition = pos + 1;
-                                    break;
-                                }
+                                expression.Separator = ";";
+                                expression.WordBefore = word;
+                                expression.WordBeforePosition = pos + 1;
+                                break;
                             }
                             continue;
                         }
@@ -3753,11 +3750,8 @@ namespace ASCompletion.Completion
                             break;
                         }
                         genCount--;
-                        if (subCount > 0 || genCount < 0)
-                        {
-                            sb.Insert(0, sbSub);
-                            sbSub.Clear();
-                        }
+                        sb.Insert(0, sbSub);
+                        sbSub.Clear();
                     }
                     else if (c == '{')
                     {
