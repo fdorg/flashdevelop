@@ -1,3 +1,5 @@
+// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 //  FILE ENCODING IS UTF-8 WITHOUT A BOM.
 //  русский    中文（简体）    日本    한국의
 //

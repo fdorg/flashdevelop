@@ -1,3 +1,5 @@
+// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Copyright © Sven Groot (Ookii.org) 2009
 // BSD license; see license.txt for details.
 using System;

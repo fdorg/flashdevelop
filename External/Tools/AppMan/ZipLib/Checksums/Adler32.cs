@@ -1,3 +1,5 @@
+// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Adler32.cs - Computes Adler32 data checksum of a data stream
 // Copyright (C) 2001 Mike Krueger
 //

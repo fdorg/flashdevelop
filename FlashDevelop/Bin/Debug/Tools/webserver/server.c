@@ -1,3 +1,5 @@
+// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Copyright (c) 2004-2013 Sergey Lyubka <valenok@gmail.com>
 // Copyright (c) 2013 Cesanta Software Limited
 // All rights reserved
