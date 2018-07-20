@@ -2489,7 +2489,7 @@ namespace ASCompletion.Completion
                         var endPosition = sci.PositionFromLine(currentClass.LineFrom);
                         for (var i = pos; i > endPosition; i--)
                         {
-                            if (sci.PositionIsOnComment(i) || c <= ' ') continue;
+                            if (sci.PositionIsOnComment(i)) continue;
                             var e = GetExpressionType(sci, i, false, true);
                             if (e.Type == currentClass) break;
                             var value = e.Context.Value;
