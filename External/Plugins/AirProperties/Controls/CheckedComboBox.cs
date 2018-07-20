@@ -1,6 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-// Original source code from a CodeProject article, several improvements where added.
+﻿// Original source code from a CodeProject article, several improvements where added.
 
 using System;
 using System.Text;

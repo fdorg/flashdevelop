@@ -1,6 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-/*
+﻿/*
     swfOP is an open source library for manipulation and examination of
     Macromedia Flash (SWF) ActionScript bytecode.
     Copyright (C) 2004 Florian Krüsch.

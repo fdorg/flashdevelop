@@ -1,6 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-#pragma warning disable 0618
+﻿#pragma warning disable 0618
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Text;

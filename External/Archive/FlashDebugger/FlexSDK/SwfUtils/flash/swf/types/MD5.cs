@@ -1,5 +1,3 @@
-// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // Md5.java
 // $Id: Md5.java,v 1.5 2000/08/16 21:37:48 ylafon Exp $
 // (c) COPYRIGHT MIT and INRIA, 1996.

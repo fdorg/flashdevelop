@@ -1,5 +1,3 @@
-// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
 // $ANTLR 2.7.7 (20060930): "as3.g" -> "AS3Lexer.cs"$
 
 

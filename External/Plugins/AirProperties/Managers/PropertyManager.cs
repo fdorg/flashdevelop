@@ -1,6 +1,4 @@
-﻿// This is an independent project of an individual developer. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++ and C#: http://www.viva64.com
-// TODO: Some of these methods should be merged with WizardHelper
+﻿// TODO: Some of these methods should be merged with WizardHelper
 
 using System;
 using System.Collections.Generic;
