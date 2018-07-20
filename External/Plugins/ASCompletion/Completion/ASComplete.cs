@@ -2816,8 +2816,8 @@ namespace ASCompletion.Completion
             if (!inClass.IsVoid() && !string.IsNullOrEmpty(features.ConstructorKey) && token == features.ConstructorKey && local.BeforeBody)
                 return EvalVariable(inClass.Name, local, inFile, inClass);
             var contextMember = local.ContextMember;
-            if (contextMember == null || local.coma != ComaExpression.None || !local.BeforeBody || (contextMember.Flags & (FlagType.Getter | FlagType.Setter)) > 0
-                || (local.BeforeBody && local.WordBefore != features.functionKey))
+            if (contextMember == null || local.coma != ComaExpression.None || (contextMember.Flags & (FlagType.Getter | FlagType.Setter)) > 0
+                || (local.WordBefore != features.functionKey))
             {
                 // local vars
                 if (local.LocalVars != null)
