@@ -211,15 +211,20 @@ namespace ProjectManager.Controls.TreeView
         public override void Refresh(bool recursive)
         {
             base.Refresh(recursive);
-
-            ArrayList projectClasspaths = new ArrayList();
-            ArrayList globalClasspaths = new ArrayList();
-
-            GenericNodeList nodesToDie = new GenericNodeList();
-            foreach (GenericNode oldRef in Nodes) nodesToDie.Add(oldRef);
-            //if (Nodes.Count == 0) recursive = true;
+            var nodesToDie = new GenericNodeList();
+            nodesToDie.AddRange(Nodes);
+            if (PluginMain.Settings.ShowExternalLibraries)
+            {
+                foreach (var it in project.ExternalLibraries)
+                {
+                    var node = ReuseNode(it, nodesToDie) as ProjectClasspathNode ?? new ProjectClasspathNode(project,it,it);
+                    Nodes.Add(node);
+                    node.Refresh(recursive);
+                }
+            }
 
             // explore classpaths
+            var projectClasspaths = new ArrayList();
             if (PluginMain.Settings.ShowProjectClasspaths)
             {
                 projectClasspaths.AddRange(project.Classpaths);
@@ -227,6 +232,7 @@ namespace ProjectManager.Controls.TreeView
             }
             projectClasspaths.Sort();
 
+            var globalClasspaths = new ArrayList();
             if (PluginMain.Settings.ShowGlobalClasspaths)
                 globalClasspaths.AddRange(PluginMain.Settings.GlobalClasspaths);
             globalClasspaths.Sort();
@@ -271,9 +277,7 @@ namespace ProjectManager.Controls.TreeView
                     if (!Path.IsPathRooted(absolute))
                         absolute = project.GetAbsolutePath(asset.Path);
 
-                    bool showNode = true;
-                    if (absolute.StartsWithOrdinal(project.Directory))
-                        showNode = false;
+                    var showNode = !absolute.StartsWithOrdinal(project.Directory);
                     foreach (string path in project.AbsoluteClasspaths)
                         if (absolute.StartsWithOrdinal(path))
                         {

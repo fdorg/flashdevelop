@@ -162,6 +162,18 @@ namespace ProjectManager
             set { filteredDirectoryNames = value; FireChanged("FilteredDirectoryNames"); }
         }
 
+        bool showExternalLibraries = false;
+
+        [DisplayName("Show External Libraries")]
+        [LocalizedDescription("ProjectManager.Description.ShowExternalLibraries")]
+        [LocalizedCategory("ProjectManager.Category.ProjectTree")]
+        [DefaultValue(false)]
+        public bool ShowExternalLibraries
+        {
+            get { return showExternalLibraries; }
+            set { showExternalLibraries = value; FireChanged("ShowExternalLibraries"); }
+        }
+
         [DisplayName("Show Project Classpaths")]
         [LocalizedDescription("ProjectManager.Description.ShowProjectClasspaths")]
         [LocalizedCategory("ProjectManager.Category.ProjectTree")]

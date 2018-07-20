@@ -131,6 +131,7 @@ namespace ProjectManager.Projects
         public AssetCollection LibraryAssets { get { return libraryAssets; } }
         public virtual String LibrarySWFPath { get { return OutputPath; } }
         public Dictionary<string, string> Storage { get { return storage; } }
+        public List<string> ExternalLibraries { get; } = new List<string>();
 
         public CompilerOptions CompilerOptions
         {
