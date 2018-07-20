@@ -3475,22 +3475,19 @@ namespace ASCompletion.Completion
                         if (arrCount == 0 && braCount == 0)
                         {
                             positionExpression = position;
-                            if (parCount == 0)
+                            sbSub.Insert(0, c);
+                            expression.SubExpressions.Add(sbSub.ToString());
+                            sbSub.Clear();
+                            sb.Insert(0, ".#" + (subCount++) + "~");
+                            var pos = position - 1;
+                            var word = GetWordLeft(sci, ref pos);
+                            // for example: return [].<complete>
+                            if (context.Features.codeKeywords.Contains(word))
                             {
-                                sbSub.Insert(0, c);
-                                expression.SubExpressions.Add(sbSub.ToString());
-                                sbSub.Clear();
-                                sb.Insert(0, ".#" + (subCount++) + "~");
-                                var pos = position - 1;
-                                var word = GetWordLeft(sci, ref pos);
-                                // for example: return [].<complete>
-                                if (context.Features.codeKeywords.Contains(word))
-                                {
-                                    expression.Separator = ";";
-                                    expression.WordBefore = word;
-                                    expression.WordBeforePosition = pos + 1;
-                                    break;
-                                }
+                                expression.Separator = ";";
+                                expression.WordBefore = word;
+                                expression.WordBeforePosition = pos + 1;
+                                break;
                             }
                             continue;
                         }
@@ -3755,11 +3752,8 @@ namespace ASCompletion.Completion
                             break;
                         }
                         genCount--;
-                        if (subCount > 0 || genCount < 0)
-                        {
-                            sb.Insert(0, sbSub);
-                            sbSub.Clear();
-                        }
+                        sb.Insert(0, sbSub);
+                        sbSub.Clear();
                     }
                     else if (c == '{')
                     {
