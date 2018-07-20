@@ -39,7 +39,7 @@ namespace CodeFormatter.Handlers
                     if (!firstCRFound)
                         firstCRFound=true;
                     else
-                        count++;;
+                        count++;
                 }
                 i--;
             }
