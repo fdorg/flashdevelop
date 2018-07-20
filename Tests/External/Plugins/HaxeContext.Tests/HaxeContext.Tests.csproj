@@ -571,6 +571,12 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterAddInterfaceDefTests_issue1733_3.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterAddInterfaceDefTests_issue1733_4.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeAddInterfaceDefTests_issue1733_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2230_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2230__1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2230_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2230_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2230_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2230_5.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -124,14 +124,14 @@ namespace HaXeContext.Generators
             else if (expr.WordBefore == "untyped") type = ctx.ResolveType(ctx.Features.dynamicKey, inClass.InFile);
             if (type == null) return false;
             var varName = GuessVarName(type.Name, type.Type);
-            varName = AvoidKeyword(varName);
-            var template = TemplateUtils.GetTemplate("AssignVariable");
-            template = TemplateUtils.ReplaceTemplateVariable(template, "Name", varName);
-            template = TemplateUtils.ReplaceTemplateVariable(template, "Type", type.Name);
-            var pos = expr.WordBeforePosition;
-            sci.SetSel(pos, pos);
-            InsertCode(pos, template, sci);
+            AssignStatementToVar(sci, expr.WordBeforePosition, varName, type.Name);
             return true;
+        }
+
+        protected override void AssignStatementToVar(ScintillaControl sci, int position, string name, string type)
+        {
+            if (((HaXeSettings) ASContext.Context.Settings).DisableTypeDeclaration) type = null;
+            base.AssignStatementToVar(sci, position, name, type);
         }
 
         protected override void GenerateEventHandler(ScintillaControl sci, int position, string template, string currentTarget, string eventName, string handlerName)

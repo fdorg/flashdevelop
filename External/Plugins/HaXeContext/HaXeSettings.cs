@@ -29,7 +29,18 @@ namespace HaXeContext
             get { return documentationCommandLine; }
             set { documentationCommandLine = value; }
         }
+        
 
+        bool disableTypeDeclaration = false;
+
+        [DisplayName("Disable type declaration for variables")]
+        [Category("Code Generator")]
+        [DefaultValue(false)]
+        public bool DisableTypeDeclaration
+        {
+            get { return disableTypeDeclaration; }
+            set { disableTypeDeclaration = value; }
+        }
 
         private bool enableLeadingAsterisks = true;
 
