@@ -312,7 +312,7 @@ namespace XMLCompletion
                     {
                         string expr = expandExpression(sci.SelText);
                         if (expr == null) return false;
-                        if (expr.IndexOfOrdinal("$(EntryPoint)") < 0) expr += "$(EntryPoint)";
+                        if (!expr.Contains("$(EntryPoint)")) expr += "$(EntryPoint)";
                         data["snippet"] = expr;
                     }
                     catch (ZenExpandException zex)
@@ -436,12 +436,12 @@ namespace XMLCompletion
                                     tag = tagStart;
                                     if (atId.Length > 0)
                                     {
-                                        if (tagEnd.IndexOfOrdinal(" id=") < 0) tag += atId;
+                                        if (!tagEnd.Contains(" id=")) tag += atId;
                                         else tagEnd = tagEnd.Replace(" id=\"\"", atId);
                                     }
                                     if (atClass.Length > 0)
                                     {
-                                        if (tagEnd.IndexOfOrdinal(" class=") < 0) tag += atClass;
+                                        if (!tagEnd.Contains(" class=")) tag += atClass;
                                         else tagEnd = tagEnd.Replace(" class=\"\"", atClass);
                                     }
                                     tag += tagEnd;

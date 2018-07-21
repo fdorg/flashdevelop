@@ -694,7 +694,7 @@ namespace AS3Context
                 // parse & cache
                 if (!File.Exists(fileName)) return null;
                 string src = File.ReadAllText(fileName);
-                if (src.IndexOfOrdinal("package") < 0) src = "package {" + src + "}";
+                if (!src.Contains("package")) src = "package {" + src + "}";
                 ASFileParser parser = new ASFileParser();
                 FileModel model = new FileModel(path);
                 parser.ParseSrc(model, src);

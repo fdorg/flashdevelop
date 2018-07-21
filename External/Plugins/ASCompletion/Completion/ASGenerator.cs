@@ -4364,7 +4364,7 @@ namespace ASCompletion.Completion
                     firstLine = line;
                 }
                 // skip Haxe #if blocks
-                else if (txt.StartsWithOrdinal("#if ") && txt.IndexOfOrdinal("#end") < 0) skipIfDef++;
+                else if (txt.StartsWithOrdinal("#if ") && !txt.Contains("#end")) skipIfDef++;
                 else if (skipIfDef > 0)
                 {
                     if (txt.StartsWithOrdinal("#end")) skipIfDef--;

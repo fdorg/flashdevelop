@@ -387,7 +387,7 @@ namespace ASCompletion.Model
             if (String.IsNullOrEmpty(typeDefinition))
                 return TypeDefinitionKind.Null;
 
-            if (typeDefinition.IndexOfOrdinal("/*") < 0 || typeDefinition.IndexOfOrdinal("*/") < 0)
+            if (!typeDefinition.Contains("/*") || !typeDefinition.Contains("*/"))
             {
                 if (!parseCommon)
                     return TypeDefinitionKind.Null;

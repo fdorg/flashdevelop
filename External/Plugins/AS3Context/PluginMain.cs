@@ -402,7 +402,7 @@ namespace AS3Context
         /// </summary>
         public void OpenPanel(object sender, EventArgs e)
         {
-            if (sender is ToolStripButton && profilerPanel.Visible && profilerPanel.DockState.ToString().IndexOfOrdinal("AutoHide") < 0)
+            if (sender is ToolStripButton && profilerPanel.Visible && !profilerPanel.DockState.ToString().Contains("AutoHide"))
             {
                 profilerPanel.Hide();
             }

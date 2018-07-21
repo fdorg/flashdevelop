@@ -997,7 +997,7 @@ namespace ASCompletion.Completion
                     string cmd = ASContext.Context.Settings.DocumentationCommandLine;
                     if (string.IsNullOrEmpty(cmd)) return null;
                     // top-level vars should be searched only if the command includes member information
-                    if (CurrentResolvedContext.Result.InClass == ClassModel.VoidClass && cmd.IndexOfOrdinal("$(Itm") < 0) 
+                    if (CurrentResolvedContext.Result.InClass == ClassModel.VoidClass && !cmd.Contains("$(Itm"))
                         return null;
                     // complete command
                     cmd = ArgumentsProcessor.Process(cmd, CurrentResolvedContext.Arguments);

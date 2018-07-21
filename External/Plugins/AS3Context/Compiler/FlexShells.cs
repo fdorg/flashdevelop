@@ -347,7 +347,7 @@ namespace AS3Context.Compiler
             else if (requireTag) return;
 
             // Flex4 static linking
-            if (isFlex4SDK && cmd.IndexOfOrdinal("-static-link-runtime-shared-libraries") < 0)
+            if (isFlex4SDK && !cmd.Contains("-static-link-runtime-shared-libraries"))
                 cmd += ";-static-link-runtime-shared-libraries=true";
 
             // add current class sourcepath and global classpaths

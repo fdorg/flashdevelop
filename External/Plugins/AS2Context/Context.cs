@@ -1344,7 +1344,7 @@ namespace AS2Context
                 else mtascPath = Path.GetDirectoryName(mtascPath);
 
                 command += ";\"" + CurrentFile + "\"";
-                if (append == null || append.IndexOfOrdinal("-swf-version") < 0)
+                if (append == null || !append.Contains("-swf-version"))
                     command += " -version "+majorVersion;
                 // classpathes
                 foreach(PathModel aPath in classPath)
