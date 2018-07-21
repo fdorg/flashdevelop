@@ -249,7 +249,7 @@ namespace ASCompletion.Model
                 {
                     foreach (KeyValuePair<String,String> replEntry in qStrRepls)
                     {
-                        if (pName.IndexOfOrdinal(replEntry.Key) > -1)
+                        if (pName.Contains(replEntry.Key))
                         {
                             pName = "[COLOR=#F00][I]InvalidName[/I][/COLOR]";
                             break;
@@ -262,7 +262,7 @@ namespace ASCompletion.Model
                 {
                     foreach (KeyValuePair<String,String> replEntry in qStrRepls)
                     {
-                        if (pType.IndexOfOrdinal(replEntry.Key) > -1)
+                        if (pType.Contains(replEntry.Key))
                         {
                             pType = "[COLOR=#F00][I]InvalidType[/I][/COLOR]";
                             break;
@@ -281,7 +281,7 @@ namespace ASCompletion.Model
                     {
                         foreach (KeyValuePair<String,String> replEntry in qStrRepls)
                         {
-                            if (pVal.IndexOfOrdinal(replEntry.Key) > -1)
+                            if (pVal.Contains(replEntry.Key))
                             {
                                 pVal = "[COLOR=#F00][I]InvalidValue[/I][/COLOR]";
                                 break;

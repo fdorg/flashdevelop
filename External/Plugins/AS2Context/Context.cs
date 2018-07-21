@@ -870,7 +870,7 @@ namespace AS2Context
                                     string correctPath = null;
                                     foreach (PathModel pm in classpaths)
                                     {
-                                        if (fullpath.IndexOfOrdinal(pm.Path) > -1 && fullpath.Length > pm.Path.Length)
+                                        if (fullpath.Contains(pm.Path) && fullpath.Length > pm.Path.Length)
                                         {
                                             correctPath = fullpath.Substring(pm.Path.Length + 1);
                                         }
