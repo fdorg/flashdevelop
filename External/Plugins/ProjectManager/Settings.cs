@@ -294,7 +294,7 @@ namespace ProjectManager
             var filteredDirectoryNames = new List<string>(this.filteredDirectoryNames);
 
             foreach (var item in extraFilteredDirectoryNames)
-                if (filteredDirectoryNames.IndexOf(item) == -1) filteredDirectoryNames.Add(item);
+                if (!filteredDirectoryNames.Contains(item)) filteredDirectoryNames.Add(item);
 
             this.filteredDirectoryNames = filteredDirectoryNames.ToArray();
         }
