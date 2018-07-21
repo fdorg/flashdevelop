@@ -252,7 +252,7 @@ namespace ASCompletion.Completion
                     int position = Sci.CurrentPos-1;
                     string tail = GetWordLeft(Sci, ref position);
                     ContextFeatures features = ASContext.Context.Features;
-                    if (tail.IndexOfOrdinal(features.dot) < 0 && features.HasTypePreKey(tail)) tail = "";
+                    if (!tail.Contains(features.dot) && features.HasTypePreKey(tail)) tail = "";
                     // display the full project classes list
                     HandleAllClassesCompletion(Sci, tail, false, true);
                     return true;
@@ -4776,7 +4776,7 @@ namespace ASCompletion.Completion
                 }
 
                 // look for a snippet
-                if (trigger == '\t' && expr.Value.IndexOfOrdinal(features.dot) < 0)
+                if (trigger == '\t' && !expr.Value.Contains(features.dot))
                 {
                     foreach(string key in features.codeKeywords)
                         if (key == expr.Value)
@@ -4831,7 +4831,7 @@ namespace ASCompletion.Completion
             }
             // if not completed a type
             else if (context.IsNull() || !context.IsStatic || context.Type == null
-                || (context.Type.Type != null && context.Type.Type.IndexOfOrdinal(features.dot) < 0)
+                || (context.Type.Type != null && !context.Type.Type.Contains(features.dot))
                 || context.Type.IsVoid())
             {
                 if (context.Member != null && expr.Separator == " " && expr.WordBefore == features.overrideKey)

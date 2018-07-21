@@ -232,7 +232,7 @@ namespace AS3Context
                         if (playerglobal != null)
                         {
                             // add missing SWC in new SDKs
-                            if (!swcPresent && sdkLibs.IndexOfOrdinal(S + "flexlibs") < 0 && Directory.Exists(compiler))
+                            if (!swcPresent && !sdkLibs.Contains(S + "flexlibs") && Directory.Exists(compiler))
                             {
                                 string swcDir = sdkLibs + S + "player" + S;
                                 if (!Directory.Exists(swcDir + "9") && !Directory.Exists(swcDir + "10"))
