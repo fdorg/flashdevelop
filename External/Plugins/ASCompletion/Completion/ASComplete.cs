@@ -2371,9 +2371,9 @@ namespace ASCompletion.Completion
                     while (position >= 0 && groupCount > 0)
                     {
                         c = (char)Sci.CharAt(position);
-                        if ("({[<".IndexOf(c) > -1)
+                        if ("({[<".Contains(c))
                             groupCount--;
-                        else if (")}]>".IndexOf(c) > -1)
+                        else if (")}]>".Contains(c))
                             groupCount++;
                         position--;
                     }

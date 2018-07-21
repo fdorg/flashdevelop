@@ -3004,7 +3004,7 @@ namespace ASCompletion.Completion
                     if (lastPos > 0)
                     {
                         prevOrNextChar = currentMethodBody[lastPos - 1];
-                        if (characterClass.IndexOf(prevOrNextChar) > -1)
+                        if (characterClass.Contains(prevOrNextChar))
                         {
                             continue;
                         }
@@ -3012,7 +3012,7 @@ namespace ASCompletion.Completion
                     if (lastPos + expression.Length < currentMethodBody.Length)
                     {
                         prevOrNextChar = currentMethodBody[lastPos + expression.Length];
-                        if (characterClass.IndexOf(prevOrNextChar) > -1)
+                        if (characterClass.Contains(prevOrNextChar))
                         {
                             continue;
                         }
