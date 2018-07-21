@@ -336,7 +336,7 @@ namespace ProjectManager.Projects
         public string GetAbsolutePath(string path)
         {
             path = Environment.ExpandEnvironmentVariables(path);
-            if (vars != null && path.Contains('$'))
+            if (vars != null && path.IndexOf('$') >= 0)
                 foreach (BuildEventInfo arg in vars) 
                     path = path.Replace(arg.FormattedName, arg.Value);
             return ProjectPaths.GetAbsolutePath(this.Directory, path);

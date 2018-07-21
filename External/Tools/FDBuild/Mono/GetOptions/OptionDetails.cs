@@ -41,7 +41,7 @@ namespace Mono.GetOptions
             {
                 if (this.ParameterType.FullName != "System.Boolean")
                 {
-                    if (this.LongForm.Contains(':'))
+                    if (this.LongForm.IndexOf(':') >= 0)
                     {
                         throw new InvalidOperationException("Options with an embedded colon (':') in their visible name must be boolean!!! [" + this.MemberInfo.ToString() + " isn't]");
                     }
