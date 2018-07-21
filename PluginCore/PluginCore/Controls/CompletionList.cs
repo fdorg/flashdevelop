@@ -781,7 +781,7 @@ namespace PluginCore.Controls
             try
             {
                 String triggers = PluginBase.Settings.InsertionTriggers ?? "";
-                if (triggers.Length > 0 && Regex.Unescape(triggers).Contains(trigger)) return false;
+                if (triggers.Length > 0 && !Regex.Unescape(triggers).Contains(trigger)) return false;
 
                 ICompletionListItem item = null;
                 if (completionList.SelectedIndex >= 0)
