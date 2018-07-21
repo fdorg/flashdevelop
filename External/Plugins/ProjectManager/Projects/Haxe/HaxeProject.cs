@@ -146,7 +146,7 @@ namespace ProjectManager.Projects.Haxe
 
         string Quote(string s)
         {
-            if (s.IndexOf(' ') >= 0)
+            if (s.Contains(' '))
                 return "\"" + s + "\"";
             return s;
         }

@@ -679,7 +679,7 @@ namespace ASCompletion.Completion
         /// </summary>
         internal static string CheckEventType(string name)
         {
-            if (name.IndexOf('"') >= 0) return "Event";
+            if (name.Contains('"')) return "Event";
             if (name.IndexOf('.') > 0) name = name.Substring(0, name.IndexOf('.'));
             ClassModel model = ASContext.Context.ResolveType(name, ASContext.Context.CurrentModel);
             if (model.IsVoid() || model.Name == "Event") return "Event";
@@ -3143,7 +3143,7 @@ namespace ASCompletion.Completion
             while (line < maxLine)
             {
                 string text = sci.GetLine(line++);
-                if (text.IndexOf('{') >= 0)
+                if (text.Contains('{'))
                 {
                     firstVar = true;
                     return sci.PositionFromLine(line) - ((sci.EOLMode == 0) ? 2 : 1);
@@ -4390,7 +4390,7 @@ namespace ASCompletion.Completion
                     break;
                 }
 
-                if (packageLine >= 0 && !IsHaxe && txt.IndexOf('{') >= 0)
+                if (packageLine >= 0 && !IsHaxe && txt.Contains('{'))
                 {
                     packageLine = -1;
                     indent = sci.GetLineIndentation(line - 1) + PluginBase.MainForm.Settings.IndentSize;

@@ -175,12 +175,12 @@ namespace XMLCompletion
                         ns = tag.Attributes["ns"];
                         htag = new HTMLTag(
                             (toUpper) ? tag.Name.ToUpper() : tag.Name, 
-                            (ns != null) ? ns.Value : null, isLeaf != null && isLeaf.Value == "yes");
+                            ns?.Value, isLeaf != null && isLeaf.Value == "yes");
                         if (!string.IsNullOrEmpty(htag.NS) && !namespaces.Contains(htag.NS))
                             namespaces.Add(htag.NS);
                         htag.Attributes = new List<string>();
                         temp = tag.Attributes["at"].Value;
-                        if (temp.IndexOf('@') >= 0)
+                        if (temp.Contains('@'))
                         {
                             attributes = temp.Split(coma);
                             temp = "";

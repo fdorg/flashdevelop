@@ -514,7 +514,7 @@ namespace ASCompletion
                                 Hashtable details = ASComplete.ResolveElement(sci, null);
                                 te.Value = ArgumentsProcessor.Process(te.Value, details);
 
-                                if (te.Value.IndexOf('$') >= 0 && reCostlyArgs.IsMatch(te.Value))
+                                if (te.Value.Contains('$') && reCostlyArgs.IsMatch(te.Value))
                                 {
                                     ASResult result = ASComplete.CurrentResolvedContext.Result ?? new ASResult();
                                     details = new Hashtable();
