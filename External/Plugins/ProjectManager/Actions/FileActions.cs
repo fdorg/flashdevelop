@@ -74,7 +74,7 @@ namespace ProjectManager.Actions
                 string fileName = Path.GetFileNameWithoutExtension(templatePath);
                 string caption = TextHelper.GetString("Label.AddNew") + " ";
 
-                if (fileName.IndexOf('.') > -1)
+                if (fileName.Contains('.'))
                 {
                     // it's something like Class.as.fdt
                     extension = Path.GetExtension(fileName); // .as
