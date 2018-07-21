@@ -666,7 +666,7 @@ namespace XMLCompletion
                     return false;
                 }
                 // Closing tag
-                else if (ctag.Tag.StartsWithOrdinal("</") && (ctag.Tag.IndexOf(' ') < 0))
+                else if (ctag.Tag.StartsWithOrdinal("</") && !ctag.Tag.Contains(' '))
                 {
                     ctag.Name = ctag.Tag.Substring(2);
                     ctag.Tag = "<"+ctag.Name;

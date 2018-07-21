@@ -287,13 +287,13 @@ namespace ASCompletion.Completion
                         needSpace = false;
                     }
                     sb.Append(c);
-                    if (options.SpacedChars.IndexOf(c) >= 0)
+                    if (options.SpacedChars.Contains(c))
                     {
-                        if ((c == '-' || c == '+') && (i >= n || options.Operators.IndexOf(txt[i]) < 0)) // unary sign
+                        if ((c == '-' || c == '+') && (i >= n || !options.Operators.Contains(txt[i]))) // unary sign
                         {
                             needSpace = (c2 == ')' || c2 == ']' || c2 == '\'' || c2 == '"' || Char.IsLetterOrDigit(c2));
                         }
-                        else if (c != '!' || (i < n && options.Operators.IndexOf(txt[i]) >= 0)) // operator
+                        else if (c != '!' || (i < n && options.Operators.Contains(txt[i]))) // operator
                         {
                             while (i < n && (txt[i] == '=' || txt[i] == c))
                             {

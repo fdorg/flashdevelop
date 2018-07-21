@@ -1700,7 +1700,7 @@ namespace ASCompletion.Completion
             {
                 MemberModel param = calltipMember.Parameters[paramIndex];
                 string type = param.Type;
-                if (indexTypeOnly && (String.IsNullOrEmpty(type) || type.IndexOf('@') < 0))
+                if (indexTypeOnly && (String.IsNullOrEmpty(type) || !type.Contains('@')))
                     return ClassModel.VoidClass;
                 if (ASContext.Context.Features.objectKey == "Dynamic" && type.StartsWithOrdinal("Dynamic@"))
                     type = type.Replace("Dynamic@", "Dynamic<") + ">";

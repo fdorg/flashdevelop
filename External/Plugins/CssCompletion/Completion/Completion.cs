@@ -56,7 +56,7 @@ namespace CssCompletion
             bool autoInsert = false;
 
             char c = (char)value;
-            if (wordChars.IndexOf(c) < 0)
+            if (!wordChars.Contains(c))
             {
                 if (c == ':')
                 {

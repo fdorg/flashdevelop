@@ -33,7 +33,7 @@ namespace PluginCore.Helpers
 
             // default values
             if (!config.ContainsKey("java.home")) config["java.home"] = "";
-            else config["java.home"] = config["java.home"].Trim(new char[] { '"', '\'', ' ', '\t' });
+            else config["java.home"] = config["java.home"].Trim('"', '\'', ' ', '\t');
 
             string args = "-Dsun.io.useCanonCaches=false -Xms32m -Xmx512m";
             if (config.ContainsKey("java.args")) args = config["java.args"];
@@ -42,13 +42,13 @@ namespace PluginCore.Helpers
             args = ExpandArguments(args, config, 0);
 
             // add language if not specified
-            if (args.IndexOf("-Duser.language", StringComparison.Ordinal) < 0)
+            if (!args.Contains("-Duser.language"))
             {
                 args += " -Duser.language=en -Duser.region=US";
             }
 
             // flex needs old Java 6 sort
-            if (args.IndexOf("-Djava.util.Arrays.useLegacyMergeSort", StringComparison.Ordinal) < 0)
+            if (!args.Contains("-Djava.util.Arrays.useLegacyMergeSort"))
             {
                 args += " -Djava.util.Arrays.useLegacyMergeSort=true";
             }

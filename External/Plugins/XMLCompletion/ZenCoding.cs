@@ -300,7 +300,7 @@ namespace XMLCompletion
                         if (lastValid - 1 <= pos) break;
                         lastValid = pos + 1;
                     }
-                    else if (!Char.IsLetterOrDigit(c) && "+*$.#:-".IndexOf(c) < 0) break;
+                    else if (!Char.IsLetterOrDigit(c) && !"+*$.#:-".Contains(c)) break;
                     pos--;
                     if (pos < 0) lastValid = 0;
                 }
@@ -456,7 +456,7 @@ namespace XMLCompletion
                         if (tag.Contains("${")) tag = ProcessVars(tag);
 
                         tag = tag.Replace("\\n", "\n").Replace("\\t", "\t");
-                        if (tag.IndexOf('|') < 0) tag = tag.Replace("\"\"", "\"|\"");
+                        if (!tag.Contains('|')) tag = tag.Replace("\"\"", "\"|\"");
 
                         int child = tag.IndexOfOrdinal("${child}");
                         if (child >= 0)
