@@ -192,7 +192,7 @@ namespace CodeFormatter.Handlers
 
         public String print(int startIndent)
         {
-            if (mSource.IndexOfOrdinal(ASPrettyPrinter.mIgnoreFileProcessing) >= 0)
+            if (mSource.Contains(ASPrettyPrinter.mIgnoreFileProcessing))
             {
                 mParseErrors = new List<Exception>();
                 mParseErrors.Add(new Exception("File ignored: Ignore tag exists in file==> " + ASPrettyPrinter.mIgnoreFileProcessing));

@@ -1230,7 +1230,7 @@ namespace HaXeContext
             aClass.Name = baseType.Substring(baseType.LastIndexOf('.') + 1) + "<" + indexType + ">";
             aClass.IndexType = indexType;
 
-            if (aClass.ExtendsType != null && aClass.ExtendsType.IndexOfOrdinal(Tname) >= 0)
+            if (aClass.ExtendsType != null && aClass.ExtendsType.Contains(Tname))
                 aClass.ExtendsType = reReplaceType.Replace(aClass.ExtendsType, indexType);
 
             // special Haxe Proxy support
@@ -1241,7 +1241,7 @@ namespace HaXeContext
 
             foreach (MemberModel member in aClass.Members)
             {
-                if (member.Type != null && member.Type.IndexOfOrdinal(Tname) >= 0)
+                if (member.Type != null && member.Type.Contains(Tname))
                 {
                     member.Type = reReplaceType.Replace(member.Type, indexType);
                 }
@@ -1249,7 +1249,7 @@ namespace HaXeContext
                 {
                     foreach (MemberModel param in member.Parameters)
                     {
-                        if (param.Type != null && param.Type.IndexOfOrdinal(Tname) >= 0)
+                        if (param.Type != null && param.Type.Contains(Tname))
                         {
                             param.Type = reReplaceType.Replace(param.Type, indexType);
                         }
