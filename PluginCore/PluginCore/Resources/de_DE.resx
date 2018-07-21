@@ -6255,4 +6255,8 @@ AND - All conditions are met.</value>
     <value>Remember, don't ask again</value>
     <comment>Added after 5.3.0</comment>
   </data>
+  <data name="ProjectManager.Description.ShowExternalLibraries" xml:space="preserve">
+    <value>Sets whether or not to include external libraries directories in the project tree.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
 </root>

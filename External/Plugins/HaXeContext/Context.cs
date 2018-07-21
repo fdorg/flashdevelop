@@ -441,10 +441,15 @@ namespace HaXeContext
                     OnCompletionModeChange();
                 }
 
-                InstalledSDK installedSDK = GetCurrentSDK();
-                string haxeCP = (installedSDK != null && installedSDK.IsHaxeShim) ? installedSDK.ClassPath : Path.Combine(hxPath, "std");
+                var installedSDK = GetCurrentSDK();
+                var haxeCP = (installedSDK != null && installedSDK.IsHaxeShim) ? installedSDK.ClassPath : Path.Combine(hxPath, "std");
                 if (Directory.Exists(haxeCP))
                 {
+                    if (project != null)
+                    {
+                        project.ExternalLibraries.Clear();
+                        project.ExternalLibraries.Add(haxeCP);
+                    }
                     if (Directory.Exists(Path.Combine(haxeCP, "flash9")))
                     {
                         FLASH_NEW = "flash9";
