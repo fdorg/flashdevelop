@@ -414,7 +414,7 @@ namespace HaXeContext
                         lang = "";
                     else if (contextSetup.TargetBuild.StartsWithOrdinal("html5"))
                         lang = "js";
-                    else if (contextSetup.TargetBuild.IndexOfOrdinal("neko") >= 0)
+                    else if (contextSetup.TargetBuild.Contains("neko"))
                         lang = "neko";
                 }
             }
@@ -607,7 +607,7 @@ namespace HaXeContext
                         path.ValidatePackage = true;
                         // let's hide confusing packages of NME library
                         string src = File.ReadAllText(haxelib);
-                        if (src.IndexOfOrdinal("<project name=\"nme\"") >= 0)
+                        if (src.Contains("<project name=\"nme\""))
                         {
                             ManualExploration(path, new[] { "js", "jeash", "neash", "native", "browser", "flash", "neko", "tools", "samples", "project" });
                         }

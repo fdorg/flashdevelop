@@ -453,7 +453,7 @@ namespace XMLCompletion
 
                     if (customExpand)
                     {
-                        if (tag.IndexOfOrdinal("${") >= 0) tag = ProcessVars(tag);
+                        if (tag.Contains("${")) tag = ProcessVars(tag);
 
                         tag = tag.Replace("\\n", "\n").Replace("\\t", "\t");
                         if (tag.IndexOf('|') < 0) tag = tag.Replace("\"\"", "\"|\"");

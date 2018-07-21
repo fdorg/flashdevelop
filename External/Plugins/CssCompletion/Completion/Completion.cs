@@ -538,7 +538,7 @@ namespace CssCompletion
                     {
                         prevLine = prevLine.Trim();
                         if (prevLine.StartsWithOrdinal("//")) break;
-                        if (!prevLine.EndsWithOrdinal("*/") || prevLine.IndexOfOrdinal("/*") >= 0) break;
+                        if (!prevLine.EndsWithOrdinal("*/") || prevLine.Contains("/*")) break;
                     }
                     prevLine = c + prevLine;
                 }

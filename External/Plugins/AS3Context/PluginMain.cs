@@ -138,7 +138,7 @@ namespace AS3Context
                 {
                     case EventType.ProcessArgs:
                         TextEvent te = e as TextEvent;
-                        if (te.Value.IndexOfOrdinal("$(FlexSDK)") >= 0)
+                        if (te.Value.Contains("$(FlexSDK)"))
                         {
                             te.Value = te.Value.Replace("$(FlexSDK)", contextInstance.GetCompilerPath());
                         }

@@ -434,7 +434,7 @@ namespace OutputPanel
                             newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ProcessEndColor", Color.Blue);
                             break;
                         case -3: // ProcessError
-                            if (message.IndexOfOrdinal("Warning") >= 0) newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.WarningColor", Color.Orange);
+                            if (message.Contains("Warning")) newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.WarningColor", Color.Orange);
                             else newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ErrorColor", Color.Red);
                             break;
                     }
