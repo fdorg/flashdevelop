@@ -531,7 +531,7 @@ namespace Mono.GetOptions
 
         private void ShowUsage(string errorMessage)
         {
-            Console.WriteLine("ERROR: " + errorMessage.TrimEnd(new char[0]));
+            Console.WriteLine("ERROR: " + errorMessage.TrimEnd());
             this.ShowUsage();
         }
 

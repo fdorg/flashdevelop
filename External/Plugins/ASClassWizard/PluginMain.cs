@@ -276,7 +276,7 @@ namespace ASClassWizard
         {
             if (!path.StartsWith(classpath, StringComparison.OrdinalIgnoreCase))
                 return "";
-            string subPath = path.Substring(classpath.Length).Trim(new char[] { '/', '\\', ' ', '.' });
+            string subPath = path.Substring(classpath.Length).Trim('/', '\\', ' ', '.');
             return subPath.Replace(Path.DirectorySeparatorChar, '.');
         }
 
