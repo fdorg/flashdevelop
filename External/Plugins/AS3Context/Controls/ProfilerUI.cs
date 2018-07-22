@@ -381,8 +381,7 @@ namespace AS3Context.Controls
 
         static private string CheckResource(string fileName, string resName)
         {
-            string path = Path.Combine(PathHelper.DataDir, "AS3Context");
-            string fullPath = Path.Combine(path, fileName);
+            string fullPath = Path.Combine(PathHelper.DataDir, "AS3Context", fileName);
             if (!File.Exists(fullPath))
             {
                 string id = "AS3Context.Resources." + resName;

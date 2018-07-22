@@ -209,9 +209,7 @@ namespace FlashLogViewer
         {
             String mmConfigFile = PathHelper.ResolveMMConfig();
             String userAppDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            String macromediaDir = Path.Combine(userAppDir, "Macromedia");
-            String flashPlayerDir = Path.Combine(macromediaDir, "Flash Player");
-            String flashLogDir = Path.Combine(flashPlayerDir, "Logs");
+            String flashLogDir = Path.Combine(userAppDir, "Macromedia", "Flash Player", "Logs");
             try
             {
                 if (!File.Exists(this.Settings.FlashLogFile))

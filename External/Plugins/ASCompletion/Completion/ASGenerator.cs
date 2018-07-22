@@ -2962,12 +2962,10 @@ namespace ASCompletion.Completion
 
             IProject project = PluginBase.CurrentProject;
             if (String.IsNullOrEmpty(className)) className = "Class";
-            string projFilesDir = Path.Combine(PathHelper.TemplateDir, "ProjectFiles");
-            string projTemplateDir = Path.Combine(projFilesDir, project.GetType().Name);
             string paramsString = TemplateUtils.ParametersString(paramMember, true);
             Hashtable info = new Hashtable();
             info["className"] = className;
-            info["templatePath"] = Path.Combine(projTemplateDir, $"Class{ASContext.Context.Settings.DefaultExtension}.fdt");
+            info["templatePath"] = Path.Combine(PathHelper.TemplateDir, "ProjectFiles", project.GetType().Name, $"Class{ASContext.Context.Settings.DefaultExtension}.fdt");
             info["inDirectory"] = Path.GetDirectoryName(inClass.InFile.FileName);
             info["constructorArgs"] = paramsString.Length > 0 ? paramsString : null;
             info["constructorArgTypes"] = constructorArgTypes;

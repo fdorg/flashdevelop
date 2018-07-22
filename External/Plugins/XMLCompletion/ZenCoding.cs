@@ -232,8 +232,7 @@ namespace XMLCompletion
 
         private static void LoadResource(string file)
         {
-            string path = Path.Combine(PathHelper.DataDir, "XMLCompletion");
-            string filePath = Path.Combine(path, file);
+            string filePath = Path.Combine(PathHelper.DataDir, "XMLCompletion", file);
             try
             {
                 if (!File.Exists(filePath) && !WriteResource(file, filePath))

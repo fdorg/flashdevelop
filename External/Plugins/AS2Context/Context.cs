@@ -954,11 +954,14 @@ namespace AS2Context
 
             // search top-level declaration
             foreach(PathModel aPath in classPath)
-            if (File.Exists(Path.Combine(aPath.Path, filename)))
             {
-                filename = Path.Combine(aPath.Path, filename);
-                topLevel = GetCachedFileModel(filename);
-                break;
+                var path = Path.Combine(aPath.Path, filename);
+                if (File.Exists(path))
+                {
+                    filename = path;
+                    topLevel = GetCachedFileModel(filename);
+                    break;
+                }
             }
 
             if (File.Exists(filename))

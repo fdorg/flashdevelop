@@ -23,8 +23,7 @@ namespace FlashDevelop.Managers
         public static String GetSnippet(String word, String syntax, Encoding current)
         {
             String global = Path.Combine(PathHelper.SnippetDir, word + ".fds");
-            String specificDir = Path.Combine(PathHelper.SnippetDir, syntax);
-            String specific = Path.Combine(specificDir, word + ".fds");
+            String specific = Path.Combine(PathHelper.SnippetDir, syntax, word + ".fds");
             if (File.Exists(specific))
             {
                 EncodingFileInfo info = FileHelper.GetEncodingFileInfo(specific);

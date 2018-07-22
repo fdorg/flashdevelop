@@ -362,8 +362,7 @@ namespace ASCompletion.Model
 
         private static string GetCachePath()
         {
-            string pluginDir = Path.Combine(PathHelper.DataDir, "ASCompletion");
-            return Path.Combine(pluginDir, "FileCache");
+            return Path.Combine(PathHelper.DataDir, "ASCompletion", "FileCache");
         }
 
         private void NotifyProgress(string state, int value, int max)

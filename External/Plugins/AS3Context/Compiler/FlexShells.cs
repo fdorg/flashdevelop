@@ -56,8 +56,7 @@ namespace AS3Context.Compiler
         
         static private string CheckResource(string resName, string fileName)
         {
-            string path = Path.Combine(PathHelper.DataDir, "AS3Context");
-            string fullPath = Path.Combine(path, fileName);
+            string fullPath = Path.Combine(PathHelper.DataDir, "AS3Context", fileName);
             if (!File.Exists(fullPath))
             {
                 string id = "AS3Context.Resources." + resName;

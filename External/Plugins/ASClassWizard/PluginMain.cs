@@ -225,11 +225,11 @@ namespace ASClassWizard
                     dialog.StartupPackage = package;
                 }
                 DialogResult conflictResult = DialogResult.OK;
-                string cPackage, path, newFilePath;
+                string path, newFilePath;
                 do
                 {
                     if (dialog.ShowDialog() != DialogResult.OK) return;
-                    cPackage = dialog.getPackage();
+                    var cPackage = dialog.getPackage();
                     path = Path.Combine(classpath, cPackage.Replace('.', Path.DirectorySeparatorChar));
                     newFilePath = Path.ChangeExtension(Path.Combine(path, dialog.getClassName()),
                                                               isHaxe ? ".hx" : ".as");

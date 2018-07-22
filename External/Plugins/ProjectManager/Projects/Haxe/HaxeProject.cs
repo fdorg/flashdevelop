@@ -120,11 +120,14 @@ namespace ProjectManager.Projects.Haxe
             string docFile = CompilerOptions.MainClass.Replace('.', Path.DirectorySeparatorChar) + ".hx";
             CompilerOptions.MainClass = "";
             foreach (string cp in AbsoluteClasspaths)
-                if (File.Exists(Path.Combine(cp, docFile)))
+            {
+                var path = Path.Combine(cp, docFile);
+                if (File.Exists(path))
                 {
-                    SetCompileTarget(Path.Combine(cp, docFile), false);
+                    SetCompileTarget(path, false);
                     break;
                 }
+            }
         }
 
         public override bool Clean()
