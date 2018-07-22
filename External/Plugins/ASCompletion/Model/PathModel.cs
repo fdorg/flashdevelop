@@ -126,7 +126,7 @@ namespace ASCompletion.Model
         public PathModel(string path, IASContext context)
         {
             Owner = context;
-            Path = path.TrimEnd(new char[] { '\\', '/' });
+            Path = path.TrimEnd('\\', '/');
 
             files = new Dictionary<string, FileModel>();
 

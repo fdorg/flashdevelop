@@ -1528,11 +1528,11 @@ namespace ASCompletion.Completion
             {
                 if (value.StartsWith('\"'))
                 {
-                    value = value.Trim(new char[] { '"' });
+                    value = value.Trim('"');
                 }
                 else if (value.StartsWith('\''))
                 {
-                    value = value.Trim(new char[] { '\'' });
+                    value = value.Trim('\'');
                 }
             }
             else value = resolve.Member.Type;
@@ -2975,9 +2975,9 @@ namespace ASCompletion.Completion
 
         public static void GenerateExtractVariable(ScintillaControl sci, string newName)
         {
-            string expression = sci.SelText.Trim(new char[] { '=', ' ', '\t', '\n', '\r', ';', '.' });
-            expression = expression.TrimEnd(new char[] { '(', '[', '{', '<' });
-            expression = expression.TrimStart(new char[] { ')', ']', '}', '>' });
+            string expression = sci.SelText.Trim('=', ' ', '\t', '\n', '\r', ';', '.');
+            expression = expression.TrimEnd('(', '[', '{', '<');
+            expression = expression.TrimStart(')', ']', '}', '>');
 
             var cFile = ASContext.Context.GetCodeModel(ASContext.Context.CurrentModel, sci.Text);
             MemberModel current = cFile.Context.CurrentMember;
