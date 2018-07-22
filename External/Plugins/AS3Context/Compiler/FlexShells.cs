@@ -201,7 +201,7 @@ namespace AS3Context.Compiler
 
             if (flexPath != null && Directory.Exists(flexPath))
             {
-                mxmlcPath = Path.Combine(Path.Combine(flexPath, "lib"), "mxmlc.jar");
+                mxmlcPath = Path.Combine(flexPath, "lib", "mxmlc.jar");
             }
             if (mxmlcPath == null || !File.Exists(mxmlcPath)) 
             {

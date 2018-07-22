@@ -563,7 +563,7 @@ namespace PluginCore.Helpers
                     // restore path with <drive> and <filename>
                     if (isPath)
                     {
-                        tst = Path.Combine(Path.Combine(pre, tst), post);
+                        tst = Path.Combine(pre, tst, post);
                     }
                     s = TextRenderer.MeasureText(tst, font);
 
@@ -600,7 +600,7 @@ namespace PluginCore.Helpers
                         // "C:\...\filename.ext" No need to check for drive, but generates extra check
                         if (pre.Length > 0)
                         {
-                            fit = Path.Combine(Path.Combine(pre, EllipsisChars), post);
+                            fit = Path.Combine(pre, EllipsisChars, post);
 
                             s = TextRenderer.MeasureText(fit, font);
 

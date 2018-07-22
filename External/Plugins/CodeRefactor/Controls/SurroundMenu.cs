@@ -33,7 +33,7 @@ namespace CodeRefactor.Controls
         {
             var files = new List<string>();
 
-            string specific = Path.Combine(Path.Combine(PathHelper.SnippetDir, sci.ConfigurationLanguage), SurroundWithCommand.SurroundFolder);
+            string specific = Path.Combine(PathHelper.SnippetDir, sci.ConfigurationLanguage, SurroundWithCommand.SurroundFolder);
             if (Directory.Exists(specific))
             {
                 var walker = new PathWalker(specific, "*" + SurroundWithCommand.SurroundExt, false);
