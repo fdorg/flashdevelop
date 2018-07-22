@@ -1271,12 +1271,15 @@ namespace HaXeContext
 
             // search top-level declaration
             foreach (PathModel aPath in classPath)
-                if (File.Exists(Path.Combine(aPath.Path, filename)))
+            {
+                var path = Path.Combine(aPath.Path, filename);
+                if (File.Exists(path))
                 {
-                    filename = Path.Combine(aPath.Path, filename);
+                    filename = path;
                     topLevel = GetCachedFileModel(filename);
                     break;
                 }
+            }
 
             if (File.Exists(filename))
             {

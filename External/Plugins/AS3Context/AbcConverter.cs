@@ -116,8 +116,7 @@ namespace AS3Context
                     model.Package = reSafeChars.Replace(instance.name.uri, "_");
                     model.HasPackage = true;
                     string filename = reSafeChars.Replace(trait.name.ToString(), "_").TrimEnd('$');
-                    filename = Path.Combine(model.Package.Replace('.', Path.DirectorySeparatorChar), filename);
-                    model.FileName = Path.Combine(path.Path, filename);
+                    model.FileName = Path.Combine(path.Path, model.Package.Replace('.', Path.DirectorySeparatorChar), filename);
                     model.Version = 3;
 
                     ClassModel type = new ClassModel();
@@ -278,10 +277,8 @@ namespace AS3Context
 
                             string package = info.name.uri ?? "";
                             string filename = package.Length > 0 ? "package.as" : "toplevel.as";
-                            filename = Path.Combine(package.Replace('.', Path.DirectorySeparatorChar), filename);
-                            filename = Path.Combine(path.Path, filename);
-                            if (models.ContainsKey(filename))
-                                model = models[filename];
+                            filename = Path.Combine(path.Path, package.Replace('.', Path.DirectorySeparatorChar), filename);
+                            if (models.ContainsKey(filename)) model = models[filename];
                             else
                             {
                                 model = new FileModel("");

@@ -95,9 +95,7 @@ namespace ProjectManager.Projects
 
 #if !FDBUILD
                 string appDir = Path.GetDirectoryName(localPath);
-                string toolsDir = Path.Combine(appDir, "Tools");
-                string fdbuildDir = Path.Combine(toolsDir, "fdbuild");
-                return Path.Combine(fdbuildDir, "fdbuild.exe");
+                return Path.Combine(appDir, "Tools", "fdbuild", "fdbuild.exe");
 #else
                 return localPath;
 #endif

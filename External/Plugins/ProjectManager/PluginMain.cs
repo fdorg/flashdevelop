@@ -607,8 +607,7 @@ namespace ProjectManager
         {
             if (project == null || !Settings.UseProjectSessions) return false;
             String hash = HashCalculator.CalculateSHA1(project.ProjectPath.ToLower());
-            String sessionDir = Path.Combine(SettingsDir, "Sessions");
-            String sessionFile = Path.Combine(sessionDir, hash + ".fdb");
+            String sessionFile = Path.Combine(SettingsDir, "Sessions", hash + ".fdb");
             if (File.Exists(sessionFile))
             {
                 PluginBase.MainForm.CallCommand("RestoreSession", sessionFile);
@@ -624,8 +623,8 @@ namespace ProjectManager
             if (project == null || !Settings.UseProjectSessions) return;
             String hash = HashCalculator.CalculateSHA1(project.ProjectPath.ToLower());
             String sessionDir = Path.Combine(SettingsDir, "Sessions");
-            String sessionFile = Path.Combine(sessionDir, hash + ".fdb");
             if (!Directory.Exists(sessionDir)) Directory.CreateDirectory(sessionDir);
+            String sessionFile = Path.Combine(sessionDir, hash + ".fdb");
             PluginBase.MainForm.CallCommand("SaveSession", sessionFile);
         }
 

@@ -354,7 +354,7 @@ namespace HaXeContext
         {
             string haxelib = project.CurrentSDK;
             if (haxelib == null) return "haxelib";
-            else if (Directory.Exists(haxelib)) haxelib = Path.Combine(haxelib, "haxelib.exe");
+            if (Directory.Exists(haxelib)) haxelib = Path.Combine(haxelib, "haxelib.exe");
             else haxelib = haxelib.Replace("haxe.exe", "haxelib.exe");
 
             if (!File.Exists(haxelib)) return "haxelib";

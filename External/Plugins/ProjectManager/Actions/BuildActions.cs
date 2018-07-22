@@ -151,7 +151,7 @@ namespace ProjectManager.Actions
             cmd += ".jsfl";
             if (!releaseMode) cmd = "debug-" + cmd;
 
-            cmd = Path.Combine("Tools", Path.Combine("flashide", cmd));
+            cmd = Path.Combine("Tools", "flashide", cmd);
             cmd = PathHelper.ResolvePath(cmd, null);
             if (cmd == null || !File.Exists(cmd))
             {
@@ -171,8 +171,7 @@ namespace ProjectManager.Actions
             string directory = Environment.CurrentDirectory;
             Environment.CurrentDirectory = project.Directory;
 
-            string fdBuildDir = Path.Combine(PathHelper.ToolDir, "fdbuild");
-            string fdBuildPath = Path.Combine(fdBuildDir, "fdbuild.exe");
+            string fdBuildPath = Path.Combine(PathHelper.ToolDir, "fdbuild", "fdbuild.exe");
 
             string arguments = " -ipc " + ipcName;
             if (sdk != null)

@@ -62,13 +62,13 @@ namespace FDBuild
 
         public string Language
         {
-            set {
+            set
+            {
                 if (LibraryDir == null) return;
-                if (language != null)
-                    extraClasspaths.Remove(Path.Combine(LibraryDir, Path.Combine(language, "classes")));
+                var library = Path.Combine(LibraryDir, language, "classes");
+                if (language != null) extraClasspaths.Remove(library);
                 language = value;
                 // add the library classpath for the language
-                string library = Path.Combine(LibraryDir, Path.Combine(language, "classes"));
                 if (Directory.Exists(library) && language != "HAXE") extraClasspaths.Add(library);
             }
         }

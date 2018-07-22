@@ -981,18 +981,18 @@ namespace FileExplorer
             if (this.fileView.SelectedItems.Count == 0) target = this.selectedPath.Text;
             else target = this.fileView.SelectedItems[0].Tag.ToString();
             StringCollection items = Clipboard.GetFileDropList();
-            for (Int32 i = 0; i < items.Count; i++)
+            foreach (var it in items)
             {
-                if (File.Exists(items[i]))
+                if (File.Exists(it))
                 {
-                    String copy = Path.Combine(target, Path.GetFileName(items[i]));
+                    String copy = Path.Combine(target, Path.GetFileName(it));
                     String file = FileHelper.EnsureUniquePath(copy);
-                    File.Copy(items[i], file, false);
+                    File.Copy(it, file, false);
                 }
                 else
                 {
                     String folder = FolderHelper.EnsureUniquePath(target);
-                    FolderHelper.CopyFolder(items[i], folder);
+                    FolderHelper.CopyFolder(it, folder);
                 }
             }
         }

@@ -433,8 +433,7 @@ namespace FlashDevelop.Dialogs
             if (this.snippetListView.SelectedItems.Count == 0) return;
             if (this.saveButton.Enabled) this.PromptToSaveSnippet();
             String name = this.snippetListView.SelectedItems[0].Text;
-            String path = Path.Combine(this.SnippetDir, this.currentSyntax);
-            path = Path.Combine(path, name + ".fds");
+            var path = Path.Combine(SnippetDir, currentSyntax, name + ".fds");
             String content = File.ReadAllText(path);
             // Convert eols to windows and save current eol mode
             this.eolMode = LineEndDetector.DetectNewLineMarker(content, 0);
@@ -452,8 +451,7 @@ namespace FlashDevelop.Dialogs
             String caption = TextHelper.GetString("Title.ConfirmDialog");
             String message = TextHelper.GetString("Info.ConfirmSnippetDelete");
             if (MessageBox.Show(message, caption, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) != DialogResult.OK) return;
-            String path = Path.Combine(this.SnippetDir, this.currentSyntax);
-            path = Path.Combine(path, this.snippetNameTextBox.Text + ".fds");
+            var path = Path.Combine(SnippetDir, currentSyntax, this.snippetNameTextBox.Text + ".fds");
             if (!FileHelper.Recycle(path))
             {
                 String error = TextHelper.GetString("Info.CouldNotBeRecycled");
@@ -651,8 +649,7 @@ namespace FlashDevelop.Dialogs
             StreamWriter file;
             // Restore previous eol mode
             content = content.Replace("\r\n", LineEndDetector.GetNewLineMarker(this.eolMode));
-            String path = Path.Combine(this.SnippetDir, this.currentSyntax);
-            path = Path.Combine(path, name + ".fds");
+            var path = Path.Combine(SnippetDir, currentSyntax, name + ".fds");
             file = File.CreateText(path);
             file.Write(content);
             file.Close();

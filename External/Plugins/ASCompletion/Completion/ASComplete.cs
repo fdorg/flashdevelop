@@ -277,7 +277,7 @@ namespace ASCompletion.Completion
                             string idePath = ASContext.CommonSettings.PathToFlashIDE;
                             if (idePath != null && File.Exists(Path.Combine(idePath, "Flash.exe")))
                             {
-                                string cmd = Path.Combine("Tools", Path.Combine("flashide", "testmovie.jsfl"));
+                                string cmd = Path.Combine("Tools", "flashide", "testmovie.jsfl");
                                 cmd = PathHelper.ResolvePath(cmd);
                                 if (cmd != null && File.Exists(cmd))
                                     CallFlashIDE.Run(idePath, cmd);
@@ -4965,8 +4965,7 @@ namespace ASCompletion.Completion
         public static bool HasSnippet(string word)
         {
             String global = Path.Combine(PathHelper.SnippetDir, word + ".fds");
-            String specificDir = Path.Combine(PathHelper.SnippetDir, ASContext.Context.Settings.LanguageId);
-            String specific = Path.Combine(specificDir, word + ".fds");
+            String specific = Path.Combine(PathHelper.SnippetDir, ASContext.Context.Settings.LanguageId, word + ".fds");
             return File.Exists(specific) || File.Exists(global);
         }
 
