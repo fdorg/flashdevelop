@@ -155,11 +155,11 @@ namespace FlashDevelop.Helpers
         /// </summary>
         public static String GetSettingFile(String file)
         {
-            Boolean standalone = Globals.MainForm.StandaloneMode;
-            String appDirSettingFile = Path.Combine(Path.Combine(PathHelper.AppDir, "Settings"), file);
-            String userDirSettingFile = Path.Combine(Path.Combine(PathHelper.UserAppDir, "Settings"), file);
+            var standalone = Globals.MainForm.StandaloneMode;
+            var appDirSettingFile = Path.Combine(PathHelper.AppDir, "Settings", file);
+            var userDirSettingFile = Path.Combine(PathHelper.UserAppDir, "Settings", file);
             if (!standalone && File.Exists(userDirSettingFile)) return userDirSettingFile;
-            else return appDirSettingFile;
+            return appDirSettingFile;
         }
 
     }
