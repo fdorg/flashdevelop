@@ -138,7 +138,7 @@ namespace AS3Context
                 {
                     case EventType.ProcessArgs:
                         TextEvent te = e as TextEvent;
-                        if (te.Value.IndexOfOrdinal("$(FlexSDK)") >= 0)
+                        if (te.Value.Contains("$(FlexSDK)"))
                         {
                             te.Value = te.Value.Replace("$(FlexSDK)", contextInstance.GetCompilerPath());
                         }
@@ -402,7 +402,7 @@ namespace AS3Context
         /// </summary>
         public void OpenPanel(object sender, EventArgs e)
         {
-            if (sender is ToolStripButton && profilerPanel.Visible && profilerPanel.DockState.ToString().IndexOfOrdinal("AutoHide") < 0)
+            if (sender is ToolStripButton && profilerPanel.Visible && !profilerPanel.DockState.ToString().Contains("AutoHide"))
             {
                 profilerPanel.Hide();
             }

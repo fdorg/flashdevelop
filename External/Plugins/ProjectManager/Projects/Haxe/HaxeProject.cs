@@ -262,7 +262,7 @@ namespace ProjectManager.Projects.Haxe
             if (!release)
             {
                 pr.Insert(0, "-debug");
-                if (CurrentSDK == null || CurrentSDK.IndexOf("Motion-Twin", StringComparison.Ordinal) < 0) // Haxe 3+
+                if (CurrentSDK == null || !CurrentSDK.Contains("Motion-Twin")) // Haxe 3+
                     pr.Insert(1, "--each");
                 if (isFlash && EnableInteractiveDebugger && CompilerOptions.EnableDebug)
                 {

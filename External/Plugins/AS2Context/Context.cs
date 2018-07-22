@@ -870,7 +870,7 @@ namespace AS2Context
                                     string correctPath = null;
                                     foreach (PathModel pm in classpaths)
                                     {
-                                        if (fullpath.IndexOfOrdinal(pm.Path) > -1 && fullpath.Length > pm.Path.Length)
+                                        if (fullpath.Contains(pm.Path) && fullpath.Length > pm.Path.Length)
                                         {
                                             correctPath = fullpath.Substring(pm.Path.Length + 1);
                                         }
@@ -1344,7 +1344,7 @@ namespace AS2Context
                 else mtascPath = Path.GetDirectoryName(mtascPath);
 
                 command += ";\"" + CurrentFile + "\"";
-                if (append == null || append.IndexOfOrdinal("-swf-version") < 0)
+                if (append == null || !append.Contains("-swf-version"))
                     command += " -version "+majorVersion;
                 // classpathes
                 foreach(PathModel aPath in classPath)

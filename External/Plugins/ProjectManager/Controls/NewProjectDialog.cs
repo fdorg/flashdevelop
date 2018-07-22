@@ -307,7 +307,7 @@ namespace ProjectManager.Controls
                 if ((File.GetAttributes(templateDir) & FileAttributes.Hidden) != 0) continue;
 
                 string templateName = Path.GetFileName(templateDir).Substring(3);
-                if (templateName.IndexOf('-') < 0) templateName = "-" + templateName;
+                if (!templateName.Contains('-')) templateName = "-" + templateName;
                 string[] parts = templateName.Split('-');
 
                 ListViewItem item = new ListViewItem(" " + parts[1].Trim());

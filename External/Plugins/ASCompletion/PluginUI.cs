@@ -1052,7 +1052,7 @@ namespace ASCompletion
             {
                 return false;
             }
-            return (inputText.ToUpper().IndexOfOrdinal(searchText) >= 0);
+            return inputText.ToUpper().Contains(searchText);
         }
 
         private void HighlightAllMachingDeclaration(string text)

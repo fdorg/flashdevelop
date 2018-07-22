@@ -511,8 +511,7 @@ namespace FlashDevelop.Dialogs
         /// </summary>
         public Boolean PartialName(MemberInfo candidate, Object part)
         {
-            if (candidate.Name.IndexOfOrdinal(part.ToString()) > -1) return true;
-            else return false;
+            return candidate.Name.Contains(part.ToString());
         }
 
         /// <summary>

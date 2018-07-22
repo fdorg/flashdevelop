@@ -428,9 +428,9 @@ namespace BasicCompletion
                 String characters = config.characterclass.Characters;
                 // Do not autocomplete in word
                 Char c = sci.CurrentChar;
-                if (characters.IndexOf(c) >= 0) return;
+                if (characters.Contains(c)) return;
                 // Autocomplete after typing word chars only
-                if (characters.IndexOf((char)value) < 0) return;
+                if (!characters.Contains((char)value)) return;
                 String curWord = sci.GetWordLeft(sci.CurrentPos - 1, false);
                 if (curWord == null || curWord.Length < 3) return;
                 List<ICompletionListItem> items = this.GetCompletionListItems(lang, sci.FileName);

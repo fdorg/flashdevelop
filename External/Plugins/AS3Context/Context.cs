@@ -232,7 +232,7 @@ namespace AS3Context
                         if (playerglobal != null)
                         {
                             // add missing SWC in new SDKs
-                            if (!swcPresent && sdkLibs.IndexOfOrdinal(S + "flexlibs") < 0 && Directory.Exists(compiler))
+                            if (!swcPresent && !sdkLibs.Contains(S + "flexlibs") && Directory.Exists(compiler))
                             {
                                 string swcDir = sdkLibs + S + "player" + S;
                                 if (!Directory.Exists(swcDir + "9") && !Directory.Exists(swcDir + "10"))
@@ -973,7 +973,7 @@ namespace AS3Context
             foreach (MemberModel member in aClass.Members)
             {
                 if (member.Name == baseType) member.Name = baseType.Replace("<T>", typed);
-                if (member.Type != null && member.Type.IndexOf('T') >= 0)
+                if (member.Type != null && member.Type.Contains('T'))
                 {
                     if (member.Type == "T") member.Type = indexType;
                     else member.Type = member.Type.Replace("<T>", typed);
@@ -982,7 +982,7 @@ namespace AS3Context
                 {
                     foreach (MemberModel param in member.Parameters)
                     {
-                        if (param.Type != null && param.Type.IndexOf('T') >= 0)
+                        if (param.Type != null && param.Type.Contains('T'))
                         {
                             if (param.Type == "T") param.Type = indexType;
                             else param.Type = param.Type.Replace("<T>", typed);

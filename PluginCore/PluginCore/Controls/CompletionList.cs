@@ -203,7 +203,7 @@ namespace PluginCore.Controls
         /// </summary>
         public static void SelectItem(String name)
         {
-            string pname = name.IndexOf('.') < 0 ? "." + name : null;
+            string pname = !name.Contains('.') ? "." + name : null;
             ICompletionListItem found = null;
             foreach (ICompletionListItem item in completionList.Items)
             {
@@ -724,7 +724,7 @@ namespace PluginCore.Controls
             int p2;
             int score = 0;
             if (label[0] == c) { p2 = 0; score = 1; }
-            else if (label.IndexOf('.') < 0)
+            else if (!label.Contains('.'))
             {
                 p2 = label.IndexOf(c);
                 if (p2 < 0) return 0;
@@ -781,7 +781,7 @@ namespace PluginCore.Controls
             try
             {
                 String triggers = PluginBase.Settings.InsertionTriggers ?? "";
-                if (triggers.Length > 0 && Regex.Unescape(triggers).IndexOf(trigger) < 0) return false;
+                if (triggers.Length > 0 && !Regex.Unescape(triggers).Contains(trigger)) return false;
 
                 ICompletionListItem item = null;
                 if (completionList.SelectedIndex >= 0)

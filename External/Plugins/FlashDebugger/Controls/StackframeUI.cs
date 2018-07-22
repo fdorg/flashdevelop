@@ -261,8 +261,8 @@ namespace FlashDebugger
                         {
                             foreach (string cp in project.AbsoluteClasspaths)
                             {
-                                string pathBackSlash = cp.TrimEnd(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar });
-                                pathBackSlash = pathBackSlash.IndexOfOrdinal(Path.AltDirectorySeparatorChar.ToString()) > -1 ? pathBackSlash + Path.AltDirectorySeparatorChar : pathBackSlash + Path.DirectorySeparatorChar;
+                                string pathBackSlash = cp.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                                pathBackSlash = pathBackSlash.Contains(Path.AltDirectorySeparatorChar.ToString()) ? pathBackSlash + Path.AltDirectorySeparatorChar : pathBackSlash + Path.DirectorySeparatorChar;
                                 if (sourceFile.getFullPath().ToString().StartsWithOrdinal(pathBackSlash))
                                 {
                                     ownFile = true;

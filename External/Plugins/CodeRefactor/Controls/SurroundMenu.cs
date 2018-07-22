@@ -54,7 +54,7 @@ namespace CodeRefactor.Controls
                 foreach (string file in files)
                 {
                     string content = File.ReadAllText(file);
-                    if (content.IndexOfOrdinal("{0}") >= 0)
+                    if (content.Contains("{0}"))
                     {
                         items.Add(new SurroundWithItem(Path.GetFileNameWithoutExtension(file)));
                     }

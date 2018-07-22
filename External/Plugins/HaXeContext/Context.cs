@@ -414,7 +414,7 @@ namespace HaXeContext
                         lang = "";
                     else if (contextSetup.TargetBuild.StartsWithOrdinal("html5"))
                         lang = "js";
-                    else if (contextSetup.TargetBuild.IndexOfOrdinal("neko") >= 0)
+                    else if (contextSetup.TargetBuild.Contains("neko"))
                         lang = "neko";
                 }
             }
@@ -607,7 +607,7 @@ namespace HaXeContext
                         path.ValidatePackage = true;
                         // let's hide confusing packages of NME library
                         string src = File.ReadAllText(haxelib);
-                        if (src.IndexOfOrdinal("<project name=\"nme\"") >= 0)
+                        if (src.Contains("<project name=\"nme\""))
                         {
                             ManualExploration(path, new[] { "js", "jeash", "neash", "native", "browser", "flash", "neko", "tools", "samples", "project" });
                         }
@@ -1230,7 +1230,7 @@ namespace HaXeContext
             aClass.Name = baseType.Substring(baseType.LastIndexOf('.') + 1) + "<" + indexType + ">";
             aClass.IndexType = indexType;
 
-            if (aClass.ExtendsType != null && aClass.ExtendsType.IndexOfOrdinal(Tname) >= 0)
+            if (aClass.ExtendsType != null && aClass.ExtendsType.Contains(Tname))
                 aClass.ExtendsType = reReplaceType.Replace(aClass.ExtendsType, indexType);
 
             // special Haxe Proxy support
@@ -1241,7 +1241,7 @@ namespace HaXeContext
 
             foreach (MemberModel member in aClass.Members)
             {
-                if (member.Type != null && member.Type.IndexOfOrdinal(Tname) >= 0)
+                if (member.Type != null && member.Type.Contains(Tname))
                 {
                     member.Type = reReplaceType.Replace(member.Type, indexType);
                 }
@@ -1249,7 +1249,7 @@ namespace HaXeContext
                 {
                     foreach (MemberModel param in member.Parameters)
                     {
-                        if (param.Type != null && param.Type.IndexOfOrdinal(Tname) >= 0)
+                        if (param.Type != null && param.Type.Contains(Tname))
                         {
                             param.Type = reReplaceType.Replace(param.Type, indexType);
                         }
@@ -1940,7 +1940,7 @@ namespace HaXeContext
                 if (cname.IndexOf('<') > 0) cname = cname.Substring(0, cname.IndexOf('<'));
                 command += cname;
 
-                if (HaxeTarget == "flash" && (append == null || append.IndexOfOrdinal("-swf-version") < 0)) 
+                if (HaxeTarget == "flash" && (append == null || !append.Contains("-swf-version")))
                     command += " -swf-version " + majorVersion;
                 // classpathes
                 string hxPath = PathHelper.ResolvePath(hxsettings.GetDefaultSDK().Path);

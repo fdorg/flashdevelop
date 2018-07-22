@@ -7405,7 +7405,7 @@ namespace ScintillaNet
                 {
                     if (!skipWS) break;
                 }
-                else if (characterClass.IndexOf(c) < 0) break;
+                else if (!characterClass.Contains(c)) break;
                 else
                 {
                     word = c + word;
@@ -7431,7 +7431,7 @@ namespace ScintillaNet
                 {
                     if (!skipWS) break;
                 }
-                else if (characterClass.IndexOf(c) < 0) break;
+                else if (!characterClass.Contains(c)) break;
                 else
                 {
                     result += c;

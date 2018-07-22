@@ -49,7 +49,7 @@ namespace HaXeContext
 
             string config = hxproj.TargetBuild;
             if (String.IsNullOrEmpty(config)) config = "flash";
-            else if (config.IndexOfOrdinal("android") >= 0) CheckADB();
+            else if (config.Contains("android")) CheckADB();
             
             if (config.StartsWithOrdinal("html5") && ProjectManager.Actions.Webserver.Enabled && hxproj.RawHXML != null) // webserver
             {

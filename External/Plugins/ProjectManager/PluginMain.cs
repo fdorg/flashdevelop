@@ -379,7 +379,7 @@ namespace ProjectManager
 
                     if (!ProjectCreator.IsRunning)
                     {
-                        if (project != null && te.Value.IndexOf('$') >= 0)
+                        if (project != null && te.Value.Contains('$'))
                         {
                             // steal macro names and values from the very useful BuildEvent macros
                             BuildEventVars vars = new BuildEventVars(project);

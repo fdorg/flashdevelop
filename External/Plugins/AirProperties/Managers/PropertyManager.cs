@@ -194,7 +194,7 @@ namespace AirProperties
         public static String GetAttribute(string attribute)
         {
             XmlNode propertyNode;
-            if (attribute.IndexOf('/') > -1)
+            if (attribute.Contains('/'))
                 propertyNode = _rootNode.SelectSingleNode("air:" + attribute.Replace("/", "/air:").Replace("/air:@", "/@"), _namespaceManager);
             else
                 propertyNode = _rootNode.Attributes.GetNamedItem(attribute);
@@ -210,7 +210,7 @@ namespace AirProperties
         public static void SetAttribute(string attribute, string value)
         {
             XmlAttribute attributeNode;
-            if (attribute.IndexOf('/') > -1)
+            if (attribute.Contains('/'))
                 attributeNode = _rootNode.SelectSingleNode("air:" + attribute.Replace("/", "/air:").Replace("/air:@", "/@"), _namespaceManager) as XmlAttribute;
             else
                 attributeNode = _rootNode.Attributes.GetNamedItem(attribute) as XmlAttribute;
@@ -221,7 +221,7 @@ namespace AirProperties
                 {
                     // Remove the attribute, reverting to system default
                     XmlNode attributeParent;
-                    if (attribute.IndexOf('/') > -1)
+                    if (attribute.Contains('/'))
                         attributeParent = _rootNode.SelectSingleNode("air:" + attribute.Substring(0, attribute.LastIndexOf('/')).Replace("/", "/air:"), _namespaceManager);
                     else
                         attributeParent = _rootNode;
@@ -237,7 +237,7 @@ namespace AirProperties
                     string attributeName = attribute.Substring(attribute.IndexOf('@') + 1);
                     attributeNode = _descriptorFile.CreateAttribute(attributeName);
                     attributeNode.Value = value;
-                    if (attribute.IndexOf('/') > -1)
+                    if (attribute.Contains('/'))
                         propertyNode = _rootNode.SelectSingleNode("air:" + attribute.Substring(0, attribute.LastIndexOf('/')).Replace("/", "/air:"), _namespaceManager);
                     else
                         propertyNode = _rootNode;

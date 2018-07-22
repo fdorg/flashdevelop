@@ -252,7 +252,7 @@ namespace ASCompletion.Completion
                     int position = Sci.CurrentPos-1;
                     string tail = GetWordLeft(Sci, ref position);
                     ContextFeatures features = ASContext.Context.Features;
-                    if (tail.IndexOfOrdinal(features.dot) < 0 && features.HasTypePreKey(tail)) tail = "";
+                    if (!tail.Contains(features.dot) && features.HasTypePreKey(tail)) tail = "";
                     // display the full project classes list
                     HandleAllClassesCompletion(Sci, tail, false, true);
                     return true;
@@ -997,7 +997,7 @@ namespace ASCompletion.Completion
                     string cmd = ASContext.Context.Settings.DocumentationCommandLine;
                     if (string.IsNullOrEmpty(cmd)) return null;
                     // top-level vars should be searched only if the command includes member information
-                    if (CurrentResolvedContext.Result.InClass == ClassModel.VoidClass && cmd.IndexOfOrdinal("$(Itm") < 0) 
+                    if (CurrentResolvedContext.Result.InClass == ClassModel.VoidClass && !cmd.Contains("$(Itm"))
                         return null;
                     // complete command
                     cmd = ArgumentsProcessor.Process(cmd, CurrentResolvedContext.Arguments);
@@ -1700,7 +1700,7 @@ namespace ASCompletion.Completion
             {
                 MemberModel param = calltipMember.Parameters[paramIndex];
                 string type = param.Type;
-                if (indexTypeOnly && (String.IsNullOrEmpty(type) || type.IndexOf('@') < 0))
+                if (indexTypeOnly && (String.IsNullOrEmpty(type) || !type.Contains('@')))
                     return ClassModel.VoidClass;
                 if (ASContext.Context.Features.objectKey == "Dynamic" && type.StartsWithOrdinal("Dynamic@"))
                     type = type.Replace("Dynamic@", "Dynamic<") + ">";
@@ -2371,9 +2371,9 @@ namespace ASCompletion.Completion
                     while (position >= 0 && groupCount > 0)
                     {
                         c = (char)Sci.CharAt(position);
-                        if ("({[<".IndexOf(c) > -1)
+                        if ("({[<".Contains(c))
                             groupCount--;
-                        else if (")}]>".IndexOf(c) > -1)
+                        else if (")}]>".Contains(c))
                             groupCount++;
                         position--;
                     }
@@ -4776,7 +4776,7 @@ namespace ASCompletion.Completion
                 }
 
                 // look for a snippet
-                if (trigger == '\t' && expr.Value.IndexOfOrdinal(features.dot) < 0)
+                if (trigger == '\t' && !expr.Value.Contains(features.dot))
                 {
                     foreach(string key in features.codeKeywords)
                         if (key == expr.Value)
@@ -4831,7 +4831,7 @@ namespace ASCompletion.Completion
             }
             // if not completed a type
             else if (context.IsNull() || !context.IsStatic || context.Type == null
-                || (context.Type.Type != null && context.Type.Type.IndexOfOrdinal(features.dot) < 0)
+                || (context.Type.Type != null && !context.Type.Type.Contains(features.dot))
                 || context.Type.IsVoid())
             {
                 if (context.Member != null && expr.Separator == " " && expr.WordBefore == features.overrideKey)
