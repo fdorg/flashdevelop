@@ -577,6 +577,9 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2230_3.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2230_4.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2230_5.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue1150_1.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue1150_2.hx" />
+    <EmbeddedResource Include="Test Files\parser\Issue1150_3.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

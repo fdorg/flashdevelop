@@ -4,6 +4,7 @@ using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using HaXeContext.TestUtils;
+using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
 
@@ -71,7 +72,7 @@ namespace HaXeContext
         [Test, TestCaseSource(nameof(DecomposeTypesTestCases))]
         public IEnumerable<string> DecomposeTypes(IEnumerable<string> types) => ASContext.Context.DecomposeTypes(types);
 
-        static IEnumerable<TestCaseData> ParseFile_Issue1849TestCases
+        static IEnumerable<TestCaseData> ParseFileIssue1849TestCases
         {
             get
             {
@@ -90,15 +91,15 @@ namespace HaXeContext
             }
         }
 
-        [Test, TestCaseSource(nameof(ParseFile_Issue1849TestCases))]
-        public string ParseFile_Issue1849(string sourceText)
+        [Test, TestCaseSource(nameof(ParseFileIssue1849TestCases))]
+        public string ParseFileIssue1849(string sourceText)
         {
             var model = ASContext.Context.GetCodeModel(sourceText);
             var interfaceType = ASContext.Context.ResolveType(model.Classes.First().Implements.First(), model);
             return interfaceType.Type;
         }
 
-        static IEnumerable<TestCaseData> ResolveDotContext_Issue750TestCases
+        static IEnumerable<TestCaseData> ResolveDotContextIssue750TestCases
         {
             get
             {
@@ -117,8 +118,8 @@ namespace HaXeContext
             }
         }
 
-        [Test, TestCaseSource(nameof(ResolveDotContext_Issue750TestCases))]
-        public void ResolveDotContext_issue750(string sourceText, MemberModel code)
+        [Test, TestCaseSource(nameof(ResolveDotContextIssue750TestCases))]
+        public void ResolveDotContextIssue750(string sourceText, MemberModel code)
         {
             ((HaXeSettings)ASContext.Context.Settings).CompletionMode = HaxeCompletionModeEnum.FlashDevelop;
             SetSrc(sci, sourceText);
@@ -309,6 +310,44 @@ namespace HaXeContext
             var result = new ASResult();
             context.ResolveTopLevelElement("EFoo", result);
             return result.Member;
+        }
+
+        static IEnumerable<TestCaseData> ParseFileIssue1150TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("Issue1150_1")
+                    .Returns(new List<MemberModel> {new MemberModel("lpad", "String", FlagType.Access | FlagType.Static | FlagType.Function, Visibility.Public)})
+                    .SetName("Import static member. Issue 1150. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1150");
+                yield return new TestCaseData("Issue1150_2")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("rpad", "String", FlagType.Access | FlagType.Static | FlagType.Function, Visibility.Public),
+                        new MemberModel("lpad", "String", FlagType.Access | FlagType.Static | FlagType.Function, Visibility.Public),
+                    })
+                    .SetName("Import static member. Issue 1150. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1150");
+                yield return new TestCaseData("Issue1150_3")
+                    .Returns(new List<MemberModel> {new MemberModel("PI", "Float", FlagType.Static | FlagType.Getter | FlagType.Setter, Visibility.Public)})
+                    .SetName("Import static member. Issue 1150. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1150");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(ParseFileIssue1150TestCases))]
+        public List<MemberModel> ParseFile_Issue1150(string fileName)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            var context = (Context)ASContext.GetLanguageContext("haxe");
+            context.CurrentModel = ASContext.Context.CurrentModel;
+            ASContext.Context.ResolveImports(null).ReturnsForAnyArgs(it =>
+            {
+                context.completionCache.Imports = null;
+                return context.ResolveImports(it.ArgAt<FileModel>(0));
+            });
+            var imports = ASContext.Context.ResolveImports(context.CurrentModel);
+            return imports.Items;
         }
     }
 }
