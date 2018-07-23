@@ -915,7 +915,7 @@ namespace HaXeContext
 
             if (inFile == cFile)
             {
-                if (cClass != null && cClass != ClassModel.VoidClass)
+                if (cClass != null && !cClass.IsVoid())
                     ResolveImport(cClass, imports);
             }
             else
@@ -947,7 +947,6 @@ namespace HaXeContext
                         var member = type.Members.Search(rpart, FlagType.Static, Visibility.Public);
                         if (member == null) continue;
                         member = (MemberModel) member.Clone();
-                        //member.InFile = imports[i].InFile;
                         member.InFile = type.InFile;
                         imports[i] = member;
                     }
