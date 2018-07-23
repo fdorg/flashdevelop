@@ -75,6 +75,7 @@ namespace ASCompletion.TestUtils
                 var member = it.ArgAt<MemberModel>(0) ?? ClassModel.VoidClass;
                 return context.IsImported(member, it.ArgAt<int>(1));
             });
+            mock.ResolveImports(null).ReturnsForAnyArgs(it => context.ResolveImports(it.ArgAt<FileModel>(0)));
             mock.ResolveType(null, null).ReturnsForAnyArgs(x => context.ResolveType(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
             mock.ResolveToken(null, null).ReturnsForAnyArgs(x => context.ResolveToken(x.ArgAt<string>(0), x.ArgAt<FileModel>(1)));
             mock.ResolveDotContext(null, null, false).ReturnsForAnyArgs(it =>

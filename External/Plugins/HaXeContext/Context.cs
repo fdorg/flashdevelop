@@ -899,9 +899,10 @@ namespace HaXeContext
                         var model = ResolveType(cname, null);
                         if (!model.IsVoid())
                         {
+                            var access = TypesAffinity(model, Context.CurrentClass);
                             foreach (MemberModel member in model.Members)
                             {
-                                if ((member.Flags & FlagType.Static) > 0)
+                                if ((member.Flags & FlagType.Static) > 0 && (member.Access & access) != 0)
                                 {
                                     member.InFile = model.InFile;
                                     imports.Add(member);
@@ -914,7 +915,7 @@ namespace HaXeContext
 
             if (inFile == cFile)
             {
-                if (cClass != null && cClass != ClassModel.VoidClass)
+                if (cClass != null && !cClass.IsVoid())
                     ResolveImport(cClass, imports);
             }
             else
@@ -927,7 +928,29 @@ namespace HaXeContext
             {
                 // haxe3: type resolution from bottom to top
                 imports.Items.Reverse();
-                if (inFile == cFile) completionCache.Imports = imports;
+                if (inFile == cFile)
+                {
+                    completionCache.Imports = imports;
+                    for (var i = 0; i < imports.Count; i++)
+                    {
+                        var import = imports[i].Type;
+                        if (import == null) continue;
+                        var p1 = import.LastIndexOf('.');
+                        if (p1 == -1) continue;
+                        var lpart = import.Substring(0, p1);
+                        var p2 = lpart.LastIndexOf('.');
+                        if (p2 != -1) lpart = import.Substring(p2 + 1);
+                        if (char.IsLower(lpart[0])) continue;
+                        var type = ResolveType(lpart, Context.CurrentModel);
+                        if (type.IsVoid() || type.Members.Count <= 0) continue;
+                        var rpart = import.Substring(p1 + 1);
+                        var member = type.Members.Search(rpart, FlagType.Static, Visibility.Public);
+                        if (member == null) continue;
+                        member = (MemberModel) member.Clone();
+                        member.InFile = type.InFile;
+                        imports[i] = member;
+                    }
+                }
             }
             return imports;
         }
@@ -975,8 +998,7 @@ namespace HaXeContext
                     }
                 }
 
-            if (!matched) // add anyway
-                imports.Add(new MemberModel(item.Name, item.Type, FlagType.Class, Visibility.Public));
+            if (!matched) imports.Add(new MemberModel(item.Name, item.Type, FlagType.Class, Visibility.Public));
         }
 
         /// <summary>
