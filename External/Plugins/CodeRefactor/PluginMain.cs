@@ -215,6 +215,7 @@ namespace CodeRefactor
         static bool IsValidForMove(string oldPath)
         {
             return PluginBase.CurrentProject != null
+                && !RefactoringHelper.IsUnderSDKPath(oldPath)
                 && (File.Exists(oldPath) || Directory.Exists(oldPath))
                 && IsValidFile(oldPath);
         }
@@ -352,9 +353,9 @@ namespace CodeRefactor
                 var curFileName = document != null ? document.FileName : string.Empty;
                 this.refactorMainMenu.DelegateMenuItem.Enabled = false;
                 this.refactorContextMenu.DelegateMenuItem.Enabled = false;
-                bool langIsValid = RefactoringHelper.GetLanguageIsValid();
-                bool isValid = langIsValid && resolved != null && resolved.Position >= 0;
-                ASResult result = isValid ? resolved.Result : null;
+                var langIsValid = RefactoringHelper.GetLanguageIsValid();
+                var isValid = langIsValid && resolved != null && resolved.Position >= 0;
+                var result = isValid ? resolved.Result : null;
                 if (result != null && !result.IsNull())
                 {
                     var validator = CommandFactoryProvider.GetFactory(result)?.GetValidator(typeof(Rename))
@@ -382,10 +383,10 @@ namespace CodeRefactor
                     this.editorReferencesItem.Enabled = false;
                     this.viewReferencesItem.Enabled = false;
                 }
-                IASContext context = ASContext.Context;
-                if (context != null && context.CurrentModel != null)
+                var context = ASContext.Context;
+                if (context?.CurrentModel != null)
                 {
-                    bool enabled = langIsValid && context.CurrentModel.Imports.Count > 0;
+                    var enabled = langIsValid && context.CurrentModel.Imports.Count > 0;
                     this.refactorContextMenu.OrganizeMenuItem.Enabled = enabled;
                     this.refactorContextMenu.TruncateMenuItem.Enabled = enabled;
                     this.refactorMainMenu.OrganizeMenuItem.Enabled = enabled;
@@ -401,7 +402,7 @@ namespace CodeRefactor
                 this.refactorContextMenu.ExtractLocalVariableMenuItem.Enabled = false;
                 if (document != null && document.IsEditable && langIsValid)
                 {
-                    bool isValidFile = IsValidFile(curFileName);
+                    var isValidFile = IsValidForMove(curFileName);
                     refactorMainMenu.MoveMenuItem.Enabled = isValidFile;
                     refactorContextMenu.MoveMenuItem.Enabled = isValidFile;
                     var sci = document.SciControl;
@@ -454,7 +455,7 @@ namespace CodeRefactor
         /// <summary>
         /// Invoked when the user selects the "Rename" command
         /// </summary>
-        private void RenameClicked(Object sender, EventArgs e)
+        private void RenameClicked(object sender, EventArgs e)
         {
             if (InlineRename.InProgress) return;
             try
@@ -477,10 +478,10 @@ namespace CodeRefactor
 
         static void MoveFile(string fileName)
         {
-            MoveDialog dialog = new MoveDialog(fileName);
+            var dialog = new MoveDialog(fileName);
             if (dialog.ShowDialog() != DialogResult.OK) return;
-            Dictionary<string, string> oldPathToNewPath = new Dictionary<string, string>();
-            foreach (string file in dialog.MovingFiles)
+            var oldPathToNewPath = new Dictionary<string, string>();
+            foreach (var file in dialog.MovingFiles)
             {
                 oldPathToNewPath[file] = dialog.SelectedDirectory;
             }
@@ -506,7 +507,7 @@ namespace CodeRefactor
         /// <summary>
         /// Invoked when the user selects the "Find All References" command
         /// </summary>
-        private void FindAllReferencesClicked(Object sender, EventArgs e)
+        private void FindAllReferencesClicked(object sender, EventArgs e)
         {
             try
             {
@@ -522,7 +523,7 @@ namespace CodeRefactor
         /// <summary>
         /// Invoked when the user selects the "Organize Imports" command
         /// </summary>
-        private void OrganizeImportsClicked(Object sender, EventArgs e)
+        private void OrganizeImportsClicked(object sender, EventArgs e)
         {
             try
             {
@@ -539,7 +540,7 @@ namespace CodeRefactor
         /// <summary>
         /// Invoked when the user selects the "Truncate Imports" command
         /// </summary>
-        private void TruncateImportsClicked(Object sender, EventArgs e)
+        private void TruncateImportsClicked(object sender, EventArgs e)
         {
             try
             {
@@ -557,14 +558,14 @@ namespace CodeRefactor
         /// <summary>
         /// Invoked when the user selects the "Delegate Method" command
         /// </summary>
-        private void DelegateMethodsClicked(Object sender, EventArgs e)
+        private void DelegateMethodsClicked(object sender, EventArgs e)
         {
             try
             {
-                ASResult result = ASComplete.CurrentResolvedContext.Result;
-                Dictionary<MemberModel, ClassModel> members = new Dictionary<MemberModel, ClassModel>();
-                List<String> memberNames = new List<String>();
-                ClassModel cm = result.Type;
+                var result = ASComplete.CurrentResolvedContext.Result;
+                var members = new Dictionary<MemberModel, ClassModel>();
+                var memberNames = new List<string>();
+                var cm = result.Type;
                 cm.ResolveExtends();
                 while (cm != null && !cm.IsVoid() && cm.Type != "Object")
                 {
@@ -603,14 +604,14 @@ namespace CodeRefactor
         /// <summary>
         /// Invoked when the user selects the "Extract Method" command
         /// </summary>
-        private void ExtractMethodClicked(Object sender, EventArgs e)
+        private void ExtractMethodClicked(object sender, EventArgs e)
         {
             try
             {
-                String newName = "newMethod";
-                String label = TextHelper.GetString("Label.NewName");
-                String title = TextHelper.GetString("Title.ExtractMethodDialog");
-                LineEntryDialog askName = new LineEntryDialog(title, label, newName);
+                var newName = "newMethod";
+                var label = TextHelper.GetString("Label.NewName");
+                var title = TextHelper.GetString("Title.ExtractMethodDialog");
+                var askName = new LineEntryDialog(title, label, newName);
                 var result = askName.ShowDialog();
                 if (result != DialogResult.OK) return;
                 if (askName.Line.Trim().Length > 0 && askName.Line.Trim() != newName)
@@ -677,10 +678,7 @@ namespace CodeRefactor
         /// <summary>
         /// Saves the plugin settings
         /// </summary>
-        public void SaveSettings()
-        {
-            ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
-        }
+        public void SaveSettings() => ObjectSerializer.Serialize(this.settingFilename, this.settingObject);
 
         void OnAddRefactorOptions(List<ICompletionListItem> list)
         {
