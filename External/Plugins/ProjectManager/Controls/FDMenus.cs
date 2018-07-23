@@ -121,6 +121,8 @@ namespace ProjectManager.Controls
             RecentProjects.AddOpenedProject(project.ProjectPath);
             ConfigurationSelector.Enabled = true;
             ProjectMenu.ProjectItemsEnabled = true;
+            TestMovie.Enabled = true;
+            BuildProject.Enabled = true;
             ProjectChanged(project);
         }
 
@@ -128,6 +130,8 @@ namespace ProjectManager.Controls
         {
             TargetBuildSelector.Text = "";
             EnableTargetBuildSelector(false);
+            TestMovie.Enabled = false;
+            BuildProject.Enabled = false;
             ProjectMenu.ProjectItemsEnabled = false;
         }
 
