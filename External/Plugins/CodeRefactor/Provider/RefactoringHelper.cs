@@ -83,8 +83,8 @@ namespace CodeRefactor.Provider
 
         public static bool IsUnderSDKPath(string file)
         {
-            var sdk = PluginBase.CurrentSDK;
-            return sdk != null && !string.IsNullOrEmpty(sdk.Path) && file.StartsWithOrdinal(sdk.Path);
+            var path = PluginBase.CurrentSDK?.Path;
+            return !string.IsNullOrEmpty(path) && file.StartsWithOrdinal(path);
         }
 
         /// <summary>
