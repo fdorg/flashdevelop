@@ -312,7 +312,7 @@ namespace HaXeContext
             return result.Member;
         }
 
-        static IEnumerable<TestCaseData> ParseFileIssue1150TestCases
+        static IEnumerable<TestCaseData> ParseFileIssue1150_1_TestCases
         {
             get
             {
@@ -335,8 +335,8 @@ namespace HaXeContext
             }
         }
 
-        [Test, TestCaseSource(nameof(ParseFileIssue1150TestCases))]
-        public List<MemberModel> ParseFile_Issue1150(string fileName)
+        [Test, TestCaseSource(nameof(ParseFileIssue1150_1_TestCases))]
+        public List<MemberModel> ParseFileIssue1150_1(string fileName)
         {
             SetSrc(sci, ReadAllText(fileName));
             var context = (Context)ASContext.GetLanguageContext("haxe");
@@ -348,6 +348,34 @@ namespace HaXeContext
             });
             var imports = ASContext.Context.ResolveImports(context.CurrentModel);
             return imports.Items;
+        }
+        static IEnumerable<TestCaseData> ParseFileIssue1150_2_TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("Issue1150_4", "Math")
+                    .SetName("Import static member. Issue 1150. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1150");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(ParseFileIssue1150_2_TestCases))]
+        public void ParseFileIssue1150_2(string fileName, string fromClass)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            var context = (Context)ASContext.GetLanguageContext("haxe");
+            context.CurrentModel = ASContext.Context.CurrentModel;
+            ASContext.Context.ResolveImports(null).ReturnsForAnyArgs(it =>
+            {
+                context.completionCache.Imports = null;
+                return context.ResolveImports(it.ArgAt<FileModel>(0));
+            });
+            var type = ASContext.Context.ResolveType(fromClass, ASContext.Context.CurrentModel);
+            var expectedImports = type.Members.Items.Where(it => (it.Flags & FlagType.Static) != 0 && (it.Access & Visibility.Public) != 0).ToList();
+            var actualImports = ASContext.Context.ResolveImports(context.CurrentModel);
+            expectedImports.Sort();
+            actualImports.Sort();
+            Assert.AreEqual(expectedImports, actualImports.Items);
         }
     }
 }

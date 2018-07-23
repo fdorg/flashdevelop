@@ -899,9 +899,10 @@ namespace HaXeContext
                         var model = ResolveType(cname, null);
                         if (!model.IsVoid())
                         {
+                            var access = TypesAffinity(model, Context.CurrentClass);
                             foreach (MemberModel member in model.Members)
                             {
-                                if ((member.Flags & FlagType.Static) > 0)
+                                if ((member.Flags & FlagType.Static) > 0 && (member.Access & access) != 0)
                                 {
                                     member.InFile = model.InFile;
                                     imports.Add(member);
