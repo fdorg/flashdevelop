@@ -600,6 +600,12 @@
     <EmbeddedResource Include="Test Files\parser\Issue1150_4.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue1759_10.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue1759_10.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue1759_11.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue1759_11.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue1759_12.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue1759_13.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue1759_14.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue1759_15.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

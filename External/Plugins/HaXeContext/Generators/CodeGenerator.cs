@@ -31,7 +31,8 @@ namespace HaXeContext.Generators
                 return;
             }
             var member = expr.Member;
-            if (member != null && expr.Context.WordBefore is var word && word != ctx.Features.varKey && word != ctx.Features.functionKey)
+            if (member != null && !member.Flags.HasFlag(FlagType.Enum)
+                && expr.Context.WordBefore is var word && word != ctx.Features.varKey && word != ctx.Features.functionKey)
             {
                 var isAvailable = true;
                 var contextMember = expr.Context.ContextMember;
