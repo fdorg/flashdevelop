@@ -549,7 +549,7 @@ namespace ASCompletion.Completion
                     ASGenerator.contextMember = expr.Context.LocalVars[0];
                     var options = new List<ICompletionListItem>();
                     ASGenerator.ContextualGenerator(sci, options);
-                    var item = options.Find(it => ((GeneratorItem)it).job == GeneratorJobType.PromoteLocal);
+                    var item = options.Find(it => ((GeneratorItem)it).Job == GeneratorJobType.PromoteLocal);
                     var value = item.Value;
                     return sci.Text;
                 }
@@ -904,7 +904,7 @@ namespace ASCompletion.Completion
                     SetSrc(sci, sourceText);
                     var options = new List<ICompletionListItem>();
                     ASGenerator.ContextualGenerator(sci, options);
-                    var item = options.Find(it => ((GeneratorItem) it).job == job);
+                    var item = options.Find(it => ((GeneratorItem) it).Job == job);
                     var value = item.Value;
                     return sci.Text;
                 }
@@ -2199,7 +2199,7 @@ namespace ASCompletion.Completion
                     SetSrc(sci, sourceText);
                     var options = new List<ICompletionListItem>();
                     ASGenerator.ContextualGenerator(sci, options);
-                    var item = options.Find(it => it is GeneratorItem && ((GeneratorItem)it).job == job);
+                    var item = options.Find(it => it is GeneratorItem && ((GeneratorItem)it).Job == job);
                     Assert.NotNull(item);
                     var value = item.Value;
                     return sci.Text;
@@ -3223,7 +3223,7 @@ namespace ASCompletion.Completion
                     SetSrc(sci, sourceText);
                     var options = new List<ICompletionListItem>();
                     ASGenerator.ContextualGenerator(sci, options);
-                    var item = options.Find(it => ((GeneratorItem)it).job == GeneratorJobType.Class);
+                    var item = options.Find(it => ((GeneratorItem)it).Job == GeneratorJobType.Class);
                     var value = item.Value;
                 }
             }
@@ -3267,13 +3267,13 @@ namespace ASCompletion.Completion
                     if (hasGenerator)
                     {
                         Assert.IsNotEmpty(options);
-                        var item = options.Find(it => ((ASCompletion.Completion.GeneratorItem)it).job == job);
+                        var item = options.Find(it => ((ASCompletion.Completion.GeneratorItem)it).Job == job);
                         Assert.IsNotNull(item);
                         var value = item.Value;
                         return sci.Text;
                     }
                     if (job == (GeneratorJobType)(-1)) Assert.IsEmpty(options);
-                    if (options.Count > 0) Assert.IsFalse(options.Any(it => ((ASCompletion.Completion.GeneratorItem)it).job == job));
+                    if (options.Count > 0) Assert.IsFalse(options.Any(it => ((ASCompletion.Completion.GeneratorItem)it).Job == job));
                     return null;
                 }
             }
