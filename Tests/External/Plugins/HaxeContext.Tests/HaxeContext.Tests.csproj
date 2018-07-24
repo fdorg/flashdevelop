@@ -608,6 +608,8 @@
     <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue1759_15.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue1759_16.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue1759_17.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue1759_18.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue1759_18.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

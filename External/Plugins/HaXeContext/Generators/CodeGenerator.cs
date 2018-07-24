@@ -335,10 +335,7 @@ namespace HaXeContext.Generators
             var exprStartPosition = expr.Context.PositionExpression;
             int exprEndPosition;
             if (expr.Type.QualifiedName == ASContext.Context.ResolveType("Function", null).QualifiedName)
-            {
-                var endPosition = sci.PositionFromLine(expr.Context.ContextMember.LineTo);
-                exprEndPosition = GetEndOfStatement(exprStartPosition, endPosition, sci) - 1;
-            }
+                exprEndPosition = GetEndOfStatement(exprStartPosition, sci.Length, sci) - 1;
             else exprEndPosition = expr.Context.Position;
             sci.SetSel(exprStartPosition, exprEndPosition);
             var template = TemplateUtils.GetTemplate("Switch");
