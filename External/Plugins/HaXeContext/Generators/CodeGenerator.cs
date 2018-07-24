@@ -61,21 +61,6 @@ namespace HaXeContext.Generators
             base.ContextualGenerator(sci, position, expr, options);
         }
 
-        static void Generate(GeneratorJob job, ScintillaControl sci, ASResult expr)
-        {
-            switch (job)
-            {
-                case GeneratorJob.Switch:
-                    sci.BeginUndoAction();
-                    try
-                    {
-                        GenerateSwitch(sci, expr, expr.InFile.Context.ResolveType(expr.Member.Type, expr.InFile));
-                    }
-                    finally { sci.EndUndoAction(); }
-                    break;
-            }
-        }
-
         /// <inheritdoc />
         protected override bool CanShowConvertToConst(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
@@ -327,6 +312,21 @@ namespace HaXeContext.Generators
             if (parameters == null || parameters.Count == 0 || parameters.Count > 2 || parameters.Last().Name  != "set"
                 || ASContext.Context.CurrentClass.Members.Search($"set_{newMember.Name}", FlagType.Function, 0) != null) return string.Empty;
             return base.TryGetOverrideSetterTemplate(ofClass, parameters, newMember);
+        }
+
+        static void Generate(GeneratorJob job, ScintillaControl sci, ASResult expr)
+        {
+            switch (job)
+            {
+                case GeneratorJob.Switch:
+                    sci.BeginUndoAction();
+                    try
+                    {
+                        GenerateSwitch(sci, expr, expr.InFile.Context.ResolveType(expr.Member.Type, expr.InFile));
+                    }
+                    finally { sci.EndUndoAction(); }
+                    break;
+            }
         }
 
         static void GenerateSwitch(ScintillaControl sci, ASResult expr, ClassModel inClass)
