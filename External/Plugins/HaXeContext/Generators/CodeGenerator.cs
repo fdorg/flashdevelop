@@ -1,24 +1,63 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using PluginCore;
 using PluginCore.Controls;
+using PluginCore.Helpers;
+using PluginCore.Localization;
 using ScintillaNet;
 
 namespace HaXeContext.Generators
 {
+    public enum GeneratorJob
+    {
+        Switch
+    }
+
     internal class CodeGenerator : ASGenerator
     {
         /// <inheritdoc />
         protected override void ContextualGenerator(ScintillaControl sci, int position, ASResult expr, List<ICompletionListItem> options)
         {
-            var context = ASContext.Context;
-            if (context.CurrentClass.Flags.HasFlag(FlagType.Enum | FlagType.TypeDef) || context.CurrentClass.Flags.HasFlag(FlagType.Interface))
+            var ctx = ASContext.Context;
+            var currentClass = ctx.CurrentClass;
+            if (currentClass.Flags.HasFlag(FlagType.Enum | FlagType.TypeDef) || currentClass.Flags.HasFlag(FlagType.Interface))
             {
-                if (contextToken != null && expr.Member == null && !context.IsImported(expr.Type ?? ClassModel.VoidClass, sci.CurrentLine)) CheckAutoImport(expr, options);
+                if (contextToken != null && expr.Member == null && !ctx.IsImported(expr.Type ?? ClassModel.VoidClass, sci.CurrentLine)) CheckAutoImport(expr, options);
                 return;
+            }
+            var member = expr.Member;
+            if (member != null && !member.Flags.HasFlag(FlagType.Enum)
+                && expr.Context.WordBefore is var word && word != ctx.Features.varKey && word != ctx.Features.functionKey)
+            {
+                var isAvailable = true;
+                var contextMember = expr.Context.ContextMember;
+                var end = contextMember != null ? sci.PositionFromLine(contextMember.LineTo) : sci.TextLength;
+                for (var i = ASComplete.ExpressionEndPosition(sci, sci.CurrentPos); i < end; i++)
+                {
+                    if (sci.PositionIsOnComment(i)) continue;
+                    var c = (char) sci.CharAt(i);
+                    if (c <= ' ') continue;
+                    if (c == '.')
+                    {
+                        isAvailable = false;
+                        break;
+                    }
+                    if (c > ' ') break;
+                }
+                if (isAvailable)
+                {
+                    var type = ctx.ResolveType(member.Type, expr.InFile);
+                    if (type.Flags.HasFlag(FlagType.Enum) && type.Members.Count > 0)
+                    {
+                        var label = TextHelper.GetString("Info.GenerateSwitch");
+                        options.Add(new GeneratorItem(label, GeneratorJob.Switch, () => Generate(GeneratorJob.Switch, sci, expr)));
+                    }
+                }
             }
             base.ContextualGenerator(sci, position, expr, options);
         }
@@ -275,5 +314,83 @@ namespace HaXeContext.Generators
                 || ASContext.Context.CurrentClass.Members.Search($"set_{newMember.Name}", FlagType.Function, 0) != null) return string.Empty;
             return base.TryGetOverrideSetterTemplate(ofClass, parameters, newMember);
         }
+
+        static void Generate(GeneratorJob job, ScintillaControl sci, ASResult expr)
+        {
+            switch (job)
+            {
+                case GeneratorJob.Switch:
+                    sci.BeginUndoAction();
+                    try
+                    {
+                        GenerateSwitch(sci, expr, expr.InFile.Context.ResolveType(expr.Member.Type, expr.InFile));
+                    }
+                    finally { sci.EndUndoAction(); }
+                    break;
+            }
+        }
+
+        static void GenerateSwitch(ScintillaControl sci, ASResult expr, ClassModel inClass)
+        {
+            var start = expr.Context.PositionExpression;
+            int end;
+            if (expr.Type.QualifiedName == ASContext.Context.ResolveType("Function", null).QualifiedName)
+                end = GetEndOfStatement(start, sci.Length, sci) - 1;
+            else end = expr.Context.Position;
+            sci.SetSel(start, end);
+            var template = TemplateUtils.GetTemplate("Switch");
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Name", sci.SelText);
+            template = template.Replace(SnippetHelper.ENTRYPOINT, string.Empty);
+            var body = string.Empty;
+            for (var i = 0; i < inClass.Members.Count; i++)
+            {
+                var it = inClass.Members[i];
+                body += SnippetHelper.BOUNDARY;
+                if (i > 0) body += "\n";
+                body += "\tcase " + it.Name;
+                if (it.Parameters != null)
+                {
+                    body += "(";
+                    for (var j = 0; j < it.Parameters.Count; j++)
+                    {
+                        if (j > 0) body += ", ";
+                        body += it.Parameters[j].Name.TrimStart('?');
+                    }
+                    body += ")";
+                }
+                body += ":";
+                if (i == 0) body += ' ' + SnippetHelper.ENTRYPOINT;
+            }
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Body", body);
+            InsertCode(start, template, sci);
+        }
+    }
+
+    class GeneratorItem : ICompletionListItem
+    {
+        internal GeneratorJob Job { get; }
+        readonly Action action;
+
+        public GeneratorItem(string label, GeneratorJob job, Action action)
+        {
+            Label = label;
+            Job = job;
+            this.action = action;
+        }
+
+        public string Label { get; }
+
+        public string Value
+        {
+            get
+            {
+                action.Invoke();
+                return null;
+            }
+        }
+
+        public string Description => TextHelper.GetString("ASCompletion.Info.GeneratorTemplate");
+
+        public Bitmap Icon => (Bitmap) ASContext.Panel.GetIcon(34);
     }
 }

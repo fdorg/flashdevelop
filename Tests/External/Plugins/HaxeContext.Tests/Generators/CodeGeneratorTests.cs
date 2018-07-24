@@ -16,12 +16,12 @@ namespace HaXeContext.Generators
     {
         static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.generators.code.{fileName}.hx";
 
-        static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
+        internal static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
         static readonly string testFilesAssemblyPath = $"\\FlashDevelop\\Bin\\Debug\\{nameof(HaXeContext)}\\Test_Files\\";
         static readonly string testFilesDirectory = $"\\Tests\\External\\Plugins\\{nameof(HaXeContext)}.Tests\\Test Files\\";
 
-        static void SetCurrentFile(string fileName)
+        internal static void SetCurrentFile(string fileName)
         {
             fileName = GetFullPath(fileName);
             fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
@@ -902,13 +902,13 @@ namespace HaXeContext.Generators
             if (hasGenerator)
             {
                 Assert.IsNotEmpty(options);
-                var item = options.Find(it => ((GeneratorItem) it).job == job);
+                var item = options.Find(it => ((ASCompletion.Completion.GeneratorItem) it).Job == job);
                 Assert.IsNotNull(item);
                 var value = item.Value;
                 return sci.Text;
             }
             if (job == (GeneratorJobType) (-1)) Assert.IsEmpty(options);
-            if (options.Count > 0) Assert.IsFalse(options.Any(it => ((GeneratorItem) it).job == job));
+            if (options.Count > 0) Assert.IsFalse(options.Any(it => ((ASCompletion.Completion.GeneratorItem) it).Job == job));
             return null;
         }
 
