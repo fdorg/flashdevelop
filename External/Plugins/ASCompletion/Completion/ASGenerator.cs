@@ -4547,14 +4547,14 @@ namespace ASCompletion.Completion
     /// </summary>
     internal class GeneratorItem : ICompletionListItem
     {
-        internal GeneratorJobType job { get; }
+        internal GeneratorJobType Job { get; }
         private readonly MemberModel member;
         private readonly ClassModel inClass;
 
         public GeneratorItem(string label, GeneratorJobType job, MemberModel member, ClassModel inClass)
         {
             Label = label;
-            this.job = job;
+            this.Job = job;
             this.member = member;
             this.inClass = inClass;
         }
@@ -4574,7 +4574,7 @@ namespace ASCompletion.Completion
         {
             get
             {
-                ASGenerator.GenerateJob(job, member, inClass, Label, Data);
+                ASGenerator.GenerateJob(Job, member, inClass, Label, Data);
                 return null;
             }
         }
