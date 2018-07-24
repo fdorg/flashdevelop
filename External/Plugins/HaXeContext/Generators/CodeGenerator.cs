@@ -332,12 +332,12 @@ namespace HaXeContext.Generators
 
         static void GenerateSwitch(ScintillaControl sci, ASResult expr, ClassModel inClass)
         {
-            var exprStartPosition = expr.Context.PositionExpression;
-            int exprEndPosition;
+            var start = expr.Context.PositionExpression;
+            int end;
             if (expr.Type.QualifiedName == ASContext.Context.ResolveType("Function", null).QualifiedName)
-                exprEndPosition = GetEndOfStatement(exprStartPosition, sci.Length, sci) - 1;
-            else exprEndPosition = expr.Context.Position;
-            sci.SetSel(exprStartPosition, exprEndPosition);
+                end = GetEndOfStatement(start, sci.Length, sci) - 1;
+            else end = expr.Context.Position;
+            sci.SetSel(start, end);
             var template = TemplateUtils.GetTemplate("Switch");
             template = TemplateUtils.ReplaceTemplateVariable(template, "Name", sci.SelText);
             template = template.Replace(SnippetHelper.ENTRYPOINT, string.Empty);
@@ -362,7 +362,7 @@ namespace HaXeContext.Generators
                 if (i == 0) body += ' ' + SnippetHelper.ENTRYPOINT;
             }
             template = TemplateUtils.ReplaceTemplateVariable(template, "Body", body);
-            InsertCode(exprStartPosition, template, sci);
+            InsertCode(start, template, sci);
         }
     }
 
