@@ -34,13 +34,12 @@ namespace HaXeContext.Generators
             if (member != null && expr.Context.WordBefore is var word && word != ctx.Features.varKey && word != ctx.Features.functionKey)
             {
                 var isAvailable = true;
-                var start = ASComplete.ExpressionEndPosition(sci, expr.Context.PositionExpression);
                 var contextMember = expr.Context.ContextMember;
                 var end = contextMember != null ? sci.PositionFromLine(contextMember.LineTo) : sci.TextLength;
-                for (var i = start; i < end; i++)
+                for (var i = ASComplete.ExpressionEndPosition(sci, sci.CurrentPos); i < end; i++)
                 {
                     if (sci.PositionIsOnComment(i)) continue;
-                    var c = (char)sci.CharAt(i);
+                    var c = (char) sci.CharAt(i);
                     if (c <= ' ') continue;
                     if (c == '.')
                     {
@@ -55,14 +54,14 @@ namespace HaXeContext.Generators
                     if (type.Flags.HasFlag(FlagType.Enum) && type.Members.Count > 0)
                     {
                         var label = TextHelper.GetString("Info.GenerateSwitch");
-                        options.Add(new GeneratorItem(label, GeneratorJob.Switch, () => Generator(GeneratorJob.Switch, sci, expr)));
+                        options.Add(new GeneratorItem(label, GeneratorJob.Switch, () => Generate(GeneratorJob.Switch, sci, expr)));
                     }
                 }
             }
             base.ContextualGenerator(sci, position, expr, options);
         }
 
-        static void Generator(GeneratorJob job, ScintillaControl sci, ASResult expr)
+        static void Generate(GeneratorJob job, ScintillaControl sci, ASResult expr)
         {
             switch (job)
             {

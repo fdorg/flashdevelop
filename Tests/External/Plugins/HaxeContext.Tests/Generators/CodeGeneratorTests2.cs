@@ -62,6 +62,10 @@ namespace HaXeContext.Generators
                     .Returns(CodeGeneratorTests.ReadAllText("AfterGenerateSwitchLabels_issue1759_9"))
                     .SetName("Generate switch labels. case 9")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1759");
+                yield return new TestCaseData("BeforeGenerateSwitchLabels_issue1759_10", GeneratorJobType.Switch, true)
+                    .Returns(CodeGeneratorTests.ReadAllText("AfterGenerateSwitchLabels_issue1759_10"))
+                    .SetName("Generate switch labels. case 10")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1759");
             }
         }
 
@@ -84,7 +88,7 @@ namespace HaXeContext.Generators
             if (hasGenerator)
             {
                 Assert.IsNotEmpty(options);
-                var item = options.Find(it => ((GeneratorItem) it).Job == job);
+                var item = options.Find(it => it is GeneratorItem && ((GeneratorItem) it).Job == job);
                 Assert.IsNotNull(item);
                 var value = item.Value;
                 return sci.Text;
