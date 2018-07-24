@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
+using ASCompletion.Settings;
 using PluginCore;
 using PluginCore.Controls;
 using PluginCore.Helpers;
@@ -193,6 +195,81 @@ namespace HaXeContext.Generators
                 template = template.Replace("$(EntryPoint)", remove);
             }
             InsertCode(position, template, sci);
+        }
+
+        protected override void GenerateProperty(GeneratorJobType job, MemberModel member, ClassModel inClass, ScintillaControl sci)
+        {
+            var name = GetPropertyNameFor(member);
+            var location = ASContext.CommonSettings.PropertiesGenerationLocation;
+            var latest = TemplateUtils.GetTemplateBlockMember(sci, TemplateUtils.GetBoundary("AccessorsMethods"));
+            if (latest != null) location = PropertiesGenerationLocations.AfterLastPropertyDeclaration;
+            else
+            {
+                if (location == PropertiesGenerationLocations.AfterLastPropertyDeclaration)
+                {
+                    if (job == GeneratorJobType.Setter) latest = FindMember("get_" + (name ?? member.Name), inClass);
+                    else if (job == GeneratorJobType.Getter) latest = FindMember("set_" + (name ?? member.Name), inClass);
+                    if (latest == null) latest = FindLatest(FlagType.Function, 0, inClass, false, false);
+                }
+                else latest = member;
+            }
+            if (latest == null) return;
+            sci.BeginUndoAction();
+            try
+            {
+                if (name == null) name = member.Name;
+                var args = "(default, default)";
+                if (job == GeneratorJobType.GetterSetter) args = "(get, set)";
+                else if (job == GeneratorJobType.Getter) args = "(get, null)";
+                else if (job == GeneratorJobType.Setter) args = "(default, set)";
+                MakeHaxeProperty(sci, member, args);
+                var startsWithNewLine = true;
+                var endsWithNewLine = false;
+                int atLine;
+                if (location == PropertiesGenerationLocations.BeforeVariableDeclaration) atLine = latest.LineTo;
+                else
+                {
+                    if (job == GeneratorJobType.Getter && (latest.Flags & (FlagType.Dynamic | FlagType.Function)) != 0)
+                    {
+                        atLine = latest.LineFrom;
+                        var declaration = GetDeclarationAtLine(atLine - 1);
+                        startsWithNewLine = declaration.Member != null;
+                        endsWithNewLine = true;
+                    }
+                    else atLine = latest.LineTo + 1;
+                }
+                var position = sci.PositionFromLine(atLine) - ((sci.EOLMode == 0) ? 2 : 1);
+                sci.SetSel(position, position);
+                if (job == GeneratorJobType.GetterSetter) GenerateGetterSetter(name, member, position);
+                else if (job == GeneratorJobType.Setter) GenerateSetter(name, member, position);
+                else if (job == GeneratorJobType.Getter) GenerateGetter(name, member, position, startsWithNewLine, endsWithNewLine);
+            }
+            finally
+            {
+                sci.EndUndoAction();
+            }
+        }
+
+        static void MakeHaxeProperty(ScintillaControl sci, MemberModel member, string args)
+        {
+            var features = ASContext.Context.Features;
+            var kind = features.varKey;
+            if ((member.Flags & FlagType.Getter) > 0) kind = features.getKey;
+            else if ((member.Flags & FlagType.Setter) > 0) kind = features.setKey;
+            else if (member.Flags == FlagType.Function) kind = features.functionKey;
+            var reMember = new Regex($@"{kind}\s+({member.Name})[\s:]");
+            for (var i = member.LineFrom; i <= member.LineTo; i++)
+            {
+                var line = sci.GetLine(i);
+                var m = reMember.Match(line);
+                if (!m.Success) continue;
+                var index = sci.MBSafeTextLength(line.Substring(0, m.Groups[1].Index));
+                var position = sci.PositionFromLine(i) + index;
+                sci.SetSel(position, position + member.Name.Length);
+                sci.ReplaceSel(member.Name + args);
+                UpdateLookupPosition(position, 1);
+                return;
+            }
         }
 
         protected override string GetFunctionType(ASResult expr)

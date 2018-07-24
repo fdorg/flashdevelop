@@ -616,7 +616,7 @@ namespace ASCompletion.Completion
             sci.SetSel(position, position);
         }
 
-        private static FoundDeclaration GetDeclarationAtLine(int line)
+        protected static FoundDeclaration GetDeclarationAtLine(int line)
         {
             FoundDeclaration result = new FoundDeclaration();
             FileModel model = ASContext.Context.CurrentModel;
@@ -1000,7 +1000,7 @@ namespace ASCompletion.Completion
                 case GeneratorJobType.Getter:
                 case GeneratorJobType.Setter:
                 case GeneratorJobType.GetterSetter:
-                    GenerateProperty(job, member, inClass, sci);
+                    ((ASGenerator) ASContext.Context.CodeGenerator).GenerateProperty(job, member, inClass, sci);
                     break;
 
                 case GeneratorJobType.BasicEvent:
@@ -1278,59 +1278,32 @@ namespace ASCompletion.Completion
             }
         }
 
-        private static void GenerateProperty(GeneratorJobType job, MemberModel member, ClassModel inClass, ScintillaControl sci)
+        protected virtual void GenerateProperty(GeneratorJobType job, MemberModel member, ClassModel inClass, ScintillaControl sci)
         {
-            string name = GetPropertyNameFor(member);
-            PropertiesGenerationLocations location = ASContext.CommonSettings.PropertiesGenerationLocation;
+            var name = GetPropertyNameFor(member);
+            var location = ASContext.CommonSettings.PropertiesGenerationLocation;
             var latest = TemplateUtils.GetTemplateBlockMember(sci, TemplateUtils.GetBoundary("AccessorsMethods"));
-            if (latest != null)
-            {
-                location = PropertiesGenerationLocations.AfterLastPropertyDeclaration;
-            }
+            if (latest != null) location = PropertiesGenerationLocations.AfterLastPropertyDeclaration;
             else
             {
                 if (location == PropertiesGenerationLocations.AfterLastPropertyDeclaration)
                 {
-                    if (IsHaxe)
-                    {
-                        if (job == GeneratorJobType.Setter) latest = FindMember("get_" + (name ?? member.Name), inClass);
-                        else if (job == GeneratorJobType.Getter) latest = FindMember("set_" + (name ?? member.Name), inClass);
-                        if (latest == null) latest = FindLatest(FlagType.Function, 0, inClass, false, false);
-                    }
-                    else
-                    {
-                        if (job == GeneratorJobType.Getter || job == GeneratorJobType.Setter) latest = FindMember(name ?? member.Name, inClass);
-                        if (latest == null) latest = FindLatest(FlagType.Getter | FlagType.Setter, 0, inClass, false, false);
-                    }
+                    if (job == GeneratorJobType.Getter || job == GeneratorJobType.Setter)
+                        latest = FindMember(name ?? member.Name, inClass);
+                    if (latest == null) latest = FindLatest(FlagType.Getter | FlagType.Setter, 0, inClass, false, false);
                 }
                 else latest = member;
             }
             if (latest == null) return;
-
             sci.BeginUndoAction();
             try
             {
-                if (IsHaxe)
+                if ((member.Access & Visibility.Public) > 0) MakePrivate(sci, member, inClass);
+                if (name == null) // rename var with starting underscore
                 {
-                    if (name == null) name = member.Name;
-                    string args = "(default, default)";
-                    if (job == GeneratorJobType.GetterSetter) args = "(get, set)";
-                    else if (job == GeneratorJobType.Getter) args = "(get, null)";
-                    else if (job == GeneratorJobType.Setter) args = "(default, set)";
-                    MakeHaxeProperty(sci, member, args);
-                }
-                else
-                {
-                    if ((member.Access & Visibility.Public) > 0) // hide member
-                    {
-                        MakePrivate(sci, member, inClass);
-                    }
-                    if (name == null) // rename var with starting underscore
-                    {
-                        name = member.Name;
-                        string newName = GetNewPropertyNameFor(member);
-                        if (RenameMember(sci, member, newName)) member.Name = newName;
-                    }
+                    name = member.Name;
+                    var newName = GetNewPropertyNameFor(member);
+                    if (RenameMember(sci, member, newName)) member.Name = newName;
                 }
                 var startsWithNewLine = true;
                 var endsWithNewLine = false;
@@ -1349,24 +1322,9 @@ namespace ASCompletion.Completion
                 }
                 var position = sci.PositionFromLine(atLine) - ((sci.EOLMode == 0) ? 2 : 1);
                 sci.SetSel(position, position);
-                if (job == GeneratorJobType.GetterSetter)
-                {
-                    sci.SetSel(position, position);
-                    GenerateGetterSetter(name, member, position);
-                }
-                else
-                {
-                    if (job == GeneratorJobType.Setter)
-                    {
-                        sci.SetSel(position, position);
-                        GenerateSetter(name, member, position);
-                    }
-                    else if (job == GeneratorJobType.Getter)
-                    {
-                        sci.SetSel(position, position);
-                        GenerateGetter(name, member, position, startsWithNewLine, endsWithNewLine);
-                    }
-                }
+                if (job == GeneratorJobType.GetterSetter) GenerateGetterSetter(name, member, position);
+                else if (job == GeneratorJobType.Setter) GenerateSetter(name, member, position);
+                else if (job == GeneratorJobType.Getter) GenerateGetter(name, member, position, startsWithNewLine, endsWithNewLine);
             }
             finally
             {
@@ -3463,34 +3421,6 @@ namespace ASCompletion.Completion
             return false;
         }
 
-        public static bool MakeHaxeProperty(ScintillaControl sci, MemberModel member, string args)
-        {
-            ContextFeatures features = ASContext.Context.Features;
-            string kind = features.varKey;
-
-            if ((member.Flags & FlagType.Getter) > 0) kind = features.getKey;
-            else if ((member.Flags & FlagType.Setter) > 0) kind = features.setKey;
-            else if (member.Flags == FlagType.Function) kind = features.functionKey;
-
-            Regex reMember = new Regex($@"{kind}\s+({member.Name})[\s:]");
-
-            for (int i = member.LineFrom; i <= member.LineTo; i++)
-            {
-                var line = sci.GetLine(i);
-                var m = reMember.Match(line);
-                if (m.Success)
-                {
-                    var index = sci.MBSafeTextLength(line.Substring(0, m.Groups[1].Index));
-                    var position = sci.PositionFromLine(i) + index;
-                    sci.SetSel(position, position + member.Name.Length);
-                    sci.ReplaceSel(member.Name + args);
-                    UpdateLookupPosition(position, 1);
-                    return true;
-                }
-            }
-            return false;
-        }
-
         public static bool RenameMember(ScintillaControl Sci, MemberModel member, string newName)
         {
             ContextFeatures features = ASContext.Context.Features;
@@ -3525,7 +3455,7 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Return an obvious property name matching a private var, or null
         /// </summary>
-        private static string GetPropertyNameFor(MemberModel member)
+        protected static string GetPropertyNameFor(MemberModel member)
         {
             string name = member.Name;
             if (name.Length == 0 || (member.Access & Visibility.Public) > 0 || IsHaxe) return null;
@@ -3658,7 +3588,7 @@ namespace ASCompletion.Completion
 
         private static void GenerateGetter(string name, MemberModel member, int position) => GenerateGetter(name, member, position, true, false);
 
-        private static void GenerateGetter(string name, MemberModel member, int position, bool startsWithNewLine, bool endsWithNewLine)
+        protected static void GenerateGetter(string name, MemberModel member, int position, bool startsWithNewLine, bool endsWithNewLine)
         {
             var newMember = new MemberModel
             {
@@ -3677,7 +3607,7 @@ namespace ASCompletion.Completion
             InsertCode(position, decl);
         }
 
-        private static void GenerateSetter(string name, MemberModel member, int position)
+        protected static void GenerateSetter(string name, MemberModel member, int position)
         {
             var newMember = new MemberModel
             {
@@ -3694,7 +3624,7 @@ namespace ASCompletion.Completion
             InsertCode(position, decl);
         }
 
-        private static void GenerateGetterSetter(string name, MemberModel member, int position)
+        protected static void GenerateGetterSetter(string name, MemberModel member, int position)
         {
             string template = TemplateUtils.GetTemplate("GetterSetter");
             if (template == "")
@@ -3803,7 +3733,7 @@ namespace ASCompletion.Completion
             return latest;
         }
 
-        private static MemberModel FindMember(string name, ClassModel inClass)
+        protected static MemberModel FindMember(string name, ClassModel inClass)
         {
             MemberList list;
             if (inClass == ClassModel.VoidClass)
@@ -3826,7 +3756,7 @@ namespace ASCompletion.Completion
 
         private static MemberModel FindLatest(FlagType match, Visibility visi, ClassModel inClass) => FindLatest(match, visi, inClass, true, true);
 
-        private static MemberModel FindLatest(FlagType match, Visibility visi, ClassModel inClass, bool isFlagMatchStrict, bool isVisibilityMatchStrict)
+        protected static MemberModel FindLatest(FlagType match, Visibility visi, ClassModel inClass, bool isFlagMatchStrict, bool isVisibilityMatchStrict)
         {
             MemberList list;
             if (inClass == ClassModel.VoidClass)
@@ -4481,7 +4411,7 @@ namespace ASCompletion.Completion
             return modifier;
         }
 
-        private static void UpdateLookupPosition(int position, int delta)
+        protected static void UpdateLookupPosition(int position, int delta)
         {
             if (lookupPosition > position)
             {
