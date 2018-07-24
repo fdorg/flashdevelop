@@ -1,11 +1,11 @@
 ﻿package;
 public class Main {
-	function foo(v):EFoo {
+	function foo(v:EF$(EntryPoint)oo):EFoo {
 		return Bar;
 	}
 }
 
 enum EFoo {
-	Fo$(EntryPoint)o;
+	Foo;
 	Bar;
 }

@@ -7,5 +7,5 @@ public class Main {
 
 enum EF$(EntryPoint)oo {
 	Foo;
-	Bar
+	Bar;
 }

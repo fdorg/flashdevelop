@@ -70,10 +70,6 @@ namespace HaXeContext.Generators
                     .Returns(CodeGeneratorTests.ReadAllText("AfterGenerateSwitchLabels_issue1759_11"))
                     .SetName("Generate switch labels. case 11")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1759");
-                yield return new TestCaseData("BeforeGenerateSwitchLabels_issue1759_11", GeneratorJobType.Switch, true)
-                    .Returns(CodeGeneratorTests.ReadAllText("AfterGenerateSwitchLabels_issue1759_11"))
-                    .SetName("Generate switch labels. case 11")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1759");
                 yield return new TestCaseData("BeforeGenerateSwitchLabels_issue1759_12", GeneratorJobType.Switch, false)
                     .Returns(null)
                     .SetName("Generate switch labels. case 12")
@@ -89,6 +85,14 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("BeforeGenerateSwitchLabels_issue1759_15", GeneratorJobType.Switch, false)
                     .Returns(null)
                     .SetName("Generate switch labels. case 15")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1759");
+                yield return new TestCaseData("BeforeGenerateSwitchLabels_issue1759_16", GeneratorJobType.Switch, false)
+                    .Returns(null)
+                    .SetName("Generate switch labels. case 16")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1759");
+                yield return new TestCaseData("BeforeGenerateSwitchLabels_issue1759_17", GeneratorJobType.Switch, false)
+                    .Returns(null)
+                    .SetName("Generate switch labels. case 17")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1759");
             }
         }
