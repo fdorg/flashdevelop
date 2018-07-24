@@ -70,7 +70,7 @@ namespace HaXeContext.Generators
                     sci.BeginUndoAction();
                     try
                     {
-                        GenerateSwitchLabels(sci, expr, expr.InFile.Context.ResolveType(expr.Member.Type, expr.InFile));
+                        GenerateSwitch(sci, expr, expr.InFile.Context.ResolveType(expr.Member.Type, expr.InFile));
                     }
                     finally { sci.EndUndoAction(); }
                     break;
@@ -330,7 +330,7 @@ namespace HaXeContext.Generators
             return base.TryGetOverrideSetterTemplate(ofClass, parameters, newMember);
         }
 
-        static void GenerateSwitchLabels(ScintillaControl sci, ASResult expr, ClassModel inClass)
+        static void GenerateSwitch(ScintillaControl sci, ASResult expr, ClassModel inClass)
         {
             var exprStartPosition = expr.Context.PositionExpression;
             int exprEndPosition;
