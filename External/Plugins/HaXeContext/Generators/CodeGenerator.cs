@@ -54,7 +54,7 @@ namespace HaXeContext.Generators
                     var type = ctx.ResolveType(member.Type, expr.InFile);
                     if (type.Flags.HasFlag(FlagType.Enum) && type.Members.Count > 0)
                     {
-                        var label = TextHelper.GetString("Info.GeneratorSwitch");
+                        var label = TextHelper.GetString("Info.GenerateSwitch");
                         options.Add(new GeneratorItem(label, GeneratorJob.Switch, () => Generator(GeneratorJob.Switch, sci, expr)));
                     }
                 }
