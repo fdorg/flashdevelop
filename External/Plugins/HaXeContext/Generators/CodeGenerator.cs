@@ -1,14 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
 using PluginCore;
 using PluginCore.Controls;
+using PluginCore.Helpers;
+using PluginCore.Localization;
 using ScintillaNet;
 
 namespace HaXeContext.Generators
 {
+    public enum GeneratorJob
+    {
+        SwitchLabels
+    }
+
     internal class CodeGenerator : ASGenerator
     {
         /// <inheritdoc />
@@ -19,6 +28,27 @@ namespace HaXeContext.Generators
             {
                 if (contextToken != null && expr.Member == null && !context.IsImported(expr.Type ?? ClassModel.VoidClass, sci.CurrentLine)) CheckAutoImport(expr, options);
                 return;
+            }
+            var member = expr.Member;
+            if (member != null && expr.Context.WordBefore != context.Features.varKey && expr.Context.WordBefore != context.Features.functionKey)
+            {
+                var type = context.ResolveType(member.Type, expr.InFile);
+                if (type.Flags.HasFlag(FlagType.Enum) && type.Members.Count > 0)
+                {
+                    var label = "Generate switch labels";
+                    options.Add(new GeneratorItem(label, GeneratorJob.SwitchLabels, () =>
+                    {
+                        sci.BeginUndoAction();
+                        try
+                        {
+                            GenerateSwitchLabels(sci, expr, type);
+                        }
+                        finally
+                        {
+                            sci.EndUndoAction();
+                        }
+                    }));
+                }
             }
             base.ContextualGenerator(sci, position, expr, options);
         }
@@ -275,5 +305,71 @@ namespace HaXeContext.Generators
                 || ASContext.Context.CurrentClass.Members.Search($"set_{newMember.Name}", FlagType.Function, 0) != null) return string.Empty;
             return base.TryGetOverrideSetterTemplate(ofClass, parameters, newMember);
         }
+
+        static void GenerateSwitchLabels(ScintillaControl sci, ASResult expr, ClassModel inClass)
+        {
+            var exprStartPosition = expr.Context.PositionExpression;
+            int exprEndPosition;
+            if (expr.Type.QualifiedName == ASContext.Context.ResolveType("Function", null).QualifiedName)
+            {
+                var endPosition = sci.PositionFromLine(expr.Context.ContextMember.LineTo);
+                exprEndPosition = GetEndOfStatement(exprStartPosition, endPosition, sci) - 1;
+            }
+            else exprEndPosition = expr.Context.Position;
+            sci.SetSel(exprStartPosition, exprEndPosition);
+            var template = TemplateUtils.GetTemplate("Switch");
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Name", sci.SelText);
+            template = template.Replace(SnippetHelper.ENTRYPOINT, string.Empty);
+            var body = string.Empty;
+            for (var i = 0; i < inClass.Members.Count; i++)
+            {
+                var it = inClass.Members[i];
+                body += SnippetHelper.BOUNDARY;
+                if (i > 0) body += "\n";
+                body += "\tcase " + it.Name;
+                if (it.Parameters != null)
+                {
+                    body += "(";
+                    for (var j = 0; j < it.Parameters.Count; j++)
+                    {
+                        if (j > 0) body += ", ";
+                        body += it.Parameters[j].Name.TrimStart('?');
+                    }
+                    body += ")";
+                }
+                body += ":";
+                if (i == 0) body += ' ' + SnippetHelper.ENTRYPOINT;
+            }
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Body", body);
+            InsertCode(exprStartPosition, template, sci);
+        }
+    }
+
+    class GeneratorItem : ICompletionListItem
+    {
+        internal GeneratorJob Job { get; }
+        readonly Action action;
+
+        public GeneratorItem(string label, GeneratorJob job, Action action)
+        {
+            Label = label;
+            Job = job;
+            this.action = action;
+        }
+
+        public string Label { get; }
+
+        public string Value
+        {
+            get
+            {
+                action.Invoke();
+                return null;
+            }
+        }
+
+        public string Description => TextHelper.GetString("ASCompletion.Info.GeneratorTemplate");
+
+        public Bitmap Icon => (Bitmap) ASContext.Panel.GetIcon(34);
     }
 }

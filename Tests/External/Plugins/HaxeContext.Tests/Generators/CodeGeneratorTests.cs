@@ -902,13 +902,13 @@ namespace HaXeContext.Generators
             if (hasGenerator)
             {
                 Assert.IsNotEmpty(options);
-                var item = options.Find(it => ((GeneratorItem) it).job == job);
+                var item = options.Find(it => ((ASCompletion.Completion.GeneratorItem) it).job == job);
                 Assert.IsNotNull(item);
                 var value = item.Value;
                 return sci.Text;
             }
             if (job == (GeneratorJobType) (-1)) Assert.IsEmpty(options);
-            if (options.Count > 0) Assert.IsFalse(options.Any(it => ((GeneratorItem) it).job == job));
+            if (options.Count > 0) Assert.IsFalse(options.Any(it => ((ASCompletion.Completion.GeneratorItem) it).job == job));
             return null;
         }
 

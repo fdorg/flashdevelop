@@ -4545,7 +4545,7 @@ namespace ASCompletion.Completion
     /// <summary>
     /// Generation completion list item
     /// </summary>
-    class GeneratorItem : ICompletionListItem
+    internal class GeneratorItem : ICompletionListItem
     {
         internal GeneratorJobType job { get; }
         private readonly MemberModel member;
