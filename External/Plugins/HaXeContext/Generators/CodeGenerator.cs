@@ -15,7 +15,7 @@ namespace HaXeContext.Generators
 {
     public enum GeneratorJob
     {
-        SwitchLabels
+        Switch
     }
 
     internal class CodeGenerator : ASGenerator
@@ -23,34 +23,58 @@ namespace HaXeContext.Generators
         /// <inheritdoc />
         protected override void ContextualGenerator(ScintillaControl sci, int position, ASResult expr, List<ICompletionListItem> options)
         {
-            var context = ASContext.Context;
-            if (context.CurrentClass.Flags.HasFlag(FlagType.Enum | FlagType.TypeDef) || context.CurrentClass.Flags.HasFlag(FlagType.Interface))
+            var ctx = ASContext.Context;
+            var currentClass = ctx.CurrentClass;
+            if (currentClass.Flags.HasFlag(FlagType.Enum | FlagType.TypeDef) || currentClass.Flags.HasFlag(FlagType.Interface))
             {
-                if (contextToken != null && expr.Member == null && !context.IsImported(expr.Type ?? ClassModel.VoidClass, sci.CurrentLine)) CheckAutoImport(expr, options);
+                if (contextToken != null && expr.Member == null && !ctx.IsImported(expr.Type ?? ClassModel.VoidClass, sci.CurrentLine)) CheckAutoImport(expr, options);
                 return;
             }
             var member = expr.Member;
-            if (member != null && expr.Context.WordBefore != context.Features.varKey && expr.Context.WordBefore != context.Features.functionKey)
+            if (member != null && expr.Context.WordBefore is var word && word != ctx.Features.varKey && word != ctx.Features.functionKey)
             {
-                var type = context.ResolveType(member.Type, expr.InFile);
-                if (type.Flags.HasFlag(FlagType.Enum) && type.Members.Count > 0)
+                var isAvailable = true;
+                var start = ASComplete.ExpressionEndPosition(sci, expr.Context.PositionExpression);
+                var contextMember = expr.Context.ContextMember;
+                var end = contextMember != null ? sci.PositionFromLine(contextMember.LineTo) : sci.TextLength;
+                for (var i = start; i < end; i++)
                 {
-                    var label = "Generate switch labels";
-                    options.Add(new GeneratorItem(label, GeneratorJob.SwitchLabels, () =>
+                    if (sci.PositionIsOnComment(i)) continue;
+                    var c = (char)sci.CharAt(i);
+                    if (c <= ' ') continue;
+                    if (c == '.')
                     {
-                        sci.BeginUndoAction();
-                        try
-                        {
-                            GenerateSwitchLabels(sci, expr, type);
-                        }
-                        finally
-                        {
-                            sci.EndUndoAction();
-                        }
-                    }));
+                        isAvailable = false;
+                        break;
+                    }
+                    if (c > ' ') break;
+                }
+                if (isAvailable)
+                {
+                    var type = ctx.ResolveType(member.Type, expr.InFile);
+                    if (type.Flags.HasFlag(FlagType.Enum) && type.Members.Count > 0)
+                    {
+                        var label = TextHelper.GetString("Info.GeneratorSwitch");
+                        options.Add(new GeneratorItem(label, GeneratorJob.Switch, () => Generator(GeneratorJob.Switch, sci, expr)));
+                    }
                 }
             }
             base.ContextualGenerator(sci, position, expr, options);
+        }
+
+        static void Generator(GeneratorJob job, ScintillaControl sci, ASResult expr)
+        {
+            switch (job)
+            {
+                case GeneratorJob.Switch:
+                    sci.BeginUndoAction();
+                    try
+                    {
+                        GenerateSwitchLabels(sci, expr, expr.InFile.Context.ResolveType(expr.Member.Type, expr.InFile));
+                    }
+                    finally { sci.EndUndoAction(); }
+                    break;
+            }
         }
 
         /// <inheritdoc />

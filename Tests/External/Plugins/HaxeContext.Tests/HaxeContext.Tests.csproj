@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="Commands\RefactorCommandTests.cs" />
     <Compile Include="Completion\CodeCompleteTests.cs" />
+    <Compile Include="Generators\CodeGeneratorTests2.cs" />
     <Compile Include="Generators\CodeGeneratorTests.cs" />
     <Compile Include="ContextTests.cs" />
     <Compile Include="Generators\DocumentationGeneratorTests.cs" />
@@ -577,6 +578,22 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2230_3.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2230_4.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2230_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue1759_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue1759_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue1759_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue1759_6.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue1759_7.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue1759_8.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue1759_9.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue1759_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue1759_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue1759_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue1759_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue1759_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue1759_6.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue1759_7.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue1759_8.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue1759_9.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue1150_1.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue1150_2.hx" />
     <EmbeddedResource Include="Test Files\parser\Issue1150_3.hx" />
