@@ -3455,10 +3455,10 @@ namespace ASCompletion.Completion
         /// <summary>
         /// Return an obvious property name matching a private var, or null
         /// </summary>
-        protected static string GetPropertyNameFor(MemberModel member)
+        static string GetPropertyNameFor(MemberModel member)
         {
             string name = member.Name;
-            if (name.Length == 0 || (member.Access & Visibility.Public) > 0 || IsHaxe) return null;
+            if (name.Length == 0 || (member.Access & Visibility.Public) != 0) return null;
             Match parts = Regex.Match(name, "([^_$]*)[_$]+(.*)");
             if (parts.Success)
             {

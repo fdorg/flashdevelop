@@ -199,7 +199,6 @@ namespace HaXeContext.Generators
 
         protected override void GenerateProperty(GeneratorJobType job, MemberModel member, ClassModel inClass, ScintillaControl sci)
         {
-            var name = GetPropertyNameFor(member);
             var location = ASContext.CommonSettings.PropertiesGenerationLocation;
             var latest = TemplateUtils.GetTemplateBlockMember(sci, TemplateUtils.GetBoundary("AccessorsMethods"));
             if (latest != null) location = PropertiesGenerationLocations.AfterLastPropertyDeclaration;
@@ -207,8 +206,8 @@ namespace HaXeContext.Generators
             {
                 if (location == PropertiesGenerationLocations.AfterLastPropertyDeclaration)
                 {
-                    if (job == GeneratorJobType.Setter) latest = FindMember("get_" + (name ?? member.Name), inClass);
-                    else if (job == GeneratorJobType.Getter) latest = FindMember("set_" + (name ?? member.Name), inClass);
+                    if (job == GeneratorJobType.Setter) latest = FindMember("get_" + member.Name, inClass);
+                    else if (job == GeneratorJobType.Getter) latest = FindMember("set_" + member.Name, inClass);
                     if (latest == null) latest = FindLatest(FlagType.Function, 0, inClass, false, false);
                 }
                 else latest = member;
@@ -217,7 +216,7 @@ namespace HaXeContext.Generators
             sci.BeginUndoAction();
             try
             {
-                if (name == null) name = member.Name;
+                var name = member.Name;
                 var args = "(default, default)";
                 if (job == GeneratorJobType.GetterSetter) args = "(get, set)";
                 else if (job == GeneratorJobType.Getter) args = "(get, null)";
