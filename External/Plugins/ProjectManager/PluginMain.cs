@@ -628,7 +628,11 @@ namespace ProjectManager
             PluginBase.MainForm.CallCommand("SaveSession", sessionFile);
         }
 
-        void SetProject(Project project, Boolean stealFocus, Boolean internalOpening)
+        void SetProject(Project project) => SetProject(project, true, false);
+
+        void SetProject(Project project, bool stealFocus) => SetProject(project, stealFocus, false);
+
+        void SetProject(Project project, bool stealFocus, bool internalOpening)
         {
             if (project == null || Tree.Projects.Contains(project)) return;
             if (activeProject != null) CloseProject(true);
@@ -642,12 +646,12 @@ namespace ProjectManager
             SetActiveProject(project);
 
             // events
-            project.ClasspathChanged += new ChangedHandler(ProjectClasspathsChanged);
-            project.BeforeSave += new BeforeSaveHandler(ProjectBeforeSave);
+            project.ClasspathChanged += ProjectClasspathsChanged;
+            project.BeforeSave += ProjectBeforeSave;
             listenToPathChange = true;
 
             // activate
-            if (!internalOpening || (internalOpening && !PluginBase.Settings.RestoreFileSession))
+            if (!internalOpening || !PluginBase.Settings.RestoreFileSession)
             {
                 RestoreProjectSession(project);
             }
@@ -686,15 +690,6 @@ namespace ProjectManager
             pluginUI.SetProject(project);
             menus.SetProject(project); // TODO this should reflect the "solution"
             pluginUI.NotifyIssues();
-        }
-
-        void SetProject(Project project, Boolean stealFocus)
-        {
-            SetProject(project, stealFocus, false);
-        }
-        void SetProject(Project project)
-        {
-            SetProject(project, true, false);
         }
 
         void CloseProject(bool internalClosing)
