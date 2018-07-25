@@ -3253,6 +3253,22 @@ namespace ASCompletion.Completion
                         yield return new TestCaseData("BeforeGenerateVariable_1", GeneratorJobType.VariablePublic, true)
                             .Returns(ReadAllTextAS3("AfterGenerateVariable_1"))
                             .SetName("Generate variable. case 1");
+                        yield return new TestCaseData("BeforeAddToInterface_issue2257_1", GeneratorJobType.AddInterfaceDef, true)
+                            .Returns(ReadAllTextAS3("AfterAddToInterface_issue2257_1"))
+                            .SetName("Add to interface. case 1")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2257");
+                        yield return new TestCaseData("BeforeAddToInterface_issue2257_2", GeneratorJobType.AddInterfaceDef, true)
+                            .Returns(ReadAllTextAS3("AfterAddToInterface_issue2257_2"))
+                            .SetName("Add to interface. case 2")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2257");
+                        yield return new TestCaseData("BeforeAddToInterface_issue2257_3", GeneratorJobType.AddInterfaceDef, true)
+                            .Returns(ReadAllTextAS3("AfterAddToInterface_issue2257_3"))
+                            .SetName("Add to interface. case 3")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2257");
+                        yield return new TestCaseData("BeforeAddToInterface_issue2257_4", GeneratorJobType.AddInterfaceDef, true)
+                            .Returns(ReadAllTextAS3("AfterAddToInterface_issue2257_4"))
+                            .SetName("Add to interface. case 4")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2257");
                     }
                 }
 
