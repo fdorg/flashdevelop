@@ -1837,14 +1837,20 @@ namespace ASCompletion.Completion
                 position = sci.PositionFromLine(latest.LineTo + 1) - ((sci.EOLMode == 0) ? 2 : 1);
                 template = NewLine + template;
             }
-
+            string type = null;
+            if ((member.Flags & FlagType.Setter) != 0)
+            {
+                if (member.Parameters != null && member.Parameters.Count > 0) type = member.Parameters[0].Type;
+                if (type == null) type = member.Type;
+                if (type == ctx.Features.voidKey) type = ctx.Features.dynamicKey;
+            }
+            else type = member.Type ?? ctx.Features.voidKey;
             sci.SetSel(position, position);
             sci.CurrentPos = position;
-            template = TemplateUtils.ReplaceTemplateVariable(template, "Type", member.Type ?? ctx.Features.voidKey);
+            template = TemplateUtils.ReplaceTemplateVariable(template, "Type", type);
             template = TemplateUtils.ToDeclarationString(member, template);
             template = TemplateUtils.ReplaceTemplateVariable(template, "BlankLine", NewLine);
             template = TemplateUtils.ReplaceTemplateVariable(template, "Void", ctx.Features.voidKey);
-
             if (ctx.Settings.GenerateImports)
             {
                 var imports = new List<string>();

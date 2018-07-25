@@ -1147,6 +1147,14 @@
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateClassTest_issue2255_1.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateClassTest_issue2255_2.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateClassTest_issue2255_3.hx" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAddToInterface_issue2257_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAddToInterface_issue2257_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAddToInterface_issue2257_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAddToInterface_issue2257_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAddToInterface_issue2257_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAddToInterface_issue2257_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeAddToInterface_issue2257_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterAddToInterface_issue2257_4.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
