@@ -136,13 +136,13 @@ namespace ASClassWizard
 
         #region Custom Methods
 
-        public void AddEventHandlers()
+        private void AddEventHandlers()
         {
             EventManager.AddEventHandler(this, EventType.Command | EventType.ProcessArgs);
             EventManager.AddEventHandler(this, EventType.FileSwitch, HandlingPriority.Low);
         }
 
-        public void InitLocalization() => Description = TextHelper.GetString("Info.Description");
+        private void InitLocalization() => Description = TextHelper.GetString("Info.Description");
 
         private void DisplayClassWizard(string inDirectory, string templateFile, string className, string constructorArgs, List<string> constructorArgTypes)
         {
@@ -254,7 +254,7 @@ namespace ASClassWizard
             return subPath.Replace(Path.DirectorySeparatorChar, '.');
         }
 
-        public string ProcessArgs(Project project, string args)
+        private string ProcessArgs(Project project, string args)
         {
             if (lastFileFromTemplate != null)
             {
