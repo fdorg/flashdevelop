@@ -3457,16 +3457,14 @@ namespace ASCompletion.Completion
         /// </summary>
         static string GetPropertyNameFor(MemberModel member)
         {
-            string name = member.Name;
+            if (IsHaxe) return null;
+            var name = member.Name;
             if (name.Length == 0 || (member.Access & Visibility.Public) != 0) return null;
-            Match parts = Regex.Match(name, "([^_$]*)[_$]+(.*)");
-            if (parts.Success)
-            {
-                string pre = parts.Groups[1].Value;
-                string post = parts.Groups[2].Value;
-                return pre.Length > post.Length ? pre : post;
-            }
-            return null;
+            var parts = Regex.Match(name, "([^_$]*)[_$]+(.*)");
+            if (!parts.Success) return null;
+            var pre = parts.Groups[1].Value;
+            var post = parts.Groups[2].Value;
+            return pre.Length > post.Length ? pre : post;
         }
 
         /// <summary>

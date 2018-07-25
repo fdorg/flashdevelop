@@ -221,7 +221,7 @@ namespace HaXeContext.Generators
                 if (job == GeneratorJobType.GetterSetter) args = "(get, set)";
                 else if (job == GeneratorJobType.Getter) args = "(get, null)";
                 else if (job == GeneratorJobType.Setter) args = "(default, set)";
-                MakeHaxeProperty(sci, member, args);
+                MakeProperty(sci, member, args);
                 var startsWithNewLine = true;
                 var endsWithNewLine = false;
                 int atLine;
@@ -249,7 +249,7 @@ namespace HaXeContext.Generators
             }
         }
 
-        static void MakeHaxeProperty(ScintillaControl sci, MemberModel member, string args)
+        static void MakeProperty(ScintillaControl sci, MemberModel member, string args)
         {
             var features = ASContext.Context.Features;
             var kind = features.varKey;
