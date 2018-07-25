@@ -1309,17 +1309,14 @@ namespace ASCompletion.Completion
                 var endsWithNewLine = false;
                 int atLine;
                 if (location == PropertiesGenerationLocations.BeforeVariableDeclaration) atLine = latest.LineTo;
-                else
+                else if (job == GeneratorJobType.Getter && (latest.Flags & (FlagType.Dynamic | FlagType.Function)) != 0)
                 {
-                    if (job == GeneratorJobType.Getter && (latest.Flags & (FlagType.Dynamic | FlagType.Function)) != 0)
-                    {
-                        atLine = latest.LineFrom;
-                        var declaration = GetDeclarationAtLine(atLine - 1);
-                        startsWithNewLine = declaration.Member != null;
-                        endsWithNewLine = true;
-                    }
-                    else atLine = latest.LineTo + 1;
+                    atLine = latest.LineFrom;
+                    var declaration = GetDeclarationAtLine(atLine - 1);
+                    startsWithNewLine = declaration.Member != null;
+                    endsWithNewLine = true;
                 }
+                else atLine = latest.LineTo + 1;
                 var position = sci.PositionFromLine(atLine) - ((sci.EOLMode == 0) ? 2 : 1);
                 sci.SetSel(position, position);
                 if (job == GeneratorJobType.GetterSetter) GenerateGetterSetter(name, member, position);

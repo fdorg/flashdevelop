@@ -226,17 +226,14 @@ namespace HaXeContext.Generators
                 var endsWithNewLine = false;
                 int atLine;
                 if (location == PropertiesGenerationLocations.BeforeVariableDeclaration) atLine = latest.LineTo;
-                else
+                else if (job == GeneratorJobType.Getter && (latest.Flags & (FlagType.Dynamic | FlagType.Function)) != 0)
                 {
-                    if (job == GeneratorJobType.Getter && (latest.Flags & (FlagType.Dynamic | FlagType.Function)) != 0)
-                    {
-                        atLine = latest.LineFrom;
-                        var declaration = GetDeclarationAtLine(atLine - 1);
-                        startsWithNewLine = declaration.Member != null;
-                        endsWithNewLine = true;
-                    }
-                    else atLine = latest.LineTo + 1;
+                    atLine = latest.LineFrom;
+                    var declaration = GetDeclarationAtLine(atLine - 1);
+                    startsWithNewLine = declaration.Member != null;
+                    endsWithNewLine = true;
                 }
+                else atLine = latest.LineTo + 1;
                 var position = sci.PositionFromLine(atLine) - ((sci.EOLMode == 0) ? 2 : 1);
                 sci.SetSel(position, position);
                 if (job == GeneratorJobType.GetterSetter) GenerateGetterSetter(name, member, position);
@@ -256,14 +253,24 @@ namespace HaXeContext.Generators
             if ((member.Flags & FlagType.Getter) > 0) kind = features.getKey;
             else if ((member.Flags & FlagType.Setter) > 0) kind = features.setKey;
             else if (member.Flags == FlagType.Function) kind = features.functionKey;
-            var reMember = new Regex($@"{kind}\s+({member.Name})[\s:]");
+            else kind = $@"(?:(?<access>public |private |static |inline )\s)*?{kind}";
+            var reMember = new Regex($@"{kind}\s+({member.Name})[\s:]", RegexOptions.IgnorePatternWhitespace);
             for (var i = member.LineFrom; i <= member.LineTo; i++)
             {
                 var line = sci.GetLine(i);
                 var m = reMember.Match(line);
                 if (!m.Success) continue;
-                var index = sci.MBSafeTextLength(line.Substring(0, m.Groups[1].Index));
-                var position = sci.PositionFromLine(i) + index;
+                var offset = 0;
+                var positionFromLine = sci.PositionFromLine(i);
+                if (args == "(get, set)")
+                {
+                    sci.SetSel(positionFromLine + m.Index, sci.LineEndPosition(i));
+                    sci.ReplaceSel($"@:isVar {sci.SelText}");
+                    offset = "$:isVar ".Length;
+                    line = sci.GetLine(i);
+                }
+                var index = sci.MBSafeTextLength(line.Substring(0, m.Groups[1].Index + offset));
+                var position = positionFromLine + index;
                 sci.SetSel(position, position + member.Name.Length);
                 sci.ReplaceSel(member.Name + args);
                 UpdateLookupPosition(position, 1);
