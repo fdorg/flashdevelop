@@ -152,7 +152,7 @@ namespace ASClassWizard
             try
             {
                 package = GetPackage(classpath, inDirectory);
-                if (string.IsNullOrEmpty(package) && project.AdditionalPaths.Length > 0)
+                if (string.IsNullOrEmpty(package) && project.AdditionalPaths != null && project.AdditionalPaths.Length > 0)
                 {
                     var closest = "";
                     foreach (var it in project.AdditionalPaths)
