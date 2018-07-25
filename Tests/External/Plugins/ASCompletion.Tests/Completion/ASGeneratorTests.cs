@@ -3175,10 +3175,18 @@ namespace ASCompletion.Completion
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData("BeforeGenerateClassTest_issue1762_1", "$(Boundary)dynamicValue:Dynamic$(Boundary)")
-                                .SetName("Issue1762. Case 1")
-                                .SetDescription("https://github.com/fdorg/flashdevelop/issues/1762");
+                        yield return new TestCaseData("BeforeGenerateClassTest_issue1762_1", "$(Boundary)dynamicValue:Dynamic$(Boundary)")
+                            .SetName("Issue1762. Case 1")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/1762");
+                        yield return new TestCaseData("BeforeGenerateClassTest_issue2255_1", string.Empty)
+                            .SetName("Issue2255. Case 1")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2255");
+                        yield return new TestCaseData("BeforeGenerateClassTest_issue2255_2", string.Empty)
+                            .SetName("Issue2255. Case 2")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2255");
+                        yield return new TestCaseData("BeforeGenerateClassTest_issue2255_3", string.Empty)
+                            .SetName("Issue2255. Case 3")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2255");
                     }
                 }
 

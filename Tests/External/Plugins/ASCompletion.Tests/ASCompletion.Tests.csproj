@@ -1144,6 +1144,9 @@
     <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideFunction_issue_2231_1.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\AfterOverrideFunction_issue_2231_2.hx" />
     <EmbeddedResource Include="Test Files\generated\haxe\BeforeOverrideFunction_issue_2231_2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateClassTest_issue2255_1.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateClassTest_issue2255_2.hx" />
+    <EmbeddedResource Include="Test Files\generated\haxe\BeforeGenerateClassTest_issue2255_3.hx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

@@ -124,6 +124,12 @@ namespace ASCompletion.Completion
                 if ((resolve.Type == null || resolve.Type.IsVoid() || !context.IsImported(resolve.Type, line)) && CheckAutoImport(resolve, options)) return;
                 if (resolve.Type == null)
                 {
+                    // for example: public var foo : Fo|o
+                    if (resolve.Context.Separator == ":")
+                    {
+                        ShowNewClassList(found, resolve.Context, options);
+                        return;
+                    }
                     suggestItemDeclaration = ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1));
                 }
             }
