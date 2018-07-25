@@ -1,6 +1,6 @@
 package;
 class GenerateGetterSetter {
-	private static var foo(get, set):String;
+	@:isVar private static var foo(get, set):String;
 	
 	private static function get_foo():String {
 		return foo;

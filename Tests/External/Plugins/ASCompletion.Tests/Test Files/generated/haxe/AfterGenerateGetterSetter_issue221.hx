@@ -1,6 +1,6 @@
 package;
 class GenerateGetterSetter_issue221 {
-	var _foo(get, set):String;
+	@:isVar var _foo(get, set):String;
 	
 	function get__foo():String {
 		return _foo;

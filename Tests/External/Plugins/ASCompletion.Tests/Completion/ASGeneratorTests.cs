@@ -2146,34 +2146,27 @@ namespace ASCompletion.Completion
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData("BeforeGenerateGetterSetter", GeneratorJobType.GetterSetter)
-                                .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter"))
-                                .SetName("Generate getter and setter");
-                        yield return
-                            new TestCaseData("BeforeGenerateGetterSetter_issue221", GeneratorJobType.GetterSetter)
-                                .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter_issue221"))
-                                .SetName("issue 221");
-                        yield return
-                            new TestCaseData("BeforeGenerateGetterSetter_issue_1", GeneratorJobType.Setter)
-                                .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter_issue_1"))
-                                .SetName("issue set");
-                        yield return
-                            new TestCaseData("BeforeGenerateGetterSetter_issue_2", GeneratorJobType.Getter)
-                                .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter_issue_2"))
-                                .SetName("issue get 1");
-                        yield return
-                            new TestCaseData("BeforeGenerateGetterSetter_issue_3", GeneratorJobType.Getter)
-                                .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter_issue_3"))
-                                .SetName("issue get 2");
-                        yield return
-                            new TestCaseData("BeforeGenerateGetterSetter_issue_4", GeneratorJobType.Getter)
-                                .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter_issue_4"))
-                                .SetName("issue get 3");
-                        yield return
-                            new TestCaseData("BeforeGenerateGetterSetter_issue_5", GeneratorJobType.Getter)
-                                .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter_issue_5"))
-                                .SetName("issue get 4");
+                        yield return new TestCaseData("BeforeGenerateGetterSetter", GeneratorJobType.GetterSetter)
+                            .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter"))
+                            .SetName("Generate getter and setter");
+                        yield return new TestCaseData("BeforeGenerateGetterSetter_issue221", GeneratorJobType.GetterSetter)
+                            .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter_issue221"))
+                            .SetName("issue 221");
+                        yield return new TestCaseData("BeforeGenerateGetterSetter_issue_1", GeneratorJobType.Setter)
+                            .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter_issue_1"))
+                            .SetName("issue set");
+                        yield return new TestCaseData("BeforeGenerateGetterSetter_issue_2", GeneratorJobType.Getter)
+                            .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter_issue_2"))
+                            .SetName("issue get 1");
+                        yield return new TestCaseData("BeforeGenerateGetterSetter_issue_3", GeneratorJobType.Getter)
+                            .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter_issue_3"))
+                            .SetName("issue get 2");
+                        yield return new TestCaseData("BeforeGenerateGetterSetter_issue_4", GeneratorJobType.Getter)
+                            .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter_issue_4"))
+                            .SetName("issue get 3");
+                        yield return new TestCaseData("BeforeGenerateGetterSetter_issue_5", GeneratorJobType.Getter)
+                            .Returns(ReadAllTextHaxe("AfterGenerateGetterSetter_issue_5"))
+                            .SetName("issue get 4");
                     }
                 }
 

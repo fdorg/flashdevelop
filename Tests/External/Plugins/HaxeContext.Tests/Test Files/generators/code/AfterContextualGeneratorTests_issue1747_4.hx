@@ -1,6 +1,6 @@
 ﻿package;
 class Flags {
-	var f(get, set):cs.Flags;
+	@:isVar var f(get, set):cs.Flags;
 	
 	function get_f():cs.Flags {
 		return f;
