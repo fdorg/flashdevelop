@@ -33,15 +33,15 @@ namespace ASCompletion.Completion
         const string patternClass = @"new\s*{0}";
         const string BlankLine = "$(Boundary)\n\n";
         protected const string NewLine = "$(Boundary)\n";
-        static private Regex reModifiers = new Regex("^\\s*(\\$\\(Boundary\\))?([a-z ]+)(function|var|const)", RegexOptions.Compiled);
-        static private Regex reSuperCall = new Regex("^super\\s*\\(", RegexOptions.Compiled);
+        private static readonly Regex reModifiers = new Regex("^\\s*(\\$\\(Boundary\\))?([a-z ]+)(function|var|const)", RegexOptions.Compiled);
+        private static readonly Regex reSuperCall = new Regex("^super\\s*\\(", RegexOptions.Compiled);
 
         protected internal static string contextToken;
-        static internal string contextParam;
-        static internal Match contextMatch;
-        static internal ASResult contextResolved;
-        static internal MemberModel contextMember;
-        static private bool firstVar;
+        internal static string contextParam;
+        internal static Match contextMatch;
+        internal static ASResult contextResolved;
+        internal static MemberModel contextMember;
+        private static bool firstVar;
 
         private static bool IsHaxe => ASContext.Context.CurrentModel.haXe;
 
@@ -124,6 +124,12 @@ namespace ASCompletion.Completion
                 if ((resolve.Type == null || resolve.Type.IsVoid() || !context.IsImported(resolve.Type, line)) && CheckAutoImport(resolve, options)) return;
                 if (resolve.Type == null)
                 {
+                    // for example: public var foo : Fo|o
+                    if (resolve.Context.Separator == ":")
+                    {
+                        ShowNewClassList(found, resolve.Context, options);
+                        return;
+                    }
                     suggestItemDeclaration = ASComplete.IsTextStyle(sci.BaseStyleAt(position - 1));
                 }
             }
