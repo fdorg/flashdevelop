@@ -30,7 +30,7 @@ namespace ASClassWizard.Wizards
             CenterToParent();
             this.FormGuid = "eb444130-58ea-47bd-9751-ad78a59c711f";
             this.Font = PluginBase.Settings.DefaultFont;
-            this.errorIcon.Image = PluginMain.MainForm.FindImage("197");
+            this.errorIcon.Image = PluginBase.MainForm.FindImage("197");
         }
 
         public void AfterTheming()
