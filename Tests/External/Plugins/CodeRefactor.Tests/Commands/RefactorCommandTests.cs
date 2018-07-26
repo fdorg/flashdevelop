@@ -203,13 +203,16 @@ namespace CodeRefactor.Commands
         }
 
         [TestFixture]
-        public class OrganizeImports : RefactorCommandTests
+        public class OrganizeImportsTests : RefactorCommandTests
         {
-            protected static string ReadAllTextHaxe(string fileName) => TestFile.ReadAllText($"{nameof(CodeRefactor)}.Test_Files.coderefactor.organizeimports.haxe.{fileName}.hx");
+            static string GetFullPath(string fileName) => $"{nameof(CodeRefactor)}.Test_Files.coderefactor.organizeimports.{fileName}.as";
+
+            static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
             [TestFixtureSetUp]
             public void OrganizeImportsFixtureSetUp()
             {
+                SetAs3Features(sci);
                 // Needed for preprocessor directives...
                 sci.SetProperty("fold", "1");
                 sci.SetProperty("fold.preprocessor", "1");
@@ -219,54 +222,29 @@ namespace CodeRefactor.Commands
             {
                 get
                 {
-                    yield return new TestCaseData(ReadAllTextHaxe("BeforeOrganizeImports"), "BeforeOrganizeImports.hx", false)
-                        .Returns(ReadAllTextHaxe("AfterOrganizeImports"))
+                    yield return new TestCaseData("BeforeOrganizeImports", false)
+                        .Returns(ReadAllText("AfterOrganizeImports"))
                         .SetName("OrganizeImports");
-                    yield return new TestCaseData(ReadAllTextHaxe("BeforeOrganizeImports_withImportsFromSameModule"), "Main.hx", false)
-                        .Returns(ReadAllTextHaxe("AfterOrganizeImports_withImportsFromSameModule"))
-                        .SetName("Issue782. Package is empty.");
-                    yield return new TestCaseData(ReadAllTextHaxe("BeforeOrganizeImports_withImportsFromSameModule2"), "Main.hx", false)
-                        .Returns(ReadAllTextHaxe("AfterOrganizeImports_withImportsFromSameModule2"))
-                        .SetName("Issue782. Package is not empty.");
-                    yield return new TestCaseData(ReadAllTextHaxe("BeforeOrganizeImports_withImportsFromSameModule2"), "Main.hx", false)
-                        .Returns(ReadAllTextHaxe("AfterOrganizeImports_withImportsFromSameModule2"))
-                        .SetName("Issue782. Package is not empty.");
-                    yield return new TestCaseData(ReadAllTextHaxe("BeforeOrganizeImports_withElseIfDirective"), "Main.hx", false)
-                        .Returns(ReadAllTextHaxe("AfterOrganizeImports_withElseIfDirective"))
-                        .SetName("Issue783. Shouldn't touch #elseif blocks.");
-                }
-            }
-
-            static IEnumerable<TestCaseData> Issue1342TestCases
-            {
-                get
-                {
-                    yield return new TestCaseData(ReadAllTextHaxe("BeforeOrganizeImports_Issue1342"), "BeforeOrganizeImports.hx", true)
-                        .Returns(ReadAllTextHaxe("AfterOrganizeImports_Issue1342"))
-                        .SetName("Issue1342. Separate Packages = True");
+                    yield return new TestCaseData("BeforeOrganizeImports_issue592_1", false)
+                        .Returns(ReadAllText("BeforeOrganizeImports_issue592_1"))
+                        .SetName("Issue 592. Case 1")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/592");
                 }
             }
 
             [
                 Test,
                 TestCaseSource(nameof(TestCases)),
-                TestCaseSource(nameof(Issue1342TestCases)),
             ]
-            public string Haxe(string sourceText, string fileName, bool separatePackages) => HaxeImpl(sci, sourceText, fileName, separatePackages);
+            public string OrganizeImports(string fileName, bool separatePackages) => OrganizeImports(sci, ReadAllText(fileName), fileName, separatePackages);
 
-            public static string HaxeImpl(ScintillaControl sci, string sourceText, string fileName, bool separatePackages)
-            {
-                SetHaxeFeatures(sci);
-                return Common(sci, sourceText, fileName, separatePackages);
-            }
-
-            internal static string Common(ScintillaControl sci, string sourceText, string fileName, bool separatePackages)
+            public static string OrganizeImports(ScintillaControl sci, string sourceText, string fileName, bool separatePackages)
             {
                 ASContext.Context.CurrentModel.FileName = fileName;
                 SetSrc(sci, sourceText);
                 var command = CommandFactoryProvider.GetFactory(sci)
                     .CreateOrganizeImportsCommand();
-                ((Commands.OrganizeImports) command).SeparatePackages = separatePackages;
+                ((OrganizeImports) command).SeparatePackages = separatePackages;
                 command.Execute();
                 return sci.Text;
             }

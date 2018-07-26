@@ -117,12 +117,6 @@
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromString.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_fromNumber.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_ReplaceInitialOccurrence.hx" />
-    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\BeforeOrganizeImports.hx" />
-    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\AfterOrganizeImports.hx" />
-    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\BeforeOrganizeImports_withImportsFromSameModule.hx" />
-    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\AfterOrganizeImports_withImportsFromSameModule.hx" />
-    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\BeforeOrganizeImports_withImportsFromSameModule2.hx" />
-    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\AfterOrganizeImports_withImportsFromSameModule2.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\ParameterVar.hx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -135,8 +129,6 @@
     <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\LocalFunction.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\Type.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\PrivateTypedef.hx" />
-    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\AfterOrganizeImports_withElseIfDirective.hx" />
-    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\BeforeOrganizeImports_withElseIfDirective.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\findallreferences\haxe\LocalVar_enum.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractMethod_issue1617_case1.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractMethod_issue1617_case1.hx" />
@@ -186,12 +178,14 @@
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_arrayInitializer_1.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\BeforeExtractLocalVariable_arrayInitializer_2.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\extractlocalvariable\haxe\AfterExtractLocalVariable_arrayInitializer_2.hx" />
-    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\BeforeOrganizeImports_Issue1342.hx" />
-    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\haxe\AfterOrganizeImports_Issue1342.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_issue592_1.as" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
