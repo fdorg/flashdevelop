@@ -26,8 +26,10 @@ namespace HaXeContext.Commands
             sci.SetProperty("fold", "1");
             sci.SetProperty("fold.preprocessor", "1");
         }
+        
+        static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.coderefactor.organizeimports.{fileName}.hx";
 
-        static string ReadAllText(string fileName) => TestFile.ReadAllText($"{nameof(HaXeContext)}.Test_Files.coderefactor.organizeimports.{fileName}.hx");
+        static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
         static IEnumerable<TestCaseData> TestCases
         {
