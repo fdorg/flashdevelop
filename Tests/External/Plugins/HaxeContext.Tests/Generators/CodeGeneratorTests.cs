@@ -809,6 +809,17 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> GenerateFunctionIssue394TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGeneratePublicFunction_issue394_1", GeneratorJobType.Function, true)
+                    .Returns(ReadAllText("AfterGeneratePublicFunction_issue394_1"))
+                    .SetName("Issue394. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/394");
+            }
+        }
+
         static IEnumerable<TestCaseData> GenerateVariableIssue2201TestCases
         {
             get
@@ -915,6 +926,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(AddToInterfaceIssue1733TestCases)),
             TestCaseSource(nameof(GenerateFunctionTestCases)),
             TestCaseSource(nameof(GenerateFunctionIssue2200TestCases)),
+            TestCaseSource(nameof(GenerateFunctionIssue394TestCases)),
             TestCaseSource(nameof(GenerateVariableIssue2201TestCases)),
             TestCaseSource(nameof(ImplementInterfaceTestCases)),
             TestCaseSource(nameof(ImplementInterfaceIssue2264TestCases)),
@@ -922,7 +934,7 @@ namespace HaXeContext.Generators
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 
-        internal static string ContextualGenerator(ScintillaControl sci, string fileName, GeneratorJobType job, bool hasGenerator)
+        static string ContextualGenerator(ScintillaControl sci, string fileName, GeneratorJobType job, bool hasGenerator)
         {
             SetSrc(sci, ReadAllText(fileName));
             SetCurrentFile(fileName);

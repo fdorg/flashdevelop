@@ -1155,6 +1155,8 @@
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAddToInterface_issue2257_3.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeAddToInterface_issue2257_4.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterAddToInterface_issue2257_4.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeGenerateFunction_issue394_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterGenerateFunction_issue394_1.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

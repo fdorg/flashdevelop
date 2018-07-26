@@ -3199,6 +3199,10 @@ namespace ASCompletion.Completion
                             .Returns(ReadAllTextAS3("AfterAddToInterface_issue2257_4"))
                             .SetName("Add to interface. case 4")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/2257");
+                        yield return new TestCaseData("BeforeGenerateFunction_issue394_1", GeneratorJobType.Function, true)
+                            .Returns(ReadAllTextAS3("AfterGenerateFunction_issue394_1"))
+                            .SetName("Generate function. Issue 394. Case 1")
+                            .SetDescription("");
                     }
                 }
 
