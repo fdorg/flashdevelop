@@ -145,8 +145,8 @@ namespace HaXeContext.Generators
                 yield return new TestCaseData("BeforeGenerateConstructor_issue1738_9", GeneratorJobType.ChangeConstructorDecl, true)
                     .Returns(ReadAllText("AfterGenerateConstructor_issue1738_9"))
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1738");
-                yield return new TestCaseData("BeforeImplementInterface_issue1982_1", GeneratorJobType.ImplementInterface, true)
-                    .Returns(ReadAllText("AfterImplementInterface_issue1982_1"))
+                yield return new TestCaseData("BeforeImplementInterface_issue1982_1", GeneratorJobType.ImplementInterface, false)
+                    .Returns(null)
                     .SetName("Issue1982. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1982");
                 yield return new TestCaseData("BeforeImplementInterface_issue1982_2", GeneratorJobType.ImplementInterface, false)
@@ -840,21 +840,37 @@ namespace HaXeContext.Generators
         {
             get
             {
-                yield return
-                    new TestCaseData("BeforeImplementInterface_issue1696_1", GeneratorJobType.ImplementInterface, true)
-                        .Returns(ReadAllText("AfterImplementInterface_issue1696_1"))
-                        .SetName("Implement interface methods. Issue 1696. Case 1")
-                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
-                yield return
-                    new TestCaseData("BeforeImplementInterface_issue1696_2", GeneratorJobType.ImplementInterface, true)
-                        .Returns(ReadAllText("AfterImplementInterface_issue1696_2"))
-                        .SetName("Implement interface properties. Issue 1696. Case 2")
-                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
-                yield return
-                    new TestCaseData("BeforeImplementInterface_issue1696_3", GeneratorJobType.ImplementInterface, true)
-                        .Returns(ReadAllText("AfterImplementInterface_issue1696_3"))
-                        .SetName("Implement interface properties. Issue 1696. Case 3")
-                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
+                yield return new TestCaseData("BeforeImplementInterface_issue1696_1", GeneratorJobType.ImplementInterface, true)
+                    .Returns(ReadAllText("AfterImplementInterface_issue1696_1"))
+                    .SetName("Implement interface methods. Issue 1696. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
+                yield return new TestCaseData("BeforeImplementInterface_issue1696_2", GeneratorJobType.ImplementInterface, true)
+                    .Returns(ReadAllText("AfterImplementInterface_issue1696_2"))
+                    .SetName("Implement interface properties. Issue 1696. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
+                yield return new TestCaseData("BeforeImplementInterface_issue1696_3", GeneratorJobType.ImplementInterface, true)
+                    .Returns(ReadAllText("AfterImplementInterface_issue1696_3"))
+                    .SetName("Implement interface properties. Issue 1696. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1696");
+            }
+        }
+
+        static IEnumerable<TestCaseData> ImplementInterfaceIssue2264TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeImplementInterface_issue2264_1", GeneratorJobType.ImplementInterface, false)
+                    .Returns(null)
+                    .SetName("Implement interface methods. Issue 2264. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2264");
+                yield return new TestCaseData("BeforeImplementInterface_issue2264_2", GeneratorJobType.ImplementInterface, false)
+                    .Returns(null)
+                    .SetName("Implement interface methods. Issue 2264. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2264");
+                yield return new TestCaseData("BeforeImplementInterface_issue2264_3", GeneratorJobType.ImplementInterface, true)
+                    .Returns(ReadAllText("AfterImplementInterface_issue2264_3"))
+                    .SetName("Implement interface methods. Issue 2264. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2264");
             }
         }
 
@@ -886,6 +902,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(GenerateFunctionIssue2200TestCases)),
             TestCaseSource(nameof(GenerateVariableIssue2201TestCases)),
             TestCaseSource(nameof(ImplementInterfaceTestCases)),
+            TestCaseSource(nameof(ImplementInterfaceIssue2264TestCases)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 

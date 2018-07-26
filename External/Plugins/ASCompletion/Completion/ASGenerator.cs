@@ -504,8 +504,17 @@ namespace ASCompletion.Completion
         /// <returns>true, if can show "Implement Interface" list</returns>
         protected virtual bool CanShowImplementInterfaceList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
-            return expr.Context.ContextFunction == null && expr.Context.ContextMember == null
-                && expr.Member == null && expr.Type != null && (expr.Type.Flags & FlagType.Interface) > 0;
+            if (expr.Context.ContextFunction != null || expr.Context.ContextMember != null
+                || expr.Member != null
+                || expr.Type == null || (expr.Type.Flags & FlagType.Interface) == 0) return false;
+            var type = expr.Type;
+            while (type != null && !type.IsVoid())
+            {
+                if (type.Members.Count > 0) return true;
+                type.ResolveExtends();
+                type = type.Extends;
+            }
+            return false;
         }
 
         /// <summary>
