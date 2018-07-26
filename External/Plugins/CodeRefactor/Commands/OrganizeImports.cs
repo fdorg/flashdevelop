@@ -106,11 +106,44 @@ namespace CodeRefactor.Commands
                 }
                 imports.Reverse();
                 var separatedImports = SeparateImports(imports, context.CurrentModel.PrivateSectionIndex);
-                if (separatedImports.PackageImports.Count > 0) InsertImports(separatedImports.PackageImports, publicClassText, sci, separatedImports.PackageImportsIndent);
-                if (context.CurrentModel.Classes.Count > 1 && separatedImports.PrivateImports.Count > 0)
+                var packageImportsStartLine = separatedImports.PackageImports.Count > 0
+                    ? separatedImports.PackageImports[0].LineFrom
+                    : 0;
+                separatedImports.PackageImports.Sort(new CaseSensitiveImportComparer());
+                var packageImports = GetUniqueImports(separatedImports.PackageImports, publicClassText, sci.FileName);
+                var privateImportsStartLine = separatedImports.PrivateImports.Count > 0
+                    ? separatedImports.PrivateImports[0].LineFrom
+                    : 0;
+                separatedImports.PrivateImports.Sort(new CaseSensitiveImportComparer());
+                var privateImports = GetUniqueImports(separatedImports.PrivateImports, privateClassText, sci.FileName);
+                var abort = true;
+                if (packageImports.Count + privateImports.Count == context.CurrentModel.Imports.Count)
                 {
-                    InsertImports(separatedImports.PrivateImports, privateClassText, sci, separatedImports.PrivateImportsIndent);
+                    var j = 0;
+                    for (; j < packageImports.Count && j < separatedImports.PackageImports.Count; j++)
+                    {
+                        if (packageImports[j] == context.CurrentModel.Imports[j].Type) continue;
+                        abort = false;
+                        break;
+                    }
+                    for (var i = 0; !abort && i < privateImports.Count && j < separatedImports.PackageImports.Count; j++, i++)
+                    {
+                        if (privateImports[i] == context.CurrentModel.Imports[j].Type) continue;
+                        abort = false;
+                        break;
+                    }
+                    abort &= j == context.CurrentModel.Imports.Count;
                 }
+                else abort = false;
+                if (abort)
+                {
+                    sci.Undo();
+                    sci.SetSel(pos, pos);
+                    FireOnRefactorComplete();
+                    return;
+                }
+                InsertImports(separatedImports.PackageImports, packageImports, sci, packageImportsStartLine, separatedImports.PackageImportsIndent);
+                InsertImports(separatedImports.PrivateImports, privateImports, sci, privateImportsStartLine, separatedImports.PrivateImportsIndent);
                 sci.SetSel(pos, pos);
             }
             finally
@@ -169,18 +202,20 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Inserts the imports to the current document
         /// </summary>
-        private void InsertImports(List<MemberModel> imports, string searchInText, ScintillaControl sci, int indent)
+        private void InsertImports(List<MemberModel> imports, List<string> uniqueImports, ScintillaControl sci, int startLine, int indent)
         {
             var eol = LineEndDetector.GetNewLineMarker(sci.EOLMode);
-            var line = imports[0].LineFrom - deletedImportsCompensation;
-            imports.Sort(new CaseSensitiveImportComparer());
-            sci.GotoLine(line);
+            if (imports.Count > 0)
+            {
+                var line = startLine - deletedImportsCompensation;
+                imports.Sort(new CaseSensitiveImportComparer());
+                sci.GotoLine(line);
+            }
             var curLine = 0;
-            var uniques = GetUniqueImports(imports, searchInText, sci.FileName);
             // correct position compensation for private imports
-            deletedImportsCompensation = imports.Count - uniques.Count;
+            deletedImportsCompensation = imports.Count - uniqueImports.Count;
             string prevPackage = null;
-            foreach (var import in uniques)
+            foreach (var import in uniqueImports)
             {
                 var importStringToInsert = "import " + import + ";" + eol;
                 if (SeparatePackages)
