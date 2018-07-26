@@ -120,10 +120,8 @@ namespace ASCompletion.Model
             return res;
         }
 
-        public string ToDeclarationString()
-        {
-            return ToDeclarationString(true, false);
-        }
+        public string ToDeclarationString() => ToDeclarationString(true, false);
+
         public string ToDeclarationString(bool wrapWithSpaces, bool concatValue)
         {
             string colon = wrapWithSpaces ? " : " : ":";
@@ -155,10 +153,8 @@ namespace ASCompletion.Model
             if (string.IsNullOrEmpty(type) && !string.IsNullOrEmpty(Type))
                 type = FormatType(Type);
 
-            if ((Flags & FlagType.Constructor) > 0)
-                return res;
-            else if (!string.IsNullOrEmpty(type))
-                res += colon + type;
+            if ((Flags & FlagType.Constructor) > 0) return res;
+            if (!string.IsNullOrEmpty(type)) res += colon + type;
 
             res += comment;
 
@@ -168,10 +164,7 @@ namespace ASCompletion.Model
             return res;
         }
 
-        public string ParametersString()
-        {
-            return ParametersString(false);
-        }
+        public string ParametersString() => ParametersString(false);
 
         public string ParametersString(bool formated)
         {

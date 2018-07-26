@@ -1934,7 +1934,9 @@ namespace ASCompletion.Completion
             bool isVararg = false;
             string paramName = contextMember.Name;
             var paramType = contextMember.Type;
-            if (paramName.StartsWithOrdinal("..."))
+            if (paramType == ASContext.Context.Features.voidKey && (contextMember.Flags & FlagType.Function) != 0)
+                paramType = $"Function/*({contextMember.ParametersString()}):{paramType}*/";
+            else if (paramName.StartsWithOrdinal("..."))
             {
                 paramName = paramName.TrimStart(' ', '.');
                 isVararg = true;
@@ -1942,8 +1944,10 @@ namespace ASCompletion.Completion
             else if (inClass.InFile.haXe && paramName.StartsWithOrdinal("?"))
             {
                 paramName = paramName.Remove(0, 1);
-                if (!string.IsNullOrEmpty(paramType) && !paramType.StartsWith("Null<")) paramType = $"Null<{paramType}>";
+                if (!string.IsNullOrEmpty(paramType) && !paramType.StartsWith("Null<"))
+                    paramType = $"Null<{paramType}>";
             }
+
             string varName = paramName;
             string scopedVarName = varName;
 
