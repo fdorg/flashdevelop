@@ -1182,6 +1182,7 @@ namespace ASCompletion.Completion
                             Access = GetDefaultVisibility(inClass)
                         };
                         if ((member.Flags & FlagType.Static) > 0) newMember.Flags |= FlagType.Access;
+                        // for example: var f<generator>:Function/*(v1:Type):void*/
                         if (newMember.Type == ASContext.Context.Features.voidKey && (contextMember.Flags & FlagType.Function) != 0)
                             newMember.Type = $"Function/*({contextMember.ParametersString()}):{newMember.Type}*/";
                         GenerateVariable(newMember, position, detach);
@@ -1915,10 +1916,10 @@ namespace ASCompletion.Completion
             int endPos = sci.LineEndPosition(member.LineTo);
 
             sci.SetSel(funcBodyStart, endPos);
-            string body = sci.SelText;
-            string trimmed = body.TrimStart();
+            var body = sci.SelText;
+            var trimmed = body.TrimStart();
 
-            Match m = reSuperCall.Match(trimmed);
+            var m = reSuperCall.Match(trimmed);
             if (m.Success && m.Index == 0)
             {
                 funcBodyStart = GetEndOfStatement(funcBodyStart + (body.Length - trimmed.Length), endPos, sci);
@@ -1932,6 +1933,7 @@ namespace ASCompletion.Completion
             var isVararg = false;
             var paramName = contextMember.Name;
             var paramType = contextMember.Type;
+            //foo(v1<generator>:Function/*(v1:Type):void*/)
             if (paramType == ASContext.Context.Features.voidKey && (contextMember.Flags & FlagType.Function) != 0)
                 paramType = $"Function/*({contextMember.ParametersString()}):{paramType}*/";
             else if (paramName.StartsWithOrdinal("..."))
@@ -2880,6 +2882,9 @@ namespace ASCompletion.Completion
                     }
                 }
                 newMemberType = CleanType(newMemberType);
+                // for example: 
+                //      foo(v1<generator>)
+                //      function foo(v1:Function/*(v1:Type):void*/)
                 if ((param.Flags & FlagType.Function) != 0 && parameters.Count != param.Parameters.Count)
                 {
                     parameters.Clear();
@@ -3186,6 +3191,7 @@ namespace ASCompletion.Completion
             string type = "";
             if (contextMember.Type != null && (contextMember.Flags & FlagType.Inferred) == 0)
             {
+                // for example: var f:Function/*(v1:Type):void*/
                 if (contextMember.Type == ASContext.Context.Features.voidKey && (contextMember.Flags & FlagType.Function) != 0)
                     type = $@":\s*Function\/\*\({contextMember.ParametersString()}\):{contextMember.Type}\*\/";
                 else
