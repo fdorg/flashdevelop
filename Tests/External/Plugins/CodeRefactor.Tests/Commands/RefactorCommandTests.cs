@@ -224,10 +224,20 @@ namespace CodeRefactor.Commands
                 {
                     yield return new TestCaseData("BeforeOrganizeImports", false)
                         .Returns(ReadAllText("AfterOrganizeImports"))
-                        .SetName("OrganizeImports");
+                        .SetName("OrganizeImports. Case 1");
+                    yield return new TestCaseData("BeforeOrganizeImports_2", false)
+                        .Returns(ReadAllText("AfterOrganizeImports_2"))
+                        .SetName("OrganizeImports. Case 2");
+                    yield return new TestCaseData("BeforeOrganizeImports_3", false)
+                        .Returns(ReadAllText("AfterOrganizeImports_3"))
+                        .SetName("OrganizeImports. Case 3");
                     yield return new TestCaseData("BeforeOrganizeImports_issue592_1", false)
                         .Returns(ReadAllText("BeforeOrganizeImports_issue592_1"))
                         .SetName("Issue 592. Case 1")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/592");
+                    yield return new TestCaseData("BeforeOrganizeImports_issue592_2", false)
+                        .Returns(ReadAllText("BeforeOrganizeImports_issue592_2"))
+                        .SetName("Issue 592. Case 2")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/592");
                 }
             }
