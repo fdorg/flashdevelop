@@ -186,6 +186,9 @@
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports_2.as" />
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_3.as" />
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports_3.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_issue781_1.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports_4.as" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_4.as" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

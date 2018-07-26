@@ -231,6 +231,9 @@ namespace CodeRefactor.Commands
                     yield return new TestCaseData("BeforeOrganizeImports_3", false)
                         .Returns(ReadAllText("AfterOrganizeImports_3"))
                         .SetName("OrganizeImports. Case 3");
+                    yield return new TestCaseData("BeforeOrganizeImports_4", true)
+                        .Returns(ReadAllText("AfterOrganizeImports_4"))
+                        .SetName("OrganizeImports. Case 4");
                     yield return new TestCaseData("BeforeOrganizeImports_issue592_1", false)
                         .Returns(ReadAllText("BeforeOrganizeImports_issue592_1"))
                         .SetName("Issue 592. Case 1")
@@ -257,6 +260,30 @@ namespace CodeRefactor.Commands
                 ((OrganizeImports) command).SeparatePackages = separatePackages;
                 command.Execute();
                 return sci.Text;
+            }
+
+            static IEnumerable<TestCaseData> Issue781TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("BeforeOrganizeImports", false)
+                        .Returns(true)
+                        .SetName("Issue 781. Case 1");
+                    yield return new TestCaseData("BeforeOrganizeImports_issue781_1", false)
+                        .Returns(false)
+                        .SetName("Issue 781. Case 2");
+                }
+            }
+
+            [
+                Test,
+                TestCaseSource(nameof(Issue781TestCases)),
+            ]
+            public bool OrganizeImportsIssue781(string fileName, bool separatePackages)
+            {
+                var sourceText = ReadAllText(fileName);
+                OrganizeImports(sci, sourceText, fileName, separatePackages);
+                return sci.Length != sourceText.Length;
             }
         }
 
