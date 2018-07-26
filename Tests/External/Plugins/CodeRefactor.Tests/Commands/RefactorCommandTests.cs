@@ -258,6 +258,30 @@ namespace CodeRefactor.Commands
                 command.Execute();
                 return sci.Text;
             }
+
+            static IEnumerable<TestCaseData> Issue781TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("BeforeOrganizeImports", false)
+                        .Returns(true)
+                        .SetName("Issue 781. Case 1");
+                    yield return new TestCaseData("BeforeOrganizeImports_issue781_1", false)
+                        .Returns(false)
+                        .SetName("Issue 781. Case 2");
+                }
+            }
+
+            [
+                Test,
+                TestCaseSource(nameof(Issue781TestCases)),
+            ]
+            public bool OrganizeImportsIssue781(string fileName, bool separatePackages)
+            {
+                var sourceText = ReadAllText(fileName);
+                OrganizeImports(sci, sourceText, fileName, separatePackages);
+                return sci.Length != sourceText.Length;
+            }
         }
 
         [TestFixture]
