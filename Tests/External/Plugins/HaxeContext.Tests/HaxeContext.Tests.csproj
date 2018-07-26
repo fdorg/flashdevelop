@@ -314,7 +314,6 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterImplementInterface_issue1696_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterImplementInterface_issue1696_2.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterImplementInterface_issue1696_3.hx" />
-    <EmbeddedResource Include="Test Files\generators\code\AfterImplementInterface_issue1982_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeAddInterfaceDefTests_issue1989_4.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeAddInterfaceDefTests_issue1731_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeAddInterfaceDefTests_issue1989_1.hx" />
@@ -615,6 +614,10 @@
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_importStaticMember.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\BeforeOrganizeImports_2.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\AfterOrganizeImports_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeImplementInterface_issue2264_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeImplementInterface_issue2264_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeImplementInterface_issue2264_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterImplementInterface_issue2264_3.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
