@@ -84,6 +84,7 @@ namespace CodeRefactor.Commands
         /// <param name="inline">Whether to use inline renaming.</param>
         public Rename(ASResult target, bool outputResults, string newName, bool ignoreDeclarationSource, bool inline = false)
         {
+            Results = new Dictionary<string, List<SearchMatch>>();
             if (target == null)
             {
                 TraceManager.Add("Refactor target is null.");
@@ -216,7 +217,8 @@ namespace CodeRefactor.Commands
             if (string.IsNullOrEmpty(oldFileName) || oldFileName.Equals(newFileName)) return false;
 
             // Check if the new file name already exists
-            return FileHelper.ConfirmOverwrite(newFileName);
+            return oldFileName.Equals(newFileName, StringComparison.OrdinalIgnoreCase) 
+                || FileHelper.ConfirmOverwrite(newFileName);
         }
 
         /// <summary>
@@ -318,8 +320,8 @@ namespace CodeRefactor.Commands
             if (oldFileName.Equals(newFileName, StringComparison.OrdinalIgnoreCase))
             {
                 string tmpPath = oldFileName + "$renaming$";
-                RefactoringHelper.Move(oldFileName, tmpPath);
-                RefactoringHelper.Move(tmpPath, newFileName);
+                File.Move(oldFileName, tmpPath);
+                RefactoringHelper.Move(tmpPath, newFileName, true, oldFileName);
             }
             else
             {
