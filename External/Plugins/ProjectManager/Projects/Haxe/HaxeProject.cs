@@ -154,7 +154,7 @@ namespace ProjectManager.Projects.Haxe
             return s;
         }
 
-        public string[] BuildHXML(string[] paths, string outfile, bool release )
+        public string[] BuildHXML(string[] paths, string outfile, bool release)
         {
             List<String> pr = new List<String>();
             var isFlash = IsFlashOutput;

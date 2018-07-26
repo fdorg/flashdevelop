@@ -874,6 +874,21 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> GenerateEventHandlerIssue751TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateEventHandler_issue751_1", GeneratorJobType.ComplexEvent, true)
+                    .Returns(ReadAllText("AfterGenerateEventHandler_issue751_1"))
+                    .SetName("Generate event handler. Issue 751. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/751");
+                yield return new TestCaseData("BeforeGenerateEventHandler_issue751_2", GeneratorJobType.ComplexEvent, true)
+                    .Returns(ReadAllText("AfterGenerateEventHandler_issue751_2"))
+                    .SetName("Generate event handler. Issue 751. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/751");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(ContextualGeneratorTestCases)),
@@ -903,10 +918,11 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(GenerateVariableIssue2201TestCases)),
             TestCaseSource(nameof(ImplementInterfaceTestCases)),
             TestCaseSource(nameof(ImplementInterfaceIssue2264TestCases)),
+            TestCaseSource(nameof(GenerateEventHandlerIssue751TestCases)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 
-        static string ContextualGenerator(ScintillaControl sci, string fileName, GeneratorJobType job, bool hasGenerator)
+        internal static string ContextualGenerator(ScintillaControl sci, string fileName, GeneratorJobType job, bool hasGenerator)
         {
             SetSrc(sci, ReadAllText(fileName));
             SetCurrentFile(fileName);
@@ -914,6 +930,8 @@ namespace HaXeContext.Generators
             context.CurrentModel = ASContext.Context.CurrentModel;
             context.completionCache.IsDirty = true;
             context.GetTopLevelElements();
+            var visibleExternalElements = context.GetVisibleExternalElements();
+            ASContext.Context.GetVisibleExternalElements().Returns(visibleExternalElements);
             var options = new List<ICompletionListItem>();
             ASGenerator.ContextualGenerator(sci, options);
             if (hasGenerator)

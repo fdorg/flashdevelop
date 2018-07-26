@@ -618,6 +618,10 @@
     <EmbeddedResource Include="Test Files\generators\code\BeforeImplementInterface_issue2264_2.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeImplementInterface_issue2264_3.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterImplementInterface_issue2264_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateEventHandler_issue751_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateEventHandler_issue751_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateEventHandler_issue751_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateEventHandler_issue751_2.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

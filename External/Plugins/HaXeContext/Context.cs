@@ -44,7 +44,7 @@ namespace HaXeContext
         private HaXeSettings hxsettings;
         private Dictionary<string, List<string>> haxelibsCache;
         private Func<string, InstalledSDK> getCustomSDK;
-        private string HaxeTarget;
+        private string haxeTarget;
         private bool resolvingDot;
         private bool resolvingFunction;
         HaxeCompletionCache hxCompletionCache;
@@ -423,7 +423,7 @@ namespace HaXeContext
                 lang = "flash";
             }
             features.Directives.Add(lang);
-            HaxeTarget = lang;
+            haxeTarget = lang;
 
             //
             // Class pathes
@@ -460,7 +460,7 @@ namespace HaXeContext
                         FLASH_NEW = "flash";
                         FLASH_OLD = "flash8";
                     }
-                    if (HaxeTarget == "flash")
+                    if (haxeTarget == "flash")
                         lang = (majorVersion >= 6 && majorVersion < 9) ? FLASH_OLD : FLASH_NEW;
 
                     PathModel std = PathModel.GetModel(haxeCP, this);
@@ -492,7 +492,7 @@ namespace HaXeContext
             }
 
             // swf-libs
-            if (project != null && HaxeTarget == "flash" && majorVersion >= 9)
+            if (project != null && haxeTarget == "flash" && majorVersion >= 9)
             {
                 foreach(LibraryAsset asset in project.LibraryAssets)
                     if (asset.IsSwc)
@@ -967,7 +967,7 @@ namespace HaXeContext
 
             if (fileName.StartsWithOrdinal("flash" + dirSeparator))
             {
-                if (HaxeTarget != "flash" || majorVersion > 8) // flash9 remap
+                if (haxeTarget != "flash" || majorVersion > 8) // flash9 remap
                     fileName = FLASH_NEW + fileName.Substring(5);
                 else
                     fileName = FLASH_OLD + fileName.Substring(5);
@@ -1965,7 +1965,7 @@ namespace HaXeContext
                 if (cname.IndexOf('<') > 0) cname = cname.Substring(0, cname.IndexOf('<'));
                 command += cname;
 
-                if (HaxeTarget == "flash" && (append == null || !append.Contains("-swf-version")))
+                if (haxeTarget == "flash" && (append == null || !append.Contains("-swf-version")))
                     command += " -swf-version " + majorVersion;
                 // classpathes
                 string hxPath = PathHelper.ResolvePath(hxsettings.GetDefaultSDK().Path);
