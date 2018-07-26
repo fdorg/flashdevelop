@@ -111,7 +111,7 @@ namespace ProjectManager.Controls
             get { return !TestMovie.Enabled; }
             set
             {
-                ProjectMenu.ProjectItemsEnabledForBuild = ConfigurationSelector.Enabled = !value;
+                BuildProject.Enabled = TestMovie.Enabled = ProjectMenu.ProjectItemsEnabledForBuild = ConfigurationSelector.Enabled = !value;
                 EnableTargetBuildSelector(!value);
             }
         }
