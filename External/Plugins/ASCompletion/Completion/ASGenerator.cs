@@ -174,7 +174,9 @@ namespace ASCompletion.Completion
                         if (m.Success)
                         {
                             contextMatch = m;
-                            contextParam = CheckEventType(m.Groups["event"].Value);
+                            var pos = ASComplete.ExpressionEndPosition(sci, sci.PositionFromLine(line) + m.Index);
+                            var expr = ASComplete.GetExpressionType(sci, pos, false, true);
+                            contextParam = CheckEventType(expr.Member, m.Groups["event"].Value);
                             ShowEventList(found, options);
                             return;
                         }
@@ -696,13 +698,20 @@ namespace ASCompletion.Completion
         {
             if (name.Contains('"')) return "Event";
             if (name.IndexOf('.') > 0) name = name.Substring(0, name.IndexOf('.'));
-            ClassModel model = ASContext.Context.ResolveType(name, ASContext.Context.CurrentModel);
+            var model = ASContext.Context.ResolveType(name, ASContext.Context.CurrentModel);
             if (model.IsVoid() || model.Name == "Event") return "Event";
             model.ResolveExtends();
             while (!model.IsVoid() && model.Name != "Event")
                 model = model.Extends;
             if (model.Name == "Event") return name;
-            else return "Event";
+            return "Event";
+        }
+
+        internal static string CheckEventType(MemberModel handler, string eventName)
+        {
+            var first = handler?.Parameters?.FirstOrDefault();
+            if (first != null && !string.IsNullOrEmpty(first.Type)) return first.Type;
+            return CheckEventType(eventName);
         }
         #endregion
 
@@ -929,14 +938,31 @@ namespace ASCompletion.Completion
 
         internal static void ShowEventList(FoundDeclaration found, List<ICompletionListItem> options)
         {
-            string tmp = TextHelper.GetString("ASCompletion.Label.GenerateHandler");
-            string labelEvent = String.Format(tmp, "Event");
-            string labelDataEvent = String.Format(tmp, "DataEvent");
-            string labelContext = String.Format(tmp, contextParam);
-            string[] choices;
-            if (contextParam != "Event") choices = new string[] { labelContext, labelEvent };
-            else if (HasDataEvent()) choices = new string[] { labelEvent, labelDataEvent };
-            else choices = new string[] { labelEvent };
+            var tmp = TextHelper.GetString("ASCompletion.Label.GenerateHandler");
+            var labelEvent = string.Format(tmp, "Event");
+            var labelContext = string.Format(tmp, contextParam);
+            string[] choices = null;
+            if (contextParam != "Event")
+            {
+                var type = ASContext.Context.ResolveType(contextParam, ASContext.Context.CurrentModel);
+                while (!type.IsVoid())
+                {
+                    if (type.Name == "Event")
+                    {
+                        choices = new[] { labelContext, labelEvent };
+                        break;
+                    }
+                    type.ResolveExtends();
+                    type = type.Extends;
+                }
+                if (choices == null) choices = new[] { labelContext };
+            }
+            else if (HasDataEvent())
+            {
+                var labelDataEvent = string.Format(tmp, "DataEvent");
+                choices = new[] { labelEvent, labelDataEvent };
+            }
+            else choices = new[] { labelEvent };
 
             foreach (var choice in choices)
             {

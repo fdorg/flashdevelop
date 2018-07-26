@@ -132,10 +132,13 @@ namespace ASCompletion.TestUtils
         static void BuildClassPath(HaXeContext.Context context)
         {
             PlatformData.Load(Path.Combine(PathHelper.AppDir, "Settings", "Platforms"));
-            PluginBase.CurrentProject = new HaxeProject("haxe")
+            if (PluginBase.CurrentProject == null)
             {
-                CurrentSDK = Environment.GetEnvironmentVariable("HAXEPATH")?.TrimEnd('\\', '/')
-            };
+                PluginBase.CurrentProject = new HaxeProject("haxe")
+                {
+                    CurrentSDK = Environment.GetEnvironmentVariable("HAXEPATH")?.TrimEnd('\\', '/')
+                };
+            }
             context.BuildClassPath();
             foreach (var it in context.Classpath)
             {
