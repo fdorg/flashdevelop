@@ -3202,7 +3202,11 @@ namespace ASCompletion.Completion
                         yield return new TestCaseData("BeforeGenerateFunction_issue394_1", GeneratorJobType.Function, true)
                             .Returns(ReadAllTextAS3("AfterGenerateFunction_issue394_1"))
                             .SetName("Generate function. Issue 394. Case 1")
-                            .SetDescription("");
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/394");
+                        yield return new TestCaseData("BeforeGenerateFunction_issue394_2", GeneratorJobType.Variable, true)
+                            .Returns(ReadAllTextAS3("AfterGenerateFunction_issue394_2"))
+                            .SetName("Generate function. Issue 394. Case 2")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/394");
                     }
                 }
 
