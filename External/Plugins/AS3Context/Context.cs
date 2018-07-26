@@ -872,7 +872,7 @@ namespace AS3Context
         public override ClassModel ResolveType(string cname, FileModel inFile)
         {
             // handle generic types
-            if (cname != null)
+            if (!string.IsNullOrEmpty(cname))
             {
                 var index = cname.IndexOf('<');
                 if (index != -1)

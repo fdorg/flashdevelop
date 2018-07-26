@@ -3199,6 +3199,26 @@ namespace ASCompletion.Completion
                             .Returns(ReadAllTextAS3("AfterAddToInterface_issue2257_4"))
                             .SetName("Add to interface. case 4")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/2257");
+                        yield return new TestCaseData("BeforeGenerateFunction_issue394_1", GeneratorJobType.Function, true)
+                            .Returns(ReadAllTextAS3("AfterGenerateFunction_issue394_1"))
+                            .SetName("Generate function. Issue 394. Case 1")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/394");
+                        yield return new TestCaseData("BeforeGenerateFunction_issue394_2", GeneratorJobType.Variable, true)
+                            .Returns(ReadAllTextAS3("AfterGenerateFunction_issue394_2"))
+                            .SetName("Generate function. Issue 394. Case 2")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/394");
+                        yield return new TestCaseData("BeforeGenerateFunction_issue394_3", GeneratorJobType.FieldFromParameter, true)
+                            .Returns(ReadAllTextAS3("AfterGenerateFunction_issue394_3"))
+                            .SetName("Generate function. Issue 394. Case 3")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/394");
+                        yield return new TestCaseData("BeforeGenerateFunction_issue394_4", GeneratorJobType.FieldFromParameter, true)
+                            .Returns(ReadAllTextAS3("AfterGenerateFunction_issue394_4"))
+                            .SetName("Generate function. Issue 394. Case 4")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/394");
+                        yield return new TestCaseData("BeforeGenerateFunction_issue394_5", GeneratorJobType.PromoteLocal, true)
+                            .Returns(ReadAllTextAS3("AfterGenerateFunction_issue394_5"))
+                            .SetName("Generate function. Issue 394. Case 5")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/394");
                     }
                 }
 
