@@ -26,43 +26,59 @@ namespace HaXeContext.Commands
             sci.SetProperty("fold", "1");
             sci.SetProperty("fold.preprocessor", "1");
         }
+        
+        static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.coderefactor.organizeimports.{fileName}.hx";
 
-        static string ReadAllText(string fileName) => TestFile.ReadAllText($"{nameof(HaXeContext)}.Test_Files.coderefactor.organizeimports.{fileName}.hx");
+        static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
         static IEnumerable<TestCaseData> TestCases
         {
             get
             {
-                yield return
-                    new TestCaseData(ReadAllText("BeforeOrganizeImports_issue191_1"), "BeforeOrganizeImports_issue191_1.hx")
-                        .Returns(ReadAllText("AfterOrganizeImports_issue191_1"))
-                        .SetName("Issue191. Case 1.")
-                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/191");
-                yield return
-                    new TestCaseData(ReadAllText("BeforeOrganizeImports"), "BeforeOrganizeImports.hx")
-                        .Returns(ReadAllText("AfterOrganizeImports"))
-                        .SetName("OrganizeImports");
-                yield return
-                    new TestCaseData(ReadAllText("BeforeOrganizeImports_withImportsFromSameModule"), "Main.hx")
-                        .Returns(ReadAllText("AfterOrganizeImports_withImportsFromSameModule"))
-                        .SetName("Issue782. Package is empty.");
-                yield return
-                    new TestCaseData(ReadAllText("BeforeOrganizeImports_withImportsFromSameModule2"), "Main.hx")
-                        .Returns(ReadAllText("AfterOrganizeImports_withImportsFromSameModule2"))
-                        .SetName("Issue782. Package is not empty.");
-                yield return
-                    new TestCaseData(ReadAllText("BeforeOrganizeImports_withImportsFromSameModule2"), "Main.hx")
-                        .Returns(ReadAllText("AfterOrganizeImports_withImportsFromSameModule2"))
-                        .SetName("Issue782. Package is not empty.");
-                yield return
-                    new TestCaseData(ReadAllText("BeforeOrganizeImports_withElseIfDirective"), "Main.hx")
-                        .Returns(ReadAllText("AfterOrganizeImports_withElseIfDirective"))
-                        .SetName("Issue783. Shouldn't touch #elseif blocks.");
+                yield return new TestCaseData(ReadAllText("BeforeOrganizeImports"), "BeforeOrganizeImports.hx", false)
+                    .Returns(ReadAllText("AfterOrganizeImports"))
+                    .SetName("OrganizeImports. Case 1");
+                yield return new TestCaseData(ReadAllText("BeforeOrganizeImports_2"), "BeforeOrganizeImports_2.hx", false)
+                    .Returns(ReadAllText("AfterOrganizeImports_2"))
+                    .SetName("OrganizeImports. Case 2");
+                yield return new TestCaseData(ReadAllText("BeforeOrganizeImports_issue191_1"), "BeforeOrganizeImports_issue191_1.hx", false)
+                    .Returns(ReadAllText("AfterOrganizeImports_issue191_1"))
+                    .SetName("Issue191. Case 1.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/191");
+                yield return new TestCaseData(ReadAllText("BeforeOrganizeImports_withImportsFromSameModule"), "Main.hx", false)
+                    .Returns(ReadAllText("AfterOrganizeImports_withImportsFromSameModule"))
+                    .SetName("Issue782. Package is empty.");
+                yield return new TestCaseData(ReadAllText("BeforeOrganizeImports_withImportsFromSameModule2"), "Main.hx", false)
+                    .Returns(ReadAllText("AfterOrganizeImports_withImportsFromSameModule2"))
+                    .SetName("Issue782. Package is not empty.");
+                yield return new TestCaseData(ReadAllText("BeforeOrganizeImports_withImportsFromSameModule2"), "Main.hx", false)
+                    .Returns(ReadAllText("AfterOrganizeImports_withImportsFromSameModule2"))
+                    .SetName("Issue782. Package is not empty.");
+                yield return new TestCaseData(ReadAllText("BeforeOrganizeImports_withElseIfDirective"), "Main.hx", false)
+                    .Returns(ReadAllText("AfterOrganizeImports_withElseIfDirective"))
+                    .SetName("Issue783. Shouldn't touch #elseif blocks.");
+                yield return new TestCaseData(ReadAllText("BeforeOrganizeImports_importStaticMember"), "BeforeOrganizeImports_importStaticMember.hx", false)
+                    .Returns(ReadAllText("BeforeOrganizeImports_importStaticMember"))
+                    .SetName("Issue783. Shouldn't touch #elseif blocks.");
             }
         }
 
-        [Test, TestCaseSource(nameof(TestCases))]
-        public string OrganizeImports(string sourceText, string fileName) => global::CodeRefactor.Commands.RefactorCommandTests.OrganizeImports.HaxeImpl(sci, sourceText, fileName, false);
+        static IEnumerable<TestCaseData> Issue1342TestCases
+        {
+            get
+            {
+                yield return new TestCaseData(ReadAllText("BeforeOrganizeImports_Issue1342"), "BeforeOrganizeImports.hx", true)
+                    .Returns(ReadAllText("AfterOrganizeImports_Issue1342"))
+                    .SetName("Issue1342. Separate Packages = True");
+            }
+        }
+
+        [
+            Test, 
+            TestCaseSource(nameof(TestCases)),
+            TestCaseSource(nameof(Issue1342TestCases)),
+        ]
+        public string OrganizeImports(string sourceText, string fileName, bool separatePackages) => global::CodeRefactor.Commands.RefactorCommandTests.OrganizeImportsTests.OrganizeImports(sci, sourceText, fileName, separatePackages);
     }
 
     [TestFixture]
