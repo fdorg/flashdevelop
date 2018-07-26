@@ -231,6 +231,9 @@ namespace CodeRefactor.Commands
                     yield return new TestCaseData("BeforeOrganizeImports_3", false)
                         .Returns(ReadAllText("AfterOrganizeImports_3"))
                         .SetName("OrganizeImports. Case 3");
+                    yield return new TestCaseData("BeforeOrganizeImports_4", true)
+                        .Returns(ReadAllText("AfterOrganizeImports_4"))
+                        .SetName("OrganizeImports. Case 4");
                     yield return new TestCaseData("BeforeOrganizeImports_issue592_1", false)
                         .Returns(ReadAllText("BeforeOrganizeImports_issue592_1"))
                         .SetName("Issue 592. Case 1")
