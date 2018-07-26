@@ -94,15 +94,14 @@ namespace CodeRefactor.Commands
                 }
                 if (TruncateImports)
                 {
-                    for (Int32 j = 0; j < imports.Count; j++)
+                    foreach (var import in imports)
                     {
-                        MemberModel import = imports[j];
-                        String[] parts = import.Type.Split('.');
+                        var parts = import.Type.Split('.');
                         if (parts.Length > 0 && parts[parts.Length - 1] != "*")
                         {
                             parts[parts.Length - 1] = "*";
                         }
-                        import.Type = String.Join(".", parts);
+                        import.Type = string.Join(".", parts);
                     }
                 }
                 imports.Reverse();
@@ -127,8 +126,7 @@ namespace CodeRefactor.Commands
         /// </summary>
         private Imports SeparateImports(List<MemberModel> imports, int privateSectionIndex)
         {
-            MemberModel first;
-            Imports separatedImports = new Imports();
+            var separatedImports = new Imports();
             separatedImports.PackageImports = new List<MemberModel>();
             separatedImports.PrivateImports = new List<MemberModel>();
             foreach (var import in imports)
@@ -138,13 +136,13 @@ namespace CodeRefactor.Commands
             }
             if (separatedImports.PackageImports.Count > 0)
             {
-                first = separatedImports.PackageImports[0];
-                separatedImports.PackageImportsIndent = this.GetLineIndentFor(first);
+                var first = separatedImports.PackageImports[0];
+                separatedImports.PackageImportsIndent = GetLineIndentFor(first);
             }
             if (separatedImports.PrivateImports.Count > 0)
             {
-                first = separatedImports.PrivateImports[0];
-                separatedImports.PrivateImportsIndent = this.GetLineIndentFor(first);
+                var first = separatedImports.PrivateImports[0];
+                separatedImports.PrivateImportsIndent = GetLineIndentFor(first);
             }
             return separatedImports;
         }
@@ -161,9 +159,8 @@ namespace CodeRefactor.Commands
         /// </summary>
         private int GetLineIndentFor(MemberModel import)
         {
-            for (Int32 i = 0; i < this.ImportIndents.Count; i++)
+            foreach (var kvp in ImportIndents)
             {
-                KeyValuePair<MemberModel, Int32> kvp = this.ImportIndents[i];
                 if (kvp.Key == import) return kvp.Value;
             }
             return 0;
@@ -174,21 +171,21 @@ namespace CodeRefactor.Commands
         /// </summary>
         private void InsertImports(List<MemberModel> imports, string searchInText, ScintillaControl sci, int indent)
         {
-            String eol = LineEndDetector.GetNewLineMarker(sci.EOLMode);
-            Int32 line = imports[0].LineFrom - deletedImportsCompensation;
+            var eol = LineEndDetector.GetNewLineMarker(sci.EOLMode);
+            var line = imports[0].LineFrom - deletedImportsCompensation;
             imports.Sort(new CaseSensitiveImportComparer());
             sci.GotoLine(line);
-            Int32 curLine = 0;
-            List<String> uniques = this.GetUniqueImports(imports, searchInText, sci.FileName);
+            var curLine = 0;
+            var uniques = GetUniqueImports(imports, searchInText, sci.FileName);
             // correct position compensation for private imports
             deletedImportsCompensation = imports.Count - uniques.Count;
-            String prevPackage = null;
-            for (Int32 i = 0; i < uniques.Count; i++)
+            string prevPackage = null;
+            foreach (var import in uniques)
             {
-                string importStringToInsert = "import " + uniques[i] + ";" + eol;
-                if (this.SeparatePackages)
+                var importStringToInsert = "import " + import + ";" + eol;
+                if (SeparatePackages)
                 {
-                    string currentPackage = importStringToInsert.Substring(0, importStringToInsert.LastIndexOf('.'));
+                    var currentPackage = importStringToInsert.Substring(0, importStringToInsert.LastIndexOf('.'));
                     if (prevPackage != null && prevPackage != currentPackage)
                     {
                         sci.NewLine();
