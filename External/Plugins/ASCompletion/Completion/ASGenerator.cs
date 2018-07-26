@@ -1170,14 +1170,11 @@ namespace ASCompletion.Completion
                     try
                     {
                         if (!RemoveLocalDeclaration(sci, contextMember)) return;
-                        
                         latest = GetLatestMemberForVariable(GeneratorJobType.Variable, inClass, GetDefaultVisibility(inClass), member);
                         if (latest == null) return;
-
                         position = FindNewVarPosition(sci, inClass, latest);
                         if (position <= 0) return;
                         sci.SetSel(position, position);
-
                         var newMember = new MemberModel
                         {
                             Name = contextMember.Name,
@@ -1185,7 +1182,8 @@ namespace ASCompletion.Completion
                             Access = GetDefaultVisibility(inClass)
                         };
                         if ((member.Flags & FlagType.Static) > 0) newMember.Flags |= FlagType.Access;
-
+                        if (newMember.Type == ASContext.Context.Features.voidKey && (contextMember.Flags & FlagType.Function) != 0)
+                            newMember.Type = $"Function/*({contextMember.ParametersString()}):{newMember.Type}*/";
                         GenerateVariable(newMember, position, detach);
                         sci.SetSel(lookupPosition, lookupPosition);
                     }
@@ -1931,8 +1929,8 @@ namespace ASCompletion.Completion
             sci.SetSel(funcBodyStart, funcBodyStart);
             sci.CurrentPos = funcBodyStart;
 
-            bool isVararg = false;
-            string paramName = contextMember.Name;
+            var isVararg = false;
+            var paramName = contextMember.Name;
             var paramType = contextMember.Type;
             if (paramType == ASContext.Context.Features.voidKey && (contextMember.Flags & FlagType.Function) != 0)
                 paramType = $"Function/*({contextMember.ParametersString()}):{paramType}*/";
@@ -3188,29 +3186,32 @@ namespace ASCompletion.Completion
             string type = "";
             if (contextMember.Type != null && (contextMember.Flags & FlagType.Inferred) == 0)
             {
-                type = MemberModel.FormatType(contextMember.Type);
-                if (type.IndexOf('*') > 0)
-                    type = type.Replace("/*", @"/\*\s*").Replace("*/", @"\s*\*/");
-                type = @":\s*" + type;
+                if (contextMember.Type == ASContext.Context.Features.voidKey && (contextMember.Flags & FlagType.Function) != 0)
+                    type = $@":\s*Function\/\*\({contextMember.ParametersString()}\):{contextMember.Type}\*\/";
+                else
+                {
+                    type = MemberModel.FormatType(contextMember.Type);
+                    if (type.IndexOf('*') > 0)
+                        type = type.Replace("/*", @"/\*\s*").Replace("*/", @"\s*\*/");
+                    type = @":\s*" + type;
+                }
             }
             var name = contextMember.Name;
-            Regex reDecl = new Regex($@"[\s\(]((var|const)\s+{name}\s*{type})\s*");
-            for (int i = contextMember.LineFrom; i <= contextMember.LineTo + 10; i++)
+            var reDecl = new Regex($@"[\s\(]((var|const)\s+{name}\s*{type})\s*");
+            for (var i = contextMember.LineFrom; i <= contextMember.LineTo + 10; i++)
             {
-                string text = sci.GetLine(i);
-                Match m = reDecl.Match(text);
-                if (m.Success)
-                {
-                    int index = sci.MBSafeTextLength(text.Substring(0, m.Groups[1].Index));
-                    int position = sci.PositionFromLine(i) + index;
-                    int len = sci.MBSafeTextLength(m.Groups[1].Value);
-                    sci.SetSel(position, position + len);
-                    if (ASContext.CommonSettings.GenerateScope) name = "this." + name;
-                    if (contextMember.Type == null || (contextMember.Flags & FlagType.Inferred) != 0) name += " ";
-                    sci.ReplaceSel(name);
-                    UpdateLookupPosition(position, name.Length - len);
-                    return true;
-                }
+                var text = sci.GetLine(i);
+                var m = reDecl.Match(text);
+                if (!m.Success) continue;
+                var index = sci.MBSafeTextLength(text.Substring(0, m.Groups[1].Index));
+                var position = sci.PositionFromLine(i) + index;
+                var len = sci.MBSafeTextLength(m.Groups[1].Value);
+                sci.SetSel(position, position + len);
+                if (ASContext.CommonSettings.GenerateScope) name = "this." + name;
+                if (contextMember.Type == null || (contextMember.Flags & FlagType.Inferred) != 0) name += " ";
+                sci.ReplaceSel(name);
+                UpdateLookupPosition(position, name.Length - len);
+                return true;
             }
             return false;
         }

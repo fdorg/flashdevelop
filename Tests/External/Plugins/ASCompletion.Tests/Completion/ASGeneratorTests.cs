@@ -3215,6 +3215,10 @@ namespace ASCompletion.Completion
                             .Returns(ReadAllTextAS3("AfterGenerateFunction_issue394_4"))
                             .SetName("Generate function. Issue 394. Case 4")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/394");
+                        yield return new TestCaseData("BeforeGenerateFunction_issue394_5", GeneratorJobType.PromoteLocal, true)
+                            .Returns(ReadAllTextAS3("AfterGenerateFunction_issue394_5"))
+                            .SetName("Generate function. Issue 394. Case 5")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/394");
                     }
                 }
 
