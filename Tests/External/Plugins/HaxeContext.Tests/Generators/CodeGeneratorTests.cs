@@ -874,6 +874,21 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> GenerateEventHandlerIssue751TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateEventHandler_issue751_1", GeneratorJobType.ComplexEvent, true)
+                    .Returns(ReadAllText("AfterGenerateEventHandler_issue751_1"))
+                    .SetName("Generate event handler. Issue 751. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/751");
+                yield return new TestCaseData("BeforeGenerateEventHandler_issue751_2", GeneratorJobType.ComplexEvent, true)
+                    .Returns(ReadAllText("AfterGenerateEventHandler_issue751_2"))
+                    .SetName("Generate event handler. Issue 751. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/751");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(ContextualGeneratorTestCases)),
@@ -903,6 +918,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(GenerateVariableIssue2201TestCases)),
             TestCaseSource(nameof(ImplementInterfaceTestCases)),
             TestCaseSource(nameof(ImplementInterfaceIssue2264TestCases)),
+            TestCaseSource(nameof(GenerateEventHandlerIssue751TestCases)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 
@@ -1004,33 +1020,5 @@ namespace HaXeContext.Generators
             ((HaXeSettings) ASContext.Context.Settings).DisableTypeDeclaration = false;
             return result;
         }
-    }
-
-    public class CodeGeneratorTests3 : ASGeneratorTests.GenerateJob
-    {
-        [TestFixtureSetUp]
-        public void Setup()
-        {
-            ASContext.CommonSettings.DeclarationModifierOrder = new[] {"public", "protected", "internal", "private", "static", "inline", "override"};
-            ASContext.Context.Settings.GenerateImports.Returns(true);
-            SetHaxeFeatures(sci);
-        }
-
-        static IEnumerable<TestCaseData> GenerateEventHandlerIssue751TestCases
-        {
-            get
-            {
-                yield return new TestCaseData("BeforeGenerateEventHandler_issue751_1", GeneratorJobType.ComplexEvent, true)
-                    .Returns(CodeGeneratorTests.ReadAllText("AfterGenerateEventHandler_issue751_1"))
-                    .SetName("Generate event handler. Issue 751. Case 1")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/751");
-            }
-        }
-
-        [
-            Test,
-            TestCaseSource(nameof(GenerateEventHandlerIssue751TestCases)),
-        ]
-        public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => CodeGeneratorTests.ContextualGenerator(sci, fileName, job, hasGenerator);
     }
 }
