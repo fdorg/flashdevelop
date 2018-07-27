@@ -1928,6 +1928,8 @@ namespace ASCompletion.Completion
             sci.CurrentPos = bodyStart;
 
             var paramName = contextMember.Name;
+            var paramType = contextMember.Type;
+            paramType = ((ASGenerator) ASContext.Context.CodeGenerator).GetFieldTypeFromParameter(paramType, ref paramName);
 
             var varName = paramName;
             var scopedVarName = varName;
@@ -1976,10 +1978,23 @@ namespace ASCompletion.Completion
             sci.CurrentPos = position;
 
             var newMember = NewMember(varName, member, FlagType.Variable, scope);
-            newMember.Type = contextMember.Type;
+            newMember.Type = paramType;
 
             GenerateVariable(newMember, position, true);
             ASContext.Panel.RestoreLastLookupPosition();
+        }
+
+        protected virtual string GetFieldTypeFromParameter(string paramType, ref string paramName)
+        {
+            //foo(v1<generator>:Function/*(v1:Type):void*/)
+            if (paramType == ASContext.Context.Features.voidKey && (contextMember.Flags & FlagType.Function) != 0)
+                return $"Function/*({contextMember.ParametersString()}):{paramType}*/";
+            if (paramName.StartsWithOrdinal("..."))
+            {
+                paramName = paramName.TrimStart('.');
+                return "Array";
+            }
+            return paramType;
         }
 
         /// <summary>

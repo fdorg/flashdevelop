@@ -294,6 +294,17 @@ namespace HaXeContext.Generators
             return base.GetAddInterfaceDefTemplate(member);
         }
 
+        protected override string GetFieldTypeFromParameter(string paramType, ref string paramName)
+        {
+            if (paramName.StartsWith('?'))
+            {
+                paramName = paramName.Remove(0, 1);
+                if (string.IsNullOrEmpty(paramType)) return "Null<Dynamic>";
+                if (!paramType.StartsWith("Null<")) return $"Null<{paramType}>";
+            }
+            return paramType;
+        }
+
         protected override string GetFunctionType(ASResult expr)
         {
             var voidKey = ASContext.Context.Features.voidKey;
