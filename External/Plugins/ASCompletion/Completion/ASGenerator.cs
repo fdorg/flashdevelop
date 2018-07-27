@@ -1984,8 +1984,7 @@ namespace ASCompletion.Completion
         protected virtual string GetFieldTypeFromParameter(string paramType, ref string paramName)
         {
             //foo(v1<generator>:Function/*(v1:Type):void*/)
-            if (paramType == ASContext.Context.Features.voidKey && (contextMember.Flags & FlagType.Function) != 0)
-                return $"Function/*({contextMember.ParametersString()}):{paramType}*/";
+            if ((contextMember.Flags & FlagType.Function) != 0) return $"Function/*({contextMember.ParametersString()}):{paramType}*/";
             if (paramName.StartsWithOrdinal("..."))
             {
                 paramName = paramName.TrimStart('.');

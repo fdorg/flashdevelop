@@ -3215,6 +3215,10 @@ namespace ASCompletion.Completion
                             .Returns(ReadAllTextAS3("AfterGenerateFunction_issue394_5"))
                             .SetName("Generate function. Issue 394. Case 5")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/394");
+                        yield return new TestCaseData("BeforeGenerateFunction_issue394_6", GeneratorJobType.FieldFromParameter, true)
+                            .Returns(ReadAllTextAS3("AfterGenerateFunction_issue394_6"))
+                            .SetName("Generate function. Issue 394. Case 6")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/394");
                         yield return new TestCaseData("BeforeFieldFromParameter_varargs", GeneratorJobType.FieldFromParameter, true)
                             .Returns(ReadAllTextAS3("AfterFieldFromParameter_varargs"))
                             .SetName("foo(...args). Field from parameter. Case 1");
