@@ -1814,35 +1814,29 @@ namespace ASCompletion.Completion
         private static void AddAsParameter(ScintillaControl sci, MemberModel member)
         {
             if (!RemoveLocalDeclaration(sci, contextMember)) return;
-
-            int posStart = sci.PositionFromLine(member.LineFrom);
-            int posEnd = sci.LineEndPosition(member.LineTo);
+            var posStart = sci.PositionFromLine(member.LineFrom);
+            var posEnd = sci.LineEndPosition(member.LineTo);
             sci.SetSel(posStart, posEnd);
-            string selectedText = sci.SelText;
-            Regex rStart = new Regex(@"\s{1}" + member.Name + @"\s*\(([^\)]*)\)(\s*:\s*([^({{|\n|\r|\s|;)]+))?");
-            Match mStart = rStart.Match(selectedText);
-            if (!mStart.Success)
-                return;
-
-            int start = mStart.Index + posStart + 1;
-            int end = mStart.Index + posStart + mStart.Length;
-
+            var rStart = new Regex(@"\s{1}" + member.Name + @"\s*\(([^\)]*)\)(\s*:\s*([^({{|\n|\r|\s|;)]+))?");
+            var mStart = rStart.Match(sci.SelText);
+            if (!mStart.Success) return;
+            var start = mStart.Index + posStart + 1;
+            var end = mStart.Index + posStart + mStart.Length;
             sci.SetSel(start, end);
-
-            MemberModel memberCopy = (MemberModel) member.Clone();
-
-            if (memberCopy.Parameters == null)
-                memberCopy.Parameters = new List<MemberModel>();
-
-            memberCopy.Parameters.Add(contextMember);
-
-            string template = TemplateUtils.ToDeclarationString(memberCopy, TemplateUtils.GetTemplate("MethodDeclaration"));
+            var memberCopy = (MemberModel) member.Clone();
+            if (memberCopy.Parameters == null) memberCopy.Parameters = new List<MemberModel>();
+            if ((contextMember.Flags & FlagType.Function) != 0 && contextMember.Parameters != null)
+            {
+                var parameter = (MemberModel) contextMember.Clone();
+                parameter.Type = $"Function/*({parameter.ParametersString()}):{parameter.Type}*/";
+                memberCopy.Parameters.Add(parameter);
+            }
+            else memberCopy.Parameters.Add(contextMember);
+            var template = TemplateUtils.ToDeclarationString(memberCopy, TemplateUtils.GetTemplate("MethodDeclaration"));
             InsertCode(start, template, sci);
-
-            int currPos = sci.LineEndPosition(sci.CurrentLine);
-
-            sci.SetSel(currPos, currPos);
-            sci.CurrentPos = currPos;
+            var pos = sci.LineEndPosition(sci.CurrentLine);
+            sci.SetSel(pos, pos);
+            sci.CurrentPos = pos;
         }
 
         private static void AddInterfaceDefJob(ScintillaControl sci, MemberModel member, ClassModel inClass, string interf)
@@ -3184,8 +3178,7 @@ namespace ASCompletion.Completion
             if (contextMember.Type != null && (contextMember.Flags & FlagType.Inferred) == 0)
             {
                 // for example: var f:Function/*(v1:Type):void*/
-                if (contextMember.Type == ASContext.Context.Features.voidKey && (contextMember.Flags & FlagType.Function) != 0)
-                    type = $@":\s*Function\/\*\({contextMember.ParametersString()}\):{contextMember.Type}\*\/";
+                if ((contextMember.Flags & FlagType.Function) != 0) type = ":\\s*Function\\/\\*.*\\*\\/";
                 else
                 {
                     type = MemberModel.FormatType(contextMember.Type);
