@@ -3289,9 +3289,9 @@ namespace ASCompletion.Completion
         private static void GenerateImplementation(ClassModel iType, ClassModel inClass, ScintillaControl sci, bool detached)
         {
             var typesUsed = new HashSet<string>();
-            string header = TemplateUtils.ReplaceTemplateVariable(TemplateUtils.GetTemplate("ImplementHeader"), "Class", iType.Type);
+            var header = TemplateUtils.ReplaceTemplateVariable(TemplateUtils.GetTemplate("ImplementHeader"), "Class", iType.Type);
             header = TemplateUtils.ReplaceTemplateVariable(header, "BlankLine", detached ? BlankLine : null);
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append(header);
             sb.Append(NewLine);
             var entry = true;
@@ -3327,7 +3327,17 @@ namespace ASCompletion.Completion
                         }
                         decl = ((ASGenerator) ctx.CodeGenerator).GetGetterImplementationTemplate(method);
                     }
-                    else if ((method.Flags & FlagType.Setter) > 0) decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Setter"));
+                    else if ((method.Flags & FlagType.Setter) > 0)
+                    {
+                        // for example: function get set(v:Function/*(v:*):int*/):void
+                        if (method.Parameters != null && method.Parameters.Count > 0)
+                        {
+                            var parameter = method.Parameters[0];
+                            if ((parameter.Flags & FlagType.Function) != 0)
+                                parameter.Type = $"Function/*({parameter.ParametersString()}):{parameter.Type}*/";
+                        }
+                        decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Setter"));
+                    }
                     else if ((method.Flags & FlagType.Function) > 0) decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Function"));
                     else decl = NewLine + TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Variable"));
 
