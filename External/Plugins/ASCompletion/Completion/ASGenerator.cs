@@ -3289,12 +3289,9 @@ namespace ASCompletion.Completion
         private static void GenerateImplementation(ClassModel iType, ClassModel inClass, ScintillaControl sci, bool detached)
         {
             var typesUsed = new HashSet<string>();
-
-            StringBuilder sb = new StringBuilder();
-
-            string header = TemplateUtils.ReplaceTemplateVariable(TemplateUtils.GetTemplate("ImplementHeader"), "Class", iType.Type);
+            var header = TemplateUtils.ReplaceTemplateVariable(TemplateUtils.GetTemplate("ImplementHeader"), "Class", iType.Type);
             header = TemplateUtils.ReplaceTemplateVariable(header, "BlankLine", detached ? BlankLine : null);
-
+            var sb = new StringBuilder();
             sb.Append(header);
             sb.Append(NewLine);
             var entry = true;
@@ -3309,8 +3306,9 @@ namespace ASCompletion.Completion
             iType.ResolveExtends(); // resolve inheritance chain
             while (!iType.IsVoid() && iType.QualifiedName != "Object")
             {
-                foreach (MemberModel method in iType.Members)
+                for (var i = 0; i < iType.Members.Count; i++)
                 {
+                    var method = iType.Members[i];
                     if ((method.Flags & flags) == 0 || method.Name == iType.Name)
                         continue;
 
@@ -3319,10 +3317,39 @@ namespace ASCompletion.Completion
                     if (!result.IsNull()) continue;
 
                     string decl;
-                    if ((method.Flags & FlagType.Getter) > 0) decl = ((ASGenerator) ctx.CodeGenerator).GetGetterImplementationTemplate(method);
-                    else if ((method.Flags & FlagType.Setter) > 0) decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Setter"));
-                    else if ((method.Flags & FlagType.Function) > 0) decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Function"));
+                    if ((method.Flags & FlagType.Getter) > 0)
+                    {
+                        // for example: function get foo():Function/*(v:*):int*/
+                        if ((method.Flags & FlagType.Function) != 0 && method.Parameters != null)
+                            method.Type = $"Function/*({method.ParametersString()}):{method.Type}*/";
+                        decl = ((ASGenerator) ctx.CodeGenerator).GetGetterImplementationTemplate(method);
+                    }
+                    else if ((method.Flags & FlagType.Setter) > 0)
+                    {
+                        // for example: function get set(v:Function/*(v:*):int*/):void
+                        if (method.Parameters != null && method.Parameters.Count > 0)
+                        {
+                            var parameter = method.Parameters[0];
+                            if ((parameter.Flags & FlagType.Function) != 0 && parameter.Parameters != null)
+                                parameter.Type = $"Function/*({parameter.ParametersString()}):{parameter.Type}*/";
+                        }
+                        decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Setter"));
+                    }
+                    else if ((method.Flags & FlagType.Function) > 0)
+                    {
+                        // for example: function get set(v:Function/*(v:*):int*/):void
+                        if (method.Parameters != null)
+                        {
+                            foreach (var parameter in method.Parameters)
+                            {
+                                if ((parameter.Flags & FlagType.Function) != 0 && parameter.Parameters != null)
+                                    parameter.Type = $"Function/*({parameter.ParametersString()}):{parameter.Type}*/";
+                            }
+                        }
+                        decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Function"));
+                    }
                     else decl = NewLine + TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Variable"));
+
                     decl = TemplateUtils.ReplaceTemplateVariable(decl, "Member", "_" + method.Name);
                     decl = TemplateUtils.ReplaceTemplateVariable(decl, "Void", features.voidKey);
                     decl = TemplateUtils.ReplaceTemplateVariable(decl, "Body", null);
@@ -3335,20 +3362,19 @@ namespace ASCompletion.Completion
                     canGenerate = true;
                     typesUsed.Add(method.Type);
                     if (method.Parameters != null && method.Parameters.Count > 0)
-                        foreach (MemberModel param in method.Parameters)
+                        foreach (var param in method.Parameters)
                             typesUsed.Add(param.Type);
                 }
+
                 if (ASContext.Context.Settings.GenerateImports) typesUsed = (HashSet<string>) GetQualifiedTypes(typesUsed, iType.InFile);
                 // interface inheritance
                 iType = iType.Extends;
             }
-            if (!canGenerate)
-                return;
-
+            if (!canGenerate) return;
             sci.BeginUndoAction();
             try
             {
-                int position = sci.CurrentPos;
+                var position = sci.CurrentPos;
                 if (ASContext.Context.Settings.GenerateImports && typesUsed.Count > 0)
                 {
                     position += AddImportsByName(typesUsed, sci.LineFromPosition(position));
