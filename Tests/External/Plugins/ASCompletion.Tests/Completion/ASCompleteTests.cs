@@ -809,7 +809,7 @@ namespace ASCompletion.Completion
             ]
             public void OnChar(string fileName, char addedChar, bool autoHide, bool hasCompletion) => OnChar(sci, ReadAllText(fileName), addedChar, autoHide, hasCompletion);
 
-            static IEnumerable<TestCaseData> OnCharIssue2076TestCases
+            static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2076TestCases
             {
                 get
                 {
@@ -916,7 +916,7 @@ namespace ASCompletion.Completion
                 }
             }
 
-            static IEnumerable<TestCaseData> OnCharIssue2134TestCases
+            static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2134TestCases
             {
                 get
                 {
@@ -927,10 +927,22 @@ namespace ASCompletion.Completion
                 }
             }
 
+            static IEnumerable<TestCaseData> OnCharAndReplaceTextIssue2282TestCases
+            {
+                get
+                {
+                    yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2282_1", ' ', false)
+                        .Returns(ReadAllText("AfterOnCharAndReplaceTextIssue2282_1"))
+                        .SetName("override |. function(v:Function/*(v:int):int*/). Issue 2282. Case 1")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2282");
+                }
+            }
+
             [
                 Test,
-                TestCaseSource(nameof(OnCharIssue2076TestCases)),
-                TestCaseSource(nameof(OnCharIssue2134TestCases)),
+                TestCaseSource(nameof(OnCharAndReplaceTextIssue2076TestCases)),
+                TestCaseSource(nameof(OnCharAndReplaceTextIssue2134TestCases)),
+                TestCaseSource(nameof(OnCharAndReplaceTextIssue2282TestCases)),
             ]
             public string OnCharAndReplaceText(string fileName, char addedChar, bool autoHide) => OnCharAndReplaceText(sci, ReadAllText(fileName), addedChar, autoHide);
 
