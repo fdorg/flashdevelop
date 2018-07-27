@@ -3321,10 +3321,7 @@ namespace ASCompletion.Completion
                     {
                         // for example: function get foo():Function/*(v:*):int*/
                         if ((method.Flags & FlagType.Function) != 0 && method.Parameters != null)
-                        {
-                            method = (MemberModel) method.Clone();
                             method.Type = $"Function/*({method.ParametersString()}):{method.Type}*/";
-                        }
                         decl = ((ASGenerator) ctx.CodeGenerator).GetGetterImplementationTemplate(method);
                     }
                     else if ((method.Flags & FlagType.Setter) > 0)
@@ -3333,7 +3330,7 @@ namespace ASCompletion.Completion
                         if (method.Parameters != null && method.Parameters.Count > 0)
                         {
                             var parameter = method.Parameters[0];
-                            if ((parameter.Flags & FlagType.Function) != 0)
+                            if ((parameter.Flags & FlagType.Function) != 0 && parameter.Parameters != null)
                                 parameter.Type = $"Function/*({parameter.ParametersString()}):{parameter.Type}*/";
                         }
                         decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Setter"));
@@ -3344,7 +3341,7 @@ namespace ASCompletion.Completion
                         {
                             foreach (var parameter in method.Parameters)
                             {
-                                if ((parameter.Flags & FlagType.Function) != 0)
+                                if ((parameter.Flags & FlagType.Function) != 0 && parameter.Parameters != null)
                                     parameter.Type = $"Function/*({parameter.ParametersString()}):{parameter.Type}*/";
                             }
                         }
