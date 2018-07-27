@@ -3910,7 +3910,7 @@ namespace ASCompletion.Completion
             // explore getters or setters
             const FlagType mask = FlagType.Function | FlagType.Getter | FlagType.Setter;
             var tmpClass = curClass.Extends;
-            var acc = ctx.TypesAffinity(curClass, tmpClass);
+            var access = ctx.TypesAffinity(curClass, tmpClass);
             while (tmpClass != null && !tmpClass.IsVoid())
             {
                 if (tmpClass.QualifiedName.StartsWithOrdinal("flash.utils.Proxy"))
@@ -3922,24 +3922,33 @@ namespace ASCompletion.Completion
                     }
                     break;
                 }
-
                 foreach (MemberModel member in tmpClass.Members)
                 {
                     if (curClass.Members.Search(member.Name, FlagType.Override, 0) != null) continue;
-                    if ((member.Flags & FlagType.Dynamic) > 0
-                        && (member.Access & acc) > 0
-                        && ((member.Flags & FlagType.Function) > 0 || (member.Flags & mask) > 0))
+                    if ((member.Flags & FlagType.Dynamic) == 0
+                        || (member.Access & access) == 0
+                        || ((member.Flags & FlagType.Function) == 0 && (member.Flags & mask) == 0)) continue;
+                    if (member.Parameters != null && member.Parameters.Count > 0)
                     {
-                        members.Add(member);
+                        foreach (var it in member.Parameters)
+                        {
+                            if ((it.Flags & FlagType.Function) == 0 || it.Parameters == null) continue;
+                            it.Type = $"Function/*({it.ParametersString()}):{it.Type}*/";
+                            it.Parameters = null;
+                        }
                     }
+                    if ((member.Flags & FlagType.Getter) != 0 && member.Parameters != null)
+                    {
+                        member.Type = $"Function/*({member.ParametersString()}):{member.Type}*/";
+                        member.Parameters = null;
+                    }
+                    members.Add(member);
                 }
-
                 tmpClass = tmpClass.Extends;
                 // members visibility
-                acc = ctx.TypesAffinity(curClass, tmpClass);
+                access = ctx.TypesAffinity(curClass, tmpClass);
             }
             members.Sort();
-
             var list = new List<ICompletionListItem>();
             MemberModel last = null;
             foreach (var member in members)
