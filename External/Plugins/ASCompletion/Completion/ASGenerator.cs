@@ -3337,6 +3337,7 @@ namespace ASCompletion.Completion
                     }
                     else if ((method.Flags & FlagType.Function) > 0)
                     {
+                        // for example: function get set(v:Function/*(v:*):int*/):void
                         if (method.Parameters != null)
                         {
                             foreach (var parameter in method.Parameters)
@@ -3369,13 +3370,11 @@ namespace ASCompletion.Completion
                 // interface inheritance
                 iType = iType.Extends;
             }
-            if (!canGenerate)
-                return;
-
+            if (!canGenerate) return;
             sci.BeginUndoAction();
             try
             {
-                int position = sci.CurrentPos;
+                var position = sci.CurrentPos;
                 if (ASContext.Context.Settings.GenerateImports && typesUsed.Count > 0)
                 {
                     position += AddImportsByName(typesUsed, sci.LineFromPosition(position));
