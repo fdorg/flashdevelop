@@ -669,7 +669,11 @@ namespace HaXeContext
                     if (!member.Flags.HasFlag(FlagType.Function) || !(member.Parameters?.Count > 0)) continue;
                     foreach (var parameter in member.Parameters)
                     {
-                        if (parameter.Name[0] == '?') parameter.Name = parameter.Name.Substring(1);
+                        if (parameter.Name[0] != '?') continue;
+                        parameter.Name = parameter.Name.Substring(1);
+                        var type = parameter.Type;
+                        if (string.IsNullOrEmpty(type)) parameter.Type = "Null<Dynamic>";
+                        else if (!type.StartsWithOrdinal("Null<")) parameter.Type = $"Null<{type}>";
                     }
                 }
             }

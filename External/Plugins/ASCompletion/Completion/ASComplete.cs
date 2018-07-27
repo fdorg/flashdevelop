@@ -4053,11 +4053,12 @@ namespace ASCompletion.Completion
         public static MemberList ParseLocalVars(ASExpr expression)
         {
             FileModel model;
+            var ctx = ASContext.Context;
             if (!string.IsNullOrEmpty(expression.FunctionBody))
             {
                 var cm = expression.ContextMember;
                 var functionBody = Regex.Replace(expression.FunctionBody, "function\\s*\\(", "function __anonfunc__("); // name anonymous functions
-                model = ASContext.Context.GetCodeModel(functionBody, true);
+                model = ctx.GetCodeModel(functionBody, true);
                 var memberCount = model.Members.Count;
                 for (var memberIndex = 0; memberIndex < memberCount; memberIndex++)
                 {
@@ -4089,18 +4090,22 @@ namespace ASCompletion.Completion
             model.Members.Sort();
             if (expression.ContextFunction?.Parameters != null)
             {
-                var features = ASContext.Context.Features;
-                var dot = features.dot;
-                foreach (var item in expression.ContextFunction.Parameters)
-                {
-                    var name = item.Name;
-                    if (name.StartsWithOrdinal(dot)) model.Members.MergeByLine(new MemberModel(name.Substring(name.LastIndexOfOrdinal(dot) + 1), "Array", item.Flags, item.Access));
-                    else if (name[0] == '?') model.Members.MergeByLine(new MemberModel(name.Substring(1), item.Type, item.Flags, item.Access));
-                    else model.Members.MergeByLine(item);
-                }
-                if (features.functionArguments != null) model.Members.MergeByLine(features.functionArguments);
+                ctx.CodeComplete.ParseLocalVars(expression, model);
+                var functionArguments = ctx.Features.functionArguments;
+                if (functionArguments != null) model.Members.MergeByLine(functionArguments);
             }
             return model.Members;
+        }
+
+        protected virtual void ParseLocalVars(ASExpr expression, FileModel model)
+        {
+            var dot = ASContext.Context.Features.dot;
+            foreach (var item in expression.ContextFunction.Parameters)
+            {
+                var name = item.Name;
+                if (name.StartsWithOrdinal(dot)) model.Members.MergeByLine(new MemberModel(name.Substring(name.LastIndexOfOrdinal(dot) + 1), "Array", item.Flags, item.Access));
+                else model.Members.MergeByLine(item);
+            }
         }
 
         /// <summary>

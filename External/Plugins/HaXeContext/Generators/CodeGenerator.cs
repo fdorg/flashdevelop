@@ -278,22 +278,6 @@ namespace HaXeContext.Generators
             }
         }
 
-        protected override string GetFunctionType(ASResult expr)
-        {
-            var voidKey = ASContext.Context.Features.voidKey;
-            var parameters = expr.Member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
-            parameters.Add(expr.Member.Type ?? voidKey);
-            var qualifiedName = string.Empty;
-            for (var i = 0; i < parameters.Count; i++)
-            {
-                if (i > 0) qualifiedName += "->";
-                var t = parameters[i];
-                if (t.Contains("->") && !t.StartsWith('(')) t = $"({t})";
-                qualifiedName += t;
-            }
-            return qualifiedName;
-        }
-
         protected override string GetAddInterfaceDefTemplate(MemberModel member)
         {
             if ((member.Flags & (FlagType.Getter | FlagType.Setter)) != 0)
@@ -308,6 +292,33 @@ namespace HaXeContext.Generators
                 return template;
             }
             return base.GetAddInterfaceDefTemplate(member);
+        }
+
+        protected override string GetFieldTypeFromParameter(string paramType, ref string paramName)
+        {
+            if (paramName.StartsWith('?'))
+            {
+                paramName = paramName.Remove(0, 1);
+                if (string.IsNullOrEmpty(paramType)) return "Null<Dynamic>";
+                if (!paramType.StartsWith("Null<")) return $"Null<{paramType}>";
+            }
+            return paramType;
+        }
+
+        protected override string GetFunctionType(ASResult expr)
+        {
+            var voidKey = ASContext.Context.Features.voidKey;
+            var parameters = expr.Member.Parameters?.Select(it => it.Type).ToList() ?? new List<string> {voidKey};
+            parameters.Add(expr.Member.Type ?? voidKey);
+            var qualifiedName = string.Empty;
+            for (var i = 0; i < parameters.Count; i++)
+            {
+                if (i > 0) qualifiedName += "->";
+                var t = parameters[i];
+                if (t.Contains("->") && !t.StartsWith('(')) t = $"({t})";
+                qualifiedName += t;
+            }
+            return qualifiedName;
         }
 
         protected override string GetGetterImplementationTemplate(MemberModel method)

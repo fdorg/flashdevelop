@@ -229,7 +229,11 @@ namespace HaXeContext.Generators
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2022");
                 yield return new TestCaseData("BeforeContextualGeneratorTests_issue2022_3", GeneratorJobType.FieldFromParameter, true)
                     .Returns(ReadAllText("AfterContextualGeneratorTests_issue2022_3"))
-                    .SetName("foo(?ar|gs). Generate field.")
+                    .SetName("foo(?ar|gs). Field from parameter. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2022");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2022_4", GeneratorJobType.FieldFromParameter, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2022_4"))
+                    .SetName("foo(?ar|gs). Field From parameter. Case 2")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2022");
             }
         }
