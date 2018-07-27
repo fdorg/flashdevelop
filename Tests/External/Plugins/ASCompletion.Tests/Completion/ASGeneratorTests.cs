@@ -184,18 +184,14 @@ namespace ASCompletion.Completion
                 {
                     get
                     {
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFieldFromParameter"), GeneratorJobType.FieldFromParameter, Visibility.Private)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFieldFromParameter"));
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFieldFromOptionalParameter"), GeneratorJobType.FieldFromParameter, Visibility.Private)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFieldFromOptionalParameter"));
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFieldFromOptionalUntypedParameter"), GeneratorJobType.FieldFromParameter, Visibility.Private)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFieldFromOptionalUntypedParameter"));
-                        yield return
-                            new TestCaseData(ReadAllTextHaxe("BeforeGenerateFieldFromOptionalParameter2"), GeneratorJobType.FieldFromParameter, Visibility.Private)
-                                .Returns(ReadAllTextHaxe("AfterGenerateFieldFromOptionalParameter2"));
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFieldFromParameter"), GeneratorJobType.FieldFromParameter, Visibility.Private)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFieldFromParameter"));
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFieldFromOptionalParameter"), GeneratorJobType.FieldFromParameter, Visibility.Private)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFieldFromOptionalParameter"));
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFieldFromOptionalUntypedParameter"), GeneratorJobType.FieldFromParameter, Visibility.Private)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFieldFromOptionalUntypedParameter"));
+                        yield return new TestCaseData(ReadAllTextHaxe("BeforeGenerateFieldFromOptionalParameter2"), GeneratorJobType.FieldFromParameter, Visibility.Private)
+                            .Returns(ReadAllTextHaxe("AfterGenerateFieldFromOptionalParameter2"));
                     }
                 }
 
@@ -3219,6 +3215,12 @@ namespace ASCompletion.Completion
                             .Returns(ReadAllTextAS3("AfterGenerateFunction_issue394_5"))
                             .SetName("Generate function. Issue 394. Case 5")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/394");
+                        yield return new TestCaseData("BeforeFieldFromParameter_varargs", GeneratorJobType.FieldFromParameter, true)
+                            .Returns(ReadAllTextAS3("AfterFieldFromParameter_varargs"))
+                            .SetName("foo(...args). Field from parameter. Case 1");
+                        yield return new TestCaseData("BeforeFieldFromParameter_varargs_2", GeneratorJobType.FieldFromParameter, true)
+                            .Returns(ReadAllTextAS3("AfterFieldFromParameter_varargs_2"))
+                            .SetName("foo(v1:(, ...args). Field from parameter. Case 2");
                     }
                 }
 
@@ -3234,13 +3236,13 @@ namespace ASCompletion.Completion
                     if (hasGenerator)
                     {
                         Assert.IsNotEmpty(options);
-                        var item = options.Find(it => ((ASCompletion.Completion.GeneratorItem)it).Job == job);
+                        var item = options.Find(it => ((GeneratorItem)it).Job == job);
                         Assert.IsNotNull(item);
                         var value = item.Value;
                         return sci.Text;
                     }
                     if (job == (GeneratorJobType)(-1)) Assert.IsEmpty(options);
-                    if (options.Count > 0) Assert.IsFalse(options.Any(it => ((ASCompletion.Completion.GeneratorItem)it).Job == job));
+                    if (options.Count > 0) Assert.IsFalse(options.Any(it => ((GeneratorItem)it).Job == job));
                     return null;
                 }
             }

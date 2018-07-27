@@ -1,6 +1,6 @@
 ﻿package;
 class Foo {
 	public function new(?_) {
-		var dynamicValue:Dynamic = _;
+		var nullValue:Null<Dynamic> = _;
 	}
 }

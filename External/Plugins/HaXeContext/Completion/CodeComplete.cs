@@ -75,6 +75,22 @@ namespace HaXeContext.Completion
             return base.HandleWhiteSpaceCompletion(sci, position, wordLeft, autoHide);
         }
 
+        protected override void ParseLocalVars(ASExpr expression, FileModel model)
+        {
+            foreach (var item in expression.ContextFunction.Parameters)
+            {
+                var name = item.Name;
+                if (name[0] == '?')
+                {
+                    var type = item.Type;
+                    if (string.IsNullOrEmpty(type)) type = "Null<Dynamic>";
+                    else if (!type.StartsWithOrdinal("Null<")) type = $"Null<{type}>";
+                    model.Members.MergeByLine(new MemberModel(name.Substring(1), type, item.Flags, item.Access));
+                }
+                else model.Members.MergeByLine(item);
+            }
+        }
+
         /// <inheritdoc />
         protected override bool ResolveFunction(ScintillaControl sci, int position, ASResult expr, bool autoHide)
         {

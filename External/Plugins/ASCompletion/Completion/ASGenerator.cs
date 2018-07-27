@@ -1911,99 +1911,90 @@ namespace ASCompletion.Completion
 
         private static void GenerateFieldFromParameter(ScintillaControl sci, MemberModel member, ClassModel inClass, Visibility scope)
         {
-            int funcBodyStart = GetBodyStart(member.LineFrom, member.LineTo, sci, false);
-            int fbsLine = sci.LineFromPosition(funcBodyStart);
-            int endPos = sci.LineEndPosition(member.LineTo);
+            var bodyStart = GetBodyStart(member.LineFrom, member.LineTo, sci, false);
+            var fbsLine = sci.LineFromPosition(bodyStart);
+            var endPos = sci.LineEndPosition(member.LineTo);
 
-            sci.SetSel(funcBodyStart, endPos);
+            sci.SetSel(bodyStart, endPos);
             var body = sci.SelText;
             var trimmed = body.TrimStart();
 
             var m = reSuperCall.Match(trimmed);
-            if (m.Success && m.Index == 0)
-            {
-                funcBodyStart = GetEndOfStatement(funcBodyStart + (body.Length - trimmed.Length), endPos, sci);
-            }
+            if (m.Success && m.Index == 0) bodyStart = GetEndOfStatement(bodyStart + (body.Length - trimmed.Length), endPos, sci);
 
-            funcBodyStart = GetOrSetPointOfInsertion(funcBodyStart, endPos, fbsLine, sci);
+            bodyStart = GetOrSetPointOfInsertion(bodyStart, endPos, fbsLine, sci);
 
-            sci.SetSel(funcBodyStart, funcBodyStart);
-            sci.CurrentPos = funcBodyStart;
+            sci.SetSel(bodyStart, bodyStart);
+            sci.CurrentPos = bodyStart;
 
-            var isVararg = false;
             var paramName = contextMember.Name;
             var paramType = contextMember.Type;
-            //foo(v1<generator>:Function/*(v1:Type):void*/)
-            if (paramType == ASContext.Context.Features.voidKey && (contextMember.Flags & FlagType.Function) != 0)
-                paramType = $"Function/*({contextMember.ParametersString()}):{paramType}*/";
-            else if (paramName.StartsWithOrdinal("..."))
-            {
-                paramName = paramName.TrimStart(' ', '.');
-                isVararg = true;
-            }
-            else if (inClass.InFile.haXe && paramName.StartsWithOrdinal("?"))
-            {
-                paramName = paramName.Remove(0, 1);
-                if (!string.IsNullOrEmpty(paramType) && !paramType.StartsWith("Null<"))
-                    paramType = $"Null<{paramType}>";
-            }
+            paramType = ((ASGenerator) ASContext.Context.CodeGenerator).GetFieldTypeFromParameter(paramType, ref paramName);
 
-            string varName = paramName;
-            string scopedVarName = varName;
+            var varName = paramName;
+            var scopedVarName = varName;
 
             if ((scope & Visibility.Public) > 0)
             {
-                if ((member.Flags & FlagType.Static) > 0)
-                    scopedVarName = inClass.Name + "." + varName;
-                else
-                    scopedVarName = "this." + varName;
+                if ((member.Flags & FlagType.Static) > 0) scopedVarName = inClass.Name + "." + varName;
+                else scopedVarName = "this." + varName;
             }
             else
             {
-                if (ASContext.CommonSettings.PrefixFields.Length > 0 && !varName.StartsWithOrdinal(ASContext.CommonSettings.PrefixFields))
+                var prefixFields = ASContext.CommonSettings.PrefixFields;
+                if (prefixFields.Length > 0 && !varName.StartsWithOrdinal(prefixFields))
                 {
-                    scopedVarName = varName = ASContext.CommonSettings.PrefixFields + varName;
+                    scopedVarName = varName = prefixFields + varName;
                 }
 
-                if (ASContext.CommonSettings.GenerateScope || ASContext.CommonSettings.PrefixFields == "")
+                if (ASContext.CommonSettings.GenerateScope || prefixFields == "")
                 {
-                    if ((member.Flags & FlagType.Static) > 0)
-                        scopedVarName = inClass.Name + "." + varName;
-                    else
-                        scopedVarName = "this." + varName;
+                    if ((member.Flags & FlagType.Static) > 0) scopedVarName = inClass.Name + "." + varName;
+                    else scopedVarName = "this." + varName;
                 }
             }
 
-            string template = TemplateUtils.GetTemplate("FieldFromParameter");
+            var template = TemplateUtils.GetTemplate("FieldFromParameter");
             template = TemplateUtils.ReplaceTemplateVariable(template, "Name", scopedVarName);
             template = TemplateUtils.ReplaceTemplateVariable(template, "Value", paramName);
             template += "\n$(Boundary)";
 
-            SnippetHelper.InsertSnippetText(sci, funcBodyStart, template);
+            SnippetHelper.InsertSnippetText(sci, bodyStart, template);
 
             //TODO: We also need to check parent classes!!!
-            MemberList classMembers = inClass.Members;
-            foreach (MemberModel classMember in classMembers)
+            foreach (MemberModel classMember in inClass.Members)
                 if (classMember.Name.Equals(varName))
                 {
                     ASContext.Panel.RestoreLastLookupPosition();
                     return;
                 }
 
-            MemberModel latest = GetLatestMemberForVariable(GeneratorJobType.Variable, inClass, GetDefaultVisibility(inClass), new MemberModel());
+            var latest = GetLatestMemberForVariable(GeneratorJobType.Variable, inClass, GetDefaultVisibility(inClass), new MemberModel());
             if (latest == null) return;
 
-            int position = FindNewVarPosition(sci, inClass, latest);
+            var position = FindNewVarPosition(sci, inClass, latest);
             if (position <= 0) return;
             sci.SetSel(position, position);
             sci.CurrentPos = position;
 
-            MemberModel mem = NewMember(varName, member, FlagType.Variable, scope);
-            if (isVararg) mem.Type = "Array";
-            else mem.Type = paramType;
+            var newMember = NewMember(varName, member, FlagType.Variable, scope);
+            newMember.Type = paramType;
 
-            GenerateVariable(mem, position, true);
+            GenerateVariable(newMember, position, true);
             ASContext.Panel.RestoreLastLookupPosition();
+        }
+
+        protected virtual string GetFieldTypeFromParameter(string paramType, ref string paramName)
+        {
+            //foo(v1<generator>:Function/*(v1:Type):void*/)
+            if (paramType == ASContext.Context.Features.voidKey && (contextMember.Flags & FlagType.Function) != 0)
+                return $"Function/*({contextMember.ParametersString()}):{paramType}*/";
+            if (paramName.StartsWithOrdinal("..."))
+            {
+                paramName = paramName.TrimStart('.');
+                return "Array";
+            }
+            return paramType;
         }
 
         /// <summary>
@@ -3417,13 +3408,14 @@ namespace ASCompletion.Completion
             return dynamicKey;
         }
 
-        private static MemberModel NewMember(string contextToken, MemberModel calledFrom, FlagType kind, Visibility visi)
+        private static MemberModel NewMember(string name, MemberModel calledFrom, FlagType kind, Visibility access)
         {
-            string type = (kind == FlagType.Function && !ASContext.Context.Features.hasInference) 
-                ? ASContext.Context.Features.voidKey : null;
+            var type = kind == FlagType.Function && !ASContext.Context.Features.hasInference
+                ? ASContext.Context.Features.voidKey
+                : null;
             if (calledFrom != null && (calledFrom.Flags & FlagType.Static) > 0)
                 kind |= FlagType.Static;
-            return new MemberModel(contextToken, type, kind, visi);
+            return new MemberModel(name, type, kind, access);
         }
 
         /// <summary>
