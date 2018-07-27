@@ -1185,6 +1185,8 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterImplementInterfaceMethods_issue2278_1.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeImplementInterfaceMethods_issue2278_2.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterImplementInterfaceMethods_issue2278_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeImplementInterfaceMethods_issue2278_3.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterImplementInterfaceMethods_issue2278_3.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">

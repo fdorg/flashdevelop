@@ -3257,6 +3257,10 @@ namespace ASCompletion.Completion
                             .Returns(ReadAllTextAS3("AfterImplementInterfaceMethods_issue2278_2"))
                             .SetName("Implement interface methods. Issue 2278. Case 2")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/2278");
+                        yield return new TestCaseData("BeforeImplementInterfaceMethods_issue2278_3", GeneratorJobType.ImplementInterface, true)
+                            .Returns(ReadAllTextAS3("AfterImplementInterfaceMethods_issue2278_3"))
+                            .SetName("Implement interface methods. Issue 2278. Case 3")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2278");
                     }
                 }
 

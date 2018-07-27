@@ -3338,7 +3338,18 @@ namespace ASCompletion.Completion
                         }
                         decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Setter"));
                     }
-                    else if ((method.Flags & FlagType.Function) > 0) decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Function"));
+                    else if ((method.Flags & FlagType.Function) > 0)
+                    {
+                        if (method.Parameters != null)
+                        {
+                            foreach (var parameter in method.Parameters)
+                            {
+                                if ((parameter.Flags & FlagType.Function) != 0)
+                                    parameter.Type = $"Function/*({parameter.ParametersString()}):{parameter.Type}*/";
+                            }
+                        }
+                        decl = TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Function"));
+                    }
                     else decl = NewLine + TemplateUtils.ToDeclarationWithModifiersString(method, TemplateUtils.GetTemplate("Variable"));
 
                     decl = TemplateUtils.ReplaceTemplateVariable(decl, "Member", "_" + method.Name);
