@@ -2372,6 +2372,8 @@ namespace ASCompletion.Completion
                 {
                     if (returnType.Member.Type != ASContext.Context.Features.voidKey)
                         returnTypeStr = returnType.Member.Type;
+                    else if ((returnType.Member.Flags & FlagType.Function) != 0)
+                        returnTypeStr = $"Function/*({returnType.Member.ParametersString()}):{returnType.Member.Type}*/";
                 }
                 else if (returnType.Type != null) returnTypeStr = returnType.Type.Name;
                 if (ASContext.Context.Settings.GenerateImports)

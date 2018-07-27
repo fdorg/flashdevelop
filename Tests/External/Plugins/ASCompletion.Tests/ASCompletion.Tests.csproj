@@ -1169,6 +1169,8 @@
     <EmbeddedResource Include="Test Files\generated\as3\AfterFieldFromParameter_varargs.as" />
     <EmbeddedResource Include="Test Files\generated\as3\BeforeFieldFromParameter_varargs_2.as" />
     <EmbeddedResource Include="Test Files\generated\as3\AfterFieldFromParameter_varargs_2.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\BeforeDeclareVariable_issue2271_1.as" />
+    <EmbeddedResource Include="Test Files\generated\as3\AfterDeclareVariable_issue2271_1.as" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\External\Plugins\AS2Context\AS2Context.csproj">
