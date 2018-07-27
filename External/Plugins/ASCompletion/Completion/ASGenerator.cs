@@ -1183,8 +1183,7 @@ namespace ASCompletion.Completion
                         };
                         if ((member.Flags & FlagType.Static) > 0) newMember.Flags |= FlagType.Access;
                         // for example: var f<generator>:Function/*(v1:Type):void*/
-                        if (newMember.Type == ASContext.Context.Features.voidKey && (contextMember.Flags & FlagType.Function) != 0)
-                            newMember.Type = $"Function/*({contextMember.ParametersString()}):{newMember.Type}*/";
+                        if ((contextMember.Flags & FlagType.Function) != 0) newMember.Type = $"Function/*({contextMember.ParametersString()}):{newMember.Type}*/";
                         GenerateVariable(newMember, position, detach);
                         sci.SetSel(lookupPosition, lookupPosition);
                     }
@@ -1359,6 +1358,12 @@ namespace ASCompletion.Completion
                 else atLine = latest.LineTo + 1;
                 var position = sci.PositionFromLine(atLine) - ((sci.EOLMode == 0) ? 2 : 1);
                 sci.SetSel(position, position);
+                // for example: private var foo<generator>:Function/*(v1:*):void*/
+                if ((member.Flags & FlagType.Function) != 0)
+                {
+                    member = (MemberModel) member.Clone();
+                    member.Type = $"Function/*({member.ParametersString()}):{member.Type}*/";
+                }
                 if (job == GeneratorJobType.GetterSetter) GenerateGetterSetter(name, member, position);
                 else if (job == GeneratorJobType.Setter) GenerateSetter(name, member, position);
                 else if (job == GeneratorJobType.Getter) GenerateGetter(name, member, position, startsWithNewLine, endsWithNewLine);
@@ -1516,22 +1521,14 @@ namespace ASCompletion.Completion
             string line = sci.GetLine(inClass.LineFrom);
             int position = sci.PositionFromLine(inClass.LineFrom) + (line.Length - line.TrimStart().Length);
 
-            string value = resolve.Member.Value;
+            var value = resolve.Member.Value;
             if (value != null)
             {
-                if (value.StartsWith('\"'))
-                {
-                    value = value.Trim('"');
-                }
-                else if (value.StartsWith('\''))
-                {
-                    value = value.Trim('\'');
-                }
+                if (value.StartsWith('\"')) value = value.Trim('"');
+                else if (value.StartsWith('\'')) value = value.Trim('\'');
             }
             else value = resolve.Member.Type;
-
-            if (string.IsNullOrEmpty(value))
-                return;
+            if (string.IsNullOrEmpty(value)) return;
 
             Regex re1 = new Regex("'(?:[^'\\\\]|(?:\\\\\\\\)|(?:\\\\\\\\)*\\\\.{1})*'");
             Regex re2 = new Regex("\"(?:[^\"\\\\]|(?:\\\\\\\\)|(?:\\\\\\\\)*\\\\.{1})*\"");
@@ -1987,8 +1984,7 @@ namespace ASCompletion.Completion
         protected virtual string GetFieldTypeFromParameter(string paramType, ref string paramName)
         {
             //foo(v1<generator>:Function/*(v1:Type):void*/)
-            if (paramType == ASContext.Context.Features.voidKey && (contextMember.Flags & FlagType.Function) != 0)
-                return $"Function/*({contextMember.ParametersString()}):{paramType}*/";
+            if ((contextMember.Flags & FlagType.Function) != 0) return $"Function/*({contextMember.ParametersString()}):{paramType}*/";
             if (paramName.StartsWithOrdinal("..."))
             {
                 paramName = paramName.TrimStart('.');
@@ -2315,7 +2311,7 @@ namespace ASCompletion.Completion
                     break;
                 }
             }
-            bool isOtherClass = false;
+            var isOtherClass = false;
             if (varResult.RelClass != null && !varResult.RelClass.IsVoid() && !varResult.RelClass.Equals(inClass))
             {
                 AddLookupPosition();
@@ -2325,13 +2321,11 @@ namespace ASCompletion.Completion
                 sci = ASContext.CurSciControl;
                 isOtherClass = true;
                 var fileModel = ASContext.Context.GetCodeModel(sci.Text);
-                foreach (ClassModel cm in fileModel.Classes)
+                foreach (var cm in fileModel.Classes)
                 {
-                    if (cm.QualifiedName.Equals(varResult.RelClass.QualifiedName))
-                    {
-                        varResult.RelClass = cm;
-                        break;
-                    }
+                    if (!cm.QualifiedName.Equals(varResult.RelClass.QualifiedName)) continue;
+                    varResult.RelClass = cm;
+                    break;
                 }
                 inClass = varResult.RelClass;
 
@@ -2370,10 +2364,10 @@ namespace ASCompletion.Completion
             {
                 if (returnType.Member != null)
                 {
-                    if (returnType.Member.Type != ASContext.Context.Features.voidKey)
-                        returnTypeStr = returnType.Member.Type;
-                    else if ((returnType.Member.Flags & FlagType.Function) != 0)
+                    if ((returnType.Member.Flags & FlagType.Function) != 0)
                         returnTypeStr = $"Function/*({returnType.Member.ParametersString()}):{returnType.Member.Type}*/";
+                    else if (returnType.Member.Type != ASContext.Context.Features.voidKey)
+                        returnTypeStr = returnType.Member.Type;
                 }
                 else if (returnType.Type != null) returnTypeStr = returnType.Type.Name;
                 if (ASContext.Context.Settings.GenerateImports)

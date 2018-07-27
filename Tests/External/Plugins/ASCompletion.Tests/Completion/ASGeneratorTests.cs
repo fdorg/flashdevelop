@@ -3215,6 +3215,10 @@ namespace ASCompletion.Completion
                             .Returns(ReadAllTextAS3("AfterGenerateFunction_issue394_5"))
                             .SetName("Generate function. Issue 394. Case 5")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/394");
+                        yield return new TestCaseData("BeforeGenerateFunction_issue394_6", GeneratorJobType.FieldFromParameter, true)
+                            .Returns(ReadAllTextAS3("AfterGenerateFunction_issue394_6"))
+                            .SetName("Generate function. Issue 394. Case 6")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/394");
                         yield return new TestCaseData("BeforeFieldFromParameter_varargs", GeneratorJobType.FieldFromParameter, true)
                             .Returns(ReadAllTextAS3("AfterFieldFromParameter_varargs"))
                             .SetName("foo(...args). Field from parameter. Case 1");
@@ -3223,7 +3227,24 @@ namespace ASCompletion.Completion
                             .SetName("foo(v1:(, ...args). Field from parameter. Case 2");
                         yield return new TestCaseData("BeforeDeclareVariable_issue2271_1", GeneratorJobType.Variable, true)
                             .Returns(ReadAllTextAS3("AfterDeclareVariable_issue2271_1"))
-                            .SetName("this.|v = v:Function/*(v1:*):void*/. Declare variable. Case 1");
+                            .SetName("this.|v = v:Function/*(v1:*):void*/. Declare variable. Case 1")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2271");
+                        yield return new TestCaseData("BeforeDeclareVariable_issue2271_1", GeneratorJobType.Variable, true)
+                            .Returns(ReadAllTextAS3("AfterDeclareVariable_issue2271_1"))
+                            .SetName("this.|v = v:Function/*(v1:*):void*/. Declare variable. Case 1")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2271");
+                        yield return new TestCaseData("BeforeDeclareVariable_issue2271_2", GeneratorJobType.Variable, true)
+                            .Returns(ReadAllTextAS3("AfterDeclareVariable_issue2271_2"))
+                            .SetName("this.|v = v:Function/*(v1:*):int*/. Declare variable. Case 2")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2271");
+                        yield return new TestCaseData("BeforeDeclareVariable_issue2273_1", GeneratorJobType.GetterSetter, true)
+                            .Returns(ReadAllTextAS3("AfterDeclareVariable_issue2273_1"))
+                            .SetName("private var |v:Function/*(v1:*):void*/. Generate Getter and Setter. Case 1")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2273");
+                        yield return new TestCaseData("BeforeDeclareVariable_issue2273_2", GeneratorJobType.GetterSetter, true)
+                            .Returns(ReadAllTextAS3("AfterDeclareVariable_issue2273_2"))
+                            .SetName("private var |v:Function/*(v1:*):int*/. Generate Getter and Setter. Case 2")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2273");
                     }
                 }
 
