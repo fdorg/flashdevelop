@@ -3221,6 +3221,9 @@ namespace ASCompletion.Completion
                         yield return new TestCaseData("BeforeFieldFromParameter_varargs_2", GeneratorJobType.FieldFromParameter, true)
                             .Returns(ReadAllTextAS3("AfterFieldFromParameter_varargs_2"))
                             .SetName("foo(v1:(, ...args). Field from parameter. Case 2");
+                        yield return new TestCaseData("BeforeDeclareVariable_issue2271_1", GeneratorJobType.Variable, true)
+                            .Returns(ReadAllTextAS3("AfterDeclareVariable_issue2271_1"))
+                            .SetName("this.|v = v:Function/*(v1:*):void*/. Declare variable. Case 1");
                     }
                 }
 
