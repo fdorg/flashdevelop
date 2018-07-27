@@ -8,8 +8,7 @@ class A {
 }
 
 class B extends A {
-	override public function foo(v:Function/*(v1:*):int*/):void 
-	{
+	override public function foo(v:Function/*(v1:*):int*/):void {
 		super.foo(v);
-	} 
+	}
 }

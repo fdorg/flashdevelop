@@ -935,6 +935,14 @@ namespace ASCompletion.Completion
                         .Returns(ReadAllText("AfterOnCharAndReplaceTextIssue2282_1"))
                         .SetName("override |. function(v:Function/*(v:int):int*/). Issue 2282. Case 1")
                         .SetDescription("https://github.com/fdorg/flashdevelop/issues/2282");
+                    yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2282_2", ' ', false)
+                        .Returns(ReadAllText("AfterOnCharAndReplaceTextIssue2282_2"))
+                        .SetName("override |. function set foo(v:Function/*(v:int):int*/). Issue 2282. Case 2")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2282");
+                    yield return new TestCaseData("BeforeOnCharAndReplaceTextIssue2282_3", ' ', false)
+                        .Returns(ReadAllText("AfterOnCharAndReplaceTextIssue2282_3"))
+                        .SetName("override |. function get foo():Function/*(v:int):int*/. Issue 2282. Case 3")
+                        .SetDescription("https://github.com/fdorg/flashdevelop/issues/2282");
                 }
             }
 
