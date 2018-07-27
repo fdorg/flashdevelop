@@ -1871,7 +1871,12 @@ namespace ASCompletion.Completion
             string type = null;
             if ((member.Flags & FlagType.Setter) != 0)
             {
-                if (member.Parameters != null && member.Parameters.Count > 0) type = member.Parameters[0].Type;
+                if (member.Parameters != null && member.Parameters.Count > 0)
+                {
+                    var parameter = member.Parameters[0];
+                    if ((parameter.Flags & FlagType.Function) != 0) type = $"Function/*({parameter.ParametersString()}):{parameter.Type}*/";
+                    else type = parameter.Type;
+                }
                 if (type == null) type = member.Type;
                 if (type == ctx.Features.voidKey) type = ctx.Features.dynamicKey;
             }

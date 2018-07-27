@@ -3245,6 +3245,10 @@ namespace ASCompletion.Completion
                             .Returns(ReadAllTextAS3("AfterDeclareVariable_issue2273_2"))
                             .SetName("private var |v:Function/*(v1:*):int*/. Generate Getter and Setter. Case 2")
                             .SetDescription("https://github.com/fdorg/flashdevelop/issues/2273");
+                        yield return new TestCaseData("BeforeAddToInterface_issue2275_1", GeneratorJobType.AddInterfaceDef, true)
+                            .Returns(ReadAllTextAS3("AfterAddToInterface_issue2275_1"))
+                            .SetName("Add to interface. Issue 2275. case 1")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2275");
                     }
                 }
 
