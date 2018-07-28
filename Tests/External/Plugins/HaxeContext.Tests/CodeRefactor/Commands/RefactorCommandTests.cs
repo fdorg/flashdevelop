@@ -12,7 +12,7 @@ using PluginCore;
 using ProjectManager;
 using ProjectManager.Projects.Haxe;
 
-namespace HaXeContext.Commands
+namespace HaXeContext.CodeRefactor.Commands
 {
     [TestFixture]
     class OrganizeImportsTests : ASCompleteTests

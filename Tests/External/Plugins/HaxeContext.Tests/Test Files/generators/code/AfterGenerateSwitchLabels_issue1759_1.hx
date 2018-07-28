@@ -10,5 +10,5 @@ public class Main {
 
 enum EFoo {
 	Foo;
-	Bar
+	Bar;
 }

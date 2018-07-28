@@ -631,6 +631,34 @@
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\OrganizeImportsValidator_2.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\OrganizeImportsValidator_3.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\import.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue2285_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue2285_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue2285_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_6.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue2285_6.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_7.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue2285_7.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_8.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue2285_8.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_9.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue2285_9.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_10.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue2285_10.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_11.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue2285_11.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_12.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_13.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_14.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_15.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_16.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_17.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_18.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue2285_18.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

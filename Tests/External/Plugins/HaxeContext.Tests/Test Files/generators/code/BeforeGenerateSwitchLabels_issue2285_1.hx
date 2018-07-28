@@ -5,7 +5,7 @@ public class Main {
 	}
 }
 
-enum EFoo {
-	Foo;
-	Bar;
+@:enum abstract EFoo(Int) {
+	var Foo = 0;
+	var Bar = 1;
 }

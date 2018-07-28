@@ -7,7 +7,7 @@ public class Main {
 	function foo():EFoo return Bar;
 }
 
-enum EFoo {
-	Foo;
-	Bar;
+@:enum abstract EFoo(Int) {
+	var Foo = 0;
+	var Bar = 1;
 }
