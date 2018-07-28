@@ -547,12 +547,12 @@ namespace ASCompletion.Completion
         /// <returns>Declaration was found</returns>
         public static bool DeclarationLookup(ScintillaControl sci)
         {
-            if (!ASContext.Context.IsFileValid || (sci == null)) return false;
+            if (!ASContext.Context.IsFileValid || sci == null) return false;
 
             // let the context handle goto declaration if we couldn't find anything
             if (!InternalDeclarationLookup(sci))
             {
-                ASExpr expression = GetExpression(sci, sci.CurrentPos);
+                var expression = GetExpression(sci, sci.CurrentPos);
                 if (expression != null)
                 {
                     return ASContext.Context.HandleGotoDeclaration(sci, expression);
@@ -579,7 +579,8 @@ namespace ASCompletion.Completion
             result.InClass = null;
             result.InFile = null;
             var path = type.Name;
-            result.Path = path.Contains(".") ? path.Substring(0, path.IndexOfOrdinal(".")) : path;
+            var index = path.IndexOf('.');
+            result.Path = index != -1 ? path.Substring(0, index) : path;
             return OpenDocumentToDeclaration(sci, result);
         }
 
@@ -607,42 +608,36 @@ namespace ASCompletion.Completion
                 && ctx.Features.overrideKey != null
                 && sci.GetWordFromPosition(position) == ctx.Features.overrideKey)
             {
-                MemberModel member = ctx.CurrentMember;
-                if ((member.Flags & FlagType.Override) > 0)
+                var member = ctx.CurrentMember;
+                if ((member.Flags & FlagType.Override) > 0 && ctx.CurrentClass != null)
                 {
-                    ClassModel tmpClass = ctx.CurrentClass;
-                    if (tmpClass != null)
+                    ctx.CurrentClass.ResolveExtends();
+                    var tmpClass = ctx.CurrentClass.Extends;
+                    while (!tmpClass.IsVoid())
                     {
-                        tmpClass.ResolveExtends();
-                        tmpClass = tmpClass.Extends;
-                        while (tmpClass != null && !tmpClass.IsVoid())
+                        var found = tmpClass.Members.Search(member.Name, 0, 0);
+                        if (found != null)
                         {
-                            MemberModel found = tmpClass.Members.Search(member.Name, 0, 0);
-                            if (found != null)
-                            {
-                                result = new ASResult();
-                                result.Member = found;
-                                result.InFile = tmpClass.InFile;
-                                result.InClass = tmpClass;
-                                OpenDocumentToDeclaration(sci, result);
-                                break;
-                            }
-                            tmpClass = tmpClass.Extends;
+                            result = new ASResult();
+                            result.Member = found;
+                            result.InFile = tmpClass.InFile;
+                            result.InClass = tmpClass;
+                            OpenDocumentToDeclaration(sci, result);
+                            break;
                         }
+                        tmpClass = tmpClass.Extends;
                     }
                 }
             }
             return false;
         }
 
-        public static void SaveLastLookupPosition(ScintillaControl Sci)
+        public static void SaveLastLookupPosition(ScintillaControl sci)
         {
-            if (Sci != null)
-            {
-                int lookupLine = Sci.CurrentLine;
-                int lookupCol = Sci.CurrentPos - Sci.PositionFromLine(lookupLine);
-                ASContext.Panel.SetLastLookupPosition(ASContext.Context.CurrentFile, lookupLine, lookupCol);
-            }
+            if (sci == null) return;
+            var lookupLine = sci.CurrentLine;
+            var lookupCol = sci.CurrentPos - sci.PositionFromLine(lookupLine);
+            ASContext.Panel.SetLastLookupPosition(ASContext.Context.CurrentFile, lookupLine, lookupCol);
         }
 
         /// <summary>
@@ -2030,10 +2025,9 @@ namespace ASCompletion.Completion
                 // explore members
                 tmpClass.ResolveExtends();
                 if (!limitMembers || result.IsStatic || tmpClass.Name != features.objectKey)
-                while (tmpClass != null && !tmpClass.IsVoid())
+                while (!tmpClass.IsVoid())
                 {
                     mix.Merge(tmpClass.GetSortedMembersList(), mask, acc);
-
                     // static inheritance
                     if ((mask & FlagType.Static) > 0)
                     {
@@ -2041,7 +2035,6 @@ namespace ASCompletion.Completion
                             break;
                     }
                     else if (!features.hasStaticInheritance) mask |= FlagType.Dynamic;
-
                     tmpClass = tmpClass.Extends;
                     // hide Object class members
                     if (limitMembers && tmpClass != null && tmpClass.InFile.Package == "" && tmpClass.Name == features.objectKey) 

@@ -337,6 +337,7 @@ namespace ASClassWizard
                         if ((cmodel.Flags & FlagType.TypeDef) != 0)
                         {
                             var tmp = cmodel;
+                            tmp.ResolveExtends();
                             while (!tmp.IsVoid())
                             {
                                 if (!string.IsNullOrEmpty(tmp.Constructor))
@@ -344,7 +345,6 @@ namespace ASClassWizard
                                     cmodel = tmp;
                                     break;
                                 }
-                                tmp.ResolveExtends();
                                 tmp = tmp.Extends;
                             }
                         }

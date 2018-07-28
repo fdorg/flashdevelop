@@ -335,15 +335,15 @@ namespace ASCompletion.Completion
             {
                 int lineStartPos = sci.PositionFromLine(sci.CurrentLine);
                 var text = sci.GetLine(line);
-                string lineStart = text.Substring(0, sci.CurrentPos - lineStartPos);
-                Match m = Regex.Match(lineStart, String.Format(@"new\s+(?<event>\w+)\s*\(\s*\w+", lineStart));
+                var lineStart = text.Substring(0, sci.CurrentPos - lineStartPos);
+                var m = Regex.Match(lineStart, @"new\s+(?<event>\w+)\s*\(\s*\w+");
                 if (m.Success)
                 {
-                    Group g = m.Groups["event"];
-                    ASResult eventResolve = ASComplete.GetExpressionType(sci, lineStartPos + g.Index + g.Length);
-                    if (eventResolve != null && eventResolve.Type != null)
+                    var g = m.Groups["event"];
+                    var eventResolve = ASComplete.GetExpressionType(sci, lineStartPos + g.Index + g.Length);
+                    if (eventResolve?.Type != null)
                     {
-                        ClassModel aType = eventResolve.Type;
+                        var aType = eventResolve.Type;
                         aType.ResolveExtends();
                         while (!aType.IsVoid() && aType.QualifiedName != "Object")
                         {
@@ -413,11 +413,11 @@ namespace ASCompletion.Completion
                             contextMatch = m;
                             MemberModel constructor = null;
                             var type = resolve.Type;
+                            type.ResolveExtends();
                             while (!type.IsVoid())
                             {
                                 constructor = type.Members.Search(type.Name, FlagType.Constructor, 0);
                                 if (constructor != null) break;
-                                type.ResolveExtends();
                                 type = type.Extends;
                             }
                             if (constructor == null) ShowConstructorAndToStringList(new FoundDeclaration { InClass = resolve.Type }, false, true, options);
@@ -510,10 +510,10 @@ namespace ASCompletion.Completion
                 || expr.Member != null
                 || expr.Type == null || (expr.Type.Flags & FlagType.Interface) == 0) return false;
             var type = expr.Type;
-            while (type != null && !type.IsVoid())
+            type.ResolveExtends();
+            while (!type.IsVoid())
             {
                 if (type.Members.Count > 0) return true;
-                type.ResolveExtends();
                 type = type.Extends;
             }
             return false;
@@ -697,7 +697,7 @@ namespace ASCompletion.Completion
         internal static string CheckEventType(string name)
         {
             if (name.Contains('"')) return "Event";
-            if (name.IndexOf('.') > 0) name = name.Substring(0, name.IndexOf('.'));
+            if (name.IndexOf('.') is int index && index > 0) name = name.Substring(0, index);
             var model = ASContext.Context.ResolveType(name, ASContext.Context.CurrentModel);
             if (model.IsVoid() || model.Name == "Event") return "Event";
             model.ResolveExtends();
@@ -779,6 +779,7 @@ namespace ASCompletion.Completion
                 }
                 else 
                 {
+                    curClass.ResolveExtends();
                     while (!curClass.IsVoid())
                     {
                         if (curClass.Equals(exprLeft.Type))
@@ -786,7 +787,6 @@ namespace ASCompletion.Completion
                             exprLeft = null;
                             break;
                         }
-                        curClass.ResolveExtends();
                         curClass = curClass.Extends;
                     }
                 }
@@ -945,6 +945,7 @@ namespace ASCompletion.Completion
             if (contextParam != "Event")
             {
                 var type = ASContext.Context.ResolveType(contextParam, ASContext.Context.CurrentModel);
+                type.ResolveExtends();
                 while (!type.IsVoid())
                 {
                     if (type.Name == "Event")
@@ -952,7 +953,6 @@ namespace ASCompletion.Completion
                         choices = new[] { labelContext, labelEvent };
                         break;
                     }
-                    type.ResolveExtends();
                     type = type.Extends;
                 }
                 if (choices == null) choices = new[] { labelContext };
@@ -2207,36 +2207,31 @@ namespace ASCompletion.Completion
 
         private static void GenerateToString(ScintillaControl sci, ClassModel inClass)
         {
-            MemberModel resultMember = new MemberModel("toString", ASContext.Context.Features.stringKey, FlagType.Function, Visibility.Public);
-
-            bool isOverride = false;
+            var resultMember = new MemberModel("toString", ASContext.Context.Features.stringKey, FlagType.Function, Visibility.Public);
+            var isOverride = false;
             inClass.ResolveExtends();
-            if (inClass.Extends != null)
+            var aType = inClass.Extends;
+            while (!aType.IsVoid() && aType.QualifiedName != "Object")
             {
-                ClassModel aType = inClass.Extends;
-                while (!aType.IsVoid() && aType.QualifiedName != "Object")
+                foreach (MemberModel method in aType.Members)
                 {
-                    foreach (MemberModel method in aType.Members)
+                    if (method.Name == "toString")
                     {
-                        if (method.Name == "toString")
-                        {
-                            isOverride = true;
-                            break;
-                        }
-                    }
-                    if (isOverride)
-                    {
-                        resultMember.Flags |= FlagType.Override;
+                        isOverride = true;
                         break;
                     }
-                    // interface inheritance
-                    aType = aType.Extends;
                 }
+                if (isOverride)
+                {
+                    resultMember.Flags |= FlagType.Override;
+                    break;
+                }
+                // interface inheritance
+                aType = aType.Extends;
             }
-            MemberList members = inClass.Members;
-            StringBuilder membersString = new StringBuilder();
-            int len = 0;
-            foreach (MemberModel m in members)
+            var membersString = new StringBuilder();
+            var len = 0;
+            foreach (MemberModel m in inClass.Members)
             {
                 if (((m.Flags & FlagType.Variable) > 0 || (m.Flags & FlagType.Getter) > 0)
                     && (m.Access & Visibility.Public) > 0
@@ -2254,12 +2249,9 @@ namespace ASCompletion.Completion
                     membersString.Append("\"");
                 }
             }
-
-
-            string template = TemplateUtils.GetTemplate("ToString");
-            string result = TemplateUtils.ToDeclarationWithModifiersString(resultMember, template);
+            var template = TemplateUtils.GetTemplate("ToString");
+            var result = TemplateUtils.ToDeclarationWithModifiersString(resultMember, template);
             result = TemplateUtils.ReplaceTemplateVariable(result, "Body", "\"[" + inClass.Name + membersString + "]\"");
-
             InsertCode(sci.CurrentPos, result, sci);
         }
 
@@ -3911,7 +3903,7 @@ namespace ASCompletion.Completion
             const FlagType mask = FlagType.Function | FlagType.Getter | FlagType.Setter;
             var tmpClass = curClass.Extends;
             var access = ctx.TypesAffinity(curClass, tmpClass);
-            while (tmpClass != null && !tmpClass.IsVoid())
+            while (!tmpClass.IsVoid())
             {
                 if (tmpClass.QualifiedName.StartsWithOrdinal("flash.utils.Proxy"))
                 {
@@ -4087,9 +4079,9 @@ namespace ASCompletion.Completion
                     var methodTemplate = NewLine;
                     var overrideFound = false;
                     var baseClassType = inClass;
-                    while (baseClassType != null && !baseClassType.IsVoid())
+                    while (!baseClassType.IsVoid())
                     {
-                        MemberList inClassMembers = baseClassType.Members;
+                        var inClassMembers = baseClassType.Members;
                         foreach (MemberModel inClassMember in inClassMembers)
                         {
                             if ((inClassMember.Flags & FlagType.Function) > 0 && m.Name.Equals(inClassMember.Name))
@@ -4119,10 +4111,10 @@ namespace ASCompletion.Completion
                             methodTemplate = TemplateUtils.ReplaceTemplateVariable(methodTemplate, "Return", null);
 
                         // check for varargs
-                        bool isVararg = false;
+                        var isVararg = false;
                         if (m.Parameters != null && m.Parameters.Count > 0)
                         {
-                            MemberModel mm = m.Parameters[m.Parameters.Count - 1];
+                            var mm = m.Parameters[m.Parameters.Count - 1];
                             if (mm.Name.StartsWithOrdinal("..."))
                                 isVararg = true;
                         }

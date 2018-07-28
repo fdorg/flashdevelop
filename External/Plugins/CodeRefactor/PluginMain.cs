@@ -567,7 +567,7 @@ namespace CodeRefactor
                 var memberNames = new List<string>();
                 var cm = result.Type;
                 cm.ResolveExtends();
-                while (cm != null && !cm.IsVoid() && cm.Type != "Object")
+                while (!cm.IsVoid() && cm.Type != "Object")
                 {
                     cm.Members.Sort();
                     foreach (MemberModel m in cm.Members)
@@ -577,7 +577,7 @@ namespace CodeRefactor
                             && (m.Flags & FlagType.Constructor) == 0
                             && (m.Flags & FlagType.Static) == 0)
                         {
-                            string name = m.Name;
+                            var name = m.Name;
                             if ((m.Flags & FlagType.Getter) > 0) name = "get " + name;
                             if ((m.Flags & FlagType.Setter) > 0) name = "set " + name;
                             if (!memberNames.Contains(name))
