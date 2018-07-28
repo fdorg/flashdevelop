@@ -65,7 +65,7 @@ namespace HaXeContext.CodeRefactor.Commands
                         var sci = AssociatedDocumentHelper.LoadDocument(path).SciControl;
                         var line = it.LineStart - 1;
                         var lineStart = sci.PositionFromLine(line);
-                        var index = sci.MBSafeCharPosition(lineStart - it.CharacterStart);
+                        var index = sci.MBSafeCharPosition(lineStart + it.CharacterStart);
                         var lineEnd = sci.LineEndPosition(line);
                         var lineText = sci.GetLine(line);
                         var value = lineText.Substring(it.CharacterStart, it.CharacterEnd - it.CharacterStart);
