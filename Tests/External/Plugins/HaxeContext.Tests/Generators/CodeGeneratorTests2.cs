@@ -101,9 +101,21 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> GenerateSwitchLabelsIssue2285TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGenerateSwitchLabels_issue2285_1", GeneratorJobType.Switch, true)
+                    .Returns(CodeGeneratorTests.ReadAllText("AfterGenerateSwitchLabels_issue2285_1"))
+                    .SetName("Generate switch labels. Issue 2285. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2285");
+            }
+        }
+
         [
             Test,
             TestCaseSource(nameof(GenerateSwitchLabelsIssue1759TestCases)),
+            TestCaseSource(nameof(GenerateSwitchLabelsIssue2285TestCases)),
         ]
         public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => ContextualGenerator(sci, fileName, job, hasGenerator);
 

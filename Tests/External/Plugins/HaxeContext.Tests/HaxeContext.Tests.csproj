@@ -631,6 +631,8 @@
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\OrganizeImportsValidator_2.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\OrganizeImportsValidator_3.hx" />
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\import.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue2285_1.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
