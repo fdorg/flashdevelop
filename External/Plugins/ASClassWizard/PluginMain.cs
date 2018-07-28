@@ -439,10 +439,10 @@ namespace ASClassWizard
             }
         }
 
-        private void AddImport(List<string> imports, String cname, ClassModel inClass)
+        private void AddImport(List<string> imports, string cname, ClassModel inClass)
         {
-            ClassModel aClass = processContext.ResolveType(cname, inClass.InFile);
-            if (aClass != null && !aClass.IsVoid() && aClass.InFile.Package != "")
+            var aClass = processContext.ResolveType(cname, inClass.InFile);
+            if (!aClass.IsVoid() && aClass.InFile.Package != "")
             {
                 imports.Add(aClass.QualifiedName);
             }
