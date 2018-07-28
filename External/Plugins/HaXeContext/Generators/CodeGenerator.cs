@@ -32,34 +32,10 @@ namespace HaXeContext.Generators
                 if (contextToken != null && expr.Member == null && !ctx.IsImported(expr.Type ?? ClassModel.VoidClass, sci.CurrentLine)) CheckAutoImport(expr, options);
                 return;
             }
-            var member = expr.Member;
-            if (member != null && !member.Flags.HasFlag(FlagType.Enum)
-                && expr.Context.WordBefore is var word && word != ctx.Features.varKey && word != ctx.Features.functionKey)
+            if (CanShowGenerateSwitch(sci, position, expr))
             {
-                var isAvailable = true;
-                var contextMember = expr.Context.ContextMember;
-                var end = contextMember != null ? sci.PositionFromLine(contextMember.LineTo) : sci.TextLength;
-                for (var i = ASComplete.ExpressionEndPosition(sci, sci.CurrentPos); i < end; i++)
-                {
-                    if (sci.PositionIsOnComment(i)) continue;
-                    var c = (char) sci.CharAt(i);
-                    if (c <= ' ') continue;
-                    if (c == '.')
-                    {
-                        isAvailable = false;
-                        break;
-                    }
-                    if (c > ' ') break;
-                }
-                if (isAvailable)
-                {
-                    var type = ctx.ResolveType(member.Type, expr.InFile);
-                    if (type.Flags.HasFlag(FlagType.Enum) && type.Members.Count > 0)
-                    {
-                        var label = TextHelper.GetString("Info.GenerateSwitch");
-                        options.Add(new GeneratorItem(label, GeneratorJob.Switch, () => Generate(GeneratorJob.Switch, sci, expr)));
-                    }
-                }
+                var label = TextHelper.GetString("Info.GenerateSwitch");
+                options.Add(new GeneratorItem(label, GeneratorJob.Switch, () => Generate(GeneratorJob.Switch, sci, expr)));
             }
             base.ContextualGenerator(sci, position, expr, options);
         }
@@ -409,6 +385,29 @@ namespace HaXeContext.Generators
             if (parameters == null || parameters.Count == 0 || parameters.Count > 2 || parameters.Last().Name  != "set"
                 || ASContext.Context.CurrentClass.Members.Search($"set_{newMember.Name}", FlagType.Function, 0) != null) return string.Empty;
             return base.TryGetOverrideSetterTemplate(ofClass, parameters, newMember);
+        }
+
+        bool CanShowGenerateSwitch(ScintillaControl sci, int position, ASResult expr)
+        {
+            var member = expr.Member;
+            if (member == null || member.Flags.HasFlag(FlagType.Enum)) return false;
+            var ctx = ASContext.Context;
+            var word = expr.Context.WordBefore;
+            if (word == ctx.Features.varKey || word == ctx.Features.functionKey) return false;
+            var contextMember = expr.Context.ContextMember;
+            var end = contextMember != null ? sci.PositionFromLine(contextMember.LineTo) : sci.TextLength;
+            for (var i = ASComplete.ExpressionEndPosition(sci, position); i < end; i++)
+            {
+                if (sci.PositionIsOnComment(i)) continue;
+                var c = (char) sci.CharAt(i);
+                if (c <= ' ') continue;
+                if (c == '.') return false;
+                if (c > ' ') break;
+            }
+            var type = ctx.ResolveType(member.Type, expr.InFile);
+            return (type.Flags.HasFlag(FlagType.Enum) && type.Members.Count > 0)
+                   || (type.Flags.HasFlag(FlagType.Abstract) && type.MetaDatas != null && type.MetaDatas.Any(it => it.Name == ":enum")
+                       && type.Members.Items.Any(it => it.Flags.HasFlag(FlagType.Variable)));
         }
 
         static void Generate(GeneratorJob job, ScintillaControl sci, ASResult expr)

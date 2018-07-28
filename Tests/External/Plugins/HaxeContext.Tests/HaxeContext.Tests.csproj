@@ -633,6 +633,22 @@
     <EmbeddedResource Include="Test Files\coderefactor\organizeimports\import.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue2285_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue2285_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_4.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue2285_5.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_6.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue2285_6.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_7.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue2285_7.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_8.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue2285_8.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_9.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue2285_9.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateSwitchLabels_issue2285_10.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue2285_10.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
