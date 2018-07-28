@@ -304,8 +304,7 @@ namespace PHPContext
         /// </summary>
         protected override void UpdateTopLevelElements()
         {
-            MemberModel special;
-            special = topLevel.Members.Search("$this", 0, 0);
+            var special = topLevel.Members.Search("$this", 0, 0);
             if (special != null)
             {
                 if (!cClass.IsVoid()) special.Type = cClass.Name;
@@ -321,7 +320,7 @@ namespace PHPContext
             if (special != null)
             {
                 cClass.ResolveExtends();
-                ClassModel extends = cClass.Extends;
+                var extends = cClass.Extends;
                 if (!extends.IsVoid()) special.Type = extends.Name;
                 else special.Type = (cFile.Version > 1) ? features.voidKey : features.objectKey;
             }

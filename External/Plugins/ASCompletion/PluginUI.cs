@@ -540,7 +540,7 @@ namespace ASCompletion
                         lines.Add(member.LineFrom);
                         names.Add(member.Name);
                     }
-                    foreach (ClassModel aClass in aFile.Classes)
+                    foreach (var aClass in aFile.Classes)
                     {
                         if (string.IsNullOrEmpty(aClass.ExtendsType))
                             aClass.ResolveExtends();
@@ -548,7 +548,7 @@ namespace ASCompletion
                         sb.Append(aClass.Flags).Append(aClass.FullName);
                         sb.Append(aClass.ExtendsType);
                         if (aClass.Implements != null)
-                            foreach (string implements in aClass.Implements)
+                            foreach (var implements in aClass.Implements)
                                 sb.Append(implements);
                         lines.Add(aClass.LineFrom);
                         names.Add(aClass.Name);

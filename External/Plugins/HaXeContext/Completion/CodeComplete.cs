@@ -94,34 +94,30 @@ namespace HaXeContext.Completion
         /// <inheritdoc />
         protected override bool ResolveFunction(ScintillaControl sci, int position, ASResult expr, bool autoHide)
         {
-            if (expr.Member == null)
+            if (expr.Member == null && expr.Type is ClassModel type)
             {
-                var type = expr.Type;
-                if (type != null)
+                var originConstructor = ASContext.GetLastStringToken(type.Name, ".");
+                type.ResolveExtends();
+                while (!type.IsVoid())
                 {
-                    var originConstructor = ASContext.GetLastStringToken(type.Name, ".");
-                    while (!type.IsVoid())
+                    var constructor = ASContext.GetLastStringToken(type.Name, ".");
+                    var member = type.Members.Search(constructor, FlagType.Constructor, 0);
+                    if (member != null)
                     {
-                        var constructor = ASContext.GetLastStringToken(type.Name, ".");
-                        var member = type.Members.Search(constructor, FlagType.Constructor, 0);
-                        if (member != null)
+                        if (originConstructor != member.Name)
                         {
-                            if (originConstructor != member.Name)
-                            {
-                                member = (MemberModel) member.Clone();
-                                member.Name = originConstructor;
-                            }
-                            expr.Member = member;
-                            expr.Context.Position = position;
-                            FunctionContextResolved(sci, expr.Context, expr.Member, expr.RelClass, false);
-                            return true;
+                            member = (MemberModel) member.Clone();
+                            member.Name = originConstructor;
                         }
-                        if (type.Flags.HasFlag(FlagType.Abstract)) return false;
-                        type.ResolveExtends();
-                        type = type.Extends;
+                        expr.Member = member;
+                        expr.Context.Position = position;
+                        FunctionContextResolved(sci, expr.Context, expr.Member, expr.RelClass, false);
+                        return true;
                     }
-                    return false;
+                    if (type.Flags.HasFlag(FlagType.Abstract)) return false;
+                    type = type.Extends;
                 }
+                return false;
             }
             return base.ResolveFunction(sci, position, expr, autoHide);
         }
@@ -189,6 +185,7 @@ namespace HaXeContext.Completion
                     var exprType = expr.Type;
                     if (exprType == null) return;
                     string iteratorIndexType = null;
+                    exprType.ResolveExtends();
                     while (!exprType.IsVoid())
                     {
                         // typedef Ints = Array<Int>
@@ -220,7 +217,6 @@ namespace HaXeContext.Completion
                             iteratorIndexType = type.IndexType;
                             break;
                         }
-                        exprType.ResolveExtends();
                         exprType = exprType.Extends;
                     }
                     if (iteratorIndexType != null)
@@ -246,7 +242,6 @@ namespace HaXeContext.Completion
                                         break;
                                     }
                                     if (var.Type != null) break;
-                                    t.ResolveExtends();
                                     t = t.Extends;
                                 }
                             }
@@ -413,6 +408,7 @@ namespace HaXeContext.Completion
             {
                 extends.Clear();
                 var type = it as ClassModel ?? ClassModel.VoidClass;
+                type.ResolveExtends();
                 while (!type.IsVoid() && type.Flags.HasFlag(FlagType.TypeDef) && type.Members.Count == 0)
                 {
                     if (extends.Contains(type.Type)) break;
@@ -421,7 +417,6 @@ namespace HaXeContext.Completion
                     {
                         type = type.Extends;
                         if (extends.Contains(type.ExtendsType)) break;
-                        type.ResolveExtends();
                     }
                     else type = InferTypedefType(sci, type);
                 }
@@ -509,6 +504,7 @@ namespace HaXeContext.Completion
         protected override string GetConstructorTooltipText(ClassModel type)
         {
             var inClass = type;
+            type.ResolveExtends();
             while (!type.IsVoid())
             {
                 var member = type.Members.Search(type.Name, FlagType.Constructor, 0);
@@ -522,7 +518,6 @@ namespace HaXeContext.Completion
                     }
                     return MemberTooltipText(member, inClass) + GetToolTipDoc(member);
                 }
-                type.ResolveExtends();
                 type = type.Extends;
             }
             return null;

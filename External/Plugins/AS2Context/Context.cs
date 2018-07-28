@@ -354,11 +354,11 @@ namespace AS2Context
                 {
                     if (inClass.IsVoid())
                     {
-                        MemberModel thisMember = topLevel.Members.Search("this", 0, 0);
+                        var thisMember = topLevel.Members.Search("this", 0, 0);
                         inClass = Context.ResolveType(thisMember.Type, null);
                     }
                     inClass.ResolveExtends();
-                    ClassModel extends = inClass.Extends;
+                    var extends = inClass.Extends;
                     if (!extends.IsVoid())
                     {
                         result.Member = topLevel.Members.Search("super", 0, 0);
@@ -922,7 +922,6 @@ namespace AS2Context
             }
         }
 
-
         /// <summary>
         /// Update Flash intrinsic known vars
         /// </summary>
@@ -938,7 +937,7 @@ namespace AS2Context
             if (special != null) 
             {
                 cClass.ResolveExtends();
-                ClassModel extends = cClass.Extends;
+                var extends = cClass.Extends;
                 if (!extends.IsVoid()) special.Type = extends.QualifiedName;
                 else special.Type = (cFile.Version > 1) ? features.voidKey : features.objectKey;
             }

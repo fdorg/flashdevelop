@@ -113,7 +113,7 @@ namespace HaXeContext.Generators
             const FlagType mask = FlagType.Function | FlagType.Getter | FlagType.Setter;
             var tmpClass = curClass.Extends;
             var access = ctx.TypesAffinity(curClass, tmpClass);
-            while (tmpClass != null && !tmpClass.IsVoid())
+            while (!tmpClass.IsVoid())
             {
                 foreach (MemberModel member in tmpClass.Members)
                 {

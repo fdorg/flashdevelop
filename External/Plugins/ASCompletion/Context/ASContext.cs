@@ -1170,6 +1170,12 @@ namespace ASCompletion.Context
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         public virtual ClassModel ResolveType(string cname, FileModel inFile) => ClassModel.VoidClass;
 
+        /// <summary>
+        /// Retrieves a class model from string
+        /// </summary>
+        /// <param name="token">String</param>
+        /// <param name="inFile">Current file</param>
+        /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
         public virtual ClassModel ResolveToken(string token, FileModel inFile) => ClassModel.VoidClass;
 
         /// <summary>
@@ -1178,21 +1184,13 @@ namespace ASCompletion.Context
         /// <param name="name">Package path</param>
         /// <param name="onlyUserDefined">Ignore language's intrinsic pathes</param>
         /// <returns>Package folders and types</returns>
-        public virtual FileModel ResolvePackage(string name, bool onlyUserDefined)
-        {
-            // to be implemented
-            return null;
-        }
+        public virtual FileModel ResolvePackage(string name, bool onlyUserDefined) => null; // to be implemented
 
         /// <summary>
         /// Return the top-level elements (this, super) for the current file
         /// </summary>
         /// <returns></returns>
-        public virtual MemberList GetTopLevelElements()
-        {
-            // to be implemented
-            return new MemberList();
-        }
+        public virtual MemberList GetTopLevelElements() => new MemberList(); // to be implemented
 
         /// <summary>
         /// Return the visible elements (types, package-level declarations) visible from the current file
@@ -1209,10 +1207,7 @@ namespace ASCompletion.Context
         /// Return the full project classes list
         /// </summary>
         /// <returns></returns>
-        public virtual MemberList GetAllProjectClasses()
-        {
-            return new MemberList();
-        }
+        public virtual MemberList GetAllProjectClasses() => new MemberList();
 
         /// <inheritdoc />
         public virtual string GetDefaultValue(string type) => null;

@@ -197,7 +197,7 @@ namespace ASCompletion.Helpers
             var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
             return cls.Implements
                 .Select(impl => context.ResolveType(impl, cls.InFile))
-                .Where(interf => interf != null && !interf.IsVoid())
+                .Where(interf => !interf.IsVoid())
                 .SelectMany(interf => //take the interfaces we found already and add all interfaces they extend
                 {
                     interf.ResolveExtends();
@@ -219,7 +219,7 @@ namespace ASCompletion.Helpers
 
             var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
 
-            var missingExtends = cls.ExtendsType != "Dynamic" && cls.ExtendsType != "Void" && cls.ExtendsType != null && cls.Extends.IsVoid(); //Dynamic means the class extends nothing
+            var missingExtends = cls.ExtendsType != null && cls.ExtendsType != "Dynamic" && cls.ExtendsType != "Void" && cls.Extends.IsVoid(); //Dynamic means the class extends nothing
             var missingInterfaces = cls.Implements != null && cls.Implements.Any(i => GetCachedModel(context.ResolveType(i, cls.InFile)) == null);
 
             //also check parent interfaces and extends
@@ -263,7 +263,6 @@ namespace ASCompletion.Helpers
         void UpdateClass(ClassModel cls, Dictionary<ClassModel, CachedClassModel> cache)
         {
             var context = ASContext.GetLanguageContext(PluginBase.CurrentProject.Language);
-
             if (context.ResolveType(cls.Name, cls.InFile).IsVoid() || cls.QualifiedName == "Dynamic") //do not update no longer existing classes (or Dynamic)
             {
                 Remove(cls);
@@ -274,7 +273,6 @@ namespace ASCompletion.Helpers
 
             //look for functions / variables in cls that originate from interfaces of cls
             var interfaces = ResolveInterfaces(cls);
-
             foreach (var interf in interfaces)
             {
                 var cachedInterf = GetOrCreate(cache, interf);
@@ -304,11 +302,10 @@ namespace ASCompletion.Helpers
                 }
             }
 
-            if (cls.Extends != null && !cls.Extends.IsVoid())
+            if (!cls.Extends.IsVoid())
             {
-
                 var currentParent = cls.Extends;
-                while (currentParent != null && !currentParent.IsVoid())
+                while (!currentParent.IsVoid())
                 {
                     var cachedParent = GetOrCreate(cache, currentParent);
                     cachedClassModel.ConnectedClassModels.Add(currentParent); //cachedClassModel is connected to currentParent
@@ -323,7 +320,6 @@ namespace ASCompletion.Helpers
                     if ((member.Flags & (FlagType.Function | FlagType.Override)) > 0)
                     {
                         var overridden = GetOverriddenClasses(cls, member);
-
                         if (overridden == null || overridden.Count <= 0) continue;
 
                         cachedClassModel.Overriding.AddUnion(member, overridden.Keys);
@@ -370,13 +366,13 @@ namespace ASCompletion.Helpers
         /// <returns>A Dictionary containing all pairs of ClassModels and MemberModels that were overridden by <paramref name="function"/></returns>
         internal Dictionary<ClassModel, MemberModel> GetOverriddenClasses(ClassModel cls, MemberModel function)
         {
-            if (cls.Extends == null || cls.Extends.IsVoid()) return null;
+            if (cls.Extends.IsVoid()) return null;
             if ((function.Flags & FlagType.Function) == 0 || (function.Flags & FlagType.Override) == 0) return null;
 
             var parentFunctions = new Dictionary<ClassModel, MemberModel>();
 
             var currentParent = cls.Extends;
-            while (currentParent != null && !currentParent.IsVoid())
+            while (!currentParent.IsVoid())
             {
                 var parentFun = currentParent.Members.Search(function.Name, FlagType.Function, 0); //overridden function can have different access
                 //it should not be necessary to check the parameters, because two functions with different signature cannot have the same name (at least in Haxe)
@@ -398,7 +394,7 @@ namespace ASCompletion.Helpers
             var set = new HashSet<ClassModel>();
 
             var current = cls.Extends;
-            while (current != null && !current.IsVoid())
+            while (!current.IsVoid())
             {
                 set.Add(current);
                 current = current.Extends;
