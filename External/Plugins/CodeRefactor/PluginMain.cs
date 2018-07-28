@@ -386,7 +386,9 @@ namespace CodeRefactor
                 var context = ASContext.Context;
                 if (context?.CurrentModel != null)
                 {
-                    var enabled = langIsValid && context.CurrentModel.Imports.Count > 0;
+                    var validator = CommandFactoryProvider.GetFactory(result)?.GetValidator(typeof(OrganizeImports))
+                                 ?? CommandFactoryProvider.DefaultFactory.GetValidator(typeof(OrganizeImports));
+                    var enabled = validator(new ASResult {InFile = context.CurrentModel});// langIsValid && context.CurrentModel.Imports.Count > 0;
                     this.refactorContextMenu.OrganizeMenuItem.Enabled = enabled;
                     this.refactorContextMenu.TruncateMenuItem.Enabled = enabled;
                     this.refactorMainMenu.OrganizeMenuItem.Enabled = enabled;
@@ -471,10 +473,7 @@ namespace CodeRefactor
         /// <summary>
         /// Invoked when the user selects the "Move" command
         /// </summary>
-        static void MoveClicked(object sender, EventArgs e)
-        {
-            MoveFile(PluginBase.MainForm.CurrentDocument.FileName);
-        }
+        static void MoveClicked(object sender, EventArgs e) => MoveFile(PluginBase.MainForm.CurrentDocument.FileName);
 
         static void MoveFile(string fileName)
         {
