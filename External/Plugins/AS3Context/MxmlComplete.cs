@@ -539,7 +539,7 @@ namespace AS3Context
 
             List<ICompletionListItem> result = null;
             var validTypes = new Dictionary<string, bool>();
-            while (tmpClass != null && !tmpClass.IsVoid())
+            while (!tmpClass.IsVoid())
             {
                 foreach (MemberModel member in tmpClass.Members)
                     if ((member.Flags & FlagType.Function) > 0 && (member.Access & acc) > 0 && member.Parameters != null && member.Parameters.Count > 0)

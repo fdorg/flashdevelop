@@ -152,18 +152,20 @@ namespace HaXeContext.Generators
         protected override bool AssignStatementToVar(ScintillaControl sci, ClassModel inClass, ASExpr expr)
         {
             var ctx = inClass.InFile.Context;
-            ClassModel type = null;
-            // for example: cast value|, cast(value, Type)|
-            if (expr.WordBefore == "cast")
+            ClassModel type;
+            switch (expr.WordBefore)
             {
                 // for example: cast(value, Type)|
-                if (expr.SubExpressions != null && expr.SubExpressions.Count > 0 && expr.Value[0] == '#')
+                case "cast" when expr.SubExpressions != null && expr.SubExpressions.Count > 0 && expr.Value[0] == '#':
                     type = ctx.ResolveToken("cast" + expr.SubExpressions.Last(), inClass.InFile);
-                else type = ctx.ResolveType(ctx.Features.dynamicKey, inClass.InFile);
+                    break;
+                case "cast": // for example: cast value|
+                case "untyped": // for example: untyped value|
+                    type = ctx.ResolveType(ctx.Features.dynamicKey, inClass.InFile);
+                    break;
+                default:
+                    return false;
             }
-            // for example: untyped value|
-            else if (expr.WordBefore == "untyped") type = ctx.ResolveType(ctx.Features.dynamicKey, inClass.InFile);
-            if (type == null) return false;
             var varName = GuessVarName(type.Name, type.Type);
             AssignStatementToVar(sci, expr.WordBeforePosition, varName, type.Name);
             return true;

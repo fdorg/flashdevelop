@@ -131,7 +131,7 @@ namespace CodeRefactor.Provider
             return new SurroundWithCommand(snippet);
         }
 
-        Dictionary<Type, Func<ASResult, bool>> commandToValidator = new Dictionary<Type, Func<ASResult, bool>>();
+        readonly Dictionary<Type, Func<ASResult, bool>> commandToValidator = new Dictionary<Type, Func<ASResult, bool>>();
 
         public void RegisterValidator(Type command, Func<ASResult, bool> validator) => commandToValidator[command] = validator;
         public Func<ASResult, bool> GetValidator(Type command) => commandToValidator.ContainsKey(command) ? commandToValidator[command] : null;

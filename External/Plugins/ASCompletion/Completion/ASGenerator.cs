@@ -1488,10 +1488,18 @@ namespace ASCompletion.Completion
         protected virtual bool AssignStatementToVar(ScintillaControl sci, ClassModel inClass, ASExpr expr)
         {
             var ctx = inClass.InFile.Context;
-            ClassModel type = null;
-            if (expr.WordBefore == "typeof") type = ctx.ResolveType(ctx.Features.stringKey, inClass.InFile);
-            else if(expr.WordBefore == "delete") type = ctx.ResolveType(ctx.Features.booleanKey, inClass.InFile);
-            if (type == null) return false;
+            ClassModel type;
+            switch (expr.WordBefore)
+            {
+                case "typeof":
+                    type = ctx.ResolveType(ctx.Features.stringKey, inClass.InFile);
+                    break;
+                case "delete":
+                    type = ctx.ResolveType(ctx.Features.booleanKey, inClass.InFile);
+                    break;
+                default:
+                    return false;
+            }
             var varName = GuessVarName(type.Name, type.Type);
             varName = AvoidKeyword(varName);
             var template = TemplateUtils.GetTemplate("AssignVariable");

@@ -223,27 +223,6 @@ namespace PHPContext
                 return Visibility.Public;
         }
 
-
-        /// <summary>
-        /// Return the full project classes list
-        /// </summary>
-        /// <returns></returns>
-        public override MemberList GetAllProjectClasses()
-        {
-            return base.GetAllProjectClasses();
-        }
-
-        /// <summary>
-        /// Retrieves a class model from its name
-        /// </summary>
-        /// <param name="cname">Class (short or full) name</param>
-        /// <param name="inClass">Current file</param>
-        /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
-        public override ClassModel ResolveType(string cname, FileModel inFile)
-        {
-            return base.ResolveType(cname, inFile);
-        }
-
         /// <summary>
         /// Prepare intrinsic known vars/methods/classes
         /// </summary>

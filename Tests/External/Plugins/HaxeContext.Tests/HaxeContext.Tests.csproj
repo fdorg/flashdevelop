@@ -62,7 +62,8 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\RefactorCommandTests.cs" />
+    <Compile Include="CodeRefactor\Commands\RefactorCommandTests.cs" />
+    <Compile Include="CodeRefactor\Provider\HaxeCommandFactoryTests.cs" />
     <Compile Include="Completion\CodeCompleteTests.cs" />
     <Compile Include="Generators\CodeGeneratorTests2.cs" />
     <Compile Include="Generators\CodeGeneratorTests.cs" />
@@ -626,6 +627,10 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterGeneratePublicFunction_issue394_1.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2022_4.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2022_4.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\OrganizeImportsValidator_1.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\OrganizeImportsValidator_2.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\OrganizeImportsValidator_3.hx" />
+    <EmbeddedResource Include="Test Files\coderefactor\organizeimports\import.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
