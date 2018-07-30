@@ -54,19 +54,19 @@ namespace HaXeContext.Generators
         }
 
         /// <inheritdoc />
-        protected override bool CanShowNewMethodList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found, ASResult owner)
+        protected override bool CanShowNewMethodList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
-            var inClass = owner.RelClass ?? found.InClass;
-            return ((inClass.Flags & FlagType.TypeDef) == 0 || !owner.IsStatic)
-                && base.CanShowNewMethodList(sci, position, expr, found, owner);
+            var inClass = expr.RelClass ?? found.InClass;
+            return ((inClass.Flags & FlagType.TypeDef) == 0 || !expr.IsStatic)
+                && base.CanShowNewMethodList(sci, position, expr, found);
         }
 
         /// <inheritdoc />
-        protected override bool CanShowNewVarList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found, ASResult owner)
+        protected override bool CanShowNewVarList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
-            var inClass = owner.RelClass ?? found.InClass;
-            return ((inClass.Flags & FlagType.TypeDef) == 0 || !owner.IsStatic)
-                && base.CanShowNewMethodList(sci, position, expr, found, owner);
+            var inClass = expr.RelClass ?? found.InClass;
+            return ((inClass.Flags & FlagType.TypeDef) == 0 || !expr.IsStatic)
+                && base.CanShowNewMethodList(sci, position, expr, found);
         }
 
         /// <inheritdoc />

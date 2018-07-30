@@ -377,13 +377,13 @@ namespace ASCompletion.Completion
                         m = Regex.Match(text, string.Format(patternMethod, contextToken));
                         if (m.Success)
                         {
-                            if (CanShowNewMethodList(sci, position, resolve, found, inClass))
+                            if (CanShowNewMethodList(sci, position, resolve, found))
                             {
                                 contextMatch = m;
-                                ShowNewMethodList(found, options);
+                                ShowNewMethodList(resolve, found, options);
                             }
                         }
-                        else if (CanShowNewVarList(sci, position, resolve, found, inClass)) ShowNewVarList(found, options);
+                        else if (CanShowNewVarList(sci, position, resolve, found)) ShowNewVarList(resolve, found, options);
                     }
                 }
                 else
@@ -531,7 +531,7 @@ namespace ASCompletion.Completion
         /// <param name="expr">Expression at cursor position</param>
         /// <param name="found">Declaration target at current line(can not be null)</param>
         /// <returns>true, if can show "Generate public function and Generate public callback" list</returns>
-        protected virtual bool CanShowNewMethodList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found, ASResult owner) => true;
+        protected virtual bool CanShowNewMethodList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found) => true;
 
         /// <summary>
         /// Check if "Generate public variable" are available at the current cursor position.
@@ -541,7 +541,7 @@ namespace ASCompletion.Completion
         /// <param name="expr">Expression at cursor position</param>
         /// <param name="found">Declaration target at current line(can not be null)</param>
         /// <returns>true, if can show "Generate public function and Generate public callback" list</returns>
-        protected virtual bool CanShowNewVarList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found, ASResult owner) => true;
+        protected virtual bool CanShowNewVarList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found) => true;
 
         /// <summary>
         /// Check if "Add to interface" are available at the current cursor position.
@@ -780,14 +780,13 @@ namespace ASCompletion.Completion
             options.Add(new GeneratorItem(label, GeneratorJobType.ImplementInterface, null, found.InClass));
         }
 
-        private static void ShowNewVarList(FoundDeclaration found, ICollection<ICompletionListItem> options)
+        private static void ShowNewVarList(ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
+            if (expr.InClass == null || found.InClass.QualifiedName.Equals(expr.RelClass.QualifiedName))
+                expr = null;
+            ASResult exprLeft = null;
             var sci = ASContext.CurSciControl;
             var currentPos = sci.CurrentPos;
-            var exprAtCursor = ASComplete.GetExpressionType(sci, sci.WordEndPosition(currentPos, true));
-            if (exprAtCursor?.InClass == null || found.InClass.QualifiedName.Equals(exprAtCursor.RelClass.QualifiedName))
-                exprAtCursor = null;
-            ASResult exprLeft = null;
             var curWordStartPos = sci.WordStartPosition(currentPos, true);
             if ((char)sci.CharAt(curWordStartPos - 1) == '.') exprLeft = ASComplete.GetExpressionType(sci, curWordStartPos - 1);
             if (exprLeft != null && exprLeft.Type == null) exprLeft = null;
@@ -816,7 +815,7 @@ namespace ASCompletion.Completion
                 }
             }
             string label;
-            if ((exprAtCursor?.RelClass != null && (exprAtCursor.RelClass.Flags & FlagType.Interface) > 0)
+            if ((expr?.RelClass != null && (expr.RelClass.Flags & FlagType.Interface) > 0)
                 || (found.InClass != null && (found.InClass.Flags & FlagType.Interface) > 0))
             {
                 label = TextHelper.GetString("ASCompletion.Label.GenerateFunctionInterface");
@@ -824,7 +823,7 @@ namespace ASCompletion.Completion
             }
             else
             {
-                string textAtCursor = sci.GetWordFromPosition(currentPos);
+                var textAtCursor = sci.GetWordFromPosition(currentPos);
                 if (textAtCursor != null && textAtCursor.ToUpper().Equals(textAtCursor))
                 {
                     label = TextHelper.GetString("ASCompletion.Label.GenerateConstant");
@@ -832,7 +831,7 @@ namespace ASCompletion.Completion
                 }
 
                 bool genProtectedDecl = GetDefaultVisibility(found.InClass) == Visibility.Protected;
-                if (exprAtCursor == null && exprLeft == null)
+                if (expr == null && exprLeft == null)
                 {
                     if (genProtectedDecl) label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedVar");
                     else label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateVar");
@@ -842,7 +841,7 @@ namespace ASCompletion.Completion
                 label = TextHelper.GetString("ASCompletion.Label.GeneratePublicVar");
                 options.Add(new GeneratorItem(label, GeneratorJobType.VariablePublic, found.Member, found.InClass));
 
-                if (exprAtCursor == null && exprLeft == null)
+                if (expr == null && exprLeft == null)
                 {
                     if (genProtectedDecl) label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedFunction");
                     else label = TextHelper.GetString("ASCompletion.Label.GeneratePrivateFunction");
@@ -872,16 +871,14 @@ namespace ASCompletion.Completion
             options.Add(new GeneratorItem(label, GeneratorJobType.ChangeConstructorDecl, found.Member, found.InClass, parameters));
         }
 
-        private static void ShowNewMethodList(FoundDeclaration found, ICollection<ICompletionListItem> options)
+        private static void ShowNewMethodList(ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
-            var sci = ASContext.CurSciControl;
-            var result = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
-            if (result?.RelClass == null || found.InClass.QualifiedName.Equals(result.RelClass.QualifiedName))
-                result = null;
+            if (expr.RelClass == null || found.InClass.QualifiedName.Equals(expr.RelClass.QualifiedName))
+                expr = null;
             string label;
-            var inClass = result != null ? result.RelClass : found.InClass;
+            var inClass = expr != null ? expr.RelClass : found.InClass;
             var isInterface = (inClass.Flags & FlagType.Interface) > 0;
-            if (!isInterface && result == null)
+            if (!isInterface && expr == null)
             {
                 if (GetDefaultVisibility(found.InClass) == Visibility.Protected)
                     label = TextHelper.GetString("ASCompletion.Label.GenerateProtectedFunction");
