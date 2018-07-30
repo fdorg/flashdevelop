@@ -819,8 +819,19 @@ namespace HaXeContext.Generators
             {
                 yield return new TestCaseData("BeforeGeneratePublicFunction_issue394_1", GeneratorJobType.Function, true)
                     .Returns(ReadAllText("AfterGeneratePublicFunction_issue394_1"))
-                    .SetName("Issue394. Case 1")
+                    .SetName("Issue 394. Case 1")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/394");
+            }
+        }
+
+        static IEnumerable<TestCaseData> GenerateFunctionIssue2293TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeGeneratePublicFunction_issue2293_1", GeneratorJobType.FunctionPublic, true)
+                    .Returns(ReadAllText("AfterGeneratePublicFunction_issue2293_1"))
+                    .SetName("Issue 2293. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2293");
             }
         }
 
@@ -931,6 +942,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(GenerateFunctionTestCases)),
             TestCaseSource(nameof(GenerateFunctionIssue2200TestCases)),
             TestCaseSource(nameof(GenerateFunctionIssue394TestCases)),
+            TestCaseSource(nameof(GenerateFunctionIssue2293TestCases)),
             TestCaseSource(nameof(GenerateVariableIssue2201TestCases)),
             TestCaseSource(nameof(ImplementInterfaceTestCases)),
             TestCaseSource(nameof(ImplementInterfaceIssue2264TestCases)),
