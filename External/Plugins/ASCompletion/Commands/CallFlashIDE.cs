@@ -100,7 +100,7 @@ namespace ASCompletion.Commands
             if (cmdData != null)
             {
                 args = PluginBase.MainForm.ProcessArgString(cmdData);
-                if (args.IndexOf('"') < 0) args = '"' + args + '"';
+                if (!args.Contains('"')) args = '"' + args + '"';
             }
 
             // execution

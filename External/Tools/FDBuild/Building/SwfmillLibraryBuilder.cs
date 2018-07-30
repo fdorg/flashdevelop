@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ProjectManager.Projects;
 using ProjectManager.Building;
 using System.IO;
@@ -64,8 +62,7 @@ namespace FDBuild.Building
                 string backupLibraryPath = Path.Combine("obj", projectName + "Library.old");
                 string relLibraryPath = Path.Combine("obj", projectName + "Library.xml");
                 string backupSwfPath = Path.Combine("obj", projectName + "Resources.old");
-                string arguments = string.Format("simple \"{0}\" \"{1}\"",
-                    relLibraryPath, swfPath);
+                string arguments = $"simple \"{relLibraryPath}\" \"{swfPath}\"";
 
                 SwfmillLibraryWriter swfmill = new SwfmillLibraryWriter(relLibraryPath);
                 swfmill.WriteProject(project);

@@ -1,11 +1,6 @@
-using System;
-using System.Collections;
-using System.Diagnostics;
 using System.Windows.Forms;
-using ProjectManager.Controls;
 using PluginCore.Localization;
 using PluginCore;
-using PluginCore.Utilities;
 using System.Collections.Generic;
 using ProjectManager.Projects;
 using PluginCore.Helpers;
@@ -135,6 +130,9 @@ namespace ProjectManager.Controls
         {
             TargetBuildSelector.Text = "";
             EnableTargetBuildSelector(false);
+            TestMovie.Enabled = false;
+            BuildProject.Enabled = false;
+            ProjectMenu.ProjectItemsEnabled = false;
         }
 
         public void ProjectChanged(Project project)

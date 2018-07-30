@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ASCompletion.Completion;
 using ASCompletion.Model;
 using CodeRefactor.Commands;
@@ -179,5 +180,9 @@ namespace CodeRefactor.Provider
         /// </summary>
         /// <param name="snippet"></param>
         SurroundWithCommand CreateSurroundWithCommand(string snippet);
+
+        void RegisterValidator(Type command, Func<ASResult, bool> validator);
+
+        Func<ASResult, bool> GetValidator(Type command);
     }
 }

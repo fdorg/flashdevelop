@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Runtime.Serialization;
 using PluginCore;
 using PluginCore.Localization;
 using PluginCore.Managers;
@@ -36,7 +37,7 @@ namespace ProjectManager
         string[] excludedFileTypes = new string[] { ".p", ".abc", ".bak", ".tmp" };
         string[] excludedDirectories = new string[] { ".svn", "_svn", ".cvs", "_cvs", "cvs", "_sgbak", ".git", ".hg", "node_modules" };
         string[] executableFileTypes = new string[] { ".exe", ".lnk", ".fla", ".flump", ".doc", ".pps", ".psd", ".png", ".jpg", ".gif", ".xls", ".docproj", ".ttf", ".otf", ".wav", ".mp3", ".ppt", ".pptx", ".docx", ".xlsx", ".ai", ".pdf", ".zip", ".rar" };
-        string[] filteredDirectoryNames = new string[] { "src", "source", "sources", "as", "as2", "as3", "actionscript", "flash", "classes", "trunk", "svn", "git", "hg", "..", "." };
+        string[] filteredDirectoryNames = new string[] { "src", "source", "sources", "as", "as2", "as3", "actionscript", "flash", "classes", "trunk", "svn", "git", "hg", "github", "gitlab", "haxelib", "library", "..", "." };
 
         HighlightType tabHighlightType = HighlightType.ExternalFiles;
 
@@ -161,6 +162,18 @@ namespace ProjectManager
             set { filteredDirectoryNames = value; FireChanged("FilteredDirectoryNames"); }
         }
 
+        bool showExternalLibraries = false;
+
+        [DisplayName("Show External Libraries")]
+        [LocalizedDescription("ProjectManager.Description.ShowExternalLibraries")]
+        [LocalizedCategory("ProjectManager.Category.ProjectTree")]
+        [DefaultValue(false)]
+        public bool ShowExternalLibraries
+        {
+            get { return showExternalLibraries; }
+            set { showExternalLibraries = value; FireChanged("ShowExternalLibraries"); }
+        }
+
         [DisplayName("Show Project Classpaths")]
         [LocalizedDescription("ProjectManager.Description.ShowProjectClasspaths")]
         [LocalizedCategory("ProjectManager.Category.ProjectTree")]
@@ -273,6 +286,19 @@ namespace ProjectManager
             if (Changed != null)
                 Changed(setting);
         }
+
+        [OnDeserialized]
+        private void OnDeserialized(StreamingContext context)
+        {
+            string[] extraFilteredDirectoryNames = { "github", "gitlab", "haxelib", "library" };
+            var filteredDirectoryNames = new List<string>(this.filteredDirectoryNames);
+
+            foreach (var item in extraFilteredDirectoryNames)
+                if (!filteredDirectoryNames.Contains(item)) filteredDirectoryNames.Add(item);
+
+            this.filteredDirectoryNames = filteredDirectoryNames.ToArray();
+        }
+
     }
 
     [Serializable]

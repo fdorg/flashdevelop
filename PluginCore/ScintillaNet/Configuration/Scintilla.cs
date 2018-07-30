@@ -60,11 +60,11 @@ namespace ScintillaNet.Configuration
             foreach (Language lang in this.AllLanguages)
             {
                 string extensions = ","+lang.fileextensions+",";
-                if (extensions.IndexOfOrdinal(",*,") > -1)
+                if (extensions.Contains(",*,"))
                 {
                     defaultLanguage = lang.name;
                 }
-                if (extensions.IndexOfOrdinal(","+filemask+",") > -1)
+                if (extensions.Contains(","+filemask+","))
                 {
                     return lang.name;
                 }

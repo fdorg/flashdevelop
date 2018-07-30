@@ -150,7 +150,7 @@ namespace PluginCore.Controls
                     return;
 
                 case EventType.Command:
-                    string cmd = (e as DataEvent).Action;
+                    string cmd = ((DataEvent)e).Action;
                     // EventType.Command handlind should quite probably disappear when merging the "Decoupled CompletionList". This is too hacky and error-prone...
                     if (cmd.IndexOfOrdinal("ProjectManager") > 0
                         || cmd.IndexOfOrdinal("Changed") > 0
@@ -163,6 +163,7 @@ namespace PluginCore.Controls
                         || cmd == "ASCompletion.FileModelUpdated"
                         || cmd == "ASCompletion.PathExplorerFinished"
                         || cmd == "ASCompletion.ContextualGenerator.AddOptions"
+                        || cmd == "ASCompletion.DotCompletion"
                         || cmd == "ResultsPanel.ClearResults"
                         || cmd.IndexOfOrdinal("LintingManager.") == 0)
                         return; // ignore notifications
@@ -192,7 +193,7 @@ namespace PluginCore.Controls
         /// </summary>
         public void MarkerChanged(ScintillaControl sender, int line)
         {
-            if (OnMarkerChanged != null) OnMarkerChanged(sender, line);
+            OnMarkerChanged?.Invoke(sender, line);
         }
 
         private void HandleDwellStart(ScintillaControl sci, int position, int x, int y)
@@ -202,7 +203,7 @@ namespace PluginCore.Controls
             {
                 // check mouse over the editor
                 if ((position < 0) || simpleTip.Visible || errorTip.Visible || CompletionList.HasMouseIn) return;
-                Point mousePos = (PluginBase.MainForm as Form).PointToClient(Cursor.Position);
+                Point mousePos = ((Form) PluginBase.MainForm).PointToClient(Cursor.Position);
                 if (mousePos.X == lastMousePos.X && mousePos.Y == lastMousePos.Y)
                     return;
 
@@ -222,8 +223,7 @@ namespace PluginCore.Controls
                     if (bounds.Contains(mousePos))
                         return;
                 }
-                if (OnMouseHover != null) OnMouseHover(sci, position);
-
+                OnMouseHover?.Invoke(sci, position);
                 if (errorTip.Visible)
                 {
                     //move simpleTip up to not overlap error tip
@@ -256,7 +256,7 @@ namespace PluginCore.Controls
         {
             simpleTip.Hide();
             errorTip.Hide();
-            if (OnMouseHoverEnd != null) OnMouseHoverEnd(sci, position);
+            OnMouseHoverEnd?.Invoke(sci, position);
         }
 
         #endregion

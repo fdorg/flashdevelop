@@ -1,7 +1,5 @@
 using System;
 using System.IO;
-using System.Text;
-using System.Diagnostics;
 using ProjectManager.Projects;
 using ProjectManager.Projects.AS2;
 using FDBuild.Building;
@@ -24,7 +22,7 @@ namespace ProjectManager.Building.AS2
                     if (File.Exists(CompilerPath)) return CompilerPath;
                     if (PlatformHelper.IsRunningOnWindows() && File.Exists(Path.Combine(CompilerPath, "mtasc.exe")))
                         return Path.Combine(CompilerPath, "mtasc.exe");
-                    else if (!PlatformHelper.IsRunningOnWindows() && File.Exists(Path.Combine(CompilerPath, "mtasc")))
+                    if (!PlatformHelper.IsRunningOnWindows() && File.Exists(Path.Combine(CompilerPath, "mtasc")))
                         return Path.Combine(CompilerPath, "mtasc");
                 }
 
@@ -33,7 +31,7 @@ namespace ProjectManager.Building.AS2
                 string mtascDir = Path.Combine(upDirectory, "mtasc");
                 if (PlatformHelper.IsRunningOnWindows() && File.Exists(Path.Combine(mtascDir, "mtasc.exe")))
                     return Path.Combine(mtascDir, "mtasc.exe");
-                else if (!PlatformHelper.IsRunningOnWindows() && File.Exists(Path.Combine(mtascDir, "mtasc")))
+                if (!PlatformHelper.IsRunningOnWindows() && File.Exists(Path.Combine(mtascDir, "mtasc")))
                     return Path.Combine(mtascDir, "mtasc");
 
                 // hope you have it in your environment path!  

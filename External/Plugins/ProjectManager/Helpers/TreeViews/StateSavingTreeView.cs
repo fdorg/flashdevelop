@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Diagnostics;
 using PluginCore;
 
 namespace System.Windows.Forms

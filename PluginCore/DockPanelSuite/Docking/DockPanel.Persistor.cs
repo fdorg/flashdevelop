@@ -1,8 +1,6 @@
 using System;
 using System.ComponentModel;
-using System.Windows.Forms;
 using System.Drawing;
-using WeifenLuo.WinFormsUI.Docking;
 using System.IO;
 using System.Text;
 using System.Xml;

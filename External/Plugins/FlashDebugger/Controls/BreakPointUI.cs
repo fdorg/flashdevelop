@@ -5,7 +5,6 @@ using System.IO;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using FlashDebugger.Properties;
 using PluginCore.Localization;
 using PluginCore;
 using PluginCore.Helpers;

@@ -1,7 +1,5 @@
-using System;
 using System.Windows.Forms;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
 namespace WeifenLuo.WinFormsUI.Docking

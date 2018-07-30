@@ -62,7 +62,7 @@ namespace ASCompletion.Model
             }
         }
 
-        override public string FullName
+        public override string FullName
         {
             get
             {
@@ -72,14 +72,15 @@ namespace ASCompletion.Model
                     if (InFile != null && InFile.haXe) return Name + IndexType;
                     return Name + "." + IndexType;
                 }
-                else if (InFile != null && InFile.haXe) return Name + Template;
-                else return Name + "." + Template;
+                if (InFile != null && InFile.haXe) return Name + Template;
+                return Name + "." + Template;
             }
         }
 
         /// <summary>
         /// Resolved extended type. Update using ResolveExtends()
         /// </summary>
+        /// <returns>An extends ClassModel or empty ClassModel if the class do not have extends</returns>
         public ClassModel Extends
         {
             get 
@@ -89,7 +90,7 @@ namespace ASCompletion.Model
                     resolvedExtend = null;
                     return VoidClass;
                 }
-                else return resolvedExtend.Target as ClassModel ?? VoidClass;
+                return resolvedExtend.Target as ClassModel ?? VoidClass;
             }
         }
 
@@ -98,32 +99,32 @@ namespace ASCompletion.Model
         /// </summary>
         public void ResolveExtends()
         {
-            ClassModel aClass = this;
-            List<ClassModel> extensionList = new List<ClassModel> {this};
+            var aClass = this;
+            var extensionList = new List<ClassModel> {this};
             while (!aClass.IsVoid())
             {
                 aClass = aClass.ResolveExtendedType(extensionList);
             }
         }
 
-        private ClassModel ResolveExtendedType(List<ClassModel> extensionList)
+        private ClassModel ResolveExtendedType(IList<ClassModel> extensionList)
         {
             if (InFile.Context == null)
             {
                 resolvedExtend = null;
                 return VoidClass;
             }
-            string objectKey = InFile.Context.Features.objectKey;
+            var objectKey = InFile.Context.Features.objectKey;
             if (Name == objectKey && !string.IsNullOrEmpty(InFile.Package))
             {
-                string info = string.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), objectKey, objectKey);
+                var info = string.Format(TextHelper.GetString("ASCompletion.Info.InheritanceLoop"), objectKey, objectKey);
                 MessageBar.ShowWarning(info);
                 resolvedExtend = null;
                 return VoidClass;
             }
             if (string.IsNullOrEmpty(ExtendsType))
             {
-                if (this == VoidClass || (Flags & FlagType.Interface) > 0)
+                if (IsVoid() || (Flags & FlagType.Interface) > 0)
                 {
                     resolvedExtend = null;
                     return VoidClass;
@@ -136,7 +137,7 @@ namespace ASCompletion.Model
                     return VoidClass;
                 }
             }
-            ClassModel extends = InFile.Context.ResolveType(ExtendsType, InFile);
+            var extends = InFile.Context.ResolveType(ExtendsType, InFile);
             if (!extends.IsVoid())
             {
                 // check loops in inheritance
@@ -154,7 +155,6 @@ namespace ASCompletion.Model
                     }
                 }
                 extensionList.Add(extends);
-
                 extends.InFile.Check();
             }
             resolvedExtend = new WeakReference(extends);
@@ -167,14 +167,9 @@ namespace ASCompletion.Model
             Members = new MemberList();
         }
 
-        public bool IsVoid()
-        {
-            return this == VoidClass;
-        }
+        public bool IsVoid() => this == VoidClass;
 
-        public bool IsEnum() {
-            return (this.Flags & FlagType.Enum) != 0;
-        }
+        public bool IsEnum() => (Flags & FlagType.Enum) != 0;
 
         public new object Clone()
         {
@@ -214,14 +209,10 @@ namespace ASCompletion.Model
 
         public MemberModel ToMemberModel()
         {
-            MemberModel self = new MemberModel();
-            //int p = Name.LastIndexOf(".");
-            //self.Name = (p >= 0) ? Name.Substring(p + 1) : Name;
-            self.Comments = Comments;
-            self.Name = Name;
-            self.Type = QualifiedName;
-            self.Flags = Flags;
-            return self;
+            var result = (ClassModel) Clone();
+            result.Type = QualifiedName;
+            result.IndexType = string.Empty;
+            return result;
         }
 
         internal MemberList GetSortedMembersList()
@@ -239,16 +230,16 @@ namespace ASCompletion.Model
         /// </summary>
         internal MemberList GetSortedInheritedMembersList()
         {
-            MemberList items = new MemberList();
-            ClassModel curClass = this;
+            var items = new MemberList();
+            var curClass = this;
+            curClass.ResolveExtends();
             do
             {
-                curClass.ResolveExtends();
                 curClass = curClass.Extends;
-                MemberList newMembers = curClass.GetSortedMembersList();
+                var newMembers = curClass.GetSortedMembersList();
                 items.Merge(newMembers);
                 
-            } while (curClass.Extends != VoidClass);
+            } while (!curClass.Extends.IsVoid());
             items.RemoveAllWithFlag(FlagType.Static);
             items.Sort();
             return items;

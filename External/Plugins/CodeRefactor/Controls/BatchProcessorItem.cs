@@ -1,8 +1,4 @@
 ﻿using CodeRefactor.Managers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace CodeRefactor.Controls
 {

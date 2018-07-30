@@ -307,7 +307,7 @@ namespace ProjectManager.Controls
                 if ((File.GetAttributes(templateDir) & FileAttributes.Hidden) != 0) continue;
 
                 string templateName = Path.GetFileName(templateDir).Substring(3);
-                if (templateName.IndexOf('-') < 0) templateName = "-" + templateName;
+                if (!templateName.Contains('-')) templateName = "-" + templateName;
                 string[] parts = templateName.Split('-');
 
                 ListViewItem item = new ListViewItem(" " + parts[1].Trim());
@@ -490,15 +490,15 @@ namespace ProjectManager.Controls
             if (projectListView.SelectedIndices.Count > 0)
             {
                 lastTemplate = TemplateDirectory;
-                string projectImage = Path.Combine(TemplateDirectory,"Project.png");
-                string projectDescription = Path.Combine(TemplateDirectory,"Project.txt");
 
                 if (previewBox.Image != null) previewBox.Image.Dispose();
 
+                string projectImage = Path.Combine(TemplateDirectory,"Project.png");
                 if (File.Exists(projectImage)) SetProjectImage(projectImage);
                 else if (File.Exists(defaultProjectImage)) SetProjectImage(defaultProjectImage);
                 else previewBox.Image = null;
 
+                string projectDescription = Path.Combine(TemplateDirectory,"Project.txt");
                 if (File.Exists(projectDescription))
                 {
                     using (StreamReader reader = File.OpenText(projectDescription))

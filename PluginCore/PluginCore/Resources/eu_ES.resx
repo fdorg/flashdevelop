@@ -6228,4 +6228,36 @@ AND - All conditions are met.</value>
     <value>Inheritance Navigation</value>
     <comment>Added after 5.2.1</comment>
   </data>
+  <data name="PluginCore.Label.Cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.No" xml:space="preserve">
+    <value>No</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.NoToAll" xml:space="preserve">
+    <value>No to All</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.Yes" xml:space="preserve">
+    <value>Yes</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.YesToAll" xml:space="preserve">
+    <value>Yes To All</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="PluginCore.Label.DontAskAgain" xml:space="preserve">
+    <value>Remember, don't ask again</value>
+    <comment>Added after 5.3.0</comment>
+  </data>
+  <data name="ProjectManager.Description.ShowExternalLibraries" xml:space="preserve">
+    <value>Sets whether or not to include external libraries directories in the project tree.</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
+  <data name="HaXeContext.Info.GenerateSwitch" xml:space="preserve">
+    <value>Generate switch</value>
+    <comment>Added after 5.3.3</comment>
+  </data>
 </root>

@@ -58,7 +58,9 @@ namespace AirProperties
             V250 = 36,  // Version 25.0
             V260 = 37,  // Version 26.0
             V270 = 38,  // Version 27.0
-            V280 = 39   // Version 28.0
+            V280 = 39,  // Version 28.0
+            V290 = 40,  // Version 29.0
+            V300 = 41,  // Version 30.0
         }
 
         public static Exception LastException
@@ -147,11 +149,13 @@ namespace AirProperties
                     else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "26.0")) _version = AirVersion.V260;
                     else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "27.0")) _version = AirVersion.V270;
                     else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "28.0")) _version = AirVersion.V280;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "29.0")) _version = AirVersion.V290;
+                    else if (nsuri.StartsWithOrdinal(_BaseAirNamespace + "30.0")) _version = AirVersion.V300;
                     else
                     {
                         // Is a valid AIR descriptor, but version not supported so default to max supported version
                         _unsupportedVersion = true;
-                        _version = AirVersion.V280;
+                        _version = AirVersion.V300;
                     }
                 }
                 _namespaceManager = new XmlNamespaceManager(_descriptorFile.NameTable);
@@ -190,7 +194,7 @@ namespace AirProperties
         public static String GetAttribute(string attribute)
         {
             XmlNode propertyNode;
-            if (attribute.IndexOf('/') > -1)
+            if (attribute.Contains('/'))
                 propertyNode = _rootNode.SelectSingleNode("air:" + attribute.Replace("/", "/air:").Replace("/air:@", "/@"), _namespaceManager);
             else
                 propertyNode = _rootNode.Attributes.GetNamedItem(attribute);
@@ -206,7 +210,7 @@ namespace AirProperties
         public static void SetAttribute(string attribute, string value)
         {
             XmlAttribute attributeNode;
-            if (attribute.IndexOf('/') > -1)
+            if (attribute.Contains('/'))
                 attributeNode = _rootNode.SelectSingleNode("air:" + attribute.Replace("/", "/air:").Replace("/air:@", "/@"), _namespaceManager) as XmlAttribute;
             else
                 attributeNode = _rootNode.Attributes.GetNamedItem(attribute) as XmlAttribute;
@@ -217,7 +221,7 @@ namespace AirProperties
                 {
                     // Remove the attribute, reverting to system default
                     XmlNode attributeParent;
-                    if (attribute.IndexOf('/') > -1)
+                    if (attribute.Contains('/'))
                         attributeParent = _rootNode.SelectSingleNode("air:" + attribute.Substring(0, attribute.LastIndexOf('/')).Replace("/", "/air:"), _namespaceManager);
                     else
                         attributeParent = _rootNode;
@@ -233,7 +237,7 @@ namespace AirProperties
                     string attributeName = attribute.Substring(attribute.IndexOf('@') + 1);
                     attributeNode = _descriptorFile.CreateAttribute(attributeName);
                     attributeNode.Value = value;
-                    if (attribute.IndexOf('/') > -1)
+                    if (attribute.Contains('/'))
                         propertyNode = _rootNode.SelectSingleNode("air:" + attribute.Substring(0, attribute.LastIndexOf('/')).Replace("/", "/air:"), _namespaceManager);
                     else
                         propertyNode = _rootNode;

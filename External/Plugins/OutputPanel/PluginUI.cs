@@ -221,7 +221,7 @@ namespace OutputPanel
         /// <summary>
         /// Changes the wrapping in the control
         /// </summary>
-        private void WrapText(Object sender, System.EventArgs e)
+        private void WrapText(Object sender, EventArgs e)
         {
             this.pluginMain.PluginSettings.WrapOutput = !this.pluginMain.PluginSettings.WrapOutput;
             this.pluginMain.SaveSettings();
@@ -236,7 +236,7 @@ namespace OutputPanel
             if (this.pluginMain.PluginPanel == null) return;
             if (this.pluginMain.PluginPanel.InvokeRequired)
             {
-                this.pluginMain.PluginPanel.BeginInvoke((MethodInvoker)delegate { this.ApplyWrapText(); });
+                this.pluginMain.PluginPanel.BeginInvoke((MethodInvoker)this.ApplyWrapText);
                 return;
             }
             this.wrapTextItem.Checked = this.pluginMain.PluginSettings.WrapOutput;
@@ -246,7 +246,7 @@ namespace OutputPanel
         /// <summary>
         /// Copies the text to clipboard
         /// </summary>
-        private void CopyOutput(Object sender, System.EventArgs e)
+        private void CopyOutput(Object sender, EventArgs e)
         {
             if (this.textLog.SelectedText.Length > 0) this.textLog.Copy();
             else if (!String.IsNullOrEmpty(this.textLog.Text))
@@ -267,7 +267,7 @@ namespace OutputPanel
         /// <summary>
         /// Clears the output
         /// </summary>
-        public void ClearOutput(Object sender, System.EventArgs e)
+        public void ClearOutput(Object sender, EventArgs e)
         {
             this.textLog.Clear();
         }
@@ -284,7 +284,7 @@ namespace OutputPanel
         /// <summary>
         /// Shows the panel
         /// </summary>
-        private void AutoShowPanel(Object sender, System.EventArgs e)
+        private void AutoShowPanel(Object sender, EventArgs e)
         {
             this.autoShow.Stop();
             if (this.textLog.TextLength > 0)
@@ -434,7 +434,7 @@ namespace OutputPanel
                             newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ProcessEndColor", Color.Blue);
                             break;
                         case -3: // ProcessError
-                            if (message.IndexOfOrdinal("Warning") >= 0) newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.WarningColor", Color.Orange);
+                            if (message.Contains("Warning")) newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.WarningColor", Color.Orange);
                             else newColor = PluginBase.MainForm.GetThemeColor("OutputPanel.ErrorColor", Color.Red);
                             break;
                     }
@@ -535,7 +535,7 @@ namespace OutputPanel
         /// <summary>
         /// When user enters control, handle it
         /// </summary>
-        private void FindTextBoxEnter(Object sender, System.EventArgs e)
+        private void FindTextBoxEnter(Object sender, EventArgs e)
         {
             if (this.findTextBox.Text == searchInvitation)
             {
@@ -547,7 +547,7 @@ namespace OutputPanel
         /// <summary>
         /// When user leaves control, handle it
         /// </summary>
-        private void FindTextBoxLeave(Object sender, System.EventArgs e)
+        private void FindTextBoxLeave(Object sender, EventArgs e)
         {
             if (this.findTextBox.Text == "")
             {

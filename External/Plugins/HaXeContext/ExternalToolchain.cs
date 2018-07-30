@@ -18,7 +18,7 @@ namespace HaXeContext
         static HaxeProject hxproj;
         static System.Timers.Timer updater;
 
-        static internal bool HandleProject(IProject project)
+        internal static bool HandleProject(IProject project)
         {
             HaxeProject hxproj = project as HaxeProject;
             if (hxproj == null) return false;
@@ -31,7 +31,7 @@ namespace HaXeContext
         /// </summary>
         /// <param name="command">Project's custom run command</param>
         /// <returns>Execution handled</returns>
-        static internal bool Run(string command)
+        internal static bool Run(string command)
         {
             if (!string.IsNullOrEmpty(command)) // project has custom run command
                 return false;
@@ -49,7 +49,7 @@ namespace HaXeContext
 
             string config = hxproj.TargetBuild;
             if (String.IsNullOrEmpty(config)) config = "flash";
-            else if (config.IndexOfOrdinal("android") >= 0) CheckADB();
+            else if (config.Contains("android")) CheckADB();
             
             if (config.StartsWithOrdinal("html5") && ProjectManager.Actions.Webserver.Enabled && hxproj.RawHXML != null) // webserver
             {
@@ -108,7 +108,7 @@ namespace HaXeContext
         /// <summary>
         /// Start Android ADB server in the background
         /// </summary>
-        static private void CheckADB()
+        private static void CheckADB()
         {
             if (Process.GetProcessesByName("adb").Length > 0)
                 return;
@@ -129,7 +129,7 @@ namespace HaXeContext
         /// <summary>
         /// Provide FD-configured Flash player
         /// </summary>
-        static private string GetSwfPlayer()
+        private static string GetSwfPlayer()
         {
             try
             {
@@ -142,7 +142,7 @@ namespace HaXeContext
             return "";
         }
 
-        static internal bool Clean(IProject project)
+        internal static bool Clean(IProject project)
         {
             if (!HandleProject(project)) return false;
             HaxeProject hxproj = project as HaxeProject;
@@ -173,13 +173,13 @@ namespace HaXeContext
         /// Watch NME projects to update the configuration & HXML command using 'nme display'
         /// </summary>
         /// <param name="project"></param>
-        static public void Monitor(IProject project)
+        public static void Monitor(IProject project)
         {
             if (updater == null)
             {
                 updater = new System.Timers.Timer();
                 updater.Interval = 200;
-                updater.SynchronizingObject = PluginCore.PluginBase.MainForm as System.Windows.Forms.Form;
+                updater.SynchronizingObject = (System.Windows.Forms.Form) PluginBase.MainForm;
                 updater.Elapsed += updater_Elapsed;
                 updater.AutoReset = false;
             }
@@ -243,31 +243,25 @@ namespace HaXeContext
 
         private static void UpdateProject()
         {
-            var form = PluginBase.MainForm as System.Windows.Forms.Form;
+            var form = (System.Windows.Forms.Form) PluginBase.MainForm;
             if (form.InvokeRequired)
             {
-                form.BeginInvoke((System.Windows.Forms.MethodInvoker)delegate {
-                    UpdateProject();
-                });
+                form.BeginInvoke((System.Windows.Forms.MethodInvoker)UpdateProject);
                 return;
             }
+            if (hxproj.MovieOptions.Platform == "Lime" && string.IsNullOrEmpty(hxproj.TargetBuild)) return;
 
-            var toolchain = hxproj.MovieOptions.PlatformSupport.ExternalToolchain;
-            var exe = GetExecutable(toolchain);
+            var exe = GetExecutable(hxproj.MovieOptions.PlatformSupport.ExternalToolchain);
             if (exe == null) return;
 
-            string args = GetCommand(hxproj, "display");
+            var args = GetCommand(hxproj, "display");
             if (args == null)
             {
-                var msg = String.Format("No external 'display' command found for platform '{0}'", hxproj.MovieOptions.Platform);
-                TraceManager.Add(msg, -3);
+                TraceManager.Add($"No external 'display' command found for platform '{hxproj.MovieOptions.Platform}'", -3);
                 return;
             }
 
-            string config = hxproj.TargetBuild;
-            if (String.IsNullOrEmpty(config)) config = "flash";
-
-            ProcessStartInfo pi = new ProcessStartInfo();
+            var pi = new ProcessStartInfo();
             pi.FileName = Environment.ExpandEnvironmentVariables(exe);
             pi.Arguments = args;
             pi.RedirectStandardError = true;
@@ -276,7 +270,7 @@ namespace HaXeContext
             pi.CreateNoWindow = true;
             pi.WorkingDirectory = Path.GetDirectoryName(hxproj.ProjectPath);
             pi.WindowStyle = ProcessWindowStyle.Hidden;
-            Process p = Process.Start(pi);
+            var p = Process.Start(pi);
             p.WaitForExit(5000);
 
             string hxml = p.StandardOutput.ReadToEnd();
@@ -303,13 +297,12 @@ namespace HaXeContext
                 args = GetCommand(hxproj, "build", false);
                 if (args == null)
                 {
-                    var msg = String.Format("No external 'build' command found for platform '{0}'", hxproj.MovieOptions.Platform);
-                    TraceManager.Add(msg, -3);
+                    TraceManager.Add($"No external 'build' command found for platform '{hxproj.MovieOptions.Platform}'", -3);
                 }
                 else if (string.IsNullOrEmpty(hxproj.PreBuildEvent))
                 {
-                    if (toolchain == "haxelib") hxproj.PreBuildEvent = "\"$(CompilerPath)/haxelib\" " + args;
-                    else if (toolchain == "cmd") hxproj.PreBuildEvent = "cmd " + args;
+                    if (hxproj.MovieOptions.PlatformSupport.ExternalToolchain == "haxelib") hxproj.PreBuildEvent = "\"$(CompilerPath)/haxelib\" " + args;
+                    else if (hxproj.MovieOptions.PlatformSupport.ExternalToolchain == "cmd") hxproj.PreBuildEvent = "cmd " + args;
                     else hxproj.PreBuildEvent = "\"" + exe + "\" " + args;
                 }
 
@@ -354,7 +347,7 @@ namespace HaXeContext
         {
             string haxelib = project.CurrentSDK;
             if (haxelib == null) return "haxelib";
-            else if (Directory.Exists(haxelib)) haxelib = Path.Combine(haxelib, "haxelib.exe");
+            if (Directory.Exists(haxelib)) haxelib = Path.Combine(haxelib, "haxelib.exe");
             else haxelib = haxelib.Replace("haxe.exe", "haxelib.exe");
 
             if (!File.Exists(haxelib)) return "haxelib";
@@ -370,10 +363,7 @@ namespace HaXeContext
         /// <summary>
         /// Get build/run/clean commands
         /// </summary>
-        static string GetCommand(HaxeProject project, string name)
-        {
-            return GetCommand(project, name, true);
-        }
+        static string GetCommand(HaxeProject project, string name) => GetCommand(project, name, true);
 
         static string GetCommand(HaxeProject project, string name, bool processArguments)
         {
@@ -391,9 +381,9 @@ namespace HaXeContext
                 else if (platform.ExternalToolchain == "cmd") cmd = "/c " + cmd;
                 
                 if (!processArguments) return cmd;
-                else return PluginBase.MainForm.ProcessArgString(cmd);
+                return PluginBase.MainForm.ProcessArgString(cmd);
             }
-            else return null;
+            return null;
         }
     }
 }

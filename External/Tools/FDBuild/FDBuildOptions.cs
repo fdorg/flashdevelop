@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using Mono.GetOptions;
 using System.IO;
@@ -63,13 +62,13 @@ namespace FDBuild
 
         public string Language
         {
-            set {
+            set
+            {
                 if (LibraryDir == null) return;
-                if (language != null)
-                    extraClasspaths.Remove(Path.Combine(LibraryDir, Path.Combine(language, "classes")));
+                if (language != null) extraClasspaths.Remove(Path.Combine(LibraryDir, language, "classes"));
                 language = value;
+                var library = Path.Combine(LibraryDir, language, "classes");
                 // add the library classpath for the language
-                string library = Path.Combine(LibraryDir, Path.Combine(language, "classes"));
                 if (Directory.Exists(library) && language != "HAXE") extraClasspaths.Add(library);
             }
         }

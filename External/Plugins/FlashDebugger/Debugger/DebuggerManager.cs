@@ -220,7 +220,7 @@ namespace FlashDebugger
         /// </summary>
         public void RestoreOldLayout()
         {
-            String oldLayoutFile = Path.Combine(Path.Combine(PathHelper.DataDir, "FlashDebugger"), "oldlayout.fdl");
+            String oldLayoutFile = Path.Combine(PathHelper.DataDir, "FlashDebugger", "oldlayout.fdl");
             if (File.Exists(oldLayoutFile))
             {
                 PluginBase.MainForm.CallCommand("RestoreLayout", oldLayoutFile);
@@ -337,7 +337,7 @@ namespace FlashDebugger
             if (PluginMain.settingObject.SwitchToLayout != null)
             {
                 // save current state
-                String oldLayoutFile = Path.Combine(Path.Combine(PathHelper.DataDir, "FlashDebugger"), "oldlayout.fdl");
+                String oldLayoutFile = Path.Combine(PathHelper.DataDir, "FlashDebugger", "oldlayout.fdl");
                 PluginBase.MainForm.DockPanel.SaveAsXml(oldLayoutFile);
                 PluginBase.MainForm.CallCommand("RestoreLayout", PluginMain.settingObject.SwitchToLayout);
             }

@@ -121,11 +121,14 @@ namespace ProjectManager.Projects.Haxe
             string docFile = CompilerOptions.MainClass.Replace('.', Path.DirectorySeparatorChar) + ".hx";
             CompilerOptions.MainClass = "";
             foreach (string cp in AbsoluteClasspaths)
-                if (File.Exists(Path.Combine(cp, docFile)))
+            {
+                var path = Path.Combine(cp, docFile);
+                if (File.Exists(path))
                 {
-                    SetCompileTarget(Path.Combine(cp, docFile), false);
+                    SetCompileTarget(path, false);
                     break;
                 }
+            }
         }
 
         public override bool Clean()
@@ -152,7 +155,7 @@ namespace ProjectManager.Projects.Haxe
             return s;
         }
 
-        public string[] BuildHXML(string[] paths, string outfile, bool release )
+        public string[] BuildHXML(string[] paths, string outfile, bool release)
         {
             List<String> pr = new List<String>();
             var isFlash = IsFlashOutput;
@@ -263,7 +266,7 @@ namespace ProjectManager.Projects.Haxe
             if (!release)
             {
                 pr.Insert(0, "-debug");
-                if (CurrentSDK == null || CurrentSDK.IndexOf("Motion-Twin", StringComparison.Ordinal) < 0) // Haxe 3+
+                if (CurrentSDK == null || !CurrentSDK.Contains("Motion-Twin")) // Haxe 3+
                     pr.Insert(1, "--each");
                 if (isFlash && EnableInteractiveDebugger && CompilerOptions.EnableDebug)
                 {
@@ -288,15 +291,15 @@ namespace ProjectManager.Projects.Haxe
 
         public static HaxeProject Load(string path)
         {
-            string ext = Path.GetExtension(path).ToLower();
+            var ext = Path.GetExtension(path).ToLower();
             if (ext == ".hxml")
             {
-                HaxeProject hxproj = new HaxeProject(path);
+                var hxproj = new HaxeProject(path);
                 hxproj.RawHXML = File.ReadAllLines(path);
                 return hxproj;
             }
 
-            HaxeProjectReader reader = new HaxeProjectReader(path);
+            var reader = new HaxeProjectReader(path);
 
             try
             {
@@ -313,7 +316,7 @@ namespace ProjectManager.Projects.Haxe
                     var haxeTarget = string.Empty;
                     var output = string.Empty;
                     var mainClass = string.Empty;
-                    project.ParseHxmlEntries(hxmls, defs, cps, libs, adds, ref target, ref haxeTarget, ref output, ref mainClass);
+                    project.ParseHxmlEntries(hxmls, defs, cps, libs, adds, ref target, ref haxeTarget, ref output, ref mainClass, ".");
                     if (libs.Count > 0) options.Libraries = libs.ToArray();
                     if (defs.Count > 0) options.Directives = defs.ToArray();
                     if (adds.Count > 0) options.Additional = adds.ToArray();
@@ -332,10 +335,7 @@ namespace ProjectManager.Projects.Haxe
             finally { reader.Close(); }
         }
 
-        public override void Save()
-        {
-            SaveAs(ProjectPath);
-        }
+        public override void Save() => SaveAs(ProjectPath);
 
         public override void SaveAs(string fileName)
         {
@@ -345,13 +345,14 @@ namespace ProjectManager.Projects.Haxe
             if (!AllowedSaving(fileName)) return;
             try
             {
-                HaxeProjectWriter writer = new HaxeProjectWriter(this, fileName);
+                var writer = new HaxeProjectWriter(this, fileName);
                 writer.WriteProject();
                 writer.Flush();
                 writer.Close();
-                if (saveHXML && OutputType != OutputType.CustomBuild) {
-                    StreamWriter hxml = File.CreateText(Path.ChangeExtension(fileName, "hxml"));
-                    foreach( string e in BuildHXML(new string[0],this.OutputPath,true) )
+                if (saveHXML && OutputType != OutputType.CustomBuild)
+                {
+                    var hxml = File.CreateText(Path.ChangeExtension(fileName, "hxml"));
+                    foreach(string e in BuildHXML(new string[0], OutputPath, true))
                         hxml.WriteLine(e);
                     hxml.Close();
                 }
@@ -372,15 +373,15 @@ namespace ProjectManager.Projects.Haxe
                 raw = null;
             rawHXML = raw;
 
-            List<string> libs = new List<string>();
-            List<string> defs = new List<string>();
-            List<string> cps = new List<string>();
-            List<string> add = new List<string>();
-            string target = PlatformData.JAVASCRIPT_PLATFORM;
-            string haxeTarget = "js";
-            string output = "";
-            string mainClass = CompilerOptions.MainClass;
-            if (raw != null) ParseHxmlEntries(raw, defs, cps, libs, add, ref target, ref haxeTarget, ref output, ref mainClass);
+            var libs = new List<string>();
+            var defs = new List<string>();
+            var cps = new List<string>();
+            var add = new List<string>();
+            var target = PlatformData.JAVASCRIPT_PLATFORM;
+            var haxeTarget = "js";
+            var output = "";
+            var mainClass = CompilerOptions.MainClass;
+            if (raw != null) ParseHxmlEntries(raw, defs, cps, libs, add, ref target, ref haxeTarget, ref output, ref mainClass, ".");
             CompilerOptions.MainClass = mainClass;
             CompilerOptions.Directives = defs.ToArray();
             CompilerOptions.Libraries = libs.ToArray();
@@ -407,25 +408,25 @@ namespace ProjectManager.Projects.Haxe
             }
         }
 
-        private void ParseHxmlEntries(IEnumerable<string> lines, ICollection<string> defs, ICollection<string> cps, ICollection<string> libs, ICollection<string> add, ref string target, ref string haxeTarget, ref string output, ref string mainClass)
+        private void ParseHxmlEntries(IEnumerable<string> lines, ICollection<string> defs, ICollection<string> cps, ICollection<string> libs, ICollection<string> add, ref string target, ref string haxeTarget, ref string output, ref string mainClass, string cwd)
         {
-            Regex reHxOp = new Regex("^-([a-z0-9-]+)\\s*(.*)", RegexOptions.IgnoreCase);
-            foreach (string line in lines)
+            var reHxOp = new Regex("^-([a-z0-9-]+)\\s*(.*)", RegexOptions.IgnoreCase);
+            foreach (var line in lines)
             {
                 if (line == null) break;
-                string trimmedLine = line.Trim();
-                Match m = reHxOp.Match(trimmedLine);
+                var trimmedLine = line.Trim();
+                var m = reHxOp.Match(trimmedLine);
                 if (m.Success)
                 {
-                    string op = m.Groups[1].Value;
+                    var op = m.Groups[1].Value;
                     if (op == "-next")
                         break; // ignore the rest
 
-                    string value = m.Groups[2].Value.Trim();
+                    var value = m.Groups[2].Value.Trim();
                     switch (op)
                     {
                         case "D": defs.Add(value); break;
-                        case "cp": cps.Add(CleanPath(value)); break;
+                        case "cp": cps.Add(CleanPath(value, cwd)); break;
                         case "lib": libs.Add(value); break;
                         case "main": mainClass = value; break;
                         case "swf":
@@ -443,6 +444,9 @@ namespace ProjectManager.Projects.Haxe
                             break;
                         case "-connect": break; // ignore
                         case "-each": break; // ignore
+                        case "-cwd":
+                            cwd = CleanPath(value, cwd);
+                            break;
                         default:
                             // detect platform (-cpp output, -js output, ...)
                             var targetPlatform = FindPlatform(op);
@@ -458,7 +462,7 @@ namespace ProjectManager.Projects.Haxe
                 }
                 else if (!trimmedLine.StartsWith("#") && trimmedLine.EndsWith(".hxml", StringComparison.OrdinalIgnoreCase))
                 {
-                    var subhxml = GetAbsolutePath(trimmedLine);
+                    var subhxml = GetAbsolutePath(CleanPath(trimmedLine, cwd));
                     if (!File.Exists(subhxml)) continue;
                     var subhxmlDir = Path.GetDirectoryName(subhxml);
                     var sublines = new List<string>();
@@ -480,17 +484,17 @@ namespace ProjectManager.Projects.Haxe
                                 case "swf-lib-extern":
                                 case "cmd":
                                     var path = match.Groups[2].Value.Trim();
-                                    if (!Path.IsPathRooted(path)) subline = "-" + op + " " + GetRelativePath(CleanPath(Path.GetFullPath(Path.Combine(subhxmlDir, path))));
+                                    if (!Path.IsPathRooted(path)) subline = "-" + op + " " + GetRelativePath(CleanPath(Path.GetFullPath(Path.Combine(subhxmlDir, path)), cwd));
                                     break;
                             }
                         }
                         else if (subline.EndsWith(".hxml", StringComparison.OrdinalIgnoreCase) && !Path.IsPathRooted(subline))
                         {
-                            subline = GetRelativePath(CleanPath(Path.GetFullPath(Path.Combine(subhxmlDir, subline))));
+                            subline = GetRelativePath(CleanPath(Path.GetFullPath(Path.Combine(subhxmlDir, subline)), cwd));
                         }
                         sublines.Add(subline);
                     }
-                    ParseHxmlEntries(sublines, defs, cps, libs, add, ref target, ref haxeTarget, ref output, ref mainClass);
+                    ParseHxmlEntries(sublines, defs, cps, libs, add, ref target, ref haxeTarget, ref output, ref mainClass, cwd);
                 }
             }
         }
@@ -505,7 +509,7 @@ namespace ProjectManager.Projects.Haxe
             return null;
         }
 
-        private string CleanPath(string path)
+        private string CleanPath(string path, string cwd)
         {
             path = path.Replace("\"", string.Empty);
             path = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar).TrimEnd(Path.DirectorySeparatorChar);
@@ -513,7 +517,7 @@ namespace ProjectManager.Projects.Haxe
             if (Path.IsPathRooted(path)) return path;
             
             var relDir = Path.GetDirectoryName(ProjectPath);
-            var absPath = Path.GetFullPath(Path.Combine(relDir, path));
+            var absPath = Path.GetFullPath(Path.Combine(relDir, cwd, path));
             return GetRelativePath(absPath);
         }
         #endregion

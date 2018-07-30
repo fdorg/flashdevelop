@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using ASCompletion.Completion;
 using ASCompletion.Context;
@@ -36,9 +37,11 @@ namespace ASCompletion
             settings.SmartIndentType = SmartIndent.CPP;
             settings.TabIndents = true;
             settings.TabWidth = 4;
+            settings.DefaultFont.Returns(SystemFonts.DefaultFont);
             doc = Substitute.For<ITabbedDocument>();
             mainForm.Settings = settings;
             mainForm.CurrentDocument = doc;
+            mainForm.Documents = new[] {doc};
             mainForm.StandaloneMode = true;
             PluginBase.Initialize(mainForm);
             FlashDevelop.Managers.ScintillaManager.LoadConfiguration();
@@ -101,12 +104,14 @@ namespace ASCompletion
         {
             sci.Text = sourceText;
             SnippetHelper.PostProcessSnippets(sci, 0);
+            sci.Colourise(0, -1);
             var currentModel = ASContext.Context.CurrentModel;
-            new ASFileParser().ParseSrc(currentModel, sci.Text);
+            ASContext.Context.GetCodeModel(currentModel, sci.Text);
             var line = sci.CurrentLine;
             var currentClass = currentModel.Classes.FirstOrDefault(line);
+            if (currentClass == null && currentModel.Classes.Count > 0) currentClass = currentModel.Classes[0];
             ASContext.Context.CurrentClass.Returns(currentClass);
-            var currentMember = currentClass.Members.FirstOrDefault(line);
+            var currentMember = currentClass?.Members.FirstOrDefault(line);
             ASContext.Context.CurrentMember.Returns(currentMember);
             ASGenerator.contextToken = sci.GetWordFromPosition(sci.CurrentPos);
         }

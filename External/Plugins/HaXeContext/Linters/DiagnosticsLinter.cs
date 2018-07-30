@@ -27,7 +27,7 @@ namespace HaXeContext.Linters
         {
             var context = ASContext.GetLanguageContext("haxe") as Context;
 
-            if (context == null || !CanContinue(context)) return;
+            if (context == null || !(PluginBase.CurrentProject is ProjectManager.Projects.Haxe.HaxeProject) || !CanContinue(context)) return;
             
             var total = files.Count();
             var list = new List<LintingResult>();

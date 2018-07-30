@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.Remoting.Channels.Ipc;
-using System.Text;
 using ProjectManager.Projects.AS3;
 using ProjectManager.Helpers;
 using System.IO;
 using FDBuild.Building.AS3;
-using System.Collections;
 using PluginCore.Helpers;
 using ProjectManager.Projects;
 using System.Text.RegularExpressions;
@@ -133,9 +130,7 @@ namespace ProjectManager.Building.AS3
             // when path is not provided in program arguments.
             string toolsDir = Path.GetDirectoryName(FDBuildDirectory);
             string firstRunDir = Path.GetDirectoryName(toolsDir);
-            string dataDir = Path.Combine(firstRunDir, "Data");
-            string pmDir = Path.Combine(dataDir, "ProjectManager");
-            string fdbuildHints = Path.Combine(pmDir, "FDBuildHints.txt");
+            string fdbuildHints = Path.Combine(firstRunDir, "Data", "ProjectManager", "FDBuildHints.txt");
 
             if (File.Exists(fdbuildHints))
             {
@@ -143,8 +138,7 @@ namespace ProjectManager.Building.AS3
                 {
                     flexsdkPath = reader.ReadLine();
                 }
-                if (!Directory.Exists(flexsdkPath))
-                    Console.WriteLine("Compiler path configured in FDBuildHints.txt doesn't exist:\n" + flexsdkPath);
+                if (!Directory.Exists(flexsdkPath)) Console.WriteLine("Compiler path configured in FDBuildHints.txt doesn't exist:\n" + flexsdkPath);
                 else
                 {
                     Console.WriteLine("Using compiler defined in FDBuildHints.txt");

@@ -44,6 +44,8 @@ namespace CodeRefactor.Commands
                     return;
                 }
             }
+
+            string originalOld = oldPath;
             // refactor failed or was refused
             if (Path.GetFileName(oldPath).Equals(newPath, StringComparison.OrdinalIgnoreCase))
             {
@@ -57,8 +59,8 @@ namespace CodeRefactor.Commands
             if (FileHelper.ConfirmOverwrite(newPath))
             {
                 FileHelper.ForceMove(oldPath, newPath);
-                DocumentManager.MoveDocuments(oldPath, newPath);
-                RefactoringHelper.RaiseMoveEvent(oldPath, newPath);
+                DocumentManager.MoveDocuments(originalOld, newPath);
+                RefactoringHelper.RaiseMoveEvent(originalOld, newPath);
             }
         }
 

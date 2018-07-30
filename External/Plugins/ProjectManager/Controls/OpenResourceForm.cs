@@ -353,6 +353,10 @@ namespace ProjectManager.Controls
                         AddFilesInFolder(files, sub);
                     }
                 }
+                catch (UnauthorizedAccessException)
+                {
+                    // Sometimes after a directory is deleted it still "exists" for some time, but any operation on it results in "Access denied".
+                }
                 catch (PathTooLongException)
                 {
                     // Catch this error to avoid crashing the IDE.  There isn't really a graceful way to handle this.

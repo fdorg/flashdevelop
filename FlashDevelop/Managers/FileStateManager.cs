@@ -40,9 +40,8 @@ namespace FlashDevelop.Managers
             try
             {
                 if (!document.IsEditable) return;
-                String fileStateDir = FileNameHelper.FileStateDir;
                 String fileName = ConvertToFileName(document.FileName);
-                String stateFile = Path.Combine(fileStateDir, fileName + ".fdb");
+                String stateFile = Path.Combine(FileNameHelper.FileStateDir, fileName + ".fdb");
                 if (File.Exists(stateFile))
                 {
                     StateObject so = new StateObject();
@@ -64,8 +63,7 @@ namespace FlashDevelop.Managers
             try
             {
                 String fileName = ConvertToFileName(file);
-                String fileStateDir = FileNameHelper.FileStateDir;
-                String stateFile = Path.Combine(fileStateDir, fileName + ".fdb");
+                String stateFile = Path.Combine(FileNameHelper.FileStateDir, fileName + ".fdb");
                 if (File.Exists(stateFile)) File.Delete(stateFile);
             }
             catch (Exception ex)

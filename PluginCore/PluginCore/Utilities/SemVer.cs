@@ -2,6 +2,7 @@
 {
     /// <summary>
     /// Represents a semantic version, see http://semver.org/
+    /// Follows Semantic Versioning 2.0.0
     /// </summary>
     public class SemVer
     {
@@ -17,9 +18,12 @@
 
         public SemVer(string version)
         {
-            // ignore the pre-release denotation if present
+            // TODO: Parse and expose pre-release and build metadata
+            // ignore the pre-release and build metadata denotation if present
             int hyphenIndex = version.IndexOf('-');
             if (hyphenIndex >= 0) version = version.Substring(0, hyphenIndex);
+            int plusIndex = version.IndexOf('+');
+            if (plusIndex >= 0) version = version.Substring(0, plusIndex);
 
             string[] numbers = version.Split('.');
 

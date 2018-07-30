@@ -74,13 +74,17 @@ namespace HaXeContext.Generators
             if (parameters.Length == 0) return list;
             var toClean = new[] {' ', '\t', '\n', '\r', '?'};
             var braCount = 0;
+            var genCount = 0;
             var sb = new StringBuilder();
-            for (var i = 0; i < parameters.Length; i++)
+            var length = parameters.Length - 1;
+            for (var i = 0; i <= length; i++)
             {
                 var c = parameters[i];
                 if (c == '{') braCount++;
                 else if (c == '}') braCount--;
-                if (braCount == 0 && (c == ',' || i == parameters.Length - 1))
+                else if (c == '<') genCount++;
+                else if (c == '>' && i > 0 && parameters[i - 1] != '-') genCount--;
+                if (braCount == 0 && genCount == 0 && (c == ',' || i == length))
                 {
                     var s = sb.ToString();
                     sb.Clear();

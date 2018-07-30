@@ -94,6 +94,7 @@ namespace PluginCore
         private String path;
         private String name;
         private String version;
+        private String classPath;
         private bool isValid;
 
         [field: NonSerialized]
@@ -140,6 +141,19 @@ namespace PluginCore
                 catch { return false; }
                 return true;
             }
+        }
+
+        [Browsable(false)]
+        public bool IsHaxeShim
+        {
+            get { return this.classPath != null; }
+        }
+
+        [Browsable(false)]
+        public string ClassPath
+        {
+            get { return this.classPath; }
+            set { this.classPath = value; }
         }
 
         [Browsable(false)]

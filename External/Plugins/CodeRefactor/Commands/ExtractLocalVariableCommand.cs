@@ -55,10 +55,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Indicates if the current settings for the refactoring are valid.
         /// </summary>
-        public override bool IsValid()
-        {
-            return true;
-        }
+        public override bool IsValid() => true;
 
         /// <summary>
         /// Entry point to execute renaming.
@@ -66,20 +63,18 @@ namespace CodeRefactor.Commands
         protected override void ExecutionImplementation()
         {
             var sci = PluginBase.MainForm.CurrentDocument.SciControl;
-            var fileModel = ASContext.Context.CurrentModel;
-            var parser = new ASFileParser();
-            parser.ParseSrc(fileModel, sci.Text);
+            var fileModel = ASContext.Context.GetCodeModel(ASContext.Context.CurrentModel, sci.Text);
             var search = new FRSearch(sci.SelText) {SourceFile = sci.FileName};
-            var mathes = search.Matches(sci.Text);
+            var matches = search.Matches(sci.Text);
             var currentMember = fileModel.Context.CurrentMember;
             var lineFrom = currentMember.LineFrom;
             var lineTo = currentMember.LineTo;
-            mathes.RemoveAll(it => it.Line < lineFrom || it.Line > lineTo);
-            var target = mathes.FindAll(it => sci.MBSafePosition(it.Index) == sci.SelectionStart);
-            if (mathes.Count > 1)
+            matches.RemoveAll(it => it.Line < lineFrom || it.Line > lineTo);
+            var target = matches.FindAll(it => sci.MBSafePosition(it.Index) == sci.SelectionStart);
+            if (matches.Count > 1)
             {
                 CompletionList = new List<ICompletionListItem> {new CompletionListItem(target, sci, OnItemClick)};
-                CompletionList.Insert(0, new CompletionListItem(mathes, sci, OnItemClick));
+                CompletionList.Insert(0, new CompletionListItem(matches, sci, OnItemClick));
                 sci.DisableAllSciEvents = true;
                 PluginCore.Controls.CompletionList.Show(CompletionList, true);
             }
@@ -113,13 +108,23 @@ namespace CodeRefactor.Commands
             if (string.IsNullOrEmpty(newName)) newName = GetNewName();
             if (string.IsNullOrEmpty(newName)) return;
             var sci = PluginBase.MainForm.CurrentDocument.SciControl;
+            var pos = sci.SelectionEnd;
+            var expr = ASComplete.GetExpressionType(sci, pos, false, true);
+            var type = !expr.IsNull() && expr.Type != null ? expr.Type.Name : string.Empty;
+            MemberModel import = null;
+            var ctx = ASContext.Context;
+            if (type != null && ctx.Settings.GenerateImports)
+            {
+                var model = expr.Type;
+                if (!string.IsNullOrEmpty(model?.InFile.Package) && !ctx.IsImported(model, sci.LineFromPosition(pos))) import = model;
+            }
             sci.BeginUndoAction();
             try
             {
-                var expression = sci.SelText.Trim(new char[] {'=', ' ', '\t', '\n', '\r', ';', '.'});
-                expression = expression.TrimEnd(new char[] {'(', '[', '{', '<'});
-                expression = expression.TrimStart(new char[] {')', ']', '}', '>'});
-                var insertPosition = sci.PositionFromLine(ASContext.Context.CurrentMember.LineTo);
+                var expression = sci.SelText.Trim('=', ' ', '\t', '\n', '\r', ';', '.');
+                expression = expression.TrimEnd('(', '[', '{', '<');
+                expression = expression.TrimStart(')', ']', '}', '>');
+                var insertPosition = sci.PositionFromLine(ctx.CurrentMember.LineTo);
                 foreach (var match in matches)
                 {
                     var position = sci.MBSafePosition(match.Index);
@@ -130,7 +135,7 @@ namespace CodeRefactor.Commands
                 insertPosition = sci.LineIndentPosition(insertPosition);
                 RefactoringHelper.ReplaceMatches(matches, sci, newName);
                 sci.SetSel(insertPosition, insertPosition);
-                var member = new MemberModel(newName, string.Empty, FlagType.LocalVar, 0) {Value = expression};
+                var member = new MemberModel(newName, type, FlagType.LocalVar, 0) {Value = expression};
                 var snippet = TemplateUtils.GetTemplate("Variable");
                 snippet = TemplateUtils.ReplaceTemplateVariable(snippet, "Modifiers", null);
                 snippet = TemplateUtils.ToDeclarationString(member, snippet);
@@ -141,6 +146,7 @@ namespace CodeRefactor.Commands
                     match.Line += 1;
                 }
                 Results = new Dictionary<string, List<SearchMatch>> {{sci.FileName, matches}};
+                if (import != null) ASGenerator.GenerateJob(GeneratorJobType.AddImport, import, null, null, null);
                 if (OutputResults) ReportResults();
             }
             finally
@@ -211,7 +217,7 @@ namespace CodeRefactor.Commands
             Sci = sci;
         }
 
-        public string Label { get { return Text; } }
+        public string Label => Text;
 
         public string Value
         {

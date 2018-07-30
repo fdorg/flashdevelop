@@ -3,7 +3,7 @@ package org.flashdevelop.test.haxe.generator.extractlocalvariable {
 
 	public class ExtractLocalVariable extends Sprite {
 		public function extractLocalVariable() {
-			var newVar = "child";
+			var newVar:String = "child";
 			var name = getChildByName(newVar).name;
 		}
 	}

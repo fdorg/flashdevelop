@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Text;
 using System.Drawing;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using FlashDevelop.Controls;
-using System.ComponentModel;
 using System.Windows.Forms;
-using PluginCore.Managers;
 using PluginCore.Localization;
 using PluginCore.Controls;
 using PluginCore;

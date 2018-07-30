@@ -40,8 +40,7 @@ namespace FlashDebugger.Debugger
 
         private string GetWatchFile(string path)
         {
-            String dataDir = Path.Combine(PathHelper.DataDir, "FlashDebugger");
-            String cacheDir = Path.Combine(dataDir, "Watch");
+            String cacheDir = Path.Combine(PathHelper.DataDir, "FlashDebugger", "Watch");
             if (!Directory.Exists(cacheDir)) Directory.CreateDirectory(cacheDir);
             String hashFileName = HashCalculator.CalculateSHA1(path);
             return Path.Combine(cacheDir, hashFileName + ".xml");

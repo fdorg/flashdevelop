@@ -2,13 +2,10 @@ using System;
 using System.IO;
 using System.Drawing;
 using System.Diagnostics;
-using System.ComponentModel;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using PluginCore.Localization;
 using FlashDevelop.Helpers;
-using PluginCore.Helpers;
-using PluginCore;
 
 namespace FlashDevelop.Dialogs
 {
@@ -121,13 +118,16 @@ namespace FlashDevelop.Dialogs
         private void ApplyLocalizedTexts()
         {
             String name = Application.ProductName;
-            this.Text = " " + TextHelper.GetString("Title.AboutDialog");
+            String bit = Application.ExecutablePath.Contains("64") ? "[x64]" : "[x86]";
+            this.Text = " " + TextHelper.GetString("Title.AboutDialog") + " " + bit;
             this.versionLabel.Font = new Font(this.Font, FontStyle.Bold);
             this.versionLabel.Text = name;
             Regex shaRegex = new Regex("#([a-f0-9]*)");
             String sha = shaRegex.Match(name).Captures[0].ToString().Remove(0, 1);
             String link = "www.github.com/fdorg/flashdevelop/commit/" + sha;
-            this.versionLabel.Links.Add(new LinkLabel.Link(name.IndexOf('('), versionLabel.Text.Length, link));
+            Int32 lastChar = this.versionLabel.Text.Length;
+            Int32 firstChar = this.versionLabel.Text.IndexOf('(');
+            this.versionLabel.Links.Add(new LinkLabel.Link(firstChar, lastChar, link));
             ToolTip tooltip = new ToolTip();
             tooltip.SetToolTip(versionLabel, link);
         }
@@ -138,7 +138,7 @@ namespace FlashDevelop.Dialogs
         private void VersionLabelLinkClicked(Object sender, LinkLabelLinkClickedEventArgs e)
         {
             string target = e.Link.LinkData as String;
-            if (target != null) System.Diagnostics.Process.Start(target);
+            if (target != null) Process.Start(target);
         }
 
         /// <summary>
@@ -166,7 +166,9 @@ namespace FlashDevelop.Dialogs
         public static new void Show()
         {
             using (AboutDialog aboutDialog = new AboutDialog())
+            {
                 aboutDialog.ShowDialog();
+            }
         }
 
         #endregion

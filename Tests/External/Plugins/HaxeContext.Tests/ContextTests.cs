@@ -3,8 +3,8 @@ using System.Linq;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using ASCompletion.Model;
-using ASCompletion.TestUtils;
 using HaXeContext.TestUtils;
+using NSubstitute;
 using NUnit.Framework;
 using PluginCore;
 
@@ -13,18 +13,14 @@ namespace HaXeContext
     [TestFixture]
     class ContextTests : ASCompleteTests
     {
-        protected static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
+        static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
 
-        protected static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.parser.{fileName}.hx";
+        static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.parser.{fileName}.hx";
 
         [TestFixtureSetUp]
-        public void ContextTestsSetUp()
-        {
-            ASContext.Context.SetHaxeFeatures();
-            sci.ConfigurationLanguage = "haxe";
-        }
+        public void ContextTestsSetUp() => SetHaxeFeatures(sci);
 
-        IEnumerable<TestCaseData> DecomposeTypesTestCases
+        static IEnumerable<TestCaseData> DecomposeTypesTestCases
         {
             get
             {
@@ -76,7 +72,7 @@ namespace HaXeContext
         [Test, TestCaseSource(nameof(DecomposeTypesTestCases))]
         public IEnumerable<string> DecomposeTypes(IEnumerable<string> types) => ASContext.Context.DecomposeTypes(types);
 
-        static IEnumerable<TestCaseData> ParseFile_Issue1849TestCases
+        static IEnumerable<TestCaseData> ParseFileIssue1849TestCases
         {
             get
             {
@@ -95,15 +91,15 @@ namespace HaXeContext
             }
         }
 
-        [Test, TestCaseSource(nameof(ParseFile_Issue1849TestCases))]
-        public string ParseFile_Issue1849(string sourceText)
+        [Test, TestCaseSource(nameof(ParseFileIssue1849TestCases))]
+        public string ParseFileIssue1849(string sourceText)
         {
             var model = ASContext.Context.GetCodeModel(sourceText);
             var interfaceType = ASContext.Context.ResolveType(model.Classes.First().Implements.First(), model);
             return interfaceType.Type;
         }
 
-        static IEnumerable<TestCaseData> ResolveDotContext_issue750TestCases
+        static IEnumerable<TestCaseData> ResolveDotContextIssue750TestCases
         {
             get
             {
@@ -122,25 +118,15 @@ namespace HaXeContext
             }
         }
 
-        [Test, TestCaseSource(nameof(ResolveDotContext_issue750TestCases))]
-        public void ResolveDotContext_issue750(string sourceText, MemberModel code)
+        [Test, TestCaseSource(nameof(ResolveDotContextIssue750TestCases))]
+        public void ResolveDotContextIssue750(string sourceText, MemberModel code)
         {
             ((HaXeSettings)ASContext.Context.Settings).CompletionMode = HaxeCompletionModeEnum.FlashDevelop;
             SetSrc(sci, sourceText);
+            var mix = new MemberList();
             var expr = ASComplete.GetExpression(sci, sci.CurrentPos);
-            var list = ASContext.Context.ResolveDotContext(sci, expr, false);
-            if (code == null) Assert.IsNull(list);
-            else
-            {
-                var members = ASContext.Context.ResolveType(ASContext.Context.Features.stringKey, ASContext.Context.CurrentModel)
-                    .Members.Items.Where(it => !it.Flags.HasFlag(FlagType.Static) && it.Access.HasFlag(Visibility.Public))
-                    .ToArray();
-                var expectedList = new MemberList();
-                foreach (var member in members) expectedList.Add(member);
-                expectedList.Add(code);
-                expectedList.Sort();
-                Assert.AreEqual(expectedList, list);
-            }
+            ASContext.Context.ResolveDotContext(sci, expr, mix);
+            Assert.AreEqual(code, mix.Items.FirstOrDefault());
         }
 
         static IEnumerable<TestCaseData> IsImportedTestCases
@@ -148,13 +134,23 @@ namespace HaXeContext
             get
             {
                 yield return new TestCaseData(ReadAllText("IsImported_case1"))
-                    .Returns(true);
+                    .Returns(true)
+                    .SetName("Case 1");
                 yield return new TestCaseData(ReadAllText("IsImported_case2"))
-                    .Returns(false);
+                    .Returns(false)
+                    .SetName("Case 2");
                 yield return new TestCaseData(null)
                     .Returns(false)
                     .SetName("ClassModel.VoidClass")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1930");
+                yield return new TestCaseData(ReadAllText("IsImported_issue1969_1"))
+                    .Returns(true)
+                    .SetName("Issue 1969. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1969");
+                yield return new TestCaseData(ReadAllText("IsImported_issue1969_2"))
+                    .Returns(true)
+                    .SetName("Issue 1969. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1969");
             }
         }
 
@@ -165,14 +161,19 @@ namespace HaXeContext
             if (sourceText != null)
             {
                 SetSrc(sci, sourceText);
-                var type = sci.GetWordFromPosition(sci.CurrentPos);
-                member = new MemberModel(type, type, FlagType.Class, Visibility.Public);
+                var expr = ASComplete.GetExpressionType(sci, ASComplete.ExpressionEndPosition(sci, sci.CurrentPos), false, true);
+                if (expr.Type != null) member = expr.Type;
+                else
+                {
+                    var type = sci.GetWordFromPosition(sci.CurrentPos);
+                    member = new MemberModel(type, type, FlagType.Class, Visibility.Public);
+                }
             }
             else member = ClassModel.VoidClass;
             return ASContext.Context.IsImported(member, sci.CurrentLine);
         }
 
-        IEnumerable<TestCaseData> ResolveTokenTestCases
+        static IEnumerable<TestCaseData> ResolveTokenTestCases
         {
             get
             {
@@ -206,22 +207,50 @@ namespace HaXeContext
                 yield return new TestCaseData("[1 => 1]", "3.4.0")
                     .Returns(new ClassModel {Name = "Map<K, V>", Type = "Map<K, V>", InFile = FileModel.Ignore})
                     .SetName("[1 => 1]");
-                yield return new TestCaseData("(v is String)", "3.4.0")
-                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore});
-                yield return new TestCaseData("(['is'] is Array)", "3.4.0")
-                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore});
-                yield return new TestCaseData("(' is string' is String)", "3.4.0")
-                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore});
-                yield return new TestCaseData("({x:Int, y:Int} is Point)", "3.4.0")
-                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore});
-                yield return new TestCaseData("('   is  ' is Array)", "3.4.0")
-                    .Returns(new ClassModel { Name = "Bool", Type = "Bool", InFile = FileModel.Ignore});
-                yield return new TestCaseData("('   is  '   is  Array)", "3.4.0")
-                    .Returns(new ClassModel { Name = "Bool", Type = "Bool", InFile = FileModel.Ignore});
                 yield return new TestCaseData("(v:String)", "3.4.0")
-                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore});
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore})
+                    .SetName("(v:String). Haxe 3.4.0");
+                yield return new TestCaseData("(v:Map<Dynamic, Dynamic>)", "3.4.0")
+                    .Returns(new ClassModel {Name = "Map<Dynamic,Dynamic>", Type = "Map<Dynamic,Dynamic>", InFile = FileModel.Ignore})
+                    .SetName("(v:Map<Dynamic, Dynamic>). Haxe 3.4.0");
+                yield return new TestCaseData("(v:Map<Dynamic, {x:Int}>)", "3.4.0")
+                    .Returns(new ClassModel {Name = "Map<Dynamic,{x:Int}>", Type = "Map<Dynamic,{x:Int}>", InFile = FileModel.Ignore})
+                    .SetName("(v:Map<Dynamic, {x:Int}>). Haxe 3.4.0");
                 yield return new TestCaseData("(v:String)", "3.0.0")
+                    .Returns(ClassModel.VoidClass)
+                    .SetName("(v:String). Haxe 3.0.0");
+                yield return new TestCaseData("new Sprite().addChild(new Sprite())", "3.0.0")
                     .Returns(ClassModel.VoidClass);
+                yield return new TestCaseData("new String('1')", "3.0.0")
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore})
+                    .SetName("new String('1')");
+                yield return new TestCaseData("(v is String)", "3.4.0")
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
+                    .SetName("(v is String)");
+                yield return new TestCaseData("(['is'] is Array)", "3.4.0")
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
+                    .SetName("(['is'] is Array)");
+                yield return new TestCaseData("(' is string' is String)", "3.4.0")
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
+                    .SetName("(' is string' is String)");
+                yield return new TestCaseData("({x:Int, y:Int} is Point)", "3.4.0")
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
+                    .SetName("({x:Int, y:Int} is Point)");
+                yield return new TestCaseData("('   is  ' is Array)", "3.4.0")
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
+                    .SetName("('   is  ' is Array)");
+                yield return new TestCaseData("('   is  '   is  Array)", "3.4.0")
+                    .Returns(new ClassModel {Name = "Bool", Type = "Bool", InFile = FileModel.Ignore})
+                    .SetName("('   is  '   is  Array)");
+                yield return new TestCaseData("cast('s', String)", "3.4.0")
+                    .Returns(new ClassModel {Name = "String", Type = "String", InFile = FileModel.Ignore})
+                    .SetName("cast('s', String)");
+                yield return new TestCaseData("cast(v, Array<Dynamic>)", "3.4.0")
+                    .Returns(new ClassModel {Name = "Array<Dynamic>", Type = "Array<Dynamic>", InFile = FileModel.Ignore})
+                    .SetName("cast(v, Array<Dynamic>)");
+                yield return new TestCaseData("cast(v, Map<Dynamic, Dynamic>)", "3.4.0")
+                    .Returns(new ClassModel {Name = "Map<Dynamic,Dynamic>", Type = "Map<Dynamic,Dynamic>", InFile = FileModel.Ignore})
+                    .SetName("cast(v, Map<Dynamic, Dynamic>)");
             }
         }
 
@@ -230,6 +259,123 @@ namespace HaXeContext
         {
             ASContext.Context.Settings.InstalledSDKs = new[] {new InstalledSDK {Path = PluginBase.CurrentProject.CurrentSDK, Version = sdkVersion}};
             return ASContext.Context.ResolveToken(token, null);
+        }
+
+        static IEnumerable<TestCaseData> GetTopLevelElementsTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("GetTopLevelElements_1", new MemberModel("Foo", string.Empty, FlagType.Enum | FlagType.Static | FlagType.Variable, Visibility.Public))
+                    .Returns(true)
+                    .SetName("Case 1. enum");
+                yield return new TestCaseData("GetTopLevelElements_2", new MemberModel("Foo", string.Empty, FlagType.Enum | FlagType.Static | FlagType.Variable, Visibility.Public))
+                    .Returns(true)
+                    .SetName("Case 2. @:enum abstract");
+                yield return new TestCaseData("GetTopLevelElements_3", new MemberModel("toString", string.Empty, FlagType.Function, Visibility.Public))
+                    .Returns(false)
+                    .SetName("Case 3. @:enum abstract without variables");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(GetTopLevelElementsTestCases))]
+        public bool GetTopLevelElements(string fileName, MemberModel member)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            var context = ((ASContext) ASContext.GetLanguageContext("haxe"));
+            context.CurrentModel = ASContext.Context.CurrentModel;
+            context.completionCache.IsDirty = true;
+            var topLevelElements = context.GetTopLevelElements();
+            return topLevelElements.Items.Contains(member);
+        }
+
+        static IEnumerable<TestCaseData> ResolveTopLevelElementTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("ResolveTopLevelElement_enum")
+                    .Returns(new MemberModel("EFoo", "Foo", FlagType.Enum | FlagType.Static | FlagType.Variable, Visibility.Public));
+                yield return new TestCaseData("ResolveTopLevelElement_abstract")
+                    .Returns(new MemberModel("EFoo", "Foo", FlagType.Enum | FlagType.Static | FlagType.Variable, Visibility.Public));
+            }
+        }
+
+        [Test, TestCaseSource(nameof(ResolveTopLevelElementTestCases))]
+        public MemberModel ResolveTopLevelElement(string fileName)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            var context = (Context)ASContext.GetLanguageContext("haxe");
+            context.CurrentModel = ASContext.Context.CurrentModel;
+            context.completionCache.IsDirty = true;
+            context.GetVisibleExternalElements();
+            var result = new ASResult();
+            context.ResolveTopLevelElement("EFoo", result);
+            return result.Member;
+        }
+
+        static IEnumerable<TestCaseData> ParseFileIssue1150_1_TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("Issue1150_1")
+                    .Returns(new List<MemberModel> {new MemberModel("lpad", "String", FlagType.Access | FlagType.Static | FlagType.Function, Visibility.Public)})
+                    .SetName("Import static member. Issue 1150. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1150");
+                yield return new TestCaseData("Issue1150_2")
+                    .Returns(new List<MemberModel>
+                    {
+                        new MemberModel("rpad", "String", FlagType.Access | FlagType.Static | FlagType.Function, Visibility.Public),
+                        new MemberModel("lpad", "String", FlagType.Access | FlagType.Static | FlagType.Function, Visibility.Public),
+                    })
+                    .SetName("Import static member. Issue 1150. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1150");
+                yield return new TestCaseData("Issue1150_3")
+                    .Returns(new List<MemberModel> {new MemberModel("PI", "Float", FlagType.Static | FlagType.Getter | FlagType.Setter, Visibility.Public)})
+                    .SetName("Import static member. Issue 1150. Case 3")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1150");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(ParseFileIssue1150_1_TestCases))]
+        public List<MemberModel> ParseFileIssue1150_1(string fileName)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            var context = (Context)ASContext.GetLanguageContext("haxe");
+            context.CurrentModel = ASContext.Context.CurrentModel;
+            ASContext.Context.ResolveImports(null).ReturnsForAnyArgs(it =>
+            {
+                context.completionCache.Imports = null;
+                return context.ResolveImports(it.ArgAt<FileModel>(0));
+            });
+            var imports = ASContext.Context.ResolveImports(context.CurrentModel);
+            return imports.Items;
+        }
+        static IEnumerable<TestCaseData> ParseFileIssue1150_2_TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("Issue1150_4", "Math")
+                    .SetName("Import static member. Issue 1150. Case 4")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/1150");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(ParseFileIssue1150_2_TestCases))]
+        public void ParseFileIssue1150_2(string fileName, string fromClass)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            var context = (Context)ASContext.GetLanguageContext("haxe");
+            context.CurrentModel = ASContext.Context.CurrentModel;
+            ASContext.Context.ResolveImports(null).ReturnsForAnyArgs(it =>
+            {
+                context.completionCache.Imports = null;
+                return context.ResolveImports(it.ArgAt<FileModel>(0));
+            });
+            var type = ASContext.Context.ResolveType(fromClass, ASContext.Context.CurrentModel);
+            var expectedImports = type.Members.Items.Where(it => (it.Flags & FlagType.Static) != 0 && (it.Access & Visibility.Public) != 0).ToList();
+            var actualImports = ASContext.Context.ResolveImports(context.CurrentModel);
+            expectedImports.Sort();
+            actualImports.Sort();
+            Assert.AreEqual(expectedImports, actualImports.Items);
         }
     }
 }

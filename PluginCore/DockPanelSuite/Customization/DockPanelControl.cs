@@ -1,10 +1,5 @@
-using System;
-using System.Text;
 using System.Drawing;
-using System.Windows.Forms;
-using System.Collections.Generic;
 using WeifenLuo.WinFormsUI.Docking;
-using PluginCore.Managers;
 using PluginCore;
 
 namespace System.Windows.Forms

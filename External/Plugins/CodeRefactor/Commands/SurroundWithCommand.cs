@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Text;
 using PluginCore;
@@ -98,8 +97,8 @@ namespace CodeRefactor.Commands
 
         public static string GetSnippet(string word, string syntax, Encoding current)
         {
-            string specific = Path.Combine(Path.Combine(Path.Combine(PathHelper.SnippetDir, syntax), SurroundFolder), word + SurroundExt);
-            string global = Path.Combine(Path.Combine(PathHelper.SnippetDir, SurroundFolder), word + SurroundExt);
+            string specific = Path.Combine(PathHelper.SnippetDir, syntax, SurroundFolder, word + SurroundExt);
+            string global = Path.Combine(PathHelper.SnippetDir, SurroundFolder, word + SurroundExt);
             if (File.Exists(specific))
             {
                 EncodingFileInfo info = FileHelper.GetEncodingFileInfo(specific);

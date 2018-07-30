@@ -4,7 +4,6 @@ using System.Windows.Forms;
 using FlashDevelop.Managers;
 using PluginCore.Localization;
 using PluginCore.Controls;
-using PluginCore.Helpers;
 
 namespace FlashDevelop.Dialogs
 {

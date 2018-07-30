@@ -332,9 +332,9 @@ namespace FlashDevelop.Utilities
                 String result = args;
                 if (result == null) return String.Empty;
                 result = ProcessCodeStyleLineBreaks(result);
-                if (!PluginBase.Settings.UseTabs) result = reTabs.Replace(result, new MatchEvaluator(ReplaceTabs));
-                result = reArgs.Replace(result, new MatchEvaluator(ReplaceVars));
-                if (!dispatch || result.IndexOf('$') < 0) return result;
+                if (!PluginBase.Settings.UseTabs) result = reTabs.Replace(result, ReplaceTabs);
+                result = reArgs.Replace(result, ReplaceVars);
+                if (!dispatch || !result.Contains('$')) return result;
                 TextEvent te = new TextEvent(EventType.ProcessArgs, result);
                 EventManager.DispatchEvent(Globals.MainForm, te);
                 result = ReplaceArgsWithGUI(te.Value);
@@ -408,14 +408,14 @@ namespace FlashDevelop.Utilities
         /// </summary>
         public static String ReplaceArgsWithGUI(String args)
         {
-            if (args.IndexOfOrdinal("$$(") < 0) return args;
+            if (!args.Contains("$$(")) return args;
             if (reEnvArgs.IsMatch(args)) // Environmental arguments
             {
-                args = reEnvArgs.Replace(args, new MatchEvaluator(ReplaceEnvArgs));
+                args = reEnvArgs.Replace(args, ReplaceEnvArgs);
             }
             if (reSpecialArgs.IsMatch(args)) // Special arguments
             {
-                args = reSpecialArgs.Replace(args, new MatchEvaluator(ReplaceSpecialArgs));
+                args = reSpecialArgs.Replace(args, ReplaceSpecialArgs);
             }
             if (reUserArgs.IsMatch(args)) // User arguments
             {
@@ -424,9 +424,9 @@ namespace FlashDevelop.Utilities
                     userArgs = rvd.Dictionary; // Save dictionary temporarily...
                     if (rvd.ShowDialog() == DialogResult.OK)
                     {
-                        args = reUserArgs.Replace(args, new MatchEvaluator(ReplaceUserArgs));
+                        args = reUserArgs.Replace(args, ReplaceUserArgs);
                     }
-                    else args = reUserArgs.Replace(args, new MatchEvaluator(ReplaceWithEmpty));
+                    else args = reUserArgs.Replace(args, ReplaceWithEmpty);
                 }
             }
             return args;

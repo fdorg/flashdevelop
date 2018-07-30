@@ -39,17 +39,15 @@ namespace ASCompletion.Model
         /// <summary>
         /// Free models & system watchers
         /// </summary>
-        static public void Compact()
+        public static void Compact()
         {
             lock (pathes)
             {
-                //TimeSpan keep = TimeSpan.FromMinutes(5);
-                Dictionary<string, PathModel> clean = new Dictionary<string, PathModel>();
-                foreach (string key in pathes.Keys)
+                var clean = new Dictionary<string, PathModel>();
+                foreach (var key in pathes.Keys)
                 {
-                    PathModel model = pathes[key];
-                    //TimeSpan span = DateTime.Now.Subtract(model.LastAccess);
-                    if (model.InUse/* || span < keep*/) clean.Add(key, model);
+                    var model = pathes[key];
+                    if (model.InUse) clean.Add(key, model);
                     else model.Cleanup();
                 }
                 pathes = clean;
@@ -62,10 +60,9 @@ namespace ASCompletion.Model
         /// <param name="path"></param>
         /// <param name="context">Associated language context</param>
         /// <returns></returns>
-        static public PathModel GetModel(string path, IASContext context)
+        public static PathModel GetModel(string path, IASContext context)
         {
-            if (context == null || context.Settings == null) 
-                return null;
+            if (context?.Settings == null) return null;
 
             string modelName = context.Settings.LanguageId + "|" + path.ToUpper();
             PathModel aPath;
@@ -76,7 +73,6 @@ namespace ASCompletion.Model
                 {
                     pathes[modelName] = aPath = new PathModel(path, context);
                 }
-                else aPath.Touch();
             }
             else pathes[modelName] = aPath = new PathModel(path, context);
             return aPath;
@@ -85,7 +81,6 @@ namespace ASCompletion.Model
         public volatile bool Updating;
         public bool WasExplored;
         public bool IsTemporaryPath;
-        public DateTime LastAccess;
         public string Path;
         public IASContext Owner;
         public bool IsValid;
@@ -131,10 +126,9 @@ namespace ASCompletion.Model
         public PathModel(string path, IASContext context)
         {
             Owner = context;
-            Path = path.TrimEnd(new char[] { '\\', '/' });
+            Path = path.TrimEnd('\\', '/');
 
             files = new Dictionary<string, FileModel>();
-            LastAccess = DateTime.Now;
 
             if (Owner != null)
             {
@@ -525,6 +519,20 @@ namespace ASCompletion.Model
             }
         }
 
+        public bool TryGetFile(string fileName, out FileModel value)
+        {
+            if (!IsValid)
+            {
+                value = null;
+                return false;
+            }
+
+            lock (lockObject)
+            {
+                return files.TryGetValue(fileName.ToUpper(), out value);
+            }
+        }
+
         public FileModel GetFile(string fileName)
         {
             if (!IsValid)
@@ -536,7 +544,6 @@ namespace ASCompletion.Model
             }
             lock (lockObject)
             {
-                Touch();
                 return files[fileName.ToUpper()];
             }
         }
@@ -556,7 +563,6 @@ namespace ASCompletion.Model
             if (!IsValid) return;
             lock (lockObject)
             {
-                Touch();
                 files.Clear();
                 foreach (FileModel model in newFiles.Values)
                     files[model.FileName.ToUpper()] = model;
@@ -567,7 +573,6 @@ namespace ASCompletion.Model
         {
             lock (lockObject)
             {
-                Touch();
                 foreach (FileModel model in files.Values)
                     if (!callback(model)) break;
             }
@@ -582,11 +587,6 @@ namespace ASCompletion.Model
                 OnFileRemove?.Invoke(files[fn]);
                 files.Remove(fn);
             }
-        }
-
-        public void Touch()
-        {
-            LastAccess = DateTime.Now;
         }
 
         public void Cleanup()

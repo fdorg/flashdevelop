@@ -1,11 +1,6 @@
 using System;
-using System.Drawing;
-using System.Diagnostics;
-using System.Collections;
-using System.ComponentModel;
 using System.Windows.Forms;
 using ProjectManager.Projects;
-using ProjectManager.Projects.AS2;
 using PluginCore.Localization;
 
 namespace ProjectManager.Controls.AS2

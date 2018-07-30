@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ASCompletion.Completion;
+using ASCompletion.Context;
 using PluginCore;
 using PluginCore.Utilities;
 using ScintillaNet;
@@ -20,19 +21,17 @@ namespace HaXeContext
             }
         }
 
-        protected override string[] BuildHxmlArgs()
+        protected override List<string> BuildHxmlArgs()
         {
-            var args = base.BuildHxmlArgs();
-
-            if (args == null) return null;
-            var list = new List<string>(args) {"-D display-stdin"};
-            var result = list.ToArray();
+            var result = base.BuildHxmlArgs();
+            if (result == null) return null;
+            if ((ASContext.GetLanguageContext("haxe") as Context)?.Settings is HaXeSettings settings
+                && (settings.EnabledFeatures & CompletionFeatures.DisplayStdIn) != 0
+                && settings.CompletionMode == HaxeCompletionModeEnum.CompletionServer)
+                result.Add("-D display-stdin");
             return result;
         }
 
-        protected override string GetFileContent()
-        {
-            return Sci.Text;
-        }
+        protected override string GetFileContent() => Sci.Text;
     }
 }

@@ -84,6 +84,7 @@ namespace CodeRefactor.Commands
         /// <param name="inline">Whether to use inline renaming.</param>
         public Rename(ASResult target, bool outputResults, string newName, bool ignoreDeclarationSource, bool inline = false)
         {
+            Results = new Dictionary<string, List<SearchMatch>>();
             if (target == null)
             {
                 TraceManager.Add("Refactor target is null.");
@@ -160,10 +161,7 @@ namespace CodeRefactor.Commands
         /// <summary>
         /// Indicates if the current settings for the refactoring are valid.
         /// </summary>
-        public override bool IsValid()
-        {
-            return isRenamePackage ? renamePackage.IsValid() : !string.IsNullOrEmpty(NewName);
-        }
+        public override bool IsValid() => isRenamePackage ? renamePackage.IsValid() : !string.IsNullOrEmpty(NewName);
 
         #endregion
 
@@ -219,7 +217,8 @@ namespace CodeRefactor.Commands
             if (string.IsNullOrEmpty(oldFileName) || oldFileName.Equals(newFileName)) return false;
 
             // Check if the new file name already exists
-            return FileHelper.ConfirmOverwrite(newFileName);
+            return oldFileName.Equals(newFileName, StringComparison.OrdinalIgnoreCase) 
+                || FileHelper.ConfirmOverwrite(newFileName);
         }
 
         /// <summary>
@@ -231,6 +230,7 @@ namespace CodeRefactor.Commands
             UserInterfaceManager.ProgressDialog.SetTitle(TextHelper.GetString("Info.UpdatingReferences"));
             MessageBar.Locked = true;
             var isParameterVar = (Target.Member?.Flags & FlagType.ParameterVar) > 0;
+            var fileName = PluginBase.MainForm.CurrentDocument.FileName;
             foreach (var entry in eventArgs.Results)
             {
                 UserInterfaceManager.ProgressDialog.UpdateStatusMessage(TextHelper.GetString("Info.Updating") + " \"" + entry.Key + "\"");
@@ -242,8 +242,9 @@ namespace CodeRefactor.Commands
                 {
                     var lineFrom = Target.Context.ContextFunction.LineFrom;
                     var lineTo = Target.Context.ContextFunction.LineTo;
-                    var search = new FRSearch(NewName) {WholeWord = true, NoCase = false, SingleLine = true};
-                    var matches = search.Matches(sci.Text, sci.PositionFromLine(lineFrom), lineFrom);
+                    var search = RefactoringHelper.GetFRSearch(NewName, false, false);
+                    var config = new FRConfiguration(fileName, search) {CacheDocuments = true};
+                    var matches = search.Matches(config.GetSource(fileName));
                     matches.RemoveAll(it => it.Line < lineFrom || it.Line > lineTo);
                     if (matches.Count != 0)
                     {
@@ -319,8 +320,8 @@ namespace CodeRefactor.Commands
             if (oldFileName.Equals(newFileName, StringComparison.OrdinalIgnoreCase))
             {
                 string tmpPath = oldFileName + "$renaming$";
-                RefactoringHelper.Move(oldFileName, tmpPath);
-                RefactoringHelper.Move(tmpPath, newFileName);
+                File.Move(oldFileName, tmpPath);
+                RefactoringHelper.Move(tmpPath, newFileName, true, oldFileName);
             }
             else
             {

@@ -172,11 +172,10 @@ namespace StartPage
         {
             Int32 lenght = DistroConfig.DISTRIBUTION_NAME.Length + 1;
             String dataDir = Path.Combine(PathHelper.DataDir, "StartPage");
-            String startPageDir = Path.Combine(PathHelper.AppDir, "StartPage");
             String localeName = PluginBase.MainForm.Settings.LocaleVersion.ToString();
             String version = Application.ProductName.Substring(lenght, Application.ProductName.IndexOfOrdinal(" for") - lenght);
             String fileWithArgs = "index.html?l=" + localeName + "&v=" + HttpUtility.HtmlEncode(version);
-            this.defaultStartPageUrl = Path.Combine(startPageDir, fileWithArgs);
+            this.defaultStartPageUrl = Path.Combine(PathHelper.AppDir, "StartPage", fileWithArgs);
             this.defaultRssUrl = DistroConfig.DISTRIBUTION_RSS; // Default feed...
             if (!Directory.Exists(dataDir)) Directory.CreateDirectory(dataDir);
             this.settingFilename = Path.Combine(dataDir, "Settings.fdb");

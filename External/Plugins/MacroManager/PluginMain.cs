@@ -320,9 +320,9 @@ namespace MacroManager
                         data = PluginBase.MainForm.ProcessArgString(entry.Substring(1));
                         if (data == "|") return; // Invalid, don't execute..
                     }
-                    if (data.IndexOf('|') != -1)
+                    if (data.Contains('|'))
                     {
-                        String[] parts = data.Split(new Char[1] { '|' });
+                        String[] parts = data.Split('|');
                         PluginBase.MainForm.CallCommand(parts[0], parts[1]);
                     }
                     else PluginBase.MainForm.CallCommand(data, "");

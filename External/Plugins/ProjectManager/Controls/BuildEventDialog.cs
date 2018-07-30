@@ -1,13 +1,8 @@
 using System;
-using System.IO;
 using System.Drawing;
-using System.Diagnostics;
-using System.Collections;
-using System.ComponentModel;
 using System.Windows.Forms;
 using ProjectManager.Projects;
 using PluginCore.Localization;
-using ProjectManager.Actions;
 using PluginCore.Controls;
 
 namespace ProjectManager.Controls

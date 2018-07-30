@@ -110,6 +110,7 @@
     <ProjectReference Include="..\..\..\PluginCore\PluginCore.csproj">
       <Project>{61885f70-b4dc-4b44-852d-5d6d03f2a734}</Project>
       <Name>PluginCore</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

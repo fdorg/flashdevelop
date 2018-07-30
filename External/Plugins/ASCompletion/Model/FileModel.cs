@@ -163,7 +163,7 @@ namespace ASCompletion.Model
             Package = "";
             Module = "";
             FileName = fileName ?? "";
-            haXe = (FileName.Length > 3) ? FileInspector.IsHaxeFile(FileName, Path.GetExtension(FileName)) : false;
+            haXe = (FileName.Length > 3) && FileInspector.IsHaxeFile(FileName, Path.GetExtension(FileName));
             //
             Namespaces = new Dictionary<string, Visibility>();
             //
@@ -202,7 +202,8 @@ namespace ASCompletion.Model
                 if (FileName != "" && File.Exists(FileName) && LastWriteTime < File.GetLastWriteTime(FileName))
                     try
                     {
-                        ASFileParser.ParseFile(this);
+                        if (Context != null) Context.GetCodeModel(this);
+                        else ASFileParser.ParseFile(this);
                         OnFileUpdate?.Invoke(this);
                     }
                     catch

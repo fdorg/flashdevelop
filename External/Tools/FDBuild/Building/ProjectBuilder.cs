@@ -1,7 +1,5 @@
 using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Text;
 using System.Reflection;
 using FDBuild.Building.AS3;
 using ProjectManager.Projects;
@@ -35,19 +33,15 @@ namespace ProjectManager.Building
 
         public static ProjectBuilder Create(Project project, string ipcName, string compilerPath)
         {
-            if (project is AS2Project)
-                return new AS2ProjectBuilder(project as AS2Project, compilerPath);
-            else if (project is AS3Project)
+            if (project is AS2Project) return new AS2ProjectBuilder(project as AS2Project, compilerPath);
+            if (project is AS3Project)
             {
                 if (Directory.Exists(Path.Combine(compilerPath, "js"))) return new FlexJSProjectBuilder((AS3Project) project, compilerPath);
                 return new AS3ProjectBuilder(project as AS3Project, compilerPath, ipcName);
             }
-            else if (project is HaxeProject)
-                return new HaxeProjectBuilder(project as HaxeProject, compilerPath);
-            else if (project is GenericProject)
-                return new GenericProjectBuilder(project as GenericProject, compilerPath);
-            else
-                throw new Exception("FDBuild doesn't know how to build " + project.GetType().Name);
+            if (project is HaxeProject) return new HaxeProjectBuilder(project as HaxeProject, compilerPath);
+            if (project is GenericProject) return new GenericProjectBuilder(project as GenericProject, compilerPath);
+            throw new Exception("FDBuild doesn't know how to build " + project.GetType().Name);
         }
 
         protected string FDBuildDirectory
