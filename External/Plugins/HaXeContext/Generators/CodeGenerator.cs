@@ -63,6 +63,15 @@ namespace HaXeContext.Generators
         }
 
         /// <inheritdoc />
+        protected override bool CanShowNewVarList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        {
+            var result = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
+            var inClass = result.RelClass ?? found.InClass;
+            return ((inClass.Flags & FlagType.TypeDef) == 0 || !result.IsStatic)
+                   && base.CanShowNewMethodList(sci, position, expr, found);
+        }
+
+        /// <inheritdoc />
         protected override bool CanShowGenerateGetter(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return contextToken == "get" && found.Member != null && found.Member.Flags.HasFlag(FlagType.Getter | FlagType.Setter);

@@ -382,7 +382,7 @@ namespace ASCompletion.Completion
                                 ShowNewMethodList(found, options);
                             }
                         }
-                        else ShowNewVarList(found, options);
+                        else if (CanShowNewVarList(sci, position, resolve, found)) ShowNewVarList(found, options);
                     }
                 }
                 else
@@ -531,6 +531,16 @@ namespace ASCompletion.Completion
         /// <param name="found">Declaration target at current line(can not be null)</param>
         /// <returns>true, if can show "Generate public function and Generate public callback" list</returns>
         protected virtual bool CanShowNewMethodList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found) => true;
+
+        /// <summary>
+        /// Check if "Generate public variable" are available at the current cursor position.
+        /// </summary>
+        /// <param name="sci">The Scintilla control containing the document</param>
+        /// <param name="position">Cursor position</param>
+        /// <param name="expr">Expression at cursor position</param>
+        /// <param name="found">Declaration target at current line(can not be null)</param>
+        /// <returns>true, if can show "Generate public function and Generate public callback" list</returns>
+        protected virtual bool CanShowNewVarList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found) => true;
 
         /// <summary>
         /// Check if "Add to interface" are available at the current cursor position.

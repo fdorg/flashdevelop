@@ -382,6 +382,14 @@ namespace HaXeContext.Generators
                     .Returns(null)
                     .SetName("Typedef.fo|o(). Issue 2295. Case 2.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2295");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2295_2", GeneratorJobType.FunctionPublic, false)
+                    .Returns(null)
+                    .SetName("Typedef.fo|o. Issue 2295. Case 3.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2295");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2295_2", GeneratorJobType.VariablePublic, false)
+                    .Returns(null)
+                    .SetName("Typedef.fo|o. Issue 2295. Case 4.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2295");
             }
         }
 
