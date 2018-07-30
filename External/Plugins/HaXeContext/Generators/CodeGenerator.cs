@@ -193,7 +193,7 @@ namespace HaXeContext.Generators
 
         protected override void GenerateFunction(MemberModel member, int position, ClassModel inClass, bool detach)
         {
-            if ((inClass.Flags & FlagType.TypeDef) != 0)
+            if (inClass.Flags.HasFlag(FlagType.TypeDef) || inClass.Flags.HasFlag(FlagType.Interface))
             {
                 var template = TemplateUtils.GetTemplate("IFunction");
                 if (string.IsNullOrEmpty(member.Type)) template = TemplateUtils.ReplaceTemplateVariable(template, "Type", ASContext.Context.Features.voidKey);

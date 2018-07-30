@@ -3272,7 +3272,34 @@ namespace ASCompletion.Completion
                     }
                 }
 
-                [Test, TestCaseSource(nameof(ContextualGeneratorTestCases))]
+                static IEnumerable<TestCaseData> Issue2297TestCases
+                {
+                    get
+                    {
+                        yield return new TestCaseData("BeforeContextualGenerator_issue2297_1", GeneratorJobType.FunctionPublic, false)
+                            .Returns(null)
+                            .SetName("Interface.fo|o(). Issue 2297. Case 1.")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2297");
+                        yield return new TestCaseData("BeforeContextualGenerator_issue2297_1", GeneratorJobType.VariablePublic, false)
+                            .Returns(null)
+                            .SetName("Interface.fo|o(). Issue 2297. Case 2.")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2297");
+                        yield return new TestCaseData("BeforeContextualGenerator_issue2297_2", GeneratorJobType.FunctionPublic, false)
+                            .Returns(null)
+                            .SetName("Interface.fo|o. Issue 2297. Case 2.")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2297");
+                        yield return new TestCaseData("BeforeContextualGenerator_issue2297_2", GeneratorJobType.VariablePublic, false)
+                            .Returns(null)
+                            .SetName("Interface.fo|o. Issue 2297. Case 2.")
+                            .SetDescription("https://github.com/fdorg/flashdevelop/issues/2297");
+                    }
+                }
+
+                [
+                    Test, 
+                    TestCaseSource(nameof(ContextualGeneratorTestCases)),
+                    TestCaseSource(nameof(Issue2297TestCases)),
+                ]
                 public string ContextualGenerator(string fileName, GeneratorJobType job, bool hasGenerator) => Common(sci, fileName, job, hasGenerator);
 
                 internal static string Common(ScintillaControl sci, string fileName, GeneratorJobType job, bool hasGenerator)
