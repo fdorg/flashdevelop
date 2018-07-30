@@ -54,21 +54,19 @@ namespace HaXeContext.Generators
         }
 
         /// <inheritdoc />
-        protected override bool CanShowNewMethodList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        protected override bool CanShowNewMethodList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found, ASResult owner)
         {
-            var result = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
-            var inClass = result.RelClass ?? found.InClass;
-            return ((inClass.Flags & FlagType.TypeDef) == 0 || !result.IsStatic)
-                && base.CanShowNewMethodList(sci, position, expr, found);
+            var inClass = owner.RelClass ?? found.InClass;
+            return ((inClass.Flags & FlagType.TypeDef) == 0 || !owner.IsStatic)
+                && base.CanShowNewMethodList(sci, position, expr, found, owner);
         }
 
         /// <inheritdoc />
-        protected override bool CanShowNewVarList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        protected override bool CanShowNewVarList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found, ASResult owner)
         {
-            var result = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
-            var inClass = result.RelClass ?? found.InClass;
-            return ((inClass.Flags & FlagType.TypeDef) == 0 || !result.IsStatic)
-                   && base.CanShowNewMethodList(sci, position, expr, found);
+            var inClass = owner.RelClass ?? found.InClass;
+            return ((inClass.Flags & FlagType.TypeDef) == 0 || !owner.IsStatic)
+                && base.CanShowNewMethodList(sci, position, expr, found, owner);
         }
 
         /// <inheritdoc />

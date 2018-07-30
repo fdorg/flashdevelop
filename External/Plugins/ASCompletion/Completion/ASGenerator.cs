@@ -373,16 +373,17 @@ namespace ASCompletion.Completion
                     }
                     else if (!found.InClass.IsVoid())
                     {
-                        m = Regex.Match(text, String.Format(patternMethod, contextToken));
+                        var inClass = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
+                        m = Regex.Match(text, string.Format(patternMethod, contextToken));
                         if (m.Success)
                         {
-                            if (CanShowNewMethodList(sci, position, resolve, found))
+                            if (CanShowNewMethodList(sci, position, resolve, found, inClass))
                             {
                                 contextMatch = m;
                                 ShowNewMethodList(found, options);
                             }
                         }
-                        else if (CanShowNewVarList(sci, position, resolve, found)) ShowNewVarList(found, options);
+                        else if (CanShowNewVarList(sci, position, resolve, found, inClass)) ShowNewVarList(found, options);
                     }
                 }
                 else
@@ -530,7 +531,7 @@ namespace ASCompletion.Completion
         /// <param name="expr">Expression at cursor position</param>
         /// <param name="found">Declaration target at current line(can not be null)</param>
         /// <returns>true, if can show "Generate public function and Generate public callback" list</returns>
-        protected virtual bool CanShowNewMethodList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found) => true;
+        protected virtual bool CanShowNewMethodList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found, ASResult owner) => true;
 
         /// <summary>
         /// Check if "Generate public variable" are available at the current cursor position.
@@ -540,7 +541,7 @@ namespace ASCompletion.Completion
         /// <param name="expr">Expression at cursor position</param>
         /// <param name="found">Declaration target at current line(can not be null)</param>
         /// <returns>true, if can show "Generate public function and Generate public callback" list</returns>
-        protected virtual bool CanShowNewVarList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found) => true;
+        protected virtual bool CanShowNewVarList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found, ASResult owner) => true;
 
         /// <summary>
         /// Check if "Add to interface" are available at the current cursor position.
