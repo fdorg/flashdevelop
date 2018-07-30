@@ -414,6 +414,10 @@ namespace HaXeContext.Generators
                     .Returns(null)
                     .SetName("Interface.fo|o. Issue 2297. Case 4.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2297");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2297_5", GeneratorJobType.FunctionPublic, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2297_5"))
+                    .SetName("interface.fo|o(). Issue 2297. Case 5.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2297");
             }
         }
 

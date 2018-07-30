@@ -532,7 +532,7 @@ namespace ASCompletion.Completion
         protected virtual bool CanShowNewMethodList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             var inClass = expr.RelClass ?? found.InClass;
-            return ((inClass.Flags & FlagType.Interface) == 0 || !expr.IsStatic);
+            return (inClass.Flags & FlagType.Interface) == 0 || !expr.IsStatic;
         }
 
         /// <summary>
@@ -545,9 +545,8 @@ namespace ASCompletion.Completion
         /// <returns>true, if can show "Generate public function and Generate public callback" list</returns>
         protected virtual bool CanShowNewVarList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
-            
             var inClass = expr.RelClass ?? found.InClass;
-            return ((inClass.Flags & FlagType.Interface) == 0 || !expr.IsStatic);
+            return (inClass.Flags & FlagType.Interface) == 0 || !expr.IsStatic;
         }
 
         /// <summary>
