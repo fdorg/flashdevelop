@@ -365,7 +365,7 @@ namespace ASCompletion.Completion
                 if (suggestItemDeclaration)
                 {
                     var text = sci.GetLine(line);
-                    Match m = Regex.Match(text, String.Format(patternClass, contextToken));
+                    var m = Regex.Match(text, string.Format(patternClass, contextToken));
                     if (m.Success)
                     {
                         contextMatch = m;
@@ -373,7 +373,6 @@ namespace ASCompletion.Completion
                     }
                     else if (!found.InClass.IsVoid())
                     {
-                        var inClass = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
                         m = Regex.Match(text, string.Format(patternMethod, contextToken));
                         if (m.Success)
                         {
@@ -388,8 +387,7 @@ namespace ASCompletion.Completion
                 }
                 else
                 {
-                    if (resolve.InClass != null
-                        && resolve.InClass.InFile != null
+                    if (resolve.InClass?.InFile != null
                         && resolve.Member != null
                         && (resolve.Member.Flags & FlagType.Function) > 0
                         && File.Exists(resolve.InClass.InFile.FileName)
@@ -531,7 +529,11 @@ namespace ASCompletion.Completion
         /// <param name="expr">Expression at cursor position</param>
         /// <param name="found">Declaration target at current line(can not be null)</param>
         /// <returns>true, if can show "Generate public function and Generate public callback" list</returns>
-        protected virtual bool CanShowNewMethodList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found) => true;
+        protected virtual bool CanShowNewMethodList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        {
+            var inClass = expr.RelClass ?? found.InClass;
+            return ((inClass.Flags & FlagType.Interface) == 0 || !expr.IsStatic);
+        }
 
         /// <summary>
         /// Check if "Generate public variable" are available at the current cursor position.
@@ -541,7 +543,12 @@ namespace ASCompletion.Completion
         /// <param name="expr">Expression at cursor position</param>
         /// <param name="found">Declaration target at current line(can not be null)</param>
         /// <returns>true, if can show "Generate public function and Generate public callback" list</returns>
-        protected virtual bool CanShowNewVarList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found) => true;
+        protected virtual bool CanShowNewVarList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        {
+            
+            var inClass = expr.RelClass ?? found.InClass;
+            return ((inClass.Flags & FlagType.Interface) == 0 || !expr.IsStatic);
+        }
 
         /// <summary>
         /// Check if "Add to interface" are available at the current cursor position.
