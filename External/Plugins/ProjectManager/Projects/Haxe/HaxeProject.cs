@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
@@ -290,33 +291,51 @@ namespace ProjectManager.Projects.Haxe
 
         public static HaxeProject Load(string path)
         {
-            string ext = Path.GetExtension(path).ToLower();
+            var ext = Path.GetExtension(path).ToLower();
             if (ext == ".hxml")
             {
-                HaxeProject hxproj = new HaxeProject(path);
+                var hxproj = new HaxeProject(path);
                 hxproj.RawHXML = File.ReadAllLines(path);
                 return hxproj;
             }
 
-            HaxeProjectReader reader = new HaxeProjectReader(path);
+            var reader = new HaxeProjectReader(path);
 
             try
             {
-                return reader.ReadProject();
+                var project = reader.ReadProject();
+                var options = project.CompilerOptions;
+                var hxmls = options.Additional.Where(line => line.TrimEnd().EndsWith(".hxml")).ToArray();
+                if (hxmls.Length > 0)
+                {
+                    var libs = new HashSet<string>(options.Libraries);
+                    var defs = new HashSet<string>(options.Directives);
+                    var cps = new HashSet<string>(project.Classpaths);
+                    var adds = new HashSet<string>(options.Additional.Where(line => !line.TrimEnd().EndsWith(".hxml")));
+                    var target = string.Empty;
+                    var haxeTarget = string.Empty;
+                    var output = string.Empty;
+                    var mainClass = string.Empty;
+                    project.ParseHxmlEntries(hxmls, defs, cps, libs, adds, ref target, ref haxeTarget, ref output, ref mainClass, ".");
+                    if (libs.Count > 0) options.Libraries = libs.ToArray();
+                    if (defs.Count > 0) options.Directives = defs.ToArray();
+                    if (adds.Count > 0) options.Additional = adds.ToArray();
+                    if (cps.Count > 0)
+                    {
+                        project.Classpaths.Clear();
+                        project.Classpaths.AddRange(cps);
+                    }
+                }
+                return project;
             }
             catch (XmlException exception)
             {
-                string format = string.Format("Error in XML Document line {0}, position {1}.",
-                    exception.LineNumber, exception.LinePosition);
-                throw new Exception(format, exception);
+                throw new Exception($"Error in XML Document line {exception.LineNumber}, position {exception.LinePosition}.", exception);
             }
             finally { reader.Close(); }
         }
 
-        public override void Save()
-        {
-            SaveAs(ProjectPath);
-        }
+        public override void Save() => SaveAs(ProjectPath);
 
         public override void SaveAs(string fileName)
         {
@@ -326,13 +345,14 @@ namespace ProjectManager.Projects.Haxe
             if (!AllowedSaving(fileName)) return;
             try
             {
-                HaxeProjectWriter writer = new HaxeProjectWriter(this, fileName);
+                var writer = new HaxeProjectWriter(this, fileName);
                 writer.WriteProject();
                 writer.Flush();
                 writer.Close();
-                if (saveHXML && OutputType != OutputType.CustomBuild) {
-                    StreamWriter hxml = File.CreateText(Path.ChangeExtension(fileName, "hxml"));
-                    foreach( string e in BuildHXML(new string[0],this.OutputPath,true) )
+                if (saveHXML && OutputType != OutputType.CustomBuild)
+                {
+                    var hxml = File.CreateText(Path.ChangeExtension(fileName, "hxml"));
+                    foreach(string e in BuildHXML(new string[0], OutputPath, true))
                         hxml.WriteLine(e);
                     hxml.Close();
                 }
@@ -353,16 +373,16 @@ namespace ProjectManager.Projects.Haxe
                 raw = null;
             rawHXML = raw;
 
-            List<string> libs = new List<string>();
-            List<string> defs = new List<string>();
-            List<string> cps = new List<string>();
-            List<string> add = new List<string>();
-            string target = PlatformData.JAVASCRIPT_PLATFORM;
-            string haxeTarget = "js";
-            string output = "";
-            if (raw != null)
-                ParseHxmlEntries(raw, defs, cps, libs, add, ref target, ref haxeTarget, ref output, ".");
-
+            var libs = new List<string>();
+            var defs = new List<string>();
+            var cps = new List<string>();
+            var add = new List<string>();
+            var target = PlatformData.JAVASCRIPT_PLATFORM;
+            var haxeTarget = "js";
+            var output = "";
+            var mainClass = CompilerOptions.MainClass;
+            if (raw != null) ParseHxmlEntries(raw, defs, cps, libs, add, ref target, ref haxeTarget, ref output, ref mainClass, ".");
+            CompilerOptions.MainClass = mainClass;
             CompilerOptions.Directives = defs.ToArray();
             CompilerOptions.Libraries = libs.ToArray();
             CompilerOptions.Additional = add.ToArray();
@@ -388,27 +408,27 @@ namespace ProjectManager.Projects.Haxe
             }
         }
 
-        private void ParseHxmlEntries(string[] lines, List<string> defs, List<string> cps, List<string> libs, List<string> add, ref string target, ref string haxeTarget, ref string output, string cwd)
+        private void ParseHxmlEntries(IEnumerable<string> lines, ICollection<string> defs, ICollection<string> cps, ICollection<string> libs, ICollection<string> add, ref string target, ref string haxeTarget, ref string output, ref string mainClass, string cwd)
         {
-            Regex reHxOp = new Regex("^-([a-z0-9-]+)\\s*(.*)", RegexOptions.IgnoreCase);
-            foreach (string line in lines)
+            var reHxOp = new Regex("^-([a-z0-9-]+)\\s*(.*)", RegexOptions.IgnoreCase);
+            foreach (var line in lines)
             {
                 if (line == null) break;
-                string trimmedLine = line.Trim();
-                Match m = reHxOp.Match(trimmedLine);
+                var trimmedLine = line.Trim();
+                var m = reHxOp.Match(trimmedLine);
                 if (m.Success)
                 {
-                    string op = m.Groups[1].Value;
+                    var op = m.Groups[1].Value;
                     if (op == "-next")
                         break; // ignore the rest
 
-                    string value = m.Groups[2].Value.Trim();
+                    var value = m.Groups[2].Value.Trim();
                     switch (op)
                     {
                         case "D": defs.Add(value); break;
                         case "cp": cps.Add(CleanPath(value, cwd)); break;
                         case "lib": libs.Add(value); break;
-                        case "main": CompilerOptions.MainClass = value; break;
+                        case "main": mainClass = value; break;
                         case "swf":
                         case "swf9":
                             target = PlatformData.FLASHPLAYER_PLATFORM;
@@ -425,7 +445,7 @@ namespace ProjectManager.Projects.Haxe
                         case "-connect": break; // ignore
                         case "-each": break; // ignore
                         case "-cwd":
-                            cwd = this.CleanPath(value, cwd);
+                            cwd = CleanPath(value, cwd);
                             break;
                         default:
                             // detect platform (-cpp output, -js output, ...)
@@ -442,11 +462,39 @@ namespace ProjectManager.Projects.Haxe
                 }
                 else if (!trimmedLine.StartsWith("#") && trimmedLine.EndsWith(".hxml", StringComparison.OrdinalIgnoreCase))
                 {
-                    string subhxml = this.GetAbsolutePath(CleanPath(trimmedLine, cwd));
-                    if (File.Exists(subhxml))
+                    var subhxml = GetAbsolutePath(CleanPath(trimmedLine, cwd));
+                    if (!File.Exists(subhxml)) continue;
+                    var subhxmlDir = Path.GetDirectoryName(subhxml);
+                    var sublines = new List<string>();
+                    foreach (var it in File.ReadAllLines(subhxml))
                     {
-                        ParseHxmlEntries(File.ReadAllLines(subhxml), defs, cps, libs, add, ref target, ref haxeTarget, ref output, cwd);
+                        var subline = it.Trim();
+                        var match = reHxOp.Match(subline);
+                        if (match.Success)
+                        {
+                            var op = match.Groups[1].Value;
+                            switch (op)
+                            {
+                                case "cp":
+                                case "resource":
+                                case "lib-java":
+                                case "lib-net":
+                                case "lib-std":
+                                case "swf-lib":
+                                case "swf-lib-extern":
+                                case "cmd":
+                                    var path = match.Groups[2].Value.Trim();
+                                    if (!Path.IsPathRooted(path)) subline = "-" + op + " " + GetRelativePath(CleanPath(Path.GetFullPath(Path.Combine(subhxmlDir, path)), cwd));
+                                    break;
+                            }
+                        }
+                        else if (subline.EndsWith(".hxml", StringComparison.OrdinalIgnoreCase) && !Path.IsPathRooted(subline))
+                        {
+                            subline = GetRelativePath(CleanPath(Path.GetFullPath(Path.Combine(subhxmlDir, subline)), cwd));
+                        }
+                        sublines.Add(subline);
                     }
+                    ParseHxmlEntries(sublines, defs, cps, libs, add, ref target, ref haxeTarget, ref output, ref mainClass, cwd);
                 }
             }
         }
