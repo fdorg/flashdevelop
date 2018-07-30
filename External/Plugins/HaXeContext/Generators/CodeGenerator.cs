@@ -54,6 +54,22 @@ namespace HaXeContext.Generators
         }
 
         /// <inheritdoc />
+        protected override bool CanShowNewMethodList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        {
+            var inClass = expr.RelClass ?? found.InClass;
+            return ((inClass.Flags & FlagType.TypeDef) == 0 || !expr.IsStatic)
+                && base.CanShowNewMethodList(sci, position, expr, found);
+        }
+
+        /// <inheritdoc />
+        protected override bool CanShowNewVarList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
+        {
+            var inClass = expr.RelClass ?? found.InClass;
+            return ((inClass.Flags & FlagType.TypeDef) == 0 || !expr.IsStatic)
+                && base.CanShowNewMethodList(sci, position, expr, found);
+        }
+
+        /// <inheritdoc />
         protected override bool CanShowGenerateGetter(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             return contextToken == "get" && found.Member != null && found.Member.Flags.HasFlag(FlagType.Getter | FlagType.Setter);
