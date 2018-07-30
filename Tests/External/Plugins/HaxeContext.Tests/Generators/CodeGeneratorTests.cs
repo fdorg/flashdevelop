@@ -370,6 +370,21 @@ namespace HaXeContext.Generators
             }
         }
 
+        static IEnumerable<TestCaseData> Issue2295TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2295_1", GeneratorJobType.FunctionPublic, false)
+                    .Returns(null)
+                    .SetName("Typedef.fo|o(). Issue 2295. Case 1.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2295");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2295_1", GeneratorJobType.VariablePublic, false)
+                    .Returns(null)
+                    .SetName("Typedef.fo|o(). Issue 2295. Case 2.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2295");
+            }
+        }
+
         static IEnumerable<TestCaseData> AssignStatementToVarIssue1999TestCases
         {
             get
@@ -924,6 +939,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(Issue2060TestCases)),
             TestCaseSource(nameof(Issue2069TestCases)),
             TestCaseSource(nameof(Issue2220TestCases)),
+            TestCaseSource(nameof(Issue2295TestCases)),
             //TestCaseSource(nameof(AssignStatementToVarIssue220TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue1764TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue1999TestCases)),
