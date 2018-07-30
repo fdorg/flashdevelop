@@ -386,13 +386,17 @@ namespace CodeRefactor
                 var context = ASContext.Context;
                 if (context?.CurrentModel != null)
                 {
-                    var validator = CommandFactoryProvider.GetFactory(result)?.GetValidator(typeof(OrganizeImports))
-                                 ?? CommandFactoryProvider.DefaultFactory.GetValidator(typeof(OrganizeImports));
-                    var enabled = validator(new ASResult {InFile = context.CurrentModel});// langIsValid && context.CurrentModel.Imports.Count > 0;
-                    this.refactorContextMenu.OrganizeMenuItem.Enabled = enabled;
-                    this.refactorContextMenu.TruncateMenuItem.Enabled = enabled;
-                    this.refactorMainMenu.OrganizeMenuItem.Enabled = enabled;
-                    this.refactorMainMenu.TruncateMenuItem.Enabled = enabled;
+                    var enabled = false;
+                    if (RefactoringHelper.GetLanguageIsValid())
+                    {
+                        var validator = CommandFactoryProvider.GetFactoryForCurrentDocument().GetValidator(typeof(OrganizeImports))
+                                     ?? CommandFactoryProvider.DefaultFactory.GetValidator(typeof(OrganizeImports));
+                        enabled = validator(new ASResult {InFile = context.CurrentModel});
+                    }
+                    refactorContextMenu.OrganizeMenuItem.Enabled = enabled;
+                    refactorContextMenu.TruncateMenuItem.Enabled = enabled;
+                    refactorMainMenu.OrganizeMenuItem.Enabled = enabled;
+                    refactorMainMenu.TruncateMenuItem.Enabled = enabled;
                 }
                 refactorMainMenu.MoveMenuItem.Enabled = false;
                 refactorContextMenu.MoveMenuItem.Enabled = false;

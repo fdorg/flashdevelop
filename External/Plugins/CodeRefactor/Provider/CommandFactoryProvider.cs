@@ -37,7 +37,7 @@ namespace CodeRefactor.Provider
                     || (RefactoringHelper.ModelFileExists(expr.InFile) && !RefactoringHelper.IsUnderSDKPath(expr.InFile))
                     || expr.IsPackage;
             });
-            DefaultFactory.RegisterValidator(typeof(OrganizeImports), expr => RefactoringHelper.GetLanguageIsValid() && expr.InFile.Imports.Count > 0);
+            DefaultFactory.RegisterValidator(typeof(OrganizeImports), expr => expr.InFile.Imports.Count > 0);
         }
 
         public static void Register(string language, ICommandFactory factory)
