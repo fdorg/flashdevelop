@@ -393,7 +393,6 @@ namespace HaXeContext.Generators
             }
         }
 
-
         static IEnumerable<TestCaseData> Issue2297TestCases
         {
             get
@@ -418,6 +417,29 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterContextualGeneratorTests_issue2297_5"))
                     .SetName("interface.fo|o(). Issue 2297. Case 5.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2297");
+            }
+        }
+
+        static IEnumerable<TestCaseData> Issue2299TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2299_1", GeneratorJobType.FunctionPublic, false)
+                    .Returns(null)
+                    .SetName("Enum.fo|o(). Issue 2299. Case 1.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2299");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2299_1", GeneratorJobType.VariablePublic, false)
+                    .Returns(null)
+                    .SetName("Enum.fo|o(). Issue 2299. Case 2.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2299");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2299_2", GeneratorJobType.FunctionPublic, false)
+                    .Returns(null)
+                    .SetName("Enum.fo|o. Issue 2299. Case 3.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2299");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2299_2", GeneratorJobType.VariablePublic, false)
+                    .Returns(null)
+                    .SetName("Enum.fo|o. Issue 2299. Case 4.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2299");
             }
         }
 
@@ -977,6 +999,7 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(Issue2220TestCases)),
             TestCaseSource(nameof(Issue2295TestCases)),
             TestCaseSource(nameof(Issue2297TestCases)),
+            TestCaseSource(nameof(Issue2299TestCases)),
             //TestCaseSource(nameof(AssignStatementToVarIssue220TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue1764TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue1999TestCases)),

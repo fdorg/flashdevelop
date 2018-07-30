@@ -57,7 +57,7 @@ namespace HaXeContext.Generators
         protected override bool CanShowNewMethodList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             var inClass = expr.RelClass ?? found.InClass;
-            return ((inClass.Flags & FlagType.TypeDef) == 0 || !expr.IsStatic)
+            return ((!inClass.Flags.HasFlag(FlagType.TypeDef) && !inClass.Flags.HasFlag(FlagType.Enum)) || !expr.IsStatic)
                 && base.CanShowNewMethodList(sci, position, expr, found);
         }
 
@@ -65,7 +65,7 @@ namespace HaXeContext.Generators
         protected override bool CanShowNewVarList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             var inClass = expr.RelClass ?? found.InClass;
-            return ((inClass.Flags & FlagType.TypeDef) == 0 || !expr.IsStatic)
+            return ((!inClass.Flags.HasFlag(FlagType.TypeDef) && !inClass.Flags.HasFlag(FlagType.Enum)) || !expr.IsStatic)
                 && base.CanShowNewMethodList(sci, position, expr, found);
         }
 
