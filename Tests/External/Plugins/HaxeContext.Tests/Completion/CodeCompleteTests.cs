@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using ASCompletion.Completion;
 using ASCompletion.Context;
 using HaXeContext.TestUtils;
 using NSubstitute;
 using NUnit.Framework;
+using PluginCore;
 
 namespace HaXeContext.Completion
 {
@@ -12,6 +14,19 @@ namespace HaXeContext.Completion
         internal static string GetFullPath(string fileName) => $"{nameof(HaXeContext)}.Test_Files.completion.{fileName}.hx";
 
         internal static string ReadAllText(string fileName) => TestFile.ReadAllText(GetFullPath(fileName));
+
+        static readonly string testFilesAssemblyPath = $"\\FlashDevelop\\Bin\\Debug\\{nameof(HaXeContext)}\\Test_Files\\";
+        static readonly string testFilesDirectory = $"\\Tests\\External\\Plugins\\{nameof(HaXeContext)}.Tests\\Test Files\\";
+
+        internal static void SetCurrentFile(string fileName)
+        {
+            fileName = GetFullPath(fileName);
+            fileName = Path.GetFileNameWithoutExtension(fileName).Replace('.', Path.DirectorySeparatorChar) + Path.GetExtension(fileName);
+            fileName = Path.GetFullPath(fileName);
+            fileName = fileName.Replace(testFilesAssemblyPath, testFilesDirectory);
+            ASContext.Context.CurrentModel.FileName = fileName;
+            PluginBase.MainForm.CurrentDocument.FileName.Returns(fileName);
+        }
 
         [TestFixtureSetUp]
         public void Setup() => SetHaxeFeatures(sci);
@@ -183,6 +198,30 @@ namespace HaXeContext.Completion
             SetSrc(sci, ReadAllText(fileName));
             var expr = ASComplete.GetExpressionType(sci, sci.CurrentPos, false, true);
             return ASComplete.GetToolTipText(expr);
+        }
+
+        static IEnumerable<TestCaseData> DeclarationLookupIssue2291TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("DeclarationLookupIssue2291_1")
+                    .Returns("args")
+                    .SetName("function foo(args). Goto Declaration. Issue 2291. Case 1")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2291");
+                yield return new TestCaseData("DeclarationLookupIssue2291_2")
+                    .Returns("args")
+                    .SetName("function foo(?args). Goto Declaration. Issue 2291. Case 2")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2291");
+            }
+        }
+
+        [Test, TestCaseSource(nameof(DeclarationLookupIssue2291TestCases))]
+        public string DeclarationLookup(string fileName)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            SetCurrentFile(GetFullPath(fileName));
+            ASComplete.DeclarationLookup(sci);
+            return sci.SelText;
         }
     }
 
