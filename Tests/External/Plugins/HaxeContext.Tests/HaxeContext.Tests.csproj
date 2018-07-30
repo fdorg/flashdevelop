@@ -661,6 +661,8 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterGenerateSwitchLabels_issue2285_18.hx" />
     <EmbeddedResource Include="Test Files\completion\DeclarationLookupIssue2291_1.hx" />
     <EmbeddedResource Include="Test Files\completion\DeclarationLookupIssue2291_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGeneratePublicFunction_issue2293_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGeneratePublicFunction_issue2293_1.hx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

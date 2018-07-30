@@ -175,6 +175,18 @@ namespace HaXeContext.Generators
             InsertCode(position, template, sci);
         }
 
+        protected override void GenerateFunction(MemberModel member, int position, ClassModel inClass, bool detach)
+        {
+            if ((inClass.Flags & FlagType.TypeDef) != 0)
+            {
+                var template = TemplateUtils.GetTemplate("IFunction");
+                if (string.IsNullOrEmpty(member.Type)) template = TemplateUtils.ReplaceTemplateVariable(template, "Type", ASContext.Context.Features.voidKey);
+                var declaration = TemplateUtils.ToDeclarationString(member, template);
+                GenerateFunction(position, declaration, detach);
+            }
+            else base.GenerateFunction(member, position, inClass, detach);
+        }
+
         protected override void GenerateProperty(GeneratorJobType job, MemberModel member, ClassModel inClass, ScintillaControl sci)
         {
             var location = ASContext.CommonSettings.PropertiesGenerationLocation;

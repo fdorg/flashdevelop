@@ -2659,7 +2659,7 @@ namespace ASCompletion.Completion
             }
             position = GetBodyStart(inClass.LineFrom, inClass.LineTo, sci);
             sci.SetSel(position, position);
-            GenerateFunction(member, position, inClass, false);
+            ((ASGenerator) ASContext.Context.CodeGenerator).GenerateFunction(member, position, inClass, false);
         }
 
         private static void GenerateFunctionJob(GeneratorJobType job, ScintillaControl sci, MemberModel member, bool detach, ClassModel inClass)
@@ -2710,18 +2710,10 @@ namespace ASCompletion.Completion
             }
 
             string blockTmpl;
-            if ((isStatic.Flags & FlagType.Static) > 0)
-            {
-                blockTmpl = TemplateUtils.GetBoundary("StaticMethods");
-            }
-            else if ((visibility & Visibility.Public) > 0)
-            {
-                blockTmpl = TemplateUtils.GetBoundary("PublicMethods");
-            }
-            else
-            {
-                blockTmpl = TemplateUtils.GetBoundary("PrivateMethods");
-            }
+            if ((isStatic.Flags & FlagType.Static) > 0) blockTmpl = TemplateUtils.GetBoundary("StaticMethods");
+            else if ((visibility & Visibility.Public) > 0) blockTmpl = TemplateUtils.GetBoundary("PublicMethods");
+            else blockTmpl = TemplateUtils.GetBoundary("PrivateMethods");
+
             var position = 0;
             var latest = TemplateUtils.GetTemplateBlockMember(sci, blockTmpl);
             if (latest == null || (!isOtherClass && member == null))
@@ -2891,10 +2883,10 @@ namespace ASCompletion.Completion
             var newMember = NewMember(contextToken, isStatic, FlagType.Function, visibility);
             newMember.Parameters = parameters.Select(it => new MemberModel(AvoidKeyword(it.paramName), it.paramType, FlagType.ParameterVar, 0)).ToList();
             if (newMemberType != null) newMember.Type = newMemberType;
-            GenerateFunction(newMember, position, inClass, detach);
+            ((ASGenerator) ASContext.Context.CodeGenerator).GenerateFunction(newMember, position, inClass, detach);
         }
 
-        static void GenerateFunction(MemberModel member, int position, ClassModel inClass, bool detach)
+        protected virtual void GenerateFunction(MemberModel member, int position, ClassModel inClass, bool detach)
         {
             string template;
             string decl;
@@ -2929,9 +2921,14 @@ namespace ASCompletion.Completion
                 decl = TemplateUtils.ToDeclarationWithModifiersString(member, template);
                 decl = TemplateUtils.ReplaceTemplateVariable(decl, "Body", body);
             }
-            if (detach) decl = NewLine + TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", NewLine);
-            else decl = TemplateUtils.ReplaceTemplateVariable(decl, "BlankLine", null);
-            InsertCode(position, decl);
+            GenerateFunction(position, decl, detach);
+        }
+
+        protected void GenerateFunction(int position, string declaration, bool detach)
+        {
+            if (detach) declaration = NewLine + TemplateUtils.ReplaceTemplateVariable(declaration, "BlankLine", NewLine);
+            else declaration = TemplateUtils.ReplaceTemplateVariable(declaration, "BlankLine", null);
+            InsertCode(position, declaration);
         }
 
         static void GenerateClass(ScintillaControl sci, ClassModel inClass, ASExpr data)
