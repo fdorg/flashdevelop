@@ -440,6 +440,14 @@ namespace HaXeContext.Generators
                     .Returns(null)
                     .SetName("Enum.fo|o. Issue 2299. Case 4.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2299");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2299_5", GeneratorJobType.VariablePublic, false)
+                    .Returns(null)
+                    .SetName("enumValue.fo|o. Issue 2299. Case 5.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2299");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2299_6", GeneratorJobType.VariablePublic, false)
+                    .Returns(null)
+                    .SetName("enumValue.fo|o(). Issue 2299. Case 6.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2299");
             }
         }
 
