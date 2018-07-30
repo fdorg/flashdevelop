@@ -711,7 +711,7 @@ namespace ASCompletion.Completion
             return true;
         }
 
-        static public void OpenVirtualFile(FileModel model)
+        public static void OpenVirtualFile(FileModel model)
         {
             string ext = Path.GetExtension(model.FileName);
             if (ext == "") ext = model.Context.GetExplorerMask()[0].Replace("*", "");
@@ -744,35 +744,46 @@ namespace ASCompletion.Completion
         public static void LocateMember(ScintillaControl sci, string keyword, string name, int line)
         {
             if (sci == null || line <= 0) return;
+            ASContext.Context.CodeComplete.LocateMember(sci, line, keyword, name);
+        }
+
+        protected virtual void LocateMember(ScintillaControl sci, int line, string keyword, string name)
+        {
+            LocateMember(sci, line, $"{keyword ?? ""}\\s*(?<name>{name.Replace(".", "\\s*.\\s*")})[^A-z0-9]");
+        }
+
+        protected void LocateMember(ScintillaControl sci, int line, string pattern)
+        {
             try
             {
-                bool found = false;
-                string pattern = String.Format("{0}\\s*(?<name>{1})[^A-z0-9]", (keyword ?? ""), name.Replace(".", "\\s*.\\s*"));
-                Regex re = new Regex(pattern);
-                for (int i = line; i < line + 2; i++)
+                var found = false;
+                var re = new Regex(pattern);
+                for (var i = line; i < line + 2; i++)
+                {
                     if (i < sci.LineCount)
                     {
-                        string text = sci.GetLine(i);
-                        Match m = re.Match(text);
-                        if (m.Success)
-                        {
-                            int position = sci.PositionFromLine(i) + sci.MBSafeTextLength(text.Substring(0, m.Groups["name"].Index));
-                            sci.EnsureVisibleEnforcePolicy(sci.LineFromPosition(position));
-                            sci.SetSel(position, position + m.Groups["name"].Length);
-                            found = true;
-                            break;
-                        }
+                        var text = sci.GetLine(i);
+                        var m = re.Match(text);
+                        if (!m.Success) continue;
+                        var position = sci.PositionFromLine(i) + sci.MBSafeTextLength(text.Substring(0, m.Groups["name"].Index));
+                        sci.EnsureVisibleEnforcePolicy(sci.LineFromPosition(position));
+                        sci.SetSel(position, position + m.Groups["name"].Length);
+                        found = true;
+                        break;
                     }
-
+                }
                 if (!found)
                 {
                     sci.EnsureVisible(line);
-                    int linePos = sci.PositionFromLine(line);
+                    var linePos = sci.PositionFromLine(line);
                     sci.SetSel(linePos, linePos);
                 }
                 sci.Focus();
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
         }
 
         /// <summary>

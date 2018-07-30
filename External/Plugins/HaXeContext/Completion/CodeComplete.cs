@@ -75,19 +75,27 @@ namespace HaXeContext.Completion
             return base.HandleWhiteSpaceCompletion(sci, position, wordLeft, autoHide);
         }
 
+        protected override void LocateMember(ScintillaControl sci, int line, string keyword, string name)
+        {
+            LocateMember(sci, line, $"{keyword ?? ""}\\s*(\\?)?(?<name>{name.Replace(".", "\\s*.\\s*")})[^A-z0-9]");
+        }
+
         protected override void ParseLocalVars(ASExpr expression, FileModel model)
         {
-            foreach (var item in expression.ContextFunction.Parameters)
+            for (int i = 0, count = expression.ContextFunction.Parameters.Count; i < count; i++)
             {
+                var item = expression.ContextFunction.Parameters[i];
                 var name = item.Name;
                 if (name[0] == '?')
                 {
                     var type = item.Type;
                     if (string.IsNullOrEmpty(type)) type = "Null<Dynamic>";
                     else if (!type.StartsWithOrdinal("Null<")) type = $"Null<{type}>";
-                    model.Members.MergeByLine(new MemberModel(name.Substring(1), type, item.Flags, item.Access));
+                    item = (MemberModel) item.Clone();
+                    item.Name = name.Substring(1);
+                    item.Type = type;
                 }
-                else model.Members.MergeByLine(item);
+                model.Members.MergeByLine(item);
             }
         }
 
