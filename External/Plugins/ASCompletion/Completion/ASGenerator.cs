@@ -140,13 +140,12 @@ namespace ASCompletion.Completion
                 {
                     var text = sci.GetLine(line);
                     // maybe we just want to import the member's non-imported type
-                    Match m = Regex.Match(text, String.Format(patternVarDecl, found.Member.Name, contextToken));
+                    var m = Regex.Match(text, string.Format(patternVarDecl, found.Member.Name, contextToken));
                     if (m.Success)
                     {
                         contextMatch = m;
-                        ClassModel type = context.ResolveType(contextToken, context.CurrentModel);
-                        if (type.IsVoid() && CheckAutoImport(resolve, options))
-                            return;
+                        var type = context.ResolveType(contextToken, context.CurrentModel);
+                        if (type.IsVoid() && CheckAutoImport(resolve, options)) return;
                     }
                     ShowGetSetList(found, options);
                     return;
@@ -292,8 +291,8 @@ namespace ASCompletion.Completion
                 }
 
                 // "assign var to statement" suggestion
-                int curLine = sci.CurrentLine;
-                string ln = sci.GetLine(curLine).TrimEnd();
+                var curLine = sci.CurrentLine;
+                var ln = sci.GetLine(curLine).TrimEnd();
                 if (ln.Length > 0
                     && ln.Length <= sci.CurrentPos - sci.PositionFromLine(curLine)) // cursor at end of line
                 {
@@ -379,10 +378,10 @@ namespace ASCompletion.Completion
                             if (CanShowNewMethodList(sci, position, resolve, found))
                             {
                                 contextMatch = m;
-                                ShowNewMethodList(resolve, found, options);
+                                ((ASGenerator) context.CodeGenerator).ShowNewMethodList(sci, resolve, found, options);
                             }
                         }
-                        else if (CanShowNewVarList(sci, position, resolve, found)) ShowNewVarList(resolve, found, options);
+                        else if (CanShowNewVarList(sci, position, resolve, found)) ((ASGenerator) context.CodeGenerator).ShowNewVarList(sci, resolve, found, options);
                     }
                 }
                 else
@@ -394,16 +393,15 @@ namespace ASCompletion.Completion
                         && !resolve.InClass.InFile.FileName.StartsWithOrdinal(PathHelper.AppDir))
                     {
                         var text = sci.GetLine(line);
-                        Match m = Regex.Match(text, String.Format(patternMethodDecl, contextToken));
-                        Match m2 = Regex.Match(text, String.Format(patternMethod, contextToken));
-                        if (!m.Success && m2.Success)
+                        var m1 = Regex.Match(text, string.Format(patternMethodDecl, contextToken));
+                        var m2 = Regex.Match(text, string.Format(patternMethod, contextToken));
+                        if (!m1.Success && m2.Success)
                         {
-                            contextMatch = m;
+                            contextMatch = m1;
                             ShowChangeMethodDeclList(found, options);
                         }
                     }
-                    else if (resolve.Type != null
-                        && resolve.Type.InFile != null
+                    else if (resolve.Type?.InFile != null
                         && resolve.RelClass != null
                         && File.Exists(resolve.Type.InFile.FileName)
                         && !resolve.Type.InFile.FileName.StartsWithOrdinal(PathHelper.AppDir))
@@ -786,12 +784,11 @@ namespace ASCompletion.Completion
             options.Add(new GeneratorItem(label, GeneratorJobType.ImplementInterface, null, found.InClass));
         }
 
-        private static void ShowNewVarList(ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        protected virtual void ShowNewVarList(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             if (expr.InClass == null || found.InClass.QualifiedName.Equals(expr.RelClass.QualifiedName))
                 expr = null;
             ASResult exprLeft = null;
-            var sci = ASContext.CurSciControl;
             var currentPos = sci.CurrentPos;
             var curWordStartPos = sci.WordStartPosition(currentPos, true);
             if ((char)sci.CharAt(curWordStartPos - 1) == '.') exprLeft = ASComplete.GetExpressionType(sci, curWordStartPos - 1);
@@ -877,7 +874,7 @@ namespace ASCompletion.Completion
             options.Add(new GeneratorItem(label, GeneratorJobType.ChangeConstructorDecl, found.Member, found.InClass, parameters));
         }
 
-        private static void ShowNewMethodList(ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        protected virtual void ShowNewMethodList(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             if (expr.RelClass == null || found.InClass.QualifiedName.Equals(expr.RelClass.QualifiedName))
                 expr = null;
@@ -916,13 +913,13 @@ namespace ASCompletion.Completion
         {
             if (!hasConstructor)
             {
-                string label = TextHelper.GetString("ASCompletion.Label.GenerateConstructor");
+                var label = TextHelper.GetString("ASCompletion.Label.GenerateConstructor");
                 options.Add(new GeneratorItem(label, GeneratorJobType.Constructor, found.Member, found.InClass));
             }
 
             if (!hasToString)
             {
-                string label = TextHelper.GetString("ASCompletion.Label.GenerateToString");
+                var label = TextHelper.GetString("ASCompletion.Label.GenerateToString");
                 options.Add(new GeneratorItem(label, GeneratorJobType.ToString, found.Member, found.InClass));
             }
         }
@@ -2696,9 +2693,9 @@ namespace ASCompletion.Completion
             var wordPos = sci.WordEndPosition(sci.CurrentPos, true);
             var parameters = ParseFunctionParameters(sci, wordPos);
             // evaluate, if the function should be generated in other class
-            var funcResult = ASComplete.GetExpressionType(sci, sci.WordEndPosition(sci.CurrentPos, true));
+            var funcResult = ASComplete.GetExpressionType(sci, wordPos);
             if (member != null && ASContext.CommonSettings.GenerateScope && !funcResult.Context.Value.Contains(ASContext.Context.Features.dot)) AddExplicitScopeReference(sci, inClass, member);
-            var contextOwnerPos = GetContextOwnerEndPos(sci, sci.WordStartPosition(sci.CurrentPos, true));
+            var contextOwnerPos = GetContextOwnerEndPos(sci, wordStartPos);
             var isStatic = new MemberModel();
             if (contextOwnerPos != -1)
             {
@@ -3412,7 +3409,7 @@ namespace ASCompletion.Completion
             if (!typesUsed.Contains(qualifiedName)) typesUsed.Add(qualifiedName);
         }
 
-        static IEnumerable<string> GetQualifiedTypes(IEnumerable<string> types, FileModel inFile)
+        protected static IEnumerable<string> GetQualifiedTypes(IEnumerable<string> types, FileModel inFile)
         {
             var result = new HashSet<string>();
             types = ASContext.Context.DecomposeTypes(types);
@@ -4326,7 +4323,7 @@ namespace ASCompletion.Completion
         /// <param name="typesUsed">Types to import if needed</param>
         /// <param name="atLine">Current line in editor</param>
         /// <returns>Inserted characters count</returns>
-        private static int AddImportsByName(IEnumerable<string> typesUsed, int atLine)
+        protected static int AddImportsByName(IEnumerable<string> typesUsed, int atLine)
         {
             var length = 0;
             var context = ASContext.Context;
@@ -4529,15 +4526,13 @@ namespace ASCompletion.Completion
 
         private static void AddLookupPosition() => AddLookupPosition(ASContext.CurSciControl);
 
-        private static void AddLookupPosition(ScintillaControl sci)
+        protected static void AddLookupPosition(ScintillaControl sci)
         {
-            if (lookupPosition >= 0 && sci != null)
-            {
-                int lookupLine = sci.LineFromPosition(lookupPosition);
-                int lookupCol = lookupPosition - sci.PositionFromLine(lookupLine);
-                // TODO: Refactor, doesn't make a lot of sense to have this feature inside the Panel
-                ASContext.Panel.SetLastLookupPosition(sci.FileName, lookupLine, lookupCol);
-            }
+            if (lookupPosition < 0 || sci == null) return;
+            var lookupLine = sci.LineFromPosition(lookupPosition);
+            var lookupCol = lookupPosition - sci.PositionFromLine(lookupLine);
+            // TODO: Refactor, doesn't make a lot of sense to have this feature inside the Panel
+            ASContext.Panel.SetLastLookupPosition(sci.FileName, lookupLine, lookupCol);
         }
 
         #endregion
