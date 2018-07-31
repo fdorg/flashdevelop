@@ -361,26 +361,26 @@ namespace HaXeContext.Generators
             return result;
         }
 
-        protected override void ShowNewMethodList(ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        protected override void ShowNewMethodList(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             var inClass = expr.RelClass;
             if (inClass != null && inClass.Flags.HasFlag(FlagType.Enum) && expr.IsStatic)
             {
                 var label = TextHelper.GetString("ASCompletion.Label.GenerateConstructor");
-                options.Add(new GeneratorItem(label, GeneratorJob.ConstructorOfEnum, () => Generate(GeneratorJob.ConstructorOfEnum, ASContext.CurSciControl, expr)));
+                options.Add(new GeneratorItem(label, GeneratorJob.ConstructorOfEnum, () => Generate(GeneratorJob.ConstructorOfEnum, sci, expr)));
             }
-            else base.ShowNewMethodList(expr, found, options);
+            else base.ShowNewMethodList(sci, expr, found, options);
         }
 
-        protected override void ShowNewVarList(ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        protected override void ShowNewVarList(ScintillaControl sci, ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
         {
             var inClass = expr.RelClass;
             if (inClass != null && inClass.Flags.HasFlag(FlagType.Enum) && expr.IsStatic)
             {
                 var label = TextHelper.GetString("ASCompletion.Label.GenerateConstructor");
-                options.Add(new GeneratorItem(label, GeneratorJob.ConstructorOfEnum, () => Generate(GeneratorJob.ConstructorOfEnum, ASContext.CurSciControl, expr)));
+                options.Add(new GeneratorItem(label, GeneratorJob.ConstructorOfEnum, () => Generate(GeneratorJob.ConstructorOfEnum, sci, expr)));
             }
-            else base.ShowNewVarList(expr, found, options);
+            else base.ShowNewVarList(sci, expr, found, options);
         }
 
         protected override void TryGetGetterSetterDelegateTemplate(MemberModel member, MemberModel receiver, ref FlagType flags, ref string variableTemplate, ref string methodTemplate)
