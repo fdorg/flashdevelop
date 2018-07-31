@@ -4388,7 +4388,7 @@ namespace ASCompletion.Completion
             while (line < curLine)
             {
                 var txt = sci.GetLine(line++).TrimStart();
-                if (txt.StartsWith("package"))
+                if (packageLine != -2 && txt.StartsWith("package"))
                 {
                     packageLine = line;
                     firstLine = line;
@@ -4403,7 +4403,7 @@ namespace ASCompletion.Completion
                 // insert imports after a package declaration
                 else if (txt.Length > 6 && txt.StartsWithOrdinal("import") && txt[6] <= 32)
                 {
-                    packageLine = -1;
+                    packageLine = -2;
                     found = true;
                     indent = sci.GetLineIndentation(line - 1);
                     // insert in alphabetical order
@@ -4420,11 +4420,15 @@ namespace ASCompletion.Completion
                     break;
                 }
 
-                if (packageLine >= 0 && !IsHaxe && txt.Contains('{'))
+                if (packageLine >= 0)
                 {
-                    packageLine = -1;
-                    indent = sci.GetLineIndentation(line - 1) + PluginBase.MainForm.Settings.IndentSize;
-                    firstLine = line;
+                    if (IsHaxe) packageLine = -2;
+                    else if (txt.Contains('{'))
+                    {
+                        packageLine = -2;
+                        indent = sci.GetLineIndentation(line - 1) + PluginBase.MainForm.Settings.IndentSize;
+                        firstLine = line;
+                    }
                 }
             }
 
