@@ -17,7 +17,8 @@ namespace HaXeContext.Generators
 {
     public enum GeneratorJob
     {
-        Switch
+        ConstructorOfEnum,
+        Switch,
     }
 
     internal class CodeGenerator : ASGenerator
@@ -57,18 +58,18 @@ namespace HaXeContext.Generators
         protected override bool CanShowNewMethodList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             var inClass = expr.RelClass ?? found.InClass;
-            return !inClass.Flags.HasFlag(FlagType.Enum)
-                && (!inClass.Flags.HasFlag(FlagType.TypeDef) || !expr.IsStatic)
-                && base.CanShowNewMethodList(sci, position, expr, found);
+            if (inClass.Flags.HasFlag(FlagType.Enum) && !expr.IsStatic) return false;
+            if (inClass.Flags.HasFlag(FlagType.TypeDef) && expr.IsStatic) return false;
+            return base.CanShowNewMethodList(sci, position, expr, found);
         }
 
         /// <inheritdoc />
         protected override bool CanShowNewVarList(ScintillaControl sci, int position, ASResult expr, FoundDeclaration found)
         {
             var inClass = expr.RelClass ?? found.InClass;
-            return !inClass.Flags.HasFlag(FlagType.Enum)
-                && (!inClass.Flags.HasFlag(FlagType.TypeDef) || !expr.IsStatic)
-                && base.CanShowNewMethodList(sci, position, expr, found);
+            if (inClass.Flags.HasFlag(FlagType.Enum) && !expr.IsStatic) return false;
+            if (inClass.Flags.HasFlag(FlagType.TypeDef) && expr.IsStatic) return false;
+            return base.CanShowNewMethodList(sci, position, expr, found);
         }
 
         /// <inheritdoc />
@@ -360,6 +361,28 @@ namespace HaXeContext.Generators
             return result;
         }
 
+        protected override void ShowNewMethodList(ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        {
+            var inClass = expr.RelClass;
+            if (inClass != null && inClass.Flags.HasFlag(FlagType.Enum) && expr.IsStatic)
+            {
+                var label = TextHelper.GetString("ASCompletion.Label.GenerateConstructor");
+                options.Add(new GeneratorItem(label, GeneratorJob.ConstructorOfEnum, () => Generate(GeneratorJob.ConstructorOfEnum, ASContext.CurSciControl, expr)));
+            }
+            else base.ShowNewMethodList(expr, found, options);
+        }
+
+        protected override void ShowNewVarList(ASResult expr, FoundDeclaration found, ICollection<ICompletionListItem> options)
+        {
+            var inClass = expr.RelClass;
+            if (inClass != null && inClass.Flags.HasFlag(FlagType.Enum) && expr.IsStatic)
+            {
+                var label = TextHelper.GetString("ASCompletion.Label.GenerateConstructor");
+                options.Add(new GeneratorItem(label, GeneratorJob.ConstructorOfEnum, () => Generate(GeneratorJob.ConstructorOfEnum, ASContext.CurSciControl, expr)));
+            }
+            else base.ShowNewVarList(expr, found, options);
+        }
+
         protected override void TryGetGetterSetterDelegateTemplate(MemberModel member, MemberModel receiver, ref FlagType flags, ref string variableTemplate, ref string methodTemplate)
         {
             if ((flags & (FlagType.Getter | FlagType.Setter)) != 0)
@@ -444,6 +467,14 @@ namespace HaXeContext.Generators
         {
             switch (job)
             {
+                case GeneratorJob.ConstructorOfEnum:
+                    sci.BeginUndoAction();
+                    try
+                    {
+                        GenerateConstructorOfEnum(sci, expr, expr.RelClass);
+                    }
+                    finally { sci.EndUndoAction(); }
+                    break;
                 case GeneratorJob.Switch:
                     sci.BeginUndoAction();
                     try
@@ -453,6 +484,35 @@ namespace HaXeContext.Generators
                     finally { sci.EndUndoAction(); }
                     break;
             }
+        }
+
+        static void GenerateConstructorOfEnum(ScintillaControl sci, ASResult expr, ClassModel inClass)
+        {
+            var end = sci.WordEndPosition(sci.CurrentPos, true);
+            var parameters = ParseFunctionParameters(sci, end);
+            var currentClass = ASContext.Context.CurrentClass;
+            if (currentClass != inClass)
+            {
+                AddLookupPosition(sci);
+                lookupPosition = -1;
+                if (currentClass.InFile != inClass.InFile) sci = ((ITabbedDocument) PluginBase.MainForm.OpenEditableDocument(inClass.InFile.FileName, false)).SciControl;
+                ASContext.Context.UpdateContext(inClass.LineFrom);
+            }
+            var position = GetBodyStart(inClass.LineFrom, inClass.LineTo, sci);
+            if (ASContext.Context.Settings.GenerateImports && parameters.Count > 0)
+            {
+                var types = GetQualifiedTypes(parameters.Select(it => it.paramQualType), inClass.InFile);
+                position += AddImportsByName(types, sci.LineFromPosition(position));
+            }
+            sci.SetSel(position, position);
+            var member = new MemberModel(contextToken, inClass.Type, FlagType.Constructor, Visibility.Public)
+            {
+                Parameters = parameters.Select(it => new MemberModel(it.paramName, it.paramQualType, FlagType.ParameterVar, 0)).ToList()
+            };
+            var declaration = member.Name;
+            if (parameters.Count > 0) declaration += $"({member.ParametersString()})";
+            declaration += ";";
+            InsertCode(position, declaration, sci);
         }
 
         static void GenerateSwitch(ScintillaControl sci, ASResult expr, ClassModel inClass)

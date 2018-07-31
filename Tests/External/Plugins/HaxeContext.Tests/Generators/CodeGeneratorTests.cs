@@ -451,21 +451,6 @@ namespace HaXeContext.Generators
             }
         }
 
-        static IEnumerable<TestCaseData> Issue2301TestCases
-        {
-            get
-            {
-                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2301_1", GeneratorJobType.Constructor, true)
-                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2301_1"))
-                    .SetName("Enum.Fo|o. Issue 2301. Case 1.")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2301");
-                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2301_2", GeneratorJobType.Constructor, true)
-                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2301_2"))
-                    .SetName("Enum.Fo|o(1, '', true). Issue 2301. Case 2.")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2301");
-            }
-        }
-
         static IEnumerable<TestCaseData> AssignStatementToVarIssue1999TestCases
         {
             get
@@ -1023,7 +1008,6 @@ namespace HaXeContext.Generators
             TestCaseSource(nameof(Issue2295TestCases)),
             TestCaseSource(nameof(Issue2297TestCases)),
             TestCaseSource(nameof(Issue2299TestCases)),
-            TestCaseSource(nameof(Issue2301TestCases)),
             //TestCaseSource(nameof(AssignStatementToVarIssue220TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue1764TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue1999TestCases)),
@@ -1065,13 +1049,13 @@ namespace HaXeContext.Generators
             if (hasGenerator)
             {
                 Assert.IsNotEmpty(options);
-                var item = options.Find(it => ((ASCompletion.Completion.GeneratorItem) it).Job == job);
+                var item = options.Find(it => it is ASCompletion.Completion.GeneratorItem && ((ASCompletion.Completion.GeneratorItem) it).Job == job);
                 Assert.IsNotNull(item);
                 var value = item.Value;
                 return sci.Text;
             }
             if (job == (GeneratorJobType) (-1)) Assert.IsEmpty(options);
-            if (options.Count > 0) Assert.IsFalse(options.Any(it => ((ASCompletion.Completion.GeneratorItem) it).Job == job));
+            if (options.Count > 0) Assert.IsFalse(options.Any(it => it is ASCompletion.Completion.GeneratorItem && ((ASCompletion.Completion.GeneratorItem) it).Job == job));
             return null;
         }
 

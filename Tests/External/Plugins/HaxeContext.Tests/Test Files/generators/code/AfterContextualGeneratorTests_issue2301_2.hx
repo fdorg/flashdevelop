@@ -6,5 +6,5 @@ class EFoo {
 }
 
 enum Enum {
-	Foo(int:Int, string:String, bool:Bool);
+	Foo(float:Float, string:String, bool:Bool);
 }
