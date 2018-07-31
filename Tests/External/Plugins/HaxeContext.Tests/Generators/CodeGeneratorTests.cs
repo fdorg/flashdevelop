@@ -172,40 +172,6 @@ namespace HaXeContext.Generators
             }
         }
 
-        static IEnumerable<TestCaseData> Issue2017TestCases
-        {
-            get
-            {
-                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2017_1", -1, false)
-                    .Returns(null)
-                    .SetName("Contextual generator shouldn't work. `var foo(|null, null)`")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2017");
-                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2017_2", -1, false)
-                    .Returns(null)
-                    .SetName("Contextual generator shouldn't work. `var foo(null, |null)`")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2017");
-                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2017_3", -1, false)
-                    .Returns(null)
-                    .SetName("Contextual generator shouldn't work. `function foo(v = |null)`")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2017");
-                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2017_4", -1, false)
-                    .Returns(null)
-                    .SetName("Contextual generator shouldn't work. `foo(|null)`")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2017");
-                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2017_5", -1, false)
-                    .Returns(null)
-                    .SetName("Contextual generator shouldn't work. `[|null]`")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2017");
-                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2017_6", -1, false)
-                    .Returns(null)
-                    .SetName("Contextual generator shouldn't work. `{v:|null}`")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2017");
-                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2017_7", -1, false)
-                    .Returns(null)
-                    .SetName("Contextual generator shouldn't work. `return |null;`")
-                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2017");
-            }
-        }
 
         static IEnumerable<TestCaseData> ContextualGeneratorForOptionParametersTestCases
         {
@@ -258,6 +224,41 @@ namespace HaXeContext.Generators
                     .Returns(ReadAllText("AfterContextualGeneratorTests_issue1880_4"))
                     .SetName("new Fo|o(~/regex/). Change constructor declaration. ")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/1880");
+            }
+        }
+        
+        static IEnumerable<TestCaseData> Issue2017TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2017_1", -1, false)
+                    .Returns(null)
+                    .SetName("Contextual generator shouldn't work. `var foo(|null, null)`")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2017");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2017_2", -1, false)
+                    .Returns(null)
+                    .SetName("Contextual generator shouldn't work. `var foo(null, |null)`")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2017");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2017_3", -1, false)
+                    .Returns(null)
+                    .SetName("Contextual generator shouldn't work. `function foo(v = |null)`")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2017");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2017_4", -1, false)
+                    .Returns(null)
+                    .SetName("Contextual generator shouldn't work. `foo(|null)`")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2017");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2017_5", -1, false)
+                    .Returns(null)
+                    .SetName("Contextual generator shouldn't work. `[|null]`")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2017");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2017_6", -1, false)
+                    .Returns(null)
+                    .SetName("Contextual generator shouldn't work. `{v:|null}`")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2017");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2017_7", -1, false)
+                    .Returns(null)
+                    .SetName("Contextual generator shouldn't work. `return |null;`")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2017");
             }
         }
 
@@ -448,6 +449,25 @@ namespace HaXeContext.Generators
                     .Returns(null)
                     .SetName("enumValue.fo|o(). Issue 2299. Case 6.")
                     .SetDescription("https://github.com/fdorg/flashdevelop/issues/2299");
+            }
+        }
+
+        static IEnumerable<TestCaseData> Issue2303TestCases
+        {
+            get
+            {
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2303_1", -1, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2303_1"))
+                    .SetName("Auto import. Issue 2303. Case 1.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2303");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2303_2", -1, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2303_2"))
+                    .SetName("Auto import. Issue 2303. Case 2.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2303");
+                yield return new TestCaseData("BeforeContextualGeneratorTests_issue2303_3", -1, true)
+                    .Returns(ReadAllText("AfterContextualGeneratorTests_issue2303_3"))
+                    .SetName("Auto import. Issue 2303. Case 3.")
+                    .SetDescription("https://github.com/fdorg/flashdevelop/issues/2303");
             }
         }
 
@@ -999,15 +1019,16 @@ namespace HaXeContext.Generators
         [
             Test,
             TestCaseSource(nameof(ContextualGeneratorTestCases)),
-            TestCaseSource(nameof(Issue2017TestCases)),
             TestCaseSource(nameof(ContextualGeneratorForOptionParametersTestCases)),
             TestCaseSource(nameof(Issue1880TestCases)),
+            TestCaseSource(nameof(Issue2017TestCases)),
             TestCaseSource(nameof(Issue2060TestCases)),
             TestCaseSource(nameof(Issue2069TestCases)),
             TestCaseSource(nameof(Issue2220TestCases)),
             TestCaseSource(nameof(Issue2295TestCases)),
             TestCaseSource(nameof(Issue2297TestCases)),
             TestCaseSource(nameof(Issue2299TestCases)),
+            TestCaseSource(nameof(Issue2303TestCases)),
             //TestCaseSource(nameof(AssignStatementToVarIssue220TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue1764TestCases)),
             TestCaseSource(nameof(AssignStatementToVarIssue1999TestCases)),
@@ -1048,10 +1069,13 @@ namespace HaXeContext.Generators
             ASGenerator.ContextualGenerator(sci, options);
             if (hasGenerator)
             {
-                Assert.IsNotEmpty(options);
-                var item = options.Find(it => it is ASCompletion.Completion.GeneratorItem && ((ASCompletion.Completion.GeneratorItem) it).Job == job);
-                Assert.IsNotNull(item);
-                var value = item.Value;
+                if (job != (GeneratorJobType) (-1))
+                {
+                    Assert.IsNotEmpty(options);
+                    var item = options.Find(it => it is ASCompletion.Completion.GeneratorItem && ((ASCompletion.Completion.GeneratorItem) it).Job == job);
+                    Assert.IsNotNull(item);
+                    var value = item.Value;
+                }
                 return sci.Text;
             }
             if (job == (GeneratorJobType) (-1)) Assert.IsEmpty(options);
