@@ -1001,6 +1001,7 @@ namespace HaXeContext
                 if (type.IsVoid() || type.Members.Count == 0) continue;
                 var access = TypesAffinity(target, type);
                 var extends = target;
+                extends.ResolveExtends();
                 while (!extends.IsVoid())
                 {
                     foreach (MemberModel member in type.Members)
@@ -1021,7 +1022,6 @@ namespace HaXeContext
                             result.Add(newMember);
                         }
                     }
-                    extends.ResolveExtends();
                     extends = extends.Extends;
                 }
             }
@@ -1030,10 +1030,10 @@ namespace HaXeContext
                 result.Items.RemoveAll(extension =>
                 {
                     var extends = target;
+                    extends.ResolveExtends();
                     while (!extends.IsVoid())
                     {
                         if (extends.Members.Items.Any(m => !m.Flags.HasFlag(FlagType.Static) && m.Name == extension.Name)) return true;
-                        extends.ResolveExtends();
                         extends = extends.Extends;
                     }
                     return false;
