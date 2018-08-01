@@ -1382,12 +1382,10 @@ namespace HaXeContext
         public MemberList ResolveStaticExtensions(ClassModel target, FileModel inFile)
         {
             var result = new MemberList();
-            IEnumerable<MemberModel> imports = inFile.Imports.Items;
-            if (GetCurrentSDKVersion() >= "3.3.0") imports = ResolveDefaults(inFile.Package).Items.Concat(imports);
-            var importModels = imports.Where(it => it.Flags.HasFlag(FlagType.Using)).ToArray();
-            for (var i = importModels.Length - 1; i >= 0; i--)
+            var usings = inFile.Imports.Items.Where(it => it.Flags.HasFlag(FlagType.Using)).ToArray();
+            for (var i = usings.Length - 1; i >= 0; i--)
             {
-                var import = importModels[i];
+                var import = usings[i];
                 var type = ResolveType(import.Name, inFile);
                 if (type.IsVoid() || type.Members.Count == 0) continue;
                 var access = TypesAffinity(target, type);
@@ -1406,6 +1404,7 @@ namespace HaXeContext
                             index = firstParamType.IndexOf('<');
                             if (index != -1) firstParamType = firstParamType.Remove(index);
                             if (firstParamType != extendsType) continue;
+
                             var newMember = (MemberModel)member.Clone();
                             newMember.Parameters.RemoveAt(0);
                             newMember.Flags = FlagType.Dynamic | FlagType.Function;
@@ -1421,7 +1420,6 @@ namespace HaXeContext
                 result.Items.RemoveAll(extension =>
                 {
                     var extends = target;
-                    extends.ResolveExtends();
                     while (!extends.IsVoid())
                     {
                         if (extends.Members.Items.Any(m => !m.Flags.HasFlag(FlagType.Static) && m.Name == extension.Name)) return true;
