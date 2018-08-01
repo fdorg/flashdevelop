@@ -145,13 +145,16 @@ namespace HaXeContext.Completion
             var rvalueStart = sci.PositionFromLine(var.LineFrom) + m.Index + m.Length;
             var methodEndPosition = sci.LineEndPosition(ctx.CurrentMember.LineTo);
             var parCount = 0;
+            var braCount = 0;
             for (var i = rvalueStart; i < methodEndPosition; i++)
             {
                 if (sci.PositionIsOnComment(i) || sci.PositionIsInString(i)) continue;
                 var c = (char) sci.CharAt(i);
                 if (c <= ' ') continue;
+                if (c == '{') braCount++;
+                else if (c == '}') braCount--;
                 // for(i in 0...1)
-                if (c == '.' && sci.CharAt(i + 1) == '.' && sci.CharAt(i + 2) == '.')
+                else if (c == '.' && sci.CharAt(i + 1) == '.' && sci.CharAt(i + 2) == '.')
                 {
                     var type = ctx.ResolveType("Int", null);
                     var.Type = type.QualifiedName;
@@ -160,7 +163,7 @@ namespace HaXeContext.Completion
                 }
                 if (c == '(') parCount++;
                 // for(it in expr)
-                else if (c == ')')
+                else if (c == ')' || (c == ';' && braCount == 0))
                 {
                     parCount--;
                     if (parCount >= 0) continue;

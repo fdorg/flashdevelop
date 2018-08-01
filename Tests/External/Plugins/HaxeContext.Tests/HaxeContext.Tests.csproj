@@ -683,6 +683,13 @@
     <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2303_2.hx" />
     <EmbeddedResource Include="Test Files\generators\code\BeforeContextualGeneratorTests_issue2303_3.hx" />
     <EmbeddedResource Include="Test Files\generators\code\AfterContextualGeneratorTests_issue2303_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeAssignStatementToVar_issue2306_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterAssignStatementToVar_issue2306_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateConstructor_issue2305_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\AfterGenerateConstructor_issue2305_1.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateConstructor_issue2305_2.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateConstructor_issue2305_3.hx" />
+    <EmbeddedResource Include="Test Files\generators\code\BeforeGenerateConstructor_issue2305_4.hx" />
     <EmbeddedResource Include="Test Files\parser\ResolveStaticExtensions_Issue1900_1.hx" />
     <EmbeddedResource Include="Test Files\parser\ResolveStaticExtensions_Issue1900_2.hx" />
     <EmbeddedResource Include="Test Files\parser\ResolveStaticExtensions_Issue1900_3.hx" />

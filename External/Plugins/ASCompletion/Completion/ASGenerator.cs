@@ -2683,7 +2683,7 @@ namespace ASCompletion.Completion
             }
             position = GetBodyStart(inClass.LineFrom, inClass.LineTo, sci);
             sci.SetSel(position, position);
-            ((ASGenerator) ASContext.Context.CodeGenerator).GenerateFunction(member, position, inClass, false);
+            ((ASGenerator) ASContext.Context.CodeGenerator).GenerateFunction(sci, member, position, inClass, false);
         }
 
         private static void GenerateFunctionJob(GeneratorJobType job, ScintillaControl sci, MemberModel member, bool detach, ClassModel inClass)
@@ -2907,10 +2907,10 @@ namespace ASCompletion.Completion
             var newMember = NewMember(contextToken, isStatic, FlagType.Function, visibility);
             newMember.Parameters = parameters.Select(it => new MemberModel(AvoidKeyword(it.paramName), it.paramType, FlagType.ParameterVar, 0)).ToList();
             if (newMemberType != null) newMember.Type = newMemberType;
-            ((ASGenerator) ASContext.Context.CodeGenerator).GenerateFunction(newMember, position, inClass, detach);
+            ((ASGenerator) ASContext.Context.CodeGenerator).GenerateFunction(sci, newMember, position, inClass, detach);
         }
 
-        protected virtual void GenerateFunction(MemberModel member, int position, ClassModel inClass, bool detach)
+        protected virtual void GenerateFunction(ScintillaControl sci, MemberModel member, int position, ClassModel inClass, bool detach)
         {
             string template;
             string decl;
@@ -2923,6 +2923,9 @@ namespace ASCompletion.Completion
             {
                 template = TemplateUtils.GetTemplate("Constructor");
                 decl = TemplateUtils.ToDeclarationWithModifiersString(member, template);
+                var line = sci.LineFromPosition(position);
+                if (GetDeclarationAtLine(line).Member != null) decl += $"{NewLine}{NewLine}{NewLine}";
+                else if (GetDeclarationAtLine(line + 1).Member != null) decl += $"{NewLine}{NewLine}";
             }
             else
             {
