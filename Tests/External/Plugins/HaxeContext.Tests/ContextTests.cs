@@ -377,5 +377,33 @@ namespace HaXeContext
             actualImports.Sort();
             Assert.AreEqual(expectedImports, actualImports.Items);
         }
+
+        static IEnumerable<TestCaseData> ResolveStaticExtensionsTestCases
+        {
+            get
+            {
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_1", true);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_2", true);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_3", true);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_4", true);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_5", false);
+            }
+        }
+
+        [Test, TestCaseSource(nameof(ResolveStaticExtensionsTestCases))]
+        public void ResolveStaticExtensions(string fileName, bool hasExtensions)
+        {
+            SetSrc(sci, ReadAllText(fileName));
+            var expr = ASComplete.GetExpressionType(sci, sci.CurrentPos);
+            var type = ASContext.Context.ResolveType(expr.Type.Name, ASContext.Context.CurrentModel);
+            var extensions = ((Context) ASContext.GetLanguageContext("haxe")).ResolveStaticExtensions(type, ASContext.Context.CurrentModel).Items;
+            if (hasExtensions)
+            {
+                Assert.IsNotEmpty(extensions);
+                //var exprType = expr.Type;
+                //Assert.IsTrue(extensions.All(it => exprType.Members.Items.Any(m => m.Name == it.Name)));
+            }
+            else Assert.IsEmpty(extensions);
+        }
     }
 }

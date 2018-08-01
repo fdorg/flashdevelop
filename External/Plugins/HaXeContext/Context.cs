@@ -1373,6 +1373,66 @@ namespace HaXeContext
             return result;
         }
 
+        /// <summary>
+        /// https://haxe.org/manual/lf-static-extension.html
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="inFile">Current file</param>
+        /// <returns></returns>
+        public MemberList ResolveStaticExtensions(ClassModel target, FileModel inFile)
+        {
+            var result = new MemberList();
+            IEnumerable<MemberModel> imports = inFile.Imports.Items;
+            if (GetCurrentSDKVersion() >= "3.3.0") imports = ResolveDefaults(inFile.Package).Items.Concat(imports);
+            var importModels = imports.Where(it => it.Flags.HasFlag(FlagType.Using)).ToArray();
+            for (var i = importModels.Length - 1; i >= 0; i--)
+            {
+                var import = importModels[i];
+                var type = ResolveType(import.Name, inFile);
+                if (type.IsVoid() || type.Members.Count == 0) continue;
+                var access = TypesAffinity(target, type);
+                var extends = target;
+                extends.ResolveExtends();
+                while (!extends.IsVoid())
+                {
+                    foreach (MemberModel member in type.Members)
+                    {
+                        if ((member.Access & access) > 0 && member.Flags.HasFlag(FlagType.Static | FlagType.Function) && member.Parameters?.Count > 0)
+                        {
+                            var extendsType = extends.Type;
+                            var firstParamType = member.Parameters[0].Type;
+                            var index = extendsType.IndexOf('<');
+                            if (index != -1) extendsType = extendsType.Remove(index);
+                            index = firstParamType.IndexOf('<');
+                            if (index != -1) firstParamType = firstParamType.Remove(index);
+                            if (firstParamType != extendsType) continue;
+                            var newMember = (MemberModel)member.Clone();
+                            newMember.Parameters.RemoveAt(0);
+                            newMember.Flags = FlagType.Dynamic | FlagType.Function;
+                            newMember.InFile = type.InFile;
+                            result.Add(newMember);
+                        }
+                    }
+                    extends = extends.Extends;
+                }
+            }
+            if (result.Count > 0)
+            {
+                result.Items.RemoveAll(extension =>
+                {
+                    var extends = target;
+                    extends.ResolveExtends();
+                    while (!extends.IsVoid())
+                    {
+                        if (extends.Members.Items.Any(m => !m.Flags.HasFlag(FlagType.Static) && m.Name == extension.Name)) return true;
+                        extends = extends.Extends;
+                    }
+                    return false;
+                });
+            }
+            return result;
+        }
+
         public override string GetDefaultValue(string type)
         {
             if (string.IsNullOrEmpty(type) || type == features.voidKey) return null;
