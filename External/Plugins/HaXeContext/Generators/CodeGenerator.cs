@@ -194,7 +194,7 @@ namespace HaXeContext.Generators
             InsertCode(position, template, sci);
         }
 
-        protected override void GenerateFunction(MemberModel member, int position, ClassModel inClass, bool detach)
+        protected override void GenerateFunction(ScintillaControl sci, MemberModel member, int position, ClassModel inClass, bool detach)
         {
             if (inClass.Flags.HasFlag(FlagType.TypeDef) || inClass.Flags.HasFlag(FlagType.Interface))
             {
@@ -203,7 +203,7 @@ namespace HaXeContext.Generators
                 var declaration = TemplateUtils.ToDeclarationString(member, template);
                 GenerateFunction(position, declaration, detach);
             }
-            else base.GenerateFunction(member, position, inClass, detach);
+            else base.GenerateFunction(sci, member, position, inClass, detach);
         }
 
         protected override void GenerateProperty(GeneratorJobType job, MemberModel member, ClassModel inClass, ScintillaControl sci)
