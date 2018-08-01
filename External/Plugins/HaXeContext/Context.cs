@@ -1382,6 +1382,7 @@ namespace HaXeContext
         public MemberList ResolveStaticExtensions(ClassModel target, FileModel inFile)
         {
             var result = new MemberList();
+            var kind = FlagType.Static | FlagType.Function;
             for (var i = inFile.Imports.Items.Count - 1; i >= 0; i--)
             {
                 var import = inFile.Imports.Items[i];
@@ -1396,15 +1397,15 @@ namespace HaXeContext
                     foreach (MemberModel member in type.Members)
                     {
                         if ((member.Access & access) == 0
-                            || !member.Flags.HasFlag(FlagType.Static | FlagType.Function)
+                            || (member.Flags & kind) == 0
                             || member.Parameters == null || member.Parameters.Count == 0
                             || result.Search(member.Name, 0, 0) != null
                             || !CanBeExtended(extends, member, access)) continue;
-                        var newMember = (MemberModel) member.Clone();
-                        newMember.Parameters.RemoveAt(0);
-                        newMember.Flags = FlagType.Dynamic | FlagType.Function;
-                        newMember.InFile = type.InFile;
-                        result.Add(newMember);
+                        var extension = (MemberModel) member.Clone();
+                        extension.Parameters.RemoveAt(0);
+                        extension.Flags = FlagType.Dynamic | FlagType.Function;
+                        extension.InFile = type.InFile;
+                        result.Add(extension);
                     }
                     extends = extends.Extends;
                 }
