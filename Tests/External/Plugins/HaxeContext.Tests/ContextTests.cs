@@ -349,6 +349,7 @@ namespace HaXeContext
             var imports = ASContext.Context.ResolveImports(context.CurrentModel);
             return imports.Items;
         }
+        
         static IEnumerable<TestCaseData> ParseFileIssue1150_2_TestCases
         {
             get
@@ -387,6 +388,8 @@ namespace HaXeContext
                 yield return new TestCaseData("ResolveStaticExtensions_Issue1900_3", true);
                 yield return new TestCaseData("ResolveStaticExtensions_Issue1900_4", true);
                 yield return new TestCaseData("ResolveStaticExtensions_Issue1900_5", false);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_6", false);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_7", true);
             }
         }
 

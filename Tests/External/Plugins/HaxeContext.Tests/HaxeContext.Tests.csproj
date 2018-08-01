@@ -688,6 +688,8 @@
     <EmbeddedResource Include="Test Files\parser\ResolveStaticExtensions_Issue1900_3.hx" />
     <EmbeddedResource Include="Test Files\parser\ResolveStaticExtensions_Issue1900_4.hx" />
     <EmbeddedResource Include="Test Files\parser\ResolveStaticExtensions_Issue1900_5.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveStaticExtensions_Issue1900_6.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveStaticExtensions_Issue1900_7.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

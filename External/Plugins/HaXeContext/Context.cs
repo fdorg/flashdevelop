@@ -1382,10 +1382,10 @@ namespace HaXeContext
         public MemberList ResolveStaticExtensions(ClassModel target, FileModel inFile)
         {
             var result = new MemberList();
-            var usings = inFile.Imports.Items.Where(it => it.Flags.HasFlag(FlagType.Using)).ToArray();
-            for (var i = usings.Length - 1; i >= 0; i--)
+            for (var i = inFile.Imports.Items.Count - 1; i >= 0; i--)
             {
-                var import = usings[i];
+                var import = inFile.Imports.Items[i];
+                if (!import.Flags.HasFlag(FlagType.Using)) continue;
                 var type = ResolveType(import.Name, inFile);
                 if (type.IsVoid() || type.Members.Count == 0) continue;
                 var access = TypesAffinity(target, type);
@@ -1395,40 +1395,42 @@ namespace HaXeContext
                 {
                     foreach (MemberModel member in type.Members)
                     {
-                        if ((member.Access & access) > 0 && member.Flags.HasFlag(FlagType.Static | FlagType.Function) && member.Parameters?.Count > 0)
-                        {
-                            var extendsType = extends.Type;
-                            var firstParamType = member.Parameters[0].Type;
-                            var index = extendsType.IndexOf('<');
-                            if (index != -1) extendsType = extendsType.Remove(index);
-                            index = firstParamType.IndexOf('<');
-                            if (index != -1) firstParamType = firstParamType.Remove(index);
-                            if (firstParamType != extendsType) continue;
-
-                            var newMember = (MemberModel)member.Clone();
-                            newMember.Parameters.RemoveAt(0);
-                            newMember.Flags = FlagType.Dynamic | FlagType.Function;
-                            newMember.InFile = type.InFile;
-                            result.Add(newMember);
-                        }
+                        if ((member.Access & access) == 0
+                            || !member.Flags.HasFlag(FlagType.Static | FlagType.Function)
+                            || member.Parameters == null || member.Parameters.Count == 0
+                            || result.Search(member.Name, 0, 0) != null
+                            || !CanBeExtended(extends, member, access)) continue;
+                        var newMember = (MemberModel) member.Clone();
+                        newMember.Parameters.RemoveAt(0);
+                        newMember.Flags = FlagType.Dynamic | FlagType.Function;
+                        newMember.InFile = type.InFile;
+                        result.Add(newMember);
                     }
                     extends = extends.Extends;
                 }
             }
-            if (result.Count > 0)
-            {
-                result.Items.RemoveAll(extension =>
-                {
-                    var extends = target;
-                    while (!extends.IsVoid())
-                    {
-                        if (extends.Members.Items.Any(m => !m.Flags.HasFlag(FlagType.Static) && m.Name == extension.Name)) return true;
-                        extends = extends.Extends;
-                    }
-                    return false;
-                });
-            }
             return result;
+
+            bool CanBeExtended(ClassModel type, MemberModel extension, Visibility access)
+            {
+                var firstParamType = extension.Parameters[0].Type;
+                if (firstParamType != "Dynamic" && !firstParamType.StartsWithOrdinal("Dynamic<"))
+                {
+                    var targetType = type.Type;
+                    var index = targetType.IndexOf('<');
+                    if (index != -1) targetType = targetType.Remove(index);
+                    index = firstParamType.IndexOf('<');
+                    if (index != -1) firstParamType = firstParamType.Remove(index);
+                    if (firstParamType != targetType) return false;
+                }
+                while (!type.IsVoid())
+                {
+                    var model = type.Members.Search(extension.Name, 0, access);
+                    if (model != null && !model.Flags.HasFlag(FlagType.Static)) return false;
+                    type = type.Extends;
+                }
+                return true;
+            }
         }
 
         public override string GetDefaultValue(string type)
