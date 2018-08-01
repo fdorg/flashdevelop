@@ -1050,7 +1050,7 @@ namespace HaXeContext
             return result;
         }
 
-        ClassModel InternalResolveType(string cname, FileModel inFile)
+        internal ClassModel InternalResolveType(string cname, FileModel inFile)
         {
             // unknown type
             if (string.IsNullOrEmpty(cname) || cname == features.voidKey || classPath == null)
