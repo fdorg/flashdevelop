@@ -398,8 +398,9 @@ namespace HaXeContext
         {
             SetSrc(sci, ReadAllText(fileName));
             var expr = ASComplete.GetExpressionType(sci, sci.CurrentPos);
-            var ctx = ((Context) ASContext.GetLanguageContext("haxe"));
+            var ctx = (Context) ASContext.GetLanguageContext("haxe");
             var type = ctx.InternalResolveType(expr.Type.Name, ASContext.Context.CurrentModel);
+            ctx.hxCompletionCache.StaticExtensions.Clear();
             var extensions = ctx.ResolveStaticExtensions(type, ASContext.Context.CurrentModel).Items;
             if (hasExtensions)
             {

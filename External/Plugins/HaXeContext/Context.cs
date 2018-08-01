@@ -47,7 +47,7 @@ namespace HaXeContext
         private string haxeTarget;
         private bool resolvingDot;
         private bool resolvingFunction;
-        HaxeCompletionCache hxCompletionCache;
+        internal HaxeCompletionCache hxCompletionCache;
         ClassModel stubFunctionClass;
 
         public Context(HaXeSettings initSettings) : this(initSettings, path => null)
@@ -1041,13 +1041,16 @@ namespace HaXeContext
         public override ClassModel ResolveType(string className, FileModel inFile)
         {
             var result = InternalResolveType(className, inFile);
-            var staticExtensions = ResolveStaticExtensions(result, inFile);
-            if (staticExtensions.Count > 0)
+            if (inFile == CurrentModel && !result.IsVoid())
             {
-                completionCache.Elements.Remove(result);
-                result = (ClassModel)result.Clone();
-                result.Members.Merge(staticExtensions);
-                completionCache.Elements.Add(result);
+                var staticExtensions = ResolveStaticExtensions(result, inFile);
+                if (staticExtensions.Count > 0)
+                {
+                    completionCache.Elements.Remove(result);
+                    result = (ClassModel)result.Clone();
+                    result.Members.Merge(staticExtensions);
+                    completionCache.Elements.Add(result);
+                }
             }
             return result;
         }
@@ -1396,8 +1399,9 @@ namespace HaXeContext
         /// <returns></returns>
         public MemberList ResolveStaticExtensions(ClassModel target, FileModel inFile)
         {
-            var result = new MemberList();
-            if (target == ClassModel.VoidClass || inFile == null) return result;
+            if (hxCompletionCache.StaticExtensions.TryGetValue(target, out var result)) return result;
+            result = new MemberList();
+            if (target.IsVoid() || inFile == null) return result;
             var imports = ResolveDefaults(inFile.Package);
             imports.Merge(inFile.Imports);
             var kind = FlagType.Static | FlagType.Function;
@@ -1428,8 +1432,9 @@ namespace HaXeContext
                     extends = extends.Extends;
                 }
             }
+            if (result.Count > 0) hxCompletionCache.StaticExtensions[target] = result;
             return result;
-
+            // utils
             bool CanBeExtended(ClassModel type, MemberModel extension, Visibility access)
             {
                 var firstParamType = extension.Parameters[0].Type;
@@ -2236,7 +2241,8 @@ namespace HaXeContext
 
     class HaxeCompletionCache: CompletionCache
     {
-        public MemberList OtherElements;
+        public readonly MemberList OtherElements;
+        public readonly Dictionary<MemberModel, MemberList> StaticExtensions = new Dictionary<MemberModel, MemberList>();
 
         public HaxeCompletionCache(ASContext context, MemberList elements, MemberList otherElements)
             : base(context, elements)
