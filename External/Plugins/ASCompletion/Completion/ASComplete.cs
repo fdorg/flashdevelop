@@ -1905,8 +1905,7 @@ namespace ASCompletion.Completion
                         return HandleImportCompletion(Sci, expr.Value, autoHide);
                 }
                 // type
-                else if (features.hasEcmaTyping && expr.Separator == ":"
-                    && HandleColonCompletion(Sci, expr.Value, autoHide))
+                else if (features.hasEcmaTyping && expr.Separator == ":" && HandleColonCompletion(Sci, expr.Value, autoHide))
                     return true;
 
                 // no completion
@@ -1946,11 +1945,7 @@ namespace ASCompletion.Completion
                         return HandleDeclarationCompletion(Sci, expr.Value, autoHide);
                 }
             }
-            else
-            {
-                if (expr.Value.EndsWithOrdinal("..") || Regex.IsMatch(expr.Value, "^[0-9]+\\.")) 
-                    return false;
-            }
+            else if (expr.Value.EndsWithOrdinal("..") || Regex.IsMatch(expr.Value, "^[0-9]+\\.")) return false;
 
             string tail = (dotIndex >= 0) ? expr.Value.Substring(dotIndex + features.dot.Length) : expr.Value;
             
@@ -1967,7 +1962,7 @@ namespace ASCompletion.Completion
             // Context
             ASResult result;
             ClassModel tmpClass;
-            bool outOfDate = (expr.Separator == ":") && ctx.UnsetOutOfDate();
+            var outOfDate = (expr.Separator == ":") && ctx.UnsetOutOfDate();
             var cFile = ctx.CurrentModel;
             var cClass = ctx.CurrentClass;
 
@@ -1987,8 +1982,7 @@ namespace ASCompletion.Completion
                     if (outOfDate) ctx.SetOutOfDate();
                     return true;
                 }
-                if (autoHide && features.hasE4X && IsXmlType(result.Type))
-                    return true;
+                if (autoHide && features.hasE4X && IsXmlType(result.Type)) return true;
                 tmpClass = result.Type;
             }
             else

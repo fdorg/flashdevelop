@@ -1382,10 +1382,12 @@ namespace HaXeContext
         public MemberList ResolveStaticExtensions(ClassModel target, FileModel inFile)
         {
             var result = new MemberList();
+            var imports = ResolveDefaults(inFile.Package);
+            imports.Merge(inFile.Imports);
             var kind = FlagType.Static | FlagType.Function;
-            for (var i = inFile.Imports.Items.Count - 1; i >= 0; i--)
+            for (var i = imports.Count - 1; i >= 0; i--)
             {
-                var import = inFile.Imports.Items[i];
+                var import = imports[i];
                 if (!import.Flags.HasFlag(FlagType.Using)) continue;
                 var type = ResolveType(import.Name, inFile);
                 if (type.IsVoid() || type.Members.Count == 0) continue;
@@ -1739,7 +1741,6 @@ namespace HaXeContext
         public override MemberList GetVisibleExternalElements()
         {
             if (!IsFileValid) return new MemberList();
-
             if (completionCache.IsDirty)
             {
                 var elements = new MemberList();
