@@ -945,7 +945,7 @@ namespace HaXeContext
                         var p2 = lpart.LastIndexOf('.');
                         if (p2 != -1) lpart = import.Substring(p2 + 1);
                         if (char.IsLower(lpart[0])) continue;
-                        var type = ResolveType(lpart, Context.CurrentModel);
+                        var type = InternalResolveType(lpart, Context.CurrentModel);
                         if (type.IsVoid() || type.Members.Count <= 0) continue;
                         var rpart = import.Substring(p1 + 1);
                         var member = type.Members.Search(rpart, FlagType.Static, Visibility.Public);
@@ -1035,10 +1035,22 @@ namespace HaXeContext
         /// <summary>
         /// Retrieves a class model from its name
         /// </summary>
-        /// <param name="cname">Class (short or full) name</param>
+        /// <param name="className">Class (short or full) name</param>
         /// <param name="inFile">Current file</param>
         /// <returns>A parsed class or an empty ClassModel if the class is not found</returns>
-        public override ClassModel ResolveType(string cname, FileModel inFile)
+        public override ClassModel ResolveType(string className, FileModel inFile)
+        {
+            var result = InternalResolveType(className, inFile);
+            var staticExtensions = ResolveStaticExtensions(result, inFile);
+            if (staticExtensions.Count > 0)
+            {
+                result = (ClassModel)result.Clone();
+                result.Members.Merge(staticExtensions);
+            }
+            return result;
+        }
+
+        ClassModel InternalResolveType(string cname, FileModel inFile)
         {
             // unknown type
             if (string.IsNullOrEmpty(cname) || cname == features.voidKey || classPath == null)
@@ -1066,7 +1078,7 @@ namespace HaXeContext
                 package = cname.Substring(0, p);
                 cname = cname.Substring(p + 1);
             }
-            else 
+            else
             {
                 // search in file
                 if (inFile != null)
@@ -1088,6 +1100,7 @@ namespace HaXeContext
                         var dotIndex = type.LastIndexOf('.');
                         if (dotIndex > 0) package = type.Substring(0, dotIndex);
                     }
+
                     found = true;
                     break;
                 }
@@ -1382,6 +1395,7 @@ namespace HaXeContext
         public MemberList ResolveStaticExtensions(ClassModel target, FileModel inFile)
         {
             var result = new MemberList();
+            if (target == ClassModel.VoidClass || inFile == null) return result;
             var imports = ResolveDefaults(inFile.Package);
             imports.Merge(inFile.Imports);
             var kind = FlagType.Static | FlagType.Function;
@@ -1389,7 +1403,7 @@ namespace HaXeContext
             {
                 var import = imports[i];
                 if (!import.Flags.HasFlag(FlagType.Using)) continue;
-                var type = ResolveType(import.Name, inFile);
+                var type = InternalResolveType(import.Name, inFile);
                 if (type.IsVoid() || type.Members.Count == 0) continue;
                 var access = TypesAffinity(target, type);
                 var extends = target;
@@ -1399,7 +1413,7 @@ namespace HaXeContext
                     foreach (MemberModel member in type.Members)
                     {
                         if ((member.Access & access) == 0
-                            || (member.Flags & kind) == 0
+                            || !member.Flags.HasFlag(kind)
                             || member.Parameters == null || member.Parameters.Count == 0
                             || result.Search(member.Name, 0, 0) != null
                             || !CanBeExtended(extends, member, access)) continue;
@@ -1805,7 +1819,7 @@ namespace HaXeContext
                 elements.Add(imports);
                 foreach (MemberModel import in imports)
                 {
-                    TryAddEnums(import as ClassModel ?? ResolveType(import.Name, cFile), other);
+                    TryAddEnums(import as ClassModel ?? InternalResolveType(import.Name, cFile), other);
                 }
                 // in cache
                 elements.Sort();
