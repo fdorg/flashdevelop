@@ -2920,8 +2920,8 @@ namespace ASCompletion.Completion
                 }
                 else if ((aDecl.Flags & (FlagType.Class | FlagType.Enum)) > 0)
                 {
-                    ClassModel friendClass = null;
-                    if (aDecl.InFile != null)
+                    var friendClass = aDecl as ClassModel;
+                    if (friendClass == null && aDecl.InFile != null)
                     {
                         foreach(var aClass in aDecl.InFile.Classes)
                             if (aClass.Name == token)
@@ -3164,8 +3164,7 @@ namespace ASCompletion.Completion
         /// <param name="acc">Visibility mask</param>
         public static void FindMember(string token, ClassModel inClass, ASResult result, FlagType mask, Visibility acc)
         {
-            if (string.IsNullOrEmpty(token))
-                return;
+            if (string.IsNullOrEmpty(token)) return;
 
             IASContext context = ASContext.Context;
             ContextFeatures features = context.Features;
@@ -3307,7 +3306,7 @@ namespace ASCompletion.Completion
             if (found != null)
             {
                 result.InClass = tmpClass;
-                result.InFile = tmpClass.InFile;
+                result.InFile = result.Member?.InFile ?? tmpClass.InFile;
                 if (result.Type == null) 
                     result.Type = ASContext.Context.ResolveType(found.Type, tmpClass.InFile);
                 return;

@@ -1044,8 +1044,10 @@ namespace HaXeContext
             var staticExtensions = ResolveStaticExtensions(result, inFile);
             if (staticExtensions.Count > 0)
             {
+                completionCache.Elements.Remove(result);
                 result = (ClassModel)result.Clone();
                 result.Members.Merge(staticExtensions);
+                completionCache.Elements.Add(result);
             }
             return result;
         }
