@@ -321,7 +321,7 @@ namespace ASCompletion.Completion
                     while (pos > 0)
                     {
                         c = (char)sci.CharAt(pos--);
-                        if (hadWS && characterClass.IndexOf(c) >= 0) break;
+                        if (hadWS && characterClass.Contains(c)) break;
                         if (c == '<' && ((char)sci.CharAt(pos + 2) == '/' || !hadWS)) break;
                         if (":;,+-*%!&|<>/{}()[=?".Contains(c))
                         {
@@ -1419,8 +1419,7 @@ namespace ASCompletion.Completion
                     p = paramName.IndexOf('=');
                     if (p > 0) paramName = paramName.Substring(0, p);
                 }
-                char[] toClean = new char[] { ' ', '\t', '\n', '\r', '*', '?' };
-                paramName = paramName.Trim(toClean);
+                paramName = paramName.Trim(' ', '\t', '\n', '\r', '*', '?');
             }
             
             // show calltip
@@ -2253,7 +2252,7 @@ namespace ASCompletion.Completion
                 {
                     int itemIndex = list.FindIndex(item => string.Compare(item.Label, newItem.Label, StringComparison.OrdinalIgnoreCase) >= 0);
 
-                    int genericStart = newItemType.IndexOfOrdinal("<");
+                    int genericStart = newItemType.IndexOf('<');
                     if (genericStart > -1 && ASContext.Context.Features.HasGenericsShortNotation)
                     {
                         newItemType = newItemType.Substring(0, genericStart);
@@ -2982,10 +2981,10 @@ namespace ASCompletion.Completion
         private static ClassModel ResolveType(string qname, FileModel inFile)
         {
             if (qname == null) return ClassModel.VoidClass;
-            IASContext context = ASContext.Context;
-            bool isQualified = qname.IndexOf('.') > 0;
-
+            var context = ASContext.Context;
             if (inFile == null || inFile == context.CurrentModel)
+            {
+                bool isQualified = qname.Contains('.');
                 foreach (MemberModel aDecl in context.GetVisibleExternalElements())
                 {
                     if (aDecl.Name == qname || (isQualified && aDecl.Type == qname))
@@ -2996,10 +2995,10 @@ namespace ASCompletion.Completion
                                 if (aClass.Name == aDecl.Name) return aClass;
                             return context.GetModel(aDecl.InFile.Package, qname, inFile?.Package);
                         }
-                        else return context.ResolveType(aDecl.Type, inFile);
+                        return context.ResolveType(aDecl.Type, inFile);
                     }
                 }
-
+            }
             return context.ResolveType(qname, inFile);
         }
 
@@ -4748,16 +4747,10 @@ namespace ASCompletion.Completion
         internal static void HandleCompletionInsert(ScintillaControl sci, int position, string text, char trigger, ICompletionListItem item)
         {
             // if the current class hash was set, we want to store whatever the user selected as the last-completed member for this class.
-            if (currentClassHash != null)
-            {
-                completionHistory[currentClassHash] = text;
-            }
-
-            if (!ASContext.Context.IsFileValid)
-                return;
+            if (currentClassHash != null) completionHistory[currentClassHash] = text;
+            if (!ASContext.Context.IsFileValid) return;
             // let the context handle the insertion
-            if (ASContext.Context.OnCompletionInsert(sci, position, text, trigger))
-                return;
+            if (ASContext.Context.OnCompletionInsert(sci, position, text, trigger)) return;
             // event inserted
             if (item is EventItem)
             {
@@ -4777,10 +4770,10 @@ namespace ASCompletion.Completion
                 ContextFeatures features = ASContext.Context.Features;
 
                 // add ; for imports
-                if (" \n\t".IndexOf(trigger) >= 0 && expr.WordBefore != null 
+                if (" \n\t".Contains(trigger) && expr.WordBefore != null
                     && (expr.WordBefore == features.importKey || expr.WordBefore == features.importKeyAlt))
                 {
-                    if (!sci.GetLine(sci.CurrentLine).Contains(";")) sci.InsertText(sci.CurrentPos, ";");
+                    if (!sci.GetLine(sci.CurrentLine).Contains(';')) sci.InsertText(sci.CurrentPos, ";");
                     return;
                 }
 
