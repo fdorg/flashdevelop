@@ -1373,6 +1373,7 @@ namespace HaXeContext
         {
             var result = new MemberList();
             if (GetCurrentSDKVersion() < "3.3.0") return result;
+            if (CurrentModel == null || package != CurrentModel.Package) return result;
             var packagePath = string.IsNullOrEmpty(package) ? string.Empty : package.Replace('.', dirSeparatorChar);
             while(true)
             {
