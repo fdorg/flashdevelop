@@ -701,6 +701,7 @@
     <EmbeddedResource Include="Test Files\parser\ResolveStaticExtensions_Issue1900_9.hx" />
     <EmbeddedResource Include="Test Files\parser\ResolveStaticExtensions_Issue1900_10.hx" />
     <EmbeddedResource Include="Test Files\parser\ResolveStaticExtensions_Issue1900_11.hx" />
+    <EmbeddedResource Include="Test Files\parser\ResolveStaticExtensions_Issue1900_12.hx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

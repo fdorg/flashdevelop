@@ -394,6 +394,7 @@ namespace HaXeContext
                 yield return new TestCaseData("ResolveStaticExtensions_Issue1900_9", true);
                 yield return new TestCaseData("ResolveStaticExtensions_Issue1900_10", true);
                 yield return new TestCaseData("ResolveStaticExtensions_Issue1900_11", true);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_12", true);
             }
         }
 

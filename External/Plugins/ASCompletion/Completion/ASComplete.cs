@@ -3207,6 +3207,7 @@ namespace ASCompletion.Completion
                 {
                     if ((result.Member.Flags & FlagType.Constructor) > 0)
                         result.Type = inClass;
+                    // TODO slavara: check this
                     else result.Type = ResolveType(result.Member.Type, result.InFile);
                 }
                 return;
