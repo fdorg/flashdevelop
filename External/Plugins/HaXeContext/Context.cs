@@ -1392,7 +1392,7 @@ namespace HaXeContext
             }
             if (result.Count > 0)
             {
-                if (hxCompletionCache == null) hxCompletionCache = new HaxeCompletionCache(this, completionCache.Elements, new MemberList());
+                if (hxCompletionCache == null) completionCache = hxCompletionCache = new HaxeCompletionCache(this, new MemberList(), new MemberList());
                 hxCompletionCache.Defaults = result;
             }
             return result;
@@ -1441,7 +1441,7 @@ namespace HaXeContext
             }
             if (result.Count > 0)
             {
-                if (hxCompletionCache == null) hxCompletionCache = new HaxeCompletionCache(this, completionCache.Elements, new MemberList());
+                if (hxCompletionCache == null) completionCache = hxCompletionCache = new HaxeCompletionCache(this, new MemberList(), new MemberList());
                 hxCompletionCache.StaticExtensions[target] = result;
             }
             return result;
