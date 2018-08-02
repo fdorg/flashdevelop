@@ -2858,7 +2858,7 @@ namespace ASCompletion.Completion
                                 }
                                 if (string.IsNullOrEmpty(var.Type)) result.Type = context.ResolveType(features.objectKey, null);
                                 else if (var.Flags.HasFlag(FlagType.Function)) result.Type = context.ResolveType("Function", null);
-                                else result.Type = ResolveType(var.Type, inFile);
+                                else result.Type = context.ResolveType(var.Type, inFile);
                                 return result;
                             }
                         }

@@ -1371,6 +1371,7 @@ namespace HaXeContext
         /// <returns>Imported classes list (not null)</returns>
         private MemberList ResolveDefaults(string package)
         {
+            if (hxCompletionCache?.Defaults != null) return hxCompletionCache.Defaults;
             var result = new MemberList();
             if (GetCurrentSDKVersion() < "3.3.0") return result;
             if (CurrentModel == null || package != CurrentModel.Package) return result;
@@ -1389,6 +1390,11 @@ namespace HaXeContext
                 if (string.IsNullOrEmpty(packagePath)) break;
                 packagePath = Path.GetDirectoryName(packagePath);
             }
+            if (result.Count > 0)
+            {
+                if (hxCompletionCache == null) hxCompletionCache = new HaxeCompletionCache(this, completionCache.Elements, new MemberList());
+                hxCompletionCache.Defaults = result;
+            }
             return result;
         }
 
@@ -1400,7 +1406,7 @@ namespace HaXeContext
         /// <returns></returns>
         public MemberList ResolveStaticExtensions(ClassModel target, FileModel inFile)
         {
-            if (hxCompletionCache.StaticExtensions.TryGetValue(target, out var result)) return result;
+            if (hxCompletionCache != null && hxCompletionCache.StaticExtensions.TryGetValue(target, out var result)) return result;
             result = new MemberList();
             if (target.IsVoid() || inFile == null) return result;
             var imports = ResolveDefaults(inFile.Package);
@@ -1433,7 +1439,11 @@ namespace HaXeContext
                     extends = extends.Extends;
                 }
             }
-            if (result.Count > 0) hxCompletionCache.StaticExtensions[target] = result;
+            if (result.Count > 0)
+            {
+                if (hxCompletionCache == null) hxCompletionCache = new HaxeCompletionCache(this, completionCache.Elements, new MemberList());
+                hxCompletionCache.StaticExtensions[target] = result;
+            }
             return result;
             // utils
             bool CanBeExtended(ClassModel type, MemberModel extension, Visibility access)
@@ -2242,6 +2252,7 @@ namespace HaXeContext
 
     class HaxeCompletionCache: CompletionCache
     {
+        public MemberList Defaults;
         public readonly MemberList OtherElements;
         public readonly Dictionary<MemberModel, MemberList> StaticExtensions = new Dictionary<MemberModel, MemberList>();
 

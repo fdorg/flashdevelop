@@ -390,6 +390,7 @@ namespace HaXeContext
                 yield return new TestCaseData("ResolveStaticExtensions_Issue1900_5", false);
                 yield return new TestCaseData("ResolveStaticExtensions_Issue1900_6", false);
                 yield return new TestCaseData("ResolveStaticExtensions_Issue1900_7", true);
+                yield return new TestCaseData("ResolveStaticExtensions_Issue1900_8", true);
             }
         }
 
