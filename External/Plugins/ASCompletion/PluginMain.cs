@@ -1284,15 +1284,15 @@ namespace ASCompletion
 
         private void ContextChanged()
         {
-            ITabbedDocument doc = PluginBase.MainForm.CurrentDocument;
-            bool isValid = false;
+            var doc = PluginBase.MainForm.CurrentDocument;
+            var isValid = false;
 
             if (doc.IsEditable)
             {
-                ScintillaControl sci = ASContext.CurSciControl;
+                var sci = ASContext.CurSciControl;
                 if (currentDoc == doc.FileName && sci != null)
                 {
-                    int line = sci.LineFromPosition(currentPos);
+                    var line = sci.LineFromPosition(currentPos);
                     ASContext.SetCurrentLine(line);
                 }
                 else ASComplete.CurrentResolvedContext = null; // force update
@@ -1302,7 +1302,7 @@ namespace ASCompletion
             }
             else ASComplete.ResolveContext(null);
             
-            bool enableItems = isValid && !doc.IsUntitled;
+            var enableItems = isValid && !doc.IsUntitled;
             pluginUI.OutlineTree.Enabled = ASContext.Context.CurrentModel != null;
             SetItemsEnabled(enableItems, ASContext.Context.CanBuild);
         }
