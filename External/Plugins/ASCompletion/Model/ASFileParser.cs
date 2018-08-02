@@ -202,14 +202,8 @@ namespace ASCompletion.Model
         /// </summary>
         private static MemberModel extractTypedCallbackModel(string comment)
         {
-            if (string.IsNullOrEmpty(comment))
-                return null;
-
-            int idxBraceOp = comment.IndexOf('(');
-            int idxBraceCl = comment.IndexOf(')');
-
-            if (idxBraceOp != 0 || idxBraceCl < 1)
-                return null;
+            if (string.IsNullOrEmpty(comment)) return null;
+            if (comment.IndexOf('(') != 0 || comment.IndexOf(')') < 1) return null;
 
             // replace strings by temp replacements
             MatchCollection qStrMatches = ASFileParserRegexes.QuotedString.Matches(comment);
@@ -223,8 +217,8 @@ namespace ASCompletion.Model
             }
 
             // refreshing
-            idxBraceOp = comment.IndexOf('(');
-            idxBraceCl = comment.IndexOf(')');
+            var idxBraceOp = comment.IndexOf('(');
+            var idxBraceCl = comment.IndexOf(')');
 
             if (idxBraceOp != 0 || comment.LastIndexOf('(') != idxBraceOp
                 || idxBraceCl < 0 || comment.LastIndexOf(')') != idxBraceCl)
@@ -952,7 +946,8 @@ namespace ASCompletion.Model
                 {
                     bool stopParser = false;
                     bool valueError = false;
-                    if (inType && !inAnonType && !inGeneric && !char.IsLetterOrDigit(c1) && !".{}-><".Contains(c1))
+                    if (inType && !inAnonType && !inGeneric && !char.IsLetterOrDigit(c1)
+                        && (c1 != '.' && c1 != '{' && c1 != '}' && c1 != '-' && c1 != '>' && c1 != '<'))
                     {
                         inType = false;
                         inValue = false;
@@ -1114,7 +1109,7 @@ namespace ASCompletion.Model
                                 i -= 2;
                                 continue;
                             }
-                            if (param.EndsWith('}') || param.Contains(">"))
+                            if (param.EndsWith('}') || param.Contains('>'))
                             {
                                 param = ASFileParserRegexes.Spaces.Replace(param, "");
                                 param = param.Replace(",", ", ");
@@ -1729,7 +1724,7 @@ namespace ASCompletion.Model
                 c = ba[i0++];
                 if (c == '\\') { i0++; continue; } // escape next
                 if (c == '/') break; // end of regex
-                if ("\r\n".IndexOf(c) >= 0) return false;
+                if (c == '\r' || c == '\n') return false;
             }
             while (i0 < len)
             {
@@ -1764,7 +1759,7 @@ namespace ASCompletion.Model
                 {
                     if (c == '"') inString = 1;
                     else if (c == '\'') inString = 2;
-                    else if ("{;[".IndexOf(c) >= 0)
+                    else if (c == '{' || c == ';' || c == '[')
                     {
                         i = i0;
                         line = line0;
@@ -1818,7 +1813,7 @@ namespace ASCompletion.Model
                 {
                     if (c == '"') inString = 1;
                     else if (c == '\'') inString = 2;
-                    else if ("{;[".IndexOf(c) >= 0) // Is this valid in Haxe meta?
+                    else if (c == '{' || c == ';' || c == '[') // Is this valid in Haxe meta?
                     {
                         i = i0;
                         line = line0;
