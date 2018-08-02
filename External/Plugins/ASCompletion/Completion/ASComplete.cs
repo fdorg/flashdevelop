@@ -801,13 +801,13 @@ namespace ASCompletion.Completion
                 }
 
                 // check if resolution is needed
-                int position = Sci.WordEndPosition(Sci.CurrentPos, true);
+                var position = Sci.WordEndPosition(Sci.CurrentPos, true);
                 if (CurrentResolvedContext != null && CurrentResolvedContext.Position == position
                     && CurrentResolvedContext.Result != null && !CurrentResolvedContext.Result.IsNull())
                     return;
 
                 // check context
-                IASContext context = ASContext.Context;
+                var context = ASContext.Context;
                 if (context == null || context.CurrentModel == null)
                 {
                     ClearResolvedContext();
@@ -818,10 +818,17 @@ namespace ASCompletion.Completion
 
                 // get type at cursor position
                 ASResult result;
-                if (context.IsFileValid) result = GetExpressionType(Sci, position);
+                if (context.IsFileValid
+                    // comments
+                    && Sci.BaseStyleAt(Sci.CurrentPos) is int style && !IsCommentStyle(style)
+                    // keywords
+                    && style != 19 && style != 24)
+                {
+                    result = GetExpressionType(Sci, position);
+                }
                 else result = new ASResult();
                 CurrentResolvedContext.Result = result;
-                ContextFeatures features = context.Features;
+                var features = context.Features;
 
                 Hashtable args = CurrentResolvedContext.Arguments;
                 string package = context.CurrentModel.Package;
@@ -829,8 +836,8 @@ namespace ASCompletion.Completion
 
                 ClassModel cClass = context.CurrentClass ?? ClassModel.VoidClass;
                 args.Add("TypName", MemberModel.FormatType(cClass.Name));
-                string fullname = MemberModel.FormatType(cClass.QualifiedName);
-                args.Add("TypPkgName", fullname);
+                string fullName = MemberModel.FormatType(cClass.QualifiedName);
+                args.Add("TypPkgName", fullName);
                 FlagType flags = cClass.Flags;
                 string kind = GetKind(flags, features);
                 args.Add("TypKind", kind);
@@ -847,8 +854,8 @@ namespace ASCompletion.Completion
                     package = aType.IsVoid() ? "" : aType.InFile.Package;
                     args.Add("MbrTypPkg", package);
                     args.Add("MbrTypName", MemberModel.FormatType(aType.Name));
-                    fullname = MemberModel.FormatType(aType.QualifiedName);
-                    args.Add("MbrTypePkgName", fullname);
+                    fullName = MemberModel.FormatType(aType.QualifiedName);
+                    args.Add("MbrTypePkgName", fullName);
                     flags = aType.Flags;
                     kind = GetKind(flags, features);
                     args.Add("MbrTypKind", kind);
@@ -891,27 +898,27 @@ namespace ASCompletion.Completion
                     {
                         args.Add("ItmTypName", member.Name);
                         file = member.InFile;
-                        fullname = "package";
+                        fullName = "package";
                         flags = member.Flags;
                     }
                     else
                     {
                         args.Add("ItmTypName", MemberModel.FormatType(oClass.Name));
                         file = oClass.InFile;
-                        fullname = MemberModel.FormatType(oClass.Name);
+                        fullName = MemberModel.FormatType(oClass.Name);
                         flags = oClass.Flags;
                     }
                     package = file.Package;
-                    fullname = (package.Length > 0 ? package + "." : "") + fullname;
+                    fullName = (package.Length > 0 ? package + "." : "") + fullName;
                     kind = GetKind(flags, features);
 
                     args.Add("ItmFile", file.FileName);
                     args.Add("ItmTypPkg", package);
-                    args.Add("ItmTypPkgName", fullname);
+                    args.Add("ItmTypPkgName", fullName);
                     args.Add("ItmTypKind", kind);
                     // type as path
-                    args.Add("ItmTypPkgNamePath", fullname.Replace('.', '\\'));
-                    args.Add("ItmTypPkgNameURL", fullname.Replace('.', '/'));
+                    args.Add("ItmTypPkgNamePath", fullName.Replace('.', '\\'));
+                    args.Add("ItmTypPkgNameURL", fullName.Replace('.', '/'));
 
                     if (result.Type != null)
                     {
