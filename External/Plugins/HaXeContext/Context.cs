@@ -1041,7 +1041,7 @@ namespace HaXeContext
         public override ClassModel ResolveType(string className, FileModel inFile)
         {
             var result = InternalResolveType(className, inFile);
-            if (inFile == CurrentModel && !result.IsVoid())
+            if (!result.IsVoid() && inFile == CurrentModel)
             {
                 var staticExtensions = ResolveStaticExtensions(result, inFile);
                 if (staticExtensions.Count > 0)
