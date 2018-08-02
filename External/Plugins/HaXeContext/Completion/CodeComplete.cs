@@ -533,5 +533,19 @@ namespace HaXeContext.Completion
             }
             return null;
         }
+
+        protected override string MemberTooltipText(MemberModel member, ClassModel inClass)
+        {
+            if (member.InFile != null && member.InFile != inClass.InFile)
+            {
+                foreach (var it in member.InFile.Classes)
+                {
+                    if (it.Members.Search(member.Name, 0, 0) == null) continue;
+                    inClass = it;
+                    break;
+                }
+            }
+            return base.MemberTooltipText(member, inClass);
+        }
     }
 }

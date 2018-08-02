@@ -4604,20 +4604,17 @@ namespace ASCompletion.Completion
         #endregion
 
         #region tooltips formatting
-        static public string GetCodeTipCode(ASResult result)
+        public static string GetCodeTipCode(ASResult result)
         {
-            if (result.Member == null)
-            {
-                return result.Type?.ToString();
-            }
+            if (result.Member == null) return result.Type?.ToString();
 
             var file = GetFileContents(result.InFile);
             if (string.IsNullOrEmpty(file))
             {
-                return MemberTooltipText(result.Member, ClassModel.VoidClass);
+                return ASContext.Context.CodeComplete.MemberTooltipText(result.Member, ClassModel.VoidClass);
             }
 
-            int eolMode = LineEndDetector.DetectNewLineMarker(file, (Int32)PluginBase.MainForm.Settings.EOLMode);
+            var eolMode = LineEndDetector.DetectNewLineMarker(file, (int)PluginBase.MainForm.Settings.EOLMode);
             var eolMarker = LineEndDetector.GetNewLineMarker(eolMode);
             var lines = file.Split(new[] { eolMarker }, StringSplitOptions.None);
             var code = new StringBuilder();
@@ -4629,11 +4626,11 @@ namespace ASCompletion.Completion
             return code.ToString();
         }
 
-        static private string GetFileContents(FileModel model)
+        private static string GetFileContents(FileModel model)
         {
             if (model != null && model.FileName.Length > 0 && File.Exists(model.FileName))
             {
-                foreach (ITabbedDocument doc in PluginBase.MainForm.Documents)
+                foreach (var doc in PluginBase.MainForm.Documents)
                 {
                     if (doc.IsEditable && doc.FileName.ToUpper() == model.FileName.ToUpper())
                     {
@@ -4648,19 +4645,20 @@ namespace ASCompletion.Completion
 
         public static string GetToolTipText(ASResult result)
         {
+            var complete = ASContext.Context.CodeComplete;
             if (result.Member != null && result.InClass != null)
             {
-                return MemberTooltipText(result.Member, result.InClass) + GetToolTipDoc(result.Member);
+                return complete.MemberTooltipText(result.Member, result.InClass) + GetToolTipDoc(result.Member);
             }
             if (result.Member != null && (result.Member.Flags & FlagType.Constructor) != FlagType.Constructor)
             {
-                return MemberTooltipText(result.Member, ClassModel.VoidClass) + GetToolTipDoc(result.Member);
+                return complete.MemberTooltipText(result.Member, ClassModel.VoidClass) + GetToolTipDoc(result.Member);
             }
             if (result.InClass != null)
             {
                 return ClassModel.ClassDeclaration(result.InClass) + GetToolTipDoc(result.InClass);
             }
-            if (result.Type != null && result.Context.WordBefore == "new") return ASContext.Context.CodeComplete.GetConstructorTooltipText(result.Type);
+            if (result.Type != null && result.Context.WordBefore == "new") return complete.GetConstructorTooltipText(result.Type);
             return null;
         }
 
@@ -4678,7 +4676,7 @@ namespace ASCompletion.Completion
             return details.TrimStart(' ', '\u2026');
         }
 
-        protected static string MemberTooltipText(MemberModel member, ClassModel inClass)
+        protected virtual string MemberTooltipText(MemberModel member, ClassModel inClass)
         {
             // modifiers
             var ft = member.Flags;
@@ -4709,7 +4707,7 @@ namespace ASCompletion.Completion
             }
             // signature
             var foundIn = "";
-            if (inClass != ClassModel.VoidClass)
+            if (!inClass.IsVoid())
             {
                 var themeForeColor = PluginBase.MainForm.GetThemeColor("MethodCallTip.InfoColor");
                 var foreColorString = themeForeColor != Color.Empty ? ColorTranslator.ToHtml(themeForeColor) : "#666666:MULTIPLY";
