@@ -9,12 +9,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using ASCompletion.Completion;
+using ASCompletion.Model;
 using PluginCore;
-using PluginCore.Helpers;
 
-namespace ASCompletion.Model
+namespace HaXeContext.Model
 {
-
     #region Token class
     class Token
     {
@@ -33,412 +32,15 @@ namespace ASCompletion.Model
             Position = copy.Position;
         }
 
-        override public string ToString()
-        {
-            return Text;
-        }
+        public override string ToString() => Text;
     }
     #endregion
-
-    #region TypeDefinitionKind enum
-    /// <summary>
-    /// Contributor: i.o.
-    /// </summary>
-    public enum TypeDefinitionKind : uint
-    {
-        Null = 0,
-        Simple = 1,
-        TypedArray = 2,
-        TypedCallback = 3,
-        TypedObject = 4
-    }
-    
-    #endregion
-
-    #region TypeCommentUtils class
-    /// <summary>
-    /// Contributor: i.o.
-    /// </summary>
-    public class TypeCommentUtils
-    {
-        const string ObjectType = "Object";
-        private static Random random = new Random(123456);
-
-        /// <summary>
-        /// Type-comment parsing into model (source and destination)
-        /// </summary>
-        public static TypeDefinitionKind Parse(string comment, MemberModel model)
-        {
-            return Parse(comment, model, false);
-        }
-        public static TypeDefinitionKind Parse(string comment, MemberModel model, bool detectKindOnly)
-        {
-            if (model != null && !string.IsNullOrEmpty(comment))
-            {
-                switch (model.Type)
-                {
-                    case "Array":
-                        return ParseTypedArray(comment, model, detectKindOnly);
-
-                    case "Function":
-                        return ParseTypedCallback(comment, model, detectKindOnly);
-                }
-
-                if (model.Type == ObjectType) 
-                    return ParseTypedObject(comment, model, detectKindOnly);
-            }
-            return TypeDefinitionKind.Null;
-        }
-
-        /// <summary>
-        /// Typed object parsing
-        /// </summary>
-        public static TypeDefinitionKind ParseTypedObject(string comment, MemberModel model)
-        {
-            return ParseTypedObject(comment, model, false);
-        }
-        public static TypeDefinitionKind ParseTypedObject(string comment, MemberModel model, bool detectKindOnly)
-        {
-            if (model != null && !string.IsNullOrEmpty(comment))
-            {
-                Match m = ASFileParserRegexes.ValidObjectType.Match(comment);
-                if (m.Success)
-                {
-                    if (!detectKindOnly)
-                        model.Type = ObjectType + "@" + m.Groups["type"].Value;
-                    return TypeDefinitionKind.TypedObject;
-                }
-            }
-            return TypeDefinitionKind.Null;
-        }
-
-        /// <summary>
-        /// Typed array parsing
-        /// </summary>
-        public static TypeDefinitionKind ParseTypedArray(string comment, MemberModel model)
-        {
-            return ParseTypedArray(comment, model, false);
-        }
-        public static TypeDefinitionKind ParseTypedArray(string comment, MemberModel model, bool detectKindOnly)
-        {
-            if (model != null && !string.IsNullOrEmpty(comment))
-            {
-                Match m = ASFileParserRegexes.ValidTypeName.Match(comment);
-                if (m.Success)
-                {
-                    if (!detectKindOnly)
-                        model.Type = "Array@" + m.Groups["type"].Value;
-
-                    return TypeDefinitionKind.TypedArray;
-                }
-            }
-            return TypeDefinitionKind.Null;
-        }
-
-        /// <summary>
-        /// Typed callbck parsing
-        /// </summary>
-        public static TypeDefinitionKind ParseTypedCallback(string comment, MemberModel model)
-        {
-            return ParseTypedCallback(comment, model, false);
-        }
-        public static TypeDefinitionKind ParseTypedCallback(string comment, MemberModel model, bool detectKindOnly)
-        {
-            if (model != null && !string.IsNullOrEmpty(comment)
-                && (model.Flags & FlagType.Function) == 0)
-            {
-                MemberModel fnModel = extractTypedCallbackModel(comment);
-                if (fnModel != null)
-                {
-                    if (!detectKindOnly)
-                    {
-                        model.Type = fnModel.Type;
-                        model.Flags |= FlagType.Function;
-                        model.Parameters = fnModel.Parameters;
-                        if (model.Access == 0)
-                        {
-                            if (model.Namespace == "internal")
-                            {
-                                if ((model.Access & Visibility.Public) == 0)
-                                    model.Access = Visibility.Internal;
-
-                                model.Namespace = "";
-                            }
-                            else model.Access = Visibility.Public;
-                        }
-                    }
-                    return TypeDefinitionKind.TypedCallback;
-                }
-            }
-            return TypeDefinitionKind.Null;
-        }
-
-
-        //---------------------
-        // PRIVATE METHODS
-        //---------------------
-
-        /// <summary>
-        /// String randomer
-        /// </summary>
-        private static string getRandomStringRepl()
-        {
-            random.NextDouble();
-            return "StringRepl" + random.Next(0xFFFFFFF);
-        }
-
-        /// <summary>
-        /// TypedCallback model extracting
-        /// </summary>
-        private static MemberModel extractTypedCallbackModel(string comment)
-        {
-            if (string.IsNullOrEmpty(comment)) return null;
-            if (comment.IndexOf('(') != 0 || comment.IndexOf(')') < 1) return null;
-
-            // replace strings by temp replacements
-            MatchCollection qStrMatches = ASFileParserRegexes.QuotedString.Matches(comment);
-            Dictionary<String, String> qStrRepls = new Dictionary<string, string>();
-            int i = qStrMatches.Count;
-            while (i-- > 0)
-            {
-                String strRepl = getRandomStringRepl();
-                qStrRepls.Add(strRepl, qStrMatches[i].Value);
-                comment = comment.Substring(0, qStrMatches[i].Index) + strRepl + comment.Substring(qStrMatches[i].Index + qStrMatches[i].Length);
-            }
-
-            // refreshing
-            var idxBraceOp = comment.IndexOf('(');
-            var idxBraceCl = comment.IndexOf(')');
-
-            if (idxBraceOp != 0 || comment.LastIndexOf('(') != idxBraceOp
-                || idxBraceCl < 0 || comment.LastIndexOf(')') != idxBraceCl)
-                return null;
-
-            MemberModel fm = new MemberModel("unknown", "*", FlagType.Function, Visibility.Default);
-            fm.Parameters = new List<MemberModel>();
-
-            // return type
-            Match m = ASFileParserRegexes.FunctionType.Match(comment.Substring(idxBraceCl));
-            if (m.Success)
-                fm.Type = m.Groups["fType"].Value;
-
-            // parameters
-            String pBody = comment.Substring(idxBraceOp, 1 + idxBraceCl - idxBraceOp);
-            MatchCollection pMatches = ASFileParserRegexes.Parameter.Matches(pBody);
-            int l = pMatches.Count;
-            for (i = 0; i < l; i++)
-            {
-                string pName = pMatches[i].Groups["pName"].Value;
-                if (!string.IsNullOrEmpty(pName))
-                {
-                    foreach (KeyValuePair<String,String> replEntry in qStrRepls)
-                    {
-                        if (pName.Contains(replEntry.Key))
-                        {
-                            pName = "[COLOR=#F00][I]InvalidName[/I][/COLOR]";
-                            break;
-                        }
-                    }
-                }
-
-                string pType = pMatches[i].Groups["pType"].Value;
-                if (!string.IsNullOrEmpty(pType))
-                {
-                    foreach (KeyValuePair<String,String> replEntry in qStrRepls)
-                    {
-                        if (pType.Contains(replEntry.Key))
-                        {
-                            pType = "[COLOR=#F00][I]InvalidType[/I][/COLOR]";
-                            break;
-                        }
-                    }
-                }
-
-                string pVal = pMatches[i].Groups["pVal"].Value;
-                if (!string.IsNullOrEmpty(pVal))
-                {
-                    if (qStrRepls.ContainsKey(pVal))
-                    {
-                        pVal = qStrRepls[pVal];
-                    }
-                    else
-                    {
-                        foreach (KeyValuePair<String,String> replEntry in qStrRepls)
-                        {
-                            if (pVal.Contains(replEntry.Key))
-                            {
-                                pVal = "[COLOR=#F00][I]InvalidValue[/I][/COLOR]";
-                                break;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    pVal = null;
-                }
-
-                MemberModel pModel = new MemberModel();
-                pModel.Name = pName;
-                pModel.Type = pType;
-                pModel.Value = pVal;
-                pModel.Flags = FlagType.ParameterVar;
-                pModel.Access = Visibility.Default;
-
-                fm.Parameters.Add(pModel);
-            }
-            return fm;
-        }
-    }
-    
-    #endregion
-
-    #region ASFileParserRegexes class
-    
-    public class ASFileParserRegexes
-    {
-        public static readonly Regex Spaces = new Regex("\\s+", RegexOptions.Compiled);
-        public static readonly Regex RegionStart = new Regex(@"^{[ ]?region[:\\s]*(?<name>[^\r\n]*)", RegexOptions.Compiled);
-        public static readonly Regex RegionEnd = new Regex(@"^}[ ]?endregion", RegexOptions.Compiled);
-        public static readonly Regex QuotedString = new Regex("(\"(\\\\.|[^\"\\\\])*\")|('(\\\\.|[^'\\\\])*')", RegexOptions.Compiled);
-        public static readonly Regex FunctionType = new Regex(@"\)\s*\:\s*(?<fType>[\w\$\.\<\>\@]+)", RegexOptions.Compiled);
-        public static readonly Regex ValidTypeName = new Regex("^(\\s*of\\s*)?(?<type>[\\w.\\$]*)$", RegexOptions.Compiled);
-        public static readonly Regex ValidObjectType = new Regex("^(?<type>[\\w.,\\$]*)$", RegexOptions.Compiled);
-        public static readonly Regex Import = new Regex("^[\\s]*import[\\s]+(?<package>[\\w.]+)", ASFileParserRegexOptions.MultilineComment);
-        public static readonly Regex Parameter = new Regex(@"[\(,]\s*((?<pName>(\.\.\.)?[\w\$]+)\s*(\:\s*(?<pType>[\w\$\*\.\<\>\@]+))?(\s*\=\s*(?<pVal>[^\,\)]+))?)", RegexOptions.Compiled);
-        public static readonly Regex BalancedBraces = new Regex("{[^{}]*(((?<Open>{)[^{}]*)+((?<Close-Open>})[^{}]*)+)*(?(Open)(?!))}", ASFileParserRegexOptions.SinglelineComment);
-
-        private const string typeChars = @"[\w\$][\w\d\$]*";
-        private const string typeClsf = @"(\s*(?<Classifier>" + typeChars + @"(\." + typeChars + ")*" + @"(\:\:?" + typeChars + ")?" + @")\s*)";
-        private const string typeComment = @"(\s*\/\*(?<Comment>.*)\*\/\s*)";
-        public static readonly Regex TypeDefinition = new Regex(@"^((" + typeClsf + typeComment + ")|(" + typeComment + typeClsf + ")|(" + typeClsf + "))$", RegexOptions.Compiled);
-    }
-    
-    #endregion
-
-    #region ASFileParserRegexOptions class
-    //
-    public class ASFileParserRegexOptions
-    {
-        public const RegexOptions MultilineComment = RegexOptions.Compiled | RegexOptions.Multiline;
-        public const RegexOptions SinglelineComment = RegexOptions.Compiled | RegexOptions.Singleline;
-    }
-    //
-    #endregion
-
-    #region ASFileParserUtils class
-    
-    public class ASFileParserUtils
-    {
-        /// <summary>
-        /// Contributor: i.o.
-        /// Description: Extracts from plain string a type classifier and type comment
-        /// Example:
-        ///     typeDefinition: "Array/*String*/" or "Array[spaces]/*String*/" or "/*String*/Array"
-        ///     typeClassifier: "Array"
-        ///     typeComment: "String"
-        /// </summary>
-        public static bool ParseTypeDefinition(string typeDefinition, out string typeClassifier, out string typeComment)
-        {
-            typeClassifier = null;
-            typeComment = null;
-
-            if (String.IsNullOrEmpty(typeDefinition))
-                return false;
-
-            Match m = ASFileParserRegexes.TypeDefinition.Match(typeDefinition);
-            if (!m.Success)
-                return false;
-
-            typeClassifier = m.Groups["Classifier"].Value;
-
-            if (m.Groups["Comment"].Success)
-                typeComment = m.Groups["Comment"].Value;
-
-            return true;
-        }
-
-        public static TypeDefinitionKind ParseTypeDefinitionInto(string typeDefinition, MemberModel model)
-        {
-            return ParseTypeDefinitionInto(typeDefinition, model, true, true);
-        }
-        public static TypeDefinitionKind ParseTypeDefinitionInto(string typeDefinition, MemberModel model, bool parseCommon, bool parseGeneric)
-        {
-            if (String.IsNullOrEmpty(typeDefinition))
-                return TypeDefinitionKind.Null;
-
-            if (!typeDefinition.Contains("/*") || !typeDefinition.Contains("*/"))
-            {
-                if (!parseCommon)
-                    return TypeDefinitionKind.Null;
-
-                model.Type = typeDefinition.Replace(":", ".");
-                if (model.Type.IndexOf('$') > 0) model.Type = model.Type.Replace("$", ".<") + ">";
-                return TypeDefinitionKind.Simple;
-            }
-
-            if (!parseGeneric)
-                return TypeDefinitionKind.Null;
-
-            string typeClassifier;
-            string typeComment;
-            if (!ParseTypeDefinition(typeDefinition, out typeClassifier, out typeComment))
-                return TypeDefinitionKind.Null;
-
-            model.Type = typeClassifier;
-
-            return TypeCommentUtils.Parse(typeComment, model);
-        }
-    }
-    
-    #endregion
-
-    public interface IFileParser
-    {
-        bool ScriptMode { set; }
-
-        /// <summary>
-        /// Rebuild a file model with the source provided
-        /// </summary>
-        /// <param name="fileModel">Model</param>
-        /// <param name="src">Source</param>
-        void ParseSrc(FileModel fileModel, string src);
-        void ParseSrc(FileModel fileModel, string ba, bool allowBaReExtract);
-    }
 
     /// <summary>
-    /// Old & clumsy AS2/AS3 file parser - beware!
+    /// Old & clumsy Haxe file parser - beware!
     /// </summary>
-    public class ASFileParser : IFileParser
+    public class FileParser : IFileParser
     {
-
-        #region public methods
-
-        public static FileModel ParseFile(FileModel fileModel)
-        {
-            // parse file
-            if (fileModel.FileName.Length > 0)
-            {
-                if (File.Exists(fileModel.FileName))
-                {
-                    var parser = new ASFileParser();
-                    parser.Parse(fileModel);
-                }
-                // the file is not available (for the moment?)
-                else if (Path.GetExtension(fileModel.FileName).Length > 0)
-                {
-                    fileModel.OutOfDate = true;
-                }
-            }
-            // this is a package
-            else
-            {
-                // ignore
-            }
-            return fileModel;
-        }
-        #endregion
-
         #region parser context
         const int COMMENTS_BUFFER = 4096;
         const int TOKEN_BUFFER = 1024;
@@ -446,7 +48,6 @@ namespace ASCompletion.Model
 
         // parser context
         private FileModel model;
-        private int version;
         private bool tryPackage;
         private bool hasPackageSection;
         private FlagType context;
@@ -458,10 +59,12 @@ namespace ASCompletion.Model
         private bool foundColon;
         private bool foundConstant;
         private bool inParams;
+        private bool inEnum;
+        private bool inTypedef;
+        private bool inAbstract;
         private bool inGeneric;
         private bool inValue;
         private bool hadValue;
-        private bool inConst;
         private bool inType;
         private bool inAnonType;
         private int flattenNextBlock;
@@ -482,32 +85,24 @@ namespace ASCompletion.Model
         private List<ASMetaData> carriedMetaData;
         #endregion
 
+        public bool ScriptMode { private get; set;}
+
         #region tokenizer
 
-        public bool ScriptMode { private get; set; }
-
-        public ASFileParser() : this(new ContextFeatures())
+        public FileParser() : this(new ContextFeatures())
         {
         }
 
-        public ASFileParser(ContextFeatures features)
+        public FileParser(ContextFeatures features)
         {
             this.features = features;
         }
 
         /// <summary>
-        /// Rebuild a file model using the content of that file.
+        /// Rebuild a file model with the source provided
         /// </summary>
         /// <param name="fileModel">Model</param>
-        public FileModel Parse(FileModel fileModel)
-        {
-            fileModel.LastWriteTime = File.GetLastWriteTime(fileModel.FileName);
-            var src = FileHelper.ReadFile(fileModel.FileName);
-            ParseSrc(fileModel, src);
-            return fileModel;
-        }
-
-        /// <inheritdoc />
+        /// <param name="src">Source</param>
         public void ParseSrc(FileModel fileModel, string src) => ParseSrc(fileModel, src, true);
 
         public void ParseSrc(FileModel fileModel, string ba, bool allowBaReExtract)
@@ -553,7 +148,6 @@ namespace ASCompletion.Model
             // tokenisation
             tryPackage = true;
             hasPackageSection = false;
-            version = 1;
             curToken = new Token();
             prevToken = new Token();
             int tokPos = 0;
@@ -578,9 +172,11 @@ namespace ASCompletion.Model
             bool hadWS = true;
             bool hadDot = false;
             inParams = false;
+            inEnum = false;
+            inTypedef = false;
+            inAbstract = false;
             inValue = false;
             hadValue = false;
-            inConst = false;
             inType = false;
             inGeneric = false;
             inAnonType = false;
@@ -682,7 +278,7 @@ namespace ASCompletion.Model
                         // end of string?
                         else
                         {
-                            if (c1 == 10 || c1 == 13) { inString = 0; }
+                            if (c1 == 10 || c1 == 13) { }
                             else if ((c1 == '"' && inString == 1) || (c1 == '\'' && inString == 2))
                             {
                                 // Are we on an escaped ' or ""?
@@ -693,28 +289,6 @@ namespace ASCompletion.Model
 
                                 // Even number of escaped \ means we are not on an escaped ' or ""
                                 if (escNo % 2 == 0) inString = 0;
-                            }
-
-                            // extract "include" declarations
-                            if (inString == 0 && length == 7 && context == 0)
-                            {
-                                string token = new string(buffer, 0, length);
-                                if (token == "include")
-                                {
-                                    string inc = ba.Substring(tokPos, i - tokPos);
-                                    ASMetaData meta = new ASMetaData("Include");
-                                    meta.ParseParams(inc);
-                                    if (curClass == null)
-                                    {
-                                        if (carriedMetaData == null) carriedMetaData = new List<ASMetaData>();
-                                        carriedMetaData.Add(meta);
-                                    }
-                                    else
-                                    {
-                                        if (curClass.MetaDatas == null) curClass.MetaDatas = new List<ASMetaData>();
-                                        curClass.MetaDatas.Add(meta);
-                                    }
-                                }
                             }
                         }
                         break;
@@ -1021,7 +595,7 @@ namespace ASCompletion.Model
                     }
 
                     // in params, store the default value
-                    else if ((inParams || inType || inConst) && valueLength < VALUE_BUFFER)
+                    else if ((inParams || inType) && valueLength < VALUE_BUFFER)
                     {
                         if (c1 <= 32)
                         {
@@ -1078,27 +652,40 @@ namespace ASCompletion.Model
                     else if (inType)
                     {
                         foundColon = false;
+                        if (c1 == '>' && ba[i - 2] == '-' && inAnonType)
+                        {
+                            length = 0;
+                            valueLength = 0;
+                            hadValue = false;
+                            inValue = false;
+                            param = ASFileParserRegexes.Spaces.Replace(param, "").Replace(",", ", ");
+                            if (string.IsNullOrEmpty(curMember.Type)) curMember.Type = param;
+                            else curMember.Type += param;
+                            i -= 2;
+                            continue;
+                        }
+                        if (param.EndsWith('}') || param.Contains('>'))
+                        {
+                            param = ASFileParserRegexes.Spaces.Replace(param, "");
+                            param = param.Replace(",", ", ");
+                            //param = param.Replace("->", " -> ");
+                        }
                         curMember.Type = param;
                         length = 0;
                         inType = false;
                     }
-                    // AS3 const or method parameter's default value 
-                    else if (version > 2 && (curMember.Flags & FlagType.Variable) > 0)
+                    // method parameter's default value 
+                    else if ((curMember.Flags & FlagType.Variable) > 0)
                     {
-                        if (inParams || inConst) curMember.Value = param;
+                        if (inParams) curMember.Value = param;
                         curMember.LineTo = line;
                         if (c1 == '\r' || c1 == '\n') curMember.LineTo--;
-                        if (inConst && c1 != ',')
-                        {
-                            context = 0;
-                            inConst = false;
-                        }
                     }
                     //
                     hadValue = false;
                     valueLength = 0;
                     valueMember = null;
-                    if (!inParams && !(inConst && context != 0) && c1 != '{' && c1 != ',') continue;
+                    if (!inParams && c1 != '{' && c1 != ',') continue;
                     length = 0;
                 }
 
@@ -1113,14 +700,14 @@ namespace ASCompletion.Model
                 // a dot can be in an identifier
                 if (c1 == '.')
                 {
-                    if (length > 0 || (inParams && version == 3))
+                    if (length > 0)
                     {
                         hadWS = false;
                         hadDot = true;
                         addChar = true;
                         if (!inValue && context == FlagType.Variable && !foundColon)
                         {
-                            bool keepContext = inParams && (length == 0 || buffer[0] == '.');
+                            var keepContext = inParams && (length == 0 || buffer[0] == '.');
                             if (!keepContext) context = 0;
                         }
                     }
@@ -1152,13 +739,13 @@ namespace ASCompletion.Model
                     else
                     {
                         // valid chars for identifiers
-                        if (char.IsLetter(c1) || (c1 >= 'A' && c1 <= 'Z')) addChar = true;
+                        if ((c1 >= 'A' && c1 <= 'Z')) addChar = true;
                         else if (c1 == '$' || c1 == '_') addChar = true;
                         else if (length > 0)
                         {
                             if (c1 >= '0' && c1 <= '9') addChar = true;
                             else if (c1 == '*' && context == FlagType.Import) addChar = true;
-                            // AS3 generics
+                            // generics
                             else if (c1 == '<' && features.hasGenerics)
                             {
                                 if (!inValue && i > 2 && length > 1 && i <= len - 3)
@@ -1177,7 +764,7 @@ namespace ASCompletion.Model
                                         continue;
                                     }
                                     if ((char.IsLetterOrDigit(ba[i - 3]) || ba[i - 3] == '_')
-                                        && (char.IsLetter(ba[i]))
+                                        && (char.IsLetter(ba[i]) || (ba[i] == '{' || ba[i] == '(' || ba[i] <= ' ' || ba[i] == '?'))
                                         && (char.IsLetter(buffer[0]) || buffer[0] == '_' || inType && buffer[0] == '('))
                                     {
                                         if (curMember == null)
@@ -1226,6 +813,48 @@ namespace ASCompletion.Model
                                     }
                                 }
                             }
+                            else if (inType && c1 == ')')
+                            {
+                                if (paramParCount > 0)
+                                {
+                                    paramParCount--;
+                                    addChar = true;
+                                }
+                                else if (paramParCount == 0 && paramTempCount == 0 && paramBraceCount == 0 && paramSqCount == 0)
+                                {
+                                    inType = false;
+                                    shortcut = false;
+                                    evalToken = 1;
+                                }
+                            }
+                            else if (inType && c1 == '(')
+                            {
+                                paramParCount++;
+                                addChar = true;
+                            }
+                            else if (c1 == '{' && length > 1
+                                     && (buffer[length - 2] == '-' && buffer[length - 1] == '>'
+                                        || buffer[length - 1] == ':'
+                                        || buffer[length - 1] == '('
+                                        || buffer[length - 1] == '?'))
+                            {
+                                paramBraceCount++;
+                                inAnonType = true;
+                                addChar = true;
+                            }
+                            else if (inAnonType && c1 == '}')
+                            {
+                                paramBraceCount--;
+                                if (paramBraceCount == 0) inAnonType = false;
+                                addChar = true;
+                            }
+                            else if (inAnonType && paramBraceCount > 0) addChar = true;
+                            else if (c1 == '?')
+                            {
+                                hadWS = false;
+                                evalToken = 0;
+                                addChar = true;
+                            }
                             else if (paramBraceCount == 0)
                             {
                                 evalToken = 2;
@@ -1233,7 +862,8 @@ namespace ASCompletion.Model
                             }
                         }
                         // star is valid in import statements
-                        else if (c1 == '*' && version >= 3) addChar = true;
+                        else if (c1 == '*') addChar = true;
+                        else if (c1 == '?' && inParams && length == 0) addChar = true;
                         else shortcut = false;
                     }
                     // eval this word
@@ -1255,6 +885,73 @@ namespace ASCompletion.Model
                         {
                             // parse package/class block
                             if (context == FlagType.Package || context == FlagType.Class) context = 0;
+                            else if (context == FlagType.Enum) // parse enum block
+                            {
+                                if (curClass != null && (curClass.Flags & FlagType.Enum) > 0) inEnum = true;
+                                else
+                                {
+                                    context = 0;
+                                    curModifiers = 0;
+                                    braceCount++; // ignore block
+                                }
+                            }
+                            else if (context == FlagType.TypeDef) // parse typedef block
+                            {
+                                if (curClass != null && (curClass.Flags & FlagType.TypeDef) > 0)
+                                {
+                                    inTypedef = true;
+                                    var pos = i;
+                                    while (pos < len)
+                                    {
+                                        var c = ba[pos++];
+                                        if (c <= ' ') continue;
+                                        if (c == '>')
+                                        {
+                                            buffer[0] = 'e';
+                                            buffer[1] = 'x';
+                                            buffer[2] = 't';
+                                            buffer[3] = 'e';
+                                            buffer[4] = 'n';
+                                            buffer[5] = 'd';
+                                            buffer[6] = 's';
+                                            length = 7;
+                                            context = FlagType.Class;
+                                        }
+                                        break;
+                                    }
+                                }
+                                else
+                                {
+                                    context = 0;
+                                    curModifiers = 0;
+                                    braceCount++; // ignore block
+                                }
+                            }
+                            else if (context == FlagType.Abstract) // parse abstract block
+                            {
+                                if (curClass != null && (curClass.Flags & FlagType.Abstract) > 0)
+                                    inAbstract = true;
+                                else
+                                {
+                                    context = 0;
+                                    curModifiers = 0;
+                                    braceCount++; // ignore block
+                                }
+                            }
+                            else if (foundColon && length == 0) // copy Haxe anonymous type
+                            {
+                                inValue = true;
+                                hadValue = false;
+                                inType = true;
+                                inAnonType = true;
+                                valueLength = 0;
+                                valueBuffer[valueLength++] = c1;
+                                paramBraceCount = 1;
+                                paramParCount = 0;
+                                paramSqCount = 0;
+                                paramTempCount = 0;
+                                continue;
+                            }
                             else if (foundConstant) // start config block
                             {
                                 flattenNextBlock++;
@@ -1278,11 +975,15 @@ namespace ASCompletion.Model
                             {
                                 flattenNextBlock--;
                             }
+
                             // outside of a method, the '}' ends the current class
                             else if (curClass != null)
                             {
                                 curClass.LineTo = line;
                                 curClass = null;
+                                inEnum = false;
+                                inTypedef = false;
+                                inAbstract = false;
                             }
                             else
                             {
@@ -1301,7 +1002,7 @@ namespace ASCompletion.Model
                         // next variable declaration
                         else if (c1 == ',')
                         {
-                            if (context == FlagType.Variable && curMember != null)
+                            if ((context == FlagType.Variable || context == FlagType.TypeDef) && curMember != null)
                             {
                                 curAccess = curMember.Access;
                                 foundKeyword = FlagType.Variable;
@@ -1316,9 +1017,24 @@ namespace ASCompletion.Model
                         }
                         else if (c1 == '(')
                         {
-                            if (!inValue && context == FlagType.Variable && curToken.Text != "catch")
+                            if (!inValue && context == FlagType.Variable && curToken.Text != "catch" && curToken.Text != "for")
                             {
-                                context = 0;
+                                if (curMember != null && valueLength == 0)
+                                {
+                                    if (!foundColon && !inType) // Haxe properties
+                                    {
+                                        curMember.Flags -= FlagType.Variable;
+                                        curMember.Flags |= FlagType.Getter | FlagType.Setter;
+                                        context = FlagType.Function;
+                                    }
+                                    else // Haxe function types with subtypes
+                                    {
+                                        inType = true;
+                                        addChar = true;
+                                        paramParCount++;
+                                    }
+                                }
+                                else context = 0;
                             }
 
                             // beginning of method parameters
@@ -1363,7 +1079,37 @@ namespace ASCompletion.Model
                                     curMethod = curMember;
                                 }
                             }
-                            else if (curMember == null && curToken.Text != "catch")
+
+                            // an Enum value with parameters
+                            else if (inEnum)
+                            {
+                                context = FlagType.Variable;
+                                inParams = true;
+                                curMethod = curMember ?? new MemberModel();
+                                curMethod.Name = curToken.Text;
+                                curMethod.Flags = curModifiers | FlagType.Function | FlagType.Static;
+                                curMethod.Parameters = new List<MemberModel>();
+                                if (curClass != null && curMember == null) curClass.Members.Add(curMethod);
+                            }
+
+                            // a TypeDef method with parameters
+                            else if (inTypedef)
+                            {
+                                context = FlagType.Variable;
+                                inParams = true;
+                                curMethod = curMember ?? new MemberModel();
+                                curMethod.Name = curToken.Text;
+                                curMethod.Flags = curModifiers | FlagType.Function;
+                                curMethod.Parameters = new List<MemberModel>();
+                                if (curClass != null && curMember == null) curClass.Members.Add(curMethod);
+                            }
+                            // an Abstract "opaque type"
+                            else if (context == FlagType.Abstract && prevToken.Text == "abstract") 
+                            {
+                                foundKeyword = FlagType.Class;
+                                curModifiers = FlagType.Extends;
+                            }
+                            else if (curMember == null && curToken.Text != "catch" && curToken.Text != "for")
                             {
                                 context = 0;
                                 inGeneric = false;
@@ -1372,7 +1118,7 @@ namespace ASCompletion.Model
                         // end of statement
                         else if (c1 == ';')
                         {
-                            context = 0;
+                            context = inEnum ? FlagType.Enum : 0;
                             inGeneric = false;
                             inType = false;
                             modifiers = 0;
@@ -1382,7 +1128,10 @@ namespace ASCompletion.Model
                         // end of method parameters
                         else if (c1 == ')' && inParams)
                         {
-                            context = FlagType.Variable;
+                            context = 0;
+                            if (inEnum) context = FlagType.Enum;
+                            else if (inTypedef) context = FlagType.TypeDef;
+                            else context = FlagType.Variable;
                             modifiers = 0;
                             inParams = false;
                             curMember = curMethod;
@@ -1390,13 +1139,12 @@ namespace ASCompletion.Model
                         // skip value of a declared variable
                         else if (c1 == '=')
                         {
-                            if (context == FlagType.Variable)
+                            if (context == FlagType.Variable || (context == FlagType.Enum && inEnum))
                             {
                                 if (!inValue && curMember != null)
                                 {
                                     inValue = true;
                                     hadValue = false;
-                                    inConst = (curMember.Flags & FlagType.Constant) > 0;
                                     inType = false;
                                     inGeneric = false;
                                     paramBraceCount = 0;
@@ -1411,18 +1159,30 @@ namespace ASCompletion.Model
                         // metadata, contexts should define a meta keyword and a way to parse metadata
                         else if (!inValue && c1 == '[')
                         {
-                            if (version == 3)
-                            {
-                                var meta = LookupMeta(ref ba, ref i);
-                                if (meta != null)
-                                {
-                                    carriedMetaData = carriedMetaData ?? new List<ASMetaData>();
-                                    carriedMetaData.Add(meta);
-                                }
-                            }
-                            else if (features.hasCArrays && curMember?.Type != null)
+                            if (features.hasCArrays && curMember?.Type != null)
                             {
                                 if (ba[i] == ']') curMember.Type = features.CArrayTemplate + "@" + curMember.Type;
+                            }
+                        }
+                        else if (!inValue && c1 == '@')
+                        {
+                            var meta = LookupHaxeMeta(ref ba, ref i);
+                            if (meta != null)
+                            {
+                                carriedMetaData = carriedMetaData ?? new List<ASMetaData>();
+                                carriedMetaData.Add(meta);
+                            }
+                        }
+                        // Unreachable code???? plus it seems a bit crazy we have so many places for function types
+                        // Haxe signatures: T -> T -> T 
+                        else if (c1 == '-' && curMember != null)
+                        {
+                            if (ba[i] == '>' && curMember.Type != null)
+                            {
+                                curMember.Type += "->";
+                                foundColon = true;
+                                i++;
+                                continue;
                             }
                         }
                         // escape next char
@@ -1431,19 +1191,12 @@ namespace ASCompletion.Model
                             i++;
                             continue;
                         }
-                        // literal regex
-                        else if (c1 == '/' && version == 3)
-                        {
-                            if (LookupRegex(ba, ref i))
-                                continue;
-                        }
                 }
 
                 // put in buffer
                 if (addChar)
                 {
                     if (length < TOKEN_BUFFER) buffer[length++] = c1;
-
                     if (length == 1)
                     {
                         tokPos = i - 1;
@@ -1464,10 +1217,11 @@ namespace ASCompletion.Model
 
         private bool LookupRegex(string ba, ref int i)
         {
-            int len = ba.Length;
+            if (ba[i - 2] != '~') return false;
+            var len = ba.Length;
+            var i0 = i - 3;
             char c;
-            
-            var i0 = i - 2;
+
             while (i0 > 0)
             {
                 c = ba[i0--];
@@ -1479,19 +1233,27 @@ namespace ASCompletion.Model
                     || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')
                     || (c >= '0' && c <= '9'))
                 {
-                    break;// ok
+                    break; // ok
                 }
+
                 if (c == ' ' || c == '\t') continue;
                 return false; // anything else isn't expected before a regex
             }
+
             i0 = i;
             while (i0 < len)
             {
                 c = ba[i0++];
-                if (c == '\\') { i0++; continue; } // escape next
+                if (c == '\\')
+                {
+                    i0++;
+                    continue;
+                } // escape next
+
                 if (c == '/') break; // end of regex
                 if (c == '\r' || c == '\n') return false;
             }
+
             while (i0 < len)
             {
                 c = ba[i0++];
@@ -1501,11 +1263,12 @@ namespace ASCompletion.Model
                     break;
                 }
             }
+
             i = i0; // ok, skip this regex
             return true;
         }
 
-        private ASMetaData LookupMeta(ref string ba, ref int i)
+        private ASMetaData LookupHaxeMeta(ref string ba, ref int i)
         {
             int len = ba.Length;
             int i0 = i;
@@ -1516,33 +1279,38 @@ namespace ASCompletion.Model
             while (i < len)
             {
                 char c = ba[i];
-                if (c == 10 || c == 13)
-                {
-                    line++;
-                    if (c == 13 && i < len && ba[i + 1] == 10) i++;
-                }
                 if (inString == 0)
                 {
                     if (c == '"') inString = 1;
                     else if (c == '\'') inString = 2;
-                    else if (c == '{' || c == ';' || c == '[')
+                    else if (c == '{' || c == ';' || c == '[') // Is this valid in Haxe meta?
                     {
                         i = i0;
                         line = line0;
                         return null;
                     }
-                    else if (c == '(') parCount++;
+                    else if (c == '(')
+                    {
+                        parCount++;
+                        isComplex = true;
+                    }
                     else if (c == ')')
                     {
                         parCount--;
-                        if (parCount < 0) return null;
-                        isComplex = true;
+                        if (parCount <= 0) break;
                     }
-                    else if (c == ']') break;
+                    else if (c <= 32 && parCount <= 0)
+                    {
+                        break;
+                    }
                 }
                 else if (inString == 1 && c == '"') inString = 0;
                 else if (inString == 2 && c == '\'') inString = 0;
-                else if (c == 10 || c == 13) inString = 0;
+                if (c == 10 || c == 13)
+                {
+                    line++;
+                    if (c == 13 && i < len && ba[i + 1] == 10) i++;
+                }
                 i++;
             }
 
@@ -1552,35 +1320,24 @@ namespace ASCompletion.Model
             md.LineTo = line;
             if (isComplex)
             {
-                meta = meta.Substring(meta.IndexOf('(') + 1);
-                md.ParseParams(meta.Substring(0, meta.Length - 1));
-                if (lastComment != null && isBlockComment && (md.Name == "Event" || md.Name == "Style"))
-                {
-                    md.Comments = lastComment;
-                    lastComment = null;
-                }
-                else lastComment = null;
+                meta = meta.Substring(meta.IndexOf('(') + 1).Trim();
+                md.Params = new Dictionary<string, string>();
+                md.Params["Default"] = meta;
             }
             return md;
         }
 
         private void FinalizeModel()
         {
-            model.Version = version;
-            model.HasPackage = hasPackageSection;
-            model.FullPackage = model.Module == "" ? model.Package
-                : (model.Package == "" ? model.Module : model.Package + '.' + model.Module);
+            model.Version = 4;
+            model.HasPackage = true;
+            model.FullPackage = model.Module == ""
+                ? model.Package
+                : (model.Package == ""
+                    ? model.Module
+                    : model.Package + '.' + model.Module);
             if (model.FileName.Length == 0 || model.FileName.EndsWithOrdinal("_cache")) return;
             if (model.PrivateSectionIndex == 0) model.PrivateSectionIndex = line + 1;
-            if (version == 2)
-            {
-                string className = model.GetPublicClass().Name;
-                if (className.IndexOfAny(Path.GetInvalidFileNameChars()) > 0)
-                    return;
-
-                string testPackage = Path.Combine(Path.GetDirectoryName(model.FileName), className);
-                if (Directory.Exists(testPackage)) model.TryAsPackage = true;
-            }
         }
         #endregion
 
@@ -1594,20 +1351,20 @@ namespace ASCompletion.Model
         /// <returns>A keyword was found</returns>
         private bool EvalToken(bool evalContext, bool evalKeyword)
         {
-            bool hadContext = (context != 0);
-            bool hadKeyword = (foundKeyword != 0);
+            bool hadContext = context != 0;
+            bool hadKeyword = foundKeyword != 0;
             foundKeyword = 0;
 
             /* KEYWORD EVALUATION */
 
             string token = curToken.Text;
             int dotIndex = token.LastIndexOf('.');
-            if (evalKeyword && token.Length >= 3)
+            if (evalKeyword && token.Length >= 2)
             {
                 if (dotIndex > 0) token = token.Substring(dotIndex + 1);
 
                 // members
-                if (token == "var" || token == "catch")
+                if (token == "var")
                 {
                     foundKeyword = FlagType.Variable;
                 }
@@ -1615,67 +1372,50 @@ namespace ASCompletion.Model
                 {
                     foundKeyword = FlagType.Function;
                 }
-                else if (features.hasConsts && token == "const")
-                {
-                    foundKeyword = FlagType.Variable;
-                    modifiers |= FlagType.Constant;
-                }
-                else if (features.hasNamespaces && token == "namespace")
-                {
-                    if (context == 0 && prevToken.Text != "use")
-                        foundKeyword = FlagType.Namespace;
-                }
-                else if (features.hasDelegates && token == "delegate")
-                {
-                    foundKeyword = FlagType.Function;
-                    modifiers |= FlagType.Delegate;
-                }
                 // class declaration
                 else if (tryPackage && token == "package")
                 {
                     foundKeyword = FlagType.Package;
-                    if (version < 3)
-                    {
-                        version = 3;
-                        hasPackageSection = true;
-                        //model.Namespaces.Add("AS3", Visibility.Public);
-                        //model.Namespaces.Add("ES", Visibility.Public);
-                    }
                 }
                 else if (token == "class")
                 {
                     foundKeyword = FlagType.Class;
                     modifiers |= FlagType.Class;
-                    if (version == 1)
-                    {
-                        version = 2;
-                        hasPackageSection = true;
-                    }
                 }
                 else if (token == "interface")
                 {
                     foundKeyword = FlagType.Class;
                     modifiers |= FlagType.Class | FlagType.Interface;
-                    if (version == 1)
-                    {
-                        version = 2;
-                        hasPackageSection = true;
-                    }
+                }
+                else if (features.hasTypeDefs && token == "typedef")
+                {
+                    foundKeyword = FlagType.TypeDef;
+                    modifiers |= FlagType.TypeDef;
+                }
+                else if (features.hasTypeDefs && token == "abstract")
+                {
+                    foundKeyword = FlagType.Abstract;
+                    modifiers |= FlagType.Abstract;
                 }
                 else if (features.hasStructs && token == "struct")
                 {
                     foundKeyword = FlagType.Struct;
                     modifiers |= FlagType.Class | FlagType.Struct;
                 }
+                else if (features.hasEnums && token == "enum")
+                {
+                    foundKeyword = FlagType.Enum;
+                    modifiers |= FlagType.Enum;
+                }
                 // head declarations
-                else if (token == features.importKey)
+                else if (token == features.importKey || token == features.importKeyAlt)
                 {
                     foundKeyword = FlagType.Import;
                 }
                 // modifiers
                 else
                 {
-                    if (context == FlagType.Class)
+                    if (context == FlagType.Class || context == FlagType.TypeDef)
                     {
                         if (token == "extends")
                         {
@@ -1688,6 +1428,32 @@ namespace ASCompletion.Model
                             foundKeyword = FlagType.Class;
                             curModifiers = FlagType.Implements;
                             return true;
+                        }
+                    }
+                    else if (context == FlagType.Abstract)
+                    {
+                        if (features.hasTypeDefs)
+                        {
+                            if (token == "from")
+                            {
+                                foundKeyword = FlagType.Class;
+                                curModifiers = FlagType.Extends;
+                                if (curClass != null)
+                                {
+                                    if (curClass.MetaDatas == null) curClass.MetaDatas = new List<ASMetaData>();
+                                    curClass.MetaDatas.Add(new ASMetaData(token) {RawParams = prevToken.Text});
+                                }
+                                return true;
+                            }
+                            if (token == "to")
+                            {
+                                if (curClass != null)
+                                {
+                                    if (curClass.MetaDatas == null) curClass.MetaDatas = new List<ASMetaData>();
+                                    curClass.MetaDatas.Add(new ASMetaData(token) {RawParams = prevToken.Text});
+                                }
+                                return true;
+                            }
                         }
                     }
                     // properties
@@ -1720,31 +1486,6 @@ namespace ASCompletion.Model
                         foundModifier = FlagType.Access;
                         curAccess = Visibility.Private;
                     }
-                    else if (token == features.protectedKey)
-                    {
-                        foundModifier = FlagType.Access;
-                        curAccess = Visibility.Protected;
-                    }
-                    else if (token == features.internalKey)
-                    {
-                        foundModifier = FlagType.Access;
-                        curAccess = Visibility.Internal;
-                    }
-                    else if (version == 3 && !hadContext) // TODO Handle namespaces properly
-                    {
-                        if (token == "AS3")
-                        {
-                            foundModifier = FlagType.Access;
-                            curAccess = Visibility.Public;
-                            curNamespace = token;
-                        }
-                        else if (token == "flash_proxy")
-                        {
-                            foundModifier = FlagType.Access;
-                            curAccess = Visibility.Public;
-                            curNamespace = token;
-                        }
-                    }
 
                     // other modifiers
                     if (foundModifier == 0)
@@ -1753,17 +1494,13 @@ namespace ASCompletion.Model
                         {
                             foundModifier = FlagType.Static;
                         }
-                        else if (version <= 3 && token == "intrinsic")
-                        {
-                            foundModifier = FlagType.Intrinsic;
-                        }
                         else if (token == "override")
                         {
                             foundModifier = FlagType.Override;
                         }
-                        else if (version == 3 && token == "native")
+                        else if (token == "extern" && context != FlagType.Package)
                         {
-                            foundModifier = FlagType.Intrinsic | FlagType.Native;
+                            foundModifier = FlagType.Intrinsic | FlagType.Extern;
                         }
                         else if (token == "final")
                         {
@@ -1773,24 +1510,17 @@ namespace ASCompletion.Model
                         {
                             foundModifier = FlagType.Dynamic;
                         }
-                        // namespace modifier
-                        else if (features.hasNamespaces && model.Namespaces.Count > 0)
-                            foreach (var ns in model.Namespaces)
-                                if (token == ns.Key)
-                                {
-                                    curAccess = ns.Value;
-                                    curNamespace = token;
-                                    foundModifier = FlagType.Namespace;
-                                }
                     }
                     // a declaration modifier was recognized
                     if (foundModifier != 0)
                     {
                         if (inParams && inValue) valueKeyword = new Token(curToken);
                         inParams = false;
+                        inEnum = false;
+                        inTypedef = false;
+                        inAbstract = false;
                         inValue = false;
                         hadValue = false;
-                        inConst = false;
                         inType = false;
                         inGeneric = false;
                         valueMember = null;
@@ -1825,10 +1555,12 @@ namespace ASCompletion.Model
 
                 if (inParams && inValue) valueKeyword = new Token(curToken);
                 inParams = false;
+                inEnum = false;
+                inTypedef = false;
+                inAbstract = false;
                 inGeneric = false;
                 inValue = false;
                 hadValue = false;
-                inConst = false;
                 if (token != "function") valueMember = null;
                 foundColon = false;
                 foundConstant = false;
@@ -1846,7 +1578,7 @@ namespace ASCompletion.Model
             // when not in a class, parse if/for/while blocks
             if (ScriptMode)
             {
-                if (token == "catch")
+                if (token == "catch" || token == "for")
                 {
                     curModifiers = 0;
                     foundKeyword = FlagType.Variable;
@@ -1859,20 +1591,43 @@ namespace ASCompletion.Model
             if (!evalContext) return false;
             if (dotIndex > 0) token = curToken.Text;
 
+            // some heuristic around Enums & Typedefs
+            if (inEnum && !inValue)
+            {
+                curModifiers = 0;
+                curAccess = Visibility.Public;
+            }
+            if (inTypedef && !inValue && curModifiers != FlagType.Extends)
+            {
+                curModifiers = 0;
+                curAccess = Visibility.Public;
+            }
+            else if (!inTypedef && curModifiers == FlagType.TypeDef && curClass != null && token != "extends")
+            {
+                curClass.ExtendsType = token;
+                curModifiers = 0;
+                context = 0;
+                curComment = null;
+                curClass = null;
+                curNamespace = "internal";
+                curAccess = 0;
+                modifiers = 0;
+                modifiersLine = 0;
+                return true;
+            }
+
+
             /* EVAL DECLARATION */
 
             if (foundColon && curMember != null)
             {
                 foundColon = false;
-                curMember.Type = curToken.Text;
+                if (curMember.Type != null) curMember.Type += curToken.Text;
+                else curMember.Type = curToken.Text;
                 curMember.Type = ASFileParserRegexes.Spaces.Replace(curMember.Type, string.Empty).Replace(",", ", ");
                 curMember.LineTo = curToken.Line;
-                // Typed Arrays
-
-                if (TypeCommentUtils.Parse(lastComment, curMember) != TypeDefinitionKind.Null)
-                    lastComment = null;
             }
-            else if (hadContext && (hadKeyword || inParams))
+            else if (hadContext && (hadKeyword || inParams || inEnum || inTypedef))
             {
                 MemberModel member;
                 switch (context)
@@ -1885,33 +1640,6 @@ namespace ASCompletion.Model
                         }
                         break;
 
-                    case FlagType.Namespace:
-                        if (prevToken.Text == "namespace")
-                        {
-                            if (!model.Namespaces.ContainsKey(token))
-                            {
-                                model.Namespaces.Add(token, curAccess);
-                                // namespace is treated as a variable
-                                member = new MemberModel();
-                                member.Comments = curComment;
-                                member.Name = token;
-                                member.Type = "Namespace";
-                                member.Flags = FlagType.Dynamic | FlagType.Variable | FlagType.Namespace;
-                                member.Access = (curAccess == 0) ? features.varModifierDefault : curAccess;
-                                member.Namespace = curNamespace;
-                                member.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
-                                member.LineTo = curToken.Line;
-                                if (curClass != null) curClass.Members.Add(member);
-                                else
-                                {
-                                    member.InFile = model;
-                                    member.IsPackageLevel = true;
-                                    model.Members.Add(member);
-                                }
-                            }
-                        }
-                        break;
-
                     case FlagType.Import:
                         if (prevToken.Text == features.importKey)
                         {
@@ -1920,9 +1648,19 @@ namespace ASCompletion.Model
                             member.Type = token;
                             member.LineFrom = prevToken.Line;
                             member.LineTo = curToken.Line;
-                            member.Flags = token.EndsWith('*') ? FlagType.Package : FlagType.Class;
+                            member.Flags = (token.EndsWith('*')) ? FlagType.Package : FlagType.Class;
                             if (flattenNextBlock > 0) // this declaration is inside a config block
                                 member.Flags |= FlagType.Constant; 
+                            model.Imports.Add(member);
+                        }
+                        else if (prevToken.Text == features.importKeyAlt)
+                        {
+                            member = new MemberModel();
+                            member.Name = LastStringToken(token, ".");
+                            member.Type = token;
+                            member.LineFrom = prevToken.Line;
+                            member.LineTo = curToken.Line;
+                            member.Flags = FlagType.Class | FlagType.Using;
                             model.Imports.Add(member);
                         }
                         break;
@@ -1945,6 +1683,7 @@ namespace ASCompletion.Model
                                     }
                                 }
                                 curClass.ExtendsType = token;
+                                if (inTypedef) context = FlagType.TypeDef;
                             }
                         }
                         else if (curModifiers == FlagType.Implements)
@@ -1956,23 +1695,18 @@ namespace ASCompletion.Model
                             }
                         }
                         else if ((context == FlagType.Class && (prevToken.Text == "class" || prevToken.Text == "interface"))
-                                || (context == FlagType.Struct && prevToken.Text == "struct"))
+                                 || (context == FlagType.Struct && prevToken.Text == "struct"))
                         {
                             if (curClass != null)
                             {
                                 curClass.LineTo = (modifiersLine != 0) ? modifiersLine - 1 : curToken.Line - 1;
                             }
                             // check classname
-                            int p = token.LastIndexOf('.');
-                            if (p > 0)
-                            {
-                                if (version < 3)
-                                {
-                                    model.Package = token.Substring(0, p);
-                                    token = token.Substring(p + 1);
-                                }
-                                //TODO  Error: AS3 classes are qualified by their package declaration
-                            }
+                            //int p = token.LastIndexOf('.');
+                            //if (p > 0)
+                            //{
+                            //    //TODO  Error: AS3 & Haxe classes are qualified by their package declaration
+                            //}
 
                             if (model.PrivateSectionIndex != 0 && curToken.Line > model.PrivateSectionIndex)
                                 curAccess = Visibility.Private;
@@ -2007,55 +1741,185 @@ namespace ASCompletion.Model
                         }
                         break;
 
-                    case FlagType.Variable:
-                        member = new MemberModel();
-                        member.Comments = curComment;
-                        member.Name = token;
-                        if ((curModifiers & FlagType.Static) == 0) curModifiers |= FlagType.Dynamic;
-                        member.Flags = curModifiers | FlagType.Variable;
-                        member.Access = (curAccess == 0) ? features.varModifierDefault : curAccess;
-                        member.Namespace = curNamespace;
-                        member.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
-                        member.LineTo = curToken.Line;
-                        //
-                        // method parameter
-                        if (inParams && curMethod != null)
+                    case FlagType.Enum:
+                        if (inEnum && curClass != null && prevToken.Text != "enum")
                         {
-                            member.Flags = FlagType.Variable | FlagType.ParameterVar;
-                            if (curMethod.Parameters == null) curMethod.Parameters = new List<MemberModel>();
-                            member.Access = 0;
-                            if (member.Name.Length > 0)
-                                curMethod.Parameters.Add(member);
-                        }
-                        // class member
-                        else if (curClass != null)
-                        {
-                            FlagType forcePublic = FlagType.Interface;
-                            if ((curClass.Flags & forcePublic) > 0)
-                                member.Access = Visibility.Public;
-
+                            member = new MemberModel();
+                            member.Comments = curComment;
+                            member.Name = token;
+                            member.Flags = curModifiers | FlagType.Variable | FlagType.Enum | FlagType.Static;
+                            member.Access = Visibility.Public;
+                            member.Namespace = curNamespace;
+                            member.LineFrom = member.LineTo = curToken.Line;
                             curClass.Members.Add(member);
-                            curClass.LineTo = member.LineTo;
+                            //
+                            curMember = member;
                         }
-                        // package member
                         else
                         {
-                            member.InFile = model;
-                            member.IsPackageLevel = true;
-                            model.Members.Add(member);
+                            if (curClass != null)
+                            {
+                                curClass.LineTo = (modifiersLine != 0) ? modifiersLine - 1 : curToken.Line - 1;
+                            }
+                            curClass = new ClassModel();
+                            curClass.InFile = model;
+                            curClass.Comments = curComment;
+                            var qtype = QualifiedName(model, token);
+                            curClass.Type = qtype.Type;
+                            curClass.Template = qtype.Template;
+                            curClass.Name = qtype.Name;
+                            curClass.Flags = curModifiers;
+                            curClass.Access = (curAccess == 0) ? features.enumModifierDefault : curAccess;
+                            curClass.Namespace = curNamespace;
+                            curClass.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
+                            curClass.LineTo = curToken.Line;
+                            AddClass(model, curClass);
                         }
+                        break;
 
-                        //
-                        curMember = member;
+                    case FlagType.TypeDef:
+                        if (inTypedef && curClass != null && prevToken.Text != "typedef")
+                        {
+                            member = new MemberModel();
+                            member.Comments = curComment;
+                            member.Name = token;
+                            member.Flags = curModifiers | FlagType.Variable | FlagType.Dynamic;
+                            member.Access = Visibility.Public;
+                            member.Namespace = curNamespace;
+                            member.LineFrom = member.LineTo = curToken.Line;
+                            curClass.Members.Add(member);
+                            //
+                            curMember = member;
+                        }
+                        else 
+                        {
+                            if (curClass != null)
+                            {
+                                curClass.LineTo = (modifiersLine != 0) ? modifiersLine - 1 : curToken.Line - 1;
+                            }
+                            curClass = new ClassModel();
+                            curClass.InFile = model;
+                            curClass.Comments = curComment;
+                            var qtype = QualifiedName(model, token);
+                            curClass.Type = qtype.Type;
+                            curClass.Template = qtype.Template;
+                            curClass.Name = qtype.Name;
+                            curClass.Flags = FlagType.Class | FlagType.TypeDef;
+                            curClass.Access = (curAccess == 0) ? features.typedefModifierDefault : curAccess;
+                            curClass.Namespace = curNamespace;
+                            curClass.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
+                            curClass.LineTo = curToken.Line;
+                            AddClass(model, curClass);
+                        }
+                        break;
 
+                    case FlagType.Abstract:
+                        if (inAbstract && curClass != null && prevToken.Text != "abstract")
+                        {
+                            member = new MemberModel();
+                            member.Comments = curComment;
+                            member.Name = token;
+                            member.Flags = curModifiers | FlagType.Variable | FlagType.Dynamic;
+                            member.Access = Visibility.Public;
+                            member.Namespace = curNamespace;
+                            member.LineFrom = member.LineTo = curToken.Line;
+                            curClass.Members.Add(member);
+                            //
+                            curMember = member;
+                        }
+                        else if (!inAbstract && curClass != null && (curClass.Flags & FlagType.Abstract) > 0)
+                        {
+                            if (prevToken.Text == "to") { /* can be casted to X */ }
+                            else curClass.ExtendsType = curToken.Text;
+                        }
+                        else
+                        {
+                            if (curClass != null)
+                            {
+                                curClass.LineTo = (modifiersLine != 0) ? modifiersLine - 1 : curToken.Line - 1;
+                            }
+                            curClass = new ClassModel();
+                            curClass.InFile = model;
+                            curClass.Comments = curComment;
+                            var qtype = QualifiedName(model, token);
+                            curClass.Type = qtype.Type;
+                            curClass.Template = qtype.Template;
+                            curClass.Name = qtype.Name;
+                            curClass.Flags = FlagType.Class | FlagType.Abstract;
+                            curClass.Access = (curAccess == 0) ? features.typedefModifierDefault : curAccess;
+                            curClass.Namespace = curNamespace;
+                            curClass.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
+                            curClass.LineTo = curToken.Line;
+                            AddClass(model, curClass);
+                        }
                         if (carriedMetaData != null)
                         {
-                            if (member.MetaDatas == null)
-                                member.MetaDatas = carriedMetaData;
-                            else member.MetaDatas.AddRange(carriedMetaData);
+                            if (curClass.MetaDatas == null) curClass.MetaDatas = carriedMetaData;
+                            else curClass.MetaDatas.AddRange(carriedMetaData);
                             carriedMetaData = null;
                         }
+                        break;
 
+                    case FlagType.Variable:
+                        // Haxe signatures: T -> T
+                        if (curMember?.Type != null && curMember.Type.EndsWithOrdinal("->"))
+                        {
+                            curMember.Type += token;
+                            curMember.Type = ASFileParserRegexes.Spaces.Replace(curMember.Type, string.Empty).Replace(",", ", ");
+                            return false;
+                        }
+                        else
+                        {
+                            member = new MemberModel();
+                            member.Comments = curComment;
+                            member.Name = token;
+                            if ((curModifiers & FlagType.Static) == 0) curModifiers |= FlagType.Dynamic;
+                            member.Flags = curModifiers | FlagType.Variable;
+                            member.Access = (curAccess == 0) ? features.varModifierDefault : curAccess;
+                            member.Namespace = curNamespace;
+                            member.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
+                            member.LineTo = curToken.Line;
+                            //
+                            // method parameter
+                            if (inParams && curMethod != null)
+                            {
+                                member.Flags = FlagType.Variable | FlagType.ParameterVar;
+                                if (inEnum) member.Flags |= FlagType.Enum;
+                                if (curMethod.Parameters == null) curMethod.Parameters = new List<MemberModel>();
+                                member.Access = 0;
+                                if (member.Name.Length > 0)
+                                    curMethod.Parameters.Add(member);
+                            }
+                            // class member
+                            else if (curClass != null)
+                            {
+                                FlagType forcePublic = FlagType.Interface;
+                                forcePublic |= FlagType.Intrinsic | FlagType.TypeDef;
+                                if ((curClass.Flags & forcePublic) > 0)
+                                    member.Access = Visibility.Public;
+
+                                curClass.Members.Add(member);
+                                curClass.LineTo = member.LineTo;
+                            }
+                            // package member
+                            else
+                            {
+                                member.InFile = model;
+                                member.IsPackageLevel = true;
+                                model.Members.Add(member);
+                            }
+                            //
+                            curMember = member;
+
+                            if (carriedMetaData != null)
+                            {
+                                if (member.MetaDatas == null)
+                                    member.MetaDatas = carriedMetaData;
+                                else member.MetaDatas.AddRange(carriedMetaData);
+
+                                carriedMetaData = null;
+                            }
+                        }
                         break;
 
                     case FlagType.Function:
@@ -2095,6 +1959,7 @@ namespace ASCompletion.Model
                             }
 
                             FlagType forcePublic = FlagType.Interface;
+                            forcePublic |= FlagType.Intrinsic | FlagType.TypeDef;
                             if (curAccess == 0 && (curClass.Flags & forcePublic) > 0)
                                 member.Access = Visibility.Public;
 

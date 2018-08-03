@@ -219,7 +219,6 @@ namespace ASCompletion.Completion
                 {
                     MemberModel latest = new MemberModel();
                     latest.LineFrom = lineNum;
-                    latest.LineTo = lineNum;
                     latest.LineTo = lineNum + lineCount;
                     return latest;
                 }

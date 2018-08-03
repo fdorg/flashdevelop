@@ -175,17 +175,17 @@ namespace ProjectManager.Controls.TreeView
             set
             {
                 activeProject = value;
-                string path = activeProject != null ? activeProject.Directory : null;
+                string path = activeProject?.Directory;
                 SelectedNode = null;
                 foreach (GenericNode node in Nodes)
                 {
                     if (!(node is ProjectNode)) continue;
                     if (node.BackingPath == path)
                     {
-                        (node as ProjectNode).IsActive = true;
-                        SelectedNode = node as GenericNode;
+                        ((ProjectNode) node).IsActive = true;
+                        SelectedNode = node;
                     }
-                    else (node as ProjectNode).IsActive = false;
+                    else ((ProjectNode) node).IsActive = false;
                 }
             }
         }
@@ -311,7 +311,7 @@ namespace ProjectManager.Controls.TreeView
                 if (node.IsExpanded)
                 {
                     list.Add(node.BackingPath);
-                    AddExpanded(node.Nodes,list);
+                    AddExpanded(node.Nodes, list);
                 }
         }
 
@@ -489,7 +489,7 @@ namespace ProjectManager.Controls.TreeView
                 string fromPath = (node as GenericNode).BackingPath;
                 string toPath = (targetNode as GenericNode).BackingPath;
 
-                MovePath(fromPath,toPath);
+                MovePath(fromPath, toPath);
             }
         }
 
@@ -500,8 +500,8 @@ namespace ProjectManager.Controls.TreeView
                 string fromPath = (node as GenericNode).BackingPath;
                 string toPath = (targetNode as GenericNode).BackingPath;
 
-                CopyPath(fromPath,toPath);
-            }           
+                CopyPath(fromPath, toPath);
+            }
         }
 
         protected override void OnFileDrop(string[] paths, TreeNode targetNode)
@@ -510,7 +510,7 @@ namespace ProjectManager.Controls.TreeView
             {
                 string toPath = (targetNode as GenericNode).BackingPath;
                 foreach (string fromPath in paths)
-                    CopyPath(fromPath,toPath);
+                    CopyPath(fromPath, toPath);
             }
         }
 

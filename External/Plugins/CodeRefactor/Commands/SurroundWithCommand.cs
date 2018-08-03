@@ -34,21 +34,12 @@ namespace CodeRefactor.Commands
             try
             {
                 string selection = sci.SelText;
-                if (string.IsNullOrEmpty(selection))
-                {
-                    return;
-                }
+                if (string.IsNullOrEmpty(selection)) return;
+                if (selection.TrimStart().Length == 0) return;
 
-                if (selection.TrimStart().Length == 0)
-                {
-                    return;
-                }
-
-                sci.SetSel(sci.SelectionStart + selection.Length - selection.TrimStart().Length,
-                    sci.SelectionEnd);
+                sci.SetSel(sci.SelectionStart + selection.Length - selection.TrimStart().Length, sci.SelectionEnd);
                 sci.CurrentPos = sci.SelectionEnd;
-                selection = sci.SelText;
-
+                
                 int lineStart = sci.LineFromPosition(sci.SelectionStart);
                 int lineEnd = sci.LineFromPosition(sci.SelectionEnd);
                 int firstLineIndent = sci.GetLineIndentation(lineStart);

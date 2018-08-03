@@ -1334,7 +1334,7 @@ namespace ASCompletion.Completion
         #endregion
 
         #region template_completion
-        static private bool HandleDeclarationCompletion(ScintillaControl Sci, string tail, bool autoHide)
+        private static bool HandleDeclarationCompletion(ScintillaControl Sci, string tail, bool autoHide)
         {
             int position = Sci.CurrentPos;
             int line = Sci.LineFromPosition(position);
