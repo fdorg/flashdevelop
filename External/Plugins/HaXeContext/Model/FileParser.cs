@@ -1486,16 +1486,6 @@ namespace HaXeContext.Model
                         foundModifier = FlagType.Access;
                         curAccess = Visibility.Private;
                     }
-                    else if (token == features.protectedKey)
-                    {
-                        foundModifier = FlagType.Access;
-                        curAccess = Visibility.Protected;
-                    }
-                    else if (token == features.internalKey)
-                    {
-                        foundModifier = FlagType.Access;
-                        curAccess = Visibility.Internal;
-                    }
 
                     // other modifiers
                     if (foundModifier == 0)
