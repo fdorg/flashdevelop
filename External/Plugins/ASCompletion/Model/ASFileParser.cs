@@ -1382,7 +1382,6 @@ namespace ASCompletion.Model
                         // end of method parameters
                         else if (c1 == ')' && inParams)
                         {
-                            context = 0;
                             context = FlagType.Variable;
                             modifiers = 0;
                             inParams = false;
