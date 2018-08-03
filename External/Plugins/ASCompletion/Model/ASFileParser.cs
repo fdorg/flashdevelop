@@ -872,7 +872,7 @@ namespace ASCompletion.Model
                         if (matchStart.Success)
                         {
                             string regionName = matchStart.Groups["name"].Value.Trim();
-                            MemberModel region = new MemberModel(regionName, String.Empty, FlagType.Declaration, Visibility.Default);
+                            MemberModel region = new MemberModel(regionName, string.Empty, FlagType.Declaration, Visibility.Default);
                             region.LineFrom = line;
                             model.Regions.Add(region);
                         }
