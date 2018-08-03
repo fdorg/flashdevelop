@@ -12,7 +12,6 @@ using System.Text.RegularExpressions;
 using ASCompletion.Completion;
 using ASCompletion.Model;
 using PluginCore;
-using PluginCore.Helpers;
 
 namespace HaXeContext.Model
 {
@@ -37,268 +36,6 @@ namespace HaXeContext.Model
 
         public override string ToString() => Text;
     }
-    #endregion
-
-    #region TypeDefinitionKind enum
-    /// <summary>
-    /// Contributor: i.o.
-    /// </summary>
-    public enum TypeDefinitionKind : uint
-    {
-        Null = 0,
-        Simple = 1,
-        TypedArray = 2,
-        TypedCallback = 3,
-        TypedObject = 4
-    }
-    //
-    #endregion
-
-    #region TypeCommentUtils class
-    /// <summary>
-    /// Contributor: i.o.
-    /// </summary>
-    public class TypeCommentUtils
-    {
-        //---------------------
-        // FIELDS
-        //---------------------
-
-        public static string ObjectType = "Object"; // will differ in haxe
-        private static Random random = new Random(123456);
-
-
-        //---------------------
-        // PUBLIC METHODS
-        //---------------------
-
-        /// <summary>
-        /// Type-comment parsing into model (source and destination)
-        /// </summary>
-        public static TypeDefinitionKind Parse(string comment, MemberModel model)
-        {
-            return Parse(comment, model, false);
-        }
-        public static TypeDefinitionKind Parse(string comment, MemberModel model, bool detectKindOnly)
-        {
-            if (model != null && !string.IsNullOrEmpty(comment))
-            {
-                switch (model.Type)
-                {
-                    case "Array":
-                        return ParseTypedArray(comment, model, detectKindOnly);
-
-                    case "Function":
-                        return ParseTypedCallback(comment, model, detectKindOnly);
-                }
-
-                if (model.Type == ObjectType) 
-                    return ParseTypedObject(comment, model, detectKindOnly);
-            }
-            return TypeDefinitionKind.Null;
-        }
-
-        /// <summary>
-        /// Typed object parsing
-        /// </summary>
-        public static TypeDefinitionKind ParseTypedObject(string comment, MemberModel model)
-        {
-            return ParseTypedObject(comment, model, false);
-        }
-        public static TypeDefinitionKind ParseTypedObject(string comment, MemberModel model, bool detectKindOnly)
-        {
-            if (model != null && !string.IsNullOrEmpty(comment))
-            {
-                Match m = ASFileParserRegexes.ValidObjectType.Match(comment);
-                if (m.Success)
-                {
-                    if (!detectKindOnly)
-                        model.Type = ObjectType + "@" + m.Groups["type"].Value;
-                    return TypeDefinitionKind.TypedObject;
-                }
-            }
-            return TypeDefinitionKind.Null;
-        }
-
-        /// <summary>
-        /// Typed array parsing
-        /// </summary>
-        public static TypeDefinitionKind ParseTypedArray(string comment, MemberModel model)
-        {
-            return ParseTypedArray(comment, model, false);
-        }
-        public static TypeDefinitionKind ParseTypedArray(string comment, MemberModel model, bool detectKindOnly)
-        {
-            if (model != null && !string.IsNullOrEmpty(comment))
-            {
-                Match m = ASFileParserRegexes.ValidTypeName.Match(comment);
-                if (m.Success)
-                {
-                    if (!detectKindOnly)
-                        model.Type = "Array@" + m.Groups["type"].Value;
-
-                    return TypeDefinitionKind.TypedArray;
-                }
-            }
-            return TypeDefinitionKind.Null;
-        }
-
-        /// <summary>
-        /// Typed callbck parsing
-        /// </summary>
-        public static TypeDefinitionKind ParseTypedCallback(string comment, MemberModel model)
-        {
-            return ParseTypedCallback(comment, model, false);
-        }
-        public static TypeDefinitionKind ParseTypedCallback(string comment, MemberModel model, bool detectKindOnly)
-        {
-            if (model != null && !string.IsNullOrEmpty(comment)
-                && (model.Flags & FlagType.Function) == 0)
-            {
-                MemberModel fnModel = extractTypedCallbackModel(comment);
-                if (fnModel != null)
-                {
-                    if (!detectKindOnly)
-                    {
-                        model.Type = fnModel.Type;
-                        model.Flags |= FlagType.Function;
-                        model.Parameters = fnModel.Parameters;
-                        if (model.Access == 0)
-                        {
-                            if (model.Namespace == "internal")
-                            {
-                                if ((model.Access & Visibility.Public) == 0)
-                                    model.Access = Visibility.Internal;
-
-                                model.Namespace = "";
-                            }
-                            else model.Access = Visibility.Public;
-                        }
-                    }
-                    return TypeDefinitionKind.TypedCallback;
-                }
-            }
-            return TypeDefinitionKind.Null;
-        }
-
-
-        //---------------------
-        // PRIVATE METHODS
-        //---------------------
-
-        /// <summary>
-        /// String randomer
-        /// </summary>
-        private static string getRandomStringRepl()
-        {
-            random.NextDouble();
-            return "StringRepl" + random.Next(0xFFFFFFF);
-        }
-
-        /// <summary>
-        /// TypedCallback model extracting
-        /// </summary>
-        private static MemberModel extractTypedCallbackModel(string comment)
-        {
-            if (string.IsNullOrEmpty(comment)) return null;
-            if (comment.IndexOf('(') != 0 || comment.IndexOf(')') < 1) return null;
-
-            // replace strings by temp replacements
-            MatchCollection qStrMatches = ASFileParserRegexes.QuotedString.Matches(comment);
-            Dictionary<String, String> qStrRepls = new Dictionary<string, string>();
-            int i = qStrMatches.Count;
-            while (i-- > 0)
-            {
-                String strRepl = getRandomStringRepl();
-                qStrRepls.Add(strRepl, qStrMatches[i].Value);
-                comment = comment.Substring(0, qStrMatches[i].Index) + strRepl + comment.Substring(qStrMatches[i].Index + qStrMatches[i].Length);
-            }
-
-            // refreshing
-            var idxBraceOp = comment.IndexOf('(');
-            var idxBraceCl = comment.IndexOf(')');
-
-            if (idxBraceOp != 0 || comment.LastIndexOf('(') != idxBraceOp
-                || idxBraceCl < 0 || comment.LastIndexOf(')') != idxBraceCl)
-                return null;
-
-            MemberModel fm = new MemberModel("unknown", "*", FlagType.Function, Visibility.Default);
-            fm.Parameters = new List<MemberModel>();
-
-            // return type
-            Match m = ASFileParserRegexes.FunctionType.Match(comment.Substring(idxBraceCl));
-            if (m.Success)
-                fm.Type = m.Groups["fType"].Value;
-
-            // parameters
-            String pBody = comment.Substring(idxBraceOp, 1 + idxBraceCl - idxBraceOp);
-            MatchCollection pMatches = ASFileParserRegexes.Parameter.Matches(pBody);
-            int l = pMatches.Count;
-            for (i = 0; i < l; i++)
-            {
-                string pName = pMatches[i].Groups["pName"].Value;
-                if (!string.IsNullOrEmpty(pName))
-                {
-                    foreach (KeyValuePair<String,String> replEntry in qStrRepls)
-                    {
-                        if (pName.Contains(replEntry.Key))
-                        {
-                            pName = "[COLOR=#F00][I]InvalidName[/I][/COLOR]";
-                            break;
-                        }
-                    }
-                }
-
-                string pType = pMatches[i].Groups["pType"].Value;
-                if (!string.IsNullOrEmpty(pType))
-                {
-                    foreach (KeyValuePair<String,String> replEntry in qStrRepls)
-                    {
-                        if (pType.Contains(replEntry.Key))
-                        {
-                            pType = "[COLOR=#F00][I]InvalidType[/I][/COLOR]";
-                            break;
-                        }
-                    }
-                }
-
-                string pVal = pMatches[i].Groups["pVal"].Value;
-                if (!string.IsNullOrEmpty(pVal))
-                {
-                    if (qStrRepls.ContainsKey(pVal))
-                    {
-                        pVal = qStrRepls[pVal];
-                    }
-                    else
-                    {
-                        foreach (KeyValuePair<String,String> replEntry in qStrRepls)
-                        {
-                            if (pVal.Contains(replEntry.Key))
-                            {
-                                pVal = "[COLOR=#F00][I]InvalidValue[/I][/COLOR]";
-                                break;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    pVal = null;
-                }
-
-                MemberModel pModel = new MemberModel();
-                pModel.Name = pName;
-                pModel.Type = pType;
-                pModel.Value = pVal;
-                pModel.Flags = FlagType.ParameterVar;
-                pModel.Access = Visibility.Default;
-
-                fm.Parameters.Add(pModel);
-            }
-            return fm;
-        }
-    }
-    //
     #endregion
 
     #region ASFileParserRegexes class
@@ -338,73 +75,6 @@ namespace HaXeContext.Model
     //
     #endregion
 
-    #region ASFileParserUtils class
-    //
-    public class ASFileParserUtils
-    {
-        /// <summary>
-        /// Contributor: i.o.
-        /// Description: Extracts from plain string a type classifier and type comment
-        /// Example:
-        ///     typeDefinition: "Array/*String*/" or "Array[spaces]/*String*/" or "/*String*/Array"
-        ///     typeClassifier: "Array"
-        ///     typeComment: "String"
-        /// </summary>
-        public static bool ParseTypeDefinition(string typeDefinition, out string typeClassifier, out string typeComment)
-        {
-            typeClassifier = null;
-            typeComment = null;
-
-            if (String.IsNullOrEmpty(typeDefinition))
-                return false;
-
-            Match m = ASFileParserRegexes.TypeDefinition.Match(typeDefinition);
-            if (!m.Success)
-                return false;
-
-            typeClassifier = m.Groups["Classifier"].Value;
-
-            if (m.Groups["Comment"].Success)
-                typeComment = m.Groups["Comment"].Value;
-
-            return true;
-        }
-
-        public static TypeDefinitionKind ParseTypeDefinitionInto(string typeDefinition, MemberModel model)
-        {
-            return ParseTypeDefinitionInto(typeDefinition, model, true, true);
-        }
-        public static TypeDefinitionKind ParseTypeDefinitionInto(string typeDefinition, MemberModel model, bool parseCommon, bool parseGeneric)
-        {
-            if (String.IsNullOrEmpty(typeDefinition))
-                return TypeDefinitionKind.Null;
-
-            if (!typeDefinition.Contains("/*") || !typeDefinition.Contains("*/"))
-            {
-                if (!parseCommon)
-                    return TypeDefinitionKind.Null;
-
-                model.Type = typeDefinition.Replace(":", ".");
-                if (model.Type.IndexOf('$') > 0) model.Type = model.Type.Replace("$", ".<") + ">";
-                return TypeDefinitionKind.Simple;
-            }
-
-            if (!parseGeneric)
-                return TypeDefinitionKind.Null;
-
-            string typeClassifier;
-            string typeComment;
-            if (!ParseTypeDefinition(typeDefinition, out typeClassifier, out typeComment))
-                return TypeDefinitionKind.Null;
-
-            model.Type = typeClassifier;
-
-            return TypeCommentUtils.Parse(typeComment, model);
-        }
-    }
-    //
-    #endregion
-
     /// <summary>
     /// Old & clumsy AS2/AS3/haxe file parser - beware!
     /// </summary>
@@ -417,8 +87,6 @@ namespace HaXeContext.Model
 
         // parser context
         private FileModel model;
-        private int version;
-        private bool haXe;
         private bool tryPackage;
         private bool hasPackageSection;
         private FlagType context;
@@ -459,7 +127,7 @@ namespace HaXeContext.Model
 
         #region tokenizer
 
-        public bool ScriptMode {get; set;}
+        public bool ScriptMode { private get; set;}
 
         public FileParser() : this(new ContextFeatures())
         {
@@ -468,18 +136,6 @@ namespace HaXeContext.Model
         public FileParser(ContextFeatures features)
         {
             this.features = features;
-        }
-
-        /// <summary>
-        /// Rebuild a file model using the content of that file.
-        /// </summary>
-        /// <param name="fileModel">Model</param>
-        public FileModel Parse(FileModel fileModel)
-        {
-            fileModel.LastWriteTime = File.GetLastWriteTime(fileModel.FileName);
-            var src = FileHelper.ReadFile(fileModel.FileName);
-            ParseSrc(fileModel, src);
-            return fileModel;
         }
 
         /// <summary>
@@ -532,9 +188,6 @@ namespace HaXeContext.Model
             // tokenisation
             tryPackage = true;
             hasPackageSection = false;
-            haXe = model.haXe;
-            TypeCommentUtils.ObjectType = features.dynamicKey;
-            version = (haXe) ? 4 : 1;
             curToken = new Token();
             prevToken = new Token();
             int tokPos = 0;
@@ -617,7 +270,7 @@ namespace HaXeContext.Model
                                     i++;
                                     continue;
                                 }
-                                else if (c2 == '*')
+                                if (c2 == '*')
                                 {
                                     isBlockComment = (i + 1 < len && ba[i + 1] == '*');
                                     matching = 2;
@@ -652,7 +305,7 @@ namespace HaXeContext.Model
                                 {
                                     c2 = ba[ls--];
                                     if (c2 == 10 || c2 == 13) break;
-                                    else if (c2 > 32) { inlineDirective = true; break; }
+                                    if (c2 > 32) { inlineDirective = true; break; }
                                 }
                                 c2 = ba[i];
                                 if (i < 2 || ba[i - 2] < 33 && c2 >= 'a' && c2 <= 'z')
@@ -666,7 +319,7 @@ namespace HaXeContext.Model
                         // end of string?
                         else
                         {
-                            if (c1 == 10 || c1 == 13) { if (!haXe) inString = 0; }
+                            if (c1 == 10 || c1 == 13) { }
                             else if ((c1 == '"' && inString == 1) || (c1 == '\'' && inString == 2))
                             {
                                 // Are we on an escaped ' or ""?
@@ -728,7 +381,7 @@ namespace HaXeContext.Model
                                     end = true;
                                     break;
                                 }
-                                else if (c2 == '*') i++;
+                                if (c2 == '*') i++;
                                 else break;
                             }
                             if (end)
@@ -792,12 +445,9 @@ namespace HaXeContext.Model
                                             skipAhead = true;
                                             break;
                                         }
-                                        else
-                                        {
-                                            // Not a comment!  We're done!
-                                            end = true;
-                                            break;
-                                        }
+                                        // Not a comment!  We're done!
+                                        end = true;
+                                        break;
                                     }
                                 }
                             }
@@ -1065,7 +715,7 @@ namespace HaXeContext.Model
                     else if (inType)
                     {
                         foundColon = false;
-                        if (haXe)
+                        if (true)
                         {
                             if (c1 == '>' && ba[i - 2] == '-' && inAnonType)
                             {
@@ -1091,7 +741,7 @@ namespace HaXeContext.Model
                         inType = false;
                     }
                     // AS3 const or method parameter's default value 
-                    else if (version > 2 && (curMember.Flags & FlagType.Variable) > 0)
+                    else if ((curMember.Flags & FlagType.Variable) > 0)
                     {
                         if (inParams || inConst) curMember.Value = param;
                         curMember.LineTo = line;
@@ -1121,7 +771,7 @@ namespace HaXeContext.Model
                 // a dot can be in an identifier
                 if (c1 == '.')
                 {
-                    if (length > 0 || (inParams && version == 3))
+                    if (length > 0 || (inParams && 4 == 3))
                     {
                         hadWS = false;
                         hadDot = true;
@@ -1160,13 +810,13 @@ namespace HaXeContext.Model
                     else
                     {
                         // valid chars for identifiers
-                        if ((!haXe && char.IsLetter(c1)) || (c1 >= 'A' && c1 <= 'Z')) addChar = true;
+                        if ((c1 >= 'A' && c1 <= 'Z')) addChar = true;
                         else if (c1 == '$' || c1 == '_') addChar = true;
                         else if (length > 0)
                         {
                             if (c1 >= '0' && c1 <= '9') addChar = true;
                             else if (c1 == '*' && context == FlagType.Import) addChar = true;
-                            // AS3/Haxe generics
+                            // generics
                             else if (c1 == '<' && features.hasGenerics)
                             {
                                 if (!inValue && i > 2 && length > 1 && i <= len - 3)
@@ -1185,7 +835,7 @@ namespace HaXeContext.Model
                                         continue;
                                     }
                                     if ((char.IsLetterOrDigit(ba[i - 3]) || ba[i - 3] == '_')
-                                        && (char.IsLetter(ba[i]) || (haXe && (ba[i] == '{' || ba[i] == '(' || ba[i] <= ' ' || ba[i] == '?')))
+                                        && (char.IsLetter(ba[i]) || (ba[i] == '{' || ba[i] == '(' || ba[i] <= ' ' || ba[i] == '?'))
                                         && (char.IsLetter(buffer[0]) || buffer[0] == '_' || inType && buffer[0] == '('))
                                     {
                                         if (curMember == null)
@@ -1234,7 +884,7 @@ namespace HaXeContext.Model
                                     }
                                 }
                             }
-                            else if (haXe && inType && c1 == ')')
+                            else if (inType && c1 == ')')
                             {
                                 if (paramParCount > 0)
                                 {
@@ -1248,13 +898,13 @@ namespace HaXeContext.Model
                                     evalToken = 1;
                                 }
                             }
-                            else if (haXe && inType && c1 == '(')
+                            else if (inType && c1 == '(')
                             {
                                 paramParCount++;
                                 addChar = true;
                             }
-                            else if (haXe && c1 == '{' && length > 1
-                                    && (buffer[length - 2] == '-' && buffer[length - 1] == '>'
+                            else if (c1 == '{' && length > 1
+                                     && (buffer[length - 2] == '-' && buffer[length - 1] == '>'
                                         || buffer[length - 1] == ':'
                                         || buffer[length - 1] == '('
                                         || buffer[length - 1] == '?'))
@@ -1263,14 +913,14 @@ namespace HaXeContext.Model
                                 inAnonType = true;
                                 addChar = true;
                             }
-                            else if (haXe && inAnonType && c1 == '}')
+                            else if (inAnonType && c1 == '}')
                             {
                                 paramBraceCount--;
                                 if (paramBraceCount == 0) inAnonType = false;
                                 addChar = true;
                             }
-                            else if (haXe && inAnonType && paramBraceCount > 0) addChar = true;
-                            else if (haXe && c1 == '?')
+                            else if (inAnonType && paramBraceCount > 0) addChar = true;
+                            else if (c1 == '?')
                             {
                                 hadWS = false;
                                 evalToken = 0;
@@ -1283,8 +933,8 @@ namespace HaXeContext.Model
                             }
                         }
                         // star is valid in import statements
-                        else if (c1 == '*' && version >= 3) addChar = true;
-                        else if (c1 == '?' && haXe && inParams && length == 0) addChar = true;
+                        else if (c1 == '*') addChar = true;
+                        else if (c1 == '?' && inParams && length == 0) addChar = true;
                         else shortcut = false;
                     }
                     // eval this word
@@ -1359,7 +1009,7 @@ namespace HaXeContext.Model
                                     braceCount++; // ignore block
                                 }
                             }
-                            else if (foundColon && haXe && length == 0) // copy Haxe anonymous type
+                            else if (foundColon && length == 0) // copy Haxe anonymous type
                             {
                                 inValue = true;
                                 hadValue = false;
@@ -1417,7 +1067,7 @@ namespace HaXeContext.Model
                             foundColon = curMember != null && curMember.Type == null;
                             // recognize compiler config block
                             if (!foundColon && braceCount == 0 
-                                && i < len - 2 && ba[i] == ':' && Char.IsLetter(ba[i + 1]))
+                                && i < len - 2 && ba[i] == ':' && char.IsLetter(ba[i + 1]))
                                 foundConstant = true;
                         }
                         // next variable declaration
@@ -1438,9 +1088,9 @@ namespace HaXeContext.Model
                         }
                         else if (c1 == '(')
                         {
-                            if (!inValue && context == FlagType.Variable && curToken.Text != "catch" && (!haXe || curToken.Text != "for"))
+                            if (!inValue && context == FlagType.Variable && curToken.Text != "catch" && curToken.Text != "for")
                             {
-                                if (haXe && curMember != null && valueLength == 0)
+                                if (curMember != null && valueLength == 0)
                                 {
                                     if (!foundColon && !inType) // Haxe properties
                                     {
@@ -1534,7 +1184,7 @@ namespace HaXeContext.Model
                                 curModifiers = FlagType.Extends;
                             }
 
-                            else if (curMember == null && curToken.Text != "catch" && (!haXe || curToken.Text != "for"))
+                            else if (curMember == null && curToken.Text != "catch" && curToken.Text != "for")
                             {
                                 context = 0;
                                 inGeneric = false;
@@ -1585,21 +1235,12 @@ namespace HaXeContext.Model
                         // metadata, contexts should define a meta keyword and a way to parse metadata
                         else if (!inValue && c1 == '[')
                         {
-                            if (version == 3)
-                            {
-                                var meta = LookupMeta(ref ba, ref i);
-                                if (meta != null)
-                                {
-                                    carriedMetaData = carriedMetaData ?? new List<ASMetaData>();
-                                    carriedMetaData.Add(meta);
-                                }
-                            }
-                            else if (features.hasCArrays && curMember != null && curMember.Type != null)
+                            if (features.hasCArrays && curMember?.Type != null)
                             {
                                 if (ba[i] == ']') curMember.Type = features.CArrayTemplate + "@" + curMember.Type;
                             }
                         }
-                        else if (!inValue && c1 == '@' && haXe)
+                        else if (!inValue && c1 == '@')
                         {
                             var meta = LookupHaxeMeta(ref ba, ref i);
                             if (meta != null)
@@ -1610,7 +1251,7 @@ namespace HaXeContext.Model
                         }
                         // Unreachable code???? plus it seems a bit crazy we have so many places for function types
                         // Haxe signatures: T -> T -> T 
-                        else if (haXe && c1 == '-' && curMember != null)
+                        else if (c1 == '-' && curMember != null)
                         {
                             if (ba[i] == '>' && curMember.Type != null)
                             {
@@ -1625,12 +1266,6 @@ namespace HaXeContext.Model
                         {
                             i++;
                             continue;
-                        }
-                        // literal regex
-                        else if (c1 == '/' && version == 3)
-                        {
-                            if (LookupRegex(ba, ref i))
-                                continue;
                         }
                 }
 
@@ -1659,18 +1294,10 @@ namespace HaXeContext.Model
 
         private bool LookupRegex(string ba, ref int i)
         {
-            int len = ba.Length;
-            int i0;
+            if (ba[i - 2] != '~') return false;
+            var len = ba.Length;
+            var i0 = i - 3;
             char c;
-            // regex in valid context
-
-            if (!haXe) i0 = i - 2;
-            else
-            {
-                if (ba[i - 2] != '~')
-                    return false;
-                i0 = i - 3;
-            }
 
             while (i0 > 0)
             {
@@ -1683,19 +1310,27 @@ namespace HaXeContext.Model
                     || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')
                     || (c >= '0' && c <= '9'))
                 {
-                    break;// ok
+                    break; // ok
                 }
+
                 if (c == ' ' || c == '\t') continue;
                 return false; // anything else isn't expected before a regex
             }
+
             i0 = i;
             while (i0 < len)
             {
                 c = ba[i0++];
-                if (c == '\\') { i0++; continue; } // escape next
+                if (c == '\\')
+                {
+                    i0++;
+                    continue;
+                } // escape next
+
                 if (c == '/') break; // end of regex
                 if (c == '\r' || c == '\n') return false;
             }
+
             while (i0 < len)
             {
                 c = ba[i0++];
@@ -1705,67 +1340,9 @@ namespace HaXeContext.Model
                     break;
                 }
             }
+
             i = i0; // ok, skip this regex
             return true;
-        }
-
-        private ASMetaData LookupMeta(ref string ba, ref int i)
-        {
-            int len = ba.Length;
-            int i0 = i;
-            int line0 = line;
-            int inString = 0;
-            int parCount = 0;
-            bool isComplex = false;
-            while (i < len)
-            {
-                char c = ba[i];
-                if (c == 10 || c == 13)
-                {
-                    line++;
-                    if (c == 13 && i < len && ba[i + 1] == 10) i++;
-                }
-                if (inString == 0)
-                {
-                    if (c == '"') inString = 1;
-                    else if (c == '\'') inString = 2;
-                    else if (c == '{' || c == ';' || c == '[')
-                    {
-                        i = i0;
-                        line = line0;
-                        return null;
-                    }
-                    else if (c == '(') parCount++;
-                    else if (c == ')')
-                    {
-                        parCount--;
-                        if (parCount < 0) return null;
-                        isComplex = true;
-                    }
-                    else if (c == ']') break;
-                }
-                else if (inString == 1 && c == '"') inString = 0;
-                else if (inString == 2 && c == '\'') inString = 0;
-                else if (c == 10 || c == 13) inString = 0;
-                i++;
-            }
-
-            string meta = ba.Substring(i0, i - i0);
-            ASMetaData md = new ASMetaData(isComplex ? meta.Substring(0, meta.IndexOf('(')) : meta);
-            md.LineFrom = line0;
-            md.LineTo = line;
-            if (isComplex)
-            {
-                meta = meta.Substring(meta.IndexOf('(') + 1);
-                md.ParseParams(meta.Substring(0, meta.Length - 1));
-                if (lastComment != null && isBlockComment && (md.Name == "Event" || md.Name == "Style"))
-                {
-                    md.Comments = lastComment;
-                    lastComment = null;
-                }
-                else lastComment = null;
-            }
-            return md;
         }
 
         private ASMetaData LookupHaxeMeta(ref string ba, ref int i)
@@ -1829,21 +1406,15 @@ namespace HaXeContext.Model
 
         private void FinalizeModel()
         {
-            model.Version = version;
-            model.HasPackage = hasPackageSection || haXe;
-            model.FullPackage = model.Module == "" ? model.Package
-                : (model.Package == "" ? model.Module : model.Package + '.' + model.Module);
+            model.Version = 4;
+            model.HasPackage = true;
+            model.FullPackage = model.Module == ""
+                ? model.Package
+                : (model.Package == ""
+                    ? model.Module
+                    : model.Package + '.' + model.Module);
             if (model.FileName.Length == 0 || model.FileName.EndsWithOrdinal("_cache")) return;
             if (model.PrivateSectionIndex == 0) model.PrivateSectionIndex = line + 1;
-            if (version == 2)
-            {
-                string className = model.GetPublicClass().Name;
-                if (className.IndexOfAny(Path.GetInvalidFileNameChars()) > 0)
-                    return;
-
-                string testPackage = Path.Combine(Path.GetDirectoryName(model.FileName), className);
-                if (Directory.Exists(testPackage)) model.TryAsPackage = true;
-            }
         }
         #endregion
 
@@ -1865,13 +1436,12 @@ namespace HaXeContext.Model
 
             string token = curToken.Text;
             int dotIndex = token.LastIndexOf('.');
-            var minTokenLength = haXe ? 2 : 3;
-            if (evalKeyword && token.Length >= minTokenLength)
+            if (evalKeyword && token.Length >= 2)
             {
                 if (dotIndex > 0) token = token.Substring(dotIndex + 1);
 
                 // members
-                if (token == "var" || (token == "catch" && !haXe))
+                if (token == "var")
                 {
                     foundKeyword = FlagType.Variable;
                 }
@@ -1899,33 +1469,16 @@ namespace HaXeContext.Model
                 else if (tryPackage && token == "package")
                 {
                     foundKeyword = FlagType.Package;
-                    if (version < 3)
-                    {
-                        version = 3;
-                        hasPackageSection = true;
-                        //model.Namespaces.Add("AS3", Visibility.Public);
-                        //model.Namespaces.Add("ES", Visibility.Public);
-                    }
                 }
                 else if (token == "class")
                 {
                     foundKeyword = FlagType.Class;
                     modifiers |= FlagType.Class;
-                    if (version == 1)
-                    {
-                        version = 2;
-                        hasPackageSection = true;
-                    }
                 }
                 else if (token == "interface")
                 {
                     foundKeyword = FlagType.Class;
                     modifiers |= FlagType.Class | FlagType.Interface;
-                    if (version == 1)
-                    {
-                        version = 2;
-                        hasPackageSection = true;
-                    }
                 }
                 else if (features.hasTypeDefs && token == "typedef")
                 {
@@ -1949,7 +1502,7 @@ namespace HaXeContext.Model
                 }
 
                 // head declarations
-                else if (token == features.importKey || (haXe && token == features.importKeyAlt))
+                else if (token == features.importKey || token == features.importKeyAlt)
                 {
                     foundKeyword = FlagType.Import;
                 }
@@ -1965,7 +1518,7 @@ namespace HaXeContext.Model
                             curModifiers = FlagType.Extends;
                             return true;
                         }
-                        else if (token == "implements")
+                        if (token == "implements")
                         {
                             foundKeyword = FlagType.Class;
                             curModifiers = FlagType.Implements;
@@ -2039,21 +1592,6 @@ namespace HaXeContext.Model
                         foundModifier = FlagType.Access;
                         curAccess = Visibility.Internal;
                     }
-                    else if (version == 3 && !hadContext) // TODO Handle namespaces properly
-                    {
-                        if (token == "AS3")
-                        {
-                            foundModifier = FlagType.Access;
-                            curAccess = Visibility.Public;
-                            curNamespace = token;
-                        }
-                        else if (token == "flash_proxy")
-                        {
-                            foundModifier = FlagType.Access;
-                            curAccess = Visibility.Public;
-                            curNamespace = token;
-                        }
-                    }
 
                     // other modifiers
                     if (foundModifier == 0)
@@ -2062,19 +1600,11 @@ namespace HaXeContext.Model
                         {
                             foundModifier = FlagType.Static;
                         }
-                        else if (version <= 3 && token == "intrinsic")
-                        {
-                            foundModifier = FlagType.Intrinsic;
-                        }
                         else if (token == "override")
                         {
                             foundModifier = FlagType.Override;
                         }
-                        else if (version == 3 && token == "native")
-                        {
-                            foundModifier = FlagType.Intrinsic | FlagType.Native;
-                        }
-                        else if (version == 4 && token == "extern" && context != FlagType.Package)
+                        else if (token == "extern" && context != FlagType.Package)
                         {
                             foundModifier = FlagType.Intrinsic | FlagType.Extern;
                         }
@@ -2088,7 +1618,7 @@ namespace HaXeContext.Model
                         }
                         // namespace modifier
                         else if (features.hasNamespaces && model.Namespaces.Count > 0)
-                            foreach (KeyValuePair<string, Visibility> ns in model.Namespaces)
+                            foreach (var ns in model.Namespaces)
                                 if (token == ns.Key)
                                 {
                                     curAccess = ns.Value;
@@ -2167,7 +1697,7 @@ namespace HaXeContext.Model
                 // when not in a class, parse if/for/while blocks
                 if (ScriptMode)
                 {
-                    if (token == "catch" || (haXe && token == "for"))
+                    if (token == "catch" || token == "for")
                     {
                         curModifiers = 0;
                         foundKeyword = FlagType.Variable;
@@ -2212,14 +1742,10 @@ namespace HaXeContext.Model
             if (foundColon && curMember != null)
             {
                 foundColon = false;
-                if (haXe && curMember.Type != null) curMember.Type += curToken.Text;
+                if (curMember.Type != null) curMember.Type += curToken.Text;
                 else curMember.Type = curToken.Text;
                 curMember.Type = ASFileParserRegexes.Spaces.Replace(curMember.Type, string.Empty).Replace(",", ", ");
                 curMember.LineTo = curToken.Line;
-                // Typed Arrays
-
-                if (TypeCommentUtils.Parse(lastComment, curMember) != TypeDefinitionKind.Null)
-                    lastComment = null;
             }
             else if (hadContext && (hadKeyword || inParams || inEnum || inTypedef))
             {
@@ -2231,33 +1757,6 @@ namespace HaXeContext.Model
                         {
                             model.Package = token;
                             model.Comments = curComment;
-                        }
-                        break;
-
-                    case FlagType.Namespace:
-                        if (prevToken.Text == "namespace")
-                        {
-                            if (!model.Namespaces.ContainsKey(token))
-                            {
-                                model.Namespaces.Add(token, curAccess);
-                                // namespace is treated as a variable
-                                member = new MemberModel();
-                                member.Comments = curComment;
-                                member.Name = token;
-                                member.Type = "Namespace";
-                                member.Flags = FlagType.Dynamic | FlagType.Variable | FlagType.Namespace;
-                                member.Access = (curAccess == 0) ? features.varModifierDefault : curAccess;
-                                member.Namespace = curNamespace;
-                                member.LineFrom = (modifiersLine != 0) ? modifiersLine : curToken.Line;
-                                member.LineTo = curToken.Line;
-                                if (curClass != null) curClass.Members.Add(member);
-                                else
-                                {
-                                    member.InFile = model;
-                                    member.IsPackageLevel = true;
-                                    model.Members.Add(member);
-                                }
-                            }
                         }
                         break;
 
@@ -2323,19 +1822,11 @@ namespace HaXeContext.Model
                                 curClass.LineTo = (modifiersLine != 0) ? modifiersLine - 1 : curToken.Line - 1;
                             }
                             // check classname
-                            int p = token.LastIndexOf('.');
-                            if (p > 0)
-                            {
-                                if (version < 3)
-                                {
-                                    model.Package = token.Substring(0, p);
-                                    token = token.Substring(p + 1);
-                                }
-                                else
-                                {
-                                    //TODO  Error: AS3 & Haxe classes are qualified by their package declaration
-                                }
-                            }
+                            //int p = token.LastIndexOf('.');
+                            //if (p > 0)
+                            //{
+                            //    //TODO  Error: AS3 & Haxe classes are qualified by their package declaration
+                            //}
 
                             if (model.PrivateSectionIndex != 0 && curToken.Line > model.PrivateSectionIndex)
                                 curAccess = Visibility.Private;
@@ -2491,7 +1982,7 @@ namespace HaXeContext.Model
 
                     case FlagType.Variable:
                         // Haxe signatures: T -> T
-                        if (haXe && curMember?.Type != null && curMember.Type.EndsWithOrdinal("->"))
+                        if (curMember?.Type != null && curMember.Type.EndsWithOrdinal("->"))
                         {
                             curMember.Type += token;
                             curMember.Type = ASFileParserRegexes.Spaces.Replace(curMember.Type, string.Empty).Replace(",", ", ");
@@ -2523,7 +2014,7 @@ namespace HaXeContext.Model
                             else if (curClass != null)
                             {
                                 FlagType forcePublic = FlagType.Interface;
-                                if (haXe) forcePublic |= FlagType.Intrinsic | FlagType.TypeDef;
+                                if (true) forcePublic |= FlagType.Intrinsic | FlagType.TypeDef;
                                 if ((curClass.Flags & forcePublic) > 0)
                                     member.Access = Visibility.Public;
 
@@ -2588,7 +2079,7 @@ namespace HaXeContext.Model
                             }
 
                             FlagType forcePublic = FlagType.Interface;
-                            if (haXe) forcePublic |= FlagType.Intrinsic | FlagType.TypeDef;
+                            if (true) forcePublic |= FlagType.Intrinsic | FlagType.TypeDef;
                             if (curAccess == 0 && (curClass.Flags & forcePublic) > 0)
                                 member.Access = Visibility.Public;
 
