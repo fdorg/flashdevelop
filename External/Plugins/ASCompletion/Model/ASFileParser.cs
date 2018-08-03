@@ -682,7 +682,7 @@ namespace ASCompletion.Model
                         // end of string?
                         else
                         {
-                            if (c1 == 10 || c1 == 13) { if (!false) inString = 0; }
+                            if (c1 == 10 || c1 == 13) { inString = 0; }
                             else if ((c1 == '"' && inString == 1) || (c1 == '\'' && inString == 2))
                             {
                                 // Are we on an escaped ' or ""?

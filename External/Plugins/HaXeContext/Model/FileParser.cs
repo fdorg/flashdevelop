@@ -1894,7 +1894,7 @@ namespace HaXeContext.Model
                             else if (curClass != null)
                             {
                                 FlagType forcePublic = FlagType.Interface;
-                                if (true) forcePublic |= FlagType.Intrinsic | FlagType.TypeDef;
+                                forcePublic |= FlagType.Intrinsic | FlagType.TypeDef;
                                 if ((curClass.Flags & forcePublic) > 0)
                                     member.Access = Visibility.Public;
 
@@ -1959,7 +1959,7 @@ namespace HaXeContext.Model
                             }
 
                             FlagType forcePublic = FlagType.Interface;
-                            if (true) forcePublic |= FlagType.Intrinsic | FlagType.TypeDef;
+                            forcePublic |= FlagType.Intrinsic | FlagType.TypeDef;
                             if (curAccess == 0 && (curClass.Flags & forcePublic) > 0)
                                 member.Access = Visibility.Public;
 
